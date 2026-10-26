@@ -188,3 +188,90 @@ def test_json_error_shapes():
 
 def test_tool_class_is_a_tool():
     assert issubclass(plugin_tool.PrizedTool, Tool)
+
+
+# --- exec calls: what a failure says about whether the sandbox acted ----------
+
+
+@pytest.mark.parametrize(
+    "answer",
+    [
+        httpx.Response(500, content=b"<html>oops</html>"),  # a proxy's page: no code at all
+        httpx.Response(500, json={"error": "internal"}),
+        httpx.Response(502, json={"error": "worker_failed"}),
+        httpx.Response(503, json={"error": "worker_unavailable"}),
+        httpx.Response(504, json={"error": "gateway_timeout"}),
+    ],
+)
+def test_a_5xx_on_a_command_says_it_may_have_run_and_is_not_resent(fake, answer):
+    fake.add()
+    fake.queue += [httpx.Response(200, json={"sandbox": fake.sandboxes[SID]}), answer]
+    with pytest.raises(plugin_tool.ToolError, match="the command may or may not have run") as caught:
+        invoke(tool("run_command"), {"sandbox_id": SID, "command": "make deploy"})
+    assert "refused" not in str(caught.value)
+    assert sum(r.url.path.endswith("/process/execute") for r in fake.requests) == 1
+
+
+def test_a_lost_upload_speaks_of_the_file_not_a_command(fake):
+    fake.add()
+    fake.queue += [httpx.Response(200, json={"sandbox": fake.sandboxes[SID]}), httpx.Response(502, json={})]
+    with pytest.raises(plugin_tool.ToolError, match="the file may or may not have been written") as caught:
+        invoke(tool("write_file"), {"sandbox_id": SID, "path": "a.txt", "content": "x"})
+    assert "command" not in str(caught.value)
+    assert sum(r.url.path.endswith("/files/upload") for r in fake.requests) == 1
+
+
+def test_a_refused_command_is_reported_as_refused(fake):
+    fake.add()
+    fake.queue += [
+        httpx.Response(200, json={"sandbox": fake.sandboxes[SID]}),
+        httpx.Response(400, json={"error": "spawn_failed", "message": "no such directory"}),
+    ]
+    with pytest.raises(plugin_tool.ToolError, match="could not start") as caught:
+        invoke(tool("run_command"), {"sandbox_id": SID, "command": "ls"})
+    assert "may or may not" not in str(caught.value)
+
+
+@pytest.mark.parametrize(
+    "name,params,message",
+    [
+        ("run_command", {"command": "make deploy"}, "The command ran, but its answer could not be read"),
+        ("write_file", {"path": "a.txt", "content": "x"}, "The file was written, but the answer could not be read"),
+    ],
+)
+def test_an_unreadable_success_says_the_sandbox_acted(fake, name, params, message):
+    fake.add()
+    fake.queue += [httpx.Response(200, json={"sandbox": fake.sandboxes[SID]}), httpx.Response(200, content=b"<html>")]
+    with pytest.raises(plugin_tool.ToolError, match=message):
+        invoke(tool(name), {"sandbox_id": SID, **params})
+
+
+@pytest.mark.parametrize("value", ["inf", "-inf", "1e400", "nan", float("inf"), float("nan"), "9" * 400, 10**400])
+def test_non_finite_numbers_are_refused_as_input(fake, value):
+    with pytest.raises(plugin_tool.ToolError, match="whole number") as caught:
+        invoke(tool("run_command"), {"sandbox_id": SID, "command": "x", "timeout_seconds": value})
+    assert "unexpectedly" not in str(caught.value)
+    assert fake.requests == []
+
+
+def test_a_key_that_sees_no_sandboxes_is_explained_at_authorize(monkeypatch):
+    from conftest import FakePrized
+
+    api = FakePrized()
+    api.queue.append(httpx.Response(404, json={"error": "not_found"}))  # a contractor's key
+    monkeypatch.setattr(pc, "PrizedClient", _client_with(api))
+    with pytest.raises(ToolProviderCredentialValidationError, match="cannot reach sandboxes"):
+        provider().validate_credentials({"api_key": KEY})
+
+
+def test_a_create_refused_as_not_found_names_both_causes(fake):
+    fake.queue.append(httpx.Response(404, json={"error": "not_found"}))
+    with pytest.raises(plugin_tool.ToolError, match="contractor's key, or sandboxes are switched off"):
+        invoke(tool("create_sandbox"), {})
+
+
+def test_a_key_without_sandbox_access_is_pointed_at_a_custom_key(fake):
+    fake.queue.append(httpx.Response(403, json={"error": "key_access_denied"}))
+    with pytest.raises(plugin_tool.ToolError) as caught:
+        invoke(tool("create_sandbox"), {})
+    assert "Custom key with Sandboxes: Write" in str(caught.value) and "Full access" not in str(caught.value)

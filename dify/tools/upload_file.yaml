@@ -6,7 +6,7 @@ identity:
 description:
   human:
     en_US: Copy a file from the workflow (an uploaded file, or another node's file output) into the sandbox.
-      The file's URL must be a public address.
+      The file's URL must be a public address, or on the Dify file server set in the plugin's settings.
   llm: Copy a workflow file into the sandbox. By default it lands in /home/prized/work under its own name.
 parameters:
 - name: sandbox_id

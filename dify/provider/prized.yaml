@@ -18,8 +18,19 @@ credentials_for_provider:
     placeholder:
       en_US: dcp_...
     help:
-      en_US: A Full access key, or a Custom key with Sandboxes Write, from prized.dev under Settings, API keys.
+      en_US: 'A Custom key with only Sandboxes: Write, and an expiry, from prized.dev under Settings, API keys.'
     url: https://prized.dev/dashboard/workspace/api-keys
+  dify_files_url:
+    type: text-input
+    required: false
+    label:
+      en_US: Dify file URL (self-hosted Dify only)
+    placeholder:
+      en_US: http://api:5001
+    help:
+      en_US: For Upload file on a self-hosted Dify that gives plugins a private file address. Enter Dify's
+        INTERNAL_FILES_URL (or FILES_URL if that is unset), such as http://api:5001, and Upload file also
+        fetches files under its /files/ path. Leave empty on Dify Cloud.
 tools:
   - tools/create_sandbox.yaml
   - tools/run_command.yaml

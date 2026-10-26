@@ -6,9 +6,9 @@ Source: [github.com/prized-dev/integrations](https://github.com/prized-dev/integ
 
 ## Setup
 
-1. Make an API key at [prized.dev](https://prized.dev/dashboard/workspace/api-keys): a **Full access** key, or a **Custom** key with **Sandboxes: Write**. A new workspace's owner gets free credit once ([Billing](https://prized.dev/docs/billing#free-credit)); on the free credit alone, sandboxes run within the [free tier](https://prized.dev/docs/sandboxes#free-tier) (up to 2 vCPU and 4 GB each, 60 minutes of running per sandbox).
-2. Build the `.difypkg` (see [Development](#development)) and upload it under **Plugins > Install plugin > Local package file**. (A self-hosted Dify that verifies plugin signatures installs local packages only with `FORCE_VERIFYING_SIGNATURE=false`.)
-3. Open the plugin, choose **Authorize**, and paste the key. Dify keeps it in its credential store. The check is a read that creates nothing, so it cannot tell a read-only key from one that can write: a read-only key passes it and then fails on Create sandbox.
+1. Make an API key at [prized.dev](https://prized.dev/dashboard/workspace/api-keys) with **New key**: choose **Custom** with only **Sandboxes: Write** (everything else **None**) and an expiry. On a workspace with no sandboxes yet, **Create API key** on [Sandboxes](https://prized.dev/onboarding/sandboxes) makes such a key in one click (sandboxes only, expires after 90 days). A **Full access** key also works, but it reaches your whole workspace. A new workspace's owner gets free credit once ([Billing](https://prized.dev/docs/billing#free-credit)); on the free credit alone, sandboxes run within the [free tier](https://prized.dev/docs/sandboxes#free-tier) (up to 2 vCPU and 4 GB each, 60 minutes of running per sandbox).
+2. Build the `.difypkg` (see [Development](#development)) and upload it under **Plugins > Install plugin > Local package file**. The package is not signed: a self-hosted Dify verifies plugin signatures by default and installs it only with `FORCE_VERIFYING_SIGNATURE=false` (or once you sign it with your own key). It has not yet been installed in a real Dify, Dify Cloud included; so far it has run under Dify's plugin runtime (`dify plugin run`).
+3. Open the plugin, choose **Authorize**, and paste the key. On a self-hosted Dify, also fill in **Dify file URL** for Upload file (see [Files from the workflow](#files-from-the-workflow)). Dify keeps both in its credential store. The check is a read that creates nothing, so it cannot tell a read-only key from one that can write: a read-only key passes it and then fails on Create sandbox.
 4. Add the tools to a workflow or an agent.
 
 Sandboxes are billed to your Prized workspace per second at the [sandbox rates](https://prized.dev/docs/billing#sandboxes); the plugin itself is free.
@@ -43,7 +43,11 @@ Connect **Delete sandbox** to the failure branches too, so a failed run does not
 
 In an **Agent** node, **Run code** alone works as a code interpreter: with no Sandbox ID, each call runs in a fresh sandbox that is deleted afterwards. For work that spans calls, add Create sandbox, Run code (or Run command), Read file and Delete sandbox, and tell the agent to create one sandbox, work in it, and delete it at the end.
 
-To work on a file a user uploads, pass the Start node's file variable to **Upload file**; it lands in `/home/prized/work` under its own name. Upload file fetches the file from the URL Dify gives it, and only from a public address: it refuses IP addresses and hosts that resolve to private, loopback or link-local addresses. On a self-hosted Dify whose `FILES_URL` is an internal address, Upload file is refused; use Write file for text instead.
+### Files from the workflow
+
+To work on a file a user uploads, pass the Start node's file variable to **Upload file**; it lands in `/home/prized/work` under its own name. Upload file fetches the file from the URL Dify gives the plugin, without your Prized key, and by default only from a public address: it refuses IP addresses and hosts that resolve to private, loopback or link-local addresses, and connects only to an address it checked.
+
+A recent self-hosted Dify gives plugins file URLs on its `INTERNAL_FILES_URL` when that is set, else on `FILES_URL`; often that is a private address such as `http://api:5001`. Put that same value in the plugin's **Dify file URL** setting, and Upload file also fetches files under its `/files/` path, private address included (never a link-local or cloud metadata address). If neither is set, Dify gives plugins no address for files and Upload file cannot work. Upload file has not yet been tried with a real Dify's file URLs, Dify Cloud's included; for text, Write file works anywhere.
 
 ## Behaviour and limits
 
@@ -53,11 +57,11 @@ To work on a file a user uploads, pass the Start node's file variable to **Uploa
 - **Labelled sandboxes only.** The plugin labels each sandbox it creates `integration=dify` and refuses to act on a sandbox without that label, so an agent cannot touch the workspace's other sandboxes. (Any sandbox someone else labels `integration=dify` in the same workspace is reachable too.)
 - **Internet.** Code in a sandbox can reach the internet. The plugin does not filter that traffic.
 - **Run time.** A sandbox is deleted when its run time runs out (60 minutes by default here). On a paid workspace a resume restarts the clock; on the free tier a sandbox gets 60 minutes of running in all. Copy out what you need first.
-- **Retries.** Reads and state changes are retried on transient errors. A command or upload is retried only when the API shows it never reached the sandbox, so nothing runs twice. When a command's answer is lost on the way back, the tool says the command may or may not have run.
+- **Retries.** Reads and state changes are retried on transient errors. A command or upload is retried only when the API shows it never reached the sandbox, so nothing runs twice. When no clear answer comes back (a lost connection, a timeout, or a server error), the tool says the command may or may not have run, or the file may or may not have been written.
 
 ## Credentials and connections
 
-The plugin sends your API key only to `api.prized.dev` and to `term.prized.dev` (each sandbox's command endpoint), over HTTPS, in the `Authorization` header. It does not follow redirects, put the key in a sandbox, return it in a tool result, or include it in error messages or logs. The only other connection is **Upload file** fetching the chosen file from the URL Dify gives it (a public address only, without the key). Errors show the Prized API's error code with a fixed sentence or with the API's own short message, with anything shaped like a key removed; never a raw HTTP body.
+The plugin sends your API key only to `api.prized.dev` and to `term.prized.dev` (each sandbox's command endpoint), over HTTPS, in the `Authorization` header. It does not follow redirects, put the key in a sandbox, return it in a tool result, or include it in error messages or logs. The only other connection is **Upload file** fetching the chosen file from the URL Dify gives it, without the key: from a public address, or from the Dify file server named in the plugin's settings. Errors show the Prized API's error code with a fixed sentence or with the API's own short message, with anything shaped like a key removed; never a raw HTTP body.
 
 See [PRIVACY.md](PRIVACY.md) for what data goes where.
 
@@ -79,7 +83,7 @@ A live test creates one labelled sandbox in your workspace, uses every tool on i
 PRIZED_LIVE=1 pytest tests/test_live.py
 ```
 
-Package it with the Dify plugin CLI: `dify plugin package ./dify -o prized_sandboxes-0.1.0.difypkg`.
+Package it with the Dify plugin CLI, from the repository root: `dify plugin package ./dify -o prized_sandboxes-0.1.0.difypkg`.
 
 ## Support
 

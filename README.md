@@ -8,7 +8,7 @@ Each folder is its own package with its own README, tests and release. You need 
 | --- | --- | --- | --- | --- |
 | [`hermes`](hermes) | Hermes Agent: terminal backend plugin | `hermes plugins install prized-dev/integrations/hermes` | Works now | [README](hermes/README.md) |
 | [`harbor`](harbor) | Harbor (Terminal-Bench): environment | `harbor-prized` | Works now from this repo; on PyPI soon | [README](harbor/README.md) |
-| [`dify`](dify) | Dify: tool plugin (workflows and agents) | `prized_sandboxes` (`.difypkg`) | Works now from this repo (upload the `.difypkg`); Dify Marketplace submission pending | [README](dify/README.md) |
+| [`dify`](dify) | Dify: tool plugin (workflows and agents) | `prized_sandboxes` (`.difypkg`) | Build the `.difypkg` from this repo; tested under Dify's plugin runtime, not yet in a Dify install (self-hosted Dify takes the unsigned package only with signature checks off); Marketplace submission pending | [README](dify/README.md) |
 | [`claude-managed-agents`](claude-managed-agents) | Claude Managed Agents: self-hosted environment | `on-work.sh` | Works now | [README](claude-managed-agents/README.md) |
 | [`inspect`](inspect) | Inspect AI: sandbox environment | `inspect-prized` | Waits on SDK publish (2026-11-05) | [README](inspect/README.md) |
 | [`adk`](adk) | Google ADK: environment and code executor | `prized-adk` | Waits on SDK publish (2026-11-05) | [README](adk/README.md) |

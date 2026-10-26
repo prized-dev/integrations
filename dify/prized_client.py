@@ -13,6 +13,7 @@ one without that label.
 from __future__ import annotations
 
 import logging
+import math
 import mimetypes
 import posixpath
 import re
@@ -87,13 +88,31 @@ EXEC_UNDELIVERED = frozenset(
     }
 )
 
-ANSWER_LOST = "The sandbox's answer was lost on the way back. The command or upload may or may not have run."
+# A command or upload that got no clear answer (a lost connection, a timeout, or a 5xx other
+# than the ones above) may still have run, so the plugin never sends it again and says so.
+ANSWER_LOST = {
+    "command": "No clear answer came back from the sandbox, so the command may or may not have run. "
+    "Check before running it again.",
+    "upload": "No clear answer came back from the sandbox, so the file may or may not have been written.",
+}
+# A 2xx whose body cannot be read: the sandbox did act on it.
+ANSWER_UNREADABLE = {
+    "command": "The command ran, but its answer could not be read.",
+    "upload": "The file was written, but the answer could not be read.",
+}
+NO_SANDBOX_ACCESS = (
+    "This API key cannot reach sandboxes. A workspace contractor's key cannot; use a key made by "
+    "an owner or member, with Sandboxes: Write."
+)
+NO_SANDBOX_CREATE = (
+    "This API key cannot create sandboxes: it is a workspace contractor's key, or sandboxes are "
+    "switched off for this workspace (email team@prized.dev)."
+)
 
 MESSAGES = {
     "unauthorized": "The Prized API key was refused. Check that it is a live key from prized.dev.",
     "token_expired": "The Prized API key has expired. Make a new one on prized.dev.",
-    "key_access_denied": "This API key lacks the permission it needs: use a Full access key, "
-    "or a Custom key with Sandboxes: Write.",
+    "key_access_denied": "This API key lacks the permission it needs: use a Custom key with Sandboxes: Write.",
     "workspace_held": "The Prized workspace is on hold, so sandboxes cannot start.",
     "workspace_closing": "The Prized workspace is being closed, so sandboxes cannot start.",
     "not_found": "No such sandbox for this API key, or it was not created by this plugin.",
@@ -113,7 +132,7 @@ MESSAGES = {
     "failed, or being deleted).",
     "sandbox_not_ready": "The sandbox did not finish starting in time. Nothing ran; retry.",
     "sandbox_deleted": "The sandbox was deleted. Create a new one.",
-    "sandbox_unreachable": "The sandbox did not answer. A command may or may not have run.",
+    "sandbox_unreachable": "The sandbox did not answer. Retry shortly.",
     "rate_limited": "Too many requests to the Prized API. Retry shortly.",
     "spawn_failed": "The command could not start. Does the working directory exist?",
     "path_outside_root": "File paths must be inside /home/prized.",
@@ -181,9 +200,9 @@ def integer(params: Mapping[str, Any], name: str, default: int, low: int, high: 
         raise InputError(f"{name} must be a whole number from {low} to {high}.")
     try:
         number = float(value)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         raise InputError(f"{name} must be a whole number from {low} to {high}.") from None
-    if number != number or number != int(number) or not low <= number <= high:
+    if not math.isfinite(number) or number != int(number) or not low <= number <= high:
         raise InputError(f"{name} must be a whole number from {low} to {high}.")
     return int(number)
 
@@ -336,10 +355,12 @@ class PrizedClient:
         url: str,
         *,
         mode: str = IDEMPOTENT,
+        what: str = "command",
         timeout: float = REQUEST_TIMEOUT,
         headers: Mapping[str, str] | None = None,
         **kwargs: Any,
     ) -> httpx.Response:
+        """``what`` ("command" or "upload") names an exec call in its errors."""
         for attempt in range(MAX_ATTEMPTS):
             last = attempt == MAX_ATTEMPTS - 1
             try:
@@ -355,7 +376,7 @@ class PrizedClient:
                 if last or not retryable:
                     code = "timeout" if isinstance(exc, httpx.TimeoutException) else "network_error"
                     if mode == EXEC and not never_sent:
-                        raise PrizedError(code, ANSWER_LOST) from None
+                        raise PrizedError(code, ANSWER_LOST[what]) from None
                     raise PrizedError(code) from None
                 self._sleep(_backoff(attempt))
                 continue
@@ -364,6 +385,9 @@ class PrizedClient:
             if response.status_code < 300:
                 return response
             error = _error_from(response)
+            if mode == EXEC and response.status_code >= 500 and error.code not in EXEC_UNDELIVERED:
+                # Past the edge, a 5xx does not say whether the sandbox acted on the request.
+                raise PrizedError(error.code, ANSWER_LOST[what], status=response.status_code)
             if last or not _retryable(error, mode, method):
                 raise error
             delay = _backoff(attempt)
@@ -382,6 +406,12 @@ class PrizedClient:
             raise PrizedError("bad_response", status=response.status_code)
         return data
 
+    def _exec_json(self, response: httpx.Response, what: str) -> dict[str, Any]:
+        try:
+            return self._json(response)
+        except PrizedError:
+            raise PrizedError("bad_response", ANSWER_UNREADABLE[what], status=response.status_code) from None
+
     def _sandbox_doc(self, response: httpx.Response) -> dict[str, Any]:
         sandbox = self._json(response).get("sandbox")
         if not isinstance(sandbox, dict) or not isinstance(sandbox.get("id"), str):
@@ -392,7 +422,12 @@ class PrizedClient:
 
     def validate(self) -> None:
         """A read that needs a working key and creates nothing."""
-        self._send("GET", f"{API_BASE}/sandboxes", params={"label": f"{LABEL_KEY}={LABEL_VALUE}"})
+        try:
+            self._send("GET", f"{API_BASE}/sandboxes", params={"label": f"{LABEL_KEY}={LABEL_VALUE}"})
+        except PrizedError as exc:
+            if exc.code == "not_found":  # the list itself is missing: the key sees no sandboxes
+                raise PrizedError("not_found", NO_SANDBOX_ACCESS, status=exc.status) from None
+            raise
 
     def get(self, sid: str) -> dict[str, Any]:
         """The sandbox, if it exists for this key and this plugin created it."""
@@ -423,9 +458,14 @@ class PrizedClient:
         # One key per create: a retry after a lost answer returns the same
         # sandbox instead of making a second one.
         headers = {"Idempotency-Key": f"dify-{uuid.uuid4().hex}", "Content-Type": "application/json"}
-        response = self._send(
-            "POST", f"{API_BASE}/sandboxes", params={"wait": "running"}, json=body, headers=headers, timeout=40.0
-        )
+        try:
+            response = self._send(
+                "POST", f"{API_BASE}/sandboxes", params={"wait": "running"}, json=body, headers=headers, timeout=40.0
+            )
+        except PrizedError as exc:
+            if exc.code == "not_found":  # a create names no sandbox: no sandboxes for this key or workspace
+                raise PrizedError("not_found", NO_SANDBOX_CREATE, status=exc.status) from None
+            raise
         sandbox = self._sandbox_doc(response)
         deadline = time.monotonic() + CREATE_WAIT_SECONDS
         while sandbox.get("state") == "starting" and time.monotonic() < deadline:
@@ -463,10 +503,11 @@ class PrizedClient:
             "POST",
             edge_url(sandbox, "/process/execute"),
             mode=EXEC,
+            what="command",
             json={"command": command, "cwd": cwd, "timeout": timeout},
             timeout=timeout + 30.0,
         )
-        data = self._json(response)
+        data = self._exec_json(response, "command")
         stdout, cut_out = clip(str(data.get("stdout") or ""))
         stderr, cut_err = clip(str(data.get("stderr") or ""))
         return {
@@ -485,12 +526,13 @@ class PrizedClient:
             "POST",
             edge_url(sandbox, "/files/upload"),
             mode=EXEC,
+            what="upload",
             params={"path": path},
             content=content,
             headers={"Content-Type": "application/octet-stream"},
             timeout=FILE_TIMEOUT,
         )
-        data = self._json(response)
+        data = self._exec_json(response, "upload")
         return {"sandbox_id": sid, "path": data.get("path", path), "size": data.get("size", len(content))}
 
     def download(self, sid: str, path: str, limit: int) -> tuple[bytes, int | None, bool]:

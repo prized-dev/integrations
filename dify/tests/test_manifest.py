@@ -44,8 +44,10 @@ def test_the_sdk_loads_the_manifest_the_provider_and_every_tool(registration):
     (provider,) = registration.tools_configuration
     assert provider.identity.name == "prized_sandboxes"
     assert [t.identity.name for t in provider.tools] == TOOLS
-    assert [c.name for c in provider.credentials_schema] == ["api_key"]
-    assert provider.credentials_schema[0].type.value == "secret-input"
+    assert [c.name for c in provider.credentials_schema] == ["api_key", "dify_files_url"]
+    key, files_url = provider.credentials_schema
+    assert key.type.value == "secret-input" and key.required
+    assert files_url.type.value == "text-input" and not files_url.required  # only for a self-hosted Dify
     _, provider_cls, tools = registration.tools_mapping["prized_sandboxes"]
     assert provider_cls.__name__ == "PrizedProvider"
     assert sorted(tools) == sorted(TOOLS)

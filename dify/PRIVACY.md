@@ -9,7 +9,7 @@ The plugin itself collects no personal data, keeps no database, and has no analy
 ## What it sends, and where
 
 - **Your Prized API key**, from Dify's credential store, goes over HTTPS to `api.prized.dev` and `term.prized.dev` in the `Authorization` header, to authenticate each request. It is never sent anywhere else, put in a sandbox, returned in a tool result, or written in an error message.
-- **Tool inputs and results**, such as commands, code, file paths, file contents, and command output, pass between Dify and Prized to run in your sandbox. For Upload file, the plugin first fetches the chosen workflow file from the URL Dify gives it (public addresses only), then sends it to the sandbox.
+- **Tool inputs and results**, such as commands, code, file paths, file contents, and command output, pass between Dify and Prized to run in your sandbox. For Upload file, the plugin first fetches the chosen workflow file from the URL Dify gives it (a public address, or the Dify file server set in the plugin's settings), without your Prized key, then sends it to the sandbox.
 - **At Prized**, this is Customer Content, processed under the [Prized privacy policy](https://prized.dev/privacy), which says: "We don't use Customer Content to train AI models. We don't sell personal information." A deleted sandbox's saved disk and memory are kept up to 30 days after deletion, and server logs up to 1 year; the policy lists every retention period and the sub-processors.
 - **Dify** may keep workflow inputs, outputs, and logs according to your Dify workspace's settings.
 

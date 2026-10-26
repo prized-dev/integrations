@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
@@ -58,8 +59,8 @@ class FakePrized:
 
     def handle(self, request: httpx.Request) -> httpx.Response:
         self.requests.append(request)
-        if request.url.path.startswith("/dify-files/"):  # Dify's own file server, which needs no Prized key
-            content = self.dify_files.get(request.url.path.removeprefix("/dify-files/"))
+        if request.url.path.startswith("/files/"):  # Dify's own file server, which needs no Prized key
+            content = self.dify_files.get(request.url.path.removeprefix("/files/"))
             return httpx.Response(200, content=content) if content is not None else httpx.Response(404)
         if request.headers.get("authorization") != f"Bearer {KEY}":
             return httpx.Response(401, json={"error": "unauthorized"})
@@ -180,26 +181,58 @@ class StubFile:
         self.url, self.filename, self.size = url, filename, size
 
 
+class Chunks(httpx.SyncByteStream):
+    """A response body that arrives in pieces, like one off the network (unread until iterated)."""
+
+    def __init__(self, data: bytes, size: int = 64 * 1024, delay: float = 0.0) -> None:
+        self.data, self.size, self.delay, self.sent = data, size, delay, 0
+
+    def __iter__(self):
+        for start in range(0, len(self.data), self.size):
+            time.sleep(self.delay)  # under dify_plugin's gevent patching, this yields like a slow socket
+            self.sent += 1
+            yield self.data[start : start + self.size]
+
+
 class FakeFiles:
-    """Dify's file server for Upload file: URLs to bytes, and what each host resolves to."""
+    """Dify's file server for Upload file: URLs to bytes, and what each host resolves to.
+
+    The plugin connects to the IP it checked, with the name in the Host header, so each
+    request is matched to its URL by the Host header; ``connected`` records the IPs.
+    """
 
     def __init__(self) -> None:
         self.content: dict[str, bytes] = {}
-        self.addresses: dict[str, str] = {"files.dify.example": "93.184.216.34"}
+        self.addresses: dict[str, str | list[str]] = {"files.dify.example": "93.184.216.34"}
         self.requests: list[httpx.Request] = []
+        self.connected: list[str] = []
+        self.lookups: list[str] = []
+        self.refuse: set[str] = set()  # IPs that do not accept connections
         self.status = 200
+        self.headers: dict[str, str] = {}
+        self.header_delay = 0.0  # seconds before the answer starts
+        self.chunk_delay = 0.0  # seconds before each piece of the body
 
     def handle(self, request: httpx.Request) -> httpx.Response:
+        time.sleep(self.header_delay)
+        self.connected.append(request.url.host)
+        if request.url.host in self.refuse:
+            raise httpx.ConnectError("connection refused")
         self.requests.append(request)
         if self.status != 200:
             return httpx.Response(self.status, headers={"location": "http://127.0.0.1/x"})
-        body = self.content.get(str(request.url))
-        return httpx.Response(200, content=body) if body is not None else httpx.Response(404)
+        url = f"{request.url.scheme}://{request.headers['host']}{request.url.raw_path.decode()}"
+        body = self.content.get(url)
+        if body is None:
+            return httpx.Response(404)
+        return httpx.Response(200, stream=Chunks(body, delay=self.chunk_delay), headers=self.headers)
 
     def resolve(self, host, port, proto=0):
+        self.lookups.append(host)
         if host not in self.addresses:
             raise OSError("no such host")
-        return [(2, 1, 6, "", (self.addresses[host], port))]
+        found = self.addresses[host]
+        return [(2, 1, 6, "", (ip, port)) for ip in ([found] if isinstance(found, str) else found)]
 
 
 @pytest.fixture

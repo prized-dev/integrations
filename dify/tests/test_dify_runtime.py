@@ -163,7 +163,7 @@ def test_every_tool_through_the_dify_runtime(tmp_path):
             api.dify_files["data.csv"] = b"a,b\n1,2\n"
             file_param = {
                 "dify_model_identity": "__dify__file__",
-                "url": f"http://127.0.0.1:{port}/dify-files/data.csv",
+                "url": f"http://127.0.0.1:{port}/files/data.csv",
                 "mime_type": "text/csv",
                 "type": "document",
                 "filename": "data.csv",
@@ -171,9 +171,18 @@ def test_every_tool_through_the_dify_runtime(tmp_path):
                 "size": 8,
             }
             # It reaches the tool as a file, and the tool refuses a loopback URL before fetching it.
-            with pytest.raises(ValueError, match="public address"):
+            with pytest.raises(ValueError, match="public addresses"):
                 call("upload_file", sandbox_id=sid, file=file_param)
-            assert not any(r.url.path.startswith("/dify-files/") for r in api.requests)
+            assert not any(r.url.path.startswith("/files/") for r in api.requests)
+            # With the Dify file URL setting naming that server, the same file is fetched and copied in.
+            credentials["dify_files_url"] = f"http://127.0.0.1:{port}"
+            uploaded = variables(call("upload_file", sandbox_id=sid, file=file_param))
+            assert uploaded["path"] == "/home/prized/work/data.csv" and uploaded["size"] == 8
+            assert api.files[(sid, "/home/prized/work/data.csv")] == b"a,b\n1,2\n"
+            # A path outside its /files/ is still refused.
+            with pytest.raises(ValueError, match="public addresses"):
+                call("upload_file", sandbox_id=sid, file={**file_param, "url": f"http://127.0.0.1:{port}/api/v1/x"})
+            del credentials["dify_files_url"]
 
             one_off = variables(call("run_code", language="bash", code="echo hi"))
             assert one_off["one_off"] is True and "sandbox_id" not in one_off
