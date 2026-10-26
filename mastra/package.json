@@ -49,8 +49,8 @@
   "scripts": {
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run test/unit.test.ts",
-    "test:live": "vitest run test/live.test.ts",
+    "test": "vitest run test/unit.test.ts test/filesystem.test.ts",
+    "test:live": "vitest run test/live.test.ts test/live-filesystem.test.ts",
     "example": "tsx examples/fix-bug.ts",
     "prepublishOnly": "npm run build"
   },

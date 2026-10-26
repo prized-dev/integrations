@@ -5,6 +5,8 @@
 import { CommandTimeoutError, PrizedError } from '@prized/sdk';
 import type { CreateOptions, ExecResult, ListOptions, SandboxState } from '@prized/sdk';
 
+import type { FakeDisk } from './fake-disk.js';
+
 /** What a command does in the fake: its output, exit code, and whether it runs until killed. */
 export interface Behaviour {
   stdout?: string[];
@@ -152,6 +154,12 @@ export class FakeSandbox {
   /** Set to make list / deleteByLabels throw. */
   static listError: Error | undefined;
   static deleteByLabelsCalls: Array<Record<string, string>> = [];
+  /** When set, file transfers and foreground commands act on this disk (see fake-disk.ts). */
+  static disk: FakeDisk | undefined;
+  /** How many times any sandbox was refreshed. */
+  static refreshes = 0;
+  /** Errors the next refreshes throw, once each. */
+  static refreshErrors: Error[] = [];
 
   static reset(): void {
     FakeSandbox.store.clear();
@@ -165,6 +173,9 @@ export class FakeSandbox {
     FakeSandbox.createErrors = [];
     FakeSandbox.listError = undefined;
     FakeSandbox.deleteByLabelsCalls = [];
+    FakeSandbox.disk = undefined;
+    FakeSandbox.refreshes = 0;
+    FakeSandbox.refreshErrors = [];
     FakeSandbox.seq = 0;
   }
 
@@ -194,11 +205,20 @@ export class FakeSandbox {
   resumes = 0;
   deletes = 0;
 
-  readonly files: { write(path: string, data: unknown): Promise<{ path: string; size: number }> } = {
+  readonly files: {
+    write(path: string, data: unknown): Promise<{ path: string; size: number }>;
+    readBytes(path: string): Promise<Uint8Array>;
+  } = {
     write: async (path: string, data: unknown) => {
       this.alive();
       FakeSandbox.writes.push({ sandboxId: this.id, path, data });
+      if (FakeSandbox.disk) return FakeSandbox.disk.write(path, data as string | Uint8Array);
       return { path, size: typeof data === 'string' ? data.length : (data as Uint8Array).byteLength };
+    },
+    readBytes: async (path: string) => {
+      this.alive();
+      if (!FakeSandbox.disk) throw new Error('no fake disk');
+      return FakeSandbox.disk.readBytes(path);
     },
   };
 
@@ -254,6 +274,9 @@ export class FakeSandbox {
   nextStates: SandboxState[] = [];
 
   async refresh(): Promise<this> {
+    FakeSandbox.refreshes++;
+    const error = FakeSandbox.refreshErrors.shift();
+    if (error) throw error;
     this.alive();
     const next = this.nextStates.shift();
     if (next) this.state = next;
@@ -286,6 +309,7 @@ export class FakeSandbox {
     }
     FakeSandbox.execs.push({ sandboxId: this.id, command, options });
     if (this.state === 'paused') this.state = 'running'; // a command wakes a paused sandbox
+    if (FakeSandbox.disk && !options.background) return FakeSandbox.disk.shell(command, options.cwd as string | undefined);
     const behaviour = FakeSandbox.behave(command);
     if (behaviour.startError) throw behaviour.startError;
     const run = new FakeRun(this.id, behaviour, (options.timeoutMs as number | undefined) ?? null);

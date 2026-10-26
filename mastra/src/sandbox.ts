@@ -30,6 +30,8 @@ import {
 import { PrizedError, Sandbox } from '@prized/sdk';
 import type { CreateOptions, ResourcesInput, SandboxState } from '@prized/sdk';
 
+import { shellQuote } from './file-commands.js';
+import { PrizedSandboxFilesystem } from './filesystem.js';
 import { LOG_PREFIX, PrizedProcessManager, isGone } from './process-manager.js';
 
 /** The label a sandbox this provider creates carries: its logical `id`, so a later `start()` finds it. */
@@ -89,6 +91,7 @@ export class PrizedSandbox extends MastraSandbox<Sandbox> {
   declare readonly processes: PrizedProcessManager;
 
   private _sandbox: Sandbox | null = null;
+  private _filesystem: PrizedSandboxFilesystem | undefined;
   private _recovery: Promise<void> | undefined;
   private _preferredSandboxId?: string;
   private readonly _apiKey?: string;
@@ -114,6 +117,19 @@ export class PrizedSandbox extends MastraSandbox<Sandbox> {
   get sandbox(): Sandbox {
     if (!this._sandbox) throw new SandboxNotReadyError(this.id);
     return this._sandbox;
+  }
+
+  /**
+   * The sandbox's own disk as a Mastra workspace filesystem, for the agent's file tools. A
+   * `Workspace` doesn't use it by itself: pass it as `filesystem`.
+   *
+   * ```ts
+   * const workspace = new Workspace({ sandbox, filesystem: sandbox.filesystem });
+   * ```
+   */
+  get filesystem(): PrizedSandboxFilesystem {
+    this._filesystem ??= new PrizedSandboxFilesystem(this);
+    return this._filesystem;
   }
 
   /** The Prized sandbox id (`sbx_…`) in use, or the one `sandboxId` named before `start()`. */
@@ -258,15 +274,24 @@ export class PrizedSandbox extends MastraSandbox<Sandbox> {
     }
   }
 
-  /** Whether an error means the sandbox is gone: not found, or refused while it is being deleted. */
+  /**
+   * Whether an error means the sandbox is gone: deleted, not found, or refused while it is being
+   * deleted. A file transfer's `not_found` reads the same as a missing sandbox's, so a `not_found`
+   * counts only once the sandbox itself is confirmed gone.
+   */
   private async _isDead(error: unknown): Promise<boolean> {
-    if (isGone(error)) return true;
+    if (!(error instanceof PrizedError)) return false;
+    if (error.code === 'sandbox_deleted') return true;
+    if (error.code !== 'not_found' && error.code !== 'sandbox_not_running') return false;
     const sandbox = this._sandbox;
-    if (!(error instanceof PrizedError && error.code === 'sandbox_not_running' && sandbox)) return false;
+    if (!sandbox) return error.code === 'not_found';
     try {
       await sandbox.refresh();
     } catch (refreshError) {
-      return isGone(refreshError);
+      if (isGone(refreshError)) return true;
+      // Unconfirmed: a not_found must not pass for a missing file, so say why it is unknown.
+      if (error.code === 'not_found') throw refreshError;
+      return false;
     }
     return DEAD.has(sandbox.state);
   }
@@ -394,7 +419,4 @@ async function settle(sandbox: Sandbox, signal?: AbortSignal): Promise<void> {
   }
 }
 
-/** Quote one shell word. */
-export function shellQuote(word: string): string {
-  return `'${word.replace(/'/g, `'\\''`)}'`;
-}
+export { shellQuote };

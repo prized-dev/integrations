@@ -2,7 +2,7 @@
 
 > **Coming 2026-11-05.** `@prized/mastra` and the Prized TypeScript SDK it uses (`@prized/sdk`) are not on npm yet.
 
-A [Mastra](https://mastra.ai) workspace sandbox on [Prized](https://prized.dev/docs/sandboxes): an agent's `execute_command` and background processes run in a Prized sandbox, a Firecracker microVM, instead of on your server. `stop()` pauses the sandbox with its memory and disk, and the same `id` resumes it later, from this process or another.
+A [Mastra](https://mastra.ai) workspace sandbox on [Prized](https://prized.dev/docs/sandboxes): an agent's `execute_command`, background processes and file tools (read, write, edit, list, grep) run in a Prized sandbox, a Firecracker microVM, instead of on your server. `stop()` pauses the sandbox with its memory and disk, and the same `id` resumes it later, from this process or another.
 
 ## Install
 
@@ -20,12 +20,13 @@ import { Agent } from '@mastra/core/agent';
 import { Workspace } from '@mastra/core/workspace';
 import { PrizedSandbox } from '@prized/mastra';
 
-const workspace = new Workspace({ sandbox: new PrizedSandbox({ resources: { vcpu: 2, memoryGb: 4 } }) });
+const sandbox = new PrizedSandbox({ resources: { vcpu: 2, memoryGb: 4 } });
+const workspace = new Workspace({ sandbox, filesystem: sandbox.filesystem });
 
 const agent = new Agent({
   id: 'fixer',
   name: 'Fixer',
-  instructions: 'Use execute_command to run the tests and fix the code.',
+  instructions: 'Read and edit the code with the file tools, and run the tests with execute_command.',
   model: 'openai/gpt-5-nano',
   workspace,
 });
@@ -63,6 +64,19 @@ workspace.clearSandboxCache('42');
 
 The id is stored as the sandbox's `mastra-id` label (ids over 256 characters as their SHA-256), so `prized sandbox ls` and the API find it too.
 
+## Files
+
+`sandbox.filesystem` is the sandbox's own disk as a Mastra workspace filesystem. Pass it as the workspace's `filesystem` (a `Workspace` doesn't pick it up by itself) and Mastra's file tools act on the files the sandbox's commands see.
+
+- Absolute paths are paths in the sandbox; relative ones start in the working directory (`/home/prized/work`). Paths aren't confined to a root: the agent's commands can read anything anyway.
+- A read is one download. A write is one upload to a staging file plus one command that puts it in place, whole or not at all (and one check before, when it carries `expectedMtime`). A replaced file keeps its permission bits, so a `0755` script stays executable; a new one gets `0666` less the sandbox's umask.
+- Stat, list, mkdir, delete, copy and move are one command each, and copies and moves send no file bytes over the network. `walk()` returns a whole tree in one command, so `list_files` doesn't make a request per directory. A listing bigger than one command's 4 MiB of output throws (code `E2BIG`): list a narrower directory.
+- One read or write moves at most 100 MiB. Past that, `FileTooLargeError` (code `EFBIG`) is thrown before anything is sent: read part of the file with a command (`head -c`, `tail`, `sed -n`).
+- Paths outside `/home/prized`, or behind a symlink that leaves it, are read and written through a staging file under `~/.cache/prized-mastra`, deleted after.
+- `overwrite: false` writes and copies claim the destination atomically, and so do moves within one filesystem. A write with `expectedMtime` (Mastra's write and edit tools set it after a read) throws `StaleFileError` if the file changed since it was read.
+- Each operation starts or resumes the sandbox if needed, and is retried once on a new sandbox if this one was deleted (which has none of the old files).
+- There is no native `grep` yet: Mastra's grep tool lists and reads the files itself, a request per directory and per file.
+
 ## Lifecycle
 
 | Mastra | Prized |
@@ -99,20 +113,20 @@ The id is stored as the sandbox's `mastra-id` label (ids over 256 characters as 
 - Commands get no stdin: `sendStdin()` throws, so LSP servers and other stdin protocols don't work.
 - A command past its timeout is killed and returns exit code 124 with `timedOut: true`; a killed one returns 137 with `killed: true`. An aborted command is killed.
 - A background process's output is read only while something follows it: `wait()`, or output callbacks (such as `backgroundProcesses` `onStdout` or `onExit` in the workspace tool config). `processes.get()` and `list()` read it once, and an abort signal kills it without following it. Reads count as activity, so a followed process keeps the sandbox from pausing itself; one nobody follows does not.
-- `writeFiles()` writes through the file API: paths inside `/home/prized`, up to 100 MiB per file; a `mode` is applied with `chmod`.
-- Not supported: the workspace's file tools (`filesystem`), mounts, port URLs (`networking`), snapshots and checkpoints, computer use. The agent works through `execute_command`.
+- `writeFiles()` uploads through the file API: paths inside `/home/prized`, up to 100 MiB per file; a `mode` is applied with `chmod`. Without one, a file it replaces may not keep its mode (images before r4 write `0600`); `sandbox.filesystem.writeFile()` always keeps it.
+- Not supported: mounts, port URLs (`networking`), snapshots and checkpoints, computer use.
 - Sandboxes run in one region (US West).
 - Two processes starting the same new `id` at the same moment can create two sandboxes; later starts use the newest.
 
 ## Tests
 
 ```sh
-npm test                                          # offline unit tests, a fake in place of the Prized API
+npm test                                          # offline: a fake in place of the Prized API
 PRIZED_LIVE=1 PRIZED_API_KEY=dcp_... npm run test:live   # against the real API
 PRIZED_API_KEY=dcp_... OPENAI_API_KEY=sk-... npm run example
 ```
 
-The live tests create a few 2 vCPU sandboxes labelled `run=<this run>` (add your own with `PRIZED_TEST_LABELS=k=v,k=v`) and delete them at the end, failures included. The example's sandbox is deleted too, and it stops once the model's tokens would cost more than `MAX_USD` (default 0.10).
+Offline, the filesystem tests run its shell commands for real in a temp directory (they need `sh` with GNU coreutils and findutils). The live tests create a few 2 vCPU sandboxes labelled `run=<this run>` (add your own with `PRIZED_TEST_LABELS=k=v,k=v`) and delete them at the end, failures included. The example's sandbox is deleted too, and it stops once the model's tokens would cost more than `MAX_USD` (default 0.10).
 
 ## License
 

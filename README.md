@@ -16,7 +16,7 @@ Each folder is its own package with its own README, tests and release. You need 
 | [`agent-framework`](agent-framework) | Microsoft Agent Framework: shell tool and file store | `agent-framework-prized` | Waits on SDK publish (2026-11-05) | [README](agent-framework/README.md) |
 | [`pydantic-ai`](pydantic-ai) | Pydantic AI: workspace | `pydantic-ai-prized` | Waits on SDK publish (2026-11-05) | [README](pydantic-ai/README.md) |
 | [`langchain-js`](langchain-js) | LangChain Deep Agents (JS): sandbox | `@prized/langchain` | Waits on SDK publish (2026-11-05) | [README](langchain-js/README.md) |
-| [`mastra`](mastra) | Mastra: workspace sandbox | `@prized/mastra` | Waits on SDK publish (2026-11-05) | [README](mastra/README.md) |
+| [`mastra`](mastra) | Mastra: workspace sandbox and filesystem | `@prized/mastra` | Waits on SDK publish (2026-11-05) | [README](mastra/README.md) |
 
 "Waits on SDK publish" means the package needs the Prized Python SDK (`prized`) or TypeScript SDK (`@prized/sdk`), which go on PyPI and npm on 2026-11-05. The packages follow right after.
 
