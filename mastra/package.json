@@ -1,0 +1,75 @@
+{
+  "name": "@prized/mastra",
+  "version": "0.1.0",
+  "description": "Prized Sandboxes for Mastra workspaces: run an agent's commands in a Firecracker microVM that pauses with its memory and resumes by id.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "mastra",
+    "workspace",
+    "sandbox",
+    "prized",
+    "microvm",
+    "agents"
+  ],
+  "author": "Prized <team@prized.dev>",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/prized-dev/integrations/tree/main/mastra#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prized-dev/integrations.git",
+    "directory": "mastra"
+  },
+  "bugs": {
+    "url": "https://github.com/prized-dev/integrations/issues"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run test/unit.test.ts",
+    "test:live": "vitest run test/live.test.ts",
+    "example": "tsx examples/fix-bug.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@prized/sdk": "^0.1.0"
+  },
+  "peerDependencies": {
+    "@mastra/core": ">=1.79.0 <2.0.0"
+  },
+  "devDependencies": {
+    "@mastra/core": "^1.79.0",
+    "@types/node": "^24.10.0",
+    "tsdown": "^0.23.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5",
+    "zod": "^4.1.12"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

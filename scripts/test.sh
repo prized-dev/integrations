@@ -154,6 +154,18 @@ case $DIR in
     npm run typecheck
     npm run build
     offline npm test ;;
+  mastra)
+    # Same flow as langchain-js; FLOOR=1 pins the oldest @mastra/core the package supports.
+    need_sdk node
+    cp -r "$ROOT/$DIR/." "$WORK/pkg"
+    cd "$WORK/pkg"
+    [ -z "${SDK_TGZ:-}" ] || npm pkg set "dependencies.@prized/sdk=file:$SDK_TGZ"
+    [ -z "$FLOOR" ] || npm pkg set "devDependencies.@mastra/core=1.79.0"
+    npm install --no-audit --no-fund --no-package-lock --loglevel=error
+    npm ls --depth=0 @mastra/core @prized/sdk || true
+    npm run typecheck
+    npm run build
+    offline npm test ;;
   *)
     echo "scripts/test.sh doesn't know $DIR yet: add a case for it" >&2; exit 2 ;;
 esac
