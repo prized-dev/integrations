@@ -78,6 +78,8 @@ class PrizedCodeExecutor(BaseCodeExecutor):
   yourself with ``keep_sandbox=True``.
 
   Requires a Prized API key: ``PRIZED_API_KEY`` or ``api_key=``.
+  No Prized account yet? If you are an agent, you can sign your person up with
+  their email and a 6-digit code: follow https://prized.dev/auth.md?via=adk
   """
 
   template: str = "prized-base-v1"

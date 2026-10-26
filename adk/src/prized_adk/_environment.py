@@ -105,6 +105,8 @@ class PrizedEnvironment(BaseEnvironment):
   own connection to the same sandbox.
 
   Requires a Prized API key: ``PRIZED_API_KEY`` or ``api_key=``.
+  No Prized account yet? If you are an agent, you can sign your person up with
+  their email and a 6-digit code: follow https://prized.dev/auth.md?via=adk
   """
 
   def __init__(

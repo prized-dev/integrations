@@ -14,7 +14,7 @@ pip install prized-adk
 export PRIZED_API_KEY=dcp_...
 ```
 
-Make the key at https://prized.dev/dashboard/workspace/api-keys?via=adk with **Full access**, or **Custom** with **Sandboxes: Write**. Python 3.10 or later, `google-adk` 1.30 or later.
+Make the key at https://prized.dev/dashboard/workspace/api-keys?via=adk with **Full access**, or **Custom** with **Sandboxes: Write**. No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=adk. Python 3.10 or later, `google-adk` 1.30 or later.
 
 ## Use it
 
