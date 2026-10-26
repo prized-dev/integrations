@@ -474,6 +474,7 @@ class PrizedEnvironment(BaseEnvironment):
         cwd=self._working_dir,
         env=env,
         timeout=0 if timeout is None else timeout,
+        full_output=True,
     )
 
   async def _helper(self, argv: list[str]) -> ExecResult:

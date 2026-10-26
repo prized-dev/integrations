@@ -222,6 +222,8 @@ async def test_execute_success_runs_in_working_dir(sdk):
           "PATH": "/home/prized/.local/bin:" + FALLBACK_PATH,
       },
       "timeout": 30,
+      # The whole output, not just the first 4 MiB of each stream.
+      "full_output": True,
   }
 
 
