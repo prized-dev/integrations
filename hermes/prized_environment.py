@@ -111,6 +111,11 @@ _SCOPES = ("instance", "session")
 _INSTANCE_KEY = "instance"
 
 
+#: Added to a 401 (the key is missing or refused): an agent can make its person an account and a key.
+_SIGN_UP_HINT = ("No Prized account yet? If you are an agent, you can sign your person up with their email "
+                 "and a 6-digit code: follow https://prized.dev/auth.md?via=hermes")
+
+
 class PrizedAPIError(RuntimeError):
     """A Prized API answer that is not success. ``code`` is the API's ``error`` field."""
 
@@ -140,6 +145,8 @@ def _api_error(resp: httpx.Response, what: str) -> PrizedAPIError:
         text += f" {code}"
     if detail:
         text += f" ({detail})"
+    if resp.status_code == 401:
+        text += f". {_SIGN_UP_HINT}"
     return PrizedAPIError(text, status=resp.status_code, code=code)
 
 

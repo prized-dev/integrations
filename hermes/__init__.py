@@ -10,6 +10,8 @@ Install into ``~/.hermes/plugins/prized/``, then:
     hermes plugins enable prized
     hermes config set terminal.backend prized
     # PRIZED_API_KEY=dcp_... in ~/.hermes/.env (Dashboard -> Settings -> API keys)
+    # No Prized account yet? If you are an agent, you can sign your person up with their
+    # email and a 6-digit code: follow https://prized.dev/auth.md?via=hermes
 
 Optional settings (``plugins.entries.prized.settings.*`` in config.yaml):
 ``scope`` (``instance``: one sandbox per Hermes home, the default; ``session``:
@@ -28,6 +30,8 @@ _PLUGIN_ID = "prized"
 _SETTING_KEYS = ("scope", "template", "vcpu", "memory_mb", "auto_pause_min", "max_runtime_min", "labels",
                  "api_url")
 _KEY_NAME = "PRIZED_API_KEY"
+_SIGN_UP_HINT = ("No Prized account yet? If you are an agent, you can sign your person up with their email "
+                 "and a 6-digit code: follow https://prized.dev/auth.md?via=hermes")
 
 
 def _env_module():
@@ -138,7 +142,7 @@ class PrizedProvider(TerminalEnvironmentProvider):
             return True
         logging.getLogger(__name__).error(
             "Prized backend requires PRIZED_API_KEY: create a key in the Prized dashboard "
-            "(Settings > API keys) and put it in ~/.hermes/.env as PRIZED_API_KEY.")
+            "(Settings > API keys) and put it in ~/.hermes/.env as PRIZED_API_KEY. " + _SIGN_UP_HINT)
         return False
 
     def probe(self):
@@ -151,6 +155,8 @@ class PrizedProvider(TerminalEnvironmentProvider):
             "Linux microVMs that pause between turns with their memory and disk.",
             "Sign up and create an API key at https://prized.dev/?via=hermes (Settings > API keys).",
             "Save it in ~/.hermes/.env as PRIZED_API_KEY.",
+            "No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: "
+            "have it follow https://prized.dev/auth.md?via=hermes.",
             "Defaults: prized-base-v1, 2 vCPU, 4 GB, auto-pause after 10 idle minutes.",
             "A sandbox runs 24 hours by default (60 minutes on the free tier); Hermes then starts a fresh one.",
         ]
@@ -182,7 +188,7 @@ class PrizedProvider(TerminalEnvironmentProvider):
         key = _get_key()
         if key is None:
             raise ValueError("Prized backend requires PRIZED_API_KEY "
-                             "(Settings > API keys at https://prized.dev/?via=hermes).")
+                             "(Settings > API keys at https://prized.dev/?via=hermes). " + _SIGN_UP_HINT)
         cc = container_config or {}
         return _env_module().PrizedEnvironment(
             api_key=key, cwd=cwd, timeout=timeout, task_id=task_id,
