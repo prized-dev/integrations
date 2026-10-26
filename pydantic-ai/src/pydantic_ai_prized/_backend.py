@@ -208,8 +208,7 @@ def _unavailable(sandbox_id: str, why: str) -> WorkspaceUnavailableError:
 
 
 class PrizedSandboxBackend(WorkspaceBackend, SupportsCommands):
-    """A [Prized](https://prized.dev/?via=pydantic-ai) sandbox (a Firecracker microVM) as a Pydantic AI
-    `WorkspaceBackend`.
+    """A [Prized](https://prized.dev/?via=pydantic-ai) sandbox (a Firecracker microVM) as a Pydantic AI `WorkspaceBackend`.
 
     Building one does no I/O. The first operation creates a sandbox from `template`, or attaches to
     the one `ref` names; a paused sandbox resumes on its first command. The backend never pauses or
