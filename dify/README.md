@@ -45,9 +45,9 @@ In an **Agent** node, **Run code** alone works as a code interpreter: with no Sa
 
 ### Files from the workflow
 
-To work on a file a user uploads, pass the Start node's file variable to **Upload file**; it lands in `/home/prized/work` under its own name. Upload file fetches the file from the URL Dify gives the plugin, without your Prized key, and by default only from a public address: it refuses IP addresses and hosts that resolve to private, loopback or link-local addresses, and connects only to an address it checked.
+To work on a file a user uploads, pass the Start node's file variable to **Upload file**; it lands in `/home/prized/work` under its own name. Upload file fetches the file from the URL Dify gives the plugin, without your Prized key, and by default only from a public address: it refuses IP addresses and hosts that resolve to private, loopback, link-local or known cloud metadata addresses, and connects only to an address it checked.
 
-A recent self-hosted Dify gives plugins file URLs on its `INTERNAL_FILES_URL` when that is set, else on `FILES_URL`; often that is a private address such as `http://api:5001`. Put that same value in the plugin's **Dify file URL** setting, and Upload file also fetches files under its `/files/` path, private address included (never a link-local or cloud metadata address). If neither is set, Dify gives plugins no address for files and Upload file cannot work. Upload file has not yet been tried with a real Dify's file URLs, Dify Cloud's included; for text, Write file works anywhere.
+A recent self-hosted Dify gives plugins file URLs on its `INTERNAL_FILES_URL` when that is set, else on `FILES_URL`; often that is a private address such as `http://api:5001`. Put that same value in the plugin's **Dify file URL** setting, and Upload file also fetches files under its `/files/` path, private address included (never a link-local or known cloud metadata address). If neither is set, Dify gives plugins no address for files and Upload file cannot work. Upload file has not yet been tried with a real Dify's file URLs, Dify Cloud's included; for text, Write file works anywhere.
 
 ## Behaviour and limits
 

@@ -227,8 +227,11 @@ NOT_PUBLIC_V6 = tuple(
     for net in ("::/96", "::ffff:0:0/96", "64:ff9b::/96", "64:ff9b:1::/48", "2002::/16", "2001::/32", "fec0::/10")
 )
 CARRIES_V4 = tuple(ipaddress.ip_network(net) for net in ("::/96", "64:ff9b::/96"))  # in its last 32 bits
-# Cloud metadata services outside link-local: AWS over IPv6, Alibaba Cloud.
-METADATA = frozenset(ipaddress.ip_address(a) for a in ("fd00:ec2::254", "100.100.100.200"))
+# Cloud metadata services outside link-local: AWS over IPv6, Alibaba Cloud, Oracle Cloud, and
+# Azure's WireServer (a global address, so this list also guards the public path).
+METADATA = frozenset(
+    ipaddress.ip_address(a) for a in ("fd00:ec2::254", "100.100.100.200", "192.0.0.192", "168.63.129.16")
+)
 
 
 @dataclass(frozen=True)

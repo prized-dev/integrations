@@ -99,6 +99,7 @@ def test_the_next_checked_address_is_tried_when_one_refuses(fake, files):
         "0.0.0.0",  # noqa: S104
         "224.0.0.1",
         "198.18.0.1",  # benchmarking
+        "168.63.129.16",  # Azure's WireServer, which counts as a global address
     ],
 )
 def test_addresses_that_reach_back_inside_are_refused(fake, files, address):
@@ -229,6 +230,8 @@ def test_the_setting_keeps_a_path_prefix(fake, files):
         "fe80::1",
         "fd00:ec2::254",  # AWS metadata over IPv6
         "100.100.100.200",  # Alibaba Cloud metadata
+        "192.0.0.192",  # Oracle Cloud metadata
+        "168.63.129.16",  # Azure WireServer
     ],
 )
 def test_the_setting_never_opens_metadata_or_link_local_addresses(fake, files, address):
