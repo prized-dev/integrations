@@ -49,7 +49,6 @@ inspect eval arithmetic.py --model openai/gpt-5
 | `env` | none | Variables for every command. |
 | `labels` | none | Extra labels; every sandbox also carries `created-by=inspect-prized`. |
 | `max_runtime_min` | `60` | Prized deletes the sandbox after this many running minutes, even if cleanup never ran. 60 is the free tier's maximum; on a paid plan, raise it for samples that run longer. |
-| `full_output` | `False` | Read each command's whole output up to Inspect's limit, instead of the first 4 MiB per stream (slower: each command streams its output). |
 | `keep` | `False` | Pause sandboxes after each sample instead of deleting them, to inspect them later. |
 
 Inspect runs up to 10 sandboxes at once by default (the free tier's limit). Raise it with `--max-sandboxes`.
@@ -58,7 +57,7 @@ Inspect runs up to 10 sandboxes at once by default (the free tier's limit). Rais
 
 - Inspect's portable sandbox checks (`inspect_ai.util._sandbox.self_check`) pass against live sandboxes: 43 of 44, with the root-user check expected to fail.
 - Commands run as the user `prized` in `/home/prized/work`. There is no root or sudo, so `exec(user="root")` raises `SandboxUserUnsupportedError`.
-- stdin (text, binary, 50 MiB), about 1 MiB of argv, cwd, env, timeouts (the command and its children are killed, then `TimeoutError`), signal exit codes (128+n), and Inspect's file errors (`FileNotFoundError`, `PermissionError`, `IsADirectoryError`, `OutputLimitExceededError`) all behave as with the Docker sandbox. Files can be written anywhere the user `prized` can write, `/tmp` and `/var/tmp` included.
+- stdin (text, binary, 50 MiB), about 1 MiB of argv, cwd, env, timeouts (the command and its children are killed, then `TimeoutError`), signal exit codes (128+n), output up to Inspect's limit (10 MiB a stream by default, then `OutputLimitExceededError`), and Inspect's file errors (`FileNotFoundError`, `PermissionError`, `IsADirectoryError`, `OutputLimitExceededError`) all behave as with the Docker sandbox. Files can be written anywhere the user `prized` can write, `/tmp` and `/var/tmp` included.
 - No Dockerfiles, compose files or custom images: use it for tasks that run on a stock Ubuntu machine. No inbound ports.
 - `inspect sandbox cleanup prized` deletes every sandbox labelled `created-by=inspect-prized`; `inspect sandbox cleanup prized <id>` deletes one, if this package made it.
 - `connection()` gives `prized sandbox ssh <id>` for a shell into a running sample's sandbox (with the `prized` CLI).

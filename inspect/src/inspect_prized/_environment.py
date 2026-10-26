@@ -32,7 +32,7 @@ WORKDIR = f"{HOME}/work"
 STAGE = f"{HOME}/.inspect-prized"
 LABEL = {"created-by": "inspect-prized"}
 _GONE = ("not_found", "sandbox_deleted")
-_SINGLE_CALL_OUTPUT = 4 * 1024 * 1024  # what one non-streamed exec keeps per stream
+_FULL_OUTPUT = 100 * 1024 * 1024  # what exec(full_output=True) keeps per stream
 _LARGE_ARGV = 256 * 1024  # argv bigger than this travels as a file (the exec route takes 1 MiB)
 _HELPER_TIMEOUT = 120
 
@@ -92,10 +92,6 @@ class PrizedSandboxConfig(BaseModel, frozen=True):
     max_runtime_min: int = 60
     """Minutes of running before Prized deletes a sandbox, even if cleanup never ran. 60 is the
     free tier's maximum; on a paid plan, raise it for samples that run longer."""
-
-    full_output: bool = False
-    """Read each command's whole output (up to Inspect's limit) instead of the first 4 MiB per
-    stream. Slower, since each command streams its output."""
 
     keep: bool = False
     """Keep sandboxes after the sample (pause them) instead of deleting them, for debugging."""
@@ -244,12 +240,9 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
                 await self._sandbox.files.write(argv_path, b"".join(a.encode() + b"\0" for a in argv))
                 argv = []
         run = ["bash", "-c", _RUN, "inspect-prized", in_path, argv_path, *argv]
-        kwargs: dict = {"cwd": self._resolve(cwd) if cwd else WORKDIR, "timeout": timeout or 0}
+        kwargs: dict = {"cwd": self._resolve(cwd) if cwd else WORKDIR, "timeout": timeout or 0, "full_output": True}
         if env:
             kwargs["env"] = dict(env)
-        if self._config.full_output:
-            kwargs["on_stdout"] = _ignore
-            kwargs["on_stderr"] = _ignore
         with self._available():
             try:
                 res = await self._sandbox.exec(run, **kwargs)
@@ -257,10 +250,10 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
                 raise TimeoutError(f"Command timed out after {timeout} seconds: {cmd}") from err
         limit = SandboxEnvironmentLimits.MAX_EXEC_OUTPUT_SIZE
         if res.truncated or len(res.stdout.encode()) > limit or len(res.stderr.encode()) > limit:
-            # A command with no timeout, or one over 240 s, is polled and read whole like full_output.
-            whole = self._config.full_output or not timeout or timeout > 240
-            kept = limit if whole else min(limit, _SINGLE_CALL_OUTPUT)
-            raise OutputLimitExceededError(limit_str=_size_str(kept), truncated_output=res.stdout)
+            # Over Inspect's limit (10 MiB a stream by default) this raises as the Docker sandbox does;
+            # output past the 100 MiB a stream the SDK keeps raises at that size.
+            kept = min(limit, _FULL_OUTPUT)
+            raise OutputLimitExceededError(limit_str=_size_str(kept), truncated_output=_head(res.stdout, kept))
         if res.exit_code == 126 and "Permission denied" in res.stderr:
             raise PermissionError(f"Permission denied executing command: {cmd[0]}")
         return ExecResult(success=res.exit_code == 0, returncode=res.exit_code, stdout=res.stdout, stderr=res.stderr)
@@ -333,10 +326,6 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
         return 0.5
 
 
-def _ignore(_chunk: str) -> None:
-    pass
-
-
 def _config(config: SandboxEnvironmentConfigType | None) -> PrizedSandboxConfig:
     if config is None or isinstance(config, str):
         return PrizedSandboxConfig()
@@ -350,6 +339,11 @@ def _config(config: SandboxEnvironmentConfigType | None) -> PrizedSandboxConfig:
 def _label_value(value: str) -> str:
     cleaned = "".join(c if c.isalnum() or c in "-_." else "-" for c in value)[:63].strip("-_.")
     return cleaned or "task"
+
+
+def _head(text: str, size: int) -> str:
+    """The start of ``text``, at most ``size`` bytes of it in UTF-8."""
+    return text.encode()[:size].decode(errors="ignore")
 
 
 def _size_str(size: int) -> str:

@@ -40,6 +40,7 @@ class FakeFiles:
 class FakeSandbox:
     made: list = []
     cut = 10**9  # what one blocking call keeps per stream (4 MiB on Prized)
+    full_cut = 10**9  # what one with full_output=True keeps per stream (100 MiB on Prized)
 
     def __init__(self, root, options):
         self.id = f"sbx_fake{len(FakeSandbox.made)}"
@@ -74,12 +75,13 @@ class FakeSandbox:
             raise CommandTimeoutError(res, timeout, self.id) from None
         out = p.stdout.decode(errors="replace").replace(self.root, "/home/prized")
         err = p.stderr.decode(errors="replace").replace(self.root, "/home/prized")
-        cut = FakeSandbox.cut
+        streamed = "on_stdout" in kw or "on_stderr" in kw
+        cut = 10**12 if streamed else FakeSandbox.full_cut if kw.get("full_output") else FakeSandbox.cut
         return ExecResult(
-            stdout=out[:cut] if len(out) > cut and not kw else out,
+            stdout=out[:cut],
             stderr=err,
             exit_code=p.returncode,
-            truncated=len(out) > cut and not kw,
+            truncated=len(out) > cut,
             timed_out=False,
             duration_ms=1,
         )
@@ -149,20 +151,42 @@ async def test_large_argv_travels_as_a_file():
     assert chunk not in cmd and cmd[-1].startswith("/home/prized/.inspect-prized/argv-")
 
 
-async def test_output_cap_raises_limit_error(monkeypatch):
+async def test_output_past_one_call_cap_comes_back_whole(monkeypatch):
     monkeypatch.setattr(FakeSandbox, "cut", 64)
+    env, _, _ = await _env()
+    r = await env.exec(["bash", "-c", "printf '%0100d' 0"], timeout=10)
+    assert len(r.stdout) == 100 and r.success
+    assert FakeSandbox.made[0].calls[-1][4] == {"full_output": True}
+
+
+class _Limits:
+    MAX_EXEC_OUTPUT_SIZE = 50
+    MAX_READ_FILE_SIZE = 100 * 1024 * 1024
+    MAX_READ_FILE_SIZE_STR = "100 MiB"
+
+
+async def test_output_over_inspect_limit_raises(monkeypatch):
+    monkeypatch.setattr(env_mod, "SandboxEnvironmentLimits", _Limits)
     env, _, _ = await _env()
     with pytest.raises(OutputLimitExceededError) as e:
         await env.exec(["bash", "-c", "printf '%0100d' 0"], timeout=10)
-    assert "4 MiB" in str(e.value)
+    assert "50 bytes" in str(e.value) and e.value.truncated_output == "0" * 50
+    with pytest.raises(OutputLimitExceededError):
+        await env.exec(["bash", "-c", "printf '%0100d' 0 >&2"], timeout=10)
+    assert (await env.exec(["bash", "-c", "printf '%050d' 0"], timeout=10)).stdout == "0" * 50
 
 
-async def test_full_output_streams(monkeypatch):
-    monkeypatch.setattr(FakeSandbox, "cut", 64)
-    env, _, _ = await _env(full_output=True)
-    r = await env.exec(["bash", "-c", "printf '%0100d' 0"], timeout=10)
-    assert len(r.stdout) == 100
-    assert "on_stdout" in FakeSandbox.made[0].calls[-1][4]
+async def test_output_past_what_the_sdk_keeps_raises(monkeypatch):
+    monkeypatch.setattr(FakeSandbox, "full_cut", 64)
+    env, _, _ = await _env()
+    with pytest.raises(OutputLimitExceededError) as e:
+        await env.exec(["bash", "-c", "printf '%0100d' 0"])
+    assert "10 MiB" in str(e.value)
+    monkeypatch.setattr(_Limits, "MAX_EXEC_OUTPUT_SIZE", 10**9)
+    monkeypatch.setattr(env_mod, "SandboxEnvironmentLimits", _Limits)
+    with pytest.raises(OutputLimitExceededError) as e:
+        await env.exec(["bash", "-c", "printf '%0100d' 0"])
+    assert "100 MiB" in str(e.value)
 
 
 async def test_permission_error_and_timeout():
