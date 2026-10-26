@@ -246,7 +246,7 @@ class FilesOrigin:
             (url.scheme, _host(url), _port(url)) == (self.scheme, self.host, self.port)
             and path.startswith(self.prefix)
             # httpx has already removed dot segments; refuse encoded ones and encoded slashes.
-            and not any(token in path.lower() for token in ("%2e", "%2f", "%5c", "\\"))
+            and not any(encoded in path.lower() for encoded in ("%2e", "%2f", "%5c", "\\"))
         )
 
 
