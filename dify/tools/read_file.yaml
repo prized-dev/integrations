@@ -1,0 +1,73 @@
+identity:
+  name: read_file
+  author: prized
+  label:
+    en_US: Read file
+description:
+  human:
+    en_US: Read a file from the sandbox as text, or return it as a file to the workflow.
+  llm: Read a file from the sandbox. Returns its text (up to 256 KiB; truncated is true when cut). Relative
+    paths start in /home/prized/work.
+parameters:
+- name: sandbox_id
+  type: string
+  required: true
+  label:
+    en_US: Sandbox ID
+  human_description:
+    en_US: The sandbox_id that Create sandbox returned (sbx_...).
+  llm_description: The sandbox_id returned by create_sandbox, such as sbx_3f9c0a1b2d4e5f60.
+  form: llm
+- name: path
+  type: string
+  required: true
+  label:
+    en_US: Path
+  human_description:
+    en_US: The file's path. Relative paths start in /home/prized/work.
+  llm_description: File path, for example results.json or /home/prized/work/out/report.md.
+  form: llm
+- name: output
+  type: select
+  required: false
+  label:
+    en_US: Return as
+  human_description:
+    en_US: 'text: the content as text, up to 256 KiB. file: the file itself (up to 15 MiB), as a workflow
+      file output.'
+  form: form
+  default: text
+  options:
+  - value: text
+    label:
+      en_US: Text
+  - value: file
+    label:
+      en_US: File
+output_schema:
+  type: object
+  properties:
+    sandbox_id:
+      type: string
+      description: The sandbox's ID
+    path:
+      type: string
+      description: The absolute path read
+    content:
+      type: string
+      description: 'The text (output: text)'
+    size:
+      type: number
+      description: The file's size in bytes
+    truncated:
+      type: boolean
+      description: Whether the text was cut at 256 KiB
+    binary:
+      type: boolean
+      description: Whether the file is not valid UTF-8 text
+    filename:
+      type: string
+      description: 'The file''s name (output: file)'
+extra:
+  python:
+    source: tools/read_file.py

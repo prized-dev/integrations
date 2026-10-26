@@ -1,0 +1,55 @@
+identity:
+  name: upload_file
+  author: prized
+  label:
+    en_US: Upload file
+description:
+  human:
+    en_US: Copy a file from the workflow (an uploaded file, or another node's file output) into the sandbox.
+      The file's URL must be a public address.
+  llm: Copy a workflow file into the sandbox. By default it lands in /home/prized/work under its own name.
+parameters:
+- name: sandbox_id
+  type: string
+  required: true
+  label:
+    en_US: Sandbox ID
+  human_description:
+    en_US: The sandbox_id that Create sandbox returned (sbx_...).
+  llm_description: The sandbox_id returned by create_sandbox, such as sbx_3f9c0a1b2d4e5f60.
+  form: llm
+- name: file
+  type: file
+  required: true
+  label:
+    en_US: File
+  human_description:
+    en_US: The file to copy in, up to 50 MiB.
+  llm_description: The file to copy into the sandbox.
+  form: llm
+- name: path
+  type: string
+  required: false
+  label:
+    en_US: Path
+  human_description:
+    en_US: 'Optional. Where to put it: a file path, or a folder ending in /. Relative paths start in /home/prized/work.
+      Default /home/prized/work/<file name>.'
+  llm_description: Optional destination path; a folder ending in / keeps the file's name. Default /home/prized/work/<file
+    name>.
+  form: llm
+output_schema:
+  type: object
+  properties:
+    sandbox_id:
+      type: string
+      description: The sandbox's ID
+    path:
+      type: string
+      description: The absolute path written
+    size:
+      type: number
+      description: Bytes written
+extra:
+  python:
+    source: tools/upload_file.py

@@ -1,0 +1,53 @@
+identity:
+  name: write_file
+  author: prized
+  label:
+    en_US: Write file
+description:
+  human:
+    en_US: Write text to a file in the sandbox, creating folders as needed.
+  llm: Write text content to a file in the sandbox, replacing it if it exists. Relative paths start in
+    /home/prized/work; absolute paths must be inside /home/prized.
+parameters:
+- name: sandbox_id
+  type: string
+  required: true
+  label:
+    en_US: Sandbox ID
+  human_description:
+    en_US: The sandbox_id that Create sandbox returned (sbx_...).
+  llm_description: The sandbox_id returned by create_sandbox, such as sbx_3f9c0a1b2d4e5f60.
+  form: llm
+- name: path
+  type: string
+  required: true
+  label:
+    en_US: Path
+  human_description:
+    en_US: The file's path. Relative paths start in /home/prized/work.
+  llm_description: File path, for example app/main.py or /home/prized/work/data.csv.
+  form: llm
+- name: content
+  type: string
+  required: true
+  label:
+    en_US: Content
+  human_description:
+    en_US: The text to write, up to 5 MiB.
+  llm_description: The full text content of the file.
+  form: llm
+output_schema:
+  type: object
+  properties:
+    sandbox_id:
+      type: string
+      description: The sandbox's ID
+    path:
+      type: string
+      description: The absolute path written
+    size:
+      type: number
+      description: Bytes written
+extra:
+  python:
+    source: tools/write_file.py

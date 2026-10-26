@@ -1,0 +1,134 @@
+identity:
+  name: create_sandbox
+  author: prized
+  label:
+    en_US: Create sandbox
+description:
+  human:
+    en_US: Start a Linux microVM sandbox and return its sandbox_id. Vcpu, memory and lifetime are set
+      here, not by the model.
+  llm: Create a new isolated Linux sandbox (Ubuntu 24.04 with Python 3, Node.js 22, git and build tools)
+    and return its sandbox_id. Pass that sandbox_id to the other tools. Delete it when the task is done.
+parameters:
+- name: template
+  type: select
+  required: false
+  label:
+    en_US: Template
+  human_description:
+    en_US: 'prized-base-v1: Ubuntu 24.04, Python 3, Node.js 22, git, build tools. prized-agent-v1: the
+      same plus Claude Code and Codex CLIs.'
+  form: form
+  default: prized-base-v1
+  options:
+  - value: prized-base-v1
+    label:
+      en_US: prized-base-v1
+  - value: prized-agent-v1
+    label:
+      en_US: prized-agent-v1
+- name: vcpu
+  type: number
+  required: false
+  label:
+    en_US: vCPUs
+  human_description:
+    en_US: 1 to 32. Default 2 (the free tier allows up to 2).
+  form: form
+  default: 2
+  min: 1
+  max: 32
+- name: memory_gb
+  type: number
+  required: false
+  label:
+    en_US: Memory (GB)
+  human_description:
+    en_US: 1 to 128. Default 4 (the free tier allows up to 4).
+  form: form
+  default: 4
+  min: 1
+  max: 128
+- name: max_runtime_minutes
+  type: number
+  required: false
+  label:
+    en_US: Run time (minutes)
+  human_description:
+    en_US: Delete the sandbox after this many minutes of running, up to 10080. Default 60. On a paid workspace
+      a resume restarts the clock; on the free tier a sandbox gets 60 minutes of running in all.
+  form: form
+  default: 60
+  min: 1
+  max: 10080
+- name: auto_pause_minutes
+  type: number
+  required: false
+  label:
+    en_US: Pause when idle (minutes)
+  human_description:
+    en_US: Pause after this many minutes without commands or file transfers (a background job does not
+      count); 0 turns it off. Default 10.
+  form: form
+  default: 10
+  min: 0
+  max: 40320
+- name: auto_delete_minutes
+  type: number
+  required: false
+  label:
+    en_US: Delete when paused (minutes)
+  human_description:
+    en_US: Delete after this many minutes paused; 0 turns this off. Default 1440 (a day).
+  form: form
+  default: 1440
+  min: 0
+  max: 40320
+- name: labels
+  type: string
+  required: false
+  label:
+    en_US: Labels
+  human_description:
+    en_US: Optional key=value pairs, comma-separated (team=data, app=report), to find the sandboxes on
+      prized.dev. The plugin adds integration=dify.
+  form: form
+output_schema:
+  type: object
+  properties:
+    sandbox_id:
+      type: string
+      description: The sandbox's ID, for the other tools
+    state:
+      type: string
+      description: starting, running, pausing, paused, resizing, deleting, deleted, or error
+    template:
+      type: string
+      description: The template it was created from
+    vcpu:
+      type: number
+      description: vCPUs
+    memory_mb:
+      type: number
+      description: Memory in MiB
+    disk_gb:
+      type: number
+      description: Disk in GiB
+    expires_at:
+      type: string
+      description: When its run time ends and it is deleted (empty while paused)
+    auto_pause_minutes:
+      type: number
+      description: Idle minutes before it pauses
+    auto_delete_minutes:
+      type: number
+      description: Paused minutes before it is deleted
+    error_reason:
+      type: string
+      description: Why it is in error, if it is
+    created_at:
+      type: string
+      description: When it was created
+extra:
+  python:
+    source: tools/create_sandbox.py

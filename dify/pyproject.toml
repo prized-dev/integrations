@@ -1,0 +1,24 @@
+# Development settings only: the plugin's runtime dependencies are in requirements.txt,
+# and this file is not part of the .difypkg (see .difyignore).
+[project]
+name = "prized-dify-plugin"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S"]
+ignore = ["S101"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S603", "S105", "S106"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["prized_client", "plugin_tool"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["live: talks to the real Prized API (needs PRIZED_LIVE=1 and PRIZED_API_KEY)"]

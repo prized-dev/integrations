@@ -1,0 +1,36 @@
+identity:
+  author: prized
+  name: prized_sandboxes
+  label:
+    en_US: Prized Sandboxes
+  description:
+    en_US: Run commands, code and files in Prized Sandboxes, Linux microVMs that pause and resume.
+  icon: icon.svg
+  tags:
+    - utilities
+    - productivity
+credentials_for_provider:
+  api_key:
+    type: secret-input
+    required: true
+    label:
+      en_US: Prized API key
+    placeholder:
+      en_US: dcp_...
+    help:
+      en_US: A Full access key, or a Custom key with Sandboxes Write, from prized.dev under Settings, API keys.
+    url: https://prized.dev/dashboard/workspace/api-keys
+tools:
+  - tools/create_sandbox.yaml
+  - tools/run_command.yaml
+  - tools/run_code.yaml
+  - tools/write_file.yaml
+  - tools/upload_file.yaml
+  - tools/read_file.yaml
+  - tools/get_sandbox.yaml
+  - tools/pause_sandbox.yaml
+  - tools/resume_sandbox.yaml
+  - tools/delete_sandbox.yaml
+extra:
+  python:
+    source: provider/prized.py

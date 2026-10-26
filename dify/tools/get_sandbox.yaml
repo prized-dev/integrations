@@ -1,0 +1,58 @@
+identity:
+  name: get_sandbox
+  author: prized
+  label:
+    en_US: Get sandbox
+description:
+  human:
+    en_US: Read a sandbox's state, shape and expiry time.
+  llm: Get a sandbox's current state (running, paused, ...), shape and when it expires.
+parameters:
+- name: sandbox_id
+  type: string
+  required: true
+  label:
+    en_US: Sandbox ID
+  human_description:
+    en_US: The sandbox_id that Create sandbox returned (sbx_...).
+  llm_description: The sandbox_id returned by create_sandbox, such as sbx_3f9c0a1b2d4e5f60.
+  form: llm
+output_schema:
+  type: object
+  properties:
+    sandbox_id:
+      type: string
+      description: The sandbox's ID, for the other tools
+    state:
+      type: string
+      description: starting, running, pausing, paused, resizing, deleting, deleted, or error
+    template:
+      type: string
+      description: The template it was created from
+    vcpu:
+      type: number
+      description: vCPUs
+    memory_mb:
+      type: number
+      description: Memory in MiB
+    disk_gb:
+      type: number
+      description: Disk in GiB
+    expires_at:
+      type: string
+      description: When its run time ends and it is deleted (empty while paused)
+    auto_pause_minutes:
+      type: number
+      description: Idle minutes before it pauses
+    auto_delete_minutes:
+      type: number
+      description: Paused minutes before it is deleted
+    error_reason:
+      type: string
+      description: Why it is in error, if it is
+    created_at:
+      type: string
+      description: When it was created
+extra:
+  python:
+    source: tools/get_sandbox.py

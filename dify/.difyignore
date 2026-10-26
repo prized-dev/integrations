@@ -1,0 +1,16 @@
+# Kept out of the .difypkg: only runtime files ship.
+.git
+.github
+.env
+.env.*
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.DS_Store
+tests
+pyproject.toml
+*.difypkg

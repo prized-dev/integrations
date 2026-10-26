@@ -12,5 +12,6 @@ node_modules/
 package-lock.json
 *.tgz
 *.whl
+*.difypkg
 .env
 .env.*

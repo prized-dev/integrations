@@ -1,0 +1,98 @@
+identity:
+  name: run_code
+  author: prized
+  label:
+    en_US: Run code
+description:
+  human:
+    en_US: Run a Python, JavaScript (Node.js) or bash snippet in the sandbox and return its output.
+  llm: Run a code snippet in the sandbox and return exit_code, stdout and stderr. Print what you want
+    to see. The snippet runs as a file in /home/prized/work, so it can read and write files there.
+parameters:
+- name: sandbox_id
+  type: string
+  required: false
+  label:
+    en_US: Sandbox ID
+  human_description:
+    en_US: Optional. A sandbox_id from Create sandbox, to keep files and state between calls. Leave empty
+      to run in a one-off sandbox (2 vCPU, 4 GB) that is deleted after the run.
+  llm_description: Optional. The sandbox_id from create_sandbox, to keep files and state between calls.
+    Leave empty to run in a fresh one-off sandbox that is deleted after the run.
+  form: llm
+- name: language
+  type: select
+  required: true
+  label:
+    en_US: Language
+  human_description:
+    en_US: python (Python 3), javascript (Node.js 22) or bash.
+  llm_description: python, javascript or bash.
+  form: llm
+  default: python
+  options:
+  - value: python
+    label:
+      en_US: Python
+  - value: javascript
+    label:
+      en_US: JavaScript
+  - value: bash
+    label:
+      en_US: Bash
+- name: code
+  type: string
+  required: true
+  label:
+    en_US: Code
+  human_description:
+    en_US: The code to run, up to 512 KiB.
+  llm_description: The full code to run. Print results to stdout.
+  form: llm
+- name: timeout_seconds
+  type: number
+  required: false
+  label:
+    en_US: Timeout (seconds)
+  human_description:
+    en_US: Stop the command after this many seconds, 1 to 240. Default 60.
+  llm_description: 'Seconds before the command is killed, 1 to 240 (default 60). For longer jobs, start
+    them in the background with nohup and read their log in later calls, at least every few minutes: an
+    idle sandbox pauses, and the job with it.'
+  form: llm
+  default: 60
+  min: 1
+  max: 240
+output_schema:
+  type: object
+  properties:
+    sandbox_id:
+      type: string
+      description: The sandbox's ID
+    exit_code:
+      type: number
+      description: The command's exit code; -1 when it timed out
+    stdout:
+      type: string
+      description: 'Standard output (up to 64 KiB: the start and the end)'
+    stderr:
+      type: string
+      description: 'Standard error (up to 64 KiB: the start and the end)'
+    timed_out:
+      type: boolean
+      description: Whether the command was killed at its timeout
+    truncated:
+      type: boolean
+      description: Whether output was cut to fit
+    duration_ms:
+      type: number
+      description: How long it ran (ms)
+    one_off:
+      type: boolean
+      description: Whether it ran in a one-off sandbox, already deleted (then there is no sandbox_id)
+    language:
+      type: string
+      description: The language it ran as
+extra:
+  python:
+    source: tools/run_code.py

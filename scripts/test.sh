@@ -25,6 +25,9 @@ HERMES_AGENT_SHA=05d7b5af1c42d524762c7ffce991c1fe1aa2adb1 # NousResearch/hermes-
 HERMES_UV_VERSION=0.12.13 # the uv Hermes pins in its own CI
 ANT_VERSION=2.3.0
 ANT_SHA256=cd3fa57af3efbdbf68d569d0b921a69171b53be14cc5e013b35018ccb0f1d8ab # ant_2.3.0_linux_amd64.tar.gz
+DIFY_CLI_VERSION=0.6.12 # langgenius/dify-plugin-daemon release: the Dify plugin CLI
+DIFY_CLI_SHA256=f5190893643492c3f17f12c9752615a5652e47bbf30e84298634e176611aa108 # dify-plugin-linux-amd64
+DIFY_UV_VERSION=0.12.13
 
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
@@ -124,6 +127,23 @@ case $DIR in
     echo "$ANT_SHA256  $WORK/ant.tgz" | sha256sum -c --quiet -
     tar -xzf "$WORK/ant.tgz" -C "$WORK" ant
     ANT="$WORK/ant" offline bash test/test.sh ;;
+  dify)
+    # A Dify plugin ships as a .difypkg, not a wheel: requirements.txt is what Dify installs, and
+    # pyproject.toml holds only the lint and test settings.
+    venv
+    pip install -q -r requirements.txt pytest==9.1.1 ruff==0.17.2 "uv==$DIFY_UV_VERSION"
+    pip list 2>/dev/null | grep -i -E "^(dify.plugin|httpx) " || true
+    ruff check . && ruff format --check .
+    offline pytest -rs -p no:cacheprovider
+    # Then inside Dify's own plugin runtime: the pinned Dify plugin CLI, checked against its published
+    # sha256, packages the plugin and runs it (`dify plugin run`) against a fake API on 127.0.0.1. The
+    # network stays up for this step, for the runtime's own install of requirements.txt; the key is unset.
+    curl -fsSL -o "$WORK/dify" \
+      "https://github.com/langgenius/dify-plugin-daemon/releases/download/$DIFY_CLI_VERSION/dify-plugin-linux-amd64"
+    echo "$DIFY_CLI_SHA256  $WORK/dify" | sha256sum -c --quiet -
+    chmod +x "$WORK/dify"
+    env -u PRIZED_API_KEY -u PRIZED_LIVE DIFY_CLI_PATH="$WORK/dify" \
+      pytest -rs -p no:cacheprovider tests/test_dify_runtime.py ;;
   langchain-js)
     # No lockfile until @prized/sdk is on npm (the one made here would point at a local tarball).
     need_sdk node

@@ -10,7 +10,7 @@ FLOOR=1 scripts/test.sh <folder>    # against the oldest framework versions the 
 PYTHON=python3.10 scripts/test.sh <folder>
 ```
 
-The script needs Python 3.10+ (3.11+ for `pydantic-ai`, 3.12+ for `harbor`), Node.js 20+ for `langchain-js`, and `jq` for `claude-managed-agents`. It unsets `PRIZED_API_KEY` and, where it can (sudo or user namespaces), cuts the network off while the tests run, so a test that reaches the real API fails.
+The script needs Python 3.10+ (3.11+ for `pydantic-ai`, 3.12+ for `harbor` and `dify`), Node.js 20+ for `langchain-js`, and `jq` for `claude-managed-agents`. It unsets `PRIZED_API_KEY` and, where it can (sudo or user namespaces), cuts the network off while the tests run, so a test that reaches the real API fails.
 
 Until the Prized SDKs are on PyPI and npm (2026-11-05), folders that need them are skipped unless `PRIZED_SDK_DIST` points at a directory with the SDK's wheel and tarball.
 

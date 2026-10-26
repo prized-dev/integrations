@@ -1,0 +1,85 @@
+identity:
+  name: run_command
+  author: prized
+  label:
+    en_US: Run command
+description:
+  human:
+    en_US: Run a shell command in the sandbox and return its exit code, stdout and stderr.
+  llm: Run a bash command in the sandbox, as the user prized (no sudo), and return exit_code, stdout and
+    stderr. Commands start in /home/prized/work and can reach the internet. Install Python packages in
+    a venv (python3 -m venv .venv && .venv/bin/pip install ...).
+parameters:
+- name: sandbox_id
+  type: string
+  required: false
+  label:
+    en_US: Sandbox ID
+  human_description:
+    en_US: Optional. A sandbox_id from Create sandbox, to keep files and state between calls. Leave empty
+      to run in a one-off sandbox (2 vCPU, 4 GB) that is deleted after the run.
+  llm_description: Optional. The sandbox_id from create_sandbox, to keep files and state between calls.
+    Leave empty to run in a fresh one-off sandbox that is deleted after the run.
+  form: llm
+- name: command
+  type: string
+  required: true
+  label:
+    en_US: Command
+  human_description:
+    en_US: The bash command to run.
+  llm_description: 'The bash command to run, for example: ls -la or python3 script.py'
+  form: llm
+- name: cwd
+  type: string
+  required: false
+  label:
+    en_US: Working directory
+  human_description:
+    en_US: Where the command runs. Relative paths start in /home/prized/work. Default /home/prized/work.
+  llm_description: Optional working directory inside /home/prized; relative paths start in /home/prized/work.
+  form: llm
+- name: timeout_seconds
+  type: number
+  required: false
+  label:
+    en_US: Timeout (seconds)
+  human_description:
+    en_US: Stop the command after this many seconds, 1 to 240. Default 60.
+  llm_description: 'Seconds before the command is killed, 1 to 240 (default 60). For longer jobs, start
+    them in the background with nohup and read their log in later calls, at least every few minutes: an
+    idle sandbox pauses, and the job with it.'
+  form: llm
+  default: 60
+  min: 1
+  max: 240
+output_schema:
+  type: object
+  properties:
+    sandbox_id:
+      type: string
+      description: The sandbox's ID
+    exit_code:
+      type: number
+      description: The command's exit code; -1 when it timed out
+    stdout:
+      type: string
+      description: 'Standard output (up to 64 KiB: the start and the end)'
+    stderr:
+      type: string
+      description: 'Standard error (up to 64 KiB: the start and the end)'
+    timed_out:
+      type: boolean
+      description: Whether the command was killed at its timeout
+    truncated:
+      type: boolean
+      description: Whether output was cut to fit
+    duration_ms:
+      type: number
+      description: How long it ran (ms)
+    one_off:
+      type: boolean
+      description: Whether it ran in a one-off sandbox, already deleted (then there is no sandbox_id)
+extra:
+  python:
+    source: tools/run_command.py
