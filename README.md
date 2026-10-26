@@ -10,17 +10,17 @@ Each folder is its own package with its own README, tests and release. You need 
 | [`harbor`](harbor) | Harbor (Terminal-Bench): environment | `harbor-prized` | Works now from this repo; on PyPI soon | [README](harbor/README.md) |
 | [`dify`](dify) | Dify: tool plugin (workflows and agents) | `prized_sandboxes` (`.difypkg`) | Build the `.difypkg` from this repo; tested under Dify's plugin runtime, not yet in a Dify install (self-hosted Dify takes the unsigned package only with signature checks off); Marketplace submission pending | [README](dify/README.md) |
 | [`claude-managed-agents`](claude-managed-agents) | Claude Managed Agents: self-hosted environment | `on-work.sh` | Works now | [README](claude-managed-agents/README.md) |
-| [`inspect`](inspect) | Inspect AI: sandbox environment | `inspect-prized` | Waits on SDK publish (2026-11-05) | [README](inspect/README.md) |
-| [`adk`](adk) | Google ADK: environment and code executor | `prized-adk` | Waits on SDK publish (2026-11-05) | [README](adk/README.md) |
-| [`strands`](strands) | Strands Agents: sandbox | `strands-prized` | Waits on SDK publish (2026-11-05) | [README](strands/README.md) |
-| [`agent-framework`](agent-framework) | Microsoft Agent Framework: shell tool and file store | `agent-framework-prized` | Waits on SDK publish (2026-11-05) | [README](agent-framework/README.md) |
-| [`pydantic-ai`](pydantic-ai) | Pydantic AI: workspace | `pydantic-ai-prized` | Waits on SDK publish (2026-11-05) | [README](pydantic-ai/README.md) |
-| [`langchain-js`](langchain-js) | LangChain Deep Agents (JS): sandbox | `@prized/langchain` | Waits on SDK publish (2026-11-05) | [README](langchain-js/README.md) |
-| [`mastra`](mastra) | Mastra: workspace sandbox and filesystem | `@prized/mastra` | Waits on SDK publish (2026-11-05) | [README](mastra/README.md) |
+| [`inspect`](inspect) | Inspect AI: sandbox environment | `inspect-prized` | Coming 2026-11-05 | [README](inspect/README.md) |
+| [`adk`](adk) | Google ADK: environment and code executor | `prized-adk` | Coming 2026-11-05 | [README](adk/README.md) |
+| [`strands`](strands) | Strands Agents: sandbox | `strands-prized` | Coming 2026-11-05 | [README](strands/README.md) |
+| [`agent-framework`](agent-framework) | Microsoft Agent Framework: shell tool and file store | `agent-framework-prized` | Coming 2026-11-05 | [README](agent-framework/README.md) |
+| [`pydantic-ai`](pydantic-ai) | Pydantic AI: workspace | `pydantic-ai-prized` | Coming 2026-11-05 | [README](pydantic-ai/README.md) |
+| [`langchain-js`](langchain-js) | LangChain Deep Agents (JS): sandbox | `@prized/langchain` | Coming 2026-11-05 | [README](langchain-js/README.md) |
+| [`mastra`](mastra) | Mastra: workspace sandbox and filesystem | `@prized/mastra` | Coming 2026-11-05 | [README](mastra/README.md) |
 
-"Waits on SDK publish" means the package needs the Prized Python SDK (`prized`) or TypeScript SDK (`@prized/sdk`), which go on PyPI and npm on 2026-11-05. The packages follow right after.
+"Coming 2026-11-05" means the package itself isn't on PyPI or npm yet. The Prized SDKs it uses already are (`prized` on PyPI, `@prized/sdk` on npm).
 
-Also from Prized, outside this repo: the SDKs themselves, `langchain-prized` (LangChain Python) and `openai-agents-prized` (OpenAI Agents SDK), all on PyPI and npm from 2026-11-05, and the Claude Code and Codex plugin in [prized-dev/skills](https://github.com/prized-dev/skills).
+Also from Prized, outside this repo: the SDKs themselves (`prized` on PyPI, `@prized/sdk` on npm), `langchain-prized` (LangChain Python) and `openai-agents-prized` (OpenAI Agents SDK), both on PyPI, and the Claude Code and Codex plugin in [prized-dev/skills](https://github.com/prized-dev/skills).
 
 ## Tests
 

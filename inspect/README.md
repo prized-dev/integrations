@@ -1,6 +1,6 @@
 # inspect-prized
 
-> **Coming 2026-11-05.** `inspect-prized` and the Prized Python SDK it uses (`prized`) are not on PyPI yet.
+> **Coming 2026-11-05.** `inspect-prized` is not on PyPI yet. The Prized Python SDK it uses (`prized`) is.
 
 A sandbox environment for [Inspect AI](https://inspect.aisi.org.uk/) that runs each sample in its own [Prized](https://prized.dev/docs/sandboxes?via=inspect) sandbox, a Firecracker microVM in the cloud. Sample cleanup deletes it.
 

@@ -1,6 +1,6 @@
 # prized-adk
 
-> **Coming 2026-11-05.** `prized-adk` and the Prized Python SDK it uses (`prized`) are not on PyPI yet.
+> **Coming 2026-11-05.** `prized-adk` is not on PyPI yet. The Prized Python SDK it uses (`prized`) is.
 
 Run a [Google ADK](https://google.github.io/adk-docs/) agent's shell commands, files and code in a [Prized](https://prized.dev/?via=adk) sandbox: a Firecracker microVM with its own kernel that pauses with its memory, and forks into live copies.
 

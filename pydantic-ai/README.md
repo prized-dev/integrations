@@ -1,6 +1,6 @@
 # pydantic-ai-prized
 
-> **Coming 2026-11-05.** `pydantic-ai-prized` and the Prized Python SDK it uses (`prized`) are not on PyPI yet.
+> **Coming 2026-11-05.** `pydantic-ai-prized` is not on PyPI yet. The Prized Python SDK it uses (`prized`) is.
 
 Run a [Pydantic AI](https://pydantic.dev/docs/ai/) agent's workspace in a [Prized](https://prized.dev/sandboxes?via=pydantic-ai) sandbox, a Firecracker microVM.
 Harness's `Coder`, `Shell`, `FileSystem` and every other workspace-aware capability run in it unchanged.

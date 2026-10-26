@@ -1,6 +1,6 @@
 # strands-prized
 
-> **Coming 2026-11-05.** `strands-prized` and the Prized Python SDK it uses (`prized`) are not on PyPI yet.
+> **Coming 2026-11-05.** `strands-prized` is not on PyPI yet. The Prized Python SDK it uses (`prized`) is.
 
 Run a [Strands Agents](https://strandsagents.com/) agent's shell commands, code and file edits in a [Prized](https://prized.dev/?via=strands) sandbox: a Firecracker microVM with its own kernel that pauses with its memory and running processes, and forks into live copies.
 
