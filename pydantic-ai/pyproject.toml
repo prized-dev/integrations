@@ -30,9 +30,9 @@ dependencies = ["pydantic-ai-slim>=2.59,<3", "prized>=0.1,<0.2", "anyio>=4"]
 test = ["pytest>=8", "anyio[trio]>=4", "pydantic-ai-harness[coder]>=0.59"]
 
 [project.urls]
-Homepage = "https://prized.dev/sandboxes"
-Documentation = "https://prized.dev/docs/sandboxes"
-"API reference" = "https://prized.dev/docs/sandboxes-api"
+Homepage = "https://prized.dev/sandboxes?via=pydantic-ai"
+Documentation = "https://prized.dev/docs/sandboxes?via=pydantic-ai"
+"API reference" = "https://prized.dev/docs/sandboxes-api?via=pydantic-ai"
 Repository = "https://github.com/prized-dev/integrations/tree/main/pydantic-ai"
 Issues = "https://github.com/prized-dev/integrations/issues"
 

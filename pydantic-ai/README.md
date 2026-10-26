@@ -2,12 +2,12 @@
 
 > **Coming 2026-11-05.** `pydantic-ai-prized` and the Prized Python SDK it uses (`prized`) are not on PyPI yet.
 
-Run a [Pydantic AI](https://pydantic.dev/docs/ai/) agent's workspace in a [Prized](https://prized.dev/sandboxes) sandbox, a Firecracker microVM.
+Run a [Pydantic AI](https://pydantic.dev/docs/ai/) agent's workspace in a [Prized](https://prized.dev/sandboxes?via=pydantic-ai) sandbox, a Firecracker microVM.
 Harness's `Coder`, `Shell`, `FileSystem` and every other workspace-aware capability run in it unchanged.
 
 ## Quickstart
 
-Get an API key at https://prized.dev/onboarding/sandboxes (free credit, no card), then:
+Get an API key at https://prized.dev/onboarding/sandboxes?via=pydantic-ai (free credit, no card), then:
 
 ```sh
 pip install pydantic-ai-prized "pydantic-ai-harness[coder,anthropic]"
@@ -42,7 +42,7 @@ Options on `PrizedSandbox`: `template` (`prized-base-v1`, or `prized-agent-v1` w
 
 ## Limits
 
-One region (us-west-2). Fixed Ubuntu 24.04 templates, no custom images or inbound ports. One command runs for up to an hour unless you pass a longer `timeout`, and keeps the first 4 MiB of each output stream (past that it raises `WorkspaceOutputLimitError`). A sandbox runs 24 hours by default, up to 7 days (each resume restarts the clock). On the free credit: 10 sandboxes at once, 2 vCPU and 4 GB each, 1 hour. Details: https://prized.dev/docs/sandboxes.
+One region (us-west-2). Fixed Ubuntu 24.04 templates, no custom images or inbound ports. One command runs for up to an hour unless you pass a longer `timeout`, and keeps the first 4 MiB of each output stream (past that it raises `WorkspaceOutputLimitError`). A sandbox runs 24 hours by default, up to 7 days (each resume restarts the clock). On the free credit: 10 sandboxes at once, 2 vCPU and 4 GB each, 1 hour. Details: https://prized.dev/docs/sandboxes?via=pydantic-ai.
 
 ## Tests
 

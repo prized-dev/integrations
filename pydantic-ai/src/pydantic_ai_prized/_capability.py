@@ -36,7 +36,7 @@ def _innermost(backend: WorkspaceBackend) -> WorkspaceBackend:
 
 @dataclass(kw_only=True)
 class PrizedSandbox(AbstractCapability[AgentDepsT]):
-    """Supply a [Prized](https://prized.dev) sandbox, a Firecracker microVM, as the run's workspace.
+    """Supply a [Prized](https://prized.dev/?via=pydantic-ai) sandbox, a Firecracker microVM, as the run's workspace.
 
     A run with no reference creates a fresh sandbox on first use; pass a `WorkspaceRef` (from
     `result.workspace.ref` or the message history) to continue in an existing one. A paused sandbox
