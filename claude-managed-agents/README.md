@@ -1,6 +1,6 @@
 # Claude Managed Agents in Prized Sandboxes
 
-Run each [Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview) session's tools in a [Prized sandbox](https://prized.dev/docs/sandboxes) of its own, through a [self-hosted environment](https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes). Claude runs on Anthropic's side. The sandbox runs the agent's commands and holds its files, and between messages it pauses with its files and processes, so the session's next message carries on where it stopped.
+Run each [Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview) session's tools in a [Prized sandbox](https://prized.dev/docs/sandboxes?via=claude-managed-agents) of its own, through a [self-hosted environment](https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes). Claude runs on Anthropic's side. The sandbox runs the agent's commands and holds its files, and between messages it pauses with its files and processes, so the session's next message carries on where it stopped.
 
 ## Run it
 
@@ -10,7 +10,7 @@ Run each [Claude Managed Agents](https://platform.claude.com/docs/en/managed-age
    curl -fsSL https://prized.dev/install.sh | sh
    ```
 
-2. In the [Claude Console](https://platform.claude.com/workspaces/default/environments), create a self-hosted environment and generate its environment key. Make a Prized API key with **Sandboxes: Write** at https://prized.dev/dashboard/workspace/api-keys.
+2. In the [Claude Console](https://platform.claude.com/workspaces/default/environments), create a self-hosted environment and generate its environment key. Make a Prized API key with **Sandboxes: Write** at https://prized.dev/dashboard/workspace/api-keys?via=claude-managed-agents.
 
 3. Export the three keys on that machine (`PRIZED_API_KEY` is required: the script calls Prized's API directly to resume a sandbox):
 
@@ -60,8 +60,8 @@ Run each [Claude Managed Agents](https://platform.claude.com/docs/en/managed-age
 - **Skills.** A worker that holds only the session's secret can't download skills (Anthropic's skills API takes the environment key), so it logs `failed to download skill` and carries on.
 - **Memory stores** need a writable `/mnt/memory`, which a sandbox doesn't have. A session with memory stores attached fails as soon as its run starts; the poller prints the end of the worker's log, which says `cannot create the memory store's folder`.
 - **Files** last while the session's sandbox does. If it is deleted (after `KEEP_PAUSED`, at the end of its run time, or if its machine fails), the next message starts from an empty working directory.
-- **Paused sandboxes keep their disk**, 10 GB each on `prized-base-v1`, for `KEEP_PAUSED`. On the free tier, 100 GB of disk across the workspace's sandboxes holds about ten recently active sessions; on a paid plan, paused storage past 20 GB costs $0.05 per GB-month ([Pause and resume](https://prized.dev/docs/sandboxes#pause-and-resume)).
-- **Run time.** A sandbox is deleted after 24 hours of running unless you set `MAX_RUNTIME` (up to `7d` on a paid plan); the clock restarts on each resume. On the free tier, 60 minutes of running per sandbox in all, and the 2 idle minutes before each pause count toward it ([Limits](https://prized.dev/docs/limits#sandboxes)).
+- **Paused sandboxes keep their disk**, 10 GB each on `prized-base-v1`, for `KEEP_PAUSED`. On the free tier, 100 GB of disk across the workspace's sandboxes holds about ten recently active sessions; on a paid plan, paused storage past 20 GB costs $0.05 per GB-month ([Pause and resume](https://prized.dev/docs/sandboxes?via=claude-managed-agents#pause-and-resume)).
+- **Run time.** A sandbox is deleted after 24 hours of running unless you set `MAX_RUNTIME` (up to `7d` on a paid plan); the clock restarts on each resume. On the free tier, 60 minutes of running per sandbox in all, and the 2 idle minutes before each pause count toward it ([Limits](https://prized.dev/docs/limits?via=claude-managed-agents#sandboxes)).
 - **If the poller's machine goes away** mid-run, the sandbox pauses itself 2 minutes later.
 
 ## Troubleshooting
