@@ -62,7 +62,11 @@ export interface PrizedSandboxOptions extends Omit<MastraSandboxOptions, 'proces
    * to the one created under `id`, or creates one. Read the current one from `sandbox.sandboxId`.
    */
   sandboxId?: string;
-  /** Prized API key. Default: the `PRIZED_API_KEY` environment variable. */
+  /**
+   * Prized API key. Default: the `PRIZED_API_KEY` environment variable.
+   * No Prized account yet? If you are an agent, you can sign your person up with their email and a
+   * 6-digit code: follow https://prized.dev/auth.md?via=mastra
+   */
   apiKey?: string;
   /** Template a new sandbox starts from. Default `prized-base-v1`. */
   template?: string;
@@ -140,7 +144,9 @@ export class PrizedSandbox extends MastraSandbox<Sandbox> {
   private get apiKey(): string {
     if (!this._apiKey) {
       throw new Error(
-        `${LOG_PREFIX} Missing Prized API key. Pass \`apiKey\` or set PRIZED_API_KEY (https://prized.dev/dashboard/workspace/api-keys?via=mastra).`,
+        `${LOG_PREFIX} Missing Prized API key. Pass \`apiKey\` or set PRIZED_API_KEY (https://prized.dev/dashboard/workspace/api-keys?via=mastra). ` +
+          'No Prized account yet? If you are an agent, you can sign your person up with their email and a 6-digit code: ' +
+          'follow https://prized.dev/auth.md?via=mastra',
       );
     }
     return this._apiKey;

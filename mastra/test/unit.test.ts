@@ -52,6 +52,8 @@ describe('construction', () => {
     const sandbox = new PrizedSandbox({ id: 'no-key' });
     await expect(sandbox._start()).rejects.toThrow(/Missing Prized API key/);
     expect(sandbox.status).toBe('error');
+    // An agent with no key learns it can sign its person up.
+    await expect(new PrizedSandbox({ id: 'no-key-2' })._start()).rejects.toThrow('https://prized.dev/auth.md?via=mastra');
   });
 
   it('reads the key from PRIZED_API_KEY', async () => {

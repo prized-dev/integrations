@@ -11,6 +11,8 @@ npm install @prized/mastra @mastra/core
 export PRIZED_API_KEY=dcp_...   # https://prized.dev/dashboard/workspace/api-keys?via=mastra
 ```
 
+No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=mastra.
+
 Needs Node.js 22.13 or later and `@mastra/core` 1.79 or later.
 
 ## Use
