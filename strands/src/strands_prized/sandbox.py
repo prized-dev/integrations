@@ -528,7 +528,13 @@ class PrizedSandbox(Sandbox):
         async def once(target: AsyncSandbox) -> PrizedExecResult:
             full_env = {**_PIP_ENV, "PATH": await self._command_path(target), **(env or {})}
             return await target.exec(
-                command, cwd=directory, env=full_env, timeout=limit, on_stdout=on_stdout, on_stderr=on_stderr
+                command,
+                cwd=directory,
+                env=full_env,
+                timeout=limit,
+                on_stdout=on_stdout,
+                on_stderr=on_stderr,
+                full_output=True,
             )
 
         try:

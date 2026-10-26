@@ -198,6 +198,7 @@ async def test_execute_maps_options_and_result(sdk):
     assert kwargs["cwd"] == "/home/prized/work/src"
     assert kwargs["timeout"] == 30
     assert kwargs["on_stdout"] is None and kwargs["on_stderr"] is None  # one-request path
+    assert kwargs["full_output"] is True  # its whole output, not the first 4 MiB of a plain call
     # pip-installed tools are on PATH, and pip may install without root.
     assert kwargs["env"] == {
         "PIP_BREAK_SYSTEM_PACKAGES": "1",
