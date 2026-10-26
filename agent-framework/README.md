@@ -2,7 +2,7 @@
 
 > **Coming 2026-11-05.** `agent-framework-prized` and the Prized Python SDK it uses (`prized`) are not on PyPI yet.
 
-Run a [Microsoft Agent Framework](https://github.com/microsoft/agent-framework) agent's shell commands in a [Prized](https://prized.dev) sandbox: a Firecracker microVM with its own kernel that pauses with its memory and running processes, and forks into live copies. `PrizedShellTool` has the same surface as the framework's `DockerShellTool` and implements its `ShellExecutor` protocol.
+Run a [Microsoft Agent Framework](https://github.com/microsoft/agent-framework) agent's shell commands in a [Prized](https://prized.dev/?via=agent-framework) sandbox: a Firecracker microVM with its own kernel that pauses with its memory and running processes, and forks into live copies. `PrizedShellTool` has the same surface as the framework's `DockerShellTool` and implements its `ShellExecutor` protocol.
 
 ## Install
 
@@ -11,7 +11,7 @@ pip install agent-framework-prized
 export PRIZED_API_KEY=dcp_...
 ```
 
-Make the key at https://prized.dev/dashboard/workspace/api-keys with **Full access**, or **Custom** with **Sandboxes: Write**. Python 3.10 or later, `agent-framework-core` 1.19 or later, `agent-framework-tools` 1.0.0b260918 or later.
+Make the key at https://prized.dev/dashboard/workspace/api-keys?via=agent-framework with **Full access**, or **Custom** with **Sandboxes: Write**. Python 3.10 or later, `agent-framework-core` 1.19 or later, `agent-framework-tools` 1.0.0b260918 or later.
 
 ## Use it
 
@@ -64,7 +64,7 @@ Options: `sandbox_id`, `template` (`prized-base-v1`, or `prized-agent-v1` with C
 
 ## Limits
 
-On free credit, sandboxes run within the free tier: up to 10 at once, each up to 2 vCPU and 4 GB, with 60 minutes of running each. A top-up or a plan lifts that; a paid sandbox runs 24 hours by default, up to 7 days. No inbound ports, no custom images, no GPUs. Details: https://prized.dev/docs/sandboxes
+On free credit, sandboxes run within the free tier: up to 10 at once, each up to 2 vCPU and 4 GB, with 60 minutes of running each. A top-up or a plan lifts that; a paid sandbox runs 24 hours by default, up to 7 days. No inbound ports, no custom images, no GPUs. Details: https://prized.dev/docs/sandboxes?via=agent-framework
 
 ## Tests
 
