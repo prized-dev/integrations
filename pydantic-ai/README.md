@@ -7,6 +7,8 @@ Harness's `Coder`, `Shell`, `FileSystem` and every other workspace-aware capabil
 
 ## Quickstart
 
+No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=pydantic-ai.
+
 Get an API key at https://prized.dev/onboarding/sandboxes?via=pydantic-ai (free credit, no card), then:
 
 ```sh

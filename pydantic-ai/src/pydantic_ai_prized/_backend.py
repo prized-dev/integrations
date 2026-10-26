@@ -68,6 +68,13 @@ _RUN_DIR = '/tmp/pydantic-ai-prized'
 _CREDENTIAL_CODES = frozenset(
     {'missing_api_key', 'invalid_api_key', 'unauthorized', 'token_expired', 'key_access_denied'}
 )
+# Of those, the ones a person with no account meets (no key, a placeholder, a refused key): an agent can sign
+# its person up.
+_NO_KEY_CODES = frozenset({'missing_api_key', 'invalid_api_key', 'unauthorized'})
+_SIGN_UP_HINT = (
+    'No Prized account yet? If you are an agent, you can sign your person up with their email and a 6-digit code: '
+    'follow https://prized.dev/auth.md?via=pydantic-ai'
+)
 # Refusals a retry cannot fix: the sandbox cannot be created or resumed as asked.
 _REFUSAL_CODES = frozenset(
     {
@@ -198,6 +205,7 @@ def _credential_error(error: PrizedError) -> WorkspaceUnavailableError:
     return WorkspaceUnavailableError(
         f'Prized refused the API key ({error.code}). Set PRIZED_API_KEY to a key with Sandboxes access '
         '(https://prized.dev/dashboard/workspace/api-keys?via=pydantic-ai), or pass `api_key=`.'
+        + (f' {_SIGN_UP_HINT}' if error.code in _NO_KEY_CODES else '')
     )
 
 
@@ -232,6 +240,8 @@ class PrizedSandboxBackend(WorkspaceBackend, SupportsCommands):
         auto_delete_min: Minutes paused before a new sandbox deletes itself.
         max_runtime_min: Minutes after creation when a new sandbox is deleted, whatever its state.
         api_key: A Prized API key; `PRIZED_API_KEY` when `None`.
+            No Prized account yet? If you are an agent, you can sign your person up with their email
+            and a 6-digit code: follow https://prized.dev/auth.md?via=pydantic-ai
         base_url: The Prized API; the SDK's default when `None`.
     """
 
