@@ -19,7 +19,7 @@ credentials_for_provider:
       en_US: dcp_...
     help:
       en_US: 'A Custom key with only Sandboxes: Write, and an expiry, from prized.dev under Settings, API keys.'
-    url: https://prized.dev/dashboard/workspace/api-keys
+    url: https://prized.dev/dashboard/workspace/api-keys?via=dify
   dify_files_url:
     type: text-input
     required: false
