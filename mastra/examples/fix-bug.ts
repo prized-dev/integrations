@@ -5,7 +5,7 @@
  *
  * MODEL picks another model from Mastra's model router (default openai/gpt-5-nano). The run stops
  * once the model's tokens would cost more than MAX_USD (default 0.10, priced for gpt-5-nano). The
- * sandbox (2 vCPU, labelled example=prized-mastra plus EXAMPLE_LABELS) is deleted at the end,
+ * sandbox (2 vCPU, 4 GB, labelled example=prized-mastra plus EXAMPLE_LABELS) is deleted at the end,
  * failures included.
  */
 import { createHash } from 'node:crypto';
@@ -55,9 +55,10 @@ const extraLabels = Object.fromEntries(
 );
 
 const sandbox = new PrizedSandbox({
-  resources: { vcpu: 2 },
+  resources: { vcpu: 2, memoryGb: 4 },
   labels: { ...extraLabels, example: 'prized-mastra' },
   maxRuntimeMin: 30,
+  autoDeleteMin: 60, // if this script dies before it deletes the sandbox, Prized does after it pauses
 });
 
 const workspace = new Workspace({ sandbox });
@@ -91,7 +92,7 @@ let usd = 0;
 let exitCode = 1;
 const budget = new AbortController();
 try {
-  await sandbox._start();
+  await sandbox.start();
   console.log(`[${seconds()}s] sandbox ${sandbox.sandboxId} running`);
   await sandbox.writeFiles(Object.entries(FILES).map(([path, content]) => ({ path: `/home/prized/work/${path}`, content })));
   const before = await sandbox.executeCommand!('python3', ['-m', 'unittest', '-q'], { cwd: APP });

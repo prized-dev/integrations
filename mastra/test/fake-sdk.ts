@@ -14,6 +14,10 @@ export interface Behaviour {
   hang?: boolean;
   /** Fail to start with this error. */
   startError?: Error;
+  /** kill() throws this. */
+  killError?: Error;
+  /** status() throws this. */
+  statusError?: Error;
 }
 
 export interface ExecCall {
@@ -30,8 +34,13 @@ export class FakeRun {
   readonly pid = 4242;
   killedWith: string | undefined;
   cleaned = false;
-  private finished = false;
-  private wake: (() => void) | undefined;
+  /** How many times the run was followed (wait), checked (status) or read (logs): each is a request. */
+  waits = 0;
+  statusCalls = 0;
+  logsCalls = 0;
+  private state: 'running' | 'done' | 'killed' | 'timeout';
+  private readonly outcome: Promise<'done' | 'killed' | 'timeout'>;
+  private resolveOutcome!: (o: 'done' | 'killed' | 'timeout') => void;
 
   constructor(
     readonly sandboxId: string,
@@ -39,48 +48,87 @@ export class FakeRun {
     private readonly timeoutMs: number | null,
   ) {
     this.id = `run_${Math.random().toString(16).slice(2, 10)}`;
+    this.outcome = new Promise(resolve => {
+      this.resolveOutcome = resolve;
+    });
+    this.state = 'running';
+    if (!behaviour.hang) this.finish('done');
+    else if (timeoutMs) setTimeout(() => this.finish('timeout'), timeoutMs);
   }
 
+  private finish(o: 'done' | 'killed' | 'timeout'): void {
+    if (this.state !== 'running') return;
+    this.state = o;
+    this.resolveOutcome(o);
+  }
+
+  /** Let a hanging command exit by itself. */
+  exit(): void {
+    this.finish('done');
+  }
+
+  /** Like the SDK, every call on a run in a deleted sandbox is not_found. */
+  private alive(): void {
+    if (!FakeSandbox.store.has(this.sandboxId)) throw notFound(this.sandboxId);
+  }
+
+  private get out(): string {
+    return (this.behaviour.stdout ?? []).join('');
+  }
+
+  private get err(): string {
+    return (this.behaviour.stderr ?? []).join('');
+  }
+
+  private exitCode(): number {
+    return this.state === 'killed' ? -1 : (this.behaviour.exitCode ?? 0);
+  }
+
+  /** Replays the output from the start, as the SDK does, then waits for the exit. */
   async wait(options: {
     onStdout?: (c: string) => void;
     onStderr?: (c: string) => void;
     signal?: AbortSignal;
   } = {}): Promise<ExecResult> {
+    this.waits++;
+    this.alive();
     for (const c of this.behaviour.stdout ?? []) options.onStdout?.(c);
     for (const c of this.behaviour.stderr ?? []) options.onStderr?.(c);
-    const out = (this.behaviour.stdout ?? []).join('');
-    const err = (this.behaviour.stderr ?? []).join('');
-    if (this.behaviour.hang && !this.killedWith) {
-      const outcome = await new Promise<'killed' | 'timeout' | 'aborted'>(resolve => {
-        this.wake = () => resolve('killed');
-        if (this.timeoutMs) setTimeout(() => resolve('timeout'), this.timeoutMs);
-        options.signal?.addEventListener('abort', () => resolve('aborted'), { once: true });
-      });
-      if (outcome === 'aborted') throw new PrizedError('aborted', 'The wait was aborted.');
-      if (outcome === 'timeout') {
-        this.finished = true;
-        throw new CommandTimeoutError(
-          { stdout: out, stderr: err, exitCode: -1, durationMs: this.timeoutMs ?? 0, timedOut: true, truncated: false },
-          this.timeoutMs,
-          this.sandboxId,
-        );
-      }
+    const aborted = new Promise<'aborted'>(resolve => {
+      if (options.signal?.aborted) resolve('aborted');
+      options.signal?.addEventListener('abort', () => resolve('aborted'), { once: true });
+    });
+    const o = await Promise.race([this.outcome, aborted]);
+    if (o === 'aborted') throw new PrizedError('aborted', 'The wait was aborted.');
+    if (o === 'timeout') {
+      throw new CommandTimeoutError(
+        { stdout: this.out, stderr: this.err, exitCode: -1, durationMs: this.timeoutMs ?? 0, timedOut: true, truncated: false },
+        this.timeoutMs,
+        this.sandboxId,
+      );
     }
-    this.finished = true;
-    return {
-      stdout: out,
-      stderr: err,
-      exitCode: this.killedWith ? -1 : (this.behaviour.exitCode ?? 0),
-      durationMs: 1,
-      timedOut: false,
-      truncated: false,
-    };
+    return { stdout: this.out, stderr: this.err, exitCode: this.exitCode(), durationMs: 1, timedOut: false, truncated: false };
+  }
+
+  async status(): Promise<{ running: boolean; exitCode: number | null }> {
+    this.statusCalls++;
+    if (this.behaviour.statusError) throw this.behaviour.statusError;
+    this.alive();
+    return this.state === 'running' ? { running: true, exitCode: null } : { running: false, exitCode: this.exitCode() };
+  }
+
+  async logs(): Promise<{ stdout: string; stderr: string }> {
+    this.logsCalls++;
+    this.alive();
+    return { stdout: this.out, stderr: this.err };
   }
 
   async kill(signal = 'SIGTERM'): Promise<boolean> {
-    if (this.finished || this.killedWith) return false;
+    if (this.behaviour.killError) throw this.behaviour.killError;
+    this.alive();
+    if (this.state !== 'running') return false;
     this.killedWith = signal;
-    this.wake?.();
+    this.finish('killed');
     return true;
   }
 
@@ -101,6 +149,9 @@ export class FakeSandbox {
   static behave: (command: string) => Behaviour = () => ({});
   /** Errors the next create throws, once each. */
   static createErrors: Error[] = [];
+  /** Set to make list / deleteByLabels throw. */
+  static listError: Error | undefined;
+  static deleteByLabelsCalls: Array<Record<string, string>> = [];
 
   static reset(): void {
     FakeSandbox.store.clear();
@@ -112,6 +163,8 @@ export class FakeSandbox {
     FakeSandbox.writes = [];
     FakeSandbox.behave = () => ({});
     FakeSandbox.createErrors = [];
+    FakeSandbox.listError = undefined;
+    FakeSandbox.deleteByLabelsCalls = [];
     FakeSandbox.seq = 0;
   }
 
@@ -176,16 +229,34 @@ export class FakeSandbox {
     return found;
   }
 
+  static async deleteByLabels(labels: Record<string, string>): Promise<string[]> {
+    FakeSandbox.deleteByLabelsCalls.push(labels);
+    if (FakeSandbox.listError) throw FakeSandbox.listError;
+    const doomed = [...FakeSandbox.store.values()].filter(s => Object.entries(labels).every(([k, v]) => s.labels[k] === v));
+    for (const s of doomed) {
+      s.deletes++;
+      s.state = 'deleted';
+      FakeSandbox.store.delete(s.id);
+    }
+    return doomed.map(s => s.id);
+  }
+
   static async list(options: ListOptions = {}): Promise<FakeSandbox[]> {
     FakeSandbox.lists.push(options);
+    if (FakeSandbox.listError) throw FakeSandbox.listError;
     const want = Object.entries(options.labels ?? {});
     return [...FakeSandbox.store.values()]
       .filter(s => want.every(([k, v]) => s.labels[k] === v))
       .reverse();
   }
 
+  /** States the next refreshes move through (a starting sandbox becoming running, say). */
+  nextStates: SandboxState[] = [];
+
   async refresh(): Promise<this> {
     this.alive();
+    const next = this.nextStates.shift();
+    if (next) this.state = next;
     return this;
   }
 
@@ -210,6 +281,9 @@ export class FakeSandbox {
   /** A background command returns its run; a foreground one its result. */
   async exec(command: string, options: Record<string, unknown> = {}): Promise<FakeRun | ExecResult> {
     this.alive();
+    if (this.state === 'deleting') {
+      throw new PrizedError('sandbox_not_running', 'The sandbox is being deleted.', { status: 409, sandboxId: this.id });
+    }
     FakeSandbox.execs.push({ sandboxId: this.id, command, options });
     if (this.state === 'paused') this.state = 'running'; // a command wakes a paused sandbox
     const behaviour = FakeSandbox.behave(command);

@@ -18,6 +18,7 @@ function make(overrides: PrizedSandboxOptions = {}): PrizedSandbox {
     labels: testLabels(),
     resources: testResources(),
     maxRuntimeMin: 60,
+    autoDeleteMin: 60,
     ...overrides,
   });
 }
@@ -109,12 +110,18 @@ describe.skipIf(!LIVE)('PrizedSandbox against the real API', () => {
 
   it('runs, reads and kills a background process', async () => {
     const handle = await main.processes.spawn('i=0; while true; do i=$((i+1)); echo "tick $i"; sleep 0.2; done');
-    await expect.poll(() => handle.stdout, { timeout: 15_000 }).toContain('tick 2');
+    await expect.poll(async () => (await main.processes.get(handle.pid))?.stdout, { timeout: 15_000 }).toContain('tick 2');
     expect((await main.processes.list()).find(p => p.pid === handle.pid)?.running).toBe(true);
     expect(await main.processes.kill(handle.pid)).toBe(true);
     const result = await handle.wait();
     expect(result).toMatchObject({ success: false, killed: true });
     expect(await handle.kill()).toBe(false);
+
+    const controller = new AbortController();
+    const server = await main.processes.spawn('sleep 600', { abortSignal: controller.signal });
+    controller.abort();
+    expect((await server.wait()).exitCode).toBe(137);
+    expect(server.killedByAbort).toBe(true);
   });
 
   it('writes files with modes', async () => {
@@ -143,12 +150,12 @@ describe.skipIf(!LIVE)('PrizedSandbox against the real API', () => {
   });
 
   it('a second instance with the same id, or the sandboxId, reattaches to the same sandbox', async () => {
-    const byId = new PrizedSandbox({ id: main.id });
+    const byId = make({ id: main.id });
     await expect(byId._start()).resolves.toEqual({ outcome: 'connected' });
     expect(byId.sandboxId).toBe(main.sandboxId);
     expect((await byId.executeCommand!('cat', ['/home/prized/work/state.txt'])).stdout).toBe('kept\n');
 
-    const bySandboxId = new PrizedSandbox({ sandboxId: main.sandboxId! });
+    const bySandboxId = make({ id: main.id, sandboxId: main.sandboxId! });
     await expect(bySandboxId._start()).resolves.toEqual({ outcome: 'connected' });
     expect(bySandboxId.sandboxId).toBe(main.sandboxId);
   });
@@ -185,6 +192,22 @@ describe.skipIf(!LIVE)('PrizedSandbox against the real API', () => {
     await new PrizedSandbox({ id: first.id }).destroy();
     expect(await stateOf(id)).toMatch(/^(gone|deleting|deleted)$/);
   });
+
+  it('a background process nobody follows lets the sandbox pause itself, and is still running after', async () => {
+    const idle = make({ autoPauseMin: 1 });
+    await idle._start();
+    const id = idle.sandboxId!;
+    // With an abort signal, as the agent's execute_command passes one by default.
+    const handle = await idle.processes.spawn('i=0; while true; do i=$((i+1)); echo $i > /home/prized/work/count; sleep 1; done', {
+      abortSignal: new AbortController().signal,
+    });
+    await expect.poll(() => stateOf(id), { timeout: 180_000, interval: 10_000 }).toBe('paused');
+    const got = await idle.processes.get(handle.pid); // reads it: resumes the sandbox
+    expect(got?.exitCode).toBeUndefined();
+    const count = await idle.executeCommand!('sh', ['-c', 'a=$(cat count); sleep 2; b=$(cat count); [ "$b" -gt "$a" ] && echo counting']);
+    expect(count.stdout).toBe('counting\n');
+    await idle._destroy();
+  }, 240_000);
 
   it('an unknown template fails start cleanly', async () => {
     const bad = make({ template: 'no-such-template' });

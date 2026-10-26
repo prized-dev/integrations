@@ -19,9 +19,9 @@ export function testLabels(): Record<string, string> {
   return { ...extra, 'created-by': 'prized-mastra-test', run: RUN };
 }
 
-/** A small shape: PRIZED_TEST_VCPU vCPU (default 2). */
+/** A small shape that fits the free tier: PRIZED_TEST_VCPU vCPU (default 2) and 4 GB. */
 export function testResources(): ResourcesInput {
-  return { vcpu: Number(process.env.PRIZED_TEST_VCPU ?? 2) };
+  return { vcpu: Number(process.env.PRIZED_TEST_VCPU ?? 2), memoryGb: 4 };
 }
 
 /** Delete every sandbox this run created and wait until none is listed. Returns the ids deleted. */

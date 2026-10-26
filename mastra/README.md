@@ -20,7 +20,7 @@ import { Agent } from '@mastra/core/agent';
 import { Workspace } from '@mastra/core/workspace';
 import { PrizedSandbox } from '@prized/mastra';
 
-const workspace = new Workspace({ sandbox: new PrizedSandbox({ resources: { vcpu: 2 } }) });
+const workspace = new Workspace({ sandbox: new PrizedSandbox({ resources: { vcpu: 2, memoryGb: 4 } }) });
 
 const agent = new Agent({
   id: 'fixer',
@@ -69,8 +69,8 @@ The id is stored as the sandbox's `mastra-id` label (ids over 256 characters as 
 |---|---|
 | `start()`, or the first command | Finds the sandbox labelled with `id` (or the one `sandboxId` names) and resumes it if it is paused; otherwise creates one. |
 | `stop()` | Kills the background processes this instance started, then pauses the sandbox. Files, memory and other processes are kept; a paused sandbox bills storage only. |
-| `destroy()` | Deletes the sandbox and everything in it. |
-| idle | A sandbox pauses itself after `autoPauseMin` idle minutes (default 10). The next command resumes it. |
+| `destroy()` | Deletes the sandbox and everything in it, and any other sandbox labelled with the same `id`. |
+| idle | A sandbox pauses itself after `autoPauseMin` idle minutes (default 10). The next command resumes it. A paused sandbox is kept until you delete it, unless you set `autoDeleteMin`. |
 | sandbox gone | If the sandbox was deleted, or its run time ended, the next command starts a new one under the same `id` (with none of the old files). |
 
 ## Options
@@ -81,8 +81,9 @@ The id is stored as the sandbox's `mastra-id` label (ids over 256 characters as 
 | `sandboxId` | none | Attach to this sandbox (`sbx_…`). If it no longer exists, falls back to `id`. `sandbox.sandboxId` reads the one in use. |
 | `template` | `prized-base-v1` | `prized-base-v1` (Ubuntu 24.04, git, curl, Python 3, Node.js 22) or `prized-agent-v1` (adds Claude Code and Codex). |
 | `resources` | the template's | `{ vcpu, memoryGb, diskGb }` for a new sandbox. |
-| `labels` | none | Labels for a new sandbox (`mastra-id` is always added). |
+| `labels` | none | Up to 31 labels for a new sandbox (`mastra-id` is always added). |
 | `autoPauseMin` | `10` | Idle minutes before a new sandbox pauses itself; `0` never. |
+| `autoDeleteMin` | never | Minutes after pausing before Prized deletes a new sandbox; `0` never. |
 | `maxRuntimeMin` | your plan's | Minutes of running before Prized deletes a new sandbox: 24 hours by default on paid plans (up to 7 days, and every resume restarts the clock), 60 minutes on the free tier. |
 | `timeout` | `300000` | Milliseconds a foreground command may run; `0` for no limit. A command's own `timeout` wins. Background processes have no limit unless they set one. |
 | `env` | none | Variables for every command (`setEnv()` changes them later). They are passed per command and never written into the sandbox. |
@@ -97,6 +98,7 @@ The id is stored as the sandbox's `mastra-id` label (ids over 256 characters as 
 - Commands run in a shell as the user `prized` (home `/home/prized`, no sudo). Install Python packages into a virtualenv (`python3 -m venv ~/.venv`); the system pip refuses.
 - Commands get no stdin: `sendStdin()` throws, so LSP servers and other stdin protocols don't work.
 - A command past its timeout is killed and returns exit code 124 with `timedOut: true`; a killed one returns 137 with `killed: true`. An aborted command is killed.
+- A background process's output is read only while something follows it: `wait()`, or output callbacks (such as `backgroundProcesses` `onStdout` or `onExit` in the workspace tool config). `processes.get()` and `list()` read it once, and an abort signal kills it without following it. Reads count as activity, so a followed process keeps the sandbox from pausing itself; one nobody follows does not.
 - `writeFiles()` writes through the file API: paths inside `/home/prized`, up to 100 MiB per file; a `mode` is applied with `chmod`.
 - Not supported: the workspace's file tools (`filesystem`), mounts, port URLs (`networking`), snapshots and checkpoints, computer use. The agent works through `execute_command`.
 - Sandboxes run in one region (US West).

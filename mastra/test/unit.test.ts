@@ -83,8 +83,14 @@ describe('start', () => {
       autoPauseMin: 10,
       maxRuntimeMin: 120,
     });
+    expect(create).not.toHaveProperty('autoDeleteMin');
     expect(only(FakeSandbox.lists).labels).toEqual({ [ID_LABEL]: 'proj-1' });
     expect(sandbox.sandboxId).toMatch(/^sbx_/);
+  });
+
+  it('passes autoDeleteMin', async () => {
+    await new PrizedSandbox({ id: 'proj-ad', apiKey: KEY, autoDeleteMin: 60 })._start();
+    expect(only(FakeSandbox.creates).autoDeleteMin).toBe(60);
   });
 
   it('a user label cannot replace the mastra-id label', async () => {
@@ -202,6 +208,37 @@ describe('stop and destroy', () => {
     await expect(sandbox._destroy()).resolves.toBeUndefined();
   });
 
+  it('destroy() deletes every sandbox labelled with the id, duplicates and failed ones included', async () => {
+    const a = FakeSandbox.seed('running', { [ID_LABEL]: 'life-7' });
+    const b = FakeSandbox.seed('error', { [ID_LABEL]: 'life-7' });
+    const other = FakeSandbox.seed('running', { [ID_LABEL]: 'life-other' });
+    await new PrizedSandbox({ id: 'life-7', apiKey: KEY }).destroy();
+    expect([FakeSandbox.store.has(a.id), FakeSandbox.store.has(b.id), FakeSandbox.store.has(other.id)]).toEqual([false, false, true]);
+  });
+
+  it('destroy() reports a failure instead of resolving', async () => {
+    FakeSandbox.seed('paused', { [ID_LABEL]: 'life-8' });
+    FakeSandbox.listError = new PrizedError('network_error', 'unreachable');
+    await expect(new PrizedSandbox({ id: 'life-8', apiKey: KEY }).destroy()).rejects.toMatchObject({ code: 'network_error' });
+    await expect(new PrizedSandbox({ id: 'life-8' }).destroy()).rejects.toThrow(/Missing Prized API key/);
+  });
+
+  it('stop() on a sandbox deleted elsewhere succeeds', async () => {
+    const sandbox = new PrizedSandbox({ id: 'life-9', apiKey: KEY });
+    await sandbox._start();
+    FakeSandbox.store.delete(sandbox.sandboxId!);
+    await sandbox._stop();
+    expect(sandbox.status).toBe('stopped');
+  });
+
+  it('start waits for a sandbox that is still starting', async () => {
+    const starting = FakeSandbox.seed('starting', { [ID_LABEL]: 'life-10' });
+    starting.nextStates = ['running'];
+    const sandbox = new PrizedSandbox({ id: 'life-10', apiKey: KEY });
+    await expect(sandbox._start()).resolves.toEqual({ outcome: 'connected' });
+    expect(sandbox.sandboxId).toBe(starting.id);
+  });
+
   it('destroy with nothing to delete makes no create', async () => {
     await new PrizedSandbox({ id: 'life-6', apiKey: KEY }).destroy();
     expect(FakeSandbox.creates).toHaveLength(0);
@@ -286,6 +323,45 @@ describe('executeCommand', () => {
     expect(sandbox.status).toBe('running');
   });
 
+  it('treats a sandbox being deleted as gone', async () => {
+    const sandbox = new PrizedSandbox({ id: 'cmd-11', apiKey: KEY });
+    await sandbox._start();
+    const old = FakeSandbox.store.get(sandbox.sandboxId!)!;
+    old.state = 'deleting';
+    const result = await sandbox.executeCommand!('true');
+    expect(result.success).toBe(true);
+    expect(sandbox.sandboxId).not.toBe(old.id);
+  });
+
+  it('concurrent commands on a deleted sandbox share one new sandbox', async () => {
+    const sandbox = new PrizedSandbox({ id: 'cmd-12', apiKey: KEY });
+    await sandbox._start();
+    FakeSandbox.store.delete(sandbox.sandboxId!);
+    const results = await Promise.all([1, 2, 3].map(() => sandbox.executeCommand!('true')));
+    expect(results.every(r => r.success)).toBe(true);
+    expect(FakeSandbox.creates).toHaveLength(2);
+  });
+
+  it('never sends the API key into the sandbox', async () => {
+    vi.stubEnv('PRIZED_API_KEY', KEY);
+    const sandbox = new PrizedSandbox({ id: 'cmd-13', env: { A: '1' } });
+    await sandbox.executeCommand!('env');
+    await sandbox.processes.spawn('env');
+    await sandbox.writeFiles([{ path: '/home/prized/work/x', content: 'x', mode: 0o600 }]);
+    expect(JSON.stringify([FakeSandbox.execs, FakeSandbox.writes])).not.toContain(KEY);
+    expect(FakeSandbox.creates[0]).not.toHaveProperty('envVars');
+  });
+
+  it('does not start a new sandbox for a call that fails after destroy', async () => {
+    const sandbox = new PrizedSandbox({ id: 'cmd-14', apiKey: KEY });
+    await sandbox._start();
+    await sandbox._destroy();
+    const gone = new PrizedError('not_found', 'gone', { status: 404 });
+    await expect(sandbox.retryOnDead(() => Promise.reject(gone))).rejects.toBe(gone);
+    expect(FakeSandbox.creates).toHaveLength(1);
+    expect(sandbox.status).toBe('destroyed');
+  });
+
   it('does not retry other errors', async () => {
     FakeSandbox.behave = () => ({ startError: new PrizedError('rate_limited', 'slow down', { status: 429 }) });
     const sandbox = new PrizedSandbox({ id: 'cmd-10', apiKey: KEY });
@@ -295,17 +371,105 @@ describe('executeCommand', () => {
 });
 
 describe('processes', () => {
-  it('tracks, lists and kills a background process', async () => {
-    FakeSandbox.behave = () => ({ stdout: ['started\n'], hang: true });
+  it('tracks, reads, lists and kills a background process', async () => {
+    FakeSandbox.behave = () => ({ stdout: ['start', 'ed\n'], hang: true });
     const sandbox = new PrizedSandbox({ id: 'proc-1', apiKey: KEY });
     const handle = await sandbox.processes.spawn('node server.js');
     expect(handle.pid).toMatch(/^run_/);
     expect(only(FakeSandbox.execs).options.timeoutMs).toBeUndefined(); // background spawns have no default limit
-    await vi.waitFor(() => expect(handle.stdout).toBe('started\n'));
+    const got = await sandbox.processes.get(handle.pid);
+    expect(got).toBe(handle);
+    expect(handle.stdout).toBe('started\n');
     expect(await sandbox.processes.list()).toEqual([{ pid: handle.pid, command: 'node server.js', running: true }]);
     expect(await sandbox.processes.kill(handle.pid)).toBe(true);
     expect(await sandbox.processes.get(handle.pid)).toBeUndefined();
-    expect((await handle.wait()).killed).toBe(true);
+    const result = await handle.wait();
+    expect(result).toMatchObject({ killed: true, exitCode: KILLED_EXIT_CODE, stdout: 'started\n' }); // replayed output not doubled
+  });
+
+  it('does not read a process nobody follows, so the sandbox can idle', async () => {
+    FakeSandbox.behave = () => ({ stdout: ['tick\n'], hang: true });
+    const sandbox = new PrizedSandbox({ id: 'proc-lazy', apiKey: KEY });
+    await sandbox.processes.spawn('dev-server');
+    await new Promise(resolve => setTimeout(resolve, 20));
+    const run = only(FakeSandbox.runs);
+    expect([run.waits, run.statusCalls, run.logsCalls]).toEqual([0, 0, 0]);
+  });
+
+  it('follows a process whose output was asked for at spawn', async () => {
+    FakeSandbox.behave = () => ({ stdout: ['a\n'], hang: true });
+    const sandbox = new PrizedSandbox({ id: 'proc-follow', apiKey: KEY });
+    const chunks: string[] = [];
+    const handle = await sandbox.processes.spawn('server', { onStdout: c => chunks.push(c) });
+    await vi.waitFor(() => expect(chunks).toEqual(['a\n']));
+    expect(only(FakeSandbox.runs).waits).toBe(1);
+    expect(handle.exitCode).toBeUndefined();
+    await handle.kill();
+    expect((await handle.wait()).exitCode).toBe(KILLED_EXIT_CODE);
+  });
+
+  it('get() settles a process that exited while nobody followed it', async () => {
+    FakeSandbox.behave = () => ({ stdout: ['done\n'], hang: true });
+    const sandbox = new PrizedSandbox({ id: 'proc-exit', apiKey: KEY });
+    const handle = await sandbox.processes.spawn('job');
+    only(FakeSandbox.runs).exit();
+    const got = await sandbox.processes.get(handle.pid);
+    expect(got?.exitCode).toBe(0);
+    expect(got?.stdout).toBe('done\n');
+    expect(await sandbox.processes.get(handle.pid)).toBeUndefined(); // read once after exit, then pruned
+  });
+
+  it('a background process spawned with an abort signal is not followed, and the abort kills it', async () => {
+    FakeSandbox.behave = () => ({ hang: true });
+    const sandbox = new PrizedSandbox({ id: 'proc-abort', apiKey: KEY });
+    const controller = new AbortController();
+    const handle = await sandbox.processes.spawn('dev-server', { abortSignal: controller.signal });
+    await new Promise(resolve => setTimeout(resolve, 20));
+    const run = only(FakeSandbox.runs);
+    expect(run.waits).toBe(0);
+    controller.abort();
+    await vi.waitFor(() => expect(run.killedWith).toBe('SIGKILL'));
+    expect((await handle.wait()).exitCode).toBe(KILLED_EXIT_CODE);
+    expect(handle.killedByAbort).toBe(true);
+  });
+
+  it('list() still answers after the sandbox was deleted elsewhere, and settles the old process', async () => {
+    FakeSandbox.behave = () => ({ hang: true });
+    const sandbox = new PrizedSandbox({ id: 'proc-gone', apiKey: KEY });
+    const handle = await sandbox.processes.spawn('sleep 600');
+    FakeSandbox.store.delete(sandbox.sandboxId!);
+    const listed = await sandbox.processes.list();
+    expect(listed).toEqual([{ pid: handle.pid, command: 'sleep 600', running: false, exitCode: 1 }]);
+  });
+
+  it('get() passes on an error other than gone', async () => {
+    FakeSandbox.behave = () => ({ hang: true, statusError: new PrizedError('rate_limited', 'slow down', { status: 429 }) });
+    const sandbox = new PrizedSandbox({ id: 'proc-get-err', apiKey: KEY });
+    const handle = await sandbox.processes.spawn('sleep 600');
+    await expect(sandbox.processes.get(handle.pid)).rejects.toMatchObject({ code: 'rate_limited' });
+    expect(handle.exitCode).toBeUndefined();
+  });
+
+  it('stop() reports the real exit code of a process that exited unfollowed', async () => {
+    FakeSandbox.behave = () => ({ hang: true, exitCode: 0 });
+    const sandbox = new PrizedSandbox({ id: 'proc-stop-exit', apiKey: KEY });
+    const handle = await sandbox.processes.spawn('job');
+    only(FakeSandbox.runs).exit();
+    await sandbox._stop();
+    expect((await handle.wait()).exitCode).toBe(0);
+  });
+
+  it('a failed kill throws and leaves the process running; a gone one returns false', async () => {
+    FakeSandbox.behave = () => ({ hang: true, killError: new PrizedError('rate_limited', 'slow down', { status: 429 }) });
+    const sandbox = new PrizedSandbox({ id: 'proc-killfail', apiKey: KEY });
+    const handle = await sandbox.processes.spawn('sleep 600');
+    await expect(handle.kill()).rejects.toMatchObject({ code: 'rate_limited' });
+    expect(handle.exitCode).toBeUndefined();
+
+    FakeSandbox.behave = () => ({ hang: true, killError: new PrizedError('not_found', 'gone', { status: 404 }) });
+    const gone = await sandbox.processes.spawn('sleep 600');
+    expect(await gone.kill()).toBe(false);
+    expect(gone.exitCode).toBe(1);
   });
 
   it('kill after exit returns false and keeps the real exit code', async () => {
@@ -337,11 +501,11 @@ describe('processes', () => {
     const sandbox = new PrizedSandbox({ id: 'proc-5', apiKey: KEY });
     FakeSandbox.behave = () => ({ hang: true });
     const handle = await sandbox.processes.spawn('sleep 600');
-    // The handle stops following without a kill (the sandbox went away): wait still settles.
+    // The handle stops following without a kill: wait still settles.
     (handle as unknown as { detach(): void }).detach();
     const result = await handle.wait();
     expect(result.success).toBe(false);
-    expect(result.stderr).toMatch(/aborted/);
+    expect(result.stderr).toMatch(/stopped following/);
   });
 });
 

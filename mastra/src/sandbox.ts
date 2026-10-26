@@ -30,7 +30,7 @@ import {
 import { PrizedError, Sandbox } from '@prized/sdk';
 import type { CreateOptions, ResourcesInput, SandboxState } from '@prized/sdk';
 
-import { LOG_PREFIX, PrizedProcessManager } from './process-manager.js';
+import { LOG_PREFIX, PrizedProcessManager, isGone } from './process-manager.js';
 
 /** The label a sandbox this provider creates carries: its logical `id`, so a later `start()` finds it. */
 export const ID_LABEL = 'mastra-id';
@@ -42,8 +42,8 @@ export const DEFAULT_TIMEOUT_MS = 300_000;
 export const DEFAULT_AUTO_PAUSE_MIN = 10;
 
 const MAX_LABEL_VALUE = 256;
-/** API error codes that mean the sandbox no longer exists. */
-const GONE_CODES = new Set(['not_found', 'sandbox_deleted']);
+/** States in which a sandbox will not come back. */
+const DEAD: ReadonlySet<SandboxState> = new Set(['deleting', 'deleted', 'error']);
 /** States a found sandbox can be adopted from. */
 const ADOPTABLE: ReadonlySet<SandboxState> = new Set(['running', 'paused', 'pausing', 'starting', 'resizing']);
 const SETTLE_TIMEOUT_MS = 180_000;
@@ -70,6 +70,8 @@ export interface PrizedSandboxOptions extends Omit<MastraSandboxOptions, 'proces
   labels?: Record<string, string>;
   /** Idle minutes before a new sandbox pauses itself (0: never). Default 10. */
   autoPauseMin?: number;
+  /** Minutes after pausing before Prized deletes a new sandbox (0: never). Default: never, so a paused sandbox is kept until you delete it. */
+  autoDeleteMin?: number;
   /** Minutes of running before Prized deletes a new sandbox. Default: your plan's (24 hours on paid plans). */
   maxRuntimeMin?: number;
   /** Foreground command timeout in milliseconds (0: none). Default 300 000. A command's own `timeout` wins. */
@@ -87,7 +89,7 @@ export class PrizedSandbox extends MastraSandbox<Sandbox> {
   declare readonly processes: PrizedProcessManager;
 
   private _sandbox: Sandbox | null = null;
-  private _retrying = false;
+  private _recovery: Promise<void> | undefined;
   private _preferredSandboxId?: string;
   private readonly _apiKey?: string;
   private readonly _labelValue: string;
@@ -181,6 +183,7 @@ export class PrizedSandbox extends MastraSandbox<Sandbox> {
       ...(o.template !== undefined && { template: o.template }),
       ...(o.resources !== undefined && { resources: o.resources }),
       ...(o.maxRuntimeMin !== undefined && { maxRuntimeMin: o.maxRuntimeMin }),
+      ...(o.autoDeleteMin !== undefined && { autoDeleteMin: o.autoDeleteMin }),
       ...(options?.abortSignal && { signal: options.abortSignal }),
     };
     this._sandbox = await Sandbox.create(createOptions);
@@ -198,28 +201,38 @@ export class PrizedSandbox extends MastraSandbox<Sandbox> {
     if (!sandbox) return;
     try {
       await sandbox.refresh();
-      if (sandbox.state === 'running' || sandbox.state === 'starting') await sandbox.pause();
+      if (sandbox.state === 'starting' || sandbox.state === 'resizing') await settle(sandbox);
+      if (sandbox.state === 'running') await sandbox.pause();
     } catch (error) {
       if (!isGone(error)) throw error;
       this._sandbox = null;
     }
   }
 
-  /** Delete the sandbox and everything in it. One that no longer exists counts as deleted. */
+  /**
+   * Delete the sandbox and everything in it, with any other sandbox labelled with this `id`. One
+   * that no longer exists counts as deleted. Works on a new instance too: `new PrizedSandbox({ id
+   * }).destroy()` deletes the sandbox created under `id` without resuming it.
+   */
   override async destroy(): Promise<void> {
     await this._killTrackedProcesses();
+    const apiKey = this.apiKey;
     let sandbox = this._sandbox;
     this._sandbox = null;
-    if (!sandbox && this._apiKey) {
-      sandbox = (await this.find().catch(() => undefined)) ?? null;
-      this._sandbox = null;
+    if (!sandbox && this._preferredSandboxId) {
+      sandbox = await Sandbox.connect(this._preferredSandboxId, { apiKey }).catch(error => {
+        if (isGone(error)) return null;
+        throw error;
+      });
     }
-    if (!sandbox) return;
-    try {
-      await sandbox.delete();
-    } catch (error) {
-      if (!isGone(error)) throw error;
+    if (sandbox) {
+      try {
+        await sandbox.delete();
+      } catch (error) {
+        if (!isGone(error)) throw error;
+      }
     }
+    await Sandbox.deleteByLabels({ [ID_LABEL]: this._labelValue }, { apiKey });
   }
 
   private async _killTrackedProcesses(): Promise<void> {
@@ -231,25 +244,43 @@ export class PrizedSandbox extends MastraSandbox<Sandbox> {
   /**
    * Run `fn`; if the sandbox turns out to be gone (deleted, or past its run time), forget it, start
    * again (which creates a new one under the same `id`) and run `fn` once more. Only for calls that
-   * did not run when they failed, such as starting a command.
+   * did not run when they failed, such as starting a command. Concurrent callers share one restart.
    * @internal
    */
   async retryOnDead<T>(fn: () => Promise<T>): Promise<T> {
     try {
       return await fn();
     } catch (error) {
-      if (!isGone(error) || this._retrying) throw error;
+      if (this.status === 'destroying' || this.status === 'destroyed') throw error;
+      if (!(await this._isDead(error))) throw error;
+      await this._recover();
+      return await fn();
+    }
+  }
+
+  /** Whether an error means the sandbox is gone: not found, or refused while it is being deleted. */
+  private async _isDead(error: unknown): Promise<boolean> {
+    if (isGone(error)) return true;
+    const sandbox = this._sandbox;
+    if (!(error instanceof PrizedError && error.code === 'sandbox_not_running' && sandbox)) return false;
+    try {
+      await sandbox.refresh();
+    } catch (refreshError) {
+      return isGone(refreshError);
+    }
+    return DEAD.has(sandbox.state);
+  }
+
+  private _recover(): Promise<void> {
+    this._recovery ??= (async () => {
       this.logger.warn(`${LOG_PREFIX} Sandbox is gone; starting a new one`, { id: this.id });
       this._sandbox = null;
       this.status = 'stopped';
-      this._retrying = true;
-      try {
-        await this.ensureRunning();
-        return await fn();
-      } finally {
-        this._retrying = false;
-      }
-    }
+      await this.ensureRunning();
+    })().finally(() => {
+      this._recovery = undefined;
+    });
+    return this._recovery;
   }
 
   // ---------------------------------------------------------------------------
@@ -339,10 +370,6 @@ export class PrizedSandbox extends MastraSandbox<Sandbox> {
 function labelValueFor(id: string): string {
   if (id.length <= MAX_LABEL_VALUE && !id.includes('\0')) return id;
   return `sha256-${createHash('sha256').update(id).digest('hex')}`;
-}
-
-function isGone(error: unknown): boolean {
-  return error instanceof PrizedError && GONE_CODES.has(error.code);
 }
 
 function throwIfAborted(signal?: AbortSignal): void {
