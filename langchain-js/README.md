@@ -2,7 +2,7 @@
 
 > **Coming 2026-11-05.** `@prized/langchain` and the Prized TypeScript SDK it uses (`@prized/sdk`) are not on npm yet.
 
-A [Deep Agents](https://github.com/langchain-ai/deepagentsjs) (LangChain JS) sandbox backend on [Prized](https://prized.dev/docs/sandboxes): the agent's `execute` tool and its file tools (`read_file`, `write_file`, `edit_file`, `ls`, `glob`, `grep`) run in a Prized sandbox, a Firecracker microVM, instead of on your machine.
+A [Deep Agents](https://github.com/langchain-ai/deepagentsjs) (LangChain JS) sandbox backend on [Prized](https://prized.dev/docs/sandboxes?via=langchain-js): the agent's `execute` tool and its file tools (`read_file`, `write_file`, `edit_file`, `ls`, `glob`, `grep`) run in a Prized sandbox, a Firecracker microVM, instead of on your machine.
 
 For Python, see `langchain-prized` (on PyPI from 2026-11-05).
 
@@ -10,7 +10,7 @@ For Python, see `langchain-prized` (on PyPI from 2026-11-05).
 
 ```sh
 npm install @prized/langchain deepagents @langchain/anthropic
-export PRIZED_API_KEY=dcp_...   # prized.dev/dashboard/workspace/api-keys
+export PRIZED_API_KEY=dcp_...   # prized.dev/dashboard/workspace/api-keys?via=langchain-js
 ```
 
 ## Use
