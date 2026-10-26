@@ -2,7 +2,7 @@
 
 > **Coming 2026-11-05.** `prized-adk` and the Prized Python SDK it uses (`prized`) are not on PyPI yet.
 
-Run a [Google ADK](https://google.github.io/adk-docs/) agent's shell commands, files and code in a [Prized](https://prized.dev) sandbox: a Firecracker microVM with its own kernel that pauses with its memory, and forks into live copies.
+Run a [Google ADK](https://google.github.io/adk-docs/) agent's shell commands, files and code in a [Prized](https://prized.dev/?via=adk) sandbox: a Firecracker microVM with its own kernel that pauses with its memory, and forks into live copies.
 
 - `PrizedEnvironment` plugs into ADK's `EnvironmentToolset` (the `Execute`, `ReadFile`, `EditFile` and `WriteFile` tools), like ADK's built-in E2B and Daytona environments.
 - `PrizedCodeExecutor` runs the code blocks an `LlmAgent` writes (`code_executor=`).
@@ -14,7 +14,7 @@ pip install prized-adk
 export PRIZED_API_KEY=dcp_...
 ```
 
-Make the key at https://prized.dev/dashboard/workspace/api-keys with **Full access**, or **Custom** with **Sandboxes: Write**. Python 3.10 or later, `google-adk` 1.30 or later.
+Make the key at https://prized.dev/dashboard/workspace/api-keys?via=adk with **Full access**, or **Custom** with **Sandboxes: Write**. Python 3.10 or later, `google-adk` 1.30 or later.
 
 ## Use it
 
@@ -56,7 +56,7 @@ Options on `PrizedEnvironment`: `template` (`prized-base-v1`, or `prized-agent-v
 
 ## Limits
 
-On free credit, sandboxes run within the free tier: up to 10 at once, each up to 2 vCPU and 4 GB, with 60 minutes of running each. A top-up or a plan lifts that; a paid sandbox runs 24 hours by default, up to 7 days. No inbound ports, no custom images, no GPUs. Details: https://prized.dev/docs/sandboxes
+On free credit, sandboxes run within the free tier: up to 10 at once, each up to 2 vCPU and 4 GB, with 60 minutes of running each. A top-up or a plan lifts that; a paid sandbox runs 24 hours by default, up to 7 days. No inbound ports, no custom images, no GPUs. Details: https://prized.dev/docs/sandboxes?via=adk
 
 ## Tests
 
