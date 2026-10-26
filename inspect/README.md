@@ -11,6 +11,8 @@ pip install inspect-prized
 export PRIZED_API_KEY=dcp_...   # prized.dev/dashboard/workspace/api-keys?via=inspect
 ```
 
+No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=inspect.
+
 The package registers `prized` through Inspect's entry point, so no import is needed for `--sandbox prized` or `sandbox="prized"`.
 
 ## Use
