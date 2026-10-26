@@ -497,3 +497,37 @@ async def test_reinitialize_after_pause_continues_in_the_same_sandbox():
     sb = await AsyncSandbox.connect(env.sandbox_id)
     await sb.delete(wait=True)
     await sb.close()
+
+
+async def test_execute_keeps_the_whole_output():
+  # A timeout of 4 minutes or less takes the SDK's full_output path: more
+  # than the 4 MiB a plain exec keeps comes back whole, and a timed-out
+  # command keeps everything it printed before the kill.
+  env = PrizedEnvironment(**SMALL, labels=LABELS)
+  await env.initialize()
+  CREATED.append(env.sandbox_id)
+  mib = 1024 * 1024
+  try:
+    big = await env.execute(
+        f"head -c {6 * mib} /dev/zero | tr '\\0' a;"
+        f" head -c {5 * mib} /dev/zero | tr '\\0' b >&2",
+        timeout=60,
+    )
+    _log("whole output", big.exit_code, len(big.stdout), len(big.stderr))
+    assert big.exit_code == 0
+    assert big.stdout == "a" * (6 * mib)
+    assert big.stderr == "b" * (5 * mib)
+
+    slow = await env.execute(
+        f"head -c {5 * mib} /dev/zero | tr '\\0' c; sleep 30", timeout=3
+    )
+    _log("timed out", slow.timed_out, len(slow.stdout))
+    assert slow.timed_out is True
+    assert slow.stdout == "c" * (5 * mib)
+
+    left = await env.sandbox.exec("ls -A /home/prized/.prized/exec | wc -l")
+    assert left.stdout.strip() == "0"
+  finally:
+    sandbox_id = env.sandbox_id
+    await env.close()
+  assert await _state(sandbox_id) in ("deleting", "deleted", "gone")
