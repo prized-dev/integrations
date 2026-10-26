@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+node_modules/
+# langchain-js: no lockfile until @prized/sdk is on npm (one made now would point at a local tarball)
+package-lock.json
+*.tgz
+*.whl
+.env
+.env.*

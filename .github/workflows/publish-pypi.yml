@@ -1,0 +1,101 @@
+# Publish one Python package from this repo to PyPI with trusted publishing: no PyPI token anywhere.
+#
+# A release is a manual dispatch from main: pick the folder and untick dry_run. It publishes the
+# version the package's build reports (bump it in a commit first). With dry_run ticked (the default)
+# it tests, builds and test-installs, and publishes nothing.
+#
+# One-time setup:
+# - GitHub: Settings > Environments > New environment "pypi", deployment branches: main only.
+# - PyPI, once per package: add a pending trusted publisher (https://pypi.org/manage/account/publishing/)
+#   with the package's PyPI name, owner prized-dev, repository integrations, workflow publish-pypi.yml,
+#   environment pypi.
+name: publish-pypi
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "Folder to publish"
+        type: choice
+        options: [inspect, adk, strands, agent-framework, pydantic-ai, harbor]
+      dry_run:
+        description: "Test, build and test-install only; publish nothing"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-pypi
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      name: ${{ steps.meta.outputs.name }}
+    env:
+      DIR: ${{ inputs.package }}
+      PUBLISH: ${{ inputs.dry_run == false }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: A publishing dispatch runs from main only
+        run: |
+          if [ "$PUBLISH" = true ] && [ "$GITHUB_REF" != refs/heads/main ]; then
+            echo "::error::a publishing dispatch runs from main only (this is $GITHUB_REF)"; exit 1
+          fi
+      - run: scripts/test.sh "$DIR"
+        env:
+          PYTHON: python
+          REQUIRE_SDK: "1"
+      - run: pip install build twine
+      - run: python -m build "$DIR" --outdir dist
+      - run: twine check --strict dist/*
+      - name: This version isn't on PyPI yet
+        id: meta
+        run: |
+          set -euo pipefail
+          wheel=$(ls dist/*.whl)
+          name=$(basename "$wheel" | cut -d- -f1 | tr _ -)
+          version=$(basename "$wheel" | cut -d- -f2)
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          status=$(curl -s -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/$name/$version/json")
+          if [ "$status" = 200 ] && [ "$PUBLISH" = true ]; then
+            echo "::error::$name $version is already on PyPI; bump the version first"; exit 1
+          fi
+          echo "$name $version, publish=$PUBLISH"
+      - name: The wheel installs and imports in a clean virtualenv
+        run: |
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install dist/*.whl
+          module=$(python -c "import sys, zipfile; names = zipfile.ZipFile(sys.argv[1]).namelist(); print(next(n.split('/')[0] for n in names if n.endswith('/__init__.py')))" dist/*.whl)
+          /tmp/clean/bin/python -c "import importlib, sys; m = importlib.import_module(sys.argv[1]); print(m.__name__, getattr(m, '__version__', ''))" "$module"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    if: inputs.dry_run == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: pypi
+      url: https://pypi.org/p/${{ needs.build.outputs.name }}
+    permissions:
+      id-token: write # trusted publishing: the OIDC token PyPI exchanges for a short-lived upload token
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3

@@ -1,0 +1,260 @@
+"""Offline tests. A fake prized.AsyncSandbox runs every command with the local bash and keeps files
+in a temp dir that stands in for /home/prized, so the package's own shell helpers run for real."""
+
+import os
+import subprocess
+
+import pytest
+from inspect_ai.util import (
+    OutputLimitExceededError,
+    SandboxUnavailableError,
+    SandboxUserUnsupportedError,
+)
+from prized import CommandTimeoutError, ExecResult, PrizedError
+
+import inspect_prized._environment as env_mod
+from inspect_prized import PrizedSandboxConfig, PrizedSandboxEnvironment
+
+
+class FakeFiles:
+    def __init__(self, sb):
+        self.sb = sb
+
+    async def write(self, path, data):
+        local = self.sb.local(path)
+        os.makedirs(os.path.dirname(local), exist_ok=True)
+        with open(local, "wb") as f:
+            f.write(data.encode() if isinstance(data, str) else data)
+
+    async def read_bytes(self, path):
+        with open(self.sb.local(path), "rb") as f:
+            return f.read()
+
+    async def remove(self, path, recursive=False):
+        try:
+            os.remove(self.sb.local(path))
+        except FileNotFoundError:
+            pass
+
+
+class FakeSandbox:
+    made: list = []
+    cut = 10**9  # what one blocking call keeps per stream (4 MiB on Prized)
+
+    def __init__(self, root, options):
+        self.id = f"sbx_fake{len(FakeSandbox.made)}"
+        self.root = root
+        self.options = options
+        self.labels = options.get("labels", {})
+        self.files = FakeFiles(self)
+        self.deleted = self.paused = self.closed = False
+        self.calls: list = []
+        os.makedirs(os.path.join(root, "work"), exist_ok=True)
+        FakeSandbox.made.append(self)
+
+    def local(self, path):
+        return path.replace("/home/prized", self.root)
+
+    async def exec(self, cmd, cwd=None, env=None, timeout=None, **kw):
+        self.calls.append((cmd, cwd, env, timeout, kw))
+        if self.deleted:
+            raise PrizedError("sandbox_deleted", "gone", status=410)
+        argv = [self.local(a) for a in cmd]
+        full_env = {"PATH": os.environ["PATH"], "HOME": self.root, **(env or {})}
+        try:
+            p = subprocess.run(
+                argv,
+                cwd=self.local(cwd or "/home/prized/work"),
+                env=full_env,
+                capture_output=True,
+                timeout=timeout or None,
+            )
+        except subprocess.TimeoutExpired:
+            res = ExecResult(stdout="", stderr="", exit_code=-1, truncated=False, timed_out=True, duration_ms=0)
+            raise CommandTimeoutError(res, timeout, self.id) from None
+        out = p.stdout.decode(errors="replace").replace(self.root, "/home/prized")
+        err = p.stderr.decode(errors="replace").replace(self.root, "/home/prized")
+        cut = FakeSandbox.cut
+        return ExecResult(
+            stdout=out[:cut] if len(out) > cut and not kw else out,
+            stderr=err,
+            exit_code=p.returncode,
+            truncated=len(out) > cut and not kw,
+            timed_out=False,
+            duration_ms=1,
+        )
+
+    async def delete(self, wait=False):
+        self.deleted = True
+        self.delete_waited = wait
+
+    async def pause(self, wait=True):
+        self.paused = True
+
+    async def close(self):
+        self.closed = True
+
+
+@pytest.fixture(autouse=True)
+def fake(monkeypatch, tmp_path):
+    FakeSandbox.made.clear()
+    PrizedSandboxEnvironment._live.clear()
+    n = {"i": 0}
+
+    async def create(**options):
+        n["i"] += 1
+        return FakeSandbox(str(tmp_path / f"home{n['i']}"), options)
+
+    async def connect(sandbox_id, **_):
+        for sb in FakeSandbox.made:
+            if sb.id == sandbox_id and not sb.deleted:
+                return sb
+        raise PrizedError("not_found", "nope", status=404)
+
+    monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(create))
+    monkeypatch.setattr(env_mod.AsyncSandbox, "connect", staticmethod(connect))
+
+
+async def _env(**cfg):
+    config = PrizedSandboxConfig(**cfg)
+    envs = await PrizedSandboxEnvironment.sample_init("unit task", config, {})
+    return envs["default"].as_type(PrizedSandboxEnvironment), config, envs
+
+
+async def test_create_options_and_labels():
+    env, _, _ = await _env(template="prized-agent-v1", vcpu=2, memory_gb=4, env={"A": "1"}, labels={"team": "x"})
+    o = FakeSandbox.made[0].options
+    assert o["template"] == "prized-agent-v1" and o["vcpu"] == 2 and o["memory_gb"] == 4
+    assert o["env_vars"] == {"A": "1"} and o["auto_pause_min"] == 0 and o["max_runtime_min"] == 60
+    assert o["labels"] == {"team": "x", "created-by": "inspect-prized", "inspect-task": "unit-task"}
+    assert "disk_gb" not in o
+
+
+async def test_exec_wrapper_keeps_signal_exit_code_and_stdin():
+    env, _, _ = await _env()
+    r = await env.exec(["sh", "-c", "kill -TERM $$"])
+    assert r.returncode == 143 and not r.success
+    r = await env.exec(["cat"], input="a 'b' $HOME\n")
+    assert r.stdout == "a 'b' $HOME\n"
+    r = await env.exec(["cat"], input="")
+    assert r.stdout == "" and r.success
+
+
+async def test_large_argv_travels_as_a_file():
+    env, _, _ = await _env()
+    chunk = "y" * 70_000
+    r = await env.exec(["printf", "%s", chunk, chunk, chunk, chunk])
+    cmd = FakeSandbox.made[0].calls[-1][0]
+    assert r.stdout[:10] == "y" * 10
+    assert chunk not in cmd and cmd[-1].startswith("/home/prized/.inspect-prized/argv-")
+
+
+async def test_output_cap_raises_limit_error(monkeypatch):
+    monkeypatch.setattr(FakeSandbox, "cut", 64)
+    env, _, _ = await _env()
+    with pytest.raises(OutputLimitExceededError) as e:
+        await env.exec(["bash", "-c", "printf '%0100d' 0"], timeout=10)
+    assert "4 MiB" in str(e.value)
+
+
+async def test_full_output_streams(monkeypatch):
+    monkeypatch.setattr(FakeSandbox, "cut", 64)
+    env, _, _ = await _env(full_output=True)
+    r = await env.exec(["bash", "-c", "printf '%0100d' 0"], timeout=10)
+    assert len(r.stdout) == 100
+    assert "on_stdout" in FakeSandbox.made[0].calls[-1][4]
+
+
+async def test_permission_error_and_timeout():
+    env, _, _ = await _env()
+    with pytest.raises(PermissionError):
+        await env.exec(["/etc/passwd"])
+    with pytest.raises(TimeoutError):
+        await env.exec(["sleep", "5"], timeout=1)
+
+
+async def test_users():
+    env, _, _ = await _env()
+    with pytest.raises(SandboxUserUnsupportedError):
+        await env.exec(["whoami"], user="root")
+    assert (await env.exec(["true"], user="prized")).success
+
+
+async def test_cwd_relative_and_default():
+    env, _, _ = await _env()
+    await env.exec(["mkdir", "sub"])
+    await env.write_file("sub/f.txt", "x")
+    assert (await env.exec(["ls"], cwd="sub")).stdout == "f.txt\n"
+    assert FakeSandbox.made[0].calls[-1][1] == "/home/prized/work/sub"
+
+
+async def test_file_round_trip_and_errors(tmp_path):
+    env, _, _ = await _env()
+    await env.write_file("a/b/c.bin", b"\x00\xff")
+    assert await env.read_file("a/b/c.bin", text=False) == b"\x00\xff"
+    await env.write_file("t.txt", "one")
+    await env.write_file("t.txt", "two")
+    assert await env.read_file("t.txt") == "two"
+    with pytest.raises(FileNotFoundError, match="nope"):
+        await env.read_file("nope")
+    with pytest.raises(IsADirectoryError):
+        await env.read_file("a")
+    with pytest.raises(IsADirectoryError):
+        await env.write_file("a", "x")
+    await env.exec(["chmod", "-w", "t.txt"])
+    with pytest.raises(PermissionError, match="t.txt"):
+        await env.write_file("t.txt", "three")
+    await env.exec(["chmod", "-r", "t.txt"])
+    with pytest.raises(PermissionError, match="t.txt"):
+        await env.read_file("t.txt")
+    leftovers = os.listdir(os.path.join(FakeSandbox.made[0].root, ".inspect-prized"))
+    assert leftovers == []
+
+
+async def test_read_limit():
+    from inspect_ai.util._sandbox.limits import override_max_read_file_size
+
+    env, _, _ = await _env()
+    await env.write_file("big", "a" * 2048)
+    with override_max_read_file_size(1024):
+        with pytest.raises(OutputLimitExceededError):
+            await env.read_file("big")
+
+
+async def test_cleanup_deletes_or_pauses_and_is_per_task():
+    env, cfg, envs = await _env()
+    other = await PrizedSandboxEnvironment.sample_init("other task", cfg, {})
+    await PrizedSandboxEnvironment.sample_cleanup("unit task", cfg, envs, False)
+    assert FakeSandbox.made[0].deleted and FakeSandbox.made[0].closed
+    assert FakeSandbox.made[0].delete_waited  # the slot is free before the next sample starts
+    assert PrizedSandboxEnvironment._live["unit task"] == set()
+    await PrizedSandboxEnvironment.task_cleanup("unit task", cfg, True)
+    assert not FakeSandbox.made[1].deleted
+    await PrizedSandboxEnvironment.task_cleanup("other task", cfg, True)  # sample cleanup never ran there
+    assert FakeSandbox.made[1].deleted and PrizedSandboxEnvironment._live["other task"] == set()
+    kept_cfg = PrizedSandboxConfig(keep=True)
+    kept = await PrizedSandboxEnvironment.sample_init("k", kept_cfg, {})
+    await PrizedSandboxEnvironment.sample_cleanup("k", kept_cfg, kept, True)
+    assert FakeSandbox.made[2].paused and not FakeSandbox.made[2].deleted
+    assert other["default"]
+
+
+async def test_deleted_sandbox_raises_unavailable():
+    env, _, _ = await _env()
+    FakeSandbox.made[0].deleted = True
+    with pytest.raises(SandboxUnavailableError):
+        await env.exec(["true"])
+    with pytest.raises(SandboxUnavailableError):
+        await env.write_file("x.txt", "x")
+    with pytest.raises(SandboxUnavailableError):
+        await env.read_file("x.txt")
+
+
+def test_config_hash_and_deserialize():
+    a = PrizedSandboxConfig(env={"A": "1"}, labels={"x": "y"})
+    assert hash(a) == hash(PrizedSandboxConfig(env={"A": "1"}, labels={"x": "y"}))
+    b = PrizedSandboxConfig(env={"A": "1", "B": "2"})
+    c = PrizedSandboxConfig(env={"B": "2", "A": "1"})
+    assert b == c and hash(b) == hash(c) and {b: 1}[c] == 1
+    assert PrizedSandboxEnvironment.config_deserialize({"vcpu": 2}) == PrizedSandboxConfig(vcpu=2)
+    assert env_mod._label_value("a b/c" * 30).startswith("a-b-c") and len(env_mod._label_value("x" * 99)) == 63

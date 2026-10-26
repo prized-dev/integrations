@@ -1,0 +1,68 @@
+# Lint and offline tests for every integration. No secrets: nothing here talks to the Prized API.
+# scripts/test.sh is the same script contributors run locally, and it cuts the network off (loopback
+# stays up) while the tests run.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.dir }} (${{ matrix.python || matrix.node && format('node {0}', matrix.node) || 'bash' }}${{ matrix.floor && ', oldest deps' || '' }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { dir: inspect, python: "3.10", floor: true }
+          - { dir: inspect, python: "3.13" }
+          - { dir: adk, python: "3.10", floor: true }
+          - { dir: adk, python: "3.13" }
+          - { dir: strands, python: "3.10", floor: true }
+          - { dir: strands, python: "3.13" }
+          - { dir: agent-framework, python: "3.10", floor: true }
+          - { dir: agent-framework, python: "3.13" }
+          - { dir: pydantic-ai, python: "3.11", floor: true }
+          - { dir: pydantic-ai, python: "3.13" }
+          - { dir: harbor, python: "3.12", floor: true }
+          - { dir: harbor, python: "3.13" }
+          - { dir: hermes, python: "3.12" }
+          - { dir: claude-managed-agents }
+          - { dir: langchain-js, node: "20" }
+          - { dir: langchain-js, node: "24" }
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - if: matrix.python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - if: matrix.node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ matrix.node }}
+      - run: scripts/test.sh ${{ matrix.dir }}
+        env:
+          PYTHON: python
+          FLOOR: ${{ matrix.floor && '1' || '' }}
+
+  shell:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - run: shellcheck scripts/test.sh claude-managed-agents/on-work.sh claude-managed-agents/test/test.sh

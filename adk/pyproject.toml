@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "prized-adk"
+dynamic = ["version"]
+description = "Prized Sandboxes for Google ADK: a remote workspace (EnvironmentToolset) and a code executor in Firecracker microVMs."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["google-adk", "adk", "prized", "sandbox", "code execution", "microvm", "agents"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Typing :: Typed",
+]
+dependencies = ["google-adk>=1.30", "prized>=0.1,<1"]
+
+[project.optional-dependencies]
+test = ["pytest>=8", "pytest-asyncio>=0.23"]
+
+[project.urls]
+Homepage = "https://prized.dev/docs/sandboxes-adk"
+Documentation = "https://prized.dev/docs/sandboxes-adk"
+Source = "https://github.com/prized-dev/integrations/tree/main/adk"
+Issues = "https://github.com/prized-dev/integrations/issues"
+
+[tool.hatch.version]
+path = "src/prized_adk/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/prized_adk"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = ["live: talks to the real Prized API (needs PRIZED_API_KEY)"]
+
+[tool.pyink]
+line-length = 80
+unstable = true
+pyink-indentation = 2
+pyink-use-majority-quotes = true
+
+[tool.isort]
+profile = "google"
+line_length = 200
+known_third_party = ["google.adk"]

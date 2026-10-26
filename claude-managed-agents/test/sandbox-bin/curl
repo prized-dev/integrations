@@ -1,0 +1,21 @@
+#!/bin/sh
+# The fake sandbox's curl, for `curl -fsSL -o FILE URL` only. It serves STUB_ANT_TGZ for the one URL
+# on-work.sh should ask for (ant 2.3.0, linux amd64) and fails (curl -f's 22) for any other.
+# If the file STUB_CURL_FAIL_ONCE names exists, it is removed and the download fails; if the file
+# STUB_EVIL_ONCE names exists, it is removed and STUB_EVIL_TGZ (a different ant) is served instead.
+out='' url=''
+while [ $# -gt 0 ]; do
+  case $1 in -o) out=$2; shift 2 ;; -*) shift ;; *) url=$1; shift ;; esac
+done
+want=https://github.com/anthropics/anthropic-cli/releases/download/v2.3.0/ant_2.3.0_linux_amd64.tar.gz
+if [ -n "${STUB_CURL_ANY:-}" ]; then  # test.sh --contrast runs other scripts, which ask for other releases
+  if [ -n "$out" ]; then cp "$STUB_ANT_TGZ" "$out"; else cat "$STUB_ANT_TGZ"; fi; exit 0
+fi
+if [ "$url" != "$want" ] || [ -z "$out" ]; then echo "curl (test): unexpected request: -o '$out' '$url'" >&2; exit 22; fi
+if [ -n "${STUB_CURL_FAIL_ONCE:-}" ] && [ -e "$STUB_CURL_FAIL_ONCE" ]; then
+  rm -f "$STUB_CURL_FAIL_ONCE"; echo "curl: (22) The requested URL returned error: 503" >&2; exit 22
+fi
+if [ -n "${STUB_EVIL_ONCE:-}" ] && [ -e "$STUB_EVIL_ONCE" ]; then
+  rm -f "$STUB_EVIL_ONCE"; cp "$STUB_EVIL_TGZ" "$out"; exit 0
+fi
+cp "$STUB_ANT_TGZ" "$out"

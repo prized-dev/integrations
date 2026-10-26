@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "strands-prized"
+dynamic = ["version"]
+description = "Prized Sandboxes for Strands Agents: run an agent's shell, code and file tools in a Firecracker microVM that pauses and forks."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["strands", "strands-agents", "agents", "ai", "sandbox", "prized", "microvm"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Typing :: Typed",
+]
+dependencies = ["strands-agents>=1.59,<2", "prized>=0.1,<1"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.25", "ruff>=0.11", "mypy>=1.15"]
+
+[project.urls]
+Homepage = "https://prized.dev/docs/sandboxes-strands"
+Documentation = "https://prized.dev/docs/sandboxes-strands"
+Source = "https://github.com/prized-dev/integrations/tree/main/strands"
+Issues = "https://github.com/prized-dev/integrations/issues"
+
+[tool.hatch.version]
+path = "src/strands_prized/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/strands_prized"]
+
+[tool.ruff]
+line-length = 120
+include = ["src/**/*.py", "tests/**/*.py", "examples/**/*.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = ["live: talks to the real Prized API (needs PRIZED_API_KEY and PRIZED_LIVE=1)"]

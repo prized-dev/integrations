@@ -1,0 +1,54 @@
+name: prized
+version: 0.1.0
+description: Prized terminal backend — Linux microVMs that pause between turns with their memory, so background processes keep running
+author: Prized (prized.dev)
+kind: backend
+requires_env:
+  - PRIZED_API_KEY
+# Optional settings, read from plugins.entries.prized.settings in config.yaml.
+config_schema:
+  scope:
+    type: str
+    label: Sandbox scope
+    description: >-
+      "instance" (default) shares one persistent sandbox across every session,
+      cron job and subagent of this Hermes home: one machine for your agent.
+      "session" gives each session its own sandbox (use it for a gateway that
+      serves several people).
+    choices: [instance, session]
+    default: instance
+  template:
+    type: str
+    label: Sandbox template
+    description: >-
+      Template id for new sandboxes (GET /api/v1/sandbox-templates lists them).
+      Default prized-base-v1: Ubuntu 24.04 with git, Python 3 and Node.js 22.
+  vcpu:
+    type: int
+    label: vCPUs
+    description: vCPUs for new sandboxes, 1 to 32 (2 at most on the free tier). Default 2.
+  memory_mb:
+    type: int
+    label: Memory (MB)
+    description: Memory for new sandboxes in MB, 1024 to 131072 (4096 at most on the free tier). Default 4096.
+  auto_pause_min:
+    type: int
+    label: Auto-pause (minutes)
+    description: >-
+      Pause after this many idle minutes even if Hermes never releases the
+      sandbox. 0 turns it off. Default 10.
+  max_runtime_min:
+    type: int
+    label: Lifetime (minutes)
+    description: >-
+      Minutes of running before the sandbox is deleted (each resume restarts
+      the clock), at most 10080. Unset uses the default (1440, or 60 in all
+      on the free tier).
+  labels:
+    type: dict
+    label: Labels
+    description: Extra string labels on every sandbox this plugin creates (keys must not start with "hermes").
+  api_url:
+    type: str
+    label: API URL
+    description: Prized API base URL. Default https://api.prized.dev/api/v1.

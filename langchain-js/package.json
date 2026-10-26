@@ -1,0 +1,79 @@
+{
+  "name": "@prized/langchain",
+  "version": "0.1.0",
+  "description": "Prized Sandboxes for LangChain Deep Agents (JS): run an agent's shell and file tools in a Firecracker microVM.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "langchain",
+    "deepagents",
+    "deep-agents",
+    "sandbox",
+    "prized",
+    "microvm",
+    "agents"
+  ],
+  "author": "Prized <team@prized.dev>",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/prized-dev/integrations/tree/main/langchain-js#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prized-dev/integrations.git",
+    "directory": "langchain-js"
+  },
+  "bugs": {
+    "url": "https://github.com/prized-dev/integrations/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run test/unit.test.ts",
+    "test:int": "vitest run test/standard.int.test.ts",
+    "example": "tsx examples/fix-bug.ts"
+  },
+  "dependencies": {
+    "@prized/sdk": "^0.1.0"
+  },
+  "peerDependencies": {
+    "deepagents": ">=1.13.4"
+  },
+  "devDependencies": {
+    "@langchain/core": "^1.3.0",
+    "@langchain/langgraph": "^1.5.2",
+    "@langchain/openai": "^1.7.0",
+    "@langchain/sandbox-standard-tests": "^2.0.1",
+    "@types/node": "^26.6.5",
+    "deepagents": "^1.15.1",
+    "langchain": "^1.5.19",
+    "tsdown": "^0.23.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

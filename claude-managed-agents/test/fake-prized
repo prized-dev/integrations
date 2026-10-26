@@ -1,0 +1,200 @@
+#!/usr/bin/env python3
+"""A stand-in for the `prized` CLI, for test.sh: just the `prized sandbox` commands on-work.sh uses.
+
+Each "sandbox" is a directory under $FAKE_PRIZED_ROOT whose home/ plays /home/prized. Commands run
+there with a clean environment, as they would in a real sandbox: nothing from this machine's
+environment gets in (except STUB_* settings for the stub worker). Every call is logged to calls.log.
+"""
+
+import json
+import os
+import signal
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(os.environ["FAKE_PRIZED_ROOT"])
+HERE = Path(__file__).resolve().parent
+
+
+def log(argv):
+    with open(ROOT / "calls.log", "a") as f:
+        envkey = "ANTHROPIC_ENVIRONMENT_KEY" in os.environ
+        f.write(json.dumps({"t": time.time(), "argv": argv, "envkey": envkey}) + "\n")
+
+
+def meta_path(sid):
+    return ROOT / sid / "meta.json"
+
+
+def load(sid):
+    p = meta_path(sid)
+    if not p.exists():
+        print(f"prized: sandbox {sid} not found", file=sys.stderr)
+        sys.exit(1)
+    return json.loads(p.read_text())
+
+
+def save(m):
+    meta_path(m["id"]).write_text(json.dumps(m))
+
+
+def home(sid):
+    return ROOT / sid / "home"
+
+
+def flags(args, repeatable=("label", "env")):
+    out, rest, i = {}, [], 0
+    while i < len(args):
+        a = args[i]
+        if a == "--":
+            rest.extend(args[i:])
+            break
+        if a.startswith("--"):
+            name = a[2:]
+            if name in ("wait", "no-wait", "json"):
+                out[name] = True
+            else:
+                i += 1
+                if name in repeatable:
+                    out.setdefault(name, []).append(args[i])
+                else:
+                    out[name] = args[i]
+        else:
+            rest.append(a)
+        i += 1
+    return out, rest
+
+
+def seconds(d):
+    units = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+    return float(d[:-1]) * units[d[-1]] if d[-1] in units else float(d)
+
+
+def worker_groups(sid):
+    """Process groups of the workers alive in a sandbox, from their pid files."""
+    groups = []
+    for p in home(sid).glob(".anthropic/*/pid"):
+        try:
+            g = int(p.read_text().strip())
+            os.killpg(g, 0)
+            groups.append(g)
+        except (ValueError, OSError):
+            pass
+    return groups
+
+
+def wake(m):
+    if m["state"] in ("paused", "pausing"):
+        for g in m.pop("frozen", []):  # a paused sandbox's processes carry on where they stopped
+            try:
+                os.killpg(g, signal.SIGCONT)
+            except OSError:
+                pass
+        m["state"] = "running"
+        m["resumes"] = m.get("resumes", 0) + 1
+        save(m)
+
+
+def remote_path(sid, p):
+    p = p[2:] if p.startswith("~/") else p
+    return home(sid) / p if not p.startswith("/") else Path(p)
+
+
+def main():
+    argv = sys.argv[1:]
+    log(argv)
+    if argv[:1] != ["sandbox"]:
+        sys.exit("fake-prized: only `prized sandbox` is faked")
+    verb, args = argv[1], argv[2:]
+    f, rest = flags(args)
+
+    if verb == "ls":
+        boxes = []
+        for p in sorted(ROOT.glob("sbx_*/meta.json")):
+            m = json.loads(p.read_text())
+            if m["state"] != "deleted":
+                boxes.append({"id": m["id"], "state": m["state"], "labels": m["labels"]})
+        print(json.dumps({"sandboxes": list(reversed(boxes))}))
+    elif verb == "create":
+        n = len(list(ROOT.glob("sbx_*"))) + 1
+        sid = f"sbx_{n:016x}"
+        (home(sid) / "work").mkdir(parents=True)
+        labels = dict(kv.split("=", 1) for kv in f.get("label", []))
+        save({"id": sid, "state": "running", "labels": labels, "flags": f})
+        print(sid)
+    elif verb == "resume":
+        m = load(rest[0])
+        if m.get("resume_fails"):
+            print(f"prized: sandbox {m['id']} can't be resumed (test)", file=sys.stderr)
+            sys.exit(5)
+        wake(m)
+        m["state"] = "running"
+        save(m)
+    elif verb == "pause":
+        time.sleep(float(os.environ.get("FAKE_PAUSE_DELAY", "0")))  # a real pause can take seconds
+        m = load(rest[0])
+        groups = worker_groups(m["id"])  # a pause freezes everything in the sandbox, workers too
+        for g in groups:
+            os.killpg(g, signal.SIGSTOP)
+        m["frozen"] = m.get("frozen", []) + groups
+        m["froze_live_workers"] = m.get("froze_live_workers", 0) + len(groups)
+        m["state"] = "paused"
+        m["pauses"] = m.get("pauses", 0) + 1
+        save(m)
+    elif verb == "get":
+        m = load(rest[0])
+        print(json.dumps({"sandbox": {"id": m["id"], "state": m["state"], "labels": m["labels"]}}))
+    elif verb == "rm":
+        for sid in rest:
+            m = load(sid)
+            m["state"] = "deleted"
+            save(m)
+    elif verb == "cp":
+        src, dst = rest
+        if src == "-":
+            sid, p = dst.split(":", 1)
+            wake(load(sid))
+            target = remote_path(sid, p)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(sys.stdin.buffer.read())
+            os.chmod(target, 0o644)
+        else:
+            sid, p = src.split(":", 1)
+            wake(load(sid))
+            data = remote_path(sid, p).read_bytes()
+            if dst == "-":
+                sys.stdout.buffer.write(data)
+            else:
+                Path(dst).write_bytes(data)
+    elif verb == "exec":
+        sid, cmd = rest[0], " ".join(rest[2:])  # rest[1] is "--"
+        m = load(sid)
+        if m["state"] == "deleted":
+            print(f"prized: sandbox {sid} not found", file=sys.stderr)
+            sys.exit(1)
+        wake(m)
+        env = {"HOME": str(home(sid)), "PATH": f"{HERE}/sandbox-bin:/usr/local/bin:/usr/bin:/bin", "LANG": "C.UTF-8"}
+        env.update({k: v for k, v in os.environ.items() if k.startswith("STUB_")})
+        env.update(kv.split("=", 1) for kv in f.get("env", []))
+        timeout = seconds(f.get("timeout", "5m"))
+        proc = subprocess.Popen(["bash", "-c", cmd], cwd=home(sid) / "work", env=env, start_new_session=True)
+
+        def stop(signum, frame):  # the caller went away: end its command too, so a test leaves nothing running
+            os.killpg(proc.pid, signal.SIGKILL)
+            sys.exit(128 + signum)
+
+        signal.signal(signal.SIGTERM, stop)
+        signal.signal(signal.SIGINT, stop)
+        try:
+            sys.exit(proc.wait(timeout=timeout))
+        except subprocess.TimeoutExpired:
+            os.killpg(proc.pid, 9)
+            sys.exit(124)
+    else:
+        sys.exit(f"fake-prized: sandbox {verb} is not faked")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pydantic-ai-prized"
+dynamic = ["version"]
+description = "Prized Sandboxes as a Pydantic AI workspace: run Coder, Shell and FileSystem in a Firecracker microVM."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["pydantic-ai", "pydantic-ai-harness", "prized", "sandbox", "workspace", "microvm", "agents"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Framework :: Pydantic",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Typing :: Typed",
+]
+dependencies = ["pydantic-ai-slim>=2.59,<3", "prized>=0.1,<0.2", "anyio>=4"]
+
+[project.optional-dependencies]
+test = ["pytest>=8", "anyio[trio]>=4", "pydantic-ai-harness[coder]>=0.59"]
+
+[project.urls]
+Homepage = "https://prized.dev/sandboxes"
+Documentation = "https://prized.dev/docs/sandboxes"
+"API reference" = "https://prized.dev/docs/sandboxes-api"
+Repository = "https://github.com/prized-dev/integrations/tree/main/pydantic-ai"
+Issues = "https://github.com/prized-dev/integrations/issues"
+
+[tool.hatch.version]
+path = "src/pydantic_ai_prized/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pydantic_ai_prized"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/pydantic_ai_prized", "tests", "examples", "README.md", "LICENSE", "pyproject.toml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = ["live: talks to the real Prized API (needs PRIZED_API_KEY)"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "RUF"]
+ignore = ["E501"]

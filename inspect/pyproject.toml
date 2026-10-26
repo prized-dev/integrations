@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "inspect-prized"
+dynamic = ["version"]
+description = "Prized Sandboxes for Inspect AI: each sample runs in its own Firecracker microVM."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["inspect", "inspect-ai", "evals", "sandbox", "prized", "microvm"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Typing :: Typed",
+]
+dependencies = ["inspect-ai>=0.3.280,<0.4", "prized>=0.1,<1"]
+
+[project.entry-points.inspect_ai]
+prized = "inspect_prized"
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.25", "ruff>=0.11"]
+
+[project.urls]
+Homepage = "https://prized.dev/docs/sandboxes"
+Source = "https://github.com/prized-dev/integrations/tree/main/inspect"
+Issues = "https://github.com/prized-dev/integrations/issues"
+
+[tool.hatch.version]
+path = "src/inspect_prized/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/inspect_prized"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = ["live: talks to the real Prized API (needs PRIZED_API_KEY and PRIZED_LIVE=1)"]

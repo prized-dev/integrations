@@ -1,0 +1,23 @@
+#!/bin/sh
+# Stands in for `ant` inside a fake sandbox. `beta:worker run` records what it was given, then works
+# for STUB_RUN_SECONDS (default 3) the way a session's run would. After it writes "end" it lingers
+# STUB_TAIL_SECONDS (default 0) before exiting, like a worker posting its last events. STUB_DIE=1 makes
+# it kill its whole process group instead, so no exit code is ever written.
+case "$1" in --version) echo "ant version 2.3.0"; exit 0 ;; esac
+[ "$1 $2" = "beta:worker run" ] || { echo "stub-ant: only beta:worker run" >&2; exit 2; }
+seen="$HOME/.anthropic/seen/$ANTHROPIC_WORK_ID"
+mkdir -p "$seen"
+env | grep '^ANTHROPIC_' | sort > "$seen/env"
+echo "$@" > "$seen/args"
+stat -c %a "$ANTHROPIC_WORK_SECRET_FILE" > "$seen/secret-mode"
+cat "$ANTHROPIC_WORK_SECRET_FILE" > "$seen/secret"
+ls "$HOME/work" > "$seen/files-before"
+touch "$HOME/work/made-by-$ANTHROPIC_WORK_ID"
+date +%s.%N > "$seen/start"
+trap 'date +%s.%N > "$seen/term"; exit 143' TERM
+if [ "${STUB_DIE:-}" = 1 ]; then sleep 1; date +%s.%N > "$seen/died"; kill -KILL 0; fi
+sleep "${STUB_RUN_SECONDS:-3}" &
+wait $!
+date +%s.%N > "$seen/end"
+sleep "${STUB_TAIL_SECONDS:-0}" &
+wait $!
