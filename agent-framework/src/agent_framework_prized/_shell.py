@@ -83,8 +83,8 @@ _LABELS = {"agent-framework": "shell"}
 _PIP_ENV = {"PIP_BREAK_SYSTEM_PACKAGES": "1"}
 _OS_DESCRIPTION = "Linux (a Prized sandbox: an Ubuntu 24.04 microVM)"
 _CAPPED_NOTE = (
-    "\n[prized: the sandbox kept only the first 4 MiB of this command's output; redirect large output "
-    "to a file and read its tail]\n"
+    "\n[prized: the sandbox kept only the start of this command's output; redirect large output to a "
+    "file and read its tail]\n"
 )
 _REPLACED_NOTE = (
     "[prized: the previous sandbox was gone (its run time ended or it was deleted after being "
@@ -659,7 +659,12 @@ class PrizedShellTool:
             script, staged = await self._script(target, command)
             try:
                 result: PrizedExecResult = await target.exec(
-                    script, cwd="/", env=self._env, timeout=0 if limit is None else limit, **streams
+                    script,
+                    cwd="/",
+                    env=self._env,
+                    timeout=0 if limit is None else limit,
+                    full_output=True,
+                    **streams,
                 )
             except Exception:
                 if staged is not None:  # the script removes it when it runs

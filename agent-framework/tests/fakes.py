@@ -237,6 +237,7 @@ class FakeAsyncSandbox:
         timeout: float | None = None,
         on_stdout: Callable[[str], Any] | None = None,
         on_stderr: Callable[[str], Any] | None = None,
+        full_output: bool = False,
     ) -> ExecResult:
         r = self.remote
         script = r.to_local(cmd if isinstance(cmd, str) else shlex.join(cmd))

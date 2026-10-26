@@ -170,7 +170,19 @@ async def test_a_replacement_closes_the_old_handle(sdk):
     await shell.close()
 
 
-# when the sandbox kept only the first 4 MiB, the model is told.
+# each command keeps its whole output (up to the SDK's 100 MiB a stream), not the
+# first 4 MiB one plain call keeps; past that, the model is told.
+
+
+async def test_commands_keep_their_whole_output(sdk):
+    for mode in ("persistent", "stateless"):
+        shell = PrizedShellTool(mode=mode)
+        assert (await shell.run("echo hi")).stdout == "hi\n"
+        await shell.close()
+    assert len(sdk.created) == 2
+    for remote in sdk.created:
+        commands = [kw for cmd, kw in remote.calls if "__prized_c=" in str(cmd)]
+        assert len(commands) == 1 and commands[0].get("full_output") is True
 
 
 async def test_capped_output_says_so(sdk):
@@ -178,7 +190,7 @@ async def test_capped_output_says_so(sdk):
     await shell.start()
     sdk.created[0].handler = lambda cmd, kw: ExecResult("x" * 10, "", 0, truncated=True)
     result = await shell.run("yes")
-    assert result.truncated and "first 4 MiB" in result.stderr
+    assert result.truncated and "kept only the start of this command's output" in result.stderr
     sdk.created[0].handler = None
     await shell.close()
 
