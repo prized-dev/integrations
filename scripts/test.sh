@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # Lint and test one integration offline, the way CI does: a fresh virtualenv (or a temp copy for
-# Node), no API key, and, where the machine allows it, no network while the tests run.
+# Node), tests run with an empty environment (env -i) and a fresh HOME, and, where the machine allows
+# it, no network while they run.
 #
 #   scripts/test.sh <folder>            # latest dependencies
 #   FLOOR=1 scripts/test.sh <folder>    # the oldest framework versions the package supports
 #   PYTHON=python3.10 scripts/test.sh inspect
 #
-# Live tests are never run here: they need PRIZED_API_KEY plus a flag, and this script unsets both.
+# Live tests are never run here: they need PRIZED_API_KEY plus a flag, and no test step sees either.
 #
 # SDK-PRERELEASE: the Prized SDKs (`prized` on PyPI, `@prized/sdk` on npm) are published on 2026-11-05.
 # Until then, set PRIZED_SDK_DIST to a directory holding prized-*.whl and prized-sdk-*.tgz built
@@ -51,8 +52,17 @@ need_sdk() {
   exit 0
 }
 
-# offline CMD...: run CMD as this user in a network namespace of its own (loopback only), through
-# sudo (CI runners) or user namespaces, whichever works here; else as is, with a notice.
+# scrubbed [NAME=value...] CMD...: run CMD with an empty environment plus PATH, a fresh HOME and the
+# NAME=value pairs given, so no key, token, proxy or API endpoint set in this shell (or kept in the
+# real HOME) reaches a test.
+scrubbed() {
+  mkdir -p "$WORK/home"
+  env -i PATH="$PATH" HOME="$WORK/home" "$@"
+}
+
+# offline [NAME=value...] CMD...: scrubbed, and as this user in a network namespace of its own
+# (loopback only), through sudo (CI runners) or user namespaces, whichever works here; else as is,
+# with a notice.
 via_sudo() {
   sudo -n --preserve-env unshare --net -- sh -c 'ip link set lo up && exec "$@"' sh \
     setpriv --reuid="$(id -u)" --regid="$(id -g)" --init-groups -- "$@"
@@ -62,8 +72,8 @@ via_userns() {
     unshare --user --map-user="$(id -u)" --map-group="$(id -g)" -- "$@"
 }
 offline() {
-  local clean=(env -u PRIZED_API_KEY -u PRIZED_LIVE -u PRIZED_LIVE_TESTS -u ANTHROPIC_API_KEY -u OPENROUTER_API_KEY
-    PATH="$PATH" HOME="$HOME")
+  mkdir -p "$WORK/home"
+  local clean=(env -i PATH="$PATH" HOME="$WORK/home")
   local isolated me
   me=$(id -u)
   isolated="[ \"\$(id -u)\" = $me ] && ! getent ahosts pypi.org >/dev/null"
@@ -119,14 +129,14 @@ case $DIR in
     git -c advice.detachedHead=false clone -q --filter=blob:none https://github.com/NousResearch/hermes-agent "$WORK/hermes-agent"
     git -C "$WORK/hermes-agent" checkout -q "$HERMES_AGENT_SHA"
     (cd "$WORK/hermes-agent" && uv sync -q --locked --python 3.14 --group dev)
-    HERMES_AGENT_REPO="$WORK/hermes-agent" offline "$WORK/hermes-agent/.venv/bin/python" -m pytest -rs -p no:cacheprovider tests ;;
+    offline HERMES_AGENT_REPO="$WORK/hermes-agent" "$WORK/hermes-agent/.venv/bin/python" -m pytest -rs -p no:cacheprovider tests ;;
   claude-managed-agents)
     # The test drives on-work.sh with the real `ant` poller, checked against its published sha256.
     curl -fsSL -o "$WORK/ant.tgz" \
       "https://github.com/anthropics/anthropic-cli/releases/download/v$ANT_VERSION/ant_${ANT_VERSION}_linux_amd64.tar.gz"
     echo "$ANT_SHA256  $WORK/ant.tgz" | sha256sum -c --quiet -
     tar -xzf "$WORK/ant.tgz" -C "$WORK" ant
-    ANT="$WORK/ant" offline bash test/test.sh ;;
+    offline ANT="$WORK/ant" bash test/test.sh ;;
   dify)
     # A Dify plugin ships as a .difypkg, not a wheel: requirements.txt is what Dify installs, and
     # pyproject.toml holds only the lint and test settings.
@@ -137,12 +147,13 @@ case $DIR in
     offline pytest -rs -p no:cacheprovider
     # Then inside Dify's own plugin runtime: the pinned Dify plugin CLI, checked against its published
     # sha256, packages the plugin and runs it (`dify plugin run`) against a fake API on 127.0.0.1. The
-    # network stays up for this step, for the runtime's own install of requirements.txt; the key is unset.
+    # network stays up for this step, for the runtime's own install of requirements.txt; the
+    # environment is scrubbed all the same (DIFY_PACKAGE_OUT, where to keep the package, passes).
     curl -fsSL -o "$WORK/dify" \
       "https://github.com/langgenius/dify-plugin-daemon/releases/download/$DIFY_CLI_VERSION/dify-plugin-linux-amd64"
     echo "$DIFY_CLI_SHA256  $WORK/dify" | sha256sum -c --quiet -
     chmod +x "$WORK/dify"
-    env -u PRIZED_API_KEY -u PRIZED_LIVE DIFY_CLI_PATH="$WORK/dify" \
+    scrubbed DIFY_CLI_PATH="$WORK/dify" ${DIFY_PACKAGE_OUT:+"DIFY_PACKAGE_OUT=$DIFY_PACKAGE_OUT"} \
       pytest -rs -p no:cacheprovider tests/test_dify_runtime.py ;;
   langchain-js)
     # No lockfile until @prized/sdk is on npm (the one made here would point at a local tarball).
