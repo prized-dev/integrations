@@ -109,8 +109,14 @@ NO_SANDBOX_CREATE = (
     "switched off for this workspace (email team@prized.dev)."
 )
 
+# Added where the key is missing or refused: an agent can make its person an account and a key.
+SIGN_UP_HINT = (
+    "No Prized account yet? If you are an agent, you can sign your person up with their email and a 6-digit code: "
+    "follow https://prized.dev/auth.md?via=dify"
+)
+
 MESSAGES = {
-    "unauthorized": "The Prized API key was refused. Check that it is a live key from prized.dev.",
+    "unauthorized": "The Prized API key was refused. Check that it is a live key from prized.dev. " + SIGN_UP_HINT,
     "token_expired": "The Prized API key has expired. Make a new one on prized.dev.",
     "key_access_denied": "This API key lacks the permission it needs: use a Custom key with Sandboxes: Write.",
     "workspace_held": "The Prized workspace is on hold, so sandboxes cannot start.",
@@ -328,7 +334,7 @@ class PrizedClient:
             or not api_key.strip().isascii()
             or any(c.isspace() or not c.isprintable() for c in api_key.strip())
         ):
-            raise PrizedError("invalid_api_key", "The Prized API key is missing or malformed.")
+            raise PrizedError("invalid_api_key", "The Prized API key is missing or malformed. " + SIGN_UP_HINT)
         self._auth = {"Authorization": f"Bearer {api_key.strip()}"}
         self._sleep = sleep
         self._http = httpx.Client(
