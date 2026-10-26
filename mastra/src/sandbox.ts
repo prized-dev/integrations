@@ -6,7 +6,7 @@
  * creates), resumes it if it is paused, or creates one. `stop()` pauses it, keeping memory and
  * disk; `destroy()` deletes it.
  *
- * @see https://prized.dev/docs/sandboxes
+ * @see https://prized.dev/docs/sandboxes?via=mastra
  */
 
 import { createHash } from 'node:crypto';
@@ -140,7 +140,7 @@ export class PrizedSandbox extends MastraSandbox<Sandbox> {
   private get apiKey(): string {
     if (!this._apiKey) {
       throw new Error(
-        `${LOG_PREFIX} Missing Prized API key. Pass \`apiKey\` or set PRIZED_API_KEY (https://prized.dev/dashboard/workspace/api-keys).`,
+        `${LOG_PREFIX} Missing Prized API key. Pass \`apiKey\` or set PRIZED_API_KEY (https://prized.dev/dashboard/workspace/api-keys?via=mastra).`,
       );
     }
     return this._apiKey;

@@ -2,13 +2,13 @@
 
 > **Coming 2026-11-05.** `@prized/mastra` and the Prized TypeScript SDK it uses (`@prized/sdk`) are not on npm yet.
 
-A [Mastra](https://mastra.ai) workspace sandbox on [Prized](https://prized.dev/docs/sandboxes): an agent's `execute_command`, background processes and file tools (read, write, edit, list, grep) run in a Prized sandbox, a Firecracker microVM, instead of on your server. `stop()` pauses the sandbox with its memory and disk, and the same `id` resumes it later, from this process or another.
+A [Mastra](https://mastra.ai) workspace sandbox on [Prized](https://prized.dev/docs/sandboxes?via=mastra): an agent's `execute_command`, background processes and file tools (read, write, edit, list, grep) run in a Prized sandbox, a Firecracker microVM, instead of on your server. `stop()` pauses the sandbox with its memory and disk, and the same `id` resumes it later, from this process or another.
 
 ## Install
 
 ```sh
 npm install @prized/mastra @mastra/core
-export PRIZED_API_KEY=dcp_...   # https://prized.dev/dashboard/workspace/api-keys
+export PRIZED_API_KEY=dcp_...   # https://prized.dev/dashboard/workspace/api-keys?via=mastra
 ```
 
 Needs Node.js 22.13 or later and `@mastra/core` 1.79 or later.
