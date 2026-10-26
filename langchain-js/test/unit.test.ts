@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const state = vi.hoisted(() => ({ made: [] as any[], root: "" }));
+const state = vi.hoisted(() => ({ made: [] as any[], root: "", cut: Infinity, fullCut: Infinity }));
 
 vi.mock("@prized/sdk", () => {
   class PrizedError extends Error {
@@ -17,12 +17,16 @@ vi.mock("@prized/sdk", () => {
     }
   }
   class CommandTimeoutError extends PrizedError {
-    stdout: string;
-    stderr: string;
-    constructor(stdout: string, stderr: string) {
+    result: any;
+    constructor(result: any) {
       super("command_timeout");
-      this.stdout = stdout;
-      this.stderr = stderr;
+      this.result = result;
+    }
+    get stdout() {
+      return this.result.stdout;
+    }
+    get stderr() {
+      return this.result.stderr;
     }
   }
   class FakeSandbox {
@@ -73,8 +77,19 @@ vi.mock("@prized/sdk", () => {
         encoding: "utf8",
       });
       const back = (s: string) => (s ?? "").split(this.root).join("/home/prized");
-      if (r.error && (r.error as any).code === "ETIMEDOUT") throw new CommandTimeoutError(back(r.stdout), back(r.stderr));
-      return { stdout: back(r.stdout), stderr: back(r.stderr), exitCode: r.status ?? -1, durationMs: 1 };
+      // What one call keeps per stream: 4 MiB on Prized, 100 MiB with fullOutput.
+      const cut = opts.fullOutput ? state.fullCut : state.cut;
+      const [stdout, stderr] = [back(r.stdout), back(r.stderr)];
+      const result = {
+        stdout: stdout.slice(0, cut),
+        stderr: stderr.slice(0, cut),
+        exitCode: r.status ?? -1,
+        durationMs: 1,
+        timedOut: false,
+        truncated: stdout.length > cut || stderr.length > cut,
+      };
+      if (r.error && (r.error as any).code === "ETIMEDOUT") throw new CommandTimeoutError({ ...result, exitCode: -1, timedOut: true });
+      return result;
     }
     failDeletes = 0;
     async delete() {
@@ -99,6 +114,7 @@ const { PrizedSandbox, createPrizedSandboxFactory, createPrizedSandboxFactoryFro
 beforeEach(() => {
   state.made.length = 0;
   state.root = mkdtempSync(join(tmpdir(), "prized-langchain-"));
+  state.cut = state.fullCut = Infinity;
 });
 afterEach(() => {
   rmSync(state.root, { recursive: true, force: true });
@@ -142,6 +158,26 @@ describe("PrizedSandbox (offline)", () => {
     const r = await sb.execute("echo started; sleep 5");
     expect(r.exitCode).toBe(124);
     expect(r.output).toContain("Command timed out after 1 seconds");
+  });
+
+  it("reads a command's whole output, past what one plain call keeps", async () => {
+    state.cut = 10;
+    const sb = await PrizedSandbox.create();
+    const r = await sb.execute("printf '%050d' 0; printf '%040d' 1 >&2");
+    expect(r).toEqual({ output: `${"0".repeat(50)}\n<stderr>${"0".repeat(39)}1</stderr>`, exitCode: 0, truncated: false });
+    expect(state.made[0].calls.at(-1)[1].fullOutput).toBe(true);
+  });
+
+  it("says when the sandbox cut the output, timed out or not", async () => {
+    state.fullCut = 10;
+    const sb = await PrizedSandbox.create({ timeout: 1 });
+    const r = await sb.execute("printf '%050d' 0");
+    expect(r.truncated).toBe(true);
+    expect(r.output).toBe(`${"0".repeat(10)}\n\n... Output truncated: the sandbox keeps the first 100 MiB of each stream. Write large output to a file and read it in parts.`);
+    const t = await sb.execute("printf '%050d' 0; sleep 5");
+    expect(t.exitCode).toBe(124);
+    expect(t.truncated).toBe(true);
+    expect(t.output).toContain("Command timed out after 1 seconds\n\n... Output truncated");
   });
 
   it("uploads atomically, keeps an existing file's mode, and maps errors per file", async () => {

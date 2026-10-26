@@ -15,7 +15,6 @@ export const DEFAULT_WORKDIR = "/home/prized/work";
 export const DEFAULT_TIMEOUT = 240;
 const STAGING = "/home/prized/.cache/prized-langchain";
 const HELPER_TIMEOUT_MS = 120_000;
-const STREAM_CAP = 4 * 1024 * 1024;
 const LABELS = { "created-by": "prized-langchain" };
 const GONE = new Set(["not_found", "sandbox_deleted"]);
 
@@ -213,20 +212,25 @@ export class PrizedSandbox extends BaseSandbox {
     let stdout: string;
     let stderr: string;
     let exitCode: number;
+    let truncated: boolean;
     let timedOut = false;
     try {
-      const r = await sandbox.exec(command, { cwd: this.#options.cwd ?? DEFAULT_WORKDIR, env, timeoutMs: timeout * 1000 });
-      ({ stdout, stderr, exitCode } = r);
+      const r = await sandbox.exec(command, {
+        cwd: this.#options.cwd ?? DEFAULT_WORKDIR,
+        env,
+        timeoutMs: timeout * 1000,
+        fullOutput: true,
+      });
+      ({ stdout, stderr, exitCode, truncated } = r);
     } catch (err) {
       if (err instanceof CommandTimeoutError) {
-        ({ stdout, stderr } = err);
+        ({ stdout, stderr, truncated } = err.result);
         exitCode = 124;
         timedOut = true;
       } else {
         throw this.#wrap(err, "COMMAND_FAILED");
       }
     }
-    const truncated = atCap(stdout) || atCap(stderr);
     let output = stdout;
     if (stderr.trim()) {
       if (output && !output.endsWith("\n")) output += "\n";
@@ -237,7 +241,7 @@ export class PrizedSandbox extends BaseSandbox {
       output += `Command timed out after ${timeout} seconds`;
     }
     if (truncated) {
-      output += "\n\n... Output truncated: the sandbox keeps the first 4 MiB of each stream. Write large output to a file and read it in parts.";
+      output += "\n\n... Output truncated: the sandbox keeps the first 100 MiB of each stream. Write large output to a file and read it in parts.";
     }
     return { output, exitCode, truncated };
   }
@@ -378,10 +382,6 @@ export function createPrizedSandboxFactory(options: PrizedSandboxOptions = {}): 
 /** A synchronous BackendFactory that always returns this sandbox. */
 export function createPrizedSandboxFactoryFromSandbox(sandbox: PrizedSandbox): BackendFactory {
   return () => sandbox;
-}
-
-function atCap(stream: string): boolean {
-  return stream.length * 4 >= STREAM_CAP - 3 && new TextEncoder().encode(stream).length >= STREAM_CAP - 3;
 }
 
 function parseCodes(stdout: string): Array<[number, string]> {

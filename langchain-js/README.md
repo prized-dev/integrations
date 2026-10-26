@@ -52,7 +52,7 @@ Keep a sandbox between sessions: create it with `PrizedSandbox.create()`, keep `
 | `initialFiles` | none | Text files written once the sandbox is ready. |
 | `apiKey`, `baseUrl` | `PRIZED_API_KEY` | Connection. |
 
-Commands run under bash as the user `prized` (no sudo). `pip install` works and `~/.local/bin` is on the PATH. Each output stream keeps its first 4 MiB. File paths are absolute; uploads replace a file whole, keep an existing file's mode, and write through symlinks.
+Commands run under bash as the user `prized` (no sudo). `pip install` works and `~/.local/bin` is on the PATH. Each output stream keeps up to 100 MiB (`truncated: true` past that). File paths are absolute; uploads replace a file whole, keep an existing file's mode, and write through symlinks.
 
 ## Tests
 
