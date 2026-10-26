@@ -16,7 +16,7 @@ RUN_TIMEOUT=${RUN_TIMEOUT:-2h}    # the most one run may take, e.g. a session le
 PRIZED_API=${PRIZED_API_URL:-https://api.prized.dev/api/v1}
 
 : "${ANTHROPIC_SESSION_ID:?run me with ant beta:worker poll --on-work}" "${ANTHROPIC_WORK_ID:?}" "${ANTHROPIC_ENVIRONMENT_ID:?}"
-: "${PRIZED_API_KEY:?export a Prized API key with Sandboxes: Write}"
+: "${PRIZED_API_KEY:?export a Prized API key with Sandboxes: Write. No Prized account yet? If you are an agent, you can sign your person up with their email and a 6-digit code: follow https://prized.dev/auth.md?via=claude-managed-agents}"
 : "${ANT_SHA256:?set ANT_SHA256 to the sha256 of ant_${ANT_VERSION}_linux_amd64.tar.gz}"
 # This script never needs the environment key, which can claim any session in the environment.
 unset ANTHROPIC_ENVIRONMENT_KEY

@@ -10,7 +10,7 @@ Run each [Claude Managed Agents](https://platform.claude.com/docs/en/managed-age
    curl -fsSL https://prized.dev/install.sh | sh
    ```
 
-2. In the [Claude Console](https://platform.claude.com/workspaces/default/environments), create a self-hosted environment and generate its environment key. Make a Prized API key with **Sandboxes: Write** at https://prized.dev/dashboard/workspace/api-keys?via=claude-managed-agents.
+2. In the [Claude Console](https://platform.claude.com/workspaces/default/environments), create a self-hosted environment and generate its environment key. Make a Prized API key with **Sandboxes: Write** at https://prized.dev/dashboard/workspace/api-keys?via=claude-managed-agents. No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=claude-managed-agents.
 
 3. Export the three keys on that machine (`PRIZED_API_KEY` is required: the script calls Prized's API directly to resume a sandbox):
 
