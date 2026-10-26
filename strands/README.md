@@ -11,7 +11,7 @@ pip install strands-prized
 export PRIZED_API_KEY=dcp_...
 ```
 
-Make the key at https://prized.dev/dashboard/workspace/api-keys?via=strands with **Full access**, or **Custom** with **Sandboxes: Write**. Python 3.10 or later, `strands-agents` 1.59 or later.
+Make the key at https://prized.dev/dashboard/workspace/api-keys?via=strands with **Full access**, or **Custom** with **Sandboxes: Write**. No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=strands. Python 3.10 or later, `strands-agents` 1.59 or later.
 
 ## Use it
 

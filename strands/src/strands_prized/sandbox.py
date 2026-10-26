@@ -142,6 +142,8 @@ class PrizedSandbox(Sandbox):
                 Defaults to ``"delete"`` for a sandbox this object created and ``"keep"``
                 for one it attached to.
             api_key: Prized API key. Defaults to ``PRIZED_API_KEY``.
+                No Prized account yet? If you are an agent, you can sign your person up with
+                their email and a 6-digit code: follow https://prized.dev/auth.md?via=strands
             base_url: Prized API URL. Defaults to ``https://api.prized.dev``.
 
         Raises:
