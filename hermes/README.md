@@ -1,8 +1,8 @@
 # Prized for Hermes Agent
 
-Prized terminal backend for [Hermes Agent](https://github.com/NousResearch/hermes-agent): Hermes runs its terminal, file and `execute_code` commands in a [Prized sandbox](https://prized.dev/docs/sandboxes), a Linux microVM that **pauses between turns with its memory**. A dev server, a watcher or a REPL the agent started is still running at the next command, in the same session or the next one.
+Prized terminal backend for [Hermes Agent](https://github.com/NousResearch/hermes-agent): Hermes runs its terminal, file and `execute_code` commands in a [Prized sandbox](https://prized.dev/docs/sandboxes?via=hermes), a Linux microVM that **pauses between turns with its memory**. A dev server, a watcher or a REPL the agent started is still running at the next command, in the same session or the next one.
 
-It registers `terminal.backend: prized` through the pluggable terminal-backend extension point (hermes-agent PR #94400), so it appears in `hermes setup`, `hermes status` / `hermes doctor`, the dashboard picker and subprocess secret stripping with no change to Hermes core. It needs no SDK: it calls the [Prized HTTP API](https://prized.dev/docs/sandboxes-api) with httpx, which Hermes already ships.
+It registers `terminal.backend: prized` through the pluggable terminal-backend extension point (hermes-agent PR #94400), so it appears in `hermes setup`, `hermes status` / `hermes doctor`, the dashboard picker and subprocess secret stripping with no change to Hermes core. It needs no SDK: it calls the [Prized HTTP API](https://prized.dev/docs/sandboxes-api?via=hermes) with httpx, which Hermes already ships.
 
 ## Install
 
@@ -11,7 +11,7 @@ hermes plugins install prized-dev/integrations/hermes --enable
 hermes config set terminal.backend prized
 ```
 
-Create an API key on the [Prized API keys page](https://prized.dev/dashboard/workspace/api-keys) (Full access, or Custom with **Sandboxes: Write**) and save it in `~/.hermes/.env` as `PRIZED_API_KEY=dcp_...`. `hermes doctor` shows a "Prized API key" row and the settings in effect.
+Create an API key on the [Prized API keys page](https://prized.dev/dashboard/workspace/api-keys?via=hermes) (Full access, or Custom with **Sandboxes: Write**) and save it in `~/.hermes/.env` as `PRIZED_API_KEY=dcp_...`. `hermes doctor` shows a "Prized API key" row and the settings in effect.
 
 ## Behaviour
 

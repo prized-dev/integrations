@@ -149,7 +149,7 @@ class PrizedProvider(TerminalEnvironmentProvider):
     def setup_instructions(self):
         return [
             "Linux microVMs that pause between turns with their memory and disk.",
-            "Sign up and create an API key at https://prized.dev (Settings > API keys).",
+            "Sign up and create an API key at https://prized.dev/?via=hermes (Settings > API keys).",
             "Save it in ~/.hermes/.env as PRIZED_API_KEY.",
             "Defaults: prized-base-v1, 2 vCPU, 4 GB, auto-pause after 10 idle minutes.",
             "A sandbox runs 24 hours by default (60 minutes on the free tier); Hermes then starts a fresh one.",
@@ -181,7 +181,8 @@ class PrizedProvider(TerminalEnvironmentProvider):
         # the plugin's own ``vcpu`` / ``memory_mb`` settings instead.
         key = _get_key()
         if key is None:
-            raise ValueError("Prized backend requires PRIZED_API_KEY (Settings > API keys at prized.dev).")
+            raise ValueError("Prized backend requires PRIZED_API_KEY "
+                             "(Settings > API keys at https://prized.dev/?via=hermes).")
         cc = container_config or {}
         return _env_module().PrizedEnvironment(
             api_key=key, cwd=cwd, timeout=timeout, task_id=task_id,
