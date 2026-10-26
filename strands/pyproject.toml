@@ -19,7 +19,7 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Typing :: Typed",
 ]
-dependencies = ["strands-agents>=1.59,<2", "prized>=0.1,<1"]
+dependencies = ["strands-agents>=1.59,<2", "prized>=0.1.0,<0.2"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "pytest-asyncio>=0.25", "ruff>=0.11", "mypy>=1.15"]

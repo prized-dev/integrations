@@ -19,7 +19,7 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Typing :: Typed",
 ]
-dependencies = ["inspect-ai>=0.3.280,<0.4", "prized>=0.1,<1"]
+dependencies = ["inspect-ai>=0.3.280,<0.4", "prized>=0.1.0,<0.2"]
 
 [project.entry-points.inspect_ai]
 prized = "inspect_prized"

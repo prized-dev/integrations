@@ -9,11 +9,9 @@
 #
 # Live tests are never run here: they need PRIZED_API_KEY plus a flag, and no test step sees either.
 #
-# SDK-PRERELEASE: the Prized SDKs (`prized` on PyPI, `@prized/sdk` on npm) are published on 2026-11-05.
-# Until then, set PRIZED_SDK_DIST to a directory holding prized-*.whl and prized-sdk-*.tgz built
-# from the SDK sources; without it, a folder that needs an SDK the registry doesn't have yet is
-# skipped with a warning (REQUIRE_SDK=1 makes it an error, as the publish workflow does). Once both
-# are published, delete the skip in need_sdk() so a missing SDK fails the run instead.
+# The Prized SDKs come from their registries (`prized` on PyPI, `@prized/sdk` on npm), as each
+# folder's dependencies say. To test against an SDK build that isn't published, set PRIZED_SDK_DIST to a
+# directory holding the prized-*.whl and prized-sdk-*.tgz built from the SDK sources.
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -34,22 +32,13 @@ WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
 note() { echo "::$1::$DIR: $2"; }
 
-# need_sdk python|node: install the SDK from PRIZED_SDK_DIST, or check the registry has it.
+# need_sdk python|node: with PRIZED_SDK_DIST, install the SDK from there instead of the registry.
 need_sdk() {
-  if [ -n "${PRIZED_SDK_DIST:-}" ]; then
-    case $1 in
-      python) "$WORK/venv/bin/pip" install -q "$PRIZED_SDK_DIST"/prized-*.whl ;;
-      node) SDK_TGZ=$(ls "$PRIZED_SDK_DIST"/prized-sdk-*.tgz) ;;
-    esac
-    return 0
-  fi
+  [ -n "${PRIZED_SDK_DIST:-}" ] || return 0
   case $1 in
-    python) curl -fsS -o /dev/null https://pypi.org/pypi/prized/json && return 0 ;;
-    node) curl -fsS -o /dev/null https://registry.npmjs.org/@prized%2fsdk && return 0 ;;
+    python) "$WORK/venv/bin/pip" install -q "$PRIZED_SDK_DIST"/prized-*.whl ;;
+    node) SDK_TGZ=$(ls "$PRIZED_SDK_DIST"/prized-sdk-*.tgz) ;;
   esac
-  if [ -n "${REQUIRE_SDK:-}" ]; then note error "the Prized $1 SDK is not on its registry"; exit 1; fi
-  note warning "skipped: the Prized $1 SDK is not on its registry yet (set PRIZED_SDK_DIST)"
-  exit 0
 }
 
 # scrubbed [NAME=value...] CMD...: run CMD with an empty environment plus PATH, a fresh HOME and the
@@ -156,7 +145,7 @@ case $DIR in
     scrubbed DIFY_CLI_PATH="$WORK/dify" ${DIFY_PACKAGE_OUT:+"DIFY_PACKAGE_OUT=$DIFY_PACKAGE_OUT"} \
       pytest -rs -p no:cacheprovider tests/test_dify_runtime.py ;;
   langchain-js)
-    # No lockfile until @prized/sdk is on npm (the one made here would point at a local tarball).
+    # No lockfile: like the Python folders, the latest row installs the newest versions the package allows.
     need_sdk node
     cp -r "$ROOT/$DIR/." "$WORK/pkg"
     cd "$WORK/pkg"

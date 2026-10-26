@@ -22,7 +22,7 @@ classifiers = [
 dependencies = [
   "agent-framework-core>=1.19.0,<2",
   "agent-framework-tools>=1.0.0b260918,<2",
-  "prized>=0.1,<1",
+  "prized>=0.1.0,<0.2",
 ]
 
 [project.optional-dependencies]
