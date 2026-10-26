@@ -41,6 +41,7 @@ class FakeSandbox:
     made: list = []
     cut = 10**9  # what one blocking call keeps per stream (4 MiB on Prized)
     full_cut = 10**9  # what one with full_output=True keeps per stream (100 MiB on Prized)
+    polled_cut = 10**9  # what a polled one (no timeout, or over 240 s) keeps (64 Mi characters on Prized)
 
     def __init__(self, root, options):
         self.id = f"sbx_fake{len(FakeSandbox.made)}"
@@ -76,7 +77,10 @@ class FakeSandbox:
         out = p.stdout.decode(errors="replace").replace(self.root, "/home/prized")
         err = p.stderr.decode(errors="replace").replace(self.root, "/home/prized")
         streamed = "on_stdout" in kw or "on_stderr" in kw
-        cut = 10**12 if streamed else FakeSandbox.full_cut if kw.get("full_output") else FakeSandbox.cut
+        if streamed or not timeout or timeout > 240:
+            cut = FakeSandbox.polled_cut
+        else:
+            cut = FakeSandbox.full_cut if kw.get("full_output") else FakeSandbox.cut
         return ExecResult(
             stdout=out[:cut],
             stderr=err,
@@ -178,15 +182,20 @@ async def test_output_over_inspect_limit_raises(monkeypatch):
 
 async def test_output_past_what_the_sdk_keeps_raises(monkeypatch):
     monkeypatch.setattr(FakeSandbox, "full_cut", 64)
+    monkeypatch.setattr(FakeSandbox, "polled_cut", 64)
     env, _, _ = await _env()
     with pytest.raises(OutputLimitExceededError) as e:
-        await env.exec(["bash", "-c", "printf '%0100d' 0"])
+        await env.exec(["bash", "-c", "printf '%0100d' 0"], timeout=10)
     assert "10 MiB" in str(e.value)
     monkeypatch.setattr(_Limits, "MAX_EXEC_OUTPUT_SIZE", 10**9)
     monkeypatch.setattr(env_mod, "SandboxEnvironmentLimits", _Limits)
     with pytest.raises(OutputLimitExceededError) as e:
-        await env.exec(["bash", "-c", "printf '%0100d' 0"])
+        await env.exec(["bash", "-c", "printf '%0100d' 0"], timeout=10)
     assert "100 MiB" in str(e.value)
+    for timeout in (None, 300):  # polled by the SDK, which keeps 64 Mi characters
+        with pytest.raises(OutputLimitExceededError) as e:
+            await env.exec(["bash", "-c", "printf '%0100d' 0"], timeout=timeout)
+        assert "64 MiB" in str(e.value)
 
 
 async def test_permission_error_and_timeout():

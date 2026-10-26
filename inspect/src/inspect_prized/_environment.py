@@ -32,7 +32,8 @@ WORKDIR = f"{HOME}/work"
 STAGE = f"{HOME}/.inspect-prized"
 LABEL = {"created-by": "inspect-prized"}
 _GONE = ("not_found", "sandbox_deleted")
-_FULL_OUTPUT = 100 * 1024 * 1024  # what exec(full_output=True) keeps per stream
+_FULL_OUTPUT = 100 * 1024 * 1024  # what exec(full_output=True) keeps per stream in one call
+_POLLED_OUTPUT = 64 * 1024 * 1024  # what a polled exec (no timeout, or over 240 s) keeps: 64 Mi characters
 _LARGE_ARGV = 256 * 1024  # argv bigger than this travels as a file (the exec route takes 1 MiB)
 _HELPER_TIMEOUT = 120
 
@@ -251,8 +252,8 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
         limit = SandboxEnvironmentLimits.MAX_EXEC_OUTPUT_SIZE
         if res.truncated or len(res.stdout.encode()) > limit or len(res.stderr.encode()) > limit:
             # Over Inspect's limit (10 MiB a stream by default) this raises as the Docker sandbox does;
-            # output past the 100 MiB a stream the SDK keeps raises at that size.
-            kept = min(limit, _FULL_OUTPUT)
+            # output past what the SDK keeps raises at that size.
+            kept = min(limit, _FULL_OUTPUT if timeout and timeout <= 240 else _POLLED_OUTPUT)
             raise OutputLimitExceededError(limit_str=_size_str(kept), truncated_output=_head(res.stdout, kept))
         if res.exit_code == 126 and "Permission denied" in res.stderr:
             raise PermissionError(f"Permission denied executing command: {cmd[0]}")
