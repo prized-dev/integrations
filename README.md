@@ -1,8 +1,8 @@
 # Prized integrations
 
-Adapters that run AI agent frameworks, eval harnesses and agent platforms on [Prized Sandboxes](https://prized.dev/docs/sandboxes): Firecracker microVMs that pause with their memory and fork into live copies.
+Adapters that run AI agent frameworks, eval harnesses and agent platforms on [Prized Sandboxes](https://prized.dev/docs/sandboxes?via=integrations): Firecracker microVMs that pause with their memory and fork into live copies.
 
-Each folder is its own package with its own README, tests and release. You need a Prized API key from [prized.dev](https://prized.dev/onboarding/sandboxes).
+Each folder is its own package with its own README, tests and release. You need a Prized API key from [prized.dev](https://prized.dev/onboarding/sandboxes?via=integrations).
 
 | Folder | Framework | Package | Status | Docs |
 | --- | --- | --- | --- | --- |

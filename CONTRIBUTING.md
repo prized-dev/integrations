@@ -22,6 +22,7 @@ Each folder's README says how to run its tests against the real API. They create
 
 - Keep a change to one folder where you can, and add or update its offline tests.
 - Never commit a key, a `.env` file or a token, even a revoked one. Tests use obvious fakes (`dcp_000…`).
+- A prized.dev link in a README, docstring or error message carries `?via=<folder>` (before any `#fragment`), so a sign-up that starts from it is counted for that integration.
 - CI must pass. It runs the same `scripts/test.sh` for every folder, with no secrets.
 
 ## Add an integration
