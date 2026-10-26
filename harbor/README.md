@@ -1,10 +1,10 @@
 # harbor-prized
 
-Run [Harbor](https://github.com/harbor-framework/harbor) tasks, such as Terminal-Bench, in [Prized Sandboxes](https://prized.dev/docs/sandboxes) (Firecracker microVMs). No Harbor fork or PR needed.
+Run [Harbor](https://github.com/harbor-framework/harbor) tasks, such as Terminal-Bench, in [Prized Sandboxes](https://prized.dev/docs/sandboxes?via=harbor) (Firecracker microVMs). No Harbor fork or PR needed.
 
 ```bash
 pip install harbor harbor-prized   # not on PyPI yet: until then, "harbor-prized @ git+https://github.com/prized-dev/integrations#subdirectory=harbor"
-export PRIZED_API_KEY=dcp_...   # https://prized.dev/onboarding/sandboxes
+export PRIZED_API_KEY=dcp_...   # https://prized.dev/onboarding/sandboxes?via=harbor
 harbor run -d terminal-bench@2.0 -a oracle -e harbor_prized:PrizedEnvironment -n 4
 ```
 

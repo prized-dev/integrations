@@ -94,7 +94,7 @@ class PrizedEnvironment(BaseEnvironment):
         if not os.environ.get("PRIZED_API_KEY"):
             raise SystemExit(
                 "Prized requires PRIZED_API_KEY, a key with Sandboxes: Write "
-                "(https://prized.dev/dashboard/workspace/api-keys)."
+                "(https://prized.dev/dashboard/workspace/api-keys?via=harbor)."
             )
 
     def __init__(
