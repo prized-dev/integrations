@@ -18,8 +18,10 @@ import asyncio
 import logging
 from unittest import mock
 
+from fakes import cut_result
 from fakes import FakeSdk
 from fakes import FALLBACK_PATH
+from fakes import output_read_error
 from google.adk.tools.environment import EnvironmentToolset
 from prized import CommandTimeoutError
 from prized import ExecResult
@@ -265,6 +267,60 @@ async def test_execute_timeout_keeps_partial_output(sdk):
   assert result.timed_out is True
   assert result.exit_code == -1
   assert result.stdout == "tick\n"
+
+
+async def test_execute_says_when_the_output_was_cut_and_why(sdk):
+  env = PrizedEnvironment()
+  await env.initialize()
+  sdk.created[0].handler = only(
+      "yes", lambda cmd, kw: cut_result("y\n", "output_limit")
+  )
+  result = await env.execute("yes")
+  assert result.stdout == "y\n"
+  assert "kept only the start of this command's output" in result.stderr
+  sdk.created[0].handler = only(
+      "make", lambda cmd, kw: cut_result("cc\n", "write_failed")
+  )
+  result = await env.execute("make")
+  assert "its disk is full" in result.stderr
+  assert "kept only the start" not in result.stderr
+
+
+async def test_execute_timeout_says_its_partial_output_was_cut(sdk):
+  env = PrizedEnvironment()
+  await env.initialize()
+
+  def slow(cmd, kwargs):
+    raise CommandTimeoutError(cut_result("tick\n", "write_failed"), 1)
+
+  sdk.created[0].handler = only("sleep", slow)
+  result = await env.execute("sleep 999", timeout=1)
+  assert result.timed_out is True and result.stdout == "tick\n"
+  assert "its disk is full" in result.stderr
+
+
+@pytest.mark.parametrize("reason", ["not_found", "sandbox_not_running"])
+async def test_output_that_could_not_be_read_back_is_a_result_and_never_reruns(
+    sdk, reason
+):
+  env = PrizedEnvironment()
+  await env.initialize()
+
+  def unread(cmd, kwargs):
+    raise output_read_error(4, reason)
+
+  sdk.created[0].handler = only("make deploy", unread)
+  result = await env.execute("make deploy")
+
+  assert result.exit_code == 4 and result.stdout == ""
+  assert (
+      f"the command ran, but its output could not be read back ({reason})"
+      in result.stderr
+  )
+  assert "/home/prized/.prized/exec/x/stdout and" in result.stderr
+  box = sdk.created[0]
+  assert [c for c, _ in user_commands(box)].count("make deploy") == 1
+  assert len(sdk.created) == 1
 
 
 # ---- files -------------------------------------------------------------------

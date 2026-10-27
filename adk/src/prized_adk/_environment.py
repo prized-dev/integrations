@@ -75,6 +75,18 @@ _REPLACED_NOTE = (
     " deleted after being paused), so this ran in a fresh, empty sandbox:"
     " earlier files and installs are not there]\n"
 )
+_CAPPED_NOTE = (
+    "\n[prized: the sandbox kept only the start of this command's output;"
+    " redirect large output to a file and read its tail]\n"
+)
+_WRITE_FAILED_NOTE = (
+    "\n[prized: the sandbox could not save all of this command's output, most"
+    " often because its disk is full, so it stops where the write failed; free"
+    " some space and run the command again]\n"
+)
+# prized 0.1.1+ (OutputReadError): the command ran, but its output could not be
+# read back.
+_OUTPUT_READ_FAILED = "output_read_failed"
 _NOT_STARTED = "Sandbox is not started. Call initialize() first."
 
 OnClose = Literal["delete", "pause", "keep"]
@@ -343,17 +355,23 @@ class PrizedEnvironment(BaseEnvironment):
       try:
         result = await self._exec(sandbox, command, timeout)
       except PrizedError as e:
-        if isinstance(e, CommandTimeoutError):
+        if isinstance(e, CommandTimeoutError) or e.code == _OUTPUT_READ_FAILED:
           raise
         sandbox = await self._replace_if_gone(sandbox, e)
         result = await self._exec(sandbox, command, timeout)
     except CommandTimeoutError as e:
       return self._note(_timed_out(e))
+    except PrizedError as e:
+      # The command ran: never run it again, report its exit code and where
+      # its output is.
+      if e.code != _OUTPUT_READ_FAILED:
+        raise
+      return self._note(_unread(e))
     return self._note(
         ExecutionResult(
             exit_code=result.exit_code,
             stdout=result.stdout,
-            stderr=result.stderr,
+            stderr=result.stderr + _cut_note(result),
         )
     )
 
@@ -753,8 +771,44 @@ def _timed_out(error: Exception) -> ExecutionResult:
   return ExecutionResult(
       exit_code=_TIMEOUT_EXIT_CODE,
       stdout=getattr(result, "stdout", "") or "",
-      stderr=getattr(result, "stderr", "") or "",
+      stderr=(getattr(result, "stderr", "") or "") + _cut_note(result),
       timed_out=True,
+  )
+
+
+def _cut_note(result: Any) -> str:
+  """The note for output the SDK cut, by why it did (prized 0.1.1+ says)."""
+  if not getattr(result, "truncated", False):
+    return ""
+  if getattr(result, "truncated_reason", None) == "write_failed":
+    return _WRITE_FAILED_NOTE
+  return _CAPPED_NOTE
+
+
+def _unread(error: PrizedError) -> ExecutionResult:
+  """A command that ran but whose output could not be read back (prized 0.1.1+
+  ``OutputReadError``): its exit code, and where the output is kept."""
+  paths = " and ".join(
+      p
+      for p in (
+          getattr(error, "stdout_path", None),
+          getattr(error, "stderr_path", None),
+      )
+      if p
+  )
+  kept = (
+      f" It is kept in the sandbox for an hour: read {paths} instead of"
+      " running the command again."
+      if paths
+      else ""
+  )
+  why = f" ({error.reason})" if error.reason else ""
+  return ExecutionResult(
+      exit_code=getattr(error, "exit_code", 1),
+      stderr=(
+          "[prized: the command ran, but its output could not be read"
+          f" back{why}.{kept}]\n"
+      ),
   )
 
 

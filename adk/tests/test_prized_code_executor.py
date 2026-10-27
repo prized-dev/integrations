@@ -241,6 +241,13 @@ def test_timeout_reports_partial_output(sdk):
   assert sdk.created[0].state == "deleted"
 
 
+def test_cut_output_says_so(sdk):
+  sdk.next_run = lambda box, cmd, kw: ExecResult("1\n", "", 0, truncated=True)
+  result = _run(PrizedCodeExecutor(), "print(1)")
+  assert result.stdout == "1\n"
+  assert "kept only the start of this output" in result.stderr
+
+
 def test_no_timeout_means_no_limit(sdk):
   _run(PrizedCodeExecutor(timeout_seconds=None), "print(1)")
   ((_, kwargs),) = code_runs(sdk.created[0])

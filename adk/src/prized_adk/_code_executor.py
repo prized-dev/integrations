@@ -49,6 +49,10 @@ _MAX_OUTPUT_FILE_BYTES = 20 * 1024 * 1024
 _LABELS = {"adk": "code-executor"}
 # Lets code that shells out to `pip install` install for the user (no root).
 _DEFAULT_ENV = {"PIP_BREAK_SYSTEM_PACKAGES": "1"}
+_CAPPED_NOTE = (
+    "\n[prized: the sandbox kept only the start of this output; write large"
+    " output to a file]\n"
+)
 _MAYBE_GONE_CODES = frozenset(
     {"not_found", "sandbox_not_running", "sandbox_deleted"}
 )
@@ -247,12 +251,16 @@ class PrizedCodeExecutor(BaseCodeExecutor):
       )
       stdout, stderr = result.stdout, result.stderr
       exit_code = result.exit_code
+      cut = result.truncated
     except CommandTimeoutError as e:
       timed_out = True
       partial = e.result
       stdout = partial.stdout if partial else ""
       stderr = partial.stderr if partial else ""
       exit_code = _TIMEOUT_EXIT_CODE
+      cut = bool(partial and partial.truncated)
+    if cut:
+      stderr += _CAPPED_NOTE
     if timed_out:
       note = f"Code execution timed out after {self.timeout_seconds} seconds."
       stderr = f"{stderr}\n{note}" if stderr else note
