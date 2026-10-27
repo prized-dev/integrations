@@ -2,7 +2,7 @@
  * A sandbox disk for the filesystem's offline tests: a temp directory on this machine, reached the
  * two ways the real sandbox is.
  *
- * - `readBytes` / `write` follow Prized's files API (toolboxd's files.go): only paths under the
+ * - `readBytes` / `write` follow Prized's files API: only paths under the
  *   home root, no `..`, symlinks followed only while they stay under it, a 100 MiB limit, a write
  *   that keeps the replaced file's permission bits and gives a new one 0666 less the umask.
  * - `shell` runs a command with this machine's `sh` (or PRIZED_TEST_SHELL), under the same umask,
@@ -96,7 +96,7 @@ export class FakeDisk {
     const path = await this.resolve(raw);
     const info = await stat(path).catch((error: NodeJS.ErrnoException) => {
       if (error.code === 'EACCES') throw fault('permission_denied', 403);
-      // toolboxd checks each component: a file on the way is `not_directory`.
+      // The files API checks each component: a file on the way is `not_directory`.
       if (error.code === 'ENOTDIR') throw fault('not_directory', 400);
       throw fault('not_found', 404);
     });
@@ -152,7 +152,7 @@ export class FakeDisk {
 
   /**
    * Run a command the way the exec edge does, answering with its exit code and output. Without a
-   * `cwd` it runs in the home's `work` directory, and fails to start if that is gone, as toolboxd does.
+   * `cwd` it runs in the home's `work` directory, and fails to start if that is gone, as Prized does.
    */
   shell = (command: string, cwd?: string): Promise<ExecResult> => {
     this.commands.push(command);

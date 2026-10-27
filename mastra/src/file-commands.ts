@@ -14,9 +14,8 @@
  * ce3004df, Apache-2.0, Copyright (c) 2025 Kepler Software, Inc.), the scripts behind
  * `E2BSandboxFilesystem`, so the two providers answer the same way. Changed here: `--` before
  * every path, exit codes shared with the rest of this file, and a no-clobber write that starts
- * from a staging file. `replaceFromStagingCommand` follows langchain-prized's staged upload
- * (prized-dev/doppel#1888): a replaced file keeps its permission bits, as the files API itself
- * does only from the r4 image on.
+ * from a staging file. `replaceFromStagingCommand` follows langchain-prized's staged upload:
+ * a replaced file keeps its permission bits, as the files API itself does on newer sandbox images.
  */
 
 /** Exit codes the scripts use for outcomes the caller turns into typed errors. Any other non-zero code is a plain failure. */
