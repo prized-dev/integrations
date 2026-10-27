@@ -32,6 +32,12 @@ WORKDIR = f"{HOME}/work"
 STAGE = f"{HOME}/.inspect-prized"
 LABEL = {"created-by": "inspect-prized"}
 _GONE = ("not_found", "sandbox_deleted")
+# prized 0.1.1+ (OutputReadError): the command ran, but its output could not be read back.
+_OUTPUT_READ_FAILED = "output_read_failed"
+_WRITE_FAILED_NOTE = (
+    "\n[inspect-prized: the sandbox could not save all of this command's output, most often because its disk "
+    "is full, so it stops where the write failed; free some space and run the command again]\n"
+)
 _FULL_OUTPUT = 100 * 1024 * 1024  # what exec(full_output=True) keeps per stream in one call
 _POLLED_OUTPUT = 64 * 1024 * 1024  # what a polled exec (no timeout, or over 240 s) keeps: 64 Mi characters
 _LARGE_ARGV = 256 * 1024  # argv bigger than this travels as a file (the exec route takes 1 MiB)
@@ -249,15 +255,23 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
                 res = await self._sandbox.exec(run, **kwargs)
             except CommandTimeoutError as err:
                 raise TimeoutError(f"Command timed out after {timeout} seconds: {cmd}") from err
+            except PrizedError as err:
+                if err.code == _OUTPUT_READ_FAILED:
+                    raise _unread(self._sandbox.id, err) from err
+                raise
         limit = SandboxEnvironmentLimits.MAX_EXEC_OUTPUT_SIZE
-        if res.truncated or len(res.stdout.encode()) > limit or len(res.stderr.encode()) > limit:
+        over = len(res.stdout.encode()) > limit or len(res.stderr.encode()) > limit
+        # prized 0.1.1+ says why output was cut; a full disk is not an output limit.
+        disk_full = res.truncated and getattr(res, "truncated_reason", None) == "write_failed"
+        if over or (res.truncated and not disk_full):
             # Over Inspect's limit (10 MiB a stream by default) this raises as the Docker sandbox does;
             # output past what the SDK keeps raises at that size.
             kept = min(limit, _FULL_OUTPUT if timeout and timeout <= 240 else _POLLED_OUTPUT)
             raise OutputLimitExceededError(limit_str=_size_str(kept), truncated_output=_head(res.stdout, kept))
         if res.exit_code == 126 and "Permission denied" in res.stderr:
             raise PermissionError(f"Permission denied executing command: {cmd[0]}")
-        return ExecResult(success=res.exit_code == 0, returncode=res.exit_code, stdout=res.stdout, stderr=res.stderr)
+        stderr = res.stderr + _WRITE_FAILED_NOTE if disk_full else res.stderr
+        return ExecResult(success=res.exit_code == 0, returncode=res.exit_code, stdout=res.stdout, stderr=stderr)
 
     # ------------------------------------------------------------------ files
 
@@ -325,6 +339,26 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
     @override
     def default_polling_interval(self) -> float:
         return 0.5
+
+
+def _unread(sandbox_id: str, err: PrizedError) -> SandboxUnavailableError:
+    """The command ran, but Prized could not deliver its output (prized 0.1.1+ OutputReadError).
+
+    Not an ExecResult: Inspect's rule is that a provider failure is never presented as the command's
+    output. As SandboxUnavailableError (the exec machinery failed) a tool call gets it as a tool
+    error and the sample keeps running, while a scorer gets an exception rather than empty output.
+    The message says the command ran, its exit code, and where its output is kept.
+    """
+    exit_code = getattr(err, "exit_code", None)
+    paths = " and ".join(p for p in (getattr(err, "stdout_path", None), getattr(err, "stderr_path", None)) if p)
+    why = f" ({err.reason})" if err.reason else ""
+    kept = (
+        f" It is kept in the sandbox for an hour: read {paths} rather than running the command again." if paths else ""
+    )
+    return SandboxUnavailableError(
+        f"Prized sandbox {sandbox_id}: the command ran (exit code {exit_code}), but its output could not be read "
+        f"back{why}.{kept}"
+    )
 
 
 def _config(config: SandboxEnvironmentConfigType | None) -> PrizedSandboxConfig:

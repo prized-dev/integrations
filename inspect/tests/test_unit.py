@@ -4,6 +4,7 @@ in a temp dir that stands in for /home/prized, so the package's own shell helper
 import os
 import subprocess
 
+import prized
 import pytest
 from inspect_ai.util import (
     OutputLimitExceededError,
@@ -37,8 +38,34 @@ class FakeFiles:
             pass
 
 
+def _result(reason=None, **fields):
+    """An ExecResult; ``reason`` is prized 0.1.1's truncated_reason, set by hand on 0.1.0 (no such field)."""
+    if reason is None:
+        return ExecResult(**fields)
+    try:
+        return ExecResult(**fields, truncated_reason=reason)
+    except TypeError:  # prized 0.1.0
+        result = ExecResult(**fields)
+        object.__setattr__(result, "truncated_reason", reason)
+        return result
+
+
+def _output_read_error(exit_code, reason):
+    """prized 0.1.1's OutputReadError (the command ran, its output could not be read back); by hand on 0.1.0."""
+    out, err = "/home/prized/.prized/exec/x/stdout", "/home/prized/.prized/exec/x/stderr"
+    message = f"The command ran (exit {exit_code}), but its output could not be read back."
+    cls = getattr(prized, "OutputReadError", None)
+    if cls is not None:
+        return cls(message, exit_code=exit_code, stdout_path=out, stderr_path=err, reason=reason)
+    error = PrizedError("output_read_failed", message, reason=reason)
+    error.exit_code, error.stdout_path, error.stderr_path = exit_code, out, err
+    return error
+
+
 class FakeSandbox:
     made: list = []
+    reason = None  # truncated_reason of a cut result (prized 0.1.1)
+    error = None  # raised by the next exec
     cut = 10**9  # what one blocking call keeps per stream (4 MiB on Prized)
     full_cut = 10**9  # what one with full_output=True keeps per stream (100 MiB on Prized)
     polled_cut = 10**9  # what a polled one (no timeout, or over 240 s) keeps (64 Mi characters on Prized)
@@ -61,6 +88,8 @@ class FakeSandbox:
         self.calls.append((cmd, cwd, env, timeout, kw))
         if self.deleted:
             raise PrizedError("sandbox_deleted", "gone", status=410)
+        if FakeSandbox.error is not None:
+            raise FakeSandbox.error
         argv = [self.local(a) for a in cmd]
         full_env = {"PATH": os.environ["PATH"], "HOME": self.root, **(env or {})}
         try:
@@ -81,7 +110,8 @@ class FakeSandbox:
             cut = FakeSandbox.polled_cut
         else:
             cut = FakeSandbox.full_cut if kw.get("full_output") else FakeSandbox.cut
-        return ExecResult(
+        return _result(
+            FakeSandbox.reason if len(out) > cut else None,
             stdout=out[:cut],
             stderr=err,
             exit_code=p.returncode,
@@ -104,6 +134,8 @@ class FakeSandbox:
 @pytest.fixture(autouse=True)
 def fake(monkeypatch, tmp_path):
     FakeSandbox.made.clear()
+    monkeypatch.setattr(FakeSandbox, "reason", None)
+    monkeypatch.setattr(FakeSandbox, "error", None)
     PrizedSandboxEnvironment._live.clear()
     n = {"i": 0}
 
@@ -196,6 +228,38 @@ async def test_output_past_what_the_sdk_keeps_raises(monkeypatch):
         with pytest.raises(OutputLimitExceededError) as e:
             await env.exec(["bash", "-c", "printf '%0100d' 0"], timeout=timeout)
         assert "64 MiB" in str(e.value)
+
+
+async def test_output_a_full_disk_cut_is_returned_with_a_note(monkeypatch):
+    # prized 0.1.1: truncated_reason "write_failed" is a full disk, not an output limit.
+    monkeypatch.setattr(FakeSandbox, "full_cut", 64)
+    monkeypatch.setattr(FakeSandbox, "reason", "write_failed")
+    env, _, _ = await _env()
+    r = await env.exec(["bash", "-c", "printf '%0100d' 0; echo oops >&2; exit 3"], timeout=10)
+    assert r.stdout == "0" * 64 and r.returncode == 3 and not r.success
+    assert r.stderr.startswith("oops\n") and "its disk is full" in r.stderr
+    # Over Inspect's limit it still raises.
+    monkeypatch.setattr(env_mod, "SandboxEnvironmentLimits", _Limits)
+    with pytest.raises(OutputLimitExceededError):
+        await env.exec(["bash", "-c", "printf '%0100d' 0"], timeout=10)
+    # A stream cut at the SDK's cap still raises, as before.
+    monkeypatch.setattr(_Limits, "MAX_EXEC_OUTPUT_SIZE", 10**9)
+    monkeypatch.setattr(FakeSandbox, "reason", "output_limit")
+    with pytest.raises(OutputLimitExceededError):
+        await env.exec(["bash", "-c", "printf '%0100d' 0"], timeout=10)
+
+
+@pytest.mark.parametrize("reason", ["not_found", "network_error"])
+async def test_output_that_could_not_be_read_back_says_the_command_ran(reason):
+    env, _, _ = await _env()
+    FakeSandbox.error = _output_read_error(3, reason)
+    with pytest.raises(SandboxUnavailableError) as e:
+        await env.exec(["make"], timeout=10)  # a blocking exec: what can raise OutputReadError
+    message = str(e.value)
+    assert f"the command ran (exit code 3), but its output could not be read back ({reason})" in message
+    assert "/home/prized/.prized/exec/x/stdout and /home/prized/.prized/exec/x/stderr" in message
+    assert "is not available" not in message
+    assert len([c for c in FakeSandbox.made[0].calls if "make" in c[0]]) == 1
 
 
 async def test_permission_error_and_timeout():
