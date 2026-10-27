@@ -6,7 +6,15 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const state = vi.hoisted(() => ({ made: [] as any[], root: "", cut: Infinity, fullCut: Infinity }));
+const state = vi.hoisted(() => ({
+  made: [] as any[],
+  root: "",
+  cut: Infinity,
+  fullCut: Infinity,
+  // @prized/sdk 0.1.1: why a cut result was cut (absent on 0.1.0), and an error the next exec throws.
+  reason: undefined as string | undefined,
+  execError: null as Error | null,
+}));
 
 vi.mock("@prized/sdk", () => {
   class PrizedError extends Error {
@@ -29,10 +37,24 @@ vi.mock("@prized/sdk", () => {
       return this.result.stderr;
     }
   }
+  // @prized/sdk 0.1.1: the command ran, but its output could not be read back.
+  class OutputReadError extends PrizedError {
+    reason: string;
+    exitCode: number;
+    stdoutPath = "/home/prized/.prized/exec/x/stdout";
+    stderrPath = "/home/prized/.prized/exec/x/stderr";
+    constructor(exitCode: number, reason: string) {
+      super("output_read_failed", `The command ran (exit ${exitCode}), but its output could not be read back.`);
+      this.exitCode = exitCode;
+      this.reason = reason;
+    }
+  }
   class FakeSandbox {
     id: string;
     options: any;
     deleted = false;
+    vanished = false; // gone without this handle knowing: refresh() says not_found
+    state = "running";
     paused = false;
     calls: any[] = [];
     root: string;
@@ -66,6 +88,7 @@ vi.mock("@prized/sdk", () => {
     async exec(cmd: string | string[], opts: any = {}) {
       this.calls.push([cmd, opts]);
       if (this.deleted) throw new PrizedError("sandbox_deleted");
+      if (state.execError) throw state.execError;
       const local = (p: string) => p.split("/home/prized").join(this.root);
       const argv = typeof cmd === "string" ? ["bash", "-c", local(cmd)] : cmd.map(local);
       const env = { PATH: process.env.PATH, HOME: this.root, ...(opts.env ?? {}) };
@@ -87,9 +110,14 @@ vi.mock("@prized/sdk", () => {
         durationMs: 1,
         timedOut: false,
         truncated: stdout.length > cut || stderr.length > cut,
+        ...(state.reason && (stdout.length > cut || stderr.length > cut) ? { truncatedReason: state.reason } : {}),
       };
       if (r.error && (r.error as any).code === "ETIMEDOUT") throw new CommandTimeoutError({ ...result, exitCode: -1, timedOut: true });
       return result;
+    }
+    async refresh() {
+      if (this.deleted || this.vanished) throw new PrizedError("not_found");
+      return this;
     }
     failDeletes = 0;
     async delete() {
@@ -106,15 +134,18 @@ vi.mock("@prized/sdk", () => {
       this.paused = false;
     }
   }
-  return { Sandbox: FakeSandbox, PrizedError, CommandTimeoutError };
+  return { Sandbox: FakeSandbox, PrizedError, CommandTimeoutError, OutputReadError };
 });
 
 const { PrizedSandbox, createPrizedSandboxFactory, createPrizedSandboxFactoryFromSandbox } = await import("../src/index.js");
+const sdk: any = await import("@prized/sdk");
 
 beforeEach(() => {
   state.made.length = 0;
   state.root = mkdtempSync(join(tmpdir(), "prized-langchain-"));
   state.cut = state.fullCut = Infinity;
+  state.reason = undefined;
+  state.execError = null;
 });
 afterEach(() => {
   rmSync(state.root, { recursive: true, force: true });
@@ -178,6 +209,45 @@ describe("PrizedSandbox (offline)", () => {
     expect(t.exitCode).toBe(124);
     expect(t.truncated).toBe(true);
     expect(t.output).toContain("Command timed out after 1 seconds\n\n... Output truncated");
+  });
+
+  it("says when a full disk cut the output (truncatedReason write_failed), timed out or not", async () => {
+    state.fullCut = 10;
+    state.reason = "write_failed";
+    const sb = await PrizedSandbox.create({ timeout: 1 });
+    const disk = "\n\n... Output truncated: the sandbox could not save all of it, most often because its disk is full. Free some space and run the command again.";
+    const r = await sb.execute("printf '%050d' 0");
+    expect(r).toEqual({ output: `${"0".repeat(10)}${disk}`, exitCode: 0, truncated: true });
+    const t = await sb.execute("printf '%050d' 0; sleep 5");
+    expect(t.exitCode).toBe(124);
+    expect(t.output).toContain(`Command timed out after 1 seconds${disk}`);
+    state.reason = "output_limit";
+    expect((await sb.execute("printf '%050d' 0")).output).toContain("the sandbox keeps the first 100 MiB of each stream");
+  });
+
+  it("returns a command whose output could not be read back with its exit code and where the output is kept", async () => {
+    const sb = await PrizedSandbox.create();
+    state.execError = new sdk.OutputReadError(3, "not_found");
+    expect(await sb.execute("make")).toEqual({
+      output:
+        "The command ran (exit code 3), but its output could not be read back (not_found). It is kept in the sandbox for an hour: " +
+        "read /home/prized/.prized/exec/x/stdout and /home/prized/.prized/exec/x/stderr instead of running the command again.",
+      exitCode: 3,
+      truncated: false,
+    });
+    expect(state.made[0].deleted).toBe(false);
+    // Any other failure still throws.
+    state.execError = new sdk.PrizedError("network_error");
+    await expect(sb.execute("make")).rejects.toMatchObject({ code: "COMMAND_FAILED" });
+  });
+
+  it("calls a sandbox gone after a command's not_found only once the API says so", async () => {
+    const sb = await PrizedSandbox.create();
+    // 0.1.0 raises not_found for a live sandbox too (output it couldn't read back, a long command's lost state).
+    state.execError = new sdk.PrizedError("not_found");
+    await expect(sb.execute("make")).rejects.toMatchObject({ code: "COMMAND_FAILED" });
+    state.made[0].vanished = true;
+    await expect(sb.execute("make")).rejects.toMatchObject({ code: "SANDBOX_NOT_FOUND" });
   });
 
   it("uploads atomically, keeps an existing file's mode, and maps errors per file", async () => {

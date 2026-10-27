@@ -17,6 +17,11 @@ const STAGING = "/home/prized/.cache/prized-langchain";
 const HELPER_TIMEOUT_MS = 120_000;
 const LABELS = { "created-by": "prized-langchain" };
 const GONE = new Set(["not_found", "sandbox_deleted"]);
+const GONE_STATES = new Set(["deleting", "deleted", "error"]);
+const CAPPED_NOTE =
+  "\n\n... Output truncated: the sandbox keeps the first 100 MiB of each stream. Write large output to a file and read it in parts.";
+const WRITE_FAILED_NOTE =
+  "\n\n... Output truncated: the sandbox could not save all of it, most often because its disk is full. Free some space and run the command again.";
 
 // Puts `python` next to `python3` when there is none, and prints the PATH every later command
 // gets: ~/.local/bin first, so `pip install --user` tools run.
@@ -217,6 +222,7 @@ export class PrizedSandbox extends BaseSandbox {
     let stderr: string;
     let exitCode: number;
     let truncated: boolean;
+    let cutBy: string | undefined;
     let timedOut = false;
     try {
       const r = await sandbox.exec(command, {
@@ -226,13 +232,25 @@ export class PrizedSandbox extends BaseSandbox {
         fullOutput: true,
       });
       ({ stdout, stderr, exitCode, truncated } = r);
+      cutBy = truncatedReason(r);
     } catch (err) {
       if (err instanceof CommandTimeoutError) {
         ({ stdout, stderr, truncated } = err.result);
+        cutBy = truncatedReason(err.result);
         exitCode = 124;
         timedOut = true;
       } else {
-        throw this.#wrap(err, "COMMAND_FAILED");
+        const unread = outputReadFailure(err);
+        if (!unread) throw await this.#commandError(sandbox, err);
+        // The command ran: say so with its exit code, so the agent reads the output instead of running it again.
+        const why = unread.reason ? ` (${unread.reason})` : "";
+        return {
+          output:
+            `The command ran (exit code ${unread.exitCode}), but its output could not be read back${why}. ` +
+            `It is kept in the sandbox for an hour: read ${unread.stdoutPath} and ${unread.stderrPath} instead of running the command again.`,
+          exitCode: unread.exitCode,
+          truncated: false,
+        };
       }
     }
     let output = stdout;
@@ -244,9 +262,7 @@ export class PrizedSandbox extends BaseSandbox {
       if (output && !output.endsWith("\n")) output += "\n";
       output += `Command timed out after ${timeout} seconds`;
     }
-    if (truncated) {
-      output += "\n\n... Output truncated: the sandbox keeps the first 100 MiB of each stream. Write large output to a file and read it in parts.";
-    }
+    if (truncated) output += cutBy === "write_failed" ? WRITE_FAILED_NOTE : CAPPED_NOTE;
     return { output, exitCode, truncated };
   }
 
@@ -369,6 +385,18 @@ export class PrizedSandbox extends BaseSandbox {
     return path.startsWith("/") ? path : `${this.#options.cwd ?? DEFAULT_WORKDIR}/${path}`;
   }
 
+  /**
+   * The error for a command that failed. A `not_found` there doesn't always mean the sandbox is gone:
+   * the SDK also raises it on a live sandbox (0.1.0, when a command's output couldn't be read back; a
+   * long command whose state file is missing), so the sandbox is asked again before it's called gone.
+   */
+  async #commandError(sandbox: Sandbox, err: unknown): Promise<Error> {
+    if (err instanceof PrizedError && err.code === "not_found" && !(await confirmedGone(sandbox))) {
+      return new PrizedSandboxError(err.message, "COMMAND_FAILED", err);
+    }
+    return this.#wrap(err, "COMMAND_FAILED");
+  }
+
   #wrap(err: unknown, code: string): Error {
     if (err instanceof SandboxError) return err;
     if (err instanceof PrizedError && GONE.has(err.code)) {
@@ -386,6 +414,34 @@ export function createPrizedSandboxFactory(options: PrizedSandboxOptions = {}): 
 /** A synchronous BackendFactory that always returns this sandbox. */
 export function createPrizedSandboxFactoryFromSandbox(sandbox: PrizedSandbox): BackendFactory {
   return () => sandbox;
+}
+
+/** Whether the API, asked again, says the sandbox is gone (any other answer, or none, keeps it). */
+async function confirmedGone(sandbox: Sandbox): Promise<boolean> {
+  try {
+    await sandbox.refresh();
+  } catch (err) {
+    return err instanceof PrizedError && GONE.has(err.code);
+  }
+  return GONE_STATES.has(sandbox.state);
+}
+
+/** Why the SDK cut a result's output: @prized/sdk 0.1.1 says (`truncatedReason`), 0.1.0 doesn't. */
+function truncatedReason(result: object): string | undefined {
+  const reason = (result as { truncatedReason?: unknown }).truncatedReason;
+  return typeof reason === "string" ? reason : undefined;
+}
+
+/**
+ * A command that ran but whose output could not be read back from the sandbox: @prized/sdk 0.1.1's
+ * OutputReadError (code `output_read_failed`). Matched by code and fields rather than the class, so this
+ * package still loads and builds against 0.1.0, which has no such export.
+ */
+function outputReadFailure(err: unknown): { exitCode: number; stdoutPath: string; stderrPath: string; reason: string | null } | null {
+  if (!(err instanceof PrizedError) || err.code !== "output_read_failed") return null;
+  const { exitCode, stdoutPath, stderrPath } = err as unknown as Record<string, unknown>;
+  if (typeof exitCode !== "number" || typeof stdoutPath !== "string" || typeof stderrPath !== "string") return null;
+  return { exitCode, stdoutPath, stderrPath, reason: typeof err.reason === "string" ? err.reason : null };
 }
 
 function parseCodes(stdout: string): Array<[number, string]> {
