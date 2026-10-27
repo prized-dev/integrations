@@ -158,8 +158,9 @@ def cmd_connect(args: argparse.Namespace) -> int:
     code = c.wait_for_code(args.callback_url, timeout=args.timeout)
     conn = c.exchange(code, verifier)
     out = Path(args.env_file).expanduser()
-    out.parent.mkdir(parents=True, exist_ok=True)
+    out.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
     fd = os.open(out, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    os.fchmod(fd, 0o600)  # an existing file keeps its mode through O_CREAT
     with os.fdopen(fd, "w") as fh:
         fh.write(
             f"DEVIN_OUTPOSTS_TOKEN={conn.access_token}\nDEVIN_API_URL={conn.api_base_url}\n"

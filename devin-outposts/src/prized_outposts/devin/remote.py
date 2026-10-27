@@ -211,10 +211,16 @@ else echo none; fi
 """
 
 
-def stop_script(session_id: str) -> str:
+def stop_script(session_id: str, only_pid: int | None = None) -> str:
+    """Stop the session's worker; with ``only_pid``, only if it is still the run.sh with that pid."""
     run = run_dir(session_id)
+    guard = (
+        f'[ "$(cat "$run/pid" 2>/dev/null)" = "{int(only_pid)}" ] || {{ echo "not ours"; exit 0; }}\n'
+        if only_pid is not None
+        else ""
+    )
     return f"""run="{run}"
-for f in remote.pid pid; do
+{guard}for f in remote.pid pid; do
   [ -s "$run/$f" ] || continue
   p=$(cat "$run/$f"); kill -TERM "$p" 2>/dev/null || continue
   for i in $(seq 50); do kill -0 "$p" 2>/dev/null || break; sleep 0.1; done

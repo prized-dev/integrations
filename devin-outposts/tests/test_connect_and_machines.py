@@ -4,6 +4,7 @@ import base64
 import hashlib
 import threading
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -134,3 +135,23 @@ def test_durations_and_labels():
     assert label_pairs(["a=b", "c=d=e"]) == {"a": "b", "c": "d=e"}
     with pytest.raises(ValueError):
         label_pairs(["nope"])
+
+
+def test_stray_requests_do_not_end_the_connect_attempt():
+    port = free_port()
+    callback = f"http://localhost:{port}/prized/devin/callback"
+    got: dict[str, str] = {}
+    listener = threading.Thread(target=lambda: got.update(code=c.wait_for_code(callback, timeout=10)))
+    listener.start()
+    for path in ("?error=access_denied", "", "?x=1"):
+        for _ in range(50):
+            try:
+                urllib.request.urlopen(f"{callback}{path}", timeout=2).read()
+            except urllib.error.HTTPError as err:
+                assert err.code == 400
+                break
+            except OSError:
+                time.sleep(0.1)
+    urllib.request.urlopen(f"{callback}?code=real", timeout=2).read()
+    listener.join(10)
+    assert got == {"code": "real"}

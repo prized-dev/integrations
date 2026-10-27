@@ -253,3 +253,88 @@ def test_the_api_pages_and_watches(fake):
     assert other.release("devin-p0") is False
     assert api.release("devin-p0") is True
     assert "ctok" not in repr(claimed)
+
+
+# -- failures (regressions from review) --------------------------------------------------------
+
+
+def test_a_failed_claim_is_handed_back_and_retried_after_a_backoff(fake, world, make):
+    orch = make()
+    world.fail_create = "sandbox_capacity"
+    fake.enqueue("devin-f1")
+    settle(orch, lambda: any(e[0] == "devin-f1" and e[1] == "error" for e in orch.events))
+    assert fake.row("devin-f1").phase == "pending", "the claim went back to the queue"
+    assert "devin-f1" not in orch.tracks and "devin-f1" in orch.rules.cooldown
+    world.fail_create = None
+    orch.rules.cooldown["devin-f1"] = 0.0  # the backoff has passed
+    settle(orch, serving(fake, "devin-f1"))
+    assert fake.row("devin-f1").claims == 2
+
+
+def test_a_lapsed_claim_on_a_sleeping_session_pauses_its_sandbox(fake, world, make):
+    fake.claim_ttl = 1.0
+    orch = make(renew_margin=0.0)
+    fake.enqueue("devin-f2")
+    settle(orch, serving(fake, "devin-f2"))
+    [sb] = sandboxes(world)
+    fake.suspend("devin-f2")
+    time.sleep(2.5)  # the orchestrator stalled; the claim expired while the session slept
+    settle(orch, lambda: sb.state == "paused" and not orch.tracks)
+    fake.wake("devin-f2")
+    settle(orch, serving(fake, "devin-f2", attached=2))
+    assert sandboxes(world) == [sb]
+
+
+def test_a_prized_blip_keeps_the_claim_and_the_worker(fake, world, make):
+    from prized import PrizedError
+
+    orch = make()
+    fake.enqueue("devin-f3")
+    settle(orch, serving(fake, "devin-f3"))
+    sb = orch.sandboxes["devin-f3"]
+    real_exec, real_list = sb.exec, orch.machines.api.list
+
+    def down(*a, **k):
+        raise PrizedError("network_error")
+
+    sb.exec = down
+    orch.machines.api.list = staticmethod(down)
+    for _ in range(2):
+        orch.tick()
+        orch.drain(30)
+    sb.exec = real_exec
+    orch.machines.api.list = real_list
+    for _ in range(5):
+        orch.tick()
+        orch.drain(30)
+    row = fake.row("devin-f3")
+    assert (row.phase, row.acceptor_id) == ("claimed", "prized-test-1")
+    assert orch.tracks["devin-f3"].remote == "alive"
+    assert read(state_file(sb, "devin-f3", "launches")) == "1", "the worker was never restarted"
+
+
+def test_stopping_by_pid_never_touches_another_worker(fake, world, make):
+    from prized_outposts.devin import remote as rm
+
+    orch = make()
+    fake.enqueue("devin-f4")
+    settle(orch, serving(fake, "devin-f4"))
+    sb = orch.sandboxes["devin-f4"]
+    assert sb.exec(rm.stop_script("devin-f4", only_pid=1)).stdout.strip() == "not ours"
+    assert rm.parse_status(sb.exec(rm.status_script("devin-f4")).stdout)[0] == "alive"
+    pid = orch.tracks["devin-f4"].pid
+    assert sb.exec(rm.stop_script("devin-f4", only_pid=pid)).stdout.strip() == "stopped"
+    assert rm.parse_status(sb.exec(rm.status_script("devin-f4")).stdout)[0] == "exited"
+
+
+def test_a_give_up_message_is_cleared_once_the_session_is_served_again(fake, world, make):
+    orch = make(restart_limit=1)
+    fake.enqueue("devin-f5")
+    settle(orch, serving(fake, "devin-f5"))
+    sb = orch.sandboxes["devin-f5"]
+    os.kill(int(read(os.path.join(sb.home, ".prized-outposts", "devin-f5", "remote.pid")).strip()), 9)
+    settle(orch, lambda: any(e[1] == "gave up" for e in orch.events))
+    assert fake.row("devin-f5").messages[-1].startswith("Prized: the Devin worker")
+    orch.rules.cooldown["devin-f5"] = 0.0
+    settle(orch, serving(fake, "devin-f5", attached=2))
+    assert fake.row("devin-f5").messages[-1] == ""

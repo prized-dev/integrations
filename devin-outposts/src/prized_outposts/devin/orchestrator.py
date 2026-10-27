@@ -54,12 +54,15 @@ class Orchestrator:
         self.chrome_path = chrome_path
         self.desktop = desktop
         self.poll_interval = poll_interval
+        self.min_pass = min(1.0, poll_interval)
         self.sweep_interval = sweep_interval
         self.clock = clock
         self.tracks: dict[str, Track] = {}
         self.sandboxes: dict[str, Any] = {}
         self.entries: dict[str, Entry] = {}
         self.notified: set[str] = set()
+        self.bannered: set[str] = set()  # sessions showing our give-up message
+        self.failures: dict[str, int] = {}  # failed claims in a row, for the backoff
         self.events: list[tuple[str, str, str]] = []  # (session, what, detail): for tests and status
         self._lock = threading.RLock()
         self._wake = threading.Event()
@@ -77,12 +80,14 @@ class Orchestrator:
             )
             watcher.start()
         while not stop.is_set():
+            started = time.monotonic()
             try:
                 self.tick()
             except Exception:  # keep serving; the next pass converges
                 log.exception("pass failed")
             self._wake.wait(self.poll_interval)
             self._wake.clear()
+            stop.wait(max(0.0, self.min_pass - (time.monotonic() - started)))  # at most one pass a second
         log.info("stopping: sessions keep running in their sandboxes; restart to pick them up again")
 
     def _watch_loop(self, stop: threading.Event) -> None:
@@ -92,13 +97,18 @@ class Orchestrator:
             try:
                 if cursor is None:
                     _, cursor = self.api.list_all(self.outpost_id)
+                opened = time.monotonic()
                 for _kind, _entry, event_cursor in self.api.watch(self.outpost_id, cursor, stop):
                     cursor = event_cursor or cursor
                     self._wake.set()
-                backoff = 1.0
+                lasted = time.monotonic() - opened
             except Exception as err:  # the stream ends every few minutes; reconnect
                 log.debug("watch ended: %s", err)
-                stop.wait(backoff)
+                lasted = 0.0
+            if lasted >= 30.0:
+                backoff = 1.0  # a normal stream that ran its course
+            else:
+                stop.wait(backoff)  # one that ended at once (an error, a proxy): don't hammer the API
                 backoff = min(backoff * 2, 30.0)
 
     def tick(self) -> list[Action]:
@@ -143,55 +153,60 @@ class Orchestrator:
             (sid, self._pool.submit(sb.exec, rm.status_script(sid), timeout=20)) for sid, sb in targets
         ]
         for sid, fut in futures:
+            reached = True
             try:
                 state, num = rm.parse_status(fut.result(timeout=60).stdout)
             except PrizedError as err:
-                state, num = ("none" if err.code in GONE else "unknown"), None
+                state, num, reached = ("none" if err.code in GONE else "unknown"), None, err.code in GONE
                 if err.code in GONE:
                     with self._lock:
                         self.sandboxes.pop(sid, None)
             except Exception:
-                state, num = "unknown", None
+                state, num, reached = "unknown", None, False
             with self._lock:
                 t = self.tracks.get(sid)
                 if t is None:
                     continue
+                t.probe_failures = 0 if reached else t.probe_failures + 1
                 if state == "exited" and t.remote != "exited":
                     t.exited_seen = now
                 t.remote, t.exit_code = state, (num if state == "exited" else None)
+                if state == "alive":
+                    t.pid = num
 
     # -- actions -------------------------------------------------------------------------------
 
     def _run_action(self, action: Action) -> None:
         sid = action.session_id
+        with self._lock:
+            track = self.tracks.get(sid)  # this action's own track; a later pass may make a new one
         try:
             getattr(self, f"_do_{action.kind}")(sid, action.reason)
             with self._lock:
-                t = self.tracks.get(sid)
-                if t is not None:
-                    t.attempts = 0
+                track.attempts = 0
+                if action.kind == "claim":
+                    self.failures.pop(sid, None)
         except (ClaimConflict, NotQueued) as err:
             self._note(sid, "lost", f"{action.kind}: {err.status}")
-            self._forget(sid)
+            self._forget(sid, track)
         except Exception as err:
-            with self._lock:
-                t = self.tracks.get(sid)
-                if t is not None:
-                    t.attempts += 1
-                    t.next_try = self.clock() + min(5.0 * 2 ** (t.attempts - 1), 120.0)
             self._note(sid, "error", f"{action.kind}: {_describe(err)}")
-            if action.kind in ("claim", "start"):
+            if action.kind == "claim":
+                # Nothing serves this fresh claim: hand it back, forget the session, and wait before
+                # claiming it again, longer each time.
                 self._release_quietly(sid)
                 with self._lock:
-                    t = self.tracks.get(sid)
-                    if t is not None and t.attempts >= 3:
-                        self.rules.cooldown[sid] = self.clock() + 600
-                        self._forget(sid)
+                    n = self.failures[sid] = self.failures.get(sid, 0) + 1
+                    self.rules.cooldown[sid] = self.clock() + min(5.0 * 2 ** (n - 1), 600.0)
+                self._forget(sid, track)
+            else:
+                # Keep the claim: a worker may still be serving (this could be a Prized blip). Retry later.
+                with self._lock:
+                    track.attempts += 1
+                    track.next_try = self.clock() + min(5.0 * 2 ** (track.attempts - 1), 120.0)
         finally:
             with self._lock:
-                t = self.tracks.get(sid)
-                if t is not None:
-                    t.busy = False
+                track.busy = False
             self._wake.set()
 
     def _do_claim(self, sid: str, _reason: str) -> None:
@@ -234,10 +249,16 @@ class Orchestrator:
             sb.exec(rm.launch_command(sid), env=env, background=True)
             self._wait_alive(sb, sid)
             self._note(sid, "worker started", f"devin-remote {binary.sha}")
+        alive, pid = rm.parse_status(sb.exec(rm.status_script(sid), timeout=20).stdout)
         with self._lock:
             t = self.tracks[sid]
             t.remote, t.exit_code, t.exited_seen, t.suspended_seen = "alive", None, None, None
+            t.pid = pid if alive == "alive" else None
             t.starts += 1 if state != "alive" else 0
+            clear = sid in self.bannered
+            self.bannered.discard(sid)
+        if clear:
+            self.api.operator_message(sid, "")
 
     def _prepare(self, sb: Any, sid: str, binary: rm.Binary) -> str:
         script = rm.prepare_script(sid, binary, self.workdir)
@@ -282,6 +303,8 @@ class Orchestrator:
         except PrizedError as err:
             if err.code not in GONE:
                 raise
+        with self._lock:
+            self.sandboxes.pop(sid, None)  # a probe would resume it
         self.api.release(sid)
         self._note(sid, "released", "suspended")
         self._forget(sid)
@@ -293,7 +316,8 @@ class Orchestrator:
         self._forget(sid)
 
     def _do_give_up(self, sid: str, reason: str) -> None:
-        sb = self.sandboxes.get(sid)
+        with self._lock:
+            sb = self.sandboxes.pop(sid, None)  # a probe would resume it once paused
         if sb is not None:
             self._stop_remote(sb, sid)
         try:
@@ -306,6 +330,7 @@ class Orchestrator:
             f"Prized: the Devin worker for this session stopped ({reason}). Its sandbox is paused with "
             "its files; the outpost will try again in about 10 minutes.",
         )
+        self.bannered.add(sid)
         self.api.release(sid)
         self.rules.cooldown[sid] = self.clock() + 600
         self._note(sid, "gave up", reason)
@@ -318,11 +343,15 @@ class Orchestrator:
         self._forget(sid)
 
     def _do_drop(self, sid: str, reason: str) -> None:
-        sb = self.sandboxes.get(sid)
+        with self._lock:
+            sb = self.sandboxes.pop(sid, None)
+            t = self.tracks.get(sid)
+            pid, had = (t.pid, bool(t.sandbox_id)) if t is not None else (None, False)
         if sb is not None:
-            self._stop_remote(sb, sid)
+            self._stop_remote(sb, sid, only_pid=pid)
+        if sb is not None or had:
             try:
-                self.machines.hibernate({SESSION: sid})
+                self.machines.hibernate({SESSION: sid})  # found by label, so a retry still pauses it
             except PrizedError as err:
                 if err.code not in GONE:
                     raise
@@ -330,16 +359,20 @@ class Orchestrator:
         self._forget(sid)
 
     def _do_abandon(self, sid: str, reason: str) -> None:
-        sb = self.sandboxes.get(sid)
-        if sb is not None:
-            self._stop_remote(sb, sid)
+        # Another acceptor holds the session now. Stop the worker we started, and only that one: in the
+        # same Prized workspace the new holder uses this same sandbox and may run its own.
+        with self._lock:
+            sb = self.sandboxes.pop(sid, None)
+            pid = self.tracks[sid].pid if sid in self.tracks else None
+        if sb is not None and pid is not None:
+            self._stop_remote(sb, sid, only_pid=pid)
         self._note(sid, "abandoned", reason)
         self._forget(sid)
 
-    def _stop_remote(self, sb: Any, sid: str) -> None:
+    def _stop_remote(self, sb: Any, sid: str, only_pid: int | None = None) -> None:
         try:
             if sb.state == "running":
-                sb.exec(rm.stop_script(sid), timeout=30)
+                sb.exec(rm.stop_script(sid, only_pid=only_pid), timeout=30)
         except PrizedError as err:
             if err.code not in GONE:
                 log.info("%s: could not stop the worker: %s", sid, err.code)
@@ -350,8 +383,10 @@ class Orchestrator:
         except Exception as err:
             log.info("%s: release failed: %s", sid, _describe(err))
 
-    def _forget(self, sid: str) -> None:
+    def _forget(self, sid: str, track: Track | None = None) -> None:
         with self._lock:
+            if track is not None and self.tracks.get(sid) is not track:
+                return  # a newer pass owns this session now
             self.tracks.pop(sid, None)
             self.sandboxes.pop(sid, None)
 

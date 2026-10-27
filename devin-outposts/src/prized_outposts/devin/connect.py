@@ -81,12 +81,13 @@ def wait_for_code(callback_url: str = CALLBACK_URL, timeout: float = 600.0) -> s
             if url.path != parsed.path:
                 self.send_error(404)
                 return
-            if "code" in query:
-                got["code"] = query["code"][0]
-                body = b"Connected. You can close this tab and go back to your terminal.\n"
-            else:
-                got["error"] = (query.get("error") or ["no code in the callback"])[0]
-                body = b"Devin did not send a code. Go back to your terminal.\n"
+            if "code" not in query:
+                # Only Devin's redirect carries a code. Anything else (a stray request from another page
+                # in the browser) is answered and ignored, so it can't end the attempt.
+                self.send_error(400, "no code")
+                return
+            got["code"] = query["code"][0]
+            body = b"Connected. You can close this tab and go back to your terminal.\n"
             self.send_response(200)
             self.send_header("Content-Type", "text/plain; charset=utf-8")
             self.send_header("Cache-Control", "no-store")
@@ -106,8 +107,6 @@ def wait_for_code(callback_url: str = CALLBACK_URL, timeout: float = 600.0) -> s
     finally:
         server.shutdown()
         server.server_close()
-    if "code" not in got:
-        raise ConnectError(f"Devin returned no code: {got.get('error')}")
     return got["code"]
 
 

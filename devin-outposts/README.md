@@ -31,8 +31,8 @@ Run each [Devin Outposts](https://docs.devin.ai/cloud/outposts/overview) session
 - The remote connects out to Devin's gateway with a connect token for that one session. That is the only Devin credential in the sandbox; the service-user token and your Prized key stay on the orchestrator's machine.
 - **Session sleeps:** the remote exits, the orchestrator pauses the sandbox (memory, processes and disk kept; no compute billed) and returns the session to the queue.
 - **Session wakes:** the orchestrator claims it again, resumes the same sandbox (about 0.6 s), and starts a new remote with the new token. Files, branches, installed packages, and anything still running are where Devin left them.
-- **Session ends:** the sandbox is deleted.
-- The orchestrator renews its claims before they expire, starts a crashed remote again (three times, then pauses the sandbox and tells the session), and deletes the sandboxes of ended sessions. A restarted orchestrator finds its sandboxes by their labels and carries on; two orchestrators on one outpost never serve the same session.
+- **Session ends:** the sandbox is deleted. A session that leaves the queue without Devin saying it ended has its sandbox paused instead, and deleted after `KEEP_PAUSED`.
+- The orchestrator renews its claims before they expire, starts a crashed remote again (up to three launches in all, then it pauses the sandbox and tells the session), and deletes the sandboxes of ended sessions. A restarted orchestrator finds its sandboxes by their labels and carries on; two orchestrators on one outpost never serve the same session.
 
 ## Start new sessions warm
 
@@ -44,7 +44,7 @@ export WARM_PARENT=sbx_…   # the id it prints
 prized-devin-outposts run
 ```
 
-The parent stays paused. Each session forks it, memory included, so a dev server started in `--setup` is already running in the session. For private repositories, clone with a token in a credential helper you set up in `--setup`, never in the URL.
+The parent stays paused. Each session forks it, memory included, so a dev server started in `--setup` is already running in the session. Forked sessions keep the parent's `AUTO_PAUSE` and `KEEP_PAUSED`, so set those when you run `warm`. For private repositories, clone with a token in a credential helper you set up in `--setup`, never in the URL.
 
 ## Connect from Devin's consent page
 

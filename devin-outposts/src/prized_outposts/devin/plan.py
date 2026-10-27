@@ -26,6 +26,8 @@ class Track:
     exited_seen: float | None = None  # first time we saw the remote ended while the session wasn't
     suspended_seen: float | None = None  # first time we saw the session suspended
     starts: int = 0
+    pid: int | None = None  # the run.sh we launched or attached to
+    probe_failures: int = 0  # probes in a row that couldn't reach the sandbox
     attempts: int = 0  # failed actions in a row
     next_try: float = 0.0
     busy: bool = False
@@ -46,6 +48,7 @@ class Rules:
     exit_grace: float = 20.0  # a clean exit while the session still looks live: wait for the status
     suspend_grace: float = 30.0  # let the remote exit by itself after a suspend
     restart_limit: int = 3  # launches per claim before giving up
+    probe_tolerance: int = 3  # unreachable probes in a row before a worker counts as gone
     refuse: Callable[[Entry], str | None] = lambda entry: None
     platforms: tuple[str, ...] = ("linux",)
     cooldown: dict[str, float] = field(default_factory=dict)  # session -> no claims until then
@@ -67,11 +70,19 @@ def plan(
         seen.add(e.session_id)
         t = tracks.get(e.session_id)
         ours = e.phase == "claimed" and e.acceptor_id == rules.acceptor_id
+        if t is not None and t.busy:
+            if e.session_status not in FINISHED:
+                active += 1  # being served, or a claim in flight
+            continue
         if not ours:
             if t is not None and e.phase == "claimed":
                 actions.append(Action("abandon", e.session_id, "claimed by another acceptor"))
+            elif t is not None:
+                # Our claim lapsed (it expires only while the session isn't running): stop, pause, forget,
+                # so the session can be claimed again like any other.
+                actions.append(Action("drop", e.session_id, "our claim lapsed"))
             continue
-        if t is not None and (t.busy or now < t.next_try):
+        if t is not None and now < t.next_try:
             if e.session_status not in FINISHED:
                 active += 1
             continue
@@ -85,6 +96,17 @@ def plan(
             actions.append(Action("suspend", e.session_id))
             continue
         active += 1
+        near = e.claim_deadline is None or e.claim_deadline - now < rules.renew_margin
+        if (
+            t is not None
+            and t.remote == "unknown"
+            and t.sandbox_id
+            and t.probe_failures < rules.probe_tolerance
+        ):
+            # A probe that couldn't reach the sandbox says nothing about the worker yet: keep the claim.
+            if near:
+                actions.append(Action("renew", e.session_id))
+            continue
         if t is None or t.remote in ("none", "gone", "unknown"):
             if t is not None and t.starts >= rules.restart_limit:
                 actions.append(Action("give_up", e.session_id, f"the worker stopped {t.starts} times"))
@@ -98,7 +120,7 @@ def plan(
                 actions.append(Action("give_up", e.session_id, f"the worker stopped {t.starts} times"))
             else:
                 actions.append(Action("start", e.session_id, f"worker exited {t.exit_code}"))
-        elif e.claim_deadline is None or e.claim_deadline - now < rules.renew_margin:
+        elif near:
             actions.append(Action("renew", e.session_id))
 
     for sid, t in tracks.items():
