@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "prized-devin-outposts"
+version = "0.1.0"
+description = "Run Devin Outposts sessions in Prized Sandboxes: one Firecracker microVM per session that pauses with its memory while the session sleeps and resumes in under a second."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["devin", "outposts", "cognition", "prized", "sandbox", "microvm"]
+dependencies = ["prized>=0.1.0,<1", "httpx>=0.24,<1"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+prized-devin-outposts = "prized_outposts.cli:devin_main"
+prized-machines = "prized_outposts.cli:machines_main"
+
+[project.urls]
+Homepage = "https://prized.dev/sandboxes?via=devin-outposts"
+Documentation = "https://prized.dev/docs/devin-outposts?via=devin-outposts"
+Source = "https://github.com/prized-dev/integrations/tree/main/devin-outposts"
+Issues = "https://github.com/prized-dev/integrations/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/prized_outposts"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["live: needs PRIZED_API_KEY and PRIZED_LIVE=1; creates real sandboxes"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]

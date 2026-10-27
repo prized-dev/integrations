@@ -110,6 +110,10 @@ case $DIR in
     py "test" yes "pydantic-ai-slim==2.59.0" "pip install -q ruff && ruff check . && ruff format --check ." ;;
   harbor)
     py "test" no "harbor==0.24.0" "pip install -q ruff && ruff check . && ruff format --check ." ;;
+  devin-outposts)
+    # Offline: a stand-in for Devin's Outposts service on 127.0.0.1, fake sandboxes that run the
+    # in-sandbox scripts with bash, and a fake devin-remote. Live tests skip without PRIZED_LIVE=1.
+    py "test" yes "prized==0.1.0 httpx==0.24.1" "pip install -q ruff && ruff check . && ruff format --check ." ;;
   hermes)
     # The plugin's tests import Hermes itself, so they run in a pinned hermes-agent checkout's own
     # environment, installed from its lockfile the way Hermes' CI does (uv, Python 3.14).

@@ -37,6 +37,8 @@ jobs:
           - { dir: pydantic-ai, python: "3.13" }
           - { dir: harbor, python: "3.12", floor: true }
           - { dir: harbor, python: "3.13" }
+          - { dir: devin-outposts, python: "3.10", floor: true }
+          - { dir: devin-outposts, python: "3.13" }
           - { dir: hermes, python: "3.12" }
           - { dir: dify, python: "3.12" }
           - { dir: claude-managed-agents }
