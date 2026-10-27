@@ -15,6 +15,8 @@ export PRIZED_API_KEY=dcp_...   # prized.dev/dashboard/workspace/api-keys?via=la
 
 No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=langchain-js.
 
+Needs Node.js 22 or later.
+
 ## Use
 
 ```ts
