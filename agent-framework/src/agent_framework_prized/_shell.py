@@ -86,6 +86,12 @@ _CAPPED_NOTE = (
     "\n[prized: the sandbox kept only the start of this command's output; redirect large output to a "
     "file and read its tail]\n"
 )
+_WRITE_FAILED_NOTE = (
+    "\n[prized: the sandbox could not save all of this command's output, most often because its disk is "
+    "full, so it stops where the write failed; free some space and run the command again]\n"
+)
+# prized 0.1.1+ (OutputReadError): the command ran, but its output could not be read back.
+_OUTPUT_READ_FAILED = "output_read_failed"
 _REPLACED_NOTE = (
     "[prized: the previous sandbox was gone (its run time ended or it was deleted after being "
     "paused), so this ran in a fresh, empty sandbox: earlier files, installs and shell state are not there]\n"
@@ -679,11 +685,16 @@ class PrizedShellTool:
             try:
                 return await once(sandbox), False
             except PrizedError as e:
-                if isinstance(e, CommandTimeoutError):
+                if isinstance(e, CommandTimeoutError) or e.code == _OUTPUT_READ_FAILED:
                     raise
                 return await once(await self._replace_if_gone(sandbox, e)), False
         except CommandTimeoutError as e:
             return e.result, True
+        except PrizedError as e:
+            # The command ran: never run it again, report its exit code and where its output is.
+            if e.code != _OUTPUT_READ_FAILED:
+                raise
+            return _unread_result(e), False
 
     async def _script(self, sandbox: AsyncSandbox, command: str) -> tuple[str, str | None]:
         """The bash script that runs ``command`` in this tool's mode, and the file it
@@ -705,7 +716,10 @@ class PrizedShellTool:
         if replaced:
             stderr = _REPLACED_NOTE + stderr
         if result.truncated:
-            stderr += _CAPPED_NOTE
+            # prized 0.1.1+ says why it cut the output.
+            stderr += (
+                _WRITE_FAILED_NOTE if getattr(result, "truncated_reason", None) == "write_failed" else _CAPPED_NOTE
+            )
         return ShellResult(
             stdout=stdout,
             stderr=stderr,
@@ -902,6 +916,18 @@ class PrizedShellTool:
         if sandbox is failed or sandbox is None:
             raise error
         return sandbox
+
+
+def _unread_result(error: PrizedError) -> PrizedExecResult:
+    """The result of a command that ran but whose output could not be read back
+    (prized 0.1.1+ ``OutputReadError``): its exit code, and a note on where the output is kept."""
+    paths = " and ".join(p for p in (getattr(error, "stdout_path", None), getattr(error, "stderr_path", None)) if p)
+    kept = (
+        f" It is kept in the sandbox for an hour: read {paths} instead of running the command again." if paths else ""
+    )
+    why = f" ({error.reason})" if error.reason else ""
+    note = f"[prized: the command ran, but its output could not be read back{why}.{kept}]\n"
+    return prized.ExecResult(stdout="", stderr=note, exit_code=getattr(error, "exit_code", 1))
 
 
 def _head_tail(text: str, cap: int) -> tuple[str, bool]:

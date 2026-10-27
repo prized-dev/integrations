@@ -25,7 +25,7 @@ from prized import ExecResult
 
 from agent_framework_prized import PrizedShellTool
 from agent_framework_prized import _shell as shell_module
-from tests.fakes import FakeSdk
+from tests.fakes import FakeSdk, cut_result, output_read_error
 
 STATE = "/home/prized/.prized/maf/shell-state.sh"
 
@@ -191,6 +191,40 @@ async def test_capped_output_says_so(sdk):
     sdk.created[0].handler = lambda cmd, kw: ExecResult("x" * 10, "", 0, truncated=True)
     result = await shell.run("yes")
     assert result.truncated and "kept only the start of this command's output" in result.stderr
+    sdk.created[0].handler = None
+    await shell.close()
+
+
+async def test_output_a_full_disk_cut_says_so(sdk):
+    shell = PrizedShellTool()
+    await shell.start()
+    sdk.created[0].handler = lambda cmd, kw: cut_result("x" * 10, "write_failed")
+    result = await shell.run("make")
+    assert result.truncated and "its disk is full" in result.stderr
+    assert "kept only the start" not in result.stderr
+    sdk.created[0].handler = lambda cmd, kw: cut_result("x" * 10, "output_limit")
+    assert "kept only the start of this command's output" in (await shell.run("yes")).stderr
+    sdk.created[0].handler = None
+    await shell.close()
+
+
+@pytest.mark.parametrize("reason", ["not_found", "network_error"])
+async def test_output_that_could_not_be_read_back_is_a_result_and_never_reruns(sdk, reason):
+    shell = PrizedShellTool()
+    await shell.start()
+    calls = []
+
+    def unread(cmd, kw):
+        if "__prized_c=" in str(cmd):
+            calls.append(cmd)
+            raise output_read_error(3, reason)
+
+    sdk.created[0].handler = unread
+    result = await shell.run("make deploy")
+    assert result.exit_code == 3 and result.stdout == "" and not result.timed_out
+    assert f"the command ran, but its output could not be read back ({reason})" in result.stderr
+    assert "/home/prized/.prized/exec/x/stdout and /home/prized/.prized/exec/x/stderr" in result.stderr
+    assert len(calls) == 1 and len(sdk.created) == 1 and not sdk.created[0].deleted
     sdk.created[0].handler = None
     await shell.close()
 
