@@ -18,6 +18,8 @@ ID=$CURSOR_AGENT_WORKER_ID
 log() { echo "[spawn] $ID: $*" >&2; }
 [[ $ID =~ ^[A-Za-z0-9._-]+$ && $CURSOR_POOL =~ ^[A-Za-z0-9._-]+$ ]] || { log "unexpected worker id or pool"; exit 1; }
 [[ $IDLE =~ ^[1-9][0-9]*$ ]] || { log "CURSOR_IDLE_RELEASE must be a number of seconds above 0"; exit 1; }
+EVERY=${PRIZED_CURSOR_POLL:-30}            # seconds between polls; well under the 5-minute auto-pause
+[[ $EVERY =~ ^[0-9]+(\.[0-9]+)?$ && ! $EVERY =~ ^0+(\.0+)?$ ]] || { log "PRIZED_CURSOR_POLL must be a number of seconds above 0"; exit 1; }
 [[ $FLAGS =~ ^[A-Za-z0-9\ ._=/:,-]*$ ]] || { log "CURSOR_WORKER_FLAGS takes plain flags only, no quotes"; exit 1; }
 if [ "$CURSOR_POOL" = default ] && [[ " $FLAGS " == *" --clone-git-repos "* ]]; then
   log "--clone-git-repos needs a named pool, not default"; exit 1
@@ -43,8 +45,10 @@ cd ~/work && rm -f ~/.cursor-worker/done && setsid -f sh -c '
     --idle-release-timeout $IDLE $FLAGS start >> ~/.cursor-worker/worker.log 2>&1
   echo \$? > ~/.cursor-worker/done' < /dev/null > /dev/null 2>&1
 EOF
-# Exits 0 once the worker has exited, 3 while it runs.
-POLL='[ -e ~/.cursor-worker/done ] || ! kill -0 "$(cat ~/.cursor-worker/pid 2>/dev/null)" 2>/dev/null || exit 3'
+# Prints "exited" once the worker has exited, "running" while it runs. (Not an exit code: the
+# prized CLI's own codes include 3 for an unreachable sandbox.)
+# shellcheck disable=SC2016 # runs in the sandbox
+POLL='if [ -e ~/.cursor-worker/done ] || ! kill -0 "$(cat ~/.cursor-worker/pid 2>/dev/null)" 2>/dev/null; then echo exited; else echo running; fi'
 
 (
   # The watcher's polls keep the sandbox running. If they stop (this machine goes down), it pauses
@@ -71,12 +75,12 @@ POLL='[ -e ~/.cursor-worker/done ] || ! kill -0 "$(cat ~/.cursor-worker/pid 2>/d
   # polls leave it to pause and delete itself, so an outage never deletes a live agent's sandbox.
   trap - EXIT
   trap 'log "watcher stopped; $SBX pauses and is deleted by itself"; exit 0' TERM HUP INT
-  while sleep "${PRIZED_CURSOR_POLL:-30}"; do
-    code=0
-    prized sandbox exec "$SBX" --timeout 30s -- "$POLL" >/dev/null 2>&1 || code=$?
-    [ "$code" = 3 ] && continue
-    [ "$code" = 0 ] && break
-    if prized sandbox get "$SBX" 2>&1 | grep -q "no sandbox"; then log "$SBX is gone"; exit 0; fi
+  while :; do
+    sleep "$EVERY" || true  # a failed or killed sleep must not end the loop: only "exited" does
+    state=$(prized sandbox exec "$SBX" --timeout 30s -- "$POLL" 2>/dev/null) || state=
+    case $state in *running) continue ;; *exited) break ;; esac  # the last word printed
+    # Not a pipeline: under pipefail, get's non-zero exit would hide grep's match.
+    info=$(prized sandbox get "$SBX" 2>&1) || case $info in *"no sandbox"*) log "$SBX is gone"; exit 0 ;; esac
   done
   log "worker exited ($(prized sandbox exec "$SBX" -- 'cat ~/.cursor-worker/done 2>/dev/null || echo killed'))"
   prized sandbox cp "$SBX:~/.cursor-worker/worker.log" "$LOGS/$ID.worker.log" >/dev/null 2>&1 || true
