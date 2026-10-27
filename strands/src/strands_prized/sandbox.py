@@ -68,6 +68,12 @@ _FALLBACK_PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
 # directory every command also gets on its PATH.
 _PIP_ENV = {"PIP_BREAK_SYSTEM_PACKAGES": "1"}
 _TRUNCATED_NOTE = "\n[prized: the output was cut off here; redirect large output to a file]\n"
+_WRITE_FAILED_NOTE = (
+    "\n[prized: the output was cut off here because the sandbox could not save it, most often because its "
+    "disk is full; free some space and run the command again]\n"
+)
+# prized 0.1.1+ (OutputReadError): the command ran, but its output could not be read back.
+_OUTPUT_READ_FAILED = "output_read_failed"
 _REPLACED_NOTE = (
     "[prized: the previous sandbox was gone (its run time ended or it was deleted after being "
     "paused), so this ran in a fresh, empty sandbox: earlier files and installs are not there]\n"
@@ -543,11 +549,16 @@ class PrizedSandbox(Sandbox):
             try:
                 return await once(sandbox)
             except PrizedError as e:
-                if isinstance(e, CommandTimeoutError):
+                if isinstance(e, CommandTimeoutError) or e.code == _OUTPUT_READ_FAILED:
                     raise
                 return await once(await self._replace_if_gone(sandbox, e))
         except CommandTimeoutError as e:
-            raise SandboxTimeoutError(timeout, e.stdout, e.stderr) from e
+            raise SandboxTimeoutError(timeout, e.stdout, e.stderr + _cut_note(e.result)) from e
+        except PrizedError as e:
+            # The command ran: never run it again, report its exit code and where its output is.
+            if e.code != _OUTPUT_READ_FAILED:
+                raise
+            return _unread_result(e)
 
     async def _helper(self, argv: list[str]) -> PrizedExecResult:
         """A short helper command, retried once on a replacement sandbox if it was gone."""
@@ -772,7 +783,7 @@ class PrizedSandbox(Sandbox):
         return sandbox
 
     def _to_result(self, result: PrizedExecResult) -> ExecutionResult:
-        stderr = result.stderr + _TRUNCATED_NOTE if result.truncated else result.stderr
+        stderr = result.stderr + _cut_note(result)
         with self._state:
             replaced, self._replaced = self._replaced, False
         if replaced:
@@ -783,6 +794,29 @@ class PrizedSandbox(Sandbox):
         if not path:
             raise ValueError("path must not be empty")
         return posixpath.normpath(posixpath.join(self.working_dir, path))
+
+
+def _cut_note(result: PrizedExecResult | None) -> str:
+    """The note for output the SDK cut, by why it did (prized 0.1.1+ says: ``truncated_reason``)."""
+    if not getattr(result, "truncated", False):
+        return ""
+    if getattr(result, "truncated_reason", None) == "write_failed":
+        return _WRITE_FAILED_NOTE
+    return _TRUNCATED_NOTE
+
+
+def _unread_result(error: PrizedError) -> PrizedExecResult:
+    """The result of a command that ran but whose output could not be read back
+    (prized 0.1.1+ ``OutputReadError``): its exit code, and a note on where the output is kept."""
+    from prized import ExecResult
+
+    paths = " and ".join(p for p in (getattr(error, "stdout_path", None), getattr(error, "stderr_path", None)) if p)
+    kept = (
+        f" It is kept in the sandbox for an hour: read {paths} instead of running the command again." if paths else ""
+    )
+    why = f" ({error.reason})" if error.reason else ""
+    note = f"[prized: the command ran, but its output could not be read back{why}.{kept}]\n"
+    return ExecResult(stdout="", stderr=note, exit_code=getattr(error, "exit_code", 1))
 
 
 def _inside_home(path: str) -> bool:

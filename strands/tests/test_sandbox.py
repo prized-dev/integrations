@@ -18,7 +18,7 @@ import asyncio
 import logging
 
 import pytest
-from fakes import FALLBACK_PATH, FakeSdk
+from fakes import FALLBACK_PATH, FakeSdk, cut_result, output_read_error
 from prized import CommandTimeoutError, ExecResult, PrizedError
 from strands import Agent
 from strands.sandbox import ExecutionResult, Sandbox, StreamChunk
@@ -219,6 +219,35 @@ async def test_truncated_output_is_flagged(sdk):
     assert "the output was cut off" in result.stderr
 
 
+async def test_output_a_full_disk_cut_says_so(sdk):
+    sandbox = PrizedSandbox()
+    await sandbox.start()
+    sdk.created[0].handler = only("make", lambda cmd, kw: cut_result("a" * 10, "write_failed"))
+    result = await sandbox.execute("make")
+    assert "could not save it" in result.stderr and "disk is full" in result.stderr
+    sdk.created[0].handler = only("yes", lambda cmd, kw: cut_result("a" * 10, "output_limit"))
+    result = await sandbox.execute("yes")
+    assert "the output was cut off here; redirect" in result.stderr
+
+
+@pytest.mark.parametrize("reason", ["not_found", "sandbox_not_running"])
+async def test_output_that_could_not_be_read_back_is_a_result_and_never_reruns(sdk, reason):
+    sandbox = PrizedSandbox()
+    await sandbox.start()
+
+    def unread(cmd, kw):
+        raise output_read_error(2, reason)
+
+    sdk.created[0].handler = only("make deploy", unread)
+    result = await sandbox.execute("make deploy")
+    assert result.exit_code == 2 and result.stdout == ""
+    assert f"the command ran, but its output could not be read back ({reason})" in result.stderr
+    assert "/home/prized/.prized/exec/x/stdout and /home/prized/.prized/exec/x/stderr" in result.stderr
+    box = sdk.created[0]
+    assert [c for c, _ in user_commands(box)].count("make deploy") == 1
+    assert len(sdk.created) == 1
+
+
 async def test_timeout_raises_strands_timeout_with_partial_output(sdk):
     sandbox = PrizedSandbox()
     await sandbox.start()
@@ -230,6 +259,19 @@ async def test_timeout_raises_strands_timeout_with_partial_output(sdk):
     with pytest.raises(SandboxTimeoutError) as info:
         await sandbox.execute("sleep 99", timeout=1)
     assert (info.value.stdout, info.value.stderr) == ("tick\n", "warn\n")
+
+
+async def test_timeout_says_its_partial_output_was_cut(sdk):
+    sandbox = PrizedSandbox()
+    await sandbox.start()
+
+    def slow(cmd, kwargs):
+        raise CommandTimeoutError(cut_result("tick\n", "write_failed"), kwargs["timeout"])
+
+    sdk.created[0].handler = only("sleep", slow)
+    with pytest.raises(SandboxTimeoutError) as info:
+        await sandbox.execute("sleep 99", timeout=1)
+    assert info.value.stdout == "tick\n" and "disk is full" in info.value.stderr
 
 
 async def test_execute_streaming_yields_chunks_then_result(sdk):

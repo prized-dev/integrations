@@ -185,6 +185,30 @@ class FakeAsyncSandbox:
         self.closed = True
 
 
+def cut_result(stdout: str, reason: str) -> ExecResult:
+    """A result whose output the SDK cut, saying why (``truncated_reason``, prized 0.1.1+;
+    set by hand on 0.1.0, which has no such field)."""
+    try:
+        return ExecResult(stdout, "", 0, truncated=True, truncated_reason=reason)  # type: ignore[call-arg]
+    except TypeError:  # prized 0.1.0
+        result = ExecResult(stdout, "", 0, truncated=True)
+        object.__setattr__(result, "truncated_reason", reason)
+        return result
+
+
+def output_read_error(exit_code: int, reason: str = "network_error") -> PrizedError:
+    """What prized 0.1.1+ raises when a command ran but its output could not be read back
+    (``OutputReadError``); built by hand on 0.1.0, which has no such class."""
+    out, err = "/home/prized/.prized/exec/x/stdout", "/home/prized/.prized/exec/x/stderr"
+    message = f"The command ran (exit {exit_code}), but its output could not be read back."
+    cls = getattr(prized, "OutputReadError", None)
+    if cls is not None:
+        return cls(message, exit_code=exit_code, stdout_path=out, stderr_path=err, reason=reason)  # type: ignore[no-any-return]
+    error = PrizedError("output_read_failed", message, reason=reason)
+    error.exit_code, error.stdout_path, error.stderr_path = exit_code, out, err  # type: ignore[attr-defined]
+    return error
+
+
 def _shell(r: Remote, cmd: Any) -> ExecResult:
     """Just enough of the helper commands PrizedSandbox runs."""
     if isinstance(cmd, list) and cmd[:2] == ["base64", "-w0"]:
