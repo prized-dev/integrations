@@ -41,6 +41,7 @@ jobs:
           - { dir: devin-outposts, python: "3.13" }
           - { dir: hermes, python: "3.12" }
           - { dir: dify, python: "3.12" }
+          - { dir: cursor }
           - { dir: claude-managed-agents }
           - { dir: langchain-js, node: "20" }
           - { dir: langchain-js, node: "24" }
@@ -70,4 +71,6 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
-      - run: shellcheck scripts/test.sh claude-managed-agents/on-work.sh claude-managed-agents/test/test.sh
+      - run: >-
+          shellcheck scripts/test.sh claude-managed-agents/on-work.sh claude-managed-agents/test/test.sh
+          cursor/spawn.sh cursor/test/test.sh cursor/test/stub-agent cursor/test/sandbox-bin/curl

@@ -11,6 +11,7 @@ Each folder is its own package with its own README, tests and release. You need 
 | [`dify`](dify) | Dify: tool plugin (workflows and agents) | `prized_sandboxes` (`.difypkg`) | Build the `.difypkg` from this repo; tested under Dify's plugin runtime, not yet in a Dify install (self-hosted Dify takes the unsigned package only with signature checks off); Marketplace submission pending | [README](dify/README.md) |
 | [`devin-outposts`](devin-outposts) | Devin Outposts: orchestrator (one sandbox per session, paused with memory while it sleeps) | `prized-devin-outposts` | Works now: install from this repo (not on PyPI yet); Devin's one-click connect waits on Cognition | [README](devin-outposts/README.md) |
 | [`claude-managed-agents`](claude-managed-agents) | Claude Managed Agents: self-hosted environment | `on-work.sh` | Works now | [README](claude-managed-agents/README.md) |
+| [`cursor`](cursor) | Cursor Cloud Agents: Team Pool spawn hook (one sandbox per agent) | `spawn.sh` | Team Pools need Cursor Enterprise; not yet run in a real pool, tested end to end with a My Machines worker | [README](cursor/README.md) |
 | [`inspect`](inspect) | Inspect AI: sandbox environment | `inspect-prized` | Coming 2026-11-05 | [README](inspect/README.md) |
 | [`adk`](adk) | Google ADK: environment and code executor | `prized-adk` | Coming 2026-11-05 | [README](adk/README.md) |
 | [`strands`](strands) | Strands Agents: sandbox | `strands-prized` | Coming 2026-11-05 | [README](strands/README.md) |
