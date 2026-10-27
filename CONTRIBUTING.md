@@ -10,7 +10,7 @@ FLOOR=1 scripts/test.sh <folder>    # against the oldest framework versions the 
 PYTHON=python3.10 scripts/test.sh <folder>
 ```
 
-The script needs Python 3.10+ (3.11+ for `pydantic-ai`, 3.12+ for `harbor` and `dify`), Node.js 20+ for `langchain-js`, Node.js 22.13+ for `mastra`, and `jq` for `claude-managed-agents`. The tests run with an empty environment (`PATH`, a fresh `HOME` and the few paths a folder's step names, so no `PRIZED_API_KEY` or other key reaches them) and, where it can (sudo or user namespaces), with the network cut off, so a test that reaches the real API fails. Dify's runtime step keeps the network for its own install of `requirements.txt`.
+The script needs Python 3.10+ (3.11+ for `pydantic-ai`, 3.12+ for `harbor` and `dify`), Node.js 22.18+ for `langchain-js` and `mastra`, and `jq` for `claude-managed-agents`. The tests run with an empty environment (`PATH`, a fresh `HOME` and the few paths a folder's step names, so no `PRIZED_API_KEY` or other key reaches them) and, where it can (sudo or user namespaces), with the network cut off, so a test that reaches the real API fails. Dify's runtime step keeps the network for its own install of `requirements.txt`.
 
 Folders that need a Prized SDK install it from PyPI or npm. To test against an SDK build that isn't published yet, point `PRIZED_SDK_DIST` at a directory with its wheel and tarball.
 
