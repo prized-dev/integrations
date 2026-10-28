@@ -6,6 +6,7 @@ Each folder is its own package with its own README, tests and release. You need 
 
 | Folder | Framework | Package | Status | Docs |
 | --- | --- | --- | --- | --- |
+| [`openai-agents`](openai-agents) | OpenAI Agents SDK: sandbox client | `openai-agents-prized` | Works now: on PyPI | [README](openai-agents/README.md) |
 | [`hermes`](hermes) | Hermes Agent: terminal backend plugin | `hermes plugins install prized-dev/integrations/hermes` | Works now | [README](hermes/README.md) |
 | [`harbor`](harbor) | Harbor (Terminal-Bench): environment | `harbor-prized` | Works now: install from this repo (not on PyPI yet) | [README](harbor/README.md) |
 | [`dify`](dify) | Dify: tool plugin (workflows and agents) | `prized_sandboxes` (`.difypkg`) | Build the `.difypkg` from this repo; tested under Dify's plugin runtime, not yet in a Dify install (self-hosted Dify takes the unsigned package only with signature checks off); Marketplace submission pending | [README](dify/README.md) |
@@ -22,7 +23,7 @@ Each folder is its own package with its own README, tests and release. You need 
 
 "Coming 2026-11-05" means the package itself isn't on PyPI or npm yet. The Prized SDKs it uses already are (`prized` on PyPI, `@prized/sdk` on npm).
 
-Also from Prized, outside this repo: the SDKs themselves (`prized` on PyPI, `@prized/sdk` on npm), `langchain-prized` (LangChain Python) and `openai-agents-prized` (OpenAI Agents SDK), both on PyPI, and the Claude Code and Codex plugin in [prized-dev/skills](https://github.com/prized-dev/skills).
+Also from Prized, outside this repo: the SDKs themselves (`prized` on PyPI, `@prized/sdk` on npm), `langchain-prized` (LangChain Python, on PyPI), and the Claude Code and Codex plugin in [prized-dev/skills](https://github.com/prized-dev/skills).
 
 ## Tests
 

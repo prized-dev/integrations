@@ -1,0 +1,66 @@
+{
+  "auto_delete_min": 1440,
+  "auto_pause_min": 10,
+  "base_env_vars": {
+    "APP_MODE": "test"
+  },
+  "disk_gb": 20,
+  "exposed_ports": [],
+  "labels": {
+    "team": "agents"
+  },
+  "manifest": {
+    "entries": {},
+    "environment": {
+      "value": {
+        "GREETING": "hi"
+      }
+    },
+    "extra_path_grants": [],
+    "groups": [],
+    "remote_mount_command_allowlist": [
+      "ls",
+      "find",
+      "stat",
+      "cat",
+      "less",
+      "head",
+      "tail",
+      "du",
+      "grep",
+      "rg",
+      "wc",
+      "sort",
+      "cut",
+      "cp",
+      "tee",
+      "echo",
+      "mkdir",
+      "rm"
+    ],
+    "root": "/home/prized/work",
+    "users": [],
+    "version": 1
+  },
+  "max_runtime_min": 120,
+  "memory_mb": 4096,
+  "pause_on_exit": true,
+  "sandbox_id": "sbx_9f8e7d6c5b4a3921",
+  "session_id": "6c7feb0a-4ebc-469c-9783-d18da3ce350d",
+  "snapshot": {
+    "id": "6c7feb0a-4ebc-469c-9783-d18da3ce350d",
+    "type": "noop"
+  },
+  "snapshot_fingerprint": null,
+  "snapshot_fingerprint_version": null,
+  "template": "prized-agent-v1",
+  "timeouts": {
+    "exec_timeout_unbounded_s": 3600,
+    "fast_op_s": 30,
+    "start_s": 120.0,
+    "workspace_tar_s": 900
+  },
+  "type": "prized",
+  "vcpu": 2,
+  "workspace_root_ready": true
+}

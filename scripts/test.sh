@@ -27,6 +27,8 @@ ANT_SHA256=cd3fa57af3efbdbf68d569d0b921a69171b53be14cc5e013b35018ccb0f1d8ab # an
 DIFY_CLI_VERSION=0.6.12 # langgenius/dify-plugin-daemon release: the Dify plugin CLI
 DIFY_CLI_SHA256=f5190893643492c3f17f12c9752615a5652e47bbf30e84298634e176611aa108 # dify-plugin-linux-amd64
 DIFY_UV_VERSION=0.12.13
+OPENAI_AGENTS_UV_VERSION=0.13.0 # the uv openai-agents/tests/package_check.py builds with
+OPENAI_AGENTS_FLOOR=0.23.1 # the oldest openai-agents that openai-agents-prized allows
 
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
@@ -114,6 +116,24 @@ case $DIR in
     # Offline: a stand-in for Devin's Outposts service on 127.0.0.1, fake sandboxes that run the
     # in-sandbox scripts with bash, and a fake devin-remote. Live tests skip without PRIZED_LIVE=1.
     py "test" yes "prized==0.1.0 httpx==0.24.1" "pip install -q ruff && ruff check . && ruff format --check ." ;;
+  openai-agents)
+    # The package's own dependency groups (pyproject.toml [dependency-groups]); FLOOR=1 pins the
+    # oldest openai-agents it allows. On the latest row, lint and types, then the build as PyPI
+    # gets it: wheel and sdist, twine check, and a clean virtualenv in which the installed wheel
+    # runs a scripted agent through Runner against the fake API (tests/package_check.py; it
+    # installs from PyPI, so it runs scrubbed but online).
+    venv
+    # shellcheck disable=SC2086 # the pin is one word or none
+    pip install -q -e . --group test --group lint --group typing --group release \
+      "uv==$OPENAI_AGENTS_UV_VERSION" ${FLOOR:+openai-agents==$OPENAI_AGENTS_FLOOR}
+    pip list 2>/dev/null | grep -i -E "^(openai-agents|httpx) " || true
+    if [ -z "$FLOOR" ]; then
+      ruff check . && ruff format --check . && ty check openai_agents_prized
+    else
+      echo "(lint, types and the package check run on the latest-dependencies row)"
+    fi
+    offline pytest -rs -p no:cacheprovider --disable-socket --allow-unix-socket
+    [ -n "$FLOOR" ] || scrubbed python tests/package_check.py ;;
   hermes)
     # The plugin's tests import Hermes itself, so they run in a pinned hermes-agent checkout's own
     # environment, installed from its lockfile the way Hermes' CI does (uv, Python 3.14).
