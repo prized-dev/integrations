@@ -43,7 +43,7 @@ jobs:
           - { dir: dify, python: "3.12" }
           - { dir: cursor }
           - { dir: claude-managed-agents }
-          - { dir: langchain-js, node: "20" }
+          - { dir: langchain-js, node: "22" }
           - { dir: langchain-js, node: "24" }
           - { dir: mastra, node: "22", floor: true }
           - { dir: mastra, node: "24" }
