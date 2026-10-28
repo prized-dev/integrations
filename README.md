@@ -23,6 +23,8 @@ Each folder is its own package with its own README, tests and release. You need 
 
 "Coming 2026-11-05" means the package itself isn't on PyPI or npm yet. The Prized SDKs it uses already are (`prized` on PyPI, `@prized/sdk` on npm).
 
+Also in this repo: [`auth-md-spend-limits`](auth-md-spend-limits), a draft extension to [auth.md](https://github.com/workos/auth.md) for agent spend caps and billing refusals (MIT, unlike the rest of the repo).
+
 Also from Prized, outside this repo: the SDKs themselves (`prized` on PyPI, `@prized/sdk` on npm), `langchain-prized` (LangChain Python, on PyPI), and the Claude Code and Codex plugin in [prized-dev/skills](https://github.com/prized-dev/skills).
 
 ## Tests
