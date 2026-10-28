@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Stands in for curl inside a fake sandbox: `curl -fsS https://cursor.com/install` prints an installer
+# that puts the stub agent in ~/.local/bin, as Cursor's installer puts the real one there.
+case "$*" in
+  *cursor.com/install*) printf 'mkdir -p ~/.local/bin && cp %q ~/.local/bin/agent && chmod 755 ~/.local/bin/agent\n' "$STUB_AGENT_SRC" ;;
+  *) echo "stub curl: unexpected $*" >&2; exit 22 ;;
+esac
