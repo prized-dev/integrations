@@ -15,18 +15,25 @@ keywords = ["strands", "strands-agents", "agents", "ai", "sandbox", "prized", "m
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Software Development",
   "Typing :: Typed",
 ]
-dependencies = ["strands-agents>=1.59,<2", "prized>=0.1.0,<0.2"]
+dependencies = ["strands-agents>=1.59,<2", "prized>=0.1.1,<0.2"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "pytest-asyncio>=0.25", "ruff>=0.11", "mypy>=1.15"]
 
 [project.urls]
-Homepage = "https://prized.dev/docs/sandboxes-strands?via=strands"
-Documentation = "https://prized.dev/docs/sandboxes-strands?via=strands"
+Homepage = "https://github.com/prized-dev/integrations/tree/main/strands#readme"
+Documentation = "https://github.com/prized-dev/integrations/tree/main/strands#readme"
 Source = "https://github.com/prized-dev/integrations/tree/main/strands"
 Issues = "https://github.com/prized-dev/integrations/issues"
 

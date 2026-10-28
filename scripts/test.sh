@@ -102,12 +102,12 @@ case $DIR in
   inspect)
     py dev yes "inspect-ai==0.3.280" "ruff check . && ruff format --check ." ;;
   adk)
-    py "test" yes "google-adk==1.30.0" \
+    py "test" yes "google-adk==1.30.0 prized==0.1.1" \
       "pip install -q pyink==25.12.0 isort==8.0.1 && pyink --check src tests examples && isort --check-only src tests examples" ;;
   strands)
-    py dev yes "strands-agents==1.59.0" "ruff check . && ruff format --check . && mypy src" ;;
+    py dev yes "strands-agents==1.59.0 prized==0.1.1" "ruff check . && ruff format --check . && mypy src" ;;
   agent-framework)
-    py dev yes "agent-framework-core==1.19.0 agent-framework-tools==1.0.0b260918" \
+    py dev yes "agent-framework-core==1.19.0 agent-framework-tools==1.0.0b260918 prized==0.1.1" \
       "ruff check . && ruff format --check . && mypy src" ;;
   pydantic-ai)
     py "test" yes "pydantic-ai-slim==2.59.0" "pip install -q ruff && ruff check . && ruff format --check ." ;;

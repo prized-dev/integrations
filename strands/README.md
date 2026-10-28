@@ -1,7 +1,5 @@
 # strands-prized
 
-> **Coming 2026-11-05.** `strands-prized` is not on PyPI yet. The Prized Python SDK it uses (`prized`) is.
-
 Run a [Strands Agents](https://strandsagents.com/) agent's shell commands, code and file edits in a [Prized](https://prized.dev/?via=strands) sandbox: a Firecracker microVM with its own kernel that pauses with its memory and running processes, and forks into live copies.
 
 ## Install
@@ -45,6 +43,8 @@ Options: `sandbox_id`, `template` (`prized-base-v1`, or `prized-agent-v1` with C
 On free credit, sandboxes run within the free tier: up to 10 at once, each up to 2 vCPU and 4 GB, with 60 minutes of running each. A top-up or a plan lifts that; a paid sandbox runs 24 hours by default, up to 7 days. No inbound ports, no custom images, no GPUs. Details: https://prized.dev/docs/sandboxes?via=strands
 
 ## Tests
+
+In a clone of https://github.com/prized-dev/integrations, from the `strands` folder:
 
 ```sh
 pip install -e ".[dev]"
