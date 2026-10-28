@@ -3,6 +3,8 @@
 # A release is a manual dispatch from main: pick the folder and untick dry_run. It publishes the
 # version the package's build reports (bump it in a commit first). With dry_run ticked (the default)
 # it tests, builds and test-installs, and publishes nothing.
+# From a terminal: gh workflow run publish-pypi.yml -R prized-dev/integrations --ref main -f package=<folder>
+# (a dry run; add -f dry_run=false to publish).
 #
 # One-time setup:
 # - GitHub: Settings > Environments > New environment "pypi", deployment branches: main only.
