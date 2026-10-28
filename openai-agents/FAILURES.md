@@ -60,7 +60,3 @@ Four rules, held by every operation: what an operation made is undone when it fa
 ## Known limit, a process in the sandbox racing a write
 
 The write's last check and its rename are two steps, and bash cannot rename relative to a held descriptor. So a process in the sandbox that moves the directory the write holds somewhere else, or renames another file onto the temporary name after its bytes are checked, gets those bytes published there, and the write reports success. Only a process that could already write there itself can do it: commands in a sandbox all run as `prized`.
-
-## Known issue, server side
-
-A read under `/home/prized` with no link in its path goes through the file API, which refuses links itself and opens the file with `O_NOFOLLOW`. Its check and its open are two steps (an `Lstat` of each component, then `os.Root.OpenFile`, which follows a link that stays under `/home/prized`), so a process in the sandbox that swaps a parent directory for a link between the two can redirect the download elsewhere in `/home/prized`. Nothing outside `/home/prized` is reachable, and the process doing it already has the same access. The fix belongs in the file API (open with `openat2` and `RESOLVE_NO_SYMLINKS`), not in this client.
