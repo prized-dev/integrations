@@ -1,6 +1,6 @@
 # Devin Outposts on Prized
 
-Run each [Devin Outposts](https://docs.devin.ai/cloud/outposts/overview) session in a [Prized sandbox](https://prized.dev/docs/sandboxes?via=devin-outposts) of its own. Devin plans in Cognition's cloud; the sandbox, a Firecracker microVM, runs its commands, edits and git. When the session sleeps, the sandbox pauses with its memory, so the dev servers and databases it left running are still there when it wakes, about a second later.
+Run each [Devin Outposts](https://docs.devin.ai/cloud/outposts/overview) session in a [Prized sandbox](https://prized.dev/docs/sandboxes?via=devin-outposts) of its own. Devin plans in Cognition's cloud; the sandbox, a Firecracker microVM, runs its commands, edits and git. When the session sleeps, the sandbox pauses with its memory, so the dev servers and databases it left running are still there when it wakes.
 
 ## Run it
 
@@ -30,13 +30,13 @@ Run each [Devin Outposts](https://docs.devin.ai/cloud/outposts/overview) session
 - The orchestrator watches the outpost's queue and claims a waiting session. It creates a sandbox for it (from `prized-base-v1`, 4 vCPU and 8 GB, unless you choose otherwise), downloads the `devin-remote` build Devin pinned for the session, checks it against its published sha256, and starts it from `/home/prized/work`. Devin's repositories go in `/home/prized/work/repos`.
 - The remote connects out to Devin's gateway with a connect token for that one session. That is the only Devin credential in the sandbox; the service-user token and your Prized key stay on the orchestrator's machine.
 - **Session sleeps:** the remote exits, the orchestrator pauses the sandbox (memory, processes and disk kept; no compute billed) and returns the session to the queue.
-- **Session wakes:** the orchestrator claims it again, resumes the same sandbox (about 0.6 s), and starts a new remote with the new token. Files, branches, installed packages, and anything still running are where Devin left them.
+- **Session wakes:** the orchestrator claims it again, resumes the same sandbox, and starts a new remote with the new token. Files, branches, installed packages, and anything still running are where Devin left them.
 - **Session ends:** the sandbox is deleted. A session that leaves the queue without Devin saying it ended has its sandbox paused instead, and deleted after `KEEP_PAUSED`.
 - The orchestrator renews its claims before they expire, starts a crashed remote again (up to three launches in all, then it pauses the sandbox and tells the session), and deletes the sandboxes of ended sessions. A restarted orchestrator finds its sandboxes by their labels and carries on; two orchestrators on one outpost never serve the same session.
 
 ## Start new sessions warm
 
-Set up a sandbox once (repositories cloned, dependencies installed, services running) and every new session starts as a live copy of it, in about 2 seconds:
+Set up a sandbox once (repositories cloned, dependencies installed, services running) and every new session starts as a live copy of it:
 
 ```bash
 prized-devin-outposts warm --repo https://github.com/you/app --setup "cd repos/app && npm ci"

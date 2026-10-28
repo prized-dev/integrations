@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "prized-devin-outposts"
 version = "0.1.0"
-description = "Run Devin Outposts sessions in Prized Sandboxes: one Firecracker microVM per session that pauses with its memory while the session sleeps and resumes in under a second."
+description = "Run Devin Outposts sessions in Prized Sandboxes: one Firecracker microVM per session that pauses with its memory while the session sleeps and resumes when it wakes."
 readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
@@ -24,7 +24,7 @@ prized-machines = "prized_outposts.cli:machines_main"
 
 [project.urls]
 Homepage = "https://prized.dev/sandboxes?via=devin-outposts"
-Documentation = "https://prized.dev/docs/devin-outposts?via=devin-outposts"
+Documentation = "https://github.com/prized-dev/integrations/tree/main/devin-outposts#readme"
 Source = "https://github.com/prized-dev/integrations/tree/main/devin-outposts"
 Issues = "https://github.com/prized-dev/integrations/issues"
 
