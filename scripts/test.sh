@@ -130,6 +130,9 @@ case $DIR in
     echo "$ANT_SHA256  $WORK/ant.tgz" | sha256sum -c --quiet -
     tar -xzf "$WORK/ant.tgz" -C "$WORK" ant
     offline ANT="$WORK/ant" bash test/test.sh ;;
+  cursor)
+    # spawn.sh against a stand-in `prized` and a stub Cursor `agent` (test/): no keys, no network.
+    offline bash test/test.sh ;;
   dify)
     # A Dify plugin ships as a .difypkg, not a wheel: requirements.txt is what Dify installs, and
     # pyproject.toml holds only the lint and test settings.

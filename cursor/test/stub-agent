@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Stands in for Cursor's `agent` CLI inside a fake sandbox: records how the worker was started, then
+# "serves" for STUB_RUN seconds and exits with STUB_EXIT, as a worker does after its idle window.
+if [ "${1:-}" = --version ]; then echo 2026.10.22-stub; exit 0; fi
+printf '%s\n' "$@" > ~/.cursor-worker/argv
+{ echo "CURSOR_AGENT_WORKER_ID=${CURSOR_AGENT_WORKER_ID:-}"; echo "CURSOR_WORKER_NAME=${CURSOR_WORKER_NAME:-}"
+  echo "CURSOR_API_KEY=${CURSOR_API_KEY:+set}"; echo "PWD=$PWD"; } > ~/.cursor-worker/seen-env
+stat -c %a ~/.cursor-worker/token > ~/.cursor-worker/token-mode
+echo "Worker is now running"
+sleep "${STUB_RUN:-1}"
+exit "${STUB_EXIT:-0}"
