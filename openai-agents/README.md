@@ -85,7 +85,7 @@ Leaving `async with session` deletes the sandbox, or pauses it with `pause_on_ex
 
 The client implements the SDK's session lifecycle: `RunState` round trips, snapshots, and `resume()`. With `pause_on_exit=True`, a paused sandbox keeps memory and disk for the price of storage, and the resumed run reuses it without restoring anything. Without it, the sandbox is deleted and a resumed run starts a new one and restores the workspace from the session's snapshot.
 
-The saved session state holds the sandbox's id, the options above, and the SDK's own fields (manifest, snapshot). This release resumes state saved by 0.1.0, and its tests check that.
+The saved session state holds the sandbox's id, the options above, and the SDK's own fields (manifest, snapshot). State saved by 0.1.0 still resumes, and the tests check that. A process that resumes saved state imports `openai_agents_prized` first: the import is what registers the `prized` options and state types with the SDK.
 
 ## Moving from Runloop
 
@@ -104,8 +104,8 @@ Runloop session state cannot be resumed on Prized; start new runs.
 ## Limits
 
 - **Isolation.** Each session gets its own sandbox, a Firecracker microVM. Nothing runs on your machine, and nothing falls back to it.
-- **No root.** Commands run as `prized` without sudo, so manifest users other than `prized`, manifest groups, and mounts are refused before a sandbox is created. Every other manifest entry works: files, directories, local files and directories, and git repos.
-- **No inbound network.** Sandboxes reach the internet, but nothing reaches them: exposed ports are refused (`ExposedPortUnavailableError`).
+- **No root.** Commands run as `prized` without sudo, so manifest users other than `prized`, manifest groups, and mounts are refused before a sandbox is created. The other manifest entries work: files, directories, local files and directories, and git repos. An entry whose `group` is anything but `prized` fails when the session starts, since that `chgrp` needs root.
+- **No inbound network.** Sandboxes reach the internet, but nothing reaches them: there is no `exposed_ports` option, and `resolve_exposed_port()` raises `ExposedPortUnavailableError`.
 - **Commands.** A command that outlives `exec_command`'s yield keeps running, and `write_stdin` polls it or types into it (with `tty=True`, Ctrl-C included). It runs until it exits or the session ends, unless the tool call passes a `timeout`. A command run with `exec` takes up to an hour (`PrizedSandboxTimeouts.exec_timeout_unbounded_s`) and keeps the first 4 MiB of its output and of its errors.
 - **Snapshots.** Symlinks are kept as links, so a virtualenv in the workspace comes back working in a replacement sandbox; hard-linked files come back as separate copies.
 - **Run time.** 24 hours of running by default, up to 7 days with `max_runtime_min`; on the free tier 60 minutes, 2 vCPU and 4 GB.
@@ -123,7 +123,7 @@ The source is in [prized-dev/integrations](https://github.com/prized-dev/integra
 
 ```bash
 scripts/test.sh openai-agents            # lint, types and offline tests in a fresh virtualenv, as CI runs them
-FLOOR=1 scripts/test.sh openai-agents    # the same against openai-agents 0.23.1, the oldest allowed
+FLOOR=1 scripts/test.sh openai-agents    # the offline tests against openai-agents 0.23.1 and httpx 0.27.0, the oldest allowed
 
 cd openai-agents
 uv sync

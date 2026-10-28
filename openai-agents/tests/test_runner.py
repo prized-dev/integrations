@@ -3,9 +3,10 @@
 openai-agents-python's docs/sandbox/custom-providers.md ("Package and test the
 integration") lists the runs to make with `ScriptedModel`: fresh
 client-owned sessions, application-owned live sessions, and a persisted
-`Runner` resume (tests/lifecycle.py has those two), and cleanup after success,
-a tool error, a timeout, a cancellation, and a partial startup. Each test here
-runs one of them against the fake API and ends with no sandbox left running.
+`Runner` resume, and cleanup after success, a tool error, a timeout, a
+cancellation, and a partial startup. tests/lifecycle.py runs a client-owned
+session through a `RunState` resume; each test here runs one of the others
+against the fake API and ends with no sandbox left running.
 """
 
 from __future__ import annotations
@@ -15,6 +16,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 from agents import RunConfig, Runner, function_tool
+from agents.items import ToolCallOutputItem
 from agents.sandbox import Manifest, SandboxAgent, SandboxRunConfig
 from agents.sandbox.errors import WorkspaceStartError
 from agents.testing import ScriptedModel, assistant_message, function_call
@@ -25,6 +27,7 @@ from tests.conftest import settle
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
 
+    from agents.result import RunResult
     from agents.tool import Tool
 
     from openai_agents_prized import PrizedSandboxClient
@@ -44,6 +47,15 @@ def _shell(cmd: str, call_id: str) -> list[object]:
     return [function_call("exec_command", {"cmd": cmd}, call_id=call_id)]
 
 
+def _outputs(result: RunResult) -> list[str]:
+    """What the tools returned, without the calls (whose arguments echo the command)."""
+    return [
+        item.output
+        for item in result.new_items
+        if isinstance(item, ToolCallOutputItem) and isinstance(item.output, str)
+    ]
+
+
 def _run_config(client: PrizedSandboxClient, **options: object) -> RunConfig:
     return RunConfig(
         sandbox=SandboxRunConfig(client=client, options=PrizedSandboxClientOptions(**options))
@@ -54,9 +66,12 @@ async def test_a_client_owned_run_deletes_its_sandbox(
     make_client: Callable[..., PrizedSandboxClient], fake: FakePrized
 ) -> None:
     client = make_client()
-    agent = _agent([_shell("echo hi > hi.txt && cat hi.txt", "c1"), [assistant_message("done")]])
+    agent = _agent([_shell("echo hi-$((6 * 7))", "c1"), [assistant_message("done")]])
     result = await Runner.run(agent, "say hi", run_config=_run_config(client))
     assert result.final_output == "done"
+    (output,) = _outputs(result)
+    assert "Process exited with code 0" in output
+    assert "\nhi-42" in output
     assert len(fake.sandboxes) == 1
     assert fake.live() == []
 
@@ -80,7 +95,9 @@ async def test_an_application_owned_session_outlives_its_runs(
             second = _agent([_shell("cat kept.txt", "c2"), [assistant_message("two")]])
             result = await Runner.run(second, "read", run_config=config)
             assert result.final_output == "two"
-            assert "kept" in str(result.new_items)
+            (output,) = _outputs(result)
+            assert "Process exited with code 0" in output
+            assert output.endswith("Output:\nkept\n")
             assert fake.live() == [sandbox_id]
     finally:
         await client.delete(session)
@@ -108,9 +125,11 @@ async def test_a_run_that_times_out_deletes_the_sandbox(
     make_client: Callable[..., PrizedSandboxClient], fake: FakePrized
 ) -> None:
     """A command still running in the sandbox, then a tool that never returns, under a deadline."""
+    reached = asyncio.Event()
 
     @function_tool
     async def wait_forever() -> str:
+        reached.set()
         await asyncio.Event().wait()
         return "never"
 
@@ -128,7 +147,8 @@ async def test_a_run_that_times_out_deletes_the_sandbox(
     )
     run = Runner.run(agent, "wait", run_config=_run_config(client))
     with pytest.raises(asyncio.TimeoutError):
-        await asyncio.wait_for(run, timeout=2)
+        await asyncio.wait_for(run, timeout=5)
+    assert reached.is_set()  # the deadline hit the run, not its startup
     await settle(client)
     assert len(fake.sandboxes) == 1
     assert fake.live() == []

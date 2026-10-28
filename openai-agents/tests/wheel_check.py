@@ -18,6 +18,7 @@ from importlib import metadata
 from pathlib import Path
 
 from agents import RunConfig, Runner, set_tracing_disabled
+from agents.items import ToolCallOutputItem
 from agents.sandbox import SandboxAgent, SandboxRunConfig
 from agents.sandbox.session import BaseSandboxClientOptions, SandboxSessionState
 from agents.testing import ScriptedModel, assistant_message, function_call
@@ -46,7 +47,7 @@ async def run_app() -> str | None:
     set_tracing_disabled(disabled=True)
     model = ScriptedModel(
         [
-            [function_call("exec_command", {"cmd": "echo wheel-ok"}, call_id="call_1")],
+            [function_call("exec_command", {"cmd": "echo wheel-$((6 * 7))"}, call_id="call_1")],
             [assistant_message("done")],
         ]
     )
@@ -60,9 +61,16 @@ async def run_app() -> str | None:
             ) as client,
         ):
             config = RunConfig(sandbox=SandboxRunConfig(client=client))
-            result = await Runner.run(agent, "say wheel-ok", run_config=config)
-        if result.final_output != "done" or "wheel-ok" not in str(result.new_items):
-            return f"the scripted run ended with {result.final_output!r}"
+            result = await Runner.run(agent, "run the check", run_config=config)
+        outputs = [
+            item.output
+            for item in result.new_items
+            if isinstance(item, ToolCallOutputItem) and isinstance(item.output, str)
+        ]
+        if result.final_output != "done" or not any(
+            "Process exited with code 0" in out and "\nwheel-42" in out for out in outputs
+        ):
+            return f"the scripted run ended with {result.final_output!r} after {outputs}"
         if len(fake.sandboxes) != 1 or fake.live():
             return f"the run left sandboxes {fake.live()} of {len(fake.sandboxes)}"
     return None

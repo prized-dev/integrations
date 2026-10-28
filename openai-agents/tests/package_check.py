@@ -13,11 +13,11 @@ Builds with `uv build` into DIR (default: a temporary directory), then checks:
 - `twine check --strict` passes on both;
 - the wheel installs into a fresh virtualenv, where tests/wheel_check.py runs
   with `python -I` (version, `py.typed`, the SDK finds the options and state
-  classes, no abstract methods).
+  classes, no abstract methods, and a scripted agent runs through `Runner`
+  with the installed wheel against the tests' fake API).
 
-ci.yml's sdk-openai-agents job and
-publish-openai-agents-prized.yml run it (the publish workflow with --dist
-dist, and uploads that).
+CI runs it on every change, and a release runs it with --dist dist and
+publishes what it built.
 """
 
 from __future__ import annotations

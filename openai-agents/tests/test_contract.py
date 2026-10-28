@@ -158,12 +158,18 @@ async def test_malformed_timeouts_are_refused_before_any_request(
 
 
 async def test_exposed_ports_are_refused(
-    make_client: Callable[..., PrizedSandboxClient],
+    make_client: Callable[..., PrizedSandboxClient], fake: FakePrized
 ) -> None:
     with pytest.raises(TypeError, match="exposed_ports"):
         PrizedSandboxClientOptions.model_validate({"exposed_ports": [8080]})
+    # A state that names a port (written by hand, or by another tool) still gets
+    # no endpoint: Prized has no inbound network, and nothing is served instead.
+    payload = _saved()
+    payload["sandbox_id"] = fake.add_sandbox(state="paused", template="prized-agent-v1")
+    payload["exposed_ports"] = [8080]
     client = make_client()
-    session = await client.create()
-    with pytest.raises(ExposedPortUnavailableError):
+    session = await client.resume(client.deserialize_session_state(payload))
+    with pytest.raises(ExposedPortUnavailableError) as refused:
         await session.resolve_exposed_port(8080)
+    assert refused.value.context["reason"] == "backend_unavailable"
     await client.delete(session)
