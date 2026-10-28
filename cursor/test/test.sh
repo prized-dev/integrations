@@ -30,7 +30,7 @@ run() {
   find_sbx
 }
 # find_sbx: the sandbox this run created, if any, and its home.
-find_sbx() { SBX=$(cd "$C/root" && ls -d sbx_* 2>/dev/null | head -1 || true); H=$C/root/$SBX/home; }
+find_sbx() { SBX=$(find "$C/root" -maxdepth 1 -name 'sbx_*' -printf '%f\n' 2>/dev/null | sort | head -1 || true); H=$C/root/$SBX/home; }
 # wait_log PATTERN: wait up to 30 s for the background part's log to say PATTERN.
 wait_log() { local i; for i in $(seq 150); do grep -q "$1" "$C"/cursor-workers/*.log 2>/dev/null && { find_sbx; return 0; }; sleep 0.2; done; find_sbx; echo "     (timed out waiting for: $1)"; }
 state() { jq -r .state "$C/root/$SBX/meta.json"; }
@@ -120,4 +120,4 @@ wait_log "deleted"
 check "a worker name is reduced to safe characters" 'grep -qx "CURSOR_WORKER_NAME=touchpwnedname" "$H/.cursor-worker/seen-env" && [ ! -e "$H/work/pwned" ] && [ ! -e "$H/pwned" ]'
 
 echo
-[ "$FAILS" = 0 ] && echo "all passed" || { echo "$FAILS failed"; exit 1; }
+if [ "$FAILS" = 0 ]; then echo "all passed"; else echo "$FAILS failed"; exit 1; fi
