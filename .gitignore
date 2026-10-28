@@ -10,6 +10,8 @@ dist/
 node_modules/
 # langchain-js: no lockfile until @prized/sdk is on npm (one made now would point at a local tarball)
 package-lock.json
+# openai-agents: `uv sync` makes a uv.lock; the package's releases are built from their own lock
+openai-agents/uv.lock
 *.tgz
 *.whl
 *.difypkg

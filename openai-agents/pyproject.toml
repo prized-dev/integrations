@@ -1,0 +1,123 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openai-agents-prized"
+dynamic = ["version"]
+description = "Prized Sandboxes (Linux microVMs) as a sandbox client for the OpenAI Agents SDK"
+readme = "README.md"
+# SPDX expression and the file that ships in the wheel's dist-info/licenses
+# and the sdist (PEP 639); tests/package_check.py holds the built package to
+# both.
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+# The same floor as openai-agents itself.
+requires-python = ">=3.10,<4.0"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["openai", "openai-agents", "agents", "sandbox", "prized", "microvm", "firecracker"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Typing :: Typed",
+]
+dependencies = [
+    # The sandbox client interface this package implements; CI runs the
+    # oldest allowed release too.
+    "openai-agents>=0.23.1,<0.26.0",
+    "httpx>=0.27.0,<1.0.0",
+]
+
+[project.urls]
+Homepage = "https://prized.dev/docs/sandboxes?via=openai-agents"
+Documentation = "https://github.com/prized-dev/integrations/tree/main/openai-agents#readme"
+Source = "https://github.com/prized-dev/integrations/tree/main/openai-agents"
+Repository = "https://github.com/prized-dev/integrations"
+Issues = "https://github.com/prized-dev/integrations/issues"
+"API reference" = "https://prized.dev/docs/sandboxes-api?via=openai-agents"
+
+[dependency-groups]
+test = [
+    "pytest>=9.0.0,<10.0.0",
+    "pytest-asyncio>=1.0.0",
+    "pytest-socket>=0.7.0",
+    "pytest-timeout>=2.4.0,<3.0.0",
+]
+lint = ["ruff>=0.15.0,<1.0.0"]
+typing = ["ty>=0.0.54,<1.0.0"]
+# tests/package_check.py (`uv run --group release`): the built wheel and sdist
+# as PyPI checks them. Not a default group: nothing else needs twine.
+release = ["twine>=6.1"]
+
+[tool.uv]
+default-groups = ["test", "lint", "typing"]
+
+[tool.hatch.version]
+path = "openai_agents_prized/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["openai_agents_prized"]
+
+[tool.hatch.build.targets.sdist]
+# The tests stay in the repository.
+include = ["openai_agents_prized", "README.md", "LICENSE", "pyproject.toml"]
+
+[tool.ty.environment]
+python-version = "3.10"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812", # conflicts with the formatter
+    "ISC001", # conflicts with the formatter
+    "CPY001", # no per-file copyright header; the LICENSE file covers the package
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+ignore-var-parameters = true
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.isort]
+known-first-party = ["openai_agents_prized"]
+known-third-party = ["agents"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+# PrizedAPIError's first argument is the API's error code, not a message.
+"openai_agents_prized/_api.py" = ["EM101"]
+# The session overrides the SDK's private hooks, as the built-in clients do.
+"openai_agents_prized/sandbox.py" = ["SLF001"]
+"tests/**/*.py" = ["D", "S101", "SLF001", "PLR2004", "ANN401", "S108", "S603", "S607", "ARG001", "ARG002", "ARG005", "FBT", "INP001", "PLR0913"]
+"scripts/**/*.py" = ["S108", "INP001", "T201", "PLR2004"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers --strict-config --durations=5"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+timeout = 300
+markers = [
+    "live: runs against the real Prized API (needs PRIZED_LIVE_TESTS=1 and PRIZED_API_KEY)",
+]
+filterwarnings = [
+    # Unexpected warnings fail the run.
+    "error",
+]
