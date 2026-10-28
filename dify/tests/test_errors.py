@@ -57,7 +57,7 @@ def test_known_codes_get_a_fixed_sentence(fake):
 def test_a_wrong_key_is_refused_with_a_clear_message(fake):
     with pytest.raises(plugin_tool.ToolError, match="key was refused") as caught:
         invoke(tool("get_sandbox"), {"sandbox_id": SID}, key="dcp_wrong")
-    assert "https://prized.dev/auth.md?via=dify" in str(caught.value)  # an agent can sign its person up
+    assert "http" not in str(caught.value)  # a fixed sentence: no link or instruction for the model to follow
 
 
 @pytest.mark.parametrize("key", [None, "", "   ", "dcp_has space", "dcp_\nnewline", "x" * 600, "dcp_caf\u00e9"])
@@ -65,7 +65,7 @@ def test_malformed_keys_never_reach_the_network(fake, key):
     with pytest.raises(plugin_tool.ToolError, match="missing or malformed") as caught:
         invoke(tool("get_sandbox"), {"sandbox_id": SID}, key=key)
     assert fake.requests == []
-    assert "https://prized.dev/auth.md?via=dify" in str(caught.value)
+    assert "http" not in str(caught.value)
 
 
 def test_a_redirect_is_not_followed(fake):
