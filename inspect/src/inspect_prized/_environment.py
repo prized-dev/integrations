@@ -7,6 +7,7 @@ import posixpath
 import secrets
 from collections.abc import Iterator
 from contextlib import contextmanager
+from contextvars import ContextVar
 from logging import getLogger
 from typing import Literal, Union, overload
 
@@ -31,6 +32,7 @@ HOME = "/home/prized"
 WORKDIR = f"{HOME}/work"
 STAGE = f"{HOME}/.inspect-prized"
 LABEL = {"created-by": "inspect-prized"}
+RUN_LABEL = "inspect-run"  # one id per eval, so task cleanup can find everything the eval made
 _GONE = ("not_found", "sandbox_deleted")
 # prized 0.1.1+ (OutputReadError): the command ran, but its output could not be read back.
 _OUTPUT_READ_FAILED = "output_read_failed"
@@ -137,6 +139,14 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
 
     @override
     @classmethod
+    async def task_init(cls, task_name: str, config: SandboxEnvironmentConfigType | None) -> None:
+        # Inspect calls this before any sample starts (with task_name "startup"), in the context
+        # that the samples and the final task_cleanup (task_name "shutdown") run in.
+        if _run.get() is None:
+            _run.set(secrets.token_hex(8))
+
+    @override
+    @classmethod
     async def sample_init(
         cls, task_name: str, config: SandboxEnvironmentConfigType | None, metadata: dict[str, str]
     ) -> dict[str, SandboxEnvironment]:
@@ -147,6 +157,9 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
             "max_runtime_min": cfg.max_runtime_min,
             "auto_pause_min": 0,
         }
+        run = _run.get()
+        if run is not None and not cfg.keep:
+            options["labels"][RUN_LABEL] = run
         if cfg.env:
             options["env_vars"] = dict(cfg.env)
         for name in ("vcpu", "memory_gb", "disk_gb"):
@@ -192,6 +205,17 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
         for sandbox_id in list(cls._live.get(task_name, ())):
             await _delete(sandbox_id)
             cls._live.get(task_name, set()).discard(sandbox_id)
+        # In an eval, task_name is "shutdown" here, not the name the samples ran under, so the
+        # loop above finds nothing: delete by the eval's label whatever sample cleanup missed.
+        run = _run.get()
+        if run is not None:
+            try:
+                deleted = await AsyncSandbox.delete_by_labels({RUN_LABEL: run})
+            except PrizedError as err:
+                logger.warning("Prized sandboxes labelled %s=%s: cleanup failed (%s)", RUN_LABEL, run, err)
+                return
+            for ids in cls._live.values():
+                ids.difference_update(deleted)
 
     @override
     @classmethod
@@ -359,6 +383,9 @@ def _unread(sandbox_id: str, err: PrizedError) -> SandboxUnavailableError:
         f"Prized sandbox {sandbox_id}: the command ran (exit code {exit_code}), but its output could not be read "
         f"back{why}.{kept}"
     )
+
+
+_run: ContextVar[str | None] = ContextVar("inspect_prized_run", default=None)
 
 
 def _config(config: SandboxEnvironmentConfigType | None) -> PrizedSandboxConfig:
