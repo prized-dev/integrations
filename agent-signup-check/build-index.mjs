@@ -19,8 +19,20 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { normalizeSite } from './agent-signup-check.mjs';
 
 export const TITLE = 'Agent sign-up check: developer platforms';
+
+/** targets.json, with every domain normalized the way the checker names it (lower case, no scheme). */
+export function loadTargets(file) {
+  return JSON.parse(fs.readFileSync(file, 'utf8')).map((t) => ({ ...t, site: normalizeSite(t.site) }));
+}
+
+/** Text a platform controls (a heading, an endpoint, a reason quoting them), made inert in Markdown. */
+export const md = (v) =>
+  String(v ?? '')
+    .replace(/\s+/g, ' ')
+    .replace(/[\\`*_[\]<>|#@]/g, (c) => `\\${c}`);
 const MARK = { pass: 'P', partial: '~', fail: '.', skipped: '-' };
 
 const byName = (a, b) => {
@@ -117,7 +129,7 @@ export function indexMarkdown(doc, { applied = [], stale = [], diffPath = null }
   L.push('## Top line', '');
   const tops = rows.filter((r) => r.passed === best.passed).map((r) => r.name);
   L.push(
-    `- Platforms checked: ${n}. ${full.length ? `${full.map((r) => r.name).join(', ')} pass every check they were given.` : 'None passes all seven checks.'} The best score is ${best.passed} of 7 (${tops.join(', ')}).`,
+    `- Platforms checked: ${n}. ${full.length ? `${full.map((r) => r.name).join(', ')} pass every check they were given.` : 'None passes all seven checks.'} The best score is ${best.passed} of ${doc.checks.length} (${tops.join(', ')}).`,
   );
   for (const c of doc.checks) {
     const skipped = count(rows, c.id, 'skipped');
@@ -150,7 +162,8 @@ export function indexMarkdown(doc, { applied = [], stale = [], diffPath = null }
   L.push(`|---|---|---|---|${'---|'.repeat(doc.checks.length)}---|`);
   for (const r of rows) {
     const score = `${r.passed}/${r.total}${r.partial ? ` +${r.partial}~` : ''}`;
-    L.push(`| ${rankOf(rows, r)} | ${r.name} (${r.site}) | ${r.category} | ${score} | ${r.checks.map((c) => MARK[c.status] ?? c.status).join(' | ')} | ${r.whoActs ?? ''} |`);
+    const kept = r.notChecked ? ` (not checked ${r.notChecked.date}; from ${r.notChecked.keptFrom})` : '';
+    L.push(`| ${rankOf(rows, r)} | ${md(r.name)} (${md(r.site)})${kept} | ${md(r.category)} | ${score} | ${r.checks.map((c) => MARK[c.status] ?? c.status).join(' | ')} | ${md(r.whoActs)} |`);
   }
   L.push('', '## Method', '');
   L.push(`- One run of \`agent-signup-check.mjs\` over the ${n} platforms in \`targets.json\`, 4 platforms at a time, 300 ms between requests to the same platform. The full method is in [METHOD.md](../METHOD.md).`);
@@ -161,7 +174,9 @@ export function indexMarkdown(doc, { applied = [], stale = [], diffPath = null }
   if (stale.length) {
     L.push(`- ${stale.length} correction(s) no longer apply, because the checker's verdict changed: ${stale.map((s) => `${s.name} ${s.check} (was ${s.expected}, now ${s.now})`).join('; ')}. The checker's verdict stands until someone reviews them.`);
   }
-  if (doc.errors?.length) L.push(`- Errors: ${doc.errors.map((e) => `${e.name} (${e.error})`).join(', ')}.`);
+  if (doc.errors?.length) L.push(`- Not checked, and no earlier row to keep: ${doc.errors.map((e) => `${md(e.name)} (${md(e.error)})`).join(', ')}.`);
+  const kept = rows.filter((r) => r.notChecked);
+  if (kept.length) L.push(`- Not checked this run, so their last row is kept: ${kept.map((r) => `${md(r.name)} (${md(r.notChecked.reason)})`).join(', ')}.`);
   L.push('- A check sees what a platform publishes, not what its sign-up does after a POST. Results change when platforms change their files; this is one dated run.');
   L.push('');
   return L.join('\n');
@@ -175,7 +190,7 @@ if (invoked) {
     process.exit(2);
   }
   const run = JSON.parse(fs.readFileSync(runPath, 'utf8'));
-  const targets = JSON.parse(fs.readFileSync(targetsPath, 'utf8'));
+  const targets = loadTargets(targetsPath);
   const { doc, applied, stale } = publish(run, targets);
   fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(path.join(outDir, `${doc.date}.json`), `${JSON.stringify(doc, null, 1)}\n`);

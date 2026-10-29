@@ -750,7 +750,8 @@ export async function checkSite(input, opts = {}) {
   let llmsSource = llmsR;
   const llmsOk = (r) => ok(r) && !isHtml(r) && (r.body || '').trim().length > 0;
   // Also when the root one does not start with an H1: a docs llms.txt that does is a pass.
-  const llmsWellFormed = (r) => llmsOk(r) && /^#\s+\S/.test(firstHeading(r.body));
+  // A not-found page with an H1 ("# Page Not Found") is not well formed either.
+  const llmsWellFormed = (r) => llmsOk(r) && /^#\s+\S/.test(firstHeading(r.body)) && !/not found|\b404\b/i.test(firstHeading(r.body));
   if (!llmsWellFormed(llmsR)) {
     const second = opts.docs || `https://${site}/docs/llms.txt`;
     if (!urlProblem(second)) {
@@ -967,6 +968,7 @@ export async function checkSite(input, opts = {}) {
         set('challenge', 'pass', `401 with a ${challenges.map((c) => c.scheme).join(', ')} challenge${rm ? ' that points to resource metadata (RFC 9728 section 5.1)' : ''}`, ev);
       } else if (apiR.status === 401) set('challenge', 'partial', '401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)', ev);
       else if (apiR.status === 402) set('challenge', 'pass', '402 Payment Required: the API takes payment from a client with no account', ev);
+      else if (apiR.status === 403 && challenges.length) set('challenge', 'partial', `403 with a ${challenges.map((c) => c.scheme).join(', ')} challenge, instead of 401`, ev);
       else if (apiR.status === 403) set('challenge', 'partial', AUTH_WORDS.test((apiR.body || '').slice(0, 2000)) ? '403 instead of 401: the body asks for a key, but there is no WWW-Authenticate challenge' : '403 instead of 401, with no WWW-Authenticate challenge', ev);
       else if ([400, 422].includes(apiR.status) && AUTH_WORDS.test((apiR.body || '').slice(0, 2000))) set('challenge', 'partial', `HTTP ${apiR.status} asking for a key, instead of a 401 challenge`, ev);
       else if (apiR.status === 200 && isHtml(apiR)) set('challenge', 'fail', 'The API URL answers with an HTML page, not an API error', ev);

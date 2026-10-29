@@ -41,4 +41,5 @@ Prized wrote this checker, picked the platforms, and wrote auth-md-spend-limits,
 - A check sees what a platform publishes, not what its sign-up does after a POST. A platform that lets agents in through a CLI or an SDK it never describes in a public file scores lower here than it would in use.
 - One API URL per platform. A platform whose other endpoints answer differently is scored on the one listed.
 - Bot walls count against a platform: if a plain client gets a challenge page at `/auth.md`, an agent does too.
+- A platform that can't be reached in a run (every request failed twice) keeps its last row, marked as not checked with the date of the row kept, so a bad network day never reads as a regression.
 - Results change when platforms change their files. Each run is dated, and the weekly diff says what moved.

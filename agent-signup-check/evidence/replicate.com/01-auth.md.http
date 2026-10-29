@@ -71,7 +71,7 @@ alt-svc: h3=":443"; ma=86400
       'event': 'user_anonymous',
       'user_type': 'anonymous',
       
-      'anonymous_session_id': 'cb74861a-c8b4-40f2-aadd-a60ad3a9bc09'
+      'anonymous_session_id': '[redacted]'
       
     });
     

@@ -46,7 +46,7 @@ content-encoding: br
 <meta content='https://res.cloudinary.com/prod/image/upload/w_144/console/favicon.png' name='msapplication-TileImage'>
 <meta content='DPR' http-equiv='Accept-CH'>
 <link rel="stylesheet" href="/stylesheets/g/cloudinary_public.css" />
-<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-param" content="[redacted]" />
 <meta name="csrf-token" content="[redacted]" />
 
 <script src='//cdn.split.io/sdk/split-10.21.1.min.js'></script>
@@ -397,6 +397,6 @@ Pricing
 <li class='menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children has-icon hide-title'>
 <a href='#'>
 <img width="18" fetch_formant="auto" class="nav-icon lazyloaded" src="https://cloudinary-res.cloudinary.com/image/upload/c_scale,dpr_2.0,q_auto,w_18/v1602683372/website/refresh/global/language_icon.png" />
-<span>L
+<span>Language<
 
-[body trimmed for publication: kept 16384 of 147129 characters; sha256 of the full body 04a47e855aa1fd31a2bf79b38a74be42a55d20f4dfac2dfc087f6c31ba4b0422]
+[body trimmed for publication: kept 16384 of 147121 characters; sha256 of the published body ac020d558bac102686a3ae5b0a1e705e4ce16dee54657ceb664d8216c72ae0cf]

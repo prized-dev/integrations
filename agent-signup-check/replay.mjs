@@ -13,6 +13,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { checkSite, CHECKS, VERSION } from './agent-signup-check.mjs';
+import { loadTargets } from './build-index.mjs';
 import { bodyOf, parseEvidence } from './scrub.mjs';
 
 /** The saved responses for one site, keyed by the URL first requested. */
@@ -32,10 +33,11 @@ export function loadSite(dir) {
       const m = line.match(/^([a-z0-9-]+): (.*)$/);
       if (m && m[1] !== 'error') headers[m[1]] = m[2];
     }
+    // A response can have a status and an error both (a body cut off part way): keep both.
     map.set(
       url,
       statusM
-        ? { url, finalUrl, hops, status: Number(statusM[1]), headers, body: bodyOf(raw) }
+        ? { url, finalUrl, hops, status: Number(statusM[1]), headers, body: bodyOf(raw), ...(err ? { error: err } : {}) }
         : { url, finalUrl, hops, error: err || 'not saved' },
     );
   }
@@ -64,7 +66,7 @@ if (invoked) {
     console.error('usage: node replay.mjs targets.json evidence/ out.json');
     process.exit(2);
   }
-  const targets = JSON.parse(fs.readFileSync(targetsPath, 'utf8'));
+  const targets = loadTargets(targetsPath);
   const results = await replay(targets, evDir);
   const doc = { checker: `agent-signup-check/${VERSION}`, replayOf: evDir, generatedAt: new Date().toISOString(), checks: CHECKS, results };
   fs.writeFileSync(outPath, JSON.stringify(doc, null, 1));

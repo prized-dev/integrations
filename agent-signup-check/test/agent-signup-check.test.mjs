@@ -1,4 +1,5 @@
-// Offline tests: no network, no keys. Run with `node --test agent-signup-check/test/`.
+// Offline tests: no network, no keys. Run with `scripts/test.sh agent-signup-check`, or
+// `node --test agent-signup-check/test/*.test.mjs` from the repo root.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -6,12 +7,20 @@ import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { checkSite, isPublicAddress, normalizeSite, saveEvidence, urlProblem } from '../agent-signup-check.mjs';
-import { applyCorrections, publish } from '../build-index.mjs';
-import { replay } from '../replay.mjs';
-import { auditDir, bodyOf, HTML_KEEP, scrubEvidence } from '../scrub.mjs';
+import { applyCorrections, loadTargets, md as mdText } from '../build-index.mjs';
+import { loadSite, replay } from '../replay.mjs';
+import { auditDir, bodyOf, HTML_KEEP, redactClientIps, scrubEvidence } from '../scrub.mjs';
 import { diffRuns, weekly } from '../weekly.mjs';
 
-const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'asc-test-'));
+const made = [];
+const tmp = () => {
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), 'asc-test-'));
+  made.push(d);
+  return d;
+};
+test.after(() => {
+  for (const d of made) fs.rmSync(d, { recursive: true, force: true });
+});
 
 // ---------------------------------------------------------------------------------------
 // The guards: what the checker refuses to fetch.
@@ -118,7 +127,7 @@ test('anti-forgery tokens are redacted', () => {
 test('a long HTML body is trimmed with its hash; Markdown is kept whole', () => {
   const long = `<!doctype html><title>Sign in</title>${'x'.repeat(HTML_KEEP * 2)}`;
   const out = scrubEvidence(evidence(['content-type: text/html'], long));
-  assert.match(out, /\[body trimmed for publication: kept 16384 of \d+ characters; sha256 of the full body [0-9a-f]{64}\]$/);
+  assert.match(out, /\[body trimmed for publication: kept 16384 of \d+ characters; sha256 of the published body [0-9a-f]{64}\]$/);
   assert.equal(bodyOf(out), long.slice(0, HTML_KEEP));
   assert.equal(scrubEvidence(out), out, 'scrubbing twice changes nothing');
   const doc = `# Doc\n${'y'.repeat(HTML_KEEP * 2)}`;
@@ -132,6 +141,62 @@ test('the audit catches what the scrubber removes', () => {
   assert.equal(auditDir(dir).length, 2);
   fs.writeFileSync(path.join(dir, 'one.example', '01-auth.md.http'), scrubEvidence(fs.readFileSync(path.join(dir, 'one.example', '01-auth.md.http'), 'utf8')));
   assert.deepEqual(auditDir(dir), []);
+});
+
+test('an IPv4 client address goes in every spelling, and only as a whole address', () => {
+  const ip = ['54.201.10.20'];
+  const cases = {
+    '54.201.10.20:8080': '[client-ip]:8080',
+    'x-client-addr: 54.201.10.20:443': 'x-client-addr: [client-ip]:443',
+    '::ffff:54.201.10.20': '::ffff:[client-ip]',
+    'ec2-54-201-10-20.us-west-2.compute.amazonaws.com': 'ec2-[client-ip].us-west-2.compute.amazonaws.com',
+    '154.201.10.20 54.201.10.201 54.201.10.2': '154.201.10.20 54.201.10.201 54.201.10.2',
+  };
+  for (const [input, want] of Object.entries(cases)) assert.equal(redactClientIps(input, ip), want, input);
+});
+
+test('an IPv6 client address goes however it is written', () => {
+  const ip = ['2600:1f14:abc:de00::5'];
+  for (const spelling of ['2600:1f14:abc:de00::5', '2600:1f14:abc:de00:0:0:0:5', '2600:1F14:0ABC:DE00:0000:0000:0000:0005', '[2600:1f14:abc:de00::5]:443']) {
+    assert.doesNotMatch(redactClientIps(`seen ${spelling} here`, ip), /2600/i, spelling);
+  }
+  assert.equal(redactClientIps('2600:1f14:abc:de00::6', ip), '2600:1f14:abc:de00::6');
+});
+
+test('per-visitor tokens go from HTML pages: session ids, csrf in JS, Cloudflare challenge tokens', () => {
+  const page = [
+    `<script>window.csrfToken = "Zx9yQwErTy12345678"; var cfg = {'anonymous_session_id': '6f1c2b9e-1111-2222-3333-444455556666'};</script>`,
+    `<input type="hidden" name="csrfmiddlewaretoken" value="AbCdEfGhIjKlMnOp">`,
+    `<script>window._cf_chl_opt = {cH: 'AbCdEfGhIjKlMnOpQrSt', md: 'SxDVP_nD2Wc95bvBjmO_3Qp2', cUPMDTk:"/auth.md?__cf_chl_tk=AmpDS2SkZGp2mlg_KR9P"};</script>`,
+  ].join('\n');
+  const out = scrubEvidence(evidence(['content-type: text/html', 'x-csrf-token: Zx9yQwErTy12345678'], page));
+  for (const secret of ['Zx9yQwErTy12345678', '6f1c2b9e', 'AbCdEfGhIjKlMnOp', 'SxDVP_nD2Wc95bvBjmO', 'AmpDS2SkZGp2mlg']) assert.doesNotMatch(out, new RegExp(secret), secret);
+  assert.match(out, /_cf_chl_opt/, 'the markers a bot-wall check reads stay');
+});
+
+test('JSON served as text/html is a document: kept whole and unscrubbed', () => {
+  const json = JSON.stringify({ x402Version: 2, accepts: [{ note: 'x'.repeat(HTML_KEEP * 2) }], session_id: 'keep-this-value-1234' });
+  const out = scrubEvidence(evidence(['content-type: text/html'], json));
+  assert.equal(bodyOf(out), json);
+});
+
+test('replay keeps an error that came with a status (a body cut off part way)', () => {
+  const dir = tmp();
+  const text = [`GET https://one.example/auth.md`, 'user-agent: test', 'final-url: https://one.example/auth.md', '', 'error: incomplete body (ECONNRESET)', 'HTTP 200', 'content-type: text/markdown', '', '# auth.md\n'].join('\n');
+  fs.writeFileSync(path.join(dir, '01-auth.md.http'), text);
+  const r = loadSite(dir).get('https://one.example/auth.md');
+  assert.equal(r.status, 200);
+  assert.equal(r.error, 'incomplete body (ECONNRESET)');
+});
+
+test('targets are named the way the checker names them', () => {
+  const dir = tmp();
+  fs.writeFileSync(path.join(dir, 'targets.json'), JSON.stringify([{ name: 'S', site: 'https://S1.Example/' }]));
+  assert.equal(loadTargets(path.join(dir, 'targets.json'))[0].site, 's1.example');
+});
+
+test('platform text is inert in the published Markdown', () => {
+  assert.equal(mdText('a|b [x](https://e.example) <img> @someone\nnext'), 'a\\|b \\[x\\](https://e.example) \\<img\\> \\@someone next');
 });
 
 // ---------------------------------------------------------------------------------------
@@ -229,7 +294,7 @@ test('weekly writes nothing when most platforms are unreachable', async () => {
   const root = tmp();
   const many = Array.from({ length: 12 }, (_, i) => ({ name: `S${i}`, category: 'Test', site: `s${i}.example`, api: `https://api.s${i}.example/v1` }));
   fs.writeFileSync(path.join(root, 'targets.json'), JSON.stringify(many));
-  const down = () => async (url) => ({ url, finalUrl: url, hops: [], error: 'getaddrinfo ENOTFOUND' });
+  const down = () => async (url) => ({ url, finalUrl: url, hops: [], error: 'ENOTFOUND' });
   await assert.rejects(weekly({ root, out: root, getFor: down, clientIps: ['203.0.113.9'], date: '2026-11-04', log: () => {} }), /unreachable/);
   assert.equal(fs.existsSync(path.join(root, 'results.json')), false);
   assert.equal(fs.existsSync(path.join(root, 'evidence')), false);
@@ -239,7 +304,7 @@ test('weekly refuses to publish without knowing the address to scrub', async () 
   const root = tmp();
   fs.writeFileSync(path.join(root, 'targets.json'), JSON.stringify(TARGETS));
   // No --client-ip, and the address lookup itself is offline here: it must stop, not publish.
-  await assert.rejects(weekly({ root, out: root, date: '2026-11-04', log: () => {}, learnClientIp: async () => null }), /public address/);
+  await assert.rejects(weekly({ root, out: root, date: '2026-11-04', log: () => {}, learnClientIps: async () => [] }), /public address/);
   assert.equal(fs.existsSync(path.join(root, 'results.json')), false);
 });
 
@@ -265,4 +330,38 @@ test('results.json is the newest dated run', () => {
   const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
   const dates = fs.readdirSync(path.join(root, 'results')).filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort();
   assert.deepEqual(fs.readFileSync(path.join(root, 'results.json'), 'utf8'), fs.readFileSync(path.join(root, 'results', dates.at(-1)), 'utf8'));
+});
+
+test('a platform that cannot be reached keeps its last row, marked, instead of regressing', async () => {
+  const root = tmp();
+  const two = [...TARGETS, { name: 'Two', category: 'Test', site: 'two.example', api: 'https://api.two.example/v1' }];
+  fs.writeFileSync(path.join(root, 'targets.json'), JSON.stringify(two));
+  const quiet = () => {};
+  const live = (t) => (t.site === 'one.example' ? stub(SITE_V2) : stub({}));
+  await weekly({ root, out: root, getFor: live, clientIps: ['203.0.113.9'], date: '2026-10-28', log: quiet });
+  const down = (t) => (t.site === 'one.example' ? async (url) => ({ url, finalUrl: url, hops: [], error: 'ETIMEDOUT' }) : stub({}));
+  const second = await weekly({ root, out: root, getFor: down, clientIps: ['203.0.113.9'], date: '2026-11-04', log: quiet });
+  assert.deepEqual(second.diff.regressed, []);
+  assert.deepEqual(second.notChecked.map((n) => [n.site, n.carried]), [['one.example', '2026-10-28']]);
+  const row = second.doc.results.find((r) => r.site === 'one.example');
+  assert.equal(row.notChecked.keptFrom, '2026-10-28');
+  assert.equal(row.checks.find((c) => c.id === 'markdown').status, 'pass');
+  assert.ok(second.warnings >= 1, 'a kept row is a warning');
+  assert.match(fs.readFileSync(path.join(root, 'diffs/2026-11-04.md'), 'utf8'), /## Not checked this run/);
+  assert.ok(fs.existsSync(path.join(root, 'evidence', 'one.example')), 'its evidence is kept too');
+});
+
+test('a backfill with an older date leaves results.json on the newest run', async () => {
+  const root = tmp();
+  fs.writeFileSync(path.join(root, 'targets.json'), JSON.stringify(TARGETS));
+  const opts = { root, out: root, getFor: () => stub(SITE_V2), clientIps: ['203.0.113.9'], log: () => {} };
+  await weekly({ ...opts, date: '2026-11-04' });
+  await weekly({ ...opts, date: '2026-10-21' });
+  assert.equal(JSON.parse(fs.readFileSync(path.join(root, 'results.json'), 'utf8')).date, '2026-11-04');
+});
+
+test('weekly refuses a --client-ip that is not an address', async () => {
+  const root = tmp();
+  fs.writeFileSync(path.join(root, 'targets.json'), JSON.stringify(TARGETS));
+  await assert.rejects(weekly({ root, out: root, clientIps: ['not-an-ip'], date: '2026-11-04', log: () => {} }), /needs an IP address/);
 });
