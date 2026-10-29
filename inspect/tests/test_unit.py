@@ -2,6 +2,7 @@
 in a temp dir that stands in for /home/prized, so the package's own shell helpers run for real."""
 
 import os
+import shutil
 import subprocess
 
 import prized
@@ -65,6 +66,7 @@ def _output_read_error(exit_code, reason):
 class FakeSandbox:
     made: list = []
     reason = None  # truncated_reason of a cut result (prized 0.1.1)
+    fork_error = None  # raised by fork()
     error = None  # raised by the next exec
     cut = 10**9  # what one blocking call keeps per stream (4 MiB on Prized)
     full_cut = 10**9  # what one with full_output=True keeps per stream (100 MiB on Prized)
@@ -91,7 +93,8 @@ class FakeSandbox:
         if FakeSandbox.error is not None:
             raise FakeSandbox.error
         argv = [self.local(a) for a in cmd]
-        full_env = {"PATH": os.environ["PATH"], "HOME": self.root, **(env or {})}
+        sandbox_env = {k: self.local(v) for k, v in self.options.get("env_vars", {}).items()}
+        full_env = {"PATH": os.environ["PATH"], "HOME": self.root, **sandbox_env, **(env or {})}
         try:
             p = subprocess.run(
                 argv,
@@ -120,6 +123,18 @@ class FakeSandbox:
             duration_ms=1,
         )
 
+    async def fork(self, count=1, labels=None):
+        if FakeSandbox.fork_error is not None:
+            raise FakeSandbox.fork_error
+        copies = []
+        for _ in range(count):
+            root = f"{self.root}-fork{len(FakeSandbox.made)}"
+            shutil.copytree(self.root, root, symlinks=True)
+            copy = FakeSandbox(root, {**self.options, "labels": dict(labels or self.labels)})
+            copy.forked_from = self.id
+            copies.append(copy)
+        return copies
+
     async def delete(self, wait=False):
         self.deleted = True
         self.delete_waited = wait
@@ -136,6 +151,7 @@ def fake(monkeypatch, tmp_path):
     FakeSandbox.made.clear()
     monkeypatch.setattr(FakeSandbox, "reason", None)
     monkeypatch.setattr(FakeSandbox, "error", None)
+    monkeypatch.setattr(FakeSandbox, "fork_error", None)
     PrizedSandboxEnvironment._live.clear()
     n = {"i": 0}
 
@@ -398,3 +414,46 @@ async def test_python_runs_python3():
     await _env(python_alias=False, env={"PATH": "/usr/bin:/bin"})
     assert not os.path.exists(os.path.join(FakeSandbox.made[1].root, ".local", "bin", "python"))
     assert FakeSandbox.made[1].options["env_vars"] == {"PATH": "/usr/bin:/bin"}
+
+
+async def test_setup_runs_once_and_samples_fork_the_paused_template():
+    token = env_mod._run.set(None)
+    try:
+        cfg = PrizedSandboxConfig(setup=["echo installed > ~/marker", "touch ~/second"], labels={"t": "1"})
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        template = FakeSandbox.made[0]
+        assert template.paused and template.labels["inspect-role"] == "template"
+        assert [c[0][-1] for c in template.calls] == [env_mod._ALIAS, *cfg.setup]
+        a = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"].as_type(PrizedSandboxEnvironment)
+        b = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"].as_type(PrizedSandboxEnvironment)
+        assert len(FakeSandbox.made) == 3 and template.calls[-1][0][-1] == "touch ~/second"  # setup ran once
+        assert a.sandbox.forked_from == template.id and a.sandbox.labels["t"] == "1"
+        assert a.sandbox.labels["inspect-task"] == "t" and "inspect-role" not in a.sandbox.labels
+        assert (await a.exec(["cat", "/home/prized/marker"])).stdout == "installed\n"
+        assert (await b.exec(["python", "-c", "print(6 * 7)"])).stdout == "42\n"
+        # A fork that does not fit falls back to a fresh sandbox with the setup run in it.
+        FakeSandbox.fork_error = PrizedError("fork_capacity", "full", status=409)
+        c = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"].as_type(PrizedSandboxEnvironment)
+        assert not hasattr(c.sandbox, "forked_from") and (await c.exec(["cat", "/home/prized/marker"])).success
+        await PrizedSandboxEnvironment.task_cleanup("shutdown", cfg, True)
+        assert template.deleted and template.closed and env_mod._templates.get() == {}
+    finally:
+        env_mod._run.reset(token)
+
+
+async def test_setup_failure_deletes_the_sandbox():
+    cfg = PrizedSandboxConfig(setup=["exit 3"])
+    with pytest.raises(RuntimeError, match="setup command failed"):
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+    assert all(sb.deleted or sb.closed for sb in FakeSandbox.made)
+
+
+async def test_fork_copies_go_with_the_sample():
+    env, cfg, envs = await _env()
+    await env.write_file("state.txt", "step 1")
+    [copy] = await env.fork()
+    assert await copy.read_file("state.txt") == "step 1"
+    await copy.write_file("state.txt", "branch")
+    assert await env.read_file("state.txt") == "step 1"
+    await PrizedSandboxEnvironment.sample_cleanup("unit task", cfg, envs, False)
+    assert env.sandbox.deleted and copy.sandbox.deleted

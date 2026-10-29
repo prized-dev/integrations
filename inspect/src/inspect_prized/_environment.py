@@ -11,6 +11,7 @@ from contextvars import ContextVar
 from logging import getLogger
 from typing import Literal, Union, overload
 
+import anyio
 from inspect_ai.util import (
     ExecResult,
     OutputLimitExceededError,
@@ -108,6 +109,14 @@ class PrizedSandboxConfig(BaseModel, frozen=True):
     keep: bool = False
     """Keep sandboxes after the sample (pause them) instead of deleting them, for debugging."""
 
+    setup: list[str] = Field(default_factory=list)
+    """Shell commands that install what the task needs (in place of a Dockerfile). They run once,
+    before the first sample, in a sandbox that is then paused; each sample starts as a fork of it,
+    with the install done (files, memory and running processes)."""
+
+    setup_timeout: int = 1800
+    """Seconds each ``setup`` command may run."""
+
     python_alias: bool = True
     """Make ``python`` run ``python3``, as in Python images (many evals call ``python``; the template
     has only ``python3``). It is a link in ``~/.local/bin``, which goes first on ``PATH``."""
@@ -125,6 +134,7 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
     def __init__(self, sandbox: AsyncSandbox, config: PrizedSandboxConfig) -> None:
         super().__init__()
         self._sandbox = sandbox
+        self._forks: list[PrizedSandboxEnvironment] = []
         self._config = config
 
     @property
@@ -151,6 +161,10 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
         # that the samples and the final task_cleanup (task_name "shutdown") run in.
         if _run.get() is None:
             _run.set(secrets.token_hex(8))
+            _templates.set({})
+        cfg = _config(config)
+        if cfg.setup:
+            await _template(cfg)
 
     @override
     @classmethod
@@ -158,34 +172,25 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
         cls, task_name: str, config: SandboxEnvironmentConfigType | None, metadata: dict[str, str]
     ) -> dict[str, SandboxEnvironment]:
         cfg = _config(config)
-        options: dict = {
-            "template": cfg.template,
-            "labels": {**cfg.labels, **LABEL, "inspect-task": _label_value(task_name)},
-            "max_runtime_min": cfg.max_runtime_min,
-            "auto_pause_min": 0,
-        }
-        run = _run.get()
-        if run is not None and not cfg.keep:
-            options["labels"][RUN_LABEL] = run
-        env_vars = {"PATH": _PATH} if cfg.python_alias else {}
-        env_vars.update(cfg.env)
-        if env_vars:
-            options["env_vars"] = env_vars
-        for name in ("vcpu", "memory_gb", "disk_gb"):
-            if getattr(cfg, name) is not None:
-                options[name] = getattr(cfg, name)
-        sandbox = await AsyncSandbox.create(**options)
-        cls._live.setdefault(task_name, set()).add(sandbox.id)
-        if cfg.python_alias:
+        options = _options(cfg, task_name)
+        sandbox = None
+        if cfg.setup:
+            template = await _template(cfg)
             try:
-                res = await sandbox.exec(["bash", "-c", _ALIAS], timeout=60)
-                if res.exit_code != 0:
-                    raise RuntimeError(f"Prized sandbox {sandbox.id}: could not link python: {res.stderr.strip()}")
+                sandbox = (await template.fork(1, labels=options["labels"]))[0]
+            except PrizedError as err:
+                # Copies start on the template's machine; when it has no room (fork_capacity), or
+                # the fork fails otherwise, start a fresh sandbox and run the setup in it.
+                logger.info("Prized: fork of template %s failed (%s); creating a sandbox", template.id, err)
+        if sandbox is None:
+            sandbox = await AsyncSandbox.create(**options)
+            try:
+                await _prepare(sandbox, cfg)
             except BaseException:
                 await _delete(sandbox.id)
-                cls._live[task_name].discard(sandbox.id)
                 await sandbox.close()
                 raise
+        cls._live.setdefault(task_name, set()).add(sandbox.id)
         return {"default": cls(sandbox, cfg)}
 
     @override
@@ -198,8 +203,11 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
         interrupted: bool,
     ) -> None:
         cfg = _config(config)
-        for env in environments.values():
-            sb = env.as_type(PrizedSandboxEnvironment)._sandbox
+        envs = [env.as_type(PrizedSandboxEnvironment) for env in environments.values()]
+        for env in envs:  # copies made with fork() go with the sample (envs grows as we walk it)
+            envs.extend(env._forks)
+        for env in envs:
+            sb = env._sandbox
             try:
                 if cfg.keep:
                     await sb.pause(wait=False)
@@ -219,6 +227,13 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
     @override
     @classmethod
     async def task_cleanup(cls, task_name: str, config: SandboxEnvironmentConfigType | None, cleanup: bool) -> None:
+        templates = _templates.get(None) or {}
+        for entry in list(templates.values()):
+            if entry.sandbox is not None:
+                if cleanup:
+                    await _delete(entry.sandbox.id)
+                await entry.sandbox.close()
+        templates.clear()
         if not cleanup or _config(config).keep:
             return
         for sandbox_id in list(cls._live.get(task_name, ())):
@@ -253,6 +268,19 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
             print(f"Deleted {id}.")
         finally:
             await sb.close()
+
+    async def fork(self, count: int = 1) -> list[PrizedSandboxEnvironment]:
+        """Live copies of this sandbox: its files, memory and running processes as they are now.
+
+        Not part of Inspect's interface: reach it with
+        ``sandbox().as_type(PrizedSandboxEnvironment).fork(n)``, e.g. to try several continuations
+        from one point of a trajectory. The copies are cleaned up with the sample.
+        """
+        with self._available():
+            copies = await self._sandbox.fork(count)
+        envs = [PrizedSandboxEnvironment(copy, self._config) for copy in copies]
+        self._forks.extend(envs)
+        return envs
 
     @override
     async def connection(self, *, user: str | None = None) -> SandboxConnection:
@@ -405,6 +433,71 @@ def _unread(sandbox_id: str, err: PrizedError) -> SandboxUnavailableError:
 
 
 _run: ContextVar[str | None] = ContextVar("inspect_prized_run", default=None)
+
+
+class _Template:
+    def __init__(self) -> None:
+        self.lock = anyio.Lock()
+        self.sandbox: AsyncSandbox | None = None
+
+
+_templates: ContextVar[dict[str, _Template]] = ContextVar("inspect_prized_templates")
+
+
+def _options(cfg: PrizedSandboxConfig, task_name: str) -> dict:
+    options: dict = {
+        "template": cfg.template,
+        "labels": {**cfg.labels, **LABEL, "inspect-task": _label_value(task_name)},
+        "max_runtime_min": cfg.max_runtime_min,
+        "auto_pause_min": 0,
+    }
+    run = _run.get()
+    if run is not None and not cfg.keep:
+        options["labels"][RUN_LABEL] = run
+    env_vars = {"PATH": _PATH} if cfg.python_alias else {}
+    env_vars.update(cfg.env)
+    if env_vars:
+        options["env_vars"] = env_vars
+    for name in ("vcpu", "memory_gb", "disk_gb"):
+        if getattr(cfg, name) is not None:
+            options[name] = getattr(cfg, name)
+    return options
+
+
+async def _prepare(sandbox: AsyncSandbox, cfg: PrizedSandboxConfig) -> None:
+    """Link python (python_alias), then run the setup commands, in order."""
+    steps = [(_ALIAS, 60)] if cfg.python_alias else []
+    steps += [(command, cfg.setup_timeout) for command in cfg.setup]
+    for command, timeout in steps:
+        res = await sandbox.exec(["bash", "-c", command], timeout=timeout, full_output=True)
+        if res.exit_code != 0:
+            raise RuntimeError(
+                f"Prized sandbox {sandbox.id}: setup command failed (exit {res.exit_code}): {command}\n"
+                f"{(res.stderr or res.stdout)[-2000:]}"
+            )
+
+
+async def _template(cfg: PrizedSandboxConfig) -> AsyncSandbox:
+    """The eval's paused sandbox with cfg.setup done, which samples fork; made on first use."""
+    templates = _templates.get(None)
+    if templates is None:
+        templates = {}
+        _templates.set(templates)
+    entry = templates.setdefault(json.dumps(cfg.model_dump(), sort_keys=True), _Template())
+    async with entry.lock:
+        if entry.sandbox is None:
+            options = _options(cfg, "template")
+            options["labels"]["inspect-role"] = "template"
+            sandbox = await AsyncSandbox.create(**options)
+            try:
+                await _prepare(sandbox, cfg)
+                await sandbox.pause()
+            except BaseException:
+                await _delete(sandbox.id)
+                await sandbox.close()
+                raise
+            entry.sandbox = sandbox
+        return entry.sandbox
 
 
 def _config(config: SandboxEnvironmentConfigType | None) -> PrizedSandboxConfig:
