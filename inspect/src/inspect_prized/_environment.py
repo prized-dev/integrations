@@ -27,6 +27,14 @@ from prized import AsyncSandbox, CommandTimeoutError, PrizedError
 from pydantic import BaseModel, Field
 from typing_extensions import override
 
+try:  # the batch's shared provider state, as Inspect's own Docker sandbox keeps it
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_state
+except ImportError:  # pragma: no cover
+
+    def sandbox_lifecycle_state():  # type: ignore[no-redef]
+        return None
+
+
 logger = getLogger(__name__)
 
 HOME = "/home/prized"
@@ -157,14 +165,12 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
     @override
     @classmethod
     async def task_init(cls, task_name: str, config: SandboxEnvironmentConfigType | None) -> None:
-        # Inspect calls this before any sample starts (with task_name "startup"), in the context
-        # that the samples and the final task_cleanup (task_name "shutdown") run in.
-        if _run.get() is None:
-            _run.set(secrets.token_hex(8))
-            _templates.set({})
+        # Inspect calls this (task_name "startup") before a config's first sample, and
+        # task_cleanup ("shutdown") after the last; both see the batch's lifecycle state.
+        state = _state(create=True)
         cfg = _config(config)
-        if cfg.setup:
-            await _template(cfg)
+        if cfg.setup and state is not None:
+            await _template(state, cfg)
 
     @override
     @classmethod
@@ -174,8 +180,9 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
         cfg = _config(config)
         options = _options(cfg, task_name)
         sandbox = None
-        if cfg.setup:
-            template = await _template(cfg)
+        state = _state()
+        if cfg.setup and state is not None:
+            template = await _template(state, cfg)
             try:
                 sandbox = (await template.fork(1, labels=options["labels"]))[0]
             except PrizedError as err:
@@ -183,12 +190,13 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
                 # the fork fails otherwise, start a fresh sandbox and run the setup in it.
                 logger.info("Prized: fork of template %s failed (%s); creating a sandbox", template.id, err)
         if sandbox is None:
+            # Outside an eval's lifecycle (no task_init), or when the fork failed: run the
+            # setup in the sample's own sandbox rather than leave an untracked template.
             sandbox = await AsyncSandbox.create(**options)
             try:
                 await _prepare(sandbox, cfg)
             except BaseException:
-                await _delete(sandbox.id)
-                await sandbox.close()
+                await _discard(sandbox)
                 raise
         cls._live.setdefault(task_name, set()).add(sandbox.id)
         return {"default": cls(sandbox, cfg)}
@@ -227,13 +235,13 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
     @override
     @classmethod
     async def task_cleanup(cls, task_name: str, config: SandboxEnvironmentConfigType | None, cleanup: bool) -> None:
-        templates = _templates.get(None) or {}
-        for entry in list(templates.values()):
-            if entry.sandbox is not None:
-                if cleanup:
-                    await _delete(entry.sandbox.id)
-                await entry.sandbox.close()
-        templates.clear()
+        state = _state()
+        if state is not None:
+            # Templates hold no sample's state, so they go even with --no-sandbox-cleanup.
+            for entry in list(state.templates.values()):
+                if entry.sandbox is not None:
+                    await _discard(entry.sandbox)
+            state.templates.clear()
         if not cleanup or _config(config).keep:
             return
         for sandbox_id in list(cls._live.get(task_name, ())):
@@ -241,12 +249,11 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
             cls._live.get(task_name, set()).discard(sandbox_id)
         # In an eval, task_name is "shutdown" here, not the name the samples ran under, so the
         # loop above finds nothing: delete by the eval's label whatever sample cleanup missed.
-        run = _run.get()
-        if run is not None:
+        if state is not None:
             try:
-                deleted = await AsyncSandbox.delete_by_labels({RUN_LABEL: run})
+                deleted = await AsyncSandbox.delete_by_labels({RUN_LABEL: state.run_id})
             except PrizedError as err:
-                logger.warning("Prized sandboxes labelled %s=%s: cleanup failed (%s)", RUN_LABEL, run, err)
+                logger.warning("Prized sandboxes labelled %s=%s: cleanup failed (%s)", RUN_LABEL, state.run_id, err)
                 return
             for ids in cls._live.values():
                 ids.difference_update(deleted)
@@ -314,7 +321,7 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
                 argv_path = f"{STAGE}/argv-{token}"
                 await self._sandbox.files.write(argv_path, b"".join(a.encode() + b"\0" for a in argv))
                 argv = []
-        run = ["bash", "-c", _RUN, "inspect-prized", in_path, argv_path, *argv]
+        run = ["/bin/bash", "-c", _RUN, "inspect-prized", in_path, argv_path, *argv]
         kwargs: dict = {"cwd": self._resolve(cwd) if cwd else WORKDIR, "timeout": timeout or 0, "full_output": True}
         if env:
             kwargs["env"] = dict(env)
@@ -350,7 +357,7 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
         staged = f"{STAGE}/w-{secrets.token_hex(8)}"
         with self._available():
             await self._sandbox.files.write(staged, contents)
-            res = await self._sandbox.exec(["bash", "-c", _WRITE, "w", path, staged], timeout=_HELPER_TIMEOUT)
+            res = await self._sandbox.exec(["/bin/bash", "-c", _WRITE, "w", path, staged], timeout=_HELPER_TIMEOUT)
         if res.exit_code == 21:
             raise IsADirectoryError(f"Failed to write file: {file} is a directory")
         if res.exit_code == 13:
@@ -372,7 +379,7 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
         limit = SandboxEnvironmentLimits.MAX_READ_FILE_SIZE
         with self._available():
             res = await self._sandbox.exec(
-                ["bash", "-c", _READ, "r", path, staged, str(limit)], timeout=_HELPER_TIMEOUT
+                ["/bin/bash", "-c", _READ, "r", path, staged, str(limit)], timeout=_HELPER_TIMEOUT
             )
         if res.exit_code == 2:
             raise FileNotFoundError(f"File not found: {file}")
@@ -431,16 +438,34 @@ def _unread(sandbox_id: str, err: PrizedError) -> SandboxUnavailableError:
     )
 
 
-_run: ContextVar[str | None] = ContextVar("inspect_prized_run", default=None)
-
-
 class _Template:
     def __init__(self) -> None:
         self.lock = anyio.Lock()
         self.sandbox: AsyncSandbox | None = None
 
 
-_templates: ContextVar[dict[str, _Template]] = ContextVar("inspect_prized_templates")
+class _State:
+    """One eval batch's state: its run label and the set-up templates its samples fork."""
+
+    def __init__(self) -> None:
+        self.run_id = secrets.token_hex(8)
+        self.templates: dict[str, _Template] = {}
+
+
+# Outside a lifecycle scope (an older Inspect, or task_init called directly), task_init keeps the
+# state here; samples in the same context see it.
+_fallback: ContextVar[_State | None] = ContextVar("inspect_prized_state", default=None)
+
+
+def _state(create: bool = False) -> _State | None:
+    scope = sandbox_lifecycle_state()
+    if scope is not None:
+        return scope.get(_State)
+    state = _fallback.get()
+    if state is None and create:
+        state = _State()
+        _fallback.set(state)
+    return state
 
 
 def _options(cfg: PrizedSandboxConfig, task_name: str) -> dict:
@@ -450,9 +475,9 @@ def _options(cfg: PrizedSandboxConfig, task_name: str) -> dict:
         "max_runtime_min": cfg.max_runtime_min,
         "auto_pause_min": 0,
     }
-    run = _run.get()
-    if run is not None and not cfg.keep:
-        options["labels"][RUN_LABEL] = run
+    state = _state()
+    if state is not None and not cfg.keep:
+        options["labels"][RUN_LABEL] = state.run_id
     env_vars = {"PATH": _PATH} if cfg.python_alias else {}
     env_vars.update(cfg.env)
     if env_vars:
@@ -468,7 +493,7 @@ async def _prepare(sandbox: AsyncSandbox, cfg: PrizedSandboxConfig) -> None:
     steps = [(_ALIAS, 60)] if cfg.python_alias else []
     steps += [(command, cfg.setup_timeout) for command in cfg.setup]
     for command, timeout in steps:
-        res = await sandbox.exec(["bash", "-c", command], timeout=timeout, full_output=True)
+        res = await sandbox.exec(["/bin/bash", "-c", command], timeout=timeout, full_output=True)
         if res.exit_code != 0:
             raise RuntimeError(
                 f"Prized sandbox {sandbox.id}: setup command failed (exit {res.exit_code}): {command}\n"
@@ -476,13 +501,10 @@ async def _prepare(sandbox: AsyncSandbox, cfg: PrizedSandboxConfig) -> None:
             )
 
 
-async def _template(cfg: PrizedSandboxConfig) -> AsyncSandbox:
+async def _template(state: _State, cfg: PrizedSandboxConfig) -> AsyncSandbox:
     """The eval's paused sandbox with cfg.setup done, which samples fork; made on first use."""
-    templates = _templates.get(None)
-    if templates is None:
-        templates = {}
-        _templates.set(templates)
-    entry = templates.setdefault(json.dumps(cfg.model_dump(), sort_keys=True), _Template())
+    key = json.dumps(cfg.model_dump(), sort_keys=True)
+    entry = state.templates.get(key) or state.templates.setdefault(key, _Template())
     async with entry.lock:
         if entry.sandbox is None:
             options = _options(cfg, "template")
@@ -492,8 +514,7 @@ async def _template(cfg: PrizedSandboxConfig) -> AsyncSandbox:
                 await _prepare(sandbox, cfg)
                 await sandbox.pause()
             except BaseException:
-                await _delete(sandbox.id)
-                await sandbox.close()
+                await _discard(sandbox)
                 raise
             entry.sandbox = sandbox
         return entry.sandbox
@@ -528,6 +549,18 @@ def _head(text: str, size: int) -> str:
 
 def _size_str(size: int) -> str:
     return f"{size // (1024 * 1024)} MiB" if size >= 1024 * 1024 else f"{size} bytes"
+
+
+async def _discard(sandbox: AsyncSandbox) -> None:
+    """Delete a sandbox this package just made and release it, even while being cancelled."""
+    with anyio.CancelScope(shield=True):
+        try:
+            await sandbox.delete()
+        except PrizedError as err:
+            if err.code not in _GONE:
+                logger.warning("Prized sandbox %s cleanup failed: %s", sandbox.id, err)
+        finally:
+            await sandbox.close()
 
 
 async def _delete(sandbox_id: str) -> None:

@@ -393,11 +393,11 @@ async def test_task_cleanup_at_shutdown_deletes_by_the_eval_label(monkeypatch):
         return [sb.id for sb in hit]
 
     monkeypatch.setattr(env_mod.AsyncSandbox, "delete_by_labels", staticmethod(delete_by_labels))
-    token = env_mod._run.set(None)
+    token = env_mod._fallback.set(None)
     try:
         cfg = PrizedSandboxConfig()
         await PrizedSandboxEnvironment.task_init("startup", cfg)
-        run = env_mod._run.get()
+        run = env_mod._fallback.get().run_id
         await PrizedSandboxEnvironment.sample_init("my task", cfg, {})  # its sample cleanup never runs
         kept_cfg = PrizedSandboxConfig(keep=True)
         await PrizedSandboxEnvironment.sample_init("my task", kept_cfg, {})
@@ -410,7 +410,7 @@ async def test_task_cleanup_at_shutdown_deletes_by_the_eval_label(monkeypatch):
         await PrizedSandboxEnvironment.task_cleanup("shutdown", cfg, False)  # --no-sandbox-cleanup
         assert len(swept) == 1
     finally:
-        env_mod._run.reset(token)
+        env_mod._fallback.reset(token)
 
 
 async def test_python_runs_python3():
@@ -423,7 +423,7 @@ async def test_python_runs_python3():
 
 
 async def test_setup_runs_once_and_samples_fork_the_paused_template():
-    token = env_mod._run.set(None)
+    token = env_mod._fallback.set(None)
     try:
         cfg = PrizedSandboxConfig(setup=["echo installed > ~/marker", "touch ~/second"], labels={"t": "1"})
         await PrizedSandboxEnvironment.task_init("startup", cfg)
@@ -442,9 +442,9 @@ async def test_setup_runs_once_and_samples_fork_the_paused_template():
         c = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"].as_type(PrizedSandboxEnvironment)
         assert not hasattr(c.sandbox, "forked_from") and (await c.exec(["cat", "/home/prized/marker"])).success
         await PrizedSandboxEnvironment.task_cleanup("shutdown", cfg, True)
-        assert template.deleted and template.closed and env_mod._templates.get() == {}
+        assert template.deleted and template.closed and env_mod._fallback.get().templates == {}
     finally:
-        env_mod._run.reset(token)
+        env_mod._fallback.reset(token)
 
 
 async def test_setup_failure_deletes_the_sandbox():
@@ -463,3 +463,36 @@ async def test_fork_copies_go_with_the_sample():
     assert await env.read_file("state.txt") == "step 1"
     await PrizedSandboxEnvironment.sample_cleanup("unit task", cfg, envs, False)
     assert env.sandbox.deleted and copy.sandbox.deleted
+
+
+async def test_state_lives_on_inspects_lifecycle_scope(monkeypatch):
+    # task_init may run in another task than the samples (a SampleSource feeder): the run label and
+    # the templates must still reach the samples and task_cleanup, through Inspect's lifecycle scope.
+    import asyncio
+
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    async def delete_by_labels(labels, **_):
+        hit = [sb for sb in FakeSandbox.made if all(sb.labels.get(k) == v for k, v in labels.items())]
+        for sb in hit:
+            sb.deleted = True
+        return [sb.id for sb in hit]
+
+    monkeypatch.setattr(env_mod.AsyncSandbox, "delete_by_labels", staticmethod(delete_by_labels))
+    cfg = PrizedSandboxConfig(setup=["touch ~/ready"])
+    with sandbox_lifecycle_scope():
+        await asyncio.create_task(PrizedSandboxEnvironment.task_init("startup", cfg))  # its own context
+        template = FakeSandbox.made[0]
+        envs = await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        sample = envs["default"].as_type(PrizedSandboxEnvironment).sandbox
+        assert sample.forked_from == template.id and "inspect-run" in sample.labels
+        await PrizedSandboxEnvironment.task_cleanup("shutdown", cfg, False)  # --no-sandbox-cleanup
+        assert template.deleted and not sample.deleted  # templates hold no sample state
+    assert env_mod._fallback.get() is None
+
+
+async def test_setup_without_task_init_runs_in_the_sample():
+    envs = await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(setup=["touch ~/ready"]), {})
+    sb = envs["default"].as_type(PrizedSandboxEnvironment).sandbox
+    assert len(FakeSandbox.made) == 1 and not hasattr(sb, "forked_from")  # no untracked template
+    assert os.path.exists(os.path.join(sb.root, "ready"))
