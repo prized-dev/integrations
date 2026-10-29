@@ -241,6 +241,7 @@ Cache-Control: no-store
 
 - `url` is required except for `claim_required`. It MUST be https, on the same site as the `issuer` or the protected resource, or on an origin in `agent_auth.billing.url_origins`.
 - `needed` is the amount that would let this exact request through. A service SHOULD send it when it can compute it. It is not a minimum purchase. `pricing_uri` is optional.
+- A service SHOULD use the reasons above where they fit, and MAY use another `reason` when none does. It MAY add members to `billing`, such as the smallest purchase that clears the refusal. Agents ignore members they don't recognize, and treat an unrecognized `reason` as one only a person can clear, at `billing.url`.
 - `error` and its human-readable description follow the service's existing error format. The example uses auth.md's (`error`, `error_description`). Part 1 above shows `billing` beside an `errors` array.
 - New APIs SHOULD answer 402, for a cap as well as for a balance: in both cases only a person can unblock the request, and common HTTP clients don't retry a 402 on their own. A service with existing clients MAY keep its current status code and `error` value and add `billing` next to them, but a refusal for money MUST NOT use a 2xx, 401 or 429 status, which auth.md tells agents to re-register on or retry.
 - A `credit_exhausted` or `plan_required` refusal MAY also carry a machine-payment challenge, such as x402 or the HTTP Payment authentication scheme. A `spend_cap_reached` or `claim_required` refusal MUST NOT, because paying never changes a cap.
