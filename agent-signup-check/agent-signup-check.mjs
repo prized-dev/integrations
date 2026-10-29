@@ -1108,7 +1108,9 @@ async function main(argv) {
     } else args._.push(a);
   }
   if (args.targets) {
-    const targets = JSON.parse(fs.readFileSync(args.targets, 'utf8'));
+    // The comment keeps bundlers (Next's Turbopack) from tracing the whole project into a server
+    // function that imports this file: the path is only known when the CLI runs.
+    const targets = JSON.parse(fs.readFileSync(/* turbopackIgnore: true */ args.targets, 'utf8'));
     const list = Array.isArray(targets) ? targets : targets.targets;
     const conc = Math.max(1, Math.min(8, Number(args.concurrency) || 4));
     const out = new Array(list.length);
