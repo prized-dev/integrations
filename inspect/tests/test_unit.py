@@ -355,3 +355,36 @@ def test_config_hash_and_deserialize():
     assert b == c and hash(b) == hash(c) and {b: 1}[c] == 1
     assert PrizedSandboxEnvironment.config_deserialize({"vcpu": 2}) == PrizedSandboxConfig(vcpu=2)
     assert env_mod._label_value("a b/c" * 30).startswith("a-b-c") and len(env_mod._label_value("x" * 99)) == 63
+
+
+async def test_task_cleanup_at_shutdown_deletes_by_the_eval_label(monkeypatch):
+    # In an eval Inspect calls task_init("startup") and task_cleanup("shutdown"), never with the
+    # task name the samples ran under (inspect_ai/_eval/run.py).
+    swept = []
+
+    async def delete_by_labels(labels, **_):
+        swept.append(labels)
+        hit = [sb for sb in FakeSandbox.made if all(sb.labels.get(k) == v for k, v in labels.items())]
+        for sb in hit:
+            sb.deleted = True
+        return [sb.id for sb in hit]
+
+    monkeypatch.setattr(env_mod.AsyncSandbox, "delete_by_labels", staticmethod(delete_by_labels))
+    token = env_mod._run.set(None)
+    try:
+        cfg = PrizedSandboxConfig()
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        run = env_mod._run.get()
+        await PrizedSandboxEnvironment.sample_init("my task", cfg, {})  # its sample cleanup never runs
+        kept_cfg = PrizedSandboxConfig(keep=True)
+        await PrizedSandboxEnvironment.sample_init("my task", kept_cfg, {})
+        assert FakeSandbox.made[0].labels["inspect-run"] == run
+        assert "inspect-run" not in FakeSandbox.made[1].labels  # kept sandboxes outlive the eval
+        await PrizedSandboxEnvironment.task_cleanup("shutdown", cfg, True)
+        assert swept == [{"inspect-run": run}]
+        assert FakeSandbox.made[0].deleted and not FakeSandbox.made[1].deleted
+        assert PrizedSandboxEnvironment._live["my task"] == {FakeSandbox.made[1].id}
+        await PrizedSandboxEnvironment.task_cleanup("shutdown", cfg, False)  # --no-sandbox-cleanup
+        assert len(swept) == 1
+    finally:
+        env_mod._run.reset(token)
