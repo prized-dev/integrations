@@ -411,6 +411,8 @@ test('a default_spend_cap out of shape, or without its two URLs, passes only par
     [{ amount: { currency: 'USD', value: '20.00' }, period: 'week' }, {}, /period/],
     [PART2.default_spend_cap, { manage_uri: undefined }, /manage_uri/],
     [PART2.default_spend_cap, { limits_endpoint: 'http://api.two.example/agent/limits' }, /limits_endpoint/],
+    [PART2.default_spend_cap, { pricing_uri: undefined }, /pricing_uri/],
+    [PART2.default_spend_cap, { version: undefined }, /version/],
   ]) {
     const v = await verdicts({ ...PART2, default_spend_cap: cap, ...extra });
     assert.equal(v.limits, 'partial', JSON.stringify(cap));
@@ -423,4 +425,11 @@ test('owner_limits_uri without a default cap passes spend limits partly', async 
   assert.equal(v.limits, 'partial');
   assert.match(v.why, /owner_limits_uri/);
   assert.equal(v.payment, 'pass');
+});
+
+test('a 402 whose billing sits in JSON:API meta passes payment handoff', async () => {
+  const pages = billingSite(undefined);
+  pages['https://api.two.example/v1/me'] = { status: 402, headers: { 'content-type': 'application/vnd.api+json' }, body: JSON.stringify({ errors: [{ code: 'insufficient_balance' }], meta: { billing: { reason: 'credit_exhausted', url: 'https://two.example/billing' } } }) };
+  const r = await checkSite(BILLING_SITE, { api: 'https://api.two.example/v1/me', get: stub(pages) });
+  assert.equal(r.checks.find((c) => c.id === 'payment').status, 'pass');
 });

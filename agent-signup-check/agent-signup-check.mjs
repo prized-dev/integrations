@@ -673,8 +673,8 @@ function aboutAgentAuth(text) {
 }
 
 /** Why agent_auth.billing.default_spend_cap isn't one an agent can rely on (null when it is):
- *  auth-md-spend-limits section 1 wants {amount: {currency, value}, period} plus the two part 2
- *  URLs that come with it. */
+ *  auth-md-spend-limits section 1 wants {amount: {currency, value}, period}, with the version,
+ *  pricing_uri, limits_endpoint and manage_uri that come with it. */
 export function spendCapProblem(billing) {
   const cap = billing && billing.default_spend_cap;
   if (!cap || typeof cap !== 'object' || Array.isArray(cap)) return 'it is not an object';
@@ -682,8 +682,9 @@ export function spendCapProblem(billing) {
   if (!a || typeof a !== 'object' || typeof a.currency !== 'string' || !/^[A-Z]{3}$/.test(a.currency)) return 'its amount has no ISO 4217 currency';
   if (typeof a.value !== 'string' || !/^\d{1,15}(?:\.\d{1,12})?$/.test(a.value)) return 'its amount value is not a decimal string';
   if (!['total', 'day', 'month'].includes(cap.period)) return 'its period is not total, day or month';
-  const missing = ['limits_endpoint', 'manage_uri'].filter((k) => !httpsUrl(billing[k]));
+  const missing = ['pricing_uri', 'limits_endpoint', 'manage_uri'].filter((k) => !httpsUrl(billing[k]));
   if (missing.length) return `it comes without an https ${missing.join(' or ')}`;
+  if (typeof billing.version !== 'string' || !billing.version) return 'it comes without a version';
   return null;
 }
 
@@ -1028,7 +1029,7 @@ export async function checkSite(input, opts = {}) {
       set('payment', 'pass', 'Publishes an x402 discovery document (/.well-known/x402) that an agent can pay from without an account', { url: x402R.finalUrl || x402R.url });
     } else if (paymentScheme) {
       set('payment', 'pass', 'The API challenges with the Payment HTTP authentication scheme', { url: apiR.url });
-    } else if (apiR && apiR.status === 402 && body402 && body402.billing) {
+    } else if (apiR && apiR.status === 402 && body402 && (body402.billing || (body402.meta && body402.meta.billing))) {
       set('payment', 'pass', 'The API answers 402 with a billing object', { url: apiR.url });
     } else if (billing && httpsUrl(billing.pricing_uri)) {
       set('payment', 'pass', 'agent_auth.billing declares a pricing_uri for the 402 billing handoff', { url: asR.url, pricing_uri: billing.pricing_uri });
