@@ -60,7 +60,7 @@ inspect eval arithmetic.py --model openai/gpt-5
 PrizedSandboxConfig(setup=["python3 -m venv ~/venv && ~/venv/bin/pip install numpy pandas"])
 ```
 
-If a fork doesn't fit on the template's machine, that sample gets a fresh sandbox and runs `setup` itself.
+If a fork doesn't fit on the template's machine, that sample gets a fresh sandbox and runs `setup` itself. On the free tier a fork keeps its template's remaining run time (60 minutes of running in all, less what `setup` took); a paid plan gives each fork its own `max_runtime_min`.
 
 To branch a sample's state (try several continuations from one point of a trajectory), fork its sandbox: `copies = await sandbox().as_type(PrizedSandboxEnvironment).fork(3)`. Each copy is a live copy (files, memory, processes) and is deleted with the sample.
 
