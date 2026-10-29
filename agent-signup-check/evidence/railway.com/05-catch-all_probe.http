@@ -1,0 +1,17 @@
+GET https://railway.com/agent-signup-check-no-such-page.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:27.392Z
+final-url: https://railway.com/agent-signup-check-no-such-page.md
+
+HTTP 404
+content-type: text/plain;charset=UTF-8
+date: Wed, 28 Oct 2026 23:57:26 GMT
+server: railway-hikari
+x-railway-request-id: -cSauASZSP2YQ7xE9fVATg
+x-cache: DYNAMIC
+transfer-encoding: chunked
+x-hikari-trace: lax1.sx7j,lax1.ez9k
+x-railway-edge: lax1
+connection: close
+
+Not found

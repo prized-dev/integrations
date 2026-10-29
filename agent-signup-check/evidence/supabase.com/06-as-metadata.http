@@ -1,0 +1,23 @@
+GET https://api.supabase.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:51.576Z
+final-url: https://api.supabase.com/.well-known/oauth-authorization-server
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:57:50 GMT
+content-type: application/json; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a51de2957f4efc83-PDX
+cf-cache-status: DYNAMIC
+cache-control: max-age=3600,public
+etag: W/"3c3-UOJfhwpbEDdkhuHI/ssZRbIABdU"
+server: cloudflare
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Origin
+access-control-allow-credentials: true
+access-control-expose-headers: x-connection-encrypted,x-forwarded-for,user-agent,CF-Connecting-IP,Retry-After,X-RateLimit-Limit,X-RateLimit-Remaining,X-RateLimit-Reset,X-Supabase-Maintenance-Scheduled
+x-powered-by: Express
+content-encoding: gzip
+
+{"issuer":"https://api.supabase.com","authorization_endpoint":"https://api.supabase.com/v1/oauth/authorize","token_endpoint":"https://api.supabase.com/v1/oauth/token","registration_endpoint":"https://api.supabase.com/platform/oauth/apps/register","response_types_supported":["code"],"response_modes_supported":["query"],"grant_types_supported":["authorization_code","refresh_token","urn:ietf:params:oauth:grant-type:jwt-bearer"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post"],"code_challenge_methods_supported":["S256","plain"],"scopes_supported":["organizations:read","projects:read","projects:write","database:write","database:read","analytics:read","secrets:read","edge_functions:read","edge_functions:write","environment:read","environment:write","storage:read","storage:write"],"authorization_response_iss_parameter_supported":true,"authorization_grant_profiles_supported":["urn:ietf:params:oauth:grant-profile:id-jag"]}

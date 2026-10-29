@@ -1,0 +1,17 @@
+GET https://docs.deno.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:49.279Z
+final-url: https://docs.deno.com/llms.txt
+
+HTTP 500
+content-type: text/plain;charset=UTF-8
+content-length: 21
+date: Wed, 28 Oct 2026 23:57:46 GMT
+connection: close
+age: 0
+cache-status: deno; fwd=bypass; detail=not-cacheable
+x-deno-trace-id: 31affb55dd30667c12c2df30aa5c604a
+via: HTTP/1.1 ord.vultr.prod.deno-cluster.net
+server: deployd
+
+Internal Server Error

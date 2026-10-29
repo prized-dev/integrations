@@ -1,0 +1,35 @@
+GET https://telnyx.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:04.929Z
+final-url: https://telnyx.com/.well-known/x402
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:04 GMT
+content-type: application/json; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a51de2edfa289694-PDX
+cf-cache-status: BYPASS
+access-control-allow-origin: *
+cache-control: public, max-age=900, stale-while-revalidate=86400, must-revalidate
+server: cloudflare
+strict-transport-security: max-age=31536000
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+access-control-allow-headers: Content-Type
+access-control-allow-methods: GET, OPTIONS
+access-control-expose-headers: RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset, RateLimit-Policy
+content-security-policy: frame-ancestors 'none'
+origin-trial: Ann8KBPVIV7RjnqvSzpSNHwy6+oDGhfRasQc709Al3dnvwvVywRhTsTwxQ7oikmb9JBkwrvsX+Tc6XGbXAr4IAYAAABdeyJvcmlnaW4iOiJodHRwczovL3RlbG55eC5jb206NDQzIiwiZmVhdHVyZSI6IldlYk1DUCIsImV4cGlyeSI6MTc5NDg3MzYwMCwiaXNTdWJkb21haW4iOnRydWV9
+permissions-policy: geolocation=(), microphone=(self), camera=()
+ratelimit-limit: 100
+ratelimit-policy: 100;w=60
+ratelimit-remaining: 99
+ratelimit-reset: 60
+referrer-policy: strict-origin-when-cross-origin
+x-frame-options: SAMEORIGIN
+x-ratelimit-limit: 100
+x-ratelimit-remaining: 99
+x-ratelimit-reset: 60
+content-encoding: gzip
+
+{"x402Version":2,"error":"Payment required","resource":{"url":"https://x402.telnyx.com/v1/chat/completions","method":"POST","description":"OpenAI-compatible chat completions via Telnyx Inference — 17 open-weight models (MiniMax, Kimi, GLM, DeepSeek, Llama, Qwen, Gemma) selected via body.model, from $0.002 to $0.150193 USDC per call. No API key, no signup, pay per request.","mimeType":"application/json"},"accepts":[{"scheme":"exact","network":"eip155:8453","amount":"13850","asset":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","payTo":"0x19a78B27a28eD93C3c914878bde7f2f843AfAEa8","maxTimeoutSeconds":300,"extra":{"name":"USD Coin","version":"2"}}],"extensions":{"schema":"x402-discovery/v1","provider":{"name":"Telnyx","url":"https://telnyx.com","gateway":"https://x402.telnyx.com","source":"https://github.com/coinbase/x402","bazaar_listing":"https://agentic.market/?service=x402-telnyx-com","docs":"https://docs.cdp.coinbase.com/x402/welcome"},"facilitator":"https://api.cdp.coinbase.com/platform/v2/x402","bazaar_resource":"https://api.cdp.coinbase.com/platform/v2/x402/discovery/resources","headers":{"request":"x-payment","response":"payment-required"},"related":{"api_catalog":"/.well-known/api-catalog","ai_services":"/.well-known/ai-services.json","discovery_resources":"/discovery/resources","llms_txt":"/llms.txt"}}}

@@ -1,0 +1,169 @@
+GET https://render.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:27.235Z
+final-url: https://render.com/.well-known/x402
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:57:26 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cache-control: private, no-cache, no-store, max-age=0, must-revalidate
+x-xss-protection: 1; mode=block
+content-encoding: gzip
+content-security-policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://assets.calendly.com https://scout-cdn.salesloft.com https://snap.licdn.com https://www.google.com https://www.googletagmanager.com https://www.gstatic.com ; connect-src 'self' https://*.algolia.net https://*.algolianet.com https://*.google-analytics.com https://*.google.com https://*.googletagmanager.com https://*.hsforms.com https://*.inkeep.com https://*.linkedin.com https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://*.segment.com https://*.segment.io https://api.unifyintent.com https://api.ashbyhq.com https://cdn.growthbook.io https://cdn.sanity.io https://hubspot-forms-static-embed.s3.amazonaws.com https://pagead2.googlesyndication.com https://scout.salesloft.com https://translate.googleapis.com ; worker-src 'self' blob: https://*.osano.com; report-uri https://render.report-uri.com/r/t/csp/reportOnly; report-to wizard;
+etag: "1131wfqh5ep3aow"
+referrer-policy: same-origin
+rndr-id: 481990d1-f2d9-4f8d
+server: cloudflare
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-nextjs-cache: HIT
+x-nextjs-prerender: 1
+x-nextjs-stale-time: 300
+x-render-origin-server: Render
+cf-cache-status: DYNAMIC
+cf-ray: a51de2030b8be09f-SEA
+alt-svc: h3=":443"; ma=86400
+
+<!DOCTYPE html><html data-dpl-id="9cc8cfd4f" lang="en" class="[--nav-bar-height:47px] lg:[--nav-bar-height:66px]"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/><link rel="stylesheet" href="/_next/static/chunks/1k41o268x29kk.css?dpl=9cc8cfd4f" data-precedence="next"/><link rel="stylesheet" href="/_next/static/chunks/00jwlxrpe4rn8.css?dpl=9cc8cfd4f" data-precedence="next"/><link rel="stylesheet" href="/_next/static/chunks/18nsqw42fluad.css?dpl=9cc8cfd4f" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/1nvewxwamo2u0.js?dpl=9cc8cfd4f"/><script src="/_next/static/chunks/012h2o3tzmp5f.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/0d-2g491zhyhv.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/3huseil37iipu.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/turbopack-3yv6cmuran_d1.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/3j_8orpbhrw6y.js?dpl=lzqfb" async=""></script><script src="/_next/static/chunks/3y0_fs90vvfk7.js?dpl=lzqfb" async=""></script><script src="/_next/static/chunks/16mt7bv-tv4cn.js?dpl=lzqfb" async=""></script><script src="/_next/static/chunks/36sdi7k1ay1k1.js?dpl=lzqfb" async=""></script><script src="/_next/static/chunks/0tl375h4oqqky.js?dpl=lzqfb" async=""></script><script src="/_next/static/chunks/3wn32a63eptof.js?dpl=lzqfb" async=""></script><script src="/_next/static/chunks/3k-jbnv168q9g.js?dpl=lzqfb" async=""></script><script src="/_next/static/chunks/1eeyadfjkxocf.js?dpl=lzqfb" async=""></script><script src="/_next/static/chunks/2jaubwpi4ymc8.js?dpl=lzqfb" async=""></script><script src="/_next/static/chunks/375r4usibi-yk.js?dpl=lzqfb" async=""></script><script src="/_next/static/chunks/3b4h2g1drvkb3.js?dpl=lzqfb" async=""></script><script src="/_next/static/chunks/3hykzu1-vhjms.js?dpl=lzqfb" async=""></script><script src="/_next/static/chunks/2dlh55p8wryvm.js?dpl=lzqfb" async=""></script><script src="/_next/static/chunks/3j_8orpbhrw6y.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/3y0_fs90vvfk7.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/16mt7bv-tv4cn.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/36sdi7k1ay1k1.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/0tl375h4oqqky.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/3wn32a63eptof.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/3k-jbnv168q9g.js?dpl=9cc8cfd4f" async=""></script><script async="" defer="" data-domain="render.com" data-api="/pan/api/event" src="/pan/script.js"></script><script src="/_next/static/chunks/2jaubwpi4ymc8.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/375r4usibi-yk.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/3b4h2g1drvkb3.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/3hykzu1-vhjms.js?dpl=9cc8cfd4f" async=""></script><script src="/_next/static/chunks/2dlh55p8wryvm.js?dpl=9cc8cfd4f" async=""></script><link rel="preload" href="/oc/cdn/AzZf4RUVBUPZc66vt/5eefab51-58ce-4b25-9547-c1676055a663/osano.js" as="script"/><meta name="robots" content="noindex"/><meta name="color-scheme" content="light dark"/><title>Not Found | Render</title><meta property="og:title" content="Not Found | Render"/><meta property="og:image" content="https://cdn.sanity.io/images/hvk0tap5/production/cb7ff287cdf28d8115569e91e856e9b6441bc7a6-3840x2146.png?fit=max&amp;auto=format"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Not Found | Render"/><meta name="twitter:image" content="https://cdn.sanity.io/images/hvk0tap5/production/cb7ff287cdf28d8115569e91e856e9b6441bc7a6-3840x2146.png?fit=max&amp;auto=format"/><link rel="icon" href="/icon.svg?icon.00d01gt742wgb.svg?dpl=9cc8cfd4f" sizes="any" type="image/svg+xml"/><meta name="next-size-adjust" content=""/><script>(self.__next_s=self.__next_s||[]).push([0,{"children":"(()=\u003e{try{if(location.pathname!==\"/\")return;var shouldSkipLanding=function m({cookie:a,search:b,referrer:c,dashboardUrl:d=\"https://dashboard.render.com/\"}){try{let e=a.split(\";\").map(a=\u003ea.trim()).find(a=\u003ea.startsWith(\"__render=\"));if(!e)return!1;let f=JSON.parse(decodeURIComponent(e.slice(9)));if(!f?.id||\"enabled\"!==f.skipLanding||new URLSearchParams(b).has(\"stay\")||c\u0026\u0026new URL(c).origin===new URL(d).origin)return!1;return!0}catch{return!1}};var dashboardUrl=\"https://dashboard.render.com/\";if(shouldSkipLanding({cookie:document.cookie,search:location.search,referrer:document.referrer,dashboardUrl}))location.replace(dashboardUrl);}catch{}})();","id":"skip-landing"}])</script><script>window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}
+        a("consent","default",{ad_storage:"denied",analytics_storage:"denied",ad_user_data:"denied",
+        ad_personalization:"denied",personalization_storage:"denied",functionality_storage:"granted",
+        security_storage:"granted",wait_for_update:500});a("set","ads_data_redaction",!0);</script><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-N644GXSK');</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://render.com/#organization","name":"Render","url":"https://render.com","logo":"https://render.com/brand/render_1105076560.svg","description":"Render is a cloud application platform for deploying and scaling web applications, APIs, databases, AI workloads, workflows, and agent infrastructure.","founder":{"@type":"Person","name":"Anurag Goel","jobTitle":"Founder and CEO"},"foundingDate":"2018","numberOfEmployees":{"@type":"QuantitativeValue","minValue":100,"maxValue":200},"sameAs":["https://twitter.com/render","https://github.com/renderinc","https://www.linkedin.com/company/renderco","https://www.crunchbase.com/organization/render"]}</script><script id="webmcp" type="application/json">{"spec":"webmcp/0.1","tools":[{"name":"render.docs.search","description":"Search Render documentation by keyword.","url":"/api/agent/docs-search","method":"GET","parameters":[{"name":"query","type":"string","description":"Keywords to search for in the Render docs.","required":true}]},{"name":"render.docs.get-markdown","description":"Fetch a Render docs page as markdown by slug.","url":"/docs/{slug}.md","method":"GET","parameters":[{"name":"slug","type":"string","description":"Docs page slug without a leading slash. Nested slugs are allowed.","required":true}]},{"name":"render.llms.get-index","description":"Fetch the Render llms.txt index as markdown.","url":"/llms.txt","method":"GET"},{"name":"render.blog.get-index","description":"Fetch the latest Render blog index as markdown (most recent 20 posts).","url":"/blog.md","method":"GET"},{"name":"render.articles.get-index","description":"Fetch the latest Render articles index as markdown (most recent 50 articles).","url":"/articles.md","method":"GET"}]}</script><script id="webmcp-bootstrap">(() => {
+  const modelContext = navigator.modelContext;
+  if (!modelContext) {
+    return;
+  }
+
+  const toolDefinitions = [{"kind":"docs-search","name":"render.docs.search","description":"Search Render documentation by keyword.","inputSchema":{"type":"object","properties":{"query":{"type":"string","description":"Keywords to search for in the Render docs."}},"required":["query"],"additionalProperties":false},"annotations":{"readOnlyHint":true}},{"kind":"docs-markdown","name":"render.docs.get-markdown","description":"Fetch a Render docs page as markdown by slug.","inputSchema":{"type":"object","properties":{"slug":{"type":"string","description":"Docs page slug without a leading slash. Nested slugs are allowed."}},"required":["slug"],"additionalProperties":false},"annotations":{"readOnlyHint":true}},{"kind":"llms-index","name":"render.llms.get-index","description":"Fetch the Render llms.txt index as markdown.","inputSchema":{"type":"object","properties":{},"additionalProperties":false},"annotations":{"readOnlyHint":true}},{"kind":"blog-index","name":"render.blog.get-index","description":"Fetch the latest Render blog index as markdown (most recent 20 posts).","inputSchema":{"type":"object","properties":{},"additionalProperties":false},"annotations":{"readOnlyHint":true}},{"kind":"articles-index","name":"render.articles.get-index","description":"Fetch the latest Render articles index as markdown (most recent 50 articles).","inputSchema":{"type":"object","properties":{},"additionalProperties":false},"annotations":{"readOnlyHint":true}}];
+
+  const buildStructuredResult = (value) => ({
+    content: [
+      {
+        type: 'text',
+        text: typeof value === 'string' ? value : JSON.stringify(value, null, 2),
+      },
+    ],
+    structuredContent: typeof value === 'string' ? { text: value } : value,
+  });
+
+  const normalizeSlug = (value) =>
+    String(value ?? '')
+      .trim()
+      .replace(/^\/+/, '')
+      .replace(/\.md$/i, '');
+
+  const encodeSlug = (slug) =>
+    slug
+      .split('/')
+      .filter(Boolean)
+      .map((segment) => encodeURIComponent(segment))
+      .join('/');
+
+  const fetchJson = async (path) => {
+    const response = await fetch(path, {
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status} for ${path}`);
+    }
+
+    return response.json();
+  };
+
+  const fetchText = async (path) => {
+    const response = await fetch(path, {
+      headers: {
+        Accept: 'text/markdown, text/plain;q=0.9',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status} for ${path}`);
+    }
+
+    return response.text();
+  };
+
+  const tools = toolDefinitions.map((tool) => ({
+    name: tool.name,
+    description: tool.description,
+    inputSchema: tool.inputSchema,
+    annotations: tool.annotations,
+    execute: async (input) => {
+      switch (tool.kind) {
+        case 'docs-search': {
+          const query = String(input?.query ?? '').trim();
+          if (!query) {
+            throw new Error('The "query" field is required.');
+          }
+
+          const result = await fetchJson('/api/agent/docs-search?query=' + encodeURIComponent(query));
+          return buildStructuredResult(result);
+        }
+        case 'docs-markdown': {
+          const slug = normalizeSlug(input?.slug);
+          if (!slug) {
+            throw new Error('The "slug" field is required.');
+          }
+
+          const markdown = await fetchText('/docs/' + encodeSlug(slug) + '.md');
+          return buildStructuredResult({
+            slug,
+            markdown,
+          });
+        }
+        case 'llms-index': {
+          const markdown = await fetchText('/llms.txt');
+          return buildStructuredResult({
+            path: '/llms.txt',
+            markdown,
+          });
+        }
+        case 'blog-index': {
+          const markdown = await fetchText('/blog.md');
+          return buildStructuredResult({
+            path: '/blog.md',
+            markdown,
+          });
+        }
+        case 'articles-index': {
+          const markdown = await fetchText('/articles.md');
+          return buildStructuredResult({
+            path: '/articles.md',
+            markdown,
+          });
+        }
+        default: {
+          throw new Error('Unsupported WebMCP tool.');
+        }
+      }
+    },
+  }));
+
+  if (typeof modelContext.registerTool === 'function') {
+    for (const tool of tools) {
+      try {
+        modelContext.registerTool(tool);
+      } catch (error) {
+        console.error('Failed to register WebMCP tool', tool.name, error);
+      }
+    }
+    return;
+  }
+
+  if (typeof modelContext.provideContext === 'function') {
+    modelContext.provideContext({ tools });
+  }
+})();</script><meta name="sentry-trace" content="0aa684f8fc6f459eb36eff0848ae4a62-abb7f0cb6574ecf6"/><meta name="baggage" content="sentry-environment=production,sentry-release=8ee2ce58ce649361e6deea6ac73fb73ce08f462b,sentry-public_key=06512e050c0048d0829fef3c7268da88,sentry-trace_id=0aa684f8fc6f459eb36eff0848ae4a62,sentry-org_id=227421"/><script src="/_next/static/chunks/0cz1d0mv5g_q7.js?dpl=9cc8cfd4f" noModule=""></script></head><body><div hidden=""><!--$--><!--/$--></div><div class="vvzO_a_variable ZNnsOq_variable PIxOEW_variable font-montreal"><main class="bg-background text-text-primary min-h-screen"><div class="text-body-xs text-primary flex w-full flex-wrap items-center justify-center gap-6 gap-y-4 px-12 py-6 print:hidden bg-promo-bg"><p class="inline-block leading-snug">Migrating production infrastructure? Get up to $10K in migration credits.</p><a class="text-body-xxs rounded-sm border border-[#571BCA66] px-6 leading-5 text-[#581CCB] dark:border-[#B4B2FA66] dark:text-[#B3B1FA]" href="/migration-credits">Apply now</a></div><header class="bg-background z-header sticky top-0 border-b"><div class="flex h-60 items-center gap-[48px] px-16 sm:px-24 lg:px-32 site-container"><a href="/"><svg width="110" height="21" viewBox="0 0 110 21" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Render" class="fill-current"><path d="M38.1801 3.45902C41.7067 3.45902 43.9994 5.45905 43.9994 8.67133C43.9994 11.0232 42.6512 12.7708 40.5375 13.5165L44.6811 20.6218H41.6077L37.7421 13.8798H33.4728V20.6218H30.8259V3.45902H38.1801ZM33.469 5.84911V11.5165H38.0544C40.1567 11.5165 41.2421 10.3387 41.2421 8.67133C41.2421 6.96576 40.1605 5.84911 38.0544 5.84911H33.469Z"></path><path d="M51.4145 8.22773C54.9412 8.22773 57.2339 10.8587 57.2339 14.1093C57.2339 14.4878 57.2073 14.8817 57.1349 15.2718H47.7508C47.865 17.0921 49.4151 18.5223 51.506 18.5223C53.0179 18.5223 54.2252 17.876 55.1316 16.4496L56.9711 17.7919C55.8514 19.8149 53.6463 20.878 51.506 20.878C47.8536 20.878 45.1686 18.1705 45.1686 14.5682C45.1686 10.9467 47.7508 8.22773 51.4145 8.22773ZM54.7013 13.398C54.5489 11.6924 53.1284 10.4878 51.3879 10.4878C49.537 10.4878 48.124 11.6886 47.8117 13.398H54.7013Z"></path><path d="M59.5495 20.6218V8.48012H62.0555V10.0098C62.4592 9.39027 63.6055 8.22773 65.7725 8.22773C69.0973 8.22773 70.8492 10.3004 70.8492 13.2488V20.6218H68.3547V13.7804C68.3547 11.7689 67.2578 10.6063 65.3803 10.6063C63.5408 10.6063 62.044 11.7689 62.044 13.7804V20.6218H59.5495Z"></path><path d="M78.9766 8.22773C81.0293 8.22773 82.389 8.98491 83.284 10.136V2.81274H85.7785V20.6218H83.284V18.9659C82.389 20.117 81.0293 20.8742 78.9766 20.8742C75.5375 20.8742 72.9058 18.2164 72.9058 14.4878C72.9058 10.7555 75.5375 8.22773 78.9766 8.22773ZM75.3966 14.4878C75.3966 16.725 76.9466 18.6217 79.2774 18.6217C81.6082 18.6217 83.2687 16.725 83.2687 14.4878C83.2687 12.2507 81.593 10.4801 79.2774 10.4801C76.9466 10.4763 75.3966 12.2469 75.3966 14.4878Z"></path><path d="M94.1382 8.22773C97.6648 8.22773 99.9575 10.8587 99.9575 14.1093C99.9575 14.4878 99.9309 14.8817 99.8585 15.2718H90.4744C90.5886 17.0921 92.1387 18.5223 94.2295 18.5223C95.7415 18.5223 96.9488 17.876 97.8552 16.4496L99.6947 17.7919C98.575 19.8149 96.3699 20.878 94.2295 20.878C90.5772 20.878 87.8922 18.1705 87.8922 14.5682C87.8884 10.9467 90.4706 8.22773 94.1382 8.22773ZM97.4249 13.398C97.2725 11.6924 95.852 10.4878 94.1115 10.4878C92.2606 10.4878 90.8476 11.6886 90.5353 13.398H97.4249Z"></path><path d="M102.368 20.6218V8.48012H104.874V10.136C105.556 8.809 106.702 8.22773 108.024 8.22773C108.968 8.22773 109.688 8.52983 109.688 8.52983L109.425 10.832C109.288 10.7823 108.744 10.5528 107.952 10.5528C106.615 10.5528 104.878 11.2603 104.878 14.006V20.6218H102.368Z"></path><path d="M15.6491 0.00582604C12.9679 -0.120371 10.7133 1.81847 10.3286 4.373C10.3134 4.49154 10.2905 4.60627 10.2715 4.72099C9.67356 7.90268 6.88955 10.3119 3.5457 10.3119C2.35364 10.3119 1.23395 10.006 0.258977 9.47058C0.140914 9.40557 0 9.4897 0 9.62354V10.3081V20.6218H10.2677V12.8894C10.2677 11.4668 11.4178 10.3119 12.8346 10.3119H15.4015C18.3074 10.3119 20.6458 7.89121 20.5315 4.94662C20.4287 2
+
+[body trimmed for publication: kept 16384 of 153824 characters; sha256 of the full body a8d4488b2977bbe259d7f79556e59ec6edb2ae76fcbaf2efab9d28f236492f17]

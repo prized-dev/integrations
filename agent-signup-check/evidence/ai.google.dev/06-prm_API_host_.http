@@ -1,0 +1,17 @@
+GET https://generativelanguage.googleapis.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:04.817Z
+final-url: https://generativelanguage.googleapis.com/.well-known/oauth-protected-resource
+
+HTTP 404
+content-type: text/html
+date: Wed, 28 Oct 2026 23:57:03 GMT
+server: scaffolding on HTTPServer2
+content-length: 0
+x-xss-protection: 0
+x-frame-options: SAMEORIGIN
+x-content-type-options: nosniff
+server-timing: gfet4t7; dur=46
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+connection: close
+

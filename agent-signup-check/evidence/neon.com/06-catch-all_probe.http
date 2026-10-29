@@ -1,0 +1,30 @@
+GET https://neon.com/agent-signup-check-no-such-page.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:52.166Z
+final-url: https://neon.com/agent-signup-check-no-such-page.md
+
+HTTP 404
+cache-control: public, max-age=60, s-maxage=300
+content-encoding: br
+content-type: text/markdown; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:51 GMT
+link: </docs/llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt"
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: Accept
+x-content-source: agent-404
+x-llms-txt: /docs/llms.txt
+x-robots-tag: noindex
+x-vercel-id: pdx1::fb4tr-1793231871467-2daeb72a9d60
+connection: close
+transfer-encoding: chunked
+
+# Page Not Found
+
+`/agent-signup-check-no-such-page.md` does not exist in Neon documentation.
+
+Try the docs index to locate the correct URL, or use one of these references:
+
+- [Neon docs index](/docs/llms.txt): full table of contents, start here to find the right page
+- [Neon REST API](/docs/reference/api.md): all REST endpoints grouped by resource
+- [Neon CLI](/docs/cli.md): neon commands, options, and usage

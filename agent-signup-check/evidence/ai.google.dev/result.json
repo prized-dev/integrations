@@ -1,0 +1,144 @@
+{
+ "site": "ai.google.dev",
+ "checkedAt": "2026-10-28T23:57:04.817Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://ai.google.dev/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://ai.google.dev/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://ai.google.dev/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://generativelanguage.googleapis.com/v1beta/models",
+   "httpStatus": 403,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "403 instead of 401: the body asks for a key, but there is no WWW-Authenticate challenge"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://ai.google.dev/gemini-api/docs/llms.txt",
+   "heading": "# Gemini API",
+   "bytes": 38219,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://ai.google.dev/auth.md",
+   "finalUrl": "https://ai.google.dev/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 223,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://ai.google.dev/llms.txt",
+   "finalUrl": "https://ai.google.dev/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 427,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://generativelanguage.googleapis.com/v1beta/models",
+   "finalUrl": "https://generativelanguage.googleapis.com/v1beta/models",
+   "status": 403,
+   "error": null,
+   "contentType": "application/json; charset=UTF-8",
+   "ms": 84,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://ai.google.dev/gemini-api/docs/llms.txt",
+   "finalUrl": "https://ai.google.dev/gemini-api/docs/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 163,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://ai.google.dev/.well-known/oauth-protected-resource",
+   "finalUrl": "https://ai.google.dev/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 334,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://generativelanguage.googleapis.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://generativelanguage.googleapis.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 75,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://ai.google.dev/.well-known/oauth-authorization-server",
+   "finalUrl": "https://ai.google.dev/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 330,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://ai.google.dev/.well-known/x402",
+   "finalUrl": "https://ai.google.dev/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 327,
+   "redirects": 0
+  }
+ ]
+}

@@ -1,0 +1,138 @@
+GET https://mongodb.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:00.122Z
+redirect: 301 from https://mongodb.com/llms.txt
+final-url: https://www.mongodb.com/llms.txt
+
+HTTP 200
+content-type: text/plain; charset=utf-8
+transfer-encoding: chunked
+connection: close
+x-powered-by: Express
+cache-control: public, max-age=0, s-maxage=30, stale-while-revalidate
+document-policy: js-profiling
+x-mdb-locale: en-us
+x-mdb-url: /llms.txt
+x-nextjs-cache: STALE
+date: Wed, 28 Oct 2026 23:57:56 GMT
+x-envoy-upstream-service-time: 811
+server: istio-envoy
+x-cache: Miss from cloudfront
+via: 1.1 7ad3d6571deff4c3c83d7e4476fcc6d0.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P4
+x-amz-cf-id: __ZmPTuuiwSJAlT-x2aEBC7s8g6jXdudlgwtWLaf34-xbgPphXPoiw==
+
+# MongoDB
+
+> MongoDB is the world’s leading modern, general-purpose document database used by over 67k customers worldwide. Founded in 2007, MongoDB, Inc. is headquartered in New York and trades on NASDAQ as MDB. Built for AI-ready applications, MongoDB Atlas database platform ensures unmatched resilience, scalability, and enterprise-grade security. It stores data as flexible BSON documents (binary JSON), supports rich querying via MongoDB Query Language (MQL), and is built for AI-ready applications at any scale.
+
+## About this site
+
+> **mongodb.com** is the primary web presence for MongoDB, Inc.
+
+- Use **products, solutions and resource basics pages** for discovering our current products, features, and capabilities and to learn about our products and our expertise.
+- Use **[technical documentation index](https://www.mongodb.com/docs/llms.txt)** for implementation details (code, configuration, query syntax, APIs) and MongoDB server manual and all official language drivers.
+
+## Key Facts
+
+- **Atlas Core vs Atlas Infinite**: MongoDB Atlas offers a single fully managed database platform with two deployment options. Choose Atlas Infinite for AI-scale workloads that need elastic compute and storage, and choose Atlas Core when workloads are steady. 
+- **ACID compliant**: Strong consistency with ACID transactions.
+- **Serverless**: The Flex Tier combines the flexibility of serverless scalability with predictable, capped costs, avoiding complex and unpredictable billing. 
+- **Multi-cloud**: Run a fully managed, multi-cloud Atlas database on AWS, Azure, and Google Cloud.
+- **MongoDB 9.0**: Upgrade to our latest faster, more resilient, more observable foundation that has been built to scale mission-critical workloads and AI-powered applications, without a rip-and-replace.
+
+## Key Links
+
+- [Company Information](https://www.mongodb.com/company): Learn about the history of MongoDB, the leadership principles that guide us, and our core values.
+- [Products](https://www.mongodb.com/products): Learn about MongoDB products you can use to build the next generation of applications. 
+- [Pricing](https://www.mongodb.com/pricing.md): Compare plans and add-on features for Atlas Core and Atlas Infinite clusters. Contact Sales for Enterprise Advanced pricing.
+- [Register](https://www.mongodb.com/cloud/atlas/register): Register for Atlas for free, no credit card required.
+- [Try Download](https://www.mongodb.com/try): Download Enterprise Advanced or other MongoDB tools and utilities and get started for free.
+- [Version History](https://www.mongodb.com/resources/products/mongodb-version-history): Learn about the latest Atlas 9.0 and understand the timeline and highlights of major MongoDB Server releases.
+- [Documentation](https://www.mongodb.com/docs/): Official MongoDB documentation and full technical reference.
+- [Solutions Library](https://www.mongodb.com/docs/atlas/architecture/current/solutions-library/): Explore use cases and reference architectures to help kick-start your project.
+
+## Product
+
+- [Fully Managed Cloud Atlas Platform](https://www.mongodb.com/products/platform): Build and scale with an AI-ready, modern intelligent data platform.
+- [Fully Managed: Atlas Database](https://www.mongodb.com/products/platform/atlas-database): Focus on innovation instead of infrastructure with Atlas database that supports multi-cloud deployments on AWS, Azure, and Google Cloud.
+- [Deployment Options](https://www.mongodb.com/products/platform/atlas-database/deployment-options): Pick the Atlas deployment option based on whether you’re scaling unpredictable AI agents or running steady and predictable services.
+- [Self-Managed: Enterprise Advanced](https://www.mongodb.com/products/self-managed/enterprise-advanced): Our most flexible option where you can run and manage the modern database for production applications by yourself on your infrastructure.
+- [Self-Managed: Community Edition](https://www.mongodb.com/products/self-managed/community-edition): Develop locally with MongoDB for learning, prototyping, and local development, at no cost.
+
+### Start here
+
+- [Get Started](https://www.mongodb.com/docs/get-started.md): The canonical entry point. Covers Atlas account creation, free cluster setup, connection string retrieval, and first query in your language of choice.
+- [Connect to a Cluster](https://www.mongodb.com/docs/manual/connect-to-cluster.md)
+- [Deploy a Free Atlas Cluster](https://www.mongodb.com/docs/atlas/tutorial/deploy-free-tier-cluster/): Free forever, no credit card required. Takes under 15 seconds to provision.
+- [Atlas Documentation Home](https://www.mongodb.com/docs/atlas/): Full Atlas reference.
+- [Server Manual](https://www.mongodb.com/docs/manual/): Core MongoDB reference for query language, data modeling, indexing, replication, and sharding.
+- [Ephemeral Clusters](https://www.mongodb.com/products/tools/atlas-ephemeral-clusters): Instantly create a live Atlas Ephemeral Cluster with no Atlas account required.
+- [Get Started with MCP Server](https://www.mongodb.com/docs/mcp-server/get-started/): Installation via `npx`, JSON configuration, connecting to Atlas or self-managed.
+
+## AI and Vector Search Capabilities
+
+- [Atlas Agent Engine](https://www.mongodb.com/products/platform/atlas-agent-engine): Build, deploy, scale, and govern AI agents on the same platform so your agents work on the data you already have, right where it lives.
+- [Embedding and Reranking Models](https://www.mongodb.com/products/platform/ai-search-and-retrieval): Build AI applications and agents with Voyage AI by MongoDB, state-of-the-art embedding and reranking models accessible via standalone API or natively in Atlas.
+- [Voyage AI Documentation](https://www.mongodb.com/docs/voyageai/)
+- [Vector Search](https://www.mongodb.com/products/platform/atlas-vector-search): Store embeddings alongside application data and run your queries all within the same database.
+- [Build with AI](https://www.mongodb.com/docs/build-with-ai.md)
+- [MCP Server Overview](https://www.mongodb.com/docs/mcp-server/overview.md)
+- [Get Started with MCP Server](https://www.mongodb.com/docs/mcp-server/get-started.md): Install and configure the MongoDB MCP Server.
+
+## Other Platform Services and Capabilities
+
+- [Atlas Search](https://www.mongodb.com/products/platform/atlas-search): Add full-text search directly on your operational data without a separate search engine.
+- [Atlas Search Documentation](https://www.mongodb.com/docs/search/)
+- [MQL Reference](https://www.mongodb.com/docs/manual/reference/mql.md): Top-level reference for query predicates, aggregation pipeline stages, and CRUD commands.
+- [Run Anywhere](https://www.mongodb.com/products/capabilities/run-anywhere): Run MongoDB across any environment as it is designed for resilience across cloud providers from one managed cluster.
+- [Atlas Stream Processing](https://www.mongodb.com/products/platform/atlas-stream-processing): Continuously read, transform, and route streaming data using the MongoDB aggregation pipeline.
+- [Auto Scaling](https://www.mongodb.com/products/capabilities/auto-scaling): Scale your MongoDB Atlas clusters with zero downtime.
+- [Observability](https://www.mongodb.com/products/capabilities/observability): MongoDB observability tools provide visibility and native insights into cluster health.
+- [Security](https://www.mongodb.com/products/capabilities/security): Our built-in security controls and customizable guardrails reduce risk.
+
+## Developer Tools
+
+- [Compass](https://www.mongodb.com/products/tools/compass): Free GUI tool for data exploration.
+- [Atlas CLI](https://www.mongodb.com/products/tools/atlas-cli): Command-line tool for managing Atlas.
+- [MongoDB Shell](https://www.mongodb.com/products/tools/shell): Programmatic solution to interact with your database.
+- [Relational Migrator](https://www.mongodb.com/products/tools/relational-migrator): Simplify your move to MongoDB.
+- [Mongosync](https://www.mongodb.com/products/tools/mongosync): Migrate data between separate MongoDB clusters.
+
+## Use Cases
+
+> Description: All the use cases where MongoDB can improve and scale strategic and mission-critical initiatives. 
+
+- [Artificial Intelligence](https://www.mongodb.com/solutions/use-cases/artificial-intelligence)
+- [Legacy Modernization](https://www.mongodb.com/solutions/use-cases/modernize)
+- [Intelligent Search](https://www.mongodb.com/solutions/use-cases/intelligent-search)
+- [Payments Experience](https://www.mongodb.com/solutions/use-cases/payments)
+- [Serverless Development](https://www.mongodb.com/solutions/use-cases/serverless)
+- [Gaming](https://www.mongodb.com/solutions/use-cases/gaming)
+- [Edge and Mobile](https://www.mongodb.com/solutions/use-cases/edge-and-mobile)
+
+## Data Basics
+
+> Description: Educational reference pages defining core database and AI concepts.
+
+- [NoSQL Database](https://www.mongodb.com/resources/basics/databases/nosql-explained)
+- [Document Database](https://www.mongodb.com/resources/basics/databases/document-databases)
+- [AI Database](https://www.mongodb.com/resources/basics/ai-databases)
+- [Acid Transactions](https://www.mongodb.com/resources/basics/databases/acid-transactions)
+- [Agent Memory](https://www.mongodb.com/resources/basics/artificial-intelligence/agent-memory)
+
+## Additional Resources
+
+- [Blog](https://www.mongodb.com/company/blog): Technical tutorials, MongoDB best practices, and industry news.
+- [Customer Case Studies](https://www.mongodb.com/solutions/customer-case-studies): Customer success stories.
+- [Contact Us](https://www.mongodb.com/company/contact): Get in touch with our team for sales and technical inquiries.
+- [Login](https://account.mongodb.com/account/login): Log into your MongoDB account.
+- [Support](https://www.mongodb.com/services/support): For Atlas and Enterprise customers.
+- [Events](https://www.mongodb.com/events/mongodb-local): Learn from experts at MongoDB.local events.
+- [MongoDB Trust Center](https://www.mongodb.com/products/platform/trust): We are dedicated to securing and protecting your data.
+- [Community](https://www.mongodb.com/community): Hub for user groups, programs, and discussions.
+- [MongoDB University](https://learn.mongodb.com): Free self-paced courses and certifications.
+- [GitHub](https://github.com/mongodb/mongo)
+- [Developer YouTube](https://www.youtube.com/@MongoDBDevelopers)
+
+Last-Modified: 2026-09-29

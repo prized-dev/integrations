@@ -1,0 +1,20 @@
+GET https://api.turso.tech/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:53.970Z
+final-url: https://api.turso.tech/.well-known/oauth-protected-resource
+
+HTTP 200
+content-type: application/json; charset=utf-8
+content-length: 128
+connection: close
+access-control-allow-headers: *
+access-control-allow-methods: GET, OPTIONS
+access-control-allow-origin: *
+date: Wed, 28 Oct 2026 23:57:52 GMT
+x-cache: Miss from cloudfront
+via: 1.1 699a0ab8b179c33d5bf800b6f12b0344.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P5
+alt-svc: h3=":443"; ma=86400
+x-amz-cf-id: jGNpvHm-YTpNHxj_ut9ApYHGMPy9PZd08gwcMKv5nMx8iNYzt_QVWQ==
+
+{"authorization_servers":["https://api.turso.tech"],"bearer_methods_supported":["header"],"resource":"https://mcp.turso.ai/mcp"}

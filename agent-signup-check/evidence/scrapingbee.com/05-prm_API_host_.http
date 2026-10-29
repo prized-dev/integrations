@@ -1,0 +1,199 @@
+GET https://app.scrapingbee.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:18.259Z
+redirect: 301 from https://app.scrapingbee.com/.well-known/oauth-protected-resource
+final-url: https://dashboard.scrapingbee.com/.well-known/oauth-protected-resource
+
+HTTP 404
+server: gunicorn
+date: Wed, 28 Oct 2026 23:58:16 GMT
+content-type: text/html; charset=utf-8
+content-length: 7153
+access-control-allow-origin: *
+spb-request-id: 56b72fa3-26f5-4b7f-97b5-7f9874570cea
+cache-control: private
+permissions-policy: browsing-topics=()
+x-frame-options: SAMEORIGIN
+x-content-type-options: nosniff
+strict-transport-security: max-age=31556926; includeSubDomains
+referrer-policy: strict-origin-when-cross-origin
+vary: Cookie
+alt-svc: h3=":443";ma=60;
+connection: close
+
+<!DOCTYPE html>
+<html class="h-full">
+
+<head>
+    <meta charset="utf-8" />
+
+<link
+  rel="apple-touch-icon"
+  type="image/png"
+  sizes="76x76"
+  href="https://dnimytjwfoka9.cloudfront.net/static/images/app/favico.png"
+/>
+<link
+  rel="icon"
+  type="image/png"
+  sizes="32x32"
+  href="https://dnimytjwfoka9.cloudfront.net/static/images/app/favico.png"
+/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+<meta
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+  name="viewport"
+/>
+<meta name="viewport" content="width=device-width" />
+
+ <link rel="stylesheet" type="text/css" href="https://dnimytjwfoka9.cloudfront.net/static/styles/app.css?ed72e4ed" />
+<script src='https://www.google.com/recaptcha/api.js' async defer></script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P4H32H5J"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P4H32H5J');
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P4H32H5J');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Crisp -->
+<script type="text/javascript">
+  window.$crisp=[];window.CRISP_WEBSITE_ID="352f6e05-af84-45d6-a5e9-474e7e0bb156";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();
+  
+</script>
+
+<!-- First Promoter -->
+<script type="text/javascript">
+  (function () {
+    var t = document.createElement("script");
+    (t.type = "text/javascript"),
+      (t.async = !0),
+      (t.src = "https://cdn.firstpromoter.com/fprom.js"),
+      (t.onload = t.onreadystatechange =
+        function () {
+          var t = this.readyState;
+          if (!t || "complete" == t || "loaded" == t)
+            try {
+              $FPROM.init("ih0s10ti", ".scrapingbee.com");
+              if (window.location.href.indexOf("account_created") > 0) {
+                var email = "";
+                if (window.$FPROM){
+                    $FPROM.trackSignup({email: email});
+                } else {
+                    _fprom=window._fprom||[];window._fprom=_fprom;
+                    _fprom.push(["event","signup"]);
+                    _fprom.push(["email",email]);
+                }
+              }
+            } catch (t) {}
+        });
+    var e = document.getElementsByTagName("script")[0];
+    e.parentNode.insertBefore(t, e);
+  })();
+</script>
+    
+    
+    
+    
+   <link rel="stylesheet" type="text/css" href="https://dnimytjwfoka9.cloudfront.net/static/styles/dashboard.css?ca8bc938" /> 
+
+    <title> ScrapingBee </title>
+    <meta name="description"
+        content=" ScrapingBee is a Web Scraping API that handles proxies and Headless browser for you, so you can focus on extracting the data you want, and nothing else. ">
+    
+    
+</head>
+
+<body class="h-full">
+    
+  <script>
+      // Cookie helper functions
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+      }
+
+      // Get values from cookies or hash parameters
+      let distinct_id = getCookie('posthog_distinct_id');
+
+      !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+      posthog.init("phc_JpBXqGLwRzNIxJryQK3hWJGOyJwTIxQuZU4SXMNEKzT", {
+            api_host: 'https://doew6cwnh4rb0.cloudfront.net',
+            person_profiles: 'identified_only',
+            autocapture: true,
+            rageclick: true,
+            save_referrer: true,
+            enable_heatmaps: true,
+            persistence: 'localStorage',
+            session_idle_timeout_seconds: 1800, // 30 minutes
+            session_recording: {
+            maskAllInputs: true,
+              maskInputFn: (text, element) => {
+                if (element?.dataset.record === 'true') {
+                  return text;
+                }
+                return '*'.repeat(text.trim().length);
+              }
+            },
+            loaded: ()=> {
+            
+            }
+      });
+  </script>
+
+
+    
+     <script type="text/javascript" src="https://dnimytjwfoka9.cloudfront.net/static/scripts/app.js?5440a025" ></script> 
+    
+    
+    
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P4H32H5J"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<style>
+    #datatables_processing {
+        display: none !important;
+    }
+</style>
+    <div id="wrapper" class="h-full">
+        
+        
+        
+
+
+    
+
+    <section>
+        <div class="container">
+            <h1 class="card-title mt-80">Ooooops !!</h1>
+            <strong> Page not found </strong>
+            <div>
+                Go back <a href="/" class="font-bold hover:underline">home</a> 🐝!
+            </div>
+        </div>
+    </section>
+
+    </div>
+
+    
+    
+    <div style="visibility: hidden; display: none">
+        <input type="hidden" name="csrf_token" value="[redacted]">
+    </div>
+    
+</body>
+
+</html>

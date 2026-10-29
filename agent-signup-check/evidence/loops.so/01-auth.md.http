@@ -1,0 +1,82 @@
+GET https://loops.so/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:03.104Z
+final-url: https://loops.so/auth.md
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:57:59 GMT
+content-type: text/plain;charset=utf-8
+content-length: 979
+connection: close
+age: 3141923
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-encoding: br
+content-security-policy: frame-ancestors 'none'
+etag: W/"257f9feabfa53c0e7157dab2a4aded6e"
+last-modified: Sun, 23 Aug 2026 21:01:53 GMT
+permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()
+referrer-policy: strict-origin-when-cross-origin
+server: cloudflare
+server-timing: rewrite;desc="static", region;desc="us-west-2", version;desc="ced8dfa"
+strict-transport-security: max-age=31536000
+vary: Accept-Encoding, Accept
+x-content-type-options: nosniff
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+cf-ray: a51de2d00ef91571-PDX
+
+# Loops authentication
+
+Loops exposes a REST API and a hosted MCP server. They use different authentication methods.
+
+## REST API
+
+Send a Loops API key as a Bearer token to `https://app.loops.so/api`:
+
+```http
+Authorization: Bearer YOUR_API_KEY
+```
+
+Create keys in [Settings → API](https://app.loops.so/settings?page=api). Keys are scoped to a Loops team and must stay on the server. Do not put them in browser code, mobile apps, repositories, logs, or prompts.
+
+Validate a key with:
+
+```bash
+curl https://app.loops.so/api/v1/api-key \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+A valid key returns `200` with the team name. A missing or invalid key returns `401` as JSON.
+
+The baseline limit is 10 requests per second per team. API responses include `X-RateLimit-Limit` and `X-RateLimit-Remaining`; a rejected request returns `429 Too Many Requests`.
+
+## Hosted MCP server
+
+Connect to `https://mcp.loops.so` with a client that supports Streamable HTTP and browser-based OAuth 2.0. Do not send a Loops API key to the MCP server.
+
+Start with the protected-resource metadata:
+
+```text
+https://mcp.loops.so/.well-known/oauth-protected-resource
+```
+
+It identifies the resource as `https://mcp.loops.so/`, the authorization server as `https://app.loops.so`, and the supported scope as `mcp`.
+
+Then read the authorization-server metadata:
+
+```text
+https://app.loops.so/.well-known/oauth-authorization-server
+```
+
+Loops supports the authorization-code grant with PKCE S256 and refresh tokens. Public MCP clients use an HTTPS Client ID Metadata Document as their `client_id`; the requested `redirect_uri` must exactly match one of the document's registered redirect URIs. The browser approval flow lets the user choose which Loops teams the client may access.
+
+Loops does not currently advertise an `agent_auth` metadata block or support the agent-driven registration flows defined by the experimental auth.md protocol. An existing Loops account and interactive browser consent are required.
+
+## References
+
+- API documentation: https://loops.so/docs
+- OpenAPI description: https://app.loops.so/openapi.json
+- MCP setup: https://loops.so/agents/mcp
+- Agent tooling: https://loops.so/agents

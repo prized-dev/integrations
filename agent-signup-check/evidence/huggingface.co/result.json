@@ -1,0 +1,139 @@
+{
+ "site": "huggingface.co",
+ "checkedAt": "2026-10-28T23:57:15.304Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 2,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://huggingface.co/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://huggingface.co/.well-known/oauth-protected-resource",
+   "via": "well-known",
+   "resource": "https://huggingface.co/mcp",
+   "authorization_servers": [
+    "https://huggingface.co"
+   ],
+   "status": "partial",
+   "reason": "resource (https://huggingface.co/mcp) does not match the URL the metadata came from; RFC 9728 section 3.3 says a client MUST NOT use it"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://huggingface.co/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://huggingface.co/api/whoami-v2",
+   "httpStatus": 401,
+   "www_authenticate": "Bearer realm=\"Authentication required\", charset=\"UTF-8\"",
+   "status": "pass",
+   "reason": "401 with a Bearer challenge"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://huggingface.co/docs/hub/llms.txt",
+   "heading": "# Hub",
+   "bytes": 22484,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://huggingface.co/auth.md",
+   "finalUrl": "https://huggingface.co/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 108,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://huggingface.co/llms.txt",
+   "finalUrl": "https://huggingface.co/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 119,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://huggingface.co/api/whoami-v2",
+   "finalUrl": "https://huggingface.co/api/whoami-v2",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 101,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://huggingface.co/docs/hub/llms.txt",
+   "finalUrl": "https://huggingface.co/docs/hub/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 173,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://huggingface.co/.well-known/oauth-protected-resource",
+   "finalUrl": "https://huggingface.co/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 98,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://huggingface.co/.well-known/oauth-authorization-server",
+   "finalUrl": "https://huggingface.co/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 100,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://huggingface.co/.well-known/x402",
+   "finalUrl": "https://huggingface.co/.well-known/x402",
+   "status": 401,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 100,
+   "redirects": 0
+  }
+ ]
+}

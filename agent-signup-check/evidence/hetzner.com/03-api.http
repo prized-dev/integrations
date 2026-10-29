@@ -1,0 +1,14 @@
+GET https://api.hetzner.cloud/v1/servers
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:49.086Z
+final-url: https://api.hetzner.cloud/v1/servers
+
+HTTP 401
+content-type: application/json
+content-encoding: gzip
+vary: Accept-Encoding
+date: Wed, 28 Oct 2026 23:57:40 GMT
+connection: close
+transfer-encoding: chunked
+
+{"error":{"code":"unauthorized","message":"token is required"}}

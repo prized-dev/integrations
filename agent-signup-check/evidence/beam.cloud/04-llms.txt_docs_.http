@@ -1,0 +1,164 @@
+GET https://docs.beam.cloud/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:39.922Z
+final-url: https://docs.beam.cloud/llms.txt
+
+HTTP 200
+age: 4061
+cache-control: public
+cf-cache-status: HIT
+cf-ray: a51de246ff10b8b9-PDX
+content-encoding: br
+content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:37 GMT
+etag: "bevzJGXcReHsdsfRS55YvwojQfqqRFQy4pInZN-xP20"
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: accept-encoding
+x-frame-options: DENY
+x-mintlify-client-version: 0.0.4006
+x-vercel-cache: MISS
+x-vercel-id: pdx1:cle1:iad1::iad1::rk9z7-1793231857706-f21e08a471d5
+x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
+x-version: dpl_2xiSHD9XEvLsPGPcfoMtkLTB3dy9
+connection: close
+transfer-encoding: chunked
+
+# Beam
+
+> Beam provides CPU and GPU machines for agents, billed by the millisecond: persistent VMs that pause with their memory intact, sandboxes that boot in seconds, and GPU endpoints for inference.
+
+> ## Agent Instructions
+> Install the Beam CLI, sign in, and connect coding agents to the Beam MCP server with `curl -fsSL https://www.beam.cloud/install | sh`. To also create a VM, run `curl -fsSL https://www.beam.cloud/install | sh -s -- --vm`.
+> VMs are persistent Linux machines without GPUs. Defaults: 4 CPUs, 8 GiB of RAM, a 50 GiB disk, Ubuntu 24.04, and a browser desktop. A running VM accrues usage until you stop, pause, or remove it, or until an idle timeout puts it to sleep.
+> Stopping a VM keeps its disk and discards RAM and processes. Pausing keeps both, and resuming restores them. To pause after 5 idle minutes and wake on access, run `beam vm update NAME --ttl 300 --idle-action pause --auto-resume`.
+> Core VM commands: `beam vm new NAME`, `beam vm ssh NAME`, `beam vm sync NAME ./dir`, `beam vm exec NAME -- CMD`, `beam vm expose NAME PORT --protected`, `beam vm fork NAME NEW_NAME`, `beam vm pause NAME`, `beam vm stop NAME`, `beam vm rm NAME`.
+> For GPUs, use a sandbox or a deployed endpoint. Sandboxes are disposable environments that boot in seconds and fork from snapshots.
+> Current rates are at https://www.beam.cloud/pricing.
+
+- [Introduction](https://docs.beam.cloud/v2/getting-started/introduction.md): Beam provides CPU and GPU machines for agents, billed by the millisecond, including VMs that pause with their memory intact.
+- [Give an Agent a Dev Box](https://docs.beam.cloud/v2/getting-started/quickstart-vm.md): Create a persistent VM, put a project on it, share a private URL, and let it sleep when idle
+- [Run Agent Code in a Sandbox](https://docs.beam.cloud/v2/getting-started/quickstart-sandbox.md): Create a sandbox, run code, serve a URL, and fork it from a snapshot
+- [Quickstart: Deploy an Endpoint](https://docs.beam.cloud/v2/getting-started/quickstart.md): Sign in, run a Python function, and deploy a web API
+- [Set Up Coding Agents](https://docs.beam.cloud/v2/getting-started/add-to-cursor-claude.md): Connect your coding agent to Beam, then create its first VM
+- [Installation](https://docs.beam.cloud/v2/getting-started/installation.md): Install the CLI, Python SDK, or TypeScript SDK and sign in
+- [Authentication and Workspaces](https://docs.beam.cloud/v2/getting-started/authentication.md): Browser login, named contexts, and tokens for automation
+- [Core Concepts](https://docs.beam.cloud/v2/getting-started/core-concepts.md)
+- [Using the Dashboard](https://docs.beam.cloud/v2/getting-started/dashboard.md): Deploy projects and manage your workspace in the browser
+- [Overview](https://docs.beam.cloud/v2/vm/overview.md): Persistent Linux machines with a durable root disk, SSH, and stable URLs
+- [Configuration](https://docs.beam.cloud/v2/vm/configuration.md): Choose VM resources, build images, and configure environment variables and storage
+- [Secrets](https://docs.beam.cloud/v2/vm/secrets.md): Bind workspace secrets to VMs, scope credential hosts, and rotate values without restarting
+- [Lifecycle](https://docs.beam.cloud/v2/vm/lifecycle.md): Stop, start, pause, resume, and automatically sleep persistent VMs
+- [Storage and Snapshots](https://docs.beam.cloud/v2/vm/storage.md): Persist the complete VM root, save restore points, fork environments, and create templates
+- [Commands and SSH](https://docs.beam.cloud/v2/vm/processes.md): Run commands, stream output, connect over SSH, transfer files, and manage systemd services
+- [Networking](https://docs.beam.cloud/v2/vm/networking.md): Use persistent IPv6 and authenticated URLs, forward private ports, and restrict egress
+- [Desktop](https://docs.beam.cloud/v2/vm/desktop.md): Use a Linux desktop in your browser and automate it through Python or JavaScript
+- [Docker and Compose](https://docs.beam.cloud/v2/vm/docker.md): Build images and run Docker containers or Compose services inside a persistent VM
+- [CLI Reference](https://docs.beam.cloud/v2/vm/cli.md): Complete command and option reference for beam vm
+- [SDK](https://docs.beam.cloud/v2/vm/sdk.md): Create and manage persistent VMs with the Python or JavaScript SDK
+- [Overview](https://docs.beam.cloud/v2/sandbox/overview.md): Disposable environments for agent code, with CPUs, GPUs, and snapshots
+- [Sandbox Configuration](https://docs.beam.cloud/v2/sandbox/configuration.md): Resources, images, storage, secrets, and lifetime
+- [Snapshots](https://docs.beam.cloud/v2/sandbox/snapshots.md)
+- [Process Management](https://docs.beam.cloud/v2/sandbox/processes.md): Run Python, execute commands, stream output, supply stdin, and use async operations
+- [Networking](https://docs.beam.cloud/v2/sandbox/networking.md): Expose services and restrict outbound access by hostname, IP, or CIDR
+- [File System Operations](https://docs.beam.cloud/v2/sandbox/filesystem.md): Read and write files, transfer data, inspect metadata, and search sandbox files
+- [Docker in Sandboxes](https://docs.beam.cloud/v2/sandbox/docker.md): Build images and run Docker containers or Compose services inside a sandbox
+- [Hosted Model Inference](https://docs.beam.cloud/v2/endpoint/hosted-models.md): Discover and call models from the Endpoints catalog
+- [Creating a Web Endpoint](https://docs.beam.cloud/v2/endpoint/overview.md): Deploying and invoking web endpoints on Beam
+- [Hosting a Web Server](https://docs.beam.cloud/v2/endpoint/web-server.md): Deploying web servers on Beam
+- [Realtime and Streaming](https://docs.beam.cloud/v2/endpoint/realtime.md)
+- [Pre-Loading Models](https://docs.beam.cloud/v2/endpoint/loaders.md): This guide shows how you can optimize performance by pre-loading models when your container first starts.
+- [Cold Start Performance](https://docs.beam.cloud/v2/topics/cold-start.md)
+- [Keeping Containers Warm](https://docs.beam.cloud/v2/endpoint/keep-warm.md): Control how long your apps stay running before shutting down.
+- [Concurrent Inputs](https://docs.beam.cloud/v2/scaling/concurrent-inputs.md)
+- [GPU Acceleration](https://docs.beam.cloud/v2/environment/gpu.md)
+- [Versioning](https://docs.beam.cloud/v2/endpoint/versioning.md)
+- [Sending File Payloads](https://docs.beam.cloud/v2/endpoint/sending-file-payloads.md): Sending file payloads to Endpoints and Web Servers
+- [Running Async Tasks](https://docs.beam.cloud/v2/task-queue/running-tasks.md)
+- [Querying Task Status](https://docs.beam.cloud/v2/task-queue/query-status.md)
+- [Running Functions Remotely](https://docs.beam.cloud/v2/function/running-functions.md): A short guide on using Beam to run one-off functions in the cloud
+- [Scheduled Jobs](https://docs.beam.cloud/v2/function/scheduled-job.md): How to run workloads on a schedule.
+- [Queues](https://docs.beam.cloud/v2/function/queues.md): Using Beam's distributed Queue to coordinate between tasks
+- [Distributed Maps](https://docs.beam.cloud/v2/function/maps.md): Using Beam's distributed Map
+- [Deploy Containers](https://docs.beam.cloud/v2/hosting/containers.md): Host a Dockerfile, registry image, or background worker with the CLI or Python
+- [Deployment Lifecycle](https://docs.beam.cloud/v2/hosting/deployments.md): Inspect revisions, wait for endpoints, choose rollouts, and roll back
+- [Environment Variables and References](https://docs.beam.cloud/v2/hosting/references.md): Create secrets, set environment variables, and connect apps to databases and other apps
+- [Stacks](https://docs.beam.cloud/v2/hosting/stacks.md): Deploy a group of services together
+- [Host a Web Service](https://docs.beam.cloud/v2/pod/web-service.md)
+- [Networking](https://docs.beam.cloud/v2/pod/networking.md)
+- [Container Images](https://docs.beam.cloud/v2/environment/custom-images.md)
+- [Custom Registries](https://docs.beam.cloud/v2/environment/custom-registries.md)
+- [CPU and RAM](https://docs.beam.cloud/v2/environment/resources.md)
+- [Storing Secrets](https://docs.beam.cloud/v2/environment/secrets.md): How to store secrets and environment variables in Beam
+- [Managed Databases](https://docs.beam.cloud/v2/data/databases.md): Create Postgres, Redis, MySQL, and MongoDB services and connect your apps
+- [Distributed Storage Volumes](https://docs.beam.cloud/v2/data/volume.md): Attach distributed storage volumes to your apps
+- [Durable Disks](https://docs.beam.cloud/v2/data/durable-disks.md): Fast, node-local persistent storage for stateful workloads
+- [Mounting S3 Buckets](https://docs.beam.cloud/v2/data/external-storage.md): Attach S3 buckets to your apps
+- [Ephemeral Files and Images](https://docs.beam.cloud/v2/data/output.md): Storing ephemeral files for images, audio files, and more.
+- [Scaling Out](https://docs.beam.cloud/v2/scaling/concurrency.md)
+- [Parallelizing Functions](https://docs.beam.cloud/v2/scaling/parallelizing-functions.md): How to parallelize your functions
+- [Logs and Metrics](https://docs.beam.cloud/v2/operations/observability.md): Read historical logs, follow output, and inspect resource and request metrics
+- [Workspace MCP](https://docs.beam.cloud/v2/operations/mcp.md): Connect your agent to Beam with OAuth or the local CLI
+- [Webhooks](https://docs.beam.cloud/v2/operations/webhooks.md): Receive signed events from your workspace
+- [Compute Pools](https://docs.beam.cloud/v2/scaling/pools.md): Reserved capacity and your own hardware
+- [Overview](https://docs.beam.cloud/v2/self-hosting/overview.md): Beta9 is the open source project that powers Beam
+- [Local Development Cluster](https://docs.beam.cloud/v2/self-hosting/local-machine.md): Run the Beta9 development environment from source
+- [Deploying Beta9 on AWS](https://docs.beam.cloud/v2/self-hosting/aws.md): Plan a persistent Kubernetes installation using the repository's chart
+- [Integrate into CI/CD](https://docs.beam.cloud/v2/topics/ci.md): Deploy from automation with environment-based authentication
+- [Input and Output Schemas](https://docs.beam.cloud/v2/topics/schemas.md): Validate structured inputs and serialize endpoint results
+- [Timeouts and Retries](https://docs.beam.cloud/v2/topics/timeouts-and-retries.md)
+- [Public Endpoints](https://docs.beam.cloud/v2/topics/public-endpoints.md): Deploying public web endpoints on Beam
+- [Task Callbacks](https://docs.beam.cloud/v2/topics/callbacks.md): Receive a signed result when an invocation finishes
+- [Send Events Between Apps](https://docs.beam.cloud/v2/topics/signal.md)
+- [Runtime Variables](https://docs.beam.cloud/v2/topics/context.md): Accessing information about the runtime while running tasks
+- [Working in Jupyter Notebooks](https://docs.beam.cloud/v2/environment/jupyter-notebook.md)
+- [Remote vs. Local Environment](https://docs.beam.cloud/v2/environment/remote-versus-local.md)
+- [Pricing and Billing](https://docs.beam.cloud/v2/resources/pricing-and-billing.md)
+- [Using Beam Docs with AI Tools](https://docs.beam.cloud/v2/resources/ai-tools.md): Bring the Beam documentation into your LLMs, IDEs, and agents
+- [Troubleshooting](https://docs.beam.cloud/v2/resources/faq.md): Common authentication, deployment, capacity, and runtime issues
+- [Security overview](https://docs.beam.cloud/v2/security/security.md): How Beam protects customer workloads and data.
+- [Terms of Service](https://docs.beam.cloud/v2/security/terms-and-conditions.md): The agreement that governs access to and use of the Beam platform.
+- [Privacy Policy](https://docs.beam.cloud/v2/security/privacy-policy.md): How Beam collects, uses, shares, and protects personal information.
+- [Examples](https://docs.beam.cloud/v2/examples/overview.md): End-to-end examples for running real workloads on Beam
+- [Hugging Face Models](https://docs.beam.cloud/v2/examples/inference.md): A beginner's guide to running highly performant inference workloads on Beam.
+- [LLaMA 3.1 8B](https://docs.beam.cloud/v2/examples/llama3.md)
+- [Qwen2.5-7B with SGLang](https://docs.beam.cloud/v2/examples/sglang.md)
+- [Serverless ComfyUI](https://docs.beam.cloud/v2/examples/comfy-ui.md)
+- [Text-to-Video with Mochi](https://docs.beam.cloud/v2/examples/mochi-1.md)
+- [Stable Diffusion with LoRAs](https://docs.beam.cloud/v2/examples/lora.md)
+- [Faster Whisper](https://docs.beam.cloud/v2/examples/whisper.md)
+- [Parler TTS](https://docs.beam.cloud/v2/examples/parler-tts.md)
+- [Zonos](https://docs.beam.cloud/v2/examples/zonos.md)
+- [Web Scraping with Beam Functions](https://docs.beam.cloud/v2/examples/web-scraping.md)
+- [Running Streamlit Apps](https://docs.beam.cloud/v2/examples/streamlit.md)
+- [Building AI Agents](https://docs.beam.cloud/v2/agents/introduction.md): Beam is launching a new type of agent framework that is stateful and has concurrency built-in.
+- [Example: Research Assistant](https://docs.beam.cloud/v2/agents/synchronization.md)
+- [Fine-tuning Gemma with LoRA](https://docs.beam.cloud/v2/examples/gemma-fine-tune.md)
+- [Fine-Tuning Meta Llama 3.1 8B with Unsloth](https://docs.beam.cloud/v2/examples/unsloth.md)
+- [Python SDK Reference](https://docs.beam.cloud/v2/reference/py-sdk.md)
+- [JavaScript and TypeScript SDK](https://docs.beam.cloud/v2/reference/ts-sdk.md)
+- [CLI Reference](https://docs.beam.cloud/v2/reference/cli.md)
+- [API Overview](https://docs.beam.cloud/v2/reference/api.md)
+- [Workspace REST API](https://docs.beam.cloud/v2/reference/platform-api.md): Apps, deployments, databases, events, and observability
+- [Get Task Status](https://docs.beam.cloud/v2/reference/api-docs/tasks/tasks-status.md)
+- [Cancel Task](https://docs.beam.cloud/v2/reference/api-docs/tasks/tasks-cancel.md)
+- [Create a Pod](https://docs.beam.cloud/v2/reference/api-docs/podservice/post-pods.md): Create a new pod and return its identifiers and initial state. Provide exactly one of `stubId` or `checkpointId`.
+- [List Containers/Pods/Sandboxes](https://docs.beam.cloud/v2/reference/api-docs/gatewayservice/get-containers.md): List containers/pods/sandboxes associated with your workspace.
+- [Stop Container/Pod/Sandbox](https://docs.beam.cloud/v2/reference/api-docs/gatewayservice/post-containers-stop.md): Stop a running container/pod/sandbox by its ID.
+
+## OpenAPI Specs
+
+- [package-lock](/package-lock.json)
+- [package](/package.json)
+- [gateway.swagger](/v2/reference/api-docs/gateway.swagger.json)
+- [pods.swagger](/v2/reference/api-docs/pods.swagger.json)
+
+## Optional
+
+- [Slack Community](https://join.slack.com/t/beam-cloud/shared_invite/zt-4bf7jalhy-KI0ebGXk4vKpcDofwDjCLA)
+- [Github](https://github.com/beam-cloud/beta9)
+- [Twitter](https://twitter.com/beam_cloud)
+
+
+This documentation is built and hosted on [Mintlify](https://mintlify.com), a developer documentation platform.

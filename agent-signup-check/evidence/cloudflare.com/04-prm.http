@@ -1,0 +1,378 @@
+GET https://cloudflare.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:30.956Z
+redirect: 301 from https://cloudflare.com/.well-known/oauth-protected-resource
+redirect: 301 from https://www.cloudflare.com/.well-known/oauth-protected-resource
+final-url: https://www.cloudflare.com/.well-known/oauth-protected-resource/
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:57:28 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+link: <https://www.cloudflare.com/.well-known/api-catalog>; rel="api-catalog", <https://www.cloudflare.com/.well-known/agents.json>; rel="service-desc", <https://www.cloudflare.com/.well-known/webmcp.json>; rel="service-desc", <https://www.cloudflare.com/openapi.json>; rel="service-desc", <https://www.cloudflare.com/llms.txt>; rel="service-doc", <https://www.cloudflare.com/sitemap.xml>; rel="sitemap", </fonts/Kunst%20Grotesk%20Regular.woff2>; rel=preload; as=font; type="font/woff2"; crossorigin, </fonts/Kunst%20Grotesk%20Medium.woff2>; rel=preload; as=font; type="font/woff2"; crossorigin, <https://ot.www.cloudflare.com>; rel=preconnect; crossorigin, <https://imagedelivery.net>; rel=preconnect; crossorigin
+cf-cache-status: MISS
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cache-control: public, max-age=10, s-maxage=10
+vary: accept-encoding
+strict-transport-security: max-age=31536000; includeSubDomains
+content-security-policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://static-staging.cloudflareinsights.com https://challenges.cloudflare.com https://*.onetrust.com https://cdn.cookielaw.org https://ot.www.cloudflare.com https://www.googletagmanager.com https://tagmanager.google.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://adservice.google.com https://cdn.bizible.com https://js.adsrvr.org https://*.marketo.net https://platform.twitter.com https://static.ads-twitter.com https://scripts.demandbase.com https://tag.demandbase.com https://*.6sc.co https://*.qualified.com https://snap.licdn.com https://bat.bing.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.googletagmanager.com https://*.google-analytics.com https://*.google.com https://*.doubleclick.net https://www.googleadservices.com https://translate.googleapis.com https://cdn.bizible.com https://js.adsrvr.org https://*.marketo.net https://ads-twitter.com https://analytics.twitter.com https://*.twimg.com https://api.demandbase.com https://scripts.demandbase.com https://tag.demandbase.com https://tag-logger.demandbase.com https://api.company-target.com https://*.6sc.co https://epsilon.6sense.com https://*.qualified.com https://*.ads.linkedin.com https://www.linkedin.com https://bat.bing.com https: wss://*.qualified.com wss://*.registrar.cloudflare.com; frame-src https://*.adsrvr.org https://*.cloudflare.com https://*.videodelivery.net https://*.cloudflarestream.com https://www.googletagmanager.com https://*.qualified.com https://td.doubleclick.net https://bid.g.doubleclick.net https://9309168.fls.doubleclick.net https://9973066.fls.doubleclick.net https://s.company-target.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; worker-src 'self' blob:; child-src 'self' blob:; upgrade-insecure-requests
+cross-origin-opener-policy: unsafe-none
+cross-origin-resource-policy: cross-origin
+permissions-policy: geolocation=(), camera=(), microphone=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-served-by: marketing-site
+x-xss-protection: 1; mode=block
+x-rm: GW
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=1ju%2FhPxN4QcGHwkjBRS2J5%2BJgX%2FprXRpIW88Vo03WmNBV%2FIsmBgjP3eLW8wllaqiMEGZb0FX%2BCbrZ9V40TZiNNdenF0lAoXj5CxmAs8zsjQfeCZ6vGHgFZO1SY9GdC1zypdMRg%3D%3D"}]}
+content-encoding: br
+server: cloudflare
+cf-ray: a51de20cb8b5121f-PDX
+alt-svc: h3=":443"; ma=86400
+
+<!DOCTYPE html><html lang="en" class="font-stk-bureau-sans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><link rel="preconnect" href="https://imagedelivery.net" crossorigin><link rel="preconnect" href="https://ot.www.cloudflare.com" crossorigin><link rel="preload" href="/icons.svg" as="image" type="image/svg+xml"><link rel="preload" href="/fonts/STKBureauSans-Book.otf" as="font" type="font/otf" crossorigin><link rel="preload" href="/fonts/STKBureauSans-Regular.otf" as="font" type="font/otf" crossorigin><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><script>
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        try {
+          var p = new URLSearchParams(window.location.search);
+          var t = p.get('theme');
+          window.__themeOverride = t;
+          if (t === 'dark') d.classList.add('dark');
+          else if (t === 'light') d.classList.remove('dark');
+          else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+            d.classList.add('dark');
+          else d.classList.remove('dark');
+        } catch (e) {}
+        try {
+          var K = 'cf-font-override',
+            q = new URLSearchParams(window.location.search).get('cfFont');
+          if (q === 'stk') {
+            localStorage.setItem(K, 'stk');
+            d.classList.add('font-stk-bureau-sans');
+          } else if (q === 'kunst') {
+            localStorage.setItem(K, 'kunst');
+            d.classList.remove('font-stk-bureau-sans');
+          } else {
+            var s = localStorage.getItem(K);
+            if (s === 'stk') d.classList.add('font-stk-bureau-sans');
+            else if (s === 'kunst') d.classList.remove('font-stk-bureau-sans');
+          }
+        } catch (e) {}
+        try {
+          if (
+            document.cookie.split(';').some(function (cookie) {
+              return cookie.trim() === '__cf_logged_in=1';
+            })
+          )
+            d.classList.add('logged-in');
+        } catch (e) {}
+      })();
+    </script><title>Page not found — Cloudflare</title><meta name="title" content="Page not found — Cloudflare"><meta name="description" content="The page you were looking for could not be found on cloudflare.com."><meta name="priority" content="30"><meta name="generator" content="Astro v6.3.7"><link rel="canonical" href="https://www.cloudflare.com/404/"><link rel="alternate" hreflang="x-default" href="https://www.cloudflare.com/404/"><link rel="alternate" hreflang="es-es" href="https://www.cloudflare.com/es-es/404/"><link rel="alternate" hreflang="fr-fr" href="https://www.cloudflare.com/fr-fr/404/"><link rel="alternate" hreflang="de-de" href="https://www.cloudflare.com/de-de/404/"><link rel="alternate" hreflang="it-it" href="https://www.cloudflare.com/it-it/404/"><link rel="alternate" hreflang="pt-br" href="https://www.cloudflare.com/pt-br/404/"><link rel="alternate" hreflang="zh-cn" href="https://www.cloudflare.com/zh-cn/404/"><link rel="alternate" hreflang="ja-jp" href="https://www.cloudflare.com/ja-jp/404/"><link rel="alternate" hreflang="ko-kr" href="https://www.cloudflare.com/ko-kr/404/"><link rel="alternate" hreflang="zh-tw" href="https://www.cloudflare.com/zh-tw/404/"><meta property="og:type" content="website"><meta property="og:url" content="https://www.cloudflare.com/404/"><meta property="og:title" content="Page not found — Cloudflare"><meta property="og:description" content="The page you were looking for could not be found on cloudflare.com."><meta property="og:image" content="https://www.cloudflare.com/preview.png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://www.cloudflare.com/404/"><meta name="twitter:title" content="Page not found — Cloudflare"><meta name="twitter:description" content="The page you were looking for could not be found on cloudflare.com."><meta name="twitter:image" content="https://www.cloudflare.com/preview.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Cloudflare","url":"https://www.cloudflare.com","logo":"https://www.cloudflare.com/logo.svg","sameAs":["https://github.com/cloudflare","https://www.linkedin.com/company/cloudflare","https://x.com/cloudflare"]}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Cloudflare","url":"https://www.cloudflare.com","inLanguage":"en","potentialAction":{"@type":"SearchAction","target":"https://www.cloudflare.com/search?q={search_term_string}","query-input":"required name=search_term_string"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Page not found — Cloudflare","description":"The page you were looking for could not be found on cloudflare.com.","url":"https://www.cloudflare.com/404/","inLanguage":"en"}</script><link rel="llms-txt" href="/llms.txt"><link rel="alternate" type="text/markdown" href="/404/.md"><script async type="text/javascript" src="https://ot.www.cloudflare.com/ot/scripttemplates/otSDKStub.js" data-domain-script="b1e05d49-f072-4bae-9116-bdb78af15448" data-document-language="true" charset="UTF-8"></script><script type="text/javascript">(function(){const zarazScriptSrc = "/static/z/i.js";
+const gtmContainerSrc = "https://www.googletagmanager.com/gtm.js?id=GTM-NDGPDFZ";
+
+      // ── dataLayer + Zaraz bridge ────────────────────────────────────
+      window.dataLayer = window.dataLayer || [];
+      window.GTM = {
+        trackInZaraz: function (event) {
+          if (!window.zaraz || typeof event !== 'object' || event === null) return;
+          for (var k in event) {
+            if (Object.prototype.hasOwnProperty.call(event, k) && k.indexOf('gtm.') !== 0) {
+              window.zaraz.set(k, event[k], { scope: 'page' });
+            }
+          }
+          if (typeof event.event !== 'string' || event.event.indexOf('gtm.') === 0) return;
+          var idx = window.dataLayer.indexOf(event);
+          var data = {};
+          for (var i = 0; i <= idx; i++) {
+            var obj = window.dataLayer[i];
+            if (!obj || typeof obj !== 'object') continue;
+            if (typeof obj.event === 'string' && obj.event.indexOf('gtm.') === 0) continue;
+            for (var key in obj) {
+              if (Object.prototype.hasOwnProperty.call(obj, key)) data[key] = obj[key];
+            }
+          }
+          delete data.event;
+          window.zaraz.track(event.event, data);
+        },
+        push: function () {
+          window.dataLayer.push.apply(window.dataLayer, arguments);
+        },
+      };
+
+      var __cfDlPreBridgeLength = window.dataLayer.length;
+      var __cfDlPush = window.dataLayer.push;
+
+      // GTM's Form Submission auto-listener pushes the raw <form> node as
+      // `gtm.element`. React's fiber bookkeeping makes DOM nodes circular,
+      // so Zaraz's own dataLayer processor throws "Converting circular
+      // structure to JSON" on the next tracked event. Strip DOM nodes to a
+      // placeholder before they ever land in the array.
+      function __cfDescribeDlNode(node) {
+        return '[DOM:' + node.nodeName + (node.id ? '#' + node.id : '') + ']';
+      }
+      function __cfSanitizeDlItem(item) {
+        if (!item || typeof item !== 'object') return item;
+        for (var k in item) {
+          if (!Object.prototype.hasOwnProperty.call(item, k)) continue;
+          var v = item[k];
+          if (v instanceof Node) {
+            item[k] = __cfDescribeDlNode(v);
+          } else if (Array.isArray(v)) {
+            for (var i = 0; i < v.length; i++) {
+              if (v[i] instanceof Node) v[i] = __cfDescribeDlNode(v[i]);
+            }
+          }
+        }
+        return item;
+      }
+
+      Object.defineProperty(window.dataLayer, 'push', {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: function () {
+          for (var i = 0; i < arguments.length; i++) {
+            __cfSanitizeDlItem(arguments[i]);
+          }
+          var result = __cfDlPush.apply(this, arguments);
+          window.GTM.trackInZaraz(arguments[0]);
+          return result;
+        },
+      });
+
+      // ── OneTrust → Zaraz consent ────────────────────────────────────
+      var __zarazConsentMap = {
+        C0002: 'Tuku', // Performance / Analytics
+        C0003: 'nBKC', // Functional
+        C0004: 'aMDT', // Targeting / Advertising
+      };
+
+      // C0003 intentionally omitted — Google Consent Mode v2 has no functional signal.
+      var __googleConsentMap = {
+        C0001: ['security_storage'],
+        C0002: ['analytics_storage'],
+        C0004: [
+          'ad_storage',
+          'ad_user_data',
+          'ad_personalization',
+          'functionality_storage',
+          'personalization_storage',
+        ],
+      };
+
+      function __parseOneTrustGroups() {
+        var match = document.cookie.match(/OptanonConsent=[^;]*/);
+        if (!match) return null;
+        var groups = {};
+        var gMatch = match[0].match(/groups=([^&]*)/);
+        if (!gMatch) return null;
+        decodeURIComponent(gMatch[1])
+          .split(',')
+          .forEach(function (pair) {
+            var parts = pair.split(':');
+            if (parts.length === 2) groups[parts[0]] = parts[1] === '1';
+          });
+        return groups;
+      }
+
+      function __syncOneTrustToZaraz() {
+        if (!window.zaraz || !window.zaraz.consent) return;
+        var groups = __parseOneTrustGroups();
+        if (!groups) return;
+
+        var current = window.zaraz.consent.getAll();
+        var activeKeys = Object.keys(current);
+        var mapped = {};
+        var changed = false;
+
+        Object.keys(__zarazConsentMap).forEach(function (otKey) {
+          var zKey = __zarazConsentMap[otKey];
+          if (activeKeys.indexOf(zKey) === -1) return;
+          mapped[zKey] = !!groups[otKey];
+          if (mapped[zKey] !== current[zKey]) changed = true;
+        });
+
+        if (!changed) return;
+        window.zaraz.consent.set(mapped);
+        window.zaraz.consent.sendQueuedEvents();
+      }
+
+      function __syncGoogleConsent(eventName) {
+        if (!window.zaraz || !window.zaraz.set) return;
+        var consent = {
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+          analytics_storage: 'denied',
+          security_storage: 'denied',
+          functionality_storage: 'denied',
+          personalization_storage: 'denied',
+        };
+
+        if (eventName === 'google_consent_default') {
+          window.zaraz.set(eventName, consent);
+          return;
+        }
+
+        var groups = __parseOneTrustGroups();
+        if (!groups) {
+          window.zaraz.set(eventName, consent);
+          return;
+        }
+
+        Object.keys(__googleConsentMap).forEach(function (otKey) {
+          if (groups[otKey]) {
+            __googleConsentMap[otKey].forEach(function (signal) {
+              consent[signal] = 'granted';
+            });
+          }
+        });
+        window.zaraz.set(eventName, consent);
+      }
+
+      // ── UTM persistence (gated on C0002) ────────────────────────────
+      var __cfUtmKeys = [
+        'utm_campaign',
+        'utm_source',
+        'utm_medium',
+        'utm_content',
+        'utm_term',
+        'adgroupid',
+        'creativeid',
+        'campaignid',
+      ];
+      function __cfSetUtmCookiesIfAllowed() {
+        var groups = __parseOneTrustGroups();
+        if (!groups || !groups.C0002) return;
+
+        var params = new URLSearchParams(window.location.search);
+        var hostname = window.location.hostname;
+        var domain = '';
+        if (hostname === 'www.cloudflare.com' || hostname.endsWith('.mrk.cfdata.org')) {
+          domain = '.' + hostname;
+        }
+
+        var maxAge = 30 * 24 * 60 * 60; // 30 days
+        var isHttps = window.location.protocol === 'https:';
+        for (var i = 0; i < __cfUtmKeys.length; i++) {
+          var key = __cfUtmKeys[i];
+          var value = params.get(key);
+          if (!value) continue;
+          var parts = [
+            encodeURIComponent(key) + '=' + encodeURIComponent(value),
+            'max-age=' + maxAge,
+            'path=/',
+            'SameSite=Lax',
+          ];
+          if (domain) parts.push('domain=' + domain);
+          // Secure rejected on http origins (localhost dev).
+          if (isHttps) parts.push('Secure');
+          document.cookie = parts.join('; ');
+        }
+      }
+
+      // ── GTM container (gated on C0004) ──────────────────────────────
+      function __cfLoadGtmContainerIfAllowed() {
+        var groups = __parseOneTrustGroups();
+        if (!groups || !groups.C0004) return;
+        if (document.querySelector('script[data-cf-gtm-loader]')) return;
+
+        var s = document.createElement('script');
+        s.src = gtmContainerSrc;
+        s.async = true;
+        s.setAttribute('data-cf-gtm-loader', '1');
+        document.head.appendChild(s);
+      }
+
+      // ── page_load (one-shot, gated on Zaraz + OneTrust ready) ───────
+      var __cfPageLoadFired = false;
+      var __cfFallbackElapsed = false;
+      function __cfPushPageLoadOnce() {
+        if (__cfPageLoadFired) return;
+        if (!window.zaraz) return;
+        if (!__parseOneTrustGroups() && !__cfFallbackElapsed) return;
+        __cfPageLoadFired = true;
+
+        for (var i = 0; i < __cfDlPreBridgeLength; i++) {
+          window.GTM.trackInZaraz(window.dataLayer[i]);
+        }
+
+        var gaMatch = document.cookie.match(/(?:^|;\s*)_ga=([^;]+)/);
+        var gaClientId = gaMatch ? gaMatch[1] : undefined;
+        window.GTM.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+        window.GTM.push({
+          event: 'page_load',
+          hostname: window.location.hostname,
+          query: window.location.search,
+          page_location: window.location.href,
+          page_url: window.location.href,
+          page_timestamp: Date.now(),
+          page_path: window.location.pathname + window.location.search,
+          page_referrer: document.referrer,
+          page_title: document.title,
+          language: window.navigator.language,
+          user_properties: {
+            ga_client_id: gaClientId,
+            ga_client_id_s: gaClientId ? 's' + gaClientId : undefined,
+          },
+        });
+      }
+
+      // Fallback in case OneTrust never loads.
+      window.setTimeout(function () {
+        __cfFallbackElapsed = true;
+        __cfPushPageLoadOnce();
+      }, 3000);
+
+      // OptanonWrapper must be a window property — define:vars wraps this
+      // script in an IIFE, so a bare `function OptanonWrapper()` is invisible
+      // to the OneTrust SDK.
+      window.OptanonWrapper = function OptanonWrapper() {
+        __syncOneTrustToZaraz();
+        __syncGoogleConsent('google_consent_update');
+        __cfSetUtmCookiesIfAllowed();
+        __cfLoadGtmContainerIfAllowed();
+        __cfPushPageLoadOnce();
+
+        if (!window.__cfConsentEventAttached) {
+          window.__cfConsentEventAttached = true;
+          // HEAD request only — sync above already covers Zaraz/Google.
+          window.addEventListener('consent.onetrust', function () {
+            setTimeout(function () {
+              fetch(window.location.pathname, { method: 'HEAD' }).catch(function () {});
+            }, 500);
+          });
+        }
+      };
+
+      document.addEventListener('zarazConsentAPIReady', function () {
+        __syncGoogleConsent('google_consent_default');
+        __syncOneTrustToZaraz();
+        __cfPushPageLoadOnce();
+      });
+
+      // Load Zaraz at idle.
+      (function () {
+        var src = zarazScriptSrc;
+        if (!src) return;
+        function loadZaraz() {
+          if (document.querySelector('script[data-cf-zaraz-loader]')) return;
+          var s = document.createElement('script');
+          s.src = src;
+          s.referrerPolicy = 'origin';
+          s.async = true;
+          s.setAttribute('data-cf-zaraz-loader', '1');
+          document.head.appendChild(s);
+        }
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadZaraz, { timeout: 3000 });
+        } else {
+          window.setTimeout(loadZaraz, 1500);
+        }
+      })();
+    })();</script><script type="module">globalThi
+
+[body trimmed for publication: kept 16384 of 176432 characters; sha256 of the full body 675f529b64209e377fb06bcdd7bd05b1d898a68b7d8f1fd778ad0ed65911c8b7]

@@ -1,0 +1,162 @@
+GET https://inference-docs.cerebras.ai/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:16.736Z
+final-url: https://inference-docs.cerebras.ai/llms.txt
+
+HTTP 200
+age: 1428
+cache-control: public
+cf-cache-status: HIT
+cf-ray: a51de1b0c9a69935-PDX
+content-encoding: br
+content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:13 GMT
+etag: "iMllQCDBdrxrLGrj_QiC5CDkQPG6LRgZXn0UsIro1z4"
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: accept-encoding
+x-frame-options: DENY
+x-mintlify-client-version: 0.0.4006
+x-vercel-cache: MISS
+x-vercel-id: pdx1:fra1:iad1::iad1::6x9sm-1793231833689-ac89b69f1b2e
+x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
+x-version: dpl_2xiSHD9XEvLsPGPcfoMtkLTB3dy9
+connection: close
+transfer-encoding: chunked
+
+# Cerebras Inference
+
+- [Quickstart](https://inference-docs.cerebras.ai/quickstart.md): Make your first Cerebras API call in just minutes.
+- [Pricing](https://inference-docs.cerebras.ai/support/pricing.md)
+- [Rate Limits](https://inference-docs.cerebras.ai/support/rate-limits.md): Learn how rate limits are applied and measured.
+- [Model Catalog](https://inference-docs.cerebras.ai/models/overview.md): Browse all models available with Cerebras Shared Inference.
+- [Qwen 3.8 27B](https://inference-docs.cerebras.ai/models/qwen-3.8-27b.md): Alibaba's 27B dense multimodal model for agentic coding, tool use, research, and long-running workflows. It accepts text and image inputs and supports configurable reasoning.
+- [OpenAI GPT OSS](https://inference-docs.cerebras.ai/models/openai-oss.md): This model excels at efficient reasoning across science, math, and coding applications. It's ideal for real-time coding assistance, processing large documents for Q&A and summarization, agentic research workflows, and regulated on-premises workloads.
+- [Choose a Model](https://inference-docs.cerebras.ai/models/choose-a-model.md): Find the right open-source model for your workload on Cerebras, including alternatives for Claude, GPT, and Gemini.
+- [Reasoning](https://inference-docs.cerebras.ai/capabilities/reasoning.md): Control reasoning effort, response format, and multi-turn reasoning behavior.
+- [Streaming Responses](https://inference-docs.cerebras.ai/capabilities/streaming.md): Learn how to enable streaming responses in the Cerebras API.
+- [Structured Outputs](https://inference-docs.cerebras.ai/capabilities/structured-outputs.md): Generate structured data with the Cerebras Inference API.
+- [Tool Calling](https://inference-docs.cerebras.ai/capabilities/tool-use.md): Learn how to connect models to external tools with tool calling.
+- [Prompt Caching](https://inference-docs.cerebras.ai/capabilities/prompt-caching.md): Store and reuse previously processed prompts to reduce latency and increase response times for similar or repeated queries.
+- [Image Inputs](https://inference-docs.cerebras.ai/capabilities/image-inputs.md): Pass images to vision-capable models.
+- [Payload Optimization](https://inference-docs.cerebras.ai/capabilities/payload-optimization.md): Reduce latency by compressing request payloads with msgpack encoding and gzip.
+- [Dedicated Inference](https://inference-docs.cerebras.ai/dedicated/overview.md): Run production inference on capacity reserved for your organization.
+- [Batch](https://inference-docs.cerebras.ai/capabilities/batch.md): Run large-scale inference workloads asynchronously.
+- [Predicted Outputs](https://inference-docs.cerebras.ai/dedicated/predicted-outputs.md): Reduce latency by specifying parts of the response that are already known.
+- [Management API](https://inference-docs.cerebras.ai/dedicated/management-api.md): Programmatically upload, version, and deploy custom model weights with Dedicated Inference.
+- [Service Tiers](https://inference-docs.cerebras.ai/capabilities/service-tiers.md): Control request prioritization with service tiers.
+- [Metrics](https://inference-docs.cerebras.ai/capabilities/metrics.md): Monitor your dedicated inference endpoints with Prometheus-compatible metrics for requests, tokens, latency, and endpoint health.
+- [OpenAI Compatibility](https://inference-docs.cerebras.ai/resources/openai.md): Use OpenAI client libraries with Cerebras Inference.
+- [Cloud Console](https://inference-docs.cerebras.ai/console/overview.md): Your dashboard for managing Cerebras Inference projects, API keys, usage, billing, and team access.
+- [Projects](https://inference-docs.cerebras.ai/console/projects.md): Organize workloads, isolate environments, control costs, and manage access using Projects in the Cerebras Cloud console.
+- [API Keys](https://inference-docs.cerebras.ai/console/api-keys.md): Authenticate to the Cerebras API with API keys.
+- [Playground](https://inference-docs.cerebras.ai/console/playground.md): Interactively test models and prompts in the Cloud Console without writing any code.
+- [Usage & Monitoring](https://inference-docs.cerebras.ai/console/usage-monitoring.md): Track API usage, inspect request logs, and view rate limits across your organization and projects.
+- [Account & Billing](https://inference-docs.cerebras.ai/console/account-billing.md): Manage team members, billing, and organization settings in the Cloud Console.
+- [Designing for Cerebras](https://inference-docs.cerebras.ai/resources/designing-for-cerebras.md): Architectural patterns that take advantage of ultra-fast inference.
+- [Service Status](https://inference-docs.cerebras.ai/support/status.md)
+- [Error Codes](https://inference-docs.cerebras.ai/support/error.md)
+- [Change Log](https://inference-docs.cerebras.ai/support/change-log.md)
+- [Deprecations](https://inference-docs.cerebras.ai/support/deprecation.md): A list of all deprecations, with the most recent announcements appearing first.
+- [Policies](https://inference-docs.cerebras.ai/support/policies.md)
+- [Preview Releases](https://inference-docs.cerebras.ai/support/preview-releases.md): Understand the different release stages for features and their support policies.
+- [Authentication](https://inference-docs.cerebras.ai/api-reference/authentication.md)
+- [Versions](https://inference-docs.cerebras.ai/api-reference/versions.md): Understand how Cerebras uses versioning to manage breaking changes.
+- [Chat Completions](https://inference-docs.cerebras.ai/api-reference/chat-completions.md): Generate conversational responses using a structured message format with roles (system, user, assistant, developer, tool). Best for chatbots, assistants, and multi-turn conversations.
+- [Completions](https://inference-docs.cerebras.ai/api-reference/completions.md)
+- [List models](https://inference-docs.cerebras.ai/api-reference/models/list-models.md)
+- [Retrieve model](https://inference-docs.cerebras.ai/api-reference/models/retrieve-model.md)
+- [Public models](https://inference-docs.cerebras.ai/api-reference/models/public-models.md)
+- [Create batch](https://inference-docs.cerebras.ai/api-reference/batch/create-batch.md)
+- [Retrieve batch](https://inference-docs.cerebras.ai/api-reference/batch/retrieve-batch.md)
+- [List batch](https://inference-docs.cerebras.ai/api-reference/batch/list-batch.md)
+- [Cancel batch](https://inference-docs.cerebras.ai/api-reference/batch/cancel-batch.md)
+- [Upload file](https://inference-docs.cerebras.ai/api-reference/file/upload-file.md)
+- [List files](https://inference-docs.cerebras.ai/api-reference/file/list-files.md)
+- [Retrieve file](https://inference-docs.cerebras.ai/api-reference/file/retrieve-file.md)
+- [Retrieve file content](https://inference-docs.cerebras.ai/api-reference/file/retrieve-file-content.md)
+- [Delete file](https://inference-docs.cerebras.ai/api-reference/file/delete-file.md)
+- [Retrieve metrics](https://inference-docs.cerebras.ai/api-reference/metrics/retrieve-metrics.md): Retrieve operational metrics for your organization's inference endpoints in Prometheus format.
+- [List model architectures](https://inference-docs.cerebras.ai/api-reference/customer_management_api/list-model-architectures.md)
+- [List model versions](https://inference-docs.cerebras.ai/api-reference/customer_management_api/list-model-versions.md)
+- [Upload model version](https://inference-docs.cerebras.ai/api-reference/customer_management_api/upload-model-version.md)
+- [Retrieve model version status](https://inference-docs.cerebras.ai/api-reference/customer_management_api/retrieve-model-version-status.md)
+- [Delete model version](https://inference-docs.cerebras.ai/api-reference/customer_management_api/delete-model-version.md)
+- [Update model version aliases](https://inference-docs.cerebras.ai/api-reference/customer_management_api/update-model-version-aliases.md)
+- [List endpoints](https://inference-docs.cerebras.ai/api-reference/customer_management_api/list-endpoints.md)
+- [Deploy model to endpoint](https://inference-docs.cerebras.ai/api-reference/customer_management_api/deploy-model-to-endpoint.md)
+- [Retrieve endpoint status](https://inference-docs.cerebras.ai/api-reference/customer_management_api/retrieve-endpoint-status.md)
+- [Integrations](https://inference-docs.cerebras.ai/integrations.md): Connect Cerebras Inference to the agent frameworks, dev tools, and platforms you already use.
+- [Get Started with AG2](https://inference-docs.cerebras.ai/integrations/ag2.md): Learn how to build multi-agent AI systems with Cerebras Inference using AG2's framework for orchestrating autonomous agents.
+- [Get Started with Agno](https://inference-docs.cerebras.ai/integrations/agno.md): Learn how to use Cerebras models in Agno for building AI agents with high-speed, low-latency inference.
+- [Get Started with Browser-Use](https://inference-docs.cerebras.ai/integrations/browser-use.md): Learn how to use Browser-Use with Cerebras to enable AI agents to control web browsers for automated navigation, form filling, data extraction, and complex multi-step workflows.
+- [Get Started with CrewAI](https://inference-docs.cerebras.ai/integrations/crewai.md): Learn how to build and orchestrate multi-agent AI workflows using CrewAI with Cerebras's ultra-fast inference for real-time agentic applications.
+- [Get Started with Stagehand](https://inference-docs.cerebras.ai/integrations/stagehand.md): Learn how to use Stagehand's AI web browsing framework with Cerebras models for intelligent browser automation.
+- [Get Started with Vercel AI SDK](https://inference-docs.cerebras.ai/integrations/vercel-ai-sdk.md): Learn how to integrate Cerebras's ultra-fast inference with the Vercel AI SDK for building AI-powered applications with streaming responses and structured outputs.
+- [Get Started with AI Suite](https://inference-docs.cerebras.ai/integrations/ai-suite.md): Learn how to use AI Suite's unified interface to access Cerebras models alongside other LLM providers for easy comparison and switching.
+- [Get Started with Milvus](https://inference-docs.cerebras.ai/integrations/milvus.md): Learn how to build scalable Retrieval-Augmented Generation (RAG) applications using Milvus vector database with Cerebras Inference models.
+- [Get Started with Aider](https://inference-docs.cerebras.ai/integrations/aider.md): Learn how to use Aider, an AI pair programming tool, with Cerebras Inference for ultra-fast code editing and generation in your terminal.
+- [Get Started with Cline and Cerebras](https://inference-docs.cerebras.ai/integrations/cline.md): Set up Cline, an open-source AI coding assistant, to work with Cerebras inference.
+- [Get Started with OpenCode](https://inference-docs.cerebras.ai/integrations/opencode.md): Configure OpenCode to use Cerebras Inference for AI coding assistance.
+- [Get Started with Cerebras for VS Code](https://inference-docs.cerebras.ai/integrations/vscode.md): Configure Visual Studio Code to use Cerebras Inference for autonomous coding assistance.
+- [Get Started with Kilo Code](https://inference-docs.cerebras.ai/integrations/kilocode.md): Configure Kilo Code to use Cerebras Inference for AI coding assistance in VS Code or from the command line.
+- [Cerebras Inference with Docker](https://inference-docs.cerebras.ai/integrations/docker.md): Learn how to run Cerebras Inference inside Docker containers to create safe, reproducible environments for AI-generated code.
+- [Get Started with Arize Phoenix](https://inference-docs.cerebras.ai/integrations/arize-phoenix.md): Learn how to set up observability, tracing, and evaluation for Cerebras Inference models using Arize Phoenix.
+- [Get Started with Braintrust](https://inference-docs.cerebras.ai/integrations/braintrust.md): Learn how to set up logging, evaluation, and tracing for Cerebras Inference models using Braintrust.
+- [Get Started with Helicone](https://inference-docs.cerebras.ai/integrations/helicone.md): Learn how to monitor, debug, and optimize your Cerebras Inference API calls using Helicone's observability platform.
+- [Get Started with Langfuse](https://inference-docs.cerebras.ai/integrations/langfuse.md): Learn how to set up logging, evaluation, and tracing for Cerebras Inference models using Langfuse.
+- [Get Started with Opik](https://inference-docs.cerebras.ai/integrations/opik.md): Learn how to set up logging, evaluation, and tracing for Cerebras Inference models using Opik.
+- [Get Started with Weave](https://inference-docs.cerebras.ai/integrations/weave.md): Learn how to track, log, and evaluate Cerebras Inference models using Weights & Biases Weave for comprehensive LLM observability.
+- [Get Started with Cloudflare AI Gateway](https://inference-docs.cerebras.ai/integrations/cloudflare-ai-gateway.md): Learn how to route Cerebras Inference requests through Cloudflare AI Gateway for enhanced observability, caching, and rate limiting.
+- [Get Started with Kong API Gateway](https://inference-docs.cerebras.ai/integrations/kong-api-gateway.md): Learn how to route Cerebras Inference requests through Kong API Gateway using the AI Proxy plugin for enhanced security, monitoring, and traffic management.
+- [Get Started with Operant](https://inference-docs.cerebras.ai/integrations/operant.md): Learn how to route Cerebras Inference API traffic through the Operant AI Gateway for real-time threat detection, PII redaction, and rate limiting.
+- [Get Started with Exa](https://inference-docs.cerebras.ai/integrations/exa.md): Learn how to ground Cerebras responses with Exa web search API.
+- [Cerebras Inference on Hugging Face](https://inference-docs.cerebras.ai/integrations/huggingface.md): This guide will walk you step-by-step through using Hugging Face Inference Providers to access Cerebras's ultra-fast inference with a unified API.
+- [Get Started with LlamaIndex](https://inference-docs.cerebras.ai/integrations/llamaindex.md): Learn how to use LlamaIndex with Cerebras Inference for building data-driven LLM applications with blazing-fast performance.
+- [Get Started with Maxim](https://inference-docs.cerebras.ai/integrations/maxim.md): Learn how to set up observability, tracing, and monitoring for Cerebras Inference models using Maxim.
+- [Get Started with Parallel](https://inference-docs.cerebras.ai/integrations/parallel.md): Learn how to build AI agents with web search, extraction, and monitoring capabilities using Parallel APIs and Cerebras models.
+- [Get Started with Instructor](https://inference-docs.cerebras.ai/integrations/instructor.md): Learn how to use Instructor with Cerebras to get type-safe, validated structured outputs from LLMs using Pydantic models.
+- [Get Started with LangChain](https://inference-docs.cerebras.ai/integrations/langchain.md): Learn how to build powerful LLM applications with Cerebras Inference and LangChain's orchestration framework.
+- [Get Started with LangGraph](https://inference-docs.cerebras.ai/integrations/langgraph.md): Learn how to build stateful, multi-agent workflows with LangGraph and Cerebras Inference for ultra-fast AI applications.
+- [Get Started with Pydantic AI](https://inference-docs.cerebras.ai/integrations/pydantic-ai.md): Learn how to build type-safe, production-ready AI agents using Pydantic AI with Cerebras Inference for blazing-fast responses.
+- [Get Started with OGX](https://inference-docs.cerebras.ai/integrations/llama-stack.md): Learn how to use OGX with Cerebras Inference for building AI applications with standardized APIs and tooling.
+- [Get Started with Reducto](https://inference-docs.cerebras.ai/integrations/reducto.md): Learn how to use Reducto's document parsing with Cerebras Inference for intelligent document processing and analysis.
+- [Get Started with Unstructured](https://inference-docs.cerebras.ai/integrations/unstructured.md): Learn how to use Unstructured's document processing library with Cerebras Inference for intelligent document analysis and extraction.
+- [Get Started with Cartesia](https://inference-docs.cerebras.ai/integrations/cartesia.md): Learn how to integrate Cerebras Inference with Cartesia for ultra-fast, realistic text-to-speech generation and voice AI applications.
+- [Get Started with LiveKit](https://inference-docs.cerebras.ai/integrations/livekit.md): Learn how to build real-time voice AI agents using LiveKit with Cerebras Inference models for low-latency speech-to-text and language processing.
+- [Get Started with ElevenLabs](https://inference-docs.cerebras.ai/integrations/elevenlabs.md): Learn how to integrate Cerebras Inference with ElevenLabs for ultra-fast text-to-speech generation and voice AI applications.
+- [Get Started with Hume AI](https://inference-docs.cerebras.ai/integrations/hume.md): Learn how to integrate Hume AI's empathic voice interface (EVI) with Cerebras for ultra-fast, emotionally intelligent AI conversations.
+- [Get Started with LiteLLM](https://inference-docs.cerebras.ai/integrations/litellm.md): Learn how to use LiteLLM as a unified interface to call Cerebras models alongside 100+ other LLM providers with a single API.
+- [Cerebras Inference on OpenRouter](https://inference-docs.cerebras.ai/integrations/openrouter.md): Learn how to use Cerebras Inference on OpenRouter with Python, LangChain, and JavaScript.
+- [Get Started with Portkey](https://inference-docs.cerebras.ai/integrations/portkey.md): Learn how to use Portkey's AI gateway to route, monitor, and manage Cerebras Inference API calls with advanced features like caching, load balancing, and fallbacks.
+- [Get Started with TrueFoundry AI Gateway](https://inference-docs.cerebras.ai/integrations/foundry.md): Learn how to route Cerebras Inference requests through TrueFoundry's AI Gateway for enhanced observability, cost tracking, and access control.
+- [Get Started with AWS Marketplace](https://inference-docs.cerebras.ai/integrations/aws-marketplace.md): Learn how to subscribe to Cerebras Inference through AWS Marketplace and integrate it with your applications for seamless billing through your AWS account.
+- [Get Started with Dify](https://inference-docs.cerebras.ai/integrations/dify.md): Learn how to build and deploy AI applications using Cerebras models in Dify's no-code/low-code platform for ultra-fast inference.
+- [Get Started with FlutterFlow](https://inference-docs.cerebras.ai/integrations/flutterflow.md): Learn how to build fast, cross-platform AI-powered apps using Cerebras Inference with FlutterFlow's visual development platform.
+- [Inference Cookbook](https://inference-docs.cerebras.ai/cookbook.md)
+- [Inference Cookbook](https://inference-docs.cerebras.ai/cookbook.md)
+- [Realtime Voice Translation Agent](https://inference-docs.cerebras.ai/cookbook/agents/realtime-voice-translation.md): Translate spoken conversations to any language with sub-second latency by building a realtime voice translation agent powered by Cerebras and LiveKit.
+- [Build a Real-Time AI Sales Agent with LiveKit](https://inference-docs.cerebras.ai/cookbook/agents/sales-agent-cerebras-livekit.md): Build a sophisticated real-time voice sales agent that can have natural conversations with potential customers. The resulting AI agent will be able to process audio input and generate spoken replies by drawing information directly from your company's sales materials.
+- [Interviewer Voice Agent with LiveKit](https://inference-docs.cerebras.ai/cookbook/agents/livekit.md): Learn how to integrate LiveKit's voice capabilities with Cerebras's fast inference to build a real-time voice interview agent that analyzes your resume and job descriptions to conduct personalized mock interviews.
+- [Inference Cookbook](https://inference-docs.cerebras.ai/cookbook.md)
+- [Academic Research Agent](https://inference-docs.cerebras.ai/cookbook/agents/academic-research-agent.md): Generate arXiv search queries, analyze academic papers, download and process PDFs, and synthesize research insights with a conversational AI research assistant powered by PydanticAI + Cerebras + Unstructured.
+- [Build Your Own Perplexity with Exa](https://inference-docs.cerebras.ai/cookbook/agents/build-your-own-perplexity.md): Build a Perplexity-style deep research assistant that can automatically search the web, analyze multiple sources, and provide structured insights in under 60 seconds.
+- [Build a Grounded Research Agent with Exa](https://inference-docs.cerebras.ai/cookbook/agents/exa-grounded-research.md): Use Exa search with Cerebras tool calling to build an agent that searches the web and produces cited answers.
+- [Automate User Research with LangChain](https://inference-docs.cerebras.ai/cookbook/agents/automate-user-research.md): Learn how to build an AI-powered user research system that can automatically generate user personas, conduct interviews, and synthesize insights using LangGraph's multi-agent workflow in under 60 seconds.
+- [Automating Search-Based Report Generation with a Multi-Agent AI Pipeline](https://inference-docs.cerebras.ai/cookbook/agents/search-agent.md): Build an AI agent pipeline that searches, summarizes, and synthesizes information from multiple sources to generate comprehensive reports.
+- [Implementing Gist Memory: Summarizing and Searching Long Documents with a ReadAgent](https://inference-docs.cerebras.ai/cookbook/agents/gist-memory.md): Build an AI agent that reads, summarizes, and answers questions about long documents using Gist Memory and the Cerebras Inference SDK.
+- [Build Your Own Content Fact Checker with gpt-oss-120B, Cerebras, and Parallel](https://inference-docs.cerebras.ai/cookbook/agents/docs-checker.md)
+- [Build Your Own Docs Checker with Cerebras & Browserbase](https://inference-docs.cerebras.ai/cookbook/agents/build-a-docs-checker.md): Build a docs checker that can crawl your documentation site and analyze each page for quality issues.
+- [Inference Cookbook](https://inference-docs.cerebras.ai/cookbook.md)
+- [Hyper-Personalized Web Pages](https://inference-docs.cerebras.ai/cookbook/agents/hyper-personalization.md): Build hyper-personalized web pages using Cerebras AI with Pydantic structured outputs and Jinja2 templating—pages that adapt to each visitor's preferred colors, tone, and products in real-time.
+
+## OpenAPI Specs
+
+- [openapi](/api-reference/customer_management_api/openapi.yaml)
+- [openapi](/api-reference/openapi.yaml)
+
+## Optional
+
+- [Python SDK](https://github.com/Cerebras/cerebras-cloud-sdk-python)
+- [Node.js SDK](https://github.com/Cerebras/cerebras-cloud-sdk-node)

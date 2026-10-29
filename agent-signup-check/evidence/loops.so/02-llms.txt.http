@@ -1,0 +1,221 @@
+GET https://loops.so/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:03.104Z
+final-url: https://loops.so/llms.txt
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:00 GMT
+content-type: text/plain;charset=utf-8
+transfer-encoding: chunked
+connection: close
+age: 80965
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-encoding: br
+content-security-policy: frame-ancestors 'none'
+etag: W/"016e49c2b8765f766bc07377f742e7f8"
+last-modified: Tue, 27 Oct 2026 22:42:55 GMT
+permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()
+referrer-policy: strict-origin-when-cross-origin
+server: cloudflare
+server-timing: rewrite;desc="static", region;desc="us-west-2", version;desc="ced8dfa"
+strict-transport-security: max-age=31536000
+vary: Accept-Encoding, Accept
+x-content-type-options: nosniff
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+cf-ray: a51de2d34a39fef6-PDX
+
+# Loops
+
+> Loops is an email platform for software companies. Send transactional and marketing email from one API, one contact model, and a no-code visual editor, with a free tier that doesn't expire. Built for engineers and lifecycle teams who want both developer-grade APIs and marketer-friendly tools in one place.
+
+- Website: https://loops.so
+- Docs: https://loops.so/docs
+- API reference: https://loops.so/docs/api-reference
+- OpenAPI specification: https://app.loops.so/openapi.json
+- MCP server: https://mcp.loops.so
+- For AI agents: https://loops.so/agents (skills, CLI, llms.txt, MCP)
+- Agent skills and plugin source: https://github.com/Loops-so/skills
+
+## Email by type
+- [Email API for developers](https://loops.so/email-api): REST email API with typed SDKs, webhooks, and lifecycle workflows. Transactional and marketing from one endpoint, with a free tier.
+- [Marketing Email for Software Companies](https://loops.so/marketing-email): Send marketing campaigns using the same contact data as your product emails. Build audiences with segments and mailing lists in Loops.
+- [Product & Lifecycle Email](https://loops.so/product-email): Send onboarding, trial, and re-engagement emails from product events. Keep contact data current and test workflow branches and exit conditions in Loops.
+- [Transactional Email Service](https://loops.so/transactional-email): Send password resets, receipts, and login codes through Loops. Authenticate your domain, use published templates, and monitor transactional delivery.
+
+## Features
+- [Email Deliverability Software for SaaS](https://loops.so/deliverability): Loops signs every email with DKIM, monitors sends on the way out, and suppresses hard bounces and spam complaints. Copy your DNS records once and verify.
+- [Email Editor with Themes and Components](https://loops.so/email-editor): Write and design emails in the Loops editor. Update a theme or component once and every email using it follows, and edit the same emails from code with LMX.
+- [Email Conversion Tracking and Split Testing](https://loops.so/goals): Attach a goal to a Loops campaign and count the contacts who reach a target state, like upgrading to paid, within days you set. Split test emails in workflows.
+- [Email Workflow Automation for SaaS](https://loops.so/workflows): Start email workflows from signups, property changes, or app events. Add timers, branches, audience filters, and experiments, or build them from the API.
+
+## For AI agents and developers
+- [Email for AI agents: CLI, API, MCP, and skills](https://loops.so/agents): Let Claude Code, Codex, Cursor, and other coding agents install Loops, migrate an email stack, send events, and test transactional email.
+- [Loops REST API for AI Agents: OpenAPI Spec](https://loops.so/agents/api): Explore the Loops REST API: contacts, events, transactional email, campaigns, workflows, themes, and more, with an OpenAPI spec for client generation.
+- [Loops CLI: Manage Email from the Terminal](https://loops.so/agents/cli): Install the Loops CLI with Homebrew or curl and manage contacts, events, transactional email, and mailing lists from your terminal. Supports JSON output.
+- [LMX: Loops Markup Extended for Email Content](https://loops.so/agents/lmx): LMX (Loops Markup Extended) is a semantic markup language for email. Author campaigns in code with the Content API and keep editing visually in Loops.
+- [Loops MCP Server for AI Agents](https://loops.so/agents/mcp): Connect compatible Streamable HTTP MCP clients and Claude to Loops using browser OAuth. Manage contacts, lists, events, transactional email, and more.
+- [Plan an Email Migration with AI Agents](https://loops.so/agents/migrate): Use the Loops API skill and migration guide to map contacts, events, templates, and transactional sends. The dedicated /migrate skill is coming soon.
+- [Set Up Loops with an AI Agent](https://loops.so/agents/setup): Install the Loops API skill, then ask your agent to add an SDK or REST integration, create a contact, and send a test event. The /setup skill is coming soon.
+- [Agent Skills for the Loops API, CLI, and LMX](https://loops.so/agents/skills): Install agent skills for the Loops API, CLI, LMX, and email sending best practices. Each skill adds focused Loops context to your coding agent.
+- [Loops Workflows API: Create and Manage Workflows](https://loops.so/agents/workflows): Create, read, and update workflows, change mailing lists, and create, branch, update, or delete workflow nodes through the Loops API.
+
+## Resources and guides
+- [Email Resources: Guides, Examples & Glossary](https://loops.so/resources): Practical email guides, real examples, and a plain-English glossary from Loops. Learn deliverability, lifecycle, and marketing email, then see how to send it.
+- [10 Best Email APIs for Developers](https://loops.so/resources/best-email-api-tools): Compare 10 email APIs by SDKs, templates, retries, webhooks, inbound routing, regional controls, and the sending operations your team needs to own.
+- [12 Best Email Deliverability Tools for SaaS (2026)](https://loops.so/resources/best-email-deliverability-tools): Choose deliverability tools for the question you need to answer: whether authentication passes, how a mailbox provider rates your sending domain, where test messages arrive, or which addresses may be invalid.
+- [10 Best Email Marketing Automation Platforms for SaaS](https://loops.so/resources/best-email-marketing-automation): Compare 10 SaaS email automation platforms by product-event triggers, workflow controls, channels, data model, and marketing and transactional email coverage.
+- [Best Time to Send Email](https://loops.so/resources/best-time-to-send-email): Choose email send windows from audience behavior and published studies, then compare clicks or conversions. Test timing instead of assuming a universal best day.
+- [Best Transactional Email Services: 8 Options Compared](https://loops.so/resources/best-transactional-email-services): Compare eight transactional email services by templates, delivery events, suppression handling, marketing features, and the operational work each requires.
+- [Customer Engagement Tools: What They Are and 9 Options](https://loops.so/resources/customer-engagement-tools): A customer engagement tool is software that helps a company reach, message, and understand its users on the channels those users already use: email, in-app, push, chat, and support. Compare tools by the channels, data, and operating tasks your team needs.
+- [Email A/B Testing: What to Test and How to Read Results](https://loops.so/resources/email-ab-testing): Test lifecycle emails with Loops Experiments, plan conversion windows and sample sizes, and estimate incremental activation lift with a randomized holdout.
+- [Email Churn Rate](https://loops.so/resources/email-churn-rate): Calculate email churn using unique subscribers lost to unsubscribes, hard bounces, and complaints. Track inactivity and deliberate marketing pauses separately.
+- [Email Deliverability Best Practices](https://loops.so/resources/email-deliverability): Check email authentication, sending reputation, audience consent, and message content. Distinguish delivery rate from inbox placement and investigate failures.
+- [Email Marketing KPIs: The Metrics That Actually Matter](https://loops.so/resources/email-marketing-kpis): Measure SaaS email activation and paid upgrades, define attribution windows, use Loops Goals, and distinguish conversion reporting from incremental lift.
+- [Email Marketing Laws](https://loops.so/resources/email-marketing-laws): What CAN-SPAM, GDPR, and CASL require, how to handle marketing opt-outs, and why required transactional email should remain separate.
+- [Lifecycle Email: Triggers, Branches, and Exit Rules](https://loops.so/resources/lifecycle-email): Build SaaS lifecycle email for onboarding, trials, retention, and Stripe failed-payment recovery. Define triggers, reminder schedules, and current-state exits.
+- [Migrate from Brevo to Loops](https://loops.so/resources/migrate-brevo-to-loops): Move Brevo email to Loops by mapping templates and API calls, preserving subscription and suppression state, and testing each send path before cutover.
+- [Migrate from Customer.io to Loops](https://loops.so/resources/migrate-customerio-to-loops): Migrate Customer.io contacts, events, and emails to Loops with state reconciliation, suppression checks, pilot acceptance tests, and a rollback plan.
+- [Migrate from Mailchimp to Loops](https://loops.so/resources/migrate-mailchimp-to-loops): Move Mailchimp email to Loops by mapping templates and API calls, preserving subscription and suppression state, and testing each send path before cutover.
+- [Migrate from Mailgun to Loops](https://loops.so/resources/migrate-mailgun-to-loops): Move Mailgun email to Loops by mapping templates and API calls, preserving subscription and suppression state, and testing each send path before cutover.
+- [Migrate from Postmark to Loops](https://loops.so/resources/migrate-postmark-to-loops): Move Postmark email to Loops by mapping templates and API calls, preserving subscription and suppression state, and testing each send path before cutover.
+- [Migrate from SendGrid to Loops](https://loops.so/resources/migrate-sendgrid-to-loops): Migrate SendGrid email and contact lists to Loops. Map templates, preserve subscription state, handle retries, and verify each send path before cutover.
+- [Send transactional email from Next.js](https://loops.so/resources/nextjs-transactional-email): Add transactional email to a Next.js app with the Loops SDK. Working code for signup sync and password reset emails, env setup, and a testing checklist.
+- [Send transactional email from Node.js](https://loops.so/resources/node-transactional-email): Send transactional email from any Node.js app with the Loops SDK. Working code for your first send, error handling, retries, idempotency, and testing.
+- [125 SaaS Email Examples Analyzed](https://loops.so/resources/saas-email-examples-benchmark): We analyzed 125 public SaaS email examples across 14 categories. See subject length, emoji use, punctuation, body length, and recipient language.
+- [SaaS Email Program Audit: 14-Point Checklist](https://loops.so/resources/saas-email-program-audit): Review consent, sending identity, product data, lifecycle coverage, workflow safety, deliverability, and measurement. Use the evidence to choose the first repairs.
+- [Send email from AI agents and coding assistants](https://loops.so/resources/send-email-from-ai-agents): Connect Claude Code, Cursor, Codex, or a compatible MCP client to Loops. Use the API, CLI, and agent skills to manage contacts, events, and email content.
+- [Send a welcome email after signup with Loops](https://loops.so/resources/send-welcome-email-after-signup): Add a signup event and a Loops Workflow for one welcome email. Map current marketing permission, configure the message, and test retries and opt-outs before release.
+- [SMTP Error Codes Explained: 421, 550, 554 and More](https://loops.so/resources/smtp-error-codes): An SMTP error code is the three-digit reply a receiving mail server sends back while it handles your message. The first digit tells you the category.
+- [SMTP Ports, IMAP vs POP3, and Email Verification](https://loops.so/resources/smtp-ports-email-protocols): Compare SMTP ports 25, 587, and 465, IMAP, POP3, and email APIs. Match TLS settings to your provider and distinguish address validation from ownership verification.
+- [Send Stripe failed payment and receipt emails](https://loops.so/resources/stripe-payment-emails): Send failed payment, dunning, and receipt emails from Stripe events. Compare Stripe built-in emails, the Loops Stripe app, and a webhook to the Loops API.
+- [Transactional Email Best Practices for SaaS](https://loops.so/resources/transactional-email-best-practices): Build reliable transactional email for SaaS: message classification, authentication, stable retries, templates, security, suppressions, and delivery monitoring.
+- [Why Are My Emails Going to Spam?](https://loops.so/resources/why-emails-go-to-spam): Investigate spam placement by checking authentication, audience permission, content, reputation, blocklists, unsubscribe handling, and volume changes. Use message headers and provider logs to identify which condition changed.
+
+## Examples
+- [Email Examples: Real SaaS Emails and Templates](https://loops.so/examples): Browse real email examples and templates from software companies: welcome, onboarding, transactional, and marketing emails you can adapt in Loops.
+- [Account Verification Email Examples + Templates](https://loops.so/examples/account-verification-email-examples): See account verification email examples, subject lines, copy patterns, and templates for SaaS signup, login, and security flows.
+- [Black Friday Email Examples](https://loops.so/examples/black-friday-email-examples): See Black Friday email examples from SaaS companies like Typefully and Llama Life, with notes on the offers and CTAs in each one.
+- [Email Footer Examples + Best Practices](https://loops.so/examples/email-footer-examples): See 12 real email footer examples with best practices and legal requirements SaaS teams can copy into Loops.
+- [New Years Email Examples](https://loops.so/examples/new-year-email-examples): See New Year email examples from SaaS companies like Buffer, Folk, and Reflect, with notes on how each recaps the year and previews what is next.
+- [Notification Email Examples](https://loops.so/examples/notification-email-examples): See notification email examples from Slack, Notion, Google, and Robinhood, covering trial endings, security alerts, and account updates.
+- [Onboarding Emails: Examples, Sequences, and Templates](https://loops.so/examples/onboarding-email-examples): See eight SaaS onboarding email examples. Build a sequence around signup, activation, user role, and behavior. Stop setup nudges after activation.
+- [Password Reset Email Examples](https://loops.so/examples/password-reset-email-examples): See password reset email examples from Peloton and SeatGeek, with notes on the CTAs and security details that get users back into their accounts.
+- [Payment Confirmation Email Examples + Templates](https://loops.so/examples/payment-confirmation-email-examples): See payment confirmation email examples and receipt templates, with subject lines and billing email tips SaaS teams can copy into Loops.
+- [Privacy Policy Email Examples](https://loops.so/examples/privacy-policy-and-terms-of-service-update-email-examples): See privacy policy and terms of service update email examples from Loom, Klarna, Reddit, and more, with notes on what makes each clear and trustworthy.
+- [Product Hunt Launch Email Examples](https://loops.so/examples/product-hunt-launch-email-examples): See Product Hunt launch email examples from Layers, Canny, and Polywork, with notes on how each one asks for support on launch day.
+- [Product Update Email Examples](https://loops.so/examples/product-update-email-examples): See product update email examples from Slack, Notion, Buffer, and more, with notes on how each one announces new features.
+- [Survey Email Examples](https://loops.so/examples/survey-email-examples): See survey email examples from Figma, Webflow, Uber, and Tesla, with notes on the subject lines and incentives in each one.
+- [Waitlist Email Examples](https://loops.so/examples/waitlist-email-examples): See waitlist email examples from Robinhood, Spline, and Loops, with notes on how each one sets expectations and keeps signups informed until launch.
+- [Webinar Invitation Email Examples](https://loops.so/examples/webinar-invitation-email-examples): See webinar invitation email examples from Airtable, Calendly, DigiCert, and AWS, with notes on the subject lines and CTAs in each one.
+- [Welcome Email Examples, Templates & Subject Lines](https://loops.so/examples/welcome-email-examples): See 17 real SaaS welcome email examples, subject-line options, templates, and a comparison table for choosing the right format.
+- [Win-Back Email Examples + Campaign Ideas](https://loops.so/examples/win-back-email-examples): See win-back email examples and campaign ideas that re-engage inactive customers before they churn for good.
+
+## Glossary
+- [Email Glossary](https://loops.so/glossary)
+- [Above the Fold](https://loops.so/glossary/above-the-fold)
+- [Acceptance Rate](https://loops.so/glossary/acceptance-rate)
+- [Aha Moment](https://loops.so/glossary/aha-moment)
+- [Apple Mail Privacy Protection (MPP)](https://loops.so/glossary/apple-mail-privacy-protection)
+- [Attachment](https://loops.so/glossary/attachment)
+- [Autoresponder](https://loops.so/glossary/autoresponder)
+- [BIMI](https://loops.so/glossary/bimi)
+- [Bounce Rate](https://loops.so/glossary/bounce-rate)
+- [Call to Action (CTA)](https://loops.so/glossary/call-to-action-cta)
+- [CAN-SPAM](https://loops.so/glossary/can-spam)
+- [CASL](https://loops.so/glossary/casl)
+- [Click-Through Rate (CTR)](https://loops.so/glossary/click-through-rate-ctr)
+- [Cold Email](https://loops.so/glossary/cold-email)
+- [CPM (Cost Per Thousand)](https://loops.so/glossary/cost-per-thousand-cpm)
+- [DKIM (DomainKeys Identified Mail)](https://loops.so/glossary/dkim)
+- [DMARC](https://loops.so/glossary/dmarc)
+- [Double Opt-In](https://loops.so/glossary/double-opt-in)
+- [Drip Campaign](https://loops.so/glossary/drip-campaign)
+- [Email Authentication](https://loops.so/glossary/email-authentication)
+- [Email Automation](https://loops.so/glossary/email-automation)
+- [Email Blacklist](https://loops.so/glossary/email-blacklist)
+- [Email Body](https://loops.so/glossary/email-body)
+- [Email Campaign](https://loops.so/glossary/email-campaign)
+- [Email Customer Journey](https://loops.so/glossary/email-customer-journey)
+- [Email Deliverability](https://loops.so/glossary/email-deliverability)
+- [Email Flow](https://loops.so/glossary/email-flow)
+- [Email Footer](https://loops.so/glossary/email-footer)
+- [Email Funnel](https://loops.so/glossary/email-funnel)
+- [Email Header](https://loops.so/glossary/email-header)
+- [Email List](https://loops.so/glossary/email-list)
+- [Email List Hygiene](https://loops.so/glossary/email-list-hygiene)
+- [Email Sender Name](https://loops.so/glossary/email-sender-name)
+- [Email Service Provider](https://loops.so/glossary/email-service-provider)
+- [Email Warmup](https://loops.so/glossary/email-warmup)
+- [Engagement](https://loops.so/glossary/engagement)
+- [Feedback Loop](https://loops.so/glossary/feedback-loop)
+- [Hard Bounce](https://loops.so/glossary/hard-bounce)
+- [HTML Email](https://loops.so/glossary/html-email)
+- [Inbox Placement](https://loops.so/glossary/inbox-placement)
+- [IP Address](https://loops.so/glossary/ip-address)
+- [IP Warming](https://loops.so/glossary/ip-warming)
+- [Landing Page](https://loops.so/glossary/landing-page)
+- [Lead Nurturing](https://loops.so/glossary/lead-nurturing)
+- [List-ID](https://loops.so/glossary/list-id)
+- [List Segmentation](https://loops.so/glossary/list-segmentation)
+- [Newsletter](https://loops.so/glossary/newsletter)
+- [Newsletter Open Rate](https://loops.so/glossary/newsletter-open-rate)
+- [No-Reply Email Address](https://loops.so/glossary/no-reply-email-address)
+- [One-Click Unsubscribe](https://loops.so/glossary/one-click-unsubscribe)
+- [Open Rate](https://loops.so/glossary/open-rate)
+- [Opt-in (or Subscribe)](https://loops.so/glossary/opt-in-or-subscribe)
+- [Opt-out (or Unsubscribe)](https://loops.so/glossary/opt-out-or-unsubscribe)
+- [Permission Marketing](https://loops.so/glossary/permission-marketing)
+- [Personalization](https://loops.so/glossary/personalization)
+- [Phishing](https://loops.so/glossary/phishing)
+- [Plain Text Email](https://loops.so/glossary/plain-text-email)
+- [Preference Center](https://loops.so/glossary/preference-center)
+- [Preview Text](https://loops.so/glossary/preview-text-or-pre-header-text)
+- [Product Waitlist](https://loops.so/glossary/product-waitlist)
+- [Promotional Email](https://loops.so/glossary/promotional-email)
+- [Recipient](https://loops.so/glossary/recipient)
+- [Reply-To Email Address](https://loops.so/glossary/reply-to-email-address)
+- [Responsive Design](https://loops.so/glossary/responsive-design)
+- [Rich Text Email](https://loops.so/glossary/rich-text-email)
+- [Sender Reputation](https://loops.so/glossary/sender-reputation)
+- [Single Opt-In](https://loops.so/glossary/single-opt-in)
+- [Soft Bounce](https://loops.so/glossary/soft-bounce)
+- [Spam (or Junk)](https://loops.so/glossary/spam-or-junk)
+- [Spam Trigger Words](https://loops.so/glossary/spam-trigger-words)
+- [SPF (Sender Policy Framework)](https://loops.so/glossary/spf)
+- [Split Testing (or A/B Testing)](https://loops.so/glossary/split-testing-or-a-b-testing)
+- [Subject Line](https://loops.so/glossary/subject-line)
+- [Suppression List](https://loops.so/glossary/suppression-list)
+- [Transactional Emails](https://loops.so/glossary/transactional-emails)
+- [Unsubscribe Rate](https://loops.so/glossary/unsubscribe-rate)
+- [Welcome Email](https://loops.so/glossary/welcome-email)
+- [Whitelist](https://loops.so/glossary/whitelist)
+
+## Tools
+- [Free email tools](https://loops.so/tools): Free email tools from Loops: subject line tester, UTM and mailto link generators, DNS and DMARC checkers, EML viewer, and spam word checker. No signup required.
+- [DMARC Record Generator](https://loops.so/tools/dmarc-generator): Build a valid DMARC TXT record. Pick your policy and report address, then copy the record to publish at _dmarc.yourdomain.com.
+- [Free DNS Checker for Email: SPF, DKIM, DMARC and MX](https://loops.so/tools/dns-checker): Check your domain's SPF, DKIM, DMARC, and MX records in your browser. See what is missing for email authentication and how to fix it with Loops.
+- [EML Viewer: Open EML Files in Your Browser](https://loops.so/tools/eml-viewer): Open .eml files without Outlook. Drop a message in to read its headers, HTML and plain-text body, and attachments. The file stays in your browser.
+- [Mailto Link Generator](https://loops.so/tools/mailto-link-generator): Build a mailto link with To, CC, BCC, subject, and body. Fields are percent-encoded correctly, and you can copy or test the link before you use it.
+- [Spam Word Checker](https://loops.so/tools/spam-word-checker): Paste an email and scan it for spam trigger words and pressure-heavy phrasing. See every flag by category, with a plain rewrite for each. Runs in your browser.
+- [Free Email Subject Line Tester](https://loops.so/tools/subject-line-tester): Test an email subject line and preview text: length, spam trigger words, caps, and emoji, with a live inbox preview. Free, no signup.
+- [UTM Link Generator](https://loops.so/tools/utm-generator): Free UTM builder. Add utm_source, utm_medium, utm_campaign, term, and content to any link, then copy a correctly encoded tracking URL.
+
+## Integrations
+- [Clerk Email Integration: Sync Users with Webhooks](https://loops.so/integrations/clerk): Send Clerk webhooks to Loops to sync users as contacts and trigger onboarding email from signups, account deletions, and waitlist entries.
+- [Stripe Email Integration for Marketing and Payments](https://loops.so/integrations/stripe): Connect Stripe to Loops with the Loops Stripe app. Sync customers as contacts and send workflow emails from payments, subscriptions, invoices, and quotes.
+- [Supabase Email Integration: Auth and Lifecycle Email](https://loops.so/integrations/supabase): Send Supabase Auth emails through Loops with the Send Email Hook or SMTP, and sync auth.users to Loops to start onboarding and lifecycle workflows.
+
+## Customer stories
+- [Cosmos: combining two ESPs into a cleaner flow](https://loops.so/customers/cosmos): Cosmos replaced SendGrid and Braze with Loops, running onboarding, transactional email, and monthly product updates from one contact list.
+- [Diagram: turning a waitlist into customers](https://loops.so/customers/diagram): How Diagram used Loops to email a fast-growing waitlist and send launch campaigns with hands-on support, before its acquisition by Figma.
+- [Framer: powering every Framer email](https://loops.so/customers/framer): Framer sends 100% of its email through Loops, from newsletters and product campaigns to onboarding flows and transactional email.
+- [Runable: emailing 1.7 million users with Loops](https://loops.so/customers/runable): Runable sends its marketing, lifecycle, and transactional emails through Loops: more than 10 million emails in about a year.
+- [Trails](https://loops.so/customers/trails): Ryo set up Loops in 30 minutes. Now an agent builds the emails, and their product updates average a 40% open rate.
+- [unDraw: illustrating product announcements](https://loops.so/customers/undraw): How unDraw, the open-source illustration platform with 400k monthly users, uses Loops for Supporter tier campaigns and welcome emails.
+
+## Company
+- [About Us: The Team Building Loops](https://loops.so/about): Meet the team behind Loops, a Y Combinator-backed company building the email platform for software companies. Learn who we are and how we work.
+- [Customer Stories: How SaaS Teams Use Loops](https://loops.so/customers): See how software companies like Framer, Cosmos, Diagram, and unDraw use Loops to power their marketing, transactional, and lifecycle email.
+- [Pricing: Free Plan and Contact-Based Plans](https://loops.so/pricing): Loops pricing is based on subscribed contacts, not sends. Start free with unlimited contacts and up to 4,000 emails to your first 1,000 contacts in any rolling 30-day window, marketing and transactional combined.

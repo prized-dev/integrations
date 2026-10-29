@@ -1,0 +1,148 @@
+{
+ "site": "groq.com",
+ "checkedAt": "2026-10-28T23:57:07.423Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 2,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://groq.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://groq.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://groq.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.groq.com/openai/v1/models",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "where": "llms.txt",
+   "url": "https://console.groq.com/llms.txt",
+   "match": "Spend Limits",
+   "snippet": "looking to implement and customize MDX pages. - [Spend Limits](https://console.groq.com/docs/spend-limits): The Spend Limits page provides information on how t",
+   "status": "partial",
+   "reason": "llms.txt mentions spend limits in prose; no machine-readable cap"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://console.groq.com/llms.txt",
+   "heading": "# https://console.groq.com llms.txt",
+   "bytes": 56518,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://groq.com/auth.md",
+   "finalUrl": "https://groq.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 248,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://groq.com/llms.txt",
+   "finalUrl": "https://groq.com/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 198,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.groq.com/openai/v1/models",
+   "finalUrl": "https://api.groq.com/openai/v1/models",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 51,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://console.groq.com/llms.txt",
+   "finalUrl": "https://console.groq.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 85,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://groq.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://groq.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 239,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.groq.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.groq.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 52,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://groq.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://groq.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 227,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://groq.com/.well-known/x402",
+   "finalUrl": "https://groq.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 226,
+   "redirects": 0
+  }
+ ]
+}

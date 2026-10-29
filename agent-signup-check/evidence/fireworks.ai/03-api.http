@@ -1,0 +1,14 @@
+GET https://api.fireworks.ai/inference/v1/models
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:09.729Z
+final-url: https://api.fireworks.ai/inference/v1/models
+
+HTTP 401
+date: Wed, 28 Oct 2026 23:57:06 GMT
+content-type: application/json
+content-length: 248
+connection: close
+vary: Origin
+x-request-id: 78714933-bff9-43c5-b5cc-b8f50a21a31f
+
+{"error":{"message":"You must provide an API key. See https://docs.fireworks.ai/api-reference/introduction#authentication for more information.","param":null,"code":"UNAUTHORIZED","type":"error"},"request_id":"78714933-bff9-43c5-b5cc-b8f50a21a31f"}

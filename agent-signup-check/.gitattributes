@@ -1,0 +1,5 @@
+# Saved responses are kept byte for byte (no line-ending changes) and folded in GitHub diffs.
+evidence/** -text linguist-generated=true
+results.json linguist-generated=true
+results/*.json linguist-generated=true
+diffs/*.json linguist-generated=true

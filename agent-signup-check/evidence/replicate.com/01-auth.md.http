@@ -1,0 +1,373 @@
+GET https://replicate.com/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:16.508Z
+final-url: https://replicate.com/auth.md
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:57:12 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a51de1a9abc3ff03-PDX
+cf-cache-status: DYNAMIC
+server: cloudflare
+strict-transport-security: max-age=15552000
+vary: Cookie, origin, accept-encoding
+content-security-policy-report-only: script-src 'report-sample' 'self' 'nonce-ZF0iubPFmDiR1vyxi2+s8Q==' https://static.replicateassets.com https://www.googletagmanager.com https://tagmanager.google.com https://*.googletagmanager.com https://challenges.cloudflare.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; media-src 'report-sample' 'self' https://replicate.delivery https://*.replicate.delivery https://static.replicateassets.com https://*.sentry.io https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; img-src 'report-sample' 'self' blob: data: https://replicate.delivery https://*.replicate.delivery https://og.replicateassets.com https://static.replicateassets.com https://*.githubusercontent.com https://github.com https://www.googletagmanager.com https://ssl.gstatic.com https://www.gstatic.com https://*.google-analytics.com https://*.googletagmanager.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; connect-src 'report-sample' 'self' https://stream.replicate.com https://replicate.delivery https://*.replicate.delivery https://*.sentry.io https://og.replicateassets.com https://static.replicateassets.com https://www.googletagmanager.com https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://www.cloudflarestatus.com https://replicate-search.replicate-search.workers.dev; style-src 'report-sample' 'self' 'unsafe-inline' https://static.replicateassets.com https://googletagmanager.com https://tagmanager.google.com https://fonts.googleapis.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; frame-src 'report-sample' 'self' https://replicate-search.replicate-search.workers.dev; default-src 'self'; worker-src https://static.replicateassets.com; font-src 'report-sample' 'self' data: https://fonts.replicateassets.com https://fonts.gstatic.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net
+cross-origin-opener-policy: same-origin
+expect-ct: max-age=86400, enforce
+referrer-policy: same-origin
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-xss-protection: 1; mode=block
+content-encoding: gzip
+alt-svc: h3=":443"; ma=86400
+
+
+
+<!DOCTYPE html>
+<html lang="en"
+      class="">
+
+  <head>
+    <meta charset="utf-8" />
+    <title>
+      
+        
+  Page not found
+
+        | Replicate
+      
+    </title>
+
+    
+      
+      <meta name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    
+
+    <link id="favicon-ico"
+          rel="icon"
+          href="https://d31rfu1d3w8e4q.cloudfront.net/static/favicon.121ea3afd763.ico"
+          sizes="any" />
+    <link id="favicon-png"
+          rel="icon"
+          href="https://d31rfu1d3w8e4q.cloudfront.net/static/favicon.fdf5ef8729cc.png"
+          type="image/png" />
+    <link rel="mask-icon"
+          href="https://d31rfu1d3w8e4q.cloudfront.net/static/safari-pinned-tab.4c32b8e091a9.svg"
+          color="#FFFFFF" />
+    <link rel="apple-touch-icon"
+          sizes="180x180"
+          href="https://d31rfu1d3w8e4q.cloudfront.net/static/apple-touch-icon.39c0aa0659e3.png" />
+
+    
+  <script nonce="ZF0iubPFmDiR1vyxi2+s8Q==">
+    /* beautify ignore:start */
+    window.dataLayer = window.dataLayer || [];
+    
+    
+    dataLayer.push({
+      'event': 'user_anonymous',
+      'user_type': 'anonymous',
+      
+      'anonymous_session_id': 'cb74861a-c8b4-40f2-aadd-a60ad3a9bc09'
+      
+    });
+    
+    /* beautify ignore:end */
+  </script>
+  <script nonce="ZF0iubPFmDiR1vyxi2+s8Q==">
+    (function(w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({
+        'gtm.start': new Date().getTime(),
+        event: 'gtm.js'
+      });
+      var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s),
+        dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true;
+      j.src =
+        'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-KZDCFZR9');
+  </script>
+
+
+
+    
+    
+
+    <link  rel="stylesheet" href="https://d31rfu1d3w8e4q.cloudfront.net/static/dist/index-B-PDs4zH.css" />
+<script type="module" crossorigin="" src="https://d31rfu1d3w8e4q.cloudfront.net/static/dist/index-CC6xk2Gp.js"></script>
+
+    <link rel="stylesheet"
+          href="https://d31rfu1d3w8e4q.cloudfront.net/static/dist/indexCss-CCkFL4yq.css" />
+
+    <link rel="alternate"
+          type="application/rss+xml"
+          title="Blog (RSS)"
+          href="https://replicate.com/blog/rss" />
+    <link rel="alternate"
+          type="application/atom+xml"
+          title="Blog (Atom)"
+          href="https://replicate.com/blog/atom" />
+    <link rel="alternate"
+          type="application/rss+xml"
+          title="Changelog (RSS)"
+          href="https://replicate.com/changelog/rss" />
+    <link rel="alternate"
+          type="application/atom+xml"
+          title="Changelog (Atom)"
+          href="https://replicate.com/changelog/atom" />
+    <link rel="alternate"
+          type="application/atom+xml"
+          title="Status (Atom)"
+          href="https://www.cloudflarestatus.com/history.atom" />
+
+    
+      <link rel="dns-prefetch"
+            href="https://replicate.delivery" />
+    
+      <link rel="dns-prefetch"
+            href="https://tjzk.replicate.delivery" />
+    
+
+    
+
+    <link rel="canonical"
+          href="https://replicate.com/auth.md" />
+
+    
+  
+    
+  <meta name="robots"
+        content="noindex" />
+
+
+    <meta name="sentry-dsn-js"
+          content="https://c171637e04a0117687462327d81e4e2a@cloud.workers-logging.cfdata.org/sentry/2435" />
+    
+    
+      <meta name="anonymous-id"
+            content="cb74861a-c8b4-40f2-aadd-a60ad3a9bc09" />
+    
+
+    
+      <script nonce="ZF0iubPFmDiR1vyxi2+s8Q==">
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (prefersDarkScheme) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.add("light");
+        }
+      </script>
+    
+
+  </head>
+
+  
+
+  <body class="font-sans overflow-y-scroll antialiased flex min-h-screen flex-col">
+    
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KZDCFZR9"
+        height="0"
+        width="0"
+        style="display:none;
+               visibility:hidden"></iframe></noscript>
+
+
+    
+
+      
+
+      
+        
+
+<div class="h-[var(--header-height)] mb-6 no-focus">
+  
+    <script id="react-component-props-ae30ab11-0712-4539-b566-171ad38251e3" type="application/json">{"activePath": "/auth.md", "isAuthenticated": false, "theme": "", "showSeedanceBanner": true, "__flags": {"show-open-ai-api-instructions": false, "web-api-token-show-once": true}}</script>
+
+<div data-component="Navigation"
+     data-props="react-component-props-ae30ab11-0712-4539-b566-171ad38251e3">
+  
+</div>
+
+  
+</div>
+
+        
+
+
+
+      
+
+      
+      
+
+      
+      
+
+      
+
+      <main class="layout-main flex-1">
+        
+
+        
+
+  <article class="mb-lh pb-4lh">
+    <div class="max-w-md pb-lh">
+      <h3 class="mb-lh">
+        Page not found
+      </h3>
+
+      <p class="my-lh">
+        Sorry, we can't find the page you're looking for. If you followed a broken link from somewhere, you can
+        <a href="https://replicate.com/support">contact us</a> and let us know.
+      </p>
+
+      <p class="my-lh">
+        If you're browsing around, why not
+        <a href="https://replicate.com/explore">explore the models on Replicate</a>.
+        
+          Or just look at this one we've picked out for you!
+        
+      </p>
+    </div>
+
+    
+      <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 grid-flow-row auto-rows-max gap-2lh ">
+  
+    
+
+<a class="no-default flex flex-col group border border-r8-gray-12 hover:bg-r8-gray-3 focus:bg-r8-gray-12"
+   href="/bytedance/seedream-5-lite"
+   title="bytedance/seedream-5-lite">
+  <div class="h-80 group-focus:ring ring-r8-gray-12 flex-shrink-0 bg-r8-gray-3">
+    
+
+
+  <div class=" h-full w-full overflow-hidden">
+    
+      <img data-src="https://tjzk.replicate.delivery/models_models_featured_image/a21f19af-c659-4598-a0f7-093d32011814/replicate-prediction-nmj3175dt.png"
+           alt=""
+           role="presentation"
+           class="object-cover object-center w-full h-full lazy" />
+    
+  </div>
+
+
+  </div>
+  <div class="flex-1">
+    <div class="p-3 h-full flex flex-col justify-between">
+      <div>
+        <h4 class="inline-block group-focus:bg-r8-gray-12"
+            translate="no">
+          
+            <span title="Official models are always on, maintained, and have predictable pricing."
+                  class="relative">
+              <svg class="icon"
+     xmlns="http://www.w3.org/2000/svg"
+     fill="currentColor"
+     viewBox="0 0 256 256">
+  <path d="M225.86,102.82c-3.77-3.94-7.67-8-9.14-11.57-1.36-3.27-1.44-8.69-1.52-13.94-.15-9.76-.31-20.82-8-28.51s-18.75-7.85-28.51-8c-5.25-.08-10.67-.16-13.94-1.52-3.56-1.47-7.63-5.37-11.57-9.14C146.28,23.51,138.44,16,128,16s-18.27,7.51-25.18,14.14c-3.94,3.77-8,7.67-11.57,9.14C88,40.64,82.56,40.72,77.31,40.8c-9.76.15-20.82.31-28.51,8S41,67.55,40.8,77.31c-.08,5.25-.16,10.67-1.52,13.94-1.47,3.56-5.37,7.63-9.14,11.57C23.51,109.72,16,117.56,16,128s7.51,18.27,14.14,25.18c3.77,3.94,7.67,8,9.14,11.57,1.36,3.27,1.44,8.69,1.52,13.94.15,9.76.31,20.82,8,28.51s18.75,7.85,28.51,8c5.25.08,10.67.16,13.94,1.52,3.56,1.47,7.63,5.37,11.57,9.14C109.72,232.49,117.56,240,128,240s18.27-7.51,25.18-14.14c3.94-3.77,8-7.67,11.57-9.14,3.27-1.36,8.69-1.44,13.94-1.52,9.76-.15,20.82-.31,28.51-8s7.85-18.75,8-28.51c.08-5.25.16-10.67,1.52-13.94,1.47-3.56,5.37-7.63,9.14-11.57C232.49,146.28,240,138.44,240,128S232.49,109.73,225.86,102.82Zm-52.2,6.84-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z">
+  </path>
+</svg>
+
+            </span>
+          
+          <span class="text-r8-gray-11 group-focus:text-r8-gray-1">bytedance</span>
+          <span class="text-r8-gray-11 group-focus:text-r8-gray-1">/</span>
+          <span class="font-semibold text-r8-gray-12 group-focus:text-r8-gray-1">seedream-5-lite</span>
+        </h4>
+        <p class="mt-2 text-r8-sm text-r8-gray-12 group-focus:text-r8-gray-1">
+          Seedream 5.0 lite: image generation with built-in reasoning, example-based editing, and deep domain knowledge
+        </p>
+        
+      </div>
+      <div class="mt-4 flex items-center justify-between">
+        <div class="text-r8-sm text-branding-red">
+          
+<svg class="icon"
+     xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 24 24"
+     width="24"
+     height="24">
+  <path fill="currentColor" fill-rule="evenodd" d="M20.322.75a10.75 10.75 0 00-7.373 2.926l-1.304 1.23A23.743 23.743 0 0010.103 6.5H5.066a1.75 1.75 0 00-1.5.85l-2.71 4.514a.75.75 0 00.49 1.12l4.571.963c.039.049.082.096.129.14L8.04 15.96l1.872 1.994c.044.047.091.09.14.129l.963 4.572a.75.75 0 001.12.488l4.514-2.709a1.75 1.75 0 00.85-1.5v-5.038a23.741 23.741 0 001.596-1.542l1.228-1.304a10.75 10.75 0 002.925-7.374V2.499A1.75 1.75 0 0021.498.75h-1.177zM16 15.112c-.333.248-.672.487-1.018.718l-3.393 2.262.678 3.223 3.612-2.167a.25.25 0 00.121-.214v-3.822zm-10.092-2.7L8.17 9.017c.23-.346.47-.685.717-1.017H5.066a.25.25 0 00-.214.121l-2.167 3.612 3.223.679zm8.07-7.644a9.25 9.25 0 016.344-2.518h1.177a.25.25 0 01.25.25v1.176a9.25 9.25 0 01-2.517 6.346l-1.228 1.303a22.248 22.248 0 01-3.854 3.257l-3.288 2.192-1.743-1.858a.764.764 0 00-.034-.034l-1.859-1.744 2.193-3.29a22.248 22.248 0 013.255-3.851l1.304-1.23zM17.5 8a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm-11 13c.9-.9.9-2.6 0-3.5-.9-.9-2.6-.9-3.5 0-1.209 1.209-1.445 3.901-1.49 4.743a.232.232 0 00.247.247c.842-.045 3.534-.281 4.743-1.49z">
+  </path>
+</svg>
+
+          3.6M runs
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</a>
+
+  
+</div>
+
+    
+  </article>
+
+
+      </main>
+
+      
+        
+
+<div class="footer no-focus">
+  <script id="react-component-props-ee46aa41-a1d4-4a43-b1be-55ec775bf498" type="application/json">{"theme": "", "__flags": {"show-open-ai-api-instructions": false, "web-api-token-show-once": true}}</script>
+
+<div data-component="Footer"
+     data-props="react-component-props-ee46aa41-a1d4-4a43-b1be-55ec775bf498">
+  
+</div>
+
+</div>
+
+      
+
+    
+
+    <script nonce="ZF0iubPFmDiR1vyxi2+s8Q==">
+      window.VIDEOJS_NO_DYNAMIC_STYLE = true;
+    </script>
+
+    <script nonce="ZF0iubPFmDiR1vyxi2+s8Q==">
+      const header = document.getElementById("app-header");
+
+      function monitorHeaderStickiness() {
+        if (header) {
+          header.setAttribute("data-stuck", window.scrollY > 0);
+        }
+      }
+
+      monitorHeaderStickiness();
+
+      document.addEventListener("scroll", (event) => {
+        monitorHeaderStickiness();
+      });
+
+      // Prevent mousewheel from being able to change the value of a numeric input.
+      // This "feature" often causes issues when users scroll from a focused input field
+      // to the submit button and accidentally increment the contents of the field.
+      document.addEventListener("wheel", (event) => {
+        if (document.activeElement && document.activeElement.matches('input[type=number]') && document.activeElement === event.target) {
+          event.preventDefault();
+        }
+      }, {
+        passive: false
+      });
+    </script>
+
+    
+    
+    
+
+  </body>
+
+</html>

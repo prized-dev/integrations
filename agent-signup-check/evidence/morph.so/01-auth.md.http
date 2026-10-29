@@ -1,0 +1,23 @@
+GET https://morph.so/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:29.503Z
+redirect: 307 from https://morph.so/auth.md
+final-url: https://www.morph.so/auth.md
+
+HTTP 404
+cache-control: public, max-age=0, must-revalidate
+content-length: 79
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:26 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-robots-tag: noindex, nofollow, noarchive, nosnippet
+x-vercel-error: NOT_FOUND
+x-vercel-id: pdx1::xht4r-1793231846246-005160151dd6
+connection: close
+
+The page could not be found
+
+NOT_FOUND
+
+pdx1::xht4r-1793231846246-005160151dd6

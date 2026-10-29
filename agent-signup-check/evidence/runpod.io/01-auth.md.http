@@ -1,0 +1,395 @@
+GET https://runpod.io/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:44.920Z
+redirect: 301 from https://runpod.io/auth.md
+final-url: https://www.runpod.io/auth.md
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:57:41 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a51de25d9db9b642-PDX
+cf-cache-status: DYNAMIC
+age: 1157
+cache-control: max-age=43200
+last-modified: Wed, 28 Oct 2026 20:45:29 GMT
+server: cloudflare
+strict-transport-security: max-age=31536000
+vary: accept-encoding
+content-security-policy: frame-ancestors 'self'
+o2o-cache-status: HIT
+surrogate-key: www.runpod.io 69ce570adca53340abab8376 pageId:69ce570adca53340abab8371 404req sp:bdaf2808431cb69034c0429a28de8ef9
+x-frame-options: SAMEORIGIN
+x-wf-region: us-east-1
+content-encoding: br
+
+<!DOCTYPE html><!-- Last Published: Wed Oct 28 2026 20:45:19 GMT+0000 (Coordinated Universal Time) --><html data-wf-domain="www.runpod.io" data-wf-page="69ce570adca53340abab8371" data-wf-site="69ce570adca53340abab8376" data-wf-intellimize-customer-id="117479198" lang="en"><head><meta charset="utf-8"/><link href="https://cdn.prod.website-files.com" rel="preconnect" crossorigin="anonymous"/><title>Not Found</title><meta content="The requested Runpod page could not be found. Return to Runpod to explore GPU cloud, serverless inference, and AI infrastructure resources." name="description"/><meta content="Not Found" property="og:title"/><meta content="The requested Runpod page could not be found. Return to Runpod to explore GPU cloud, serverless inference, and AI infrastructure resources." property="og:description"/><meta content="Not Found" name="twitter:title"/><meta content="The requested Runpod page could not be found. Return to Runpod to explore GPU cloud, serverless inference, and AI infrastructure resources." name="twitter:description"/><meta property="og:type" content="website"/><meta content="summary_large_image" name="twitter:card"/><meta content="width=device-width, initial-scale=1" name="viewport"/><meta content="vql9nJJt_toig1NgSD_Gsg1lUJQH2o19FUXVS2i-uqU" name="google-site-verification"/><link href="https://cdn.prod.website-files.com/69ce570adca53340abab8376/css/runpod-staging.shared.86f4cf86e.min.css" rel="stylesheet" type="text/css" integrity="sha384-hvTPhuldY9s5tY35QdUoNLkUbODE78pZf103Jmg0ejhdk07IbySALK3WUKuZh52a" crossorigin="anonymous"/><script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script><link href="https://cdn.prod.website-files.com/69ce570adca53340abab8376/69e08b4aed16e020149fc5ec_favicon_www_runpod_io_32x32.png" rel="shortcut icon" type="image/x-icon"/><link href="https://cdn.prod.website-files.com/69ce570adca53340abab8376/69e08b4ced16e020149fc61d_favicon_www_runpod_io_256x256.png" rel="apple-touch-icon"/><link href="https://www.runpod.io/404" rel="canonical"/><style>.anti-flicker, .anti-flicker * {visibility: hidden !important; opacity: 0 !important;}</style><style>[data-wf-hidden-variation], [data-wf-hidden-variation] * {
+        display: none !important;
+      }</style><script type="text/javascript" charset="UTF-8" async src="//geo.cookie-script.com/s/e7f4f0364e30c372db200f708bc7b28b.js?country=is-li-no-gb-gg-je-im-ch-ax-gf-gp-mq-re-yt-mf&region=eu"></script>
+
+<!-- Establish pagination robots, dataLayer, and default-denied consent before CookieScript/GTM -->
+<script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("consent","default",{analytics_storage:"denied",ad_storage:"denied",ad_personalization:"denied",ad_user_data:"denied",functionality_storage:"denied",personalization_storage:"denied",security_storage:"granted",wait_for_update:2e3}),gtag("set","ads_data_redaction",!0),gtag("set","url_passthrough",!1);</script>
+
+<!-- Google Tag Manager and consent-aware attribution capture -->
+<script>!function(e,t,a,n){e[n]=e[n]||[],e[n].push({"gtm.start":(new Date).getTime(),event:"gtm.js"});var g=t.getElementsByTagName(a)[0],m=t.createElement(a);m.async=!0,m.src="https://www.googletagmanager.com/gtm.js?id=GTM-NMTVNGPD",g.parentNode.insertBefore(m,g)}(window,document,"script","dataLayer");</script>
+
+<!-- runpod-consent-cookie-migration-v1 -->
+<script>!function(){if(!window.__rpConsentCookieMigrationV1Loaded){window.__rpConsentCookieMigrationV1Loaded=!0;var e="CookieScriptConsent",t="runpod.io",o=window.location.hostname.toLowerCase();if(o===t||o.slice(-10)==="."+t){var n=e+"=",r=document.cookie.split(";").map((function(e){return e.trim()})).filter((function(e){return 0===e.indexOf(n)})).map((function(e){var t=e.slice(20);return{rawValue:t,record:a(t)}})).filter((function(e){return e.record})).sort((function(e,t){return c(t.record)-c(e.record)})),i=!1;try{i="1"===window.localStorage.getItem("runpodConsentDomainMigrationV1")}catch(e){}if(r.length&&(r.length>1||!i)){document.cookie=e+"="+r[0].rawValue+"; Domain=."+t+"; Path=/; Max-Age=2592000; Secure; SameSite=Lax",document.cookie=e+"=; Path=/; Max-Age=0; Secure; SameSite=Lax";try{window.localStorage.setItem("runpodConsentDomainMigrationV1","1")}catch(e){}}}"loading"===document.readyState?document.addEventListener("DOMContentLoaded",d):d()}function a(e){var t=[e];try{t.unshift(decodeURIComponent(e))}catch(e){}for(var o=0;o<t.length;o+=1)try{var n=JSON.parse(t[o]);if(n&&"object"==typeof n)return n}catch(e){}return null}function c(e){return e?("accept"===e.action||"reject"===e.action?1e15:0)+(Array.isArray(e.categories)?1e14:0)+(1===e.bannershown?1e13:0)+(Number(e.consenttime)||0):-1}function d(){if(!document.getElementById("runpod-cookie-settings")){var e=document.querySelector('a[href="/legal/cookie-policy"], a[href$="/legal/cookie-policy"]');if(e&&e.parentNode){var t=document.createElement("a");t.id="runpod-cookie-settings",t.className=(e.className?e.className+" ":"")+"csconsentlink",t.href="#cookie-settings",t.textContent="Cookie Settings",e.parentNode.insertBefore(t,e.nextSibling)}}}}();</script>
+
+
+<link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="https://cdn.prod.website-files.com/69ce570adca53340abab8376/6a0c6f043cbbe03476cd39de_ABCDiatype-Medium.woff2" />
+
+<meta name="twitter:image" content="https://cdn.prod.website-files.com/67d20fb9f56ff2ec6a7a657d/6851a6263ab19185a7db2ae3_e3501b2e5eeac39a00cc46ddd17244b4_opengraph-cover-image.jpg" />
+
+<style>
+.announcement-banner,
+.announcement-banner-content {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.announcement-banner-content {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.announcement-banner-icon,
+.announcement-banner-content > .icon-embed-small {
+  flex-shrink: 0;
+}
+
+.announcement-txt {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+.announcement-track {
+  display: inline-flex;
+  width: max-content;
+  vertical-align: top;
+}
+
+.announcement-copy {
+  flex: none;
+  white-space: nowrap;
+}
+
+/* Allow manual scrolling for visitors who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .announcement-txt {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .announcement-txt::-webkit-scrollbar {
+    display: none;
+  }
+}
+</style>
+
+<style>
+/* Announcement transitions */
+[data-nav-type="is-transparent"] .announcement-banner {
+  transition:
+    background-color 0.3s ease,
+    backdrop-filter 0.3s ease,
+    -webkit-backdrop-filter 0.3s ease;
+}
+
+/* Transparent over the hero */
+[data-nav-type="is-transparent"]:not(.is-past-hero)
+.announcement-banner {
+  background-color: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Blurred beyond the hero on all screen sizes */
+[data-nav-type="is-transparent"].is-past-hero
+.announcement-banner {
+  background-color: rgba(10, 8, 20, 0.6);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+@media screen and (max-width: 991px) {
+  .navbar_component {
+    transition:
+      background-color 0.3s ease,
+      backdrop-filter 0.3s ease,
+      -webkit-backdrop-filter 0.3s ease;
+  }
+
+  /* Blur navigation when the mobile menu opens */
+  .navbar_component:has(.w-nav-button.w--open) {
+    background-color: rgba(10, 8, 20, 0.6);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+
+  /* Blur announcement when the mobile menu opens */
+  [data-nav-type="is-transparent"]:has(.w-nav-button.w--open)
+  .announcement-banner {
+    background-color: rgba(10, 8, 20, 0.6);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+}
+</style>
+
+<script>// Consent-aware attribution capture and link decoration.
+// TBT remediation 2026-09-05: body runs at DOMContentLoaded instead of during
+// head parse; landing URL params are unchanged by then and links exist.
+// INP remediation 2026-09-26: each pass reads consent and stored values once,
+// CookieScript's consent events coalesce into one pass after the next paint,
+// a tap decorates only the tapped link, and unchanged hrefs are not rewritten.
+function __rpAttributionMain() {
+    const COOKIE_DAYS = 30;
+
+    /*
+      Attribution persistence is allowed when CookieScript grants either
+      targeting or performance. If legal wants one category only, remove the other.
+    */
+    const ATTRIBUTION_CATEGORIES = ['targeting', 'performance'];
+
+    /*
+      false = do not append attribution to HubSpot/console links before consent.
+      true = allow current-page URL params to decorate links without durable storage.
+    */
+    const DECORATE_LINKS_BEFORE_CONSENT = false;
+
+    /*
+      Needed for regions where no CookieScript banner/state is active.
+      Set to false for the strictest fail-closed posture.
+    */
+    const ALLOW_ATTRIBUTION_WHEN_COOKIESCRIPT_UNAVAILABLE = true;
+    const COOKIESCRIPT_WAIT_MS = 2000;
+
+    const PARAM_MAP = {
+      utm_source: 'utm_source',
+      utm_medium: 'utm_medium',
+      utm_campaign: 'utm_campaign',
+      utm_term: 'utm_term',
+      utm_content: 'utm_content',
+      gclid: 'gclid',
+      gbraid: 'gbraid',
+      wbraid: 'wbraid',
+      ps_xid: 'ps_xid',
+      ps_partner_key: 'ps_partner_key',
+      ref: 'runpodReferralId',
+    };
+
+    const REFERRER_KEYS = ['referrer_link', 'internal_referrer_link'];
+
+    const LINK_SELECTOR = 'a[href*="share.hsforms.com"], a[href*="console.runpod.io"]';
+
+    const CONSENT_EVENTS = ['CookieScriptLoaded', 'CookieScriptAccept', 'CookieScriptAcceptAll', 'CookieScriptReject', 'CookieScriptClose', 'CookieScriptConsentUpdated', 'CookieScriptCategory-all', 'CookieScriptCategory-targeting', 'CookieScriptCategory-performance', 'CookieScriptCategory-functionality', 'CookieScriptCategory-unclassified'];
+
+    const volatileAttribution = {
+      params: {},
+      referrerKey: null,
+      referrerValue: null,
+    };
+
+    let cookieScriptUnavailableFallbackAllowed = false;
+
+    function getCookieScriptState() {
+      try {
+        if (window.CookieScript && window.CookieScript.instance && typeof window.CookieScript.instance.currentState === 'function') {
+          return window.CookieScript.instance.currentState();
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    function categoriesAllowAttribution(categories) {
+      if (!Array.isArray(categories)) return false;
+      return categories.includes('all') || ATTRIBUTION_CATEGORIES.some((category) => categories.includes(category));
+    }
+
+    // CookieScript's currentState() is the expensive call, so each pass makes it once.
+    // Global Privacy Control short-circuits before CookieScript is asked, as before.
+    function readConsent() {
+      if (navigator.globalPrivacyControl === true) {
+        return { state: null, allowed: false };
+      }
+
+      const state = getCookieScriptState();
+      const categories = Array.isArray(state && state.categories) ? state.categories : null;
+      const allowed = categories ? categoriesAllowAttribution(categories) : cookieScriptUnavailableFallbackAllowed;
+
+      return { state: state, allowed: allowed };
+    }
+
+    function setCookie(name, value) {
+      const maxAge = COOKIE_DAYS * 86400;
+      document.cookie = encodeURIComponent(name) + '=' + encodeURIComponent(value) + '; ' + 'Max-Age=' + maxAge + '; path=/; domain=.runpod.io; SameSite=Lax; Secure';
+    }
+
+    function clearCookie(name) {
+      document.cookie = encodeURIComponent(name) + '=; Max-Age=0; path=/';
+      document.cookie = encodeURIComponent(name) + '=; Max-Age=0; path=/; domain=.runpod.io';
+    }
+
+    function getCookie(name) {
+      const escaped = name.replace(/([.$?*|{}()\\[\]\/+^])/g, '\\$1');
+      const match = document.cookie.match(new RegExp('(?:^|; )' + escaped + '=([^;]*)'));
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    function safeSessionStorageGet(key) {
+      try {
+        return sessionStorage.getItem(key);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function safeSessionStorageSet(key, value) {
+      try {
+        sessionStorage.setItem(key, value);
+      } catch (e) {}
+    }
+
+    function safeSessionStorageRemove(key) {
+      try {
+        sessionStorage.removeItem(key);
+      } catch (e) {}
+    }
+
+    function safeLocalStorageGet(key) {
+      try {
+        return localStorage.getItem(key);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function safeLocalStorageSet(key, value) {
+      try {
+        localStorage.setItem(key, value);
+      } catch (e) {}
+    }
+
+    function safeLocalStorageRemove(key) {
+      try {
+        localStorage.removeItem(key);
+      } catch (e) {}
+    }
+
+    function readStoredValue(key) {
+      return safeSessionStorageGet(key) || safeLocalStorageGet(key) || getCookie(key);
+    }
+
+    function attributionValue(storageKey, consentAllowed) {
+      if (consentAllowed) {
+        return volatileAttribution.params[storageKey] || readStoredValue(storageKey);
+      }
+
+      if (DECORATE_LINKS_BEFORE_CONSENT) {
+        return volatileAttribution.params[storageKey] || null;
+      }
+
+      return null;
+    }
+
+    // Storage key -> value to append, read once per pass.
+    function readAttributionValues(consentAllowed) {
+      const values = {};
+
+      Object.values(PARAM_MAP).forEach((storageKey) => {
+        values[storageKey] = attributionValue(storageKey, consentAllowed);
+      });
+
+      return values;
+    }
+
+    function captureVolatileAttribution() {
+      const currentParams = new URLSearchParams(window.location.search);
+
+      Object.entries(PARAM_MAP).forEach(([urlKey, storageKey]) => {
+        const value = currentParams.get(urlKey);
+        if (value) {
+          volatileAttribution.params[storageKey] = value;
+        }
+      });
+
+      const referrer = document.referrer;
+      if (referrer) {
+        const internalDomains = ['blog.runpod.io', 'docs.runpod.io'];
+        const isInternal = internalDomains.some((domain) => referrer.includes(domain));
+        volatileAttribution.referrerKey = isInternal ? 'internal_referrer_link' : 'referrer_link';
+        volatileAttribution.referrerValue = referrer;
+      }
+    }
+
+    function persistAttribution() {
+      Object.entries(volatileAttribution.params).forEach(([storageKey, value]) => {
+        safeSessionStorageSet(storageKey, value);
+        safeLocalStorageSet(storageKey, value);
+        setCookie(storageKey, value);
+      });
+
+      if (volatileAttribution.referrerKey && volatileAttribution.referrerValue) {
+        if (!readStoredValue(volatileAttribution.referrerKey)) {
+          safeSessionStorageSet(volatileAttribution.referrerKey, volatileAttribution.referrerValue);
+          safeLocalStorageSet(volatileAttribution.referrerKey, volatileAttribution.referrerValue);
+          setCookie(volatileAttribution.referrerKey, volatileAttribution.referrerValue);
+        }
+      }
+    }
+
+    function clearPersistentAttribution() {
+      Array.from(new Set(Object.values(PARAM_MAP))).forEach((key) => {
+        safeSessionStorageRemove(key);
+        safeLocalStorageRemove(key);
+        clearCookie(key);
+      });
+
+      REFERRER_KEYS.forEach((key) => {
+        safeSessionStorageRemove(key);
+        safeLocalStorageRemove(key);
+        clearCookie(key);
+      });
+    }
+
+    function restoreParamsIntoCurrentURL(values) {
+      const restoredURL = new URL(window.location.href);
+      let updated = false;
+
+      Object.entries(PARAM_MAP).forEach(([urlKey, storageKey]) => {
+        if (!restoredURL.searchParams.has(urlKey)) {
+          const value = values[storageKey];
+          if (value) {
+            restoredURL.searchParams.set(urlKey, value);
+            updated = true;
+          }
+        }
+      });
+
+      if (updated) {
+        window.history.replaceState({}, '', restoredURL.toString());
+      }
+    }
+
+    function decorateLink(link, values) {
+      try {
+        const url = new URL(link.href);
+
+        Object.entries(PARAM_MAP).forEach(([urlKey, storageKey]) => {
+          if (!url.searchParams.has(urlKey)) {
+            const value = values[storageKey];
+            if (value) {
+              url.searchParams.set(urlKey, value);
+            }
+          }
+        });
+
+        // Rewriting an unchanged href still mutates the DOM, and on /pricing that
+        // is 85 links per pass, so write on
+
+[body trimmed for publication: kept 16384 of 147654 characters; sha256 of the full body cd4e0a981a56982811ad4f14d5cb99440feca5c15ab3b9ecdf3eafc2a91f7835]

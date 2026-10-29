@@ -1,0 +1,483 @@
+GET https://ai.google.dev/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:04.817Z
+final-url: https://ai.google.dev/.well-known/oauth-authorization-server
+
+HTTP 404
+content-type: text/html; charset=utf-8
+vary: Cookie, Accept-Encoding
+content-security-policy: base-uri 'self'; object-src 'none'; script-src 'strict-dynamic' 'unsafe-inline' https: http: 'nonce-W+AU/lqpdHbfJOxUPGRtqqZ4neObCA' 'unsafe-eval'; frame-ancestors 'self' https://developers.google.com/_d/analytics-iframe https://aistudio.google.com; report-uri https://csp.withgoogle.com/csp/devsite/v2
+strict-transport-security: max-age=63072000; includeSubdomains; preload
+x-xss-protection: 0
+x-content-type-options: nosniff
+cache-control: no-cache, must-revalidate
+expires: 0
+pragma: no-cache
+content-encoding: gzip
+x-cloud-trace-context: 95d759c7e0ddb892021f43e5e218ffba
+date: Wed, 28 Oct 2026 23:57:03 GMT
+server: Google Frontend
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+connection: close
+transfer-encoding: chunked
+
+
+
+
+
+
+
+
+
+
+<!doctype html>
+<html 
+      lang="en"
+      dir="ltr">
+  <head>
+    <meta name="google-signin-client-id" content="157101835696-ooapojlodmuabs2do2vuhhnf90bccmoi.apps.googleusercontent.com"><meta name="google-signin-scope"
+          content="profile email https://www.googleapis.com/auth/developerprofiles https://www.googleapis.com/auth/developerprofiles.award https://www.googleapis.com/auth/devprofiles.full_control.firstparty"><meta property="og:site_name" content="Google AI for Developers">
+    <meta property="og:type" content="website"><meta name="robots" content="noindex"><meta name="theme-color" content="#1967d2"><meta charset="utf-8">
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+
+    <link rel="manifest" href="/_pwa/googledevai/manifest.json"
+          crossorigin="use-credentials">
+    <link rel="preconnect" href="//www.gstatic.com" crossorigin>
+    <link rel="preconnect" href="//fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="//www.google-analytics.com" crossorigin><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Google+Sans:400,500|Roboto:400,400italic,500,500italic,700,700italic|Roboto+Mono:400,500,700|Inter:400,500|Inter+Tight:300,500,600&display=swap">
+      <link rel="stylesheet"
+            href="//fonts.googleapis.com/css2?family=Material+Icons&family=Material+Symbols+Outlined&display=block"><link rel="stylesheet" href="https://www.gstatic.com/devrel-devsite/prod/v5a0f9ff8b593048661361a49e11ab98a8b1ac025e19e60e6189f2b56796f8a43/googledevai/css/app.css">
+      
+        <link rel="stylesheet" href="https://www.gstatic.com/devrel-devsite/prod/v5a0f9ff8b593048661361a49e11ab98a8b1ac025e19e60e6189f2b56796f8a43/googledevai/css/dark-theme.css" disabled>
+      <link rel="shortcut icon" href="https://www.gstatic.com/devrel-devsite/prod/v5a0f9ff8b593048661361a49e11ab98a8b1ac025e19e60e6189f2b56796f8a43/googledevai/images/favicon-new.png">
+    <link rel="apple-touch-icon" href="https://www.gstatic.com/devrel-devsite/prod/v5a0f9ff8b593048661361a49e11ab98a8b1ac025e19e60e6189f2b56796f8a43/googledevai/images/touchicon-180-new.png"><link rel="canonical" href="https://ai.google.dev/.well-known/oauth-authorization-server"><link rel="search" type="application/opensearchdescription+xml"
+            title="Google AI for Developers" href="https://ai.google.dev/s/opensearch.xml">
+      <title>404 &nbsp;|&nbsp; Page Not Found &nbsp;|&nbsp; Google AI for Developers</title>
+
+<meta property="og:title" content="404 &nbsp;|&nbsp; Page Not Found &nbsp;|&nbsp; Google AI for Developers"><meta property="og:image" content="https://ai.google.dev/static/site-assets/images/share-ai-dev.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675"><meta name="twitter:card" content="summary_large_image">
+    </head>
+  <body class="color-scheme--light"
+        template="404"
+        theme="googledevai-theme"
+        type="error"
+        
+        appearance
+        
+        layout="full"
+        
+        
+        
+        
+        
+        
+        pending>
+  
+    <devsite-progress type="indeterminate" id="app-progress"></devsite-progress>
+  
+  
+    <a href="#main-content" class="skip-link button">
+      
+      Skip to main content
+    </a>
+    <section class="devsite-wrapper">
+      <devsite-cookie-notification-bar></devsite-cookie-notification-bar>
+        <devsite-header role="banner" keep-tabs-visible>
+  
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="devsite-header--inner" data-nosnippet>
+  <div class="devsite-top-logo-row-wrapper-wrapper">
+    <div class="devsite-top-logo-row-wrapper">
+      <div class="devsite-top-logo-row">
+        <button type="button" id="devsite-hamburger-menu"
+          class="devsite-header-icon-button button-flat material-icons gc-analytics-event"
+          data-category="Site-Wide Custom Events"
+          data-label="Navigation menu button"
+          visually-hidden
+          aria-label="Open menu">
+        </button>
+        
+<div class="devsite-product-name-wrapper">
+
+  <a href="/" class="devsite-site-logo-link gc-analytics-event"
+   data-category="Site-Wide Custom Events" data-label="Site logo" track-type="globalNav"
+   track-name="googleAIForDevelopers" track-metadata-position="nav"
+   track-metadata-eventDetail="nav">
+  
+  <picture>
+    
+    <source srcset="https://www.gstatic.com/devrel-devsite/prod/v5a0f9ff8b593048661361a49e11ab98a8b1ac025e19e60e6189f2b56796f8a43/googledevai/images/lockup-dark-theme-new.svg"
+            media="(prefers-color-scheme: dark)"
+            class="devsite-dark-theme">
+    
+    <img src="https://www.gstatic.com/devrel-devsite/prod/v5a0f9ff8b593048661361a49e11ab98a8b1ac025e19e60e6189f2b56796f8a43/googledevai/images/lockup-new.svg" class="devsite-site-logo" alt="Google AI for Developers">
+  </picture>
+  
+</a>
+
+
+
+</div>
+        <div class="devsite-top-logo-row-middle">
+          <div class="devsite-header-upper-tabs">
+            
+              
+              
+  <devsite-tabs class="upper-tabs">
+
+    <nav class="devsite-tabs-wrapper" aria-label="Upper tabs">
+      
+        
+          <tab class="devsite-dropdown
+    devsite-dropdown-full
+    
+    
+    ">
+  
+    <button
+      class="devsite-tabs-content devsite-tabs-dropdown-only gc-analytics-event  devsite-icon devsite-icon-arrow-drop-down"
+  
+       track-type="nav"
+       track-metadata-position="nav - models"
+       track-metadata-module="primary nav"
+       
+       
+         
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Tab: Models"
+         
+           track-name="models"
+         
+       >
+    Models
+  
+  </button>
+  
+  <div class="devsite-tabs-dropdown" role="menu" aria-label="submenu" hidden>
+    <div class="devsite-tabs-dropdown-content">
+      
+      
+        <div class="devsite-tabs-dropdown-column
+                    ">
+          
+            <ul class="devsite-tabs-dropdown-section
+                       ">
+              
+                <li class="devsite-nav-title" role="heading" tooltip>Gemini</li>
+              
+              
+              
+                <li class="devsite-nav-item">
+                  <a href="https://deepmind.google/gemini"
+                    
+                     track-type="nav"
+                     track-metadata-eventdetail="https://deepmind.google/gemini"
+                     track-metadata-position="nav - models"
+                     track-metadata-module="tertiary nav"
+                     
+                       track-metadata-module_headline="gemini"
+                     
+                     tooltip
+                  >
+                    
+                    <div class="devsite-nav-item-title">
+                      About
+                    </div>
+                    
+                  </a>
+                </li>
+              
+                <li class="devsite-nav-item">
+                  <a href="https://ai.google.dev/gemini-api/docs"
+                    
+                     track-type="nav"
+                     track-metadata-eventdetail="https://ai.google.dev/gemini-api/docs"
+                     track-metadata-position="nav - models"
+                     track-metadata-module="tertiary nav"
+                     
+                       track-metadata-module_headline="gemini"
+                     
+                     tooltip
+                  >
+                    
+                    <div class="devsite-nav-item-title">
+                      Docs
+                    </div>
+                    
+                  </a>
+                </li>
+              
+                <li class="devsite-nav-item">
+                  <a href="https://ai.google.dev/api"
+                    
+                     track-type="nav"
+                     track-metadata-eventdetail="https://ai.google.dev/api"
+                     track-metadata-position="nav - models"
+                     track-metadata-module="tertiary nav"
+                     
+                       track-metadata-module_headline="gemini"
+                     
+                     tooltip
+                  >
+                    
+                    <div class="devsite-nav-item-title">
+                      API reference
+                    </div>
+                    
+                  </a>
+                </li>
+              
+                <li class="devsite-nav-item">
+                  <a href="https://ai.google.dev/pricing"
+                    
+                     track-type="nav"
+                     track-metadata-eventdetail="https://ai.google.dev/pricing"
+                     track-metadata-position="nav - models"
+                     track-metadata-module="tertiary nav"
+                     
+                       track-metadata-module_headline="gemini"
+                     
+                     tooltip
+                  >
+                    
+                    <div class="devsite-nav-item-title">
+                      Pricing
+                    </div>
+                    
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </div>
+      
+        <div class="devsite-tabs-dropdown-column
+                    ">
+          
+            <ul class="devsite-tabs-dropdown-section
+                       ">
+              
+                <li class="devsite-nav-title" role="heading" tooltip>Imagen</li>
+              
+              
+              
+                <li class="devsite-nav-item">
+                  <a href="https://deepmind.google/technologies/imagen/"
+                    
+                     track-type="nav"
+                     track-metadata-eventdetail="https://deepmind.google/technologies/imagen/"
+                     track-metadata-position="nav - models"
+                     track-metadata-module="tertiary nav"
+                     
+                       track-metadata-module_headline="imagen"
+                     
+                     tooltip
+                  >
+                    
+                    <div class="devsite-nav-item-title">
+                      About
+                    </div>
+                    
+                  </a>
+                </li>
+              
+                <li class="devsite-nav-item">
+                  <a href="https://ai.google.dev/gemini-api/docs/imagen"
+                    
+                     track-type="nav"
+                     track-metadata-eventdetail="https://ai.google.dev/gemini-api/docs/imagen"
+                     track-metadata-position="nav - models"
+                     track-metadata-module="tertiary nav"
+                     
+                       track-metadata-module_headline="imagen"
+                     
+                     tooltip
+                  >
+                    
+                    <div class="devsite-nav-item-title">
+                      Docs
+                    </div>
+                    
+                  </a>
+                </li>
+              
+                <li class="devsite-nav-item">
+                  <a href="https://ai.google.dev/pricing"
+                    
+                     track-type="nav"
+                     track-metadata-eventdetail="https://ai.google.dev/pricing"
+                     track-metadata-position="nav - models"
+                     track-metadata-module="tertiary nav"
+                     
+                       track-metadata-module_headline="imagen"
+                     
+                     tooltip
+                  >
+                    
+                    <div class="devsite-nav-item-title">
+                      Pricing
+                    </div>
+                    
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </div>
+      
+        <div class="devsite-tabs-dropdown-column
+                    ">
+          
+            <ul class="devsite-tabs-dropdown-section
+                       ">
+              
+                <li class="devsite-nav-title" role="heading" tooltip>Veo</li>
+              
+              
+              
+                <li class="devsite-nav-item">
+                  <a href="https://deepmind.google/technologies/veo/veo-2/"
+                    
+                     track-type="nav"
+                     track-metadata-eventdetail="https://deepmind.google/technologies/veo/veo-2/"
+                     track-metadata-position="nav - models"
+                     track-metadata-module="tertiary nav"
+                     
+                       track-metadata-module_headline="veo"
+                     
+                     tooltip
+                  >
+                    
+                    <div class="devsite-nav-item-title">
+                      About
+                    </div>
+                    
+                  </a>
+                </li>
+              
+                <li class="devsite-nav-item">
+                  <a href="https://ai.google.dev/gemini-api/docs/video"
+                    
+                     track-type="nav"
+                     track-metadata-eventdetail="https://ai.google.dev/gemini-api/docs/video"
+                     track-metadata-position="nav - models"
+                     track-metadata-module="tertiary nav"
+                     
+                       track-metadata-module_headline="veo"
+                     
+                     tooltip
+                  >
+                    
+                    <div class="devsite-nav-item-title">
+                      Docs
+                    </div>
+                    
+                  </a>
+                </li>
+              
+                <li class="devsite-nav-item">
+                  <a href="https://ai.google.dev/pricing"
+                    
+                     track-type="nav"
+                     track-metadata-eventdetail="https://ai.google.dev/pricing"
+                     track-metadata-position="nav - models"
+                     track-metadata-module="tertiary nav"
+                     
+                       track-metadata-module_headline="veo"
+                     
+                     tooltip
+                  >
+                    
+                    <div class="devsite-nav-item-title">
+                      Pricing
+                    </div>
+                    
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </div>
+      
+        <div class="devsite-tabs-dropdown-column
+                    ">
+          
+            <ul class="devsite-tabs-dropdown-section
+                       ">
+              
+                <li class="devsite-nav-title" role="heading" tooltip>Gemma</li>
+              
+              
+              
+                <li class="devsite-nav-item">
+                  <a href="https://deepmind.google/models/gemma"
+                    
+                     track-type="nav"
+                     track-metadata-eventdetail="https://deepmind.google/models/gemma"
+                     track-metadata-position="nav - models"
+                     track-metadata-module="tertiary nav"
+                     
+                       track-metadata-module_headline="gemma"
+                     
+                     tooltip
+                  >
+                    
+                    <div class="devsite-nav-item-title">
+                      About
+                    </div>
+                    
+                  </a>
+                </li>
+              
+                <li class="devsite-nav-item">
+                  <a href="https://ai.google.dev/gemma/docs"
+                    
+                     track-type="nav"
+                     track-metadata-eventdetail="https://ai.google.dev/gemma/docs"
+                     track-metadata-position="nav - models"
+                     track-metadata-module="tertiary nav"
+                     
+                       track-metadata-module_headline="gemma"
+                     
+                     tooltip
+                  >
+                    
+                    <div class="devsite-nav-item-title">
+                      Docs
+                    </div>
+                    
+                  </a>
+                </li>
+              
+                <li class="devsite-nav-item">
+                  <a href="https://ai.google.dev/gemma/gemmaverse"
+                    
+                     track-type="nav"
+                     track-metadata-eventdetail="https://ai.google.dev
+
+[body trimmed for publication: kept 16384 of 83749 characters; sha256 of the full body 54dc31efdb25b7440473c442812d1c98c88a5825974f047c7904ff666038b8f3]

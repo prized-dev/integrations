@@ -1,0 +1,90 @@
+GET https://scrapingbee.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:18.259Z
+redirect: 301 from https://scrapingbee.com/llms.txt
+final-url: https://www.scrapingbee.com/llms.txt
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:14 GMT
+content-type: text/plain; charset=utf-8
+transfer-encoding: chunked
+connection: close
+access-control-allow-origin: *
+cache-control: public, max-age=0, must-revalidate
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=vDli4WMh8F4Wu3KYqfY1Zl6zICihKWaaN1f8L%2Fzfuj80Ryzvh4i1ljNY6TMG2F7PJv8lTbVgsaPTkuoGxIHDt9jf6E5rc8tHryPiieOpcSA4FKEf%2Bzpdx9Y2pJvpNG3%2BqTAPESFq"}]}
+etag: W/"52f02b767cfa8de8d53ddd994f4bc617"
+content-encoding: br
+server: cloudflare
+cf-ray: a51de32b1f1dde1d-PDX
+alt-svc: h3=":443"; ma=86400
+
+# ScrapingBee Documentation
+
+> Official documentation index for ScrapingBee's web scraping, search, ecommerce, AI, developer tools, and automation integrations.
+
+Use this index to select the specific API or integration reference for a task. Each linked file is directly maintained and contains the applicable contract, constraints, costs, and examples.
+
+## Routing decision map
+
+- Fetch, render, interact with, screenshot, download, or extract from an arbitrary URL → [HTML API](https://www.scrapingbee.com/llms/html-api.txt).
+- Let ScrapingBee choose the proxy/rendering tier for a blocked URL → [HTML API](https://www.scrapingbee.com/llms/html-api.txt) with `mode=auto` and optional `max_cost`.
+- Define CSS/XPath or AI extraction rules → [Data extraction](https://www.scrapingbee.com/llms/data-extraction.txt); automate clicks, fields, waits, or scrolling → [JavaScript scenarios](https://www.scrapingbee.com/llms/js-scenario.txt).
+- Configure a third-party HTTP/SOCKS proxy client → [Proxy mode](https://www.scrapingbee.com/llms/proxy-mode.txt).
+- Select country targeting → [Premium country codes](https://www.scrapingbee.com/llms/country-codes-premium.txt) or [Classic country codes](https://www.scrapingbee.com/llms/country-codes-classic.txt).
+- Search Google → [Google Search API](https://www.scrapingbee.com/llms/google-search-api.txt); use [Fast Search API](https://www.scrapingbee.com/llms/fast-search-api.txt) for a lightweight result list.
+- Retrieve Amazon, Walmart, or YouTube data → choose the exact endpoint below by query, ASIN, numeric product ID, video ID, or subtitles.
+- Use an LLM response → [ChatGPT API](https://www.scrapingbee.com/llms/chatgpt-api.txt) or [Gemini API](https://www.scrapingbee.com/llms/gemini-api.txt).
+- Integrate from a shell, MCP client, LangChain, or no-code product → use the matching tool/integration reference below.
+
+## Core APIs
+
+- [HTML API](https://www.scrapingbee.com/llms/html-api.txt) — Tags: web scraping, arbitrary URL, JavaScript rendering, auto-mode, automatic proxy escalation, blocked-site fallback, `mode=auto`, `max_cost`, screenshots, downloads.
+- [Usage API](https://www.scrapingbee.com/llms/usage-api.txt) — Tags: account usage, credits, credit balance, concurrency, plan limits.
+
+## HTML API capabilities and lookups
+
+- [Data extraction](https://www.scrapingbee.com/llms/data-extraction.txt) — Tags: CSS selectors, XPath, `extract_rules`, AI extraction, `ai_query`, `ai_extract_rules`, structured JSON.
+- [JavaScript scenarios](https://www.scrapingbee.com/llms/js-scenario.txt) — Tags: browser interaction, click, fill, wait, scroll, infinite scroll, `js_scenario`.
+- [Proxy mode](https://www.scrapingbee.com/llms/proxy-mode.txt) — Tags: proxy-mode, HTTP proxy, HTTPS proxy, SOCKS5, external proxy client, proxy credentials.
+- [Premium proxy country codes](https://www.scrapingbee.com/llms/country-codes-premium.txt) — Tags: premium proxy, geotargeting, residential proxy, `country_code`, ISO 3166-1.
+- [Classic proxy country codes](https://www.scrapingbee.com/llms/country-codes-classic.txt) — Tags: classic proxy, geotargeting, `country_code`, US fallback.
+
+## Search APIs
+
+- [Google Search API](https://www.scrapingbee.com/llms/google-search-api.txt) — Tags: Google SERP, web search, shopping, maps, news, images, Lens, AI Overviews, ads.
+- [Fast Search API](https://www.scrapingbee.com/llms/fast-search-api.txt) — Tags: fast Google search, lightweight SERP, low-latency search, organic results.
+
+## Commerce APIs
+
+- [Amazon Search API](https://www.scrapingbee.com/llms/amazon-search-api.txt) — Tags: Amazon product search, query, category, merchant, pagination, Amazon domain.
+- [Amazon Product API](https://www.scrapingbee.com/llms/amazon-product-api.txt) — Tags: Amazon product details, ASIN, `/dp/`, variants, reviews, availability.
+- [Amazon Pricing API](https://www.scrapingbee.com/llms/amazon-pricing-api.txt) — Tags: Amazon price, offers, sellers, ASIN, shipping, delivery.
+- [Walmart Search API](https://www.scrapingbee.com/llms/walmart-search-api.txt) — Tags: Walmart product search, query, facets, delivery ZIP, store ID, fulfillment.
+- [Walmart Product API](https://www.scrapingbee.com/llms/walmart-product-api.txt) — Tags: Walmart product details, numeric product ID, `/ip/`, store ID, delivery ZIP.
+- [YouTube Search API](https://www.scrapingbee.com/llms/youtube-search-api.txt) — Tags: YouTube search, videos, channels, playlists, upload date, duration, filters.
+- [YouTube Metadata API](https://www.scrapingbee.com/llms/youtube-metadata-api.txt) — Tags: YouTube video metadata, video ID, formats, thumbnails, channel data.
+- [YouTube Subtitles API](https://www.scrapingbee.com/llms/youtube-subtitles-api.txt) — Tags: YouTube subtitles, captions, transcript, auto-generated, uploader-provided, language.
+
+## AI APIs
+
+- [ChatGPT API](https://www.scrapingbee.com/llms/chatgpt-api.txt) — Tags: GPT, ChatGPT, prompt, web-enhanced answers, web search, citations.
+- [Gemini API](https://www.scrapingbee.com/llms/gemini-api.txt) — Tags: Gemini, prompt, LLM response, citations, geolocation.
+
+## Developer tools
+
+- [CLI](https://www.scrapingbee.com/llms/cli.txt) — Tags: command line, terminal, shell, scrape, crawl, batch, export, schedule, Smart Extract.
+- [Remote MCP](https://www.scrapingbee.com/llms/remote-mcp.txt) — Tags: MCP, Model Context Protocol, Claude Desktop, ChatGPT connector, remote tools.
+- [LangChain](https://www.scrapingbee.com/llms/langchain.txt) — Tags: LangChain, Python tools, agent tools, `ScrapeUrlTool`, `GoogleSearchTool`.
+
+## Automation integrations
+
+- [Make](https://www.scrapingbee.com/llms/make.txt) — Tags: Make, Integromat, no-code, scenarios, modules, automation.
+- [n8n](https://www.scrapingbee.com/llms/n8n.txt) — Tags: n8n, workflow automation, node, credentials, no-code.
+- [Zapier](https://www.scrapingbee.com/llms/zapier.txt) — Tags: Zapier, Zaps, action steps, workflow automation, no-code.
+
+## Reference notes
+
+- [Reference notes](https://www.scrapingbee.com/llms/reference-notes.txt) — Tags: source discrepancies, documentation conflicts, reliability rules, unsupported parameters, version-sensitive pricing.

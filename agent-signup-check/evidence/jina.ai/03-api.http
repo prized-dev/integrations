@@ -1,0 +1,23 @@
+GET https://api.jina.ai/v1/embeddings
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:24.013Z
+final-url: https://api.jina.ai/v1/embeddings
+
+HTTP 401
+date: Wed, 28 Oct 2026 23:58:21 GMT
+content-type: application/json
+content-length: 224
+connection: close
+cf-ray: a51de3574ce86192-PDX
+cf-cache-status: DYNAMIC
+content-encoding: gzip
+server: cloudflare
+vary: Accept-Encoding
+x-served-by: cf-worker-gcp-direct
+alt-svc: h3=":443"; ma=86400
+x-cloud-trace-context: f2bb03f7f09c24c621d3ecf7b7ae984e
+x-request-id: f2bb03f7f09c24c621d3ecf7b7ae984e
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=e1j35Ap2gdz9AWSzm2zMhOqwe4cPj9G6uAROIN%2FUqc4oaac90%2BYUXext6LGLf0%2FyieRlSnRpMDxh6TAojHuVkvoKlNsdHz1XGPch5RffJpSy4%2FE8UVqF88EiafNs"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+
+{"detail":"Authentication required. Provide your API key via the Authorization header: 'Authorization: Bearer <api-key>'. Get your API key at https://jina.ai/api-dashboard/key-manager.","request_id":"f2bb03f7f09c24c621d3ecf7b7ae984e","code":"AUTH_MISSING_API_KEY"}

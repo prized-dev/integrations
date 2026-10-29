@@ -1,0 +1,146 @@
+{
+ "site": "deepseek.com",
+ "checkedAt": "2026-10-28T23:57:12.394Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 0,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://deepseek.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://deepseek.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://deepseek.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.deepseek.com/models",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://api-docs.deepseek.com/llms.txt",
+   "tried": [
+    "https://deepseek.com/llms.txt",
+    "https://api-docs.deepseek.com/llms.txt"
+   ],
+   "status": "fail",
+   "reason": "https://deepseek.com/llms.txt not found (HTTP 404); https://api-docs.deepseek.com/llms.txt answers with an HTML page"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://deepseek.com/auth.md",
+   "finalUrl": "https://deepseek.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 552,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://deepseek.com/llms.txt",
+   "finalUrl": "https://deepseek.com/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 310,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.deepseek.com/models",
+   "finalUrl": "https://api.deepseek.com/models",
+   "status": 401,
+   "error": null,
+   "contentType": null,
+   "ms": 269,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://api-docs.deepseek.com/llms.txt",
+   "finalUrl": "https://api-docs.deepseek.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 319,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://deepseek.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://deepseek.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 311,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.deepseek.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.deepseek.com/.well-known/oauth-protected-resource",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 273,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://deepseek.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://deepseek.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 371,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://deepseek.com/.well-known/x402",
+   "finalUrl": "https://deepseek.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 160,
+   "redirects": 0
+  }
+ ]
+}

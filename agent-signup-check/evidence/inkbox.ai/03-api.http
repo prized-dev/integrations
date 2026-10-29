@@ -1,0 +1,22 @@
+GET https://inkbox.ai/api/v1/identities
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:08.592Z
+final-url: https://inkbox.ai/api/v1/identities
+
+HTTP 401
+content-type: application/json
+content-length: 758
+connection: close
+date: Wed, 28 Oct 2026 23:58:06 GMT
+x-ratelimit-scope: ip
+server: uvicorn
+x-ratelimit-limit: 1000
+x-ratelimit-remaining: 999
+x-ratelimit-reset: 2026-10-28T23:59:00+00:00
+x-cache: Error from cloudfront
+via: 1.1 f9cbfbc3568832d017c09dbd4649932c.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P2
+alt-svc: h3=":443"; ma=86400
+x-amz-cf-id: c_Lxet3V6IO53w_dQ7_xpyK83yL97YeMTG4gbbcyJswqPYjR2-jndg==
+
+{"detail":"Unauthorized","agent_support":"If you cannot resolve this issue from the error detail, contact the Inkbox Support Agent over A2A using its Agent Card: https://inkbox.ai/a2a/support/card. Starting a conversation requires an active agent-scoped API key for a claimed identity with A2A enabled and contact policy that permits @support. If you have trouble connecting, use the same API key and replace {agent_handle} with your agent handle to check A2A settings at GET https://inkbox.ai/api/v1/identities/{agent_handle}/a2a/settings (enabled must be true; review allow_public_egress and filter_mode) and contact rules at GET https://inkbox.ai/api/v1/identities/{agent_handle}/a2a/contact-rules (check for outbound or both rules that block @support)."}

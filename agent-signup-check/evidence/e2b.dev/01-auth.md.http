@@ -1,0 +1,31 @@
+GET https://e2b.dev/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:22.644Z
+final-url: https://e2b.dev/auth.md
+
+HTTP 404
+cache-control: public, max-age=0, must-revalidate
+content-encoding: br
+content-security-policy: frame-ancestors 'self';
+content-type: text/markdown; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:19 GMT
+permissions-policy: camera=(), microphone=(), geolocation=()
+server: Vercel
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+vary: Accept, Accept-Encoding
+x-content-type-options: nosniff
+x-dns-prefetch-control: on
+x-frame-options: SAMEORIGIN
+x-robots-tag: noindex
+x-vercel-id: pdx1::584qr-1793231839666-a15796a69ba0
+x-xss-protection: 1; mode=block
+connection: close
+transfer-encoding: chunked
+
+# 404 — Page not found
+
+The requested path does not exist.
+
+- [Agent instructions](https://e2b.dev/llms.txt)
+- [Sitemap](https://e2b.dev/sitemap.xml)
+- [Documentation](https://docs.e2b.dev)

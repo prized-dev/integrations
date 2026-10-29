@@ -1,0 +1,146 @@
+{
+ "site": "koyeb.com",
+ "checkedAt": "2026-10-28T23:57:36.274Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 0,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://koyeb.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://www.koyeb.com/auth.md)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://koyeb.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://www.koyeb.com/.well-known/oauth-protected-resource)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://koyeb.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404) (after a redirect to https://www.koyeb.com/.well-known/oauth-authorization-server); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://app.koyeb.com/v1/apps",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://www.koyeb.com/docs/llms.txt",
+   "tried": [
+    "https://koyeb.com/llms.txt",
+    "https://www.koyeb.com/docs/llms.txt"
+   ],
+   "status": "fail",
+   "reason": "https://koyeb.com/llms.txt not found (HTTP 404) (after a redirect to https://www.koyeb.com/llms.txt); https://www.koyeb.com/docs/llms.txt not found (HTTP 404)"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://koyeb.com/auth.md",
+   "finalUrl": "https://www.koyeb.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 324,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://koyeb.com/llms.txt",
+   "finalUrl": "https://www.koyeb.com/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 133,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://app.koyeb.com/v1/apps",
+   "finalUrl": "https://app.koyeb.com/v1/apps",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 563,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://www.koyeb.com/docs/llms.txt",
+   "finalUrl": "https://www.koyeb.com/docs/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 199,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://koyeb.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.koyeb.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 176,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://app.koyeb.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://app.koyeb.com/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 442,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://koyeb.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.koyeb.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 133,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://koyeb.com/.well-known/x402",
+   "finalUrl": "https://www.koyeb.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 183,
+   "redirects": 1
+  }
+ ]
+}

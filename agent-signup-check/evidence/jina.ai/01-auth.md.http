@@ -1,0 +1,229 @@
+GET https://jina.ai/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:24.013Z
+final-url: https://jina.ai/auth.md
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:58:20 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+server: cloudflare
+access-control-allow-origin: *
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=etq%2FSnmlbt82hA%2B%2BgoSBiIbUy%2BPxq4YWW0Bkz4pUzJN5uId4YEhaoMEEOyUXbhiu9QGaGXyifgEXH%2BQQjjW8cJbdz7hl3gMXnpmNCNnPYsqMq5CcBIjCc%2F8%3D"}]}
+x-proxy-cache: MISS
+x-github-request-id: 4BAC:2F763F:34545:75303:6AE28C1C
+x-github-edge-region: westus2
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+age: 0
+via: 1.1 varnish
+x-served-by: cache-pdx12332-PDX
+x-cache: MISS
+x-cache-hits: 0
+x-timer: S1793231900.437015,VS0,VE89
+vary: Accept-Encoding
+x-fastly-request-id: 9c9f5cc6e7580dc866ce1a9aaaade2a56af979a8
+cf-cache-status: DYNAMIC
+content-encoding: br
+cf-ray: a51de3519a26148b-PDX
+alt-svc: h3=":443"; ma=86400
+
+<!DOCTYPE html><html translate=no><head><title>Jina AI - Your Search Foundation, Supercharged.</title><meta charset=utf-8><meta name=title content="Jina AI"><meta name=description content="Your Search Foundation, Supercharged."><meta property=og:type content=website><meta property=og:url content=https://jina.ai/ ><meta property=og:title content="Jina AI"><meta property=og:description content="Your Search Foundation, Supercharged."><meta property=og:image content=https://jina.ai/banner.png><meta property=twitter:site content=@JinaAI_><meta name=twitter:creator content=@JinaAI_><meta property=twitter:card content=summary_large_image><meta property=twitter:url content=https://jina.ai/ ><meta property=twitter:title content="Jina AI"><meta property=twitter:description content="Your Search Foundation, Supercharged."><meta property=twitter:image content=https://jina.ai/banner.png><meta name=format-detection content="telephone=no"><meta name=msapplication-tap-highlight content=no><meta name=viewport content="initial-scale=1,width=device-width"><link rel=icon type=image/png sizes=128x128 href=/icons/favicon-128x128.png><link rel=icon type=image/png sizes=96x96 href=/icons/favicon-96x96.png><link rel=icon type=image/png sizes=32x32 href=/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/icons/favicon-16x16.png><link rel=icon type=image/ico id=favicon href=/favicon.ico><link rel=apple-touch-startup-image media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href=/icons/apple-launch-1284x2778.png><link rel=apple-touch-startup-image media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href=/icons/apple-launch-1170x2532.png><link rel=apple-touch-startup-image media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-828x1792.png><link rel=apple-touch-startup-image media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href=/icons/apple-launch-1125x2436.png><link rel=apple-touch-startup-image media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href=/icons/apple-launch-1242x2688.png><link rel=apple-touch-startup-image media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-750x1334.png><link rel=apple-touch-startup-image media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href=/icons/apple-launch-1242x2208.png><link rel=apple-touch-startup-image media="(device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-1620x2160.png><link rel=apple-touch-startup-image media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-1536x2048.png><link rel=apple-touch-startup-image media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-1668x2224.png><link rel=apple-touch-startup-image media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-1668x2388.png><link rel=apple-touch-startup-image media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-2048x2732.png><script prerender-ignore>/*
+              loadConsentManager keeps the banner out of `quasar dev`, but it is a
+              build-time flag: a production build served locally by vite preview
+              or quasar serve still carries it, and that is most local review.
+              So the tag is injected at runtime and only off a real origin.
+
+              This repeats the host list in src/utils/local-dev.ts because
+              index.html cannot import a module. Keep the two in step.
+            */
+            (function () {
+                  var h = location.hostname;
+                  var local = h === 'localhost' || h === '127.0.0.1' || h === '0.0.0.0'
+                        || h === '::1' || h === '[::1]' || /\.localhost$/.test(h);
+
+                  if (local) return;
+
+                  var s = document.createElement('script');
+                  s.id = 'usercentrics-cmp';
+                  s.src='https://web.cmp.usercentrics.eu/ui/loader.js';
+                  s.setAttribute('data-settings-id', 'w5v6v2pJsC3wdR');
+                  s.async = true;
+                  document.head.appendChild(s);
+            })();</script><style>body {
+                  margin: 0;
+                  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            }</style><script>/*
+              Resolve the theme before Quasar boots and put it on body, so the first
+              frame is not the wrong colour: a stored darkMode wins, otherwise
+              prefers-color-scheme. Rationale and history: docs/theme-flash.md.
+            */
+            (function () {
+                  var isDark = true;
+                  try {
+                        var stored = localStorage.getItem('user');
+                        var darkMode = stored ? JSON.parse(stored).settings?.darkMode : undefined;
+                        if (darkMode === true || darkMode === false) {
+                              isDark = darkMode;
+                        } else {
+                              // 'auto', null, undefined, or no stored user at all
+                              isDark = !window.matchMedia
+                                    || window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        }
+                  } catch (e) {
+                        // Malformed persisted state — fall back to the OS preference.
+                        isDark = !window.matchMedia
+                              || window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  }
+
+                  // Nothing is painted here, on purpose. Giving the root element a
+                  // background stops body's background propagating to the canvas, which
+                  // hides the z-index:-1 page pattern art. See docs/theme-flash.md.
+                  // Measured: with a background set, the art region was 1 colour level;
+                  // without it, 112.
+
+                  // The resolution is published, not applied: in <head> there is no body to
+                  // put the class on, which is precisely why the previous revision of this
+                  // block prevented no flash at all (docs/theme-flash.md). The class lands on
+                  // body in the script at the top of <body>, still before any content exists.
+                  window.__theme = isDark ? 'dark' : 'light';
+            })();</script><script prerender-ignore>/* Survive a deploy landing mid-visit: a chunk 404s and the SPA would render a
+           blank route. Reload ONCE (fresh HTML carries the new chunk names), rate-limited
+           so a permanently missing chunk cannot become a reload loop on a phone.
+           Full reasoning and the verification: docs/chunk-recovery.md */
+        (function () {
+          var KEY = 'chunk-recovery-at', COOLDOWN = 20000;
+          // Chrome, Firefox and Safari word the same failure differently.
+          var CHUNK = /dynamically imported module|Importing a module script failed|error loading dynamically imported module|Unable to preload CSS|ChunkLoadError|Loading chunk \S+ failed/i;
+          function textOf(e) { if (!e) return ''; if (typeof e === 'string') return e; try { return String(e.message || e.toString()); } catch (x) { return ''; } }
+          // true when the reload started; the caller only swallows the error if it did.
+          function reloadOnce(why) {
+            var last = 0, now = new Date().getTime();
+            try { last = Number(sessionStorage.getItem(KEY) || 0); } catch (x) {}
+            if (last && now - last < COOLDOWN) { console.error('[chunk-recovery] reload already tried ' + Math.round((now - last) / 1000) + 's ago; not looping. ' + why); return false; }
+            try { sessionStorage.setItem(KEY, String(now)); } catch (x) {}
+            console.warn('[chunk-recovery] module did not load; reloading once for the current build. ' + why);
+            window.location.reload();
+            return true;
+          }
+          window.addEventListener('vite:preloadError', function (ev) {
+            if (reloadOnce('vite:preloadError ' + textOf(ev.payload))) ev.preventDefault();
+          }, false);
+          // backstop for a chunk failing outside Vite's preload helper
+          window.addEventListener('unhandledrejection', function (ev) {
+            var msg = textOf(ev.reason);
+            if (CHUNK.test(msg) && reloadOnce('unhandledrejection ' + msg)) ev.preventDefault();
+          }, false);
+        })();</script>  <script type="module" crossorigin src="/assets/index-BSseFAMu.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-Ce8QPbAW.css">
+</head><body><script>(function () {
+                  var theme = window.__theme || 'light';
+                  if (document.body) {
+                        document.body.classList.remove(theme === 'dark' ? 'body--light' : 'body--dark');
+                        document.body.classList.add('body--' + theme);
+                  }
+
+                  /*
+                    Hold the theme until the app owns it, then let go.
+
+                    quasar's Dark plugin (node_modules/quasar/src/plugins/dark/Dark.js) installs
+                    with `this.set(config.dark)`, config.dark being 'auto' here, and 'auto'
+                    resolves against window.matchMedia. The plugin keeps no state of its own - no
+                    localStorage, no read of what is already on the element - so installing
+                    overwrites whatever this script just did, for every visitor whose stored choice
+                    disagrees with their OS. Measured on the shipped build, stored darkMode=true on
+                    an OS reporting light:
+
+                      1787ms  body--dark    this script, correct
+                      4045ms  body--light   Dark.install -> matchMedia   <-- visible
+
+                    Why that is visible even though #q-app is still .hidden: the gate hides the
+                    app's content, but the thing on screen while it is hidden IS the canvas, and
+                    the canvas takes its colour from the body class. So the pre-mount clobber
+                    paints a dark-mode visitor a light page, in the middle of loading, and it has
+                    nothing to do with the prerender.
+
+                    This observer closes exactly that window and nothing else: it re-asserts the
+                    resolved theme while #q-app is still gated, and disconnects the moment it is
+                    not, which is after the app has mounted and the store has spoken. It is not a
+                    parallel theme mechanism - after handover it does not run at all, so a theme
+                    toggle by the user, or anything the app does with $q.dark, is untouched.
+                  */
+                  if (!window.MutationObserver || !document.body) {
+                        return;
+                  }
+
+                  var want = 'body--' + theme;
+                  var hold = function () {
+                        // still gated => the app has not taken the theme yet, so hold the line
+                        if (!document.body.classList.contains(want)) {
+                              document.body.classList.remove(theme === 'dark' ? 'body--light' : 'body--dark');
+                              document.body.classList.add(want);
+                        }
+                  };
+                  var mo = new MutationObserver(function () {
+                        /*
+                          Look the mount point up on every tick - not once, here.
+
+                          This script sits above the quasar entry-point comment, so
+                          document.getElementById('q-app') is null while it runs. Captured once
+                          into a variable it stays null for the life of the page, the handover
+                          below can never be detected, the observer never disconnects, and hold()
+                          then fires on every later write to the body class - including the one
+                          made by the theme switch, which means a user could never turn light mode
+                          on. Verified: perf/toggle-check.cjs on that build reports
+                          "user picks light -> body--dark", FAIL.
+
+                          (Do not put an HTML comment opener or closer inside a comment in an
+                          inline script. The HTML tokenizer, not JS, owns the text between the
+                          script tags: an opener here puts it into an escaped state and the
+                          comment leaks out of the script element and becomes page text. It cost
+                          a failed prerender pass to learn that - the crawler reported
+                          "article never rendered" while quoting this very paragraph back.)
+                        */
+                        var el = document.getElementById('q-app');
+                        if (el && !el.classList.contains('hidden')) {
+                              mo.disconnect(); // mounted: Quasar and the store own the theme now
+                              return;
+                        }
+                        hold(); // a clobber of <body> landed while still gated - undo it
+                  });
+                  // watch <body>, because that is where Dark.set writes. #q-app does not exist
+                  // yet at this point, so the handover is detected from body mutations plus the
+                  // fresh lookup above - which is enough, because Dark.install() writes to <body>
+                  // before app.mount() ever runs.
+                  mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+            })();</script><div id=q-app></div><script>/*
+          Hand the prerendered snapshot over to the app without a blank frame.
+
+          Every route here is prerendered for SEO, and every route is also a client-rendered
+          SPA. Both are true in the same document: the snapshot paints, then Vue mounts into
+          the same element it was painted in, and mounting clears that element first. Measured
+          on this build, served exactly as it deploys (snapshot in front, spa assets behind),
+          stored light mode, medians of three:
+
+            route         snapshot painted   #q-app emptied   content back
+            /news/...     104ms            172ms              1303ms
+            /models/      88ms             157ms              307ms
+
+          On a fast local server the empty window is 77 to 1100ms. On canonical it is longer
+          (measured: /models/ 820 to 1088ms, the same blog post 836 to 2102ms) because the
+          article body is a CMS round trip and the whole bundle has to parse first. That gap is
+          the report this block exists for: the page renders, goes white, and renders again.
+
+          So the snapshot is not thrown away at mount, it is *handed over*. Before the app runs
+          - and this script is a classic script at the end of body, so it runs while the
+          document is still being parsed and before the deferred module reaches mount - the
+          children of the mount point move into a sibling that stays in flow and keeps painting.
+          The mount point itself keeps laying out, at full size, invisible and unreachable.
+          When the app has drawn its own version of the page, the veil comes off in the same
+          task, so what the reader sees is content, then content.
+
+          When is "drawn its own version"? The veil counts. It knows how many elements the
+          snapshot held, and it releases once the live tree holds at least 60 per cent of that,
+          held across two samples so a half-painted frame cannot slip through. A node count is
+          used rather than a per-page hook because it needs no cooperation from 168 routes and
+          cannot be forgotten by the next one: a page that paints its content satisfies it by
+          
+
+[body trimmed for publication: kept 16384 of 27045 characters; sha256 of the full body d3c127a89e0973cca749d4f8ea9d2074586926951fd5e206d5f510e4379bdb09]

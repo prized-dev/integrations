@@ -1,0 +1,26 @@
+GET https://api.agentphone.ai/v1/numbers
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:06.398Z
+final-url: https://api.agentphone.ai/v1/numbers
+
+HTTP 401
+date: Wed, 28 Oct 2026 23:58:04 GMT
+content-type: application/json
+content-length: 245
+connection: close
+permissions-policy: camera=(), microphone=(), geolocation=()
+referrer-policy: strict-origin-when-cross-origin
+server: cloudflare
+strict-transport-security: max-age=31536000; includeSubDomains
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-railway-request-id: 5JihoYAORwiNgVk_ljLL4A
+x-request-id: fcb52393-b729-4935-93c0-a3e28b82edd2
+x-xss-protection: 0
+x-hikari-trace: sjc1.qeyn
+x-railway-edge: sjc1
+cf-cache-status: DYNAMIC
+speculation-rules: "/cdn-cgi/speculation"
+cf-ray: a51de2ec5818b024-PDX
+
+{"detail":"Authentication required. Provide API key or login via OAuth.","error":{"message":"Authentication required. Provide API key or login via OAuth.","code":"HTTP_401","type":"api_error"},"request_id":"fcb52393-b729-4935-93c0-a3e28b82edd2"}

@@ -1,0 +1,21 @@
+GET https://api.vapi.ai/assistant
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:07.461Z
+final-url: https://api.vapi.ai/assistant
+
+HTTP 401
+date: Wed, 28 Oct 2026 23:58:05 GMT
+content-type: application/json; charset=utf-8
+content-length: 83
+connection: close
+x-powered-by: Express
+access-control-allow-origin: *
+content-security-policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; form-action 'self'; frame-ancestors 'self'; connect-src 'self' https:; worker-src 'self' blob:
+x-robots-tag: noindex
+etag: W/"53-4bLEfx0Nw5st8KWWSppmn7TQnU4"
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a51de2f57946ef5f-PDX
+alt-svc: h3=":443"; ma=86400
+
+{"message":"Missing Authorization Header.","error":"Unauthorized","statusCode":401}

@@ -1,0 +1,272 @@
+GET https://steel.dev/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:11.596Z
+final-url: https://steel.dev/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 10000
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-encoding: br
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:58:09 GMT
+etag: W/"f60d57594af9012748284af6e8d802b1"
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::9vbb5-1793231889012-df5e9bbede35
+connection: close
+transfer-encoding: chunked
+
+# Steel
+
+> Steel is an open-source cloud browser infrastructure platform for AI agents. It gives your agent a real browser that can navigate pages, fill forms, solve CAPTCHAs, persist auth, and extract content from modern websites. Steel is the fastest remote browser in independent benchmarks: 0.89s average lifecycle, 1.7x to 9x faster than alternatives.
+
+## Who Steel is for
+
+- **AI agent builders** who need reliable, authenticated web access in production.
+- **Scraping and data extraction teams** who want managed browser infrastructure without running headless Chrome themselves.
+- **Automation engineers** migrating Playwright, Puppeteer, or Selenium scripts to the cloud.
+- **Teams that need persistent browser state**: login sessions, cookies, credentials, and extensions that survive across runs.
+
+## Quick reference
+
+- Install: `npm install steel-sdk` (Node.js) or `pip install steel-sdk` (Python)
+- CLI: `curl -sSf https://setup.steel.dev | sh`
+- Auth header: `steel-api-key: <your-key>`
+- Auth env var: `STEEL_API_KEY`
+- API base URL: `https://api.steel.dev`
+- WebSocket: `wss://connect.steel.dev?apiKey=<key>&sessionId=<id>`
+
+## For coding agents
+
+- [Install guide](https://setup.steel.dev/install.md): Install the Steel CLI, add the `steel-browser` skill, authenticate, and verify with `steel scrape`.
+- [Agent setup prompt](https://steel.dev/agent-prompt): The full instructions for setting Steel up in a project, as plain text.
+- [Steel CLI](https://docs.steel.dev/overview/steel-cli): The terminal workflow, `steel browser` commands, and agent skill setup.
+- [Steel Skills](https://docs.steel.dev/overview/skills/available-skills): Choose the skill that matches your agent's workflow.
+- [Steel Browser skill](https://docs.steel.dev/overview/skills/available-skills/steel-browser): The skill for agents that operate a live Steel browser.
+
+## Why Steel
+
+- **Performance**: 0.89s avg browser lifecycle (p95: 1.09s). 25.6% control-plane tax, the lowest measured in independent testing.
+- **Open source**: Core browser runtime at [github.com/steel-dev/steel-browser](https://github.com/steel-dev/steel-browser). Benchmark code at [github.com/steel-dev/browserbench](https://github.com/steel-dev/browserbench).
+- **Self-hostable**: Run Steel in your own infrastructure with [Docker](https://docs.steel.dev/overview/self-hosting/docker) or [Railway](https://docs.steel.dev/overview/self-hosting/railway) one-click deploy. No vendor lock-in.
+- **Framework agnostic**: Works with Playwright, Puppeteer, and Selenium. Native Node and Python SDKs.
+- **Production ready**: Profiles for persistent auth, CAPTCHA solving, stealth/proxy tooling, agent traces, and live session debugging.
+
+## Key features
+
+- Steel runs isolated cloud browser sessions through an API, CLI, and SDKs.
+- Steel can return page content as HTML, markdown, screenshots, and PDFs.
+- Steel can persist browser state across runs with profiles, cookies, credentials, extensions, and auth context.
+- Steel includes anti-bot tooling: proxies, stealth settings, CAPTCHA solving, and mobile-mode browsing.
+- Steel includes debugging and observability tools: live sessions, past session embeds, recordings, WebRTC streaming, and agent traces.
+- Steel supports cloud, self-hosted, and local runtime workflows.
+
+## SDKs
+
+- [Node SDK](https://github.com/steel-dev/steel-node): `steel-sdk` on npm, for JavaScript and TypeScript projects.
+- [Python SDK](https://github.com/steel-dev/steel-python): `steel-sdk` on PyPI, for Python projects.
+- [Node SDK blog post](https://steel.dev/blog/steel-node-sdk): Deep dive on the Node SDK.
+- [Python SDK blog post](https://steel.dev/blog/steel-python-sdk): Deep dive on the Python SDK.
+
+## Core docs
+
+- [Intro to Steel](https://docs.steel.dev/overview/intro-to-steel): Product overview and why AI agents need browser infrastructure.
+- [Sessions API](https://docs.steel.dev/overview/sessions-api/overview): Create and control cloud browser sessions.
+- [Profiles API](https://docs.steel.dev/overview/profiles-api/overview): Reuse auth, cookies, extensions, credentials, and browser settings across sessions.
+- [Credentials API](https://docs.steel.dev/overview/credentials-api/overview): Store credentials for users or agents.
+- [Files API](https://docs.steel.dev/overview/files-api/overview): Upload, download, and manage files during active sessions.
+- [Extensions API](https://docs.steel.dev/overview/extensions-api/overview): Add Chrome extensions to browser sessions.
+- [CAPTCHAs API](https://docs.steel.dev/overview/captchas-api/overview): Detect and solve CAPTCHAs during browser automations.
+- [Browser Tools](https://docs.steel.dev/overview/browser-tools/overview): One-shot endpoints for scraping pages, capturing screenshots, and generating PDFs.
+- [Agent Traces](https://docs.steel.dev/overview/agent-traces/overview): Observability for browser agents: what they did, step by step.
+- [Human-in-the-loop](https://docs.steel.dev/overview/sessions-api/human-in-the-loop): Let users take control of a running session.
+- [Stealth: Proxies](https://docs.steel.dev/overview/stealth/proxies): Configure IP and location-aware browsing.
+- [Stealth: CAPTCHA solving](https://docs.steel.dev/overview/stealth/captcha-solving): How Steel handles CAPTCHA workflows.
+- [Self-hosting](https://docs.steel.dev/overview/self-hosting/docker): Run Steel Browser in your own infrastructure.
+- [Open-source Steel Browser](https://github.com/steel-dev/steel-browser): Self-hosted open-source browser/API runtime.
+- [Pricing/Limits](https://docs.steel.dev/overview/pricinglimits): Pricing and usage limits reference.
+- [Need Help?](https://docs.steel.dev/overview/need-help): Support, GitHub, Discord, and dashboard links.
+
+## Getting started
+
+- [Sessions API quickstart](https://docs.steel.dev/overview/sessions-api/quickstart): Start your first Steel session.
+- [Beginner's Guide to Steel](https://steel.dev/blog/beginner-s-guide-to-steel): End-to-end walkthrough for new users.
+- [Happy Path for Automating the Web](https://steel.dev/blog/happy-path-for-automating-the-web-with-steel): Recommended workflow for web automation with Steel.
+- [Connect with Playwright](https://docs.steel.dev/cookbook/playwright): Drive Steel sessions from Playwright.
+- [Connect with Puppeteer](https://docs.steel.dev/cookbook/puppeteer): Drive Steel sessions from Puppeteer.
+- [Connect with Selenium](https://docs.steel.dev/cookbook/selenium): Drive Steel sessions from Selenium.
+- [Auth Context Starter](https://docs.steel.dev/cookbook/auth-context-starter): Persist login state for authenticated workflows.
+- [Credentials API Starter](https://docs.steel.dev/cookbook/credentials-starter): Bootstrap credential-backed automations.
+- [Files API Starter](https://docs.steel.dev/cookbook/files-starter): Handle uploads and downloads in-session.
+- [Extensions API Starter](https://docs.steel.dev/cookbook/extensions-starter): Start automations that require browser extensions.
+- [Self-Hosting Guide](https://steel.dev/blog/self-hosting-steel-browser): Deploy Steel Browser on your own infrastructure.
+
+## Integrations
+
+- [Claude Code](https://docs.steel.dev/integrations/claude-code): Give Claude Code a Steel browser.
+- [Claude Agent SDK](https://docs.steel.dev/integrations/claude-agent-sdk): Build agents on the Claude Agent SDK that browse with Steel.
+- [Claude Computer Use](https://docs.steel.dev/integrations/claude-computer-use): Run Claude computer-use workflows on Steel.
+- [OpenAI Agents SDK](https://docs.steel.dev/integrations/openai-agents-sdk): Build typed agents on the OpenAI Agents SDK that browse with Steel.
+- [OpenAI Computer Use](https://docs.steel.dev/integrations/openai-computer-use): Run OpenAI computer-use agents on Steel browsers.
+- [Gemini Computer Use](https://docs.steel.dev/integrations/gemini-computer-use): Run Gemini computer-use workflows on Steel.
+- [Browser Use](https://docs.steel.dev/integrations/browser-use): Connect Browser Use to Steel sessions.
+- [Stagehand](https://docs.steel.dev/integrations/stagehand): Run natural-language browser automation on Steel.
+- [Notte](https://docs.steel.dev/integrations/notte): Run Notte tasks in live cloud browsers.
+- [CrewAI](https://docs.steel.dev/integrations/crewai): Build multi-agent workflows that browse the web.
+- [Agno](https://docs.steel.dev/integrations/agno): Add Steel browsing to Agno agents.
+- [AgentKit](https://docs.steel.dev/integrations/agentkit): Orchestrate agent networks with Steel browsers.
+- [Replit](https://docs.steel.dev/integrations/replit): Use Steel from Replit.
+- [StackBlitz Bolt.new](https://docs.steel.dev/integrations/stackblitz-bolt.new): Use Steel from Bolt.new.
+
+## Site
+
+- [Pricing](https://steel.dev/pricing.md): Plans, what each includes, and a comparison of them.
+- [FAQ](https://steel.dev/faq.md): Answers to common questions about Steel.
+- [Blog](https://steel.dev/blog.md): Guides, engineering, comparisons, product news, and company news.
+- [Brand kit](https://steel.dev/brand-kit): Steel's logo, colours, and type, to download.
+- [Terms of Service](https://steel.dev/terms)
+- [Privacy Policy](https://steel.dev/privacy)
+
+## Developer resources
+
+- [Changelog](https://docs.steel.dev/changelog): What has shipped, newest first.
+- [Docs home](https://docs.steel.dev): Main documentation site.
+- [Docs llms.txt](https://docs.steel.dev/llms.txt): The docs' own index for agents.
+- [llms-full.txt](https://docs.steel.dev/llms-full.txt): Flattened docs index for agents.
+- [API Reference](https://docs.steel.dev/api-reference): API reference.
+- [Dashboard](https://app.steel.dev): Manage API keys, usage, and sessions.
+- [GitHub](https://github.com/steel-dev): Open-source repos and examples.
+- [Steel Browser (OSS)](https://github.com/steel-dev/steel-browser): Open-source browser runtime and self-hosted API.
+- [Benchmark Code](https://github.com/steel-dev/browserbench): Open-source remote browser benchmark.
+- [Cookbook](https://github.com/steel-dev/steel-cookbook): Example projects and starters.
+- [Discord](https://discord.gg/steel-dev): Community support.
+- [Support](mailto:team@steel.dev): Contact Steel support.
+- [Legal](https://docs.steel.dev/overview/legal): Legal terms and conditions.
+
+## Full text
+
+- [llms-full.txt](https://steel.dev/llms-full.txt): Every blog post in full.
+
+## Pricing
+
+Plans and a full comparison: [Pricing](https://steel.dev/pricing).
+
+- **Launch** ($0 per month + usage): Start for free with $30 of credits, and pay only for what your agents run. Includes $30 of credits, one time. 10 concurrent browser sessions; sessions up to 15 minutes; up to 3 seats; email and community support; no credit card needed.
+- **Scale** ($250 per month + usage): Production capacity, stable identity, dedicated support. Includes $100 of credits every month. 100 concurrent browser sessions; sessions up to 1 hour; dedicated IPs at $5 each; dedicated Slack channel; HIPAA-ready BAA.
+- **Enterprise** (Custom per month + usage): Your hardest workloads, with guarantees: custom rates, security and support. Includes custom usage credits. 1,000+ concurrent sessions; stealth browser; reserve browser pools; sessions up to 24 hours; support and uptime SLAs; enterprise SSO.
+
+## Blog: Engineering
+
+- [Build the agent. Don’t build its computer.](https://steel.dev/blog/build-the-agent-not-its-computer.md): Should you build or buy AI agent infrastructure? Specify the computer your agent needs, test how an agent sandbox recovers, and start managed. Includes a provider map.
+- [Developer tools come with an assembly required sticker](https://steel.dev/blog/developer-tools-come-with-an-assembly-required-sticker.md): Customer-supplied proxies failed 22x more often than managed ones; the harder problem was explaining that inside our own product.
+- [Building a Deep Research Agent That Survives Its Own Failures](https://steel.dev/blog/durable-researcher.md): What we learned from making a research agent durable, routed, visible, and eval-driven.
+- [An autopsy of Claude Code's deep research](https://steel.dev/blog/claude-code-deep-research-autopsy.md): Claude Code's deep-research workflow, pulled from its binary and dissected. Wide search, no second hop.
+- [Errors Are the Interface Agents Actually Read](https://steel.dev/blog/errors-are-the-interface-agents-actually-read.md): Write API errors that correct the agent mid-failure, before the user calls it broken.
+- [Why we built Agent Traces](https://steel.dev/blog/why-we-built-agent-traces.md): Agent Traces records every browser-agent session as a replayable timeline. Inside the rebuild, and why intent is what agent observability still has to solve.
+- [Why Browser Agents Fail in Production](https://steel.dev/blog/why-browser-agents-fail-in-production.md): Raw browser control is a commodity. Reliable, reviewable, resumable execution under concurrency is the durable advantage.
+- [Reducing False Positives for Production Agents](https://steel.dev/blog/production-agents.md): The Web Is a Busy Place (and Not All Traffic Walks on Two Legs)
+- [How Websites Decide You're Human](https://steel.dev/blog/anti-bot-defense.md): Modern anti-bot systems use layered network, device, behavioral, and challenge-based defenses to distinguish humans from increasingly sophisticated malicious bots.
+
+## Blog: Guides
+
+- [OpenClaw + Steel Browser: Let Your AI Agent Fill the Forms](https://steel.dev/blog/openclaw-steel-browser-let-your-ai-agent-fill-the-forms.md): OpenClaw can operate the web. We gave it Steel CLI, pointed it at AI Engineer World's Fair's CFP form, and watched it submit a speaker application.
+- [Codex wired Steel and Resend into a daily newsletter](https://steel.dev/blog/codex-wired-steel-and-resend-into-a-daily-newsletter.md): Codex can run shell commands. Steel CLI can scrape the web. Resend CLI can send email. Wire the three together and you have a personal newsletter.
+- [Give Claude Code a real browser](https://steel.dev/blog/give-claude-code-a-real-browser.md): Steel CLI lets Claude Code automate real web apps like Gmail via a browser skill, turning messy sessions into reusable, self-healing scripts and skills.
+- [Top 7 Headless Browser Automations That Actually Work](https://steel.dev/blog/top-7-headless-browser-automations-that-actually-work.md): Learn 7 headless browser automation patterns that hold up in production, plus the retries, state handling, and debugging practices that keep them reliable.
+- [Happy Path for Automating the Web with Steel](https://steel.dev/blog/happy-path-for-automating-the-web-with-steel.md): Automate real web workflows fast with Steel’s managed cloud Chrome sessions. Create a session, connect Puppeteer, run steps, extract data, and release reliably.
+- [What is a CAPTCHA solver](https://steel.dev/blog/what-is-a-captcha-solver.md): Learn what a CAPTCHA solver is, how Steel handles CAPTCHAs, supported services, setup patterns, and production limits before automating verification reliably.
+- [How to Run Headless Browsers in the Cloud for Web Scraping](https://steel.dev/blog/headless-browsers-cloud-scraping.md): How to run headless browsers in the cloud for web scraping, what the options are, where they differ, and why Steel.dev is built for this workload.
+- [Ship Your AI Web Agent Faster: A Guide to Self-Hosting Steel Browser](https://steel.dev/blog/self-hosting-steel-browser.md): Learn to self-host Steel Browser for AI web agents. Complete guide with 1-click deploy, Docker setup, and bare metal installation options.
+- [Beginner's Guide to Steel.dev Browser Automation](https://steel.dev/blog/beginner-s-guide-to-steel.md): Steel.dev: AI-first browser automation with anti-bot protection, session persistence, and seamless integration. Free tier: 100 hours/month.
+
+## Blog: Comparisons
+
+- [Steel vs Kernel: a practical comparison](https://steel.dev/blog/steel-vs-kernel.md): Steel and Kernel both provide remote browser infrastructure for automation and agent workflows.
+- [Steel vs Browserbase: a practical comparison](https://steel.dev/blog/steel-vs-browserbase-a-practical-comparison.md): Steel and Browserbase both provide remote browser infrastructure for automation and agent workflows.
+- [Remote Browser Benchmark](https://steel.dev/blog/remote-browser-benchmark.md): How fast is "Hello, browser?"
+
+## Blog: Product
+
+- [Steel now ships as a browser plugin for Hermes Agent](https://steel.dev/blog/hermes-steel-plugin.md): Give Hermes Agent a Steel cloud browser in two commands, with live session viewing, page extraction, and per-site proxy and CAPTCHA controls built in.
+- [Steel Browser is live in Stripe Projects](https://steel.dev/blog/steel-browser-is-live-in-stripe-projects.md): Steel Browser is live in Stripe Projects, giving agents on-demand cloud browser sessions for live web work.
+- [Launch Week v3: everything we shipped](https://steel.dev/blog/launch-week-v3-recap.md): Launch Week v3 recap: Stealth Browser, Dedicated IPs, native Rust and Go SDKs, Atlas, and pricing updates for production agent workloads running on Steel.
+- [Simpler pricing, built for how agents run](https://steel.dev/blog/pricing-update.md): Steel pricing now has Launch, Scale, and Enterprise plans with metered browser rates, usage credits, visible usage, and plan limits for agent workloads.
+- [Atlas: a deep research harness you can own](https://steel.dev/blog/atlas-sdk.md): Atlas is an open-source deep research harness that turns web evidence into cited reports, with a ledger for coverage, audit, and citation grounding.
+- [Steel Speaks Rust and Go](https://steel.dev/blog/rust-go-sdks.md): Native Rust and Go SDKs for Steel: drive the browser and the computer from the stacks where agent infrastructure already runs.
+- [Dedicated IPs give production agents a stable network origin](https://steel.dev/blog/dedicated-ips.md): Dedicated IPs give production agents a stable network origin.
+- [Stealth Browser: A Chromium Built for Agents](https://steel.dev/blog/stealth-browser.md): Stealth Browser is Steel's custom Chromium fork for agent workloads: stable browser-level signals from startup and a lighter runtime.
+- [Introducing Projects](https://steel.dev/blog/introducing-projects.md): Projects bring project-level isolation to your Steel org. Scope sessions, credentials, and profiles per project.
+- [Introducing Steel Skills](https://steel.dev/blog/introducing-steel-skills.md): Today we are launching Steel Skills, a catalog of five agent skills for the web.
+- [Why we built inactivity timeouts](https://steel.dev/blog/why-we-built-inactivity-timeouts.md): Steel's inactivityTimeout releases a session after a set window of silence, so idle and crashed runs stop billing.
+- [Browser Agent Leaderboards, rebuilt](https://steel.dev/blog/browser-agent-leaderboards-rebuilt.md): Benchmarks go stale fast. We rebuilt the Steel agent leaderboards to track results as they land.
+- [Agent Traces: every browser session as a prompt](https://steel.dev/blog/agent-traces.md): Every Steel browser session is now a readable timeline synced to the video, and a markdown prompt you can paste into your coding agent.
+- [Eight ways to build a browser agent](https://steel.dev/blog/eight-ways-to-build-a-browser-agent.md): New framework starters in the Steel cookbook, all solving the same browser task.
+- [Ship Browser Automation to Users with Steel and Convex](https://steel.dev/blog/ship-browser-automation-to-users-with-steel-and-convex.md): Steel and Convex give browser automation the infrastructure it's missing: managed sessions, multi-tenancy, and real-time observability.
+- [We gave Pi agent a real browser](https://steel.dev/blog/we-gave-pi-agent-a-real-browser.md): We shipped @steel-dev/pi-steel, a one-command Steel extension that gives the Pi coding agent a real cloud browser.
+- [Hermes Agent + Steel Browser: Let Your AI Agent Browse the Web](https://steel.dev/blog/steel-is-now-a-native-browser-provider-in-hermes.md): We added Steel as a cloud browser provider in Hermes, the open source AI agent from Nous Research.
+- [Introducing Steel CLI v0.2.0: Browser Automation Built for Agents](https://steel.dev/blog/steel-cli-and-agent-skill.md): Today we are launching the Steel Browser CLI and the steel-browser skill so agents can run browser workflows and return clear outcomes with markdown, screenshots, or PDFs.
+- [Notte on Steel: Browser Infrastructure for Agents](https://steel.dev/blog/notte-on-steel.md): Connect Notte agents to Steel browser infrastructure via CDP. One line of code gives you cloud browsers with session replay and built-in CAPTCHA solving.
+- [Steel Launch Week v2: Everything We Shipped](https://steel.dev/blog/launch-week-v2-recap.md): Five features that make AI agents work in production.
+- [Doubled Concurrency Limits Across All Plans](https://steel.dev/blog/more-browsers.md): You get a browser! you get a browser!
+- [Headful Sessions: Real Streaming and Reliable Recordings](https://steel.dev/blog/webrtc.md): A complete rework of how you view and replay sessions.
+- [Agent Logs: Action Traces for Agent Actions](https://steel.dev/blog/agent-logs.md): Debug, trace and observe the actions your agents take with Agent Logs.
+- [Mobile Mode: Simpler Interfaces for AI Agents](https://steel.dev/blog/mobile-mode.md): Run sessions with mobile UA and viewport for simpler DOMs, faster vision agents, and mobile-only auth paths. Keep separate profiles for clean context.
+- [Profiles: Your Agent's Persistent Identity](https://steel.dev/blog/profiles.md): Persistent browser identities to keep auth, cookies, cache across sessions.
+- [Launch Week v2: 5 Features That Make AI Agents Actually Work](https://steel.dev/blog/launch-week-v2.md): Next week we're shipping five upgrades that eliminate the infrastructure headaches keeping your AI agents from production.
+- [Steel Node SDK: Because Your Puppeteer Scripts Deserve Better Than localhost](https://steel.dev/blog/steel-node-sdk.md): Steel Node SDK: Cloud browsers in 3 lines of code. Works with Puppeteer, Playwright. No Docker hell. TypeScript-first. Free 100hrs/mo.
+- [Steel Python SDK: Browser Automation That Actually Works](https://steel.dev/blog/steel-python-sdk.md): Tired of wrestling with Selenium and Playwright infrastructure? Steel's Python SDK gives you cloud browsers in 3 lines of code. No Docker, no proxies, no pain.
+
+## Blog: Company
+
+- [From PHP Kid to AI Infrastructure: Dane's Journey to Steel](https://steel.dev/blog/dane-s-journey-to-steel.md): From soldering circuits in NZ to building AI browser infrastructure at Steel: Meet Dane Wilson, the maker wiring tomorrow's web, one startup at a time.
+
+## FAQ
+
+### What is Steel and what does it do?
+
+Steel is cloud browser infrastructure for AI agents. It gives agents isolated cloud browser sessions with built-in anti-bot stealth, CAPTCHA solving and session persistence.
+
+### Is Steel open source?
+
+Yes. Steel Browser is the open-source server on GitHub that you can host yourself. Steel Cloud is the managed version, adding scale, stealth, proxies and CAPTCHA solving.
+
+### Is Steel an AI agent or AI infrastructure?
+
+Steel is infrastructure, not an agent. Your agent, built with the OpenAI Agents SDK, LangChain, CrewAI or your own code, connects to Steel, which handles the browser's lifecycle, stealth, session persistence and proxies.
+
+### Can I use Steel with Playwright, Puppeteer or Selenium?
+
+Yes. Steel works with Playwright, Puppeteer, Selenium and its own Node and Python SDKs. You connect over a standard CDP WebSocket URL, so any CDP-compatible tool works out of the box.
+
+### How fast does Steel start a browser session?
+
+Under a second on average, with no cold-start penalty. Each session launches into its own isolated Chromium in the cloud, with its proxy, cookies and storage already set up.
+
+### Can I run headless browsers in the cloud for web scraping?
+
+Yes. Steel runs managed cloud browser sessions for scraping and AI automation, and handles anti-bot stealth, CAPTCHA solving, residential proxies and session persistence in one API, through Playwright, Puppeteer or Selenium.
+
+### Can Steel bypass CAPTCHAs?
+
+Yes, on Steel Cloud. With CAPTCHA solving on, a session detects and solves CAPTCHAs as your agent browses, including Cloudflare Turnstile, PerimeterX press-and-hold and image CAPTCHAs, and the CAPTCHAs API reports each one's progress. Stealth and proxies keep many from appearing at all.
+
+### How can I solve CAPTCHAs with Steel?
+
+Add a $10 deposit to your account and CAPTCHA solving unlocks on the Launch plan. Solves cost $3 per 1,000 on Launch and $1 per 1,000 on Scale.
+
+### How can I use Steel's Stealth Browser?
+
+Stealth Browser is available on the Enterprise plan only, at no extra cost, and enabled workload by workload. It is Steel's own Chromium fork, which keeps fingerprint signals like GPU and WebGL consistent from the first request instead of patching them with injected JavaScript.
+
+### Does Steel support human-in-the-loop workflows and reusing logins?
+
+Yes. A live session viewer lets people watch or take over running sessions. Persistent browser profiles keep cookies and session tokens, so agents pick up signed-in workflows without logging in again.
+
+### How much does Steel cost, and is there a free tier?
+
+Launch includes $30 free credits, no monthly fee, and usage-based pricing after your one-time credits run out. Scale is $250 per month plus usage, and Enterprise pricing is custom. Steel Browser is free and open source.

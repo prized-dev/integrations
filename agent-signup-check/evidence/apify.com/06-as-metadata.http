@@ -1,0 +1,19 @@
+GET https://apify.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:15.223Z
+redirect: 307 from https://apify.com/.well-known/oauth-authorization-server
+final-url: https://console-backend.apify.com/.well-known/oauth-authorization-server
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:13 GMT
+content-type: application/json; charset=utf-8
+content-length: 858
+connection: close
+cache-control: no-store
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-frame-options: DENY
+content-security-policy: frame-ancestors 'none'
+vary: Origin, Authorization
+etag: W/"35a-r7E1KXmV4wl3ucv3WH+HSIz05qI"
+
+{"issuer":"https://console-backend.apify.com","authorization_endpoint":"https://console.apify.com/authorize/oauth","device_authorization_endpoint":"https://console-backend.apify.com/oauth/apps/devices","token_endpoint":"https://console-backend.apify.com/oauth/apps/token","registration_endpoint":"https://console-backend.apify.com/oauth/apps","scopes_supported":["full_api_access"],"grant_types_supported":["authorization_code","refresh_token","urn:ietf:params:oauth:grant-type:device_code"],"response_types_supported":["code"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","none","private_key_jwt"],"token_endpoint_auth_signing_alg_values_supported":["RS256","RS384","RS512"],"client_id_metadata_document_supported":true,"authorization_response_iss_parameter_supported":true}

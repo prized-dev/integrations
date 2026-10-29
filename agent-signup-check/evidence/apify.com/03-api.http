@@ -1,0 +1,30 @@
+GET https://api.apify.com/v2/users/me
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:15.223Z
+final-url: https://api.apify.com/v2/users/me
+
+HTTP 401
+date: Wed, 28 Oct 2026 23:58:12 GMT
+content-type: application/json; charset=utf-8
+content-length: 109
+connection: close
+strict-transport-security: max-age=300; includeSubDomains
+cache-control: no-cache, no-store, must-revalidate
+pragma: no-cache
+expires: 0
+access-control-allow-origin: *
+access-control-allow-headers: User-Agent, Content-Type, Authorization, X-Apify-Request-Origin, X-Apify-Github-Actions-Run-Url, openai-conversation-id, openai-ephemeral-user-id, x-apify-integration-platform, x-apify-integration-app-id, x-apify-integration-ai-tool
+access-control-allow-methods: GET
+access-control-expose-headers: X-Apify-Pagination-Total, X-Apify-Pagination-Offset, X-Apify-Pagination-Desc, X-Apify-Pagination-Count, X-Apify-Pagination-Limit
+referrer-policy: no-referrer
+x-robots-tag: none
+x-ratelimit-limit: 90
+etag: W/"6d-//MRi/FTE5O9snWaO4ZbLTz9O2s"
+vary: Accept-Encoding
+
+{
+  "error": {
+    "type": "token-not-provided",
+    "message": "Authentication token was not provided"
+  }
+}

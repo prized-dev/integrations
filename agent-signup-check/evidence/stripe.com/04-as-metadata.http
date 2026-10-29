@@ -1,0 +1,406 @@
+GET https://stripe.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:25.107Z
+final-url: https://stripe.com/.well-known/oauth-authorization-server
+
+HTTP 404
+server: nginx
+date: Wed, 28 Oct 2026 23:58:24 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+content-security-policy: base-uri 'none'; connect-src https://c.increment.com https://c.stripe.dev https://c.stripe.global https://c.stripe.partners blob: https://b.stripecdn.com https://climate.stripe.com https://errors.stripe.com https://ext.stripe.com https://r.stripe.com https://stripe-images.s3.us-west-1.amazonaws.com https://stripe.com https://y4pfttj91h-1.algolianet.com/1/indexes/mkt_partners/query https://y4pfttj91h-2.algolianet.com/1/indexes/mkt_partners/query https://y4pfttj91h-3.algolianet.com/1/indexes/mkt_partners/query https://y4pfttj91h-dsn.algolia.net/1/indexes/mkt_partners/query https://tax-connectors.stripe.com 'self'; default-src 'none'; font-src https://b.stripecdn.com 'self'; form-action https://climate.stripe.com https://stripe.com 'self'; frame-ancestors https://app.contentful.com 'self'; frame-src https://checkout.stripe.dev https://support-conversations.stripe.com https://b.stripecdn.com https://checkout.stripe.com https://crypto-js.stripe.com https://js.stripe.com 'self'; img-src data: https://assets.ctfassets.net https://assets.stripeassets.com https://b.stripecdn.com https://images.ctfassets.net https://images.stripeassets.com https://q.stripe.com https://stripe-camo.global.ssl.fastly.net 'self'; media-src https://assets.ctfassets.net https://assets.stripeassets.com https://b.stripecdn.com https://videos.ctfassets.net https://videos.stripeassets.com 'self'; script-src https://b.stripecdn.com https://crypto-js.stripe.com https://js.stripe.com 'self' 'sha256-3aWvb9tRBjmz1OjR3n7mwiTm94+s4iki4mMZF82asmc=' 'sha256-5LtzXhT7UFn+GqP5pKEMGL08UNZsrzANHFEBW/mQHGw=' 'sha256-beLzNcen8LrazzSCRjAapoIMTgJI0osPWGNSX7aK6lc=' 'sha256-cCM0Z4lzGkzQnmbdVw+ouz0JRawyaKcZ4yiqzqYS7ek=' 'sha256-vTifGUJH6hJYTvstw4xJ4xfr/vE0ELkOV4GpCumyqfg=' 'sha256-KxhSaxKB5RFTQsqfRwp+zG7iLjvMrTAySqnSvWlqct0=' 'sha256-tMuJ8c00j54yuxogrdIJeGhNVB350dc56i969XRz/Mc=' 'sha256-aEFSvCaVnb2wNwuO3IzA8J44RdTKt6vms9beA7BcCYg=' 'sha256-0SWEc2BfR2o77i2vUiNNIrFKQkjc2Ujsr2hlfZ6oUek=' 'report-sample'; style-src https://b.stripecdn.com 'self' 'unsafe-inline'; worker-src 'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=3wxbKwgc7nCucHYMRtJCjcVI1iAlhkYglaWg8gbl8t3_EoXpY2NC1VcaZZlnLdw%3D; report-to csp
+cross-origin-opener-policy: same-origin-allow-popups; report-to="wsp_coop"
+cross-origin-opener-policy-report-only: same-origin-allow-popups; report-to="wsp_coop"
+report-to: {"group":"coop","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/coop-report"}],"include_subdomains":true}, {"group":"wsp_coop","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/coop-report?s=3wxbKwgc7nCucHYMRtJCjcVI1iAlhkYglaWg8gbl8t3_EoXpY2NC1VcaZZlnLdw="}],"include_subdomains":true}, {"group":"wsp_coep","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/coep-report?s=3wxbKwgc7nCucHYMRtJCjcVI1iAlhkYglaWg8gbl8t3_EoXpY2NC1VcaZZlnLdw="}],"include_subdomains":true}, {"group":"csp","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/csp-report-v2?q=3wxbKwgc7nCucHYMRtJCjcVI1iAlhkYglaWg8gbl8t3_EoXpY2NC1VcaZZlnLdw%3D&t=1"}],"include_subdomains":true}
+reporting-endpoints: coop="https://q.stripe.com/coop-report", wsp_coop="https://q.stripe.com/coop-report?s=3wxbKwgc7nCucHYMRtJCjcVI1iAlhkYglaWg8gbl8t3_EoXpY2NC1VcaZZlnLdw=", wsp_coep="https://q.stripe.com/coep-report?s=3wxbKwgc7nCucHYMRtJCjcVI1iAlhkYglaWg8gbl8t3_EoXpY2NC1VcaZZlnLdw=", csp="https://q.stripe.com/csp-report-v2?q=3wxbKwgc7nCucHYMRtJCjcVI1iAlhkYglaWg8gbl8t3_EoXpY2NC1VcaZZlnLdw%3D&t=1"
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-stripe-proxy-response: upstream
+x-stripe-server-rpc-duration-micros: 27306
+x-wc: 3ff
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+content-encoding: gzip
+
+<!DOCTYPE html>
+<html
+  class="MktRoot"
+  lang="en-US"
+  data-js-controller="Page"
+  data-page-id="Not found"
+  data-page-title="Page not found"
+  data-loading
+>
+  <head>
+    <script>window.__capturedErrors = [];
+window.onerror = function (message, url, line, column, error) { __capturedErrors.push(error); };
+window.onunhandledrejection = function(evt) { __capturedErrors.push(evt.reason); }
+</script>
+<meta
+  name="sentry-config"
+  data-js-dsn=""
+  data-js-release="3dc5239859e8a80095fe8a8ccd4b4de16999b952"
+  data-js-environment="production"
+  data-js-project="mkt"
+>
+
+    <meta name="edge-experiment-treatments" content="">
+<meta name="experiment-treatments" content="">
+<meta name="experiment-token" content="">
+    
+
+    <script>(() => {
+  const getExperimentsContent = () =>
+    document.querySelector('meta[name="edge-experiment-treatments"]')
+      ?.content ||
+    document.querySelector('meta[name="experiment-treatments"]')?.content;
+
+  const buildAssignedRules = (experimentId, variantId) => {
+    const expClass = CSS.escape(experimentId);
+    const varClass = CSS.escape(variantId);
+    return [
+      `.${expClass}.${varClass}.client-variant-wrapper { display: unset; }`,
+      `.${expClass}.control.client-variant-wrapper { display: none; }`,
+    ];
+  };
+
+  const generateClientSideExperimentsStyle = () => {
+    const baseRules = [
+      '.client-variant-wrapper { display: none; }',
+      '.control.client-variant-wrapper { display: unset; }',
+    ];
+
+    const experimentsContent = getExperimentsContent();
+
+    if (!experimentsContent) {
+      return baseRules.join('\n');
+    }
+
+    const assignedRules = experimentsContent
+      .split(',')
+      .map((entry) => {
+        const [experimentId, variantId, , , , renderSide] = entry.split('.');
+        return {experimentId, variantId, renderSide};
+      })
+      .filter((exp) => exp.renderSide === 'c' && exp.variantId !== 'control')
+      .flatMap((exp) => buildAssignedRules(exp.experimentId, exp.variantId));
+
+    return [...baseRules, ...assignedRules].join('\n');
+  };
+
+  const style = document.createElement('style');
+  style.id = 'experiments-style';
+  style.textContent = generateClientSideExperimentsStyle();
+  document.head.appendChild(style);
+
+  document.currentScript?.remove();
+})();
+</script>
+
+    
+    
+
+    <meta name="request-country" content="">
+
+    <script type="application/json" id="AnalyticsConfigurationJSON" >{"GTM_ID":"GTM-WK8882T","GTM_FRAME_URL":"https://b.stripecdn.com/stripethirdparty-srv/assets/","enableKeepalive":true,"environment":"production"}</script>
+
+    <template id="source-attribution-loader">
+  <script defer
+    src="https://b.stripecdn.com/mkt-statics-srv/assets/imt-1a78cab60245dc88379d8866f041610e.js"
+    data-store_url="https://b.stripecdn.com/mkt-statics-srv/assets/store-936f0d847a16164e7f6b15d74659c4a9.html">
+  </script>
+</template>
+
+    <meta charset='utf-8' />
+    
+    <meta name='viewport' content='width=device-width, initial-scale=1, viewport-fit=cover' />
+
+    
+      <link rel="icon" type="image/svg+xml" href="https://images.ctfassets.net/fzn2n1nzq965/1hgcBNd12BfT9VLgbId7By/01d91920114b124fb4cf6d448f9f06eb/favicon.svg" />
+<link rel="icon" type="image/png" href="https://images.ctfassets.net/fzn2n1nzq965/4vVgZi0ZMoEzOhkcv7EVwK/8cce6fdcf2733b2ec8e99548908847ed/favicon.png?w=96&amp;h=96" sizes="96x96" />
+<link rel="shortcut icon" href="https://assets.ctfassets.net/fzn2n1nzq965/nu0iR4KqmkdJ52fgRts09/c3a10df318e7ffb1f516073daadea625/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="https://images.ctfassets.net/fzn2n1nzq965/4vVgZi0ZMoEzOhkcv7EVwK/8cce6fdcf2733b2ec8e99548908847ed/favicon.png?w=180&amp;h=180" />
+    
+    
+    
+    <meta name="description" content="">
+    
+
+    
+      <link rel="canonical" href="https://stripe.com/">
+<link rel="alternate" href="https://stripe.com/" hreflang="x-default">
+<link rel="alternate" href="https://stripe.com/" hreflang="en-US">
+<link rel="alternate" href="https://stripe.com/es-us" hreflang="es-US">
+<link rel="alternate" href="https://stripe.com/zh-us" hreflang="zh-US">
+<link rel="alternate" href="https://stripe.com/ae" hreflang="en-AE">
+<link rel="alternate" href="https://stripe.com/at" hreflang="de-AT">
+<link rel="alternate" href="https://stripe.com/en-at" hreflang="en-AT">
+<link rel="alternate" href="https://stripe.com/au" hreflang="en-AU">
+<link rel="alternate" href="https://stripe.com/nl-be" hreflang="nl-BE">
+<link rel="alternate" href="https://stripe.com/fr-be" hreflang="fr-BE">
+<link rel="alternate" href="https://stripe.com/de-be" hreflang="de-BE">
+<link rel="alternate" href="https://stripe.com/en-be" hreflang="en-BE">
+<link rel="alternate" href="https://stripe.com/en-bg" hreflang="en-BG">
+<link rel="alternate" href="https://stripe.com/br" hreflang="pt-BR">
+<link rel="alternate" href="https://stripe.com/en-br" hreflang="en-BR">
+<link rel="alternate" href="https://stripe.com/en-ca" hreflang="en-CA">
+<link rel="alternate" href="https://stripe.com/fr-ca" hreflang="fr-CA">
+<link rel="alternate" href="https://stripe.com/de-ch" hreflang="de-CH">
+<link rel="alternate" href="https://stripe.com/fr-ch" hreflang="fr-CH">
+<link rel="alternate" href="https://stripe.com/it-ch" hreflang="it-CH">
+<link rel="alternate" href="https://stripe.com/en-ch" hreflang="en-CH">
+<link rel="alternate" href="https://stripe.com/cn" hreflang="zh-CN">
+<link rel="alternate" href="https://stripe.com/en-cn" hreflang="en-CN">
+<link rel="alternate" href="https://stripe.com/en-cy" hreflang="en-CY">
+<link rel="alternate" href="https://stripe.com/en-cz" hreflang="en-CZ">
+<link rel="alternate" href="https://stripe.com/de" hreflang="de-DE">
+<link rel="alternate" href="https://stripe.com/en-de" hreflang="en-DE">
+<link rel="alternate" href="https://stripe.com/en-dk" hreflang="en-DK">
+<link rel="alternate" href="https://stripe.com/en-ee" hreflang="en-EE">
+<link rel="alternate" href="https://stripe.com/es" hreflang="es-ES">
+<link rel="alternate" href="https://stripe.com/en-es" hreflang="en-ES">
+<link rel="alternate" href="https://stripe.com/en-fi" hreflang="en-FI">
+<link rel="alternate" href="https://stripe.com/sv-fi" hreflang="sv-FI">
+<link rel="alternate" href="https://stripe.com/fr" hreflang="fr-FR">
+<link rel="alternate" href="https://stripe.com/en-fr" hreflang="en-FR">
+<link rel="alternate" href="https://stripe.com/gb" hreflang="en-GB">
+<link rel="alternate" href="https://stripe.com/en-gi" hreflang="en-GI">
+<link rel="alternate" href="https://stripe.com/en-gr" hreflang="en-GR">
+<link rel="alternate" href="https://stripe.com/en-hk" hreflang="en-HK">
+<link rel="alternate" href="https://stripe.com/zh-hk" hreflang="zh-HK">
+<link rel="alternate" href="https://stripe.com/en-hr" hreflang="en-HR">
+<link rel="alternate" href="https://stripe.com/it-hr" hreflang="it-HR">
+<link rel="alternate" href="https://stripe.com/en-hu" hreflang="en-HU">
+<link rel="alternate" href="https://stripe.com/ie" hreflang="en-IE">
+<link rel="alternate" href="https://stripe.com/in" hreflang="en-IN">
+<link rel="alternate" href="https://stripe.com/it" hreflang="it-IT">
+<link rel="alternate" href="https://stripe.com/en-it" hreflang="en-IT">
+<link rel="alternate" href="https://stripe.com/jp" hreflang="ja-JP">
+<link rel="alternate" href="https://stripe.com/en-jp" hreflang="en-JP">
+<link rel="alternate" href="https://stripe.com/de-li" hreflang="de-LI">
+<link rel="alternate" href="https://stripe.com/en-li" hreflang="en-LI">
+<link rel="alternate" href="https://stripe.com/en-lt" hreflang="en-LT">
+<link rel="alternate" href="https://stripe.com/fr-lu" hreflang="fr-LU">
+<link rel="alternate" href="https://stripe.com/de-lu" hreflang="de-LU">
+<link rel="alternate" href="https://stripe.com/en-lu" hreflang="en-LU">
+<link rel="alternate" href="https://stripe.com/en-lv" hreflang="en-LV">
+<link rel="alternate" href="https://stripe.com/en-my" hreflang="en-MY">
+<link rel="alternate" href="https://stripe.com/zh-my" hreflang="zh-MY">
+<link rel="alternate" href="https://stripe.com/en-mt" hreflang="en-MT">
+<link rel="alternate" href="https://stripe.com/mx" hreflang="es-MX">
+<link rel="alternate" href="https://stripe.com/en-mx" hreflang="en-MX">
+<link rel="alternate" href="https://stripe.com/nl" hreflang="nl-NL">
+<link rel="alternate" href="https://stripe.com/en-nl" hreflang="en-NL">
+<link rel="alternate" href="https://stripe.com/en-no" hreflang="en-NO">
+<link rel="alternate" href="https://stripe.com/nz" hreflang="en-NZ">
+<link rel="alternate" href="https://stripe.com/en-pl" hreflang="en-PL">
+<link rel="alternate" href="https://stripe.com/pt-pt" hreflang="pt-PT">
+<link rel="alternate" href="https://stripe.com/en-pt" hreflang="en-PT">
+<link rel="alternate" href="https://stripe.com/en-ro" hreflang="en-RO">
+<link rel="alternate" href="https://stripe.com/se" hreflang="sv-SE">
+<link rel="alternate" href="https://stripe.com/en-se" hreflang="en-SE">
+<link rel="alternate" href="https://stripe.com/en-sg" hreflang="en-SG">
+<link rel="alternate" href="https://stripe.com/zh-sg" hreflang="zh-SG">
+<link rel="alternate" href="https://stripe.com/en-si" hreflang="en-SI">
+<link rel="alternate" href="https://stripe.com/it-si" hreflang="it-SI">
+<link rel="alternate" href="https://stripe.com/en-sk" hreflang="en-SK">
+<link rel="alternate" href="https://stripe.com/th" hreflang="th-TH">
+<link rel="alternate" href="https://stripe.com/en-th" hreflang="en-TH">
+<link rel="alternate" href="https://stripe.com/br" hreflang="pt">
+<link rel="alternate" href="https://stripe.com/nl" hreflang="nl">
+<link rel="alternate" href="https://stripe.com/" hreflang="en">
+<link rel="alternate" href="https://stripe.com/fr" hreflang="fr">
+<link rel="alternate" href="https://stripe.com/de" hreflang="de">
+<link rel="alternate" href="https://stripe.com/it" hreflang="it">
+<link rel="alternate" href="https://stripe.com/jp" hreflang="ja">
+<link rel="alternate" href="https://stripe.com/zh-sg" hreflang="zh">
+<link rel="alternate" href="https://stripe.com/es" hreflang="es">
+<link rel="alternate" href="https://stripe.com/se" hreflang="sv">
+<link rel="alternate" href="https://stripe.com/th" hreflang="th">
+
+    
+
+    <title>Page not found</title>
+
+    
+    <meta name="format-detection" content="telephone=no">
+    
+
+    
+
+    
+    
+    
+    
+
+    
+      <template data-js-controller="NotificationCenterLoader">
+  <div
+  class="NotificationCenter theme--Light flavor--Chroma accent--Slate"
+  data-js-controller="NotificationCenter"
+  data-js-notification-path="/notifications"
+>
+  <div class="NotificationCenter__backdrop" data-js-target="NotificationCenter.backdrop"></div>
+  <div class="NotificationCenter__list" data-js-target="NotificationCenter.list">
+    
+    
+
+    <div
+      class="NotificationCenter__chatSlot"
+      data-js-target="NotificationCenter.chatSlot"
+      data-universal-chat-slot
+      data-layout="empty"
+    >
+      <template data-js-controller="UniversalChatInitializer">
+  <div class="UniversalChatCtaCard__container UniversalChatCtaCard__container--fixed" data-universal-chat-cta-card>
+  <div class="UniversalChatCtaCard__collapsible">
+    <div class="UniversalChatCtaCard__card" data-universal-chat-faces-card>
+      <div class="UniversalChatCtaCard__gap">
+        <div
+  class="
+    Card
+    
+    
+    
+    Card--shadowMedium
+    
+    
+    
+    Notification__card UniversalChatCtaCard
+  "
+  
+  
+  
+  
+  
+  
+>
+  <div class="Notification__content">
+            <div class="UniversalChatCtaCard__header">
+              <div class="UniversalChatCtaCard__avatars">
+                <img
+                  class="UniversalChatCtaCard__avatar UniversalChatCtaCard__avatar--1"
+                  data-universal-chat-avatar-1
+                  src=""
+                  alt=""
+                  width="34"
+                  height="34"
+                />
+                <img
+                  class="UniversalChatCtaCard__avatar UniversalChatCtaCard__avatar--2"
+                  data-universal-chat-avatar-2
+                  src=""
+                  alt=""
+                  width="38"
+                  height="38"
+                />
+              </div>
+
+              <div class="UniversalChatCtaCard__availability">
+                <span class="UniversalChatCtaCard__dot" aria-hidden="true"></span>
+                <span class="UniversalChatCtaCard__agentCount">
+                  <span data-universal-chat-agent-count>8</span>&nbsp;sales reps available
+                </span>
+              </div>
+            </div>
+
+            <p class="UniversalChatCtaCard__subtitle">We're here to discuss your business needs.</p>
+          </div>
+
+          <button
+            class="Notification__closeButton"
+            data-universal-chat-cta-card-close
+            type="button"
+            aria-label="Dismiss chat"
+          >
+            <svg width="20px" height="20px" aria-hidden="true">
+              <path fill="var(--closeButtonFill)" fill-rule="evenodd" d="M10 0a10 10 0 1 1 0 20 10 10 0 0 1 0-20zM7.17 5.76a1 1 0 0 0-1.41 1.41L8.59 10l-2.83 2.83a1 1 0 0 0 1.41 1.41L10 11.41l2.83 2.83a1 1 0 0 0 1.41-1.41L11.41 10l2.83-2.83a1 1 0 1 0-1.41-1.41L10 8.59z" />
+            </svg>
+          </button>
+</div>
+      </div>
+    </div>
+  </div>
+
+  <button
+    class="UniversalChatCtaCard__cta"
+    data-universal-chat-cta-card-open
+    data-testid="chat-button"
+    type="button"
+    aria-label="Chat now with sales"
+  >
+    Chat now<span class="UniversalChatCtaCard__ctaSuffix" aria-hidden="true">&nbsp;with sales</span>
+  </button>
+</div>
+
+  <iframe data-universal-chat-iframe title="Chat Widget" src="https://support-conversations.stripe.com/widget?entrypoint=dot_com&audience=dot_com" style="position: fixed; right: 24px; bottom: 0px; left: auto; z-index: 2147483639; width: 390px; max-height: 708px; overflow: hidden; background-color: rgb(230, 235, 241); border: 0px; border-radius: 8px 8px 0 0; box-shadow: rgba(0, 0, 0, 0.05) 0px 12px 15px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.08) 0px 5px 9px; transition: 0.2s ease-in-out; transform: translate(0, 100%); height: calc(-40px + 100svh); opacity: 0;"></iframe>
+
+  <div data-universal-chat-unseen-messages-count-div style="display: none; visibility: hidden; position: fixed; right: 11px; bottom: 33px; z-index: 2147483640; height: 24px; width: 24px; color: #ffffff; background-color: #635bff; border-radius: 50%; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 500; padding-bottom: 2px;"></div>
+</template>
+    </div>
+  </div>
+
+  <template data-js-target="NotificationCenter.template">
+    <div
+  class="Notification"
+  data-js-controller="Notification"
+  data-js-target-list="NotificationCenter.notifications"
+  data-js-id=""
+>
+  <div
+  class="
+    Card
+    
+    
+    
+    Card--shadowMedium
+    
+    
+    
+    Notification__card
+  "
+  
+  
+  
+  
+  
+  
+>
+  <div class="Notification__content"></div>
+    <button class="Notification__closeButton" data-js-target="Notification.closeButton" aria-label="Close"><svg width="20px" height="20px"><path fill="var(--closeButtonFill)" fill-rule="evenodd" d="M10 0a10 10 0 1 1 0 20 10 10 0 0 1 0-20zM7.17 5.76a1 1 0 0 0-1.41 1.41L8.59 10l-2.83 2.83a1 1 0 0 0 1.41 1.41L10 11.41l2.83 2.83a1 1 0 0 0 1.41-1.41L11.41 10l2.83-2.83a1 1 0 1 0-1.41-1.41L10 8.59z" /></svg></button>
+</div>
+</div>
+  </template>
+</div>
+</template>
+    
+
+    
+
+    <meta data-js-controller="ScrollDepthTracker"></meta>
+    
+    
+      <meta data-js-controller="MonitorWebVitals"></meta>
+    
+
+    
+    <link rel="preconnect" href="https://q.stripe.com" crossorigin>
+<link rel="dns-prefetch" href="https://q.stripe.com">
+    <link rel="preconnect" href="https://images.ctfassets.net" crossorigin>
+<link rel="dns-prefetch" href="https://images.ctfassets.net">
+    <link rel="preconnect" href="https://assets.ctfassets.net" crossorigin>
+<link rel="dns-prefetch" href="https://assets.ctfassets.net">
+    
+      
+    
+    
+      
+    
+    <script>new MutationObserver(e=>{for(const d of e)if(d.addedNodes)for(const e of d.addedNodes)e instanceof HTMLLinkElement&&void 0!==e.dataset.jsLazyStyle&&e.addEventListener("load",function(){this.media="all"})}).observe(document.head,{childList:!0}),document.addEventListener("DOMContentLoaded",()=>{for(const e of document.querySelectorAll("link[data-js-lazy-style]"))"all"!==e.media&&(e.media="all")});
+</script>
+    <link rel="preconnect" href="https://b.stripecdn.com" crossorigin>
+<link rel="dns-prefetch" href="https://b.stripecdn.com">
+
+    
+
+[body trimmed for publication: kept 16384 of 370091 characters; sha256 of the full body 032486d242c8ef014d4d6cad51a4e4005e8faac51cd029636770efaf7b5c5661]

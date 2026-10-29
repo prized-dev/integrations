@@ -1,0 +1,156 @@
+{
+ "site": "browser-use.com",
+ "checkedAt": "2026-10-28T23:58:13.803Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 4,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://browser-use.com/auth.md",
+   "heading": "# Browser Use authentication for agents",
+   "registrationEndpoints": [],
+   "mentions": [],
+   "status": "partial",
+   "reason": "An agent sign-in guide is published at /auth.md, but its heading (# Browser Use authentication for agents) does not name auth.md, so tools looking for the spec may skip it"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://browser-use.com/.well-known/oauth-protected-resource",
+   "via": "well-known",
+   "resource": "https://api.browser-use.com/mcp",
+   "authorization_servers": [
+    "https://api.browser-use.com"
+   ],
+   "status": "partial",
+   "reason": "resource (https://api.browser-use.com/mcp) does not match the URL the metadata came from; RFC 9728 section 3.3 says a client MUST NOT use it"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://browser-use.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.browser-use.com/api/v4/runs",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "where": "llms.txt",
+   "url": "https://browser-use.com/llms.txt",
+   "match": "x402",
+   "snippet": "d.browser-use.com/settings?tab=api-keys&new=1) - [x402 for crypto-wallet agents](https://docs.browser-use.com/cloud/guides/x402); most users create an API key i",
+   "status": "partial",
+   "reason": "llms.txt mentions a payment path (x402) in prose; nothing machine-readable"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://browser-use.com/llms.txt",
+   "heading": "# Browser Use",
+   "bytes": 38591,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://browser-use.com/auth.md",
+   "finalUrl": "https://browser-use.com/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 172,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://browser-use.com/llms.txt",
+   "finalUrl": "https://browser-use.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 66,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.browser-use.com/api/v4/runs",
+   "finalUrl": "https://api.browser-use.com/api/v4/runs",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 202,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://browser-use.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.browser-use.com/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 198,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.browser-use.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.browser-use.com/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 218,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://browser-use.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.browser-use.com/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 195,
+   "redirects": 1
+  },
+  {
+   "label": "catch-all probe",
+   "url": "https://browser-use.com/agent-signup-check-no-such-page.md",
+   "finalUrl": "https://browser-use.com/agent-signup-check-no-such-page.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 214,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://browser-use.com/.well-known/x402",
+   "finalUrl": "https://browser-use.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 95,
+   "redirects": 0
+  }
+ ]
+}

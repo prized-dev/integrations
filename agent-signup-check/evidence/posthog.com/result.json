@@ -1,0 +1,162 @@
+{
+ "site": "posthog.com",
+ "checkedAt": "2026-10-28T23:58:34.818Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 3,
+ "partial": 2,
+ "total": 7,
+ "whoActs": "the agent's provider vouches (ID-JAG)",
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://us.posthog.com/auth.md",
+   "heading": "# PostHog",
+   "registrationEndpoints": [],
+   "mentions": [
+    "anonymous",
+    "identity_assertion",
+    "service_auth"
+   ],
+   "status": "partial",
+   "reason": "An agent sign-in guide is published at /auth.md, but its heading (# PostHog) does not name auth.md, so tools looking for the spec may skip it"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://us.posthog.com/.well-known/oauth-protected-resource",
+   "via": "www-authenticate",
+   "resource": "https://us.posthog.com",
+   "authorization_servers": [
+    "https://us.posthog.com"
+   ],
+   "status": "pass",
+   "reason": "Names 1 authorization server"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://us.posthog.com/.well-known/oauth-authorization-server",
+   "endpoint": "https://us.posthog.com/oauth/token/",
+   "identity_types_supported": [
+    "identity_assertion"
+   ],
+   "field": "identity_endpoint",
+   "issuer": "https://us.posthog.com",
+   "status": "partial",
+   "reason": "agent_auth names the OAuth token endpoint (https://us.posthog.com/oauth/token/) as its identity endpoint: it exchanges an assertion for a token, it does not register a new account"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://us.posthog.com/api/projects/",
+   "httpStatus": 401,
+   "www_authenticate": "Bearer resource_metadata=\"https://us.posthog.com/.well-known/oauth-protected-resource\"",
+   "status": "pass",
+   "reason": "401 with a Bearer challenge that points to resource metadata (RFC 9728 section 5.1)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://posthog.com/llms.txt",
+   "heading": "# PostHog",
+   "bytes": 476704,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://posthog.com/auth.md",
+   "finalUrl": "https://posthog.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 73,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://posthog.com/llms.txt",
+   "finalUrl": "https://posthog.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 62,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://us.posthog.com/api/projects/",
+   "finalUrl": "https://us.posthog.com/api/projects/",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 199,
+   "redirects": 0
+  },
+  {
+   "label": "prm (from 401)",
+   "url": "https://us.posthog.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://us.posthog.com/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 183,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://us.posthog.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://us.posthog.com/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 181,
+   "redirects": 0
+  },
+  {
+   "label": "auth.md (agent_auth.skill)",
+   "url": "https://us.posthog.com/auth.md",
+   "finalUrl": "https://us.posthog.com/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 261,
+   "redirects": 0
+  },
+  {
+   "label": "catch-all probe",
+   "url": "https://us.posthog.com/agent-signup-check-no-such-page.md",
+   "finalUrl": "https://us.posthog.com/agent-signup-check-no-such-page.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 251,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://posthog.com/.well-known/x402",
+   "finalUrl": "https://posthog.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 80,
+   "redirects": 0
+  }
+ ]
+}

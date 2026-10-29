@@ -1,0 +1,163 @@
+GET https://together.ai/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:08.063Z
+redirect: 301 from https://together.ai/llms.txt
+final-url: https://www.together.ai/llms.txt
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:57:05 GMT
+content-type: text/plain; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a51de17e7f6c6cc2-SEA
+cf-cache-status: HIT
+age: 14531
+content-encoding: gzip
+last-modified: Wed, 28 Oct 2026 22:01:42 GMT
+server: cloudflare
+vary: accept-encoding
+content-security-policy: default-src 'self'; base-uri 'self'; frame-ancestors 'self'; object-src 'none'; form-action 'self' https://*.hsforms.com https://www.facebook.com; upgrade-insecure-requests; block-all-mixed-content; img-src 'self' data: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; connect-src 'self' https://webflow.com https://cdn.jsdelivr.net https://*.together.ai https://api.together.xyz https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.doubleclick.net https://*.googlesyndication.com https://*.google.com https://www.googleadservices.com https://*.amplitude.com https://px.ads.linkedin.com https://*.reddit.com https://analytics.twitter.com https://t.co https://*.hubspot.com https://*.hubapi.com https://*.hsforms.com https://*.hs-analytics.net https://*.hsadspixel.net https://*.hs-banner.com https://*.termly.io https://*.intellimize.co https://*.intellimizeio.com https://*.unifyintent.com https://*.lfeeder.com https://*.salesforce-scrt.com https://boards-api.greenhouse.io https://challenges.cloudflare.com https://maps.googleapis.com https://*.b-cdn.net https://d3-36c34dc0877246a0b32c4f4e24be6ce8.ecs.us-east-1.on.aws https://bded8a3c6ae-1-1053047382554.us-central1.run.app; frame-src 'self' https://*.together.ai https://www.googletagmanager.com https://*.my.site.com https://challenges.cloudflare.com https://*.hsforms.com https://www.youtube.com https://www.youtube-nocookie.com https://cdn.embedly.com https://app.termly.io https://www.facebook.com https://luma.com; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' https: blob:
+surrogate-control: max-age=43200
+surrogate-key: www.together.ai 69654e88dce9154b5f1206dd sp:dffd99cc240c2b4c0c9ab9d553f533c0
+x-robots-tag: noindex
+x-wf-region: us-east-1
+alt-svc: h3=":443"; ma=86400
+
+# Together AI
+
+> Together AI is the AI Native Cloud: a full-stack platform for running, fine-tuning, and training
+> open-source and frontier AI models in production, used by developers and AI-native companies for
+> serverless and dedicated inference, model shaping, code sandboxes, and NVIDIA GPU clusters via an
+> OpenAI-compatible API. This file covers www.together.ai — products, pricing, models, customers and
+> company pages. API reference and how-to guides live on docs.together.ai, which publishes its own
+> llms.txt and is the authoritative source for anything developer-facing.
+
+The inference API base URL is https://api.together.ai/v1 (the older api.together.xyz host still
+resolves). The model catalog changes most weeks, so read the live list rather than memorized model
+names: GET https://api.together.ai/v1/models, or the serverless catalog page below. Model pages on this site are always /models/<slug>.
+
+## Getting started
+
+- [Quickstart](https://docs.together.ai/docs/quickstart): Make your first Together AI API request.
+- [Docs index for LLMs](https://docs.together.ai/llms.txt): Auto-generated index of the full docs site.
+- [OpenAI compatibility](https://docs.together.ai/docs/inference/openai-compatibility): Use an OpenAI SDK client against Together AI unchanged.
+- [API keys and authentication](https://docs.together.ai/docs/api-keys-authentication): Create and use project-scoped API keys.
+- [Serverless model catalog](https://docs.together.ai/docs/serverless/models): Models available for per-token inference.
+- [Pricing](https://www.together.ai/pricing): Prices for inference, fine-tuning and GPU clusters.
+
+## For AI agents
+
+Every page on www.together.ai returns Markdown instead of HTML when requested with an
+`Accept: text/markdown` header; there are no `.md` URLs on this domain and `.md` paths return 404.
+On docs.together.ai each page has a `.md` mirror (append `.md` to the page URL). The full list of
+indexable pages on this domain is at www.together.ai/sitemap.xml.
+
+- [Full documentation text](https://docs.together.ai/llms-full.txt): The whole docs site as one Markdown file.
+
+## Products
+
+- [Together AI](https://www.together.ai/): Homepage: inference, fine-tuning and GPU clusters.
+- [Products overview](https://www.together.ai/products): How the product lines fit together.
+- [Serverless Inference](https://www.together.ai/serverless-inference): Open models on demand, priced per token.
+- [Dedicated Model Inference](https://www.together.ai/dedicated-model-inference): Dedicated endpoints for a single model.
+- [Dedicated Container Inference](https://www.together.ai/dedicated-container-inference): Dedicated GPUs for video, audio and avatar models.
+- [Batch Inference](https://www.together.ai/batch-inference): Async large-scale jobs at up to 50% lower cost.
+- [Provisioned Throughput](https://www.together.ai/provisioned-throughput): Reserved token capacity, 99% uptime SLA.
+- [Fine-Tuning](https://www.together.ai/fine-tuning): Fine-tune open models, including 100B+ parameters.
+- [Custom Training](https://www.together.ai/custom-training): RL and SFT post-training, full-weight or LoRA.
+- [Evaluations](https://www.together.ai/evaluations): Benchmark model quality before shipping.
+- [Sandbox](https://www.together.ai/sandbox): Secure code sandboxes with instant VMs.
+- [GPU Clusters](https://www.together.ai/gpu-clusters): H100, H200, B200 and GB200 clusters with InfiniBand.
+- [AI Factory](https://www.together.ai/ai-factory): Private GPU cloud for training, fine-tuning and inference.
+- [Managed Storage](https://www.together.ai/managed-storage): Object and parallel-filesystem storage for AI.
+
+## GPU hardware
+
+- [NVIDIA GB200 NVL72](https://www.together.ai/gpu/nvidia-gb200-nvl72): 72 Blackwell GPUs, 13.4TB HBM3e; pricing and specs.
+- [NVIDIA GB300 NVL72](https://www.together.ai/gpu/nvidia-gb300-nvl72): 72 Blackwell Ultra GPUs, 21TB HBM3e; pricing and specs.
+- [NVIDIA HGX B200](https://www.together.ai/gpu/nvidia-hgx-b200): 180GB HBM3e, 7.7TB/s, FP4; on-demand or reserved.
+- [NVIDIA HGX B300](https://www.together.ai/gpu/nvidia-hgx-b300): 288GB HBM3e, 8TB/s, enhanced FP4; on-demand or reserved.
+- [NVIDIA HGX H200](https://www.together.ai/gpu/nvidia-h200): 141GB HBM3e, 4.8TB/s; on-demand or reserved.
+- [NVIDIA HGX H100](https://www.together.ai/gpu/nvidia-h100): 80GB HBM3, 3.35TB/s; on-demand or reserved.
+
+## Models
+
+- [Model catalog](https://www.together.ai/models): 200+ text, image, video, code and audio models.
+- [ByteDance Seedance 2.5](https://www.together.ai/models/seedance-2-5): Video model generating 30-second audio-video clips in one pass, up to 50 reference inputs.
+- [DeepSeek V4 Flash 0731](https://www.together.ai/models/deepseek-v4-flash-0731): 284B-parameter (13B active) MoE, 1M context, three reasoning effort levels.
+- [DeepSeek V4 Pro 0813](https://www.together.ai/models/deepseek-v4-pro-0813): 1.6T-parameter (49B active) MoE, three reasoning effort levels, speculative decoding.
+- [DeepSeek V4.1 Flash 1017](https://www.together.ai/models/deepseek-v4-1-flash-1017): Updated V4.1 Flash release with faster task completion and shorter outputs, 1M context.
+- [Elorian Glimpse](https://www.together.ai/models/elorian-glimpse): Visual reasoning model for images and video, tracking objects through motion and predicting what happens next.
+- [GLM-5.3](https://www.together.ai/models/glm-5-3): Coding model post-trained from GLM-5.2, three thinking effort levels, 1M context.
+- [GLM-5.3-Flash](https://www.together.ai/models/glm-5-3-flash): Multimodal GLM-5, 320B-parameter (18B active) MoE, hybrid attention, 1M context.
+- [Kimi K3](https://www.together.ai/models/kimi-k3): 2.8T-parameter MoE, 1M context, native vision.
+- [MiniMax M3](https://www.together.ai/models/minimax-m3): 1M context via sparse attention, multimodal.
+- [MiniMax M3.1 Flash](https://www.together.ai/models/minimax-m3-1-flash): 428B-parameter (23B active) multimodal MoE for coding, agentic workflows and computer use, text, image and video input, 1M context.
+- [Muse Spark Open](https://www.together.ai/models/muse-spark-open): Meta's coding-optimized open-weights model for agentic workflows and tool calling, multimodal input, 1M context.
+- [Qwen3.8-2.4T-A95B](https://www.together.ai/models/qwen3-8-max): 2.4T-parameter MoE, 1M context, multimodal input.
+- [Reflection Beam](https://www.together.ai/models/reflection-beam): 501B-parameter (23B active) MoE for software engineering and long-horizon agents, 1M context, Apache 2.0.
+- [Tev1 4B Experimental](https://www.together.ai/models/tev1-4b-experimental): Experimental Qwen3.5-4B decision model that returns one letter mapped to a labeled option.
+- [Boreal-H3](https://www.together.ai/models/boreal-h3): Creatify Labs' advertising video model post-trained from MiniMax H3, keyframe and multi-reference control up to 2K.
+- [ByteDance Seedance 2.0](https://www.together.ai/models/seedance-2-0): Multimodal video model with synchronized audio, 4-15 second clips, multi-shot narratives.
+- [DeepSeek V4 Pro](https://www.together.ai/models/deepseek-v4-pro): 1.6T-parameter (49B active) MoE, 512K context.
+- [FLUX 3](https://www.together.ai/models/flux-3): Multimodal video model with synchronized audio, up to 20-second multi-shot clips.
+- [GLM-5.2](https://www.together.ai/models/glm-52): 744B-parameter (40B active) MoE, 1M context.
+- [GPT Image 2](https://www.together.ai/models/gpt-image-2): Image generation model with built-in reasoning, native 1K to 4K outputs.
+- [Inkling](https://www.together.ai/models/inkling): 975B-parameter (41B active) multimodal MoE, 524K context.
+- [MiniMax H3](https://www.together.ai/models/minimax-h3): 33B video model producing 4-15 second clips at 24 FPS, 768p default with 2K regeneration.
+- [NVIDIA Nemotron 3.5 Super VL](https://www.together.ai/models/nemotron-3-5-super-vl): 120B-parameter (12B active) multimodal MoE for document, image and video reasoning with tool use.
+- [Qwen3.7-Plus](https://www.together.ai/models/qwen37-plus): Multimodal agent model with 1M context, hybrid GUI and CLI agent control.
+- [Qwen3.8 Flash](https://www.together.ai/models/qwen3-8-flash): Hybrid thinking model with agentic coding, vision-language understanding, 1M context.
+- [Step 5 Preview](https://www.together.ai/models/step-5-preview): StepFun's 600B-parameter (27B active) open-weights MoE for long-horizon agentic work, text and vision input, 1M context.
+- [Ternary Bonsai 2 27B](https://www.together.ai/models/ternary-bonsai-2-27b): Ternary Qwen3.8 27B at 1.76 bits/weight, vision input, 262K context.
+- [Ternary Bonsai 27B](https://www.together.ai/models/prism-ml-ternary-bonsai-27b): Ternary Qwen3.6 27B at 1.71 bits/weight, 262K context.
+
+## Model providers
+
+- [Meta](https://www.together.ai/models-providers/meta): Llama 4 Maverick and Scout.
+- [OpenAI](https://www.together.ai/models-providers/openai): gpt-oss-120B and gpt-oss-20B, Apache 2.0.
+- [DeepSeek](https://www.together.ai/models-providers/deepseek): DeepSeek reasoning and general models.
+- [Moonshot AI](https://www.together.ai/models-providers/moonshot-ai): Kimi models: long context, vision, agentic coding.
+- [Z.ai](https://www.together.ai/models-providers/zai-org): GLM open-weight coding models.
+- [Qwen](https://www.together.ai/models-providers/qwen): Qwen and QwQ hybrid-reasoning models.
+- [MiniMax](https://www.together.ai/models-providers/minimaxai): MiniMax sparse-attention long-context models.
+- [Google](https://www.together.ai/models-providers/google): Gemma open models, built from Gemini technology.
+- [NVIDIA](https://www.together.ai/models-providers/nvidia): Nemotron hybrid Mamba-Transformer models.
+- [Mistral](https://www.together.ai/models-providers/mistral): Mistral models, Apache 2.0, multilingual.
+- [Deep Cogito](https://www.together.ai/models-providers/deep-cogito): Cogito self-improving reasoning models.
+- [Alibaba](https://www.together.ai/models-providers/alibaba): Wan image and video, HappyHorse video.
+- [ByteDance](https://www.together.ai/models-providers/bytedance): Seedance video and Seedream image models.
+- [Black Forest Labs](https://www.together.ai/models-providers/black-forest-labs): FLUX open-weight image models.
+- [Ideogram](https://www.together.ai/models-providers/ideogram): Image models with strong text rendering.
+- [RunDiffusion](https://www.together.ai/models-providers/rundiffusion): Juggernaut photorealistic image models.
+- [Cartesia](https://www.together.ai/models-providers/cartesia): Sonic low-latency text-to-speech.
+- [Deepgram](https://www.together.ai/models-providers/deepgram): Real-time speech-to-text models.
+
+## Solutions
+
+- [Voice](https://www.together.ai/solutions/voice): Co-located STT, LLM and TTS for voice agents.
+
+## Customers
+
+- [Customer stories](https://www.together.ai/customers): Production stories on inference, tuning and clusters.
+- [Cursor](https://www.together.ai/customers/cursor): Real-time inference for in-editor coding agents.
+- [Decagon](https://www.together.ai/customers/decagon): Sub-second voice AI, 6x cost reduction.
+- [Hedra](https://www.together.ai/customers/hedra): AI video at 60% lower cost, 3x faster.
+- [Vercept](https://www.together.ai/customers/vercept): 5x computer-automation inference performance.
+- [The Washington Post](https://www.together.ai/customers/washington-post): "Ask The Post AI", 1.79B tokens a month.
+- [Slingshot AI](https://www.together.ai/customers/slingshot-ai): Mental-health AI fine-tuned by API, ~5x cheaper.
+- [LegionEdge](https://www.together.ai/customers/legionedge): Real-time AI prototyping on Code Sandbox.
+- [SCB10X](https://www.together.ai/customers/scb10x): Typhoon Thai-language models, trained on Together AI.
+
+## Company
+
+- [About us](https://www.together.ai/about-us): The team behind the AI Native Cloud.
+- [Careers](https://www.together.ai/careers): Open roles across research and engineering.
+- [News and press](https://www.together.ai/press): Press coverage and announcements.
+- [Research](https://www.together.ai/research): Research on kernels, inference and agents.
+- [Blog](https://www.together.ai/blog): Product launches and technical guides.
+- [Events](https://www.together.ai/events): Conferences, meetups and webinars.
+- [Series C announcement](https://www.together.ai/blog/announcing-our-series-c): The $800M Series C and open-model economics.
+- [What is an AI Native Cloud?](https://www.together.ai/blog/what-is-an-ai-native-cloud): AI-native cloud versus legacy infrastructure.
+- [Contact sales](https://www.together.ai/contact-sales): Enterprise, cluster and inference inquiries.
+- [Support](https://www.together.ai/support): Support for deployment and production issues.

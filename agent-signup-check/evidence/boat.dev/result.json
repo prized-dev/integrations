@@ -1,0 +1,161 @@
+{
+ "site": "boat.dev",
+ "checkedAt": "2026-10-28T23:57:48.279Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 4,
+ "partial": 2,
+ "total": 7,
+ "whoActs": "nobody (anonymous); the person confirms an email code",
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://boat.dev/auth.md",
+   "heading": "# auth.md",
+   "registrationEndpoints": [
+    "/api/boat/agent/identity",
+    "/api/boat/agent/identity",
+    "/api/boat/agent/identity"
+   ],
+   "mentions": [
+    "anonymous",
+    "identity_assertion",
+    "service_auth"
+   ],
+   "status": "pass",
+   "reason": "auth.md documents agent registration (/api/boat/agent/identity)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://boat.dev/api/box/.well-known/oauth-protected-resource",
+   "via": "www-authenticate",
+   "resource": "https://boat.dev/api/box/v1/",
+   "authorization_servers": [
+    "https://boat.dev/"
+   ],
+   "status": "partial",
+   "reason": "resource (https://boat.dev/api/box/v1/) does not match the URL the metadata came from; RFC 9728 section 3.3 says a client MUST NOT use it"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://boat.dev/.well-known/oauth-authorization-server",
+   "endpoint": "https://boat.dev/api/box/agent/identity",
+   "identity_types_supported": [
+    "anonymous",
+    "service_auth"
+   ],
+   "field": "identity_endpoint",
+   "issuer": "https://boat.dev",
+   "status": "pass",
+   "reason": "agent_auth names a registration endpoint (anonymous, service_auth)"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://boat.dev/api/v1/me",
+   "httpStatus": 401,
+   "www_authenticate": "Bearer resource_metadata=\"https://boat.dev/api/box/.well-known/oauth-protected-resource\"",
+   "status": "pass",
+   "reason": "401 with a Bearer challenge that points to resource metadata (RFC 9728 section 5.1)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "where": "auth.md",
+   "url": "https://boat.dev/auth.md",
+   "match": "billing_required",
+   "snippet": "| Boat API | Finish Step 4 before this call. | | `billing_required` | Boat API | Finish Step 7. | ## Revocation POST `token=<access_token>&token_type_hint=acc",
+   "status": "partial",
+   "reason": "auth.md mentions a payment path (billing_required) in prose; nothing machine-readable"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://boat.dev/llms.txt",
+   "heading": "# boat",
+   "bytes": 59616,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://boat.dev/auth.md",
+   "finalUrl": "https://boat.dev/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 735,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://boat.dev/llms.txt",
+   "finalUrl": "https://boat.dev/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 540,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://boat.dev/api/v1/me",
+   "finalUrl": "https://boat.dev/api/v1/me",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json;charset=utf-8",
+   "ms": 497,
+   "redirects": 0
+  },
+  {
+   "label": "prm (from 401)",
+   "url": "https://boat.dev/api/box/.well-known/oauth-protected-resource",
+   "finalUrl": "https://boat.dev/api/box/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json;charset=utf-8",
+   "ms": 503,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://boat.dev/.well-known/oauth-protected-resource",
+   "finalUrl": "https://boat.dev/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json;charset=utf-8",
+   "ms": 521,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://boat.dev/.well-known/oauth-authorization-server",
+   "finalUrl": "https://boat.dev/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json;charset=utf-8",
+   "ms": 520,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://boat.dev/.well-known/x402",
+   "finalUrl": "https://boat.dev/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 825,
+   "redirects": 0
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+GET https://api.heroku.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:37.726Z
+final-url: https://api.heroku.com/.well-known/oauth-protected-resource
+
+HTTP 400
+content-type: application/json; charset=utf-8
+content-length: 159
+connection: close
+content-security-policy: default-src 'none'; frame-ancestors 'none'
+date: Wed, 28 Oct 2026 23:57:34 GMT
+request-id: 5baf2311-adc2-4085-b769-c2910262e8af,d6f16f71-c376-833f-feb0-4127fbae23eb,a4bac937-de32-5804-b3d7-dc783c1de874,e903daa4-158f-a445-e1ea-bfcc5ce58ff4
+strict-transport-security: max-age=31536000; includeSubDomains
+via: 1.1 spaces-router (0ec3aaa24c5a), 1.1 spaces-router (0ec3aaa24c5a), 1.1 1060b90484c0f94092a0f1bfc61f7e9e.cloudfront.net (CloudFront)
+x-cache: Error from cloudfront
+x-amz-cf-pop: HIO52-P5
+x-amz-cf-id: n9AlCBz0Q9DiVUXhdkFl9QcOsmGqaPoBXFJYFNspQTZS-bOBSSKpeQ==
+
+{"id":"missing_version","error":"Please specify a version along with Heroku's API MIME type. For example, `Accept: application/vnd.heroku+json; version=3`.\n"}

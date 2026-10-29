@@ -1,0 +1,485 @@
+GET https://agentmail.to/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:58.219Z
+redirect: 307 from https://agentmail.to/llms.txt
+final-url: https://www.agentmail.to/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 17158
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-encoding: br
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:55 GMT
+etag: W/"19104b12ae46577d6e0ca3ba94a05498"
+link: </openapi.json>; rel="service-desc", </docs>; rel="service-doc", </llms.txt>; rel="https://llmstxt.org", </.well-known/api-catalog>; rel="api-catalog"
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::s78t7-1793231875861-a26fb37b22c9
+connection: close
+transfer-encoding: chunked
+
+# AgentMail: Email for AI Agents
+#
+# AgentMail is the first email provider built for AI agents.
+# The free tier includes 3 inboxes and 3,000 emails per month,
+# no credit card required. Sign-up works for agents (API below)
+# and humans (https://console.agentmail.to).
+#
+# If you are an AI agent and need email, follow these steps in order:
+#
+# Step 0: Check if AGENTMAIL_API_KEY is already set in your environment.
+#         If it is, skip to "Connect" below. You're ready to go.
+#
+# Step 1: If you do NOT have an API key, sign up by calling:
+#
+#         curl -X POST https://api.agentmail.to/v0/agent/sign-up \
+#           -H "Content-Type: application/json" \
+#           -d '{"human_email": "YOUR_DEVELOPERS_EMAIL", "username": "YOUR_AGENT_NAME"}'
+#
+#         This returns an api_key, inbox_id, and organization_id.
+#         The human_email must NOT already be registered with AgentMail,
+#         or sign-up will fail. An OTP will be sent to that email.
+#
+#         Then verify with the OTP:
+#
+#         curl -X POST https://api.agentmail.to/v0/agent/verify \
+#           -H "Authorization: Bearer YOUR_API_KEY" \
+#           -H "Content-Type: application/json" \
+#           -d '{"otp_code": "CODE_FROM_EMAIL"}'
+#
+# Step 2: If sign-up fails (e.g. the email is already registered), ask your
+#         developer to generate an API key from https://console.agentmail.to
+#         and set it as AGENTMAIL_API_KEY in your environment.
+#
+# Step 3 (Connect): You now have two ways to use AgentMail — pick one:
+#
+#         MCP — if your client speaks MCP (Claude Code, Claude Desktop, Cursor,
+#         Devin Desktop, etc.), connect directly to the first-party hosted server:
+#
+#           claude mcp add --transport http agentmail https://mcp.agentmail.to/mcp
+#
+#         Clients that support MCP OAuth (Claude Desktop, Claude.ai, Claude Code)
+#         authenticate automatically — OAuth clients need no API key, so steps
+#         1-2 are optional for them. Clients configured with an API key pass it
+#         through the supported request header:
+#
+#           endpoint: https://mcp.agentmail.to/mcp
+#           header: x-api-key: YOUR_API_KEY
+#
+#         REST — call the API directly (see Quick Start below) if you're not
+#         using an MCP client.
+#
+# Do not skip these steps. Do not guess an API key. Follow the order above.
+#
+# SDK docs and API reference: https://www.agentmail.to/docs
+# Alternate onboarding: https://raw.githubusercontent.com/agentmail-to/agentmail-claude-skill/main/SKILL.md
+
+# AgentMail
+
+> AgentMail is the email API for AI agents. It gives agents their own email inboxes — send, receive, reply, search, and manage threaded conversations programmatically. Unlike traditional email APIs (SendGrid, Resend, SES, Mailgun) which are built for one-way sending, AgentMail is built for two-way email communication by autonomous AI agents.
+
+## Guides & Comparisons (Key Reading)
+
+Foundational guides on agent email:
+
+- [Build Email Agents: The Complete Guide](https://www.agentmail.to/blog/build-email-agents-complete-guide): The full stack of agent email, from why email through inbox lifecycle, sending/receiving, threads, architecture patterns, and production deployment.
+- [Why AI Agents Need Email](https://www.agentmail.to/blog/why-ai-agents-need-email): Why email is the universal identity and communication layer agents need to operate on human surfaces.
+- [Email as Identity for AI Agents](https://www.agentmail.to/blog/email-as-identity-for-ai-agents): How an inbox gives an agent a persistent, verifiable identity for signup and authentication across the internet.
+- [An Email Address for Your AI Agent's Signups](https://www.agentmail.to/blog/an-email-address-for-your-ai-agents-signups): An agent inbox for signups: create it in one idempotent call, read verification mail, reply, and sign in with AgentID where apps accept it.
+- [What Happens When Your AI Agent Hits 2FA or an Email OTP?](https://www.agentmail.to/blog/when-your-ai-agent-hits-2fa-or-an-email-otp): Reading emailed codes from the agent's own inbox, where AgentID removes the code, and which blockers (SMS, CAPTCHA) neither solves.
+- [Agent vs User Authentication: What Changes?](https://www.agentmail.to/blog/agent-vs-user-authentication-what-changes): What stays the same and what changes when AI agents sign in, as a checklist for turning agent sign-in on.
+- [Centralized vs Decentralized Agent Identity](https://www.agentmail.to/blog/centralized-vs-decentralized-agent-identity): Directory-bound, provider-issued and registration-protocol agent identity, and who can verify each.
+- [Is OAuth Enough to Verify an AI Agent?](https://www.agentmail.to/blog/is-oauth-enough-to-verify-an-ai-agent): What an app can conclude from an OAuth token, an OIDC id_token and an agent token.
+- [What Is an Agent Identity Provider?](https://www.agentmail.to/blog/what-is-an-agent-identity-provider): The definition, whether it layers on your existing login, and what the five current options issue.
+- [What Identity Layer Does Agentic Commerce Need?](https://www.agentmail.to/blog/what-identity-layer-agentic-commerce-needs): Identity, accountability and permission to pay as three separate layers.
+- [Email as Memory for AI Agents](https://www.agentmail.to/blog/email-as-memory-for-ai-agents): Using an inbox as persistent semantic, episodic, and procedural memory beyond the context window.
+- [Email Deliverability Demystified](https://www.agentmail.to/blog/deliverability-demystified): How deliverability really works, across authentication, reputation, sending behavior, content, and engagement.
+
+Compare AgentMail vs alternatives:
+
+- [Comparisons hub](https://www.agentmail.to/comparisons): Every AgentMail provider comparison and best-email-API roundup in one place.
+- [AgentMail vs Resend](https://www.agentmail.to/blog/agentmail-vs-resend): Inbox primitive vs transactional sending; inbound, threading, retention, and pricing.
+- [AgentMail vs Gmail API](https://www.agentmail.to/blog/agentmail-vs-gmail-api): Per-agent inboxes vs OAuth access to a human's mailbox; limits, quotas, and push notifications.
+- [AgentMail vs Nylas](https://www.agentmail.to/blog/agentmail-vs-nylas): Agent-owned inboxes vs connected accounts and Nylas Agent Accounts; retention and multi-provider tradeoffs.
+- [AgentMail vs SendGrid](https://www.agentmail.to/blog/agentmail-vs-sendgrid): Persistent inbox with threading vs Inbound Parse webhook forwarding; free tier and multi-tenancy.
+- [AgentMail vs Postmark](https://www.agentmail.to/blog/agentmail-vs-postmark): Inbox object vs inbound webhooks; retention, plan gating, and coding-agent skills.
+- [AgentMail vs Amazon SES](https://www.agentmail.to/blog/agentmail-vs-amazon-ses): Managed inbox vs raw MIME to S3/SNS/Lambda; per-message cost vs the build.
+- [AgentMail is now an official OpenClaw plugin](https://www.agentmail.to/blog/agentmail-official-openclaw-plugin): Install command, the email channel, allowlist defaults, and version requirements.
+- [AgentMail vs Gmail for OpenClaw](https://www.agentmail.to/blog/agentmail-vs-gmail-openclaw): Dedicated agent inboxes vs OAuth/Himalaya Gmail setup for OpenClaw agents.
+- [Cloudflare Email Service vs AgentMail](https://www.agentmail.to/blog/cloudflare-vs-agentmail): Workers-based DIY inbox vs a managed agent inbox provider.
+- [Best Email API for AI Agents (2026)](https://www.agentmail.to/blog/best-email-api-for-ai-agents-2026): 7 options compared across sending, receiving, and inbox features.
+- [Best Email API for OpenClaw (2026)](https://www.agentmail.to/blog/best-email-api-for-openclaw-2026): Two-way inboxes vs stateless webhooks for OpenClaw agents.
+- [5 Best Email APIs for Developers, Compared (2026)](https://www.agentmail.to/blog/5-best-email-api-for-developers-compared-2026): AgentMail, Resend, SendGrid, Mailgun, and Amazon SES side by side.
+- [Why Gmail and SendGrid Don't Work for AI Agents](https://www.agentmail.to/blog/why-gmail-and-sendgrid-dont-work-for-ai-agents): No programmatic inboxes, OAuth complexity, and stateless webhooks.
+
+## Research: AgentMail Evals
+
+How good are LLMs at using agentic tools? An AI agent benchmark run on real AgentMail inboxes: model and harness configurations (Claude Code, Codex, Cursor Agent, OpenCode, OpenClaw, Hermes) attempt seven everyday email jobs, with and without the docs, scored 0–100 on what each run actually got done.
+
+- [AgentMail Evals](https://www.agentmail.to/evals): Results for every model and harness configuration, with 95% intervals, the best harness per model, and the three main findings. Markdown: https://www.agentmail.to/evals.md
+- [AgentMail Evals methodology](https://www.agentmail.to/evals/report): The seven tasks, the docs conditions, outcome-based grading, the scoring rule, confidence intervals, and how agents fail. Markdown: https://www.agentmail.to/evals/report.md
+
+## When to Use AgentMail vs Other Email Tools
+
+- **Use AgentMail when:** Your AI agent needs its own inbox. You need to receive AND send email. You need per-agent email identities. You need threaded conversations. You need real-time email events. You need multi-tenant email isolation.
+- **Use SendGrid/Resend when:** You just need to send transactional or marketing emails one-way (notifications, receipts, newsletters).
+- **Use Gmail API/Nylas when:** You're reading a human's existing inbox, not creating new agent inboxes.
+- **Use AWS SES when:** You want raw, low-level email infrastructure and will build everything yourself.
+
+## Not Sure Where AgentMail Fits? Ask the Workbench
+
+The Workbench at https://www.agentmail.to/build is a use-case architect. A human types what they do or what they are building and gets back a one-line answer, a diagram of where AgentMail sits, a build plan (stack, steps, AgentMail setup), and a prompt to paste into a coding agent.
+
+Agents can call it directly. Not sure where AgentMail fits in what you are building? Send your situation to this endpoint and get a build plan back.
+
+One-shot plan (GET):
+
+```bash
+curl "https://www.agentmail.to/api/build-chat?q=I+run+a+recruiting+agency+and+candidate+email+is+drowning+us"
+```
+
+The JSON has `kind` (`blueprint`, `ideas`, `answer` or `clarify`), `tldr`, `title`, `summary`, `stack`, `steps`, `agentmailSetup`, `resources` (docs and setup links you can fetch next), `agentPrompt`, and `followUp`, which tells you how to continue. When `kind` is `ideas` you get three candidate builds; call again with `&idea=<id>` to get the blueprint for one.
+
+Conversation (POST): send the whole history each time, up to 10 user messages. The `followUp.body` in every response is the exact history to send next, with your new message appended.
+
+```bash
+curl -X POST https://www.agentmail.to/api/build-chat \
+  -H "Accept: application/json" -H "Content-Type: application/json" \
+  -d '{"messages": [
+        {"role": "user", "content": "I run a recruiting agency and candidate email is drowning us"},
+        {"role": "assistant", "content": "<the tldr or transcript from the previous response>"},
+        {"role": "user", "content": "Swap Slack for Microsoft Teams and add interview scheduling"}
+      ]}'
+```
+
+To pull only the prompt into your own context, ask for markdown:
+
+```bash
+curl -H "Accept: text/markdown" "https://www.agentmail.to/api/build-chat?q=an+agent+that+signs+up+for+SaaS+tools+and+reads+the+verification+codes"
+```
+
+No state is kept between calls, and each address gets a few dozen calls a day. Do not send secrets. Answers come from the public docs and are validated before they are returned, but verify API details against https://docs.agentmail.to before shipping.
+
+## Quick Start
+
+```python
+pip install agentmail
+
+from agentmail import AgentMail
+client = AgentMail(api_key="am_...")
+inbox = client.inboxes.create()
+client.inboxes.messages.send(inbox.inbox_id, to="user@example.com", subject="Hello", text="Hello from my agent!")
+```
+
+```typescript
+npm install agentmail
+
+import { AgentMailClient } from "agentmail";
+const client = new AgentMailClient({ apiKey: "am_..." });
+const inbox = await client.inboxes.create();
+await client.inboxes.messages.send(inbox.inboxId, { to: "user@example.com", subject: "Hello", text: "Hello from my agent!" });
+```
+
+## Copy for Claude / Cursor
+
+Copy one of the blocks below into Cursor or Claude for a complete, working AgentMail integration.
+
+```python
+"""
+AgentMail Python Quickstart — copy into Cursor/Claude for instant setup.
+
+Setup: pip install agentmail python-dotenv. Set AGENTMAIL_API_KEY in .env.
+
+API reference:
+- inboxes.create(username?, domain?, display_name?, client_id?) — client_id for idempotent retries
+- messages.send(inbox_id, to, subject, text, html?, cc?, bcc?, reply_to?, attachments?)
+- messages.list(inbox_id, limit?, page_token?, labels?) — receive emails; use extracted_text/extracted_html for reply content
+- messages.reply(inbox_id, message_id, text, html?) — reply to a message in-thread
+- threads.list(inbox_id, limit?, page_token?, labels?) — list threaded conversations
+
+Errors: SDK raises on 4xx/5xx. Inspect error.body.message or str(e).
+Rate limit: 429 with Retry-After header. Implement exponential backoff for retries.
+Idempotency: Pass client_id to inboxes.create() to safely retry without duplicates.
+"""
+import os
+from dotenv import load_dotenv
+from agentmail import AgentMail
+
+load_dotenv()
+client = AgentMail(api_key=os.getenv("AGENTMAIL_API_KEY"))
+
+# Create inbox (client_id enables safe retries)
+inbox = client.inboxes.create(client_id="my-agent-inbox-v1")
+
+# Send email
+try:
+    client.inboxes.messages.send(
+        inbox.inbox_id,
+        to="recipient@example.com",
+        subject="Hello from AgentMail",
+        text="Plain text body",
+        html="<p>HTML body</p>",
+    )
+except Exception as e:
+    print(f"Send failed: {e}")
+    raise
+
+# Receive messages
+for msg in client.inboxes.messages.list(inbox.inbox_id, limit=10).messages:
+    print(msg.subject, msg.extracted_text or msg.text)
+```
+
+```typescript
+/**
+ * AgentMail TypeScript Quickstart — copy into Cursor/Claude for instant setup.
+ *
+ * Setup: npm install agentmail dotenv. Set AGENTMAIL_API_KEY in .env.
+ *
+ * API reference:
+ * - inboxes.create({ username?, domain?, displayName?, clientId? }) — clientId for idempotent retries
+ * - messages.send(inboxId, { to, subject, text, html?, cc?, bcc?, replyTo?, attachments? })
+ * - messages.list(inboxId, { limit?, pageToken?, labels? }) — receive; use extractedText/extractedHtml for reply content
+ * - messages.reply(inboxId, messageId, { text, html? }) — reply to a message in-thread
+ * - threads.list(inboxId, { limit?, pageToken?, labels? }) — list threaded conversations
+ *
+ * Errors: SDK throws on 4xx/5xx. Check error.body?.message.
+ * Rate limit: 429 with Retry-After header. Use exponential backoff for retries.
+ * Idempotency: Pass clientId to inboxes.create() to safely retry without duplicates.
+ */
+import { AgentMailClient } from "agentmail";
+import "dotenv/config";
+
+const client = new AgentMailClient({
+  apiKey: process.env.AGENTMAIL_API_KEY!,
+});
+
+async function main() {
+  // Create inbox (clientId enables safe retries)
+  const inbox = await client.inboxes.create({
+    clientId: "my-agent-inbox-v1",
+  });
+
+  try {
+    await client.inboxes.messages.send(inbox.inboxId, {
+      to: "recipient@example.com",
+      subject: "Hello from AgentMail",
+      text: "Plain text body",
+      html: "<p>HTML body</p>",
+    });
+  } catch (error: unknown) {
+    const msg = (error as { body?: { message?: string } })?.body?.message ?? String(error);
+    throw new Error(`Send failed: ${msg}`);
+  }
+
+  // Receive messages
+  const res = await client.inboxes.messages.list(inbox.inboxId, { limit: 10 });
+  for (const msg of res.messages) {
+    console.log(msg.subject, msg.extractedText ?? msg.text);
+  }
+}
+
+main();
+```
+
+## Core Capabilities
+
+- **Inboxes API** — Create unique email inboxes per agent via API. Each inbox gets its own email address. Create inboxes instantly — no domain verification required for @agentmail.to addresses.
+- **Messages** — Send and receive emails with HTML/plain text, CC/BCC, custom headers, attachments (up to 30MB). Reply, reply-all, and forward via API. Built-in reply/forward content extraction (extracted_text, extracted_html).
+- **Threads** — Automatic email threading. Query threads across inboxes or within a specific inbox. Full conversation context maintained across the thread lifetime.
+- **Webhooks** — Real-time events: message.received, message.sent, message.delivered, message.bounced, message.complained, message.rejected, domain.verified. HMAC signature verification.
+- **WebSockets** — Real-time email event streaming. Sub-second response times. Works behind firewalls and NATs.
+- **Semantic Search** — Search across email content using natural language queries.
+- **Custom Domains** — Use your own domain with automatic SPF, DKIM, and DMARC configuration.
+- **Pods** — Multi-tenant isolation for different customers, projects, or stages (dev/staging/prod).
+- **Drafts** — Create, update, and send drafts for human-in-the-loop workflows.
+- **Attachments** — Send and receive files of all MIME types, up to 30MB.
+- **IMAP & SMTP** — Access inboxes via standard protocols for backward compatibility.
+- **Labels** — Tag messages and threads with custom labels for state tracking and filtering.
+- **Lists** — Allowlists and blocklists to control who agents can send to or receive from.
+
+## Pricing
+
+- **Free:** $0/month — 3 inboxes, 3,000 emails/month, 3 GB storage. No credit card required.
+- **Developer:** $20/month — 10 inboxes, 10,000 emails/month, 10 GB storage, 10 custom domains, 2 organization seats, email support.
+- **Startup:** $200/month — 150 inboxes, 150 custom domains, 10 organization seats, SOC 2 report.
+- **Enterprise:** Custom pricing — bulk discounts, white-label platform, usage-based pricing, EU region cloud, BYO cloud deployment, OIDC/SAML SSO.
+- **Add-ons:** paid plans can add inboxes, custom domains, monthly sends in 1,000-email blocks, and organization seats, billed with the plan. Current prices: https://www.agentmail.to/pricing.md
+
+Optional 24-hour message expiry for your organization. Contact us about early access. Details: https://docs.agentmail.to/message-expiry
+
+Rate limits are very generous and built for agent throughput. If you exceed limits, the API returns 429 with a Retry-After header. See docs for details.
+
+## Error Handling
+
+All errors return JSON with `name` and `message` fields:
+
+- **400** — Validation error. Check request parameters.
+- **403** — Forbidden. Common causes: incorrect API key, accessing a resource you don't own, sending to a suppressed address.
+- **404** — Resource not found. Check that IDs are correct.
+- **429** — Rate limited. Respect the `Retry-After` header and implement exponential backoff.
+
+Idempotency: Pass `client_id` (Python) / `clientId` (TypeScript) to all create operations (inboxes, pods, webhooks, drafts) to safely retry without duplicates.
+
+## Common Patterns
+
+- **Support Agent** — Create inbox, webhook on message.received, extract content with extracted_text, generate reply with LLM, track state with labels.
+- **2FA/Auth Agent** — Create inbox per session, sign up for services, listen for verification emails, extract OTP codes.
+- **Sales Outreach** — Send personalized emails, listen for replies, classify responses, follow up or escalate.
+- **Document Processing** — Receive emails with attachments, download and process documents, send results back.
+
+## Use Cases
+
+Vertical and outcome pages for building AI agents with AgentMail:
+
+- AI support triage that keeps your support@ address: https://www.agentmail.to/use-case/ai-support-triage-agent
+- Shared company mailbox for one agent: https://www.agentmail.to/use-case/ai-agent-that-reads-a-shared-inbox
+- AI agents for legal: https://www.agentmail.to/use-case/ai-agents-for-legal
+- AI agents for education: https://www.agentmail.to/use-case/ai-agents-for-education
+- Recruiting candidate reply loop with owned inboxes: https://www.agentmail.to/use-case/ai-agent-that-processes-recruiting-email-replies
+- Pod tenancy for fleets of agent addresses: https://www.agentmail.to/use-case/ai-agent-fleet-that-needs-thousands-of-inboxes
+- AI agents for accounting: https://www.agentmail.to/use-case/ai-agents-for-accounting
+- AI agents for n8n: https://www.agentmail.to/use-case/ai-agents-for-n8n
+- AI agents for ecommerce: https://www.agentmail.to/use-case/ai-agents-for-ecommerce
+- AI summarizer for email threads: https://www.agentmail.to/use-case/ai-agent-that-summarizes-email-threads
+- AI agent that sends reminders: https://www.agentmail.to/use-case/ai-agent-that-sends-reminders
+- AI agent that routes emails: https://www.agentmail.to/use-case/ai-agent-that-routes-emails
+- AI agents for SaaS: https://www.agentmail.to/use-case/ai-agents-for-saas
+- AI agent for lead follow-up: https://www.agentmail.to/use-case/ai-agent-for-lead-follow-up
+- AI agents for marketing: https://www.agentmail.to/use-case/ai-agents-for-marketing
+- AI agent that reads emails: https://www.agentmail.to/use-case/ai-agent-that-reads-emails
+- AI agents for sales: https://www.agentmail.to/use-case/ai-agents-for-sales
+- AI agent that replies to emails: https://www.agentmail.to/use-case/ai-agent-that-replies-to-emails
+- AI agent that follows up automatically: https://www.agentmail.to/use-case/ai-agent-that-follows-up-automatically
+- AI agent that sends emails: https://www.agentmail.to/use-case/ai-agent-that-sends-emails
+- AI agents for recruiting: https://www.agentmail.to/use-case/ai-agents-for-recruiting
+- AI agents for customer support: https://www.agentmail.to/use-case/ai-agents-for-customer-support
+
+## MCP Server
+
+AgentMail runs a first-party hosted MCP server at `https://mcp.agentmail.to/mcp` (Streamable HTTP)
+exposing inbox, message, thread, draft, and attachment tools to any MCP-compatible client
+(Claude Code, Claude Desktop, Cursor, Devin Desktop, etc.).
+
+Claude Code:
+```
+claude mcp add --transport http agentmail https://mcp.agentmail.to/mcp
+```
+
+Claude Desktop / Claude.ai (OAuth-capable clients): add the URL above; sign-in happens automatically.
+
+Cursor / Devin Desktop (API-key clients): use `https://mcp.agentmail.to/mcp` with the
+`x-api-key: YOUR_API_KEY` header.
+
+Full setup guide: https://docs.agentmail.to/integrations/mcp
+Canonical source: https://github.com/agentmail-to/agentmail-mcp
+
+## Integrations (per-tool setup pages)
+
+One page per agent framework or platform, each with install commands, working code, and an FAQ:
+
+- Build hub: https://www.agentmail.to/build
+- Claude Code: https://www.agentmail.to/build/claude-code
+- Codex: https://www.agentmail.to/build/codex
+- Cursor: https://www.agentmail.to/build/cursor
+- Devin (formerly Windsurf): https://www.agentmail.to/build/devin
+- Dots (OpenAI): https://www.agentmail.to/build/dots
+- Grok Bot and Grok Build: https://www.agentmail.to/build/grokbot
+- Hermes: https://www.agentmail.to/build/hermes
+- Lovable: https://www.agentmail.to/build/lovable
+- Meta Muse: https://www.agentmail.to/build/muse
+- OpenClaw: https://www.agentmail.to/build/openclaw
+- Replit: https://www.agentmail.to/build/replit
+- Vercel: https://www.agentmail.to/build/vercel
+
+Plugins: the AgentMail plugin for Cursor, Codex and Claude Code is open source at
+https://github.com/agentmail-to/agentmail-plugins. It bundles the AgentMail skills and points the
+client at the hosted MCP server. Cursor installs it from the Cursor plugin marketplace
+(https://cursor.com/marketplace/agentmail) with `/add-plugin agentmail`; Codex and Claude Code add
+the repository as a marketplace and install `agentmail@agentmail` from it.
+
+Grok Bot: AgentMail is listed in the plugin browser Grok Bot ships with, alongside the other
+official plugins. Install via Settings -> Plugins -> search AgentMail -> Install, then approve the
+OAuth prompt. Twenty-four email tools appear and every bot on the account can call them. Where the
+plugin browser is locked down, add AgentMail as a custom MCP connector at
+https://mcp.agentmail.to/mcp with an `x-api-key: YOUR_API_KEY` header. The same MCP server serves
+Grok Build via `grok mcp add` and the Grok API. AgentMail is an independent company; the
+marketplace listing is the extent of the xAI relationship.
+
+## OpenClaw Plugin (Official)
+
+AgentMail is an official plugin on ClawHub, the OpenClaw plugin registry, published under the
+`@agentmail` account. ClawHub lists twenty-five channel plugins for OpenClaw and every other one
+is a chat surface (WhatsApp, Matrix, Discord, Slack, Teams, Feishu, LINE, Google Chat, QQ, Zalo,
+Nostr, Twitch, Urbit, iMessage via BlueBubbles). AgentMail is the email one.
+
+Install:
+```
+openclaw plugins install clawhub:@agentmail/agentmail
+openclaw plugins enable agentmail
+```
+
+The plugin ships two capabilities:
+
+1. **CLI-backed AgentMail skill.** The agent drives the official AgentMail CLI bundled with the
+   plugin and reads its help output at runtime, so new API resources work without a plugin
+   release. Covers inboxes, messages, threads, drafts, webhooks, domains, pods, and API keys.
+   Passthrough command: `openclaw agentmail -- --format json inboxes list`
+2. **Email channel.** A durable, allowlisted, reply-only channel. Inbound email drives an agent
+   turn and the agent replies inside the AgentMail thread. Ingress is committed durably before
+   acknowledgement, senders are authorized against a default-deny allowlist, and replies stay
+   bound to the triggering message (no proactive threads, no arbitrary recipients).
+
+Configuration:
+- `AGENTMAIL_API_KEY` in the Gateway environment (`~/.openclaw/.env` for a managed Gateway).
+- `AGENTMAIL_WEBHOOK_SECRET` (optional, Svix-signed) enables webhook ingress; without it the
+  channel falls back to WebSocket ingress.
+- Channel settings live under `channels.agentmail` (or `channels.agentmail.accounts.<id>` for
+  several inboxes): `inboxId`, `dmPolicy` (defaults to `allowlist`), `allowFrom`, `mediaMaxMb`.
+
+Requirements: OpenClaw 2026.7.2 (beta) or newer; Node.js 22.22.3+, 24.15.0+, or 25.9.0+.
+Listing: https://clawhub.ai/agentmail
+Integration page: https://www.agentmail.to/build/openclaw
+
+## SDKs
+
+- **Python:** `pip install agentmail` — https://github.com/agentmail-to/agentmail-python
+- **TypeScript/Node:** `npm install agentmail` — https://github.com/agentmail-to/agentmail-node
+
+## Documentation
+
+- [Full API documentation](https://docs.agentmail.to)
+- [Documentation index for LLMs](https://docs.agentmail.to/llms.txt)
+- [API reference](https://docs.agentmail.to/api-reference)
+
+## Security & Compliance
+
+- SOC 2 Type II compliant; first Type II audit completed in 2025
+- 2026 annual SOC 2 Type II audit in progress with A-LIGN, supported by Vanta continuous controls monitoring and audit evidence collection
+- 2025 SOC 2 Type II report and security policies available to customers and prospects after access approval through the AgentMail Trust Center
+- HIPAA compliant with BAA available on enterprise
+- Encryption at rest and in transit
+- AgentMail Trust Center: https://app.vanta.com/agentmail.to/trust/1oqosh1a62stku80d8hdep
+
+## Markdown Content Negotiation
+
+Any page on agentmail.to can be fetched as markdown:
+- Add `.md` to the URL: https://www.agentmail.to/pricing.md
+- Send `Accept: text/markdown` header: `curl -H "Accept: text/markdown" https://www.agentmail.to/pricing`
+
+Supported pages: /, /pricing, /enterprise, /careers, /blog, /evals, /evals/report, /use-case/*
+
+## Links
+
+- Website: https://www.agentmail.to
+- Console: https://console.agentmail.to
+- GitHub: https://github.com/agentmail-to
+- Skills: https://github.com/agentmail-to/agentmail-skills
+- OpenClaw plugin (ClawHub): https://clawhub.ai/agentmail
+- MCP Server: https://mcp.agentmail.to/mcp
+- Discord: https://discord.gg/ZYN7f7KPjS
+- Twitter/X: https://x.com/agentmail

@@ -1,0 +1,27 @@
+GET https://workos.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:37.407Z
+final-url: https://workos.com/.well-known/oauth-protected-resource
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:58:35 GMT
+content-type: text/markdown; charset=utf-8
+transfer-encoding: chunked
+connection: close
+vary: Accept, accept-encoding
+content-encoding: gzip
+server: cloudflare
+cf-ray: a51de3b0aa4be5c0-PDX
+
+# 404 — page not found
+
+`/.well-known/oauth-protected-resource` does not exist on https://workos.com.
+
+## Where to look next
+
+- Sitemap index: https://workos.com/sitemap.xml
+- Documentation: https://workos.com/docs
+- Documentation index for LLMs: https://workos.com/docs/llms.txt
+- REST API reference: https://workos.com/docs/reference
+- OpenAPI specification: https://workos.com/openapi.json
+- Homepage (Markdown available via `Accept: text/markdown`): https://workos.com/

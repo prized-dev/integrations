@@ -1,0 +1,82 @@
+GET https://assemblyai.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:20.701Z
+redirect: 308 from https://assemblyai.com/llms.txt
+final-url: https://www.assemblyai.com/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 2062
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline; filename="llms.txt"
+content-encoding: br
+content-security-policy: default-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://*.assemblyai.com cdn.cookielaw.org https://rs-cdn.assemblyai.com https://cdn.rudderlabs.com https://www.datadoghq-browser-agent.com https://www.googletagmanager.com/gtag/ https://widget.usepylon.com https://*.google.com https://*.google-analytics.com https://*.gstatic.com https://*.googleadservices.com https://snap.licdn.com https://www.redditstatic.com/ads/pixel https://px.ads.linkedin.com https://googleads.g.doubleclick.net https://assets.apollo.io https://vercel.live https://polyfill-fastly.io; style-src 'self' 'unsafe-inline' https://*.assemblyai.com https://widget.usepylon.com/fonts.css https://vercel.live; img-src 'self' data: blob: https://vercel.live https://vercel.com https://*.assemblyai.com cdn.cookielaw.org https://*.google-analytics.com https://*.googletagmanager.com https://*.google.com https://*.google.co.uk https://*.google.com.sg https://*.google.com.au https://*.google.co.jp https://*.google.de https://*.google.fr https://*.google.ca https://*.google.co.in https://*.doubleclick.net https://*.googleadservices.com https://*.reddit.com https://*.ytimg.com https://www.linkedin.com/px https://*.ads.linkedin.com https://*.usepylon.com https://*.gstatic.com/faviconV2 https://pylon-avatars.s3.us-west-1.amazonaws.com https://cdn.prod.website-files.com; font-src 'self' data: https://*.assemblyai.com cdn.cookielaw.org https://widget.usepylon.com/fonts/ https://fonts.gstatic.com https://vercel.live https://assets.vercel.com; connect-src 'self' https://vercel.live https://*.vercel.app https://webflow.com https://*.assemblyai.com wss://*.assemblyai.com https://rs-dp.assemblyai.com https://rs-api.assemblyai.com https://rs-cdn.assemblyai.com https://*.dataplane.rudderstack.com https://*.browser-intake-datadoghq.com https://browser-intake-datadoghq.com https://*.google.com https://*.analytics.google.com https://*.google-analytics.com https://*.doubleclick.net https://*.googleadservices.com cdn.cookielaw.org https://*.onetrust.com https://*.usepylon.com wss://*.pusher.com https://*.ads.linkedin.com https://aplo-evnt.com https://vitals.vercel-insights.com https://track.customer.io https://api.rudderstack.com https://*.livekit.cloud wss://*.livekit.cloud; frame-src 'self' https://*.assemblyai.com https://td.doubleclick.net https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://vercel.live; media-src 'self' https://*.assemblyai.com https://assemblyaiassets.com https://cdn.prod.website-files.com
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:17 GMT
+etag: W/"162def5d1c43b8fe53aac42e4bde1110"
+last-modified: Wed, 28 Oct 2026 23:22:55 GMT
+permissions-policy: autoplay=(self), geolocation=(self), clipboard-read=(self), clipboard-write=(self)
+referrer-policy: strict-origin-when-cross-origin
+server: Vercel
+strict-transport-security: max-age=31536000; includeSubDomains
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-frame-options: SAMEORIGIN
+x-robots-tag: index, follow
+x-vercel-cache: HIT
+x-vercel-id: pdx1:pdx1:pdx1::fb4tr-1793231837743-c3841fdcbdf7
+x-xss-protection: 1; mode=block
+connection: close
+transfer-encoding: chunked
+
+# AssemblyAI
+
+> AssemblyAI provides production-ready Voice AI models for speech-to-text, real-time streaming transcription, speaker diarization, Speech Understanding, Guardrails, Text-to-Speech, and the LLM Gateway. This file indexes the Markdown sources agents should prefer over crawling the HTML marketing site.
+
+## Agent Instructions
+
+- Prefer the Markdown sources linked in this file over crawling HTML pages.
+- For documentation pages, append `.md` to the page URL to get the Markdown version (e.g. `https://www.assemblyai.com/docs/getting-started/models.md`).
+- For the complete documentation index, use https://www.assemblyai.com/docs/llms.txt.
+- For all documentation in a single file, use https://www.assemblyai.com/docs/llms-full.txt.
+- For coding assistants and agentic IDEs, start with [Build with AI coding agents](https://www.assemblyai.com/docs/agent-instructions.md) and the docs MCP server at https://www.assemblyai.com/docs/mcp.
+
+## Core References
+
+- [Pricing](https://www.assemblyai.com/llms/pricing.md): canonical rate card, billing rules, and add-on stacking.
+- [Models & terminology](https://www.assemblyai.com/llms/models.md): model identifiers, language support, deprecations, capability matrices, API parameters, terminology rules, and streaming WebSocket URLs.
+
+## Documentation
+
+- [Documentation index — all pages](https://www.assemblyai.com/docs/llms.txt): the docs team's complete, authoritative index.
+- [All documentation in one file](https://www.assemblyai.com/docs/llms-full.txt)
+- [Build with AI coding agents](https://www.assemblyai.com/docs/agent-instructions.md): integration guidance for Cursor, Claude Code, Copilot, and other AI coding assistants.
+- [Models overview](https://www.assemblyai.com/docs/getting-started/models.md): how to choose a speech model.
+- [Universal-3.5 Pro](https://www.assemblyai.com/docs/pre-recorded-audio/universal-3-5-pro.md): the flagship pre-recorded speech-to-text model.
+- [Transcribe a file — pre-recorded quickstart](https://www.assemblyai.com/docs/pre-recorded-audio/getting-started/transcribe-an-audio-file.md)
+- [Transcribe streaming audio — streaming quickstart](https://www.assemblyai.com/docs/streaming/getting-started/transcribe-streaming-audio.md)
+- [Speech Understanding](https://www.assemblyai.com/docs/speech-understanding/getting-started.md): LLM-powered analysis over transcripts.
+- [LLM Gateway](https://www.assemblyai.com/docs/llm-gateway/overview.md): apply leading LLMs to audio through one API.
+- [API reference](https://www.assemblyai.com/docs/api-reference/overview.md)
+- [End-to-end examples](https://www.assemblyai.com/docs/getting-started/end-to-end-examples.md)
+- [FAQ](https://www.assemblyai.com/docs/faq.md)
+
+## Website Pages
+
+- [Home](https://www.assemblyai.com/index.md)
+- [Products overview](https://www.assemblyai.com/products.md)
+- [Speech-to-Text](https://www.assemblyai.com/products/speech-to-text.md)
+- [Streaming Speech-to-Text](https://www.assemblyai.com/products/streaming-speech-to-text.md)
+- [Sync Speech-to-Text](https://www.assemblyai.com/products/sync-speech-to-text.md)
+- [Speech Understanding](https://www.assemblyai.com/products/speech-understanding.md)
+- [Guardrails](https://www.assemblyai.com/products/guardrails.md)
+- [LLM Gateway](https://www.assemblyai.com/products/llm-gateway.md)
+- [Pricing](https://www.assemblyai.com/llms/pricing.md)
+- [Benchmarks](https://www.assemblyai.com/benchmarks.md)
+- [Customers](https://www.assemblyai.com/customers.md)
+- [Blog](https://www.assemblyai.com/blog.md)
+- [Changelog](https://www.assemblyai.com/changelog.md)
+
+## Optional
+
+- [Security](https://www.assemblyai.com/security): security and compliance overview.

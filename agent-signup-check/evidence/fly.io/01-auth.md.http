@@ -1,0 +1,243 @@
+GET https://fly.io/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:26.123Z
+final-url: https://fly.io/auth.md
+
+HTTP 200
+access-control-allow-origin: *
+cache-control: max-age=0, private, must-revalidate
+content-length: 9951
+content-type: text/markdown; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:21 GMT
+server: Fly/366e4bf88 (2026-10-27)
+x-request-id: GOLW3CqqVotaDeQABmyh
+via: 1.1 fly.io
+fly-request-id: 01M62F4VDP7TEDDH842HWKC85D-lax
+connection: close
+
+# Authenticating to Fly.io
+
+You are an agent that needs to act on Fly.io: deploy an app, drive the
+Machines API, or work inside a Sprite. This file tells you which credential
+that takes, how to get it without putting it at risk, and how to give it
+back.
+
+Fly.io does not support agentic registration. There is no anonymous
+identity endpoint, no claim ceremony, and no `agent_auth` block in any
+metadata document. Every credential below begins with a human who has
+signed in to Fly.io. If you arrived here from the auth.md spec looking for
+those, stop looking; the paths that exist are shorter.
+
+## First, look for a credential you already have
+
+The user may have done this already. Check in this order and stop at the
+first hit. It is the order flyctl itself resolves a token, so what you find
+is what flyctl would use:
+
+1. `-t` / `--access-token` passed on the flyctl command for this invocation.
+2. `FLY_ACCESS_TOKEN` in your environment.
+3. `FLY_API_TOKEN` in your environment.
+4. A signed-in session in `~/.fly/config.yml`. `fly auth whoami` prints the
+   account if there is one.
+5. For Sprites work: a `sprite` CLI that already answers `sprite list`, or a
+   Sprites MCP server already in your client's configuration.
+
+Found one? Use it. Do not start a login flow, and do not ask the user for a
+token. Tokens arrive through the environment or a secrets manager; they are
+not something a user pastes into a conversation, and once you hold one it
+stays out of your output, logs, commits, and pull requests.
+
+Found nothing? Decide which kind you need.
+
+## Two credentials, not one
+
+Fly.io and Sprites issue credentials separately. A Fly.io credential
+manages apps, Machines, volumes, and secrets. A Sprites credential manages
+the persistent Linux computers an agent works in. One does not stand in for
+the other.
+
+| Your situation | Get |
+| --- | --- |
+| A human is at the keyboard and you are in their terminal | A flyctl session |
+| No human will be present when the work runs: CI, a script, code on a Machine | A scoped Fly.io access token |
+| You are an MCP client and want Sprites without installing anything | The Sprites MCP server, over OAuth |
+| You need a computer to build and test in, from a shell | The Sprites CLI |
+
+## A flyctl session
+
+The shortest path when a human is present, because the browser step keeps
+them in control.
+
+```bash
+curl -L https://fly.io/install.sh | sh   # if flyctl is not installed
+fly auth login
+```
+
+`fly auth login` opens a browser. If it cannot, it prints the URL: show it to
+the human and wait for them to approve. Do not try to work around that
+step. `fly auth signup` is the same flow for a human without an account.
+Ask before running any of these; they change the machine's configuration.
+
+The session lands in `~/.fly/config.yml` and every `fly` command uses it.
+So does `fly mcp server`, which hands the session to an MCP client on the
+same machine as a local stdio server: `fly mcp server --claude` (also
+`--cursor`, `--vscode`, `--zed`).
+
+The session is short-lived and reaches everything the user can. That is
+fine for a terminal; it is not a token to copy anywhere. `fly auth token`,
+which prints it, is deprecated for that reason.
+
+## A scoped access token
+
+For work that runs with nobody watching. Fly.io tokens are macaroons: each
+carries its own scope, can be given an expiry at creation, and — unusually —
+can be narrowed further by whoever holds it, with no call to Fly.io.
+
+Create one from a signed-in flyctl. Each command prints a single line
+beginning `FlyV1 fm2_`; that whole line, prefix included, is the credential.
+
+```bash
+fly tokens create deploy -a <app> --expiry 48h            # one app and its resources
+fly tokens create org -o <org> --expiry 168h              # every app in one org
+fly tokens create readonly -o <org>                        # read one org, change nothing
+fly tokens create ssh -a <app>                             # SSH into one app's Machines
+fly tokens create machine-exec -a <app> --command "<argv>" # run one exact command there
+```
+
+Rules that hold across all of them:
+
+- **Pick the narrowest scope that does the job.** A deploy token for one
+  app is the usual answer. `machine-exec` with `--command` is the narrowest
+  possible: one exact command, on one app's Machines, nothing else.
+- **Set `--expiry`.** The default is 20 years. Match it to the job: 48h for
+  a one-off, a week for a pipeline the user will rotate.
+- **Name it** with `--name` so it is recognisable in `fly tokens list` and
+  the dashboard when it is time to revoke it.
+- `--json` wraps the token in `{"token": ...}` for a script.
+
+### Narrow a token you were handed
+
+If the user gives you a broader token than the work needs, cut it down
+before you store it. A read-only token derived from an org token:
+
+```bash
+fly tokens create readonly --from-existing -t "FlyV1 fm2_..." --expiry 24h
+```
+
+`fly tokens debug -t <token>` decodes any token and prints its caveats —
+what it can reach — so you can check before using it. `fly tokens attenuate` appends
+arbitrary caveats for cases the presets do not cover.
+
+### Where tokens are made without flyctl
+
+The dashboard issues the same tokens: an organization's at
+`https://fly.io/dashboard/<org-slug>/tokens`, an app's at
+`https://fly.io/apps/<app-name>/tokens`, the user's own at
+<https://fly.io/user/personal_access_tokens>. Point the human there if they
+would rather not run a command.
+
+## The Sprites MCP server
+
+For an MCP client with no local install. Nothing to pre-register:
+
+```bash
+claude mcp add --transport http sprites https://sprites.dev/mcp
+```
+
+The first request comes back `401` with
+`WWW-Authenticate: Bearer resource_metadata="https://sprites.dev/.well-known/oauth-protected-resource"`.
+Your client follows that to the authorization server, registers itself
+dynamically, and runs the browser flow; the human approves in the browser.
+PKCE `S256` is required. Scopes are `sprites:read` and `sprites:write`, and
+the `refresh_token` grant is supported, so the session outlives the first
+token. Nothing is written to disk and no CLI is involved.
+
+Server card: <https://fly.io/.well-known/mcp/server-card.json>. Other
+clients: <https://fly.io/sprites/ecosystem>.
+
+## The Sprites CLI
+
+For working in a Sprite from a shell:
+
+```bash
+sprite login             # opens a browser, or prints the URL for the human
+sprite list
+```
+
+For CI, the human creates a Sprites token at
+`https://fly.io/dashboard/<org-slug>/sprites/tokens` and you install it
+with `sprite auth setup --token <token>`. The Sprites REST API takes the
+same token: `Authorization: Bearer $SPRITES_TOKEN` against
+`https://api.sprites.dev/v1`. Once you are in, the working brief is
+<https://fly.io/sprites/agent-ready.md>.
+
+## Use a Fly.io token
+
+The Machines API takes it as a bearer token, prefix and all:
+
+```bash
+curl "https://api.machines.dev/v1/apps?org_slug=<org>" \
+  --header "Authorization: Bearer $FLY_API_TOKEN"
+```
+
+Base URL `https://api.machines.dev/v1` from anywhere;
+`http://_api.internal:4280` from inside the organization's private network.
+OpenAPI: <https://docs.machines.dev/openapi.json>. The `fly-machines-api`
+skill at <https://fly.io/.well-known/agent-skills/index.json> covers the
+calls; load it before hand-writing requests.
+
+flyctl reads the same variable, so a CI job deploys with no login:
+
+```bash
+FLY_API_TOKEN="FlyV1 fm2_..." fly deploy
+```
+
+Code on a Fly Machine that needs the API gets its token as an app secret,
+never baked into the image or `fly.toml`:
+
+```bash
+fly secrets set FLY_API_TOKEN="$(fly tokens create deploy)"
+```
+
+## When it fails
+
+| You see | Where | It means | Do |
+| --- | --- | --- | --- |
+| `401` `{"error":"Authenticate: token validation error"}` | Machines API | Token missing, expired, revoked, or malformed | Check the whole `FlyV1 fm2_` line was sent. Its `WWW-Authenticate` says `Basic`; ignore that, it is `Bearer`. If it worked before, it has expired or been revoked: get a new one, do not retry. |
+| `401` with `WWW-Authenticate: Bearer resource_metadata=…` | Sprites MCP | No token, or it expired | Let the client redo the OAuth flow; the header tells it where. |
+| `401` `{"error":"authentication failed"}` | Sprites API | Sprites token missing or wrong | It is a Sprites token, not a Fly.io one. |
+| Machines API request rejected under load | Machines API | Per-action, per-Machine rate limit: 1/s, burst 3 | Back off and retry that one action. |
+
+A token belongs in the environment or in `fly secrets`, and only in a
+secret the user asked you to set. It does not go in source, in `fly.toml`,
+or in anything you say to the user.
+
+## Give it back
+
+- **Access token** — `fly tokens list` (add `--scope org` for org tokens)
+  shows IDs; `fly tokens revoke <id>` takes effect immediately. The same
+  lists are under **Tokens** on an app or organization in the dashboard.
+- **flyctl session** — `fly auth logout`, run wherever `fly auth login`
+  was.
+- **Sprites** — tokens are managed at
+  `https://fly.io/dashboard/<org-slug>/sprites/tokens`; `sprite logout`
+  removes the local configuration.
+
+Revoke a token you created for a one-off job as soon as the job is done.
+
+## Machine-readable
+
+- API catalog (RFC 9727): <https://fly.io/.well-known/api-catalog>
+- Machines API OpenAPI: <https://docs.machines.dev/openapi.json>
+- Agent skills index: <https://fly.io/.well-known/agent-skills/index.json>
+- Sprites MCP, protected resource (RFC 9728): <https://sprites.dev/.well-known/oauth-protected-resource>
+- Sprites MCP, authorization server (RFC 8414): <https://sprites.dev/.well-known/oauth-authorization-server>
+
+## Read next
+
+- Access tokens, in full: <https://docs.fly.io/security/tokens.md>
+- Organization roles and what each may do: <https://docs.fly.io/security/org-roles-permissions.md>
+- A Machine proving its own identity to AWS and others (OIDC): <https://docs.fly.io/security/openid-connect.md>
+- Status: <https://status.flyio.net/>
+
+This file is <https://fly.io/auth.md>.

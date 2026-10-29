@@ -1,0 +1,144 @@
+{
+ "site": "paddle.com",
+ "checkedAt": "2026-10-28T23:58:31.035Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://paddle.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://www.paddle.com/auth.md)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://paddle.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://www.paddle.com/.well-known/oauth-protected-resource)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://paddle.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404) (after a redirect to https://www.paddle.com/.well-known/oauth-authorization-server); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.paddle.com/event-types",
+   "httpStatus": 403,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "403 instead of 401: the body asks for a key, but there is no WWW-Authenticate challenge"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://developer.paddle.com/llms.txt",
+   "heading": "# Paddle Developer Docs",
+   "bytes": 12672,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://paddle.com/auth.md",
+   "finalUrl": "https://www.paddle.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 1358,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://paddle.com/llms.txt",
+   "finalUrl": "https://www.paddle.com/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 771,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.paddle.com/event-types",
+   "finalUrl": "https://api.paddle.com/event-types",
+   "status": 403,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 144,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://developer.paddle.com/llms.txt",
+   "finalUrl": "https://developer.paddle.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=UTF-8",
+   "ms": 124,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://paddle.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.paddle.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 148,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.paddle.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.paddle.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 98,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://paddle.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.paddle.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 1285,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://paddle.com/.well-known/x402",
+   "finalUrl": "https://www.paddle.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 1062,
+   "redirects": 1
+  }
+ ]
+}

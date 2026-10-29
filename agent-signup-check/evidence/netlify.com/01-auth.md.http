@@ -1,0 +1,98 @@
+GET https://netlify.com/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:31.764Z
+final-url: https://netlify.com/auth.md
+
+HTTP 200
+accept-ranges: bytes
+access-control-allow-origin: *
+age: 0
+cache-control: public,max-age=0,must-revalidate
+cache-status: "Netlify Edge"; fwd=miss; fwd-status=200; stored
+content-encoding: br
+content-type: text/markdown; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:27 GMT
+etag: "3d1129c25614189b7236e4cca9c03798-ssl-df"
+link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/ard.json>; rel="ard"; type="application/ai-catalog+json"
+netlify-vary: header=x-forwarded-proto
+server: Netlify
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Accept-Encoding
+x-nf-request-id: 01M62F502592VFEF8SPV5J0TZQ
+x-robots-tag: noindex
+connection: close
+transfer-encoding: chunked
+
+# Authenticating AI agents with Netlify
+
+How an AI agent gets credentials to act on a Netlify account. Every method ends with a bearer token that acts as a Netlify user. A human always grants access, either by approving an OAuth prompt or by creating a token. There is no anonymous or agent-only credential.
+
+## Discover
+
+- **MCP server (recommended for agents):** `https://netlify-mcp.netlify.app/mcp` (Streamable HTTP). Its OAuth details are published as RFC 9728 protected-resource metadata at `https://netlify-mcp.netlify.app/.well-known/oauth-protected-resource` and RFC 8414 authorization-server metadata at `https://netlify-mcp.netlify.app/.well-known/oauth-authorization-server`.
+- **REST API:** `https://api.netlify.com/api/v1/`, described by the OpenAPI spec at `https://open-api.netlify.com/swagger.json`.
+- **Catalog:** `https://www.netlify.com/.well-known/ard.json` lists the MCP server card, the OpenAPI spec, and Netlify's agent skills.
+
+## Pick a method
+
+### 1. Connect through the MCP server (OAuth 2.1)
+
+Use this for agents and AI clients that speak MCP. No token handling is needed by the user.
+
+1. Call the MCP endpoint without a token. It responds `401` with a `WWW-Authenticate: Bearer resource_metadata="…"` header pointing at the protected-resource metadata.
+2. Read `authorization_servers` from that document, then fetch the authorization-server metadata.
+3. Register your client dynamically at the `registration_endpoint` (RFC 7591). Public clients use `token_endpoint_auth_method: none`.
+4. Send the user to the `authorization_endpoint` with the authorization-code flow and PKCE (`code_challenge_method=S256` is required). The user signs in and approves access on app.netlify.com.
+5. Exchange the code at the `token_endpoint`. Request the `offline_access` scope if you need a refresh token (`grant_type=refresh_token`).
+
+Most MCP clients do all of this automatically when you add the server URL. For example: `npx -y add-mcp https://netlify-mcp.netlify.app/mcp`.
+
+### 2. Use a personal access token (scripts, CI, local tools)
+
+1. In the Netlify UI, open **User settings > Applications > Personal access tokens** (`https://app.netlify.com/user/applications#personal-access-tokens`) and select **New access token**.
+2. Name it, pick an expiration date, and, if your team uses SAML SSO, choose whether to allow access to that team.
+3. Copy the token when it's shown. It can't be viewed again.
+
+A personal access token works against the REST API, as `NETLIFY_AUTH_TOKEN` for the Netlify CLI, and as `NETLIFY_PERSONAL_ACCESS_TOKEN` for the local MCP server (`npx -y @netlify/mcp`). The hosted MCP server also accepts one directly as its bearer token.
+
+### 3. Build a public integration (OAuth2 app)
+
+If other people will authorize your application, you must use OAuth2 rather than asking users for tokens. Register an OAuth application at `https://app.netlify.com/applications` to get a client ID and secret. Send users to `https://app.netlify.com/authorize`, then exchange the authorization code at `https://api.netlify.com/oauth/token`.
+
+### 4. Use the Netlify CLI
+
+Run `netlify login`. It opens a browser for the user to authorize **Netlify CLI** and stores the token in the CLI's global `config.json`. In CI or other non-interactive environments, set `NETLIFY_AUTH_TOKEN` to a personal access token instead.
+
+## Use the access token
+
+Send the token as a bearer token over HTTPS:
+
+```bash
+curl -H "Authorization: Bearer $NETLIFY_AUTH_TOKEN" \
+     -H "User-Agent: MyAgent (you@example.com)" \
+     https://api.netlify.com/api/v1/sites
+```
+
+The REST API allows up to 500 requests per minute for most requests, and deploys are limited to 3 per minute and 100 per day. The `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` response headers report your current status.
+
+## Errors
+
+- **REST API:** a missing, invalid, or revoked token returns `401` with the JSON body `{"code":401,"message":"Access Denied"}`. Get a new token; don't retry with the same one.
+- **MCP server:** returns `401` with `WWW-Authenticate: Bearer realm="MCP Server", resource_metadata="https://netlify-mcp.netlify.app/.well-known/oauth-protected-resource/mcp"`. An expired or invalid token also carries `error="invalid_token"`. Restart the OAuth flow, or use your refresh token.
+- **SAML SSO teams:** personal access tokens are denied access to an SSO team unless access was granted when the token was created.
+
+## Revocation
+
+Manage all grants at `https://app.netlify.com/user/applications`:
+
+- **OAuth grants** (the MCP server, Netlify CLI, third-party apps) are listed under **Authorized applications**. Choose **Options > Revoke access**.
+- **Personal access tokens** are listed under **Personal access tokens**. Choose **Options > Delete personal token**.
+
+Resetting your Netlify password permanently invalidates every personal access token and OAuth token created before the reset.
+
+## Reference
+
+- REST API authentication: https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/
+- Netlify CLI authentication: https://docs.netlify.com/api-and-cli-guides/cli-guides/get-started-with-cli/
+- Netlify MCP server setup: https://docs.netlify.com/build/build-with-ai/agent-setup-guides/agent-setup-overview/
+- Netlify MCP server source: https://github.com/netlify/netlify-mcp

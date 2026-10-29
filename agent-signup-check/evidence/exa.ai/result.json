@@ -1,0 +1,134 @@
+{
+ "site": "exa.ai",
+ "checkedAt": "2026-10-28T23:58:17.466Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://exa.ai/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://exa.ai/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://exa.ai/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.exa.ai/websets/v0/websets",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://exa.ai/llms.txt",
+   "heading": "# Exa",
+   "bytes": 8808,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://exa.ai/auth.md",
+   "finalUrl": "https://exa.ai/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 116,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://exa.ai/llms.txt",
+   "finalUrl": "https://exa.ai/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 50,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.exa.ai/websets/v0/websets",
+   "finalUrl": "https://api.exa.ai/websets/v0/websets",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 37,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://exa.ai/.well-known/oauth-protected-resource",
+   "finalUrl": "https://exa.ai/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 52,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.exa.ai/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.exa.ai/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 40,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://exa.ai/.well-known/oauth-authorization-server",
+   "finalUrl": "https://exa.ai/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 72,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://exa.ai/.well-known/x402",
+   "finalUrl": "https://exa.ai/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 59,
+   "redirects": 0
+  }
+ ]
+}

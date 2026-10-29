@@ -1,0 +1,17 @@
+GET https://railway.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:27.392Z
+final-url: https://railway.com/.well-known/x402
+
+HTTP 406
+content-type: application/json
+date: Wed, 28 Oct 2026 23:57:27 GMT
+server: railway-hikari
+x-railway-request-id: x2uWeXY1QNGeQp8onPRhug
+x-cache: DYNAMIC
+transfer-encoding: chunked
+x-hikari-trace: lax1.sx7j,lax1.ez9k
+x-railway-edge: lax1
+connection: close
+
+{"error":"Only HTML requests are supported here"}

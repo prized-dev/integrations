@@ -1,0 +1,34 @@
+GET https://www.firecrawl.dev/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:13.325Z
+final-url: https://www.firecrawl.dev/.well-known/oauth-authorization-server
+
+HTTP 200
+access-control-allow-headers: Content-Type, Authorization, Accept
+access-control-allow-methods: GET, POST, PUT, OPTIONS
+access-control-allow-origin: *
+access-control-max-age: 86400
+age: 1072
+cache-control: public, max-age=3600
+content-encoding: br
+content-security-policy: default-src 'self' https://docs.firecrawl.dev; script-src 'nonce-9eafa7c3-af39-4ca7-953d-57e3d1ce1d9d' 'strict-dynamic' 'wasm-unsafe-eval' 'report-sample' 'self' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://googleads.g.doubleclick.net https://static.ads-twitter.com https://www.clarity.ms https://scripts.clarity.ms https://us-assets.i.posthog.com https://www.dubcdn.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.chatbase.co https://assets.calendly.com https://platform.twitter.com https://bugcrowd.com https://assets.bugcrowdusercontent.com https://*.quarterzip.ai; script-src-elem 'nonce-9eafa7c3-af39-4ca7-953d-57e3d1ce1d9d' 'strict-dynamic' 'wasm-unsafe-eval' 'report-sample' 'self' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://googleads.g.doubleclick.net https://static.ads-twitter.com https://www.clarity.ms https://scripts.clarity.ms https://us-assets.i.posthog.com https://www.dubcdn.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.chatbase.co https://assets.calendly.com https://platform.twitter.com https://bugcrowd.com https://assets.bugcrowdusercontent.com https://*.quarterzip.ai; style-src 'self' 'unsafe-inline' 'report-sample' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' 'report-sample' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob:; font-src 'self' data: https:; connect-src 'self' https: wss: data: blob: https://www.google.com/recaptcha/; frame-src 'self' https://docs.firecrawl.dev https://www.youtube.com https://www.youtube-nocookie.com https://platform.twitter.com https://www.linkedin.com https://www.google.com https://accounts.google.com https://recaptcha.google.com https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://js.stripe.com https://verify.didit.me https://www.googletagmanager.com https://vercel.live https://liveview.firecrawl.dev https://hangar.firecrawl.dev https://bugcrowd.com https://assets.bugcrowdusercontent.com https://renderer.gist.build https://code.gist.build https://www.chatbase.co https://calendly.com https://*.quarterzip.ai https://www.g2.com; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests; report-uri /api/csp-report; report-to csp-endpoint
+content-type: application/json
+date: Wed, 28 Oct 2026 23:40:20 GMT
+permissions-policy: geolocation=(self), microphone=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), display-capture=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), autoplay=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), speaker-selection=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), storage-access=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai")
+referrer-policy: strict-origin-when-cross-origin
+report-to: {"group":"csp-endpoint","max_age":10886400,"endpoints":[{"url":"/api/csp-report"}]}
+reporting-endpoints: csp-endpoint="/api/csp-report"
+server: Vercel
+strict-transport-security: max-age=63072000
+x-content-type-options: nosniff
+x-csp-nonce: 9eafa7c3-af39-4ca7-953d-57e3d1ce1d9d
+x-frame-options: DENY
+x-matched-path: /api/oauth/metadata
+x-nextjs-rewritten-path: /api/oauth/metadata
+x-nonce: 9eafa7c3-af39-4ca7-953d-57e3d1ce1d9d
+x-vercel-cache: HIT
+x-vercel-id: pdx1::iad1::lrq2l-1793231892417-d9efcab8b8c3
+connection: close
+transfer-encoding: chunked
+
+{"issuer":"https://www.firecrawl.dev","resource":"https://api.firecrawl.dev/","resources":["https://api.firecrawl.dev/","https://mcp.firecrawl.dev/v2/mcp","https://mcp.firecrawl.dev/v2/mcp-search","https://mcp.firecrawl.dev/v2/mcp-oauth"],"authorization_servers":["https://www.firecrawl.dev"],"authorization_endpoint":"https://www.firecrawl.dev/api/oauth/authorize","token_endpoint":"https://www.firecrawl.dev/api/oauth/token","registration_endpoint":"https://www.firecrawl.dev/api/oauth/register","revocation_endpoint":"https://www.firecrawl.dev/api/oauth/revoke","introspection_endpoint":"https://www.firecrawl.dev/api/oauth/introspect","response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token"],"code_challenge_methods_supported":["S256"],"client_id_metadata_document_supported":true,"token_endpoint_auth_methods_supported":["none"],"revocation_endpoint_auth_methods_supported":["none"],"scopes_supported":["firecrawl:global","offline_access"],"bearer_methods_supported":["header"],"agent_auth":{"skill":"https://www.firecrawl.dev/auth.md","register_uri":"https://www.firecrawl.dev/agent/auth","revocation_uri":"https://www.firecrawl.dev/agent/auth/revoke","identity_types_supported":["identity_assertion"],"identity_assertion":{"assertion_types_supported":["urn:ietf:params:oauth:token-type:id-jag"],"credential_types_supported":["api_key"]},"events_supported":["https://schemas.workos.com/events/agent/auth/identity/assertion/revoked"]},"agent_authentication":{"register_uri":"https://www.firecrawl.dev/agent/auth","supported_identity_types":["identity_assertion"],"identity_assertion":{"supported_assertion_types":["urn:ietf:params:oauth:token-type:id-jag"],"supported_credential_types":["api_key"]}}}

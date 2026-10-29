@@ -1,0 +1,18 @@
+GET https://api.agentmail.to/v0/inboxes
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:58.219Z
+final-url: https://api.agentmail.to/v0/inboxes
+
+HTTP 401
+content-type: application/json
+content-length: 26
+connection: close
+date: Wed, 28 Oct 2026 23:57:56 GMT
+apigw-requestid: F-rQvh4dyK4EJMw=
+x-cache: Error from cloudfront
+via: 1.1 9b38ff4b39c6c0a269c601916dab060e.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P4
+x-amz-cf-id: dkLFYukX9BnUvZeOKNuvxl-F1HEYbTn83S560u2cyNEKFV6MUWjy3w==
+strict-transport-security: max-age=31536000; includeSubDomains
+
+{"message":"Unauthorized"}

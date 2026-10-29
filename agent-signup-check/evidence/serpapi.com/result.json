@@ -1,0 +1,124 @@
+{
+ "site": "serpapi.com",
+ "checkedAt": "2026-10-28T23:58:19.942Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://serpapi.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://serpapi.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://serpapi.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://serpapi.com/account.json",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://serpapi.com/llms.txt",
+   "heading": "# SerpApi",
+   "bytes": 32282,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://serpapi.com/auth.md",
+   "finalUrl": "https://serpapi.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 117,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://serpapi.com/llms.txt",
+   "finalUrl": "https://serpapi.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 33,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://serpapi.com/account.json",
+   "finalUrl": "https://serpapi.com/account.json",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 132,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://serpapi.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://serpapi.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 133,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://serpapi.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://serpapi.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 135,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://serpapi.com/.well-known/x402",
+   "finalUrl": "https://serpapi.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 120,
+   "redirects": 0
+  }
+ ]
+}

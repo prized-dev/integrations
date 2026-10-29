@@ -1,0 +1,20 @@
+GET https://claimable.neon.tech/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:52.166Z
+final-url: https://claimable.neon.tech/.well-known/oauth-protected-resource
+
+HTTP 200
+age: 0
+cache-control: public, max-age=0, must-revalidate
+content-encoding: br
+content-type: application/json
+date: Wed, 28 Oct 2026 23:57:50 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-request-id: a94673a3-4bc3-4b06-a510-c3c63261eae9
+x-vercel-cache: MISS
+x-vercel-id: pdx1::iad1::cv5n8-1793231870559-0c054289b0ea
+connection: close
+transfer-encoding: chunked
+
+{"resource":"https://claimable.neon.tech/","authorization_servers":["https://neon.com/claimable"],"scopes_supported":["postgres.read","postgres.write","data_api.query","data_api.configure","auth.configure","storage.read","storage.write","functions.deploy","functions.invoke","ai_gateway.invoke"],"bearer_methods_supported":["header"]}

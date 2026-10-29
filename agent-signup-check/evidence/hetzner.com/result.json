@@ -1,0 +1,144 @@
+{
+ "site": "hetzner.com",
+ "checkedAt": "2026-10-28T23:57:49.086Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://hetzner.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://www.hetzner.com/auth.md)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://hetzner.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://www.hetzner.com/.well-known/oauth-protected-resource/)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://hetzner.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404) (after a redirect to https://www.hetzner.com/.well-known/oauth-authorization-server/); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.hetzner.cloud/v1/servers",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://docs.hetzner.com/llms.txt",
+   "heading": "# Hetzner Docs",
+   "bytes": 89860,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://hetzner.com/auth.md",
+   "finalUrl": "https://www.hetzner.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 763,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://hetzner.com/llms.txt",
+   "finalUrl": "https://www.hetzner.com/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 585,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.hetzner.cloud/v1/servers",
+   "finalUrl": "https://api.hetzner.cloud/v1/servers",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 686,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://docs.hetzner.com/llms.txt",
+   "finalUrl": "https://docs.hetzner.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=UTF-8",
+   "ms": 840,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://hetzner.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.hetzner.com/.well-known/oauth-protected-resource/",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 605,
+   "redirects": 2
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.hetzner.cloud/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.hetzner.cloud/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json; charset=UTF-8",
+   "ms": 508,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://hetzner.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.hetzner.com/.well-known/oauth-authorization-server/",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 608,
+   "redirects": 2
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://hetzner.com/.well-known/x402",
+   "finalUrl": "https://www.hetzner.com/.well-known/x402/",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 598,
+   "redirects": 2
+  }
+ ]
+}

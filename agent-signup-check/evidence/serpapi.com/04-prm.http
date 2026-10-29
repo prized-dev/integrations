@@ -1,0 +1,73 @@
+GET https://serpapi.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:19.942Z
+final-url: https://serpapi.com/.well-known/oauth-protected-resource
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:58:18 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+x-frame-options: SAMEORIGIN
+x-xss-protection: 1; mode=block
+x-content-type-options: nosniff
+x-download-options: noopen
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+link: </assets/fontawesome-175d2a6f50e90c8369a071e18dcdd26e8318fb8262cd5344f8b936908a2e1f59.css>; rel=preload; as=style; nopush,</assets/fontawesome-all-859dacb17de7ff576e0239fab418e6f00052400387b1b4c37d77ba57c8b6453a.css>; rel=preload; as=style; nopush,</assets/error-d451a8c727930d20ca57183449f1afae1cb3c79f416a311f42f56e0248f65544.css>; rel=preload; as=style; nopush
+vary: Accept, accept-encoding
+cache-control: no-cache
+x-request-id: 2a203a6c-8244-46f7-9380-938637bcad62
+x-runtime: 0.001470
+cf-cache-status: BYPASS
+content-encoding: br
+server: cloudflare
+cf-ray: a51de346b8aaff0e-PDX
+alt-svc: h3=":443"; ma=86400
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>404 - Page Not Found</title>
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#377FEA">
+<meta name="apple-mobile-web-app-title" content="SerpApi">
+<meta name="application-name" content="SerpApi">
+
+    <link rel="stylesheet" media="all" href="/assets/fontawesome-175d2a6f50e90c8369a071e18dcdd26e8318fb8262cd5344f8b936908a2e1f59.css" />
+    <link rel="stylesheet" media="all" href="/assets/fontawesome-all-859dacb17de7ff576e0239fab418e6f00052400387b1b4c37d77ba57c8b6453a.css" />
+
+    <link rel="stylesheet" media="all" href="/assets/error-d451a8c727930d20ca57183449f1afae1cb3c79f416a311f42f56e0248f65544.css" />
+  </head>
+  <body>
+    <a class="logo" href="/" title="Home"><img src="https://serpapi.com/assets/SerpApi-gentle-white-dc708ed0b09596cd08db74108b88af298123eeb384e872716b61d2a0ba1a1e03.png" alt="" /></a>
+    <div class="wrap-error">
+      <div class="info">
+        <h1><span>404</span> - Page Not Found</h1>
+        <p>The page you are looking for doesn't exist.</p>
+        <div class="links">
+          <p>Some hopefully helpful links instead:</p>
+          <ul>
+            <li><i class="fas fa-home"></i><a href="/">Homepage</a></li>
+            <li><i class="fab fa-google"></i><a href="/search-api">Google Search API</a></li>
+            <li><img src="/demo-redesign/icons/static/bing.svg" alt=""><a href="/bing-search-api">Bing Search API</a></li>
+            <li><i class="fas fa-code"></i><a href="/playground">Playground</a></li>
+            <li class="support">You can also contact support:</li>
+            <li><i class="fas fa-envelope"></i><a href="mailto:contact@serpapi.com">contact@serpapi.com</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="img">
+        <img src="/demo-redesign/images/cat-404.png" alt="" />
+      </div>
+    </div>
+  </body>
+</html>

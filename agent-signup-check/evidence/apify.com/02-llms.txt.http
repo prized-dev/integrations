@@ -1,0 +1,157 @@
+GET https://apify.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:15.223Z
+final-url: https://apify.com/llms.txt
+
+HTTP 200
+content-type: text/plain; charset=UTF-8
+transfer-encoding: chunked
+connection: close
+date: Wed, 28 Oct 2026 22:02:32 GMT
+content-encoding: gzip
+strict-transport-security: max-age=15768000
+x-permitted-cross-domain-policies: none
+x-frame-options: SAMEORIGIN
+x-xss-protection: 1; mode=block
+x-content-type-options: nosniff
+expect-ct: enforce, max-age=604800
+x-download-options: noopen
+feature-policy: geolocation 'none'; camera 'self' https://embed.sequel.io; microphone 'self' https://embed.sequel.io;
+content-security-policy: default-src 'none'; connect-src 'self' data: https://apify.com https://*.apify.com https://*.intercom.io https://*.intercom.help https://*.intercom-messenger.com https://intercom-sheets.com https://intercom.help wss://*.intercom.io wss://*.intercom-messenger.com https://*.intercomassets.com https://*.s3.amazonaws.com https://*.s3.us-east-1.amazonaws.com https://*.intercomcdn.com https://*.zapier.com https://zapier.com https://*.bootstrapcdn.com https://*.apiary.com https://*.apiary.io https://*.fury.io https://travis-ci.org https://*.travis-ci.org https://travis-ci.com https://*.travis-ci.com https://*.cloudfront.net https://*.algolianet.com https://*.algolianet.net https://*.algolia.net https://*.algolia.io https://browser.sentry-cdn.com https://*.sentry.io https://*.sentry-cdn.com https://*.reddit.com/ https://www.redditstatic.com/ads/ https://google.com https://*.google.com https://fonts.googleapis.com https://fonts.gstatic.com https://www.googletagmanager.com/ https://tagmanager.google.com https://*.google-analytics.com https://ssl.google-analytics https://*.g.doubleclick.net https://*.doubleclick.net https://optimize.google.com https://www.googleoptimize.com https://translate.google.com https://*.googlesyndication.com https://translate.googleapis.com https://www.googleadservices.com https://*.google.com/pagead/ https://*.google.com/pagead/landing https://*.google.cz/pagead/landing https://*.googlesyndication.com/pagead/ https://*.googlesyndication.com/pagead/landing https://*.google.com/ads/ https://*.google.cz/ads/ https://*.smartlook.com https://*.smartlook.cloud https://*.dreamdata.cloud https://cdn.firstpromoter.com https://t.firstpromoter.com https://*.hs-scripts.com https://*.hs-banner.com https://*.hs-analytics.net https://*.hsappstatic.net https://*.hscollectedforms.net https://*.hsforms.net https://*.hsforms.com https://*.hubspot.com https://*.hubapi.com https://*.hs-banner.com https://js.hscta.net https://js-eu1.hscta.net https://api.hubapi.com/ https://*.hsleadflows.net https://*.hsadspixel.net https://cookie-cdn.cookiepro.com https://privacyportal.cookiepro.com https://geolocation.onetrust.com https://tracking.g2crowd.com https://*.g2.com https://*.maze.co https://api-js.mixpanel.com https://*.mxpnl.com https://www.clarity.ms https://*.clarity.ms https://*.lfeeder.com https://snap.licdn.com https://*.ads.linkedin.com https://*.bing.net https://*.bing.com https://redditstatic.com https://analytics.tiktok.com https://analytics-ipv6.tiktokw.us https://static.ads-twitter.com https://t.co https://analytics.twitter.com https://cdn.segment.com https://api.segment.io https://www.youtube.com https://noembed.com https://*.vimeo.com https://vimeo.com/api/oembed.json https://ourworldindata.org/grapher/internet-users-by-world-region https://*.fs1.hubspotusercontent-na1.net https://apify.ghost.io https://my.demio.com; img-src 'self' blob: data: https://apify.com https://*.apify.com https://*.google.com https://*.googleusercontent.com https://*.google-analytics.com https://*.doubleclick.net https://*.g.doubleclick.net https://*.googlesyndication.com https://*.googletagmanager.com https://fonts.googleapis.com https://*.gstatic.com https://ssl.gstatic.com https://www.gstatic.com https://*.google.com/pagead/ https://*.google.cz/pagead/ https://*.googlesyndication.com/pagead/ https://*.google.com/ads/ https://*.google.cz/ads/ https://*.zapier.com https://zapier.com https://*.intercom.io https://*.intercom.help https://intercom.help https://intercom-sheets.com https://*.intercomassets.com https://*.intercomcdn.com https://*.fury.io https://travis-ci.com https://*.travis-ci.com https://travis-ci.org https://*.travis-ci.org https://*.cloudfront.net https://*.s3.amazonaws.com https://*.s3.us-east-1.amazonaws.com https://raw.githubusercontent.com/apify/ https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/ https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/ https://www.redditstatic.com/ads/ https://*.reddit.com/ https://*.hsforms.com https://*.hsforms.net https://js.hscta.net https://js-eu1.hscta.net https://*.hubspot.com https://ct.capterra.com https://cookie-cdn.cookiepro.com https://cookiepro.blob.core.windows.net/logos/static/ot_persistent_cookie.png https://privacyportal.cookiepro.com/request/v1/consentreceipts https://*.lfeeder.com https://snap.licdn.com https://*.ads.linkedin.com https://www.linkedin.com https://www.clarity.ms https://*.clarity.ms https://*.mxpnl.com https://*.bing.com https://*.bing.net https://redditstatic.com https://analytics.tiktok.com https://static.ads-twitter.com https://t.co https://analytics.twitter.com https://q.quora.com https://cdn.segment.com https://api.segment.io https://*.gravatar.com https://avatars.githubusercontent.com https://*.facebook.com https://*.fbcdn.net https://*.twimg.com https://*.wp.com https://*.fbsbx.com https://ph-files.imgix.net https://miro.medium.com https://i.ytimg.com https://*.fs1.hubspotusercontent-na1.net https://*.trustradius.com https://*.crozdesk.com https://assets.capterra.com https://*.g2.com https://img.shields.io https://assets.unicorn.studio https://*.ghost.io https://images.apifyusercontent.com; frame-src https://apify.com https://*.apify.com https://www.youtube.com/ https://*.doubleclick.net https://*.g.doubleclick.net https://intercom-sheets.com/ https://*.intercom.io https://*.intercom.help https://intercom.help https://*.hsforms.com https://*.hubspot.com https://*.hsforms.net https://*.hs-sites.com https://*.hs-sites-eu1.com https://www.googletagmanager.com/ https://www.tiktok.com/ https://embed.sequel.io; style-src 'self' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-attr 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' https://*.hsadspixel.net https://*.hs-analytics.net https://*.hs-scripts.com; script-src-elem 'unsafe-inline' 'unsafe-eval' 'self' https://*.google.com https://fonts.googleapis.com https://fonts.gstatic.com https://www.googletagmanager.com/ https://tagmanager.google.com https://*.google-analytics.com https://ssl.google-analytics https://*.g.doubleclick.net https://*.doubleclick.net https://optimize.google.com https://www.googleoptimize.com https://translate.google.com https://*.googlesyndication.com https://translate.googleapis.com https://www.googleadservices.com https://*.google.com/pagead/ https://*.google.com/pagead/landing https://*.google.cz/pagead/landing https://*.googlesyndication.com/pagead/ https://*.googlesyndication.com/pagead/landing https://*.google.com/ads/ https://*.google.cz/ads/ https://*.hsforms.net https://cookie-cdn.cookiepro.com https://*.hs-scripts.com https://*.hs-banner.com https://*.hs-analytics.net https://*.hscollectedforms.net https://*.hsforms.com https://*.hubspot.com https://*.hubspotfeedback.com https://static.hsappstatic.net https://*.hs-banner.com https://js.hs-banner.com https://feedback.hubapi.com https://feedback-eu1.hubapi.com https://js.hscta.net https://js-eu1.hscta.net https://api.hubapi.com/ https://*.hsleadflows.net https://*.hsadspixel.net https://cdn.firstpromoter.com https://t.firstpromoter.com https://*.intercom.io https://*.intercom.help https://intercom.help https://intercom-sheets.com https://*.intercomassets.com https://*.intercomcdn.com https://www.clarity.ms https://*.clarity.ms https://snap.licdn.com https://*.bing.net https://*.bing.com https://redditstatic.com https://analytics.tiktok.com https://static.ads-twitter.com https://t.co https://analytics.twitter.com https://*.smartlook.com https://*.smartlook.cloud https://*.dreamdata.cloud https://privacyportal.cookiepro.com https://geolocation.onetrust.com https://tracking.g2crowd.com https://*.maze.co https://api-js.mixpanel.com https://*.mxpnl.com https://*.lfeeder.com https://*.ads.linkedin.com https://www.redditstatic.com/ads/ https://www.youtube.com https://a.quora.com https://cdn.segment.com https://api.segment.io https://analytics.apify.com https://cdn.jsdelivr.net; font-src 'self' data: https://fonts.googleapis.com https://fonts.gstatic.com https://*.intercomcdn.com; form-action 'self' https://*.intercom.io https://*.intercom.help https://intercom-sheets.com https://*.hsforms.com https://*.hubspot.com https://*.hsforms.net; child-src https://*.hsforms.com; media-src https://cdn-cms-securitybyobscurity.apify.com https://cdn-cms.apify.com; frame-ancestors 'self' https://cms.apify.com; base-uri 'self'
+access-control-allow-origin: *
+access-control-allow-methods: GET, HEAD, OPTIONS
+access-control-allow-headers: Content-Type
+access-control-expose-headers: Link
+cache-control: public, max-age=7200
+accept-ranges: bytes
+last-modified: Tue, 27 Oct 2026 16:27:44 GMT
+etag: W/"41be-1a17e306800"
+vary: Accept-Encoding
+x-cache: Hit from cloudfront
+via: 1.1 949f02beb00874a68d9d2ac605c9b938.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P5
+alt-svc: h3=":443"; ma=86400
+x-amz-cf-id: LHxRfBVzynwZv9Qtl4YUS2E9PPHGjQecuhCg4EXQZjRM_LW-dDzViw==
+age: 6939
+
+# Apify
+
+> Apify is a marketplace of ready-to-run tools for AI that automate work on the web. Thousands of _Actors_ get web data, generate leads, monitor social media, track competitors, and integrate with existing apps and agents. Actors are created by a global community of builders who earn from them, while Apify manages infrastructure, billing, and distribution.
+
+AI agents reach Apify in three ways. An interactive agent connects the MCP server at https://mcp.apify.com and signs in through the browser. Code that outlives the session — a server, a scheduled job, a product feature — uses the `apify-client` package or the REST API with an API token. An autonomous agent with a wallet and nobody to sign in buys a prepaid, spend-capped token at https://agi.apify.com through x402 or MPP. The quickstart at https://apify.com/agents.md walks through all three.
+
+**Important notes:**
+
+- No account is needed to explore. Search the Store with `GET https://api.apify.com/v2/store?search={keywords}`, read any Actor by appending `.md` to its page URL, or connect the anonymous MCP tools at https://mcp.apify.com/?tools=search-actors,fetch-actor-details,search-apify-docs,fetch-apify-docs. Running Actors and reading private run or storage data requires authentication.
+- Creating an account is free and requires no credit card: the free plan renews $5 of usage credit every month, and if that credit runs out, access pauses until the next month instead of being billed. There is nothing to cancel.
+- An Actor is not an AI agent. It is a serverless cloud program that takes JSON input, runs on Apify’s infrastructure, and returns structured output. On Apify, "Actor" always means this and is always capitalized, i.e. "Actor", not "actor".
+- Apify Store is a marketplace: most Actors are built, priced, and maintained by independent creators rather than by Apify, so each one has its own owner, pricing model, and README.
+- Install `apify-client`, not `apify`, to call Actors from your own code. The `apify` package is the SDK for building them, and picking the wrong one is the most common integration mistake.
+
+## Main pages
+
+- [Apify Store](https://apify.com/store.md): Thousands of ready-to-run tools for web data, AI, and automation. Lists the most popular Actors overall and per use case, and describes how to search the full catalog over the Store API. For connecting and running an Actor, it points at the quickstart below.
+- [Apify Actors](https://apify.com/actors): Web data automations that power your AI and operations. Run them in the cloud or locally to scrape websites, process data, or connect APIs without managing infrastructure.
+- [Careers at Apify](https://apify.com/jobs): Join the Apify team to help people get more value from the web.
+- [Apify integrations](https://apify.com/integrations): Connect Apify and Actors with your favorite tools, APIs, and cloud services. Trigger workflows, send data in real time, and power your AI and apps with live web automation.
+- [Apify pricing](https://apify.com/pricing.md): Flexible plans with pay-as-you-go usage on top of the monthly fee. A free plan is available with no credit card required.
+- [Apify Storage](https://apify.com/storage): Scalable and reliable cloud data storage designed for web scraping and automation workloads.
+- [Contact Sales](https://apify.com/contact-sales): Tell us what you need to achieve with web data, AI, or automation, and find the right Apify solution.
+- [Scrape the web without getting blocked](https://apify.com/anti-blocking): Use Apify’s combined anti-blocking solutions to extract data reliably, even from sites with advanced anti-scraping protections.
+- [Apify Proxy](https://apify.com/proxy): Apify Proxy allows you to change your IP address when web scraping to reduce the chance of being blocked because of your geographical location.
+- [Apify for Enterprise](https://apify.com/enterprise): Accurate, reliable, and compliant web data for your business. From any website. At any scale.
+- [Fast, reliable data for ChatGPT and LLMs](https://apify.com/use-cases/data-for-generative-ai): Get the data to train ChatGPT API and Large Language Models, fast.
+- [Apify MCP server](https://mcp.apify.com): Hosted Model Context Protocol (MCP) server that lets AI agents and LLM clients (such as Claude, ChatGPT, or Cursor) discover, run, and retrieve results from Apify Actors and platform tools.
+- [Apify MCP server card](https://mcp.apify.com/.well-known/mcp/server-card.json): Machine-readable discovery document for the hosted MCP server, describing its endpoint, transport, capabilities, and authentication.
+- [AGENTS.md](https://apify.com/agents.md): Quickstart for AI agents and coding assistants integrating with Apify — MCP server, Agent Skills, and API paths.
+- [auth.md](https://apify.com/auth.md): How an agent gets an Apify credential — the live OAuth device flow, MCP browser sign-in, API tokens, and prepaid tokens. Apify does not support agentic self-registration.
+- [Agent Skills registry](https://apify.com/.well-known/agent-skills/index.json): Machine-readable index of official Apify Agent Skills.
+- [Apify API catalog](https://apify.com/.well-known/api-catalog): RFC 9727 linkset describing Apify's REST API and MCP server as catalog items.
+- [Apify agentic resource catalog](https://apify.com/.well-known/ard.json): Agentic Resource Discovery (ARD) catalog of the resources an agent can call or read — the MCP server, the REST and Store search APIs, each Agent Skill, the agentic payment path, and the markdown documents describing the agent quickstart, the Store and pricing.
+- [Apify Agent General Interface (AGI)](https://agi.apify.com): Entry point to Apify for autonomous AI agents, enabling them to use and pay for the Apify platform and Actors through agentic payment protocols like x402 or MPP, without account setup or ongoing billing.
+- [Use cases](https://apify.com/use-cases): Turn live web content into reliable, API-ready data to feed AI models, enrich CRMs, monitor competitors, train chatbots, and automate repetitive tasks.
+- [Apify Professional Services](https://apify.com/professional-services): Premium, customized professional services for web scraping, AI agents, and automation projects.
+- [Apify Partners](https://apify.com/partners): Find certified partners to help you build or set up data extraction and automation solutions.
+- [Actor and integration ideas](https://apify.com/ideas): Explore ideas for API-fied websites, SaaS API wrappers, MCP servers, and open-source libraries, or submit your own.
+- [Changelog](https://apify.com/change-log): Keep up to date with the latest releases, fixes, and features from Apify.
+- [Customer stories](https://apify.com/success-stories): Get inspired by these awesome projects. Find out how Apify can make your work more efficient, profitable, useful, and add value to everything you do.
+- [About Apify](https://apify.com/about): We’re building the world’s largest platform for web data and tools for AI builders.
+- [Contact us](https://apify.com/contact): Company contact and legal information. Let us know what you would like Apify to do for you!
+
+## Apify Partners
+
+- [Monetize your code](https://apify.com/partners/actor-developers): Publish your code on the Apify platform, attract people who need your solution, and get paid!
+- [Apify Affiliate Program](https://apify.com/partners/affiliate): Join Apify Affiliate program and earn up to 30% recurring commission by referring customers and leads.
+
+## Apify support programs
+
+- [Apify for startups](https://apify.com/resources/startups): Apify believes in encouraging startups to grow by making use of online data at scale. So we're extending a special 30% discount on our Scale plan exclusively for entrepreneurs and teams just starting out.
+- [Apify for universities](https://apify.com/resources/universities): We hope to see future generations take advantage of the vast amount of data available online. That’s why we’re offering a 50% discount on our paid plans to students.
+- [Apify for nonprofits](https://apify.com/resources/nonprofits): We believe that online data can help your organization have more impact, so we're offering a substantial discount from our plans to nonprofits and NGOs.
+
+## Use cases
+
+- [Lead generation](https://apify.com/use-cases/lead-generation): A reliable and versatile solution for data extraction that will take your lead generation to the next level.
+- [Market research](https://apify.com/use-cases/market-research): Use web scraping to uncover deep insights from reviews, social media, comments, and forums. Find out what real customers are saying about you and your competitors.
+- [Sentiment analysis](https://apify.com/use-cases/sentiment-analysis): Fuel your sentiment analysis projects with automated data collection be it product reviews, news articles, or social media.
+
+## Apify documentation
+
+- [Apify documentation index as Markdown](https://docs.apify.com/llms.txt): Contains the index of Apify documentation as Markdown file for LLMs.
+- [Apify documentation full content as Markdown](https://docs.apify.com/llms-full.txt): Contains the full content of Apify documentation as a single Markdown file for LLMs.
+- [Web Scraping Academy](https://docs.apify.com/academy.md): Learn everything about web scraping and automation with our free courses that will turn you into an expert scraper developer.
+- [Apify API](https://docs.apify.com/api.md): Introduction to the Apify API and how to access the platform programmatically.
+- [Apify SDK](https://docs.apify.com/sdk.md): Toolkits for building Actors in JavaScript/Node.js and Python.
+- [Apify command-line interface (CLI)](https://docs.apify.com/cli/docs.md): Manage and develop Actors from your terminal.
+- [Apify open source](https://docs.apify.com/open-source.md): Apify's open-source projects, including Crawlee.
+- [Apify platform](https://docs.apify.com/): Apify is your one-stop shop for web scraping, data extraction, and RPA. Automate anything you can do manually in a browser.
+- [Actors](https://docs.apify.com/actors.md): Learn how to develop, run and share serverless cloud programs. Create your own web scraping and automation tools and publish them on the Apify platform.
+- [Storage](https://docs.apify.com/storage.md): Store anything from images and key-value pairs to structured output data. Learn how to access and manage your stored data from the Apify platform or via API.
+- [Proxy](https://docs.apify.com/proxy.md): Learn to anonymously access websites in scraping/automation jobs. Improve data outputs and efficiency of bots, and access websites from various geographies.
+- [Schedules](https://docs.apify.com/actors/running/schedules.md): Learn how to automatically start your Actor and task runs and the basics of cron expressions. Set up and manage your schedules from Apify Console or via API.
+- [Integrations](https://docs.apify.com/integrations.md): Learn how to integrate the Apify platform with other services, your systems, data pipelines, and other web automation workflows.
+- [Monitoring](https://docs.apify.com/actors/running/monitoring.md): Learn how to continuously make sure that your Actors and tasks perform as expected and retrieve correct results. Receive alerts when your jobs or their metrics are not as you expect.
+- [Collaboration](https://docs.apify.com/account/collaboration.md): Learn how to collaborate with other users and manage permissions for organizations or private resources such as Actors, Actor runs, and storages.
+- [Security](https://docs.apify.com/security.md): Learn more about Apify's security practices and data protection measures that are used to protect your Actors, their data, and the Apify platform in general.
+
+## Apify Academy
+
+- [API scraping](https://docs.apify.com/academy/api-scraping.md): Learn all about how the professionals scrape various types of APIs with various configurations, parameters, and requirements.
+- [Advanced web scraping](https://docs.apify.com/academy/advanced-web-scraping.md): Take your scrapers to the next level by learning various advanced concepts and techniques that will help you build highly scalable and reliable crawlers.
+- [Anti-scraping protections](https://docs.apify.com/academy/anti-scraping.md): Understand the various anti-scraping measures different sites use to prevent bots from accessing them, and how to appear more human to fix these issues.
+- [Deploying your code to Apify](https://docs.apify.com/academy/deploying-your-code.md): In this course learn how to take an existing project of yours and deploy it to the Apify platform as an Actor.
+- [Web scraping basics for JavaScript devs](https://docs.apify.com/academy/scraping-basics-javascript.md): Learn how to develop web scrapers with this comprehensive and practical course. Go from beginner to expert, all in one place.
+- [Introduction to the Apify platform](https://docs.apify.com/academy/apify-platform.md): Learn all about the Apify platform, all of the tools it offers, and how it can improve your overall development experience.
+
+## Apify API
+
+- [Apify API](https://docs.apify.com/api/v2.md): Reference documentation for the Apify API (version 2), a RESTful HTTP API for programmatic access to the Apify platform. Base URL: `https://api.apify.com/v2`.
+- [OpenAPI definition](https://apify.com/openapi.json): Machine-readable OpenAPI specification of the Apify API, served on this origin. Canonical copy: https://docs.apify.com/api/openapi.json.
+- [API client for JavaScript](https://docs.apify.com/api/client/js/docs.md): Official Node.js/JavaScript client for the Apify API.
+- [API client for Python](https://docs.apify.com/api/client/python/docs.md): Official Python client for the Apify API.
+
+## Actors
+
+Actors are serverless cloud programs that run on the Apify platform and perform web scraping, data extraction, and automation tasks. An Actor takes a JSON input, runs in the cloud for as long as needed, and stores its results in a dataset or key-value store. Thousands of ready-made Actors are available in [Apify Store](https://apify.com/store.md), or you can build and publish your own.
+
+Each Actor published on Apify Store has a public web page, for example https://apify.com/apify/website-content-crawler. The page is also available as a single Markdown document for AI agents by adding `.md` to the URL, for example https://apify.com/apify/website-content-crawler.md.
+
+- [Running](https://docs.apify.com/actors/running.md): Start an Actor from Apify Console or via API. Learn about Actor lifecycles, how to specify settings and version, provide input, and resurrect finished runs.
+- [Publishing and monetization](https://docs.apify.com/actors/publishing.md): Learn about publishing, and monetizing your Actors on the Apify platform.
+- [Development](https://docs.apify.com/actors/development.md): Read about the technical part of building Apify Actors. Learn to define Actor inputs, build new versions, persist Actor state, and choose base Docker images.
+
+### Actor code templates
+
+To simplify creating new Actors, you can start from one of the following code templates. The full source code of all templates is available at https://github.com/apify/actor-templates.
+
+- [Crawlee + Playwright + Chrome](https://apify.com/templates/ts-crawlee-playwright-chrome): Web scraper example with Crawlee, Playwright and headless Chrome. Playwright is more modern, user-friendly and harder to block than Puppeteer.
+- [Crawlee + Puppeteer + Chrome](https://apify.com/templates/ts-crawlee-puppeteer-chrome): Example of a Puppeteer and headless Chrome web scraper. Headless browsers render JavaScript and are harder to block, but they're slower than plain HTTP.
+- [Crawlee + Cheerio](https://apify.com/templates/ts-crawlee-cheerio): A scraper example that uses Cheerio to parse HTML. It's fast, but it can't run the website's JavaScript or pass JS anti-scraping challenges.
+- [Selenium + Chrome](https://apify.com/templates/python-selenium): Scraper example built with Selenium and headless Chrome browser to scrape a website and save the results to storage. A popular alternative to Playwright.
+- [Scrapy](https://apify.com/templates/python-scrapy): This example Scrapy spider scrapes page titles from URLs defined in input parameter. It shows how to use Apify SDK for Python and Scrapy pipelines to save results.
+- [Crawlee + BeautifulSoup](https://apify.com/templates/python-crawlee-beautifulsoup): Crawl and scrape websites using Crawlee and BeautifulSoup. Start from a given start URLs, and store results to Apify dataset.
+
+## Apify SDK
+
+- [Apify SDK for JavaScript and Node.js](https://docs.apify.com/sdk/js/docs/overview.md): Toolkit for building Actors in JavaScript and Node.js.
+- [Apify SDK for Python](https://docs.apify.com/sdk/python/docs/overview.md): Toolkit for building Actors in Python.

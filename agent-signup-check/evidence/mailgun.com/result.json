@@ -1,0 +1,149 @@
+{
+ "site": "mailgun.com",
+ "checkedAt": "2026-10-28T23:58:08.485Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 2,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://mailgun.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://www.mailgun.com/auth.md)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://mailgun.com/.well-known/oauth-protected-resource",
+   "via": "well-known",
+   "resource": "https://www.mailgun.com/wp-json/mcp/mcp-oauth-server",
+   "authorization_servers": [
+    "https://www.mailgun.com"
+   ],
+   "status": "partial",
+   "reason": "resource (https://www.mailgun.com/wp-json/mcp/mcp-oauth-server) does not match the URL the metadata came from; RFC 9728 section 3.3 says a client MUST NOT use it"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://mailgun.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.mailgun.net/v3/domains",
+   "httpStatus": 401,
+   "www_authenticate": "Basic realm=\"MG API\"",
+   "status": "pass",
+   "reason": "401 with a Basic challenge"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://documentation.mailgun.com/llms.txt",
+   "heading": "# Mailgun Documentation",
+   "bytes": 32845,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://mailgun.com/auth.md",
+   "finalUrl": "https://www.mailgun.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=UTF-8",
+   "ms": 1275,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://mailgun.com/llms.txt",
+   "finalUrl": "https://www.mailgun.com/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=UTF-8",
+   "ms": 1349,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.mailgun.net/v3/domains",
+   "finalUrl": "https://api.mailgun.net/v3/domains",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 61,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://documentation.mailgun.com/llms.txt",
+   "finalUrl": "https://documentation.mailgun.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 295,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://mailgun.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.mailgun.com/.well-known/oauth-protected-resource/",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=UTF-8",
+   "ms": 172,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.mailgun.net/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.mailgun.net/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 64,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://mailgun.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.mailgun.com/.well-known/oauth-authorization-server/",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=UTF-8",
+   "ms": 214,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://mailgun.com/.well-known/x402",
+   "finalUrl": "https://www.mailgun.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=UTF-8",
+   "ms": 1051,
+   "redirects": 1
+  }
+ ]
+}

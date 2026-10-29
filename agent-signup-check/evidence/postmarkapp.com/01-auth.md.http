@@ -1,0 +1,194 @@
+GET https://postmarkapp.com/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:59.656Z
+final-url: https://postmarkapp.com/auth.md
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:57:55 GMT
+content-type: application/octet-stream
+content-length: 7560
+connection: close
+accept-ranges: bytes
+etag: "6ad90d5c-1d88"
+last-modified: Wed, 21 Oct 2026 19:07:08 GMT
+strict-transport-security: max-age=2592000
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a51de2b54cedd455-SEA
+alt-svc: h3=":443"; ma=86400
+
+# auth.md
+
+Not an agent? You're looking for <https://postmarkapp.com/developer/api/overview>.
+
+You are an agent. This document tells you how to authenticate to **Postmark**, a
+transactional and broadcast email service. Read it fully before your first
+request.
+
+## There is no OAuth
+
+Postmark's API has no authorization server, no dynamic client registration, no
+scopes, and no refresh tokens. Nothing lives at
+`/.well-known/oauth-authorization-server`,
+`/.well-known/openid-configuration` or `/.well-known/oauth-protected-resource`,
+and their absence is deliberate rather than an oversight — publishing OAuth
+metadata for endpoints that do not exist would send you through a flow that
+cannot complete.
+
+Do not send `Authorization: Bearer …`. Postmark ignores it and you will get a
+`401`.
+
+Authentication is a long-lived API token in a Postmark-specific request header.
+
+## Credentials
+
+| Credential            | Request header             | Grants                                                                                 |
+| --------------------- | -------------------------- | -------------------------------------------------------------------------------------- |
+| **Server API token**  | `X-Postmark-Server-Token`  | One server: send email, templates, message search, bounces, suppressions, stats, webhooks |
+| **Account API token** | `X-Postmark-Account-Token` | The whole account: create and configure servers, domains, sender signatures             |
+
+Both are opaque strings. A Server API token is scoped to exactly one Postmark
+server, which is the unit of isolation you should be reasoning about: separate
+servers have separate tokens, separate message streams, and separate data.
+
+Almost everything an agent wants to do — sending mail, reading delivery
+outcomes — needs a **Server API token only**. Ask for an Account API token
+solely when the task is provisioning servers or verifying domains.
+
+## Getting a credential
+
+There is no endpoint that issues tokens. Token creation is an authenticated,
+interactive action taken by a human account holder in the Postmark UI; you
+cannot complete it yourself, and you should not try to automate the UI. Ask your
+operator to do the following, then have them supply the token to you through
+whatever secret-handling mechanism you are configured with.
+
+**For a Server API token:**
+
+1. Sign in, or create a free account, at <https://account.postmarkapp.com/sign_up>.
+2. Go to <https://account.postmarkapp.com/servers>.
+3. Select an existing server, or create one — a dedicated server for the agent
+   is the better choice, for the reasons under "Least privilege" below.
+4. Open the **API Tokens** tab and copy the **Server API token**.
+
+**For an Account API token:** in the same UI, open the account menu and use its
+**API Tokens** tab.
+
+Never ask a human to paste a token into a shared transcript, a commit, a ticket,
+or a prompt you will log. Read it from the environment or a secret store.
+
+## Using a credential
+
+Base URL: `https://api.postmarkapp.com`
+
+```
+POST /email HTTP/1.1
+Host: api.postmarkapp.com
+Accept: application/json
+Content-Type: application/json
+X-Postmark-Server-Token: <your server API token>
+
+{
+  "From": "sender@example.com",
+  "To": "recipient@example.com",
+  "Subject": "Hello",
+  "TextBody": "Hello from an agent."
+}
+```
+
+The machine-readable definitions of every endpoint are linked from
+<https://postmarkapp.com/.well-known/api-catalog>.
+
+## Verifying your credential works before you send
+
+Send with the literal token `POSTMARK_API_TEST` to exercise the sending
+endpoints without delivering anything. Requests are accepted and validated, and
+no mail leaves Postmark. Use it for your first call, for retries while you get
+the request shape right, and in tests.
+
+To check a real token instead, `GET /server` with it — a `200` means the token
+is valid and tells you which server it belongs to.
+
+## Before real mail will send
+
+A real send needs a verified sender: the `From` address must belong to a
+confirmed Sender Signature or a verified sending domain. Until then Postmark
+accepts the token and rejects the message. If you are handed a token and your
+first live send fails on the sender address, that is the cause — report it to
+your operator rather than retrying, because only they can complete the
+verification.
+
+## When authentication fails
+
+A missing, malformed or revoked token returns:
+
+```
+HTTP/1.1 401 Unauthorized
+
+{"ErrorCode":10,"Message":"Request does not contain a valid Server token."}
+```
+
+`401` with `ErrorCode` `10` is terminal: the credential is wrong. Do not retry
+it, and do not retry it with backoff — no amount of waiting makes a bad token
+valid. Stop and tell your operator the token was rejected.
+
+A `422` is a different thing entirely: the token was accepted and the *request*
+was wrong. Read the `Message` in the body, fix the request, and try again. Also
+note that using an Account API token where a Server API token is required, or
+the reverse, fails as an authentication error — check the table above before
+concluding a token is bad.
+
+## Rotation and revocation
+
+Tokens do not expire on their own. A human can rotate or revoke any token from
+the same **API Tokens** screen it was issued on, which takes effect
+immediately and invalidates the old value.
+
+Treat rotation as expected rather than exceptional: re-read the token from your
+secret store rather than caching it for the life of the process, so a rotation
+does not require a restart. On a `401` for a credential that previously worked,
+assume it was rotated or revoked, re-read it once, and if the new value also
+fails, stop and report.
+
+## Least privilege
+
+- Use a **dedicated Postmark server** for agent traffic. It gives the agent its
+  own token, its own message streams, and its own data, so revoking it costs a
+  human nothing else.
+- Prefer a Server API token to an Account API token. An Account API token can
+  create and reconfigure servers and domains across the whole account.
+- Hold one credential, in memory, for as long as the task needs it. Do not copy
+  it into logs, error reports, traces, or files.
+
+## MCP
+
+The official Postmark MCP server authenticates the same way. It reads
+`POSTMARK_SERVER_TOKEN` from its environment, and the same Server API token
+described above is what belongs there:
+
+```json
+{
+  "mcpServers": {
+    "postmark": {
+      "command": "npx",
+      "args": ["-y", "@activecampaign/postmark-mcp"],
+      "env": { "POSTMARK_SERVER_TOKEN": "<your server API token>" }
+    }
+  }
+}
+```
+
+Its card is at <https://postmarkapp.com/.well-known/mcp/server-card.json>.
+
+## Related discovery documents
+
+| Document                                                             | What it is                                    |
+| -------------------------------------------------------------------- | --------------------------------------------- |
+| <https://postmarkapp.com/.well-known/ai-catalog.json>                | Everything Postmark publishes for agents      |
+| <https://postmarkapp.com/.well-known/api-catalog>                    | The APIs, their OpenAPI definitions and docs  |
+| <https://postmarkapp.com/.well-known/mcp/server-card.json>           | The MCP server                                |
+| <https://postmarkapp.com/.well-known/agent-skills/index.json>        | Installable Postmark skills                   |
+| <https://postmarkapp.com/llms.txt>                                   | What Postmark is, in brief                    |
+
+Human support, if you need to escalate to your operator:
+<https://postmarkapp.com/support>.

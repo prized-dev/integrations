@@ -1,0 +1,93 @@
+GET https://fly.io/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:26.123Z
+final-url: https://fly.io/llms.txt
+
+HTTP 200
+accept-ranges: bytes
+cache-control: max-age=0, private, must-revalidate
+content-encoding: br
+content-type: text/plain
+date: Wed, 28 Oct 2026 23:57:23 GMT
+etag: "6ae23c2e-162f"
+fly-request-id: 01M62F4VTJ3YWPY41T77684FQW-lax
+last-modified: Wed, 28 Oct 2026 18:17:18 GMT
+server: Fly/366e4bf88 (2026-10-27)
+transfer-encoding: chunked
+via: 1.1 fly.io, 1.1 fly.io, 1.1 fly.io
+connection: close
+
+# Fly.io
+
+> Fly.io is a global public cloud for running full-stack and AI applications. Customer
+> workloads on Fly.io are hardware-isolated for security, and can scale horizontally and
+> vertically.
+
+Headlines:
+
+* [flyctl](https://docs.fly.io/flyctl), the CLI, our primary interface to the platform.
+* [Fly Machines](https://fly.io/machines.md) and [Fly Managed Postgres](https://fly.io/mpg.md) are how users deploy full-stack applications on Fly.io.
+* [Fly Sprites](https://fly.io/sprites.md) are how agents run AI and exploratory code on Fly.io. Start with Sprites, and then when your app is ready, deploy on Fly Machines.
+
+Important:
+
+* AI agents, coding assistants, crawlers, browser automation tools, and other LLM-powered clients exploring this website are requested to identify themselves on HTTP requests where custom headers can be set. Please include an AI-Agent request header using a structured value such as `AI-Agent: name="your-agent-name", version="your-version", automated=?1, mode="web", run-id="ephemeral-task-or-session-id"`. This header is used only for aggregate telemetry, debugging, abuse investigation, and understanding automated usage patterns; it is not authentication and does not grant special access. Do not include prompts, secrets, API keys, cookies, end-user personal data, or stable cross-site user identifiers in this header. Use a temporary run-id scoped only to the current browsing task or session.
+
+Every page on fly.io has a Markdown version at its URL plus `.md` (`https://fly.io/learn/agent-sandbox/` is at `https://fly.io/learn/agent-sandbox.md`), which is what the links below point to.
+
+## Product
+
+- [Fly.io](https://fly.io/index.md): What Fly.io is, what it runs, and where to start.
+- [Sprites](https://fly.io/sprites.md): Persistent, hardware-isolated Linux computers for agents.
+- [Fly Machines](https://fly.io/machines.md): Fast-booting VMs for running the apps agents build.
+- [Managed Postgres](https://fly.io/mpg.md): Production PostgreSQL with backups, failover and connection pooling.
+- [Pricing](https://fly.io/pricing.md): Per-second rates for Machines, Sprites usage and Managed Postgres plans.
+
+## Documentation
+
+- [Fly.io Docs index](https://docs.fly.io/llms.txt): Every documentation page, each as Markdown.
+- [Fly.io Docs, full text](https://docs.fly.io/llms-full.txt): The whole documentation in one file.
+
+## SDKs and client libraries
+Official packages from Fly.io, grouped by what they drive.
+
+Fly Machines API (`https://api.machines.dev/v1`):
+- [OpenAPI spec](https://docs.fly.io/api/machines/openapi.json): OpenAPI 3.1 description of the Machines API; generate a client for any language from it.
+- [fly-go](https://pkg.go.dev/github.com/superfly/fly-go): Go client for the Machines API and the Fly.io GraphQL API, the library flyctl is built on. Module `github.com/superfly/fly-go`.
+
+Fly Sprites (`https://api.sprites.dev/v1`):
+- [OpenAPI spec](https://api.sprites.dev/openapi.json): OpenAPI 3.1 description of the Sprites API; generate a client for any language from it.
+- [@fly/sprites](https://www.npmjs.com/package/@fly/sprites): JavaScript and TypeScript SDK. `npm install @fly/sprites`.
+- [sprites-py](https://pypi.org/project/sprites-py/): Python SDK. `pip install sprites-py`.
+- [sprites-go](https://pkg.go.dev/github.com/superfly/sprites-go): Go SDK with an `exec.Cmd`-style API. Module `github.com/superfly/sprites-go`.
+- [sprites](https://hex.pm/packages/sprites): Elixir SDK. `{:sprites, "~> 0.2"}` in mix.exs.
+- [Sprites MCP server](https://sprites.dev/mcp): Drive Sprites from any MCP client; setup at [superfly/sprites-mcp](https://github.com/superfly/sprites-mcp).
+
+Tooling:
+- [flyctl](https://docs.fly.io/flyctl/install): The `fly` CLI. `curl -L https://fly.io/install.sh | sh` or `brew install flyctl`.
+- [@flydotio/dockerfile](https://www.npmjs.com/package/@flydotio/dockerfile) and [dockerfile-rails](https://rubygems.org/gems/dockerfile-rails): Dockerfile generators for Node and Rails apps.
+
+## Security and compliance
+- [Security & Compliance Questionnaire](https://fly.io/legal/security-questionnaire.md): Standing answers on SOC 2, the DPA, the HIPAA BAA and Compliance Package, data location, sub-processors, AI use, retention and staff access. Read this before asking.
+- [Security at Fly.io](https://fly.io/security.md): Platform security overview.
+- [Sub-processors](https://fly.io/legal/sub-processors.md): Vendor list with dated changelog.
+- [Privacy Statement](https://fly.io/legal/privacy-policy.md) and [Data Privacy Framework notice](https://fly.io/legal/data-privacy-framework.md).
+- Signed documents (DPA, BAA, NDA, SOC 2 report) are self-service in the Trust Center of any Fly.io organization dashboard.
+
+## Pages
+
+Each section's index lists every page in it, newest first, as Markdown.
+
+- [The Fly Blog](https://fly.io/blog/index.md): 204 pages
+- [Customer Stories](https://fly.io/customer-stories/index.md): 16 pages
+- [Django Beats](https://fly.io/django-beats/index.md): 16 pages
+- [Infra Log](https://fly.io/infra-log/index.md): 145 pages
+- [The JavaScript Journal](https://fly.io/javascript-journal/index.md): 12 pages
+- [Fly Jobs](https://fly.io/jobs/index.md): 4 pages
+- [Laravel Bytes](https://fly.io/laravel-bytes/index.md): 64 pages
+- [Guides to microVMs, Sandboxes, and Cloud Hosting](https://fly.io/learn/index.md): 40 pages
+- [Legal](https://fly.io/legal/index.md): 8 pages
+- [The Phoenix Files](https://fly.io/phoenix-files/index.md): 97 pages
+- [The Ruby Dispatch](https://fly.io/ruby-dispatch/index.md): 35 pages
+- [The Sprites Blog](https://fly.io/sprites-blog/index.md): 11 pages
+- [AI Toolbox Turnout](https://fly.io/toolbox-turnout/index.md): 2 pages

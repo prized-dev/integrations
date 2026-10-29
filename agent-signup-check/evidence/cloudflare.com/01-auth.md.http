@@ -1,0 +1,68 @@
+GET https://cloudflare.com/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:30.956Z
+redirect: 301 from https://cloudflare.com/auth.md
+final-url: https://www.cloudflare.com/auth.md
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:57:27 GMT
+content-type: text/markdown; charset=utf-8
+transfer-encoding: chunked
+connection: close
+link: </.well-known/api-catalog>; rel="api-catalog", </.well-known/agents.json>; rel="service-desc", </.well-known/webmcp.json>; rel="service-desc", </openapi.json>; rel="service-desc", </llms.txt>; rel="service-doc", </sitemap.xml>; rel="sitemap"
+cf-cache-status: HIT
+cache-control: public, max-age=0, must-revalidate
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+strict-transport-security: max-age=31536000; includeSubDomains
+x-served-by: marketing-site
+content-security-policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://static-staging.cloudflareinsights.com https://challenges.cloudflare.com https://*.onetrust.com https://cdn.cookielaw.org https://ot.www.cloudflare.com https://www.googletagmanager.com https://tagmanager.google.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://adservice.google.com https://cdn.bizible.com https://js.adsrvr.org https://*.marketo.net https://platform.twitter.com https://static.ads-twitter.com https://scripts.demandbase.com https://tag.demandbase.com https://*.6sc.co https://*.qualified.com https://snap.licdn.com https://bat.bing.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.googletagmanager.com https://*.google-analytics.com https://*.google.com https://*.doubleclick.net https://www.googleadservices.com https://translate.googleapis.com https://cdn.bizible.com https://js.adsrvr.org https://*.marketo.net https://ads-twitter.com https://analytics.twitter.com https://*.twimg.com https://api.demandbase.com https://scripts.demandbase.com https://tag.demandbase.com https://tag-logger.demandbase.com https://api.company-target.com https://*.6sc.co https://epsilon.6sense.com https://*.qualified.com https://*.ads.linkedin.com https://www.linkedin.com https://bat.bing.com https: wss://*.qualified.com wss://*.registrar.cloudflare.com; frame-src https://*.adsrvr.org https://*.cloudflare.com https://*.videodelivery.net https://*.cloudflarestream.com https://www.googletagmanager.com https://*.qualified.com https://td.doubleclick.net https://bid.g.doubleclick.net https://9309168.fls.doubleclick.net https://9973066.fls.doubleclick.net https://s.company-target.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; worker-src 'self' blob:; child-src 'self' blob:; upgrade-insecure-requests
+cross-origin-opener-policy: unsafe-none
+cross-origin-resource-policy: cross-origin
+permissions-policy: geolocation=(), camera=(), microphone=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-xss-protection: 1; mode=block
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=TObvndO8ifZpkFH00DGSxkc7SR%2Fthj5Gzo60VXtw3uf1gM%2BpR4JekjVvHjschyiX4tUOwP2yB2NEAH3tmH%2FX28TT3NCDwU9fZKWu%2B%2FXRmgRLhmqHNBIcA7bFK42wx6AO%2BPcm5Q%3D%3D"}]}
+etag: W/"81e5f5c5b665a50eb1ff96eea549f59a"
+content-encoding: br
+server: cloudflare
+cf-ray: a51de20598118e5d-PDX
+alt-svc: h3=":443"; ma=86400
+
+# auth.md
+
+You are an agent. Cloudflare is working toward auth.md registration support, including the ID-JAG `identity_assertion` flow. This file exists at `https://cloudflare.com/auth.md` so agents can discover what is coming soon and use supported Cloudflare authentication paths safely today.
+
+## auth.md Registration
+
+Cloudflare does not yet advertise production auth.md registration methods, auth.md Protected Resource Metadata, or agent-auth metadata. Do not mint ID-JAGs or attempt `identity_assertion`, `service_auth`, or `anonymous` auth.md registration against Cloudflare until this file links to production discovery metadata.
+
+When auth.md support launches, this file will point to the authoritative metadata for supported flows, scopes, endpoints, token exchange, errors, and revocation.
+
+## Current Authentication Paths
+
+Use these supported paths today instead of auth.md registration:
+
+- **Wrangler OAuth**: For local development with a Cloudflare account, use `wrangler login`. Documentation: https://developers.cloudflare.com/workers/wrangler/commands/general/#login
+- **Cloudflare API tokens**: For scripts, CI/CD, headless tools, and direct API calls to `https://api.cloudflare.com`, use a scoped API token, typically provided through the `CLOUDFLARE_API_TOKEN` environment variable, and send it as `Authorization: Bearer <API_TOKEN>`. Documentation: https://developers.cloudflare.com/fundamentals/api/get-started/create-token/
+- **Cloudflare OAuth clients**: For third-party applications that integrate with the Cloudflare API, create a Cloudflare OAuth client. Documentation: https://developers.cloudflare.com/fundamentals/oauth/
+- **Temporary accounts**: For unauthenticated agent deployments to Workers, use `wrangler deploy --temporary`. Documentation: https://developers.cloudflare.com/workers/platform/claim-deployments/
+
+Before requesting credentials, check whether the user already has Cloudflare authentication configured through Wrangler or `CLOUDFLARE_API_TOKEN`. Do not ask users to paste API tokens into chat. Read tokens from the environment or a secure secret store at the moment of use, and never print them in logs, commits, pull requests, screenshots, generated docs, or error reports.
+
+## Product Links
+
+- Sign up or sign in: https://dash.cloudflare.com/sign-up/workers-and-pages
+- Cloudflare API documentation: https://developers.cloudflare.com/api/
+- Developer Platform documentation: https://developers.cloudflare.com/
+
+## Legal
+
+- Terms: https://www.cloudflare.com/terms/
+- Privacy: https://www.cloudflare.com/privacypolicy/
+
+## Contact
+
+For Cloudflare product support, use the Cloudflare support portal or product documentation: https://developers.cloudflare.com/support/

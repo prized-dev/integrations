@@ -1,0 +1,163 @@
+{
+ "site": "nano-gpt.com",
+ "checkedAt": "2026-10-28T23:57:17.161Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 5,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://nano-gpt.com/auth.md",
+   "heading": "# auth.md",
+   "registrationEndpoints": [],
+   "mentions": [
+    "anonymous",
+    "identity_assertion"
+   ],
+   "status": "partial",
+   "reason": "auth.md is published, but documents no registration endpoint the checker recognizes (it describes OAuth, device login or keys the person makes)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://nano-gpt.com/.well-known/oauth-protected-resource",
+   "via": "well-known",
+   "resource": "https://nano-gpt.com/api/v1",
+   "authorization_servers": [
+    "https://nano-gpt.com"
+   ],
+   "status": "partial",
+   "reason": "resource (https://nano-gpt.com/api/v1) does not match the URL the metadata came from; RFC 9728 section 3.3 says a client MUST NOT use it"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://nano-gpt.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://nano-gpt.com/api/v1/batches",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "where": "auth.md",
+   "url": "https://nano-gpt.com/auth.md",
+   "match": "usage_limit_type",
+   "snippet": "code_challenge_method\": \"S256\", \"limit\": 20, \"usage_limit_type\": \"weekly\", \"expires_at\": \"2099-07-01T00:00:00.000Z\", \"key_label\": \"Local coding agent\" }",
+   "status": "partial",
+   "reason": "auth.md mentions usage_limit_type in prose; no machine-readable cap"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "where": "llms.txt",
+   "url": "https://docs.nano-gpt.com/llms.txt",
+   "match": "x402",
+   "snippet": "enAI-compatible). For unauthenticated accountless x402 quote requests, include x-x402: true. - [Image Edits](https://docs.nano-gpt.com/api-reference/endpoint/im",
+   "status": "partial",
+   "reason": "llms.txt mentions a payment path (x402) in prose; nothing machine-readable"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://docs.nano-gpt.com/llms.txt",
+   "heading": "# NanoGPT API Documentation",
+   "bytes": 21086,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://nano-gpt.com/auth.md",
+   "finalUrl": "https://nano-gpt.com/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 111,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://nano-gpt.com/llms.txt",
+   "finalUrl": "https://nano-gpt.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 82,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://nano-gpt.com/api/v1/batches",
+   "finalUrl": "https://nano-gpt.com/api/v1/batches",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 248,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://docs.nano-gpt.com/llms.txt",
+   "finalUrl": "https://docs.nano-gpt.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 263,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://nano-gpt.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://nano-gpt.com/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 89,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://nano-gpt.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://nano-gpt.com/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 77,
+   "redirects": 0
+  },
+  {
+   "label": "catch-all probe",
+   "url": "https://nano-gpt.com/agent-signup-check-no-such-page.md",
+   "finalUrl": "https://nano-gpt.com/agent-signup-check-no-such-page.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 100,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://nano-gpt.com/.well-known/x402",
+   "finalUrl": "https://nano-gpt.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 110,
+   "redirects": 0
+  }
+ ]
+}

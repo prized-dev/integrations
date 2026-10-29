@@ -1,0 +1,134 @@
+{
+ "site": "vercel.com",
+ "checkedAt": "2026-10-28T23:57:24.633Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://vercel.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md answers with an HTML page, not Markdown"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://vercel.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://vercel.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.vercel.com/v2/user",
+   "httpStatus": 403,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "403 instead of 401: the body asks for a key, but there is no WWW-Authenticate challenge"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://vercel.com/llms.txt",
+   "heading": "# Vercel",
+   "bytes": 5397,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://vercel.com/auth.md",
+   "finalUrl": "https://vercel.com/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 91,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://vercel.com/llms.txt",
+   "finalUrl": "https://vercel.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 80,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.vercel.com/v2/user",
+   "finalUrl": "https://api.vercel.com/v2/user",
+   "status": 403,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 97,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://vercel.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://vercel.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/plain;charset=UTF-8",
+   "ms": 103,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.vercel.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.vercel.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 143,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://vercel.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://vercel.com/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 90,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://vercel.com/.well-known/x402",
+   "finalUrl": "https://vercel.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/plain;charset=UTF-8",
+   "ms": 112,
+   "redirects": 0
+  }
+ ]
+}

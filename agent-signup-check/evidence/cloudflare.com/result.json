@@ -1,0 +1,152 @@
+{
+ "site": "cloudflare.com",
+ "checkedAt": "2026-10-28T23:57:30.956Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 2,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://www.cloudflare.com/auth.md",
+   "heading": "# auth.md",
+   "registrationEndpoints": [],
+   "mentions": [
+    "anonymous",
+    "identity_assertion",
+    "service_auth"
+   ],
+   "quote": "afely today. ## auth.md Registration Cloudflare does not yet advertise production auth.md registration methods, auth.md Protected Resource Metadata, or agent-",
+   "status": "partial",
+   "reason": "auth.md is published, and says agents cannot register here yet"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://cloudflare.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://www.cloudflare.com/.well-known/oauth-protected-resource/)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://cloudflare.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404) (after a redirect to https://www.cloudflare.com/.well-known/oauth-authorization-server/); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.cloudflare.com/client/v4/user",
+   "httpStatus": 403,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "403 instead of 401, with no WWW-Authenticate challenge"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://www.cloudflare.com/llms.txt",
+   "heading": "# Cloudflare",
+   "bytes": 17169,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://cloudflare.com/auth.md",
+   "finalUrl": "https://www.cloudflare.com/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 51,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://cloudflare.com/llms.txt",
+   "finalUrl": "https://www.cloudflare.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain",
+   "ms": 45,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.cloudflare.com/client/v4/user",
+   "finalUrl": "https://api.cloudflare.com/client/v4/user",
+   "status": 403,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 53,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://cloudflare.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.cloudflare.com/.well-known/oauth-protected-resource/",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 197,
+   "redirects": 2
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.cloudflare.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.cloudflare.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 51,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://cloudflare.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.cloudflare.com/.well-known/oauth-authorization-server/",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 242,
+   "redirects": 2
+  },
+  {
+   "label": "catch-all probe",
+   "url": "https://www.cloudflare.com/agent-signup-check-no-such-page.md",
+   "finalUrl": "https://www.cloudflare.com/agent-signup-check-no-such-page.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/plain; charset=UTF-8",
+   "ms": 225,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://cloudflare.com/.well-known/x402",
+   "finalUrl": "https://www.cloudflare.com/.well-known/x402/",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 200,
+   "redirects": 2
+  }
+ ]
+}

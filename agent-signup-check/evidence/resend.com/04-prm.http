@@ -1,0 +1,27 @@
+GET https://resend.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:58.587Z
+final-url: https://resend.com/.well-known/oauth-protected-resource
+
+HTTP 200
+cache-control: public, max-age=300
+cf-cache-status: DYNAMIC
+cf-ray: a51de2bb2e36ad66-PDX
+content-encoding: br
+content-security-policy: default-src 'self';    connect-src 'self' data: https://api.liveblocks.io wss://api.liveblocks.io/ https://react-tweet.vercel.app https://js.hs-scripts.com https://unpkg.com https://app.posthog.com https://fonts.gstatic.com https://us.i.posthog.com https://browser-intake-us5-datadoghq.com https://*.mintlify.com https://*.mintlifytrieve.com https://hcaptcha.com https://*.hcaptcha.com https://resend-status.com https://*.resend.com https://resend.com https://resend-attachments.s3.amazonaws.com https://resend-attachments.s3.us-east-1.amazonaws.com https://cdn.resend.app https://*.resend.app https://vercel.live https://fpjs.io https://*.fpjs.io https://maps.googleapis.com https://img.logo.dev https://rsnd-contact-uploads-961341540729.s3.us-east-1.amazonaws.com https://rsnd-suppression-uploads-961341540729.s3.us-east-1.amazonaws.com https://rsnd-inbox-draft-attachments-961341540729.s3.us-east-1.amazonaws.com;    script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.hs-scripts.com https://js.stripe.com https://cdn.lr-in-prod.com https://*.mintlify.com https://hcaptcha.com https://*.hcaptcha.com https://vercel.live https://js.hs-analytics.net https://va.vercel-scripts.com https://us-assets.i.posthog.com https://*.resend.com https://resend.com https://fpjs.io https://*.fpjs.io https://maps.googleapis.com;    worker-src 'self' blob:;    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://*.cloudfront.net https://hcaptcha.com https://*.hcaptcha.com;    img-src 'self' blob: data: https://www.gravatar.com https://i2.wp.com https://mintlify.b-cdn.net https://mintlify.s3.us-west-1.amazonaws.com https://*;    font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com https://fonts.cdnfonts.com https://use.typekit.net https://*.cloudfront.net data:;    frame-src 'self' https://www.youtube.com https://js.stripe.com https://vercel.live https://hcaptcha.com https://*.hcaptcha.com;    media-src 'self' https://mintlify.s3.us-west-1.amazonaws.com https://mintcdn.com https://cdn.resend.com;    object-src 'none';    base-uri 'self';    form-action 'self' https://github.com https://accounts.google.com https://sb.resend.com;    frame-ancestors 'self';    block-all-mixed-content;    upgrade-insecure-requests;
+content-type: application/json; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:56 GMT
+document-policy: js-profiling
+etag: W/"ef-UQ+Z2gnk4KvjJu40kZY3jeHnP/Q"
+permissions-policy: autoplay=(self), geolocation=(), microphone=(), camera=()
+referrer-policy: origin-when-cross-origin
+server: Vercel
+strict-transport-security: max-age=63072000; includeSubDomains
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-vercel-cache: MISS
+x-vercel-id: pdx1::4ngpn-1793231876286-0f6e788126e4
+connection: close
+transfer-encoding: chunked
+
+{"resource":"https://api.resend.com","authorization_servers":["https://api.resend.com"],"bearer_methods_supported":["header"],"scopes_supported":["full_access","emails:send"],"resourceDocumentation":"https://resend.com/docs/api-reference"}

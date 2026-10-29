@@ -1,0 +1,80 @@
+GET https://useautumn.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:30.640Z
+final-url: https://useautumn.com/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 15003
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-encoding: br
+content-security-policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://ddwl4m2hdecbv.cloudfront.net https://app.rb2b.com https://b2bjsstore.s3.us-west-2.amazonaws.com https://s3-us-west-2.amazonaws.com https://a.usbrowserspeed.com https://alocdn.com https://pro.ip-api.com https://liadm.com https://*.liadm.com https://9xgnrndqve.execute-api.us-west-2.amazonaws.com https://us.i.posthog.com https://us-assets.i.posthog.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://framerusercontent.com https://ddwl4m2hdecbv.cloudfront.net https://app.rb2b.com https://b2bjsstore.s3.us-west-2.amazonaws.com https://s3-us-west-2.amazonaws.com https://a.usbrowserspeed.com https://alocdn.com https://pro.ip-api.com https://liadm.com https://*.liadm.com https://9xgnrndqve.execute-api.us-west-2.amazonaws.com; font-src 'self' data:; media-src 'self'; connect-src 'self' https://*.vercel.app https://vitals.vercel-insights.com https://ddwl4m2hdecbv.cloudfront.net https://app.rb2b.com https://b2bjsstore.s3.us-west-2.amazonaws.com https://s3-us-west-2.amazonaws.com https://a.usbrowserspeed.com https://alocdn.com https://pro.ip-api.com https://liadm.com https://*.liadm.com https://9xgnrndqve.execute-api.us-west-2.amazonaws.com https://us.i.posthog.com https://us-assets.i.posthog.com; frame-src 'self' https://ddwl4m2hdecbv.cloudfront.net https://app.rb2b.com https://b2bjsstore.s3.us-west-2.amazonaws.com https://s3-us-west-2.amazonaws.com https://a.usbrowserspeed.com https://alocdn.com https://pro.ip-api.com https://liadm.com https://*.liadm.com https://9xgnrndqve.execute-api.us-west-2.amazonaws.com; frame-ancestors 'none'
+content-type: text/plain; charset=utf-8
+cross-origin-opener-policy: same-origin
+date: Wed, 28 Oct 2026 23:58:28 GMT
+etag: W/"d8c8a0002bd8d946152935b26b144305"
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-frame-options: DENY
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::rjnxh-1793231908058-2afccf96905b
+connection: close
+transfer-encoding: chunked
+
+# Autumn
+
+> Drop-in, open-source billing infrastructure for AI startups. Usage-based billing, credits, entitlements, and subscription state on top of Stripe, behind one API.
+
+## What Autumn is
+- Autumn is open-source billing infrastructure that runs on top of Stripe.
+- It is the system of record for subscriptions, usage metering, credits, and feature entitlements, exposed through a small API (`attach`, `check`, `track`).
+
+## What Autumn is not
+- Autumn is not a payment processor and does not replace Stripe; Stripe still holds the subscription and processes payments.
+- Autumn is not a pure usage-metering tool — it also enforces entitlements and feature access, not just end-of-month invoicing.
+
+## Docs
+For how the platform itself works, see the docs:
+- [Autumn docs](https://docs.useautumn.com/welcome)
+- [Quickstart](https://docs.useautumn.com/quickstart)
+- [API reference](https://docs.useautumn.com/api-reference)
+
+## Comparisons
+- [Autumn vs Building In-House](https://useautumn.com/alog/autumn-vs-building-in-house.md): Building in-house gives you maximum control. Autumn is for teams that want real-time checks, credits, entitlements, ledgers, rollovers, reset rules, custom packages, and pricing changes without maintaining a billing system forever.
+- [Autumn vs Metronome](https://useautumn.com/alog/autumn-vs-metronome.md): Metronome fits teams that need sophisticated usage rating and invoicing. Autumn fits teams that need credits, limits, entitlements, and pricing changes enforced inside the product.
+- [Autumn vs Orb](https://useautumn.com/alog/autumn-vs-orb.md): Orb fits teams whose billing problem starts from usage events, complex pricing queries, ledgers, and invoicing. Autumn fits teams whose billing problem starts from application billing state: credits, limits, entitlements, resets, rollovers, and runtime checks.
+- [Autumn vs Stripe Billing](https://useautumn.com/alog/autumn-vs-stripe-billing.md): Stripe Billing handles subscriptions, invoices, payments, and usage billing. Autumn complements Stripe when your app needs credits, entitlements, limits, and pricing changes enforced in product.
+
+## Blog
+- [Using Claude to improve throughput by 3x](https://useautumn.com/blog/using-claude-to-improve-throughput-by-3x.md): How we set Claude up to run load tests on its own, and what it found when our first ideas didn't work.
+- [How Runable prices an AI agent for 1.7 million users](https://useautumn.com/blog/how-runable-prices-an-ai-agent-for-1-7-million-users.md): How Runable's credit-based pricing works, how it changed over a year, and how it uses pricing iteration to grow.
+- [Rebuilding our onboarding for agents](https://useautumn.com/blog/rebuilding-onboarding-for-agents.md): How we revamped every layer of our stack, from the API to skills and evals, to help agents handle onboarding end to end.
+- [Inching towards a software factory](https://useautumn.com/blog/inching-towards-a-software-factory.md): How we've been getting our codebase, tests and infra to keep up with model improvements, so cloud agents can actually do useful work on their own.
+- [Weekly pricing experiments across billions of credits at Firecrawl](https://useautumn.com/blog/how-firecrawl-runs-pricing-experiments-every-week.md): Firecrawl replaced an 800-line SQL function and a decision between smart upgrades and top-ups with a billing system they can iterate on weekly.
+- [Hunting down memory leaks (in Bun)](https://useautumn.com/blog/eliminating-memory-leaks.md): How we tracked down a stack of memory leaks in our Bun production server — and recycled what we couldn't fix.
+- [How Mintlify is scaling sales-led GTM](https://useautumn.com/blog/how-mintlify-is-scaling-sales-led-gtm.md): Mintlify moved from product-led to sales-led growth, and had to rebuild billing and provisioning to keep up. Here's how they combined billing and enablement into one model.
+- [Reworking our positioning](https://useautumn.com/blog/saying-goodbye-to-react-hooks.md): We built Autumn around React hooks and shadcn components for the developer experience. Here's why we're deprecating them, and how our positioning shifted as coding agents got better.
+- [How to build a credit ledger that scales](https://useautumn.com/blog/ai-billing-infrastructure.md): Metering token usage needs a different type of infrastructure. This article is about how to build a counter and ledger that works at high throughput and concurrency.
+- [Building an API for agents](https://useautumn.com/blog/building-an-api-for-agents.md): Some patterns we've found ourselves adopting as we design Autumn's API increasingly for agents instead of humans.
+- [How to build a flexible billing system](https://useautumn.com/blog/stop-rebuilding-billing.md): How to architect a flexible billing system that handles pricing changes well
+- [Saying goodbye to multi-region (for now)](https://useautumn.com/blog/active-active-redis-cache.md): Why we moved Autumn to a multi-region architecture, the tradeoffs we hit with active-active Redis, and why we eventually returned to a simpler single-region setup.
+- [Building on top of Stripe billing](https://useautumn.com/blog/we-built-a-billing-company-but-didnt-replace-stripe-billing.md): Why Autumn builds around Stripe Billing instead of replacing subscriptions and invoices, and where the real complexity has moved for credit-based pricing.
+- [How we use agents for billing support](https://useautumn.com/blog/building-an-ai-agent-to-investigate-support-tickets.md): How we automated customer support investigations by structuring our logs and giving Claude Code the right primitives.
+- [Making internal agents useful](https://useautumn.com/blog/coding-agents-and-abstractions.md): 
+- [Migrating Autumn to PlanetScale](https://useautumn.com/blog/migrating-to-planetscale.md): How we migrated our core database to PlanetScale, and why it's been a game-changer for performance, reliability, and developer experience.
+- [Post mortem: database outage](https://useautumn.com/blog/post-mortem-database-outage-caused-by-collation-migration-locking-conflict.md): Post-mortem write up of an outage that affected a number of requests between 15:00 and 16:00 UTC, 15th March 2026.
+- [The psychology behind T3 Chat's pricing](https://useautumn.com/blog/working-with-t3-chat-on-a-new-way-of-pricing.md): We worked with Theo and Mark from T3 Chat to build a cool new way of pricing. We learned about the psychology behind how AI products are consumed, and what that means for how we should monetize them.
+- [We're making some API changes](https://useautumn.com/blog/we-re-making-some-api-changes.md): A bit of context about what will be changing in the new version of the Autumn API and SDK.
+- [People really don't like metered billing](https://useautumn.com/blog/usage-billing-bad.md): Replit’s 2026 pricing shift highlights three trends in AI-first products: usage-based billing creates anxiety, seats don’t map to AI value, and credits/effort-based pricing reduce transparency as agents run longer.
+- [React vs shadcn, and trying to be too clever](https://useautumn.com/blog/component-fail.md): Learnings about building a component library for a billing platform for AI companies
+- [Marketing is hard](https://useautumn.com/blog/marketing.md): A little write up on our thoughts and exploration around how to market our developer tool for billing and payments.
+- [100 stripe cases in 1 endpoint](https://useautumn.com/blog/attach.md): Handling stripes upgrades, downgrades, schedules, one off and subscriptions all in 1 endpoint.
+- [What if Stripe builds this](https://useautumn.com/blog/what-if-stripe-builds-this.md): Stripe has been the go-to for billing, subscriptions and managing payment logic for 16 years. We think that'll change soon.
+- [Embedded UI components](https://useautumn.com/blog/shadcn.md): We decided to use a shadcn/ui registry to set up our pricing components, instead of a Reactjs library. We used this approach for pricing pages, upgrade and downgrade flows and paywalls.
+- [A roasting from HN makes better devtools](https://useautumn.com/blog/thanks-hn.md): 
+- [We tried to make billing backendless](https://useautumn.com/blog/backendless.md): We wanted to make payments, billing, usage limits and tracking as easy as possible. We explored a billing integration that required no backend setup, but ultimately gave up.
+- [How we made our first sale as a startup](https://useautumn.com/blog/how-we-made-our-first-sale-as-a-startup.md): How we generated our first revenue as a startup, and got into Y Combinator.
+- [Talking about billing with 30 YC founders](https://useautumn.com/blog/talking-about-billing-with-30-yc-founders.md):

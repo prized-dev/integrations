@@ -1,0 +1,190 @@
+GET https://apify.com/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:15.223Z
+final-url: https://apify.com/auth.md
+
+HTTP 200
+content-type: text/markdown; charset=utf-8
+transfer-encoding: chunked
+connection: close
+date: Wed, 28 Oct 2026 22:02:32 GMT
+content-encoding: gzip
+strict-transport-security: max-age=15768000
+x-permitted-cross-domain-policies: none
+x-frame-options: SAMEORIGIN
+x-xss-protection: 1; mode=block
+x-content-type-options: nosniff
+expect-ct: enforce, max-age=604800
+x-download-options: noopen
+feature-policy: geolocation 'none'; camera 'self' https://embed.sequel.io; microphone 'self' https://embed.sequel.io;
+content-security-policy: default-src 'none'; connect-src 'self' data: https://apify.com https://*.apify.com https://*.intercom.io https://*.intercom.help https://*.intercom-messenger.com https://intercom-sheets.com https://intercom.help wss://*.intercom.io wss://*.intercom-messenger.com https://*.intercomassets.com https://*.s3.amazonaws.com https://*.s3.us-east-1.amazonaws.com https://*.intercomcdn.com https://*.zapier.com https://zapier.com https://*.bootstrapcdn.com https://*.apiary.com https://*.apiary.io https://*.fury.io https://travis-ci.org https://*.travis-ci.org https://travis-ci.com https://*.travis-ci.com https://*.cloudfront.net https://*.algolianet.com https://*.algolianet.net https://*.algolia.net https://*.algolia.io https://browser.sentry-cdn.com https://*.sentry.io https://*.sentry-cdn.com https://*.reddit.com/ https://www.redditstatic.com/ads/ https://google.com https://*.google.com https://fonts.googleapis.com https://fonts.gstatic.com https://www.googletagmanager.com/ https://tagmanager.google.com https://*.google-analytics.com https://ssl.google-analytics https://*.g.doubleclick.net https://*.doubleclick.net https://optimize.google.com https://www.googleoptimize.com https://translate.google.com https://*.googlesyndication.com https://translate.googleapis.com https://www.googleadservices.com https://*.google.com/pagead/ https://*.google.com/pagead/landing https://*.google.cz/pagead/landing https://*.googlesyndication.com/pagead/ https://*.googlesyndication.com/pagead/landing https://*.google.com/ads/ https://*.google.cz/ads/ https://*.smartlook.com https://*.smartlook.cloud https://*.dreamdata.cloud https://cdn.firstpromoter.com https://t.firstpromoter.com https://*.hs-scripts.com https://*.hs-banner.com https://*.hs-analytics.net https://*.hsappstatic.net https://*.hscollectedforms.net https://*.hsforms.net https://*.hsforms.com https://*.hubspot.com https://*.hubapi.com https://*.hs-banner.com https://js.hscta.net https://js-eu1.hscta.net https://api.hubapi.com/ https://*.hsleadflows.net https://*.hsadspixel.net https://cookie-cdn.cookiepro.com https://privacyportal.cookiepro.com https://geolocation.onetrust.com https://tracking.g2crowd.com https://*.g2.com https://*.maze.co https://api-js.mixpanel.com https://*.mxpnl.com https://www.clarity.ms https://*.clarity.ms https://*.lfeeder.com https://snap.licdn.com https://*.ads.linkedin.com https://*.bing.net https://*.bing.com https://redditstatic.com https://analytics.tiktok.com https://analytics-ipv6.tiktokw.us https://static.ads-twitter.com https://t.co https://analytics.twitter.com https://cdn.segment.com https://api.segment.io https://www.youtube.com https://noembed.com https://*.vimeo.com https://vimeo.com/api/oembed.json https://ourworldindata.org/grapher/internet-users-by-world-region https://*.fs1.hubspotusercontent-na1.net https://apify.ghost.io https://my.demio.com; img-src 'self' blob: data: https://apify.com https://*.apify.com https://*.google.com https://*.googleusercontent.com https://*.google-analytics.com https://*.doubleclick.net https://*.g.doubleclick.net https://*.googlesyndication.com https://*.googletagmanager.com https://fonts.googleapis.com https://*.gstatic.com https://ssl.gstatic.com https://www.gstatic.com https://*.google.com/pagead/ https://*.google.cz/pagead/ https://*.googlesyndication.com/pagead/ https://*.google.com/ads/ https://*.google.cz/ads/ https://*.zapier.com https://zapier.com https://*.intercom.io https://*.intercom.help https://intercom.help https://intercom-sheets.com https://*.intercomassets.com https://*.intercomcdn.com https://*.fury.io https://travis-ci.com https://*.travis-ci.com https://travis-ci.org https://*.travis-ci.org https://*.cloudfront.net https://*.s3.amazonaws.com https://*.s3.us-east-1.amazonaws.com https://raw.githubusercontent.com/apify/ https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/ https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/ https://www.redditstatic.com/ads/ https://*.reddit.com/ https://*.hsforms.com https://*.hsforms.net https://js.hscta.net https://js-eu1.hscta.net https://*.hubspot.com https://ct.capterra.com https://cookie-cdn.cookiepro.com https://cookiepro.blob.core.windows.net/logos/static/ot_persistent_cookie.png https://privacyportal.cookiepro.com/request/v1/consentreceipts https://*.lfeeder.com https://snap.licdn.com https://*.ads.linkedin.com https://www.linkedin.com https://www.clarity.ms https://*.clarity.ms https://*.mxpnl.com https://*.bing.com https://*.bing.net https://redditstatic.com https://analytics.tiktok.com https://static.ads-twitter.com https://t.co https://analytics.twitter.com https://q.quora.com https://cdn.segment.com https://api.segment.io https://*.gravatar.com https://avatars.githubusercontent.com https://*.facebook.com https://*.fbcdn.net https://*.twimg.com https://*.wp.com https://*.fbsbx.com https://ph-files.imgix.net https://miro.medium.com https://i.ytimg.com https://*.fs1.hubspotusercontent-na1.net https://*.trustradius.com https://*.crozdesk.com https://assets.capterra.com https://*.g2.com https://img.shields.io https://assets.unicorn.studio https://*.ghost.io https://images.apifyusercontent.com; frame-src https://apify.com https://*.apify.com https://www.youtube.com/ https://*.doubleclick.net https://*.g.doubleclick.net https://intercom-sheets.com/ https://*.intercom.io https://*.intercom.help https://intercom.help https://*.hsforms.com https://*.hubspot.com https://*.hsforms.net https://*.hs-sites.com https://*.hs-sites-eu1.com https://www.googletagmanager.com/ https://www.tiktok.com/ https://embed.sequel.io; style-src 'self' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-attr 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' https://*.hsadspixel.net https://*.hs-analytics.net https://*.hs-scripts.com; script-src-elem 'unsafe-inline' 'unsafe-eval' 'self' https://*.google.com https://fonts.googleapis.com https://fonts.gstatic.com https://www.googletagmanager.com/ https://tagmanager.google.com https://*.google-analytics.com https://ssl.google-analytics https://*.g.doubleclick.net https://*.doubleclick.net https://optimize.google.com https://www.googleoptimize.com https://translate.google.com https://*.googlesyndication.com https://translate.googleapis.com https://www.googleadservices.com https://*.google.com/pagead/ https://*.google.com/pagead/landing https://*.google.cz/pagead/landing https://*.googlesyndication.com/pagead/ https://*.googlesyndication.com/pagead/landing https://*.google.com/ads/ https://*.google.cz/ads/ https://*.hsforms.net https://cookie-cdn.cookiepro.com https://*.hs-scripts.com https://*.hs-banner.com https://*.hs-analytics.net https://*.hscollectedforms.net https://*.hsforms.com https://*.hubspot.com https://*.hubspotfeedback.com https://static.hsappstatic.net https://*.hs-banner.com https://js.hs-banner.com https://feedback.hubapi.com https://feedback-eu1.hubapi.com https://js.hscta.net https://js-eu1.hscta.net https://api.hubapi.com/ https://*.hsleadflows.net https://*.hsadspixel.net https://cdn.firstpromoter.com https://t.firstpromoter.com https://*.intercom.io https://*.intercom.help https://intercom.help https://intercom-sheets.com https://*.intercomassets.com https://*.intercomcdn.com https://www.clarity.ms https://*.clarity.ms https://snap.licdn.com https://*.bing.net https://*.bing.com https://redditstatic.com https://analytics.tiktok.com https://static.ads-twitter.com https://t.co https://analytics.twitter.com https://*.smartlook.com https://*.smartlook.cloud https://*.dreamdata.cloud https://privacyportal.cookiepro.com https://geolocation.onetrust.com https://tracking.g2crowd.com https://*.maze.co https://api-js.mixpanel.com https://*.mxpnl.com https://*.lfeeder.com https://*.ads.linkedin.com https://www.redditstatic.com/ads/ https://www.youtube.com https://a.quora.com https://cdn.segment.com https://api.segment.io https://analytics.apify.com https://cdn.jsdelivr.net; font-src 'self' data: https://fonts.googleapis.com https://fonts.gstatic.com https://*.intercomcdn.com; form-action 'self' https://*.intercom.io https://*.intercom.help https://intercom-sheets.com https://*.hsforms.com https://*.hubspot.com https://*.hsforms.net; child-src https://*.hsforms.com; media-src https://cdn-cms-securitybyobscurity.apify.com https://cdn-cms.apify.com; frame-ancestors 'self' https://cms.apify.com; base-uri 'self'
+access-control-allow-origin: *
+access-control-allow-methods: GET, HEAD, OPTIONS
+access-control-allow-headers: Content-Type
+access-control-expose-headers: Link
+cache-control: public, max-age=7200
+accept-ranges: bytes
+last-modified: Tue, 27 Oct 2026 16:27:44 GMT
+etag: W/"2041-1a17e306800"
+vary: Accept-Encoding
+x-cache: Hit from cloudfront
+via: 1.1 699a0ab8b179c33d5bf800b6f12b0344.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P5
+alt-svc: h3=":443"; ma=86400
+x-amz-cf-id: iYRytNsZjaXB7EkN4XjUPyTRv5hRpfUpQPzRhjBnlZLhCtgP4R_Omg==
+age: 6939
+
+# auth.md — how an agent gets an Apify credential
+
+You are an agent. Apify is the largest marketplace of tools for AI: ready-to-run tools called Actors that collect web data and automate workflows. This file tells you how to get a credential for them.
+
+**Canonical URL:** `https://apify.com/auth.md`
+
+**Apify does not implement the `auth.md` registration flows.** There is no identity endpoint, no claim ceremony, and no `agent_auth` block in Apify's authorization server metadata. Read that absence as the answer: the well-known metadata is the authoritative statement of what is supported, and this file is its prose companion. You cannot register an Apify account by calling an API. Every path below needs either a person with an Apify account or a payment.
+
+What does work is standard OAuth. Apify's authorization server supports open dynamic client registration and the RFC 8628 device authorization grant, so an agent with no client credentials and no browser of its own can still get a user-authorized token. That is method 1 below.
+
+## Discover
+
+Three hosts appear in this file:
+
+- Resource server: `https://api.apify.com` — the REST API you call with the credential.
+- MCP server: `https://mcp.apify.com` — the same platform exposed as MCP tools, and the only protected resource that publishes metadata.
+- Authorization server: `https://console-backend.apify.com` — where registration, authorization, and token issuance live.
+
+Start at the protected resource metadata (RFC 9728):
+
+```http
+GET https://mcp.apify.com/.well-known/oauth-protected-resource
+```
+
+```json
+{
+    "resource": "https://mcp.apify.com",
+    "authorization_servers": ["https://console-backend.apify.com"],
+    "scopes_supported": ["full_api_access"]
+}
+```
+
+`https://apify.com/.well-known/oauth-protected-resource` serves the same document with `resource_name`, `resource_documentation`, and `bearer_methods_supported` added. It describes the MCP server, not `apify.com`.
+
+Then the authorization server metadata (RFC 8414):
+
+```http
+GET https://console-backend.apify.com/.well-known/oauth-authorization-server
+```
+
+It publishes `issuer`, `authorization_endpoint`, `device_authorization_endpoint`, `token_endpoint`, `registration_endpoint`, `scopes_supported`, `grant_types_supported`, `response_types_supported`, `code_challenge_methods_supported`, and the `token_endpoint_auth_methods_supported` family. It publishes no `agent_auth` block and no `revocation_endpoint`.
+
+Two hops that the `auth.md` spec expects do not work here, so do not wait on them:
+
+- `https://api.apify.com` publishes no protected resource metadata, and a `401` from it carries no `WWW-Authenticate` header. There is nothing to follow from the REST API; use the two URLs above.
+- There is one scope, `full_api_access`. Nothing narrower can be requested, so a credential you obtain can do anything the user's account can do. Say so to the user before you ask for one.
+
+## Pick a method
+
+1. A user is reachable in this conversation but you have no browser and no client credentials — **device authorization**.
+2. You are running inside an MCP client that handles OAuth itself — **connect to the MCP server** and let it run the browser flow.
+3. The user already has a token, or will fetch one — **ask for an API token**.
+4. There is no user and no Apify account, only a funded wallet — **buy a prepaid token from AGI**.
+
+## 1. Device authorization
+
+The RFC 8628 flow, end to end, with no pre-registered client. Register one first (no credential required):
+
+```http
+POST https://console-backend.apify.com/oauth/apps
+Content-Type: application/json
+
+{
+    "client_name": "<your agent>",
+    "grant_types": ["urn:ietf:params:oauth:grant-type:device_code"],
+    "token_endpoint_auth_method": "none"
+}
+```
+
+```json
+{ "client_id": "...", "client_secret_expires_at": 0 }
+```
+
+Cache the `client_id` and reuse it every time you authorize. It is not a secret and it does not expire. Registering again on each run leaves the user one more app to review in Console, so re-register only when a call is rejected with `invalid_client`.
+
+Ask for a device code:
+
+```http
+POST https://console-backend.apify.com/oauth/apps/devices
+Content-Type: application/x-www-form-urlencoded
+
+client_id=<client_id>&scope=full_api_access
+```
+
+```json
+{
+    "device_code": "...",
+    "user_code": "WDJBMJHT",
+    "interval": 5,
+    "expires_in": 300,
+    "verification_uri": "https://console.apify.com/authorize/device",
+    "verification_uri_complete": "https://console.apify.com/authorize/device?code=WDJBMJHT"
+}
+```
+
+Show the user `verification_uri_complete` and `user_code` in one message. They open the link, sign in to Apify or sign up, and approve there. The code never comes back to you. The window is `expires_in` seconds; on expiry, request a new device code.
+
+Poll the token endpoint no faster than `interval` seconds:
+
+```http
+POST https://console-backend.apify.com/oauth/apps/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:device_code&device_code=<device_code>&client_id=<client_id>
+```
+
+While the user has not finished, this returns `{"error": "authorization_pending"}`. Keep polling, back off on `slow_down`, and stop on `expired_token` or `access_denied`. On approval you get a standard OAuth token response. The access token it carries does not expire and comes with no refresh token, so it is as long-lived as the API token in method 3 and deserves the same handling: keep it out of URLs, logs, and files you write.
+
+## 2. Browser OAuth through an MCP client
+
+If you are inside an MCP client, connect it to `https://mcp.apify.com` over streamable HTTP and let the client run the authorization code flow. The user signs in and approves in a browser, and the client stores the token; you never see it. Per-client setup is at `https://mcp.apify.com` and `https://docs.apify.com/integrations/mcp.md`.
+
+## 3. An API token from the user
+
+Ask the user for an Apify API token from `https://console.apify.com/settings/integrations`. It is a long-lived credential for their account. Keep it out of URLs, logs, and files you write.
+
+## 4. Prepaid token, no Apify account
+
+`https://agi.apify.com` mints a temporary, spend-capped Apify API token in exchange for an agentic payment over x402 or MPP. No account, no user, no browser. The token works directly against `api.apify.com` and expires with its account. Read `https://agi.apify.com/AGENTS.md` for the protocols, the minimum amount, and the TTL.
+
+## Use the credential
+
+Every method above ends in a bearer token for the REST API:
+
+```http
+GET https://api.apify.com/v2/actors
+Authorization: Bearer <token>
+```
+
+Send it in the header, never in a query string. The API reference is `https://docs.apify.com/api/v2.md`, and `https://apify.com/agents.md` is the quickstart for running an Actor once you are authorized.
+
+## Errors
+
+| Code | Where | What to do |
+| --- | --- | --- |
+| `invalid_client` | `/oauth/apps/devices` | The client you registered has no device grant. Register again with `urn:ietf:params:oauth:grant-type:device_code` in `grant_types`. |
+| `authorization_pending` | `/oauth/apps/token` | The user has not approved yet. Poll again after `interval` seconds. |
+| `slow_down` | `/oauth/apps/token` | Add 5 seconds to the interval and keep polling. |
+| `expired_token` | `/oauth/apps/token` | The `user_code` window lapsed. Request a new device code. |
+| `access_denied` | `/oauth/apps/token` | The user declined. Stop; do not retry. |
+| `401` | `https://api.apify.com` | The token is invalid, expired, or revoked. Discard it and start again at "Pick a method". |
+
+Retry `5xx` with exponential backoff. Do not retry a `4xx` with the same body unless the row above says to.
+
+## Revocation
+
+There is no agent-callable revocation endpoint: the authorization server metadata publishes no `revocation_endpoint`, so there is nothing for you to POST a token to. Revocation is the user's, in Apify Console. What you observe is a `401` on a credential that worked before. Discard it and re-authorize.
+
+## Resources
+
+- Agent quickstart: `https://apify.com/agents.md`
+- Actor discovery: `https://apify.com/store.md`
+- Pricing: `https://apify.com/pricing.md`
+- REST API reference: `https://docs.apify.com/api/v2.md`

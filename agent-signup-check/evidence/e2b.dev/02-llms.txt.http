@@ -1,0 +1,80 @@
+GET https://e2b.dev/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:22.644Z
+final-url: https://e2b.dev/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 9677
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-encoding: br
+content-security-policy: frame-ancestors 'self';
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:20 GMT
+etag: W/"e59785c5b474bb3825bdb8b7c833033f"
+permissions-policy: camera=(), microphone=(), geolocation=()
+server: Vercel
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-content-type-options: nosniff
+x-dns-prefetch-control: on
+x-frame-options: SAMEORIGIN
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::rjnxh-1793231840061-d8a298c76bf9
+x-xss-protection: 1; mode=block
+connection: close
+transfer-encoding: chunked
+
+# E2B
+
+> The AI Agent Cloud. Open-source sandbox platform that gives AI agents isolated machines.
+
+Append `.md` to any page, blog post, or case study URL for its Markdown representation. Use `/index.md` for the homepage.
+
+> **If you are an AI agent**, read [SKILL.md](https://e2b.dev/SKILL.md) for step-by-step instructions on setting up and using E2B in your workflow.
+
+## When to use E2B
+
+Use E2B when an AI agent needs an isolated Linux computer to execute generated code, run shell commands, work with files, install packages, access the internet, or operate a desktop. Use sandboxes for coding agents, data analysis, deep research, computer use, reinforcement learning, and other workloads that should not run on the host application.
+
+E2B provides compute for agents. Bring your own model and orchestration framework.
+
+## Start building
+
+- Install the SDK: `pip install e2b` for Python or `npm install e2b` for JavaScript and TypeScript.
+- Create an account: https://console.e2b.dev/sign-up?signup_source=agent
+- Get an API key (starts with `e2b_`): https://console.e2b.dev/?tab=keys
+- Create a sandbox with `Sandbox.create()`. Connect to an existing sandbox with `Sandbox.connect(id)`.
+- Install the CLI with `npm install -g @e2b/cli` or `brew install e2b`.
+
+## Developer interfaces
+
+- [Documentation](https://docs.e2b.dev): Quickstarts, SDK reference, CLI reference, authentication, and API documentation.
+- [Machine-readable documentation index](https://docs.e2b.dev/llms.txt): Complete documentation inventory for agents.
+- [OpenAPI specification](https://docs.e2b.dev/openapi-public.yaml): OpenAPI 3.1 description of the E2B REST API.
+- [REST API](https://api.e2b.app): API origin. Authenticate requests as described in the OpenAPI specification.
+- [CLI documentation](https://docs.e2b.dev/cli): Install, authenticate, and manage sandboxes and templates.
+- [Docs MCP server](https://docs.e2b.dev/mcp): Public, no auth; tools `search_e2_b_docs` and `query_docs_filesystem_e2_b_docs`.
+- [MCP gateway documentation](https://docs.e2b.dev/mcp-gateway): Connect MCP servers to E2B sandboxes.
+
+## Key pages
+
+- [E2B](https://e2b.dev/index.md): The AI Agent Cloud and secure execution layer for agents.
+- [Pricing](https://e2b.dev/pricing.md): Plans, usage rates, concurrency, and enterprise pricing.
+- [Resources](https://e2b.dev/resources.md): Guides, technical articles, product news, and tutorials.
+- [Customers](https://e2b.dev/customers.md): Case studies from teams running agents on E2B.
+- [Enterprise](https://e2b.dev/enterprise.md): BYOC deploys sandboxes into your own AWS, GCP, or Azure account, inside your VPC, provisioned and operated by E2B. SOC 2 Type II, HIPAA BAA, GDPR DPA.
+- [BYOC (Bring Your Own Cloud)](https://docs.e2b.dev/byoc): Deploy E2B sandboxes into your own AWS, GCP, or Azure account and VPC, operated by E2B. Enterprise plans. Not the same as self-hosting.
+- [Security and compliance](https://e2b.dev/security.md): SOC 2 Type II, HIPAA BAA on Enterprise plans, per-sandbox Firecracker microVM isolation, BYOC, and how to get the SOC 2 report, bridge letter, pen test, and DPA.
+- [Open Source](https://e2b.dev/open-source.md): E2B's Apache-2.0 runtime, SDKs, and open-source projects.
+- [Cookbook](https://e2b.dev/cookbook.md): Ready-to-run examples for code execution and agent workflows.
+- [Product updates](https://e2b.dev/product-updates.md): Launch posts and the weekly changelog for the E2B SDKs, CLI, API, and sandboxes.
+- [Talks](https://e2b.dev/talks.md): Recordings of talks and workshops by E2B engineers, with chapters.
+- [E2B for Startups](https://e2b.dev/startups.md): One-time $20,000 in credits and the Pro tier for eligible early-stage startups.
+- [E2B for Research](https://e2b.dev/research.md): One-time $20,000 in credits and the Pro tier for eligible academic and nonprofit research teams.
+- [Careers](https://e2b.dev/careers.md): How E2B works, employee benefits, and open positions.
+- [About](https://e2b.dev/about.md): E2B's mission, history, team, and direction.
+- [Brand assets](https://e2b.dev/brand.md): Official E2B marks, downloads, colors, and usage guidance.
+- [Contact](https://e2b.dev/contact.md): Sales, support, community, and careers contact options.

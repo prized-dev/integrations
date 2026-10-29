@@ -1,0 +1,161 @@
+{
+ "site": "parallel.ai",
+ "checkedAt": "2026-10-28T23:58:22.665Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 4,
+ "total": 7,
+ "whoActs": "the person confirms an email code (from auth.md prose)",
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://parallel.ai/auth.md",
+   "heading": "# Agent Authentication",
+   "registrationEndpoints": [
+    "https://platform.parallel.ai/agent/identity"
+   ],
+   "mentions": [
+    "anonymous",
+    "identity_assertion",
+    "service_auth"
+   ],
+   "status": "partial",
+   "reason": "An agent sign-in guide is published at /auth.md, but its heading (# Agent Authentication) does not name auth.md, so tools looking for the spec may skip it"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://parallel.ai/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "where": "auth.md",
+   "url": "https://parallel.ai/auth.md",
+   "endpoint": "https://platform.parallel.ai/agent/identity",
+   "link": false,
+   "quote": "Reserved scope. ## 1. Register an identity ``` POST https://platform.parallel.ai/agent/identity Content-Type: application/json { \"type\": \"service_auth\",",
+   "status": "partial",
+   "reason": "auth.md documents a sign-up API (https://platform.parallel.ai/agent/identity), but there is no agent_auth metadata for tools to find it"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.parallel.ai/v1/tasks/runs/run_0",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "where": "auth.md",
+   "url": "https://parallel.ai/auth.md",
+   "match": "top up balance — `POST /service/v1/balance",
+   "snippet": "`balance:add` — Charge the org's default card and top up balance — `POST /service/v1/balance/add`. - `usage:read` — Reserved scope. - `tenants:manage` — Reserve",
+   "status": "partial",
+   "reason": "auth.md mentions a payment path (top up balance — `POST /service/v1/balance) in prose; nothing machine-readable"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://parallel.ai/llms.txt",
+   "heading": "# Parallel",
+   "bytes": 3500,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://parallel.ai/auth.md",
+   "finalUrl": "https://parallel.ai/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 201,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://parallel.ai/llms.txt",
+   "finalUrl": "https://parallel.ai/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 76,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.parallel.ai/v1/tasks/runs/run_0",
+   "finalUrl": "https://api.parallel.ai/v1/tasks/runs/run_0",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 1090,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://parallel.ai/.well-known/oauth-protected-resource",
+   "finalUrl": "https://parallel.ai/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 82,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.parallel.ai/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.parallel.ai/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 86,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://parallel.ai/.well-known/oauth-authorization-server",
+   "finalUrl": "https://parallel.ai/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 88,
+   "redirects": 0
+  },
+  {
+   "label": "catch-all probe",
+   "url": "https://parallel.ai/agent-signup-check-no-such-page.md",
+   "finalUrl": "https://parallel.ai/agent-signup-check-no-such-page.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 307,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://parallel.ai/.well-known/x402",
+   "finalUrl": "https://parallel.ai/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 70,
+   "redirects": 0
+  }
+ ]
+}

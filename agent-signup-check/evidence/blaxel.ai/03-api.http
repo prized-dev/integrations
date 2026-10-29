@@ -1,0 +1,26 @@
+GET https://api.blaxel.ai/v0/sandboxes
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:34.491Z
+final-url: https://api.blaxel.ai/v0/sandboxes
+
+HTTP 401
+content-type: application/json; charset=utf-8
+content-length: 35
+connection: close
+server: awselb/2.0
+date: Wed, 28 Oct 2026 23:57:32 GMT
+blaxel-version: 2026-04-16
+x-cf-request-id: fz_K9dbZ3uOIggy_y93pcX_Ml3hQxDXpWy8fvokR3xcBMh-ilXXNww==
+cache-control: no-store, private
+x-cache: Error from cloudfront
+via: 1.1 3bbe2b9a1067c049fd5ff2d57048d36a.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P5
+alt-svc: h3=":443"; ma=86400
+x-amz-cf-id: fz_K9dbZ3uOIggy_y93pcX_Ml3hQxDXpWy8fvokR3xcBMh-ilXXNww==
+x-frame-options: DENY
+referrer-policy: strict-origin-when-cross-origin
+content-security-policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'
+x-content-type-options: nosniff
+strict-transport-security: max-age=63072000; includeSubDomains
+
+{"code":401,"error":"Unauthorized"}

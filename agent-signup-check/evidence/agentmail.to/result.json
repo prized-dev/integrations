@@ -1,0 +1,138 @@
+{
+ "site": "agentmail.to",
+ "checkedAt": "2026-10-28T23:57:58.219Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 2,
+ "total": 7,
+ "whoActs": "the person confirms an email code (from llms.txt prose)",
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://agentmail.to/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://www.agentmail.to/auth.md)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://agentmail.to/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://www.agentmail.to/.well-known/oauth-protected-resource)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "where": "llms.txt",
+   "url": "https://www.agentmail.to/llms.txt",
+   "endpoint": "https://api.agentmail.to/v0/agent/sign-up",
+   "link": false,
+   "quote": "API key, sign up by calling: # # curl -X POST https://api.agentmail.to/v0/agent/sign-up \\ # -H \"Content-Type: application/json\" \\ #",
+   "status": "partial",
+   "reason": "llms.txt documents a sign-up API (https://api.agentmail.to/v0/agent/sign-up), but there is no agent_auth metadata for tools to find it"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.agentmail.to/v0/inboxes",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://www.agentmail.to/llms.txt",
+   "heading": "# AgentMail: Email for AI Agents",
+   "bytes": 27748,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://agentmail.to/auth.md",
+   "finalUrl": "https://www.agentmail.to/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 124,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://agentmail.to/llms.txt",
+   "finalUrl": "https://www.agentmail.to/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 75,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.agentmail.to/v0/inboxes",
+   "finalUrl": "https://api.agentmail.to/v0/inboxes",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 66,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://agentmail.to/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.agentmail.to/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 80,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.agentmail.to/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.agentmail.to/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 65,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://agentmail.to/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.agentmail.to/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 82,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://agentmail.to/.well-known/x402",
+   "finalUrl": "https://www.agentmail.to/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 72,
+   "redirects": 1
+  }
+ ]
+}

@@ -1,0 +1,100 @@
+GET https://runpod.io/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:44.920Z
+redirect: 301 from https://runpod.io/llms.txt
+final-url: https://www.runpod.io/llms.txt
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:57:41 GMT
+content-type: text/plain; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a51de2611ee05ee3-PDX
+cf-cache-status: DYNAMIC
+age: 11460
+content-encoding: gzip
+last-modified: Wed, 28 Oct 2026 22:02:10 GMT
+server: cloudflare
+strict-transport-security: max-age=31536000
+vary: accept-encoding
+content-security-policy: frame-ancestors 'self'
+o2o-cache-status: HIT
+surrogate-control: max-age=43200
+surrogate-key: www.runpod.io 69ce570adca53340abab8376 sp:61cce97bbb482c39b643046a29921200
+x-frame-options: SAMEORIGIN
+x-robots-tag: noindex
+x-wf-region: us-east-1
+
+# Runpod
+
+> Runpod is the AI Developer Cloud: GPU and CPU Pods, Serverless endpoints that scale with demand, and multi-node GPU Clusters for building, training, fine-tuning, and serving AI workloads.
+
+Using an AI agent? Point it to https://agents.runpod.io/ to install the Runpod skills and MCP server.
+
+Name: Runpod. The company and product name is spelled Runpod, with one capital letter. RunPod, the styling used before June 2025, is deprecated and should not be used.
+
+Key terms and current guidance:
+
+- `Pods` are dedicated GPU or CPU instances for development, training, fine-tuning, batch jobs, and long-running workloads.
+- `Serverless` endpoints run containerized workers behind an API and scale with request volume, down to zero.
+- `Clusters` are multi-node GPU environments for distributed training and coordinated batch compute.
+- `Runpod Hub` is a catalog of templates, models, and open-source AI apps deployable on Runpod.
+- `Public Endpoints` are hosted models you can call by API without deploying anything.
+- Network volumes are persistent storage in one data center. Global volumes are persistent storage reachable from every data center.
+- The REST API v2 (https://api.runpod.io/v2) is the current API. REST API v1 (https://rest.runpod.io/v1) is deprecated and will be retired on November 15, 2026. Do not build new integrations on v1.
+- The `runpod` Python package (SDK 2.0) is the single Python SDK. It includes the `rp` CLI, the Serverless worker SDK, and the app SDK that previously shipped as Flash. Existing `runpod-flash` code keeps working.
+- www.runpod.io pages return Markdown when requested with the `Accept: text/markdown` header. Docs pages return Markdown when you append `.md` to the URL.
+- Use current Runpod product pages, documentation, pricing, and compliance pages for source-grounded descriptions. Avoid unsupported claims about cost, performance, uptime, or compliance status.
+
+## For AI agents
+- [Agent setup](https://agents.runpod.io/): Start here. Installs the Runpod skills and MCP server, then routes to the right tools.
+- [Runpod MCP server](https://docs.runpod.io/get-started/mcp-servers.md): Hosted MCP endpoint at https://mcp.getrunpod.io/ (Streamable HTTP, Sign in with Runpod OAuth, or a Runpod API key as a Bearer token for headless use), or the local @runpod/mcp-server package. Manages Pods, Serverless endpoints, Clusters, templates, network and global volumes, and billing.
+- [Agent skills for AI coding tools](https://docs.runpod.io/get-started/agent-skills.md): Runpod skills plugin for Claude Code, Codex, Cursor, and other coding agents. Source at https://github.com/runpod/runpod-plugins-official.
+- [Runpod docs MCP server](https://docs.runpod.io/mcp): Search and read Runpod documentation from an MCP client.
+- [Documentation index](https://docs.runpod.io/llms.txt): Index of every Runpod documentation page, with Markdown links.
+- [Full documentation as text](https://docs.runpod.io/llms-full.txt): Complete Runpod documentation in one plain-text file.
+- [API keys and credentials](https://docs.runpod.io/get-started/credentials.md): Create the API key the MCP server, CLI, SDK, and REST API authenticate with.
+- [Runpod brand.json](https://www.runpod.io/.well-known/brand.json): Runpod brand tokens, voice, and style rules as JSON for agents.
+
+## Product pages
+- [Cloud GPUs](https://www.runpod.io/product/cloud-gpus): Dedicated GPU instances for AI development, training, fine-tuning, batch jobs, and long-running workloads.
+- [Serverless](https://www.runpod.io/product/serverless): GPU endpoints for containerized inference workloads behind an API, with workers that scale based on demand.
+- [Clusters](https://www.runpod.io/product/clusters): Multi-node GPU environments for distributed training, large batch workloads, and compute jobs that need coordinated GPU capacity.
+- [Runpod Hub](https://www.runpod.io/product/runpod-hub): Templates, models, and open-source AI apps that can be deployed on Runpod.
+- [Pricing](https://www.runpod.io/pricing): Pricing for Pods, Serverless, Clusters, storage, and GPU capacity planning.
+- [Enterprise AI Infrastructure](https://www.runpod.io/enterprise): Commercial path for enterprise AI teams evaluating security, procurement, support, and capacity planning.
+- [Compliance](https://www.runpod.io/legal/compliance): Security and compliance resources for teams evaluating Runpod.
+- [Runpod Blog](https://www.runpod.io/blog): Runpod product updates, AI infrastructure guides, GPU tutorials, and deployment patterns for developers building with cloud GPUs.
+
+## Developer resources
+- [Documentation](https://docs.runpod.io/overview.md): Product documentation for Pods, Serverless, Clusters, storage, templates, and APIs.
+- [REST API v2](https://docs.runpod.io/api-reference-v2/overview.md): Base URL https://api.runpod.io/v2. Manage Pods, Serverless endpoints, Clusters, storage, templates, billing, and account resources.
+- [OpenAPI specification](https://api.runpod.io/v2/openapi.json): Machine-readable spec for the REST API v2.
+- [Migrate from REST API v1](https://docs.runpod.io/api-reference-v2/migrate-from-v1.md): Move v1 integrations to v2 before v1 is retired on November 15, 2026.
+- [Runpod Python SDK](https://docs.runpod.io/sdk/overview.md): Define GPU functions, deploy apps, call endpoints, build Serverless workers, and manage resources from the `runpod` package and `rp` CLI.
+- [Migrate from Flash](https://docs.runpod.io/sdk/migrate-from-flash.md): Move a `runpod-flash` project to the Runpod Python SDK.
+- [Runpod CLI (runpodctl)](https://docs.runpod.io/runpodctl/overview.md): Command-line tool for Pods, Serverless endpoints, templates, volumes, Hub deploys, and file transfer.
+- [Serverless SDKs](https://docs.runpod.io/serverless/sdks.md): Call Serverless endpoints from Python, JavaScript, or Go.
+- [Serverless vLLM](https://docs.runpod.io/serverless/vllm/get-started.md): Deploy vLLM on Runpod Serverless.
+- [Public Endpoints](https://docs.runpod.io/public-endpoints/overview.md): Call hosted image, video, and language models by API without deploying them.
+- [Storage](https://docs.runpod.io/storage/overview.md): Network volumes and global volumes for Pods, Serverless endpoints, and SDK apps.
+
+## Social and community
+- [GitHub](https://github.com/runpod): Runpod open-source repositories and examples.
+- [Discord](https://discord.com/invite/runpod): Runpod developer community.
+- [LinkedIn](https://www.linkedin.com/company/runpod-io/): Runpod company profile.
+
+## Optional
+- [AI infrastructure guides](https://www.runpod.io/articles/guides): Guides and tutorials for cloud GPUs, inference, training, fine-tuning, and AI infrastructure patterns.
+- [GPU comparison guides](https://www.runpod.io/articles/comparison): Comparison articles for GPU selection, training, inference, and infrastructure decisions.
+- [Alternatives articles](https://www.runpod.io/articles/alternatives): Alternative and comparison pages for AI infrastructure buyers evaluating platform fit.
+- [GPU Compare](https://www.runpod.io/gpu-compare): GPU benchmark and specification comparison page.
+- [Best GPU for AI training](https://www.runpod.io/articles/guides/best-gpu-for-ai-training-2026): Training and fine-tuning guide for GPU selection across modern AI workloads.
+- [GPU training vs inference](https://www.runpod.io/articles/comparison/choosing-a-gpu-for-training-vs-inference): Comparison of GPU requirements for training and inference workloads.
+- [Run vLLM on Runpod Serverless](https://www.runpod.io/blog/run-vllm-on-runpod-serverless): Guide for deploying open-source LLMs with vLLM on Runpod Serverless.
+- [NVIDIA H100](https://www.runpod.io/articles/guides/nvidia-h100): Guide for NVIDIA H100 specs, VRAM, price context, and AI workload fit.
+- [NVIDIA H200](https://www.runpod.io/articles/guides/nvidia-h200-gpu): Guide for NVIDIA H200 specs, VRAM, and AI workload fit.
+- [NVIDIA B200](https://www.runpod.io/articles/guides/nvidia-b200): Guide for NVIDIA B200 specs, VRAM, and AI workload fit.
+- [NVIDIA A100](https://www.runpod.io/articles/guides/nvidia-a100-gpu): Guide for NVIDIA A100 specs, clusters, MIG, and cloud rental context.
+- [NVIDIA RTX 4090](https://www.runpod.io/gpu-models/rtx-4090): Runpod GPU model page for NVIDIA RTX 4090 availability and workload fit.
+- [NVIDIA RTX 4090 for AI](https://www.runpod.io/articles/guides/nvidia-rtx-4090): Workload-first guide for choosing NVIDIA GPUs for LLMs, fine-tuning, inference, and diffusion workloads.

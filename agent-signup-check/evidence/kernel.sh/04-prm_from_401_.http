@@ -1,0 +1,13 @@
+GET https://api.onkernel.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:10.204Z
+final-url: https://api.onkernel.com/.well-known/oauth-protected-resource
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:08 GMT
+content-type: application/json
+content-length: 325
+connection: close
+cache-control: private, no-store
+
+{"authorization_servers":["https://api.onkernel.com/"],"bearer_methods_supported":["header"],"resource":"https://api.onkernel.com/","resource_documentation":"https://www.kernel.sh/auth.md","resource_logo_uri":"https://www.kernel.sh/favicon-96x96.png","resource_name":"Kernel API","scopes_supported":["api.read","api.write"]}

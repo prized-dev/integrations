@@ -1,0 +1,261 @@
+GET https://agentphone.to/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:06.398Z
+redirect: 301 from https://agentphone.to/llms.txt
+final-url: https://agentphone.ai/llms.txt
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:03 GMT
+content-type: text/plain; charset=utf-8
+transfer-encoding: chunked
+connection: close
+accept-ranges: bytes
+content-disposition: inline; filename="llms.txt"
+content-encoding: br
+content-security-policy: frame-ancestors 'none'
+etag: "e1b48d0e5c43ed8f69acc98a1365b5fe0e6ab459"
+referrer-policy: strict-origin-when-cross-origin
+server: cloudflare
+vary: Accept-Encoding
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-railway-request-id: 1X7G5mg6T7a2vQQm8u2xcg
+x-railway-edge: sjc1
+x-hikari-trace: sjc1.hqvw
+cf-cache-status: DYNAMIC
+speculation-rules: "/cdn-cgi/speculation"
+cf-ray: a51de2e97b1afff0-PDX
+
+# Agent Phone
+
+> Phone numbers for AI agents. Give your AI a real phone number.
+
+Agent Phone is an API platform that gives AI agents phone identities. Developers use Agent Phone to provision real US/Canadian phone numbers and connect them to AI agents for SMS and voice communication.
+
+## Key Features
+
+- **Instant Phone Numbers**: Provision US and Canadian phone numbers via API in seconds
+- **Two Voice Modes**: Built-in AI (zero infrastructure) or Custom Webhook (full control)
+- **Unified Webhook**: One `agent.message` event for both SMS and voice, with full conversation history
+- **Per-Agent Webhooks**: Route events to different endpoints per agent (overrides the project default)
+- **Stateful Conversations**: Messages and calls auto-thread into durable conversation history with custom metadata
+- **Voice Abstraction**: Simple JSON transcript-to-response loop — no TwiML or WebSocket management
+- **Production-Grade**: HMAC+timestamp signatures, idempotency headers, exponential backoff retries
+- **MCP Server**: Model Context Protocol support for tool-using AI agents (Cursor, Claude Code, Windsurf)
+
+## Voice Modes
+
+Every agent has a `voiceMode` that controls how voice calls are handled:
+
+### Built-in AI (`"hosted"`)
+- Calls are handled end-to-end by an AI using your system prompt
+- No server or webhook needed — works immediately
+- Provide `systemPrompt` (required), `beginMessage` (optional greeting), and `voice` (TTS voice ID)
+- Best for: quick prototyping, simple conversational agents
+
+### Custom Webhook (`"webhook"`)
+- Caller speech is transcribed and sent to your webhook as `agent.message` events
+- Your server controls every response — use any LLM, RAG, or custom logic
+- Requires a webhook endpoint configured for your project or agent
+- Best for: production agents that need tool use, database access, or custom business logic
+
+### Switching Modes
+Switch at any time via `PATCH /v1/agents/:id` with `{"voiceMode": "hosted", "systemPrompt": "..."}` or `{"voiceMode": "webhook"}`. The backend automatically re-provisions voice infrastructure and rebinds phone numbers with no downtime.
+
+Note: SMS is always webhook-based regardless of voice mode.
+
+## Agent Authentication
+
+Two paths to get an API key — agents should prefer the self-signup flow.
+
+### For agents (recommended)
+
+The agent signs itself up via a two-step API flow. No human web signup needed.
+
+1. `POST /v0/agent/sign-up` with `{"human_email": "...", "agent_name": "..."}` — sends a 6-digit OTP to the human's email, returns a `verification_id`. Nothing is provisioned yet.
+2. Agent asks the human for the code.
+3. `POST /v0/agent/verify` with `{"verification_id": "...", "otp_code": "..."}` — atomically creates account + phone number + starter agent + API key. Returns `{"account_id", "agent_id", "number_id", "phone_number", "api_key"}`.
+4. (Recommended) Ask your human for their phone number and call them with `POST /v1/calls` to introduce yourself live — the wow moment. Their phone rings within seconds and you talk to them autonomously. No webhook needed.
+
+Full details and curl examples: https://agentphone.ai/skills.md
+
+### For humans
+
+Sign up at https://agentphone.ai/dashboard and generate an API key from settings. No credit card required.
+
+### Using the key
+
+All API requests require the API key as a Bearer token: `Authorization: Bearer YOUR_API_KEY`. Base URL: https://api.agentphone.ai
+
+API keys have full access to your account's resources (agents, numbers, calls, messages, webhooks). There is no separate sandbox — new accounts get $5.00 in free credit which covers the first month of one phone number plus some SMS and voice usage, so you can test in production safely.
+
+## MCP Integration
+
+AgentPhone exposes a Model Context Protocol server with 28 tools for managing phone numbers, SMS, voice calls, agents, conversations, contacts, and webhooks.
+
+**Hosted MCP endpoint (Streamable HTTP):**
+https://mcp.agentphone.ai/mcp
+
+Pass your API key via the Authorization header. Compatible with any MCP client that supports Streamable HTTP transport.
+
+**Local MCP (stdio):**
+
+```json
+{
+  "mcpServers": {
+    "agentphone": {
+      "command": "npx",
+      "args": ["-y", "agentphone-mcp"],
+      "env": {
+        "AGENTPHONE_API_KEY": "YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+Claude Code: `claude plugin add agentphone`
+
+## Pricing
+
+Pay-as-you-go. No monthly subscriptions or per-month allotments — you pay only for what you use.
+
+- **Signup bonus**: $5.00 in free credit for new accounts (covers the first month of one number plus some usage)
+- **Phone numbers**: $3.00 per number per month
+- **SMS**: $0.02 per outbound message
+- **Voice, webhook mode**: $0.13 per minute
+- **Voice, hosted mode**: $0.22 per minute
+- **Call recording** (optional add-on): $5.00 per month
+
+Balance is maintained via auto-recharge through Stripe. Unpaid numbers enter a 30-day grace period before being released. Each account has a self-serve number limit (see `numbers.limit` in GET /v1/usage) — contact us to raise it.
+
+## API Base URL
+
+https://api.agentphone.ai
+
+## Authentication
+
+All API requests require a Bearer token: `Authorization: Bearer YOUR_API_KEY`
+
+## API Endpoints
+
+### Agents
+
+- `POST /v1/agents` — Create agent. Body: `name` (required), `description`, `voiceMode` ("webhook" | "hosted", default "webhook"), `systemPrompt` (required if hosted), `beginMessage`, `voice`, `voiceSpeed` (0.5-2.0, default 1.0), `interruptionSensitivity` (0.0-1.0, default 0.8)
+- `GET /v1/agents` — List agents. Query: `limit`, `offset`
+- `GET /v1/agents/:id` — Get agent with attached numbers
+- `PATCH /v1/agents/:id` — Update agent. Body: `name`, `description`, `voiceMode`, `systemPrompt`, `beginMessage`, `voice`, `voiceSpeed`, `interruptionSensitivity` (all optional). Switching `voiceMode` automatically re-provisions voice infrastructure
+- `DELETE /v1/agents/:id` — Delete agent (preserves numbers, conversations, calls)
+- `GET /v1/agents/voices` — List available TTS voices
+- `POST /v1/agents/:id/numbers` — Attach number to agent. Body: `numberId`
+- `GET /v1/agents/:id/conversations` — List agent conversations
+- `GET /v1/agents/:id/calls` — List agent calls
+
+### Phone Numbers
+
+- `POST /v1/numbers` — Provision number. Body: `country` (default "US"), `areaCode`, `agentId`
+- `GET /v1/numbers` — List numbers. Query: `limit`, `offset`
+- `GET /v1/numbers/:id/messages` — List messages. Query: `limit`, `before`, `after`
+- `GET /v1/numbers/:id/calls` — List calls for number
+- `DELETE /v1/numbers/:id` — Release number (irreversible)
+
+### Conversations
+
+- `GET /v1/conversations` — List conversations
+- `GET /v1/conversations/:id` — Get conversation with messages
+- `GET /v1/conversations/:id/messages` — Paginated messages
+- `PATCH /v1/conversations/:id` — Update metadata. Body: `metadata` (JSON object)
+
+### Voice Calls
+
+- `GET /v1/calls` — List calls with transcripts
+- `GET /v1/calls/:id` — Get call with transcripts
+- `POST /v1/calls` — Start outbound call. Body: `agentId` (required), `toNumber` (required), `fromNumberId` (optional — pick which of the agent's numbers to call from; defaults to first), `initialGreeting`, `voice`, `systemPrompt`
+
+### Webhooks
+
+Events are delivered to exactly one endpoint per event: the per-agent webhook if configured, otherwise the project default. No duplicates.
+
+- `POST /v1/webhooks` — Create/update project default webhook. Body: `url`, `contextLimit` (0-50)
+- `GET /v1/webhooks` — Get project default webhook config
+- `DELETE /v1/webhooks` — Remove project default webhook
+- `GET /v1/webhooks/deliveries` — View delivery history (all webhooks)
+- `POST /v1/webhooks/test` — Send test webhook
+
+### Per-Agent Webhooks (Optional Override)
+
+When set, the agent's events go here instead of the project default.
+
+- `POST /v1/agents/:id/webhook` — Create/update agent webhook (overrides project default)
+- `GET /v1/agents/:id/webhook` — Get agent webhook config
+- `DELETE /v1/agents/:id/webhook` — Remove agent webhook (reverts to project default)
+- `GET /v1/agents/:id/webhook/deliveries` — View agent webhook delivery history
+- `POST /v1/agents/:id/webhook/test` — Send test webhook
+
+## Webhook Events
+
+All inbound messages (SMS and voice) are delivered as `agent.message` events:
+
+```json
+{
+  "event": "agent.message",
+  "channel": "sms | voice",
+  "agentId": "agent_123",
+  "data": { "conversationId": "...", "from": "+1...", "to": "+1...", "message": "..." },
+  "conversationState": { ... },
+  "recentHistory": [ ... ]
+}
+```
+
+Voice webhook responses: `{"text": "...", "hangup": false}`
+
+Streaming voice responses (for tool calls / LLM token streaming):
+Return `Content-Type: application/x-ndjson` with newline-delimited JSON chunks.
+Mark interim chunks with `"interim": true` — TTS starts immediately on the first chunk.
+```
+{"text": "Let me check that for you.", "interim": true}
+{"text": "I found 3 emails from Modi about the meeting."}
+```
+
+Voice webhook deliveries are logged and visible via `GET /v1/webhooks/deliveries`.
+
+## AgentPhone Developer Resources
+
+Predictable URLs for agent-discoverable resources. Each resource is named so that name-based lookups ("AgentPhone API docs", "AgentPhone OpenAPI spec", "AgentPhone MCP server") resolve to the canonical location.
+
+- AgentPhone API Docs: https://docs.agentphone.ai
+- AgentPhone API Docs (llms.txt): https://docs.agentphone.ai/llms.txt
+- AgentPhone API Docs (llms-full.txt): https://docs.agentphone.ai/llms-full.txt
+- AgentPhone OpenAPI Spec (JSON): https://agentphone.ai/openapi.json
+- AgentPhone API Reference (rendered): https://docs.agentphone.ai/api-reference
+- AgentPhone Welcome / Quickstart: https://docs.agentphone.ai/welcome
+- AgentPhone llms.txt (site): https://agentphone.ai/llms.txt
+- AgentPhone Agent Skill: https://agentphone.ai/skills.md
+- AgentPhone Auth Docs: https://docs.agentphone.ai/welcome#authentication
+- AgentPhone Webhooks Docs: https://docs.agentphone.ai/documentation/guides/webhooks
+- AgentPhone Agent Webhooks Docs: https://docs.agentphone.ai/documentation/guides/agent-webhooks
+- AgentPhone Coding Agents Integration: https://docs.agentphone.ai/integrations/connect-your-ai/coding-agents
+- AgentPhone MCP Docs: https://docs.agentphone.ai/mcp
+- AgentPhone MCP Server (hosted, Streamable HTTP): https://mcp.agentphone.ai/mcp
+- AgentPhone MCP Server (npm package): https://www.npmjs.com/package/agentphone-mcp
+- AgentPhone MCP Manifest: https://agentphone.ai/.well-known/mcp/manifest.json
+- AgentPhone Claude Code Plugin: https://github.com/AgentPhone-AI/agentphone-claude
+- AgentPhone Python SDK (Docs): https://docs.agentphone.ai/documentation/sdks/python
+- AgentPhone Python SDK (PyPI): https://pypi.org/project/agentphone
+- AgentPhone TypeScript SDK (Docs): https://docs.agentphone.ai/documentation/sdks/typescript
+- AgentPhone TypeScript SDK (npm): https://www.npmjs.com/package/agentphone
+- AgentPhone GitHub: https://github.com/AgentPhone-AI
+
+## Links
+
+- Website: https://agentphone.ai
+- API Documentation: https://docs.agentphone.ai
+- OpenAPI Spec: https://agentphone.ai/openapi.json
+- Pricing: https://agentphone.ai/pricing
+- MCP Server: https://www.npmjs.com/package/agentphone-mcp
+- Claude Code Plugin: https://github.com/AgentPhone-AI/agentphone-claude
+- GitHub: https://github.com/AgentPhone-AI
+
+## Contact
+
+Schedule a call: https://calendar.app.google/1GW2EZBtwx5ao7uF8

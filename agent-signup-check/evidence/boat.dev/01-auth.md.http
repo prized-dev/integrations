@@ -1,0 +1,241 @@
+GET https://boat.dev/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:48.279Z
+final-url: https://boat.dev/auth.md
+
+HTTP 200
+access-control-allow-credentials: false
+access-control-allow-headers: Content-Type, Authorization, X-Ascii-Confirm-Delete, X-Box-Org, X-Boat-Org, If-None-Match
+access-control-allow-methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
+access-control-allow-origin: http://localhost:1420
+access-control-expose-headers: ETag, RateLimit-Policy, RateLimit, Retry-After
+access-control-max-age: 86400
+content-encoding: gzip
+content-type: text/markdown; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:42 GMT
+ratelimit: "ip";r=9999;t=60
+ratelimit-policy: "ip";q=10000;w=60
+vary: Accept-Encoding
+via: 1.1 Caddy, 1.1 Caddy
+connection: close
+transfer-encoding: chunked
+
+# auth.md
+
+You are an agent. Boat supports agentic registration.
+
+Use the **same host you fetched this file from** for every URL. Staging, city CLIs, and production all serve this file; do not hardcode boat.dev.
+
+Authoritative endpoints live in:
+
+```http
+GET /.well-known/oauth-protected-resource
+GET /.well-known/oauth-authorization-server
+```
+
+Those also exist under `/api/boat/.well-known/...`. Read `issuer`, `token_endpoint`, `revocation_endpoint`, `grant_types_supported`, and the `agent_auth` block. Then follow the steps in order.
+
+Boat does not accept ID-JAG identity assertions. Use `anonymous` to explore, or `service_auth` when you have the user's email. Creating sandboxes and starting the trial require a completed claim plus Stripe Checkout (card on file, same fraud controls as a human signup).
+
+## Expect a human in the loop
+
+Nearly every step below sends a credential or an email address to a host you have no prior relationship with, and agent harnesses gate exactly that. Expect to be stopped and asked for approval more than once — registration and the first authenticated call are the usual points.
+
+That is the flow working, not failing. When it happens:
+
+- Say what you are about to send and to whom, then wait for the person.
+- Resume from the step you were on. Every step here is independently retryable, so a pause costs nothing.
+- Do not try to route around the gate.
+
+The claim token and the identity assertion both outlive a pause — check the `claim_token_expires` and `assertion_expires` fields you were given. Only the 6-digit `user_code` is short-lived, so if it lapses, get a fresh one from Step 4a rather than hurrying the person.
+
+## Step 1 — Discover
+
+A 401 from the Boat API carries:
+
+```http
+WWW-Authenticate: Bearer resource_metadata="<origin>/api/boat/.well-known/oauth-protected-resource"
+```
+
+If you don't have the 401, fetch the well-known paths above.
+
+`identity_types_supported` is `["anonymous","service_auth"]`.
+
+## Step 2 — Pick a method
+
+0. You have your own AgentMail inbox → sign in with AgentID instead of this protocol. See "Sign in with AgentID" below. No claim ceremony.
+1. You have the user's email → `service_auth`. Claim ceremony required before any credential.
+2. You have neither a user session nor an email → `anonymous`. You get a pre-claim token immediately (`box.me box.limits`). Claim later to unlock `box.me box.limits box.write box.billing` and start the trial.
+
+OAuth scope identifiers retain their `box.*` spelling for compatibility. They are separate from the `sandbox.*` action names used by scoped API keys.
+
+Do not send `identity_assertion`. Boat returns `issuer_not_enabled`.
+
+Before `service_auth`, confirm with the user: you will register them with **Boat** and they will sign in to bind this agent.
+
+## Step 3 — Register
+
+`POST /api/boat/agent/identity` (also `POST /agent/identity`).
+
+### service_auth
+
+```http
+POST /api/boat/agent/identity
+Content-Type: application/json
+
+{"type":"service_auth","login_hint":"user@example.com"}
+```
+
+200 body includes `claim_token` (hold in memory) and a `claim` block (`user_code`, `verification_uri`, `expires_in`, `interval`). No `identity_assertion` yet. Go to Step 4.
+
+### anonymous
+
+```http
+POST /api/boat/agent/identity
+Content-Type: application/json
+
+{"type":"anonymous"}
+```
+
+200 body includes `identity_assertion`, `pre_claim_scopes`, `claim_token`, and `post_claim_scopes`. Exchange the assertion (Step 5) to call `GET /me` and `GET /limits`. To let a human take ownership and start a trial, go to Step 4.
+
+## Step 4 — Claim ceremony
+
+The user types a 6-digit `user_code` **you give them** into a page Boat owns. The code does not come back to you.
+
+### 4a. Get the ceremony materials
+
+`service_auth`: already in the Step 3 `claim` block.
+
+`anonymous`:
+
+```http
+POST /api/boat/agent/identity/claim
+Content-Type: application/json
+
+{"claim_token":"clm_...","email":"user@example.com"}
+```
+
+### 4b. Hand off to the user
+
+Send the link on its own first. Say what it is and that a code follows — a bare URL with no sentence around it leaves the person guessing:
+
+> Open this link and sign in to Boat — GitHub, Google, or email. Tell me once you're in and I'll send you a code to enter.
+> `<origin>/api/boat/agent/identity/claim?claim_attempt_token=...`
+
+Only once they tell you they are signed in, send the code:
+
+> Now enter this agent code: **123456**
+
+Send both, in that order, and keep the explanatory wording. The one thing to leave out is why you are splitting them, which is your business rather than theirs. (Why: signing in by email issues its own 6-digit code, so anyone holding both at once can put one in the wrong field.) The agent code goes into the sandbox page after sign-in — it never comes back to you.
+
+### 4c. Poll for completion
+
+```http
+POST /api/boat/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:workos:agent-auth:grant-type:claim
+&claim_token=<clm_...>
+```
+
+While waiting: `{"error":"authorization_pending"}`. Honor `interval` (5s). On `slow_down`, add 5s. On `expired_token`, re-call Step 4a. On success you get `access_token` plus a new `identity_assertion`. Drop any pre-claim token. Polling again returns the same live token; it does not mint another key.
+
+## Step 5 — Exchange the assertion
+
+Use this to get the first pre-claim token, or to rotate a live token (the previous key is revoked).
+
+```http
+POST /api/boat/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+&assertion=<identity_assertion>
+&resource=<origin>/api/v1/
+```
+
+Response: `access_token` (a Boat API key, `boat_...`), `token_type=Bearer`, `expires_in`, `scope`.
+
+## Step 6 — Use the access_token
+
+```http
+GET /api/v1/me
+Authorization: Bearer <access_token>
+```
+
+Pre-claim tokens may only call `GET /me` and `GET /limits`. Everything else returns `claim_required`.
+
+When the token stops working, re-run Step 5 with the current assertion. If that returns `invalid_grant`, restart at Step 3.
+
+API reference: https://docs.boat.dev/api/v1
+
+## Step 7 — Start the free trial
+
+Claimed tokens can start Boat's 7-day Base-plan trial. This is the same checkout a human uses: Stripe collects a card, existing trial-abuse checks still apply, and a second trial is never issued.
+
+**Never quote a price from memory or from a web search.** `GET /api/v1/limits` returns the current plans, what the trial includes, and what it caps — read the numbers there, at the time you need them. If the person wants to estimate what their usage will cost, send them to <https://boat.dev>, which has the calculator. Search results and cached marketing pages are not a price source — some of them describe other Ascii products entirely.
+
+```http
+POST /api/boat/billing/checkout
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{"kind":"subscription"}
+```
+
+Surface the returned `url` to the user. Poll `GET /api/v1/limits` until `canStart` is true, then create a sandbox:
+
+```http
+POST /api/v1/sandboxes
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{"ttlSeconds":3600}
+```
+
+An account that is not eligible for a free trial gets a checkout that bills at once. Do not try to open another account.
+
+## Sign in with AgentID
+
+If you have an AgentMail inbox, sign in to Boat as that inbox with [AgentID](https://agentid.com). Boat makes an account that belongs to your inbox address. Your AgentMail organization must be verified by its human.
+
+1. Run `boat login --agentid --json` and read `url`. Without the CLI, use `<origin>/api/boat/auth/agentid`.
+2. Open that URL in a browser. It goes to the AgentID waiting page, which shows an `auth_token`.
+3. Approve with your AgentMail key, from any HTTP client:
+
+```http
+POST https://api.agentmail.to/v0/inboxes/<your inbox id>/authorize
+Authorization: Bearer <your AgentMail API key>
+Content-Type: application/json
+
+{"auth_token":"<auth_token from the page>","accept_disclosure":true}
+```
+
+4. The browser that opened the URL returns to Boat and shows "Login Complete". Keep it open until then.
+5. Run the `nextCommand` from step 1 (`boat onboard --json`) to finish the CLI login.
+
+The free trial still needs Step 7: a human enters a card in Stripe Checkout.
+
+## Errors
+
+| Code | Where | What to do |
+| --- | --- | --- |
+| `anonymous_not_enabled` | `/agent/identity` | Use `service_auth`. |
+| `service_auth_not_enabled` | `/agent/identity` | Use `anonymous`. |
+| `issuer_not_enabled` | `/agent/identity` | ID-JAG is not accepted. Use `service_auth` or `anonymous`. |
+| `invalid_request` | `/agent/identity` | Fix the body. |
+| `invalid_claim_token` | `/agent/identity/claim` | Restart at Step 3. |
+| `claimed_or_in_flight` | `/agent/identity/claim` | Already claimed, or wrong endpoint. |
+| `claim_expired` | `/agent/identity/claim` | Restart at Step 3. |
+| `invalid_grant` | `/oauth2/token` | Restart at Step 3. |
+| `unsupported_grant_type` | `/oauth2/token` | Use jwt-bearer or the agent-auth claim grant. |
+| `authorization_pending` | `/oauth2/token` | Wait `interval` seconds and retry. |
+| `expired_token` | `/oauth2/token` | Re-call `/agent/identity/claim`. |
+| `slow_down` | `/oauth2/token` | Add 5s to `interval`. |
+| `rate_limited` | any | Back off. |
+| `claim_required` | Boat API | Finish Step 4 before this call. |
+| `billing_required` | Boat API | Finish Step 7. |
+
+## Revocation
+
+POST `token=<access_token>&token_type_hint=access_token` to `/api/boat/oauth2/revoke`. 200, idempotent. The `identity_assertion` still works; re-run Step 5 (that rotates — the revoked key stays dead).

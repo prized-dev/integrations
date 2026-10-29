@@ -1,0 +1,134 @@
+{
+ "site": "hyperbrowser.ai",
+ "checkedAt": "2026-10-28T23:58:11.489Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://hyperbrowser.ai/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://www.hyperbrowser.ai/auth.md)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://hyperbrowser.ai/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://www.hyperbrowser.ai/.well-known/oauth-protected-resource)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://hyperbrowser.ai/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404) (after a redirect to https://www.hyperbrowser.ai/.well-known/oauth-authorization-server); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.hyperbrowser.ai/api/sessions",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://www.hyperbrowser.ai/llms.txt",
+   "heading": "# Hyperbrowser",
+   "bytes": 5345,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://hyperbrowser.ai/auth.md",
+   "finalUrl": "https://www.hyperbrowser.ai/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 72,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://hyperbrowser.ai/llms.txt",
+   "finalUrl": "https://www.hyperbrowser.ai/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 58,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.hyperbrowser.ai/api/sessions",
+   "finalUrl": "https://api.hyperbrowser.ai/api/sessions",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 98,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://hyperbrowser.ai/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.hyperbrowser.ai/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 64,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.hyperbrowser.ai/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.hyperbrowser.ai/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 94,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://hyperbrowser.ai/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.hyperbrowser.ai/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 53,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://hyperbrowser.ai/.well-known/x402",
+   "finalUrl": "https://www.hyperbrowser.ai/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 52,
+   "redirects": 1
+  }
+ ]
+}

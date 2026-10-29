@@ -1,0 +1,132 @@
+GET https://clerk.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:36.739Z
+final-url: https://clerk.com/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 1461
+cache-control: public, max-age=3600, s-maxage=3600
+content-disposition: inline
+content-encoding: br
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:58:34 GMT
+etag: W/"ba830dfcd0e6ab967f5923f44a102de7"
+referrer-policy: same-origin
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-clerk-auth-reason: session-token-and-uat-missing
+x-clerk-auth-status: signed-out
+x-content-type-options: nosniff
+x-download-options: noopen
+x-frame-options: deny
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::wfqqk-1793231914329-45eec6d6e4a3
+x-xss-protection: 1
+connection: close
+transfer-encoding: chunked
+
+# Clerk
+
+> Clerk is user management for developers: sign-up, sign-in, and prebuilt UI components, multi-tenant organizations, enterprise SSO, subscription billing, and machine-to-machine auth, with SDKs for Next.js, React, and most web and mobile frameworks.
+
+For AI agents and automation, use the tools and markdown surfaces below. Append `.md` to any `/docs`, `/articles`, `/blog`, `/changelog`, or `/glossary` URL to get the page as markdown.
+
+## When to use Clerk
+
+Use Clerk when an application needs sign-up, sign-in, and user management: prebuilt UI components, social login, MFA, multi-tenant organizations, enterprise SSO and SCIM, subscription billing, or machine-to-machine and API-key auth. Point a coding agent at the skill below or install the CLI; API specs are under API references.
+
+## Agent setup
+
+- [Clerk Skills](https://clerk.com/SKILL.md): One file that routes a coding agent to the right framework-specific skill
+- [Clerk CLI](https://clerk.com/docs/cli.md): Commands, flags, and agent workflows. Install with `npm install -g clerk` or the [install script](https://clerk.com/install)
+- [Clerk MCP server](https://mcp.clerk.com/mcp): Sign in once and let an agent read and configure your Clerk apps from an MCP client. Follow the [setup guide](https://clerk.com/docs/guides/ai/mcp/clerk-mcp-server.md)
+- [Agent registration](https://clerk.com/auth.md): Provision an accountless Clerk application and keys without an account
+- [Skills discovery](https://clerk.com/.well-known/agent-skills/index.json): Every individually published skill
+- [Ship auth with AI agents](https://clerk.com/agents): How agent-driven Clerk setup works, end to end
+
+## SDKs
+
+Quickstart for each official Clerk SDK.
+
+- [Next.js](https://clerk.com/docs/nextjs/getting-started/quickstart.md)
+- [React](https://clerk.com/docs/react/getting-started/quickstart.md)
+- [Expo](https://clerk.com/docs/expo/getting-started/quickstart.md)
+- [TanStack React Start](https://clerk.com/docs/tanstack-react-start/getting-started/quickstart.md)
+- [React Router](https://clerk.com/docs/react-router/getting-started/quickstart.md)
+- [Android](https://clerk.com/docs/android/getting-started/quickstart.md)
+- [Astro](https://clerk.com/docs/astro/getting-started/quickstart.md)
+- [Chrome Extension](https://clerk.com/docs/chrome-extension/getting-started/quickstart.md)
+- [Electron](https://clerk.com/docs/electron/getting-started/quickstart.md)
+- [iOS](https://clerk.com/docs/ios/getting-started/quickstart.md)
+- [JavaScript](https://clerk.com/docs/js-frontend/getting-started/quickstart.md)
+- [Nuxt](https://clerk.com/docs/nuxt/getting-started/quickstart.md)
+- [Vue](https://clerk.com/docs/vue/getting-started/quickstart.md)
+- [Express](https://clerk.com/docs/expressjs/getting-started/quickstart.md)
+- [C#](https://github.com/clerk/clerk-sdk-csharp/blob/main/README.md)
+- [Fastify](https://clerk.com/docs/fastify/getting-started/quickstart.md)
+- [Go](https://clerk.com/docs/go/getting-started/quickstart.md)
+- [Java](https://github.com/clerk/clerk-sdk-java)
+- [PHP](https://github.com/clerk/clerk-sdk-php)
+- [Python](https://github.com/clerk/clerk-sdk-python/blob/main/README.md)
+- [Ruby on Rails](https://clerk.com/docs/ruby/getting-started/quickstart.md)
+
+## Products
+
+- [User Authentication](https://clerk.com/user-authentication): Sign-up, sign-in, MFA, social login, and prebuilt components
+- [Enterprise Authentication](https://clerk.com/enterprise-authentication): SAML, OIDC, and SCIM for B2B SaaS
+- [Multi-tenancy](https://clerk.com/multi-tenancy): Organizations, roles, and invitations
+- [Billing](https://clerk.com/billing): Subscriptions without payment code
+- [Platform](https://clerk.com/platform): White-label Clerk for the apps your customers build
+- [Waitlist](https://clerk.com/waitlist): Gather interest and invite early testers
+
+## Documentation
+
+- [Documentation home](https://clerk.com/docs.md): Explore by feature, frontend framework, and backend framework
+- [Documentation index](https://clerk.com/docs/llms.txt): Every docs page with a one-line description
+- [Documentation search](https://clerk.com/docs/search.md): Search the docs with `?q=<query>`, optional `&sdk=<sdk>`; returns markdown links to `.md` pages
+
+## Dashboard
+
+- [Dashboard index](https://dashboard.clerk.com/llms.txt): Every Dashboard route, grouped by auth scope, with access notes
+
+## API references
+
+- [Backend API](https://clerk.com/openapi.json): OpenAPI spec as JSON, or [YAML](https://clerk.com/openapi.yaml)
+- [Frontend API](https://clerk.com/docs/reference/spec/fapi/latest.json): OpenAPI spec as JSON, or [YAML](https://clerk.com/docs/reference/spec/fapi/latest.yml)
+- [Platform API](https://clerk.com/docs/reference/spec/platform/latest.json): OpenAPI spec as JSON, or [YAML](https://clerk.com/docs/reference/spec/platform/latest.yml)
+
+## Pricing
+
+- [Pricing](https://clerk.com/pricing.md): Plans, feature comparison, add-ons, and volume tiers
+
+## Security and compliance
+
+- [Security](https://clerk.com/security.md): SOC 2, HIPAA, GDPR, and CCPA status with links to evidence
+
+## Articles
+
+- [Articles index](https://clerk.com/articles/llms.txt): Every article with a description. Append `.md` to any article URL for markdown
+
+## Blog
+
+- [Blog index](https://clerk.com/blog/llms.txt): Every post with a description. Append `.md` to any post URL for markdown
+
+## Changelog
+
+- [Changelog index](https://clerk.com/changelog/llms.txt): Every entry with a description. Append `.md` to any entry URL for markdown
+
+## Glossary
+
+- [Glossary index](https://clerk.com/glossary/llms.txt): Every term with a definition
+
+## Legal
+
+- [Legal resources](https://clerk.com/legal.md): Terms, privacy, DPA, and other notices, each served as markdown
+
+## Optional
+
+- [Homepage](https://clerk.com/index.md): The clerk.com homepage as markdown
+- [Design system](https://clerk.com/design.md): Brand colors, typography, and component appearance

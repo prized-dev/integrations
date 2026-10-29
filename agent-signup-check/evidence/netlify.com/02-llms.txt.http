@@ -1,0 +1,70 @@
+GET https://netlify.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:31.764Z
+final-url: https://netlify.com/llms.txt
+
+HTTP 200
+accept-ranges: bytes
+age: 0
+cache-control: public,max-age=0,must-revalidate
+cache-status: "Netlify Edge"; fwd=miss; fwd-status=200; stored
+content-encoding: gzip
+content-type: text/plain; charset=UTF-8
+date: Wed, 28 Oct 2026 23:57:28 GMT
+etag: W/"338978b0c7a771c1dcc81300dccb6779-ssl-df"
+link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/ard.json>; rel="ard"; type="application/ai-catalog+json"
+netlify-vary: header=x-forwarded-proto
+server: Netlify
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Accept-Encoding
+x-nf-request-id: 01M62F50MAQ2N63QF3Q1RXZGKC
+x-robots-tag: noindex
+connection: close
+transfer-encoding: chunked
+
+# Netlify
+
+> Netlify is the composable web platform for building, deploying, and scaling modern web projects — and the agents that build them. Every page below is also available as Markdown by appending `.md` (or sending `Accept: text/markdown`).
+
+## Platform
+
+- [Platform overview](https://www.netlify.com/platform.md): The Netlify composable web platform.
+- [Build](https://www.netlify.com/platform/core/build.md): Continuous deployment and build infrastructure.
+- [Edge](https://www.netlify.com/platform/core/edge.md): Netlify's global edge network.
+- [Agent Runners](https://www.netlify.com/platform/agent-runners.md): Run AI coding agents against your repo on Netlify.
+- [AI Gateway](https://www.netlify.com/platform/ai-gateway.md): A managed proxy to OpenAI, Anthropic, and Gemini without provider API keys.
+- [Database](https://www.netlify.com/platform/database.md): Managed Postgres built into Netlify.
+- [Storage](https://www.netlify.com/platform/storage.md): Blobs and object storage.
+- [Primitives](https://www.netlify.com/platform/primitives.md): Functions, edge functions, forms, and more.
+
+## Solutions
+
+- [Marketing sites](https://www.netlify.com/solutions/marketing-sites.md): Composable, high-performance marketing sites.
+- [Ecommerce](https://www.netlify.com/solutions/ecommerce.md): Composable commerce storefronts.
+- [Internal apps](https://www.netlify.com/solutions/internal-apps.md): Build and ship internal tools.
+- [Prototypes](https://www.netlify.com/solutions/prototypes.md): Ship prototypes and previews fast.
+- [Web applications](https://www.netlify.com/for/web-applications.md): Dynamic, full-stack web applications.
+
+## Company
+
+- [Pricing](https://www.netlify.com/pricing.md): Plans and pricing.
+- [Customers](https://www.netlify.com/customers.md): Customer stories and results.
+- [About](https://www.netlify.com/about.md): About Netlify.
+- [Security](https://www.netlify.com/security.md): Security, compliance, and trust.
+- [Agent experience](https://www.netlify.com/agent-experience.md): How Netlify builds for AI agents.
+- [Agent authentication](https://www.netlify.com/auth.md): How AI agents get credentials for Netlify (MCP OAuth, personal access tokens, OAuth apps, CLI).
+- [Careers](https://www.netlify.com/careers.md): Open roles at Netlify.
+- [Contact](https://www.netlify.com/contact.md): Get in touch.
+
+## Resources
+
+- [Blog](https://www.netlify.com/blog.md): News, guides, and engineering posts.
+- [Changelog](https://www.netlify.com/changelog.md): Product updates and releases.
+- [Resources](https://www.netlify.com/resources.md): Ebooks, case studies, and more.
+- [Integrations](https://www.netlify.com/integrations.md): Extensions and integrations.
+- [Partners](https://www.netlify.com/partners.md): The Netlify partner network.
+
+## Optional
+
+- [Support](https://www.netlify.com/support.md): Support options and resources.
+- [Sustainability](https://www.netlify.com/sustainability.md): Netlify's sustainability commitments.

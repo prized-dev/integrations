@@ -1,0 +1,163 @@
+GET https://api.polar.sh/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:27.635Z
+final-url: https://api.polar.sh/auth.md
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:26 GMT
+content-type: text/markdown; charset=utf-8
+content-length: 2183
+connection: close
+cache-control: private, no-store
+content-encoding: br
+polar-version: 2026-10
+rndr-id: 8dbc607e-7e56-40dc
+server: cloudflare
+strict-transport-security: max-age=63072000; includeSubDomains
+vary: Accept-Encoding
+x-render-origin-server: uvicorn
+cf-cache-status: DYNAMIC
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2FSwcDdKM%2BdUr%2B0D8pbq6WGBlK5%2FhA4TUBoRuje50UAOQlAITS7NGlHX9BASkGDOmKysiQ5EIJprXfIs5DDRKPf%2B7QUM1WUKxN7JKZNHne%2BsjNtn%2FuKxBxdNuCUHMqA%3D%3D"}]}
+cf-ray: a51de3787a1c148b-PDX
+alt-svc: h3=":443"; ma=86400
+
+# auth.md
+
+You are an agent. Polar lets you sign up on your own, build an organization (products, benefits,
+meters, checkouts), and hand it over to a human later. Follow the steps in order.
+
+## Step 1: Discover
+
+- Protected resource metadata: `GET https://api.polar.sh/.well-known/oauth-protected-resource`
+- Authorization server metadata: `GET https://api.polar.sh/.well-known/oauth-authorization-server`. Its `agent_auth` block
+  lists the endpoints below.
+
+## Step 2: Sign up
+
+Polar supports the `anonymous` registration type only. You don't need anything from the human yet.
+
+```http
+POST https://api.polar.sh/v1/agent/identity
+Content-Type: application/json
+
+{ "type": "anonymous", "name": "<what you call yourself, shown to the human>" }
+```
+
+Response:
+
+```json
+{
+  "registration_id": "<your agent ID>",
+  "registration_type": "anonymous",
+  "identity_assertion": "<JWT>",
+  "assertion_expires": "<ISO 8601>",
+  "pre_claim_scopes": ["products:write", "..."],
+  "claim_url": "https://api.polar.sh/v1/agent/identity/claim",
+  "claim_token": "polar_act_...",
+  "claim_token_expires": "<ISO 8601>",
+  "post_claim_scopes": ["..."]
+}
+```
+
+Keep `identity_assertion` (30 days, reusable) and `claim_token` (30 days, returned once, keep it
+secret).
+
+## Step 3: Get an access token
+
+```http
+POST https://api.polar.sh/v1/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=<identity_assertion>
+```
+
+You get an `access_token` that lasts one hour, and no refresh token. When it expires, repeat
+this step with the same assertion. Once a human claimed you, use the assertion the claim poll
+returned (Step 4): the one from sign-up stops working.
+
+If you get `invalid_grant`, your assertion expired or you were revoked. Before the claim, sign up
+again. After it, ask the human to connect you to their account another way, such as Polar's MCP
+server or CLI.
+
+Call the API with `Authorization: Bearer <access_token>`. Before the claim you can create one
+organization and set up its products, benefits, discounts, files, meters, events, checkouts and
+checkout links. You can't touch customers, orders, subscriptions, refunds, payouts, members,
+webhooks or organization access tokens until a human claims you.
+
+## Step 4: Hand over to a human (claim)
+
+When you're done, ask the human for their email, then start a claim:
+
+```http
+POST https://api.polar.sh/v1/agent/identity/claim
+Content-Type: application/json
+
+{ "claim_token": "<claim_token>", "email": "<the human's email>" }
+```
+
+Response:
+
+```json
+{
+  "registration_id": "<your agent ID>",
+  "status": "initiated",
+  "expires_at": "<ISO 8601>",
+  "claim_attempt": {
+    "user_code": "amber-river-lemon",
+    "expires_in": 604800,
+    "verification_uri": "<link to the Polar dashboard>",
+    "interval": 5
+  }
+}
+```
+
+Give the human the `verification_uri` and the `user_code` in one message. The code is three
+words joined by hyphens; pass it on exactly as you received it, for example:
+
+> Open this link, sign in to Polar with <email>, and enter this code: **amber-river-lemon**
+
+Only the human signed in with that email can claim you. The link and code expire after 7 days.
+Starting a new claim replaces them with a new pair, valid for 7 more days, as long as your claim
+token is valid (30 days after sign-up).
+
+Then poll every `interval` seconds:
+
+```http
+POST https://api.polar.sh/v1/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:workos:agent-auth:grant-type:claim&claim_token=<claim_token>
+```
+
+- `authorization_pending`: the human hasn't entered the code yet. Keep polling.
+- `slow_down`: you're polling too fast. Add 5 seconds to your interval.
+- `expired_token`: the link and code expired, or your claim token did. Start a new claim; if that
+  answers `claim_expired`, sign up again.
+- Success: an `access_token` for the human, plus a new `identity_assertion` and
+  `assertion_expires`. The claim token stops working.
+
+Once claimed, you act on behalf of the human: the organization is theirs, and you have their
+access. Everything issued to you before the claim stops working, including the old identity
+assertion. Use the new one in Step 3 from now on.
+
+## Errors
+
+| Code | Where | What to do |
+| --- | --- | --- |
+| HTTP 422 | `https://api.polar.sh/v1/agent/identity`, `https://api.polar.sh/v1/agent/identity/claim` | The body is invalid. Fix it; `detail` says how. |
+| HTTP 429 | any | Too many requests. Back off and retry later. |
+| `invalid_claim_token` (401) | `https://api.polar.sh/v1/agent/identity/claim` | The claim token is wrong, or you were revoked. Sign up again. |
+| `claimed_or_in_flight` (409) | `https://api.polar.sh/v1/agent/identity/claim` | You're already claimed. Poll the token endpoint with your claim token. |
+| `claim_expired` (410) | `https://api.polar.sh/v1/agent/identity/claim` | Your claim token expired. Sign up again. |
+| `invalid_grant` | token endpoint, JWT bearer | See Step 3. |
+| `invalid_grant` | token endpoint, claim poll | The claim token is wrong, already used, or you were revoked. |
+| `invalid_client` | token endpoint | Don't send a `client_id`: Polar knows your client from your credentials. |
+| `authorization_pending`, `slow_down`, `expired_token` | token endpoint, claim poll | See Step 4. |
+
+## Revoking
+
+To revoke an access token, `POST https://api.polar.sh/v1/oauth2/revoke` with
+`token=<access_token>&token_type_hint=access_token`. Your identity assertion keeps working.
+
+API reference: https://polar.sh/docs

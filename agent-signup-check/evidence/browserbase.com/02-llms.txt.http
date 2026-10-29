@@ -1,0 +1,248 @@
+GET https://browserbase.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:09.939Z
+redirect: 301 from https://browserbase.com/llms.txt
+final-url: https://www.browserbase.com/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 2064
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline; filename="llms.txt"
+content-encoding: br
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:58:07 GMT
+etag: W/"f57fa70924d0be1441844f65caef959d"
+last-modified: Wed, 28 Oct 2026 23:23:42 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::pt7xj-1793231887248-c288a5488832
+connection: close
+transfer-encoding: chunked
+
+# Browserbase: The Browser Agent Platform
+
+> Browserbase is the complete platform to build and deploy agents that browse and interact with the web like humans. One API key gives your agent everything it needs: headless browsers, Search and Fetch, Agent Identity, Functions, and a Model Gateway — with the browser at the center.
+
+> Browsers remain the core. Search, Fetch, Agent Identity, Functions, and the Model Gateway are the supporting primitives that make browser agents fast, reliable, and cheap to run. Powered by best-in-class observability (rich logs, live view, session replay) and a scalable, secure infrastructure layer trusted by 10,000+ companies, including Ramp, Vercel, Commure, and Lovable.
+
+> **If you are an AI agent**, read [SKILL.md](https://www.browserbase.com/SKILL.md) for step-by-step instructions on setting up and using Browserbase in your workflow.
+
+## Browserbase Developer Resources
+
+- [Browserbase Documentation](https://docs.browserbase.com/welcome/introduction) — Product guides, quickstarts, integrations, and platform concepts.
+- [Browserbase API Documentation](https://docs.browserbase.com/reference/introduction) — REST API and SDK reference.
+- [Browserbase OpenAPI Specification](https://docs.browserbase.com/reference/api/openapi.v1.yaml) — Machine-readable OpenAPI schema for the Browserbase API.
+- [Browserbase API Authentication](https://docs.browserbase.com/reference/api/overview) — Authenticate REST requests with a Browserbase API key.
+- [Browserbase Functions](https://docs.browserbase.com/platform/runtime/overview) — Build, publish, invoke, and monitor browser automations deployed on Browserbase.
+- [Browserbase MCP Documentation](https://docs.browserbase.com/integrations/mcp/introduction) — Set up the Browserbase Model Context Protocol server.
+- [Browserbase Documentation Index](https://docs.browserbase.com/llms.txt) — Complete machine-readable index of Browserbase documentation.
+
+## Packages
+
+- `@browserbasehq/sdk` — Browserbase SDK ([npm](https://www.npmjs.com/package/@browserbasehq/sdk))
+- `@browserbasehq/stagehand` — Stagehand, the SDK for browser agents ([npm](https://www.npmjs.com/package/@browserbasehq/stagehand))
+- `@browserbasehq/sdk-functions` — Browserbase Functions, run code next to the browser ([npm](https://www.npmjs.com/package/@browserbasehq/sdk-functions))
+- `@browserbasehq/cli` — Browserbase CLI ([npm](https://www.npmjs.com/package/@browserbasehq/cli))
+
+---
+
+## The Platform
+
+One API key, everything your agent needs to browse the web. Browsers are the core; the rest orbit around them.
+
+- **Browsers** — Programmatic access to fleets of headless browsers at scale. Spin up as many concurrent sessions as your agents need, with globally distributed infrastructure, 2 vCPUs per browser, isolated sessions, and SOC-2 Type II compliance.
+- **Search & Fetch APIs** — Agents can quickly search and fetch LLM-ready context from the web for fast, token-efficient decisions when a full browser session isn't needed.
+- **Agent Identity** — A global passport for your agents. Strategic partnerships (Cloudflare, Stytch, Fingerprint, Vercel) and secure credential management (1Password) get agents past anti-bot systems, CAPTCHAs, and authentication walls — moving from sneaky/undetected to upfront and credential-first.
+- **Functions** — Deploy and run agent code next to the browser with <5ms latency. No queues, schedulers, or orchestration to maintain. `bb function deploy` and you're live, with built-in observability.
+- **Model Gateway** — Your Browserbase API key gives access to major models via Stagehand, with unified billing and zero friction to switch models.
+- **Stagehand** — The SDK for browser agents. Playwright-level control combined with AI primitives (`act`, `extract`, `observe`) that self-heal when pages change. Automatic action caching eliminates redundant LLM calls across runs (up to 2x faster, ~30% cost reduction on repeated actions). Plugs into all major agent frameworks (LangChain, CrewAI, Mastra).
+
+---
+
+## Documentation
+
+- [What is Browserbase?](https://docs.browserbase.com/introduction/what-is-browserbase) — Overview and key concepts.
+- [Getting Started Guide](https://docs.browserbase.com/fundamentals/create-browser-session) — Launch your first cloud browser.
+- [API Reference](https://docs.browserbase.com/reference/introduction) — REST and SDK reference.
+- [Playground](https://app.browserbase.com/playground) — Interactive environment to try features.
+- [Stagehand](https://github.com/browserbase/stagehand) — Open-source SDK for browser agents.
+
+### Feature Documentation
+
+- [Browser Contexts](https://docs.browserbase.com/features/contexts) — Persistent sessions with cookies, localStorage, and auth state.
+- [Downloads](https://docs.browserbase.com/features/downloads) — Download files from browser sessions.
+- [Fetch API](https://docs.browserbase.com/features/fetch) — Lightweight HTTP requests for token-efficient agent context.
+- [Proxies](https://docs.browserbase.com/features/proxies) — Residential and datacenter proxy configuration.
+- [Agent Identity](https://docs.browserbase.com/features/stealth-mode) — Get agents past anti-bot systems and authentication walls.
+
+### Integration Guides
+
+- [MCP Integration](https://docs.browserbase.com/integrations/mcp/introduction) — Model Context Protocol setup and tools.
+- [Stripe Integration](https://docs.browserbase.com/integrations/stripe/introduction) — Stripe billing integration.
+
+### Docs Use Case Guides
+
+- [Automating Form Submissions](https://docs.browserbase.com/use-cases/automating-form-submissions)
+- [Building Automated Tests](https://docs.browserbase.com/use-cases/building-automated-tests)
+- [Scraping Websites](https://docs.browserbase.com/use-cases/scraping-website)
+
+---
+
+## Why Browser Agents Need a Platform
+
+AI agents are everywhere — coding agents, assistants, support bots, deep research tools — and all of them need web access. Teams building browser agents today stitch together 5+ vendors (search, fetch, browsers, models, deployment) before writing a single prompt. APIs see ~15% of the web; agents need the other 85%, which is locked behind anti-bot systems, CAPTCHAs, and authentication walls.
+
+Browserbase already won the browser layer. The platform extends that position into the adjacent primitives agents are buying from other vendors today — under one API key, with the browser at the center.
+
+### Key Capabilities
+
+- **Browsers that work where APIs can't** — Concurrent sessions, isolated environments, globally distributed.
+- **One platform, one vendor** — Browsers, Search, Fetch, Functions, Model Gateway, and Agent Identity under a single account. One bill, one place to debug.
+- **Unrestricted access to the web** — Agent Identity gets agents past anti-bot systems and auth walls.
+- **Deploy instantly** — Functions run your code next to the browser with <5ms latency.
+- **Observability across every step** — Rich logs, live view, and session replay.
+- **Stagehand, the SDK for browser agents** — Natural language browser interactions that self-heal, with automatic action caching.
+- **Framework Compatibility** — Works with Stagehand, Playwright, Puppeteer, and Selenium.
+- **Multi-User Orgs** — Team accounts for collaboration at scale.
+
+---
+
+## Products & Pages
+
+- [Browsers](https://www.browserbase.com/browsers) — Headless browser fleet. The core of the platform.
+- [Stagehand](https://www.browserbase.com/stagehand) — The SDK for browser agents.
+- [Search API](https://www.browserbase.com/search) — Web search with structured results for agent context.
+- [Identity](https://www.browserbase.com/identity) — Agent Identity: get past anti-bot systems and auth walls.
+- [Models](https://www.browserbase.com/models) — Model Gateway for browser agents.
+- [Runtime](https://www.browserbase.com/runtime) — Browserbase runtime infrastructure.
+- [Observability](https://www.browserbase.com/observability) — Session Inspector, Replay, and debugging tools.
+- [Computer Use](https://www.browserbase.com/computer-use) — Browser agents powered by Browserbase.
+- [Computer Use Academy: Gemini](https://www.browserbase.com/cua/gemini) — Build browser agents with Gemini.
+- [Computer Use Academy: OpenAI](https://www.browserbase.com/cua/openai) — Build browser agents with OpenAI.
+- [Model Context Protocol (MCP)](https://www.browserbase.com/mcp) — MCP integration for agents.
+- [Director](https://www.browserbase.com/director) — Open-source browser agent reference implementation.
+- [browse CLI](https://www.browserbase.com/browse-cli) — Lightweight entry point for giving agents browsing capabilities from the command line.
+- [Templates](https://www.browserbase.com/templates) — Ready-to-use browser agent templates and examples.
+- [Evaluations](https://www.browserbase.com/evaluations) — Evaluate browser agent performance.
+- [Customer Stories](https://www.browserbase.com/customer-stories) — How teams use Browserbase in production.
+- [Enterprise](https://www.browserbase.com/enterprise) — Enterprise plans and features.
+
+---
+
+## Example Use Cases
+
+- [Templates Repository](https://github.com/browserbase/templates/blob/dev/README.md) — Canonical list of 40+ working code templates (TypeScript, Python, Go) covering form filling, MFA handling, scraping, agents, CUA, proxies, contexts, caching, and more. Start here if you want runnable code.
+- [All Use Cases](https://www.browserbase.com/use-cases) — Browse all use case pages.
+- [Browser Tool for Agents](https://www.browserbase.com/use-case/browser-tool-for-agents) — Browser tool for AI agents and copilots.
+- [AI Web Scraper](https://www.browserbase.com/use-case/ai-web-scraper) — Agent-driven web data extraction.
+- [Playwright Cloud](https://www.browserbase.com/use-case/playwright-cloud) — Run Playwright scripts in the cloud.
+- [End-to-End Testing](https://www.browserbase.com/use-case/end-to-end-testing) — Browser-based test automation.
+- [Data Entry Automation](https://www.browserbase.com/use-case/data-entry-automation) — Agents handling repetitive data-entry workflows.
+- [Web Scraping for Lead Generation](https://www.browserbase.com/use-case/web-scraping-for-lead-generation) — Agents that find and qualify sales leads.
+- [Web Scraping for Real Estate](https://www.browserbase.com/use-case/web-scraping-for-real-estate) — Real estate data collection.
+- [Web Scraping for Ecommerce](https://www.browserbase.com/use-case/web-scraping-for-ecommerce) — Product and catalog data.
+- [Web Scraping for Price Monitoring](https://www.browserbase.com/use-case/web-scraping-for-price-monitoring) — Competitive price monitoring.
+- [Browser Automation for Fintech](https://www.browserbase.com/use-case/browser-automation-for-fintech) — Agents in financial services workflows.
+- [Browser Automation for Healthcare](https://www.browserbase.com/use-case/browser-automation-for-healthcare) — Agents in healthcare workflows.
+- [Browser Automation for Insurance](https://www.browserbase.com/use-case/browser-automation-for-insurance) — Agents in insurance workflows.
+- [Amazon Scraper](https://www.browserbase.com/use-case/amazon-scraper) — Amazon product data.
+- [Flight Scraper](https://www.browserbase.com/use-case/flight-scraper) — Flight data and pricing.
+- [Job Board Scraper](https://www.browserbase.com/use-case/job-board-scraper) — Aggregate job listings.
+- [Local Business Scraper](https://www.browserbase.com/use-case/local-business-scraper) — Local business data.
+- [News Scraper](https://www.browserbase.com/use-case/news-scraper) — News content extraction.
+- [Social Media Scraper](https://www.browserbase.com/use-case/social-media-scraper) — Social media data.
+
+### Solutions
+
+- [Browser Agents](https://www.browserbase.com/solutions/browser-agents) — Agents that browse and interact with the web like humans.
+- [Accessing Web Data](https://www.browserbase.com/solutions/accessing-web-data) — Web data extraction at scale.
+- [Workflow Automation](https://www.browserbase.com/solutions/workflow-automation) — Agents handling repetitive browser workflows.
+- [Testing](https://www.browserbase.com/solutions/testing) — Browser-based testing in the cloud.
+
+### Industry Pages
+
+- [AI](https://www.browserbase.com/industry/ai) — Browser agents powered by Browserbase.
+- [Go-to-Market Automation](https://www.browserbase.com/industry/gtm) — Agents for sales and revenue intelligence.
+- [Fintech Automation](https://www.browserbase.com/industry/fintech) — Browser agents for financial services.
+- [Legal Tech Automation](https://www.browserbase.com/industry/legal) — Compliance and discovery workflows.
+- [Healthcare Automation](https://www.browserbase.com/industry/healthcare) — Maintain compliance while running agents on healthcare workflows.
+- [Supply Chain Automation](https://www.browserbase.com/industry/supply-chain) — Vendor monitoring, pricing intelligence, and compliance tracking.
+
+---
+
+## Blog & Resources
+
+- *Browserbase Blog* — [All posts](https://www.browserbase.com/blog)
+- *Scaling Web Intelligence with Browserbase* — [Vercel Case Study](https://www.browserbase.com/blog/case-study-vercel)
+- *How Commure Powers Healthcare Workflows* — [Commure Case Study](https://www.browserbase.com/blog/case-study-commure)
+- *Introducing Stagehand V3* — [Blog Post](https://www.browserbase.com/blog/stagehand-v3)
+- *Introducing Director* — [Blog Post](https://www.browserbase.com/blog/introducing-director)
+- *Introducing Browserbase Functions* — [Blog Post](https://www.browserbase.com/blog/browserbase-functions)
+- *Introducing the Fetch API* — [Blog Post](https://www.browserbase.com/blog/fetch-api)
+- *The Evolution of AI-Driven Browsers* — [Blog Post](https://www.browserbase.com/blog/an-internet-browser-for-ai)
+- *Series B Funding Announcement* — [Blog Post](https://www.browserbase.com/blog/series-b-and-beyond)
+- *Cloudflare Partnership: Agent Identity Verification* — [Blog Post](https://www.browserbase.com/blog/cloudflare-browserbase-pioneering-identity)
+- *Enterprise Tech 30 Recognition* — [Blog Post](https://www.browserbase.com/blog/browserbase-named-to-7th-annual-enterprise-tech-30-list)
+- *Stagehand + MongoDB Atlas* — [MongoDB Blog](https://www.mongodb.com/company/blog/technical/scalable-automation-starts-here-meet-stagehand-atlas)
+- *The Unbreakable Web* — [Temporal Blog](https://temporal.io/blog/the-unbreakable-web-from-fragile-scripts-to-bulletproof-workflows)
+
+---
+
+## Media, Tutorials & Community
+
+### YouTube Tutorials & Demos
+
+- *Stagehand V2: Fully Free Browser Agent!* — [World of AI](https://www.youtube.com/watch?v=Qb1YrN0fZfM)
+- *Claude MCP has Changed AI Forever* — [Cole Medin](https://www.youtube.com/watch?v=v_6EXt6T83I)
+- *New GitHub MCP Server Automates Developer Workflows* — [YouTube](https://www.youtube.com/watch?v=JFLjWfnhNGs)
+- *Build an AI Agent that Browses the Web* — [Beau Carnes](https://www.youtube.com/watch?v=oW0tf0IXX5U)
+- *React JS Project with Stagehand* — [Roadside Coder](https://www.youtube.com/watch?v=9Bvz_HJESV4)
+- *Give your AI a Browser with Stagehand* — [Elie Steinbock](https://www.youtube.com/watch?v=zGR6TDKTeGo)
+- *Browser Agents with MCP* — [Elie Steinbock](https://www.youtube.com/watch?v=VkAwC6q3Hbk)
+- *AI Code That Fixes Itself* — [Cole Medin](https://www.youtube.com/watch?v=8Mib-hb6Fcg)
+
+---
+
+## Optional Media
+
+### Newsletters & Articles
+
+- *How AI is evolving for our digital world* — [Artificial Ignorance Newsletter](https://www.ignorance.ai/p/native-speakers)
+
+### Podcasts & Interviews
+
+- *Infrastructure for AI Browsers with Paul Klein* — [Spotify](https://open.spotify.com/episode/2FAnNVyqqvdluxzHdKnmsp)
+- *Open Operator, Headless Browsers and the Future of Computer-Using Agents* — [Latent Space](https://www.latent.space/p/browserbase)
+- *How Browserbase Raised $67.5M to Power AI Agents* — [Sourcery with Molly O'Shea](https://www.youtube.com/watch?v=Xx_ylwTwStE)
+- *Why AI Agents Need a New Kind of Browser* — [The New Stack](https://www.youtube.com/watch?v=3Ukmmsrn23I)
+
+---
+
+## Company Info
+
+- [Homepage](https://www.browserbase.com/)
+- [Pricing](https://www.browserbase.com/pricing)
+- [Careers](https://www.browserbase.com/careers)
+- [Partner](https://www.browserbase.com/partner)
+- [Contact](https://www.browserbase.com/contact)
+- [Status](https://status.browserbase.com)
+- [ElevenLabs Founder Pack](https://www.browserbase.com/11labs-founder-pack) — Partner offer for ElevenLabs founders.
+
+---
+
+## Lower-Priority Resources
+
+- [Changelog](https://www.browserbase.com/changelog)
+- [Sitemap](https://www.browserbase.com/sitemap.xml)
+- [Community Discussions](https://github.com/browserbase/stagehand/discussions)
+- [Privacy Policy](https://www.browserbase.com/privacy-policy)
+- [Terms of Service](https://www.browserbase.com/terms-of-service)
+
+---
+
+## See Also
+
+- [Stagehand: The SDK for Browser Agents](https://www.stagehand.dev/) — Open-source SDK with primitives (`act`, `extract`, `observe`) for reliable browser agents.

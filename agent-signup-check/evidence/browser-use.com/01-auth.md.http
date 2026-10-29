@@ -1,0 +1,71 @@
+GET https://browser-use.com/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:13.803Z
+final-url: https://browser-use.com/auth.md
+
+HTTP 200
+age: 0
+cache-control: public, max-age=0, must-revalidate
+content-encoding: br
+content-type: text/markdown; charset=utf-8
+date: Wed, 28 Oct 2026 23:58:10 GMT
+link: <https://browser-use.com/auth>; rel="canonical"
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: Accept-Encoding
+x-content-source: pages-for-llms
+x-matched-path: /api/md/[[...path]]
+x-robots-tag: noindex
+x-vercel-cache: MISS
+x-vercel-id: pdx1::iad1::cmtmn-1793231889987-a572f6b17f8e
+connection: close
+transfer-encoding: chunked
+
+BROWSER USE
+
+- Browser Use Agents: give Browser Use a task and receive completed work. API V4 is current for new integrations.
+- Browser Infrastructure: connect your agent or automation to managed browsers through SDK, REST, or CDP. Starts at $0.02/browser-hour.
+- Developer tools: Open Source, Browser Harness, SDK, and MCP support the two products above.
+
+[Developer Index](https://browser-use.com/index.md)
+[Product Map](https://browser-use.com/llms.txt)
+[Full Product Context](https://browser-use.com/llms-full.txt)
+[Pricing](https://browser-use.com/pricing.md)
+[Cloud Docs](https://docs.browser-use.com/cloud/quickstart)
+[Open Source Docs](https://docs.browser-use.com/open-source/introduction)
+
+---
+
+# Browser Use authentication for agents
+
+Browser Use has two public authentication paths. Choose the one supported by the interface you are calling.
+
+## REST API and Cloud SDK
+
+API V4 and the Python and TypeScript Cloud SDKs authenticate with an API key in the `X-Browser-Use-API-Key` header.
+
+```bash
+curl https://api.browser-use.com/api/v4/runs \
+  -H "X-Browser-Use-API-Key: $BROWSER_USE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"task":"Summarize the Browser Use homepage"}'
+```
+
+- [Create an API key](https://cloud.browser-use.com/settings?tab=api-keys&new=1)
+- [API V4 documentation](https://browser-use.com/api)
+- [OpenAPI 3.1 specification](https://browser-use.com/openapi.json)
+
+Do not put API keys in prompts, source control, browser-delivered code, or logs. Isolate keys by environment, store them in a secret manager, and revoke keys that are no longer needed.
+
+## OAuth 2.0 for MCP clients
+
+The Browser Use authorization server advertises Authorization Code with PKCE and Device Authorization as supported grant types. The currently published permission is the `mcp` scope.
+
+- Authorization server: `https://api.browser-use.com`
+- Authorization endpoint: `https://api.browser-use.com/oauth/authorize`
+- Token endpoint: `https://api.browser-use.com/oauth/token`
+- Dynamic client registration: `https://api.browser-use.com/oauth/register`
+- Authorization-server metadata: [browser-use.com/.well-known/oauth-authorization-server](https://browser-use.com/.well-known/oauth-authorization-server)
+- Protected-resource metadata: [browser-use.com/.well-known/oauth-protected-resource](https://browser-use.com/.well-known/oauth-protected-resource)
+
+Request the `mcp` scope only when calling the Browser Use MCP resource. Finer-grained REST API OAuth scopes are not currently advertised by the public authorization metadata.

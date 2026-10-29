@@ -1,0 +1,144 @@
+{
+ "site": "brave.com",
+ "checkedAt": "2026-10-28T23:58:20.385Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://brave.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://brave.com/auth.md/)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://brave.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://brave.com/.well-known/oauth-protected-resource/)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://brave.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404) (after a redirect to https://brave.com/.well-known/oauth-authorization-server/); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.search.brave.com/res/v1/web/search?q=agent",
+   "httpStatus": 422,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "HTTP 422 asking for a key, instead of a 401 challenge"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://api-dashboard.search.brave.com/llms.txt",
+   "heading": "# Brave Search API",
+   "bytes": 7309,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://brave.com/auth.md",
+   "finalUrl": "https://brave.com/auth.md/",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 114,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://brave.com/llms.txt",
+   "finalUrl": "https://brave.com/llms.txt/",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 107,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.search.brave.com/res/v1/web/search?q=agent",
+   "finalUrl": "https://api.search.brave.com/res/v1/web/search?q=agent",
+   "status": 422,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 34,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://api-dashboard.search.brave.com/llms.txt",
+   "finalUrl": "https://api-dashboard.search.brave.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 43,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://brave.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://brave.com/.well-known/oauth-protected-resource/",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 97,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.search.brave.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.search.brave.com/.well-known/oauth-protected-resource",
+   "status": 403,
+   "error": null,
+   "contentType": null,
+   "ms": 33,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://brave.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://brave.com/.well-known/oauth-authorization-server/",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 98,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://brave.com/.well-known/x402",
+   "finalUrl": "https://brave.com/.well-known/x402/",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 106,
+   "redirects": 1
+  }
+ ]
+}

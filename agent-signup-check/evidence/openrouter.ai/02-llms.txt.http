@@ -1,0 +1,120 @@
+GET https://openrouter.ai/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:09.405Z
+final-url: https://openrouter.ai/llms.txt
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:57:07 GMT
+content-type: text/markdown; charset=utf-8
+transfer-encoding: chunked
+connection: close
+age: 0
+cache-control: public, max-age=0, must-revalidate
+content-encoding: br
+content-security-policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://clerk.openrouter.ai https://*.protect.clerk.com https://*.client.protect.clerk.com https://challenges.cloudflare.com https://checkout.stripe.com https://connect-js.stripe.com https://js.stripe.com https://maps.googleapis.com https://www.googletagmanager.com https://*.googletagmanager.com 'wasm-unsafe-eval' https://unpkg.com https://esm.sh https://static.cloudflareinsights.com https://cdn.jsdelivr.net https://*.algolia.net https://*.algolianet.com https://app.buildwithfern.com https://prod.ferndocs.com https://cdn.segment.com https://jobs.ashbyhq.com https://*.posthog.com https://cdn.tldraw.com; connect-src 'self' blob: https://model-assets.openrouter.ai https://clerk.openrouter.ai https://*.protect.clerk.com https://*.client.protect.clerk.com https://*.protect.clerk.com:* https://clerk-telemetry.com https://checkout.stripe.com https://api.stripe.com https://m.stripe.com https://maps.googleapis.com *.google-analytics.com https://www.googletagmanager.com https://www.google.com https://*.analytics.google.com https://analytics.google.com https://*.google-analytics.com https://*.googletagmanager.com https://*.g.doubleclick.net https://fonts.googleapis.com https://raw.githubusercontent.com wss://www.walletlink.org/rpc https://static.cloudflareinsights.com https://esm.sh https://*.browser-intake-datadoghq.com https://browser-intake-us5-datadoghq.com https://rum.browser-intake-us5-datadoghq.com https://api-na2.hsforms.com https://*.algolia.net https://*.algolianet.com https://app.buildwithfern.com https://prod.ferndocs.com https://api.segment.io https://cdn.segment.com https://www.openrouter.ai https://openrouter.ai https://jobs.ashbyhq.com https://api.ashbyhq.com/ https://*.posthog.com https://cdn.tldraw.com https://wrapped.openrouter.ai https://storage.googleapis.com; frame-src 'self' https://model-assets.openrouter.ai https://*.protect.clerk.com https://*.client.protect.clerk.com https://challenges.cloudflare.com https://checkout.stripe.com https://connect-js.stripe.com https://js.stripe.com https://hooks.stripe.com https://m.stripe.network https://us5.datadoghq.com https://share-na2.hsforms.com https://www.youtube.com https://app.buildwithfern.com https://prod.ferndocs.com https://jobs.ashbyhq.com; img-src 'self' data: blob: https://*.github.io https://model-assets.openrouter.ai https://img.clerk.com https://*.stripe.com https://www.googletagmanager.com www.google.com https://*.google-analytics.com https://*.googletagmanager.com https://analytics.google.com https://*.analytics.google.com https://*.g.doubleclick.net https://source.unsplash.com https://t0.gstatic.com https://imagedelivery.net https://raw.githubusercontent.com https://*.algolia.io https://files.buildwithfern.com https://icons.ferndocs.com https://cdn.tldraw.com https://wrapped.openrouter.ai; media-src 'self' data: blob: https://model-assets.openrouter.ai https://vgi-bench-mirror.openrouter.ai; worker-src 'self' blob: data:; style-src 'self' 'unsafe-inline' sha256-0hAheEzaMe6uXIKV4EehS9pu1am1lj/KnnzrOYqckXk= https://fonts.googleapis.com https://unpkg.com https://cdn.jsdelivr.net https://app.buildwithfern.com https://prod.ferndocs.com https://jobs.ashbyhq.com https://*.posthog.com https://cdn.tldraw.com; frame-ancestors 'self'; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdn.tldraw.com; upgrade-insecure-requests
+content-security-policy-report-only: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://clerk.openrouter.ai https://*.protect.clerk.com https://*.client.protect.clerk.com https://challenges.cloudflare.com https://checkout.stripe.com https://connect-js.stripe.com https://js.stripe.com https://maps.googleapis.com https://www.googletagmanager.com https://*.googletagmanager.com 'wasm-unsafe-eval' https://unpkg.com https://esm.sh https://static.cloudflareinsights.com https://cdn.jsdelivr.net https://*.algolia.net https://*.algolianet.com https://app.buildwithfern.com https://prod.ferndocs.com https://cdn.segment.com https://jobs.ashbyhq.com https://*.posthog.com https://cdn.tldraw.com; connect-src 'self' blob: https://model-assets.openrouter.ai https://clerk.openrouter.ai https://*.protect.clerk.com https://*.client.protect.clerk.com https://*.protect.clerk.com:* https://clerk-telemetry.com https://checkout.stripe.com https://api.stripe.com https://m.stripe.com https://maps.googleapis.com *.google-analytics.com https://www.googletagmanager.com https://www.google.com https://*.analytics.google.com https://analytics.google.com https://*.google-analytics.com https://*.googletagmanager.com https://*.g.doubleclick.net https://fonts.googleapis.com https://raw.githubusercontent.com wss://www.walletlink.org/rpc https://static.cloudflareinsights.com https://esm.sh https://*.browser-intake-datadoghq.com https://browser-intake-us5-datadoghq.com https://rum.browser-intake-us5-datadoghq.com https://api-na2.hsforms.com https://*.algolia.net https://*.algolianet.com https://app.buildwithfern.com https://prod.ferndocs.com https://api.segment.io https://cdn.segment.com https://www.openrouter.ai https://openrouter.ai https://jobs.ashbyhq.com https://api.ashbyhq.com/ https://*.posthog.com https://cdn.tldraw.com https://wrapped.openrouter.ai https://storage.googleapis.com; frame-src 'self' https://model-assets.openrouter.ai https://*.protect.clerk.com https://*.client.protect.clerk.com https://challenges.cloudflare.com https://checkout.stripe.com https://connect-js.stripe.com https://js.stripe.com https://hooks.stripe.com https://m.stripe.network https://us5.datadoghq.com https://share-na2.hsforms.com https://www.youtube.com https://app.buildwithfern.com https://prod.ferndocs.com https://jobs.ashbyhq.com; img-src 'self' data: blob: https://*.github.io https://model-assets.openrouter.ai https://img.clerk.com https://*.stripe.com https://www.googletagmanager.com www.google.com https://*.google-analytics.com https://*.googletagmanager.com https://analytics.google.com https://*.analytics.google.com https://*.g.doubleclick.net https://source.unsplash.com https://t0.gstatic.com https://imagedelivery.net https://raw.githubusercontent.com https://*.algolia.io https://files.buildwithfern.com https://icons.ferndocs.com https://cdn.tldraw.com https://wrapped.openrouter.ai; media-src 'self' data: blob: https://model-assets.openrouter.ai https://vgi-bench-mirror.openrouter.ai; worker-src 'self' blob: data:; style-src 'self' 'unsafe-inline' sha256-0hAheEzaMe6uXIKV4EehS9pu1am1lj/KnnzrOYqckXk= https://fonts.googleapis.com https://unpkg.com https://cdn.jsdelivr.net https://app.buildwithfern.com https://prod.ferndocs.com https://jobs.ashbyhq.com https://*.posthog.com https://cdn.tldraw.com; frame-ancestors 'self'; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdn.tldraw.com; script-src-attr 'none'
+server: cloudflare
+x-content-type-options: nosniff
+strict-transport-security: max-age=63072000
+vary: User-Agent, RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch, accept-encoding
+x-frame-options: SAMEORIGIN
+x-matched-path: /llms.txt
+x-vercel-cache: MISS
+x-vercel-id: pdx1::sfo1::nz8ds-1793231827162-527502a9c710
+cf-cache-status: DYNAMIC
+permissions-policy: payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com" "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+referrer-policy: no-referrer, strict-origin-when-cross-origin
+cf-ray: a51de187be5cefce-PDX
+
+# OpenRouter
+
+> A unified API for every major LLM. One endpoint, hundreds of models, with
+> routing, fallbacks, and cost tracking across providers.
+
+## What OpenRouter is and when to use it
+
+OpenRouter is one OpenAI-compatible API in front of hundreds of models from
+many providers. Send `POST https://openrouter.ai/api/v1/chat/completions`
+with an OpenRouter API key and a `model` such as `openai/gpt-4o` or
+`anthropic/claude-sonnet-4`. Every chat model accepts that same request shape.
+Image, video, speech-to-text, and text-to-speech models use their own
+endpoints, described in each model's per-model guide below.
+
+Use OpenRouter when you need to:
+
+- Call many models or providers through one API key, one bill, and one SDK.
+- Switch models without changing code, or compare models on the same prompt.
+- Route around provider outages and rate limits with automatic fallbacks.
+- Use text, image, video, speech-to-text, and text-to-speech models from one place.
+
+Getting started:
+
+- API keys are self-serve: sign up at https://openrouter.ai and create a key at https://openrouter.ai/settings/keys. No sales contact is needed.
+- Free tier: models with the `:free` variant cost nothing, and the free models router at `openrouter/free` picks one for you. Free usage is rate limited per day; buying credits raises the limit. See https://openrouter.ai/docs/api-reference/limits.md.
+- Pricing is pay-as-you-go per token with no markup on the provider's price: https://openrouter.ai/pricing.
+- MCP server for agents: https://mcp.openrouter.ai/mcp (OAuth in the browser, hosted by OpenRouter). Setup guide: https://openrouter.ai/docs/guides/overview/mcp-server.md.
+- OpenAPI description of the whole API: https://openrouter.ai/openapi.json.
+
+## Docs
+
+- [Quickstart](https://openrouter.ai/docs/quickstart.md): Get an API key and send the first request.
+- [API reference](https://openrouter.ai/docs/api-reference/overview.md): Endpoints, parameters, and response shapes.
+- [Docs index](https://openrouter.ai/docs/llms.txt): Every documentation page as a markdown link with a one-line summary.
+- [Full docs](https://openrouter.ai/docs/llms-full.txt): The complete documentation in one file, for agents that want everything at once.
+- [Limits](https://openrouter.ai/docs/api-reference/limits.md): Credit limits, free-model request caps, and rate limits.
+- [Free variant](https://openrouter.ai/docs/guides/routing/model-variants/free.md): Access free models with the `:free` variant.
+- [Free models router](https://openrouter.ai/docs/guides/routing/routers/free-router.md): Route to whichever free model is available.
+- [FAQ](https://openrouter.ai/docs/faq.md): Common questions about billing, privacy, routing, and models.
+
+## Models
+
+- [Models](https://openrouter.ai/models): Compare every model on OpenRouter by pricing, context length, and benchmarks, all through one API.
+- [Model API](https://openrouter.ai/api/v1/models): Machine-readable list of every model, with pricing and supported parameters.
+- Per-model guide: `https://openrouter.ai/{author}/{model}/llms.txt` returns one machine-readable guide with sections for every confirmed OpenRouter API that serves a public model: text/chat, image, video, speech-to-text, and text-to-speech.
+
+## Site
+
+- [Rankings](https://openrouter.ai/rankings): LLM leaderboards by real-world usage, ranked by tokens processed through the OpenRouter API, with per-modality views.
+- [Pricing](https://openrouter.ai/pricing.md): How OpenRouter pricing works, with pay-as-you-go and enterprise plans, plus answers to common billing questions. Markdown twin of https://openrouter.ai/pricing with the plan table, fees, BYOK terms, and billing FAQ.
+- [Enterprise](https://openrouter.ai/enterprise.md): OpenRouter for companies: one API, contract, and invoice for every model, with SSO and SCIM, zero data retention and in-region routing, budgets and spend alerts, invoiced billing, and an SLA. Talk to sales at https://openrouter.ai/enterprise/form. Markdown twin of https://openrouter.ai/enterprise with the security controls, billing terms, and FAQ.
+- [Providers](https://openrouter.ai/providers): The network of model providers available on OpenRouter, with a page per provider.
+- [Compare](https://openrouter.ai/compare): Compare models by benchmarks, price, context length, latency, uptime, and throughput.
+- [Collections](https://openrouter.ai/collections): Curated collections of models, including free models and image generation models.
+- [Image generation models](https://openrouter.ai/collections/image-models): Image generation models ranked by weekly usage; generate images from text prompts and reference images with one API.
+- [Video generation models](https://openrouter.ai/collections/video-models): Video generation models ranked by weekly usage; generate videos from text or images with one API and compare per-second pricing.
+- [Text-to-speech models](https://openrouter.ai/collections/text-to-speech-models): Text-to-speech models for voice generation, narration, assistants, accessibility, and audio apps.
+- [Speech-to-text models](https://openrouter.ai/collections/speech-to-text-models): Speech-to-text and transcription models for meetings, calls, captions, and speech recognition.
+- [Audio generation models](https://openrouter.ai/collections/audio-models): Audio generation models for music, sound, and audio-output applications.
+- [Apps](https://openrouter.ai/apps): App and agent rankings, listing the apps built on OpenRouter and the top apps by category.
+- [State of AI](https://openrouter.ai/state-of-ai): An empirical study of real-world LLM usage across more than 100 trillion tokens on OpenRouter.
+- [Data](https://openrouter.ai/data): OpenRouter's empirical AI usage data for researchers, journalists, and academics.
+- [Support](https://openrouter.ai/support): Frequently asked questions about using OpenRouter, and how to reach support.
+- [For AI crawlers](https://openrouter.ai/for-ai): Text-only HTML index of the site with the top models per modality, every provider, and every collection, each with a description and canonical link.
+
+## EU in-region routing
+
+- [OpenRouter EU](https://openrouter.ai/business/eu): EU in-region routing on OpenRouter Business. Requests sent to https://eu.openrouter.ai are decrypted in the EU and routed only to shared provider endpoints located in Europe (the EU/EEA, the UK, and Switzerland); prompts and completions are processed there, while account data, billing records, authentication data, security logs, and other operational records may be stored and processed in the US. Requests served by a customer's BYOK key go to the customer's own cloud deployment: the customer provisions it in the region they need and sets the key's region per provider, and OpenRouter does not verify where it runs. Self-serve on Business: no contract, no monthly minimum. Lists the live EU model catalog, the data boundary, and data-region guardrail setup.
+- [EU Model API](https://eu.openrouter.ai/api/v1/models): Machine-readable list of models with endpoints in Europe (the EU/EEA, the UK, and Switzerland), with EU endpoint pricing. Batch (:batch) variants appear in this list but are not accepted on regional domains; the Batch API runs only on openrouter.ai.
+- [In-region routing docs](https://openrouter.ai/docs/guides/features/in-region-routing): Regional base URLs, fail-closed behavior, and the features regional domains reject.
+
+## Ori
+
+- [Ori](https://openrouter.ai/ori): OpenRouter's family of tools for putting agents to work with any model: Ori Harness, Ori Code, Ori Eval, Ori Intern, and Ori Desktop.
+- [Ori Harness](https://openrouter.ai/ori/harness): Run the agent CLI you already use — Claude Code, Codex, OpenCode, Hermes, and more — on OpenRouter, with OAuth sign-in and your org's guardrails.
+- [Ori Eval](https://openrouter.ai/ori/eval.md): Find the best model for your project — run your agent on your own prompts, on a harness and model that stay pinned, and rank the candidates.
+- [spawn-ori-eval skill](https://openrouter.ai/skills/spawn-ori-eval): For coding agents. Read it to run a model eval by handing it to Ori, so the eval is authored and graded on a pinned harness and model rather than one you improvised.
+- [install-ori-harness skill](https://openrouter.ai/skills/install-ori-harness): For coding agents. Read it to install Ori, sign in, run an existing agent CLI through Ori, choose an OpenRouter model, and verify the setup.
+- [Install Ori](https://openrouter.ai/labs/ori/install.sh): `curl -fsSL https://openrouter.ai/labs/ori/install.sh | bash`
+- [Ori Eval docs](https://openrouter.ai/docs/guides/ori/eval.md): Writing `*.eval.ts` files, LLM-as-judge grading, and model bakeoffs.
+- [Ori Harness docs](https://openrouter.ai/docs/guides/ori/harness.md): Installing Ori, signing in, and running each supported agent CLI on OpenRouter.
+
+## Skills
+
+- [Skills](https://github.com/OpenRouterTeam/skills): Every skill OpenRouter publishes. Each one is served as raw markdown from `https://openrouter.ai/skills/<name>` (also at `/.well-known/skills/<name>/SKILL.md`, for agents that look there first).
+- [Agent guide](https://openrouter.ai/agents.md): Using OpenRouter from a coding agent.
+
+## Benchmarks
+
+- [Benchmarks](https://openrouter.ai/benchmarks): Browse live independent benchmark results for OpenRouter models, providers, and search engines.
+- [GET /api/v1/benchmarks](https://openrouter.ai/api/v1/benchmarks): Fetch benchmark results programmatically with a valid OpenRouter API key.
+- [Benchmarks API reference](https://openrouter.ai/docs/api/api-reference/benchmarks/list-benchmarks): Read the API contract for listing benchmark results and supported filters.

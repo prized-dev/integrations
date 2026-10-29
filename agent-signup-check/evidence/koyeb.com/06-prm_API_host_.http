@@ -1,0 +1,317 @@
+GET https://app.koyeb.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:36.274Z
+final-url: https://app.koyeb.com/.well-known/oauth-protected-resource
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:57:34 GMT
+content-type: text/html
+transfer-encoding: chunked
+connection: close
+vary: Accept-Encoding
+last-modified: Mon, 13 Jul 2026 09:40:16 GMT
+etag: W/"6a54b280-80d8"
+content-security-policy: frame-ancestors none
+x-ratelimit-limit: 400, 400;w=60
+x-ratelimit-remaining: 399
+x-ratelimit-reset: 26
+strict-transport-security: max-age=31536000; includeSubDomains
+cache-control: no-cache, no-store
+pragma: no-cache
+x-cache-status: MISS
+content-encoding: gzip
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta key="og:title" property="og:title" content="Koyeb" />
+    <meta key="og:type" property="og:type" content="website" />
+    <meta
+      key="og:description"
+      property="og:description"
+      content="Koyeb is a developer-friendly serverless platform to deploy apps globally. No-ops, servers, and infrastructure management."
+    />
+    <meta
+      key="og:image"
+      property="og:image"
+      content="https://www.koyeb.com/static/images/illustrations/og/koyeb-home.png"
+    />
+    <meta key="og:image:width" property="og:image:width" content="1200" />
+    <meta key="og:image:height" property="og:image:height" content="630" />
+
+    <meta key="twitter:site" name="twitter:site" content="@gokoyeb" />
+    <meta
+      key="twitter:card"
+      name="twitter:card"
+      content="summary_large_image"
+    />
+    <meta key="twitter:create" name="twitter:creator" content="@gokoyeb" />
+    <meta
+      key="twitter:image"
+      name="twitter:image"
+      content="https://www.koyeb.com/static/images/illustrations/og/koyeb-home.png"
+    />
+
+    <meta key="itemPropName" itemprop="name" content="Koyeb" />
+    <meta
+      key="itemPropDesc"
+      itemprop="description"
+      content="Koyeb is a developer-friendly serverless platform to deploy apps globally. No-ops, servers, and infrastructure management."
+    />
+
+    <link rel="manifest" href="/manifest.json" />
+
+    <title>Koyeb</title>
+    <script
+      type="module"
+      crossorigin=""
+      src="/assets/index-DPgctgMV.js"
+    ></script>
+    <link
+      rel="modulepreload"
+      crossorigin=""
+      href="/assets/analytics-BDaDZ9f1.js"
+    />
+    <link
+      rel="modulepreload"
+      crossorigin=""
+      href="/assets/vendors-GjAHfUur.js"
+    />
+    <link rel="stylesheet" crossorigin="" href="/assets/index-EoPxkiZk.css" />
+    <link rel="modulepreload" href="/assets/_slug.deploy-CORgE_F9.js" />
+    <link rel="modulepreload" href="/assets/_slug.index-kAwlXAuz.js" />
+    <link rel="modulepreload" href="/assets/_slug.route-J8TRYKk3.js" />
+    <link rel="modulepreload" href="/assets/abap-B6iimfXx.js" />
+    <link rel="modulepreload" href="/assets/actionscript-3-rq0FdrHc.js" />
+    <link rel="modulepreload" href="/assets/activity-CbIX069Z.js" />
+    <link rel="modulepreload" href="/assets/activity-sentence-Bh-DBRBt.js" />
+    <link rel="modulepreload" href="/assets/ada-vE_Hc1k5.js" />
+    <link rel="modulepreload" href="/assets/addMonths-ndSlExaS.js" />
+    <link rel="modulepreload" href="/assets/andromeeda-BbiJB1gf.js" />
+    <link rel="modulepreload" href="/assets/angular-html-hoIX5ZDh.js" />
+    <link rel="modulepreload" href="/assets/angular-ts-B7XDCOpU.js" />
+    <link rel="modulepreload" href="/assets/apache-BwMYdR8T.js" />
+    <link rel="modulepreload" href="/assets/apex-KahFCYJX.js" />
+    <link rel="modulepreload" href="/assets/api-B0nZzvI4.js" />
+    <link rel="modulepreload" href="/assets/api-CGWwW9gF.js" />
+    <link rel="modulepreload" href="/assets/api-credential-DLW_7JU6.js" />
+    <link rel="modulepreload" href="/assets/api-credentials.page-EnARsOvY.js" />
+    <link rel="modulepreload" href="/assets/apl-Dk4Fx4W5.js" />
+    <link rel="modulepreload" href="/assets/app-card-lMKrYCH-.js" />
+    <link rel="modulepreload" href="/assets/app-not-found-BAxwXh5g.js" />
+    <link rel="modulepreload" href="/assets/applescript-DItnY6Q7.js" />
+    <link rel="modulepreload" href="/assets/apps-9HN3jI7m.js" />
+    <link rel="modulepreload" href="/assets/ara-B0fShubE.js" />
+    <link rel="modulepreload" href="/assets/asciidoc-ZYWfoCrs.js" />
+    <link rel="modulepreload" href="/assets/asm-C60NhYkA.js" />
+    <link rel="modulepreload" href="/assets/astro-CtT5EqiX.js" />
+    <link rel="modulepreload" href="/assets/aurora-x-DOFHaglv.js" />
+    <link rel="modulepreload" href="/assets/awk-D4EF5kGy.js" />
+    <link rel="modulepreload" href="/assets/ayu-dark-Cpw2ZMe6.js" />
+    <link rel="modulepreload" href="/assets/badge-new-tG1vxeFs.js" />
+    <link rel="modulepreload" href="/assets/ballerina-C-BZS2V-.js" />
+    <link
+      rel="modulepreload"
+      href="/assets/base-service-form-section-BZQIivtu.js"
+    />
+    <link rel="modulepreload" href="/assets/bat-CXO9YDvB.js" />
+    <link rel="modulepreload" href="/assets/beancount-DZiDw_0q.js" />
+    <link rel="modulepreload" href="/assets/berry-DKwAq13r.js" />
+    <link rel="modulepreload" href="/assets/bibtex-Bxh2XsyZ.js" />
+    <link rel="modulepreload" href="/assets/bicep-DUmFyEjP.js" />
+    <link rel="modulepreload" href="/assets/billing-Cg1YfKSB.js" />
+    <link rel="modulepreload" href="/assets/blade-vEkOj6pt.js" />
+    <link rel="modulepreload" href="/assets/boxes-BndLkHzm.js" />
+    <link rel="modulepreload" href="/assets/bsl-B-ehXJHo.js" />
+    <link rel="modulepreload" href="/assets/c-BDnD_FIl.js" />
+    <link rel="modulepreload" href="/assets/c3-BsvQcQ-n.js" />
+    <link rel="modulepreload" href="/assets/cadence-C3soBBT_.js" />
+    <link rel="modulepreload" href="/assets/cairo-5vw7ii0R.js" />
+    <link rel="modulepreload" href="/assets/catppuccin-frappe-B3zdRNrw.js" />
+    <link rel="modulepreload" href="/assets/catppuccin-latte-BdSz4K5O.js" />
+    <link rel="modulepreload" href="/assets/catppuccin-macchiato-DtWYg3tE.js" />
+    <link rel="modulepreload" href="/assets/catppuccin-mocha-DEQAgFnH.js" />
+    <link rel="modulepreload" href="/assets/checkbox-BYmaH_Sh.js" />
+    <link rel="modulepreload" href="/assets/circle-check-CUujM7rL.js" />
+    <link rel="modulepreload" href="/assets/clarity-CNSuEoLw.js" />
+    <link rel="modulepreload" href="/assets/clipboard-DNQ0_tMk.js" />
+    <link rel="modulepreload" href="/assets/clock-Ey8eFekP.js" />
+    <link rel="modulepreload" href="/assets/clojure-CSLF0zuH.js" />
+    <link rel="modulepreload" href="/assets/cmake-CZKuoovu.js" />
+    <link rel="modulepreload" href="/assets/cobol-872hUhhE.js" />
+    <link rel="modulepreload" href="/assets/code-mirror-COmbtnuY.js" />
+    <link rel="modulepreload" href="/assets/codeowners-uFAM4P0x.js" />
+    <link rel="modulepreload" href="/assets/codeql-BaPPFk8C.js" />
+    <link rel="modulepreload" href="/assets/coffee-g7xWHTiy.js" />
+    <link rel="modulepreload" href="/assets/collection--ipjySwf.js" />
+    <link rel="modulepreload" href="/assets/combobox-Djj9_sRt.js" />
+    <link rel="modulepreload" href="/assets/command-palette-XtE1PsZo.js" />
+    <link rel="modulepreload" href="/assets/common-lisp-aKdRImlr.js" />
+    <link rel="modulepreload" href="/assets/console-B9tElV5t.js" />
+    <link rel="modulepreload" href="/assets/console-Ci6dAJaa.js" />
+    <link rel="modulepreload" href="/assets/copy-icon-button-BGpDnxbg.js" />
+    <link rel="modulepreload" href="/assets/copy-w8DhVvQ7.js" />
+    <link rel="modulepreload" href="/assets/coq-DfR3H8am.js" />
+    <link rel="modulepreload" href="/assets/cpp-Cl0TFh2w.js" />
+    <link rel="modulepreload" href="/assets/cpu-BpiHuYJX.js" />
+    <link
+      rel="modulepreload"
+      href="/assets/create-registry-secret-dialog-DBje7kIq.js"
+    />
+    <link rel="modulepreload" href="/assets/create-secret-dialog-C0Jy_xLT.js" />
+    <link rel="modulepreload" href="/assets/crystal-DUmQBEiq.js" />
+    <link rel="modulepreload" href="/assets/csharp-DQDvUvnd.js" />
+    <link rel="modulepreload" href="/assets/css-CYlhB5i3.js" />
+    <link rel="modulepreload" href="/assets/csv-Bk5C2fTS.js" />
+    <link rel="modulepreload" href="/assets/cue-Dsa-lyhE.js" />
+    <link rel="modulepreload" href="/assets/cypher--RIYLSp-.js" />
+    <link rel="modulepreload" href="/assets/d-B-2MKm4v.js" />
+    <link rel="modulepreload" href="/assets/dark-plus-jdinThDT.js" />
+    <link rel="modulepreload" href="/assets/dart-ByNPlLAu.js" />
+    <link rel="modulepreload" href="/assets/database-form-CVyq26Kv.js" />
+    <link
+      rel="modulepreload"
+      href="/assets/database-instance-types-Bbu2LigD.js"
+    />
+    <link rel="modulepreload" href="/assets/databases-DdFJYt5h.js" />
+    <link rel="modulepreload" href="/assets/date-Ctz5HfUF.js" />
+    <link rel="modulepreload" href="/assets/dax-DXkDJx1t.js" />
+    <link rel="modulepreload" href="/assets/deploy-CmShrn76.js" />
+    <link
+      rel="modulepreload"
+      href="/assets/deployment-definition-dialog-BPuYuHzH.js"
+    />
+    <link
+      rel="modulepreload"
+      href="/assets/deployment-failed-info-BO4V__lF.js"
+    />
+    <link rel="modulepreload" href="/assets/deployment-metrics-BEdOX8zb.js" />
+    <link rel="modulepreload" href="/assets/desktop-kgwpD9dI.js" />
+    <link rel="modulepreload" href="/assets/diff-BkTpHQR1.js" />
+    <link rel="modulepreload" href="/assets/differenceInSeconds-BkiuOB6c.js" />
+    <link rel="modulepreload" href="/assets/docker-DLML7485.js" />
+    <link rel="modulepreload" href="/assets/documentation-link-xUfDShwq.js" />
+    <link rel="modulepreload" href="/assets/domains-B-EwCgxj.js" />
+    <link rel="modulepreload" href="/assets/dotenv-DsfMY6fD.js" />
+    <link
+      rel="modulepreload"
+      href="/assets/download-file-from-string-oRxLtU_8.js"
+    />
+    <link rel="modulepreload" href="/assets/dracula-D5KIOn3Q.js" />
+    <link rel="modulepreload" href="/assets/dracula-soft-DswaZQCD.js" />
+    <link rel="modulepreload" href="/assets/dream-maker-0X61wxW3.js" />
+    <link rel="modulepreload" href="/assets/edge-CDyCyh3t.js" />
+    <link rel="modulepreload" href="/assets/elixir-cP3JPypb.js" />
+    <link rel="modulepreload" href="/assets/elm-CrNvQm1O.js" />
+    <link rel="modulepreload" href="/assets/emacs-lisp-C7CyEJfF.js" />
+    <link rel="modulepreload" href="/assets/en-US-BcAw3BBL.js" />
+    <link rel="modulepreload" href="/assets/erb-CezVuwHt.js" />
+    <link rel="modulepreload" href="/assets/erlang-B1jOQ60l.js" />
+    <link rel="modulepreload" href="/assets/everforest-dark-ClmlnIyt.js" />
+    <link rel="modulepreload" href="/assets/everforest-light-b6CWfMJ_.js" />
+    <link rel="modulepreload" href="/assets/external-link-CoBByc0c.js" />
+    <link rel="modulepreload" href="/assets/eye-CZB0vOly.js" />
+    <link rel="modulepreload" href="/assets/feature-unavailable-Cgbep3Jb.js" />
+    <link rel="modulepreload" href="/assets/fennel-CF0PV-td.js" />
+    <link rel="modulepreload" href="/assets/fish-Bpj3ywQM.js" />
+    <link rel="modulepreload" href="/assets/fluent-6SKuS_Pj.js" />
+    <link rel="modulepreload" href="/assets/formatted-3wtevW2y.js" />
+    <link rel="modulepreload" href="/assets/fortran-fixed-form-CLMHbbPZ.js" />
+    <link rel="modulepreload" href="/assets/fortran-free-form-DyDhQEjV.js" />
+    <link rel="modulepreload" href="/assets/fsharp-UJn1TlSo.js" />
+    <link rel="modulepreload" href="/assets/full-screen--FqXsqOI.js" />
+    <link rel="modulepreload" href="/assets/gdresource-D_ReSKuk.js" />
+    <link rel="modulepreload" href="/assets/gdscript-DC26_aWu.js" />
+    <link rel="modulepreload" href="/assets/gdshader-B8b_hAwk.js" />
+    <link rel="modulepreload" href="/assets/genie-Cn1BjI6N.js" />
+    <link rel="modulepreload" href="/assets/gherkin-bXnJK-fU.js" />
+    <link rel="modulepreload" href="/assets/git-branch-2TnlccKb.js" />
+    <link rel="modulepreload" href="/assets/git-commit-BNfXrpZ7.js" />
+    <link rel="modulepreload" href="/assets/git-rebase-BEzI0tyg.js" />
+    <link rel="modulepreload" href="/assets/github-dark-ChNhqQld.js" />
+    <link rel="modulepreload" href="/assets/github-dark-default-Bo4J1WaU.js" />
+    <link rel="modulepreload" href="/assets/github-dark-dimmed-Bjc5nBOl.js" />
+    <link
+      rel="modulepreload"
+      href="/assets/github-dark-high-contrast-icOdbhsZ.js"
+    />
+    <link rel="modulepreload" href="/assets/github-light-default-6z33Pp0J.js" />
+    <link rel="modulepreload" href="/assets/github-light-Dg96rHrQ.js" />
+    <link
+      rel="modulepreload"
+      href="/assets/github-light-high-contrast-O6ZChJj2.js"
+    />
+    <link rel="modulepreload" href="/assets/gleam-64FQM_T-.js" />
+    <link rel="modulepreload" href="/assets/glimmer-js-BA9QQ9Ij.js" />
+    <link rel="modulepreload" href="/assets/glimmer-ts-BPESBOf3.js" />
+    <link rel="modulepreload" href="/assets/globe-BTPiAYVM.js" />
+    <link rel="modulepreload" href="/assets/glsl-LxjDAxt-.js" />
+    <link rel="modulepreload" href="/assets/gn-BPhdSQHD.js" />
+    <link rel="modulepreload" href="/assets/gnuplot-BYdqBBpy.js" />
+    <link rel="modulepreload" href="/assets/go-FPV8idFr.js" />
+    <link rel="modulepreload" href="/assets/graphql-CiHLsAhm.js" />
+    <link rel="modulepreload" href="/assets/groovy-Cott4Rje.js" />
+    <link rel="modulepreload" href="/assets/gruvbox-dark-hard-D2o5sr9r.js" />
+    <link rel="modulepreload" href="/assets/gruvbox-dark-medium-G-rhmzZR.js" />
+    <link rel="modulepreload" href="/assets/gruvbox-dark-soft-TSzVRBqr.js" />
+    <link rel="modulepreload" href="/assets/gruvbox-light-hard-FhAel7H6.js" />
+    <link rel="modulepreload" href="/assets/gruvbox-light-medium-SeMHSsN-.js" />
+    <link rel="modulepreload" href="/assets/gruvbox-light-soft-B4mN-Wfb.js" />
+    <link rel="modulepreload" href="/assets/hack-DQwRzmt4.js" />
+    <link rel="modulepreload" href="/assets/haml-C8nJmsvq.js" />
+    <link rel="modulepreload" href="/assets/handlebars-nwjwmj6-.js" />
+    <link rel="modulepreload" href="/assets/haskell-DfiLXpsQ.js" />
+    <link rel="modulepreload" href="/assets/haxe-C2C5YLCU.js" />
+    <link rel="modulepreload" href="/assets/hcl-BRiw_IyT.js" />
+    <link rel="modulepreload" href="/assets/hjson-_ZYpPgyl.js" />
+    <link rel="modulepreload" href="/assets/hlsl-CPyfeeGC.js" />
+    <link rel="modulepreload" href="/assets/houston-CUnctUsd.js" />
+    <link rel="modulepreload" href="/assets/html-BqFsZP5K.js" />
+    <link rel="modulepreload" href="/assets/html-derivative-CB7-Bg6v.js" />
+    <link rel="modulepreload" href="/assets/http-DATQPVYb.js" />
+    <link rel="modulepreload" href="/assets/hurl-tqTIQ-xR.js" />
+    <link rel="modulepreload" href="/assets/hxml-4LK7BYyT.js" />
+    <link rel="modulepreload" href="/assets/hy-DMSekhF6.js" />
+    <link rel="modulepreload" href="/assets/imba-Bbjjm1yN.js" />
+    <link rel="modulepreload" href="/assets/index-B1qC48Su.js" />
+    <link rel="modulepreload" href="/assets/index-BjlQ0XDO.js" />
+    <link rel="modulepreload" href="/assets/index-BNwwDN8g.js" />
+    <link rel="modulepreload" href="/assets/index-BQMX9Zbm.js" />
+    <link rel="modulepreload" href="/assets/index-BZmmLyR2.js" />
+    <link rel="modulepreload" href="/assets/index-CuCCqaa1.js" />
+    <link rel="modulepreload" href="/assets/index-Dc3ImTRE.js" />
+    <link rel="modulepreload" href="/assets/index-DecYPL_7.js" />
+    <link rel="modulepreload" href="/assets/index-DHIervBb.js" />
+    <link rel="modulepreload" href="/assets/index-tJoZEBsY.js" />
+    <link rel="modulepreload" href="/assets/index-UMRieem6.js" />
+    <link rel="modulepreload" href="/assets/ini-BaCssRrG.js" />
+    <link rel="modulepreload" href="/assets/input-end-spinner-DsxQFAFx.js" />
+    <link
+      rel="modulepreload"
+      href="/assets/instance-selector-state-Dd8t3B4r.js"
+    />
+    <link rel="modulepreload" href="/assets/java-CW3NcGhH.js" />
+    <link rel="modulepreload" href="/assets/javascript-HqgNWiFP.js" />
+    <link rel="modulepreload" href="/assets/jinja-DZPUCQf_.js" />
+    <link rel="modulepreload" href="/assets/jison-4fpIyRAJ.js" />
+    <link rel="modulepreload" href="/assets/json-BUfCq0k1.js" />
+    <link rel="modulepreload" href="/assets/json5-HeFrjAfK.js" />
+    <link rel="modulepreload" href="/assets/jsonc-C0qNrQ4A.js" />
+    <link rel="modulepreload" href="/assets/jsonl-Bls_JBVe.js" />
+    <link rel="modulepreload" href="/assets/jsonnet-Yoj1XXu8.js" />
+    <link rel="modulepreload" href="/assets/jssm-Byh4gPbI.js" />
+    <link rel="modulepreload" href="/assets/jsx-DdLCj8-P.js" />
+    <link rel="modulepreload" href="/assets/julia-kYqxMri_.js" />
+    <link rel="modulepreload" href="/assets/kanagawa-dragon-Dti3ZJCl.js" />
+    <link rel="modulepreload" href="/assets/kanagawa-lotus-CCR47b80.js" />
+    <link rel="modulepreload" href="/assets/kanagawa-wave-B9wsYYgk.js" />
+    <link rel="modulepreload" href="/assets/kdl-Brj1MOLt.js" />
+    <link rel="modulepreload" href="/assets/kotlin-OGIxFptF.js" />
+    <link rel="modulepreload" href="/assets/kusto-BN6fKIar.js" />
+    <link rel="modulepreload" href="/assets/laserwave-BqVDm2fG.js" />
+    <link rel="modulepreload" href="/assets/latex-CUAl
+
+[body trimmed for publication: kept 16384 of 32984 characters; sha256 of the full body b6e6d50f634a305fbf004549043e46864423e26655ece7bb002ee6e7332be521]

@@ -1,0 +1,148 @@
+GET https://financialdatasets.ai/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:23.165Z
+redirect: 308 from https://financialdatasets.ai/llms.txt
+final-url: https://www.financialdatasets.ai/llms.txt
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:20 GMT
+content-type: text/plain; charset=utf-8
+transfer-encoding: chunked
+connection: close
+access-control-allow-origin: *
+age: 2065
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline; filename="llms.txt"
+content-encoding: br
+etag: W/"41a1dde37d1d6b79a68ea1cbbf6c71d1"
+last-modified: Wed, 28 Oct 2026 23:23:55 GMT
+server: cloudflare
+strict-transport-security: max-age=63072000
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::fb4tr-1793231900760-9da9cd914f1f
+cf-cache-status: DYNAMIC
+vary: accept-encoding
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=mMbvgo3NTlU5O34w3BDVceecJQbcYcsYM9HvZqfPuDuAN8ra0YuB9WmlXm6Raf06wmKx%2BFP4arZMsG6iLCg%2BTwBoLEHAD5p%2FACMBqSJW1Hm3%2BWwFojdb8cwZIAzASJXs8lM6nNzVYco%2B58Y%3D"}]}
+cf-ray: a51de3537e713016-PDX
+alt-svc: h3=":443"; ma=86400
+
+# Financial Datasets
+
+> Financial Datasets is an agent-friendly REST API providing institutional-grade stock market data for AI agents, quantitative research, and financial applications.
+
+Financial Datasets covers 27,530 active and delisted US tickers with 30+ years of historical data, plus annual fundamentals for 674 UK companies listed on the London Stock Exchange, with sub-200ms response times and 99.98% uptime. All endpoints use simple GET/POST requests with API key authentication.
+
+## Base URL
+
+https://api.financialdatasets.ai
+
+## Authentication
+
+Include your API key in the `X-API-KEY` header with every request.
+
+No API key yet? An AI agent can create one right now: POST /agent/signup with `{"email": "<account owner's email>", "agent_name": "<your name>"}` returns a key in one call. Full self-serve flow (owner pays a Stripe link you mint): https://www.financialdatasets.ai/skill.md
+
+Or create a key in the dashboard: https://www.financialdatasets.ai
+
+No key and no account: pay with x402. Send a request with no X-API-KEY header to a supported endpoint and the 402 response carries the payment terms in the PAYMENT-REQUIRED header (amount in USDC on Base, network eip155:8453). Sign the payment with your own wallet and retry with the PAYMENT-SIGNATURE header; the x402 client libraries do this for you. x402 endpoints: /prices, /prices/snapshot, /financials/income-statements, /financials/balance-sheets, /financials/cash-flow-statements, /financial-metrics, /financial-metrics/snapshot, /earnings, /insider-trades, /beneficial-ownership, /activist-ownership. x402 requests cover the last 365 days of data. Guide: https://docs.financialdatasets.ai/x402. Announcement: https://www.financialdatasets.ai/news/x402
+
+## API Endpoints
+
+### Financial Statements
+- [Income Statements](https://docs.financialdatasets.ai/api/financials/income-statements): GET /financials/income-statements
+- [Balance Sheets](https://docs.financialdatasets.ai/api/financials/balance-sheets): GET /financials/balance-sheets
+- [Cash Flow Statements](https://docs.financialdatasets.ai/api/financials/cash-flow-statements): GET /financials/cash-flow-statements
+- [All Financial Statements](https://docs.financialdatasets.ai/api/financials/all-financial-statements): GET /financials
+  - `ticker` (required), `period` (annual|quarterly|ttm, default: annual), `limit` (default: 4), `report_period` filters
+  - UK companies: add `market=UK` to the ticker (UK tickers keep the exchange's spelling, e.g. `RR.`), or pass `isin` alone; `period=annual`; amounts in the company's reporting currency (`currency` field). List covered UK companies with GET /financials/income-statements/tickers/?market=UK. Guide: https://docs.financialdatasets.ai/guides/get-uk-fundamentals-python. Announcement: https://www.financialdatasets.ai/news/uk-fundamentals
+
+### Segmented Financials
+- [Income Statement Segments](https://docs.financialdatasets.ai/api/financials/income-statement-segments): GET /financials/income-statements/segments
+- [Balance Sheet Segments](https://docs.financialdatasets.ai/api/financials/balance-sheet-segments): GET /financials/balance-sheets/segments
+- [Cash Flow Statement Segments](https://docs.financialdatasets.ai/api/financials/cash-flow-statement-segments): GET /financials/cash-flow-statements/segments
+- [All Segmented Financials](https://docs.financialdatasets.ai/api/financials/all-segments): GET /financials/segments
+  - `ticker` (required), `period` (annual|quarterly, no ttm), `limit` (default: 4), `report_period` filters
+
+### As-Reported Financials
+- Income Statement (As-Reported): GET /financials/income-statements/as-reported
+- Balance Sheet (As-Reported): GET /financials/balance-sheets/as-reported
+- Cash Flow Statement (As-Reported): GET /financials/cash-flow-statements/as-reported
+- All Financial Statements (As-Reported): GET /financials/as-reported
+  - `ticker` (required), `period` (annual|quarterly, no ttm), `limit` (default: 4), `report_period` filters. Returns the as-filed line-item tree (`line_items` with recursive `children`). Available from 2010 onward.
+
+### Financial Metrics
+- [Financial Metrics (Historical)](https://docs.financialdatasets.ai/api/financial-metrics/historical): GET /financial-metrics
+  - `ticker` (required), `period` (annual|quarterly|ttm), `limit` (default: 4), `report_period` filters
+- [Financial Metrics (Snapshot)](https://docs.financialdatasets.ai/api/financial-metrics/snapshot): GET /financial-metrics/snapshot
+  - `ticker` (required)
+
+### Stock Prices
+- [Stock Prices (Historical)](https://docs.financialdatasets.ai/api/prices/historical): GET /prices
+  - `ticker` (required), `interval` (day|week|month|year), `start_date`, `end_date` (YYYY-MM-DD)
+- [Stock Price (Snapshot)](https://docs.financialdatasets.ai/api/prices/snapshot): GET /prices/snapshot
+  - `ticker` (required)
+
+### Earnings
+- [Earnings](https://docs.financialdatasets.ai/api/earnings/earnings): GET /earnings
+  - `ticker` (required)
+- [Earnings Press Releases](https://docs.financialdatasets.ai/api/earnings/press-releases): GET /earnings/press-releases
+  - `ticker` (required), `limit` (default: 4)
+
+### Company
+- [Company Facts](https://docs.financialdatasets.ai/api/company/facts/ticker): GET /company/facts
+  - `ticker` or `cik` (required)
+
+### Insider Trades
+- [Insider Trades](https://docs.financialdatasets.ai/api/insider-trades/insider-trades): GET /insider-trades
+  - `ticker` (required), `limit` (default: 10), `filing_date` filters
+
+### Institutional Holdings
+- [By Investor](https://docs.financialdatasets.ai/api/institutional-holdings/investor): GET /institutional-holdings
+- [By Ticker](https://docs.financialdatasets.ai/api/institutional-holdings/ticker): GET /institutional-holdings
+  - `ticker` or `filer_cik` (required), `limit` (default: 10, max: 200), `report_period` filters
+
+### News
+- [Company News](https://docs.financialdatasets.ai/api/news/company): GET /news
+  - `ticker` (required), `limit` (default: 5, max: 10)
+
+### SEC Filings
+- [Filings by Ticker](https://docs.financialdatasets.ai/api/filings/ticker): GET /filings
+  - `ticker` or `cik` (required), `filing_type` (optional), `limit` (default: 10)
+- [Filing Items](https://docs.financialdatasets.ai/api/filings/items): GET /filings/items
+  - `ticker` or `cik` (required), `filing_type` (required: 10-K, 10-Q, or 8-K), `year`, `quarter`
+
+### Search
+- [Stock Screener](https://docs.financialdatasets.ai/api/financials/search-screener): POST /financials/search/screener
+- [Search Line Items](https://docs.financialdatasets.ai/api/financials/search-line-items): POST /financials/search/line-items
+
+### Interest Rates
+- [Interest Rates (Historical)](https://docs.financialdatasets.ai/api/macro/interest-rates/historical): GET /macro/interest-rates
+  - `bank` (required, e.g. FED, ECB, BOJ), `start_date`, `end_date`
+- [Interest Rates (Snapshot)](https://docs.financialdatasets.ai/api/macro/interest-rates/snapshot): GET /macro/interest-rates/snapshot
+  - `bank` (required)
+
+### Agent Account (self-signup & funding)
+- [Agent Signup](https://docs.financialdatasets.ai/agents): POST /agent/signup
+  - `email` (required, the account owner's real inbox), `agent_name` (required, 1-64 chars) - returns an API key immediately
+- [Agent Checkout Link](https://docs.financialdatasets.ai/agents): POST /agent/checkout-link
+  - `X-API-KEY` header (required), `amount_to_add` (optional, dollars, min 20) - returns a Stripe payment link for the account owner
+
+## AI Agent Resources
+
+- **Agent onboarding**: https://www.financialdatasets.ai/agents.md — playbook the homepage "Copy onboarding prompt" button tells an agent to read
+- **Agent self-signup skill**: https://www.financialdatasets.ai/skill.md - open your own funded account fully autonomously (signup -> mint a Stripe link -> owner pays); also at /.well-known/skills/default/skill.md
+- **OpenAPI Spec**: https://www.financialdatasets.ai/openapi.json
+- **MCP Server**: https://mcp.financialdatasets.ai/ — use with Claude, Cursor, and other MCP clients
+- **Full LLM context**: https://www.financialdatasets.ai/llms-full.txt
+- **Documentation**: https://docs.financialdatasets.ai/introduction
+- **Markdown mirrors**: every page on www.financialdatasets.ai is available as plain markdown — append `.md` to the path (e.g. /pricing.md, /news.md, /contact.md, /news/earningsbench.md). The homepage is /index.md.
+- **Docs as markdown**: every docs page is fetchable as raw markdown by appending `.md` to its URL (index: https://docs.financialdatasets.ai/llms.txt)
+- **Community**: https://discord.gg/hTtb8wzgSQ
+
+## Links
+
+- [Dashboard](https://www.financialdatasets.ai)
+- [Pricing](https://www.financialdatasets.ai/pricing)
+- [Support](mailto:support@financialdatasets.ai)

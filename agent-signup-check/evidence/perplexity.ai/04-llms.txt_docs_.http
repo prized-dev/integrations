@@ -1,0 +1,226 @@
+GET https://docs.perplexity.ai/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:13.674Z
+final-url: https://docs.perplexity.ai/llms.txt
+
+HTTP 200
+age: 3135
+cache-control: public
+cf-cache-status: HIT
+cf-ray: a51de1a118b75ee3-PDX
+content-encoding: br
+content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:11 GMT
+etag: W/"zVQNtQmgSClSZ0kr2ygrqBC4zPxi6eAdpjWphvH_k4Q"
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: accept-encoding
+x-frame-options: DENY
+x-mintlify-client-version: 0.0.4006
+x-vercel-cache: MISS
+x-vercel-id: pdx1:fra1:iad1::iad1::w8dxz-1793231831167-17df4d21f215
+x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
+x-version: dpl_2xiSHD9XEvLsPGPcfoMtkLTB3dy9
+connection: close
+transfer-encoding: chunked
+
+# Perplexity
+
+> Perplexity API docs. Search: ranked web results with extracted page text for your own model. Agent: hosted models with web search and tools, returning a cited answer. Decisions: calibrated probabilities. Orchestrator (private preview): OpenAI- and Anthropic-format routing. Embeddings: vectors.
+
+- [Overview](https://docs.perplexity.ai/docs/getting-started/overview.md): Perplexity API Platform - build with the Orchestrator, Agent, Search, Embeddings, and Decisions APIs. Real-time, web-wide research and Q&A capabilities for your products.
+- [Quickstart](https://docs.perplexity.ai/docs/getting-started/quickstart.md): Generate an API key and make your first call in < 3 minutes.
+- [Pricing](https://docs.perplexity.ai/docs/getting-started/pricing.md): Understand Perplexity API pricing, model rates, request fees, billing setup, and rate-limit references.
+- [Perplexity API MCP Server](https://docs.perplexity.ai/docs/getting-started/integrations/mcp-server.md): Connect AI assistants to Perplexity's search and reasoning capabilities using the Model Context Protocol (MCP).
+- [Perplexity Computer MCP Server](https://docs.perplexity.ai/docs/getting-started/integrations/computer-mcp-server.md): Give AI assistants the ability to complete real-world tasks using Perplexity Computer through the Model Context Protocol (MCP).
+- [Perplexity CLI](https://docs.perplexity.ai/docs/cli/overview.md): Install and use Perplexity's pplx command-line interface for web search and query-relevant page snippets from your terminal or coding agent.
+- [Perplexity Orchestrator API](https://docs.perplexity.ai/docs/router/quickstart.md): Unified access to open-weight models through OpenAI Chat Completions, OpenAI Responses, and Anthropic Messages APIs, with your Perplexity API key.
+- [Orchestrator Models & Pricing](https://docs.perplexity.ai/docs/router/models.md): The model catalog for the Perplexity Orchestrator API, with per-token pricing for Perplexity-hosted and third-party models.
+- [Routing & Reliability](https://docs.perplexity.ai/docs/router/routing-and-reliability.md): How the Perplexity Orchestrator API routes requests across model deployments, and what happens automatically when a provider degrades or fails.
+- [Agent API](https://docs.perplexity.ai/docs/agent-api/quickstart.md): The Agent API is a multi-provider, interoperable API specification for building LLM applications. Access models from multiple providers with integrated real-time web search, tool configuration, reasoning control, and token budgets—all through one unified interface.
+- [Define the run](https://docs.perplexity.ai/docs/agent-api/building-agents/define-the-run.md): Configure the agent run: start from an effort level, then customize the system prompt, the loop bound, and the model.
+- [Prompt the agent](https://docs.perplexity.ai/docs/agent-api/building-agents/prompt-the-agent.md): Split the standing rules (the system prompt) from the question (input), and ground the run so the agent searches and answers on the right thing.
+- [Give it tools](https://docs.perplexity.ai/docs/agent-api/building-agents/give-it-tools.md): Enable built-in tools and your own custom tools in the tools array, let the model decide when to call them, and read the results back from the response.
+- [Run code](https://docs.perplexity.ai/docs/agent-api/building-agents/run-code.md): Give the agent a sandbox so it computes exact answers instead of estimating them, runs real code, and returns generated files.
+- [Structure the output](https://docs.perplexity.ai/docs/agent-api/building-agents/shape-output.md): Force the model to return JSON your code can parse instead of prose you have to scrape.
+- [Keep context](https://docs.perplexity.ai/docs/agent-api/building-agents/keep-context.md): Carry a conversation across turns by replaying it in the input array, so a follow-up understands what came before.
+- [Agent API Models](https://docs.perplexity.ai/docs/agent-api/models.md): Compare Agent API models, token pricing, supported service tiers, and provider documentation.
+- [Effort](https://docs.perplexity.ai/docs/agent-api/effort.md): Explore Perplexity's Agent API effort levels - pre-configured setups optimized for different use cases with specific models, search configs, and tool access.
+- [Profiles](https://docs.perplexity.ai/docs/agent-api/profiles.md): Run an Agent API request with a reusable, versioned configuration that you save and manage.
+- [Model Fallback](https://docs.perplexity.ai/docs/agent-api/model-fallback.md): Specify multiple models in a fallback chain for higher availability and automatic failover.
+- [Tools overview](https://docs.perplexity.ai/docs/agent-api/tools/overview.md): The tools an Agent API run can call - Perplexity-hosted built-in tools, remote MCP servers, and your own custom functions - and where to go for each.
+- [Web Search](https://docs.perplexity.ai/docs/agent-api/tools/web-search.md): Search the web from the Agent API with filters, search configurations, pricing, parameters, and response fields.
+- [Image Search](https://docs.perplexity.ai/docs/agent-api/tools/image-search.md): Search for web images from the Agent API with result limits, domain and format filters, typed results, streaming events, and per-invocation pricing.
+- [Sandbox](https://docs.perplexity.ai/docs/agent-api/tools/sandbox.md): Execute code in isolated containers from inside an Agent API request.
+- [Fetch URL Content](https://docs.perplexity.ai/docs/agent-api/tools/fetch-url-content.md): Fetch and extract content from specific URLs in the Agent API.
+- [Finance Search](https://docs.perplexity.ai/docs/agent-api/tools/finance-search.md): Retrieve structured financial and market data in the Agent API.
+- [People Search](https://docs.perplexity.ai/docs/agent-api/tools/people-search.md): Search for professionals, employees, and people using People Search in the Agent API
+- [MCP](https://docs.perplexity.ai/docs/agent-api/tools/mcp.md): Connect a remote MCP server to an Agent API request and optionally approve tool calls before they run.
+- [Connectors](https://docs.perplexity.ai/docs/agent-api/tools/connectors.md): Connect services or bring your own MCP server to your Project, then use them by connector ID in Agent API requests.
+- [Custom Functions](https://docs.perplexity.ai/docs/agent-api/tools/custom-functions.md): Define a custom function, execute model-requested calls in your code, and return each result to the Agent API.
+- [Output Control](https://docs.perplexity.ai/docs/agent-api/output-control.md): Streaming and structured outputs for the Agent API
+- [Conversation state](https://docs.perplexity.ai/docs/agent-api/conversation-state.md): Continue an Agent API conversation across turns, either by replaying input yourself or by pointing at a completed prior response.
+- [Image Attachments](https://docs.perplexity.ai/docs/agent-api/image-attachments.md): Learn how to upload and analyze images using base64 encoding or HTTPS URLs
+- [Background Mode](https://docs.perplexity.ai/docs/agent-api/background-mode.md): Run long agentic tasks asynchronously — submit with background, poll by response id, stream, reconnect, and cancel.
+- [Batch API](https://docs.perplexity.ai/docs/agent-api/batch.md): Run large sets of Agent API requests asynchronously from a JSONL file, then download the results.
+- [Working with Files](https://docs.perplexity.ai/docs/agent-api/working-with-files.md): Send documents to the Agent API, continue a conversation about them, and download files produced by the agent.
+- [Skills](https://docs.perplexity.ai/docs/agent-api/skills.md): Give the agent on-demand domain expertise with built-in, inline, and custom skills.
+- [OpenAI Compatibility](https://docs.perplexity.ai/docs/agent-api/openai-compatibility.md): Use existing OpenAI SDKs with Perplexity's Agent API and understand the compatibility differences.
+- [Migrate from Sonar to the Agent API](https://docs.perplexity.ai/docs/agent-api/migrate-from-sonar/overview.md): The Agent API represents a major upgrade of Sonar Chat Completions, bringing added configuration and powerful agentic primitives to your AI applications.
+- [How to migrate from Sonar](https://docs.perplexity.ai/docs/agent-api/migrate-from-sonar/how-to.md): Move a Sonar chat completions integration to the Agent API, including requests, responses, search, effort levels, async runs, and parameter mappings.
+- [Agent API vs Sonar benchmarks](https://docs.perplexity.ai/docs/agent-api/migrate-from-sonar/benchmarks.md): How Agent API effort levels perform against Sonar across the benchmarks we run, and which effort level to use in place of each Sonar model.
+- [Prompt Guide](https://docs.perplexity.ai/docs/agent-api/prompt-guide.md): How to write effective prompts for the Agent API.
+- [Search API Overview](https://docs.perplexity.ai/docs/search/overview.md): The Search API returns ranked web results as JSON, not a generated answer. What each result contains, the request controls and limits, the price per request, and when to use it instead of the Agent API.
+- [Perplexity Search API](https://docs.perplexity.ai/docs/search/quickstart.md): Access real-time web search results with Perplexity's Search API. Get ranked results, domain filtering, multi-query search, and content extraction for developers.
+- [Fast Search](https://docs.perplexity.ai/docs/search/fast-search.md): Use search_type fast on the Search API for lower-latency, lower-cost web results.
+- [Best Practices](https://docs.perplexity.ai/docs/search/best-practices.md): Learn best practices for optimizing search queries and implementing efficient async patterns with Perplexity's Search API.
+- [Perplexity Search SDK](https://docs.perplexity.ai/docs/search-sdk/overview.md): An agents-first Python SDK that brings Perplexity's Search as Code approach to your applications: composable retrieval primitives that agents orchestrate in code.
+- [Use Search API with the Anthropic SDK](https://docs.perplexity.ai/docs/search/agent-sdks/anthropic.md): Register Perplexity's Search API as a tool inside the Anthropic Messages API and run the standard tool-use loop with Claude.
+- [Use Search API with the OpenAI SDK](https://docs.perplexity.ai/docs/search/agent-sdks/openai.md): Register Perplexity's Search API as a function tool inside the OpenAI Responses API and run the standard tool-call loop with GPT models.
+- [Use Search API with the Google Gemini SDK](https://docs.perplexity.ai/docs/search/agent-sdks/gemini.md): Register Perplexity's Search API as a function tool inside Google's google-genai SDK and run the tool-call loop with Gemini models.
+- [Search Date and Time Filters](https://docs.perplexity.ai/docs/search/filters/date-time-filters.md)
+- [Search Language Filter](https://docs.perplexity.ai/docs/search/filters/language-filter.md)
+- [Search Domain Filter](https://docs.perplexity.ai/docs/search/filters/domain-filter.md)
+- [People Search](https://docs.perplexity.ai/docs/search/filters/people-search.md)
+- [Embeddings API](https://docs.perplexity.ai/docs/embeddings/quickstart.md): Generate high-quality text embeddings for semantic search, RAG, and machine learning applications.
+- [Best Practices](https://docs.perplexity.ai/docs/embeddings/best-practices.md): Optimize your embeddings workflow with batch processing, caching, RAG patterns, and performance tips.
+- [Standard Embeddings](https://docs.perplexity.ai/docs/embeddings/standard-embeddings.md): Generate embeddings for independent texts, search queries, and single sentences.
+- [Contextualized Embeddings](https://docs.perplexity.ai/docs/embeddings/contextualized-embeddings.md): Generate document-aware embeddings for chunks that share context, improving retrieval quality for document-based applications.
+- [Decisions API](https://docs.perplexity.ai/docs/decisions/quickstart.md): The Decisions API answers questions about your content with probabilities instead of text: yes or no, one of your options, or a level on your rubric.
+- [Decider for Mac](https://docs.perplexity.ai/docs/decisions/decider-for-mac.md): Run pplx-decider-flash-v1.2 on your Mac from the menu bar and call the Decisions API at 127.0.0.1 with no API key.
+- [Quickstart](https://docs.perplexity.ai/docs/sdk/overview.md): Learn how to use the official Perplexity SDKs for Python and TypeScript to access the Perplexity APIs with type safety and async support.
+- [Configuration](https://docs.perplexity.ai/docs/sdk/configuration.md): Learn how to configure the Perplexity SDKs for retries, timeouts, proxies, and advanced HTTP client customization.
+- [Error Handling](https://docs.perplexity.ai/docs/sdk/error-handling.md): Learn how to handle API errors gracefully with the Perplexity SDKs for Python and TypeScript.
+- [Performance Optimization](https://docs.perplexity.ai/docs/sdk/performance.md): Learn how to optimize the Perplexity SDKs for high-throughput applications with async support, connection pooling, and raw response access.
+- [Type Safety](https://docs.perplexity.ai/docs/sdk/type-safety.md): Learn how to leverage full TypeScript definitions and Python type hints with the Perplexity SDKs for better development experience and code safety.
+- [Best Practices](https://docs.perplexity.ai/docs/sdk/best-practices.md): Learn best practices for using the Perplexity SDKs in production, including environment variables, rate limiting, security, and efficient request patterns.
+- [Signing In to the API Portal](https://docs.perplexity.ai/docs/admin/signing-in.md): Sign in to the Perplexity API Portal with Google, Apple, single sign-on, or a passwordless email code.
+- [Projects & Billing](https://docs.perplexity.ai/docs/getting-started/projects.md): Learn how to use the Perplexity API Portal to manage access, usage, billing, and team collaboration.
+- [API Key Management](https://docs.perplexity.ai/docs/admin/api-key-management.md): Learn how to generate, revoke, and rotate API keys for secure access
+- [Safety Identifiers](https://docs.perplexity.ai/docs/admin/safety-identifiers.md): Identify your end users so a policy violation blocks one user instead of your whole API organization.
+- [Analytics API](https://docs.perplexity.ai/docs/admin/computer-analytics-api.md): Query your organization's Perplexity usage analytics programmatically with a free, org-scoped API key
+- [Audit Log API](https://docs.perplexity.ai/docs/admin/audit-api.md): Pull your organization's audit events into your SIEM or compliance tooling with a read-only, organization-scoped API key.
+- [Rate Limits & Usage Tiers](https://docs.perplexity.ai/docs/admin/rate-limits-usage-tiers.md)
+- [AWS Marketplace](https://docs.perplexity.ai/docs/resources/aws-marketplace.md): Subscribe to the Perplexity API Platform through AWS Marketplace for consolidated billing and enterprise procurement.
+- [Perplexity with AG2](https://docs.perplexity.ai/docs/getting-started/integrations/ag2.md): Understand how AG2's Perplexity tools use the Search API and Sonar Chat Completions during the Agent API migration.
+- [Perplexity with Agno](https://docs.perplexity.ai/docs/getting-started/integrations/agno.md): Use Perplexity's Agent API through Agno's OpenAI Responses integration.
+- [Perplexity MCP Server for Google Antigravity](https://docs.perplexity.ai/docs/getting-started/integrations/antigravity.md): Connect Google Antigravity to Perplexity's hosted MCP server with bearer API-key authentication.
+- [Perplexity with AnythingLLM](https://docs.perplexity.ai/docs/getting-started/integrations/anythingllm.md): Use Perplexity as the LLM provider in AnythingLLM for grounded, citation-backed chat over your documents and workspaces.
+- [Perplexity with CAMEL-AI](https://docs.perplexity.ai/docs/getting-started/integrations/camel.md): Use the Perplexity Search API as a tool inside CAMEL-AI multi-agent systems.
+- [Perplexity with Claude Code](https://docs.perplexity.ai/docs/getting-started/integrations/claude-code.md): Use Perplexity inside Claude Code — call the API from project code with the official TypeScript SDK, use the OpenAI-compatible base URL, or wire up the hosted Perplexity Docs MCP for in-editor documentation lookup.
+- [Perplexity with Composio](https://docs.perplexity.ai/docs/getting-started/integrations/composio.md): Expose Perplexity's Agent, Search, and Embeddings APIs as MCP tools or direct API actions for any AI agent framework via Composio.
+- [Perplexity with Cursor](https://docs.perplexity.ai/docs/getting-started/integrations/cursor.md): Use Perplexity with Cursor by calling the Agent API from project code with the Perplexity or OpenAI SDK, or by adding a Perplexity MCP server.
+- [Perplexity with Haystack](https://docs.perplexity.ai/docs/getting-started/integrations/haystack.md): Use Perplexity's Agent API, Embeddings API, and grounded Search API in Haystack pipelines.
+- [Perplexity web search in Hermes](https://docs.perplexity.ai/docs/getting-started/integrations/hermes.md): Use free Fast Search by default in Hermes Agent, or configure standard Perplexity web search and page extraction with your API key.
+- [Perplexity with LangChain](https://docs.perplexity.ai/docs/getting-started/integrations/langchain.md): Use Perplexity's Agent API from LangChain and LangGraph.
+- [Perplexity with LiteLLM](https://docs.perplexity.ai/docs/getting-started/integrations/litellm.md): Use Perplexity's Agent API and effort levels through LiteLLM's unified interface — Python SDK and Proxy.
+- [Perplexity with LiveKit Agents](https://docs.perplexity.ai/docs/getting-started/integrations/livekit.md): Use Perplexity's Agent API as the LLM brain of a LiveKit voice agent.
+- [Perplexity with Mastra](https://docs.perplexity.ai/docs/getting-started/integrations/mastra.md): Use Perplexity's Agent API and the Search API in your Mastra agents and tools.
+- [Perplexity with n8n](https://docs.perplexity.ai/docs/getting-started/integrations/n8n.md): Add real-time web search, AI agents, and embeddings to your n8n workflows using the native Perplexity node.
+- [Perplexity with OpenClaw](https://docs.perplexity.ai/docs/getting-started/integrations/openclaw.md): Use Perplexity as an LLM provider and web search provider in OpenClaw.
+- [Perplexity with OpenCode](https://docs.perplexity.ai/docs/getting-started/integrations/opencode.md): Use the Perplexity Agent API inside the OpenCode AI coding agent — one endpoint, every frontier model, one API key.
+- [Perplexity with Pipedream](https://docs.perplexity.ai/docs/getting-started/integrations/pipedream.md): Wire Perplexity into Pipedream workflows alongside 3,000+ other apps — automate research, summarization, and grounded responses with code and no-code steps.
+- [Perplexity on Stripe Projects](https://docs.perplexity.ai/docs/getting-started/integrations/stripe-projects.md): Provision a Perplexity API project, API key, and credits from your terminal or coding agent with the Stripe Projects CLI.
+- [Perplexity with SuperPlane](https://docs.perplexity.ai/docs/getting-started/integrations/superplane.md): Run Perplexity agents inside SuperPlane workflows — research, synthesis, and analysis steps with web search, URL fetching, and source citations.
+- [Perplexity with the Vercel AI SDK](https://docs.perplexity.ai/docs/getting-started/integrations/vercel-ai-sdk.md): Use Perplexity's Agent API from Vercel AI SDK (Next.js) apps through the @ai-sdk/open-responses provider.
+- [Feature Requests](https://docs.perplexity.ai/docs/resources/feature-roadmap.md): Share feature requests and follow product discussions on the Perplexity API community forum.
+- [Privacy & Security](https://docs.perplexity.ai/docs/resources/privacy-security.md): Learn about Perplexity's data privacy, retention policies, and security certifications for API users
+- [Frequently Asked Questions](https://docs.perplexity.ai/docs/resources/faq.md): Answers to common questions about the Perplexity API, covering models, output and capabilities, search behavior, billing and limits, errors, data privacy, and support.
+- [System Status](https://docs.perplexity.ai/docs/resources/status.md)
+- [Changelog](https://docs.perplexity.ai/docs/resources/changelog.md): Updates to the Perplexity API platform.
+- [Get in Touch](https://docs.perplexity.ai/docs/resources/discussions.md)
+- [Perplexity Crawlers](https://docs.perplexity.ai/docs/resources/perplexity-crawlers.md): We strive to improve our service every day by delivering the best search experience possible. To achieve this, we collect data using web crawlers ("robots") and user agents that gather and index information from the internet, operating either automatically or in response to user requests. Webmasters…
+- [Cookbook](https://docs.perplexity.ai/docs/cookbook/index.md): Guides, runnable examples, and community projects for building with the Perplexity Agent, Search, and Embeddings APIs. Search or filter by product and category.
+- [Getting Started](https://docs.perplexity.ai/docs/cookbook/getting-started.md): How to use the Perplexity API Cookbook, plus a quick start for getting your API key and installing the SDK.
+- [Community Showcase](https://docs.perplexity.ai/docs/cookbook/showcase/index.md): Applications developers have built on the Perplexity API Platform.
+- [Examples Overview](https://docs.perplexity.ai/docs/cookbook/examples/README.md): Runnable projects covering the Agent API, Search API, and Embeddings API
+- [Document Q&A with Embeddings](https://docs.perplexity.ai/docs/cookbook/examples/document-qa/README.md): A self-contained RAG system that ingests documents, generates contextualized embeddings, and answers questions using the Agent API
+- [Agent Research Assistant](https://docs.perplexity.ai/docs/cookbook/examples/agent-research-assistant/README.md): A CLI tool that uses Perplexity's Agent API with the medium effort level to conduct multi-step web research and produce structured reports
+- [Equity Research Brief](https://docs.perplexity.ai/docs/cookbook/examples/equity-research-brief/README.md): Generate institutional-grade equity research briefs from any public ticker using the Perplexity Agent API and the built-in finance_search tool.
+- [TypeScript Agent CLI](https://docs.perplexity.ai/docs/cookbook/examples/typescript-agent-cli/README.md): An interactive TypeScript CLI with streaming responses, model selection, and web search using the Perplexity Agent API
+- [Image Analysis](https://docs.perplexity.ai/docs/cookbook/examples/image-analysis/README.md): Vision-powered image analysis with web search for context-enriched results using the Perplexity Agent API
+- [Multi-Provider Model Comparison](https://docs.perplexity.ai/docs/cookbook/examples/model-comparison/README.md): A CLI tool that sends the same prompt to multiple AI models via Perplexity's Agent API and compares response quality, latency, and cost
+- [Document Q&A](https://docs.perplexity.ai/docs/cookbook/examples/file-attachment-qa/README.md): Load documents and ask questions about them via the Agent API — text extraction, web search enrichment, multi-turn Q&A, and structured output extraction
+- [Search News Monitor](https://docs.perplexity.ai/docs/cookbook/examples/search-news-monitor/README.md): A CLI tool that uses Perplexity's Search API to monitor real-time news across multiple configurable topics with domain and recency filtering
+- [SEC Filing Search](https://docs.perplexity.ai/docs/cookbook/examples/sec-filing-search/README.md): Use search domain filtering to query SEC.gov and EDGAR for financial filings, extract key financial data, and build structured financial summaries
+- [Competitor Buzz Tracker](https://docs.perplexity.ai/docs/cookbook/examples/competitor-buzz-tracker/README.md): Turn a basket of searches and keyword rules into a one-page share-of-voice chart (PDF) with two chained Agent API requests. The first searches and counts inside the sandbox and returns a structured-output JSON contract. The second renders the bar chart and shares it as a downloadable file.
+- [Talent Sourcer](https://docs.perplexity.ai/docs/cookbook/examples/talent-sourcer/README.md): Build a vetted engineer sourcing shortlist with one Agent API request. The model works in a Python sandbox - segmenting the brief, calling people_search across sub-segments, verifying each candidate's role, location, and tenure with web_search, collecting GitHub, social, and publication links, scori…
+- [Enrich Customer Data with Agent API](https://docs.perplexity.ai/docs/cookbook/examples/customer-enrichment-agent-api/README.md): Use Agent API with people_search to enrich a ClickHouse customer data row and append the result to the table.
+- [Model Picker](https://docs.perplexity.ai/docs/cookbook/examples/model-picker/README.md): Describe a task and get a grounded shortlist of open models to use. One Agent API request combines the Hugging Face MCP server with web search to find, verify, and recommend a model.
+- [Grounded Data Story with Kimi K3](https://docs.perplexity.ai/docs/cookbook/examples/data-story-kimi-k3/README.md): Turn any topic into a self-contained, source-linked interactive HTML report using Kimi K3, live web search, and the Agent API.
+- [Customizing Effort Levels](https://docs.perplexity.ai/docs/cookbook/examples/agent-api-effort/README.md)
+- [GitHub investigation agent using managed connectors](https://docs.perplexity.ai/docs/cookbook/examples/triage-bug-report-connectors/README.md): Use managed Slack and GitHub connectors to investigate a linked bug report and reply in its Slack thread.
+- [Triage Support Tickets with the Decisions API](https://docs.perplexity.ai/docs/cookbook/examples/decisions-api-ticket-triage/README.md): Route inbound support tickets with three probabilistic questions per ticket from the Decisions API, then send only the escalations to the Agent API.
+- [Drive a Browser with the Decisions API](https://docs.perplexity.ai/docs/cookbook/examples/decisions-api-browser-agent/README.md): Build a browser agent that asks the Decisions API six questions about a numbered screenshot and gets probabilities back. Your code compares them to cutoffs and does the clicking, scrolling, and stopping. One Decisions API request per step, plus retries if needed.
+- [Judge Citation Accuracy with Decisions API](https://docs.perplexity.ai/docs/cookbook/examples/decisions-api-answer-gate/README.md): Ask the Agent API a question with web search, score every sentence against its sources with the Decisions API, and send low-scoring sentences back to the Agent API to search again. Your code keeps only the rewrites the sources support.
+- [Check Agent Actions Before They Run with Decisions API](https://docs.perplexity.ai/docs/cookbook/examples/decisions-api-action-gate/README.md): Run an accounts-payable agent that can pay vendors, but checks proposed functions before they run using Decisions API. The Decisions API provides probabilities for questions about whether the proposed function should run, and your code compares those probabilities to cutoffs to allow, ask about, or…
+- [Rank Search Results to Answer Questions with the Best Quote Using Decisions API](https://docs.perplexity.ai/docs/cookbook/examples/decisions-quote-finder/README.md): Use Decisions API probabilities to rank sentences from your Search API results, then return the quote that best answers the question, with its URL.
+- [Catch Visual Bugs in CI with the Decisions API](https://docs.perplexity.ai/docs/cookbook/examples/decisions-api-visual-qa-gate/README.md): Use Playwright screenshots and Decisions API probabilities to check selected pages for visual defects. Your code applies cutoffs, reports warnings, and fails CI when a failure rule fires.
+- [Check a Chart for Misleading Design with a Decision Model](https://docs.perplexity.ai/docs/cookbook/examples/decisions-api-chart-check/README.md): Send a chart image to the Decisions API with yes/no questions about misleading design and your brand guide, and get a probability for each. Your code gates the checks by chart type, compares them to cutoffs, labels the chart, and prints why.
+- [Enrich a CSV of Companies Overnight with the Batch API](https://docs.perplexity.ai/docs/cookbook/examples/batch-api-company-enrichment/README.md): Write one web-grounded Agent API request per CSV row to a JSONL file, run them asynchronously with the Batch API, and join the output back to your rows by custom_id.
+- [Track What the Web Said Each Week About a Topic, and Build a Report](https://docs.perplexity.ai/docs/cookbook/examples/agent-api-story-timeline/README.md): Search engines tell you what the web says today. This recipe shows what was being reported about a topic during each week of a date range: the Agent API searches each week with publication-date filters, explains how the story changed, and counts the outlets that covered it, while your code writes th…
+- [Build a Data Analytics Agent Using Custom Connectors](https://docs.perplexity.ai/docs/cookbook/examples/agent-api-data-analyst/README.md): Ask your agent why conversions fell, have it inspect the data, and turn the investigation into a chart for you to review.
+- [Turn Agent Failures into Regression Tests](https://docs.perplexity.ai/docs/cookbook/examples/agent-api-regression-testing/README.md): Build a web-grounded API troubleshooting advisor, then catch unsafe retry advice and unsupported answers before switching models.
+- [RAG with Perplexity Embeddings](https://docs.perplexity.ai/docs/cookbook/articles/embeddings-rag/README.md): Build an end-to-end retrieval-augmented generation pipeline using Perplexity's standard and contextualized embedding models.
+- [Streaming Citation Parsing](https://docs.perplexity.ai/docs/cookbook/articles/streaming-citations/README.md): Consume streaming responses from the Agent API and extract, validate, and display citations in real-time as chunks arrive
+- [Structured Output Extraction](https://docs.perplexity.ai/docs/cookbook/articles/structured-output-extraction/README.md): Get typed, schema-validated JSON responses from the Agent API using response_format with JSON schemas for data extraction, pipelines, and structured research
+- [Multi-Provider Orchestration](https://docs.perplexity.ai/docs/cookbook/articles/multi-provider-orchestration/README.md): Route between OpenAI, Anthropic, Google, and xAI models through Perplexity's Agent API with transparent pricing, build fallback chains, and compare providers side-by-side
+- [Academic and Scholarly Search](https://docs.perplexity.ai/docs/cookbook/articles/academic-search/README.md): Use the Agent API's domain filtering to restrict search to academic sources, extract DOIs and paper metadata, build citation chains, and create research summaries with proper attribution
+- [Deep Research Workflows](https://docs.perplexity.ai/docs/cookbook/articles/async-deep-research/README.md): Use the Agent API medium effort level for comprehensive, multi-step research tasks — synchronous usage, batch concurrency, result processing, and production patterns
+- [Search Domain Filtering Patterns](https://docs.perplexity.ai/docs/cookbook/articles/search-domain-filtering/README.md): Use search_domain_filter for focused search — allowlist patterns for trusted sources, denylist for excluding domains, and practical patterns for news, government, and competitive intelligence
+- [VC Investment Memo Agent with LangGraph](https://docs.perplexity.ai/docs/cookbook/articles/langchain-vc-memo-agent/README.md): Build an auditable, citation-grounded VC research agent with LangGraph and the Perplexity Agent API, and pick the best search provider with a LangSmith eval harness.
+- [Daily AI Stock News PDF with Skills](https://docs.perplexity.ai/docs/cookbook/articles/agent-skills/README.md): Generate a daily one-page AI-industry stock news PDF with the Agent API using the built-in office skill and an inline design skill.
+- [Daily News Digest with LLM Deduplication](https://docs.perplexity.ai/docs/cookbook/articles/news-dedupe-digest/README.md): Build a daily news digest that reports each story once. One Agent API request runs code in the sandbox to fetch the day's news, groups coverage into stories, and delivers the digest and a story registry as files.
+- [Build an incident responder with Profiles, Skills, and Managed Connectors](https://docs.perplexity.ai/docs/cookbook/articles/incident-responder/README.md): Combine a saved Profile, an Incident Response Skill, Sandbox, and Datadog, GitHub, and Slack managed connectors, then launch the custom agent with the Agent API.
+- [Function Calling End-to-End](https://docs.perplexity.ai/docs/cookbook/articles/function-calling-e2e/README.md): Complete multi-turn function calling patterns for the Perplexity Agent API, including orchestration, web search integration, error handling, and parallel calls
+- [Search as Code for coding agents](https://docs.perplexity.ai/docs/cookbook/articles/search-as-code-coding-agents/README.md): Use the Perplexity Search SDK to build a source-backed dependency migration packet that any coding agent can inspect before it edits code.
+- [Create Chat Completion](https://docs.perplexity.ai/api-reference/gateway-chat-completions-post.md): Send a conversation to any Orchestrator API model using the OpenAI Chat Completions schema. Set `stream: true` to receive server-sent events; add `stream_options: {"include_usage": true}` to get token usage in the final chunk.
+- [Create Response](https://docs.perplexity.ai/api-reference/gateway-responses-post.md): Generate a model response using the OpenAI Responses schema. Set `stream: true` to receive typed server-sent events followed by `data: [DONE]`.
+- [Create Message](https://docs.perplexity.ai/api-reference/gateway-messages-post.md): Send a conversation to any Orchestrator API model using the Anthropic Messages schema. Set `stream: true` to receive server-sent events. Authenticate with your Perplexity API key — both `Authorization: Bearer` and the Anthropic SDK's default `x-api-key` header are accepted.
+- [List Models](https://docs.perplexity.ai/api-reference/gateway-models-get.md): List the models available through the Orchestrator API, sorted by id. Each model includes its base token prices in `pricing` (USD per 1M tokens).
+- [Retrieve Model](https://docs.perplexity.ai/api-reference/gateway-model-get.md): Retrieve one model by id, including its base token prices. Model ids contain a `/` (for example `perplexity/kimi-k3`); pass the full id in the path.
+- [Create Agent Response](https://docs.perplexity.ai/api-reference/agent-post.md): Generate a response for the provided input with optional web search and reasoning.
+- [Retrieve Agent Response](https://docs.perplexity.ai/api-reference/agent-get.md): Retrieve a response created earlier. Returns a JSON snapshot of the response. Only responses created with `store` omitted or `true` can be retrieved; `store: false` responses return a 404.
+- [List Agent Response Files](https://docs.perplexity.ai/api-reference/agent-files-get.md): List the files a response produced in the sandbox and delivered with the `share_file` tool. Scoped to the authenticated account, which only ever sees its own files. File content is not returned inline; download it with the file content endpoint.
+- [Download Agent Response File](https://docs.perplexity.ai/api-reference/agent-file-content-get.md): Download the raw bytes of a file the response delivered with the `share_file` tool. The `file_id` comes from the file list endpoint and is distinct from the response `id`. The response streams raw bytes, not JSON, with a `Content-Type` matching the file and a `Content-Disposition: attachment` header…
+- [Cancel Agent Response](https://docs.perplexity.ai/api-reference/agent-cancel-post.md): Requests cancellation of response `{id}`. Acts on durable state, so it works for background runs that outlive the client connection. Cancellation is asynchronous: a `200` acknowledges the request (`status: cancelling`) and the run stops shortly after - poll `GET /v1/agent/{id}` for its terminal stat…
+- [List Models](https://docs.perplexity.ai/api-reference/models-get.md): List the models available for the Agent API. Returns model identifiers that can be used with the `POST /v1/agent` endpoint. The response follows the OpenAI List Models format for compatibility with third-party tools.
+- [Create a skill](https://docs.perplexity.ai/api-reference/skills-create-post.md): Creates a skill from a zip bundle. The bundle must contain a `SKILL.md` that provides the skill name and description; those fields are read from the bundle, not from the request.
+- [List skills](https://docs.perplexity.ai/api-reference/skills-list-get.md): Lists the skills in your Project, newest first.
+- [Get a skill](https://docs.perplexity.ai/api-reference/skills-get.md): Returns a skill. Without `revision`, returns the active revision.
+- [Add a skill revision](https://docs.perplexity.ai/api-reference/skills-update-put.md): Uploads a new zip bundle as a new revision of an existing skill. Pass the revision you expect to replace as the required `expected_revision`; the request fails with `409` if the skill has already moved past it, so the update cannot race a concurrent write. Name and description are re-read from the n…
+- [List skill revisions](https://docs.perplexity.ai/api-reference/skills-revisions-get.md): Lists the revisions of a skill, newest first.
+- [Get a skill download URL](https://docs.perplexity.ai/api-reference/skills-download-get.md): Returns a short-lived URL to download the skill bundle as a zip. Without `revision`, returns the active revision.
+- [Delete a skill](https://docs.perplexity.ai/api-reference/skills-delete.md): Deletes a skill. Pass the current revision as `expected_revision`; the delete fails with `409` if the skill has a newer revision, so a delete never races a concurrent update.
+- [Upload a file](https://docs.perplexity.ai/api-reference/files-create-post.md): Uploads a JSONL batch input file, up to 50,000 lines and 200 MB. Every line is validated before the file is stored. Files expire after 30 days; `expires_after` is not supported and is rejected with a 400.
+- [List files](https://docs.perplexity.ai/api-reference/files-list-get.md): Lists your organization's files, both uploads and the output and error files batches write. Deleted and expired files are not listed.
+- [Retrieve a file](https://docs.perplexity.ai/api-reference/files-get.md)
+- [Download file content](https://docs.perplexity.ai/api-reference/files-content-get.md): Streams the raw bytes of an input, output, or error file.
+- [Delete a file](https://docs.perplexity.ai/api-reference/files-delete.md): Deletes a file. Batches already created from it are not affected.
+- [Create a batch](https://docs.perplexity.ai/api-reference/batches-create-post.md): Creates a batch from an uploaded input file. The batch starts in `validating`. Send an `Idempotency-Key` header to make retries safe: a repeat with the same key returns the original batch. `output_expires_after` is not supported and is rejected with a 400; output and error files are kept 30 days.
+- [List batches](https://docs.perplexity.ai/api-reference/batches-list-get.md): Lists your organization's batches, newest first.
+- [Retrieve a batch](https://docs.perplexity.ai/api-reference/batches-get.md)
+- [Cancel a batch](https://docs.perplexity.ai/api-reference/batches-cancel-post.md): Moves the batch to `cancelling`; it becomes `cancelled` once running items stop. Completed items stay in the output file and are billed. Cancelling a cancelled or cancelling batch returns it unchanged.
+- [Search the Web](https://docs.perplexity.ai/api-reference/search-post.md): Search the web and retrieve relevant web page contents.
+- [Create Embeddings](https://docs.perplexity.ai/api-reference/embeddings-post.md): Generate embeddings for a list of texts. Use these embeddings for semantic search, clustering, and other machine learning applications.
+- [Create Contextualized Embeddings](https://docs.perplexity.ai/api-reference/contextualized-embeddings-post.md): Generate contextualized embeddings for document chunks. Chunks from the same document share context awareness, improving retrieval quality for document-based applications.
+- [Answer questions](https://docs.perplexity.ai/api-reference/decisions-post.md): Evaluate one or more named questions against the content in `state`. Mix `noul`, `choice`, and `score` questions in one request; the response returns one answer per question under the same name, plus the model name and token usage. Set `model` to `pplx-decider-v1.2` or `pplx-decider-flash-v1.2`, or…
+- [Generate Auth Token](https://docs.perplexity.ai/api-reference/generate-auth-token-post.md): Generates a new authentication token for API access.
+- [Revoke Auth Token](https://docs.perplexity.ai/api-reference/revoke-auth-token-post.md): Revokes an existing authentication token.
+- [Usage Analytics](https://docs.perplexity.ai/api-reference/computer-analytics-usage-get.md): Returns your organization's Perplexity usage analytics as a bucketed time series for a single dataset. Requires an organization analytics API key, generated by an org admin from Settings → Organization → Computer in the Perplexity web app. Only complete UTC grid buckets are returned: start_time snap…
+- [Usage Analytics per Member](https://docs.perplexity.ai/api-reference/computer-analytics-usage-v2-get.md): Returns your organization's Perplexity usage broken down per member, as daily buckets. Each day lists one row per member with usage that day, keyed by email. credit_usage carries a Model breakdown and an optional legacy Credit Source breakdown, subject to the same availability rules as v1; query_vol…
+- [List audit events](https://docs.perplexity.ai/api-reference/admin-audit-events-get.md): Returns the organization's audit events, newest first. Requires an **audit log API key** (scope `audit_logs:read`) created by an org admin under **Enterprise APIs → Admin API**; Sonar API keys are rejected with `403`. Without time parameters the endpoint covers the most recent 30 days; a single requ…
+
+## OpenAPI Specs
+
+- [openapi-auth](/openapi-auth.json)
+- [openapi-gateway-chat](/openapi-gateway-chat.json)
+- [openapi-gateway-messages](/openapi-gateway-messages.json)
+- [openapi-gateway-responses](/openapi-gateway-responses.json)
+- [openapi](/openapi.json)
+
+## Optional
+
+- [Community](https://community.perplexity.ai)
+- [Blog](https://research.perplexity.ai/articles)

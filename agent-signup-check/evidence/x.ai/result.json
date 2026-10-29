@@ -1,0 +1,148 @@
+{
+ "site": "x.ai",
+ "checkedAt": "2026-10-28T23:57:11.426Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 2,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://x.ai/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://x.ai/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://x.ai/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.x.ai/v1/models",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "where": "llms.txt",
+   "url": "https://docs.x.ai/llms.txt",
+   "match": "Spending caps",
+   "snippet": "cription/prepaid-balance.md) - [Plans and usage — Spending caps and alerts](https://docs.x.ai/x-subscription/spending-caps.md) - [Plans and usage — Cursor Token",
+   "status": "partial",
+   "reason": "llms.txt mentions spending caps in prose; no machine-readable cap"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://docs.x.ai/llms.txt",
+   "heading": "# SpaceXSI API Documentation",
+   "bytes": 25879,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://x.ai/auth.md",
+   "finalUrl": "https://x.ai/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 123,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://x.ai/llms.txt",
+   "finalUrl": "https://x.ai/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 107,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.x.ai/v1/models",
+   "finalUrl": "https://api.x.ai/v1/models",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 121,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://docs.x.ai/llms.txt",
+   "finalUrl": "https://docs.x.ai/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 204,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://x.ai/.well-known/oauth-protected-resource",
+   "finalUrl": "https://x.ai/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 108,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.x.ai/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.x.ai/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 62,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://x.ai/.well-known/oauth-authorization-server",
+   "finalUrl": "https://x.ai/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 112,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://x.ai/.well-known/x402",
+   "finalUrl": "https://x.ai/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 120,
+   "redirects": 0
+  }
+ ]
+}

@@ -1,0 +1,147 @@
+{
+ "site": "postmarkapp.com",
+ "checkedAt": "2026-10-28T23:57:59.656Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 2,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://postmarkapp.com/auth.md",
+   "heading": "# auth.md",
+   "registrationEndpoints": [],
+   "mentions": [],
+   "status": "partial",
+   "reason": "auth.md is published, but documents no registration endpoint the checker recognizes (it describes OAuth, device login or keys the person makes)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://postmarkapp.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://postmarkapp.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.postmarkapp.com/server",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://postmarkapp.com/llms.txt",
+   "heading": "# Postmark",
+   "bytes": 28799,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://postmarkapp.com/auth.md",
+   "finalUrl": "https://postmarkapp.com/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "application/octet-stream",
+   "ms": 247,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://postmarkapp.com/llms.txt",
+   "finalUrl": "https://postmarkapp.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 247,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.postmarkapp.com/server",
+   "finalUrl": "https://api.postmarkapp.com/server",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 150,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://postmarkapp.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://postmarkapp.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json; charset=UTF-8",
+   "ms": 285,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.postmarkapp.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.postmarkapp.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 164,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://postmarkapp.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://postmarkapp.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json; charset=UTF-8",
+   "ms": 147,
+   "redirects": 0
+  },
+  {
+   "label": "catch-all probe",
+   "url": "https://postmarkapp.com/agent-signup-check-no-such-page.md",
+   "finalUrl": "https://postmarkapp.com/agent-signup-check-no-such-page.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=UTF-8",
+   "ms": 352,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://postmarkapp.com/.well-known/x402",
+   "finalUrl": "https://postmarkapp.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json; charset=UTF-8",
+   "ms": 281,
+   "redirects": 0
+  }
+ ]
+}

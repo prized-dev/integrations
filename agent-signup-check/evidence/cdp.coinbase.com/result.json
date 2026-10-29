@@ -1,0 +1,147 @@
+{
+ "site": "cdp.coinbase.com",
+ "checkedAt": "2026-10-28T23:58:31.100Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://www.coinbase.com/developer-platform",
+   "heading": "# Trusted crypto infra­struc­ture to power your business",
+   "registrationEndpoints": [],
+   "mentions": [],
+   "status": "fail",
+   "reason": "A Markdown page is served at /auth.md, but it is not about agent sign-in (it never mentions auth.md, agent_auth, or how an agent gets a credential)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://cdp.coinbase.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "The metadata URL answers, but not with a JSON object"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://cdp.coinbase.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata is not usable; no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.cdp.coinbase.com/platform/v2/evm/accounts",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt (the request budget ran out before /.well-known/x402)"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://www.coinbase.com/developer-platform",
+   "heading": "# Trusted crypto infra­struc­ture to power your business",
+   "bytes": 7754,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://cdp.coinbase.com/auth.md",
+   "finalUrl": "https://www.coinbase.com/developer-platform",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 148,
+   "redirects": 2
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://cdp.coinbase.com/llms.txt",
+   "finalUrl": "https://www.coinbase.com/developer-platform",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 367,
+   "redirects": 2
+  },
+  {
+   "label": "api",
+   "url": "https://api.cdp.coinbase.com/platform/v2/evm/accounts",
+   "finalUrl": "https://api.cdp.coinbase.com/platform/v2/evm/accounts",
+   "status": 401,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 116,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://cdp.coinbase.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.coinbase.com/developer-platform",
+   "status": 200,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 145,
+   "redirects": 2
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.cdp.coinbase.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.cdp.coinbase.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 128,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://cdp.coinbase.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.coinbase.com/developer-platform",
+   "status": 200,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 262,
+   "redirects": 2
+  },
+  {
+   "label": "catch-all probe",
+   "url": "https://www.coinbase.com/agent-signup-check-no-such-page.md",
+   "finalUrl": "https://www.coinbase.com/agent-signup-check-no-such-page.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 321,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://cdp.coinbase.com/.well-known/x402",
+   "finalUrl": "https://coinbase.com/developer-platform",
+   "status": null,
+   "error": "request budget spent",
+   "contentType": null,
+   "ms": null,
+   "redirects": 1
+  }
+ ]
+}

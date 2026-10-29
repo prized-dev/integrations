@@ -1,0 +1,148 @@
+{
+ "site": "anthropic.com",
+ "checkedAt": "2026-10-28T23:57:05.393Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 2,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://anthropic.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://www.anthropic.com/auth.md)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://anthropic.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://www.anthropic.com/.well-known/oauth-protected-resource)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://anthropic.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404) (after a redirect to https://www.anthropic.com/.well-known/oauth-authorization-server); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.anthropic.com/v1/models",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "where": "llms.txt",
+   "url": "https://platform.claude.com/llms.txt",
+   "match": "Spend Limits",
+   "snippet": "ocs/en/manage-claude/compliance-api-access.md) - [Spend Limits API](https://platform.claude.com/docs/en/manage-claude/spend-limits-api.md) - [Troubleshooting](h",
+   "status": "partial",
+   "reason": "llms.txt mentions spend limits in prose; no machine-readable cap"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://platform.claude.com/llms.txt",
+   "heading": "# Anthropic Developer Documentation",
+   "bytes": 90894,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://anthropic.com/auth.md",
+   "finalUrl": "https://www.anthropic.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 326,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://anthropic.com/llms.txt",
+   "finalUrl": "https://www.anthropic.com/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 298,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.anthropic.com/v1/models",
+   "finalUrl": "https://api.anthropic.com/v1/models",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 93,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://docs.anthropic.com/llms.txt",
+   "finalUrl": "https://platform.claude.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 124,
+   "redirects": 2
+  },
+  {
+   "label": "prm",
+   "url": "https://anthropic.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.anthropic.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 285,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.anthropic.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.anthropic.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": null,
+   "ms": 111,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://anthropic.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.anthropic.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 542,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://anthropic.com/.well-known/x402",
+   "finalUrl": "https://www.anthropic.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 357,
+   "redirects": 1
+  }
+ ]
+}

@@ -1,0 +1,87 @@
+GET https://mistral.ai/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:06.317Z
+final-url: https://mistral.ai/llms.txt
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:57:02 GMT
+content-type: text/plain; charset=UTF-8
+transfer-encoding: chunked
+connection: close
+accept-ranges: bytes
+x-nf-request-id: 01M62F470JN78WR79D56QBC0HC
+cache-control: public,max-age=0,must-revalidate
+cache-status: "Netlify Edge"; fwd=miss; fwd-status=200; stored
+content-encoding: br
+content-security-policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://client.axept.io https://api.axept.io https://static.axept.io https://js-eu1.hs-scripts.com https://js-eu1.hscollectedforms.net https://js-eu1.hs-analytics.net https://js-eu1.hs-banner.com https://forms-eu1.hscollectedforms.net https://cdn.jsdelivr.net https://static.claydar.com https://cdn.claydar.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://fonts.googleapis.com https://fonts.axept.io; font-src 'self' https://fonts.gstatic.com https://fonts.axept.io; img-src 'self' data: blob: https://cms.globalaegis.net https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://axeptio.imgix.net https://track-eu1.hubspot.com https://favicons.axept.io https://i.ytimg.com https://www.google.com https://www.google.fr https://www.google.de https://www.google.co.uk https://www.google.es https://www.google.it https://www.google.nl https://www.google.be https://www.google.ch https://www.google.at https://www.google.pt https://www.google.ie https://www.google.dk https://www.google.se https://www.google.no https://www.google.fi https://www.google.pl https://www.google.cz https://www.google.gr https://www.google.hu https://www.google.ro https://www.google.sk https://www.google.bg https://www.google.hr https://www.google.si https://www.google.lt https://www.google.lv https://www.google.ee https://www.google.lu https://www.google.com.tr https://www.google.ru https://www.google.com.ua https://www.google.ca https://www.google.com.mx https://www.google.com.br https://www.google.com.ar https://www.google.co.jp https://www.google.com.au https://www.google.co.nz https://www.google.co.in https://www.google.com.sg https://www.google.com.hk https://www.google.co.kr https://www.google.com.my https://www.google.co.th https://www.google.co.id https://www.google.com.ph https://www.google.com.vn https://www.google.co.za https://www.google.ae https://www.google.com.sa https://www.google.co.il https://www.google.com.eg https://pagead2.googlesyndication.com https://stats.g.doubleclick.net https://googleads.g.doubleclick.net https://td.doubleclick.net; media-src 'self' https://cms.globalaegis.net blob:; connect-src 'self' https://cms.globalaegis.net https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://client.axept.io https://static.axept.io https://api.axept.io https://forms-eu1.hscollectedforms.net https://ingesteer.services-prod.nsvcs.net https://api.claydar.com https://pagead2.googlesyndication.com https://stats.g.doubleclick.net https://www.google.com; frame-src 'self' https://www.googletagmanager.com https://td.doubleclick.net https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://app.storylane.io https://spaces-blogs-staging-mistral-01d83c8e.koyeb.app/ https://*.demo.emmi.ai/ https://challenges.cloudflare.com https://ml4-blog-widgets.netlify.app; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://chat.mistral.ai; frame-ancestors 'none'; upgrade-insecure-requests
+etag: "3fde62b4177869bda698cb49cecd5cec-ssl-df"
+permissions-policy: camera=(), microphone=(), geolocation=()
+referrer-policy: strict-origin-when-cross-origin
+server: cloudflare
+strict-transport-security: max-age=15552000; includeSubDomains; preload
+vary: Accept-Encoding
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+cf-cache-status: BYPASS
+cf-ray: a51de1660f56cf48-PDX
+alt-svc: h3=":443"; ma=86400
+
+# Mistral
+> Frontier AI for enterprises. Customizable, secure, and scalable solutions—from models to agents—built for performance, privacy, and control. Deploy on-prem, in the cloud, or at the edge with open-weight and commercial options.
+
+Mistral empowers organizations with state-of-the-art (SOTA) models, AI assistants (Vibe), and production platforms (AI Studio) to automate workflows, enhance decision-making, and drive innovation. Core offerings include:
+- **Models**: Open-weight and commercial models (e.g., Mistral Large, Codestral) for coding, multilingual tasks, and edge deployment.
+- **Studio**: End-to-end platform for building, deploying, and managing AI agents with observability and governance.
+- *Vibe**: Customizable AI assistant for enterprise knowledge, multimodal tasks, and secure collaboration.
+- *Vibe for Code**: Specialized coding stack.
+- *Compute**: European AI cloud platform with high-performance GPUs and sovereign data control.
+- *Forge**: Platform for building and deploying custom AI models.
+- **Applied AI Services**: Expert-led custom training, fine-tuning, and deployment for domain-specific needs.
+- **Partners**: Ecosystem of cloud providers, technology integrators, and consulting firms for seamless adoption.
+
+All solutions prioritize data ownership, compliance, and scalability, with flexible pricing tiers (Free to Enterprise) and transparent SLAs.
+
+---
+
+## Core Products
+- [Mistral Studio](https://mistral.ai/products/studio): End-to-end platform for building, deploying, and managing AI agents with observability and governance
+- [Mistral Vibe](https://mistral.ai/products/vibe): Customizable AI assistant for enterprise knowledge, multimodal tasks, and secure collaboration
+- [Mistral Vibe Code](https://mistral.ai/products/vibe/code): Specialized coding stack
+- [Mistral AI Cloud](https://mistral.ai/products/ai-cloud): European AI cloud platform with high-performance GPUs and sovereign data control
+- [Mistral Forge](https://mistral.ai/products/forge): Platform for building and deploying custom AI models
+
+## Latest Models
+- [Mistral Medium 3.5](https://mistral.ai/news/vibe-remote-agents-mistral-medium-3-5/):Mistral Medium 3.5, our new flagship model that merges instruction-following, reasoning, and coding into a single 128B dense model. Released as open weights, under a modified MIT license.
+- [Mistral Small 4](https://mistral.ai/news/mistral-small-4/): Mixture of Experts (MoE): 128 experts, with 4 active per token, enabling efficient scaling and specialization.
+- [Voxtral TTS](https://mistral.ai/news/voxtral-tts/): Voxtral TTS, our first text-to-speech model with state-of-the-art performance in multilingual voice generation.
+
+## Solutions
+- [Coding](https://mistral.ai/solutions/coding): Secure, enterprise-grade coding tools. *Codestral, Devstral, and customizable assistants for IP protection.*
+- [Custom Model Training](https://mistral.ai/solutions/custom-model-training): Domain-specialized LLMs. *Co-training partnerships, privacy-preserving workflows, and deployment flexibility.*
+- [Document AI & OCR](https://mistral.ai/solutions/document-ai): Structured data extraction. *99%+ accuracy, multilingual support, and scalable processing.*
+- [AI for Citizens](https://mistral.ai/solutions/ai-for-citizens): Sovereign AI for governments. *Self-hosted/SaaS options, domain-specific models, and transparency.*
+- [AI Transformation](https://mistral.ai/ai-transformation): End-to-end enterprise AI adoption. *On-prem/cloud/edge deployment, compliance, and accuracy.*
+
+## Models
+- [Models](https://mistral.ai/models): Customizable frontier models. *Medium 3, Mistral Small, Magistral, Codestral, Voxtral, and Edge-optimized models.*
+
+## Enterprise & Support
+- [Pricing](https://mistral.ai/pricing): Transparent tiers (Free to Enterprise). *Scalable features, storage, and administrative controls.*
+- [Customer Stories](https://mistral.ai/customers): Real-world impact across industries. *Case studies from Cisco, Stellantis, BNP Paribas, and governments.*
+- [Partners](https://mistral.ai/partners): Ecosystem for seamless adoption. *Cloud providers (AWS, Azure), technology integrators (Snowflake, GitHub), and consulting firms (Capgemini, McKinsey).*
+- [Enterprise SLA](https://mistral.ai/terms/enterprise-service-level-and-support-schedule): Uptime guarantees (99.5–99.9%) and support tiers. *Service credits, response/resolution times, and exclusions.*
+
+## Support & Compliance
+- [Help Center](https://help.mistral.ai): Self-service guides, FAQs, and troubleshooting.
+- [Trust Center](https://trust.mistral.ai): Security, compliance, and data protection policies.
+- [Status Page](https://status.mistral.ai): Real-time system health and incident updates.
+
+## Company
+- [About Us](https://mistral.ai/about): Mission, values, and founding story. *Open-source innovation, transparency, and democratizing AI.*
+- [News](https://mistral.ai/news): Latest updates, announcements, and insights from Mistral AI.
+- [Careers](https://mistral.ai/careers): Join a global team. *Science, Product/Engineering, GTM, and Corporate roles with diversity focus.*
+- [Contact](https://mistral.ai/contact): Engagement channels. *Support (Help Center, Discord), press (press@mistral.ai), privacy requests, and sales form.*
+
+## Legal & Compliance
+- [Terms of Use](https://mistral.ai/terms): Legal framework for services. *Usage rights, privacy policy, and addendums.*
+- [Legal Notice](https://mistral.ai/legal): Compliance details.

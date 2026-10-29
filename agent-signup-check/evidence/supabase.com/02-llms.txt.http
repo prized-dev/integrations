@@ -1,0 +1,77 @@
+GET https://supabase.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:51.576Z
+final-url: https://supabase.com/llms.txt
+
+HTTP 200
+age: 2650
+cache-control: public
+content-encoding: br
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:13:38 GMT
+server: Vercel
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::iad1::nz8ds-1793231868729-056d830ae0d4
+connection: close
+transfer-encoding: chunked
+
+# Supabase Docs
+
+For the complete documentation in a single file, see [Full Documentation](https://supabase.com/llms-full.txt).
+
+## Documentation
+
+- [Supabase - AI & Vectors](https://supabase.com/docs/guides/ai.md)
+- [Supabase - AI Tools](https://supabase.com/docs/guides/ai-tools.md)
+- [Supabase - Data REST API](https://supabase.com/docs/guides/api.md)
+- [Supabase - Auth](https://supabase.com/docs/guides/auth.md)
+- [Supabase - Cron](https://supabase.com/docs/guides/cron.md)
+- [Supabase - database](https://supabase.com/docs/guides/database.md)
+- [Supabase - Deployment & Branching](https://supabase.com/docs/guides/deployment.md)
+- [Supabase - Edge Functions](https://supabase.com/docs/guides/functions.md)
+- [Supabase - Getting Started](https://supabase.com/docs/guides/getting-started.md)
+- [Supabase - GraphQL](https://supabase.com/docs/guides/graphql.md)
+- [Supabase - Integrations](https://supabase.com/docs/guides/integrations.md)
+- [Supabase - Local Development & CLI](https://supabase.com/docs/guides/local-development.md)
+- [Supabase - Observability](https://supabase.com/docs/guides/observability.md)
+- [Supabase - Supabase Platform](https://supabase.com/docs/guides/platform.md)
+- [Supabase - Supabase Queues](https://supabase.com/docs/guides/queues.md)
+- [Supabase - Realtime](https://supabase.com/docs/guides/realtime.md)
+- [Supabase - Resources](https://supabase.com/docs/guides/resources.md)
+- [Supabase - Supabase Security](https://supabase.com/docs/guides/security.md)
+- [Supabase - Self-Hosting](https://supabase.com/docs/guides/self-hosting.md)
+- [Supabase - Storage](https://supabase.com/docs/guides/storage.md)
+- [Supabase Reference (JavaScript)](https://supabase.com/llms/js.txt)
+- [Supabase Reference (Dart)](https://supabase.com/llms/dart.txt)
+- [Supabase Reference (Swift)](https://supabase.com/llms/swift.txt)
+- [Supabase Reference (Kotlin)](https://supabase.com/llms/kotlin.txt)
+- [Supabase Reference (Python)](https://supabase.com/llms/python.txt)
+- [Supabase Reference (C#)](https://supabase.com/llms/csharp.txt)
+- [Supabase Server SDK Reference](https://supabase.com/llms/server.txt)
+- [Supabase CLI Reference](https://supabase.com/llms/cli.txt)
+- [Supabase Management API Reference](https://supabase.com/llms/api.txt)
+
+- [Knowledge Base](https://supabase.com/kb/sitemap.md)
+
+## Pricing
+
+- [Supabase Pricing](https://supabase.com/pricing.md)
+
+## Product overviews
+
+- [Supabase overview](https://supabase.com/index.md)
+- [Database](https://supabase.com/database.md): dedicated Postgres, usable on its own with any Postgres client or ORM
+- [Auth](https://supabase.com/auth.md)
+- [Storage](https://supabase.com/storage.md)
+- [Realtime](https://supabase.com/realtime.md)
+- [Edge Functions](https://supabase.com/edge-functions.md)
+- [Cron](https://supabase.com/modules/cron.md)
+- [Queues](https://supabase.com/modules/queues.md)
+- [Vector](https://supabase.com/modules/vector.md)
+
+## API and agent resources
+
+- [Supabase Management API OpenAPI spec](https://supabase.com/openapi.json): OpenAPI 3.0 description of the Management API for managing organizations, projects, branches, and configuration
+- [Supabase MCP server](https://mcp.supabase.com/mcp): Streamable HTTP MCP endpoint, OAuth-protected, for managing projects, database schema, and queries from MCP clients

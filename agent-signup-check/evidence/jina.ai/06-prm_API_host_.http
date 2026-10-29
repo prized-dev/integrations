@@ -1,0 +1,23 @@
+GET https://api.jina.ai/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:24.013Z
+final-url: https://api.jina.ai/.well-known/oauth-protected-resource
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:58:22 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+cf-ray: a51de3606cdab1c2-PDX
+cf-cache-status: DYNAMIC
+server: cloudflare
+x-served-by: cf-worker-gcp-direct
+alt-svc: h3=":443"; ma=86400
+x-cloud-trace-context: a94c028a76b64ede2b85e00292565992
+x-request-id: a94c028a76b64ede2b85e00292565992
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=shX0ubKBxLVweIzgHRNUzI7Vt3G5gB2x2jJD%2BBDectrlUb%2FoCyxMKWUv4VaDAfgSdg64gtfqmRGGir7sMUAaTeGZUNXf1nO93BVt4ZKF9F9bDmZDAP6KQ1bW60XH"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+content-encoding: br
+
+{"detail":"Invalid endpoint","request_id":"a94c028a76b64ede2b85e00292565992"}

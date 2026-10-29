@@ -1,0 +1,18 @@
+GET https://api.freestyle.sh/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:37.353Z
+final-url: https://api.freestyle.sh/.well-known/oauth-protected-resource
+
+HTTP 401
+server: openresty
+date: Wed, 28 Oct 2026 23:57:36 GMT
+content-type: application/json
+vary: origin, access-control-request-method, access-control-request-headers
+access-control-allow-origin: *
+x-freestyle-trace-id: 0f51bc64-43d3-4899-bc70-875713974621
+x-request-id: 7f54189b-ef93-4307-a7ba-02af01cb317d
+strict-transport-security: max-age=63072000
+content-length: 213
+connection: close
+
+{"code":"UNAUTHORIZED_ERROR","message":"Unauthorized request to /.well-known/oauth-protected-resource","route":"/.well-known/oauth-protected-resource","reason":"No Authorization or Identity token header provided"}

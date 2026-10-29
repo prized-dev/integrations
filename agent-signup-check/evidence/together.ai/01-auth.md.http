@@ -1,0 +1,458 @@
+GET https://together.ai/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:08.063Z
+redirect: 301 from https://together.ai/auth.md
+final-url: https://www.together.ai/auth.md
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:57:05 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a51de17a9c3dd7dd-SEA
+cf-cache-status: HIT
+age: 1158
+cache-control: max-age=43200
+content-encoding: gzip
+etag: W/"728f1a3f11d190ac0f9f83754ad509d3"
+last-modified: Wed, 28 Oct 2026 19:48:08 GMT
+server: cloudflare
+vary: accept-encoding
+content-security-policy: default-src 'self'; base-uri 'self'; frame-ancestors 'self'; object-src 'none'; form-action 'self' https://*.hsforms.com https://www.facebook.com; upgrade-insecure-requests; block-all-mixed-content; img-src 'self' data: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; connect-src 'self' https://webflow.com https://cdn.jsdelivr.net https://*.together.ai https://api.together.xyz https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.doubleclick.net https://*.googlesyndication.com https://*.google.com https://www.googleadservices.com https://*.amplitude.com https://px.ads.linkedin.com https://*.reddit.com https://analytics.twitter.com https://t.co https://*.hubspot.com https://*.hubapi.com https://*.hsforms.com https://*.hs-analytics.net https://*.hsadspixel.net https://*.hs-banner.com https://*.termly.io https://*.intellimize.co https://*.intellimizeio.com https://*.unifyintent.com https://*.lfeeder.com https://*.salesforce-scrt.com https://boards-api.greenhouse.io https://challenges.cloudflare.com https://maps.googleapis.com https://*.b-cdn.net https://d3-36c34dc0877246a0b32c4f4e24be6ce8.ecs.us-east-1.on.aws https://bded8a3c6ae-1-1053047382554.us-central1.run.app; frame-src 'self' https://*.together.ai https://www.googletagmanager.com https://*.my.site.com https://challenges.cloudflare.com https://*.hsforms.com https://www.youtube.com https://www.youtube-nocookie.com https://cdn.embedly.com https://app.termly.io https://www.facebook.com https://luma.com; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' https: blob:
+surrogate-key: www.together.ai 69654e88dce9154b5f1206dd pageId:69654e88dce9154b5f1206e7 404req sp:d96dc287d6f0def6bee3db62ea117331
+x-wf-region: us-east-1
+alt-svc: h3=":443"; ma=86400
+
+<!DOCTYPE html><!-- This site was created in Webflow. https://webflow.com --><!-- Last Published: Wed Oct 28 2026 19:48:01 GMT+0000 (Coordinated Universal Time) --><html data-wf-domain="www.together.ai" data-wf-page="69654e88dce9154b5f1206e7" data-wf-site="69654e88dce9154b5f1206dd" data-wf-intellimize-customer-id="117655561" lang="en"><head><meta charset="utf-8"/><link href="https://cdn.prod.website-files.com" rel="preconnect" crossorigin="anonymous"/><title>Not Found</title><meta content="Not Found" property="og:title"/><meta content="Not Found" name="twitter:title"/><meta content="width=device-width, initial-scale=1" name="viewport"/><meta content="Webflow" name="generator"/><link href="https://cdn.prod.website-files.com/69654e88dce9154b5f1206dd/css/together-ai-0ecab937ed8d4f4431c520693eb.webflow.shared.5d2bec476.min.css" rel="stylesheet" type="text/css" integrity="sha384-XSvsR2U5byyfzDnZ8hPacyBc/PbeSvynmxhgVYkr8RwzABY5wMw7Li1vf8HvSMlo" crossorigin="anonymous"/><script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script><link href="https://cdn.prod.website-files.com/69654e88dce9154b5f1206dd/699e382b218f39bfa0a115d9_favicon.png" rel="shortcut icon" type="image/x-icon"/><link href="https://cdn.prod.website-files.com/69654e88dce9154b5f1206dd/69a59cff65ed0f267dd2fbe8_touchicon.png" rel="apple-touch-icon"/><link href="https://www.together.ai/404" rel="canonical"/><style>.anti-flicker, .anti-flicker * {visibility: hidden !important; opacity: 0 !important;}</style><style>[data-wf-hidden-variation], [data-wf-hidden-variation] * {
+        display: none !important;
+      }</style><script type="text/javascript">if (localStorage.getItem('intellimize_data_tracking_type') !== 'disabled') { localStorage.setItem('intellimize_opt_out_117655561', 'true'); } if (localStorage.getItem('intellimize_data_tracking_type') !== 'disabled') { localStorage.setItem('intellimize_data_tracking_type', 'disabled'); }</script><script type="text/javascript">(function(e){var s={r:[]};e.wf={r:s.r,ready:t=>{s.r.push(t)}}})(window)</script><script type="text/javascript">(function(e){var s={p:[],r:[]};e.intellimize={p:s.p,r:s.r,push:function(t){s.p.push(t)},ready:function(t){s.r.push(t)}}})(window)</script><script type="text/javascript">(function(t,p){var n=document.documentElement;n.className+=" "+p,setTimeout(function(){n.className=n.className.replace(RegExp(" ?"+p),"")},t)})(4000, 'anti-flicker')</script><link href="https://cdn.intellimize.co/snippet/117655561.js" rel="preload" as="script"/><script type="text/javascript">var wfClientScript=document.createElement("script");wfClientScript.src="https://cdn.intellimize.co/snippet/117655561.js",wfClientScript.async=!0,wfClientScript.onerror=function(){document.documentElement.className=document.documentElement.className.replace(RegExp(" ?anti-flicker"),"")},document.head.appendChild(wfClientScript);</script><link href="https://api.intellimize.co" rel="preconnect" crossorigin="true"/><link href="https://log.intellimize.co" rel="preconnect" crossorigin="true"/><link href="https://117655561.intellimizeio.com" rel="preconnect"/><!-- Termly consent -> Webflow Analyze/Optimize tracking bridge -->
+<script>
+(function () {
+  var applied = null, settled = false, tries = 0, vetoed = false;
+  var DEBUG = false;
+  try {
+    DEBUG = /[?&]cb_debug=1/.test(location.search) ||
+            window.localStorage.getItem("cb_debug") === "1";
+  } catch (e) {}
+  function log(m) {
+    if (DEBUG && window.console && console.warn) console.warn("[consent-bridge] " + m);
+  }
+  function wfUsable() {
+    return typeof wf !== "undefined" && typeof wf.ready === "function";
+  }
+  function setTracking(allow) {
+    if (allow === null || applied === allow) return;
+    if (!wfUsable()) return;
+    applied = allow;
+    log("tracking " + (allow ? "ON" : "OFF"));
+    wf.ready(function () {
+      if (allow) wf.allowUserTracking({ activate: true });
+      else wf.denyUserTracking();
+    });
+  }
+  function evaluate() {
+    if (vetoed) return false;
+    if (navigator.globalPrivacyControl === true) return false;
+    var s = null;
+    try { s = window.Termly && Termly.getConsentState && Termly.getConsentState(); } catch (e) {}
+    if (!s) return null;
+    return s.analytics === true;
+  }
+  function decide() {
+    var v = evaluate();
+    if (v === null) return;
+    setTracking(v);
+    if (applied === v) settled = true;
+  }
+  function poll() {
+    if (settled || tries++ > 200) return;
+    decide();
+    if (!settled) setTimeout(poll, 50);
+  }
+  window.onTermlyLoaded = function () {
+    try {
+      Termly.on("initialized", function (info) {
+        var loc = (info && info.location) || {};
+        var rs  = (info && info.region_settings) || {};
+        if (rs.consent_mode !== "opt_in" &&
+            (loc.continent === "EU" || loc.country === "BR" || loc.country === "CA")) {
+          vetoed = true;
+          log("regional override active - CMP setting not applied here");
+        }
+        settled = false; decide();
+      });
+      Termly.on("consent", function () { settled = false; tries = 0; decide(); poll(); });
+    } catch (e) {}
+  };
+  poll();
+})();
+</script>
+
+<!-- Termly -->
+<script src="https://app.termly.io/resource-blocker/3ca8dfce-d291-4de9-b87d-166df7cf5b5a?autoBlock=on" onload="onTermlyLoaded()"></script>
+
+<!-- RSS Feed -->
+<link rel="alternate" type="application/rss+xml" title="Together AI Blog" href="https://www.together.ai/blog/rss.xml">
+
+<!-- Swiper CSS -->
+<link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
+      />
+
+<!-- Amplitude Analytics -->
+<script src="https://cdn.amplitude.com/script/4bac781ab9bf07bcc5fbaa7529814b3a.js"></script>
+<script>
+  if (window.amplitude && typeof window.amplitude.init === 'function') {
+    window.amplitude.init('4bac781ab9bf07bcc5fbaa7529814b3a', {
+      fetchRemoteConfig: true,
+      autocapture: true
+    });
+  }
+</script>
+<!-- /Amplitude Analytics -->
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                                                      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                            })(window,document,'script','dataLayer','GTM-T387P4MH');</script>
+<!-- End Google Tag Manager --></head><body><div class="page-wrapper"><div class="global-wrap"><div class="w-embed w-iframe"><!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T387P4MH"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) --></div><div class="global-styles w-embed"><style>
+  :root{
+  }
+
+  [data-transition] {
+    transition-property: background-color, color, opacity, border-color, transform, padding, flex, width;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+  }
+
+  @media (hover: hover) {
+    :is(a:hover,a:focus, [data-card]:hover) [data-transition="img-link"]{
+      transform: scale(1.1);
+    }
+  }
+
+  .wf-design-mode .nav-wrapper{
+    position: absolute;
+  }
+</style></div><div class="global-styles w-embed"><style>
+  /* ------------------------- Scaling System by Osmo [https://osmo.supply/] -------------------------  */
+
+  /* Desktop */
+  :root {
+    --size-unit: 16; /* body font-size in design - no px */
+    --size-container-ideal: 1440; /* screen-size in design - no px */
+    --size-container-min: 992px;
+    --size-container-max: 1440px;
+    --size-container: clamp(var(--size-container-min), 100vw, var(--size-container-max));
+    --size-font: calc(var(--size-container) / (var(--size-container-ideal) / var(--size-unit)));
+  }
+
+  /* Tablet */
+  @media screen and (max-width: 991px) {
+    :root {
+      --size-container-ideal: 834; /* screen-size in design - no px */
+      --size-container-min: 768px;
+      --size-container-max: 991px;
+    }
+  }
+
+  /* Mobile Landscape */
+  @media screen and (max-width: 767px) {
+    :root {
+      --size-container-ideal: 550; /* screen-size in design - no px */
+      --size-container-min: 480px;
+      --size-container-max: 767px;
+    }
+  }
+
+  /* Mobile Portrait */
+  @media screen and (max-width: 479px) {
+    :root {
+      --size-container-ideal: 390; /* screen-size in design - no px */
+      --size-container-min: 390px;
+      --size-container-max: 479px;
+    }
+  }
+
+  html {
+    font-size: var(--size-font);
+  }
+
+  /* _____ CSS Marqueee ____ */
+  /* CSS Keyframe Animation */
+  @keyframes translateX {
+    to {
+      transform: translateX(-100%);
+    }
+  }
+  @keyframes translateXRev {
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  [data-css-marquee-list] {
+    animation: translateX 30s linear;
+    animation-iteration-count: infinite;
+    animation-play-state: paused;
+  }
+
+  [data-css-marquee='reverse'] [data-css-marquee-list] {
+    animation: translateXRev 30s linear;
+    animation-iteration-count: infinite;
+    animation-play-state: paused;
+  }
+
+  /* _____ CSS Accordions____ */
+  /* Animate Accordion Bottom Grid */
+  [data-accordion-content] {
+    transition: grid-template-rows 0.6s cubic-bezier(0.625, 0.05, 0, 1);
+  }
+
+  [data-accordion-status='active'] [data-accordion-content] {
+    grid-template-rows: 1fr;
+  }
+
+  .accordion-css__item-top {
+    transition: opacity 0.3s;
+  }
+
+  [data-accordion-status='active'] [data-accordion-toggle] {
+    opacity: 1;
+  }
+
+ [data-accordion-status='active'] .models-d-specifications_hide {
+   display: inline;
+ }
+
+  [data-accordion-status='active'] .models-d-specifications_show {
+   display: none;
+ }
+
+  /* Animate Icon */
+  [data-accordion-icon] {
+    transition: transform 0.6s cubic-bezier(0.625, 0.05, 0, 1);
+  }
+
+  [data-accordion-status='active'] [data-accordion-icon] {
+    transform: rotate(180deg);
+  }
+
+  [data-countdown-date] {
+    gap: 0.075em;
+  }
+
+  /* Links */
+  [underline-link]::before,
+  [underline-link-alt]::before,
+  [underline-link-alt]::after {
+    content: '';
+    position: absolute;
+    bottom: 0em;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: currentColor;
+    transition: transform 0.3s cubic-bezier(0.625, 0.05, 0, 1);
+    transform-origin: right;
+    transform: scaleX(0) rotate(0.001deg);
+  }
+
+  [underline-link]:hover::before {
+    transform-origin: left;
+    transform: scaleX(1) rotate(0.001deg);
+  }
+
+  /* Alt */
+  [underline-link-alt]::before {
+    transform-origin: left;
+    transform: scaleX(1) rotate(0.001deg);
+    transition-delay: 0.3s;
+  }
+
+  [underline-link-alt]:hover::before {
+    transform-origin: right;
+    transform: scaleX(0) rotate(0.001deg);
+    transition-delay: 0s;
+  }
+
+  [underline-link-alt]::after {
+    transform-origin: right;
+    transform: scaleX(0) rotate(0.001deg);
+    transition-delay: 0s;
+  }
+
+  [underline-link-alt]:hover::after {
+    transform-origin: left;
+    transform: scaleX(1) rotate(0.001deg);
+    transition-delay: 0.3s;
+  }
+
+  /* Modals */
+  [data-modal-group-status] {
+    transition: all 0.2s linear;
+  }
+
+  [data-modal-group-status='active'] {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  [data-modal-name][data-modal-status='active'] {
+    display: flex;
+  }
+
+  /* Bunny Lightbox */
+  [data-bunny-lightbox-status] .bunny-lightbox__calc {
+    transition:
+      transform 0.3s cubic-bezier(0.625, 0.05, 0, 1),
+      opacity 0.3s linear,
+      visibility 0.3s linear;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.9) rotate(0.001deg);
+  }
+
+  [data-bunny-lightbox-status='active'] .bunny-lightbox__calc {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1) rotate(0.001deg);
+  }
+
+  [data-bunny-lightbox-status] .bunny-lightbox__dark,
+  [data-bunny-lightbox-status] .bunny-lightbox__close {
+    transition:
+      opacity 0.3s linear,
+      visibility 0.3s linear;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  [data-bunny-lightbox-status='active'] .bunny-lightbox__dark,
+  [data-bunny-lightbox-status='active'] .bunny-lightbox__close {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Animation */
+  [data-bunny-lightbox-init] :is(.bunny-lightbox-player__placeholder, .bunny-lightbox-player__dark, .bunny-lightbox-player__playpause, .bunny-lightbox-player__loading) {
+    transition:
+      opacity 0.3s linear,
+      visibility 0.3s linear;
+  }
+
+  /* Placeholder */
+  [data-bunny-lightbox-init][data-player-status='playing'] .bunny-lightbox-player__placeholder,
+  [data-bunny-lightbox-init][data-player-status='paused'] .bunny-lightbox-player__placeholder,
+  [data-bunny-lightbox-init][data-player-activated='true'][data-player-status='ready'] .bunny-lightbox-player__placeholder {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* Dark Overlay */
+  [data-bunny-lightbox-init][data-player-status='paused'] .bunny-lightbox-player__dark,
+  [data-bunny-lightbox-init][data-player-status='playing'][data-player-hover='active'] .bunny-lightbox-player__dark {
+    opacity: 0.3;
+  }
+
+  [data-bunny-lightbox-init][data-player-status='playing'] .bunny-lightbox-player__dark {
+    opacity: 0;
+  }
+
+  /* Play/Pause */
+  [data-bunny-lightbox-init][data-player-status='playing'] .bunny-lightbox-player__playpause,
+  [data-bunny-lightbox-init][data-player-status='loading'] .bunny-lightbox-player__playpause {
+    opacity: 0;
+  }
+
+  [data-bunny-lightbox-init][data-player-status='playing'][data-player-hover='active'] .bunny-lightbox-player__playpause {
+    opacity: 1;
+  }
+
+  [data-bunny-lightbox-init][data-player-status='playing'] .bunny-lightbox-player__play-svg,
+  [data-bunny-lightbox-init][data-player-status='loading'] .bunny-lightbox-player__play-svg {
+    display: none;
+  }
+
+  [data-bunny-lightbox-init][data-player-status='playing'] .bunny-lightbox-player__pause-svg,
+  [data-bunny-lightbox-init][data-player-status='loading'] .bunny-lightbox-player__pause-svg {
+    display: block;
+  }
+
+  /* Loading */
+  [data-bunny-lightbox-init][data-player-status='loading'] .bunny-lightbox-player__loading {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Interface */
+  .bunny-lightbox-player__interface {
+    transition: all 0.6s cubic-bezier(0.625, 0.05, 0, 1);
+  }
+
+  [data-bunny-lightbox-init][data-player-status='playing'] .bunny-lightbox-player__interface,
+  [data-bunny-lightbox-init][data-player-status='loading'] .bunny-lightbox-player__interface {
+    opacity: 0;
+    transform: translateY(1em) rotate(0.001deg);
+  }
+
+  [data-bunny-lightbox-init][data-player-status='playing'][data-player-hover='active'] .bunny-lightbox-player__interface,
+  [data-bunny-lightbox-init][data-player-status='loading'][data-player-hover='active'] .bunny-lightbox-player__interface {
+    opacity: 1;
+    transform: translateY(0em) rotate(0.001deg);
+  }
+
+  /* Timeline */
+  [data-bunny-lightbox-init][data-player-status='idle'][data-player-activated='false'] .bunny-lightbox-player__timeline,
+  [data-bunny-lightbox-init][data-player-status='ready'][data-player-activated='false'] .bunny-lightbox-player__timeline {
+    pointer-events: none;
+  }
+
+  /* Timeline Handle */
+  [data-bunny-lightbox-init] .bunny-lightbox-player__timeline-handle {
+    transition: transform 0.15s ease-in-out;
+  }
+
+  [data-bunny-lightbox-init][data-timeline-drag='true'] .bunny-lightbox-player__timeline-handle {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  /* Fullscreen */
+  [data-bunny-lightbox-init][data-player-fullscreen='true'] .bunny-lightbox-player__fullscreen-shrink-svg {
+    display: block;
+  }
+
+  [data-bunny-lightbox-init][data-player-fullscreen='true'] .bunny-lightbox-player__fullscreen-scale-svg {
+    display: none;
+  }
+
+  /* Mute */
+  [data-bunny-lightbox-init][data-player-muted='true'] .bunny-lightbox-player__volume-mute-svg {
+    display: block;
+  }
+
+  [data-bunny-lightbox-init][data-player-muted='true'] .bunny-lightbox-player__volume-up-svg {
+    display: none;
+  }
+
+  /* Cover Mode */
+  [data-bunny-lightbox-init][data-player-update-size='cover'] {
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+  }
+
+  [data-bunny-lightbox-init][data-player-update-size='cover'] [data-player-before] {
+    display: none;
+  }
+
+  [data-bunny-lightbox-init][data-player-update-size='cover'][data-pl
+
+[body trimmed for publication: kept 16384 of 66272 characters; sha256 of the full body e7c888209d49878f3c5c24435007a9f92ac653a2a69781465ddc000aac1f1484]

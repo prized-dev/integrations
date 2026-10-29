@@ -1,0 +1,144 @@
+{
+ "site": "beam.cloud",
+ "checkedAt": "2026-10-28T23:57:39.922Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 2,
+ "partial": 0,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://beam.cloud/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://www.beam.cloud/auth.md)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://beam.cloud/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://www.beam.cloud/.well-known/oauth-protected-resource)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://beam.cloud/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404) (after a redirect to https://www.beam.cloud/.well-known/oauth-authorization-server); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.beam.cloud/v2/deployment/",
+   "httpStatus": 401,
+   "www_authenticate": "Bearer",
+   "status": "pass",
+   "reason": "401 with a Bearer challenge"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://docs.beam.cloud/llms.txt",
+   "heading": "# Beam",
+   "bytes": 14625,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://beam.cloud/auth.md",
+   "finalUrl": "https://www.beam.cloud/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 118,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://beam.cloud/llms.txt",
+   "finalUrl": "https://www.beam.cloud/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 92,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.beam.cloud/v2/deployment/",
+   "finalUrl": "https://api.beam.cloud/v2/deployment/",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 132,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://docs.beam.cloud/llms.txt",
+   "finalUrl": "https://docs.beam.cloud/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 273,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://beam.cloud/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.beam.cloud/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 77,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.beam.cloud/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.beam.cloud/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 126,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://beam.cloud/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.beam.cloud/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 82,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://beam.cloud/.well-known/x402",
+   "finalUrl": "https://www.beam.cloud/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 75,
+   "redirects": 1
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+GET https://api.mailgun.net/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:08.485Z
+final-url: https://api.mailgun.net/.well-known/oauth-protected-resource
+
+HTTP 404
+content-type: text/plain; charset=utf-8
+x-content-type-options: nosniff
+date: Wed, 28 Oct 2026 23:58:05 GMT
+content-length: 19
+connection: close
+
+404 page not found

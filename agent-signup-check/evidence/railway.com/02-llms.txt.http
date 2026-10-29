@@ -1,0 +1,89 @@
+GET https://railway.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:27.392Z
+final-url: https://railway.com/llms.txt
+
+HTTP 200
+content-security-policy: frame-ancestors 'self' https://railway.com
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:25 GMT
+etag: W/"19e1-SNZwHiVb3ZSXWYSGnBcu4ZlawO0"
+last-modified: Tue, 27 Oct 2026 15:55:48 GMT
+server: railway-hikari
+vary: Accept-Encoding
+x-frame-options: SAMEORIGIN
+x-permitted-cross-domain-policies: none
+x-railway-request-id: 7zbYJMq0QAe3DYXNljLL4A
+content-encoding: gzip
+x-cache: DYNAMIC
+x-hikari-trace: lax1.ez9k,lax1.z1hw
+x-railway-edge: lax1
+transfer-encoding: chunked
+connection: close
+
+# Railway
+
+> Railway is an infrastructure platform that simplifies your stack from servers to observability with a single, scalable, easy-to-use platform. Railway's superior developer experience makes it easy to deploy cloud infrastructure, full-stack applications, and websites.
+
+## About Railway
+
+- [Railway Features](https://railway.com/features.md): An unparalleled developer experience for infrastructure — build, deploy, network, scale, observe, and secure your apps
+- [Railway Customers](https://railway.com/customers.md): Loved by developers at 31% of the F500. Hear how Railway powers businesses across AI, Fintech, B2B SaaS, and more
+- [About Railway](https://railway.com/about.md): Railway is building the cloud computing stack that unburdens developers, so they can focus on what matters
+- [Railway Careers](https://railway.com/careers.md): Railway is hiring engineers and designers to rebuild the cloud computing stack
+
+## For AI Agents
+
+- [Railway for AI Agents](https://railway.com/agents.md): Critical setup instructions for agents — CLI setup with `bash <(curl -fsSL cli.new) --agents -y`, local MCP and agent skills, optional remote MCP, and core use cases (deploy, databases, volumes, functions, config).
+- [railway.com/index.md](https://railway.com/index.md): The same agent setup briefing, served at the site root
+- [Railway Remote MCP Server](https://railway.com/mcp.md): Connect AI coding agents to Railway over OAuth — no local install, no CLI login, no token files
+- [Authenticating to Railway](https://railway.com/auth.md): The four ways to hold a Railway credential — CLI login, remote MCP over OAuth, public API tokens, and Login with Railway — with the exact headers to send
+
+## Machine-Readable Endpoints
+
+- [AI catalog (ARD)](https://railway.com/.well-known/ai-catalog.json): Agentic Resource Discovery catalog of every agentic resource — MCP server, API, and instruction pages — with stable identifiers
+- [API catalog](https://railway.com/.well-known/api-catalog): RFC 9727 linkset naming every Railway API, its docs, its auth metadata, and its status page
+- [MCP server card](https://railway.com/.well-known/mcp/server-card.json): Identity and transport for the remote MCP server at `mcp.railway.com`
+- Public API (GraphQL): `https://backboard.railway.com/graphql/v2` — single endpoint, schema by introspection
+- [Template deploy manifests](https://railway.com/deploy/llms.txt): Machine-readable deploy manifest per template — one line each with validation status; inputs and deploy commands inline at https://railway.com/deploy/llms-full.txt, JSON index at https://railway.com/deploy/index.json, per-template manifests at https://railway.com/deploy/{template}/manifest.json
+- [OpenAPI description](https://railway.com/openapi.json): OpenAPI 3.1 for the GraphQL entrypoint and the OAuth 2.0 / OIDC endpoints
+- [API reliability](https://railway.com/api-reliability.md): Errors and error codes, rate limits and headers, retry guidance, and the versioning/deprecation policy
+- OpenID Connect discovery: `https://backboard.railway.com/oauth/.well-known/openid-configuration`
+
+## Product Details
+
+- [Railway Sandboxes](https://railway.com/sandboxes.md): Linux VMs with coding agents preinstalled, private networking, checkpoints, forks, and usage-based pricing
+- [Free VMs, no sign up](https://railway.com/free-vm.md): `ssh railway.new` gets a free Linux VM with coding agents preinstalled and a preview URL, no account needed; agents can use it too
+- [Railway Pricing](https://railway.com/pricing.md): Plans, per-second usage rates for CPU/memory/disk/egress/storage, and committed spend
+- [Railway Enterprise](https://railway.com/enterprise.md): World-class scale, security, and support for organizations and enterprise teams
+- [Railway Domains](https://railway.com/domains.md): Register and manage custom domains for your Railway services, with automatic SSL certificates
+- [Railway Mobile App](https://railway.com/mobile.md): Deploy, monitor, and manage your services from anywhere
+- [Migrate from Heroku](https://railway.com/heroku.md): Railway is the Heroku alternative with cheaper pricing, faster builds, and better developer experience
+- [Railway Template Marketplace](https://railway.com/deploy.md): Template categories and the most deployed one-click templates
+- [Railway AI Templates](https://railway.com/deploy/category/ai.md): One-click AI templates like Ollama, Open WebUI, and vector databases, with FAQs on hosting AI apps
+- [Railway Templates](https://railway.com/llms-templates.md): One-click deploy templates with architecture details, service configs, and READMEs
+- [Railway Product Changelog](https://railway.com/llms-changelog.md): Product changelog entries with titles, dates, and links
+- [Railway Changelog Index](https://railway.com/changelog.md): Product updates ordered by date; individual entries are available at /changelog/<slug>.md
+
+## Programs & Events
+
+- [Railway Affiliate Program](https://railway.com/affiliate-program.md): Earn 15% commission on every invoice from your Railway referrals for 12 months after signup
+- [Railway Template Kickback Program](https://railway.com/open-source-kickback.md): Earn 25% revenue commission whenever someone deploys your template on Railway
+- [Railway Open Source Partner Program](https://railway.com/partners.md): Turn your open source project into a deployable Railway template, support users directly, and earn commission on every deployment
+- [Railway Bug Bounty](https://railway.com/bug-bounty.md): Railway pays researchers for valid security vulnerability reports, scored against CVSS 3.1
+- [Railway Launch Week 01](https://railway.com/launch-week-01.md): Five feature-packed days from September 25–29, 2023 bringing new ways to scale Railway applications globally
+
+## Legal
+
+- [Terms of Service](https://railway.com/legal/terms.md)
+- [Privacy Policy](https://railway.com/legal/privacy.md)
+- [Acceptable Use Policy](https://railway.com/legal/acceptable-use.md)
+- [Data Processing Addendum](https://railway.com/legal/dpa.md)
+- [Enterprise Customer Agreement](https://railway.com/legal/enterprise-agreement.md)
+- [Job Applicant and Worker Privacy Notice](https://railway.com/legal/applicant-worker-privacy.md)
+
+## Railway Ecosystem
+
+- [Railway Docs](https://docs.railway.com/llms.txt): Full documentation covering deployments, services, networking, observability, CLI, and API
+- [Railway Blog](https://blog.railway.com/llms-blog.md): Engineering blog posts and product updates
+- [Railway Station Forum](https://station.railway.com/llms-station.md): Community forum threads with questions and answers

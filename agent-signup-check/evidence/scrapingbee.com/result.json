@@ -1,0 +1,134 @@
+{
+ "site": "scrapingbee.com",
+ "checkedAt": "2026-10-28T23:58:18.259Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://scrapingbee.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://www.scrapingbee.com/auth.md)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://scrapingbee.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://www.scrapingbee.com/.well-known/oauth-protected-resource)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://scrapingbee.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404) (after a redirect to https://www.scrapingbee.com/.well-known/oauth-authorization-server); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://app.scrapingbee.com/api/v1/usage",
+   "httpStatus": 400,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "HTTP 400 asking for a key, instead of a 401 challenge"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://www.scrapingbee.com/llms.txt",
+   "heading": "# ScrapingBee Documentation",
+   "bytes": 6132,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://scrapingbee.com/auth.md",
+   "finalUrl": "https://www.scrapingbee.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 172,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://scrapingbee.com/llms.txt",
+   "finalUrl": "https://www.scrapingbee.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 50,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://app.scrapingbee.com/api/v1/usage",
+   "finalUrl": "https://app.scrapingbee.com/api/v1/usage",
+   "status": 400,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 509,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://scrapingbee.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.scrapingbee.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 58,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://app.scrapingbee.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://dashboard.scrapingbee.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 545,
+   "redirects": 1
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://scrapingbee.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.scrapingbee.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 78,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://scrapingbee.com/.well-known/x402",
+   "finalUrl": "https://www.scrapingbee.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 66,
+   "redirects": 1
+  }
+ ]
+}

@@ -1,0 +1,186 @@
+GET https://railway.com/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:27.392Z
+final-url: https://railway.com/auth.md
+
+HTTP 200
+cache-control: public, max-age=300, s-maxage=300, stale-while-revalidate=3600
+content-security-policy: frame-ancestors 'self' https://railway.com
+content-type: text/markdown; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:24 GMT
+server: railway-hikari
+vary: Accept, accept-encoding
+x-frame-options: SAMEORIGIN
+x-permitted-cross-domain-policies: none
+x-railway-request-id: B2GZlIesTnCTX3WI9o6EoQ
+content-encoding: gzip
+content-length: 2953
+age: 1158
+x-cache: STALE
+x-hikari-trace: lax1.sx7j,lax1.e74w
+x-railway-edge: lax1
+connection: close
+
+# Authenticating to Railway
+
+How an AI agent or automated client obtains and uses a Railway credential —
+CLI login, remote MCP over OAuth, API tokens, and Login with Railway.
+
+## Discover
+
+Everything below is discoverable from machine-readable documents; start there
+rather than scraping:
+
+- API catalog (RFC 9727): <https://railway.com/.well-known/api-catalog> — every
+  Railway API, its docs, its auth metadata, and its status page
+- OAuth protected resource metadata (RFC 9728): <https://mcp.railway.com/.well-known/oauth-protected-resource>
+- OAuth authorization server metadata (RFC 8414): <https://backboard.railway.com/.well-known/oauth-authorization-server>
+- OpenID Connect discovery: <https://backboard.railway.com/oauth/.well-known/openid-configuration>
+
+An unauthenticated request to the MCP server returns `401` with a
+`WWW-Authenticate: Bearer` challenge whose `resource_metadata` parameter
+points at the protected resource document above — one request teaches a client
+the whole chain.
+
+## Pick a method
+
+There are four ways to hold a Railway credential. Pick by what you are.
+
+| You are | Use | Credential |
+| --- | --- | --- |
+| A coding agent on the user's machine | Railway CLI | CLI session, written by `railway login` |
+| A coding agent in an editor, no local install | Remote MCP server | OAuth, browser-based |
+| A script or CI job | Public API token | `Authorization: Bearer <token>` |
+| An app acting for other people | Login with Railway (OAuth 2.0 + OIDC) | User-granted access token |
+
+If you are an AI agent operating on behalf of the user in their terminal, use
+the CLI. It is the shortest path and the user stays in control of the browser
+step.
+
+## Register
+
+What "registering" means depends on the method:
+
+- **CLI** — nothing to register. `railway login` both signs in an existing
+  user and creates a new account; there is no separate signup.
+
+  ```bash
+  curl -fsSL agents.railway.com | sh   # installs the CLI and configures agent support
+  railway login                        # opens a browser; prints a device code over SSH
+  ```
+
+  Ask before running either. They modify local CLI and agent configuration.
+  Full agent setup briefing: <https://railway.com/agents.md>
+
+- **Remote MCP** — nothing to pre-register. The authorization server supports
+  dynamic client registration: its `registration_endpoint` is published in
+  the RFC 8414 metadata above, and MCP clients use it automatically.
+
+- **API tokens** — create a token at <https://railway.com/account/tokens>
+  (account and workspace tokens) or in project settings (project tokens).
+
+- **Login with Railway** — register an OAuth app in your workspace's Developer
+  settings, then run the standard authorization code flow with PKCE.
+
+## Claim a credential
+
+- **CLI**: `railway login` runs the browser flow (device code over SSH) and
+  writes the session locally. If the goal is to ship something, `railway up -y`
+  signs the user up and deploys the current directory in one step.
+
+- **Remote MCP**:
+
+  ```bash
+  claude mcp add railway --transport http https://mcp.railway.com
+  ```
+
+  The server challenges with OAuth on `initialize`; the client discovers the
+  authorization server and runs the browser flow. No token files, no CLI login.
+  PKCE `S256` is required. Setup for other clients: <https://railway.com/mcp.md>.
+  Server card: <https://railway.com/.well-known/mcp/server-card.json>
+
+- **Login with Railway**: authorization code flow with PKCE against the
+  endpoints in the OIDC discovery document, which carries every endpoint, the
+  JWKS URI for ID-token signature verification, and the authoritative
+  `scopes_supported` list. Access tokens expire after one hour. Request
+  `offline_access` with `prompt=consent` to receive a refresh token.
+
+Scopes come in families: the OIDC set (`openid`, `email`, `profile`,
+`offline_access`), resource scopes at three access levels each
+(`workspace:viewer|member|admin`, `project:viewer|member|admin`), and a few
+capability scopes. Read `scopes_supported` in the OIDC discovery document for
+the current set — it is generated from the server's own list, so it is never
+behind.
+
+Resource scopes are *selective*: the user picks which workspaces or projects to
+share on the consent screen, so your token reaches those and nothing else.
+Requesting a level higher than the user's own role does not elevate them.
+
+Scopes and consent: <https://docs.railway.com/integrations/oauth/scopes-and-user-consent>
+
+## Use the credential
+
+The public API is GraphQL, at a single endpoint:
+
+```
+https://backboard.railway.com/graphql/v2
+```
+
+Choose the narrowest token that does the job:
+
+| Token type | Reaches | Use for |
+| --- | --- | --- |
+| Account token | Every resource and workspace you can access | Personal scripts, local development |
+| Workspace token | One workspace | Team CI/CD, shared automation |
+| Project token | One environment in one project | Deployments, service-specific automation |
+
+Send it as a bearer token:
+
+```bash
+curl --request POST \
+  --url https://backboard.railway.com/graphql/v2 \
+  --header 'Authorization: Bearer <RAILWAY_API_TOKEN>' \
+  --header 'Content-Type: application/json' \
+  --data '{"query":"query { me { name email } }"}'
+```
+
+`me` resolves only for account tokens — it is scoped to a personal account.
+Workspace tokens should query `workspace(workspaceId: "...")` instead.
+
+The schema is available by introspection against the same endpoint. The GraphQL
+schema is the contract — new fields ship without a version bump. An OpenAPI 3.1
+document at <https://railway.com/openapi.json> describes this endpoint and the
+OAuth endpoints below for tooling that expects one.
+
+## Errors
+
+- The GraphQL endpoint returns HTTP 200 with an `errors` array for authorization
+  failures — check `errors`, not just the status code. Validation failures
+  return HTTP 400 with `extensions.code`.
+- The MCP server returns `401` with a `WWW-Authenticate` challenge when a
+  token is missing or expired; re-run the OAuth flow it points at.
+- Every error carries a `traceId`. Include it when reporting a problem.
+- Never write a token into source, a template, or a deployed environment
+  variable the user did not ask for. Never print one back to the user.
+
+## Revocation
+
+- **API tokens** — delete the token at <https://railway.com/account/tokens>
+  (or in the project settings that created it). Deletion is immediate.
+- **OAuth grants** (remote MCP and Login with Railway) — the user revokes an
+  application's access at <https://railway.com/account/apps>. Refresh tokens
+  stop working immediately; outstanding access tokens age out within an hour.
+- **CLI sessions** — `railway logout` on the machine that holds the session.
+
+There is no RFC 7009 revocation endpoint; revocation is dashboard-driven.
+
+## Related
+
+- API catalog: <https://railway.com/.well-known/api-catalog>
+- Agent setup briefing: <https://railway.com/agents.md>
+- Public API docs: <https://docs.railway.com/integrations/api>
+- Status: <https://status.railway.com>
+
+## Open this page
+
+<https://railway.com/auth.md>

@@ -1,0 +1,150 @@
+{
+ "site": "useautumn.com",
+ "checkedAt": "2026-10-28T23:58:30.640Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 3,
+ "partial": 2,
+ "total": 7,
+ "whoActs": "not stated",
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://useautumn.com/auth.md",
+   "heading": "# Autumn auth.md",
+   "registrationEndpoints": [
+    "https://api.useautumn.com/agent.provision"
+   ],
+   "mentions": [
+    "identity_assertion"
+   ],
+   "status": "pass",
+   "reason": "auth.md documents agent registration (https://api.useautumn.com/agent.provision)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://api.useautumn.com/.well-known/oauth-protected-resource",
+   "via": "api-well-known",
+   "resource": "https://api.useautumn.com",
+   "authorization_servers": [
+    "https://api.useautumn.com/api/auth"
+   ],
+   "status": "pass",
+   "reason": "Names 1 authorization server"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "where": "auth.md",
+   "url": "https://useautumn.com/auth.md",
+   "endpoint": "https://api.useautumn.com/agent.provision",
+   "link": false,
+   "quote": "i.useautumn.com`. ## Step 1 — Provision ```http POST https://api.useautumn.com/agent.provision Content-Type: application/json {\"name\":\"<project name>\",\"slug\"",
+   "status": "partial",
+   "reason": "auth.md documents a sign-up API (https://api.useautumn.com/agent.provision), but there is no agent_auth metadata for tools to find it"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.useautumn.com/v1/customers",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://useautumn.com/llms.txt",
+   "heading": "# Autumn",
+   "bytes": 8659,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://useautumn.com/auth.md",
+   "finalUrl": "https://useautumn.com/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 86,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://useautumn.com/llms.txt",
+   "finalUrl": "https://useautumn.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 99,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.useautumn.com/v1/customers",
+   "finalUrl": "https://api.useautumn.com/v1/customers",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 194,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://useautumn.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://useautumn.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 55,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.useautumn.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.useautumn.com/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 193,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://api.useautumn.com/.well-known/oauth-authorization-server/api/auth",
+   "finalUrl": "https://api.useautumn.com/.well-known/oauth-authorization-server/api/auth",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 220,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://useautumn.com/.well-known/x402",
+   "finalUrl": "https://useautumn.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 55,
+   "redirects": 0
+  }
+ ]
+}

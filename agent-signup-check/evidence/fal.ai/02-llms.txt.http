@@ -1,0 +1,140 @@
+GET https://fal.ai/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:19.040Z
+final-url: https://fal.ai/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 0
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline; filename="llms.txt"
+content-encoding: br
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:16 GMT
+etag: W/"9195aa878bc3e03f5affe766eeb5bee8"
+last-modified: Wed, 28 Oct 2026 23:57:16 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-fal-request-url: /llms.txt
+x-frame-options: SAMEORIGIN
+x-matched-path: /llms.txt
+x-vercel-cache: MISS
+x-vercel-id: pdx1::8jddd-1793231836062-6718b10ff093
+connection: close
+transfer-encoding: chunked
+
+# fal.ai
+
+> fal.ai is a generative media platform for developers: fast, reliable APIs for image, video, audio, and 3D generation, plus serverless GPU hosting for custom models. Hundreds of models, one API key, one client SDK.
+
+Every model is an endpoint ID such as `fal-ai/flux/dev`. To get from "which model" to a working call: pick an endpoint ID below, then fetch `https://fal.ai/models/<endpoint-id>/llms.txt` — it returns that model's live input and output schema, types, defaults, constraints, pricing, and ready-to-run snippets. It is generated from the same metadata the platform serves, so it cannot drift from the real endpoint, and it links that endpoint's machine-readable OpenAPI schema. If you fetch only one more thing, make it that file — it is usually all you need to write a working call. There is a worked example under Agent-readable surfaces below.
+
+To call it: create an API key at [fal.ai/dashboard/keys](https://fal.ai/dashboard/keys) and set it as the `FAL_KEY` environment variable. Install a client with `npm install @fal-ai/client` or `pip install fal-client`, then use `fal.subscribe()` or `fal_client.subscribe()`. Over plain HTTP, POST to `https://queue.fal.run/<endpoint-id>` with an `Authorization: Key $FAL_KEY` header. Long-running generations go through a queue you poll or receive webhooks from; some models stream.
+
+Model API billing is per output, priced per model, drawn from prepaid credits. You are not charged for server errors or for time spent waiting in the queue. Current prices live in each model's `llms.txt` and on the pricing page — do not infer them from anywhere else.
+
+To deploy your own model, pipeline, or HTTP server, use fal Serverless: it runs on the same GPU infrastructure that serves the Model APIs and autoscales from zero to thousands of runners. A deployed app is an endpoint you call with the same clients and queue as the Model APIs. Serverless is billed per second of runner time by machine type, not per output, and needs Serverless access enabled on the account, which you request from the dashboard.
+
+Every documentation page is also available as Markdown by appending `.md` to its URL.
+
+The model sections below list representative endpoint IDs, not the full catalog — browse [the gallery](https://fal.ai/explore) for that. The catalog changes often, so fetch a model's `llms.txt` for its current schema rather than relying on an ID remembered from training data. For video, text-to-video takes a prompt and image-to-video animates an image you supply; most video models offer both, so swap the suffix on the endpoint ID.
+
+## Documentation
+
+- [Quickstart](https://fal.ai/docs/documentation/quickstart): First API call, end to end
+- [Authentication](https://fal.ai/docs/documentation/setting-up/authentication): API keys, key scopes, and team keys
+- [Calling endpoints](https://fal.ai/docs/documentation/model-apis/inference): Synchronous, queued, streaming, and real-time
+- [Queue](https://fal.ai/docs/documentation/model-apis/inference/queue): Submit, poll, and retrieve long-running jobs
+- [Webhooks](https://fal.ai/docs/documentation/model-apis/inference/webhooks): Delivery of results without polling
+- [Streaming](https://fal.ai/docs/documentation/model-apis/inference/streaming): Partial results as they generate
+- [Real-time](https://fal.ai/docs/documentation/model-apis/inference/real-time): WebSocket inference for interactive use
+- [Client setup](https://fal.ai/docs/documentation/model-apis/inference/client-setup): JavaScript, Python, Swift, Kotlin, Java, and Dart clients
+- [Server-side proxy](https://fal.ai/docs/documentation/model-apis/inference/proxy-setup): Keep API keys out of browser and mobile clients
+- [Uploading files](https://fal.ai/docs/documentation/model-apis/fal-cdn): Upload inputs to fal's CDN and reference them in a call
+- [Pricing](https://fal.ai/docs/documentation/model-apis/pricing): How billing works
+- [FAQ](https://fal.ai/docs/documentation/model-apis/faq): Common errors and questions
+- [API reference](https://fal.ai/docs/api-reference): CLI, client libraries, and platform APIs
+- [Examples](https://fal.ai/docs/examples): Task-oriented guides
+
+## Agent-readable surfaces
+
+- [Per-model schema, worked example](https://fal.ai/models/fal-ai/flux/dev/llms.txt): Live input and output schema, pricing, and ready-to-run snippets for `fal-ai/flux/dev`. Substitute any endpoint ID to get the same for that model
+- [Documentation index](https://fal.ai/docs/llms.txt): Every documentation page as a link
+- [Full documentation text](https://fal.ai/docs/llms-full.txt): The entire documentation in one file. Several MB; prefer the index or a specific page
+- [MCP server](https://fal.ai/docs/documentation/setting-up/mcp): Connect ChatGPT, Claude, Claude Code, Codex CLI, Cursor and other MCP clients to fal at https://mcp.fal.ai/mcp-relay with browser sign-in (OAuth); no API key needed
+- [fal MCP installer](https://fal.ai/mcp/install.sh): `curl -fsSL https://fal.ai/mcp/install.sh | bash` adds the fal MCP server to Claude Code, Codex CLI, Cursor, VS Code, Devin Desktop (Windsurf), Gemini CLI, Grok Build and opencode on macOS and Linux
+- [fal plugin on the Cursor Marketplace](https://cursor.com/marketplace/fal): The fal MCP server plus fal media skills for Cursor (`/add-plugin fal-ai`). Grok Bot installs the same plugin from https://x.ai/bot/plugin/78546892
+- [fal MCP server overview](https://fal.ai/mcp): What agents can do with fal over MCP, per-client setup, and FAQ
+
+## Image generation
+
+- [Nano Banana 2](https://fal.ai/models/fal-ai/nano-banana-2): `fal-ai/nano-banana-2`, Google's fast image generation *and* editing model
+- [FLUX.2 pro](https://fal.ai/models/fal-ai/flux-2-pro): `fal-ai/flux-2-pro`, high quality text-to-image
+- [FLUX.1 dev](https://fal.ai/models/fal-ai/flux/dev): `fal-ai/flux/dev`, widely used general-purpose text-to-image
+- [FLUX.1 schnell](https://fal.ai/models/fal-ai/flux/schnell): `fal-ai/flux/schnell`, distilled for speed
+- [Z-Image Turbo](https://fal.ai/models/fal-ai/z-image/turbo): `fal-ai/z-image/turbo`, speed-oriented, with image-to-image variants
+
+## Image editing and upscaling
+
+- [FLUX.1 Kontext](https://fal.ai/models/fal-ai/flux-pro/kontext): `fal-ai/flux-pro/kontext`, instruction-based editing of an existing image
+- [Clarity Upscaler](https://fal.ai/models/fal-ai/clarity-upscaler): `fal-ai/clarity-upscaler`, image upscaling
+
+## Video generation
+
+- [Veo 3.1](https://fal.ai/models/fal-ai/veo3.1): `fal-ai/veo3.1`, Google's video model, generates synchronised audio with the video
+- [Kling 3 pro](https://fal.ai/models/fal-ai/kling-video/v3/pro/text-to-video): `fal-ai/kling-video/v3/pro/text-to-video`, cinematic quality, also generates synchronised audio and costs less per second than Veo
+- [Kling 3 pro image-to-video](https://fal.ai/models/fal-ai/kling-video/v3/pro/image-to-video): `fal-ai/kling-video/v3/pro/image-to-video`, animates a supplied image, audio optional
+- [Seedance 1 pro](https://fal.ai/models/fal-ai/bytedance/seedance/v1/pro/text-to-video): `fal-ai/bytedance/seedance/v1/pro/text-to-video`, ByteDance video model, also has lite and fast tiers
+
+## Audio and speech
+
+- [MiniMax Speech 02 HD](https://fal.ai/models/fal-ai/minimax/speech-02-hd): `fal-ai/minimax/speech-02-hd`, text to speech
+- [MiniMax Voice Clone](https://fal.ai/models/fal-ai/minimax/voice-clone): `fal-ai/minimax/voice-clone`, clone a voice from a sample
+- [Whisper](https://fal.ai/models/fal-ai/whisper): `fal-ai/whisper`, speech to text
+
+## Avatars, 3D, and training
+
+- [AI Avatar](https://fal.ai/models/fal-ai/ai-avatar): `fal-ai/ai-avatar`, lip-synced talking avatars from audio
+- [TRELLIS](https://fal.ai/models/fal-ai/trellis): `fal-ai/trellis`, image to 3D
+- [FLUX LoRA fast training](https://fal.ai/models/fal-ai/flux-lora-fast-training): `fal-ai/flux-lora-fast-training`, train a custom style, then call it as your own endpoint
+
+## Language models
+
+- [Any LLM](https://fal.ai/models/fal-ai/any-llm): `fal-ai/any-llm`, one endpoint fronting Claude, GPT, Gemini, and Llama
+
+## Deploying your own models
+
+- [Serverless overview](https://fal.ai/docs/documentation/serverless): What Serverless is and the paths for deploying new or existing code
+- [Serverless access](https://fal.ai/serverless/demo): How access is reviewed, with a live dashboard demo and the request button (the request form needs sign-in)
+- [Quickstart](https://fal.ai/docs/documentation/development/getting-started/quick-start): Install the CLI with `pip install fal`, test a Hello World app with `fal run`, and ship it with `fal deploy`
+- [Python app reference](https://fal.ai/docs/api-reference/python-sdk/fal-app-reference): The `fal.App` class, which declares an app's machine type and endpoints
+- [Deploy your first image generator](https://fal.ai/docs/documentation/development/getting-started/deploy-your-first-image-generator): A Stable Diffusion XL endpoint, end to end
+- [Deploy to production](https://fal.ai/docs/documentation/deployment/deploy-to-production): Persistent URLs, authentication, and automatic scaling
+- [Machine types](https://fal.ai/docs/documentation/deployment/machine-types): Available GPUs and CPUs and how to choose one
+- [Scaling parameters](https://fal.ai/docs/documentation/deployment/scale-your-application): Runners, concurrency, keep-alive, and cold starts
+- [Serverless pricing](https://fal.ai/docs/documentation/serverless/pricing): Per-second billing by runner state
+- [GPU pricing](https://fal.ai/pricing): Published hourly rates by GPU type
+- [Custom containers](https://fal.ai/docs/documentation/development/use-custom-container-image): Bring your own Docker image
+- [Migrate an existing Docker server](https://fal.ai/docs/documentation/development/migrate-external-docker-server): Deploy an existing Docker image or HTTP server with minimal changes
+- [Migrating to fal](https://fal.ai/docs/documentation/development/migrating-to-fal): Move an existing Docker server or another platform's deployment to fal
+- [Optimize cold starts](https://fal.ai/docs/documentation/serverless/optimizations/optimize-cold-starts): Cut startup time with caching and weight loading
+- [Serverless examples](https://fal.ai/docs/examples): Image, video, audio, multi-GPU, and real-time apps to deploy
+- [Serverless FAQ](https://fal.ai/docs/documentation/serverless/faq): Common questions about deploying on fal
+- [Compute](https://fal.ai/docs/documentation/compute): Dedicated GPU instances you SSH into, billed per hour, for training and long-running jobs
+- [fal Serverless](https://fal.ai/serverless): Product overview
+
+## Platform
+
+- [Inference platform](https://fal.ai/inference): How Model APIs and Serverless fit together for generative media and world models, with GPU prices and an FAQ
+- [Model gallery](https://fal.ai/explore): Browse the full catalog by category
+- [Dashboard](https://fal.ai/dashboard): API keys, usage, and billing
+- [Status](https://status.fal.ai): Platform status and incidents
+- [Support](https://fal.ai/docs/documentation/model-apis/support): How to get help
+
+## Optional
+
+- [Workflows](https://fal.ai/docs/documentation/model-apis/workflows): Chaining models into pipelines
+- [Enterprise](https://fal.ai/enterprise): Private deployments, SOC 2, and dedicated capacity
+- [Changelog](https://fal.ai/docs/changelog): Platform and model updates
+- [GitHub](https://github.com/fal-ai): Client libraries and examples
+- [Trust and security](https://trust.fal.ai/): Certifications and security posture

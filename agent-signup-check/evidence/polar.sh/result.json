@@ -1,0 +1,153 @@
+{
+ "site": "polar.sh",
+ "checkedAt": "2026-10-28T23:58:27.635Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 5,
+ "partial": 0,
+ "total": 7,
+ "whoActs": "nobody (anonymous)",
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://api.polar.sh/auth.md",
+   "heading": "# auth.md",
+   "registrationEndpoints": [
+    "https://api.polar.sh/v1/agent/identity"
+   ],
+   "mentions": [
+    "anonymous",
+    "identity_assertion"
+   ],
+   "status": "pass",
+   "reason": "auth.md documents agent registration (https://api.polar.sh/v1/agent/identity)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://api.polar.sh/.well-known/oauth-protected-resource",
+   "via": "www-authenticate",
+   "resource": "https://api.polar.sh",
+   "authorization_servers": [
+    "https://api.polar.sh"
+   ],
+   "status": "pass",
+   "reason": "Names 1 authorization server"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://api.polar.sh/.well-known/oauth-authorization-server",
+   "endpoint": "https://api.polar.sh/v1/agent/identity",
+   "identity_types_supported": [
+    "anonymous"
+   ],
+   "field": "identity_endpoint",
+   "issuer": "https://api.polar.sh",
+   "status": "pass",
+   "reason": "agent_auth names a registration endpoint (anonymous)"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.polar.sh/v1/products/",
+   "httpStatus": 401,
+   "www_authenticate": "Bearer realm=\"polar\", resource_metadata=\"https://api.polar.sh/.well-known/oauth-protected-resource\"",
+   "status": "pass",
+   "reason": "401 with a Bearer challenge that points to resource metadata (RFC 9728 section 5.1)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://polar.sh/docs/llms.txt",
+   "heading": "# Polar",
+   "bytes": 86695,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://polar.sh/auth.md",
+   "finalUrl": "https://polar.sh/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 203,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://polar.sh/llms.txt",
+   "finalUrl": "https://polar.sh/docs/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 411,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.polar.sh/v1/products/",
+   "finalUrl": "https://api.polar.sh/v1/products/",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 147,
+   "redirects": 0
+  },
+  {
+   "label": "prm (from 401)",
+   "url": "https://api.polar.sh/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.polar.sh/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 128,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://api.polar.sh/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.polar.sh/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 144,
+   "redirects": 0
+  },
+  {
+   "label": "auth.md (agent_auth.skill)",
+   "url": "https://api.polar.sh/auth.md",
+   "finalUrl": "https://api.polar.sh/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 275,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://polar.sh/.well-known/x402",
+   "finalUrl": "https://polar.sh/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 156,
+   "redirects": 0
+  }
+ ]
+}

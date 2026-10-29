@@ -1,0 +1,402 @@
+GET https://api.cloudinary.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:38.373Z
+final-url: https://api.cloudinary.com/.well-known/oauth-protected-resource
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:58:37 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+vary: Accept-Encoding, Accept
+status: 404 Not Found
+cache-control: no-cache
+referrer-policy: strict-origin-when-cross-origin
+x-permitted-cross-domain-policies: none
+x-xss-protection: 1; mode=block
+x-request-id: 0d84e86e8fb6262133af012370439bf0
+link: </stylesheets/g/cloudinary_public.css>; rel=preload; as=style; nopush,</javascripts/g/cloudinary_public.js>; rel=preload; as=script; nopush
+server: cloudinary
+content-encoding: br
+
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='https://www.w3.org/1999/xhtml'><head>
+<meta charset='utf-8'>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>Cloudinary - Page not found</title>
+<link href='//fonts.googleapis.com/css?family=Roboto:500,400italic,300,700,500italic,400&amp;display=swap' rel='stylesheet'>
+<link href='//fonts.googleapis.com/css?family=Montserrat:300,500,700&amp;display=swap' rel='stylesheet'>
+<link href='//fonts.googleapis.com/css?family=Roboto+Mono:300,400&amp;display=swap' rel='stylesheet'>
+<link href='https://plus.google.com/+Cloudinary' rel='publisher'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_57/console/favicon.png' rel='apple-touch-icon' sizes='57x57'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_114/console/favicon.png' rel='apple-touch-icon' sizes='114x114'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_72/console/favicon.png' rel='apple-touch-icon' sizes='72x72'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_144/console/favicon.png' rel='apple-touch-icon' sizes='144x144'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_60/console/favicon.png' rel='apple-touch-icon' sizes='60x60'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_120/console/favicon.png' rel='apple-touch-icon' sizes='120x120'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_76/console/favicon.png' rel='apple-touch-icon' sizes='76x76'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_152/console/favicon.png' rel='apple-touch-icon' sizes='152x152'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_180/console/favicon.png' rel='apple-touch-icon' sizes='180x180'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_192/console/favicon.png' rel='icon' sizes='192x192' type='image/png'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_160/console/favicon.png' rel='icon' sizes='160x160' type='image/png'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_96/console/favicon.png' rel='icon' sizes='96x96' type='image/png'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_16/console/favicon.png' rel='icon' sizes='16x16' type='image/png'>
+<link href='https://res.cloudinary.com/prod/image/upload/w_32/console/favicon.png' rel='icon' sizes='32x32' type='image/png'>
+<meta content='#2b5797' name='msapplication-TileColor'>
+<meta content='https://res.cloudinary.com/prod/image/upload/w_144/console/favicon.png' name='msapplication-TileImage'>
+<meta content='DPR' http-equiv='Accept-CH'>
+<link rel="stylesheet" href="/stylesheets/g/cloudinary_public.css" />
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="[redacted]" />
+
+<script src='//cdn.split.io/sdk/split-10.21.1.min.js'></script>
+</head>
+<body class=''><div class='' id='wrapper'><header class='new-header new-fixed-position new' id='header'>
+<div id='header-inner'>
+<div class='header-frame'>
+<nav class='navbar-default'>
+<div class='container-fluid'>
+<div class='navbar-header'>
+<div class='logo'>
+<a href='https://cloudinary.com/'>
+<img width="156" fetch_formant="auto" alt="Cloudinary Logo" class="dark-logo ls-is-cached lazyloaded" src="https://cloudinary-res.cloudinary.com/image/upload/c_scale,dpr_2.0,q_auto,w_156/cloudinary_logo_for_white_bg.svg" />
+</a>
+</div>
+<button class='navbar-toggle collapsed' data-target='#site-main-nav' data-toggle='collapse' type='button'>
+<span class='navbar-toggler-icon'>
+<span id='nav-icon'>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+</span>
+</span>
+</button>
+</div>
+<div class='collapse navbar-collapse' id='site-main-nav'>
+<div class='header-section'>
+<div class='menu-main-menu-container' id='mainMenu'>
+<ul class='navbar-nav' id='menu-main-menu'>
+<li class='menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children nav-item dropdown first-level'>
+<a class='nav-link dropdown-toggle' href='#'>
+Products
+<span class='sub'></span>
+</a>
+<div class='dropdown-menu'>
+<div class='inner 0'>
+<div class='dropdown-column has-children'>
+<ul class='link-list'>
+<li class='link-list-item has-description'>
+<a data-ga-action='navigate' data-ga-category='website product tray menu' data-ga-label='Programmable Media' href='/products/programmable_media'>
+Programmable Media
+<span class='sub'>Powerful image and video APIs for editing, hosting, and global content distribution for Websites and Cloud Apps.</span>
+</a>
+</li>
+<li class='link-list-item has-description'>
+<a data-ga-action='navigate' data-ga-category='website product tray menu' data-ga-label='Dynamic Asset Management' href='/products/dynamic_asset_management'>
+Dynamic Asset Management
+<span class='sub'>A single source of truth for managing the entire digital asset lifecycle.</span>
+</a>
+</li>
+</ul>
+</div>
+<div class='dropdown-column'>
+<a class='dropdown-item has-description' data-ga-action='navigate' data-ga-category='website product tray menu' data-ga-label='Get Started' href='/developers'>
+Get Started
+<span class='sub'>Start using Cloudinary’s SDKs, Widgets and Integrations to develop digital media assets.</span>
+</a>
+<div class='description'>
+<ul class='new-menu'>
+<li>
+<a data-ga-action='navigate' data-ga-category='website product tray menu' data-ga-label='Documentation' href='/documentation'>Documentation</a>
+</li>
+<li>
+<a data-ga-action='navigate' data-ga-category='website product tray menu' data-ga-label='SDK' href='/documentation/cloudinary_sdks'>SDK</a>
+</li>
+<li>
+<a data-ga-action='navigate' data-ga-category='website product tray menu' data-ga-label='Add-Ons' href='/addons'>Add-Ons</a>
+</li>
+<li>
+<a data-ga-action='navigate' data-ga-category='website product tray menu' data-ga-label='Demos' href='/demos'>Demos</a>
+</li>
+</ul>
+</div>
+</div>
+<div class='featured-content'>
+<span class='title'>Get Started</span>
+<div class='description'>
+<p>
+Get started using Cloudinary free as long as you need!
+<a data-ga-action='navigate' data-ga-category='website product tray menu' data-ga-label='sign up for free' href='https://console.cloudinary.com/users/register/free'>sign up for free →</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li class='menu-item menu-item-type-custom menu-item-object-custom current-menu-ancestor current-menu-parent menu-item-has-children nav-item dropdown first-level'>
+<a class='nav-link dropdown-toggle' href='#'>
+Solutions
+<span class='sub'></span>
+</a>
+<div class='dropdown-menu'>
+<div class='inner 0'>
+<div class='dropdown-column has-children'>
+<ul class='link-list'>
+<li class='link-list-item heading'>
+<div class='dropdown-header'>
+Featured Solution
+<span class='sub'></span>
+</div>
+</li>
+<a class='dropdown-item has-description active' data-ga-action='navigate' data-ga-category='website solutions tray menu' data-ga-label='Video API' href='/video_api' style='padding: 5px 24px 10px 24px;'>
+Video API
+<span class='sub'>Leverage innovative AI technology for engaging video experiences.</span>
+</a>
+</ul>
+<ul class='link-list'>
+<li class='link-list-item heading' style='margin-top: 0px'>
+<div class='dropdown-header'>
+By Industry
+<span class='sub'></span>
+</div>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website solutions tray menu' data-ga-label='E-commerce and Retail' href='/solutions/ecommerce'>
+E-commerce and Retail
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website solutions tray menu' data-ga-label='Media &amp; Entertainment' href='/solutions/industries/media_entertainment'>
+Media & Entertainment
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website solutions tray menu' data-ga-label='Travel &amp; Hospitality' href='/solutions/industries/travel_hospitality'>
+Travel & Hospitality
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website solutions tray menu' data-ga-label='Non Profits' href='/solutions/industries/cloudinary-for-nonprofits'>
+Non Profits
+<span class='sub'></span>
+</a>
+</li>
+</ul>
+</div>
+<div class='dropdown-column'>
+<div class='dropdown-header'>
+Why Cloudinary?
+<span class='sub'></span>
+</div>
+<div class='description'>
+<p>Check out how media-savvy companies are taking their brands to the next digital level with Cloudinary.</p>
+<p>
+<a data-ga-action='navigate' data-ga-category='website solutions tray menu' data-ga-label='See Cloudinary in Action' href='/solutions/why_cloudinary'>See Cloudinary in Action →</a>
+</p>
+<p>
+<span class='dropdown-header' style='margin: 0 0 -5px 0; padding: 40px 0 0 0'>Featured Customer</span>
+<br>
+<img alt='Guess logo' class='lazyloaded' src='https://cloudinary-res.cloudinary.com/images/w_150,q_auto,f_auto,dpr_2/v1614227312/guess-blk/guess-blk.png' style='max-width: 150px'>
+</p>
+<p>
+<a data-ga-action='navigate' data-ga-category='website solutions tray menu' data-ga-label='Read the Customer Story' href='https://res.cloudinary.com/cloudinary-marketing/image/upload/v1608005347/creative_staging/cloudinary_internal/Collateral/Case%20Studies/Guess/cloudinary_case_study_GUESS_1220_fnl.pdf' rel='noopener' target='_blank'>Read the Customer Story →</a>
+</p>
+</div>
+</div>
+<div class='featured-content'>
+<span class='title'>View Customer Profiles</span>
+<div class='description'>
+<p>
+See how other companies are using Cloudinary
+<a data-ga-action='navigate' data-ga-category='website solutions tray menu' data-ga-label='view customer profiles' href='/customers'>view customer profiles →</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li class='menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children nav-item dropdown first-level'>
+<a class='nav-link dropdown-toggle' href='#'>
+Resources
+<span class='sub'></span>
+</a>
+<div class='dropdown-menu'>
+<div class='inner 0'>
+<div class='dropdown-column has-children'>
+<ul class='link-list'>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website resources tray menu' data-ga-label='Blog' href='/blog'>
+Blog
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website resources tray menu' data-ga-label='Podcasts' href='/podcasts'>
+Podcasts
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website resources tray menu' data-ga-label='Demos' href='/demos'>
+Demos
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website resources tray menu' data-ga-label='Documentation' href='/documentation'>
+Documentation
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website resources tray menu' data-ga-label='Education and Training' href='https://training.cloudinary.com/'>
+Education and Training
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website resources tray menu' data-ga-label='Technical Support' href='https://support.cloudinary.com/'>
+Technical Support
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website resources tray menu' data-ga-label='Knowledge Base' href='https://support.cloudinary.com/'>
+Knowledge Base
+<span class='sub'></span>
+</a>
+</li>
+</ul>
+</div>
+<div class='dropdown-column'>
+<div class='dropdown-header'>
+Resource Library
+<span class='sub'></span>
+</div>
+<div class='description'>
+<p>
+<img width="151" height="90" fetch_formant="auto" alt="Bleacher Report" class="ls-is-cached lazyloaded" src="https://cloudinary-res.cloudinary.com/image/upload/q_auto/v1601228032/website/refresh/global/cloudinary_web_navigation_resources.svg" />
+</p>
+<p>A collection of guides, e-books, webinars, case studies and more.</p>
+<p>
+<a data-ga-action='navigate' data-ga-category='website resources tray menu' data-ga-label='View the Resource Library' href='/resources'>View the Resource Library</a>
+</p>
+</div>
+</div>
+<div class='featured-content'>
+<span class='title'>Read the DAM Guide</span>
+<div class='description'>
+<p>
+The Definitive Resource for Managing Digital Assets
+<a data-ga-action='navigate' data-ga-category='website resources tray menu' data-ga-label='read the dam guide' href='/dam-guide/dam'>read the dam guide →</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li class='menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children nav-item dropdown first-level'>
+<a class='nav-link dropdown-toggle' href='#'>
+Company
+<span class='sub'></span>
+</a>
+<div class='dropdown-menu'>
+<div class='inner 0'>
+<div class='dropdown-column has-children'>
+<ul class='link-list'>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website company tray menu' data-ga-label='About Us' href='/about'>
+About Us
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website company tray menu' data-ga-label='Customers' href='/customers'>
+Customers
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website company tray menu' data-ga-label='Meet the Team' href='/team'>
+Meet the Team
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website company tray menu' data-ga-label='Careers' href='/jobs'>
+Careers
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website company tray menu' data-ga-label='Newsroom' href='/newsroom'>
+Newsroom
+<span class='sub'></span>
+</a>
+</li>
+<li class='link-list-item'>
+<a data-ga-action='navigate' data-ga-category='website company tray menu' data-ga-label='Contact Us' href='/contact'>
+Contact Us
+<span class='sub'></span>
+</a>
+</li>
+</ul>
+</div>
+<div class='dropdown-column'>
+<div class='dropdown-header'>
+Upcoming Events
+<span class='sub'></span>
+</div>
+<div class='description'>
+<p>
+<img width="240" height="70" fetch_formant="auto" alt="Cloudinary Events" class="lazyload" src="https://cloudinary-marketing-res.cloudinary.com/image/upload/q_auto/v1664908396/all_events_2x.png" />
+</p>
+<p>
+<a data-ga-action='navigate' data-ga-category='website company tray menu' data-ga-label='See all events' href='/events'>See all events</a>
+</p>
+</div>
+</div>
+<div class='featured-content'>
+<span class='title'>Get the Report</span>
+<div class='description'>
+<p>
+Images and videos are the story — our 3rd annual report
+<a data-ga-action='navigate' data-ga-category='website company tray menu' data-ga-label='get the report' href='/state-of-visual-media-report'>get the report →</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li class='menu-item menu-item-type-custom menu-item-object-custom nav-item first-level'>
+<a class='nav-link' data-ga-action='navigate' data-ga-category='website primary navigation' data-ga-label='Pricing' href='/pricing'>
+Pricing
+<span class='sub'></span>
+</a>
+</li>
+</ul>
+</div>
+<div class='header-side-nav'>
+<div class='header-side-nav-wrapper'>
+<div class='search-block'>
+<a class='search-opener' data-ga-action='search' data-ga-category='website primary navigation' data-ga-label='used google search api' href='#'>
+<svg aria-hidden='true' class='svg-inline--fa fa-search fa-w-16' data-icon='search' focusable='false' height='16' role='img' viewBox='0 0 512 512' width='16' xmlns='http://www.w3.org/2000/svg'>
+<path d='M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z' fill='currentColor'></path>
+</svg>
+</a>
+<div class='search_box'>
+<div class="gcse-search"></div>
+</div>
+</div>
+<div class='menu-top-right-menu-container'>
+<ul class='new-menu' id='top-right-menu'>
+<li class='menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children has-icon hide-title'>
+<a href='#'>
+<img width="18" fetch_formant="auto" class="nav-icon lazyloaded" src="https://cloudinary-res.cloudinary.com/image/upload/c_scale,dpr_2.0,q_auto,w_18/v1602683372/website/refresh/global/language_icon.png" />
+<span>L
+
+[body trimmed for publication: kept 16384 of 147129 characters; sha256 of the full body 04a47e855aa1fd31a2bf79b38a74be42a55d20f4dfac2dfc087f6c31ba4b0422]

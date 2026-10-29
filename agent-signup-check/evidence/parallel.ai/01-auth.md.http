@@ -1,0 +1,214 @@
+GET https://parallel.ai/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:22.665Z
+final-url: https://parallel.ai/auth.md
+
+HTTP 200
+access-control-allow-headers: Content-Type, Authorization, Accept
+access-control-allow-methods: GET, OPTIONS
+access-control-allow-origin: *
+access-control-max-age: 86400
+age: 0
+cache-control: no-store
+content-encoding: br
+content-security-policy: frame-ancestors 'self' https://parallel-v2.sanity.studio https://sanity.io https://www.sanity.io
+content-type: text/markdown; charset=utf-8
+date: Wed, 28 Oct 2026 23:58:18 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: Origin, Access-Control-Request-Headers
+x-matched-path: /auth.md
+x-vercel-cache: MISS
+x-vercel-id: pdx1:pdx1:pdx1::iad1::cv5n8-1793231898312-fb47e7a42328
+connection: close
+transfer-encoding: chunked
+
+# Agent Authentication
+
+This service supports user-claimed agent identities (`service_auth`).
+Anonymous registrations and provider identity assertion (ID-JAG) are not
+yet supported.
+
+An agent authenticates in two levels:
+
+1. **Access token** (this flow): a short-lived bearer token that authorizes the
+   **Account API** at `https://api.parallel.ai/account/service/v1/*` — manage apps, API keys,
+   and balance.
+2. **API key**: minted via the Account API (`keys:create`), used as
+   `x-api-key` to call the **product API** at `https://api.parallel.ai/v1/*`
+   (Search, Task, etc.). See the worked example at the end.
+
+## Scopes
+
+Request only the scopes the agent needs (space-delimited in `scope`). The user
+sees and approves them during the claim. Supported scopes:
+
+- `apps:read` — List your apps — `GET /service/v1/apps`. (An app is a container for API keys.)
+- `apps:create` — Create an app — `POST /service/v1/apps`.
+- `apps:delete` — Delete an app — `DELETE /service/v1/apps/{app_id}`.
+- `keys:read` — List API keys.
+- `keys:create` — Mint an API key under an app — `POST /service/v1/apps/{app_id}/keys`. This key (x-api-key) is what calls the product API (Search, Task, etc.).
+- `keys:delete` — Delete an API key — `DELETE /service/v1/apps/{app_id}/keys/{api_key_id}`.
+- `balance:read` — Read the org's prepaid credit balance — `GET /service/v1/balance`.
+- `balance:add` — Charge the org's default card and top up balance — `POST /service/v1/balance/add`.
+- `usage:read` — Reserved scope.
+- `tenants:manage` — Reserved scope.
+
+## 1. Register an identity
+
+```
+POST https://platform.parallel.ai/agent/identity
+Content-Type: application/json
+
+{
+  "type": "service_auth",
+  "client_id": "your-client-id",
+  "client_name": "Your App",
+  "scope": "apps:read apps:create apps:delete keys:read keys:create keys:delete balance:read balance:add usage:read tenants:manage",
+  "login_hint": "user@example.com"
+}
+```
+
+Required fields: `client_id`, `client_name` (a human-readable name shown to
+the user during the claim), `scope` (from the list above — request only what
+you need), and `login_hint` (the email of the user expected to claim this
+agent — only that user can complete the claim).
+
+The response contains:
+
+- `registration_id` — your registration handle
+- `claim_token` — secret you poll the token endpoint with (reuse it across
+  polls; it is consumed once, on the first successful token mint)
+- `claim.user_code` — 6-digit code the user enters after signing in
+- `claim.verification_uri` — browser URL for the user to open
+- `claim.interval` — minimum seconds between token polls
+
+No identity assertion is returned yet — the registration must first be
+claimed by a user.
+
+## 2. User claims the registration
+
+Direct the user to `claim.verification_uri`. They sign in, review the
+requested scopes, and enter `claim.user_code`.
+
+If the code expires before the user completes the ceremony (or too many
+wrong codes are entered), simply register again at `/agent/identity` to
+start a fresh ceremony.
+
+## 3. Poll for tokens (claim grant)
+
+```
+POST https://platform.parallel.ai/agent/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:workos:agent-auth:grant-type:claim&claim_token=ct_...
+```
+
+While the user has not finished, the response is
+`{"error": "authorization_pending"}` — keep polling at `claim.interval`.
+On success you receive:
+
+- `access_token` — short-lived bearer token for Account API calls
+- `identity_assertion` — signed JWT proving the claimed identity;
+  reusable until expiry or revocation (store it securely)
+- `assertion_expires_at`
+- `authorization_expires_in` — seconds until the whole authorization ends,
+  regardless of refreshing (the absolute ceiling)
+
+The claim grant is single-use.
+
+## 4. Use the access token
+
+Send the access token as a bearer to the Account API:
+
+```
+GET https://api.parallel.ai/account/service/v1/balance
+Authorization: Bearer <access_token>
+```
+
+The access token is short-lived — when it expires, refresh (step 5) rather than
+re-running the claim. Use it for anything under `https://api.parallel.ai/account/service/v1/*`
+(see the reference below). To call the **product API** (Search/Task), first mint
+an API key (worked example at the end).
+
+## 5. Refresh (jwt-bearer grant)
+
+```
+POST https://platform.parallel.ai/agent/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=<identity_assertion>
+```
+
+Returns a fresh `access_token`. Keep re-exchanging the same
+`identity_assertion` until it expires or is revoked.
+
+## 6. Revoke
+
+```
+POST https://platform.parallel.ai/agent/revoke
+Content-Type: application/x-www-form-urlencoded
+
+token=<identity_assertion or claim_token>
+```
+
+Revokes the backing credential; existing assertions stop working.
+
+## Account API reference
+
+Base: `https://api.parallel.ai/account` · Auth: `Authorization: Bearer <access_token>`.
+
+### GET /service/v1/balance  (scope: balance:read)
+Response: `{ org_id, credit_balance_cents, pending_debit_balance_cents, will_invoice }`.
+`will_invoice: true` means the org is invoice-billed (postpaid) and cannot add
+balance via this API; its `*_cents` fields are then always 0.
+
+### POST /service/v1/balance/add  (scope: balance:add)
+Charges the org's **default** payment method (no payment method id is accepted).
+Body: `{ "amount_cents": <1..10000>, "idempotency_key": "<8..128 chars, high-entropy, e.g. a UUID>" }`.
+Response: same shape as GET /service/v1/balance. The idempotency key dedupes the
+charge server-side for ≥24h.
+
+### GET /service/v1/apps  (scope: apps:read)
+Response: `{ "apps": [ { app_id, app_name, org_id, org_name } ] }`.
+
+### POST /service/v1/apps  (scope: apps:create)
+Body: `{ "app_name": "<name>" }`. Response: `{ "app_id": "<uuid>" }`.
+
+### POST /service/v1/apps/{app_id}/keys  (scope: keys:create)
+Body: `{ "api_key_name": "<name>" }`.
+Response: `{ api_key_id, api_key_name, app_id, app_name, created_by_user_id,
+created_by_user_email, display_value, created_at }`.
+The raw key (`display_value`) is returned once — store it; it's your
+`x-api-key` for the product API.
+
+## Example: run a search
+
+The Account API manages resources; the **product API** (`https://api.parallel.ai`) runs
+the actual work and is authenticated with an `x-api-key` (not the bearer token).
+So: create an app, mint a key under it, then call Search with that key.
+
+```
+# 1. Create an app (scope apps:create)
+curl -X POST https://api.parallel.ai/account/service/v1/apps \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"app_name": "my-agent-app"}'
+# -> { "app_id": "<app_id>" }
+
+# 2. Mint an API key under that app (scope keys:create)
+curl -X POST https://api.parallel.ai/account/service/v1/apps/<app_id>/keys \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"api_key_name": "search-key"}'
+# -> { ..., "display_value": "<x-api-key>" }   # raw key, shown once
+
+# 3. Run a search on the product API with that key (x-api-key, NOT the bearer)
+curl -X POST https://api.parallel.ai/v1/search \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: <x-api-key>" \
+  -d '{
+    "objective": "Find latest information about Parallel Web Systems. Focus on new product releases, benchmarks, or company announcements.",
+    "search_queries": ["Parallel Web Systems products", "Parallel Web Systems announcements"]
+  }'
+```

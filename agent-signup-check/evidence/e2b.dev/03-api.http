@@ -1,0 +1,18 @@
+GET https://api.e2b.dev/sandboxes
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:22.644Z
+final-url: https://api.e2b.dev/sandboxes
+
+HTTP 401
+content-type: application/json; charset=utf-8
+vary: Origin
+date: Wed, 28 Oct 2026 23:57:20 GMT
+content-length: 56
+x-ratelimit-limit: 60000
+x-ratelimit-remaining: 60000
+x-ratelimit-reset: 0
+via: 1.1 google
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+connection: close
+
+{"code":401,"message":"authorization header is missing"}

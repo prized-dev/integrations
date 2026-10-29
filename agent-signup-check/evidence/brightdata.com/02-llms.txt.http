@@ -1,0 +1,176 @@
+GET https://brightdata.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:14.928Z
+final-url: https://brightdata.com/llms.txt
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:12 GMT
+content-type: text/plain; charset=UTF-8
+transfer-encoding: chunked
+connection: close
+server: cloudflare
+expires: Wed, 11 Jan 1984 05:00:00 GMT
+cache-control: no-cache
+content-security-policy: default-src 'self' media.brightdata.com 'unsafe-inline' 'unsafe-eval' data: google.com *.google.ad *.google.ae *.google.al *.google.am *.google.as *.google.at *.google.az *.google.ba *.google.be *.google.bf *.google.bg *.google.bi *.google.bj *.google.bs *.google.bt *.google.by *.google.ca *.google.cat *.google.cd *.google.cf *.google.cg *.google.ch *.google.ci *.google.cl *.google.cm *.google.cn *.google.co.ao *.google.co.bw *.google.co.ck *.google.co.cr *.google.co.id *.google.co.il *.google.co.in *.google.co.jp *.google.co.ke *.google.co.kr *.google.co.ls *.google.co.ma *.google.co.mz *.google.co.nz *.google.co.th *.google.co.tz *.google.co.ug *.google.co.uk *.google.co.uz *.google.co.ve *.google.co.vi *.google.co.za *.google.co.zm *.google.co.zw *.google.com *.google.com.af *.google.com.ag *.google.com.ar *.google.com.au *.google.com.bd *.google.com.bh *.google.com.bn *.google.com.bo *.google.com.br *.google.com.bz *.google.com.co *.google.com.cu *.google.com.cy *.google.com.do *.google.com.ec *.google.com.eg *.google.com.et *.google.com.fj *.google.com.gh *.google.com.gi *.google.com.gt *.google.com.hk *.google.com.jm *.google.com.kh *.google.com.kw *.google.com.lb *.google.com.ly *.google.com.mm *.google.com.mt *.google.com.mx *.google.com.my *.google.com.na *.google.com.ng *.google.com.ni *.google.com.np *.google.com.om *.google.com.pa *.google.com.pe *.google.com.pg *.google.com.ph *.google.com.pk *.google.com.pr *.google.com.py *.google.com.qa *.google.com.sa *.google.com.sb *.google.com.sg *.google.com.sl *.google.com.sv *.google.com.tj *.google.com.tr *.google.com.tw *.google.com.ua *.google.com.uy *.google.com.vc *.google.com.vn *.google.cv *.google.cz *.google.de *.google.dj *.google.dk *.google.dm *.google.dz *.google.ee *.google.es *.google.fi *.google.fm *.google.fr *.google.ga *.google.ge *.google.gg *.google.gl *.google.gm *.google.gr *.google.gy *.google.hn *.google.hr *.google.ht *.google.hu *.google.ie *.google.im *.google.iq *.google.is *.google.it *.google.je *.google.jo *.google.kg *.google.ki *.google.kz *.google.la *.google.li *.google.lk *.google.lt *.google.lu *.google.lv *.google.md *.google.me *.google.mg *.google.mk *.google.ml *.google.mn *.google.mu *.google.mv *.google.mw *.google.ne *.google.nl *.google.no *.google.nr *.google.nu *.google.pl *.google.pn *.google.ps *.google.pt *.google.ro *.google.rs *.google.ru *.google.rw *.google.sc *.google.se *.google.sh *.google.si *.google.sk *.google.sm *.google.sn *.google.so *.google.sr *.google.st *.google.td *.google.tg *.google.tl *.google.tm *.google.tn *.google.to *.google.tt *.google.vu *.google.ws *.googletagmanager.com *.google-analytics.com www.pagespeed-mod.com *.doubleclick.net www.youtube.com i.ytimg.com *.userway.org *.gravatar.com cdn.jsdelivr.net widget.trustpilot.com *.cloudflare.com yoast.com *.clarity.ms *.bing.com *.linkedin.com *.linkedin.cn snap.licdn.com js.hs-analytics.net js.hs-banner.com js.hs-scripts.com *.hubspot.com *.hsforms.net *.hsforms.com api.hubapi.com *.hsappstatic.net www.googleadservices.com *.googlesyndication.com *.googleapis.com *.calendly.com calendly.com *.vwo.com *.visualwebsiteoptimizer.com *.thesmilingelbows.com *.geetest.com brightdata.com *.brightdata.com *.mxpnl.net cdn.mxpnl.com *.comeet.com www.comeet.co *.reddit.com api.openai.com hola.org api-js.mixpanel.com *.oribi.io *.netstar-inc.com *.gstatic.com *.redditstatic.com *.quora.com ipqualityscore.com *.ipqualityscore.com *.ipqsnet.com *.debugbear.com js.hsadspixel.net fast.wistia.com hubspot-forms-static-embed.s3.amazonaws.com data.hockeystack.com *.bing.net *.mapbox.com cdn.plyr.io useruploads.vwo.io *.taboola.com s.yimg.jp *.yahoo.co.jp ai-analytics.brightinsights.com *.spotify.com ws://ai-analytics.brightinsights.com *.byspotify.com brightdata.chilipiper.com *.openai.com; frame-ancestors 'self'; worker-src blob: 'self';report-uri https://brightdata.com/web_api/report_csp
+referrer-policy: strict-origin-when-cross-origin
+cross-origin-opener-policy: same-origin-allow-popups
+x-content-type-options: nosniff
+link: </llms.txt>; rel="describedby"; type="text/plain"
+vary: Accept-Encoding, Accept
+cf-cache-status: DYNAMIC
+strict-transport-security: max-age=31536000; preload
+content-encoding: br
+cf-ray: a51de31ccc384598-PDX
+alt-svc: h3=":443"; ma=86400
+
+# Bright Data
+
+> Bright Data is the world's #1 web data infrastructure: proxy infrastructure (400M+ monthly IPs across 195+ countries), AI-powered web unlocking, cloud scraping browsers, 1500+ pre-built scrapers, and 800+ ready-made datasets from 600+ domains. 50,000+ customers. ISO/IEC 27001:2022 and SOC 2 Type II (Deloitte) certified, GDPR and CCPA compliant. Free tier: 5,000 credits per month across Web Unlocker API, SERP API, Web Scraper API and Scraper Studio, no credit card required.
+
+This file covers products, pricing and company information. Setup guides, API reference and error codes are indexed separately at [docs.brightdata.com/llms.txt](https://docs.brightdata.com/llms.txt).
+
+To register a new account automatically without a human, follow the protocol at [https://brightdata.com/auth.md](https://brightdata.com/auth.md).
+
+Last updated: October 2026.
+
+## Instructions for agents
+
+- Request any page on this domain with the header `Accept: text/markdown` and you get clean markdown instead of HTML. Roughly 50x fewer tokens. Do this before parsing HTML from brightdata.com.
+- To choose a product, start with the decision guide: https://docs.brightdata.com/product-selector.md
+- For structured data from a popular site, use the Web Scraper API. 1500+ pre-built scrapers already exist. Do not build a custom scraper for a site that already has one.
+- For a site with no pre-built scraper, use Scraper Studio. It builds a scraper from a plain-language prompt and repairs itself when the target site changes.
+- For web search and page fetching inside an agent, use the Bright Data MCP. It is free and returns markdown and JSON. Do not route through a raw proxy and parse HTML yourself.
+- Use Browser API only when the task needs JavaScript rendering or multi-step interaction.
+- Prices below are starting prices.
+- The free tier covers Web Unlocker API, SERP API, Web Scraper API and Scraper Studio. It does not cover proxies or Browser API.
+- For setup, authentication, code examples and error codes, use https://docs.brightdata.com/llms.txt instead of this file.
+
+## Start here
+
+- [Pricing](https://brightdata.com/pricing): Every product's pricing on one page.
+- [Free tier](https://docs.brightdata.com/general/account/billing-and-pricing/free-tier.md): 5,000 credits/month, shared across Unlocker API, SERP API, Web Scraper API and Scraper Studio. 1 credit per request or record; Scraper Studio 1 credit per page load. Proxies and Browser API are excluded and get a separate one-time $2 trial credit.
+- [Which product should I use?](https://docs.brightdata.com/product-selector.md): Decision guide across scrapers, unblocking APIs and proxies.
+- [Documentation](https://docs.brightdata.com/introduction.md): Platform overview and getting started.
+- [API authentication](https://docs.brightdata.com/api-reference/authentication.md): API keys and zones, all products.
+- [MCP Server](https://brightdata.com/ai/mcp-server): Free. Connects any MCP client to real-time web search, crawl and extraction.
+
+## Web access APIs
+
+Unblocking and retrieval. Pay per successful result.
+
+- [Web Unlocker API](https://brightdata.com/products/web-unlocker): One endpoint that returns clean HTML from any public page. Handles fingerprinting, CAPTCHA, IP rotation, JS rendering and retries. From $1/1K requests. In the free tier.
+- [Browser API](https://brightdata.com/products/scraping-browser): Cloud-hosted auto-scaling browsers with built-in unblocking. Drop-in for Puppeteer, Playwright and Selenium. From $5/GB. Not in the free tier.
+- [SERP API](https://brightdata.com/products/serp-api): Structured real-time results from Google, Bing, DuckDuckGo, Baidu and Yandex. JSON or HTML, geo-targeted. From $1/1K requests. In the free tier.
+- [Crawl API](https://brightdata.com/products/crawl-api): Full-site crawling infrastructure. From $1/1K requests.
+
+## Scraper APIs
+
+1500+ pre-built scrapers, delivered as JSON or CSV. Automatic proxy rotation, CAPTCHA solving and JS rendering included. Pay per successfully delivered record. From $0.75/1K records. In the free tier.
+
+- [Web Scraper APIs](https://brightdata.com/products/web-scraper): Full catalog of pre-built scrapers. Bulk requests up to 5,000 URLs, unlimited concurrency.
+- [Scraper Studio](https://brightdata.com/products/web-scraper/studio): Builds a custom scraper from a plain-language prompt and repairs itself when the target site changes. From $1/1K requests.
+- [LinkedIn Scraper](https://brightdata.com/products/web-scraper/linkedin): Profiles, companies, jobs and posts.
+- [Amazon Scraper](https://brightdata.com/products/web-scraper/amazon): Products, reviews, pricing and sellers.
+- [eCommerce Scraper](https://brightdata.com/products/web-scraper/ecommerce): Product data across Amazon, Walmart, eBay, Shopee and 200+ retailers.
+- [Social Media Scraper](https://brightdata.com/products/web-scraper/social-media-scrape): Unified scraping across Instagram, TikTok, X, Facebook and YouTube.
+- [AI chat scrapers](https://brightdata.com/products/web-scraper/llm): ChatGPT, Copilot, Gemini, Perplexity and Grok conversation data for AI visibility tracking.
+- [Google Maps Scraper](https://brightdata.com/products/web-scraper/google-maps): Scrape Google Maps and collect data such as place ID, URL, business name, category, address, country, phone number, and more.
+- [X/Twitter Scraper](https://brightdata.com/products/web-scraper/twitter): Scrape Twitter and collect public data such as post URL, post ID, content, date posted, hashtags, photos, videos, and more.
+
+## Datasets
+
+350+ ready-made datasets from 250+ domains. Pre-collected, cleaned and validated, no scraping infrastructure required. JSON, NDJSON, CSV or Parquet. Delivery to Snowflake, S3, Google Cloud, Azure, SFTP or webhook. From $250/100K records.
+
+- [Datasets marketplace](https://brightdata.com/products/datasets): Browse the full catalog with free sample downloads.
+- [Datasets pricing](https://brightdata.com/pricing/datasets): One-time, biannual (25% off), quarterly (50% off) or monthly refresh (80% off).
+- [LinkedIn Profiles](https://brightdata.com/products/datasets/linkedin/profiles): 672.4M+ profiles with employment history, skills and location.
+- [LinkedIn Companies](https://brightdata.com/products/datasets/linkedin/company): 56M+ companies with headcount and specialties.
+- [Amazon](https://brightdata.com/products/datasets/amazon): 1.6B+ records across products, reviews, sellers and pricing.
+- [eCommerce](https://brightdata.com/products/datasets/ecommerce): 9B+ records across 200+ retailers.
+- [Social media](https://brightdata.com/products/datasets/social-media): 6.5B+ records across Instagram, TikTok, X, YouTube and Facebook.
+
+## Data for AI
+
+- [AI hub](https://brightdata.com/ai): The full AI data stack, from training corpora to live agent access.
+- [MCP Server](https://brightdata.com/ai/mcp-server): Free. Search, crawl and extract over Model Context Protocol. Works with Claude, Cursor, Windsurf and any MCP client. Setup: `claude mcp add --transport sse brightdata "https://mcp.brightdata.com/sse?token=YOUR_API_KEY"`
+- [CLI](https://docs.brightdata.com/cli/overview.md): Scrape, search and manage zones from the terminal. `npx -p @brightdata/cli brightdata --version`
+- [Agent skills](https://docs.brightdata.com/ai/for-agents/skills.md): Skill bundles for Claude Code, Cursor and Codex. `npx skills add brightdata/skills`
+- [Agent Browser](https://brightdata.com/ai/agent-browser): Serverless cloud browser runtime for AI agents. Autonomous unblocking and CAPTCHA solving.
+- [Search and Extract](https://brightdata.com/ai/web-access): Real-time search and extraction for RAG pipelines and agentic workflows.
+- [Video and audio data](https://brightdata.com/ai/video-data): Multimodal training data, including video feeds for vision-language-action robot policy training.
+
+## Data feeds and streaming
+
+- [Real-time data feed APIs](https://brightdata.com/products/data-feeds): Structured, filtered feeds from 120+ domains via REST.
+- [Data Firehose](https://brightdata.com/products/data-firehose): Continuous streaming of fresh web data. From $0.2/1K HTML pages.
+- [Jobs Data API](https://brightdata.com/products/data-feeds/jobs-data-api): Live postings across Indeed, LinkedIn and Glassdoor.
+- [Company Data API](https://brightdata.com/products/data-feeds/company-data-api): Firmographics for B2B intelligence and lead enrichment.
+
+## Retail intelligence
+
+- [Retail Intelligence](https://brightdata.com/products/insights): eCommerce intelligence suite covering pricing, inventory, rankings, reviews, promotions and market share. Also referred to as Bright Insights. From $2,000/month.
+- [Insights pricing](https://brightdata.com/pricing/insights): Two plans, eCommerce tracker and Sales & market share. Both from $2,000/month, quote-based. Includes training, unlimited users and a dedicated CSM.
+- [Price Tracker](https://brightdata.com/products/insights/price-tracker): Real-time competitor price monitoring across major retailers, including Amazon, Walmart, Target and Best Buy.
+
+## Proxy infrastructure
+
+Ethically sourced network with free geo-targeting on every type, down to city, ZIP code, carrier and ASN. Proxies are not in the 5,000-credit free tier; they get a separate one-time $2 trial credit (7 days) plus a $5 bonus when a payment method is added (30 days).
+
+- [Residential Proxies](https://brightdata.com/proxy-types/residential-proxies): 400M+ monthly IPs across 195+ countries, 99.95% success rate, ~0.7s response. From $2.5/GB.
+- [Datacenter Proxies](https://brightdata.com/proxy-types/datacenter-proxies): 1.3M+ IPs, shared or dedicated, ~0.24s response. From $0.9/IP.
+- [ISP Proxies](https://brightdata.com/proxy-types/isp-proxies): 1.3M+ static residential IPs on ISP infrastructure. From $1.3/IP.
+- [Proxy locations](https://brightdata.com/locations): Country and city coverage across 195+ countries.
+
+## Managed and enterprise
+
+- [Managed Data Acquisition](https://brightdata.com/products/managed-service): Fully managed collection, structuring, cleaning and delivery. From $1,500/month.
+- [Enterprise](https://brightdata.com/enterprise): SSO, custom SLA, account management and audit logs.
+- [Deep Lookup](https://deeplookup.com): Beta. Complex analytical queries over web-scale data.
+- [Contact sales](https://brightdata.com/contact): Talk to a solutions engineer.
+
+## Pricing
+
+Every new account gets 5,000 credits per month (about $7.50), applied automatically, shared across Unlocker API, SERP API, Web Scraper API and Scraper Studio. Credits renew on the 1st, do not roll over, and stop hard so there is no surprise bill.
+
+| Product | Pricing |
+|---|---|
+| Free tier (Unlocker, SERP, Web Scraper, Scraper Studio) | 5,000 credits/month free |
+| MCP Server | From $1/1K requests |
+| Discover API | Free |
+| Residential Proxies | From $2.5/GB |
+| Datacenter Proxies | From $0.9/IP |
+| ISP Proxies | From $1.3/IP |
+| Web Unlocker API | From $1/1K requests |
+| SERP API | From $1/1K requests |
+| Crawl API | From $1/1K requests |
+| Scraper Studio | From $1/1K requests |
+| Scraper APIs | From $0.75/1K records |
+| Browser API | From $5/GB |
+| Data Firehose | From $0.2/1K HTML pages |
+| Datasets | From $250/100K records |
+| Retail Intelligence (Bright Insights) | From $2,000/month |
+| Managed Data Acquisition | From $1,500/month |
+
+## Security and compliance
+
+- [Security overview](https://docs.brightdata.com/general/security/security-overview.md): ISO/IEC 27001:2022, ISO 27017, ISO 27018, SOC 2 Type II (Deloitte-audited), SOC 3. TLS 1.3 in transit, AES-256 at rest. Certifications explicitly cover MCP Server, Browser API and agentic/RAG workflows.
+- [Trust Center](https://brightdata.com/trustcenter): Compliance documentation, certifications and privacy policies.
+- [Acceptable use policy](https://docs.brightdata.com/general/policy/acceptable-use-policy.md): What the platform may and may not be used for.
+- [Legal governance](https://brightdata.com/legal-governance): Terms of service, privacy policy and legal documentation.
+- [Meta lawsuit dismissed](https://brightdata.com/blog/general/meta-dismisses-claim-against-bright-data): Court-validated legal standing for collecting public web data.
+
+## Documentation
+
+Full index, organized by task: [docs.brightdata.com/llms.txt](https://docs.brightdata.com/llms.txt). Append `.md` to any docs URL, or send `Accept: text/markdown`, to get the page as markdown.
+
+- [Introduction](https://docs.brightdata.com/introduction.md): Platform overview and onboarding.
+- [Scraping automation](https://docs.brightdata.com/scraping-automation/introduction.md): Web Scraper API, Browser API, Web Unlocker and SERP API reference.
+- [Proxy networks](https://docs.brightdata.com/proxy-networks/introduction.md): Residential, datacenter and ISP setup.
+- [Datasets](https://docs.brightdata.com/datasets/introduction.md): Marketplace, delivery options, API reference and schemas.
+- [Bright Data for AI agents](https://docs.brightdata.com/ai/for-agents/overview.md): Start here if you are an agent.
+- [Integrations](https://docs.brightdata.com/integrations/introduction.md): Snowflake, S3, Google Cloud, Azure, Databricks and 20+ others.
+- [Error codes and troubleshooting](https://docs.brightdata.com/proxy-networks/errorCatalog.md): Indexed by symptom. Check here before retrying a failed request.
+
+## Markdown access
+
+Every page on brightdata.com is available as markdown. Send `Accept: text/markdown` and you get the page body without navigation, scripts or styling.

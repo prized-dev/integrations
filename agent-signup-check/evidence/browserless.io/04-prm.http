@@ -1,0 +1,42 @@
+GET https://browserless.io/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:17.186Z
+redirect: 301 from https://browserless.io/.well-known/oauth-protected-resource
+final-url: https://www.browserless.io/.well-known/oauth-protected-resource
+
+HTTP 200
+accept-ranges: bytes
+age: 0
+cache-control: public,max-age=3600
+cache-status: "Netlify Edge"; fwd=miss; fwd-status=200; stored
+content-length: 380
+content-security-policy: frame-ancestors 'self'; object-src 'none'; base-uri 'self'
+content-security-policy-report-only: script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://www.googletagmanager.com https://js.hs-scripts.com https://js.hsforms.com https://js.hs-analytics.net https://js.hs-banner.com https://js.hsadspixel.net https://js.hscollectedforms.net https://js.hsforms.net https://js.usemessages.com https://static.reo.dev https://cdn.jsdelivr.net https://bzrcdn.openai.com https://sweet-heart-af5f.zach-7be.workers.dev https://widget.kapa.ai https://widget.usepylon.com https://challenges.cloudflare.com https://www.youtube.com https://www.google-analytics.com https://ssl.google-analytics.com https://www.gstatic.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'
+content-type: application/json; charset=utf-8
+date: Wed, 28 Oct 2026 23:58:15 GMT
+etag: "b0793a972d87b86b6b1ae8b6ec5e6252-ssl"
+server: Netlify
+strict-transport-security: max-age=31536000
+x-frame-options: SAMEORIGIN
+x-nf-request-id: 01M62F6F21KVE3ZG1NTTN31X47
+x-robots-tag: index, follow
+connection: close
+
+{
+  "resource": "https://www.browserless.io",
+  "resource_name": "Browserless",
+  "resource_documentation": "https://docs.browserless.io/open-api",
+  "authorization_servers": [
+    "https://data.browserless.io/auth/v1"
+  ],
+  "bearer_methods_supported": [
+    "header",
+    "query"
+  ],
+  "scopes_supported": [
+    "openid",
+    "email",
+    "profile",
+    "offline_access"
+  ]
+}

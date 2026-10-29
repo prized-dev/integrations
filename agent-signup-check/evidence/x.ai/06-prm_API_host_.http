@@ -1,0 +1,17 @@
+GET https://api.x.ai/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:11.426Z
+final-url: https://api.x.ai/.well-known/oauth-protected-resource
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:57:10 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+cf-cache-status: DYNAMIC
+strict-transport-security: max-age=31536000
+content-encoding: gzip
+server: cloudflare
+cf-ray: a51de19b0aed8bee-PDX
+
+{"error":{"code":404,"message":"The requested resource was not found. Please check the URL and try again. Documentation is available at https://docs.x.ai/"}}

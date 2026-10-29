@@ -1,0 +1,137 @@
+GET https://kernel.sh/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:10.204Z
+redirect: 301 from https://kernel.sh/auth.md
+final-url: https://www.kernel.sh/auth.md
+
+HTTP 200
+access-control-allow-origin: *
+age: 1158
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline; filename="auth.md"
+content-encoding: br
+content-type: text/markdown; charset=utf-8
+date: Wed, 28 Oct 2026 23:58:07 GMT
+etag: W/"e9108ff37e77633006247d96e19e9c42"
+last-modified: Wed, 28 Oct 2026 23:38:48 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-matched-path: /auth.md
+x-vercel-cache: HIT
+x-vercel-id: pdx1::rk9z7-1793231887584-d43299d6fae2
+connection: close
+transfer-encoding: chunked
+
+# kernel.sh auth.md
+
+This file tells agents how to sign up for Kernel and authenticate API requests.
+
+Kernel supports agent-assisted API key creation with an email code. It does not currently support agent-verified ID-JAG registration, or anonymous accounts.
+
+## Before registering
+
+Check for an existing Kernel API key first:
+
+1. Read `KERNEL_API_KEY` from the process environment.
+2. If you are operating inside a project and the human permits it, read `KERNEL_API_KEY` from a local `.env` file. Never commit it.
+3. Read `~/.kernel/credentials` if it exists, has mode `0600`, and contains JSON like:
+
+```json
+{
+  "api_key": "sk_...",
+  "created_at": "2026-05-26T00:00:00Z",
+  "source": "auth.md"
+}
+```
+
+If you find a candidate key, make a harmless authenticated request such as `GET https://api.onkernel.com/org/api_keys?limit=1`. If the request succeeds, use that key. If it returns 401, ignore or remove the stale key and start the Auth.md flow.
+
+## Discovery metadata
+
+Kernel publishes OAuth-style metadata at:
+
+- `https://api.onkernel.com/.well-known/oauth-protected-resource`
+- `https://api.onkernel.com/.well-known/oauth-authorization-server`
+
+The authorization server metadata contains:
+
+- `agent_auth.skill`: `https://www.kernel.sh/auth.md`
+- `agent_auth.register_uri`: `https://api.onkernel.com/authmd/agent/auth`
+- supported assertion type: `verified_email`
+- supported credential type: `api_key`
+
+Kernel does not advertise `agent_auth.claim_uri` because anonymous claim initiation is not supported. Verified-email registration sends the one-time code during registration, then completes at `/authmd/agent/auth/claim/complete`.
+
+Do not hard-code endpoint paths from examples on other services. Use Kernel's metadata and this file.
+
+## Registration flow
+
+Ask the human for consent to create or recover Kernel API credentials for their email address.
+
+Start registration:
+
+```http
+POST https://api.onkernel.com/authmd/agent/auth
+Content-Type: application/json
+
+{
+  "type": "identity_assertion",
+  "assertion_type": "verified_email",
+  "assertion": "human@example.com",
+  "requested_credential_type": "api_key"
+}
+```
+
+Kernel emails the human a short-lived one-time code and returns a `claim_token`. Do not show the `claim_token` to anyone except the service endpoint.
+
+The human reads the Kernel email and gives you the one-time code.
+
+Complete the claim:
+
+```http
+POST https://api.onkernel.com/authmd/agent/auth/claim/complete
+Content-Type: application/json
+
+{
+  "claim_token": "clm_...",
+  "otp": "123456"
+}
+```
+
+If the response status is `claimed`, read the returned `credential` string. That string is the Kernel API key and is returned only once.
+
+## Multiple organizations
+
+If the verified email belongs to more than one Kernel org, Kernel returns:
+
+```json
+{
+  "registration_id": "reg_...",
+  "status": "organization_selection_required",
+  "selection_url": "https://dashboard.onkernel.com/authmd/select-org?registration_id=reg_...&token=sel_..."
+}
+```
+
+Ask the human to open the `selection_url` and choose the Kernel org in the browser. After the human confirms that org selection is complete, call `POST https://api.onkernel.com/authmd/agent/auth/claim/complete` again with the original `claim_token` and the same one-time code from the Kernel email.
+
+Do not ask the human to paste org IDs or org names into chat. The org-selection page is scoped to this pending claim and does not create a Kernel dashboard session.
+
+## Store the credential
+
+After a successful claim, store the `credential` value from the claim response in the best available secret store for your agent platform. If no better secret store exists and the human allows file storage, save the response's `credential` string as `api_key`:
+
+- path: `~/.kernel/credentials`
+- mode: `0600`
+- format:
+
+```json
+{
+  "api_key": "sk_...",
+  "created_at": "2026-05-26T00:00:00Z",
+  "source": "auth.md"
+}
+```
+
+Never print the API key in logs, chat, commits, pull requests, generated docs, or tool output.
+
+If a later Kernel request returns 401, discard the stale credential and restart discovery from this file.

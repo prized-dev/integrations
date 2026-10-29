@@ -1,0 +1,35 @@
+GET https://assemblyai.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:20.701Z
+redirect: 308 from https://assemblyai.com/.well-known/x402
+final-url: https://www.assemblyai.com/.well-known/x402
+
+HTTP 404
+cache-control: no-transform
+cf-cache-status: EXPIRED
+cf-ray: a51de1d95a092760-SEA
+content-encoding: gzip
+content-type: text/html; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:20 GMT
+etag: W/"6ae248ca-58"
+permissions-policy: autoplay=(self), geolocation=(self), clipboard-read=(self), clipboard-write=(self)
+referrer-policy: strict-origin-when-cross-origin
+server: Vercel
+strict-transport-security: max-age=31536000; includeSubDomains
+vary: accept-encoding
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-robots-tag: index, follow
+x-vercel-cache: MISS
+x-vercel-id: pdx1::cmtmn-1793231840127-fbbad7c7280e
+x-wf-region: us-east-1
+x-xss-protection: 1; mode=block
+connection: close
+transfer-encoding: chunked
+
+<!DOCTYPE html>
+<html>
+  <body>
+    <p>Invalid .well-known request</p>
+  </body>
+</html>

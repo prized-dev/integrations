@@ -1,0 +1,47 @@
+GET https://blaxel.ai/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:34.491Z
+final-url: https://blaxel.ai/llms.txt
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:57:32 GMT
+content-type: text/plain; charset=utf-8
+transfer-encoding: chunked
+connection: close
+x-content-type-options: nosniff
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=m19NfiXfVjZbu42kdYt7sS2a7nTNf0z5uTxEJrGkqvvMmIXWJHwDK10J1YkVGuUGMnR%2FhW6NIV3j9A7IcoffjmKBUz1xU4vcpEn%2FySqbmVDlOCHFcv5YDqcxz%2Fw%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+access-control-allow-origin: *
+cache-control: public, max-age=0, must-revalidate
+referrer-policy: strict-origin-when-cross-origin
+etag: W/"d585256459003c4d18d1594d61f72beb"
+content-encoding: br
+server: cloudflare
+cf-cache-status: DYNAMIC
+vary: accept-encoding
+speculation-rules: "/cdn-cgi/speculation"
+cf-ray: a51de22428e3503f-PDX
+alt-svc: h3=":443"; ma=86400
+
+# Blaxel
+
+> Blaxel is the infrastructure foundation for autonomous agents: hardware-isolated microVM sandboxes that boot in milliseconds, suspend to zero when idle and resume in about 25 milliseconds with memory and filesystem intact; persistent storage (in-memory snapshots, durable Volumes, shared Agent Drive); and programmable networking (outbound allow-lists, static IPs, secret-injecting egress proxy, model gateway).
+
+## Platform
+- [Compute](https://blaxel.ai/platform/compute): Sandboxes, Agent Runtime, Batch Jobs, MCP Servers
+- [Sandboxes](https://blaxel.ai/platform/sandboxes): perpetual sandboxes, ~25ms resume, $0 compute on standby
+- [Sandbox filesystem](https://blaxel.ai/platform/sandbox-filesystem): RAM-speed root filesystem, snapshots kept until deleted
+- [Storage](https://blaxel.ai/platform/storage): sandbox local filesystem, Volumes, Agent Drive
+- [Networking](https://blaxel.ai/platform/networking): outbound control, static IPs, proxy routing, model gateway
+
+## Pricing
+- [Pricing](https://blaxel.ai/pricing): usage-based. Sandbox active CPU $0.0000115 / GB RAM per second, snapshot storage $0.20 / GB-month, images $0.045 / GB-month. Up to $200 free credits. Tier-based quotas up to 100,000+ sandboxes.
+
+## Company
+- [Customers](https://blaxel.ai/customers)
+- [Solutions](https://blaxel.ai/solutions)
+- [Blog](https://blaxel.ai/blog)
+- [Security and compliance](https://blaxel.ai/company/security): SOC 2, HIPAA, ISO 27001
+- [Contact](https://blaxel.ai/contact)
+- [Documentation](https://docs.blaxel.ai)
+- [Console](https://app.blaxel.ai)

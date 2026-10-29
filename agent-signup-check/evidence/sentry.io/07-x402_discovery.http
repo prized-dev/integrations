@@ -1,0 +1,363 @@
+GET https://sentry.io/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:34.157Z
+redirect: 301 from https://sentry.io/.well-known/x402
+redirect: 302 from https://sentry.io/.well-known/x402/
+final-url: https://sentry.io/auth/login/.well-known/
+
+HTTP 200
+server: nginx
+date: Wed, 28 Oct 2026 23:58:33 GMT
+content-type: text/html
+vary: Accept-Encoding,Accept-Language, Cookie
+document-policy: js-profiling
+expires: Wed, 28 Oct 2026 23:58:33 GMT
+cache-control: max-age=0, no-cache, no-store, must-revalidate, private
+link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/oauth-protected-resource>; rel="oauth-protected-resource"; type="application/json", </.well-known/oauth-authorization-server>; rel="oauth-authorization-server"; type="application/json", </.well-known/mcp/server-card.json>; rel="https://modelcontextprotocol.io/rel/server-card"; type="application/json", </.well-known/agent-skills/index.json>; rel="https://agentskills.io/rel/skills-index"; type="application/json", <https://docs.sentry.io/api/>; rel="service-doc"; type="text/html"
+x-sentry-rate-limit-remaining: 19
+x-sentry-rate-limit-limit: 20
+x-sentry-rate-limit-reset: 1793231914
+x-sentry-rate-limit-concurrentremaining: 24
+x-sentry-rate-limit-concurrentlimit: 25
+content-language: en
+x-frame-options: deny
+x-content-type-options: nosniff
+x-xss-protection: 1; mode=block
+cross-origin-opener-policy-report-only: same-origin; report-to="coop-endpoint"
+report-to: {"group":"coop-endpoint","max_age":86400,"endpoints":[{"url":"https://sentry-coop-302178938983.us-central1.run.app/coop"}]}, {"group":"nel","max_age":86400,"endpoints":[{"url":"https://o1.ingest.us.sentry.io/api/4511643338670080/nel/?sentry_key=00e06516e17f2077b4ee5e7206630df5"}]}
+content-security-policy: frame-ancestors 'self' *.sentry.io; img-src * blob: data:; media-src *; frame-src app.pendo.io demo.arcade.software js.stripe.com sentry.io 'self' intercom-sheets.com www.intercom-reporting.com; connect-src 'self' *.algolia.net *.algolianet.com *.algolia.io browser.sentry-cdn.com sentry.io *.sentry.io s1.sentry-cdn.com o1.ingest.sentry.io api2.amplitude.com app.pendo.io data.pendo.io reload.getsentry.net t687h3m0nh65.statuspage.io maps.googleapis.com plausible.io api.github.com *.intercom.io wss://*.intercom.io *.intercom-messenger.com wss://*.intercom-messenger.com uploads.intercomcdn.com uploads.intercomusercontent.com; worker-src 'self' blob:; base-uri 'none'; style-src * 'unsafe-inline'; object-src 'none'; default-src 'none'; script-src 'self' 'unsafe-inline' 'report-sample' s1.sentry-cdn.com js.sentry-cdn.com browser.sentry-cdn.com statuspage-production.s3.amazonaws.com aui-cdn.atlassian.com connect-cdn.atl-paas.net js.stripe.com 'strict-dynamic' cdn.pendo.io data.pendo.io pendo-io-static.storage.googleapis.com pendo-static-5634074999128064.storage.googleapis.com plausible.io app.intercom.io widget.intercom.io js.intercomcdn.com 'nonce-wfQc82T/skZsGSQDTai0EQ=='; font-src * data:; report-uri https://o1.ingest.sentry.io/api/54785/security/?sentry_key=f724a8a027db45f5b21507e7142ff78e&sentry_release=dd25917e2a65ff28f975a03375c8bf93732d9080
+nel: {"report_to":"nel","max_age":86400,"success_fraction":0.0,"failure_fraction":0.10}
+reporting-endpoints: default="https://sentry.my.sentry.io/api/0/reporting-api-experiment/"
+content-encoding: br
+via: 1.1 google
+alt-svc: h3=":443"; ma=2592000
+connection: close
+transfer-encoding: chunked
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <!-- The "none" directive is equivalent to using both the noindex and nofollow tags simultaneously -->
+  <meta name="robots" content="none, noarchive">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="icon" type="image/png" href="https://s1.sentry-cdn.com/_static/ee3f60fe474143f60c4140d8d873c101/sentry/images/favicon.png">
+
+  <link rel="apple-touch-icon" href="https://s1.sentry-cdn.com/_static/ee3f60fe474143f60c4140d8d873c101/sentry/images/logos/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://s1.sentry-cdn.com/_static/ee3f60fe474143f60c4140d8d873c101/sentry/images/logos/apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://s1.sentry-cdn.com/_static/ee3f60fe474143f60c4140d8d873c101/sentry/images/logos/apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://s1.sentry-cdn.com/_static/ee3f60fe474143f60c4140d8d873c101/sentry/images/logos/apple-touch-icon-152x152.png">
+  
+
+  
+  <link rel="dns-prefetch" href="https://us.sentry.io" />
+  
+  <link rel="dns-prefetch" href="https://de.sentry.io" />
+  
+
+  
+  <link rel="preconnect" href="https://s1.sentry-cdn.com" />
+  
+
+  <link rel="mask-icon" sizes="any" href="https://s1.sentry-cdn.com/_static/ee3f60fe474143f60c4140d8d873c101/sentry/images/logos/logo-sentry.svg" color="#FB4226">
+
+  <link rel="preload" href="https://s1.sentry-cdn.com/_static/dist/sentry/entrypoints-hashed/app-Bz_FZq9itgkl1DzyvTrgmNtPRFpqvQYO7gpis_4nt1k.js" as="script" crossorigin="anonymous" nonce="wfQc82T/skZsGSQDTai0EQ==" />
+
+  <link href="https://s1.sentry-cdn.com/_static/dist/sentry/entrypoints-hashed/sentry-Hfah3_6203uKIIfbz6dGfX7vrGJzofv9jWI_CWFbpw8.css" rel="stylesheet"/>
+
+  <title>Sentry</title>
+
+  
+  <script nonce="wfQc82T/skZsGSQDTai0EQ==">window.__initialData = {"initialTrace":{"sentry_trace":"e5eabfa712254248b64aed46316c5bc0-88ed4b014d0d948a-0","baggage":"sentry-trace_id=e5eabfa712254248b64aed46316c5bc0,sentry-sample_rand=0.651240,sentry-environment=control,sentry-release=backend%40dd25917e2a65ff28f975a03375c8bf93732d9080,sentry-public_key=ff3a066a612e42778d1790e6b780c2fa,sentry-transaction=/auth/login/%7Borganization_slug%7D/,sentry-sample_rate=0.00075,sentry-sampled=false"},"customerDomain":null,"singleOrganization":false,"supportEmail":"support@sentry.io","urlPrefix":"https://sentry.io","version":{"current":"26.11.0.dev0","latest":"26.11.0.dev0","build":"26.11.0.dev0","upgradeAvailable":false},"features":["organizations:create","relocation:enabled","system:multi-region"],"distPrefix":"https://s1.sentry-cdn.com/_static/dist/sentry/","needsUpgrade":false,"dsn":"https://34bc296f61e2b3f3254b6bea3f7122f3@o1.ingest.sentry.io/11276","statuspage":{"id":"t687h3m0nh65","api_host":"statuspage.io"},"messages":[],"apmSampling":0.2,"isOnPremise":false,"isSelfHosted":false,"isSelfHostedErrorsOnly":false,"sentryMode":"SAAS","shouldPreloadData":false,"shouldShowBeaconConsentPrompt":false,"invitesEnabled":true,"gravatarBaseUrl":"https://gravatar.com","termsUrl":"https://sentry.io/terms/","privacyUrl":"https://sentry.io/privacy/","lastOrganization":null,"languageCode":"en","cells":[],"localities":[{"name":"us","url":"https://us.sentry.io"},{"name":"de","url":"https://de.sentry.io"}],"signupLocalities":["us","de"],"userIdentity":{"ip_address":"[client-ip]"},"csrfCookieName":"sentry-sc","superUserCookieName":"sentry-su","superUserCookieDomain":".sentry.io","sentryConfig":{"dsn":"https://34bc296f61e2b3f3254b6bea3f7122f3@o1.ingest.sentry.io/11276","release":"frontend@dd25917e2a65ff28f975a03375c8bf93732d9080","environment":"control","whitelistUrls":["sentry.io","s1.sentry-cdn.com","\u003canonymous\u003e"],"allowUrls":["sentry.io","s1.sentry-cdn.com","\u003canonymous\u003e"],"tracePropagationTargets":["sentry.io"]},"demoMode":false,"enableAnalytics":true,"validateSUForm":true,"disableU2FForSUForm":false,"links":{"organizationUrl":null,"regionUrl":null,"sentryUrl":"https://sentry.io"},"user":null,"isAuthenticated":false,"getsentry.stripePublishKey":"pk_live_dPeBWKT7PTCCF0zEOMk4NDYe","getsentry.googleMapsApiKey":"AIzaSyDBUGmWp7crZCpF5OxI_6YwNj2WTJ7Xy-8","getsentry.amplitudeApiKey":null,"intercomAppId":"onh0p2wm"};
+    window.__SENTRY__VERSION = '26.11.0.dev0';</script>
+
+
+  <script nonce="wfQc82T/skZsGSQDTai0EQ==">// if the ads.js file loads below it will mark this variable as false
+    window.adblockSuspected = true;
+    // Initialize this so that we can queue up tasks when Sentry SPA is initialized
+    window.__onSentryInit = window.__onSentryInit || [];</script>
+
+  
+    
+
+
+<meta name="sentry-trace" content="e5eabfa712254248b64aed46316c5bc0-88ed4b014d0d948a-0">
+<meta name="baggage" content="sentry-trace_id=e5eabfa712254248b64aed46316c5bc0,sentry-sample_rand=0.651240,sentry-environment=control,sentry-release=backend%40dd25917e2a65ff28f975a03375c8bf93732d9080,sentry-public_key=ff3a066a612e42778d1790e6b780c2fa,sentry-transaction=/auth/login/%7Borganization_slug%7D/,sentry-sample_rate=0.00075,sentry-sampled=false">
+
+<script nonce="wfQc82T/skZsGSQDTai0EQ==">function __preloadData() {
+    if (!window.__initialData.shouldPreloadData) {
+      return;
+    }
+    var slug = window.__initialData.lastOrganization;
+    if (!slug && window.__initialData.customerDomain) {
+      slug = window.__initialData.customerDomain.subdomain;
+    }
+    var host = '';
+    if (window.__initialData.links && window.__initialData.links.regionUrl !== window.__initialData.links.sentryUrl) {
+      host = window.__initialData.links.regionUrl;
+    }
+
+    async function promiseRequest(url) {
+      // Network and JSON parse failures reject with their original errors
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json; charset=utf-8',
+          'Content-Type': 'application/json',
+          'sentry-trace': window.__initialData.initialTrace.sentry_trace,
+          'baggage': window.__initialData.initialTrace.baggage,
+        },
+        credentials: 'include',
+        priority: 'high',
+      });
+      if (response.status >= 200 && response.status < 300) {
+        const text = await response.text();
+        const json = JSON.parse(text);
+        // Matching ResponseMeta from api
+        const responseMeta = {
+          status: response.status,
+          statusText: response.statusText,
+          responseJSON: json,
+          responseText: text,
+          getResponseHeader: (header) => response.headers.get(header),
+        };
+        return [json, response.statusText, responseMeta];
+      }
+      const error = new Error(
+        'Preload request failed with status ' + response.status + ' ' + response.statusText
+      );
+      error.name = 'PreloadRequestError';
+      error.status = response.status;
+      error.statusText = response.statusText;
+      throw error;
+    }
+
+    function makeUrl(suffix) {
+      return host + '/api/0/organizations/' + slug + suffix;
+    }
+
+    var preloadPromises = {orgSlug: slug};
+    window.__sentry_preload = preloadPromises;
+
+    // The SDK is not loaded yet, so record each request's outcome for the app
+    // to report as metrics once it initializes. Handling the rejection here
+    // also keeps failed requests from surfacing as unhandled rejections; the
+    // bootstrap queries still receive the rejected request promise.
+    var preloadResults = {};
+    window.__sentry_preload_results = preloadResults;
+
+    function trackRequest(name, url) {
+      var startTime = performance.now();
+      var promise = promiseRequest(url);
+      preloadResults[name] = promise.then(
+        (result) => ({
+          outcome: 'success',
+          status: result[2].status,
+          durationMs: performance.now() - startTime,
+        }),
+        (error) => ({
+          outcome: 'error',
+          status: error.status,
+          error: error,
+          errorName: error.name,
+          durationMs: performance.now() - startTime,
+        })
+      );
+      return promise;
+    }
+
+    if (!slug) {
+      return;
+    }
+
+    preloadPromises.organization = trackRequest(
+      'organization',
+      makeUrl('/?detailed=0&include_feature_flags=1')
+    );
+    preloadPromises.projects = trackRequest(
+      'projects',
+      makeUrl('/projects/?all_projects=1&collapse=latestDeploys&collapse=unusedFeatures')
+    );
+    preloadPromises.teams = trackRequest('teams', makeUrl('/teams/'));
+  }
+
+  try {
+    __preloadData();
+  } catch (_) {}</script>
+
+  
+
+  
+  <script nonce="wfQc82T/skZsGSQDTai0EQ==">function __sentryMark(name) {
+      if (!window.performance || typeof window.performance.mark !== 'function') { return; }
+      window.performance.mark(name);
+    }
+    __sentryMark('head-start');</script>
+
+  
+  
+    
+    <script crossorigin="anonymous" nonce="wfQc82T/skZsGSQDTai0EQ==" src="https://s1.sentry-cdn.com/_static/dist/sentry/entrypoints-hashed/app-Bz_FZq9itgkl1DzyvTrgmNtPRFpqvQYO7gpis_4nt1k.js"></script>
+  
+
+  
+  
+
+  
+  <script crossorigin="anonymous" nonce="wfQc82T/skZsGSQDTai0EQ==" src="https://s1.sentry-cdn.com/_static/ee3f60fe474143f60c4140d8d873c101/sentry/js/ads.js"></script>
+  
+  <script async nonce="wfQc82T/skZsGSQDTai0EQ==" src="https://js.stripe.com/v3/"></script>
+
+  
+    
+
+
+<script nonce="wfQc82T/skZsGSQDTai0EQ==" type="text/javascript">!function(e){function n(r){if(t[r])return t[r].exports;var o=t[r]={exports:{},id:r,loaded:!1};return e[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var t={};return n.m=e,n.c=t,n.p="",n(0)}([function(e,n,t){"use strict";var r=t(1),o="",i=2e3,c=Object.assign||function(e){if(void 0===e||null===e)throw new TypeError("Cannot convert undefined or null to object");for(var n=Object(e),t=1;t<arguments.length;t++){var r=arguments[t];if(void 0!==r&&null!==r)for(var o in r)r.hasOwnProperty(o)&&(n[o]=r[o])}return n},a=function(){if(["127.0.0.1","0.0.0.0","localhost"].indexOf(location.hostname)>=0)return location.host;var e=location.hostname.split(".");e.length>2&&e.shift();var n=e.join(".");return n},u=function(){return console.warn("getAnonId is deprecated"),""},f=function(){try{var e=new URLSearchParams(window.location.search),n=e.get("original_referrer");return n||document.referrer}catch(e){console.error(e)}return document.referrer},s=function(){var e={url:window.location.href,path:window.location.pathname,referrer:f(),document_referrer:document.referrer,title:document.title,sent_at:Date.now().toString()};for(var n in e)e[n]=e[n].slice(0,i);return e},d=function(e,n){var t=new XMLHttpRequest;t.open("POST",e),t.send(JSON.stringify(n))},l=null,p=function(){l||(l=setTimeout(function(){for(var e in v){if(!v.hasOwnProperty(e))return;d(e,v[e]),v[e]=[]}l=null},1e3))},v={},m=function(e,n){v[e]||(v[e]=[]),v[e].push(n),p()},w=function(e,n,t){var o=(0,r.get)("gsID"),i={user_id:o};c(i,s(),n);var a=t?m:d;a(window.ra.endpoint+e,i)},g=function(e,n){var t={event_name:e};c(t,n),w("/event/",t)},h=function(e){w("/page/",e)},x=function(e){(0,r.set)("gsID",e,{domain:a()})},C=function(e,n,t){w("/metric/",{metric_name:e,value:n,tags:t},!0)};window.ra={page:h,event:g,endpoint:o,identify:x,getAnonId:u,metric:C}},function(e,n,t){var r,o;!function(i){var c;if(r=i,o="function"==typeof r?r.call(n,t,n,e):r,!(void 0!==o&&(e.exports=o)),c=!0,e.exports=i(),c=!0,!c){var a=window.Cookies,u=window.Cookies=i();u.noConflict=function(){return window.Cookies=a,u}}}(function(){function e(){for(var e=0,n={};e<arguments.length;e++){var t=arguments[e];for(var r in t)n[r]=t[r]}return n}function n(e){return e.replace(/(%[0-9A-Z]{2})+/g,decodeURIComponent)}function t(r){function o(){}function i(n,t,i){if("undefined"!=typeof document){i=e({path:"/"},o.defaults,i),"number"==typeof i.expires&&(i.expires=new Date(1*new Date+864e5*i.expires)),i.expires=i.expires?i.expires.toUTCString():"";try{var c=JSON.stringify(t);/^[\{\[]/.test(c)&&(t=c)}catch(e){}t=r.write?r.write(t,n):encodeURIComponent(String(t)).replace(/%(23|24|26|2B|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g,decodeURIComponent),n=encodeURIComponent(String(n)).replace(/%(23|24|26|2B|5E|60|7C)/g,decodeURIComponent).replace(/[\(\)]/g,escape);var a="";for(var u in i)i[u]&&(a+="; "+u,i[u]!==!0&&(a+="="+i[u].split(";")[0]));return document.cookie=n+"="+t+a}}function c(e,t){if("undefined"!=typeof document){for(var o={},i=document.cookie?document.cookie.split("; "):[],c=0;c<i.length;c++){var a=i[c].split("="),u=a.slice(1).join("=");t||'"'!==u.charAt(0)||(u=u.slice(1,-1));try{var f=n(a[0]);if(u=(r.read||r)(u,f)||n(u),t)try{u=JSON.parse(u)}catch(e){}if(o[f]=u,e===f)break}catch(e){}}return e?o[e]:o}}return o.set=i,o.get=function(e){return c(e,!1)},o.getJSON=function(e){return c(e,!0)},o.remove=function(n,t){i(n,"",e(t,{expires:-1}))},o.defaults={},o.withConverter=t,o}return t(function(){})})}]);
+  window.ra.endpoint='https://reload.getsentry.net'
+
+  
+
+  window.ra.page();
+
+  (function(){
+    var pushState = history.pushState;
+    history.pushState = function () {
+      pushState.apply(history, arguments);
+      window.ra.page();
+    };
+  })()</script>
+
+  
+  
+      <script nonce="wfQc82T/skZsGSQDTai0EQ==" type="text/javascript">(function (apiKey) {
+    (function (p, e, n, d, o) {
+      var v, w, x, y, z;
+      o = p[d] = p[d] || {};
+      o._q = o._q || [];
+      v = ['initialize', 'identify', 'updateOptions', 'pageLoad', 'track'];
+      for (w = 0, x = v.length; w < x; ++w)
+        (function (m) {
+          o[m] =
+            o[m] ||
+            function () {
+              o._q[m === v[0] ? 'unshift' : 'push'](
+                [m].concat([].slice.call(arguments, 0))
+              );
+            };
+        })(v[w]);
+      y = e.createElement(n);
+      y.async = !0;
+      y.src = 'https://cdn.pendo.io/agent/static/' + apiKey + '/pendo.js';
+      z = e.getElementsByTagName(n)[0];
+      z.parentNode.insertBefore(y, z);
+    })(window, document, 'script', 'pendo');
+  })('dc5c6fad-c3ae-4441-49ce-0ae37103aed7');</script>
+
+  
+
+  <script nonce="wfQc82T/skZsGSQDTai0EQ==">__sentryMark('head-end');</script>
+
+</head>
+
+
+<body class="theme-system">
+  
+  <div id="blk_router">
+    
+
+<div class="splash-loader">
+  <div class="loading-mask"></div>
+
+  <div class="loading-indicator" data-test-id="loading-indicator">
+    <svg
+      width="256"
+      height="256"
+      viewBox="0 0 400 400"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <style>
+        .theme-light #base {
+          fill: #f0f0f2;
+        }
+        .theme-dark #base {
+          fill: #24202b;
+        }
+        .theme-system {
+          @media (prefers-color-scheme: dark) {
+            #base {
+              fill: #24202b;
+            }
+          }
+        }
+        :root {
+          --loop: 2350ms;
+        }
+
+        g[data-index] path {
+          stroke-dasharray: 1150;
+          stroke-dashoffset: 1150;
+          animation-duration: var(--loop);
+          animation-iteration-count: infinite;
+          animation-fill-mode: both;
+          animation-timing-function: linear;
+        }
+
+        [data-index='0'] {
+          stroke: #f0369a;
+        }
+        [data-index='1'] {
+          stroke: #67c800;
+        }
+        [data-index='2'] {
+          stroke: #7553ff;
+        }
+
+        g[data-index='0'] > path:nth-of-type(1) {
+          animation-name: draw_g0_p1;
+        }
+        g[data-index='0'] > path:nth-of-type(2) {
+          animation-name: draw_g0_p0;
+        }
+        g[data-index='0'] > path:nth-of-type(3) {
+          animation-name: draw_g0_p2;
+        }
+
+        g[data-index='1'] > path:nth-of-type(1) {
+          animation-name: draw_g1_p2;
+        }
+        g[data-index='1'] > path:nth-of-type(2) {
+          animation-name: draw_g1_p0;
+        }
+        g[data-index='1'] > path:nth-of-type(3) {
+          animation-name: draw_g1_p1;
+        }
+
+        g[data-index='2'] > path:nth-of-type(1) {
+          animation-name: draw_g2_p0;
+        }
+        g[data-index='2'] > path:nth-of-type(2) {
+          animation-name: draw_g2_p3;
+        }
+        g[data-index='2'] > path:nth-of-type(3) {
+          animation-name: draw_g2_p1;
+        }
+
+        /*
+          Each baked timeline:
+          - Hold at 1150 until its start %
+          - Ease-out into 0 by its 40% point
+          - Ease-out to -1150 by end of loop
+          - Snap back to 1150 at 100% so the loop repeats cleanly
+        */
+        @key
+
+[body trimmed for publication: kept 16384 of 27385 characters; sha256 of the full body b1ba98ca4e169199abc98b6a9bdedbdc87225248d447b7f2e3d6b737e3268fb2]

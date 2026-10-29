@@ -1,0 +1,128 @@
+{
+ "site": "openrouter.ai",
+ "checkedAt": "2026-10-28T23:57:09.405Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 2,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://openrouter.ai/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://openrouter.ai/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://openrouter.ai/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://openrouter.ai/api/v1/key",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "where": "llms.txt",
+   "url": "https://openrouter.ai/llms.txt",
+   "match": "Credit limits",
+   "snippet": "ps://openrouter.ai/docs/api-reference/limits.md): Credit limits, free-model request caps, and rate limits. - [Free variant](https://openrouter.ai/docs/guides/ro",
+   "status": "partial",
+   "reason": "llms.txt mentions credit limits in prose; no machine-readable cap"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://openrouter.ai/llms.txt",
+   "heading": "# OpenRouter",
+   "bytes": 9691,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://openrouter.ai/auth.md",
+   "finalUrl": "https://openrouter.ai/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 506,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://openrouter.ai/llms.txt",
+   "finalUrl": "https://openrouter.ai/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 149,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://openrouter.ai/api/v1/key",
+   "finalUrl": "https://openrouter.ai/api/v1/key",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 32,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://openrouter.ai/.well-known/oauth-protected-resource",
+   "finalUrl": "https://openrouter.ai/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 195,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://openrouter.ai/.well-known/oauth-authorization-server",
+   "finalUrl": "https://openrouter.ai/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 186,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://openrouter.ai/.well-known/x402",
+   "finalUrl": "https://openrouter.ai/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 208,
+   "redirects": 0
+  }
+ ]
+}

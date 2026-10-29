@@ -1,0 +1,270 @@
+GET https://orthogonal.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:25.781Z
+redirect: 307 from https://orthogonal.com/llms.txt
+final-url: https://www.orthogonal.com/llms.txt
+
+HTTP 200
+age: 2064
+cache-control: public, max-age=3600
+content-encoding: br
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:23:59 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-clerk-auth-reason: session-token-and-uat-missing
+x-clerk-auth-status: signed-out
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::iad1::tbqfc-1793231903259-88fa8dff9974
+connection: close
+transfer-encoding: chunked
+
+---
+name: orthogonal
+version: 1.2.0
+description: >-
+  Discover and call verified APIs for web search, scraping, enrichment, data
+  retrieval, and other external capabilities through one catalog and one
+  balance. Use when a task needs fresh or structured data that the user's
+  existing tools do not provide.
+homepage: https://orthogonal.com
+---
+
+# Orthogonal
+
+Orthogonal gives agents one interface to discover, call, and pay for a catalog of verified APIs. The same catalog is available through the CLI, MCP server, TypeScript SDK, and REST API.
+
+## When to use Orthogonal
+
+Use Orthogonal when a task needs an external capability such as live web search, scraping, contact or company enrichment, financial data, social data, or another structured API.
+
+Before building a custom scraper, using a generic fetch for structured data, or saying data is inaccessible, search the catalog. If the user already has a dedicated tool, API key, or MCP server for the exact service, use that first; Orthogonal fills gaps rather than replacing their existing setup.
+
+## Agent workflow
+
+1. **Discover** — Search with a short description of the capability you need.
+2. **Inspect** — Read the endpoint schema, required parameters, and price. Never guess parameter names.
+3. **Quote when needed** — For dynamic pricing or a potentially large call, estimate the cost before execution.
+4. **Run** — Put inputs in the locations shown by the schema: path, query, or JSON body.
+5. **Verify** — Check the returned result and price. Save binary or large output to a file.
+
+For work spanning several sources, split it into focused calls and combine the results. Start with conservative result limits, especially when pricing may scale with volume.
+
+## CLI
+
+Install and authenticate:
+
+```bash
+npm install -g @orth/cli
+orth login
+orth whoami
+```
+
+Get an API key from https://orthogonal.com/dashboard/settings/api-keys. For non-interactive environments, set `ORTHOGONAL_API_KEY` instead of running `orth login`.
+
+For an existing account, reuse its connection or use the browser sign-in handoff at https://orthogonal.com/agent-signup.md: start a connection with POST https://api.orthogonal.com/api/agent-auth/start, show the returned verificationUrl and userCode, and poll /api/agent-auth/poll with the private deviceCode until approved. Save the returned apiKey securely and verify access before continuing. Never send an existing customer through signup or ask them to copy a dashboard key when browser connection is available. MCP clients should use their native OAuth flow for https://mcp.orthogonal.com. An API-key-only host connector needs its own OAuth support; the API handoff cannot install credentials in that connector automatically.
+
+To create a new agent account without a password, follow https://orthogonal.com/agent-signup.md. Verify both email and phone ownership; successful signup returns an API key. Eligible accounts receive a one-time $1 starter credit grant. Check `starterCredit.amountUsd`: an ineligible account still receives its key with a $0 grant and a reason. The offer is limited to one account per phone across human and agent signup. Never create more accounts to bypass this limit.
+
+The core workflow:
+
+```bash
+# Discover matching endpoints
+orth search "company enrichment from domain"
+
+# Inspect one endpoint's schema and price
+orth api show <api-slug> <path>
+
+# Estimate cost without executing
+orth run <api-slug> <path> --dry-run -b '{"key":"value"}'
+
+# Execute with query parameters
+orth run <api-slug> <path> -q key=value -q limit=5
+
+# Execute with a JSON body and save the response
+orth run <api-slug> <path> -X POST -b '{"key":"value"}' -o result.json
+```
+
+Useful commands:
+
+| Command | Purpose |
+|---|---|
+| `orth search "<need>"` | Find relevant APIs with natural language |
+| `orth api list` | Browse all APIs |
+| `orth api show <slug> [path]` | Inspect endpoints or one endpoint's parameters |
+| `orth run <slug> <path>` | Execute an endpoint |
+| `orth code <slug> <path>` | Generate TypeScript integration code |
+| `orth balance` | Check available credits |
+| `orth usage` | Review recent calls and spend |
+
+Run `orth <command> --help` for the current flags and syntax.
+
+## MCP
+
+Connect any MCP-compatible client to:
+
+```json
+{
+  "mcpServers": {
+    "orthogonal": {
+      "url": "https://mcp.orthogonal.com"
+    }
+  }
+}
+```
+
+The MCP server exposes `search`, `get_details`, `quote`, `use`, and `integrate`, plus batch variants for details and execution. Follow the same discover → inspect → quote → run workflow.
+
+## SDK
+
+```bash
+npm install @orth/sdk
+```
+
+```typescript
+import Orthogonal from "@orth/sdk";
+
+const orth = new Orthogonal({
+  apiKey: process.env.ORTHOGONAL_API_KEY,
+});
+
+const result = await orth.run({
+  api: "apollo",
+  path: "/v1/people/search",
+  query: { title: "CTO", limit: 5 },
+});
+
+console.log(result.data, result.price);
+```
+
+## REST API
+
+Base URL: `https://api.orthogonal.com`
+
+Authenticate with `Authorization: Bearer $ORTHOGONAL_API_KEY`.
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `POST` | `/v1/search` | Discover APIs using natural language |
+| `POST` | `/v1/details` | Get an endpoint's full schema and price |
+| `GET` | `/v1/list-endpoints` | Browse the complete catalog |
+| `POST` | `/v1/run` | Execute an API call |
+| `POST` | `/v1/integrate` | Generate integration code |
+
+For machine-readable discovery without authentication:
+
+- `https://api.orthogonal.com/discover` returns the catalog as JSON, including endpoint schemas, pricing, and payment URLs.
+- `https://api.orthogonal.com/openapi.json` returns the catalog as an OpenAPI 3.1 document.
+
+Example:
+
+```bash
+curl -X POST 'https://api.orthogonal.com/v1/run' \
+  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"api":"olostep","path":"/v1/scrapes","body":{"url_to_scrape":"https://example.com"}}'
+```
+
+## Pricing and payments
+
+Calls are metered individually with no subscription or per-provider account. Search and details show endpoint pricing, and run responses include the charged price. Use prepaid credits by default. Payable Base endpoints automatically accept USDC or OUSD over x402, and MPP endpoints automatically accept USDC.e or OUSD on Tempo. Choose the currency from the endpoint's HTTP 402 payment offers; no provider configuration change is needed.
+
+OUSD is Open USD issued by Bridge. On Base, use a Permit2-capable x402 v2 client: install `@x402/fetch` or `@x402/axios` together with `@x402/evm`, all v2.17 or later. Import `ExactEvmScheme` from `@x402/evm/exact/client` and register it with your signing account on the `x402Client` for `eip155:8453` before wrapping fetch or axios. Approve an OUSD allowance for Permit2 before paying. The initial approval requires ETH for Base gas and is not sponsored. On Tempo, select the OUSD currency in the MPP challenge. Circle Gateway nanopayments (np) and on-chain credit funding continue to use USDC.
+
+Do not blindly repeat a paid call after an ambiguous timeout or interrupted response. Check usage first, then retry only when the earlier call is known not to have completed.
+
+### Check balance and email a Stripe top-up link
+
+Use the API key returned by signup. Check balance and available packages:
+
+```bash
+curl --fail-with-body --silent --show-error 'https://api.orthogonal.com/v1/credits/balance' \
+  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+curl --fail-with-body --silent --show-error 'https://api.orthogonal.com/v1/credits/pricing'
+```
+
+Read the current package price, including its processing fee, and ask the user before requesting a payment email. With their approval, request a link (this example adds $25 of credits and currently costs $26.25 including the 5% fee):
+
+```bash
+curl --fail-with-body --silent --show-error \
+  -X POST 'https://api.orthogonal.com/v1/credits/email-payment-link' \
+  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"credits":25}'
+```
+
+The endpoint sends the Stripe checkout link only to the account's current verified primary email. Do not supply an email, account ID, organization ID, or redirect URL. It requires a personal API key; organization top-ups use the dashboard.
+
+Check `emailSent`, `email`, `totalLabel`, and `checkoutUrl` in the response. If `emailSent` is false, give the user the existing checkout link instead of repeatedly requesting more emails. Requests are limited to one per minute and five per account per day; honor HTTP 429 and do not retry in a loop.
+
+Creating a link does not charge a card or add credits. The user completes Stripe checkout; never enter payment details or complete payment on their behalf without explicit authorization. After they confirm payment, check `GET /v1/credits/balance` again. Payment processing can take a moment; avoid rapid polling. Keep API keys and checkout URLs out of shared logs.
+
+## Links
+
+- API catalog: https://orthogonal.com/discover
+- Documentation: https://docs.orthogonal.com
+- Dashboard: https://orthogonal.com/dashboard
+
+
+## API skill files
+
+Per-API agent references (one markdown file each):
+
+- [Abstract](https://orthogonal.com/discover/abstractapi/skill.md): Verify every user and stop fraud before it starts. Verify emails, phone numbers and IPs, block fraud and bots, and enrich your data with Abstract.
+- [AgentMail](https://orthogonal.com/discover/agentmail/skill.md): Programmatic email for AI agents. Create inboxes, send/receive emails, manage threads and drafts. Inboxes cost $2/month. Inboxes inactive for 30+ days are automatically deleted.
+- [AgentPhone](https://orthogonal.com/discover/agentphone/skill.md): Give your AI agent a real phone number. Make calls, send and receive messages across iMessage, WhatsApp, SMS and more to have conversations in the real world — all via API.
+- [akta.pro](https://orthogonal.com/discover/akta-pro/skill.md): akta.pro provides structured company data with deep private-company coverage, company discovery, real-time and historical news, business-event signals and alternative data for AI agents and data products. Built for financial-services platforms, PE/VC and investment teams, consulting and research workflows, GTM and revenue-intelligence products, and agent routers. Use it to enrich companies, build lists and market maps, monitor company or industry news, surface GTM and buying signals from events such as funding, M&A, leadership changes, hiring, launches and partnerships, and analyze headcount, jobs, website traffic, social activity, employee reviews and product reviews. Responses are structured, entity-resolved and compact for reliable agent routing and workflow automation.
+- [AllModels](https://orthogonal.com/discover/allmodels/skill.md): Unified TTS and STT API aggregating 18+ speech providers including Deepgram, ElevenLabs, OpenAI, AssemblyAI, Cartesia, Soniox, Groq, Fish Audio, MiniMax, Amazon Polly, Gemini, xAI Grok, and more. OpenAI and ElevenLabs SDK-compatible endpoints for text-to-speech synthesis, speech-to-text transcription, voice cloning, and voice discovery. Access 42+ TTS models and 39+ STT models through a single API key and unified interface.
+- [Andi Search](https://orthogonal.com/discover/andi/skill.md): AI Search for the Next Generation
+- [Apollo](https://orthogonal.com/discover/apollo/skill.md): Apollo.io API for people and company enrichment, search, and prospecting. Access the Apollo database of 210M+ contacts and 30M+ companies.
+- [Aviato](https://orthogonal.com/discover/aviato/skill.md): Comprehensive company and person intelligence platform. Enrich companies and people, search with advanced DSL queries, get funding rounds, investments, employees, founders, contact info, LinkedIn social data, and market maps.
+- [Baseten](https://orthogonal.com/discover/baseten/skill.md): Baseten is a high-performance inference platform for running open source LLMs. This API provides an OpenAI-compatible chat completions endpoint, so it works as a drop-in replacement with any OpenAI SDK or client. Just swap the base URL and API key. Available models include DeepSeek V3 and V3.1, GLM 4.6 and 4.7 from Zhipu, Moonshot's Kimi K2 family (including K2 Thinking with 262k context), and OpenAI's GPT OSS 120B. Several models support controllable reasoning depth via a reasoning_effort parameter. Supports streaming, tool calling, structured outputs, and extended context windows up to 262k tokens.
+- [Brand.dev](https://orthogonal.com/discover/brand-dev/skill.md): API to personalize your product with logos, colors, and company info from any domain.
+- [Bytemine](https://orthogonal.com/discover/bytemine/skill.md): Sales intelligence platform offering prospect search, contact enrichment, company intelligence, web crawling, funding/acquisition signals, LinkedIn post monitoring, proposal generation, meeting briefs, ROI calculators, and fraud detection.
+- [CaptainData](https://orthogonal.com/discover/captaindata/skill.md): CaptainData API provides people and company enrichment, search, and discovery powered by LinkedIn Sales Navigator data. Find and enrich profiles, search for people and companies, and discover employees.
+- [Company Enrich](https://orthogonal.com/discover/company-enrich/skill.md): Comprehensive company and people data enrichment, search, and lead generation API. Enrich company profiles by domain or properties, search companies by industry/location/size/technology, find similar companies, search people by title/company/location, and more.
+- [ContactOut](https://orthogonal.com/discover/contactout/skill.md): Find anyone's email and phone number. Sales and recruitment intelligence with LinkedIn enrichment, people search, company search, email verification, and decision maker discovery.
+- [Context.dev](https://orthogonal.com/discover/context-dev/skill.md): API for retrieving context data from any website. Web scraping, brand retrieval, AI data extraction, screenshots, and more.
+- [Coresignal](https://orthogonal.com/discover/coresignal/skill.md): Business data intelligence platform providing company, employee, and job data from multiple sources. Access 3B+ regularly updated records via simple filters and data collection endpoints.
+- [Crustdata](https://orthogonal.com/discover/crustdata/skill.md): Comprehensive B2B data platform providing firmographic data, growth metrics, people profiles, and web intelligence for companies worldwide.
+- [Didit](https://orthogonal.com/discover/didit/skill.md): The all-in-one identity platform. Powering the fastest identity verification while fighting fraud and unifying all identity checks.
+- [Edges](https://orthogonal.com/discover/edges/skill.md): Edges provides LinkedIn automation actions for data extraction, search, and discovery. Extract profiles, companies, posts, jobs, events, and more. Search across LinkedIn and Sales Navigator.
+- [Extruct AI](https://orthogonal.com/discover/extruct-ai/skill.md): Extruct AI company research API. Semantic company search, lookalike company search, company profile lookup and enrichment, async deep search discovery tasks, and deep research report generation with citations. Find and discover companies using natural language queries, find similar companies to any domain, run AI-powered discovery tasks, and generate cited research reports on companies, people, and teams.
+- [Fantastic Jobs](https://orthogonal.com/discover/fantastic-jobs/skill.md): High-volume job postings feed. Indexes new ATS jobs hourly from 54 ATS platforms across 200k+ companies, plus job board listings from LinkedIn, Wellfound, and Y Combinator. Includes 20+ AI enrichments per job and deep company enrichments from LinkedIn, Glassdoor, and Crunchbase.
+- [Fiber AI](https://orthogonal.com/discover/fiber/skill.md): Reach anyone on the planet with verified contacts. Fiber AI delivers the most accurate contact data, period.
+- [Financial Datasets](https://orthogonal.com/discover/financial-datasets/skill.md): Stock market API with real-time and historical financial data for 27,000+ tickers over 30+ years. Financial statements, equity prices, insider trades, SEC filings, and more.
+- [Findymail](https://orthogonal.com/discover/findymail/skill.md): Findymail API for email finding, verification, company enrichment, phone lookup, intellimatch lead search, lookalike company search, technology stack lookup, and intent signals monitoring.
+- [FullEnrich](https://orthogonal.com/discover/fullenrich/skill.md): FullEnrich aggregates 20+ data providers for B2B contact enrichment, reverse email lookup, and people/company search. Find work emails, mobile phones, personal emails, and professional profiles.
+- [Fundable](https://orthogonal.com/discover/fundable/skill.md): Real-time venture capital deals, startup, and investor data. Search funding rounds, discover companies, analyze investors, and track deal flow with advanced filtering and AI-powered semantic search.
+- [Happenstance](https://orthogonal.com/discover/happenstance/skill.md): Person research API. Submit a description of someone and get back a detailed profile including employment history, education, projects, writings, hobbies, and a summary.
+- [Icypeas](https://orthogonal.com/discover/icypeas/skill.md): Email finder, verifier, LinkedIn scraper, and lead database API. Discover professional email addresses, verify deliverability, scrape LinkedIn profiles and companies, and search a massive lead database with advanced filters.
+- [Influencers Club](https://orthogonal.com/discover/influencers-club/skill.md): Creator discovery, enrichment, and audience analytics across Instagram, YouTube, TikTok, Twitter, Twitch, and more. Search creators with advanced filters, enrich profiles by handle or email, find similar creators, compare audience overlap, and fetch content posts with engagement data.
+- [Massive Web](https://orthogonal.com/discover/joinmassive/skill.md): One API to chat with AI, browse, and search the live web. The Massive Web Render API turns hard-to-reach web content into clean, structured data. Supports AI completions (ChatGPT, Gemini, Perplexity, Copilot), web search with geotargeting, and full browser rendering with antibot bypass.
+- [Leadsforge](https://orthogonal.com/discover/leadsforge/skill.md): Leadsforge API for lead search, enrichment (email, phone, LinkedIn), company followers, and lookalike company discovery.
+- [Linkup](https://orthogonal.com/discover/linkup/skill.md): Linkup is a web search engine for AI apps. We connect your AI application to the internet. Our API provides grounding data to enrich your AI’s output and increase its precision, accuracy and factuality.
+- [MiniMax](https://orthogonal.com/discover/minimax-08853f/skill.md): MiniMax models: MiniMax-M3 and M2.7 LLMs (1M / 205k context, agentic coding and tool use), speech-2.8 text-to-speech with 300+ voices, and image-01 image generation.
+- [Notte](https://orthogonal.com/discover/notte/skill.md): Browser automation API for AI agents. Start browser sessions, run AI agents, scrape webpages, and automate browser tasks with headless Chrome/Firefox. Features include CAPTCHA solving, proxy support, and persistent browser profiles.
+- [Nyne.ai](https://orthogonal.com/discover/nyne/skill.md): People and company intelligence platform. Find contacts, enrich profiles, get social media activity, and discover event attendees.
+- [Olostep](https://orthogonal.com/discover/olostep/skill.md): Olostep offers AI a way to search the web, extract structured data in real time and build custom research agents.
+- [OpenFunnel](https://orthogonal.com/discover/openfunnel/skill.md): GTM intelligence platform. Search companies by traits/signals, enrich accounts with firmographic data, find and enrich people, get account timelines and insights, and deploy signal-monitoring agents.
+- [Openmart](https://orthogonal.com/discover/openmart/skill.md): Local business search, enrichment, and lead intelligence. Search 30M+ US/CA/AU businesses by query, tags, location, reviews, ownership type, price tier, revenue. Enrich companies, find decision makers with verified emails and phones, detect tech stacks.
+- [People Data Labs](https://orthogonal.com/discover/peopledatalabs/skill.md): Access the world's largest people and company dataset. Enrich, search, and clean person, company, school, location, job title, and IP data.
+- [Precip AI - Hyperlocal Weather Data](https://orthogonal.com/discover/precip/skill.md): Precip offers highly accurate, site-specific rainfall accumulation data.
+- [PredictLeads](https://orthogonal.com/discover/predictleads/skill.md): Company intelligence API providing job openings, news events, financing events, technology detections, connections, products, and more for any company.
+- [Riveter](https://orthogonal.com/discover/riveter/skill.md): Power your product with data from the web. Riveter's agents manage web search, scraping, browser infrastructure, and proxies for you. Every result has a source.
+- [RocketReach](https://orthogonal.com/discover/rocketreach/skill.md): Search and retrieve contact info for 700M+ professionals and 60M+ companies. Lookup emails, phone numbers, job history, education, and more via the Universal Credits API.
+- [Scrape Creators](https://orthogonal.com/discover/scrapecreators/skill.md): Social media data extraction API covering 22+ platforms including TikTok, Instagram, YouTube, Twitter/X, LinkedIn, Facebook, Reddit, Pinterest, Threads, Bluesky, and more.
+- [ScrapeGraphAI](https://orthogonal.com/discover/scrapegraphai/skill.md): Scrape URLs, extract structured data with LLMs, search and scrape top results, crawl websites, and monitor pages for changes.
+- [Seltz](https://orthogonal.com/discover/seltz/skill.md): Context-engineered web search API. Search the web and return matching documents with full content.
+- [Serper](https://orthogonal.com/discover/serper/skill.md): Google Search API by Serper - fast, reliable access to 12 Google search types: web search, images, videos, news, places, maps, shopping, scholar, patents, autocomplete, lens (reverse image search), and reviews. All endpoints accept POST with JSON body. Returns structured JSON results.
+- [Serper Scrape](https://orthogonal.com/discover/serper-scrape/skill.md): Web scraping powered by Serper - extract clean text, markdown, or HTML from any URL. Handles JavaScript-rendered pages and returns structured content with metadata.
+- [Signalbase](https://orthogonal.com/discover/signalbase/skill.md): Real-time funding, acquisition, hiring, and job change signals API. Includes investor data, company search, people discovery, and batch CSV enrichment.
+- [Sixtyfour](https://orthogonal.com/discover/sixtyfour/skill.md): Build custom research agents to enrich people and company data, and surface real-time signals all with a simple API call.
+- [Smol Machines](https://orthogonal.com/discover/smolmachines/skill.md): Cloud microVM platform. Create isolated Linux VMs, execute commands, run code, manage files and volumes. Each machine has its own kernel with configurable CPU, memory, networking, and storage.
+- [Tako](https://orthogonal.com/discover/tako/skill.md): Tako is a knowledge search engine that visualizes the world's data. Search with natural language to get interactive knowledge cards with charts, tables, and insights powered by sources like S&P Global, World Bank, and more.
+- [Tavily](https://orthogonal.com/discover/tavily/skill.md): Real-time search, extraction, and web crawling through a single, secure API.
+- [Tomba](https://orthogonal.com/discover/tomba/skill.md): Email finding and verification API
+- [Voygr](https://orthogonal.com/discover/voygr/skill.md): Validate whether a business exists at a given address and check if it is currently open or closed.
+- [You.com](https://orthogonal.com/discover/you/skill.md): Real-time web search, content extraction, and deep research APIs for AI agents.

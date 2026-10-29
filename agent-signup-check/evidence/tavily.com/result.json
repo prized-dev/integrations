@@ -1,0 +1,138 @@
+{
+ "site": "tavily.com",
+ "checkedAt": "2026-10-28T23:58:20.048Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 2,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://tavily.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://www.tavily.com/auth.md)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://tavily.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://www.tavily.com/.well-known/oauth-protected-resource)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://tavily.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404) (after a redirect to https://www.tavily.com/.well-known/oauth-authorization-server); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.tavily.com/usage",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "where": "llms.txt",
+   "url": "https://docs.tavily.com/llms.txt",
+   "match": "x402",
+   "snippet": "s web capabilities to AI coding agents. - [Tavily x402](https://docs.tavily.com/documentation/machine-payments/x402.md): Agents pay per request for Advanced Sea",
+   "status": "partial",
+   "reason": "llms.txt mentions a payment path (x402) in prose; nothing machine-readable"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://docs.tavily.com/llms.txt",
+   "heading": "# Tavily Docs",
+   "bytes": 22215,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://tavily.com/auth.md",
+   "finalUrl": "https://www.tavily.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 592,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://tavily.com/llms.txt",
+   "finalUrl": "https://docs.tavily.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 491,
+   "redirects": 2
+  },
+  {
+   "label": "api",
+   "url": "https://api.tavily.com/usage",
+   "finalUrl": "https://api.tavily.com/usage",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 198,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://tavily.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.tavily.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 174,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.tavily.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.tavily.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": null,
+   "ms": 177,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://tavily.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.tavily.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 170,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://tavily.com/.well-known/x402",
+   "finalUrl": "https://www.tavily.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 191,
+   "redirects": 1
+  }
+ ]
+}

@@ -1,0 +1,32 @@
+GET https://clerk.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:36.739Z
+final-url: https://clerk.com/.well-known/oauth-protected-resource
+
+HTTP 200
+accept-ranges: bytes
+access-control-allow-origin: *
+age: 1159
+cache-control: public, max-age=3600
+content-disposition: inline
+content-length: 136
+content-type: application/json
+date: Wed, 28 Oct 2026 23:58:35 GMT
+etag: "a0a14bbee45d5fa5375e944c740b1bb2"
+referrer-policy: same-origin
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-clerk-auth-reason: session-token-and-uat-missing
+x-clerk-auth-status: signed-out
+x-content-type-options: nosniff
+x-download-options: noopen
+x-frame-options: deny
+x-generated-visitor-id: 2542f214-19b3-4d01-b9d2-ddf2d810509c
+x-matched-path: /.well-known/oauth-protected-resource
+x-vercel-cache: HIT
+x-vercel-id: pdx1::cv5n8-1793231915135-8ed72b1fb8e6
+x-xss-protection: 1
+connection: close
+
+{"resource":"https://clerk.com","resource_name":"Clerk","bearer_methods_supported":[],"resource_documentation":"https://clerk.com/docs"}

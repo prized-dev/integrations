@@ -1,0 +1,139 @@
+{
+ "site": "gitlab.com",
+ "checkedAt": "2026-10-28T23:58:33.830Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 2,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://gitlab.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md answers with a Cloudflare bot challenge (after a redirect to https://gitlab.com/users/sign_in)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://gitlab.com/.well-known/oauth-protected-resource",
+   "via": "well-known",
+   "resource": "https://gitlab.com/api/v4/mcp",
+   "authorization_servers": [
+    "https://gitlab.com"
+   ],
+   "status": "partial",
+   "reason": "resource (https://gitlab.com/api/v4/mcp) does not match the URL the metadata came from; RFC 9728 section 3.3 says a client MUST NOT use it"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://gitlab.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://gitlab.com/api/v4/user",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://docs.gitlab.com/llms.txt",
+   "heading": "# GitLab Documentation",
+   "bytes": 87171,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://gitlab.com/auth.md",
+   "finalUrl": "https://gitlab.com/users/sign_in",
+   "status": 403,
+   "error": null,
+   "contentType": "text/html; charset=UTF-8",
+   "ms": 29,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://gitlab.com/llms.txt",
+   "finalUrl": "https://gitlab.com/users/sign_in",
+   "status": 403,
+   "error": null,
+   "contentType": "text/html; charset=UTF-8",
+   "ms": 29,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://gitlab.com/api/v4/user",
+   "finalUrl": "https://gitlab.com/api/v4/user",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 167,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://docs.gitlab.com/llms.txt",
+   "finalUrl": "https://docs.gitlab.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 59,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://gitlab.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://gitlab.com/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 44,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://gitlab.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://gitlab.com/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 37,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://gitlab.com/.well-known/x402",
+   "finalUrl": "https://gitlab.com/users/sign_in",
+   "status": 403,
+   "error": null,
+   "contentType": "text/html; charset=UTF-8",
+   "ms": 31,
+   "redirects": 1
+  }
+ ]
+}

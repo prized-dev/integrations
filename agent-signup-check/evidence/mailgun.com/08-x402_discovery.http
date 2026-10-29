@@ -1,0 +1,144 @@
+GET https://mailgun.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:08.485Z
+redirect: 301 from https://mailgun.com/.well-known/x402
+final-url: https://www.mailgun.com/.well-known/x402
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:58:08 GMT
+content-type: text/html; charset=UTF-8
+transfer-encoding: chunked
+connection: close
+server: cloudflare
+vary: Accept-Encoding
+access-control-allow-headers: Content-Type, Authorization
+access-control-allow-methods: GET,POST
+cache-control: no-cache, must-revalidate, max-age=0, no-store, private
+content-security-policy: upgrade-insecure-requests;
+cross-origin-opener-policy: unsafe-none
+cross-origin-resource-policy: cross-origin
+expires: Wed, 11 Jan 1984 05:00:00 GMT
+link: <https://www.mailgun.com/wp-json/>; rel="https://api.w.org/"
+permissions-policy: accelerometer=(), autoplay=(), camera=(), cross-origin-isolated=(), display-capture=(self), encrypted-media=(), fullscreen=*, geolocation=(self), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=*, picture-in-picture=*, publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=*, usb=(), xr-spatial-tracking=(), gamepad=(), serial=()
+referrer-policy: strict-origin-when-cross-origin
+status: 404 Not Found
+strict-transport-security: max-age=63072000
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-permitted-cross-domain-policies: none
+x-powered-by: WP Engine
+x-cacheable: NO:Private
+x-cache: MISS
+x-cache-group: normal
+x-orig-cache-control: no-cache, must-revalidate, max-age=0, no-store, private
+cf-cache-status: BYPASS
+content-encoding: br
+cf-ray: a51de2febbb87553-SEA
+alt-svc: h3=":443"; ma=86400
+
+<!DOCTYPE html>
+<html lang="en-US">
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]> <html class="no-js" lang="en"> <![endif]-->
+
+<head>
+    <title>
+        Page not found - Transactional Email API Service For Developers | Mailgun    </title>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+        <link rel="preload" href="https://www.mailgun.com/wp-content/plugins/sinch-core/assets/fonts/host-grotesk-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    <link rel="preload" href="https://www.mailgun.com/wp-content/plugins/sinch-core/assets/fonts/host-grotesk-semibold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0">
+    <link rel="icon" type="image/png" href="https://www.mailgun.com/wp-content/themes/simpletexting-theme-blank/assets/favicon/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="https://www.mailgun.com/wp-content/themes/simpletexting-theme-blank/assets/favicon/android-chrome-512x512.png" sizes="512x512">
+    <link rel="icon" type="image/x-icon" href="https://www.mailgun.com/wp-content/themes/simpletexting-theme-blank/assets/favicon/favicon.ico">
+    <link rel="icon" type="image/png" href="https://www.mailgun.com/wp-content/themes/simpletexting-theme-blank/assets/favicon/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="https://www.mailgun.com/wp-content/themes/simpletexting-theme-blank/assets/favicon/favicon-32x32.png" sizes="32x32">
+    <link rel="apple-touch-icon" type="image/png" href="https://www.mailgun.com/wp-content/themes/simpletexting-theme-blank/assets/favicon/apple-touch-icon-180x180.png" sizes="180x180">
+    <link rel="apple-touch-icon" type="image/png" href="https://www.mailgun.com/wp-content/themes/simpletexting-theme-blank/assets/favicon/apple-touch-icon-512x512.png" sizes="512x512">
+
+    <meta name='robots' content='noindex, nofollow' />
+
+	<!-- This site is optimized with the Yoast SEO plugin v28.4 - https://yoast.com/product/yoast-seo-wordpress/ -->
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:title" content="Page not found - Transactional Email API Service For Developers | Mailgun" />
+	<meta property="og:site_name" content="Transactional Email API Service For Developers | Mailgun" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https:\/\/schema.org","@graph":[{"@type":"WebSite","@id":"https:\/\/www.mailgun.com\/#website","url":"https:\/\/www.mailgun.com\/","name":"Transactional Email API Service For Developers | Mailgun","description":"Powerful Transactional Email APIs that enable you to send, receive, and track emails, built with developers in mind. Learn more today!","publisher":{"@id":"https:\/\/www.mailgun.com\/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https:\/\/www.mailgun.com\/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https:\/\/www.mailgun.com\/#organization","name":"Transactional Email API Service For Developers | Mailgun","url":"https:\/\/www.mailgun.com\/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/www.mailgun.com\/#\/schema\/logo\/image\/","url":"https:\/\/www.mailgun.com\/wp-content\/uploads\/2025\/06\/cropped-android-chrome-512x512-1.png","contentUrl":"https:\/\/www.mailgun.com\/wp-content\/uploads\/2025\/06\/cropped-android-chrome-512x512-1.png","width":512,"height":512,"caption":"Transactional Email API Service For Developers | Mailgun"},"image":{"@id":"https:\/\/www.mailgun.com\/#\/schema\/logo\/image\/"}}]}</script>
+	<!-- / Yoast SEO plugin. -->
+
+
+<link href='https://fonts.gstatic.com' crossorigin rel='preconnect' />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<link rel="https://api.w.org/" href="https://www.mailgun.com/wp-json/" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.mailgun.com/xmlrpc.php?rsd" />
+<meta name="generator" content="WPML ver:4.9.7 stt:1,4,3,66,2;" />
+<link rel="icon" href="https://www.mailgun.com/wp-content/uploads/2025/06/cropped-android-chrome-512x512-1-1-150x150.png" sizes="32x32" />
+<link rel="icon" href="https://www.mailgun.com/wp-content/uploads/2025/06/cropped-android-chrome-512x512-1-1-300x300.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://www.mailgun.com/wp-content/uploads/2025/06/cropped-android-chrome-512x512-1-1-300x300.png" />
+<meta name="msapplication-TileImage" content="https://www.mailgun.com/wp-content/uploads/2025/06/cropped-android-chrome-512x512-1-1-300x300.png" />
+<noscript><style id="rocket-lazyload-nojs-css">.rll-youtube-player, [data-lazy-src]{display:none !important;}</style></noscript>    <script nowprocket>
+        // Initialize site scripts as an empty array
+        // Each script will push itself into the array as an object with name and type keys
+        let siteScripts = [];
+    </script>
+
+    
+    <style>
+  @media (max-width: 767.98px) {
+    @font-face {
+      font-family: 'Host Grotesk';
+      font-style: normal;
+      font-weight: 400;
+      src: url('https://www.mailgun.com/wp-content/plugins/sinch-core/assets/fonts/host-grotesk-regular.woff2') format('woff2');
+      font-display: optional;
+    }
+
+    @font-face {
+      font-family: 'Host Grotesk';
+      font-style: normal;
+      font-weight: 600;
+      src: url('https://www.mailgun.com/wp-content/plugins/sinch-core/assets/fonts/host-grotesk-semibold.woff2') format('woff2');
+      font-display: optional;
+    }
+  }
+
+  /* Desktop (fallback) */
+  @media (min-width: 768px) {
+    @font-face {
+      font-family: 'Host Grotesk';
+      font-style: normal;
+      font-weight: 400;
+      src: url('https://www.mailgun.com/wp-content/plugins/sinch-core/assets/fonts/host-grotesk-regular.woff2') format('woff2');
+      font-display: fallback;
+    }
+
+    @font-face {
+      font-family: 'Host Grotesk';
+      font-style: normal;
+      font-weight: 600;
+      src: url('https://www.mailgun.com/wp-content/plugins/sinch-core/assets/fonts/host-grotesk-semibold.woff2') format('woff2');
+      font-display: fallback;
+    }
+  }
+
+  </style>
+    <style>
+        body{--scrollbar-width:0px;--prenav-height:0px;--search-height:55px;--nav-height:53px;--fixed-content-height:var(--offer-bar-dynamic-height, 0px);--header-scrolled-height:calc(
+      var(--nav-height) + var(--fixed-content-height)
+  );--header-height:var(--header-scrolled-height);--header-height-main:calc(
+      var(--header-height) - var(--subnav-height, 0px)
+  );--body-padding-top:calc(
+      var(--nav-height, 0px) + var(--prenav-height, 0px) +
+          var(--fixed-content-height, 0px) + var(--subnav-height, 0px)
+  );transition:padding-top .3s ease-out;padding-top:var(--body-padding-top)}body.is-scrolled-top,body.scrolling-up{--header-height:calc(
+      var(--header-scrolled-height) + var(--prenav-height)
+  )}@media (min-width:768px){body{--prenav-height:33px}}@media (min-width:1200px){body{--search-height:87px}}.menu-background{position:fixed;top:0;left:0;right:var(--scrollbar-width);height:0}.menu-backdrop{position:fixed;top:0;left:0;bottom:0;right:0;display:block;opacity:0;visibility:hidden;pointer-events:none}.nav-search{display:none;opacity:0;visibility:hidden}.top-prenav{background-color:#f0f3f5;border-bottom:1px solid #dce2e5;z-index:1031;position:fixed;left:0;right:0;top:calc(var(--fixed-content-height) + var(--prenav-height) * -1);transition:top .3s ease-out}body.is-scrolled-top .top-prenav,body.scrolling-up .top-prenav{top:var(--fixed-content-height)}@media (max-width:767.98px){.top-prenav{display:none}}.top-prenav .top-prenav__menu{--menu-items-gap:0;--menu-item-font-size:0.75rem;--menu-item-line-height:1.25rem;--menu-item-padding:0.375rem 0.5rem;--menu-item-chevron-size:0.75rem;--menu-item-font-weight:400}.top-nav{--top-nav-box-shadow:0 0.125rem 0.5rem -0.125rem rgba(0, 0, 0, 0.16);--top-nav-border-bottom-width:1px;min-height:var(--nav-height);background-color:#fff;border-bottom:var(--top-nav-border-bottom-width) solid var(--top-nav-border-color,#dce2e5);box-shadow:var(--top-nav-box-shadow);z-index:1030;position:fixed;left:0;right:0;top:var(--fixed-content-height);display:flex;align-items:center;transition:top .3s ease-out}body.is-scrolled-top .top-nav,body.scrolling-up .top-nav{top:calc(var(--prenav-height) + var(--fixed-content-height))}.top-nav .menu-item-separator{background-color:#8f9aa1;border-radius:50rem;width:1px;height:1.5rem}@media (max-width:1199.98px){.top-nav .top-nav__offcanvas{padding:0!important;overflow:hidden}.top-nav .top-nav__row>:not(.top-nav__logo-wrap){flex-grow:1;flex-basis:0%!important}}.top-nav .top-nav__offcanvas-toggler{height:calc(var(--nav-height) - var(--top-nav-border-bottom-width));width:var(--nav-height);-webkit-appearance:none;-moz-appearance:none;appearance:none;border:none;border-inline-end:var(--top-nav-border-bottom-width) solid #dce2e5;background-color:#165eee;margin-inline-start:calc(var(--sinch-gutter-x,.75rem) * -1);padding:0;position:relative;cursor:pointer;display:flex;align-items:center;justify-content:center}@media (hover:hover) and (pointer:fine){.top-nav .top-nav__offcanvas-toggler:focus-visible,.top-nav .top-nav__offcanvas-toggler:hover{background-color:#2977ff}}.top-nav .top-nav__offcanvas-toggler span{background-color:#fff;border-radius:3px;display:block;height:3px;margin-right:0;opacity:1;transition:width .2s ease-out,height .2s ease-out,top .2s ease-out,margin-right .2s ease-out;width:21px;position:relative}.top-nav .top-nav__offcanvas-toggler span:after,.top-nav .top-nav__offcanvas-toggler span:before{content:"";position:absolute;background-color:#fff;border-radius:3px;display:block;height:3px;margin-right:0;opacity:1;transition:transform .2s ease-out,width .2s ease-out,height .2s ease-out,top .2s ease-out,margin-top .2s ease-out;width:21px}.top-nav .top-nav__offcanvas-toggler span:before{top:-7.7px}.top-nav .top-nav__offcanvas-toggler span:after{top:7.7px}.top-nav .top-nav__offcanvas-toggler[aria-expanded=true] span{margin-right:24px;width:0;height:0}.top-nav .top-nav__offcanvas-toggler[aria-expanded=true] span:after,.top-nav .top-nav__offcanvas-toggler[aria-expanded=true] span:before{margin-top:-.5875rem;top:0;width:24px}.top-nav .top-nav__offcanvas-toggler[aria-expanded=true] span:before{transform:translateY(.525rem) rotate(45deg)}.top-nav .top-nav__offcanvas-toggler[aria-expanded=true] span:after{transform:translateY(.525rem) rotate(-45deg)}.top-nav .top-nav__header_mobile_action_secondary{--menu-icon-size:1.5rem;--menu-icon-color:#000000;--menu-icon-offset-top:0rem;--menu-logo-height:2rem;--menu-chevron-size:1rem;--menu-chevron-color:#8F9AA1;--menu-chevron-rotate:0deg;--menu-chevron-margin-start:0;--menu-chevron-offset-top:0rem;--menu-external-icon-color:currentColor;--menu-icon-color:currentColor;height:calc(var(--nav-height) - var(--top-nav-border-bottom-width));width:var(--nav-height);-webkit-appearance:none;-moz-appearance:none;appearance:none;border:none;border-inline-start:var(--top-nav-border-bottom-width) solid #dce2e5;background-color:#f0f3f5;color:#78828a;margin-inline-end:calc(var(--sinch-gutter-x,.75rem) * -1);padding:0;position:relative;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:color .2s ease-out,background-color .2s ease-out!important}.top-nav .top-nav__header_mobile_action_secondary.top-nav__header_mobile_action_left{margin-inline-end:0;margin-inline-start:calc(var(--sinch-gutter-x,.75rem) * -1)}.top-nav .top-nav__header_mobile_action_secondary .menu-icon{flex:0 0 auto;width:var(--menu-icon-size);height:var(--menu-icon-size);margin-top:var(--menu-icon-offset-top);color:var(--menu-icon-color);transition:color .2s ease-out}.top-nav .top-nav__header_mobile_action_secondary .menu-logo{flex:0 0 auto;width:auto;height:var(--menu-logo-height);max-width:100%}.top-nav .top-nav__header_mobile_action_secondary .menu-chevron{flex:0 0 auto;width:var(--menu-chevron-size);height:var(--menu-chevron-size);margin-inline-start:var(--menu-chevron-margin-start);margin-top:var(--menu-chevron-offset-top);color:var(--menu-chevron-color);transform:rotate(var(--menu-chevron-rotate));transition:transform .2s ease-out,color .2s ease-out}.top-nav .top-nav__header_mobile_action_secondary .menu-external-icon{color:var(--menu-external-icon-color);transition:none}@media (hover:hover) and (pointer:fine){.top-nav .top-nav__header_mobile_action_secondary:focus-visible,.top-nav .top-nav__header_mobile_action_secondary:hover{background-color:#dce2e5;color:#1a2126}}nav .navbar-menu{--menu-items-gap:0.5rem;--menu-item-font-size:0.875rem;--menu-item-line-height:1.25rem;--menu-item-padding:1rem 0.5rem;--menu-item-color:#4B575E;--menu-item-color-hover:#000000;--menu-item-font-weight:600;--menu-item-icon-size:1rem;--menu-item-icon-color:#8F9AA1;--menu-item-icon-color-hover:#78828A;--menu-item-chevron-size:0.75rem;--menu-item-chevron-color:#8F9AA1;--menu-item-chevron-color-hover:#78828A;margin:0;padding:0;display:flex;list-style:none;gap:var(--menu-items-gap)}nav .navbar-menu>li{display:flex}nav .navbar-menu .menu-link{--menu-icon-size:1.5rem;--menu-icon-color:#000000;--menu-icon-offset-top:0rem;--menu-logo-height:2rem;--menu-chevron-size:1rem;--menu-chevron-color:#8F9AA1;--menu-chevron-rotate:0deg;--menu-chevron-margin-start:0;--menu-chevron-offset-top:0rem;--menu-external-icon-color:currentColor;--menu-icon-size:var(--menu-item-icon-size);--menu-icon-color:var(--menu-item-icon-color);--menu-chevron-size:var(--menu-item-chevron-size);--menu-chevron-color:var(--menu-item-chevron-color);font-size:var(--menu-item-font-size);line-height:var(--menu-item-line-height);padding:var(--menu-item-padding);color:var(--menu-item-color);font-weight:var(--menu-item-font-weight);display:flex;align-items:center;gap:.25rem;text-decoration:none;transition:color .2s ease-out;cursor:pointer;position:relative}nav .navbar-menu .menu-link .menu-icon{flex:0 0 auto;width:var(--menu-icon-size);height:var(--menu-icon-size);margin-top:var(--menu-icon-offset-top);color:var(--menu-icon-color);transition:color .2s ease-out}nav .navbar-menu .menu-link .menu-logo{flex:0 0 auto;width:auto;height:var(--menu-logo-height);max-width:100%}nav .navbar-menu .menu-link .menu-chevron{flex:0 0 auto;width:var(--menu-chevron-size);height:var(--menu-chevron-size);margin-inline-start:var(--menu-chevron-margin-start);margin-top:var(--menu-chevron-offset-top);color:var(--menu-chevron-color);transform:rotate(var(--menu-chevron-rotate));transition:transform .2s ease-out,color .2s ease-out}nav .navbar-menu .menu-link .menu-external-icon{color:var(--menu-external-icon-color);transition:none}nav .navbar-menu .menu-link:after{content:"";position:absolute;bottom:-1px;left:0;right:100%;height:2px;display:block;background-color:#2977ff;transition:right .2s ease-out}@media (hover:hover) and (pointer:fine){nav .navbar-menu .menu-link:focus-visible,nav .navbar-menu .menu-link:hover{--menu-icon-size:var(--menu-item-icon-size);--menu-icon-color:var(--menu-item-icon-color-hover);--menu-chevron-color:var(--menu-item-chevron-color-hover);color:var(--menu-item-color-hover)}}nav .navbar-menu .menu-link.active{--menu-icon-size:var(--menu-item-icon-size);--menu-icon-color:var(--menu-item-icon-color-hover);--menu-chevron-color:var(--menu-item-chevron-color-hover);--menu-chevron-rotate:-180deg;color:var(--menu-item-color-hover)}nav .navbar-menu .menu-link.active:after{right:0}@media (max-width:1199.98px){.navbar-menu-mobile{flex-direction:column;align-items:stretch;gap:0}}.menu-item.has-panel{position:relative}.menu-item.has-panel .menu-panel{visibility:hidden;display:none;opacity:0}.form-control{display:block;width:100%;padding:.4375rem 1rem;font-size:1rem;font-weight:400;line-height:1.5;color:var(--sinch-body-color);-webk
+
+[body trimmed for publication: kept 16384 of 234573 characters; sha256 of the full body 45a1686ac752167cb0d2c1324adba45171de3ad3e32e52361dca9328c333fa3f]

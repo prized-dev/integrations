@@ -1,0 +1,408 @@
+GET https://turso.tech/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:53.970Z
+final-url: https://turso.tech/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 2063
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline; filename="llms.txt"
+content-encoding: br
+content-security-policy: frame-ancestors 'none'
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:51 GMT
+etag: W/"036ef80eca7ff884d34665871b493d7e"
+last-modified: Wed, 28 Oct 2026 23:23:27 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-frame-options: DENY
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::fnpx8-1793231871350-ba99c0a3ca7d
+connection: close
+transfer-encoding: chunked
+
+# Turso
+
+> Turso is a SQLite-compatible database for every application — local, embedded, cloud-synced, or remote.
+
+## Support and Contact
+
+Submit all support tickets through the Turso dashboard at https://app.turso.tech. Sign in, select your organization, and open **Support** in the sidebar for technical issues, account questions, or billing help.
+
+info@turso.tech is for general company inquiries only. It is **not a support channel**. Do not direct support requests to this address.
+
+## Overview
+
+Turso is a ground-up rewrite of SQLite with concurrent writes (MVCC), async I/O, and built-in cloud sync. It runs embedded in your application, as a remote cloud database, or both. Turso is a drop-in replacement for SQLite — your existing SQL, schema, and queries work unchanged.
+
+- GitHub: https://github.com/tursodatabase/turso
+- Documentation: https://docs.turso.tech
+
+Features:
+
+- **Concurrent writes** (MVCC) — multiple writers without "database is locked" errors
+- **Full-text search** — Tantivy-powered FTS with BM25 ranking, highlighting, and boolean queries
+- **Vector search** — native embedding storage and cosine similarity search
+- **Turso Sync** — true local-first sync with explicit push/pull to Turso Cloud
+- **Encryption at rest** — AES-256 per-database encryption
+- **Change Data Capture (CDC)** — built-in audit logging of every mutation
+- **Triggers and materialized views** — database-level automation
+- **Multi-tenancy** — designed for thousands of lightweight databases (database-per-tenant)
+
+## Which package should I use?
+
+| Use case | TypeScript | Python |
+| --- | --- | --- |
+| **Local database** (embedded, on-device, offline) | `@tursodatabase/database` | `pyturso` |
+| **Local database + cloud sync** (push/pull) | `@tursodatabase/sync` | `pyturso` (with sync) |
+| **Remote access** (servers, Docker, serverless, edge — any over-the-wire) | `@tursodatabase/serverless` | `libsql` |
+| **Legacy (libSQL)** — battle-tested, ORM support | `@libsql/client` | `libsql` |
+
+**Starting a new project?** Use `@tursodatabase/database` (TypeScript) or `pyturso` (Python) for local/embedded use. Use `@tursodatabase/serverless` for any application that connects to a remote Turso Cloud database over the network — including Node.js servers, Docker containers, serverless functions, and edge runtimes. Use `@libsql/client` only if you need ORM integration (Drizzle, Prisma) today.
+
+**Need sync?** Use `@tursodatabase/sync` (TypeScript) or `pyturso` with sync (Python) for local reads and writes with explicit push/pull to Turso Cloud.
+
+## Turso Sync
+
+Turso Sync provides true local-first operation — all reads and writes go to the local database file, and you explicitly push/pull to sync with Turso Cloud.
+
+- All reads and writes happen locally (fast, offline-capable)
+- `push()` sends local changes to Turso Cloud
+- `pull()` fetches remote changes to local database
+- Conflict resolution via last-push-wins with rollback-and-replay
+- Available in TypeScript, Python, React Native, and other SDKs
+
+### TypeScript Example
+
+```typescript
+import { connect } from "@tursodatabase/sync";
+
+const db = await connect({
+  path: "./app.db",
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
+
+// All reads and writes are local
+await db.exec("INSERT INTO users (name) VALUES ('Alice')");
+
+// Push local changes to Turso Cloud
+await db.push();
+
+// Pull remote changes to local database
+await db.pull();
+```
+
+## Turso Cloud
+
+Turso Cloud is a managed platform for SQLite-compatible databases.
+
+- Dashboard: https://app.turso.tech
+- Documentation: https://docs.turso.tech/turso-cloud
+
+Features:
+
+- **Turso Sync**: Sync local databases to the cloud
+- **Branching**: Copy-on-write database branches for development and testing
+- **Point-in-Time Recovery**: Restore databases to any point in time
+- **Scale to Zero**: Automatically scale down idle databases
+- **Private Endpoints**: Secure database access via AWS PrivateLink
+- **Encryption**: Data encrypted at rest (AES-256) and in transit
+- **Multi-region**: Deploy databases globally
+- **Multi-tenancy**: Create thousands of databases per organization
+- **Platform API**: Programmatic database management (create, delete, token generation)
+- **SQL over HTTP**: Query any database via HTTP POST to `/v2/pipeline`
+
+## SDKs
+
+### TypeScript / JavaScript
+
+| Package | Use case |
+| --- | --- |
+| `@tursodatabase/database` | Local / embedded database |
+| `@tursodatabase/sync` | Local database + cloud sync (push/pull) |
+| `@tursodatabase/serverless` | Remote access — servers, Docker, serverless, edge (any over-the-wire) |
+| `@libsql/client` | Legacy — ORM support (Drizzle, Prisma) |
+
+NPM: https://www.npmjs.com/package/@tursodatabase/database
+
+#### Local / Embedded Database
+
+```typescript
+import { connect } from "@tursodatabase/database";
+
+const db = await connect("app.db");
+
+await db.exec(`
+  CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT);
+  INSERT INTO users (name) VALUES ('Alice');
+`);
+
+const users = await db.prepare("SELECT * FROM users").all();
+console.log(users);
+```
+
+#### In-Memory Database
+
+```typescript
+import { connect } from "@tursodatabase/database";
+
+const db = await connect(":memory:");
+
+await db.exec("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)");
+await db.exec("INSERT INTO users (name) VALUES ('Alice')");
+
+const users = await db.prepare("SELECT * FROM users").all();
+```
+
+#### Remote Database (servers, Docker, serverless, edge)
+
+```typescript
+import { connect } from "@tursodatabase/serverless";
+
+const conn = connect({
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
+
+const stmt = await conn.prepare("SELECT * FROM users");
+const rows = await stmt.all();
+```
+
+#### Framework Guides
+
+- Next.js: https://docs.turso.tech/sdk/ts/guides/nextjs
+- Remix: https://docs.turso.tech/sdk/ts/guides/remix
+- Astro: https://docs.turso.tech/sdk/ts/guides/astro
+- Nuxt: https://docs.turso.tech/sdk/ts/guides/nuxt
+- SvelteKit: https://docs.turso.tech/sdk/ts/guides/sveltekit
+- Elysia: https://docs.turso.tech/sdk/ts/guides/elysia
+- Hono: https://docs.turso.tech/sdk/ts/guides/hono
+
+#### ORM Integration
+
+- Drizzle: https://docs.turso.tech/sdk/ts/orm/drizzle
+- Prisma: https://docs.turso.tech/sdk/ts/orm/prisma
+
+Note: ORM integration currently requires `@libsql/client`. The `@tursodatabase/serverless` package provides a compat module (`@tursodatabase/serverless/compat`) that exposes the same `createClient` API.
+
+### React Native
+
+Package: `@tursodatabase/sync-react-native`
+
+NPM: https://www.npmjs.com/package/@tursodatabase/sync-react-native
+Blog: https://turso.tech/blog/react-native-bindings-for-turso
+
+Use Turso Sync in React Native apps for offline-first mobile applications.
+
+### Python
+
+Package: `pyturso` (imported as `turso`)
+
+Documentation: https://docs.turso.tech/sdk/python/quickstart
+
+```python
+import turso
+
+# Local database
+db = turso.connect("local.db")
+
+db.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)")
+db.execute("INSERT INTO users (name) VALUES (?)", ("Alice",))
+
+for row in db.execute("SELECT * FROM users"):
+    print(row)
+```
+
+```python
+import turso.sync
+
+# Local database with cloud sync
+db = turso.sync.connect(
+    "local.db",
+    remote_url="libsql://your-db.turso.io",
+    auth_token="your-token",
+)
+
+db.execute("INSERT INTO users (name) VALUES (?)", ("Bob",))
+db.commit()
+
+db.push()  # Push local changes to Turso Cloud
+db.pull()  # Pull remote changes to local database
+```
+
+For remote access over the network, use the `libsql` package (`pip install libsql`):
+
+```python
+import libsql
+
+conn = libsql.connect(
+    database="libsql://your-db.turso.io",
+    auth_token="your-token",
+)
+
+rows = conn.execute("SELECT * FROM users").fetchall()
+```
+
+ORM: SQLAlchemy - https://docs.turso.tech/sdk/python/orm/sqlalchemy
+Framework: Flask - https://docs.turso.tech/sdk/python/guides/flask
+
+### Rust
+
+Crate: `turso`
+
+Documentation: https://docs.turso.tech/sdk/rust/quickstart
+
+```rust
+use turso::Database;
+
+let db = Builder::new_local(":memory:")
+    .build()
+    .await
+    .expect("Turso Failed to Build memory db");
+
+db.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)", ())?;
+db.execute("INSERT INTO users (name) VALUES (?)", ["Alice"])?;
+
+let mut rows = db.query("SELECT * FROM users", ())?;
+while let Some(row) = rows.next()? {
+    println!("{}: {}", row.get::<i64>(0)?, row.get::<String>(1)?);
+}
+```
+
+Frameworks: Actix, Axum, Rocket, Tauri
+
+### Go
+
+Package: `turso.tech/database/tursogo`
+
+Installation: `go get turso.tech/database/tursogo`
+
+Documentation: https://docs.turso.tech/sdk/go/quickstart
+
+```go
+import (
+	"database/sql"
+
+	_ "turso.tech/database/tursogo"
+)
+
+conn, err := sql.Open("turso", ":memory:")
+conn.Exec("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)")
+conn.Exec("INSERT INTO users (name) VALUES (?)", "Alice")
+
+rows, err := conn.Query("SELECT * FROM users")
+defer rows.Close()
+```
+
+## AgentFS
+
+AgentFS provides filesystem and state management for AI agents.
+
+- Sandboxed file operations
+- Session management for agent state
+- MCP (Model Context Protocol) support
+- Sync capabilities
+
+Documentation: https://docs.turso.tech/agentfs
+
+### TypeScript
+
+```typescript
+import { AgentFS } from "@tursodatabase/agentfs";
+
+const fs = new AgentFS({ sandbox: true });
+await fs.writeFile("/data/config.json", JSON.stringify({ key: "value" }));
+const content = await fs.readFile("/data/config.json");
+```
+
+## CLI
+
+The `turso` CLI manages databases and organizations.
+
+Installation: https://docs.turso.tech/cli/installation
+
+### Commands
+
+```bash
+# Authentication
+turso auth login
+turso auth logout
+turso auth token
+
+# Database management
+turso db create mydb
+turso db list
+turso db show mydb
+turso db shell mydb
+turso db destroy mydb
+
+# Import/Export
+turso db import mydb data.sql
+turso db export mydb > backup.sql
+
+# Groups (multi-region)
+turso group create mygroup
+turso group locations add mygroup lax
+
+# Organizations
+turso org list
+turso org switch myorg
+turso org members list
+
+# Plans and billing
+turso plan show
+turso plan upgrade
+```
+
+Full CLI reference: https://docs.turso.tech/cli
+
+## Platform API
+
+REST API for programmatic access to Turso Cloud.
+
+Documentation: https://docs.turso.tech/api-reference
+OpenAPI spec: https://turso.tech/openapi.json
+Authentication: API tokens via `turso auth api-tokens mint`, or OAuth 2.0
+(authorization code + PKCE, dynamic client registration) — metadata at
+https://api.turso.tech/.well-known/oauth-authorization-server
+
+MCP server (hosted, Streamable HTTP): https://mcp.turso.ai/mcp — manifest at
+https://turso.tech/.well-known/mcp
+
+### Endpoints
+
+**Databases**
+- `GET /v1/organizations/{org}/databases` - List databases
+- `POST /v1/organizations/{org}/databases` - Create database
+- `GET /v1/organizations/{org}/databases/{db}` - Get database
+- `DELETE /v1/organizations/{org}/databases/{db}` - Delete database
+- `POST /v1/organizations/{org}/databases/{db}/auth/tokens` - Create token
+
+**Groups**
+- `GET /v1/organizations/{org}/groups` - List groups
+- `POST /v1/organizations/{org}/groups` - Create group
+- `POST /v1/organizations/{org}/groups/{group}/locations/{location}` - Add location
+
+**Organizations**
+- `GET /v1/organizations` - List organizations
+- `GET /v1/organizations/{org}/usage` - Get usage
+
+Full API reference: https://docs.turso.tech/api-reference
+
+## Pricing
+
+Full pricing details (plans, features, FAQs): https://turso.tech/pricing.md
+
+## Links
+
+- Website: https://turso.tech
+- Documentation: https://docs.turso.tech
+- Dashboard: https://app.turso.tech
+- GitHub (Turso): https://github.com/tursodatabase/turso
+- GitHub (libSQL): https://github.com/tursodatabase/libsql
+- Discord: https://discord.gg/turso
+- Blog: https://turso.tech/blog
+- Twitter: https://x.com/tursodatabase

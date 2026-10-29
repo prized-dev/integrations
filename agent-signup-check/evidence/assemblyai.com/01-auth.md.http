@@ -1,0 +1,433 @@
+GET https://assemblyai.com/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:20.701Z
+redirect: 308 from https://assemblyai.com/auth.md
+final-url: https://www.assemblyai.com/auth.md
+
+HTTP 404
+age: 1157
+cache-control: max-age=43200
+cf-cache-status: HIT
+cf-ray: a51de1c72975e945-SEA
+content-encoding: gzip
+content-security-policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.assemblyai.com https://assets.cello.so/attribution/latest/cello-attribution.js blob: https://scripts.clarity.ms/ https://cdn.jsdelivr.net/npm/chart.js https://scripts.clarity.ms/0.8.38/clarity.js https://boards.greenhouse.io/ https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js https://scripts.clarity.ms/0.8.30/clarity.js https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js.map https://unpkg.com/@vapi-ai/client-sdk-react/dist/embed/widget.umd.js https://cdnjs.cloudflare.com/ajax/libs/gsap https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js https://cdn.logr-ingest.com/logger-1.min.js https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js https://*.clarity.ms/collect https://www.google.com.ng/pagead/ https://snap.licdn.com/li.lms-analytics/insight.min.js https://www.clarity.ms/s/ https://www.clarity.ms/tag/ https://googleads.g.doubleclick.net/pagead/ https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.12/dist/js/splide.min.js https://cdn.jsdelivr.net/npm/@splidejs/splide-extension-auto-scroll@0.3.7/dist/js/splide-extension-auto-scroll.min.js https://www.datadoghq-browser-agent.com/us1/v6/datadog-rum.js https://cdn.cookielaw.org https://www.google-analytics.com/ https://tracking.g2crowd.com/ https://static.ads-twitter.com/uwt.js https://static.hotjar.com/ https://script.hotjar.com/ https://www.googletagmanager.com/ https://*.website-files.com https://cdn.jsdelivr.net/npm/@finsweet/ https://ajax.googleapis.com https://d3e54v103j8qbb.cloudfront.net/js/ https://d3e54v103j8qbb.cloudfront.net https://js.sentry-cdn.com/ https://browser.sentry-cdn.com/ https://cdn-ukwest.onetrust.com/ https://www.assemblyai.com/ https://rs-cdn.assemblyai.com/ https://chat.assemblyai.com/ https://o4506147015688192.ingest.us.sentry.io/api/ https://api.rudderstack.com/ https://error-cdn.assemblyai.com/8ee0fe3650cbb48ff632bc21758e64d0.min.js https://cdn.cookielaw.org/ https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js https://cdnjs.cloudflare.com/ajax/libs/gsap/ https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js https://cdn.jsdelivr.net/npm/@splidejs/splide-extension-auto-scroll@0.5.3/dist/js/splide-extension-auto-scroll.min.js https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js https://www.youtube.com https://s.ytimg.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css https://cdn.jsdelivr.net/npm/@splidejs/splide@3.2.2/dist/css/splide-core.min.css https://*.website-files.com/ https://fonts.googleapis.com/ https://cdnjs.cloudflare.com/ajax/libs/highlight.js/; img-src 'self' data: https://github.com/AssemblyAI-Examples/ https://www.googleadservices.com/pagead/ https://px.ads.linkedin.com/ https://c.bing.com/ https://*.ads.linkedin.com/collect https://c.clarity.ms/c.gif https://www.googletagmanager.com/ https://www.google.ca/ https://www.google.ch/ https://www.google.cn/ https://www.google.co.id/ https://www.google.co.in/ https://www.google.co.jp/ https://www.google.co.nz/ https://www.google.co.uk/ https://www.google.co.za/ https://www.google.com.ar/ https://www.google.com.au/ https://www.google.com.br/ https://www.google.com.mx/ https://www.google.com.ng/ https://www.google.com.pk/ https://www.google.com/ https://www.google.de/ https://www.google.es/ https://www.google.fr/ https://www.google.it/ https://www.google.nl/ https://www.google.pl/ https://www.google.pt/ https://www.google.ru/ https://www.google.se/ https://c.clarity.ms/c.gif https://www.googletagmanager.com/ https://www.google.com/pagead/1p-user-list/ https://*.website-files.com/ https://cdn-ukwest.onetrust.com https://i.ytimg.com https://yt3.ggpht.com https://cdn.cookielaw.org/ https://analytics.twitter.com/ https://t.co/ https://avatars.slack-edge.com/; media-src 'self' https://assembly.ai/ https://res.cloudinary.com https://*.website-files.com/ https://assemblyaiassets.com/ https://f004.backblazeb2.com/ https://www.youtube.com; font-src 'self' https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/ https://fonts.gstatic.com/ https://*.website-files.com/ data:; connect-src 'self' https://u3-pro-streaming-demo-onsite-production.up.railway.app https://share.cello.so https://cdn.jsdelivr.net/npm/chart.umd.min.js.map https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js.map wss://docs-aaigent.up.railway.app/ https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.js.map https://c.daily.co/call-machine/versioned/0.80.0/static/call-machine-object-bundle.js https://api.vapi.ai/call/web https://*.assemblyai.com wss://*.assemblyai.com https://www.googleadservices.com/pagead/ https://px.ads.linkedin.com/ wss://*.livekit.cloud https://*.livekit.cloud/settings/regions https://token-server-l230.onrender.com/get-token https://*.webflow.com https://*.webflow.io https://*.clarity.ms/collect https://region1.google-analytics.com/g/ https://www.google.com/ccm/ https://googleads.g.doubleclick.net/ wss://ws.hotjar.com/api/v2/client/ws https://google.com/pagead/form-data/ https://browser-intake-datadoghq.com/ https://geolocation.onetrust.com/cookieconsentpub/v1/geo/location https://*.website-files.com/ https://js.sentry-cdn.com https://browser.sentry-cdn.com/ https://cdn-ukwest.onetrust.com/ https://www.assemblyai.com/ https://rs-cdn.assemblyai.com https://o4506147015688192.ingest.us.sentry.io/api/ https://api.rudderstack.com/ https://devrel.sandbox.assemblyai.xyz https://cdn.cookielaw.org/ https://assemblyairuzw.dataplane.rudderstack.com/ https://tracking-api.g2.com/ https://www.google-analytics.com/ https://cdn.cookielaw.org https://*.pusher.com/ wss://*.pusher.com https://*.hotjar.io/ https://analytics.google.com/ https://stats.g.doubleclick.net/ https://www.youtube.com https://www.google.com; frame-src 'self' https://frontend-production-1b8e3.up.railway.app/ https://job-boards.greenhouse.io/ https://airtable.com https://www.googletagmanager.com/ https://*.website-files.com/ https://chat.assemblyai.com/ https://cdn.embedly.com/ https://cdn.cookielaw.org/ https://www.youtube.com/ https://www.youtube-nocookie.com/ https://*.doubleclick.net/ https://biographypod.vercel.app/;
+content-type: text/html; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:17 GMT
+etag: W/"783c8f0fb1519c5edf9a2bf649496426"
+last-modified: Tue, 25 Aug 2026 12:19:43 GMT
+permissions-policy: autoplay=(self), geolocation=(self), clipboard-read=(self), clipboard-write=(self)
+referrer-policy: strict-origin-when-cross-origin
+server: Vercel
+strict-transport-security: max-age=31536000; includeSubDomains
+surrogate-key: webflow.assemblyai.com 67a08d9d7d19f8fb63692894 pageId:67a08d9e7d19f8fb636928e7 404req sp:f2c378d9a38f67d06bd0cc89d88db725
+vary: accept-encoding
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-frame-options: SAMEORIGIN
+x-robots-tag: index, follow
+x-vercel-cache: MISS
+x-vercel-id: pdx1::rjbcq-1793231837259-553a9b01f871
+x-wf-region: us-east-1
+x-xss-protection: 1; mode=block
+connection: close
+transfer-encoding: chunked
+
+<!DOCTYPE html><!-- Last Published: Tue Aug 25 2026 12:19:37 GMT+0000 (Coordinated Universal Time) --><html data-wf-domain="webflow.assemblyai.com" data-wf-page="67a08d9e7d19f8fb636928e7" data-wf-site="67a08d9d7d19f8fb63692894" lang="en"><head><meta charset="utf-8"/><link href="https://cdn.prod.website-files.com" rel="preconnect" crossorigin="anonymous"/><title>Not Found</title><meta content="Not Found" property="og:title"/><meta content="Not Found" name="twitter:title"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://cdn.prod.website-files.com/67a08d9d7d19f8fb63692894/css/assemblyai-new.shared.81c41e5c6.min.css" rel="stylesheet" type="text/css" integrity="sha384-gcQeXGut5/DL2JFWkdtuiQXFJHKed0xQ4sSgLsxsIbFT1w07DB+RXoe+ZndqGsz4" crossorigin="anonymous"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous"/><script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script><script type="text/javascript">WebFont.load({  google: {    families: ["Anton:300,400,500,600,700","Fragment Mono:300,400,500,600,700","Instrument Serif:300,400,500,600,700","Inter:300,400,500,600,700"]  }});</script><script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script><link href="https://cdn.prod.website-files.com/67a08d9d7d19f8fb63692894/67e119e1e653ef1ce8e17a50_aai-favicon-32x32.png" rel="shortcut icon" type="image/x-icon"/><link href="https://cdn.prod.website-files.com/67a08d9d7d19f8fb63692894/67e119e514062170f3dbaad6_aai-icon-256x256.png" rel="apple-touch-icon"/><style>
+  #ot-sdk-btn-floating {
+    display: none;
+  }
+</style>
+<style>
+  button:disabled,
+  input[type="button"]:disabled,
+  input[type="submit"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  [data-cookie-settings-button] {
+    cursor: pointer;
+  }
+
+  .error-text {
+    color: #F04438;
+    font-size: 14px;
+  }
+
+  .error-input {
+    border-color: #F04438;
+  }
+</style>
+
+<script>
+  const isDevelopment = window.origin !== 'https://www.assemblyai.com'
+  const BASE_URL = ''
+  const API_BASE_URL = `${BASE_URL}/api`
+</script>
+
+<!-- helpers -->
+<script>
+  function processHTTPResponse(response) {
+    // Get content type from headers 
+    const contentType = response.headers.get('content-type') || ''
+
+    if (!contentType) {
+      return Promise.resolve(undefined) // No content
+    } else if (contentType.includes('application/json')) {
+      return response.json() // Parse JSON response
+    } else if (
+      contentType.includes('text/html') ||
+      contentType.includes('text/plain')
+    ) {
+      return response.text() // Get text response
+    } else if (
+      contentType.includes('application/octet-stream') ||
+      contentType.includes('image/')
+    ) {
+      return response.blob() // Handle binary data
+    } else if (contentType.includes('application/pdf')) {
+      return response.blob() // Handle PDF files
+    } else if (contentType.includes('multipart/form-data')) {
+      return response.formData() // Process form data
+    } else if (contentType.includes('application/x-www-form-urlencoded')) {
+      return response.formData() // Process URL encoded form data
+    } else {
+      // ArrayBuffer for other binary formats
+      return response.arrayBuffer()
+    }
+  }
+
+  const executeRequest = async (url, options, nTimesToRetry = 0) => {
+    const response = await fetch(url, options)
+
+    const data = await processHTTPResponse(response).catch(() => {
+      const error = new Error('Failed to parse response')
+      error.response = response
+      error.data = null
+
+      throw error
+    })
+
+
+    if (!response.ok) {
+      const isRetriable = [503, 504].includes(response.status)
+
+      if (isRetriable && nTimesToRetry > 0) {
+        return await executeRequest(url, options, nTimesToRetry - 1)
+      }
+
+      const error = new Error(response.statusText)
+      error.response = response
+      error.data = data
+
+      throw error
+    }
+
+    return data
+  }
+</script>
+
+<script>
+  if (!isDevelopment) {
+    (function (h, o, u, n, d) {
+      h = h[d] = h[d] || { q: [], onReady: function (c) { h.q.push(c) } }
+      d = o.createElement(u); d.async = 1; d.src = n
+      n = o.getElementsByTagName(u)[0]; n.parentNode.insertBefore(d, n)
+    })(window, document, 'script', 'https://www.datadoghq-browser-agent.com/us1/v6/datadog-rum.js', 'DD_RUM')
+    window.DD_RUM.onReady(function () {
+      window.DD_RUM.init({
+        clientToken: 'pub2a8c4f81ea1075304dc1793445d25361',
+        applicationId: 'b2a39f91-f935-421e-9f61-23b7d29e4886',
+        // `site` refers to the Datadog site parameter of your organization
+        // see https://docs.datadoghq.com/getting_started/site/
+        site: 'datadoghq.com',
+        service: 'webflow-application',
+        env: 'production',
+        // Specify a version number to identify the deployed version of your application in Datadog
+        // version: '1.0.0',
+        sessionSampleRate: 100,
+        sessionReplaySampleRate: 0,
+        defaultPrivacyLevel: 'mask-user-input',
+      });
+    })
+  }
+</script>
+
+<!-- UTM -->
+<script>
+  const utmProvider = (() => {
+    class UTMProvider {
+      UTMKeys = [
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_term',
+        'utm_content',
+        'gclid'
+      ]
+
+      STORAGE_KEY = 'utm_parameters'
+      params = this.fetch()
+
+      constructor() {
+        const capturedParams = this.capture()
+
+        this.store(capturedParams)
+      }
+
+      capture() {
+        const urlParams = new URLSearchParams(window.location.search)
+        const utmParams = Object.fromEntries(
+          this.UTMKeys.map((key) => [key, urlParams.get(key)]).filter(
+            ([_, value]) => !!value
+          )
+        )
+
+        return utmParams
+      }
+
+      store(params) {
+        this.params = { ...this.params, ...params }
+        if (Object.keys(this.params).length <= 0) return
+        try {
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.params))
+        } catch (error) {
+          console.warn(error)
+        }
+      }
+
+      fetch() {
+        const storedParams = localStorage.getItem(this.STORAGE_KEY)
+        if (storedParams) {
+          try {
+            return JSON.parse(storedParams)
+          } catch (error) {
+            console.warn(error)
+            localStorage.removeItem(this.STORAGE_KEY)
+          }
+        }
+      }
+    }
+
+    return new UTMProvider()
+  })()
+</script>
+
+
+<!-- Rudderstack -->
+<script type="text/javascript">
+    ; (function () {
+      "use strict";
+      window.RudderSnippetVersion = "3.0.60";
+      var identifier = "rudderanalytics";
+      if (!window[identifier]) {
+        window[identifier] = [];
+      }
+      var rudderanalytics = window[identifier];
+      if (Array.isArray(rudderanalytics)) {
+        if (rudderanalytics.snippetExecuted === true && window.console && console.error) {
+          console.error("RudderStack JavaScript SDK snippet included more than once.");
+        } else {
+          rudderanalytics.snippetExecuted = true;
+          window.rudderAnalyticsBuildType = "legacy";
+          var sdkBaseUrl = "https://rs-cdn.assemblyai.com";
+          var sdkVersion = "v3";
+          var sdkFileName = "rsa.min.js";
+          var scriptLoadingMode = "async";
+          var methods = ["setDefaultInstanceKey", "load", "ready", "page", "track", "identify", "alias", "group", "reset", "setAnonymousId", "startSession", "endSession", "consent"];
+          for (var i = 0; i < methods.length; i++) {
+            var method = methods[i];
+            rudderanalytics[method] = function (methodName) {
+              return function () {
+                if (Array.isArray(window[identifier])) {
+                  rudderanalytics.push([methodName].concat(Array.prototype.slice.call(arguments)));
+                } else {
+                  var _methodName;
+                  (_methodName = window[identifier][methodName]) === null || _methodName === undefined || _methodName.apply(window[identifier], arguments);
+                }
+              };
+            }(method);
+          }
+          try {
+            new Function('class Test{field=()=>{};test({prop=[]}={}){return prop?(prop?.property??[...prop]):import("");}}');
+            window.rudderAnalyticsBuildType = "modern";
+          } catch (e) { }
+          var head = document.head || document.getElementsByTagName("head")[0];
+          var body = document.body || document.getElementsByTagName("body")[0];
+          window.rudderAnalyticsAddScript = function (url, extraAttributeKey, extraAttributeVal) {
+            var scriptTag = document.createElement("script");
+            scriptTag.src = url;
+            scriptTag.setAttribute("data-loader", "RS_JS_SDK");
+            if (extraAttributeKey && extraAttributeVal) {
+              scriptTag.setAttribute(extraAttributeKey, extraAttributeVal);
+            }
+            if (scriptLoadingMode === "async") {
+              scriptTag.async = true;
+            } else if (scriptLoadingMode === "defer") {
+              scriptTag.defer = true;
+            }
+            if (head) {
+              head.insertBefore(scriptTag, head.firstChild);
+            } else {
+              body.insertBefore(scriptTag, body.firstChild);
+            }
+          };
+          window.rudderAnalyticsMount = function () {
+            (function () {
+              if (typeof globalThis === "undefined") {
+                var getGlobal = function getGlobal() {
+                  if (typeof self !== "undefined") {
+                    return self;
+                  }
+                  if (typeof window !== "undefined") {
+                    return window;
+                  }
+                  return null;
+                };
+                var global = getGlobal();
+                if (global) {
+                  Object.defineProperty(global, "globalThis", {
+                    value: global,
+                    configurable: true
+                  });
+                }
+              }
+            })();
+            window.rudderAnalyticsAddScript("".concat(sdkBaseUrl, "/").concat(sdkVersion, "/").concat(window.rudderAnalyticsBuildType, "/").concat(sdkFileName), "data-rsa-write-key", "2hNPzeocLrXEJ6fuVktdhExfmUr");
+          };
+          if (typeof Promise === "undefined" || typeof globalThis === "undefined") {
+            window.rudderAnalyticsAddScript("https://polyfill-fastly.io/v3/polyfill.min.js?version=3.111.0&features=Symbol%2CPromise&callback=rudderAnalyticsMount");
+          } else {
+            window.rudderAnalyticsMount();
+          }
+        }
+      }
+
+
+      rudderanalytics.page()
+      window.addEventListener('oneTrustConsentChanged', () => {
+        rudderanalytics.consent({
+          trackConsent: true,
+          storage: {
+            type: "localStorage"
+          }
+        })
+
+        if (analyticsProvider.hasConsent && (analyticsProvider.tempIdentifier || analyticsProvider.tempTraits)) {
+          analyticsProvider.identify(analyticsProvider.tempIdentifier, analyticsProvider.tempTraits)
+          analyticsProvider.tempIdentifier = null
+          analyticsProvider.tempTraits = null
+        }
+      })
+
+      return rudderanalytics
+    })()
+
+  function oneTrustLoaded() {
+    rudderanalytics.load("2hNPzeocLrXEJ6fuVktdhExfmUr", "https://assemblyairuzw.dataplane.rudderstack.com", {
+      storage: {
+        type: "localStorage"
+      },
+      consentManagement: {
+        enabled: true,
+        provider: "oneTrust"
+      }
+    });
+  }
+
+  const analyticsProvider = {
+    eventMap: {
+      'blog-subscribe': 'blog_completed_newsletter-subscribe',
+      'contact-sales': 'form_completed_contact-sales',
+      'contact-support': 'form_completed_support-ticket',
+      'startup-program': 'form_completed_startup-program',
+      'insights-report': 'form_completed_insight-report',
+      benchmarks: 'form_completed_benchmarks',
+      'waitlist-streaming': 'form_completed_streaming-waitlist',
+      'waitlist-slam-1': 'form_completed_slam-1-waitlist',
+      'cl-nav-stt': 'nav_click_stt',
+      'cl-nav-sstt': 'nav_click_s-stt',
+      'cl-nav-su': 'nav_click_speech-understanding',
+      'cl-nav-products': 'nav_click_all-products',
+      'cl-nav-customer-stories': 'nav_click_customer-stories',
+      'cl-nav-research': 'nav_click_research-overview',
+      'cl-nav-u2': 'nav_click_u2',
+      'cl-nav-benchmarks': 'nav_click_benchmarks',
+      'cl-nav-docs': 'nav_click_docs',
+      'cl-nav-api': 'nav_click_api-ref',
+      'cl-nav-cookbooks': 'nav_click_cookbooks',
+      'cl-nav-support': 'nav_click_support',
+      'cl-nav-status': 'nav_click_status',
+      'cl-nav-changelog': 'nav_click_changelog',
+      'cl-nav-discord': 'nav_click_discord',
+      'cl-nav-blog': 'nav_click_blog',
+      'cl-nav-customers': 'nav_click_customers',
+      'cl-nav-security': 'nav_click_security',
+      'cl-nav-assembly-required': 'nav_click_assembly-required',
+      'cl-nav-playground': 'nav_click_playground',
+      'cl-nav-pricing': 'nav_click_pricing',
+      'cl-nav-enterprise': 'nav_click_enterprise',
+      'cl-nav-contact': 'nav_click_contact',
+      'cl-nav-login': 'nav_click_log-in',
+      'cl-nav-signup': 'nav_click_sign-up',
+      'cl-footer-stt': 'footer_click_stt',
+      'cl-footer-sstt': 'footer_click_s-stt',
+      'cl-footer-su': 'footer_click_speech-understanding',
+      'cl-footer-playground': 'footer_click_playground',
+      'cl-footer-pricing': 'footer_click_pricing',
+      'cl-footer-enterprise': 'footer_click_enterprise',
+      'cl-footer-startups': 'footer_click_startups',
+      'cl-footer-ci': 'footer_click_ci',
+      'cl-footer-research': 'footer_click_research-overview',
+      'cl-footer-u2': 'footer_click_u2',
+      'cl-footer-benchmarks': 'footer_click_benchmarks',
+      'cl-footer-blog-stt-api': 'footer_click_blog-best-stt-api',
+      'cl-footer-blog-ai-audio-video': 'footer_click_blog-ai-audio-video',
+      'cl-footer-blog-what-is-asr': 'footer_click_blog-what-is-asr',
+      'cl-footer-blog-using-ai-to-summarize':
+        'footer_click_blog-using-ai-to-summarize',
+      'cl-footer-blog-what-is-stt': 'footer_click_blog-what-is-stt',
+      'cl-footer-about': 'footer_click_about',
+      'cl-footer-security': 'footer_click_security',
+      'cl-footer-careers': 'footer_click_careers',
+      'cl-footer-customers': 'footer_click_customers',
+      'cl-footer-contact': 'footer_click_contact',
+      'cl-footer-blog': 'footer_click_blog',
+      'cl-footer-docs': 'footer_click_docs',
+      'cl-footer-api-ref': 'footer_click_api-ref',
+      'cl-footer-cookbooks': 'footer_click_cookbooks',
+      'cl-footer-support': 'footer_click_support',
+      'cl-footer-status': 'footer_click_status',
+      'cl-footer-changelog': 'footer_click_changelog',
+      'cl-footer-discord': 'footer_click_discord',
+      'cl-product-try-api': 'product_button_try-api',
+      'cl-product-contact': 'product_button_contact-us',
+      'cl-product-STT-learn-more': 'product_button_STT-learn-more',
+      'cl-product-SSTT-learn-more': 'product_button_SSTT-learn-more',
+      'cl-product-SU-learn-more': 'product_button_SU-learn-more',
+      'cl-stt-try-api': 'STT_button_try-api',
+      'cl-stt-contact': 'STT_button_contact-us',
+      'cl-stt-all-docs': 'STT_button_all-docs',
+      'cl-stt-SSTT': 'STT_click_SSTT',
+      'cl-stt-SU': 'STT_click_SU',
+      'cl-sstt-try-api': 'SSTT_button_try-api',
+      'cl-sstt-contact': 'SSTT_button_contact-us',
+      'cl-sstt-all-docs': 'SSTT_button_all-docs',
+      'cl-sstt-STT': 'SSTT_click_STT',
+      'cl-sstt-SU': 'SSTT_click_SU',
+      'cl-su-try-api': 'SU_button_try-api',
+      'cl-su-contact': 'SU_button_contact-us',
+      'cl-su-all-docs': 'SU_button_all-docs',
+      'cl-su-stt': 'SU_click_STT',
+      'cl-su-sstt': 'SU_click_SSTT',
+      'cl-home-try-api': 'home_button_try-api',
+      'cl-home-contact': 'home_button_contact-us',
+      'cl-home-stt-learn-more': 'home_button-stt-learn-more',
+      'cl-home-sstt-learn-more': 'home_button-sstt-learn-more',
+      'cl-home-su-learn-more': 'home_button-su-learn-more',
+      'cl-home-latest-model': 'home_button-latest-model',
+      'cl-home-products': 'home_button-products',
+      'cl-home-docs': 'home_button-docs',
+    
+
+[body trimmed for publication: kept 16384 of 29257 characters; sha256 of the full body c376875fa2475b620144d60e44595c68d6669e5c3a80d35098672df5819d69ae]

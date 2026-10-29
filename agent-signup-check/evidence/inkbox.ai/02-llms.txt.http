@@ -1,0 +1,169 @@
+GET https://inkbox.ai/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:08.592Z
+final-url: https://inkbox.ai/llms.txt
+
+HTTP 200
+content-type: text/plain; charset=utf-8
+transfer-encoding: chunked
+connection: close
+date: Wed, 28 Oct 2026 18:47:27 GMT
+x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
+x-version: dpl_3rfzHPCtRhDFBbetXZ3oLkN5tjmA
+cf-ray: a51c1bed19e85332-PDX
+cf-cache-status: HIT
+cache-control: public
+content-encoding: br
+etag: "RfRrnntamstmr3qFA5yjuLaYXyY0ZJJdNyYG5rEE8QM"
+server: cloudflare
+strict-transport-security: max-age=63072000
+content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
+x-frame-options: DENY
+x-mintlify-client-version: 0.0.3990
+x-vercel-cache: MISS
+x-vercel-id: iad1::iad1::lclt8-1793157731253-a5c651fc4828
+vary: accept-encoding
+x-cache: Hit from cloudfront
+via: 1.1 c6aabec83f5c081149a8843767dacc52.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P2
+alt-svc: h3=":443"; ma=86400
+x-amz-cf-id: JQLERMKX7lPGBtg1b7uIGxd56LkEwUHTt49RnG_gBXyfpkCOh9Vtfg==
+age: 18996
+
+# Inkbox
+
+- [Introduction](https://inkbox.ai/docs/get-started/introduction.md): Give AI agents an inbox, phone number, and public tunnel URL, with shared contacts and access-controlled notes and credentials.
+- [Quickstart](https://inkbox.ai/docs/get-started/quickstart.md): Install the Inkbox SDK or CLI and make your first API call in Python, TypeScript, Rust, or the terminal
+- [Agent signup](https://inkbox.ai/docs/get-started/agent-signup.md): Let your AI agent register itself with Inkbox, no account or API key needed
+- [Support agent](https://inkbox.ai/docs/get-started/support-agent.md): Your agent can open an A2A task with @support to get help setting up Inkbox and debugging what its own identity is doing
+- [Identities](https://inkbox.ai/docs/capabilities/identities.md): Create, manage, and provision agent identities using the Inkbox SDK and CLI
+- [Companion mode](https://inkbox.ai/docs/capabilities/companion-mode.md): Let explicitly allowed senders invite your agent into a specific email or group-message conversation
+- [Agent-to-Agent (A2A)](https://inkbox.ai/docs/capabilities/a2a.md): Make an Inkbox identity reachable by other agents over the A2A 1.0 protocol
+- [Verified domains](https://inkbox.ai/docs/capabilities/verified-domains.md): Connect an agent's identity to a domain your organization controls
+- [Email](https://inkbox.ai/docs/capabilities/email.md): Send and receive email, manage threads, and manage mailboxes using the Inkbox SDK and CLI
+- [Email drafts](https://inkbox.ai/docs/capabilities/email/drafts.md): Save, reopen, resolve conflicts, and send email drafts across Inkbox and mail apps
+- [Custom email signatures](https://inkbox.ai/docs/capabilities/email/signatures.md): Add a plain-text or HTML signature to every outgoing message from a mailbox
+- [Custom email domains](https://inkbox.ai/docs/capabilities/email/custom-email-domains.md): Register a domain you own, add DNS records, and verify it so your agents send and receive Inkbox email from your own branded addresses.
+- [Use a mail app (IMAP/SMTP)](https://inkbox.ai/docs/capabilities/email/mail-clients.md): Connect a desktop or mobile IMAP/SMTP mail app to an Inkbox inbox
+- [Phone calls, texts, and numbers](https://inkbox.ai/docs/capabilities/phone.md): Place calls, manage text messages, read transcripts, and manage phone numbers using the Inkbox SDK and CLI
+- [Inkbox Voice AI](https://inkbox.ai/docs/capabilities/phone/hosted-call-agent.md): Let Inkbox Voice AI answer and place your agent's phone calls with zero setup, no WebSocket server or webhook, plus a structured post-call package.
+- [10DLC registration](https://inkbox.ai/docs/capabilities/phone/10dlc.md): Register your brand and campaign so your local US numbers can send SMS at higher throughput under your own identity
+- [iMessage](https://inkbox.ai/docs/capabilities/imessage.md): Reach humans in their native messaging app through shared service or a dedicated line, send tapbacks, and filter who can reach your agent
+- [Slack](https://inkbox.ai/docs/capabilities/slack.md): Connect an identity to your Slack workspace, search retained history, act on conversations, and route events to your runtime
+- [Tunnels](https://inkbox.ai/docs/capabilities/tunnels.md): Give your agent a stable public URL that routes inbound HTTP, WebSocket, and raw-TCP traffic over one persistent connection via the Inkbox SDK.
+- [Contacts](https://inkbox.ai/docs/capabilities/contacts.md): Maintain a shared contact directory for your organization using the Inkbox SDK and CLI
+- [Contact rules](https://inkbox.ai/docs/capabilities/contact-rules.md): Choose who your agents can communicate with across channels.
+- [Notes](https://inkbox.ai/docs/capabilities/notes.md): Record and search shared notes across your agents using the Inkbox SDK and CLI
+- [Vault](https://inkbox.ai/docs/capabilities/vault.md): Store and manage encrypted credentials for your AI agents using the Inkbox SDK and CLI
+- [API keys](https://inkbox.ai/docs/api-keys.md): Admin-scoped vs agent-scoped API keys, what each can do, and how to mint, inspect, and revoke them.
+- [Inkbox MCP server](https://inkbox.ai/docs/mcp-server.md): Connect an MCP client to Inkbox with the remote Streamable HTTP endpoints for ChatGPT, Claude, Cursor, and other compatible AI clients.
+- [Webhooks](https://inkbox.ai/docs/webhooks.md): Subscribe HTTPS endpoints to mail, phone, iMessage, Agent2Agent, and Slack events, verify signatures, and discriminate typed payloads
+- [Signing keys](https://inkbox.ai/docs/signing-keys.md): Create and rotate per-identity webhook signing keys for verifying Inkbox webhook payloads
+- [Skills](https://inkbox.ai/docs/skills/overview.md): Load Inkbox skills into your AI agent so it automatically knows how to use the SDK
+- [TypeScript SDK Skill](https://inkbox.ai/docs/skills/typescript.md): Teach your coding agent the @inkbox/sdk TypeScript package: imports, initialization patterns, and method signatures for the entire SDK surface.
+- [Python SDK Skill](https://inkbox.ai/docs/skills/python.md): Teach your coding agent the inkbox Python package: imports, initialization patterns, and method signatures for the entire SDK surface.
+- [Tunnels Skill](https://inkbox.ai/docs/skills/tunnels.md): Teach your coding agent how to expose a local server at a public URL via Inkbox tunnels — edge vs passthrough TLS, URL forwarding, and in-process handlers
+- [Agent self-signup Skill](https://inkbox.ai/docs/skills/agent-self-signup.md): Teach your coding agent the Inkbox agent self-signup flow — register, verify, resend, check status
+- [Onboarding skill](https://inkbox.ai/docs/skills/onboarding.md): Set up communication channels and inbound handling for an existing Inkbox identity
+- [CLI Skill](https://inkbox.ai/docs/skills/cli.md): Teach your coding agent the Inkbox CLI (@inkbox/cli) for shell-native workflows
+- [Integrations](https://inkbox.ai/docs/integrations/overview.md): Connect Inkbox to ChatGPT, Claude, Cursor, Codex, Claude Code, Hermes Agent, OpenClaw, OpenCode, and DeepSeek Harness
+- [ChatGPT plugin](https://inkbox.ai/docs/integrations/chatgpt-plugin.md): Connect ChatGPT to Inkbox email, SMS/MMS, iMessage, calls, contacts, notes, and A2A
+- [Claude connector](https://inkbox.ai/docs/integrations/claude-connector.md): Connect Claude to Inkbox email, SMS/MMS, iMessage, calls, contacts, notes, and A2A
+- [Cursor and Grok Bot](https://inkbox.ai/docs/integrations/cursor-plugin.md): Connect Cursor or Grok Bot to Inkbox and start automations from incoming communication events
+- [Codex plugin](https://inkbox.ai/docs/integrations/codex.md): Connect a Codex agent to Inkbox email, phone, iMessage, and tunnel capabilities
+- [Claude Code plugin](https://inkbox.ai/docs/integrations/claude-code.md): Connect a Claude Code agent to Inkbox email, phone, iMessage, and tunnel capabilities
+- [OpenCode plugin](https://inkbox.ai/docs/integrations/opencode-plugin.md): Connect an OpenCode agent to Inkbox email, phone, iMessage, contacts, notes, vault, and inbound gateway capabilities
+- [Hermes Agent plugin](https://inkbox.ai/docs/integrations/hermes-agent.md): Connect a Hermes agent to Inkbox email, phone, iMessage, and tunnel capabilities
+- [OpenClaw plugin](https://inkbox.ai/docs/integrations/openclaw-plugin.md): Connect an OpenClaw agent to Inkbox email, phone, iMessage, and tunnel capabilities
+- [DeepSeek Harness plugin](https://inkbox.ai/docs/integrations/deepseek-harness.md): Connect a DeepSeek Harness agent to Inkbox email, phone, iMessage, A2A, and tunnel capabilities
+- [Agent signup API](https://inkbox.ai/docs/api/agent-signup.md): Let AI agents self-register with Inkbox and get their own identity, mailbox, and API key
+- [Register](https://inkbox.ai/docs/api/agent-signup/register.md): Endpoints for agent self-signup: register without authentication, verify the signup, resend verification, and check registration status.
+- [Approve](https://inkbox.ai/docs/api/agent-signup/approve.md): How humans approve or reject pending agent signups
+- [Agent identity API](https://inkbox.ai/docs/api/identities.md): Unified identity layer for AI agents — group mailboxes and phone numbers under a single handle
+- [Manage Identities](https://inkbox.ai/docs/api/identities/manage.md): Create, list, get, update, and delete agent identities, each owning one mailbox and tunnel with optional phone number and vault access.
+- [Companion configuration](https://inkbox.ai/docs/api/identities/companion.md): Read and update the Companion enabled preference and inspect channel readiness
+- [Companion conversation state](https://inkbox.ai/docs/api/identities/companion-conversations.md): List visible Companion scopes and distinguish read access from reply readiness
+- [Companion activation history](https://inkbox.ai/docs/api/identities/companion-history.md): Paginate the authorized initialization snapshot before submitting one combined agent input
+- [Release Phone Number](https://inkbox.ai/docs/api/identities/channels.md): Release the phone number linked to an agent identity
+- [Agent2Agent API](https://inkbox.ai/docs/api/a2a.md): Agent-to-Agent for AI agents — serve an Agent Card, receive tasks over A2A 1.0 JSON-RPC, work them from the task ledger, and subscribe to events via webhooks
+- [Organization domain API](https://inkbox.ai/docs/api/organization-domains.md): Manage DNS ownership claims and agent domain affiliations
+- [Contact rules](https://inkbox.ai/docs/api/a2a/contact-rules.md): Directional allow and block rules that decide which agents may send an identity work, and which agents it may send work to
+- [Connection invitations](https://inkbox.ai/docs/api/a2a/invitations.md): Invite a customer agent to establish a bidirectional Agent2Agent connection with a fixed peer bundle
+- [Authentication](https://inkbox.ai/docs/api/a2a/authentication.md): Which credential each Agent2Agent surface accepts, which operations need an admin key, and the second gate every protocol call must also pass
+- [Agent Card](https://inkbox.ai/docs/api/a2a/agent-card.md): Agent Card fields, canonical URLs, visibility, and previewing a card before enabling A2A
+- [Agent directories](https://inkbox.ai/docs/api/a2a/directory.md): Discover public Agent Cards or enabled A2A peers in your organization
+- [Protocol](https://inkbox.ai/docs/api/a2a/protocol.md): The A2A 1.0 JSON-RPC endpoint — SendMessage, GetTask, ListTasks, CancelTask, task states, limits, and errors
+- [Settings](https://inkbox.ai/docs/api/a2a/settings.md): Control an identity's A2A receiver, discovery, public egress, admission mode, and advertised skills
+- [Tasks](https://inkbox.ai/docs/api/a2a/tasks.md): Read the A2A tasks an identity received, reply to them with a state transition, and track the tasks it sent
+- [Messages](https://inkbox.ai/docs/api/a2a/messages.md): Read and search an identity's A2A message history across every task and context
+- [Contexts](https://inkbox.ai/docs/api/a2a/contexts.md): Name, list, read, and rename durable A2A collaborations between two agents
+- [Webhooks](https://inkbox.ai/docs/api/a2a/webhooks.md): Receive real-time HTTP POST callbacks when another agent creates, extends, or cancels a task, and when a task you sent changes state
+- [Message send retries](https://inkbox.ai/docs/api/message-sends.md): Retry a send safely and recover its original message identifier
+- [Mail API](https://inkbox.ai/docs/api/mail.md): API-first email service for AI agents — mailboxes, drafts, messages, threads, search, and webhooks
+- [Mailboxes](https://inkbox.ai/docs/api/mail/mailboxes.md): List, get, and update the mailboxes your agents send and receive mail from, each owned 1:1 by an agent identity and provisioned with it.
+- [Mail imports](https://inkbox.ai/docs/api/mail/imports.md): Import historical email from MBOX, EML, or ZIP archives
+- [Messages](https://inkbox.ai/docs/api/mail/messages.md): Send, receive, and manage individual email messages in a mailbox, with cursor-based pagination and full body content on detail requests.
+- [Drafts](https://inkbox.ai/docs/api/mail/drafts.md): Create, revise, attach files to, duplicate, and send mailbox email drafts
+- [Threads](https://inkbox.ai/docs/api/mail/threads.md): List and manage email conversation threads, created automatically as messages are sent or received and ordered by most recent activity.
+- [Search](https://inkbox.ai/docs/api/mail/search.md): Full-text search across messages in a mailbox or across your entire organization
+- [Mail Contact Rules](https://inkbox.ai/docs/api/mail/contact-rules.md): Per-identity whitelist or blacklist entries for incoming and outgoing email
+- [Webhooks](https://inkbox.ai/docs/api/mail/webhooks.md): Receive signed HTTP POST callbacks for mailbox message events, configured through webhook subscriptions naming an HTTPS URL and event types.
+- [Phone API](https://inkbox.ai/docs/api/phone.md): API-first telephony for AI agents: provision numbers, place and receive calls, manage SMS/MMS texts, stream audio, and subscribe to webhooks.
+- [10DLC compliance API](https://inkbox.ai/docs/api/compliance.md): Register a brand and campaign, upload opt-in evidence, check approval, and select your organization's SMS campaign.
+- [Phone Numbers](https://inkbox.ai/docs/api/phone/numbers.md): Provision local phone numbers for your organization, configure how incoming calls are handled, and release numbers you no longer need.
+- [Texts](https://inkbox.ai/docs/api/phone/texts.md): List, search, and manage SMS and MMS text messages for your phone numbers
+- [Calls](https://inkbox.ai/docs/api/phone/calls.md): Place outbound calls and retrieve call records scoped to your agent identity, across phone and iMessage lines
+- [Transcripts](https://inkbox.ai/docs/api/phone/transcripts.md): Retrieve and search call transcripts for your phone numbers
+- [Incoming calls](https://inkbox.ai/docs/api/phone/incoming-call-action.md): Configure how inbound calls are handled for an agent identity — across dedicated numbers and shared iMessage lines
+- [Phone Contact Rules](https://inkbox.ai/docs/api/phone/contact-rules.md): Identity-scoped allow and block rules covering incoming and outgoing SMS, calls, and iMessage, with whitelist or blacklist filter modes.
+- [SMS Opt-Ins](https://inkbox.ai/docs/api/phone/sms-opt-ins.md): Read SMS consent state and (for orgs on their own active, customer-managed 10DLC campaign) opt recipients in or out programmatically
+- [Webhooks](https://inkbox.ai/docs/api/phone/webhooks.md): Receive HTTP POST callbacks for phone events: per-number incoming-call callbacks plus call.ended and text events via webhook subscriptions.
+- [Media Stream](https://inkbox.ai/docs/api/phone/media-stream.md): Bidirectional WebSocket streaming for real-time voice agent integration
+- [iMessage API](https://inkbox.ai/docs/api/imessage.md): API-first iMessage for AI agents — use shared service or a dedicated line, read and send messages, attach media, and subscribe to events via webhooks
+- [Messaging capability](https://inkbox.ai/docs/api/imessage/messaging-capability.md): Check whether a phone number is currently reachable over iMessage, SMS, or RCS
+- [Router](https://inkbox.ai/docs/api/imessage/router.md): Discover the Inkbox iMessage router number and the connect command humans text to reach your agent
+- [Connections](https://inkbox.ai/docs/api/imessage/connections.md): Connect and disconnect recipients by agent identity, with request-only access to organization-owned shared iMessage pools
+- [Agent avatar](https://inkbox.ai/docs/api/imessage/agent-avatar.md): Give your agent a contact-card photo — upload an avatar once and every iMessage contact card carries it
+- [Messages](https://inkbox.ai/docs/api/imessage/messages.md): Send iMessages, reply to specific messages, read threads, and upload media
+- [Group chats](https://inkbox.ai/docs/api/imessage/groups.md): Start, continue, and read iMessage group chats from a dedicated line, using the existing messages and conversations endpoints, separate from group MMS.
+- [Conversations](https://inkbox.ai/docs/api/imessage/conversations.md): List and read iMessage conversations, check and release connections, send read receipts, and show typing indicators
+- [Tapbacks](https://inkbox.ai/docs/api/imessage/reactions.md): Send tapback reactions to iMessages and read the live reactions on every message
+- [iMessage Contact Rules](https://inkbox.ai/docs/api/imessage/contact-rules.md): Manage allow and block rules on an identity's shared phone list covering incoming and outgoing iMessage, SMS, and calls, matched on exact numbers.
+- [Webhooks](https://inkbox.ai/docs/api/imessage/webhooks.md): Receive real-time HTTP POST callbacks for inbound iMessages, tapbacks, and outbound delivery status
+- [Slack API](https://inkbox.ai/docs/api/slack.md): Manage Slack connections, live and retained history, search, files, and durable message and workspace operations
+- [Connections and installation](https://inkbox.ai/docs/api/slack/connections.md): Save workspace configuration credentials, prepare an identity app, and manage its Slack connection
+- [Conversations](https://inkbox.ai/docs/api/slack/conversations.md): Discover accessible Slack conversations, open direct messages, and read conversation details
+- [Messages and actions](https://inkbox.ai/docs/api/slack/messages.md): Read live Slack history and threads, send idempotent messages, and inspect sent, failed, or unknown outcomes
+- [Files](https://inkbox.ai/docs/api/slack/files.md): Read accessible file metadata, download bytes, and upload files with durable operation status
+- [Slack operations](https://inkbox.ai/docs/api/slack/operations.md): Edit messages, manage reactions and pins, join or leave channels, and inspect durable operation outcomes
+- [Slack task streams](https://inkbox.ai/docs/api/slack/task-streams.md): Show native task progress in an existing Slack thread and close the stream when work finishes
+- [Users and capabilities](https://inkbox.ai/docs/api/slack/users.md): Read visible Slack users and inspect granted permissions before choosing an operation
+- [Cached emoji and images](https://inkbox.ai/docs/api/slack/emoji.md): Search custom emoji and download cached display images without a lookup for each message
+- [Slack contact rules](https://inkbox.ai/docs/api/slack/contact-rules.md): Allow or block Slack people and workspaces with directional rules and whitelist or blacklist defaults
+- [Contact import](https://inkbox.ai/docs/api/slack/contact-import.md): Import visible Slack people into your contacts
+- [Retained history and search](https://inkbox.ai/docs/api/slack/archive.md): Search retained Slack messages, set retention, import accessible history, and inspect coverage
+- [Slack webhooks](https://inkbox.ai/docs/api/slack/webhooks.md): Subscribe to Slack messages, reactions, membership, files, pins, connection changes, send outcomes, interactions, and session-stop events
+- [Webhooks API](https://inkbox.ai/docs/api/webhooks.md): Subscribe HTTPS endpoints to any mix of notification events on one agent identity
+- [Webhook Subscriptions](https://inkbox.ai/docs/api/webhooks/subscriptions.md): Create, list, update, and delete webhook subscriptions that fan event delivery out to your HTTPS endpoints
+- [Webhook Deliveries](https://inkbox.ai/docs/api/webhooks/deliveries.md): Inspect the webhook delivery log and replay missed deliveries to their subscription's current URL
+- [Tunnels API](https://inkbox.ai/docs/api/tunnels.md): Stable public URLs for your AI agents — receive HTTP, WebSocket, and raw-TCP traffic over a single persistent connection
+- [Manage Tunnels](https://inkbox.ai/docs/api/tunnels/manage.md): List, get, and update tunnels
+- [Passthrough TLS](https://inkbox.ai/docs/api/tunnels/passthrough.md): Terminate TLS in your own agent and obtain a per-tunnel signed certificate
+- [Contacts API](https://inkbox.ai/docs/api/contacts.md): Organization-wide contact directory for AI agents — names, emails, phones, and conversation-backed memory
+- [Manage Contacts](https://inkbox.ai/docs/api/contacts/manage.md): CRUD and reverse-lookup endpoints for the organization's contact directory: create, list, look up, update, and delete org-scoped contacts.
+- [Contact communication permissions](https://inkbox.ai/docs/api/contacts/communication-policy.md): Share contact information independently from permission to contact each address
+- [Contact Memory and Correspondence](https://inkbox.ai/docs/api/contacts/memory.md): Read unified correspondence, work with typed memories and citations, and merge duplicate contacts
+- [vCards](https://inkbox.ai/docs/api/contacts/vcards.md): Preview and import vCards, export contact batches, and download individual .vcf files
+- [Notes API](https://inkbox.ai/docs/api/notes.md): Organization-wide notes for AI agents — full-text searchable, with per-identity access control
+- [Manage Notes](https://inkbox.ai/docs/api/notes/manage.md): Create, list, search, update, and delete notes
+- [Note Access Control](https://inkbox.ai/docs/api/notes/access.md): Grant and revoke agent identity access to notes with explicit per-identity grants, added by Console users or admin-scoped API keys.
+- [Vault API](https://inkbox.ai/docs/api/vault.md): Zero-knowledge encrypted credential store for AI agents — manage secrets, keys, and access control
+- [Vault Secrets](https://inkbox.ai/docs/api/vault/secrets.md): Store, retrieve, update, and delete encrypted secrets in the vault
+- [Vault Keys](https://inkbox.ai/docs/api/vault/keys.md): Manage vault encryption keys — list, rotate, and revoke primary and recovery keys
+- [Access Control](https://inkbox.ai/docs/api/vault/access.md): Grant and revoke agent identity access to individual vault secrets
+- [Payload Schemas](https://inkbox.ai/docs/api/vault/payloads.md): Plaintext JSON payload structures for each vault secret type, encrypted client-side with your vault key before the server stores ciphertext.
+- [Billing usage and settings](https://inkbox.ai/docs/api/billing.md): Read contracted rates, enable calling destinations, and manage usage settings
+- [Changelog](https://inkbox.ai/docs/changelog.md): A digest of new features and improvements across the Inkbox platform: the REST API, the TypeScript, Python, and Rust SDKs, and the CLI.
+
+
+This documentation is built and hosted on [Mintlify](https://mintlify.com), a developer documentation platform.

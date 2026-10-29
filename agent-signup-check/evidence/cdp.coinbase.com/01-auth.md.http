@@ -1,0 +1,213 @@
+GET https://cdp.coinbase.com/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:31.100Z
+redirect: 302 from https://cdp.coinbase.com/auth.md
+redirect: 302 from https://coinbase.com/developer-platform
+final-url: https://www.coinbase.com/developer-platform
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:26 GMT
+content-type: text/markdown; charset=utf-8
+transfer-encoding: chunked
+connection: close
+nel: {"report_to":"cf-nel","success_fraction":0.01,"max_age":604800}
+cache-control: no-store, no-cache, must-revalidate, proxy-revalidate
+content-security-policy: default-src 'self' https://*.coinbase.com https://sdk.onfido.com https://assets.onfido.com https://*.withpersona.com; child-src 'self' https://*.coinbase.com https://accounts.google.com/ https://www.googletagmanager.com/ https://paywithmybank.com/start/ https://cdn1.paywithmybank.com/frontend/build/index.html https://fast.wistia.net https://ui.solaris-p.finleap.cloud https://fts-payment-initiation-wizard.solarisbank.de/ https://payment.truelayer.com https://*.sardine.ai https://sdk.onfido.com/ https://*.cb-device-intelligence.com https://*.wpstn.com https://platform.twitter.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://recaptcha.net https://www.recaptcha.net https://cdn.plaid.com/link/ https://*.doubleclick.net/ blob: https://www.youtube.com https://player.vimeo.com/video/ https://datawrapper.dwcdn.net/ https://widgets.marqeta.com https://*.paypal.com https://pay.google.com/ https://transact.atomicfi.com/ https://centinelapi.cardinalcommerce.com/V1/Cruise/Collect https://p2a.co/ https://docs.google.com/forms/ https://a.sprig.com/SmJKcmh5cDRYZX5zaWQ6YWE3ZDJhZjYtMjYxYS00NjkwLWE3ZWMtMGRjMGQyMGY2ZDk5 https://calendly.com/ https://link.tink.com/ https://jsv3.recruitics.com/ https://js.stripe.com/ https://*.withpersona.com https://embedded.cardless.com/; connect-src 'self' https://browser-intake-datadoghq.com/ https://accounts.google.com/gsi/ https://*.coinbase.com wss://*.coinbase.com https://www.tradingview.com/snapshot/ https://beacon.riskified.com https://c.riskified.com https://player.vimeo.com/api/player.js https://api.web3modal.org https://d1dwhf283nul1c.cloudfront.net/ https://cdnjs.cloudflare.com/ https://analytics.google.com https://*.google-analytics.com https://maps.googleapis.com https://www.googletagmanager.com/gtag/js https://www.googletagmanager.com/gtm.js https://www.googleadservices.com https://googleads.g.doubleclick.net https://*.braintree-api.com https://api.braintreegateway.com https://cdn.contentful.com/ https://api.userleap.com/ https://api.sprig.com/ https://widgets.marqeta.com/client/api/v1/ https://assets.ctfassets.net/ https://images.ctfassets.net/ https://pay.google.com/ https://google.com/pay https://c.tvpixel.com/ https://p.tvpixel.com/ https://*.salesforce.com https://pulse.walletconnect.org https://verify.walletconnect.org https://mempool.space wss://relay.walletconnect.com wss://relay.walletconnect.org https://rpc.walletconnect.org https://explorer-api.walletconnect.com wss://www.walletlink.org https://metamask-sdk.api.cx.metamask.io/evt https://api.onfido.com wss://sync.onfido.com https://sdk.onfido.com/ https://cdn.sprig.com/session-replay/ https://www.google.com/pay https://api2.branch.io https://pixel-config.reddit.com/pixels/a2_gn0ni8qm85z4/config https://www.redditstatic.com/ads/conversions-config/v1/pixel/config/a2_gn0ni8qm85z4_telemetry https://conversions-config.reddit.com/v1/pixel/error https://px.ads.linkedin.com/attribution_trigger https://www.google.com/ccm/collect https://px.ads.linkedin.com/wa/ https://cdn.cookielaw.org/ https://geolocation.onetrust.com/ https://privacyportal.onetrust.com/ https://consent-api.onetrust.com/ https://*.withpersona.com https://inquiry.withpersona.com https://wa.appsflyer.com https://websdk.appsflyer.com https://api-secure.amplitude.com https://sr-client-cfg.amplitude.com https://api-sr.amplitude.com https://api.amplitude.com/ https://rba-authed-278491357830-production.s3.us-east-1.amazonaws.com wss://www.deribit.com https://history.deribit.com https://www.deribit.com https://metrics.deribit.com https://data.deribit.com wss://retail-ws-order-stargate.aws.cbhq.net; font-src * data: blob:; img-src * data: blob:; media-src * data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.coinbase.com https://www.googletagmanager.com/ https://accounts.google.com/gsi/client https://accounts.google.com/gsi/ https://*.sardine.ai https://beacon.riskified.com https://*.cb-device-intelligence.com https://player.vimeo.com/api/player.js https://sdk.onfido.com/ https://www.youtube.com/iframe_api https://*.google-analytics.com https://www.google.com https://www.gstatic.com https://maps.googleapis.com https://cdn.plaid.com/link/ https://www.googletagmanager.com/gtag/js https://www.googletagmanager.com/gtm.js https://www.googleadservices.com https://googleads.g.doubleclick.net https://connect.facebook.net/en_US/fbevents.js https://connect.facebook.net/signals/config/ https://*.paypal.com https://images.ctfassets.net/ https://pay.google.com/ https://c.tvpixel.com/ https://p.tvpixel.com/ https://jsv3.recruitics.com/0778138b-cc59-11ef-a514-fd1759833eec.js https://static.ads-twitter.com/oct.js https://platform.twitter.com/uwt.js https://static.ads-twitter.com/uwt.js https://redditstatic.com/ads/pixel.js https://www.redditstatic.com/ads/pixel.js https://snap.licdn.com/li.lms-analytics/insight.min.js https://cdn.cookielaw.org/ https://js.stripe.com/ https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://recaptcha.net https://www.recaptcha.net https://*.withpersona.com https://wa.appsflyer.com https://websdk.appsflyer.com; style-src * data: blob: 'unsafe-inline'; frame-ancestors 'self' https://*.coinbase.com https://coinbase.com https://*.withpersona.com; report-uri /csp-logging
+expect-ct: enforce, max-age=86400, report-uri="https://coinbase.report-uri.io/r/default/ct/reportOnly"
+expires: 0
+referrer-policy: strict-origin-when-cross-origin
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+surrogate-control: no-store
+trace-id: 6181306034042521405
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-download-options: noopen
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+server: cloudflare
+vary: accept-encoding, accept
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=QOZg%2FQ3SXZ6QAa2EB6en8GpvxXxLYadBwwOO2IRoEiB7%2BLGZuAiLgqXquf6M9Fwk9i3xMCqfHXsuuE7kjwEPO8vg%2BKil00HlNoZELFFeFVtueBtVkvEURBN8lI5NGmqoH7Y%3D"}]}
+cf-cache-status: DYNAMIC
+content-signal: ai-train=yes, search=yes, ai-input=yes
+content-encoding: gzip
+cf-ray: a51de37508b4b338-PDX
+
+---
+title: Coinbase Developer Platform (CDP)
+description: Trusted crypto infrastructure to power your business
+image: https://images.ctfassets.net/o10es7wu5gm1/1JmBvMXlx7eF9qNbMiavQ0/d3ae19b5bf1791c48d495a28a04ca0fa/CDP__2_.svg
+---
+
+# Trusted crypto infra­struc­ture to power your business
+
+[Get started](https://portal.cdp.coinbase.com/?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+[Contact sales](https://www.coinbase.com/developer-platform/developer-interest?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+![ ](https://images.ctfassets.net/o10es7wu5gm1/5hRywVcSOhuRb7NyYvnxyg/b5e1039ef7bba979cad16b7881eeaceb/hero-no-noise__2_.png)
+
+## Trusted by the best
+
+![Uniswap Logo](https://images.ctfassets.net/o10es7wu5gm1/pcaEkioi30Kr0ZXYVcHBQ/9a418af67b7e9f5cce918301b716b617/uniswap-logo.svg)
+
+![Anthropic Logo](https://images.ctfassets.net/o10es7wu5gm1/6pxGfBQTDJGpHF3f5YIDoN/976f6505fc564eea75828838fb84aae9/anthropic-logo.svg)
+
+![Shopify Logo](https://images.ctfassets.net/o10es7wu5gm1/6LAmStIMF9mtxrkYuIqSi0/26a9e77a494e4aefed295ba742beef10/shopify-logo.svg)
+
+![Solana Logo](https://images.ctfassets.net/o10es7wu5gm1/LYD3U6V2LcRa2tmBNGkBm/506622dcd4c307e6fd67d0c4336d4f5a/solana-logo.svg)
+
+![Etoro Logo](https://images.ctfassets.net/o10es7wu5gm1/32g9qxRawT1zjHcFw2rm6N/7b4b9fa2080722c30194ebe14663c688/Logo.png)
+
+## Build solutions that scale
+
+![](https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/globalPayments-5.svg)
+
+### Payments
+
+Enable fast and global stablecoin payments with a single integration.
+
+[Learn more󰐲](https://www.coinbase.com/developer-platform/payments?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+![](https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/coinbaseOneTrade-1.svg)
+
+### Trading
+
+Launch crypto trading and custody for your users.
+
+[Learn more󰐲](https://www.coinbase.com/developer-platform/trading?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+![](https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/wallet-3.svg)
+
+### Wallets
+
+Deploy customizable and scalable wallets for your business.
+
+[Learn more󰐲](https://www.coinbase.com/developer-platform/wallets?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+![](https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/stableCoinMetaphor-4.svg)
+
+### Stablecoins
+
+Access USDC and Coinbase Custom Stablecoins.
+
+[Learn more󰐲](https://www.coinbase.com/developer-platform/products/stablecoin-as-a-service?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+![](https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/pieChartData-0.svg)
+
+### Onchain Tools
+
+Build onchain with powerful APIs and SDKs.
+
+[Learn more󰐲](https://www.coinbase.com/developer-platform/onchaintools?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+## Crypto-as-a-service for any company
+
+![Image content](https://images.ctfassets.net/o10es7wu5gm1/2BGXeKV6oZi3swCj0exdV5/6b147190bbef0337b4267c2a4918408b/image-for-hero-in-cdp-banks-1765830330824.png)
+
+### Ban ks
+
+Secure, regulated offerings for retail, private banking, and institutional clients.
+
+[Learn more󰐲](https://www.coinbase.com/developer-platform/banks?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+![Image content](https://images.ctfassets.net/o10es7wu5gm1/5HsuiNQQwGIzDM4Jw2yzF0/90ed7acb99ef111347191708ccf527d2/image-for-hero-in-payment-service-providers-1765834659295.png)
+
+### Payment Firms
+
+Near-instant, low-cost, global payments for modern payment providers.
+
+[Learn more󰐲](https://coinbase.com/developer-platform/paymentfirms?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+![Image content](https://images.ctfassets.net/o10es7wu5gm1/40VnKA8XHqXoRBtzU7F9fY/7a9d2735af37d47c5cf20ccc33ff8d6a/image-for-hero-in-brokerages-1765833241625.png)
+
+### Brokerages
+
+Crypto infrastructure that expands trading platforms’ reach and capabilities.
+
+[Learn more󰐲](https://www.coinbase.com/developer-platform/brokerages?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+![Image content](https://images.ctfassets.net/o10es7wu5gm1/2MFyaKvkL6AwP10sId4spX/e05955f6c36ed80b0202ed7defb4d10c/Onchain_Apps.png)
+
+### Startups
+
+Create onchain apps in minutes and give users seamless wallets, onramps/offramps, staking, and more.
+
+[Learn more󰐲](https://coinbase.com/developer-platform/startups?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+## Why Coinbase Developer Platform?
+
+󰎏
+
+### Simple
+
+Start building with a single API key and your existing Coinbase accounts in minutes.
+
+󰋛
+
+### Product depth
+
+Access to the deepest product suite: we offer everything you need, startup to enterprise.
+
+󰒯
+
+### Experience
+
+Utilize the same audited custody, compliance  controls, and risk programs that power Coinbase.
+
+󰝿
+
+### Trusted
+
+The safety and security of working with the most trusted name in crypto.
+
+![ ](https://images.ctfassets.net/o10es7wu5gm1/2usQKnTCEfWvX343lmyXjt/ffbc24fc2a1d13afea3eb1d7da93a2c2/moonshot_5_4.jpg)
+
+## Case studies
+
+Learn how the biggest businesses across the globe are using CDP to create the future of payments, trading, banking, and onchain apps.
+
+[Learn more](https://www.coinbase.com/developer-platform/discover/case-studies?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+![ ](https://images.ctfassets.net/o10es7wu5gm1/4WvoMuaGBIiVixHPGstqy8/2c7400612d74a03494f008edfc43ef41/Try_demos.png)
+
+## Try demos
+
+Want to try our products or see examples of what you can build? Check out our demo apps.
+
+[Try demos](https://docs.cdp.coinbase.com/get-started/demo-apps/explore?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+## Building onchain is hard. We make it easy.
+
+We're committed to helping builders create incredible products. That's why we've made it easy to access powerful APIs and SDKs from Coinbase to help solve developers' toughest problems.
+
+[View docs](https://docs.cdp.coinbase.com/?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+󰒩
+
+### Github
+
+View and download open source Coinbase code.
+
+[View Github](https://github.com/coinbase)
+
+󰍟
+
+### Discord
+
+Get help with your project, meet other developers, and get access to the web3 community.
+
+[Join Discord](https://discord.com/invite/cdp)
+
+󰡅
+
+### Talk to an expert
+
+Get in touch with us to discuss your integration or if you have an idea on how you would like to work with us.
+
+[Get support](https://support.cdp.coinbase.com/?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+No representation or warranty is made, express or implied, with respect to the future performance of any digital asset, financial instrument or other market or economic measure. Recipients should consult their advisors before making any investment decision. Coinbase, Inc. is not registered or licensed in any capacity with the U.S. Securities and Exchange Commission or the U.S. Commodity Futures Trading Commission. Not all products and features are available in all jurisdictions.
+
+```json
+{"@context":"http://schema.org","@type":"Organization","url":"https://www.coinbase.com","logo":"https://www.coinbase.com/images/logo.png","contactPoint":[{"@type":"ContactPoint","telephone":"+1-888-908–7930","contactType":"Customer support"}]}
+```

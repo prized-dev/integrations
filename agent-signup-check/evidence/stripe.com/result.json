@@ -1,0 +1,115 @@
+{
+ "site": "stripe.com",
+ "checkedAt": "2026-10-28T23:58:25.107Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 6,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://stripe.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://stripe.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://stripe.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "status": "skipped",
+   "reason": "not probed: this run's tooling does not call Stripe's API"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "where": "llms.txt",
+   "url": "https://stripe.com/llms.txt",
+   "match": "HTTP 402",
+   "snippet": "rge for API requests, tool calls, and content via HTTP 402. x402 is the internet's payment standard for agentic payments at scale. - [Stripe Climate documentati",
+   "status": "partial",
+   "reason": "llms.txt mentions a payment path (HTTP 402) in prose; nothing machine-readable"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://stripe.com/llms.txt",
+   "heading": "# Stripe",
+   "bytes": 69878,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://stripe.com/auth.md",
+   "finalUrl": "https://stripe.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 118,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://stripe.com/llms.txt",
+   "finalUrl": "https://stripe.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 86,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://stripe.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://stripe.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 95,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://stripe.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://stripe.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 99,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://stripe.com/.well-known/x402",
+   "finalUrl": "https://stripe.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 111,
+   "redirects": 0
+  }
+ ]
+}

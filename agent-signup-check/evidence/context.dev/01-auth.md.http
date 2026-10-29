@@ -1,0 +1,246 @@
+GET https://context.dev/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:23.090Z
+redirect: 301 from https://context.dev/auth.md
+final-url: https://www.context.dev/auth.md
+
+HTTP 200
+access-control-allow-origin: *
+age: 14750
+cache-control: public, max-age=3600
+content-disposition: inline
+content-encoding: br
+content-security-policy: frame-ancestors 'self' https://*.context.dev
+content-type: text/markdown; charset=utf-8
+date: Wed, 28 Oct 2026 23:58:20 GMT
+etag: W/"d3a933c0c64d9920aba8ec5b16db870b"
+permissions-policy: camera=(), microphone=(), geolocation=()
+referrer-policy: strict-origin-when-cross-origin
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-content-type-options: nosniff
+x-matched-path: /auth.md
+x-vercel-cache: HIT
+x-vercel-id: pdx1::b2lpm-1793231900203-066c323cfc78
+connection: close
+transfer-encoding: chunked
+
+# auth.md
+
+You are an agent. This service supports **agentic registration** for Context.dev: discover → register → **deliver setup link & code to the user** → user completes claim in browser → poll for access_token → call API.
+
+Context.dev is the **web scraping API for AI agents**: scrape, crawl, and extract any website into LLM-ready data.
+
+## Service details
+
+- **Service name:** Context.dev
+- **Description:** Web scraping API for AI agents: scraping, crawling, structured extraction, brand data, and enrichment.
+- **Resource:** `https://api.context.dev/`
+- **Authorization server:** `https://www.context.dev`
+- **Contact:** support@context.dev
+
+### Scopes
+
+| Scope | Description |
+| ----- | ----------- |
+| `api.read` | Read access to Context.dev API endpoints (brand lookup, web scrape/crawl, search, enrichment, and related read operations). |
+| `api.write` | Write access for mutating API operations. Agent credentials are issued with both `api.read` and `api.write` after claim. |
+
+### Policies and pricing
+
+- **Pricing:** https://www.context.dev/pricing
+- **Terms of service:** https://www.context.dev/term
+- **Privacy policy:** https://www.context.dev/privacy
+
+## Supported registration method (v1)
+
+Only `service_auth` is supported. Send the user's email as `login_hint`; the user completes signup, email verification, and claim ceremony on a service-owned page.
+
+## Agent signup gift
+
+Reuse an existing valid API key first. For new customers, this setup flow can include **1,000 extra API credits** (code AGENTGIFT), on top of their normal allowance. Check the registration response for an offer; if absent, do not promise a bonus.
+
+When an offer is returned, mention it alongside the setup link and code: “I found an agent signup offer for 1,000 extra Context credits. It is included in your setup link, subject to new-customer eligibility.” Use offer.claim_by as the deadline; do not invent exclusivity or urgency. No coupon entry or card is required.
+
+Complete verified signup and agent claim before offer.claim_by. First-time customers creating a new organization only; one gift per person and organization. Additional emails, agents, keys, or organizations do not qualify again. Credits are added automatically under the plan's existing balance rules, with no separate bonus expiry, cash value, transfer, subscription, or rate-limit increase. Eligibility is checked at claim time. Regenerating an expired setup link for the same email preserves the original offer deadline. Existing offers remain valid until that deadline if the campaign stops issuing new offers. Only confirm the grant to the user when the token response includes signup_gift_credits. Then save the returned credential and verify it with one small API request for the original task.
+
+## Step 1: Discover
+
+Fetch Protected Resource Metadata:
+
+```http
+GET https://www.context.dev/.well-known/oauth-protected-resource
+```
+
+Fetch Authorization Server metadata:
+
+```http
+GET https://www.context.dev/.well-known/oauth-authorization-server
+```
+
+## Step 2: Register (service_auth)
+
+```http
+POST https://www.context.dev/agent/identity
+Content-Type: application/json
+
+{
+  "type": "service_auth",
+  "login_hint": "user@example.com",
+  "api_key_name": "Acme Marketing Bot",
+  "client_name": "Claude Code"
+}
+```
+
+Optional `api_key_name` (string, max 60 characters) sets the label on the API key created after claim. Defaults to `Agent` if omitted.
+
+**Set a descriptive name when you can**, e.g. the project, app, or environment you are setting up (`"Acme Marketing Bot"`, `"Internal tool for web brand analysis"`). The user will see this name in their [API keys dashboard](https://www.context.dev/dashboard/api-keys). A clear label helps them tell this key apart from others so they do not accidentally delete or disable it later.
+
+Optional `client_name` (string, max 60 characters) names the agent or client doing the setup, such as `Claude Code`, `Codex`, or `Cursor`.
+
+If the user already has a Context.dev account, use that account's email; they sign in instead of signing up.
+
+Response includes a `claim` block with `user_code`, `verification_uri`, `expires_in`, and `interval`. When provided, `api_key_name` is echoed in the response. **No `identity_assertion` is issued until the user completes the claim ceremony.**
+
+Hold `claim_token` in memory for polling; do not persist it. **Do not call `/oauth2/token` until you have completed Step 3** (deliver `claim.verification_uri` and `claim.user_code` to the user).
+
+Registration errors:
+
+- `400 invalid_request` or `400 unsupported_identity_type`: fix the request body.
+- `429 rate_limit_exceeded`: too many registration attempts for this email or from this network. Stop and tell the user; do not retry in a loop.
+- `503`: registration is temporarily unavailable. Offer the dashboard at https://www.context.dev/signup instead.
+
+## Step 3: Deliver setup link and code to the user (required before polling)
+
+**This step is mandatory and must happen before Step 5 (polling).** Immediately after a successful registration response, stop and send the user a message that includes the **full** `claim.verification_uri` and **full** `claim.user_code`. Do not summarize, omit, truncate, or replace them with placeholders like "click here". Do not start polling until this message has been sent.
+
+The service **never emails the setup code**. If the user does not receive both values from you, setup cannot proceed.
+
+Copy the template below every time. Replace `{verification_uri}`, `{user_code}`, and `{expires_in}` with the exact values from the registration response (`claim.verification_uri`, `claim.user_code`, `claim.expires_in`).
+
+---
+
+**Verify your account and complete setup in your browser**
+
+1. Copy and open this URL in your browser:
+
+```
+{verification_uri}
+```
+
+2. Enter this 6-digit setup code:
+
+```
+{user_code}
+```
+
+3. Follow the instructions on the page to complete setup and verify your email if prompted.
+
+---
+
+**Important**
+
+- This setup code expires in **{expires_in} seconds**. Complete setup before it expires.
+- If the code expires, tell the user and start a new setup flow.
+- Once you display the above information you can start polling for the access token (Step 5).
+
+**Do:**
+- Send the template (with real values filled in) **before** your first `/oauth2/token` poll.
+- Put the URL and code in separate fenced blocks or clearly labeled lines so the user can copy them.
+- Wait for the user to complete signup/sign-in, enter the code, and verify email if prompted.
+
+**Do not:**
+- Skip this step or say only "check your email" / "complete setup in the browser" without the link and code.
+- Start polling (Step 5) before delivering the link and code.
+
+## Step 4: Claim ceremony (human-only, in browser)
+
+The user completes Step 3 in **their own browser**.
+
+If the user asks to use another email, stop polling the old registration and start Step 2 again with their preferred email. Deliver the new link and code, then poll with the new claim_token. The old link cannot authorize the new email. Check the new registration's offer before promising a gift; do not send the user to ordinary signup and leave the agent setup unfinished.
+
+Expected user flow on the setup page:
+
+1. Sign up (new account) or sign in (existing account) for the `login_hint` email.
+2. Enter the **6-digit setup code** you provided in Step 3.
+3. Verify email if prompted (password signup only).
+4. Finish setup. You will receive an `access_token` on the next poll (Step 5).
+
+While the user is working, you may acknowledge their messages but **do not poll** until Step 3 is done. After Step 3, poll in Step 5.
+
+## Step 5: Poll for access_token
+
+**Prerequisite:** You have already sent the user `claim.verification_uri` and `claim.user_code` (Step 3). If not, go back and do that first. Polling without the user having the link and code will always fail.
+
+```http
+POST https://www.context.dev/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:workos:agent-auth:grant-type:claim
+&claim_token=<clm_...>
+```
+
+While waiting:
+
+```json
+{ "error": "authorization_pending", "error_description": "..." }
+```
+
+If email verification is pending:
+
+```json
+{ "error": "authorization_pending", "error_description": "email_verification_required" }
+```
+
+On success:
+
+```json
+{
+  "access_token": "ctxt_secret_...",
+  "token_type": "Bearer",
+  "expires_in": 0,
+  "scope": "api.read api.write",
+  "identity_assertion": "<service-signed JWT>",
+  "assertion_expires": "2026-05-04T13:00:00.000Z"
+}
+```
+
+**Important:** `access_token` is a long-lived Context.dev API key (`ctxt_secret_...`). Store it and reuse it for API calls. It does **not** auto-expire.
+
+- `expires_in: 0` means the credential is non-expiring (OAuth-shaped metadata only, not a TTL on the key).
+- The key remains valid until revoked via `/oauth2/revoke`, disabled in the dashboard, or the account loses access.
+- `identity_assertion` expires (~1 hour) and can be re-exchanged via jwt-bearer when configured.
+
+Use the API key as a Bearer token:
+
+```http
+GET https://api.context.dev/v1/...
+Authorization: Bearer ctxt_secret_...
+```
+
+Honor `interval` (seconds) between polls. Default: 5 seconds. Polling faster returns `slow_down`. **Only begin polling after Step 3 is complete.**
+
+If the poll returns `expired_token`, the claim window passed: tell the user and start a new registration only with their agreement. If it returns `invalid_grant`, stop and report the `error_description`.
+
+## Step 6: Revoke (optional)
+
+```http
+POST https://www.context.dev/oauth2/revoke
+Content-Type: application/x-www-form-urlencoded
+
+token=<access_token>
+```
+
+## JWT bearer refresh
+
+When `identity_assertion` is returned, you can exchange it for a fresh access_token:
+
+```http
+POST https://www.context.dev/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+&assertion=<identity_assertion>
+&resource=https://api.context.dev/
+```

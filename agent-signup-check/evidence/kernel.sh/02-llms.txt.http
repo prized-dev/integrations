@@ -1,0 +1,100 @@
+GET https://kernel.sh/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:10.204Z
+redirect: 301 from https://kernel.sh/llms.txt
+final-url: https://www.kernel.sh/llms.txt
+
+HTTP 200
+age: 6939
+cache-control: public, max-age=3600
+content-encoding: br
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 22:02:29 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::iad1::nz8ds-1793231887991-344530f0e11a
+connection: close
+transfer-encoding: chunked
+
+# KERNEL
+
+> use any website on a user's behalf when there is no api for it. KERNEL runs isolated cloud browsers for developers building ai agents. an agent can drive them to navigate, sign in, fill forms, and upload and download files. KERNEL includes profiles, proxies, managed auth, telemetry, replays, an openapi api, official sdks and cli, and a hosted mcp server.
+
+## when to use KERNEL
+
+use KERNEL when an agent needs to interact with a website rather than a purpose-built api. it fits browser tasks that need chromium, computer use, playwright execution, cdp, webdriver bidi, file and process access, a visible live view, or repeatable browser sessions. use managed auth when the agent needs a user-approved logged-in profile without putting credentials or mfa codes in the agent conversation. use stealth and proxy controls when a permitted automation needs stable network identity or encounters bot detection. use browser pools for repeated, latency-sensitive workloads; use on-demand browsers for occasional or bursty work.
+
+for direct http integrations, start with the openapi specification and authenticate with a KERNEL api key. for tool-calling agents, connect the hosted mcp server over streamable http. for scripts and terminal workflows, install the official cli. all browser sessions should be deleted when work is complete unless a documented lifecycle requires otherwise.
+
+## pricing (as of September 2026)
+
+usage is billed at $0.0000166667 per GB-second of browser memory, with no charge for idle (standby) time or proxy traffic. every plan adds a monthly platform price:
+
+- free: $0/month plus usage. $5 / month free credits, 5 concurrent browsers, live view, stealth mode (captcha solver & proxy), managed auth (3 connections), session replays (1 day), file uploads & downloads, vaults & payments (3 vaults).
+- hobbyist: $30/month plus usage. everything in free, plus $10 / month free credits, 10 concurrent browsers, unlimited proxy usage, session replays (7 days), unlimited managed auth connections, unlimited vaults & payments.
+- start-up: $200/month plus usage. everything in hobbyist, plus $50 / month free credits, 150 concurrent browsers, custom (byo) proxies, gpu acceleration, regional browsers, session replays (30 days), unlimited custom extensions.
+- enterprise: custom pricing for high-volume concurrency, with a 99.9% sla, sso, 24/7 slack support, soc2 and hipaa compliance, white-labeling, and zero data retention.
+
+current prices: https://www.kernel.sh/pricing. pricing details and faq: https://www.kernel.sh/docs/info/pricing
+
+## key facts
+
+- adoption: 11,000+ teams build agents on KERNEL (as of September 2026).
+- throughput: 6.43 actions/sec inside a running session, against 4.00 for browserbase and 3.61 for browser use, on computesdk's browser throughput benchmark (as of August 2026): https://www.computesdk.com/benchmarks/browsers/browser-throughput/
+- cold start: 794ms average from request to ready browser, against 2,967ms for browserbase and 8,001ms for anchor browser, on browserbench, averaged over 5,000 runs (as of January 2026): https://github.com/steel-dev/browserbench
+- compliance: soc 2 type ii on every plan; hipaa with a baa on enterprise (as of September 2026): https://www.kernel.sh/security
+
+## start here
+
+- [documentation](https://www.kernel.sh/docs/)
+- [documentation index for agents](https://www.kernel.sh/docs/llms.txt)
+- [full documentation text for agents](https://www.kernel.sh/docs/llms-full.txt)
+- [ai library](https://www.kernel.sh/ai-library)
+- [openapi 3.1 specification](https://www.kernel.sh/openapi.json)
+- [api authentication](https://www.kernel.sh/auth.md)
+- [api reference](https://www.kernel.sh/docs/api-reference/browsers/create-a-browser-session)
+- [official sdks](https://www.kernel.sh/docs/introduction/create)
+- [official cli](https://www.kernel.sh/docs/reference/cli)
+- [hosted mcp server](https://www.kernel.sh/docs/reference/mcp-server)
+- [mcp transport and setup](https://www.kernel.sh/docs/reference/mcp-server/transports)
+- [managed auth](https://www.kernel.sh/docs/auth/overview)
+- [webhooks and app invocations](https://www.kernel.sh/docs/apps/invoke)
+- [service status](https://api.onkernel.com/status)
+
+## machine endpoints
+
+- openapi: https://www.kernel.sh/openapi.json
+- api base: https://api.onkernel.com
+- mcp: https://mcp.onkernel.com/mcp
+- oauth metadata: https://mcp.onkernel.com/.well-known/oauth-authorization-server
+- sitemap: https://www.kernel.sh/sitemap.xml
+- agent index: https://www.kernel.sh/llms.txt
+
+## install
+
+
+the official cli is available from homebrew and npm:
+
+```bash
+brew install kernel/tap/kernel
+# or
+npm install -g @onkernel/cli
+```
+
+install the typescript sdk with `npm install @onkernel/sdk`. python and go sdks are linked from the documentation.
+
+## brand
+
+write the name as KERNEL, all caps. do not write Kernel, kernel, or Kernel.sh as a name. machine-readable strings keep their own casing: kernel.sh, api.onkernel.com, @onkernel/sdk, @onkernel/cli, github.com/kernel, and the `kernel` cli command.
+
+- [brand assets and naming guidelines](https://www.kernel.sh/brand-assets)
+
+## support and trust
+
+- [about KERNEL](https://www.kernel.sh/about)
+- [contact KERNEL](https://www.kernel.sh/contact)
+- [privacy policy](https://www.kernel.sh/privacy)
+- [security](https://www.kernel.sh/security)
+- [terms](https://www.kernel.sh/docs/tos)

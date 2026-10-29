@@ -1,0 +1,694 @@
+[
+ {
+  "name": "OpenAI",
+  "category": "LLM APIs",
+  "site": "openai.com",
+  "api": "https://api.openai.com/v1/models",
+  "docs": "https://developers.openai.com/llms.txt"
+ },
+ {
+  "name": "Anthropic",
+  "category": "LLM APIs",
+  "site": "anthropic.com",
+  "api": "https://api.anthropic.com/v1/models",
+  "docs": "https://docs.anthropic.com/llms.txt"
+ },
+ {
+  "name": "Google Gemini API",
+  "category": "LLM APIs",
+  "site": "ai.google.dev",
+  "api": "https://generativelanguage.googleapis.com/v1beta/models",
+  "docs": "https://ai.google.dev/gemini-api/docs/llms.txt"
+ },
+ {
+  "name": "Mistral",
+  "category": "LLM APIs",
+  "site": "mistral.ai",
+  "api": "https://api.mistral.ai/v1/models",
+  "docs": "https://docs.mistral.ai/llms.txt"
+ },
+ {
+  "name": "Groq",
+  "category": "LLM APIs",
+  "site": "groq.com",
+  "api": "https://api.groq.com/openai/v1/models",
+  "docs": "https://console.groq.com/llms.txt"
+ },
+ {
+  "name": "Together AI",
+  "category": "LLM APIs",
+  "site": "together.ai",
+  "api": "https://api.together.xyz/v1/models",
+  "docs": "https://docs.together.ai/llms.txt"
+ },
+ {
+  "name": "Fireworks AI",
+  "category": "LLM APIs",
+  "site": "fireworks.ai",
+  "api": "https://api.fireworks.ai/inference/v1/models",
+  "docs": "https://docs.fireworks.ai/llms.txt"
+ },
+ {
+  "name": "OpenRouter",
+  "category": "LLM APIs",
+  "site": "openrouter.ai",
+  "api": "https://openrouter.ai/api/v1/key"
+ },
+ {
+  "name": "DeepSeek",
+  "category": "LLM APIs",
+  "site": "deepseek.com",
+  "api": "https://api.deepseek.com/models",
+  "docs": "https://api-docs.deepseek.com/llms.txt"
+ },
+ {
+  "name": "xAI",
+  "category": "LLM APIs",
+  "site": "x.ai",
+  "api": "https://api.x.ai/v1/models",
+  "docs": "https://docs.x.ai/llms.txt",
+  "corrections": [
+   {
+    "check": "limits",
+    "from": "partial",
+    "match": "Spending caps",
+    "url": "https://docs.x.ai/llms.txt",
+    "status": "fail",
+    "note": "the only match is the consumer X subscription page (\"Spending caps and alerts\"), not the API"
+   }
+  ]
+ },
+ {
+  "name": "Cohere",
+  "category": "LLM APIs",
+  "site": "cohere.com",
+  "api": "https://api.cohere.com/v1/models",
+  "docs": "https://docs.cohere.com/llms.txt"
+ },
+ {
+  "name": "Perplexity",
+  "category": "LLM APIs",
+  "site": "perplexity.ai",
+  "api": "https://api.perplexity.ai/async/chat/completions",
+  "docs": "https://docs.perplexity.ai/llms.txt"
+ },
+ {
+  "name": "Cerebras",
+  "category": "LLM APIs",
+  "site": "cerebras.ai",
+  "api": "https://api.cerebras.ai/v1/models",
+  "docs": "https://inference-docs.cerebras.ai/llms.txt"
+ },
+ {
+  "name": "Hugging Face",
+  "category": "LLM APIs",
+  "site": "huggingface.co",
+  "api": "https://huggingface.co/api/whoami-v2",
+  "docs": "https://huggingface.co/docs/hub/llms.txt"
+ },
+ {
+  "name": "Replicate",
+  "category": "LLM APIs",
+  "site": "replicate.com",
+  "api": "https://api.replicate.com/v1/account"
+ },
+ {
+  "name": "NanoGPT",
+  "category": "LLM APIs",
+  "site": "nano-gpt.com",
+  "api": "https://nano-gpt.com/api/v1/batches",
+  "docs": "https://docs.nano-gpt.com/llms.txt"
+ },
+ {
+  "name": "fal",
+  "category": "LLM APIs",
+  "site": "fal.ai",
+  "api": "https://api.fal.ai/v1/models/usage",
+  "docs": "https://docs.fal.ai/llms.txt"
+ },
+ {
+  "name": "ElevenLabs",
+  "category": "LLM APIs",
+  "site": "elevenlabs.io",
+  "api": "https://api.elevenlabs.io/v1/user",
+  "docs": "https://elevenlabs.io/docs/llms.txt"
+ },
+ {
+  "name": "Deepgram",
+  "category": "LLM APIs",
+  "site": "deepgram.com",
+  "api": "https://api.deepgram.com/v1/projects",
+  "docs": "https://developers.deepgram.com/llms.txt"
+ },
+ {
+  "name": "AssemblyAI",
+  "category": "LLM APIs",
+  "site": "assemblyai.com",
+  "api": "https://api.assemblyai.com/v2/transcript",
+  "docs": "https://www.assemblyai.com/docs/llms.txt"
+ },
+ {
+  "name": "Prized",
+  "category": "Sandboxes and compute",
+  "site": "prized.dev",
+  "api": "https://api.prized.dev/api/v1/me"
+ },
+ {
+  "name": "E2B",
+  "category": "Sandboxes and compute",
+  "site": "e2b.dev",
+  "api": "https://api.e2b.dev/sandboxes",
+  "docs": "https://e2b.dev/docs/llms.txt"
+ },
+ {
+  "name": "Daytona",
+  "category": "Sandboxes and compute",
+  "site": "daytona.io",
+  "api": "https://app.daytona.io/api/sandbox",
+  "docs": "https://www.daytona.io/docs/llms.txt"
+ },
+ {
+  "name": "Modal",
+  "category": "Sandboxes and compute",
+  "site": "modal.com",
+  "skipApi": "Modal has no public REST API to probe (its SDK and CLI talk gRPC)",
+  "docs": "https://modal.com/llms.txt"
+ },
+ {
+  "name": "Vercel",
+  "category": "Sandboxes and compute",
+  "site": "vercel.com",
+  "api": "https://api.vercel.com/v2/user",
+  "docs": "https://vercel.com/docs/llms.txt"
+ },
+ {
+  "name": "Fly.io",
+  "category": "Sandboxes and compute",
+  "site": "fly.io",
+  "api": "https://api.machines.dev/v1/apps?org_slug=personal",
+  "docs": "https://fly.io/docs/llms.txt"
+ },
+ {
+  "name": "Railway",
+  "category": "Sandboxes and compute",
+  "site": "railway.com",
+  "docs": "https://docs.railway.com/llms.txt",
+  "skipApi": "GraphQL API that takes queries by POST only; this checker sends GET requests only"
+ },
+ {
+  "name": "Render",
+  "category": "Sandboxes and compute",
+  "site": "render.com",
+  "api": "https://api.render.com/v1/services",
+  "docs": "https://render.com/docs/llms.txt"
+ },
+ {
+  "name": "Northflank",
+  "category": "Sandboxes and compute",
+  "site": "northflank.com",
+  "api": "https://api.northflank.com/v1/projects"
+ },
+ {
+  "name": "Morph Cloud",
+  "category": "Sandboxes and compute",
+  "site": "morph.so",
+  "api": "https://cloud.morph.so/api/instance",
+  "docs": "https://cloud.morph.so/docs/llms.txt"
+ },
+ {
+  "name": "Cloudflare",
+  "category": "Sandboxes and compute",
+  "site": "cloudflare.com",
+  "api": "https://api.cloudflare.com/client/v4/user",
+  "docs": "https://developers.cloudflare.com/llms.txt"
+ },
+ {
+  "name": "Netlify",
+  "category": "Sandboxes and compute",
+  "site": "netlify.com",
+  "api": "https://api.netlify.com/api/v1/sites",
+  "docs": "https://docs.netlify.com/llms.txt"
+ },
+ {
+  "name": "Heroku",
+  "category": "Sandboxes and compute",
+  "site": "heroku.com",
+  "api": "https://api.heroku.com/account",
+  "docs": "https://devcenter.heroku.com/llms.txt",
+  "apiAccept": "application/vnd.heroku+json; version=3"
+ },
+ {
+  "name": "Koyeb",
+  "category": "Sandboxes and compute",
+  "site": "koyeb.com",
+  "api": "https://app.koyeb.com/v1/apps",
+  "docs": "https://www.koyeb.com/docs/llms.txt"
+ },
+ {
+  "name": "Runloop",
+  "category": "Sandboxes and compute",
+  "site": "runloop.ai",
+  "api": "https://api.runloop.ai/v1/devboxes",
+  "docs": "https://docs.runloop.ai/llms.txt"
+ },
+ {
+  "name": "Blaxel",
+  "category": "Sandboxes and compute",
+  "site": "blaxel.ai",
+  "api": "https://api.blaxel.ai/v0/sandboxes",
+  "docs": "https://docs.blaxel.ai/llms.txt"
+ },
+ {
+  "name": "CodeSandbox",
+  "category": "Sandboxes and compute",
+  "site": "codesandbox.io",
+  "api": "https://api.codesandbox.io/sandbox",
+  "docs": "https://codesandbox.io/docs/llms.txt"
+ },
+ {
+  "name": "Freestyle",
+  "category": "Sandboxes and compute",
+  "site": "freestyle.sh",
+  "api": "https://api.freestyle.sh/web/v1/deployments",
+  "docs": "https://docs.freestyle.sh/llms.txt"
+ },
+ {
+  "name": "Beam",
+  "category": "Sandboxes and compute",
+  "site": "beam.cloud",
+  "api": "https://api.beam.cloud/v2/deployment/",
+  "docs": "https://docs.beam.cloud/llms.txt"
+ },
+ {
+  "name": "DigitalOcean",
+  "category": "Sandboxes and compute",
+  "site": "digitalocean.com",
+  "api": "https://api.digitalocean.com/v2/account",
+  "docs": "https://docs.digitalocean.com/llms.txt"
+ },
+ {
+  "name": "Hetzner Cloud",
+  "category": "Sandboxes and compute",
+  "site": "hetzner.com",
+  "api": "https://api.hetzner.cloud/v1/servers",
+  "docs": "https://docs.hetzner.com/llms.txt"
+ },
+ {
+  "name": "AWS",
+  "category": "Sandboxes and compute",
+  "site": "aws.amazon.com",
+  "api": "https://ec2.us-east-1.amazonaws.com/?Action=DescribeRegions&Version=2016-11-15",
+  "docs": "https://docs.aws.amazon.com/llms.txt"
+ },
+ {
+  "name": "Google Cloud",
+  "category": "Sandboxes and compute",
+  "site": "cloud.google.com",
+  "api": "https://cloudresourcemanager.googleapis.com/v1/projects"
+ },
+ {
+  "name": "RunPod",
+  "category": "Sandboxes and compute",
+  "site": "runpod.io",
+  "api": "https://rest.runpod.io/v1/pods",
+  "docs": "https://docs.runpod.io/llms.txt"
+ },
+ {
+  "name": "Boat",
+  "category": "Sandboxes and compute",
+  "site": "boat.dev",
+  "api": "https://boat.dev/api/v1/me"
+ },
+ {
+  "name": "Sprites",
+  "category": "Sandboxes and compute",
+  "site": "sprites.dev",
+  "api": "https://api.sprites.dev/v1/sprites"
+ },
+ {
+  "name": "Deno Deploy",
+  "category": "Sandboxes and compute",
+  "site": "deno.com",
+  "api": "https://api.deno.com/v1/organizations/me",
+  "docs": "https://docs.deno.com/llms.txt"
+ },
+ {
+  "name": "Replit",
+  "category": "Sandboxes and compute",
+  "site": "replit.com",
+  "skipApi": "Replit has no public REST API for accounts to probe",
+  "docs": "https://docs.replit.com/llms.txt"
+ },
+ {
+  "name": "Supabase",
+  "category": "Databases and backend",
+  "site": "supabase.com",
+  "api": "https://api.supabase.com/v1/projects"
+ },
+ {
+  "name": "Neon",
+  "category": "Databases and backend",
+  "site": "neon.com",
+  "api": "https://claimable.neon.tech/v1/projects/agent-signup-check/credentials",
+  "apiNote": "the agent API that neon.com/auth.md documents"
+ },
+ {
+  "name": "PlanetScale",
+  "category": "Databases and backend",
+  "site": "planetscale.com",
+  "api": "https://api.planetscale.com/v1/organizations",
+  "docs": "https://planetscale.com/docs/llms.txt"
+ },
+ {
+  "name": "Turso",
+  "category": "Databases and backend",
+  "site": "turso.tech",
+  "api": "https://api.turso.tech/v1/organizations",
+  "docs": "https://docs.turso.tech/llms.txt"
+ },
+ {
+  "name": "Upstash",
+  "category": "Databases and backend",
+  "site": "upstash.com",
+  "api": "https://api.upstash.com/v2/redis/databases",
+  "docs": "https://upstash.com/docs/llms.txt"
+ },
+ {
+  "name": "Convex",
+  "category": "Databases and backend",
+  "site": "convex.dev",
+  "api": "https://api.convex.dev/v1/token_details",
+  "docs": "https://docs.convex.dev/llms.txt"
+ },
+ {
+  "name": "Pinecone",
+  "category": "Databases and backend",
+  "site": "pinecone.io",
+  "api": "https://api.pinecone.io/indexes",
+  "docs": "https://docs.pinecone.io/llms.txt"
+ },
+ {
+  "name": "MongoDB Atlas",
+  "category": "Databases and backend",
+  "site": "mongodb.com",
+  "api": "https://cloud.mongodb.com/api/atlas/v2/groups"
+ },
+ {
+  "name": "Resend",
+  "category": "Email, phone and messaging",
+  "site": "resend.com",
+  "api": "https://api.resend.com/domains"
+ },
+ {
+  "name": "AgentMail",
+  "category": "Email, phone and messaging",
+  "site": "agentmail.to",
+  "api": "https://api.agentmail.to/v0/inboxes"
+ },
+ {
+  "name": "Postmark",
+  "category": "Email, phone and messaging",
+  "site": "postmarkapp.com",
+  "api": "https://api.postmarkapp.com/server"
+ },
+ {
+  "name": "SendGrid",
+  "category": "Email, phone and messaging",
+  "site": "sendgrid.com",
+  "api": "https://api.sendgrid.com/v3/user/profile"
+ },
+ {
+  "name": "Mailgun",
+  "category": "Email, phone and messaging",
+  "site": "mailgun.com",
+  "api": "https://api.mailgun.net/v3/domains",
+  "docs": "https://documentation.mailgun.com/llms.txt"
+ },
+ {
+  "name": "Loops",
+  "category": "Email, phone and messaging",
+  "site": "loops.so",
+  "api": "https://app.loops.so/api/v1/api-key"
+ },
+ {
+  "name": "Twilio",
+  "category": "Email, phone and messaging",
+  "site": "twilio.com",
+  "api": "https://api.twilio.com/2010-04-01/Accounts.json",
+  "docs": "https://www.twilio.com/docs/llms.txt"
+ },
+ {
+  "name": "Telnyx",
+  "category": "Email, phone and messaging",
+  "site": "telnyx.com",
+  "api": "https://api.telnyx.com/v2/balance"
+ },
+ {
+  "name": "AgentPhone",
+  "category": "Email, phone and messaging",
+  "site": "agentphone.to",
+  "api": "https://api.agentphone.ai/v1/numbers"
+ },
+ {
+  "name": "Vapi",
+  "category": "Email, phone and messaging",
+  "site": "vapi.ai",
+  "api": "https://api.vapi.ai/assistant",
+  "docs": "https://docs.vapi.ai/llms.txt"
+ },
+ {
+  "name": "Inkbox",
+  "category": "Email, phone and messaging",
+  "site": "inkbox.ai",
+  "api": "https://inkbox.ai/api/v1/identities"
+ },
+ {
+  "name": "Browserbase",
+  "category": "Browsers and scraping",
+  "site": "browserbase.com",
+  "api": "https://api.browserbase.com/v1/sessions",
+  "docs": "https://docs.browserbase.com/llms.txt"
+ },
+ {
+  "name": "Kernel",
+  "category": "Browsers and scraping",
+  "site": "kernel.sh",
+  "api": "https://api.onkernel.com/browsers"
+ },
+ {
+  "name": "Steel",
+  "category": "Browsers and scraping",
+  "site": "steel.dev",
+  "api": "https://api.steel.dev/v1/sessions",
+  "docs": "https://docs.steel.dev/llms.txt"
+ },
+ {
+  "name": "Hyperbrowser",
+  "category": "Browsers and scraping",
+  "site": "hyperbrowser.ai",
+  "api": "https://api.hyperbrowser.ai/api/sessions",
+  "docs": "https://docs.hyperbrowser.ai/llms.txt"
+ },
+ {
+  "name": "Browser Use",
+  "category": "Browsers and scraping",
+  "site": "browser-use.com",
+  "api": "https://api.browser-use.com/api/v4/runs",
+  "docs": "https://docs.browser-use.com/llms.txt"
+ },
+ {
+  "name": "Firecrawl",
+  "category": "Browsers and scraping",
+  "site": "firecrawl.dev",
+  "api": "https://api.firecrawl.dev/v1/team/credit-usage",
+  "docs": "https://docs.firecrawl.dev/llms.txt"
+ },
+ {
+  "name": "Bright Data",
+  "category": "Browsers and scraping",
+  "site": "brightdata.com",
+  "api": "https://api.brightdata.com/zone/get_active_zones"
+ },
+ {
+  "name": "Apify",
+  "category": "Browsers and scraping",
+  "site": "apify.com",
+  "api": "https://api.apify.com/v2/users/me",
+  "docs": "https://docs.apify.com/llms.txt"
+ },
+ {
+  "name": "ScrapingBee",
+  "category": "Browsers and scraping",
+  "site": "scrapingbee.com",
+  "api": "https://app.scrapingbee.com/api/v1/usage"
+ },
+ {
+  "name": "Browserless",
+  "category": "Browsers and scraping",
+  "site": "browserless.io",
+  "api": "https://production-sfo.browserless.io/sessions",
+  "docs": "https://docs.browserless.io/llms.txt"
+ },
+ {
+  "name": "Exa",
+  "category": "Search and data",
+  "site": "exa.ai",
+  "api": "https://api.exa.ai/websets/v0/websets",
+  "docs": "https://docs.exa.ai/llms.txt"
+ },
+ {
+  "name": "Tavily",
+  "category": "Search and data",
+  "site": "tavily.com",
+  "api": "https://api.tavily.com/usage",
+  "docs": "https://docs.tavily.com/llms.txt"
+ },
+ {
+  "name": "Brave Search API",
+  "category": "Search and data",
+  "site": "brave.com",
+  "api": "https://api.search.brave.com/res/v1/web/search?q=agent",
+  "docs": "https://api-dashboard.search.brave.com/llms.txt"
+ },
+ {
+  "name": "SerpApi",
+  "category": "Search and data",
+  "site": "serpapi.com",
+  "api": "https://serpapi.com/account.json"
+ },
+ {
+  "name": "Parallel",
+  "category": "Search and data",
+  "site": "parallel.ai",
+  "api": "https://api.parallel.ai/v1/tasks/runs/run_0",
+  "docs": "https://docs.parallel.ai/llms.txt"
+ },
+ {
+  "name": "Context.dev",
+  "category": "Search and data",
+  "site": "context.dev",
+  "api": "https://api.context.dev/v1/brand/search?query=prized"
+ },
+ {
+  "name": "Financial Datasets",
+  "category": "Search and data",
+  "site": "financialdatasets.ai",
+  "api": "https://api.financialdatasets.ai/prices/snapshot/?ticker=NVDA",
+  "docs": "https://docs.financialdatasets.ai/llms.txt"
+ },
+ {
+  "name": "Jina AI",
+  "category": "Search and data",
+  "site": "jina.ai",
+  "api": "https://api.jina.ai/v1/embeddings",
+  "docs": "https://docs.jina.ai/llms.txt"
+ },
+ {
+  "name": "Orthogonal",
+  "category": "Search and data",
+  "site": "orthogonal.com",
+  "api": "https://api.orthogonal.com/v1/list-endpoints"
+ },
+ {
+  "name": "Stripe",
+  "category": "Payments and billing",
+  "site": "stripe.com",
+  "skipApi": "not probed: this run's tooling does not call Stripe's API",
+  "docs": "https://docs.stripe.com/llms.txt",
+  "corrections": [
+   {
+    "check": "payment",
+    "from": "partial",
+    "match": "HTTP 402",
+    "url": "https://stripe.com/llms.txt",
+    "status": "fail",
+    "note": "the matched prose is about products Stripe sells (MPP and x402 for merchants, Stripe Climate donations), not a way for an agent to pay Stripe"
+   }
+  ]
+ },
+ {
+  "name": "Paddle",
+  "category": "Payments and billing",
+  "site": "paddle.com",
+  "api": "https://api.paddle.com/event-types",
+  "docs": "https://developer.paddle.com/llms.txt"
+ },
+ {
+  "name": "Polar",
+  "category": "Payments and billing",
+  "site": "polar.sh",
+  "api": "https://api.polar.sh/v1/products/",
+  "docs": "https://docs.polar.sh/llms.txt"
+ },
+ {
+  "name": "Lemon Squeezy",
+  "category": "Payments and billing",
+  "site": "lemonsqueezy.com",
+  "api": "https://api.lemonsqueezy.com/v1/users/me"
+ },
+ {
+  "name": "Coinbase Developer Platform",
+  "category": "Payments and billing",
+  "site": "cdp.coinbase.com",
+  "api": "https://api.cdp.coinbase.com/platform/v2/evm/accounts",
+  "docs": "https://docs.cdp.coinbase.com/llms.txt"
+ },
+ {
+  "name": "Autumn",
+  "category": "Payments and billing",
+  "site": "useautumn.com",
+  "api": "https://api.useautumn.com/v1/customers",
+  "docs": "https://docs.useautumn.com/llms.txt"
+ },
+ {
+  "name": "GitHub",
+  "category": "Dev tools",
+  "site": "github.com",
+  "api": "https://api.github.com/user",
+  "docs": "https://docs.github.com/llms.txt"
+ },
+ {
+  "name": "GitLab",
+  "category": "Dev tools",
+  "site": "gitlab.com",
+  "api": "https://gitlab.com/api/v4/user",
+  "docs": "https://docs.gitlab.com/llms.txt"
+ },
+ {
+  "name": "Sentry",
+  "category": "Dev tools",
+  "site": "sentry.io",
+  "api": "https://sentry.io/api/0/organizations/",
+  "docs": "https://docs.sentry.io/llms.txt"
+ },
+ {
+  "name": "PostHog",
+  "category": "Dev tools",
+  "site": "posthog.com",
+  "api": "https://us.posthog.com/api/projects/"
+ },
+ {
+  "name": "Linear",
+  "category": "Dev tools",
+  "site": "linear.app",
+  "skipApi": "GraphQL API that takes queries by POST only; this checker sends GET requests only"
+ },
+ {
+  "name": "Clerk",
+  "category": "Dev tools",
+  "site": "clerk.com",
+  "api": "https://api.clerk.com/v1/users"
+ },
+ {
+  "name": "WorkOS",
+  "category": "Dev tools",
+  "site": "workos.com",
+  "api": "https://api.workos.com/organizations"
+ },
+ {
+  "name": "Cloudinary",
+  "category": "Dev tools",
+  "site": "cloudinary.com",
+  "api": "https://api.cloudinary.com/v1_1/demo/resources/image"
+ }
+]

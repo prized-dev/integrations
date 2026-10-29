@@ -1,0 +1,295 @@
+GET https://us.posthog.com/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:34.818Z
+final-url: https://us.posthog.com/auth.md
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:33 GMT
+content-type: text/markdown; charset=utf-8
+content-length: 14631
+connection: close
+allow: GET, HEAD, OPTIONS
+x-frame-options: SAMEORIGIN
+content-security-policy: default-src 'none'
+vary: Cookie
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+cross-origin-opener-policy: same-origin
+server: envoy
+x-envoy-upstream-service-time: 12
+strict-transport-security: max-age=31536000; includeSubDomains
+
+# PostHog
+
+PostHog is an open-source platform for product analytics, session replay, feature flags, experiments, surveys, and data warehousing.
+
+## Creating an account
+
+- AI wizard: `npx @posthog/wizard@latest --signup` creates a new account and project from the command line, with no signup form. This is the most direct path for a new user. See https://posthog.com/docs/ai-engineering/ai-wizard
+- Provisioning API: partners and platforms can create accounts for their users and deep-link them in. See https://posthog.com/docs/integrate/provisioning
+
+## Authenticating an existing user
+
+- OAuth 2.0: standard authorization-code flow for an app acting on behalf of a user. See https://posthog.com/docs/api/oauth
+- Personal API keys: long-lived keys for scripts and server-to-server use. See https://posthog.com/docs/api#authentication
+
+## Agent registration via ID-JAG (Enterprise, beta)
+
+Available on the Enterprise plan with XAA enabled, and currently in beta, so most clients should use one of the options above. With it configured, an agent presents an [ID-JAG](https://xaa.dev) identity assertion (`identity_assertion`) to the token endpoint using the JWT-bearer grant (`urn:ietf:params:oauth:grant-type:jwt-bearer`) and receives a scoped, short-lived OAuth access token bound to the user. The agent must also authenticate as a registered client, with a client secret or `private_key_jwt`, and the ID-JAG's `client_id` must name that client. See https://posthog.com/docs/settings/id-jag
+
+- Identity endpoint: `https://us.posthog.com/oauth/token/`
+- Assertion type: `urn:ietf:params:oauth:token-type:id-jag`
+- Protected resource metadata: `https://us.posthog.com/.well-known/oauth-protected-resource`
+- Authorization server metadata: `https://us.posthog.com/.well-known/oauth-authorization-server`
+
+The user-claimed device flow (`service_auth`, `anonymous`) is not supported yet.
+
+## Scopes
+
+- `openid`: Sign in and read your user identifier
+- `profile`: Read your basic profile
+- `email`: Read your email address
+- `introspection`: Check whether a token you hold is still valid
+- `action:read`: Read access to action
+- `action:write`: Write access to action
+- `access_control:read`: Read access to access_control
+- `access_control:write`: Write access to access_control
+- `account:read`: Read access to account
+- `account:write`: Write access to account
+- `activity_log:read`: Read access to activity_log
+- `activity_log:write`: Write access to activity_log
+- `alert:read`: Read access to alert
+- `alert:write`: Write access to alert
+- `annotation:read`: Read access to annotation
+- `annotation:write`: Write access to annotation
+- `approvals:read`: Read access to approvals
+- `approvals:write`: Write access to approvals
+- `autoresearch:read`: Read access to autoresearch
+- `autoresearch:write`: Write access to autoresearch
+- `batch_export:read`: Read access to batch_export
+- `batch_export:write`: Write access to batch_export
+- `batch_import:read`: Read access to batch_import
+- `batch_import:write`: Write access to batch_import
+- `billing:read`: Read access to billing
+- `billing:write`: Write access to billing
+- `business_knowledge:read`: Read access to business_knowledge
+- `business_knowledge:write`: Write access to business_knowledge
+- `canvas:read`: Read access to canvas
+- `canvas:write`: Write access to canvas
+- `cohort:read`: Read access to cohort
+- `cohort:write`: Write access to cohort
+- `comment:read`: Read access to comment
+- `comment:write`: Write access to comment
+- `conversation:read`: Read access to conversation
+- `conversation:write`: Write access to conversation
+- `cross_project_dashboard:read`: Read access to cross_project_dashboard
+- `cross_project_dashboard:write`: Write access to cross_project_dashboard
+- `customer_analytics:read`: Read access to customer_analytics
+- `customer_analytics:write`: Write access to customer_analytics
+- `customer_task:read`: Read access to customer_task
+- `customer_task:write`: Write access to customer_task
+- `customer_journey:read`: Read access to customer_journey
+- `customer_journey:write`: Write access to customer_journey
+- `customer_profile_config:read`: Read access to customer_profile_config
+- `customer_profile_config:write`: Write access to customer_profile_config
+- `data_catalog:read`: Read access to data_catalog
+- `data_catalog:write`: Write access to data_catalog
+- `data_catalog_approval:read`: Read access to data_catalog_approval
+- `data_catalog_approval:write`: Write access to data_catalog_approval
+- `data_deletion:read`: Read access to data_deletion
+- `data_deletion:write`: Write access to data_deletion
+- `dashboard:read`: Read access to dashboard
+- `dashboard:write`: Write access to dashboard
+- `event_filter:read`: Read access to event_filter
+- `event_filter:write`: Write access to event_filter
+- `dashboard_template:read`: Read access to dashboard_template
+- `dashboard_template:write`: Write access to dashboard_template
+- `dataset:read`: Read access to dataset
+- `dataset:write`: Write access to dataset
+- `early_access_feature:read`: Read access to early_access_feature
+- `early_access_feature:write`: Write access to early_access_feature
+- `endpoint:read`: Read access to endpoint
+- `endpoint:write`: Write access to endpoint
+- `engineering_analytics:read`: Read access to engineering_analytics
+- `engineering_analytics:write`: Write access to engineering_analytics
+- `error_tracking:read`: Read access to error_tracking
+- `error_tracking:write`: Write access to error_tracking
+- `evaluation:read`: Read access to evaluation
+- `evaluation:write`: Write access to evaluation
+- `element:read`: Read access to element
+- `element:write`: Write access to element
+- `event_definition:read`: Read access to event_definition
+- `event_definition:write`: Write access to event_definition
+- `experiment:read`: Read access to experiment
+- `experiment:write`: Write access to experiment
+- `experiment_holdout:read`: Read access to experiment_holdout
+- `experiment_holdout:write`: Write access to experiment_holdout
+- `experiment_saved_metric:read`: Read access to experiment_saved_metric
+- `experiment_saved_metric:write`: Write access to experiment_saved_metric
+- `export:read`: Read access to export
+- `export:write`: Write access to export
+- `external_data_schema:read`: Read access to external_data_schema
+- `external_data_schema:write`: Write access to external_data_schema
+- `external_data_source:read`: Read access to external_data_source
+- `external_data_source:write`: Write access to external_data_source
+- `feature_flag:read`: Read access to feature_flag
+- `feature_flag:write`: Write access to feature_flag
+- `file_system:read`: Read access to file_system
+- `file_system:write`: Write access to file_system
+- `file_system_shortcut:read`: Read access to file_system_shortcut
+- `file_system_shortcut:write`: Write access to file_system_shortcut
+- `group:read`: Read access to group
+- `group:write`: Write access to group
+- `health_issue:read`: Read access to health_issue
+- `health_issue:write`: Write access to health_issue
+- `heatmap:read`: Read access to heatmap
+- `heatmap:write`: Write access to heatmap
+- `hog_flow:read`: Read access to hog_flow
+- `hog_flow:write`: Write access to hog_flow
+- `hog_function:read`: Read access to hog_function
+- `hog_function:write`: Write access to hog_function
+- `inbox:read`: Read access to inbox
+- `inbox:write`: Write access to inbox
+- `ingestion_warning:read`: Read access to ingestion_warning
+- `ingestion_warning:write`: Write access to ingestion_warning
+- `insight:read`: Read access to insight
+- `insight:write`: Write access to insight
+- `insight_variable:read`: Read access to insight_variable
+- `insight_variable:write`: Write access to insight_variable
+- `integration:read`: Read access to integration
+- `integration:write`: Write access to integration
+- `legal_document:read`: Read access to legal_document
+- `legal_document:write`: Write access to legal_document
+- `link:read`: Read access to link
+- `link:write`: Write access to link
+- `live_debugger:read`: Read access to live_debugger
+- `live_debugger:write`: Write access to live_debugger
+- `llm_analytics:read`: Read access to llm_analytics
+- `llm_analytics:write`: Write access to llm_analytics
+- `ai_observability_clusters:read`: Read access to ai_observability_clusters
+- `ai_observability_clusters:write`: Write access to ai_observability_clusters
+- `llm_playground:read`: Read access to llm_playground
+- `llm_playground:write`: Write access to llm_playground
+- `llm_prompt:read`: Read access to llm_prompt
+- `llm_prompt:write`: Write access to llm_prompt
+- `llm_provider_key:read`: Read access to llm_provider_key
+- `llm_provider_key:write`: Write access to llm_provider_key
+- `llm_skill:read`: Read access to llm_skill
+- `llm_skill:write`: Write access to llm_skill
+- `logs:read`: Read access to logs
+- `logs:write`: Write access to logs
+- `loop:read`: Read access to loop
+- `loop:write`: Write access to loop
+- `marketing_analytics:read`: Read access to marketing_analytics
+- `marketing_analytics:write`: Write access to marketing_analytics
+- `mcp_analytics:read`: Read access to mcp_analytics
+- `mcp_analytics:write`: Write access to mcp_analytics
+- `mcp_registry:read`: Read access to mcp_registry
+- `mcp_registry:write`: Write access to mcp_registry
+- `metrics:read`: Read access to metrics
+- `metrics:write`: Write access to metrics
+- `notebook:read`: Read access to notebook
+- `notebook:write`: Write access to notebook
+- `offline_evaluation_ingestion:read`: Read access to offline_evaluation_ingestion
+- `offline_evaluation_ingestion:write`: Write access to offline_evaluation_ingestion
+- `organization:read`: Read access to organization
+- `organization:write`: Write access to organization
+- `organization_integration:read`: Read access to organization_integration
+- `organization_integration:write`: Write access to organization_integration
+- `organization_member:read`: Read access to organization_member
+- `organization_member:write`: Write access to organization_member
+- `person:read`: Read access to person
+- `person:write`: Write access to person
+- `plugin:read`: Read access to plugin
+- `plugin:write`: Write access to plugin
+- `product_enablement:read`: Read access to product_enablement
+- `product_enablement:write`: Write access to product_enablement
+- `product_tour:read`: Read access to product_tour
+- `product_tour:write`: Write access to product_tour
+- `project:read`: Read access to project
+- `project:write`: Write access to project
+- `property_definition:read`: Read access to property_definition
+- `property_definition:write`: Write access to property_definition
+- `query:read`: Read access to query
+- `query:write`: Write access to query
+- `replay_scanner:read`: Read access to replay_scanner
+- `replay_scanner:write`: Write access to replay_scanner
+- `review_hog:read`: Read access to review_hog
+- `review_hog:write`: Write access to review_hog
+- `revenue_analytics:read`: Read access to revenue_analytics
+- `revenue_analytics:write`: Write access to revenue_analytics
+- `session_recording:read`: Read access to session_recording
+- `session_recording:write`: Write access to session_recording
+- `session_recording_playlist:read`: Read access to session_recording_playlist
+- `session_recording_playlist:write`: Write access to session_recording_playlist
+- `sharing_configuration:read`: Read access to sharing_configuration
+- `sharing_configuration:write`: Write access to sharing_configuration
+- `signal_scout:read`: Read access to signal_scout
+- `signal_scout:write`: Write access to signal_scout
+- `stamphog:read`: Read access to stamphog
+- `stamphog:write`: Write access to stamphog
+- `streamlit_app:read`: Read access to streamlit_app
+- `streamlit_app:write`: Write access to streamlit_app
+- `subscription:read`: Read access to subscription
+- `subscription:write`: Write access to subscription
+- `support_ticket:read`: Read access to support_ticket
+- `support_ticket:write`: Write access to support_ticket
+- `survey:read`: Read access to survey
+- `survey:write`: Write access to survey
+- `tagger:read`: Read access to tagger
+- `tagger:write`: Write access to tagger
+- `ticket:read`: Read access to ticket
+- `ticket:write`: Write access to ticket
+- `task:read`: Read access to task
+- `task:write`: Write access to task
+- `today:read`: Read access to today
+- `today:write`: Write access to today
+- `toolbar:read`: Read access to toolbar
+- `toolbar:write`: Write access to toolbar
+- `tracing:read`: Read access to tracing
+- `tracing:write`: Write access to tracing
+- `field_note:read`: Read access to field_note
+- `field_note:write`: Write access to field_note
+- `uploaded_media:read`: Read access to uploaded_media
+- `uploaded_media:write`: Write access to uploaded_media
+- `usage_metric:read`: Read access to usage_metric
+- `usage_metric:write`: Write access to usage_metric
+- `user:read`: Read access to user
+- `user:write`: Write access to user
+- `user_interview:read`: Read access to user_interview
+- `user_interview:write`: Write access to user_interview
+- `vision_action:read`: Read access to vision_action
+- `vision_action:write`: Write access to vision_action
+- `vision_alert:read`: Read access to vision_alert
+- `vision_alert:write`: Write access to vision_alert
+- `visual_review:read`: Read access to visual_review
+- `visual_review:write`: Write access to visual_review
+- `warehouse_objects:read`: Read access to warehouse_objects
+- `warehouse_objects:write`: Write access to warehouse_objects
+- `warehouse_table:read`: Read access to warehouse_table
+- `warehouse_table:write`: Write access to warehouse_table
+- `warehouse_view:read`: Read access to warehouse_view
+- `warehouse_view:write`: Write access to warehouse_view
+- `web_analytics:read`: Read access to web_analytics
+- `web_analytics:write`: Write access to web_analytics
+- `webhook:read`: Read access to webhook
+- `webhook:write`: Write access to webhook
+
+
+## Changing scopes
+
+Access tokens carry the scope set granted when they were issued.
+Scopes do not change on refresh. Refreshing a token returns the same or narrower scopes, never more.
+
+If your app needs additional scopes, for example a newly required scope, or a request that returns `403` because the token is missing a required scope, start a new authorization at `https://us.posthog.com/oauth/authorize/`.
+The user re-consents and the new token carries the updated scopes.
+PostHog does not push new scopes to existing tokens; the client must re-authorize.
+
+## Links
+
+- Pricing: https://posthog.com/pricing
+- Terms: https://posthog.com/terms
+- Privacy: https://posthog.com/privacy
+- API docs: https://posthog.com/docs/api
+- Contact: hey@posthog.com
+

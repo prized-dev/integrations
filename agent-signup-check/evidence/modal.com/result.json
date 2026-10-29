@@ -1,0 +1,115 @@
+{
+ "site": "modal.com",
+ "checkedAt": "2026-10-28T23:57:24.678Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 6,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://modal.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://modal.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://modal.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "status": "skipped",
+   "reason": "Modal has no public REST API to probe (its SDK and CLI talk gRPC)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "where": "llms.txt",
+   "url": "https://modal.com/llms.txt",
+   "match": "[Budgets](",
+   "snippet": "dal.com/docs/guide/network-egress-billing.md) - [Budgets](https://modal.com/docs/guide/budgets.md) - Other topics - [Feature maturity](https://modal.com/doc",
+   "status": "partial",
+   "reason": "llms.txt mentions budgets in prose; no machine-readable cap"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://modal.com/llms.txt",
+   "heading": "# Modal Documentation",
+   "bytes": 28213,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://modal.com/auth.md",
+   "finalUrl": "https://modal.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 437,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://modal.com/llms.txt",
+   "finalUrl": "https://modal.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain",
+   "ms": 162,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://modal.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://modal.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 395,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://modal.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://modal.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 339,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://modal.com/.well-known/x402",
+   "finalUrl": "https://modal.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 110,
+   "redirects": 0
+  }
+ ]
+}

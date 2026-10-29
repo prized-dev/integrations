@@ -1,0 +1,183 @@
+GET https://prized.dev/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:21.811Z
+final-url: https://prized.dev/auth.md
+
+HTTP 200
+age: 0
+cache-control: public, max-age=300
+content-encoding: br
+content-security-policy: frame-ancestors 'none'
+content-type: text/markdown; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:19 GMT
+referrer-policy: no-referrer
+server: Vercel
+strict-transport-security: max-age=63072000
+x-frame-options: DENY
+x-matched-path: /auth.md
+x-vercel-cache: MISS
+x-vercel-id: pdx1::pdx1::mwdmk-1793231839095-7395bb5c6448
+connection: close
+transfer-encoding: chunked
+
+# auth.md
+
+You are an agent. Prized supports **agentic registration** ([auth.md](https://github.com/workos/auth.md)): discover, register with your person's email (`service_auth`), claim with the 6-digit code Prized emails them, then use the API key. This makes NEW accounts only; if they already use Prized, they make a key at https://prized.dev/dashboard/workspace/api-keys instead. People read https://prized.dev/docs/agent-sign-in.
+
+## Rules
+
+- Only for the person you work for, when they ask, with their own address.
+- Get the code from them. Never ask anyone else for it, never guess it: five tries end it.
+- The claim token is the API key. It is a credential: never print, commit or log it. Keep it where your person says. Never put it in process arguments or shell command strings: from a shell, run the three commands in From a shell below, which keep it out of both and out of your own output.
+- Never quote a price, credit or runway from memory. Read them (Prices, below).
+- Call https://api.prized.dev exactly as written here. Keep the explicit `--url` when logging in: it is the API that issued this key, not the web origin or a previously configured control plane.
+
+## From a shell
+
+If you run commands through a shell tool, this is the whole sign-up (any POSIX shell with curl). The key goes from the answer into a private file (mode 600), then over pipes to `curl` and the CLI. It never appears in your output, a command's arguments, a command string or the environment. Steps 3 to 6 below explain each call and its answers.
+
+Register, with your person's address and your name:
+
+```sh
+(umask 077; set -C; curl -q -sS https://api.prized.dev/api/v1/agent/identity -H 'Content-Type: application/json' -d '{"type": "service_auth", "login_hint": "maya@yourcompany.com", "agent_name": "Claude Code"}' > ~/.prized-signup.json); sed 's/dcp_[0-9a-f]*/dcp_(saved)/g' ~/.prized-signup.json; grep -q '"token":"dcp_' ~/.prized-signup.json || rm -f ~/.prized-signup.json
+```
+
+An answer without a claim token (an error) is printed and not kept. Once one is kept, running it again prints that answer instead of registering again (`set -C`): after `claim_expired` or `claim_revoked`, delete `~/.prized-signup.json` first. Keep the file in your person's home folder, never in a project.
+
+Complete the claim, with the code your person gives you:
+
+```sh
+grep -Eo 'dcp_[0-9a-f]{48}' ~/.prized-signup.json | head -n 1 | sed 's/.*/{"claim_token": "&", "user_code": "123456"}/' | curl -q -sS https://api.prized.dev/api/v1/agent/identity/claim/complete -H 'Content-Type: application/json' -d @- | sed 's/dcp_[0-9a-f]*/dcp_(saved)/g'
+```
+
+If your person also said how they found Prized, add it to that JSON as `heard_from` (Step 4, below), in letters, digits and spaces only: no quotes, apostrophes or backslashes.
+
+Save the key for the CLI and delete the file. If `prized box ls` already works here, the CLI is signed in to another account: ask your person before saving, since this signs it in to the new one instead. If `prized version` fails, ask your person, then install it first with `curl -fsSL https://prized.dev/install.sh | sh` (if `prized` is still not found, use the path the installer printed).
+
+```sh
+grep -Eo 'dcp_[0-9a-f]{48}' ~/.prized-signup.json | prized login --url https://api.prized.dev --token-stdin && rm -f ~/.prized-signup.json
+```
+
+To call the API without the CLI, keep the file and send the key as a bearer from it: `grep … | sed 's/^/Authorization: Bearer /' | curl -q -H @- …`. Delete the file when you are done.
+
+## Step 1. Discover
+
+A signed-out call to the API answers `401` with `WWW-Authenticate: Bearer resource_metadata="https://api.prized.dev/.well-known/oauth-protected-resource"`. The metadata names every endpoint below:
+
+- Protected resource metadata (RFC 9728): https://api.prized.dev/.well-known/oauth-protected-resource
+- This site's own: https://prized.dev/.well-known/oauth-protected-resource
+- Authorization server metadata (RFC 8414), with `agent_auth`: https://prized.dev/.well-known/oauth-authorization-server
+
+`agent_auth.identity_endpoint` (also `register_uri`) is https://api.prized.dev/api/v1/agent/identity and `agent_auth.claim_endpoint` (also `claim_uri`) is https://api.prized.dev/api/v1/agent/identity/claim. `credential_types_supported` is `api_key`.
+
+## Step 2. Pick a method
+
+You have your person's email address: use `service_auth`. Prized has no `anonymous` registration and trusts no ID-JAG issuer. auth.md v0.1's `identity_assertion` with `"assertion_type": "verified_email"` (the address as `assertion`) is accepted too and is the same flow.
+
+## Step 3. Register
+
+```http
+POST https://api.prized.dev/api/v1/agent/identity
+Content-Type: application/json
+
+{"type": "service_auth", "login_hint": "maya@yourcompany.com", "agent_name": "Claude Code", "person_name": "Maya Lopez"}
+```
+
+- `agent_name` (optional): what you are called, letters and spaces only, up to 40. This is a self-reported key label, not a verified identity. The code email never displays it and warns that Prized has not verified which app made the request.
+- `person_name` (optional): your person's name, if you know it. The new account is named after it.
+
+The answer, the same whether or not the address has an account:
+
+```json
+{
+  "id": "reg_…",
+  "type": "service_auth",
+  "scopes": {"post_claim": ["boxes:write", "sandboxes:write", "workspace:read"]},
+  "claim": {"token": "dcp_…", "expires_at": "…", "url": "https://api.prized.dev/api/v1/agent/identity/claim", "attempt": {"expires_at": "…"}}
+}
+```
+
+Prized has emailed the address a 6-digit code (there is no page to send your person to). Tell your person:
+
+> Prized emailed you a 6-digit code. Please give it to me. And if you like, how did you find Prized?
+
+`claim.token` is the API key the claim turns on. Until then it can call only `GET /api/v1/me`; everything else answers `403 verification_required`. While that code is live (15 minutes), registering again for the address answers `409 code_pending`: keep the claim token you have. After it lapses, registering again gives a new claim token and code (the old one answers `claim_revoked`), at most five codes a day per inbox.
+
+## Step 4. Claim
+
+```http
+POST https://api.prized.dev/api/v1/agent/identity/claim/complete
+Content-Type: application/json
+
+{"claim_token": "dcp_…", "user_code": "123456"}
+```
+
+- `heard_from` (optional): how your person found Prized, only if they told you, beside the code: `{"claim_token": "dcp_…", "user_code": "123456", "heard_from": "<their answer>"}`. One of `x`, `linkedin`, `reddit`, `yc`, `friend`, `video`, `ai_chat`, `google` (a video with whose, if they said: `video <whose>`), or their own words in letters, digits and spaces only (no quotes, apostrophes or backslashes), up to 80 characters. If they did not say, leave it out: never guess, and never ask again. It changes nothing about the sign-up.
+
+The answer:
+
+```json
+{
+  "id": "reg_…",
+  "status": "claimed",
+  "identity": {"assertion": "dcp_…", "expires_at": "…"},
+  "credential_type": "api_key",
+  "credential": "dcp_…",
+  "key": {"name": "Agent: Claude Code", "access": {"boxes": "write", "sandboxes": "write", "secrets": "none", "workspace": "read"}, "expires_at": "…"},
+  "workspace": {"id": "…", "name": "…"},
+  "free_credit": true,
+  "billing_url": "https://prized.dev/dashboard/billing"
+}
+```
+
+The account now exists, in a workspace of its own, and the key works. `free_credit` says whether this call granted the free credit (one per inbox). If the address already had an account, the answer is `409 sign_in_required` and no key is made.
+
+## Step 5. Exchange the assertion (optional)
+
+Prized's `identity.assertion` is the API key itself. The `token_endpoint`, https://api.prized.dev/api/v1/agent/token, takes it with `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer` (form-encoded) and returns the same key as `access_token`. You can skip this step and use `credential` directly.
+
+## Step 6. Use the API key
+
+From a shell, the last command in From a shell saved it. Otherwise, to save the key for the CLI, use your process runner to execute `prized login --url https://api.prized.dev --token-stdin` and write the key plus a newline directly to the child's stdin, then close stdin. Keep the key out of process arguments, shell command strings (including inline scripts and here-documents), environment variables, and tool logs. Do not fall back to passing it as an argument: on Linux, other local processes may read arguments through `/proc/<pid>/cmdline`. If you can do neither, ask your person to run the interactive CLI login instead.
+
+`Authorization: Bearer <key>` on `https://api.prized.dev/api/v1`; the reference is https://prized.dev/docs/api.md.
+
+- It can start, stop and use boxes and sandboxes and read the workspace; secrets answer `403 key_access_denied`, and the boxes it makes are never sent your person's secrets (environment secret files, mounted secrets, AWS profiles). Never work around a refusal; ask your person.
+- It works for 90 days. After that your person makes a new one at https://prized.dev/dashboard/workspace/api-keys (the account exists now, so registering again answers `sign_in_required`).
+- When your person first signs in to Prized, they see this key and choose to keep or revoke it. If they revoke it, it stops working: ask them for a key from https://prized.dev/dashboard/workspace/api-keys.
+- `POST /api/v1/boxes` with `{}` starts a Small (`202`; poll `GET /api/v1/boxes/<id>` until `observedState` is `running`). No credit, or a larger size, needs a plan (`insufficient_balance`, `409 tier_unavailable`): send your person `billing_url`.
+- With the CLI, `prized box new --wait` starts a box (a Small on the free credit) and prints its ssh line. To put your person's project on it, follow https://prized.dev/docs/agent-setup.md from its step 3: you name the account and the box, copy the project there once, one way, only after their yes, and never start a sync.
+- `POST /api/v1/sandboxes?wait=running` with `{"template": "prized-agent-v1"}` starts a sandbox (`201`). The calls to copy files in, run commands, fork, pause and delete are at https://prized.dev/docs/sandboxes-agent-quickstart.md, every route at https://prized.dev/docs/sandboxes-api.md. On the free credit it runs within the free tier (https://prized.dev/docs/sandboxes#free-tier): past it, `429 sandbox_quota_exceeded` or `422 invalid_resources` with `"tier": "free"`, and `409 paid_balance_required` means sandboxes need money paid in. Delete sandboxes you are done with; for more, send your person `billing_url`. Each sandbox you create is on your person's audit log.
+
+## Prices
+
+Read them, never recall them: https://prized.dev/pricing.md (every box size and sandbox rate) and https://prized.dev/docs/billing.md for prices; `billing` in `GET /api/v1/me` for the balance and runway. Refusals carry their numbers in micro-dollars (`1000000` is $1).
+
+## Revocation
+
+POST `token=<key>` (form-encoded) to the `revocation_endpoint`, https://api.prized.dev/api/v1/agent/revoke (RFC 7009): `200`, and it stops working. `DELETE https://api.prized.dev/api/v1/agent/key` with the key as bearer does the same (`204`). Your person can also revoke it at https://prized.dev/dashboard/workspace/api-keys.
+
+## Errors
+
+| Code | What to do |
+| --- | --- |
+| `invalid_login_hint` | Use your person's real email address (placeholder and throwaway domains are refused). |
+| `invalid_request` | Fix the body: `type`, `agent_name`, `person_name`. |
+| `anonymous_registration_disabled`, `issuer_not_enabled` | Use `service_auth` with your person's email. |
+| `code_pending` | A code for this address is live: complete the claim with your claim token, or wait until `code_expires_at`. |
+| `rate_limit_exceeded` | Wait for `Retry-After`. |
+| `mail_unavailable` | The code was not sent. Try again in a minute. |
+| `verification_required` | Complete the claim first. |
+| `invalid_user_code` | Ask your person to read the 6 digits again; `tries_left` says what is left. |
+| `too_many_attempts` | The emailed code is still live: ask your person for it. Prized sends one code per claim. |
+| `claim_expired` | Older than 15 minutes, or tried five times: register again for a new code (from a shell, delete `~/.prized-signup.json` first). |
+| `claim_revoked` | A later registration replaced this claim: register again (from a shell, delete `~/.prized-signup.json` first). |
+| `already_claimed` | The claim is complete: use its key. |
+| `token_revoked` | Your person (or you) revoked the key. Ask them for a key from https://prized.dev/dashboard/workspace/api-keys; registering again answers `sign_in_required`. |
+| `invalid_claim_token` | Send the claim token registration returned. |
+| `sign_in_required` | The address already has an account: your person makes a key at https://prized.dev/dashboard/workspace/api-keys (from a shell, delete `~/.prized-signup.json`). |
+| `account_unavailable` | Ask your person to sign in at https://prized.dev. |
+
+## Earlier routes
+
+The same sign-up, from before Prized followed auth.md, still answers: `POST https://api.prized.dev/api/v1/agent/sign-up` with `{"email", "name", "personName"}` returns `{"key": …}`, and `POST https://api.prized.dev/api/v1/agent/verify` with the key as bearer and `{"code", "heardFrom"}` completes it.

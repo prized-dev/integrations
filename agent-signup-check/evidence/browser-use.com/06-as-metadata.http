@@ -1,0 +1,14 @@
+GET https://browser-use.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:13.803Z
+redirect: 307 from https://browser-use.com/.well-known/oauth-authorization-server
+final-url: https://api.browser-use.com/.well-known/oauth-authorization-server
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:12 GMT
+content-type: application/json
+content-length: 608
+connection: close
+server: uvicorn
+
+{"issuer":"https://api.browser-use.com","authorization_endpoint":"https://api.browser-use.com/oauth/authorize","token_endpoint":"https://api.browser-use.com/oauth/token","registration_endpoint":"https://api.browser-use.com/oauth/register","revocation_endpoint":"https://api.browser-use.com/oauth/revoke","revocation_endpoint_auth_methods_supported":["none"],"scopes_supported":["mcp"],"response_types_supported":["code"],"grant_types_supported":["authorization_code","urn:ietf:params:oauth:grant-type:device_code"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["none"]}

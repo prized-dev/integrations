@@ -1,0 +1,139 @@
+{
+ "site": "turso.tech",
+ "checkedAt": "2026-10-28T23:57:53.970Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 2,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://turso.tech/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://api.turso.tech/.well-known/oauth-protected-resource",
+   "via": "api-well-known",
+   "resource": "https://mcp.turso.ai/mcp",
+   "authorization_servers": [
+    "https://api.turso.tech"
+   ],
+   "status": "partial",
+   "reason": "resource (https://mcp.turso.ai/mcp) does not match the URL the metadata came from; RFC 9728 section 3.3 says a client MUST NOT use it"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://turso.tech/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.turso.tech/v1/organizations",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://turso.tech/llms.txt",
+   "heading": "# Turso",
+   "bytes": 11772,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://turso.tech/auth.md",
+   "finalUrl": "https://turso.tech/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 329,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://turso.tech/llms.txt",
+   "finalUrl": "https://turso.tech/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 121,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.turso.tech/v1/organizations",
+   "finalUrl": "https://api.turso.tech/v1/organizations",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 162,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://turso.tech/.well-known/oauth-protected-resource",
+   "finalUrl": "https://turso.tech/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 165,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.turso.tech/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.turso.tech/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 96,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://turso.tech/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.turso.tech/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 92,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://turso.tech/.well-known/x402",
+   "finalUrl": "https://turso.tech/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 159,
+   "redirects": 0
+  }
+ ]
+}

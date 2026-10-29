@@ -1,0 +1,25 @@
+GET https://api.twilio.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:05.878Z
+final-url: https://api.twilio.com/.well-known/oauth-protected-resource
+
+HTTP 404
+content-type: application/json
+content-length: 169
+connection: close
+date: Wed, 28 Oct 2026 23:58:04 GMT
+x-twilio-error-code: 20404
+twilio-request-id: RQ003413d8eb223c5c14d03d20f7059c30
+twilio-request-duration: 0.000
+x-home-region: us1
+x-api-domain: api.twilio.com
+strict-transport-security: max-age=31536000
+x-cache: Error from cloudfront
+via: 1.1 06d442c8680c66c3ea5fc3c648c3bc86.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P5
+x-amz-cf-id: fDlqsH5ZW2sAZCQZQnFbF2j7rk5tvUEaSyKcjcJFX7fSzbbZEH13oA==
+x-powered-by: AT-5000
+x-shenanigans: none
+vary: Origin
+
+{"code":20404,"message":"The requested resource /.well-known/oauth-protected-resource was not found","more_info":"https://www.twilio.com/docs/errors/20404","status":404}

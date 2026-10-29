@@ -1,0 +1,24 @@
+GET https://prized.dev/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:21.811Z
+final-url: https://prized.dev/.well-known/oauth-authorization-server
+
+HTTP 200
+access-control-allow-origin: *
+age: 0
+cache-control: public, max-age=300
+content-encoding: br
+content-security-policy: frame-ancestors 'none'
+content-type: application/json
+date: Wed, 28 Oct 2026 23:57:21 GMT
+referrer-policy: no-referrer
+server: Vercel
+strict-transport-security: max-age=63072000
+x-frame-options: DENY
+x-matched-path: /.well-known/oauth-authorization-server
+x-vercel-cache: MISS
+x-vercel-id: pdx1::pdx1::cmxhh-1793231841081-a801b2053e85
+connection: close
+transfer-encoding: chunked
+
+{"issuer":"https://prized.dev","resource":"https://api.prized.dev","authorization_servers":["https://prized.dev"],"scopes_supported":["boxes:read","boxes:write","sandboxes:read","sandboxes:write","secrets:read","secrets:write","workspace:read","workspace:write"],"bearer_methods_supported":["header"],"token_endpoint":"https://api.prized.dev/api/v1/agent/token","revocation_endpoint":"https://api.prized.dev/api/v1/agent/revoke","grant_types_supported":["urn:ietf:params:oauth:grant-type:jwt-bearer"],"token_endpoint_auth_methods_supported":["none"],"revocation_endpoint_auth_methods_supported":["none"],"service_documentation":"https://prized.dev/docs/agent-sign-in","agent_auth":{"skill":"https://prized.dev/auth.md","identity_endpoint":"https://api.prized.dev/api/v1/agent/identity","claim_endpoint":"https://api.prized.dev/api/v1/agent/identity/claim","register_uri":"https://api.prized.dev/api/v1/agent/identity","claim_uri":"https://api.prized.dev/api/v1/agent/identity/claim","identity_types_supported":["service_auth","identity_assertion"],"identity_assertion":{"assertion_types_supported":["verified_email"],"credential_types_supported":["api_key"]},"credential_types_supported":["api_key"]}}

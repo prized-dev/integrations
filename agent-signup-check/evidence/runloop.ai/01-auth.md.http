@@ -1,0 +1,361 @@
+GET https://runloop.ai/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:34.099Z
+final-url: https://runloop.ai/auth.md
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:57:31 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a51de21ccbb2346b-SEA
+cf-cache-status: HIT
+age: 1158
+cache-control: max-age=43200
+content-encoding: gzip
+etag: W/"6f644770c245e443bf8504d11e89671c"
+last-modified: Mon, 05 Oct 2026 21:41:09 GMT
+server: cloudflare
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: accept-encoding
+surrogate-key: runloop.ai 68f6566c0817e720021136f4 pageId:68f6566c0817e720021136cf 404req sp:63bd1fab99496be4af83aa40474b7ea1
+x-wf-region: us-east-1
+alt-svc: h3=":443"; ma=86400
+
+<!DOCTYPE html><!-- Last Published: Mon Oct 05 2026 21:41:05 GMT+0000 (Coordinated Universal Time) --><html data-wf-domain="runloop.ai" data-wf-page="68f6566c0817e720021136cf" data-wf-site="68f6566c0817e720021136f4" lang="en"><head><meta charset="utf-8"/><link href="https://cdn.prod.website-files.com" rel="preconnect" crossorigin="anonymous"/><title>Not Found</title><meta content="Not Found" property="og:title"/><meta content="https://cdn.prod.website-files.com/66e94f692c515ba3371b66b2/6718fb1e851f0fd8fc8171a7_Opengraph.avif" property="og:image"/><meta content="Not Found" name="twitter:title"/><meta content="https://cdn.prod.website-files.com/66e94f692c515ba3371b66b2/6718fb1e851f0fd8fc8171a7_Opengraph.avif" name="twitter:image"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://cdn.prod.website-files.com/68f6566c0817e720021136f4/css/runloop-website-2.webflow.shared.4e2053766.min.css" rel="stylesheet" type="text/css" integrity="sha384-TiBTdmxLFaFX3CdrFCEcfxYrRat3kPBy6Wn79a8sMmL1JXLPCWPb2qWQbh+7Ws6/" crossorigin="anonymous"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous"/><script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script><script type="text/javascript">WebFont.load({  google: {    families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","IBM Plex Mono:300,400,500,600,700","Inter:300,400,500,600,700"]  }});</script><script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script><link href="https://cdn.prod.website-files.com/68f6566c0817e720021136f4/6900cea915ec520f316e7a6f_Webclip-1.png" rel="shortcut icon" type="image/x-icon"/><link href="https://cdn.prod.website-files.com/68f6566c0817e720021136f4/6900ce80a12232928ce2040c_Webclip.png" rel="apple-touch-icon"/><link href="https://runloop.ai/404" rel="canonical"/><script src="https://www.google.com/recaptcha/api.js" type="text/javascript"></script><style>
+  /* Puente invisible que conecta el toggle con el panel del dropdown.
+     Cubre el gap entre "Product" y la lista que se despliega abajo. */
+  .nav-dropdown .w-dropdown-list::before {
+    content: '';
+    position: absolute;
+    top: -20px;        /* ajustá según el gap real que tengas */
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: transparent;
+    /* Solo activo cuando el dropdown está abierto, así no bloquea otros elementos */
+    pointer-events: auto;
+  }
+
+  /* Por las dudas: que el wrapper no corte el área de hover */
+  .nav-dropdown {
+    position: relative;
+  }
+</style>
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+<style>
+  .code-block { 
+    position: relative; 
+    background: #0a0a0a; 
+    border-radius: 12px; 
+    overflow: hidden; 
+    margin: 16px 0;
+  }
+  .code-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 10px 14px; 
+    border-bottom: 1px solid rgba(255,255,255,0.06); 
+  }
+  .code-lang { 
+    font-family: 'JetBrains Mono', monospace; 
+    font-size: 11px; 
+    color: rgba(255,255,255,0.5); 
+    letter-spacing: 0.1em; 
+  }
+  .code-copy { 
+    background: transparent; 
+    border: 1px solid rgba(255,255,255,0.15); 
+    color: rgba(255,255,255,0.7); 
+    font-size: 12px; 
+    padding: 4px 10px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-family: inherit; 
+  }
+  .code-copy:hover { 
+    background: rgba(255,255,255,0.08); 
+    color: white; 
+  }
+  .code-copy.copied { 
+    background: #16A34A; 
+    color: white; 
+    border-color: #16A34A; 
+  }
+  .code-block pre { 
+    margin: 0 !important; 
+    padding: 14px 16px !important; 
+    background: transparent !important; 
+    font-size: 13px; 
+    line-height: 1.6; 
+  }
+  .code-block code { 
+    font-family: 'JetBrains Mono', monospace !important; 
+    background: transparent !important;
+  }
+</style>
+
+<style>
+  /* ==================================== TRACKPAD STYLE  ====================================*/
+body {
+  --sb-track-color: #e9ecea;
+  --sb-thumb-color: #0e694e;
+  --sb-size: 8px;
+}
+
+body::-webkit-scrollbar {
+  width: var(--sb-size)
+}
+
+body::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 10px;
+  
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  body {
+    scrollbar-color: var(--sb-thumb-color)
+                     var(--sb-track-color);
+  }
+}
+  
+  
+body.dark-mode{
+  --sb-track-color: #141515;
+  --sb-thumb-color: #3c3f3f;
+}
+  
+.w-code-block {
+  border-radius: 1rem;
+  }
+  
+/* ==================================== TITLE HIGHLIGHTS  ====================================*/
+.title-highlight{
+  position:relative;
+  display:inline-block;
+  padding: 10px 18px;
+  margin-left: -10px;
+  margin-right: -10px;
+
+  /* tokens */
+  --dot-size:8px;          /* dot diameter */
+  --dot-offset:4px;        /* inset from each edge */
+  --border-width:1px;
+
+  /* light colors */
+  --border-color:rgba(14,105,78,0.4);
+  --dot-stroke:rgba(14,105,78,0.4);
+  --dot-fill:#fff;
+
+  /* TEXT COLOR (light): solid #0E694E */
+  background:none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: initial !important;
+  color:#0E694E !important;
+}
+
+/* border centered on dot radius */
+.title-highlight::before{
+  content:"";
+  position:absolute;
+  inset:calc(var(--dot-offset) + var(--dot-size)/2 - var(--border-width)/2);
+  border:var(--border-width) solid var(--border-color);
+  pointer-events:none;
+  box-sizing:border-box;
+}
+
+/* four corner dots (fill + 1px stroke) */
+.title-highlight::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle,
+      var(--dot-fill) 0,
+      var(--dot-fill) calc(var(--dot-size)/2 - 1px),
+      var(--dot-stroke) calc(var(--dot-size)/2 - 1px),
+      var(--dot-stroke) calc(var(--dot-size)/2),
+      transparent calc(var(--dot-size)/2)
+    ),
+    radial-gradient(circle,
+      var(--dot-fill) 0,
+      var(--dot-fill) calc(var(--dot-size)/2 - 1px),
+      var(--dot-stroke) calc(var(--dot-size)/2 - 1px),
+      var(--dot-stroke) calc(var(--dot-size)/2),
+      transparent calc(var(--dot-size)/2)
+    ),
+    radial-gradient(circle,
+      var(--dot-fill) 0,
+      var(--dot-fill) calc(var(--dot-size)/2 - 1px),
+      var(--dot-stroke) calc(var(--dot-size)/2 - 1px),
+      var(--dot-stroke) calc(var(--dot-size)/2),
+      transparent calc(var(--dot-size)/2)
+    ),
+    radial-gradient(circle,
+      var(--dot-fill) 0,
+      var(--dot-fill) calc(var(--dot-size)/2 - 1px),
+      var(--dot-stroke) calc(var(--dot-size)/2 - 1px),
+      var(--dot-stroke) calc(var(--dot-size)/2),
+      transparent calc(var(--dot-size)/2)
+    );
+  background-size:var(--dot-size) var(--dot-size);
+  background-repeat:no-repeat;
+  background-position:
+    left  var(--dot-offset) top    var(--dot-offset),
+    right var(--dot-offset) top    var(--dot-offset),
+    left  var(--dot-offset) bottom var(--dot-offset),
+    right var(--dot-offset) bottom var(--dot-offset);
+}
+
+/* ===== Combo class (dark) ON THE SAME ELEMENT ===== */
+.title-highlight.dark-mode{
+  /* override colors for dark */
+  --border-color:rgba(105,236,197,0.38);   /* #69ECC5 @ 38% */
+  --dot-stroke:rgba(133,255,219,0.32);     /* #85FFDB @ 32% */
+  --dot-fill:rgba(37,65,57,1);       /* #69ECC5 @ 14% */
+
+  /* TEXT GRADIENT (dark): top #85FFDB (100%) → bottom #00EAA5 (80%) */
+  background:linear-gradient(to bottom, rgba(133,255,219,1) 0%, rgba(0,234,165,0.8) 100%) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  color:transparent !important;
+  -webkit-text-fill-color:transparent !important;
+}
+  
+  .dark-mode-title{
+    background:linear-gradient(to bottom, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.8) 100%) !important;
+    -webkit-background-clip:text !important;
+    background-clip:text !important;
+    color:transparent !important;
+    -webkit-text-fill-color:transparent !important;
+  }
+</style>
+
+<style>
+  
+  /* ==================================== HIGHLIGHT CARD  ====================================*/
+
+.highlight-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1.5px; /* grosor del borde */
+  border-radius: inherit;
+  background: linear-gradient(180deg, #85FFDB, rgba(0, 234, 165, 0.2));
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+.testimonial-card-dark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1.5px; /* grosor del borde */
+  border-radius: inherit;
+  background: linear-gradient(180deg, #85FFDB, rgba(0, 234, 165, 0.8));
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+  .careers-card-highlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1.5px; /* grosor del borde */
+  border-radius: inherit;
+  background: linear-gradient(180deg, #85FFDB, rgba(0, 234, 165, 0.2));
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+  
+  
+ .principle-card:hover .icon-x-small {
+  transition: rotate(45deg);
+}
+  
+  .primitive-card {
+  transition: background-color 250ms ease;
+}
+  
+
+.primitive-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px; /* más fino */
+  border-radius: inherit;
+
+  background: linear-gradient(
+    180deg,
+    rgba(133, 255, 219, 0.35),
+    rgba(0, 234, 165, 0.05)
+  );
+
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  opacity: 0;
+  transition: opacity 250ms ease;
+  pointer-events: none;
+}
+  
+.primitive-card:hover::before {
+  opacity: 1;
+}  
+
+  
+
+
+.primitive-card:hover {
+  background-color: rgba(133, 255, 219, 0.04);
+}
+  
+
+
+  .quickstart-tab.w--current .tab-num {
+    background-color: var(--new-primary--900);
+  }
+
+  
+</style>
+</head><body><div data-animation="default" class="navigation w-nav" data-easing2="ease" data-easing="ease" data-collapse="medium" data-w-id="d7293f68-08aa-066c-993e-c1facb270a96" role="banner" data-no-scroll="1" data-duration="0" data-wf--navigation--variant="light-mode"><div class="navigation-block"><div class="navigation-container"><div class="navigation-left"><a href="/" class="brand w-nav-brand"><img src="https://cdn.prod.website-files.com/68f6566c0817e720021136f4/68f8f22fe67889f57e80a9ca_Runloop%20white.svg" loading="lazy" alt="Runloop" class="nav-dark"/><img src="https://cdn.prod.website-files.com/68f6566c0817e720021136f4/68f8f22f99dfa350026a0efc_Runloop%20black.svg" loading="lazy" alt="Runloop" class="nav-light"/></a></div><nav role="navigation" class="navigation-menu w-nav-menu"><div class="nav-menu-white"><div class="nav-links"><div data-hover="true" data-delay="0" class="nav-dropdown w-dropdown"><nav class="nav-list w-dropdown-list"><div class="w-layout-grid nav-grid"><div class="column-regular gap8"><div>Core Product</div><div class="column-x-small"><a href="/product/sandboxes" class="link-block w-inline-block"><div class="nav-icon-container"><div class="icon-nav w-embed"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+  <path d="M6.875 2.5V3.75M3.75 6.875H2.5M17.5 6.875H16.25M3.75 10H2.5M17.5 10H16.25M3.75 13.125H2.5M17.5 13.125H16.25M6.875 16.25V17.5M10 2.5V3.75M10 16.25V17.5M13.125 2.5V3.75M13.125 16.25V17.5M5.625 16.25H14.375C14.8723 16.25 15.3492 16.0525 15.7008 15.7008C16.0525 15.3492 16.25 14.8723 16.25 14.375V5.625C16.25 5.12772 16.0525 4.65081 15.7008 4.29917C15.3492 3.94754 14.8723 3.75 14.375 3.75H5.625C5.12772 3.75 4.65081 3.94754 4.29917 4.29917C3.94754 4.65081 3.75 5.12772 3.75 5.625V14.375C3.75 14.8723 3.94754 15.3492 4.29917 15.7008C4.65081 16.0525 5.12772 16.25 5.625 16.25ZM6.25 6.25H13.75V13.75H6.25V6.25Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></div></div><div><div class="nav-icon-title">Sandboxes</div><div class="nav-icon-description">Secure micro-VM environments to build and run AI agents at speed</div></div></a><a href="/product/security-compliance" class="link-block w-inline-block"><div class="nav-icon-container"><div class="icon-nav w-embed"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+  <path d="M7.5 10.625L9.375 12.5L12.5 8.12499M10 2.26166C8.11311 4.05352 5.60022 5.03631 2.99834 4.99999C2.66737 6.00831 2.49915 7.06291 2.5 8.12416C2.5 12.7842 5.68667 16.6992 10 17.81C14.3133 16.7 17.5 12.785 17.5 8.12499C17.5 7.03332 17.325 5.98249 17.0017 4.99916H16.875C14.2117 4.99916 11.7917 3.95916 10 2.26166Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></div></div><div><div class="nav-icon-title">Security &amp; Compliance</div><div class="nav-icon-description">SOC 2, HIPAA, and GDPR-ready infrastructure with isolated compute</div></div></a><a href="/product/agent-management" class="link-block w-inline-block"><div class="nav-icon-container"><div class="icon-nav w-embed"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+  <path d="M8.1775 13.2533L7.5 15.625L6.8225 13.2533C6.64739 12.6407 6.31908 12.0828 5.86855 11.6323C5.41802 11.1818 4.86012 10.8534 4.2475 10.6783L1.875 10L4.24667 9.3225C4.85928 9.14739 5.41718 8.81908 5.86772 8.36855C6.31825 7.91802 6.64656 7.36012 6.82167 6.7475L7.5 4.375L8.1775 6.74667C8.35261 7.35928 8.68092 7.91718 9.13145 8.36772C9.58198 8.81825 10.1399 9.14656 10.7525 9.32167L13.125 10L10.7533 10.6775C10.1407 10.8526 9.58282 11.1809 9.13228 11.6315C8.68175 12.082 8.35344 12.6399 8.17833 13.2525L8.1775 13.2533ZM15.2158 7.2625L15 8.125L14.7842 7.2625C14.6606 6.76799 14.405 6.31635 14.0447 5.95586C13.6843 5.59537 13.2328 5.33958 12.7383 5.21583L11.875 5L12.7383 4.78417C13.2328 4.66042 13.6843 4.40463 14.0447 4.04414C14.405 3.68365 14.6606 3.23201 14.7842 2.7375L15 1.875L15.2158 2.7375C15.3394 3.23211 15.5952 3.68382 15.9557 4.04432C16.3162 4.40482 16.7679 4.66056 17.2625 4.78417L18.125 5L17.2625 5.21583C16.7679 5.33944 16.3162 5.59518 15.9557 5.95568C15.5952 6.31618 15.3394 6.76789 15.2158 7.2625ZM14.0783 17.1392L13.75 18.125L13.4217 17.1392C13.3296 16.863 13.1745 16.6121 12.9687 16.4063C12.7629 16.2005 12.512 16.0454 12.2358 15.9533L11.25 15.625L12.2358 15.2967C12.512 15.2046 12.7629 15.0495 12.9687 14.8437C13.1745 14.6379 13.3296 14.387 13.4217 14.1108L13.75 13.125L14.0783 14.1108C14.1704 14.387 14.3255 14.6379 14.5313 14.8437C14.7371 15.0495 14.988 15.2046 15.2642 15.2967L16.25 15.625L15.2642 15.9533C14.988 16.0454 14.7371 16.2005 14.5313 16.4063C14.3255 16.6121 14.1704 16.863 14.0783 17.1392Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></div></div><div><div class="nav-icon-title">Agent Management</div><div class="nav-icon-description">Lorem ipsum</div></div></a><a href="/product/coordination" class="link-block w-inline-block"><div class="nav-icon-container"><div class="icon-nav w-embed"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+  <path d="M3.75 7.5H7.5V3.75M7.5 7.5L3.125 3.125M3.75 12.5H7.5V16.25M7.5 12.5L3.125 16.875M12.5 3.75V7.5H16.25M12.5 7.5L16.875 3.125M12.5 16.25V12.5H16.25M12.5 12.5L16.875 16.875" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></div></div><div><div class="nav-icon-title">Coordination</div><div class="nav-icon-description">Orchestrate multi-agent workflows with shared state and secrets</div></div></a><a href="#" class="link-block w-inline-block"><div class="nav-icon-container"><div class="icon-nav w-embed"><svg xml
+
+[body trimmed for publication: kept 16384 of 82799 characters; sha256 of the full body 2b39c4ac95094735e352a897c059b279d7fb4587e539fa7e6510b7bd7f3486c1]

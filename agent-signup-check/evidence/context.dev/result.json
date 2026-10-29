@@ -1,0 +1,153 @@
+{
+ "site": "context.dev",
+ "checkedAt": "2026-10-28T23:58:23.090Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 3,
+ "partial": 2,
+ "total": 7,
+ "whoActs": "the person confirms an email code",
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://www.context.dev/auth.md",
+   "heading": "# auth.md",
+   "registrationEndpoints": [
+    "https://www.context.dev/agent/identity"
+   ],
+   "mentions": [
+    "identity_assertion",
+    "service_auth"
+   ],
+   "status": "pass",
+   "reason": "auth.md documents agent registration (https://www.context.dev/agent/identity)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://context.dev/.well-known/oauth-protected-resource",
+   "via": "well-known",
+   "resource": "https://api.context.dev/",
+   "authorization_servers": [
+    "https://www.context.dev/"
+   ],
+   "status": "partial",
+   "reason": "resource (https://api.context.dev/) does not match the URL the metadata came from; RFC 9728 section 3.3 says a client MUST NOT use it"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://context.dev/.well-known/oauth-authorization-server",
+   "endpoint": "https://www.context.dev/agent/identity",
+   "identity_types_supported": [
+    "service_auth"
+   ],
+   "field": "identity_endpoint",
+   "issuer": "https://www.context.dev",
+   "status": "pass",
+   "reason": "agent_auth names a registration endpoint (service_auth)"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.context.dev/v1/brand/search?query=prized",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://www.context.dev/llms.txt",
+   "heading": "# Context.dev",
+   "bytes": 19569,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://context.dev/auth.md",
+   "finalUrl": "https://www.context.dev/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 247,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://context.dev/llms.txt",
+   "finalUrl": "https://www.context.dev/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 55,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.context.dev/v1/brand/search?query=prized",
+   "finalUrl": "https://api.context.dev/v1/brand/search?query=prized",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 142,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://context.dev/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.context.dev/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 57,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.context.dev/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.context.dev/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 29,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://context.dev/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.context.dev/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 69,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://context.dev/.well-known/x402",
+   "finalUrl": "https://www.context.dev/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 81,
+   "redirects": 1
+  }
+ ]
+}

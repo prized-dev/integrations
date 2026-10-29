@@ -1,0 +1,134 @@
+{
+ "site": "cohere.com",
+ "checkedAt": "2026-10-28T23:57:12.502Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://cohere.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://cohere.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://cohere.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.cohere.com/v1/models",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://cohere.com/llms.txt",
+   "heading": "# Cohere",
+   "bytes": 4801,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://cohere.com/auth.md",
+   "finalUrl": "https://cohere.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 163,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://cohere.com/llms.txt",
+   "finalUrl": "https://cohere.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 56,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.cohere.com/v1/models",
+   "finalUrl": "https://api.cohere.com/v1/models",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 94,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://cohere.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://cohere.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 184,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.cohere.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.cohere.com/.well-known/oauth-protected-resource",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 86,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://cohere.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://cohere.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 158,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://cohere.com/.well-known/x402",
+   "finalUrl": "https://cohere.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 152,
+   "redirects": 0
+  }
+ ]
+}

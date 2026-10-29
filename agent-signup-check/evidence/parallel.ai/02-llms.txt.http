@@ -1,0 +1,65 @@
+GET https://parallel.ai/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:22.665Z
+final-url: https://parallel.ai/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 114741
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-encoding: br
+content-security-policy: frame-ancestors 'self' https://parallel-v2.sanity.studio https://sanity.io https://www.sanity.io
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:58:18 GMT
+etag: W/"06123c8894dd5fa9a0290e462aec28f8"
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::bz5c7-1793231898799-50a1a06f535e
+connection: close
+transfer-encoding: chunked
+
+# Parallel
+
+> Web search, page extraction, research, and monitoring for AI applications.
+
+Use the product pages to choose a starting point and the documentation index for the complete guide and API reference inventory. Follow the linked pricing pages for current rates and billing rules.
+
+## Get started
+
+- [Search MCP](https://parallel.ai/mcp.md): Free web search MCP server for AI agents. One agent prompt that installs it into the agent's own MCP client, one-click links for Claude, ChatGPT, Cursor, and VS Code, and the 26 clients with setup steps.
+- [MCP setup](https://docs.parallel.ai/integrations/mcp/installation.md): Free anonymous search and extraction at lower limits through `https://mcp.parallel.ai/mcp` (Streamable HTTP), with no account, API key, or OAuth required. For higher limits and the `web_research` tool, use a Parallel API key as `Authorization: Bearer <key>`. For OAuth or enforced authentication, use `https://mcp.parallel.ai/mcp?login`. The guide includes client setup commands.
+- [CLI and agent setup](https://parallel.ai/agents.md): Install the CLI, authenticate, and install agent skills.
+- [CLI reference](https://docs.parallel.ai/integrations/cli.md): Installation options, `parallel-cli login`, API key configuration, and command examples.
+- [Agent authentication](https://parallel.ai/auth.md): Account setup and API key creation. Account access tokens manage the account; product API calls use an API key.
+- [Developer platform](https://platform.parallel.ai/): Create an account and API keys for paid API use. Anonymous Search MCP access does not provide anonymous API access.
+
+## Documentation and API references
+
+- [Search quickstart](https://docs.parallel.ai/search/search-quickstart.md): Call `POST https://api.parallel.ai/v1/search` with an API key in `x-api-key`. Includes runnable SDK and cURL examples.
+- [Search API reference](https://docs.parallel.ai/api-reference/search/search.md): Request and response schemas.
+- [Extract quickstart](https://docs.parallel.ai/extract/extract-quickstart.md): Call `POST https://api.parallel.ai/v1/extract` with an API key in `x-api-key`. Includes runnable SDK and cURL examples.
+- [Documentation index](https://docs.parallel.ai/llms.txt): The maintained inventory of all product guides, API references, and integrations, including products without a dedicated website page.
+- [OpenAPI specification](https://parallel.ai/openapi.json): Machine-readable API contract.
+
+## Products and pricing
+
+- [Pricing](https://parallel.ai/pricing): Product pricing and calculators.
+- [Pricing and billing guide](https://docs.parallel.ai/getting-started/pricing.md): Billable units, usage rules, and current rates.
+- [Search API](https://parallel.ai/products/search.md)
+- [Extract API](https://parallel.ai/products/extract.md)
+- [Task API](https://parallel.ai/products/task.md)
+- [Responses API](https://parallel.ai/products/responses.md)
+- [Monitor API](https://parallel.ai/products/monitor.md)
+- [FindAll API](https://parallel.ai/products/findall.md)
+
+## More from Parallel
+
+- [Website](https://parallel.ai/): Human-readable product overview and navigation.
+- [Integrations](https://parallel.ai/integrations.md): Client integrations and setup guides.
+- [Benchmarks](https://parallel.ai/benchmarks.md): Evaluations and methodology.
+- [Blog](https://parallel.ai/blog.md): Product announcements and research. Check publication dates before using historical guidance.
+- [Sitemap](https://parallel.ai/sitemap.xml): Website page inventory.

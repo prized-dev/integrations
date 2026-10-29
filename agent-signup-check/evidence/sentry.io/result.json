@@ -1,0 +1,142 @@
+{
+ "site": "sentry.io",
+ "checkedAt": "2026-10-28T23:58:34.157Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 3,
+ "partial": 0,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://sentry.io/auth.md",
+   "heading": "# Sentry",
+   "registrationEndpoints": [],
+   "mentions": [],
+   "status": "fail",
+   "reason": "The site answers any path with the same Markdown page, so this is not an auth.md"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://sentry.io/.well-known/oauth-protected-resource",
+   "via": "well-known",
+   "resource": "https://sentry.io",
+   "authorization_servers": [
+    "https://sentry.io"
+   ],
+   "status": "pass",
+   "reason": "Names 1 authorization server"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://sentry.io/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://sentry.io/api/0/organizations/",
+   "httpStatus": 401,
+   "www_authenticate": "Bearer realm=\"api\"",
+   "status": "pass",
+   "reason": "401 with a Bearer challenge"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://sentry.io/llms.txt",
+   "heading": "# Sentry",
+   "bytes": 246363,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://sentry.io/auth.md",
+   "finalUrl": "https://sentry.io/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown",
+   "ms": 83,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://sentry.io/llms.txt",
+   "finalUrl": "https://sentry.io/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 240,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://sentry.io/api/0/organizations/",
+   "finalUrl": "https://sentry.io/api/0/organizations/",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 91,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://sentry.io/.well-known/oauth-protected-resource",
+   "finalUrl": "https://sentry.io/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 95,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://sentry.io/.well-known/oauth-authorization-server",
+   "finalUrl": "https://sentry.io/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 93,
+   "redirects": 0
+  },
+  {
+   "label": "catch-all probe",
+   "url": "https://sentry.io/agent-signup-check-no-such-page.md",
+   "finalUrl": "https://sentry.io/agent-signup-check-no-such-page.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown",
+   "ms": 91,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://sentry.io/.well-known/x402",
+   "finalUrl": "https://sentry.io/auth/login/.well-known/",
+   "status": 200,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 112,
+   "redirects": 2
+  }
+ ]
+}

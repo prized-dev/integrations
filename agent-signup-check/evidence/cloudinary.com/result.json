@@ -1,0 +1,146 @@
+{
+ "site": "cloudinary.com",
+ "checkedAt": "2026-10-28T23:58:38.373Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 3,
+ "partial": 1,
+ "total": 7,
+ "whoActs": "nobody (provisioned without an account, claimed later) (from auth.md prose)",
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://cloudinary.com/auth.md",
+   "heading": "# auth.md — Cloudinary",
+   "registrationEndpoints": [
+    "https://api.cloudinary.com/v1_1/provisioning/clouds"
+   ],
+   "mentions": [
+    "anonymous",
+    "identity_assertion"
+   ],
+   "status": "pass",
+   "reason": "auth.md documents agent registration (https://api.cloudinary.com/v1_1/provisioning/clouds)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://cloudinary.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata answers HTTP 403"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "where": "auth.md",
+   "url": "https://cloudinary.com/auth.md",
+   "endpoint": "https://api.cloudinary.com/v1_1/provisioning/clouds",
+   "link": false,
+   "quote": "ion is required** to call this endpoint. ```http POST https://api.cloudinary.com/v1_1/provisioning/clouds Content-Type: application/json { \"delivery_ips\": [",
+   "status": "partial",
+   "reason": "auth.md documents a sign-up API (https://api.cloudinary.com/v1_1/provisioning/clouds), but there is no agent_auth metadata for tools to find it"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.cloudinary.com/v1_1/demo/resources/image",
+   "httpStatus": 401,
+   "www_authenticate": "Basic realm=\"Cloudinary\"",
+   "status": "pass",
+   "reason": "401 with a Basic challenge"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://cloudinary.com/llms.txt",
+   "heading": "# Cloudinary",
+   "bytes": 15371,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://cloudinary.com/auth.md",
+   "finalUrl": "https://cloudinary.com/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 145,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://cloudinary.com/llms.txt",
+   "finalUrl": "https://cloudinary.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain",
+   "ms": 646,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.cloudinary.com/v1_1/demo/resources/image",
+   "finalUrl": "https://api.cloudinary.com/v1_1/demo/resources/image",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 179,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://cloudinary.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://cloudinary.com/.well-known/oauth-protected-resource",
+   "status": 403,
+   "error": null,
+   "contentType": "application/xml",
+   "ms": 135,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.cloudinary.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.cloudinary.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 242,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://cloudinary.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://cloudinary.com/.well-known/oauth-authorization-server",
+   "status": 403,
+   "error": null,
+   "contentType": "application/xml",
+   "ms": 137,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://cloudinary.com/.well-known/x402",
+   "finalUrl": "https://cloudinary.com/.well-known/x402",
+   "status": 403,
+   "error": null,
+   "contentType": "application/xml",
+   "ms": 127,
+   "redirects": 0
+  }
+ ]
+}

@@ -1,0 +1,93 @@
+GET https://upstash.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:55.015Z
+final-url: https://upstash.com/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 2064
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline; filename="llms.txt"
+content-encoding: br
+content-security-policy: default-src 'self';  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://cdn.segment.com https://ingest.promptwatch.com https://va.vercel-scripts.com https://vercel.live;  style-src 'self' 'unsafe-inline' https://vercel.live;  img-src 'self' blob: data: https://cdn.contentport.io https://cdn.bydefault.so https://js.intercomcdn.com https://static.intercomassets.com https://downloads.intercomcdn.com https://downloads.intercomcdn.eu https://downloads.au.intercomcdn.com https://uploads.intercomusercontent.com https://gifs.intercomcdn.com https://video-messages.intercomcdn.com https://messenger-apps.intercom.io https://messenger-apps.eu.intercom.io https://messenger-apps.au.intercom.io https://*.intercom-attachments.com https://static.intercomassets.eu https://static.au.intercomassets.com https://www.google-analytics.com https://www.googletagmanager.com https://*.google.com https://*.doubleclick.net https://www.google.com.tr https://www.googleadservices.com https://*.mux.com;  font-src 'self' https://js.intercomcdn.com https://fonts.intercomcdn.com https://vercel.live https://assets.vercel.com;  connect-src 'self' https://api-iam.intercom.io https://api-iam.eu.intercom.io https://api-iam.au.intercom.io https://api-ping.intercom.io https://nexus-websocket-a.intercom.io wss://nexus-websocket-a.intercom.io https://nexus-websocket-b.intercom.io wss://nexus-websocket-b.intercom.io https://nexus-europe-websocket.intercom.io wss://nexus-europe-websocket.intercom.io https://nexus-australia-websocket.intercom.io wss://nexus-australia-websocket.intercom.io https://uploads.intercomcdn.com https://uploads.intercomcdn.eu https://uploads.au.intercomcdn.com https://uploads.eu.intercomcdn.com https://uploads.intercomusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://cdn.segment.com https://api.segment.io https://vitals.vercel-insights.com https://*.doubleclick.net https://analytics.google.com https://stats.g.doubleclick.net https://ingest.promptwatch.com https://kg2nsnegmd.execute-api.us-west-1.amazonaws.com https://xsdlzzdyji.execute-api.us-west-2.amazonaws.com https://effbmlt2n4.execute-api.us-east-1.amazonaws.com https://fvj3rll99i.execute-api.eu-west-1.amazonaws.com https://bszkhcn2m7.execute-api.eu-central-1.amazonaws.com https://czphf8wj9b.execute-api.ap-southeast-1.amazonaws.com https://gu1zu8xx11.execute-api.ap-east-1.amazonaws.com https://kuhry6kp4h.execute-api.sa-east-1.amazonaws.com https://um7c15bqnl.execute-api.me-south-1.amazonaws.com https://www.google.com https://www.google.com.tr https://www.googleadservices.com https://vercel.live wss://*.pusher.com https://*.mux.com https://*.litix.io;  object-src 'none';  base-uri 'self';  form-action 'self' https://intercom.help https://api-iam.intercom.io https://api-iam.eu.intercom.io https://api-iam.au.intercom.io;  frame-src https://vercel.live https://www.googletagmanager.com https://intercom-sheets.com https://www.intercom-reporting.com https://www.youtube.com https://player.vimeo.com https://fast.wistia.net https://*.doubleclick.net;  worker-src 'self' https://intercom-sheets.com https://www.intercom-reporting.com https://www.youtube.com https://player.vimeo.com https://fast.wistia.net;  media-src 'self' blob: https://js.intercomcdn.com https://downloads.intercomcdn.com https://downloads.intercomcdn.eu https://downloads.au.intercomcdn.com https://*.mux.com;  frame-ancestors 'none';  manifest-src 'self' https://upstash.com;
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:57:52 GMT
+etag: W/"33f4e698ff70f51ed47bc6097e47a120"
+last-modified: Wed, 28 Oct 2026 23:23:28 GMT
+link: <https://upstash.com/llms.txt>; rel="alternate"; type="text/plain"; title="LLM-friendly content index", <https://context7.com/api/v2/ask?siteKey=ask_4cf2adc7846aa874f833b068>; rel="search"; type="text/plain"; title="Search upstash.com", <https://upstash.com/docs/devops/developer-api/openapi.yaml>; rel="service-desc"; type="application/openapi+yaml"; title="Upstash Developer API (OpenAPI)", <https://upstash.com/docs/qstash/openapi.yaml>; rel="service-desc"; type="application/openapi+yaml"; title="QStash REST API (OpenAPI)", <https://upstash.com/docs/workflow/openapi.yaml>; rel="service-desc"; type="application/openapi+yaml"; title="Upstash Workflow REST API (OpenAPI)"
+server: Vercel
+strict-transport-security: max-age=63072000
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::6p866-1793231872154-08e41a704d7d
+connection: close
+transfer-encoding: chunked
+
+# Upstash
+
+> Serverless data platform — Redis, Vector Search, QStash (message queues), Workflow, Search, Box (compute), and Blob (object storage). Fully managed, pay-per-use, no idle costs.
+
+## When to use Upstash
+
+Reach for Upstash when an application needs a managed data or messaging service that works from serverless and edge runtimes (Vercel, Cloudflare Workers, AWS Lambda, Netlify, Deno, Bun) over HTTP, with a free tier and per-request billing instead of provisioned servers. Each product also works from long-running servers over its native protocol.
+
+- Caching, sessions, rate limiting, leaderboards, counters, pub/sub, simple queues → Upstash Redis (`@upstash/redis` over REST, `@upstash/ratelimit`, or any Redis client over TCP)
+- Storing embeddings and running similarity or semantic search for RAG and recommendations → Upstash Vector (`@upstash/vector`, optional built-in embedding models)
+- Full-text and hybrid search over documents → Upstash Search (`@upstash/search`)
+- Reliable HTTP message delivery to webhooks with retries, delays, cron schedules and fan-out → QStash (`@upstash/qstash`)
+- Durable multi-step functions on serverless (retries, waits, parallel steps, long-running jobs) → Upstash Workflow (`@upstash/workflow`)
+- Running AI agents, untrusted code or dev environments in isolated cloud sandboxes → Upstash Box (`@upstash/box`)
+- Storing and serving files (uploads, images, documents, video) with direct browser uploads, a global CDN and an S3-compatible API → Upstash Blob (`@upstash/blob`)
+
+## Search
+
+This site has a search endpoint: https://context7.com/api/v2/ask?siteKey=ask_4cf2adc7846aa874f833b068&query=<URL-encoded question>. It returns documentation that answers the question, with a source link for each part. No API key is needed. If nothing matches, it says so.
+
+## How agents should call Upstash
+
+- Need a Redis database to use or experiment with? `POST https://upstash.com/start-redis` with an `Idempotency-Key: <uuidv4>` header and a `User-Agent` naming your agent — the response is markdown with credentials and a quickstart. Free, no signup, temporary database (expires in 3 days unless claimed). `GET` the same URL for full instructions. Docs: https://upstash.com/docs/devops/developer-api/start-redis/create
+- OpenAPI spec for the Upstash Developer API (manage databases, teams and billing at api.upstash.com, authenticated): https://upstash.com/docs/devops/developer-api/openapi.yaml — also at https://upstash.com/openapi.json and listed in https://upstash.com/.well-known/api-catalog
+- OpenAPI specs for the product REST APIs: QStash https://upstash.com/docs/qstash/openapi.yaml · Workflow https://upstash.com/docs/workflow/openapi.yaml
+- The homepage, pricing pages and blog pages can be fetched as markdown by sending `Accept: text/markdown`; pricing pages and blog posts also have `.md` URLs (e.g. https://upstash.com/pricing/redis.md, https://upstash.com/blog.md). Unknown paths return a 404 with a markdown body.
+- Errors from these endpoints are JSON with `error`, `code` and `resolution` fields.
+- Remote MCP server for managing Upstash resources (Redis, QStash, Workflow, Vector, Search, Box, Blob) from Claude, Cursor, Codex and other MCP clients: `https://mcp.upstash.com/mcp` (streamable HTTP, OAuth or an `email:API_KEY` header) — https://upstash.com/docs/agent-resources/mcp. Also declared in https://upstash.com/.well-known/integrations.json
+- Reusable agent skills for each SDK: `npx skills add https://github.com/upstash/skills`
+- Programmatic account and database management (authenticated): Developer API — https://upstash.com/docs/devops/developer-api
+
+## Guides (Knowledge Base)
+
+Vendor-neutral guides, comparisons and how-tos from the Upstash team (caching, Redis, queues, object storage, AI agent sandboxes): https://upstash.com/kb. Articles are grouped by topic at https://upstash.com/kb/topics/<topic>. Longer tutorials and announcements are on the blog: https://upstash.com/blog (markdown: https://upstash.com/blog.md).
+
+## Pricing & Limits
+
+- [Redis Pricing](https://upstash.com/pricing/redis): Free, Pay-as-you-go ($0.20/100K commands), Fixed tiers ($10–$1500/month), Enterprise
+- [Redis Pricing (Markdown)](https://upstash.com/pricing/redis.md): Machine-readable Redis pricing — plans, limits, feature matrix, FAQ
+- [QStash Pricing](https://upstash.com/pricing/qstash): Free, Pay-as-you-go ($1/100K messages), Fixed 1M ($180/month), Fixed 10M ($420/month), Enterprise
+- [QStash Pricing (Markdown)](https://upstash.com/pricing/qstash.md): Machine-readable QStash pricing
+- [Vector Pricing](https://upstash.com/pricing/vector): Free, Pay-as-you-go ($0.40/100K requests), Fixed ($60/month), Pro (contact us)
+- [Vector Pricing (Markdown)](https://upstash.com/pricing/vector.md): Machine-readable Vector pricing
+- [Workflow Pricing](https://upstash.com/pricing/workflow): Free, Pay-as-you-go ($1/100K steps), Fixed 1M ($180/month), Fixed 10M ($420/month)
+- [Workflow Pricing (Markdown)](https://upstash.com/pricing/workflow.md): Machine-readable Workflow pricing
+- [Box Pricing](https://upstash.com/pricing/box): Free, Pay-as-you-go ($0.10–$0.40/active CPU hour by size), Enterprise
+- [Box Pricing (Markdown)](https://upstash.com/pricing/box.md): Machine-readable Box pricing
+
+## Enterprise & Compliance
+
+- [Enterprise](https://upstash.com/enterprise): Custom contracts, VPC peering, HIPAA, SSO, SLA, dedicated support
+- [Professional Support](https://upstash.com/docs/common/help/prosupport): Dedicated service desk and Slack/Discord SLA
+
+## Documentation
+
+- [Docs](https://upstash.com/docs): Full product documentation
+- [Redis Quickstart](https://upstash.com/docs/redis/overall/getstarted): Getting started with Upstash Redis
+- [QStash Quickstart](https://upstash.com/docs/qstash/overall/getstarted): Getting started with QStash
+- [Vector Quickstart](https://upstash.com/docs/vector/overall/getstarted): Getting started with Vector
+- [Workflow Quickstart](https://upstash.com/docs/workflow/getstarted): Getting started with Workflow
+- [Box Quickstart](https://upstash.com/docs/box/overall/quickstart): Getting started with Box
+- [Blob Quickstart](https://upstash.com/docs/blob/overall/quickstart): Getting started with Blob
+- [Blob](https://upstash.com/blob): Product page for Upstash Blob object storage
+- [Box](https://upstash.com/box): Product page for Upstash Box, persistent cloud computers for AI agents with coding agents built in
+
+## Contact
+
+- Support: support@upstash.com

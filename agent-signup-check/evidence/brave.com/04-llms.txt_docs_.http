@@ -1,0 +1,97 @@
+GET https://api-dashboard.search.brave.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:20.385Z
+final-url: https://api-dashboard.search.brave.com/llms.txt
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:18 GMT
+content-type: text/plain; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cache-control: public, max-age=3600, private, max-age=0
+vary: Sec-Fetch-Dest, Sec-Fetch-Mode, Sec-Fetch-Site, Sec-Fetch-User
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-download-options: noopen
+x-frame-options: SAMEORIGIN
+x-xss-protection: 1; mode=block
+
+# Brave Search API
+
+> Independent search infrastructure for developers: web, image, video and news search, plus LLM-ready context and cited answers.
+
+Every link below points at the markdown form of a page. Drop the trailing `/index.html.md` for the human page.
+
+## Overview
+
+- [Documentation home](https://api-dashboard.search.brave.com/documentation/index.html.md): Privacy-first search infrastructure for developers
+
+## Getting started
+
+- [Quickstart](https://api-dashboard.search.brave.com/documentation/quickstart/index.html.md): Get started with the Brave Search API in minutes
+- [Playground](https://api-dashboard.search.brave.com/documentation/playground/index.html.md): Try out the Brave Search API endpoints in your browser. Select an endpoint to see the available parameters
+- [Pricing](https://api-dashboard.search.brave.com/documentation/pricing/index.html.md): Explore the Brave Search API pricing plans and features
+
+## AI Search
+
+- [LLM Context](https://api-dashboard.search.brave.com/documentation/services/llm-context/index.html.md): Advanced Web search, with pre-extracted content that's optimized for AI agents, LLM grounding, and RAG pipelines.
+- [Answers](https://api-dashboard.search.brave.com/documentation/services/answers/index.html.md): API for AI-generated answers backed by real-time web search and verifiable sources
+
+## Specialized search
+
+- [Web Search](https://api-dashboard.search.brave.com/documentation/services/web-search/index.html.md): Search from a large index of web pages with optional local and rich data enrichments, with results intended for human consumption.
+- [News search](https://api-dashboard.search.brave.com/documentation/services/news-search/index.html.md): Dedicated search for news, with advanced filtering and freshness options
+- [Video search](https://api-dashboard.search.brave.com/documentation/services/video-search/index.html.md): Dedicated search for videos, with advanced filtering and freshness options
+- [Image search](https://api-dashboard.search.brave.com/documentation/services/image-search/index.html.md): Search from a comprehensive index of images across the web with advanced filtering options
+- [Place search](https://api-dashboard.search.brave.com/documentation/services/place-search/index.html.md): Find geographic places — businesses, landmarks, and points of interest — from our index of over 200 million locations worldwide
+- [Autosuggest](https://api-dashboard.search.brave.com/documentation/services/suggest/index.html.md): Real-time query autocompletion and suggestions to enhance search experiences
+- [Spellcheck](https://api-dashboard.search.brave.com/documentation/services/spellcheck/index.html.md): Intelligent spellchecking to improve query quality and help users find what they're looking for
+
+## Guides
+
+- [Authentication](https://api-dashboard.search.brave.com/documentation/guides/authentication/index.html.md): Learn how to authenticate your requests to the Brave Search API using API keys
+- [Versioning](https://api-dashboard.search.brave.com/documentation/guides/versioning/index.html.md): How API versioning works and what changes to expect between versions
+- [Rate limiting](https://api-dashboard.search.brave.com/documentation/guides/rate-limiting/index.html.md): Understand how rate limiting works and best practices for staying within your quota
+
+## Resources
+
+- [Skills](https://api-dashboard.search.brave.com/documentation/resources/skills/index.html.md): Official skills for using Brave Search API with AI coding agents.
+- [Help & Feedback](https://api-dashboard.search.brave.com/documentation/resources/help-feedback/index.html.md): Find answers to common questions and get support for the Brave Search API
+- [Goggles](https://api-dashboard.search.brave.com/documentation/resources/goggles/index.html.md): Customize search rankings with Goggles to create personalized search experiences
+- [Search operators](https://api-dashboard.search.brave.com/documentation/resources/search-operators/index.html.md): Learn what search operators are and how to use them to refine and control your search results
+- [Status updates](https://api-dashboard.search.brave.com/documentation/resources/status-updates/index.html.md): Information about Brave Search API incidents
+- [Security](https://api-dashboard.search.brave.com/documentation/resources/security/index.html.md): Security at Brave
+- [Privacy notice](https://api-dashboard.search.brave.com/documentation/resources/privacy-notice/index.html.md): Privacy notice for Brave Search API customers
+- [Terms of service](https://api-dashboard.search.brave.com/documentation/resources/terms-of-service)
+
+## API reference
+
+- [AI Search: LLM Context](https://api-dashboard.search.brave.com/api-reference/ai/llm_context/get/index.html.md)
+- [AI Search: Answers](https://api-dashboard.search.brave.com/api-reference/ai/answers/index.html.md)
+- [Search: Web Search](https://api-dashboard.search.brave.com/api-reference/web/search/get/index.html.md)
+- [Search: Local POIs](https://api-dashboard.search.brave.com/api-reference/web/local_pois/index.html.md)
+- [Search: POI Descriptions](https://api-dashboard.search.brave.com/api-reference/web/poi_descriptions/index.html.md)
+- [Search: Rich search](https://api-dashboard.search.brave.com/api-reference/web/rich_search/index.html.md)
+- [Specialized search: News](https://api-dashboard.search.brave.com/api-reference/news/news_search/get/index.html.md)
+- [Specialized search: Videos](https://api-dashboard.search.brave.com/api-reference/videos/video_search/get/index.html.md)
+- [Specialized search: Images](https://api-dashboard.search.brave.com/api-reference/images/image_search/index.html.md)
+- [Specialized search: Place Search](https://api-dashboard.search.brave.com/api-reference/web/place_search/index.html.md)
+- [Other: Suggest](https://api-dashboard.search.brave.com/api-reference/other/suggestions/index.html.md)
+- [Other: Spell check](https://api-dashboard.search.brave.com/api-reference/other/spell_check/index.html.md)
+
+## Agent skills
+
+Drop-in instructions for coding agents, one file per API:
+
+- [llm-context](https://raw.githubusercontent.com/brave/brave-search-skills/main/skills/llm-context/SKILL.md)
+- [web-search](https://raw.githubusercontent.com/brave/brave-search-skills/main/skills/web-search/SKILL.md)
+- [answers](https://raw.githubusercontent.com/brave/brave-search-skills/main/skills/answers/SKILL.md)
+- [news-search](https://raw.githubusercontent.com/brave/brave-search-skills/main/skills/news-search/SKILL.md)
+- [videos-search](https://raw.githubusercontent.com/brave/brave-search-skills/main/skills/videos-search/SKILL.md)
+- [images-search](https://raw.githubusercontent.com/brave/brave-search-skills/main/skills/images-search/SKILL.md)
+- [local-place-search](https://raw.githubusercontent.com/brave/brave-search-skills/main/skills/local-place-search/SKILL.md)
+- [local-pois](https://raw.githubusercontent.com/brave/brave-search-skills/main/skills/local-pois/SKILL.md)
+- [local-descriptions](https://raw.githubusercontent.com/brave/brave-search-skills/main/skills/local-descriptions/SKILL.md)
+- [suggest](https://raw.githubusercontent.com/brave/brave-search-skills/main/skills/suggest/SKILL.md)
+- [spellcheck](https://raw.githubusercontent.com/brave/brave-search-skills/main/skills/spellcheck/SKILL.md)

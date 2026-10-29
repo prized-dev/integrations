@@ -1,0 +1,117 @@
+GET https://us.posthog.com/agent-signup-check-no-such-page.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:34.818Z
+final-url: https://us.posthog.com/agent-signup-check-no-such-page.md
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:34 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+vary: Cookie, Accept-Encoding
+x-frame-options: SAMEORIGIN
+server-timing: django;dur=5, pg;dur=0, pg_max;dur=0, ch;dur=0, ch_max;dur=0, pg_count;desc="0", pg_slow;desc="0", ch_count;desc="0", ch_slow;desc="0"
+reporting-endpoints: default="https://us.i.posthog.com/report/?token=sTMFPsFhdP1Ssg&v=4"
+content-security-policy: default-src 'self' https://app-static-prod.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://app-static-prod.posthog.com https://internal-cf.posthog.com/static/; script-src 'self' 'nonce-s8BButDi69uBXZwArn7zwp' 'wasm-unsafe-eval' https://js.stripe.com https://challenges.cloudflare.com https://editor.unlayer.com/embed.js https://app-static-prod.posthog.com https://internal-cf.posthog.com/static/ https://internal-cf.posthog.com/array/sTMFPsFhdP1Ssg/config.js; font-src 'self' data: https://app-static.eu.posthog.com https://app-static-prod.posthog.com https://fonts.gstatic.com https://internal-cf.posthog.com/static/; worker-src 'self' blob:; child-src 'none'; object-src 'none'; media-src 'self' data: blob: https://res.cloudinary.com; img-src 'self' data: blob: https: https://*.posthog.com https://posthog.com https://www.gravatar.com https://res.cloudinary.com https://platform.slack-edge.com https://raw.githubusercontent.com; frame-ancestors 'self' https://posthog.com https://preview.posthog.com; connect-src 'self' https://www.posthogstatus.com https://raw.githubusercontent.com/PostHog/terminal-assets/ https://s3.us-east-1.amazonaws.com/posthog-cloud-prod-us-east-1-app-assets https://app-static-prod.posthog.com https://internal-cf.posthog.com https://live.us.posthog.com https://webhooks.us.posthog.com https://us.i.posthog.com/decide/ https://us.i.posthog.com/i/v0/e/ https://agent-proxy.us.posthog.com; frame-src 'self' https:; manifest-src 'self'; base-uri 'self'; form-action 'self' https://accounts.google.com; report-uri https://us.i.posthog.com/report/?token=sTMFPsFhdP1Ssg&v=4
+content-security-policy-report-only: img-src 'self' data: blob: https://posthog.com https://www.gravatar.com https://res.cloudinary.com https://platform.slack-edge.com https://raw.githubusercontent.com https://app-static-prod.posthog.com https://internal-cf.posthog.com/static/; report-uri https://us.i.posthog.com/report/?token=sTMFPsFhdP1Ssg&v=7
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+cross-origin-opener-policy: same-origin
+server: envoy
+x-envoy-upstream-service-time: 8
+content-encoding: gzip
+strict-transport-security: max-age=31536000; includeSubDomains
+
+<!doctype html>
+
+<html lang="en" data-boot-theme="light">
+    <head>
+        
+        
+        <title>PostHog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+
+
+    <meta http-equiv="origin-trial" content="AuiZnMF5/lJ/2IEvCF5zGliRMn1GlLvULX7FgrJ9EQdXQDSBIiVMCGF2IdWTa8WXVrduFtDw5EGCUgUOw71L9AwAAABOeyJvcmlnaW4iOiJodHRwczovL3VzLnBvc3Rob2cuY29tOjQ0MyIsImZlYXR1cmUiOiJXZWJNQ1AiLCJleHBpcnkiOjE4MDYzNjQ4MDB9">
+
+<!-- Favicons & OS-theme configurations -->
+<link rel="apple-touch-icon"
+      sizes="180x180"
+      href="/static/icons/apple-touch-icon.png?v=2026-07-07">
+<link rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/static/icons/favicon-32x32.png?v=2026-07-07">
+<link rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/static/icons/favicon-16x16.png?v=2026-07-07">
+
+    <link rel="shortcut icon" href="/static/icons/favicon.ico?v=2026-07-07">
+
+<link rel="mask-icon"
+      href="/static/icons/safari-pinned-tab.svg?v=2026-07-07"
+      color="#F54E00">
+<link rel="manifest" href="/static/site.webmanifest?v=2026-07-07">
+<meta name="apple-mobile-web-app-title" content="PostHog">
+<meta name="application-name" content="PostHog">
+
+
+    <script id="posthog-user-identity-with-flags" type="application/json">{}</script>
+    
+    <script nonce="s8BButDi69uBXZwArn7zwp">
+        window.JS_POSTHOG_API_KEY = "sTMFPsFhdP1Ssg";
+        window.JS_POSTHOG_HOST = "https://internal\u002Dcf.posthog.com";
+        if (window.JS_POSTHOG_HOST.trim().length === 0) {
+            window.JS_POSTHOG_HOST = window.location.origin;
+        }
+        window.JS_POSTHOG_UI_HOST = "https://us.posthog.com";
+        window.JS_POSTHOG_SELF_CAPTURE = false;
+        window.POSTHOG_USER_IDENTITY_WITH_FLAGS = JSON.parse(document.getElementById('posthog-user-identity-with-flags').textContent)
+        window.IMPERSONATED_SESSION = false;
+        window.POSTHOG_JS_UUID_VERSION = "v7";
+        
+    </script>
+
+
+    <script nonce="s8BButDi69uBXZwArn7zwp">window.STRIPE_PUBLIC_KEY = 'pk_live_51HIMDDEuIatRXSdzvUmf6sSyh7SudVpjeWQFUPiXv0NiJRUnAc5eqPiI7hamG9LSZFQXKGnlefRNjL1uq86pTIrD00vbZ25ASX';</script>
+
+<script id="posthog-app-context" type="application/json">{"current_user": null, "current_project": null, "current_team": null, "preflight": {"django": true, "redis": true, "plugins": true, "celery": true, "clickhouse": true, "kafka": true, "db": true, "initiated": true, "cloud": true, "demo": false, "realm": "cloud", "region": "US", "available_social_auth_providers": {"github": true, "gitlab": true, "google-oauth2": true}, "can_create_org": true, "email_service_available": true, "slack_service": {"available": true, "client_id": "910200304849.3717532025908"}, "data_warehouse_integrations": {"hubspot": {"client_id": "40c33495-033a-4070-ba2b-e8bbd5e1d9a8"}, "salesforce": {"client_id": "3MVG9Xl3BC6VHB.aEyuP1lk68ssV30svt.y6iEm6L5mvn58GHI8F6a_xzbZiGirvvmay2UU2fhMq86JpCQ.MC"}}, "object_storage": true, "public_egress_ip_addresses": ["44.205.89.55", "44.208.188.173", "52.4.194.122"], "wizard_cloud_run_available": true}, "default_event_name": "$pageview", "switched_team": null, "suggested_users_with_access": null, "project_access_denied": null, "commit_sha": "fcb362bb43", "livestream_host": "", "persisted_feature_flags": ["7569-insight-cohorts", "ai-events-table-rollout", "ai-first", "ai-observability-daily-digest-scout", "ai-observability-evaluations-overview", "ai-subscriptions", "ai-survey-response-summary", "ai-training", "alerts-inline-notifications", "alerts-investigation-agent", "amplitude-batch-import-options", "anomaly-scoring", "anonymous-user-session-replay-filtering-fix", "app-metrics", "apps-and-exports-ui", "artificial-hog", "auto-redirect", "autoname-insights-with-ai", "billing-shadow-event-limiting", "bing-ads-source", "broadcasts", "calendar-heatmap-insight", "canvas-builds-on-temporal", "cdp-activity-log-notifications", "cdp-dwh-table-source", "cdp-dwh-view-source", "cdp-new-pricing", "clearable-notifications", "code-spaces-layout", "cohort-calculation-history", "credentials-service-enabled", "csp-enforce-other-signed-out-pages", "customer-analytics-accounts-postgres", "customer-profile-config-button", "dashboard-auto-preview-limit", "dashboard-customization", "dashboard-tile-group-sections", "dashboard-tile-overrides", "dashboard-widgets", "data-exploration-insights", "data-warehouse", "data-warehouse-auto-coarsen", "data-warehouse-deltalite-write", "data-warehouse-fast-return", "data-warehouse-postgres-import", "datanode-concurrency-limit", "date-picker-explicit-date-toggle", "dead-clicks-autocapture", "default-evaluation-environments", "desktop-work-layout", "dwh-custom-source-oauth2", "dwh-customer-io", "dwh-google-analytics", "dwh-google-search-console", "dwh-join-table-preview", "dwh-particle", "dwh-postgres-direct-query", "dwh-source-metrics", "dwh_polar", "edit_dwh_source_config", "email-gated-signup-control", "end-user-facing-analytics", "error-tracking-custom-grouping", "error-tracking-embedding-configuration", "error-tracking-force-query-v3", "error-tracking-grouping-judge", "error-tracking-insights", "error-tracking-issue-releases", "error-tracking-issue-splitting", "error-tracking-new-wizard", "error-tracking-rate-limiting", "error-tracking-rate-limiting-bypass", "error-tracking-rate-limiting-per-issue", "error-tracking-recommendations", "error-tracking-source-maps-banner", "error-tracking-spike-alerting", "error-tracking-suppression-rules", "error-tracking-weekly-digest", "event-media-previews", "events-combination-in-trends", "experiment-cuped", "experiment-make-decision", "experiment-scanner", "experiments-hogql", "experiments-multiple-metrics", "experiments-new-metrics-table", "experiments-new-query-runner", "experiments-ratio-metric", "exports-sidepanel", "exposures-on-feature-flags", "feature-flag-early-exit", "feature-flag-mixed-targeting", "feature-flags-across-projects-index", "feature-flags-v2", "first-time-for-user-math", "flag-bucketing-identifier", "flag-evaluation-tags", "flag-with-evaluation-tag", "flag-with-tag", "founders-hub-redesign", "funnel-insight-alerts", "google-shets-dwh", "health-alerts", "health-ask-ai", "heatmaps-capture-allowlist-notice", "heatmaps-clickmap-chain-normalization", "heatmaps-clickmap-discriminators", "heatmaps-clickmap-pagination", "heatmaps-creation-flow", "historical-exports-v2", "hog-functions", "hog-invocation-results-runs-tab", "hog-transformations", "hogql-insights-lifecycle", "hogql-insights-paths", "hogql-insights-preview", "hogql-insights-retention", "hogql-insights-trends", "image-exporter-use-browserless", "inbox-get-it-merged", "inbox-model-sort", "inbox-ranking-overrides", "inbox-redesign", "inbox-slack-notifications", "ingestion-warnings-enabled", "insight-colors", "insight-data-checks", "insight-drag-to-zoom", "ip-allowlist-setting", "jev-chart-autodetection", "korean-site", "legal-documents", "lemon-ui-to-quill", "live-events", "llm-analytics-clustering-workflows", "llm-analytics-community-skills", "llm-analytics-datasets", "llm-analytics-evaluations-start-with-ai", "llm-analytics-system-one-evaluations", "logs-alerting", "logs-facet-rail", "logs-group-by", "logs-internal", "logs-metrics-snuffle-api", "logs-missing-link-investigate", "logs-saved-views", "logs-session-error-badges", "logs-settings", "logs-settings-custom-retention", "logs-settings-drop-rules", "logs-settings-json", "logs-settings-pii-scrub", "logs-settings-retention", "logs-sql-view", "logs-tabbed-view", "managed-migrations-iam-role-auth", "markdown-notebooks", "marketing-analytics", "marketing-analytics-ai", "marketing-analytics-drill-down", "marketing-analytics-extended-drill-down", "marketing-analytics-mcp", "marketing-analytics-multi-touch-attribution", "marketing-analytics-setup", "marketing-analytics-setup-plan-mcp", "marketing-analytics-utm-audit", "max-rag", "max-session-summarization", "mcp-analytics", "mcp-analytics-leaderboard-home", "mcp-exec-skills", "mcp-feedback-tool", "mcp-gateway", "mcp-hono", "mcp-posthog-analytics-sdk", "mcp-render-ui", "mcp-servers", "mcp-single-exec-tool", "mcp-sql-schema-discovery", "mcp-version-2", "members-can-use-personal-api-keys", "messaging", "meta-ads-dwh", "metric-insight", "metrics-dashboard-panels", "metrics-query-languages", "new-bayesian-stats-method", "new-command-k-search", "new-experiments-ui", "new-feature-flag-operators", "new-logs-date-range-picker", "new-scene-layout", "notebook-generated-widgets", "notebook-jupyter-mode", "notebook-sandbox-free-compute", "notebook-sql-editor", "null-payload", "onboarding-wizard-sync-killswitch", "page-reports-ranked-url-search", "passkey-signup-enabled", "payment-entry-contact-support", "person-property-incident-annotation-jan-2026", "persons-hogql-query", "phai-agent-modes", "phai-conversation-task-mirror", "phai-scene-auto-open", "phai-upsert-dashboards", "pi-harness", "pinterest-ads-source", "poc_alerting_exception_overrides", "poc_alerting_pipeline_config", "poc_alerting_ticket_overrides", "posthog-ai-billing-free-tier-credits", "posthog-ai-changelog", "posthog-ai-conversation-feedback-config", "posthog-ai-flags-mode", "posthog-ai-queue-messages-system", "posthog-code-billing", "posthog-code-comments", "posthog-code-deepseek-model", "posthog-code-default-harness", "posthog-code-glm-53-flash-model", "posthog-code-glm-53-model", "posthog-code-glm-model", "posthog-code-mobile-push", "posthog-code-task-cost", "posthog-code-usage-billing", "posthog-desktop-announcements", "posthog-desktop-canvas-comments", "posthog-desktop-channel-reports", "posthog-desktop-cloud-compute-billing", "posthog-desktop-launch", "posthog-desktop-reports-inbox", "posthog-desktop-server-agent-instructions", "posthog-desktop-server-task-defaults", "posthog-desktop-signup-gate", "posthog-desktop-staged-updates", "posthog-desktop-triage-focus", "product-analytics-hide-weekends", "product-analytics-hog-charts-funnel", "product-analytics-hog-charts-lifecycle", "product-analytics-hog-charts-retention", "product-analytics-hog-charts-stickiness", "product-analytics-hog-charts-trends", "product-analytics-quarter-year-intervals", "product-analytics-quill-sql-charts", "product-autonomy", "product-support-github-channel", "product-support-import-tickets", "product-support-slack-notify-on-members", "product-support-ticket-views", "product-tours-localization", "product-tours-rich-text", "project-bluebird", "property-access-control", "property-values-table", "proportion-bar-chart", "query-based-dashboard-cards", "query-based-insights-saving", "query-cache-cluster-migration", "query-single-flight", "quotehog-invoice-style-calculator", "rbac-ui-redesign", "re-engagement-emails", "real-time-notifications", "recordings-ai-filter", "recordings-inspector-v2", "recordings-list-v2-enabled", "region-select", "replay-groups-filters", "replay-list-recordings-as-query", "replay-negative-event-filters", "replay-templates", "replay-triggers-v2", "retention-dwh", "revamped-py-notebooks", "revenue-fields-in-power-users-table", "scene-tabs", "schedule-feature-flag-variants-update", "scheduled-changes-feature-flags", "scouts-model-selection", "scouts-suggestions-ui", "sdk-doctor-beta", "search-re-rank", "security-access-enforcement", "selector-match-change-notice", "self-optimising-workflows", "session-recordings-playlist-count-column", "session-replay-backend-logs", "session-risk-detection", "session-table-property-filters", "show-replay-filters-feedback-button", "signals-pipeline-models", "signals-report-metrics", "signals-scout", "signals-scout-suggestions", "simple-sidepanel", "site-destinations", "skills-store-in-sandbox", "slack-app-interview-recruitment", "slack-app-unprompted-answers", "slack-dwh", "smoothing-interval", "snapchat-ads-source", "sql-editor-ai-error-fixer", "sql-editor-tree-view", "stale-cache-invalidation-enabled", "string-payload", "subscription-ai-summary-prompt-guide", "subscription-slack-gallery", "subscription-source-summaries", "survey-funnels-cross-sell", "surveys-experiments-cross-sell", "surveys-ff-cross-sell", "surveys-hosted-editor", "surveys-redesigned-view", "surveys-toolbar", "surveys-translations", "task-cloud-run-benjamin-plus", "task-signals-cloning-blobless", "tasks-agent-proxy-keep-stream-open", "tasks-agent-run-otel-telemetry", "tasks-baked-repo-clone", "tasks-burstable-sandbox-resources", "tasks-cloud-run-continue-as-new", "tasks-cloud-run-sandbox-rotation", "tasks-cloud-runs-sandbox-event-ingest", "tasks-dedicated-redis-streams", "tasks-glm-baseten-inference", "tasks-kimi-k3", "tasks-modal-directory-resume-snapshots", "tasks-modal-network-allowlist", "tasks-native-steering-signals", "tasks-pr-auto-ready", "tasks-pr-babysit-snapshot", "tasks-prewarm-sandbox", "tasks-stream-via-proxy", "team-enabled-for-clickhouse-http", "temporal-process-expired-coupons", "temporal-remove-old-objects", "temporal-run-assertions", "test-flag", "test-flag-with-tags", "text-card-word-art", "toggle-property-arrays", "toolbar-ai", "tracing", "tracing-facet-rail", "tracing-latency-heatmap", "tracing-metrics-tab", "tracing-operations-view", "tracing-scene-tabs", "tracing-session-person-links", "tracing-settings-retention", "tracing-span-error-badges", "tracing-trace-dialog", "traffic-type-virtual-properties", "trends-session-property-pre-aggregation", "twig-cloud-mode-toggle", "ui-customization-enabled", "unified-health-page", "unlayer-editor-project-id", "ux-new-tooltip", "ux-remove-sidepanel", "warehouse-rebuild-run-compaction", "warehouse-source-webhooks", "web-analytics", "web-analytics-achievements", "web-analytics-filters-v2", "web-analytics-live-filters", "web-analytics-live-metrics", "web-analytics-live-user-count", "web-analytics-marketing-cross-sell", "web-analytics-open-as-insight", "web-analytics-page-reports", "web-analytics-replay", "web-analytics-session-property-charts", "web-analytics-trend-viz-toggle", "web-revenue-tracking", "wizard-ai-gateway-system-prompt", "wizard-basic-integration-agentic-detection", "wizard-cloud-run-pr-ready-email-enabled", "wizard-default-aio-logs", "wizard-gateway-allowlist", "wizard-orchestrator", "wizard-orchestrator-seeded-tasks", "wizard-program-registry", "wizard-self-driving-use-pi-harness", "wizard-ui-enabled", "workflows-batch-triggers", "workflows-data-suggestions", "workflows-delay-until-date", "workflows-email-domain-agent-setup", "workflows-email-domain-wizard", "workflows-email-media-library", "workflows-engagement-events", "workflows-isp-sending-health", "workflows-linear-view", "workflows-mcp-onboarding", "workflows-overview-tab", "workflows-push-notifications", "workflows-scheduled-triggers", "workflows-send-calendar", "workflows-sending-tier-requests", "workflows-tile-canvas"], "anonymous": true, "run_mode": "US"}</script>
+<script nonce="s8BButDi69uBXZwArn7zwp" id='posthog-app-user-preload'>
+    window.POSTHOG_APP_CONTEXT = JSON.parse(document.getElementById('posthog-app-context').textContent);
+    
+    
+    
+    
+    window.JS_URL = "https://app-static-prod.posthog.com";
+    
+    window.JS_CAPTURE_TIME_TO_SEE_DATA = true;
+</script>
+
+
+        
+        
+        
+        
+        
+        <style>
+            html,body,#root{height:100%;margin:0;padding:0}
+            *,:after,:before{box-sizing:border-box}
+            #root:empty,.Preloader{background:#f3f4ef;color:#111;font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;font-size:14px;line-height:1.4}
+            [data-boot-theme=dark] #root:empty,[data-boot-theme=dark] .Preloader{background:#1d1f27;color:#fff}
+            @media (prefers-color-scheme:dark){[data-boot-theme=system] #root:empty,[data-boot-theme=system] .Preloader{background:#1d1f27;color:#fff}}
+            .Preloader{display:flex;align-items:center;justify-content:center;height:100%;min-height:200px;width:100%}
+            .Preloader__inner{width:25px;height:25px;border:5px solid rgba(245,78,0,.333);border-top-color:#f54e00;border-radius:50%;animation:preloader-spin 1s linear infinite}
+            .Preloader button{border:0;padding:0;background:none;font:inherit;color:inherit;text-decoration:underline;cursor:pointer}
+            @keyframes preloader-spin{to{transform:rotate(360deg)}}
+        </style>
+        
+        
+        
+            <link rel="preconnect" href="https://app-static-prod.posthog.com" crossorigin>
+        
+        
+ 
+
+[body trimmed for publication: kept 16384 of 140061 characters; sha256 of the full body 51b1286d7336a36b91c9b17f5c5d0d073d66402bf58440b97e4142afec249d49]

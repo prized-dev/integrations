@@ -1,0 +1,23 @@
+GET https://api.render.com/v1/services
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:27.235Z
+final-url: https://api.render.com/v1/services
+
+HTTP 401
+date: Wed, 28 Oct 2026 23:57:25 GMT
+content-type: application/json; charset=utf-8
+content-length: 26
+connection: close
+referrer-policy: same-origin
+render-request-id: api-587bf476f6-47n8j/VUfZAtHsiA-262073
+strict-transport-security: max-age=315360000; includeSubDomains; preload
+vary: Origin
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-xss-protection: 1; mode=block
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a51de1fa1a4cd90f-SEA
+alt-svc: h3=":443"; ma=86400
+
+{"message":"Unauthorized"}

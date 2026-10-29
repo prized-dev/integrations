@@ -1,0 +1,28 @@
+GET https://brightdata.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:14.928Z
+final-url: https://brightdata.com/.well-known/oauth-authorization-server
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:14 GMT
+content-type: application/json; charset=utf-8
+transfer-encoding: chunked
+connection: close
+server: cloudflare
+vary: Origin, Accept-Encoding
+content-security-policy: object-src 'none';frame-ancestors 'self';upgrade-insecure-requests;block-all-mixed-content
+cross-origin-opener-policy: same-origin-allow-popups
+origin-agent-cluster: ?1
+strict-transport-security: max-age=31536000; preload
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-download-options: noopen
+x-frame-options: DENY
+x-permitted-cross-domain-policies: none
+x-xss-protection: 0
+content-encoding: gzip
+cf-cache-status: DYNAMIC
+cf-ray: a51de329e91688dc-PDX
+alt-svc: h3=":443"; ma=86400
+
+{"issuer":"https://brightdata.com","authorization_endpoint":"https://brightdata.com/users/auth/mcp/authorize","token_endpoint":"https://brightdata.com/users/auth/mcp/token","registration_endpoint":"https://brightdata.com/users/auth/mcp/register","jwks_uri":"https://brightdata.com/users/auth/mcp/jwks","introspection_endpoint":"https://brightdata.com/users/auth/mcp/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post"],"response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["none","client_secret_basic","client_secret_post"],"scopes_supported":["mcp","brightdata","offline_access"],"resource_parameter_supported":true,"agent_auth":{"skill":"https://brightdata.com/auth.md","register_uri":"https://brightdata.com/users/auth/agent_registration/auth","claim_uri":"https://brightdata.com/users/auth/agent_registration/claim","identity_types_supported":["identity_assertion"],"identity_assertion":{"assertion_types_supported":["verified_email"],"credential_types_supported":["api_key"]}}}

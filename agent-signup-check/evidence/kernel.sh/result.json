@@ -1,0 +1,144 @@
+{
+ "site": "kernel.sh",
+ "checkedAt": "2026-10-28T23:58:10.204Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 5,
+ "partial": 0,
+ "total": 7,
+ "whoActs": "the person confirms an email code",
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://www.kernel.sh/auth.md",
+   "heading": "# kernel.sh auth.md",
+   "registrationEndpoints": [
+    "https://api.onkernel.com/authmd/agent/auth"
+   ],
+   "mentions": [
+    "anonymous",
+    "identity_assertion",
+    "service_auth"
+   ],
+   "status": "pass",
+   "reason": "auth.md documents agent registration (https://api.onkernel.com/authmd/agent/auth)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://api.onkernel.com/.well-known/oauth-protected-resource",
+   "via": "www-authenticate",
+   "resource": "https://api.onkernel.com/",
+   "authorization_servers": [
+    "https://api.onkernel.com/"
+   ],
+   "status": "pass",
+   "reason": "Names 1 authorization server"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://api.onkernel.com/.well-known/oauth-authorization-server",
+   "endpoint": "https://api.onkernel.com/authmd/agent/auth",
+   "identity_types_supported": [
+    "identity_assertion"
+   ],
+   "field": "register_uri",
+   "issuer": "https://api.onkernel.com/",
+   "status": "pass",
+   "reason": "agent_auth names a registration endpoint (identity_assertion)"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.onkernel.com/browsers",
+   "httpStatus": 401,
+   "www_authenticate": "Bearer resource_metadata=\"https://api.onkernel.com/.well-known/oauth-protected-resource\"",
+   "status": "pass",
+   "reason": "401 with a Bearer challenge that points to resource metadata (RFC 9728 section 5.1)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://www.kernel.sh/llms.txt",
+   "heading": "# KERNEL",
+   "bytes": 5369,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://kernel.sh/auth.md",
+   "finalUrl": "https://www.kernel.sh/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 62,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://kernel.sh/llms.txt",
+   "finalUrl": "https://www.kernel.sh/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 59,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.onkernel.com/browsers",
+   "finalUrl": "https://api.onkernel.com/browsers",
+   "status": 401,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 220,
+   "redirects": 0
+  },
+  {
+   "label": "prm (from 401)",
+   "url": "https://api.onkernel.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.onkernel.com/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 170,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://api.onkernel.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.onkernel.com/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 191,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://kernel.sh/.well-known/x402",
+   "finalUrl": "https://www.kernel.sh/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 51,
+   "redirects": 1
+  }
+ ]
+}

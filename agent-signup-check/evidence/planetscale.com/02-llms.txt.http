@@ -1,0 +1,331 @@
+GET https://planetscale.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:52.282Z
+redirect: 307 from https://planetscale.com/llms.txt
+final-url: https://planetscale.com/docs/llms.txt
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:57:49 GMT
+content-type: text/plain; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a51de291dfdeef1c-PDX
+cf-cache-status: DYNAMIC
+age: 5939
+cache-control: public
+content-encoding: br
+etag: "4mj7Z6lM4BaoERT2yVa8SqrajTDZX6qgv5ioE0NEUcM"
+server: cloudflare
+strict-transport-security: max-age=63072000
+vary: accept-encoding
+cf-placement: local-PDX
+content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
+x-frame-options: DENY
+x-mintlify-client-version: 0.0.4006
+x-vercel-cache: MISS
+x-vercel-id: pdx1:iad1:iad1::iad1::9vt52-1793231869789-c5147cf9a292
+x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
+x-version: dpl_AUojGTPodKNPTVaxVPcxnNvkSVqo
+alt-svc: h3=":443"; ma=86400
+
+# PlanetScale
+
+> PlanetScale is a relational database platform for Vitess, Neki, and Postgres that gives you scale, performance, and reliability without sacrificing developer experience.
+
+## Platform
+
+###  
+
+- [PlanetScale](https://planetscale.com/docs/index.md): PlanetScale is a relational database platform that brings you scale, performance, and reliability — without sacrificing developer experience.
+
+### Product
+
+- [What is PlanetScale?](https://planetscale.com/docs/what-is-planetscale.md): A fully managed relational database platform for Vitess, Neki, and Postgres, built for scale, performance, and reliability.
+- [Vitess, Neki, and Postgres](https://planetscale.com/docs/postgres-vs-vitess.md): Compare PlanetScale's Vitess, Neki, and Postgres products
+
+#### Metal
+
+- [PlanetScale Metal](https://planetscale.com/docs/metal.md): PlanetScale Metal databases are the same PlanetScale databases you know and love, powered by blazing-fast, locally-attached NVMe SSD drives instead of network-attached storage.
+- [Create a Metal database](https://planetscale.com/docs/metal/create-a-metal-database.md): Create a new Metal database or upgrade an existing one to locally attached NVMe storage.
+- [PlanetScale plans](https://planetscale.com/docs/planetscale-plans.md)
+- [How to check performance after upgrading to Metal](https://planetscale.com/docs/metal/metal-performance.md): PlanetScale [Metal](/metal) databases offer performance benefits for many types of workloads.
+
+### Connect and automate
+
+- [Stripe Projects](https://planetscale.com/docs/connect/stripe-projects.md): Stripe Projects allows you to provision and manage PlanetScale Postgres and MySQL/Vitess databases directly from the Stripe CLI with the Stripe Projects developer preview.
+- [Cloudflare](https://planetscale.com/docs/connect/cloudflare.md): Create and pay for PlanetScale Postgres or MySQL databases from the Cloudflare dashboard without adding billing details to PlanetScale.
+- [PlanetScale Terraform provider](https://planetscale.com/docs/terraform.md): A resource model for Vitess, Neki, and Postgres databases, designed for Terraform and OpenTofu.
+
+#### AI & automation
+
+- [Agents](https://planetscale.com/docs/agents.md): Use agents with PlanetScale to answer database questions, investigate performance, and prepare fixes.
+- [Grok Bot](https://planetscale.com/docs/agents/grok-bot.md): Set up PlanetScale Bot to answer database questions, investigate performance, and follow webhook events.
+- [Agent setup prompt](https://planetscale.com/docs/agent-setup/prompt.md): PlanetScale instructions for AI agents to install skills, configure MCP, and authenticate the CLI.
+- [AI-enhanced development](https://planetscale.com/docs/ai-tooling.md): Improve your database development experience with AI-powered tooling specifically designed for PlanetScale
+- [Self-improving database](https://planetscale.com/docs/self-improving-database.md): Use the PlanetScale MCP server with AI coding agents to continuously optimize database performance based on production Insights data and Schema Recommendations
+
+#### MCP
+
+- [PlanetScale Model Context Protocol (MCP)](https://planetscale.com/docs/mcp-server.md): Connect Claude, Cursor, Notion, and other MCP-compatible tools to your PlanetScale databases and Insights
+- [Authenticate the MCP server with a service token](https://planetscale.com/docs/mcp/service-token.md): Use a PlanetScale service token to authenticate the hosted MCP server in CI, headless agents, and clients that send a custom HTTP header
+
+### Plans and billing
+
+- [Billing](https://planetscale.com/docs/billing.md): PlanetScale applies billing plans at the **database level**. You can create several databases under one Organization.
+- [PlanetScale plans](https://planetscale.com/docs/planetscale-plans.md)
+- [Cluster sizes](https://planetscale.com/docs/plans/planetscale-skus.md): Here you'll find a complete list of all the database sizes available to you on PlanetScale.
+- [Selecting a region](https://planetscale.com/docs/plans/regions.md)
+- [Deployment options](https://planetscale.com/docs/plans/deployment-options.md): PlanetScale offers two deployment options to accommodate your application and business needs: multi-tenancy and single-tenancy.
+- [PlanetScale Support](https://planetscale.com/docs/support.md): PlanetScale’s team has a combined 600 years of experience running databases at scale.
+
+#### PlanetScale Managed
+
+- [PlanetScale Managed overview](https://planetscale.com/docs/plans/managed.md): Run PlanetScale in your own AWS, GCP, or Azure account, operated by our team with your data in your cloud.
+- [The proof of concept phase of an enterprise contract](https://planetscale.com/docs/plans/managed/proof-of-concept.md): We get many customers that come to us with existing large, production databases.
+
+##### AWS
+
+- [PlanetScale Managed on AWS overview](https://planetscale.com/docs/plans/managed/aws.md): PlanetScale Managed on Amazon Web Services (AWS) is a single-tenant deployment of PlanetScale in your AWS organization within an isolated AWS Organizations member account.
+- [Set up PlanetScale Managed in AWS](https://planetscale.com/docs/plans/managed/aws/getting-started.md): The following guide will walk you through setting up a PlanetScale Managed cluster in your Amazon Web Services (AWS) organization.
+- [Set up AWS PrivateLink with PlanetScale Managed](https://planetscale.com/docs/plans/managed/aws/privatelink.md): PlanetScale Managed can connect you to your databases via [AWS PrivateLink](https://aws.amazon.com/privatelink/). The following guide describes how PlanetScale Managed with AWS PrivateLink works and how to set it up.
+- [Set up AWS VPC peering with PlanetScale Managed](https://planetscale.com/docs/plans/managed/aws/vpc-peering.md): Private database connectivity between your VPC and a PlanetScale Managed deployment over AWS VPC peering.
+- [Set up AWS Reverse PrivateLink with PlanetScale Managed](https://planetscale.com/docs/plans/managed/aws/reverse-privatelink.md): [PlanetScale Managed](/docs/plans/managed/aws) can connect to your existing databases via AWS PrivateLink for the purposes of data imports.
+- [Back up and restore in AWS](https://planetscale.com/docs/plans/managed/aws/back-up-and-restore.md): PlanetScale Managed backup and restore functions like the hosted PlanetScale product. For more info, see [how to create, schedule, and restore backups for your PlanetScale databases](/docs/vitess/backups).
+
+##### Azure
+
+- [PlanetScale Managed on Azure overview](https://planetscale.com/docs/plans/managed/azure.md): A single-tenant deployment of PlanetScale in a dedicated Azure subscription that you own and PlanetScale operates.
+- [Set up PlanetScale Managed in Azure](https://planetscale.com/docs/plans/managed/azure/getting-started.md): Prepare a dedicated Azure subscription and deploy the one-time bootstrap required for PlanetScale Managed.
+- [Set up Azure Private Link with PlanetScale Managed](https://planetscale.com/docs/plans/managed/azure/private-link.md): Connect an application virtual network privately to a PlanetScale Managed deployment in Azure.
+
+##### GCP
+
+- [PlanetScale Managed on GCP overview](https://planetscale.com/docs/plans/managed/gcp.md): PlanetScale Managed on Google Cloud Platform (GCP) is a single-tenant deployment of PlanetScale in your GCP organization within an isolated project.
+- [Set up PlanetScale Managed in GCP](https://planetscale.com/docs/plans/managed/gcp/getting-started.md): The following guide will walk you through setting up a PlanetScale Managed cluster in your Google Cloud Platform (GCP) organization.
+- [Set up GCP Private Service Connect with PlanetScale Managed](https://planetscale.com/docs/plans/managed/gcp/private-service-connect.md): PlanetScale Managed can connect you to your databases via [GCP Private Service Connect](https://cloud.google.com/vpc/docs/private-service-connect).
+- [Back up and restore in GCP](https://planetscale.com/docs/plans/managed/gcp/back-up-and-restore.md): PlanetScale Managed backup and restore functions like the hosted PlanetScale product. For more info, see [how to create, schedule, and restore backups for your PlanetScale databases](/docs/vitess/backups).
+
+##### Security and access
+
+- [User management](https://planetscale.com/docs/plans/managed/security-and-access/user-management.md)
+- [Cloud accounts and contents](https://planetscale.com/docs/plans/managed/security-and-access/cloud-accounts-and-contents.md)
+- [Data requests](https://planetscale.com/docs/plans/managed/security-and-access/data-requests.md)
+- [Schema snapshots](https://planetscale.com/docs/plans/managed/security-and-access/schema-snapshots.md)
+
+##### Settings
+
+- [Maintenance schedules](https://planetscale.com/docs/plans/managed/maintenance-schedules.md): Enterprise customers have the option to enable scheduled maintenance windows on databases.
+
+### Security
+
+- [Security and compliance](https://planetscale.com/docs/security.md): PlanetScale is committed to delivering a powerful and easy-to-use database platform while keeping your data secure.
+- [Vulnerability disclosure](https://planetscale.com/docs/security/vulnerability-disclosure.md)
+- [How PlanetScale uses AI](https://planetscale.com/docs/how-we-use-ai.md): Which PlanetScale features use generative AI, and how we ensure customer data stays secure and private.
+
+#### Account access
+
+- [Authentication methods](https://planetscale.com/docs/security/authentication-methods.md): There are three ways to authenticate with PlanetScale: _email address and password_, _single sign-on_, and _OAuth via GitHub_.
+- [Multi-factor authentication](https://planetscale.com/docs/security/multi-factor-authentication.md): Multi-factor authentication (MFA) provides better safety for your databases and prevents unauthorized access to your user account.
+- [Account password security](https://planetscale.com/docs/security/account-password-security.md): In addition to best practices like [multi-factor authentication](/docs/security/multi-factor-authentication), PlanetScale securely stores your account passwords and validates passwords against known security breaches.
+- [Security log](https://planetscale.com/docs/security/security-log.md): The Security log gives you insight into recent authentication and other security-related `actions` for your account. Your security log also details when you performed each `action`.
+
+#### Organization access
+
+- [Access control](https://planetscale.com/docs/security/access-control.md)
+- [Single sign-on](https://planetscale.com/docs/security/sso.md): Single sign-on (SSO) provides additional account security by allowing company administrators to require the use of an identity provider when logging into PlanetScale.
+- [Audit log](https://planetscale.com/docs/security/audit-log.md): The organization audit log grants [Organization Administrators](/docs/security/access-control#organization-administrator) access to review **actions** performed by individual members of the organization.
+- [Teams](https://planetscale.com/docs/security/teams.md): PlanetScale allows you to create teams within organizations.
+
+- [Vitess (186 pages)](https://planetscale.com/docs/_llms/vitess.txt): Documentation for Vitess.
+
+## Neki
+
+###  
+
+- [Neki](https://planetscale.com/docs/neki.md): Horizontal sharding for Postgres
+
+### Architecture
+
+#### Foundations
+
+- [Overview](https://planetscale.com/docs/neki/overview.md): The components of a Neki deployment and how they fit together
+- [When to shard](https://planetscale.com/docs/neki/when-to-shard.md): Whether a Postgres workload needs horizontal sharding
+- [Neki vs PlanetScale Postgres](https://planetscale.com/docs/neki/coming-from-postgres.md): The upgrade path from regular Postgres to Neki
+- [Neki vs Vitess](https://planetscale.com/docs/neki/vitess-and-postgres.md): Vitess concepts mapped to Neki's Postgres architecture
+
+#### Core concepts
+
+- [Data topology](https://planetscale.com/docs/neki/data-topology.md): How Neki maps tables and shard keys to shards
+- [Query planning](https://planetscale.com/docs/neki/query-planning.md): How Neki plans a statement, and how to inspect its plan with EXPLAIN
+- [Shard targeting and fanout](https://planetscale.com/docs/neki/shard-targeting-fanout.md): Limit how broadly statements route, choose where reads run, and target one shard
+- [Transactions](https://planetscale.com/docs/neki/transactions.md): Snapshot and commit behavior for transactions that reach more than one shard
+- [Reference tables and GSIs](https://planetscale.com/docs/neki/reference-tables-and-gsis.md): Shared data placement and secondary lookup routing
+- [Replicator workflows](https://planetscale.com/docs/neki/replication.md): Copy and change streaming for migrations and online schema changes
+
+#### Workflows
+
+- [Data migration](https://planetscale.com/docs/neki/data-migration.md): Table movement, resharding, verification, and traffic cutover
+- [Schema changes](https://planetscale.com/docs/neki/schema-changes.md): Native DDL and managed workflows across Neki shards
+
+#### Reference
+
+- [Platform preview limitations](https://planetscale.com/docs/neki/platform-preview-limitations.md): Postgres features and query shapes that Neki does not support during Platform Preview
+- [Neki terminology](https://planetscale.com/docs/neki/terminology.md): Definitions for the Postgres, PlanetScale, and Neki concepts used throughout the documentation.
+- [Neki error codes](https://planetscale.com/docs/neki/error-codes.md): The numeric codes Neki reports with a not implemented error, the query shapes that trigger them, and what to do instead.
+- [Error hints and details](https://planetscale.com/docs/neki/error-hints-and-details.md): How Neki uses the DETAIL and HINT fields of Postgres errors and notices, and why clients should not hide them.
+- [EXPLAIN output reference](https://planetscale.com/docs/neki/explain-reference.md): Complete EXPLAIN (NEKI_PLAN) and EXPLAIN (NEKI_PG_PLAN) output for one query in every format
+- [Example schema](https://planetscale.com/docs/neki/example-schema.md): The tables and data topology used by the SQL examples in the Neki documentation
+
+### Pricing
+
+- [Neki pricing](https://planetscale.com/docs/neki/pricing.md): How shard, router, storage, backup, and network resources contribute to Neki pricing.
+
+### Platform
+
+- [Postgres extensions](https://planetscale.com/docs/neki/extensions.md): Built-in and community Postgres extensions available on Neki.
+- [Back up and restore](https://planetscale.com/docs/neki/backups.md): Create, schedule, and restore backups for Neki database branches.
+
+#### Getting started
+
+- [Neki database dashboard](https://planetscale.com/docs/neki/neki-dashboard.md): Cluster topology, summary statistics, and query performance for a Neki database
+- [Neki quickstart](https://planetscale.com/docs/neki/tutorials/planetscale-quick-start-guide.md): Create a single-shard Neki database, connect, and insert data
+- [Neki sharding quickstart](https://planetscale.com/docs/neki/tutorials/sharding-quick-start-guide.md): Add a shard and route a new table with a data topology
+- [Neki best practices](https://planetscale.com/docs/neki/best-practices.md): Data placement, transaction scope, and workload isolation
+
+#### Connecting
+
+- [Connect to Neki](https://planetscale.com/docs/neki/connecting.md): Postgres clients, roles, router groups, and replica routing
+- [Roles and credentials](https://planetscale.com/docs/neki/connecting/roles.md): Create and manage branch-scoped Postgres roles for Neki.
+- [PlanetScale Terraform provider](https://planetscale.com/docs/terraform.md): A resource model for Vitess, Neki, and Postgres databases, designed for Terraform and OpenTofu.
+- [Web console](https://planetscale.com/docs/neki/web-console.md): Run Postgres queries and DDL from the dashboard.
+
+##### Private connections
+
+- [Connect privately with AWS PrivateLink](https://planetscale.com/docs/neki/connecting/private-connections/aws-privatelink.md): Private connectivity between an AWS VPC and Neki through AWS PrivateLink.
+- [Connect privately with GCP Private Service Connect](https://planetscale.com/docs/neki/connecting/private-connections/gcp-private-service-connect.md): Private connectivity between a Google Cloud VPC and Neki through Private Service Connect.
+
+#### Configuration
+
+- [Cluster sizing](https://planetscale.com/docs/neki/cluster-configuration/cluster-sizing.md): Choose and change configuration-profile, admin, and router sizes for a Neki database.
+- [Cluster configuration](https://planetscale.com/docs/neki/cluster-configuration.md): Configure Neki admin, routers, configuration profiles, and shards.
+- [Configure Neki maintenance windows](https://planetscale.com/docs/neki/cluster-configuration/maintenance-windows.md): Weekly maintenance scheduling for production Neki branches.
+- [Configuration parameters](https://planetscale.com/docs/neki/cluster-configuration/parameters.md): Configure Postgres, connection-pool, admin, and router parameters for a Neki database.
+- [Database replicas](https://planetscale.com/docs/neki/replicas.md): Use Neki replicas for high availability and read-only traffic.
+- [Read-only replicas](https://planetscale.com/docs/neki/read-only-replicas.md): Add Neki read-only replicas to serve long-running reads without using the replicas that take over during failover.
+
+#### Migrate to Neki
+
+- [Import a Postgres database](https://planetscale.com/docs/neki/imports/postgres.md): Import Postgres into Neki with pg_dump and pg_restore
+- [Troubleshoot a Neki migration](https://planetscale.com/docs/neki/imports/troubleshooting.md): Resolve discovery, topology-planning, data-movement, validation, and cutover problems.
+
+#### Branching
+
+- [Branching](https://planetscale.com/docs/neki/branching.md): Create development branches, restore from backups, and run production with high availability.
+- [Development environments](https://planetscale.com/docs/neki/development-environments.md): Set up empty branches for schema work and disposable test data.
+
+#### Monitoring
+
+- [Monitor a Neki database](https://planetscale.com/docs/neki/monitoring.md): Use metrics, logs, and Query Insights to monitor Neki routers, shards, Postgres instances, and queries.
+- [Query Insights](https://planetscale.com/docs/neki/monitoring/query-insights.md): Analyze query latency, resource use, and cross-shard execution in Neki.
+- [Anomalies](https://planetscale.com/docs/neki/monitoring/anomalies.md): Periods when a high share of queries run slower than the established baseline.
+- [Schema recommendations](https://planetscale.com/docs/neki/monitoring/schema-recommendations.md): Automatic DDL suggestions from production query telemetry and schema.
+- [Metrics](https://planetscale.com/docs/neki/monitoring/metrics.md): Monitor Neki router traffic, Postgres resource utilization, storage, WAL activity, replication lag, and instance health.
+- [Logs](https://planetscale.com/docs/neki/monitoring/logs.md): Search and filter Neki logs by branch, shard, server, level, and time.
+- [Inspect live Neki connections](https://planetscale.com/docs/neki/monitoring/connections.md): See live client sessions on your Neki routers, and cancel a query or terminate a session from the dashboard or the PlanetScale CLI.
+- [Prometheus metrics for PlanetScale Neki](https://planetscale.com/docs/neki/monitoring/prometheus-metrics-neki.md): PlanetScale Neki exposes a Prometheus-compatible endpoint per branch that lets you scrape metrics for routers, sidecars, and Postgres instances.
+
+### Guides
+
+#### Frameworks and ORMs
+
+- [Connect a Node.js application to Neki](https://planetscale.com/docs/neki/guides/node.md): node-postgres connections and replica routing
+- [Connect Drizzle to Neki](https://planetscale.com/docs/neki/guides/drizzle.md): Drizzle ORM with the node-postgres driver
+- [Connect Kysely to Neki](https://planetscale.com/docs/neki/guides/kysely.md): Kysely with the node-postgres driver
+- [Connect Prisma to Neki](https://planetscale.com/docs/neki/guides/prisma.md): Prisma ORM 7 with the Postgres driver adapter
+- [Connect a Ruby on Rails application to Neki](https://planetscale.com/docs/neki/guides/rails.md): Active Record Postgres connections and replica routing
+- [Connect a Django application to Neki](https://planetscale.com/docs/neki/guides/django.md): Django Postgres backend and replica routing
+- [Connect a Laravel application to Neki](https://planetscale.com/docs/neki/guides/laravel.md): Laravel Postgres connections and replica routing
+- [Connect a Bun application to Neki](https://planetscale.com/docs/neki/guides/bun.md): Bun SQL connections and replica routing
+- [Connect Cloudflare Workers to Neki](https://planetscale.com/docs/neki/guides/cloudflare-workers.md): Cloudflare Workers connection pooling through Hyperdrive
+
+- [Postgres (108 pages)](https://planetscale.com/docs/_llms/postgres.txt): Documentation for Postgres.
+- [API Reference (262 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Documentation for API Reference.
+
+## CLI Reference
+
+### Introduction
+
+- [PlanetScale CLI](https://planetscale.com/docs/cli.md)
+
+### Using the pscale CLI
+
+- [Agent setup prompt](https://planetscale.com/docs/agent-setup/prompt.md): PlanetScale instructions for AI agents to install skills, configure MCP, and authenticate the CLI.
+- [PlanetScale CLI commands: agent-guide](https://planetscale.com/docs/cli/agent-guide.md)
+- [PlanetScale environment set up](https://planetscale.com/docs/cli/planetscale-environment-setup.md)
+- [Service tokens](https://planetscale.com/docs/cli/service-tokens.md): PlanetScale provides the ability to create service tokens for your PlanetScale organization via the CLI or directly in the UI.
+
+### CLI command reference
+
+- [PlanetScale CLI](https://planetscale.com/docs/cli.md)
+- [PlanetScale CLI commands: agent-guide](https://planetscale.com/docs/cli/agent-guide.md)
+- [PlanetScale CLI commands: api](https://planetscale.com/docs/cli/api.md)
+- [PlanetScale CLI commands: audit log](https://planetscale.com/docs/cli/audit-log.md)
+- [PlanetScale CLI commands: auth](https://planetscale.com/docs/cli/auth.md)
+- [PlanetScale CLI commands: backup](https://planetscale.com/docs/cli/backup.md)
+- [PlanetScale CLI commands: billing](https://planetscale.com/docs/cli/billing.md)
+- [PlanetScale CLI commands: branch](https://planetscale.com/docs/cli/branch.md)
+- [PlanetScale CLI commands: completion](https://planetscale.com/docs/cli/completion.md)
+- [PlanetScale CLI commands: connect](https://planetscale.com/docs/cli/connect.md)
+- [PlanetScale CLI commands: connections](https://planetscale.com/docs/cli/connections.md)
+- [PlanetScale CLI commands: database](https://planetscale.com/docs/cli/database.md)
+- [PlanetScale CLI commands: deploy-request](https://planetscale.com/docs/cli/deploy-request.md)
+- [PlanetScale CLI commands: import](https://planetscale.com/docs/cli/import.md)
+- [PlanetScale CLI commands: insights](https://planetscale.com/docs/cli/insights.md)
+- [PlanetScale CLI commands: inspect](https://planetscale.com/docs/cli/inspect.md)
+- [PlanetScale CLI commands: logs](https://planetscale.com/docs/cli/logs.md)
+- [PlanetScale CLI commands: keyspace](https://planetscale.com/docs/cli/keyspace.md)
+- [PlanetScale CLI commands: maintenance](https://planetscale.com/docs/cli/maintenance.md)
+- [PlanetScale CLI commands: lookup-vindex](https://planetscale.com/docs/cli/lookup-vindex.md): Create and backfill a Vitess Lookup Vindex for an existing table with VReplication
+- [PlanetScale CLI commands: materialize](https://planetscale.com/docs/cli/materialize.md): Create and manage Vitess Materialize workflows that keep copies, aggregations, or views in sync in near-realtime
+- [PlanetScale CLI commands: metrics](https://planetscale.com/docs/cli/metrics.md)
+- [PlanetScale CLI commands: move-tables](https://planetscale.com/docs/cli/move-tables.md)
+- [PlanetScale CLI commands: org](https://planetscale.com/docs/cli/org.md)
+- [PlanetScale CLI commands: password](https://planetscale.com/docs/cli/password.md)
+- [PlanetScale CLI commands: pgbouncer](https://planetscale.com/docs/cli/pgbouncer.md)
+- [PlanetScale CLI commands: ping](https://planetscale.com/docs/cli/ping.md)
+- [PlanetScale CLI commands: planned-reparent-shard](https://planetscale.com/docs/cli/planned-reparent-shard.md): Promote a healthy Vitess replica to primary with PlannedReparentShard when both tablets are up
+- [PlanetScale CLI commands: query-patterns](https://planetscale.com/docs/cli/query-patterns.md)
+- [PlanetScale CLI commands: region](https://planetscale.com/docs/cli/region.md)
+- [PlanetScale CLI commands: role](https://planetscale.com/docs/cli/role.md)
+- [PlanetScale CLI commands: service-token](https://planetscale.com/docs/cli/service-token.md)
+- [PlanetScale CLI commands: shell](https://planetscale.com/docs/cli/shell.md)
+- [PlanetScale CLI commands: signup](https://planetscale.com/docs/cli/signup.md)
+- [PlanetScale CLI commands: size](https://planetscale.com/docs/cli/size.md)
+- [PlanetScale CLI commands: sql](https://planetscale.com/docs/cli/sql.md)
+- [PlanetScale CLI commands: traffic-control](https://planetscale.com/docs/cli/traffic-control.md)
+- [PlanetScale CLI commands: vdiff](https://planetscale.com/docs/cli/vdiff.md): Compare source and target tables for a Vitess VReplication workflow with VDiff
+- [PlanetScale CLI commands: vtctl](https://planetscale.com/docs/cli/vtctl.md): Vitess vtctl operations on a database branch: MoveTables, Materialize, Lookup Vindex, VDiff, PlannedReparentShard, tablets, and shard tablet controls
+- [PlanetScale CLI commands: webhook](https://planetscale.com/docs/cli/webhook.md)
+- [PlanetScale CLI commands: workflow](https://planetscale.com/docs/cli/workflow.md)
+
+## OpenAPI Specs
+
+- [openapi](/docs/openapi.yaml)
+
+## Optional
+
+- [Blog](https://planetscale.com/blog)
+- [Contact Us](https://planetscale.com/contact)
+- [Status](https://www.planetscalestatus.com/)
+- [Benchmarks](https://planetscale.com/benchmarks)
+
+> The links below point to documentation indexes. Follow each `/_llms/` index recursively until you reach documentation pages.
+
+## Indexes
+
+- [Vitess (186 pages)](https://planetscale.com/docs/_llms/vitess.txt): Documentation for Vitess.
+- [Postgres (108 pages)](https://planetscale.com/docs/_llms/postgres.txt): Documentation for Postgres.
+- [API Reference (262 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Documentation for API Reference.
+
+
+This documentation is built and hosted on [Mintlify](https://mintlify.com), a developer documentation platform.

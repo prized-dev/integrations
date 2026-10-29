@@ -1,0 +1,50 @@
+GET https://app.daytona.io/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:24.746Z
+final-url: https://app.daytona.io/.well-known/oauth-protected-resource
+
+HTTP 200
+content-type: text/html
+content-length: 819
+connection: close
+server: AmazonS3
+date: Wed, 28 Oct 2026 19:19:03 GMT
+last-modified: Wed, 28 Oct 2026 19:17:55 GMT
+etag: "7edabd04a9bafeb99b2c2754fff32bca"
+x-amz-server-side-encryption: AES256
+accept-ranges: bytes
+x-cache: Hit from cloudfront
+via: 1.1 fc36d22b58a363b02ecdd852a2e51610.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P2
+x-amz-cf-id: 1RAfR8idXFkT3AcId2xZX_1oJPXUIn-cojjIOqlMxozvUL_h89XlvA==
+age: 16701
+x-frame-options: DENY
+referrer-policy: strict-origin-when-cross-origin
+content-security-policy: frame-ancestors 'none'
+x-content-type-options: nosniff
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/dashboard/favicon.ico" />
+    <link rel="shortcut icon" href="/dashboard/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daytona</title>
+    <script type="module" crossorigin src="/dashboard/assets/index-DrPMvvwm.js"></script>
+    <link rel="stylesheet" crossorigin href="/dashboard/assets/index-CUtd5lPo.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Check for dark mode preference
+      if (
+        localStorage.theme === 'dark' ||
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      ) {
+        document.documentElement.classList.add('dark')
+      }
+    </script>
+  </body>
+</html>

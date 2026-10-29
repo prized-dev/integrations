@@ -1,0 +1,147 @@
+{
+ "site": "telnyx.com",
+ "checkedAt": "2026-10-28T23:58:04.929Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 6,
+ "partial": 0,
+ "total": 7,
+ "whoActs": "the person confirms an email code; nobody (anonymous)",
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://telnyx.com/auth.md",
+   "heading": "# auth.md",
+   "registrationEndpoints": [
+    "https://api.telnyx.com/v2/bot_signup",
+    "https://api.telnyx.com/v2/bot_signup"
+   ],
+   "mentions": [
+    "anonymous",
+    "identity_assertion",
+    "service_auth"
+   ],
+   "status": "pass",
+   "reason": "auth.md documents agent registration (https://api.telnyx.com/v2/bot_signup)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://api.telnyx.com/.well-known/oauth-protected-resource",
+   "via": "www-authenticate",
+   "resource": "https://api.telnyx.com",
+   "authorization_servers": [
+    "https://api.telnyx.com"
+   ],
+   "status": "pass",
+   "reason": "Names 1 authorization server"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://api.telnyx.com/.well-known/oauth-authorization-server",
+   "endpoint": "https://api.telnyx.com/v2/bot_signup",
+   "identity_types_supported": [
+    "service_auth",
+    "anonymous"
+   ],
+   "field": "identity_endpoint and register_uri",
+   "issuer": "https://api.telnyx.com",
+   "status": "pass",
+   "reason": "agent_auth names a registration endpoint (service_auth, anonymous)"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.telnyx.com/v2/balance",
+   "httpStatus": 401,
+   "www_authenticate": "Bearer resource_metadata=\"https://api.telnyx.com/.well-known/oauth-protected-resource\"",
+   "status": "pass",
+   "reason": "401 with a Bearer challenge that points to resource metadata (RFC 9728 section 5.1)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "url": "https://telnyx.com/.well-known/x402",
+   "status": "pass",
+   "reason": "Publishes an x402 discovery document (/.well-known/x402) that an agent can pay from without an account"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://telnyx.com/llms.txt",
+   "heading": "# Telnyx",
+   "bytes": 18486,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://telnyx.com/auth.md",
+   "finalUrl": "https://telnyx.com/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 218,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://telnyx.com/llms.txt",
+   "finalUrl": "https://telnyx.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 181,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.telnyx.com/v2/balance",
+   "finalUrl": "https://api.telnyx.com/v2/balance",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 176,
+   "redirects": 0
+  },
+  {
+   "label": "prm (from 401)",
+   "url": "https://api.telnyx.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.telnyx.com/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 98,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://api.telnyx.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.telnyx.com/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 97,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://telnyx.com/.well-known/x402",
+   "finalUrl": "https://telnyx.com/.well-known/x402",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 172,
+   "redirects": 0
+  }
+ ]
+}

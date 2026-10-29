@@ -1,0 +1,38 @@
+GET https://gitlab.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:33.830Z
+final-url: https://gitlab.com/.well-known/oauth-authorization-server
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:33 GMT
+content-type: application/json; charset=utf-8
+content-length: 1691
+connection: close
+cf-ray: a51de3a04b119811-PDX
+cf-cache-status: HIT
+accept-ranges: bytes
+age: 57747
+cache-control: max-age=86400, public, must-revalidate, no-transform=true
+etag: W/"8e0e3c20992580fd1fdbe9a042baf0ed"
+server: cloudflare
+strict-transport-security: max-age=31536000
+vary: Accept
+content-security-policy: base-uri 'self'; child-src https://www.google.com/recaptcha/ https://www.recaptcha.net/ https://www.googletagmanager.com/ns.html https://*.zuora.com/apps/PublicHostedPageLite.do https://gitlab.com/admin/ https://gitlab.com/assets/ https://gitlab.com/-/speedscope/index.html https://gitlab.com/-/sandbox/ 'self' https://gitlab.com/assets/ blob: data:; connect-src 'self' https://gitlab.com wss://gitlab.com https://sentry.gitlab.net https://new-sentry.gitlab.net https://customers.gitlab.com https://snowplow.trx.gitlab.net https://sourcegraph.com https://collector.prd-278964.gl-product-analytics.com https://analytics.gitlab.com; default-src 'self'; font-src 'self'; form-action 'self' https: http:; frame-ancestors 'self'; frame-src https://www.google.com/recaptcha/ https://www.recaptcha.net/ https://www.googletagmanager.com/ns.html https://*.zuora.com/apps/PublicHostedPageLite.do https://gitlab.com/admin/ https://gitlab.com/assets/ https://gitlab.com/-/speedscope/index.html https://gitlab.com/-/sandbox/; img-src 'self' data: blob: http: https:; manifest-src 'self'; media-src 'self' data: blob: http: https:; object-src 'none'; report-uri https://new-sentry.gitlab.net/api/4/security/?sentry_key=f5573e26de8f4293b285e556c35dfd6e&sentry_environment=gprd; script-src 'strict-dynamic' 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.recaptcha.net/ https://apis.google.com https://*.zuora.com/apps/PublicHostedPageLite.do 'nonce-9G1nQ/dRLkOACHq8B+rE5w=='; style-src 'self' 'unsafe-inline'; worker-src 'self' https://gitlab.com/assets/ blob: data:
+gitlab-lb: haproxy-main-35-lb-gprd
+gitlab-sv: web-gke-us-east1-c
+nel: {"max_age": 0}
+ratelimit-limit: 500
+ratelimit-name: throttle_unauthenticated_web
+ratelimit-observed: 1
+ratelimit-remaining: 499
+ratelimit-reset: 1787597520
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-gitlab-meta: {"correlation_id":"a3048cd20bef5e4d-ATL","version":"1"}
+x-permitted-cross-domain-policies: none
+x-request-id: a3048cd20bef5e4d-ATL
+x-runtime: 0.024640
+x-xss-protection: 0
+
+{"issuer":"https://gitlab.com","authorization_endpoint":"https://gitlab.com/oauth/authorize","token_endpoint":"https://gitlab.com/oauth/token","revocation_endpoint":"https://gitlab.com/oauth/revoke","introspection_endpoint":"https://gitlab.com/oauth/introspect","userinfo_endpoint":"https://gitlab.com/oauth/userinfo","jwks_uri":"https://gitlab.com/oauth/discovery/keys","scopes_supported":["api","read_api","read_user","create_runner","manage_runner","k8s_proxy","self_rotate","mcp","mcp_orbit","read_repository","write_repository","read_registry","write_registry","read_virtual_registry","write_virtual_registry","read_observability","write_observability","ai_features","sudo","admin_mode","read_service_ping","openid","profile","email","ai_workflows","user:*"],"response_types_supported":["code"],"response_modes_supported":["query","fragment","form_post"],"grant_types_supported":["authorization_code","client_credentials","device_code","refresh_token"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post"],"subject_types_supported":["public"],"id_token_signing_alg_values_supported":["RS256"],"claim_types_supported":["normal"],"claims_supported":["iss","sub","aud","exp","iat","sub_legacy","name","nickname","preferred_username","given_name","family_name","email","email_verified","website","profile","picture","groups","groups_direct","https://gitlab.org/claims/groups/owner","https://gitlab.org/claims/groups/maintainer","https://gitlab.org/claims/groups/developer","project_path","ci_config_ref_uri","ref_path","sha","environment","jti"],"code_challenge_methods_supported":["plain","S256"],"registration_endpoint":"https://gitlab.com/oauth/register"}

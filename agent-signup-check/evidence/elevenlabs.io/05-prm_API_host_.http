@@ -1,0 +1,23 @@
+GET https://api.elevenlabs.io/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:19.550Z
+final-url: https://api.elevenlabs.io/.well-known/oauth-protected-resource
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:57:17 GMT
+server: uvicorn
+content-length: 286
+content-type: application/json
+vary: Accept-Language
+access-control-allow-origin: *
+access-control-allow-headers: *
+access-control-allow-methods: POST, PATCH, OPTIONS, DELETE, GET, PUT
+access-control-max-age: 600
+strict-transport-security: max-age=1800;
+x-trace-id: 567913dd0e6fe1679a31fbd5825fa04f
+x-region: us-central1
+via: 1.1 google
+alt-svc: h3=":443"; ma=2592000
+connection: close
+
+{"resource":"https://api.us.elevenlabs.io/v1/mcp","authorization_servers":["https://api.us.elevenlabs.io"],"scopes_supported":["convai_read","convai_write","text_to_speech","speech_history_read","flows","image_video_generation","voice_generation"],"bearer_methods_supported":["header"]}

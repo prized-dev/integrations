@@ -1,0 +1,194 @@
+GET https://mistral.ai/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:06.317Z
+final-url: https://mistral.ai/.well-known/oauth-protected-resource
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:57:03 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cache-control: no-cache
+cache-status: "Netlify Durable"; fwd=bypass, "Netlify Edge"; fwd=miss; fwd-status=404
+netlify-vary: query
+server: cloudflare
+strict-transport-security: max-age=15552000; includeSubDomains; preload
+vary: Accept-Encoding
+x-content-type-options: nosniff
+x-nf-request-id: 01M62F4841RMM543Y04GVJ86F7
+cf-cache-status: EXPIRED
+content-encoding: br
+cf-ray: a51de16cc98e1f9b-PDX
+alt-svc: h3=":443"; ma=86400
+
+<!DOCTYPE html><html data-astro-transition-scope="astro-v2o6jcai-1" lang="en" class><head><meta charset="UTF-8"><title>Frontier AI LLMs, assistants, agents, services | Mistral AI</title><meta name="description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex-swap.min.css" integrity="sha384-/YlNbK67U4WeyjZpwGJd2C4H3Lm8gq0m47PFlrmuKj9TDQzW6HbfSbWI6gpHx2ol" crossorigin="anonymous"><link rel="canonical" href="https://mistral.ai/404/"><meta property="og:title" content="Frontier AI LLMs, assistants, agents, services | Mistral AI"><meta property="og:description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><meta property="og:type" content="website"><meta property="og:url" content="https://mistral.ai/404/"><meta property="og:site_name" content="Mistral"><meta property="og:image" content="https://mistral.ai/cms-media/api/media/file/cover-mistral-sovereign%20copie.webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Frontier AI LLMs, assistants, agents, services | Mistral AI"><meta name="twitter:description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><meta name="twitter:image" content="https://mistral.ai/cms-media/api/media/file/cover-mistral-sovereign%20copie.webp"><meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0"><link rel="sitemap" href="/sitemap-index.xml"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.BiERpfGH.js?dpl=6ae226d4c27465e17b2b37df"></script><script>
+      ;(function () {
+        function applyTheme(doc) {
+          try {
+            var stored = localStorage.getItem('theme')
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+            // 'system' (or unset) follows the OS; 'dark'/'light' are explicit choices.
+            var isDark = stored === 'dark' || ((stored === 'system' || stored === null) && prefersDark)
+            if (isDark) {
+              doc.documentElement.classList.add('dark')
+            } else {
+              doc.documentElement.classList.remove('dark')
+            }
+          } catch (e) {}
+        }
+
+        applyTheme(document)
+
+        // The ClientRouter copies the incoming <html> attributes over the live ones, which
+        // would drop the theme class until the darkmode button re-adds it. Apply the theme
+        // to the incoming document so the class survives the swap without a flash.
+        document.addEventListener('astro:before-swap', function (event) {
+          applyTheme(event.newDocument)
+        })
+      })()
+    </script><!-- Google Tag Manager --><script>
+      ;(function (w, d, s, l, i) {
+        w[l] = w[l] || []
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' })
+
+        var loadGTM = function () {
+          var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s),
+            dl = l != 'dataLayer' ? '&l=' + l : ''
+          j.async = true
+          j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
+          f.parentNode.insertBefore(j, f)
+        }
+
+        if ('requestIdleCallback' in w) {
+          w.requestIdleCallback(loadGTM, { timeout: 3000 })
+        } else {
+          w.setTimeout(loadGTM, 1000)
+        }
+      })(window, document, 'script', 'dataLayer', 'GTM-TX82W9W8')
+    </script><!-- End Google Tag Manager --><script>
+      ;(function () {
+        // GTM/Axeptio inject the consent banner + widget + styles into <head>/<body>
+        // AFTER initial render. Astro's ClientRouter swaps <head>/<body> on
+        // navigation, detaching those injected nodes: the banner disappears and
+        // openAxeptioCookies() stops working (SDK DOM refs point to detached
+        // nodes). A full reload re-runs GTM → re-injects Axeptio → works again.
+        //
+        // Fix: tag every node injected post-render, park the exact same nodes
+        // under <html> (outside head/body) during the swap, then move them back
+        // after. Nodes stay in the same document throughout — no cross-document
+        // adoption — so the Axeptio SDK's JS references remain valid. Scripts
+        // are skipped so the SDK is never re-executed (no duplicate banner).
+        var PERSIST = 'data-consent-persist'
+        var PARK = 'data-consent-park'
+        var observer = null
+
+        function tag(node) {
+          if (!node || node.nodeType !== 1) return
+          if (node.tagName === 'SCRIPT') return
+          if (node.hasAttribute(PERSIST) || node.hasAttribute(PARK)) return
+          // Don't tag Astro's own transition/runtime nodes
+          if (node.id === 'main' || node.id === 'mistral-data') return
+          if (node.tagName === 'HEADER' || node.tagName === 'MAIN' || node.tagName === 'FOOTER') return
+          node.setAttribute(PERSIST, '')
+        }
+
+        function observeTarget(target) {
+          if (!target || !observer) return
+          observer.observe(target, { childList: true })
+        }
+
+        // Start after DOM is parsed so we don't tag server-rendered head/body
+        // elements still being added by the HTML parser. Axeptio is injected
+        // by GTM via requestIdleCallback, which fires after DOMContentLoaded.
+        function startObserver() {
+          if (observer) return
+          observer = new MutationObserver(function (records) {
+            for (var i = 0; i < records.length; i++) {
+              var added = records[i].addedNodes
+              for (var j = 0; j < added.length; j++) tag(added[j])
+            }
+          })
+          observeTarget(document.head)
+          observeTarget(document.body)
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', startObserver)
+        } else {
+          startObserver()
+        }
+
+        // Park tagged nodes under <html> so they survive the head/body swap.
+        document.addEventListener('astro:before-swap', function () {
+          var nodes = document.querySelectorAll('[' + PERSIST + ']')
+          for (var i = 0; i < nodes.length; i++) {
+            var n = nodes[i]
+            if (!n.parentNode) continue
+            n.setAttribute(PARK, document.head.contains(n) ? 'head' : 'body')
+            document.documentElement.appendChild(n)
+          }
+        })
+
+        // Move parked nodes back into head or body.
+        document.addEventListener('astro:after-swap', function () {
+          var parked = document.querySelectorAll('[' + PARK + ']')
+          for (var i = 0; i < parked.length; i++) {
+            var n = parked[i]
+            var origin = n.getAttribute(PARK)
+            n.removeAttribute(PARK)
+            if (origin === 'head' || n.tagName === 'STYLE' || n.tagName === 'LINK' || n.tagName === 'META') {
+              document.head.appendChild(n)
+            } else {
+              document.body.appendChild(n)
+            }
+          }
+          // Re-observe body in case it was replaced
+          if (observer) observeTarget(document.body)
+        })
+      })()
+    </script><link rel="alternate" type="application/rss+xml" title="Mistral" href="https://mistral.ai/news/rss"><link rel="stylesheet" href="/_astro/astro.DVj_VzM2.css"><style>html.lenis,html.lenis body{height:auto}.lenis:not(.lenis-autoToggle).lenis-stopped{overflow:clip}.lenis [data-lenis-prevent],.lenis [data-lenis-prevent-wheel],.lenis [data-lenis-prevent-touch],.lenis [data-lenis-prevent-vertical],.lenis [data-lenis-prevent-horizontal]{overscroll-behavior:contain}.lenis.lenis-smooth iframe{pointer-events:none}.lenis.lenis-autoToggle{transition-behavior:allow-discrete;transition-property:overflow;transition-duration:1ms}
+</style><style>[data-astro-transition-scope="astro-v2o6jcai-1"] { view-transition-name: root; }@layer astro { ::view-transition-old(root) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(root) { animation: none; mix-blend-mode: normal; }::view-transition-group(root) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-v2o6jcai-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-v2o6jcai-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-v2o6jcai-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-v2o6jcai-1"] { animation: none; mix-blend-mode: normal; }</style></head><body><!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TX82W9W8" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><!-- End Google Tag Manager (noscript) --><global-navigation><header class="fixed z-50 flex items-center justify-between dark:text-white transition-colors top-0 w-full left-0 border-b border-border-primary divide-x divide-border-primary bg-surface-brand-secondary" data-header><div class="max-w-432 mx-auto relative h-auto flex items-center justify-between w-full divide-x divide-border-primary"><a href="/" rel="home" aria-label="Go to homepage" class="w-12 h-12 md:w-30 nav-item-home shrink-0 grid place-content-center overflow-hidden hover:bg-surface-brand-primary 2xl:border-l border-border-primary" data-interactive data-mobile-logo><span class="relative w-24 hidden md:block"><svg  viewBox="0 0 98 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="6.28577" y="3.14307" width="3.14286" height="3.14286" fill="#FFAF01"/>
+<rect x="6.28577" y="6.28564" width="6.28571" height="3.14286" fill="#FF8204"/>
+<rect x="6.28577" y="9.42871" width="15.7143" height="3.14286" fill="#FA500F"/>
+<rect x="18.8572" y="12.5713" width="3.14286" height="3.14286" fill="#E51300"/>
+<rect x="12.5714" y="12.5713" width="3.14286" height="3.14286" fill="#E51300"/>
+<rect x="6.28577" y="12.5713" width="3.14286" height="3.14286" fill="#E51300"/>
+<rect x="15.7142" y="15.7144" width="9.42857" height="3.14286" fill="#C4001D"/>
+<rect x="3.14282" y="15.7144" width="9.42857" height="3.14286" fill="#C4001D"/>
+<rect x="15.7142" y="6.28564" width="6.28571" height="3.14286" fill="#FF8204"/>
+<rect x="18.8572" y="3.14307" width="3.14286" height="3.14286" fill="#FFAF01"/>
+<path d="M39.5342 15.3619H39.4985L35.1017 3.14307H31.4286V18.8574H33.8847V6.57268H33.9011L38.3034 18.8135L38.3198 18.8574H40.6032L45.022 6.57268H45.0384V18.8574H47.4725V3.14307H43.8871L39.5342 15.3619Z" fill="currentColor"/>
+<path d="M51.8366 7.38623H49.3805V18.8579H51.8366V7.38623Z" fill="currentColor"/>
+<path d="M51.9901 3.14307H49.2462V5.71152H51.9901V3.14307Z" fill="currentColor"/>
+<path d="M61.461 12.7482C60.8771 12.4906 60.1041 12.2466 59.1611 12.0273L58.6513 11.9177C58.0236 11.7861 57.5302 11.6655 57.1875 11.5558C56.8531 11.4489 56.5708 11.2982 56.3487 11.1063C56.1349 10.9199 56.0308 10.6732 56.0308 10.3525C56.0308 9.88923 56.2281 9.54932 56.6365 9.31907C57.0505 9.08333 57.5685 8.96272 58.1716 8.96272C59.6354 8.96272 60.4742 9.56029 60.7346 10.7856L60.7455 10.8404H63.2016L63.1879 10.7609C62.9494 9.43694 62.3546 8.47753 61.4226 7.90737C60.4961 7.3427 59.4325 7.05762 58.262 7.05762C57.0176 7.05762 55.9348 7.33721 55.0439 7.88544C54.1421 8.4419 53.6871 9.2944 53.6871 10.4183C53.6871 11.4544 54.0763 12.2384 54.8438 12.751C55.6004 13.2554 56.6037 13.6446 57.8289 13.9105C58.6211 14.0722 59.2297 14.212 59.6354 14.3299C60.0356 14.445 60.37 14.615 60.6249 14.8343C60.8771 15.0508 60.9977 15.3277 60.9977 15.6758C60.9977 16.1857 60.7866 16.5722 60.3535 16.8545C59.9177 17.1396 59.3393 17.2849 58.6348 17.2849C57.9715 17.2849 57.3575 17.1149 56.8038 16.775C56.2555 16.4406 55.8526 15.8485 55.6086 15.0152L55.5949 14.9658H53.1608L53.18 15.0481C53.5062 16.5475 54.1887 17.6248 55.2111 18.2525C56.2254 18.8747 57.3876 19.19 58.6595 19.19C59.9314 19.19 61.0635 18.8966 61.9763 18.3183C62.9001 17.7344 63.3661 16.8353 63.3661 15.6539C63.3661 14.9055 63.1934 14.2943 62.8562 13.8337C62.5191 13.376 62.0503 13.0141 61.4582 12.751L61.461 12.7482Z" fill="currentColor"/>
+<path d="M68.4374 3.91602H65.9813V7.38357H63.75V9.48603H65.9594V16.5747C65.9594 17.4463 66.1677 18.0521 66.5816 18.3756C66.99 18.6936 67.6644 18.8553 68.5909 18.8553H71.2004V16.6185H68.8348C68.5361 16.6185 68.3963 16.4787 68.3963 16.1799V9.48878H71.2032V7.38631H68.4428V3.91602H68.4374Z" fill="currentColor"/>
+<path d="M76.0608 7.87416C75.5756 8.18939 75.274 8.64716 75.1589 9.24199L75.1507 7.38623H72.7166V18.8579H75.1726V12.737C75.1726 11.7392 75.37 10.9388 75.7565 10.3549C76.1375 9.782 76.8255 9.49143 77.7986 9.49143H79.5009V7.38897H77.7767C77.1325 7.38897 76.5542 7.55344 76.0608 7.87416Z" fill="currentColor"/>
+<path d="M88.4501 7.89074C87.5373 7.33428 86.4655 7.05469 85.2484 7.05469C84.0313 7.05469 82.9458 7.32606 81.9672 7.85784C80.9804 8.39511 80.3664 9.34081 80.1416 10.6675L80.1279 10.747H82.584L82.595 10.6922C82.7238 10.0837 83.0253 9.64782 83.4996 9.40111C83.982 9.14893 84.5467 9.02283 85.1799 9.02283C85.7555 9.02283 86.2791 9.13796 86.7396 9.36822C87.1891 9.59299 87.4084 9.94934 87.4084 10.4565C87.4084 10.7772 87.3125 11.0157 87.1124 11.1883C86.9068 11.3665 86.6409 11.5008 86.3202 11.594C85.994 11.6872 85.517 11.7887 84.903 11.8901L84.4178 11.9778C83.4886 12.1395 82.7019 12.3314 82.0769 12.5425C81.4437 12.759 80.8845 13.1263 80.413 13.6335C79.9388 14.146 79.7003 14.8587 79.7003 15.7578C79.7003 16.805 80.0868 17.6492 80.8516 18.2633C81.6109 18.8745 82.5785 19.1843 83.7216 19.1843C84.5686 19.1843 85.3252 19.0061 85.9748 18.658C86.6135 18.3126 87.1124 17.7616 87.455 17.0215H87.4742V18.8553H89.8426V10.832C89.8426 9.44223 89.3738 8.45267 88.4501 7.89074ZM84.0587 17.3285C83.5599 17.3285 83.1185 17.1805 82.743 16.8899C82.3675 16.5994 82.1838 16.2019 82.1838 15.6729C82.1838 15.1054 82.4004 14.697 82.8472 14.4284C83.3022 14.1543 83.9299 13.9268 84.7139 13.7513L85.3115 13.6417C85.8432 13.5375 86.2709 13.4333 86.5888 13.3292C86.9041 13.2278 87.17 13.0715 87.381 12.8687H87.4167V13.6609C87.4167 14.4558 87.2549 15.1356 86.9397 15.6811C86.6245 16.2266 86.2051 16.6432 85.6952 16.9146C85.1854 17.1887 84.6344 17.3258 84.0587 17.3258V17.3285Z" fill="currentColor"/>
+<path d="M94.1987 3.14307H91.7645V18.8574H94.1987V3.14307Z" fill="currentColor"/>
+</svg>
+</span><span class="relative inline-block md:hidden w-7 mt-px col-start-1 row-start-1" data-mobile-logo-icon="true"><svg viewBox="0 0 21 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6 0H3V3H6V0Z" fill="#FFAF01"/>
+<path d="M6 9H3V12H6V9Z" fill="#E61300"/>
+<path d="M9 12H0V15H9V12Z" fill="#C4001D"/>
+<path d="M9 3H3V6H9V3Z" fill="#FF8204"/>
+<path d="M12 9H9V12H12V9Z" fill="#E61300"/>
+<path d="M18 6H3V9H18V6Z" fill="#FA500F"/>
+<path d="M18 3H12V6H18V3Z" fill="#FF8204"/>
+<path d="M18 0H15V3H18V0Z" fill="#FFAF01"/>
+<path d="M18 9H15V12H18V9Z" fill="#E61300"/>
+<path d="M21 12H12V15H21V12Z" fill="#C4001D"/>
+</svg>
+</span><span class="relative inline-block md:hidden w-6 col-start-1 row-start-1" style="transform:translateX(48px)" data-mobile-back-icon="true"><svg  viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M16.9995 5L20.9995 5V9L16.9995 9L16.9995 5Z" fill="currentColor"/>
+<path d="M12.9995 9L16.9995 9V13L12.9995 13L12.9995 9Z" fill="currentColor"/>
+<path d="M8.99951 13H12.9995L12.9995 17L8.99951 17L8.99951 13Z" fill="currentColor"/>
+<path d="M12.9995 17H16.9995L16.9995 21H12.9995L12.9995 17Z" fill="currentColor"/>
+<path d="M16.9995 21H20.9995L20.9995 25H16.9995V21Z" fill="currentColor"/>
+</svg>
+</span></a><div class="flex lg:hidden items-center w-full divide-x divide-border-primary"><div class="relative overflow-hidden flex items-center justify-center w-full h-12" id="mobile-cta"><div class="flex items-center justify-center gap-2" id="mobile-cta-default"><a href="/contact/" clas
+
+[body trimmed for publication: kept 16384 of 156078 characters; sha256 of the full body a571ba91f42ca4171474c9029693bd8feb5fff72170c28dc13a6278b86e7d23e]

@@ -1,0 +1,111 @@
+{
+ "site": "replit.com",
+ "checkedAt": "2026-10-28T23:57:50.665Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 0,
+ "total": 6,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://replit.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://replit.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://replit.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "status": "skipped",
+   "reason": "Replit has no public REST API for accounts to probe"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://replit.com/llms.txt",
+   "heading": "# Replit Documentation",
+   "bytes": 20191,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://replit.com/auth.md",
+   "finalUrl": "https://replit.com/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 296,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://replit.com/llms.txt",
+   "finalUrl": "https://replit.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain",
+   "ms": 297,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://replit.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://replit.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 228,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://replit.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://replit.com/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 107,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://replit.com/.well-known/x402",
+   "finalUrl": "https://replit.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 242,
+   "redirects": 0
+  }
+ ]
+}

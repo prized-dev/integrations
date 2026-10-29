@@ -1,0 +1,139 @@
+{
+ "site": "financialdatasets.ai",
+ "checkedAt": "2026-10-28T23:58:23.165Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 3,
+ "partial": 1,
+ "total": 7,
+ "whoActs": "not stated",
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://financialdatasets.ai/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://www.financialdatasets.ai/auth.md)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://financialdatasets.ai/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://www.financialdatasets.ai/.well-known/oauth-protected-resource)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "where": "llms.txt",
+   "url": "https://www.financialdatasets.ai/llms.txt",
+   "endpoint": "/agent/signup",
+   "link": false,
+   "quote": "PI key yet? An AI agent can create one right now: POST /agent/signup with `{\"email\": \"<account owner's email>\", \"agent_name\": \"<your name>\"}` returns a key in o",
+   "status": "partial",
+   "reason": "llms.txt documents a sign-up API (/agent/signup), but there is no agent_auth metadata for tools to find it"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.financialdatasets.ai/prices/snapshot/?ticker=NVDA",
+   "httpStatus": 402,
+   "www_authenticate": null,
+   "status": "pass",
+   "reason": "402 Payment Required: the API takes payment from a client with no account"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "url": "https://api.financialdatasets.ai/prices/snapshot/?ticker=NVDA",
+   "status": "pass",
+   "reason": "The API answers 402 with an x402 payment requirement"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://www.financialdatasets.ai/llms.txt",
+   "heading": "# Financial Datasets",
+   "bytes": 8711,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://financialdatasets.ai/auth.md",
+   "finalUrl": "https://www.financialdatasets.ai/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 102,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://financialdatasets.ai/llms.txt",
+   "finalUrl": "https://www.financialdatasets.ai/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 81,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.financialdatasets.ai/prices/snapshot/?ticker=NVDA",
+   "finalUrl": "https://api.financialdatasets.ai/prices/snapshot/?ticker=NVDA",
+   "status": 402,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 104,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://financialdatasets.ai/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.financialdatasets.ai/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 55,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.financialdatasets.ai/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.financialdatasets.ai/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 97,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://financialdatasets.ai/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.financialdatasets.ai/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 52,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://financialdatasets.ai/.well-known/x402",
+   "finalUrl": "https://www.financialdatasets.ai/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 61,
+   "redirects": 1
+  }
+ ]
+}

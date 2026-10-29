@@ -1,0 +1,148 @@
+{
+ "site": "clerk.com",
+ "checkedAt": "2026-10-28T23:58:36.739Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 2,
+ "partial": 3,
+ "total": 7,
+ "whoActs": "nobody (provisioned without an account, claimed later) (from auth.md prose)",
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://clerk.com/auth.md",
+   "heading": "# auth.md",
+   "registrationEndpoints": [
+    "/v1/accountless_applications",
+    "/v1/accountless_applications/complete"
+   ],
+   "mentions": [
+    "anonymous"
+   ],
+   "status": "pass",
+   "reason": "auth.md documents agent registration (/v1/accountless_applications)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://clerk.com/.well-known/oauth-protected-resource",
+   "via": "well-known",
+   "resource": "https://clerk.com",
+   "status": "partial",
+   "reason": "Metadata names no authorization_servers, so an agent cannot find where to register"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "where": "auth.md",
+   "url": "https://clerk.com/auth.md",
+   "endpoint": "/v1/accountless_applications",
+   "link": false,
+   "quote": "I shortcut: `npx -y clerk@latest init`.* ```http POST /v1/accountless_applications HTTP/1.1 Host: api.clerk.com Content-Type: application/x-www-form-urlencoded",
+   "status": "partial",
+   "reason": "auth.md documents a sign-up API (/v1/accountless_applications), but there is no agent_auth metadata for tools to find it"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.clerk.com/v1/users",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://clerk.com/llms.txt",
+   "heading": "# Clerk",
+   "bytes": 5901,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://clerk.com/auth.md",
+   "finalUrl": "https://clerk.com/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 161,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://clerk.com/llms.txt",
+   "finalUrl": "https://clerk.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 109,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.clerk.com/v1/users",
+   "finalUrl": "https://api.clerk.com/v1/users",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 97,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://clerk.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://clerk.com/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 97,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.clerk.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.clerk.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 93,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://clerk.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://clerk.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 94,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://clerk.com/.well-known/x402",
+   "finalUrl": "https://clerk.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 153,
+   "redirects": 0
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+GET https://api.hetzner.cloud/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:49.086Z
+final-url: https://api.hetzner.cloud/.well-known/oauth-protected-resource
+
+HTTP 404
+date: Wed, 28 Oct 2026 23:57:44 GMT
+content-type: application/json; charset=UTF-8
+content-encoding: gzip
+vary: Accept-Encoding
+connection: close
+transfer-encoding: chunked
+
+{
+  "error": {
+    "message": "api route not found",
+    "code": "not_found",
+    "details": null
+  }
+}

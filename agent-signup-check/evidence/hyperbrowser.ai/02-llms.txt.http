@@ -1,0 +1,101 @@
+GET https://hyperbrowser.ai/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:11.489Z
+redirect: 307 from https://hyperbrowser.ai/llms.txt
+final-url: https://www.hyperbrowser.ai/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 2064
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline; filename="llms.txt"
+content-encoding: br
+content-type: text/plain; charset=utf-8
+date: Wed, 28 Oct 2026 23:58:09 GMT
+etag: W/"aeff50f6f7ae94329364ddd11d269de1"
+last-modified: Wed, 28 Oct 2026 23:23:44 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-matched-path: /llms.txt
+x-vercel-cache: HIT
+x-vercel-id: pdx1::9gbmb-1793231889156-3a6fe50540fd
+connection: close
+transfer-encoding: chunked
+
+# Hyperbrowser
+
+> Hyperbrowser provides fast cloud browsers for AI agents and automation: managed browser sessions, web scraping, AI agent orchestration, and sandboxed compute. Official SDKs for Python and Node.js; REST API for any language.
+
+Hyperbrowser is built by S2 Labs Inc. Documentation lives at `/docs` (Mintlify). LLM-readable markdown versions of doc pages use the same path with a `.md` suffix (for example, `/docs/quickstart.md`). For the complete documentation index with every page and API endpoint, see [Full docs llms.txt](https://hyperbrowser.ai/docs/llms.txt).
+
+**Install SDKs:**
+
+- Python: `pip install hyperbrowser`
+- Node.js: `npm install @hyperbrowser/sdk`
+
+**Get an API key:** [app.hyperbrowser.ai/signup](https://app.hyperbrowser.ai/signup)
+
+## Getting Started
+
+- [Introduction](https://hyperbrowser.ai/docs/introduction.md): Platform overview and core concepts
+- [Quickstart](https://hyperbrowser.ai/docs/quickstart.md): Start automating with Hyperbrowser Sessions
+- [Documentation home](https://hyperbrowser.ai/docs/home.md): Full docs navigation hub
+- [Pricing](https://hyperbrowser.ai/docs/pricing.md): Credits and service pricing
+
+## SDKs
+
+- [SDK overview](https://hyperbrowser.ai/docs/sdks/introduction.md): Official Python and Node.js SDKs
+- [Python SDK](https://hyperbrowser.ai/docs/sdks/python.md): Complete Python SDK guide (`pip install hyperbrowser`)
+- [Node.js SDK](https://hyperbrowser.ai/docs/sdks/node.md): Complete Node.js SDK guide (`npm install @hyperbrowser/sdk`)
+- [Python SDK (GitHub)](https://github.com/hyperbrowserai/python-sdk): Source and issues
+- [Node.js SDK (GitHub)](https://github.com/hyperbrowserai/node-sdk): Source and issues
+
+## Browser Sessions
+
+- [Create a session](https://hyperbrowser.ai/docs/sessions/create.md): Launch a cloud browser session
+- [Session lifecycle](https://hyperbrowser.ai/docs/sessions/lifecycle.md): Manage active sessions
+- [Playwright integration](https://hyperbrowser.ai/docs/sessions/playwright.md): Connect Playwright to cloud sessions
+- [Puppeteer integration](https://hyperbrowser.ai/docs/sessions/puppeteer.md): Connect Puppeteer to cloud sessions
+- [Stealth mode](https://hyperbrowser.ai/docs/sessions/stealth.md): Anti-detection and fingerprinting
+- [Proxy configuration](https://hyperbrowser.ai/docs/sessions/proxy.md): Residential and datacenter proxies
+
+## Web Scraping
+
+- [Scrape pages](https://hyperbrowser.ai/docs/web-scraping/scrape.md): Scrape to HTML, markdown, or structured data
+- [Extract structured data](https://hyperbrowser.ai/docs/web-scraping/extract.md): AI-powered extraction with schemas
+- [Crawl websites](https://hyperbrowser.ai/docs/web-scraping/crawl.md): Multi-page crawling jobs
+- [Advanced scraping guide](https://hyperbrowser.ai/docs/web-scraping/advanced-guide.md): Patterns and best practices
+
+## AI Agents
+
+- [Agents overview](https://hyperbrowser.ai/docs/agents/overview.md): Run AI agents in cloud browsers
+- [HyperAgent quickstart](https://hyperbrowser.ai/docs/hyperagent/quickstart.md): Build your first HyperAgent automation
+- [HyperAgent overview](https://hyperbrowser.ai/docs/hyperagent/overview.md): Open-source Playwright-powered agent framework
+- [Browser-Use integration](https://hyperbrowser.ai/docs/agents/browser-use.md): browser-use framework on Hyperbrowser
+- [Model Context Protocol (MCP)](https://hyperbrowser.ai/docs/integrations/model-context-protocol.md): MCP tools for web automation
+
+## Sandboxes
+
+- [Sandboxes introduction](https://hyperbrowser.ai/docs/sandboxes/introduction.md): Run agents in fully harnessed cloud sandboxes
+- [Install SDKs and CLI](https://hyperbrowser.ai/docs/sandboxes/install.md): Install Hyperbrowser SDKs and the `hx` CLI
+- [Create a sandbox](https://hyperbrowser.ai/docs/sandboxes/create.md): Launch a sandbox environment
+
+## API Reference
+
+- [Create new session](https://hyperbrowser.ai/docs/api-reference/create-new-session.md): POST endpoint to start a browser session
+- [Create new scrape job](https://hyperbrowser.ai/docs/api-reference/create-new-scrape-job.md): Start a web scrape job
+- [Start a HyperAgent task](https://hyperbrowser.ai/docs/api-reference/start-a-hyperagent-task.md): Run an AI agent task via API
+- [Fetch a web page](https://hyperbrowser.ai/docs/api-reference/fetch-a-web-page.md): Fetch page content in multiple formats
+- [Full API and docs index](https://hyperbrowser.ai/docs/llms.txt): Complete list of all API endpoints and doc pages
+
+## Optional
+
+- [AI Agents product page](https://hyperbrowser.ai/ai-agents): Marketing overview of agent capabilities
+- [Browser Sessions product page](https://hyperbrowser.ai/browser-sessions): Marketing overview of cloud sessions
+- [Web API product page](https://hyperbrowser.ai/web-apis): Marketing overview of fetch, crawl, search, and extract
+- [Templates gallery](https://hyperbrowser.ai/templates): Ready-to-run automation templates
+- [Site pricing page](https://hyperbrowser.ai/pricing): Public pricing tiers
+- [Examples (GitHub)](https://github.com/hyperbrowserai/examples): Task templates and sample code
+- [HyperAgent (GitHub)](https://github.com/hyperbrowserai/HyperAgent): Open-source agent framework source
+- [MCP server (GitHub)](https://github.com/hyperbrowserai/mcp): Model Context Protocol server source
+- [Discord community](https://discord.com/invite/zsYzsgVRjh): Support and discussion

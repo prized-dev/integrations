@@ -1,0 +1,138 @@
+{
+ "site": "agentphone.to",
+ "checkedAt": "2026-10-28T23:58:06.398Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 2,
+ "total": 7,
+ "whoActs": "the person confirms an email code (from llms.txt prose)",
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://agentphone.to/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://agentphone.ai/auth.md)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://agentphone.to/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://agentphone.ai/.well-known/oauth-protected-resource)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "where": "llms.txt",
+   "url": "https://agentphone.ai/llms.txt",
+   "endpoint": "/v0/agent/sign-up",
+   "link": false,
+   "quote": "o-step API flow. No human web signup needed. 1. `POST /v0/agent/sign-up` with `{\"human_email\": \"...\", \"agent_name\": \"...\"}` — sends a 6-digit OTP to the human'",
+   "status": "partial",
+   "reason": "llms.txt documents a sign-up API (/v0/agent/sign-up), but there is no agent_auth metadata for tools to find it"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.agentphone.ai/v1/numbers",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://agentphone.ai/llms.txt",
+   "heading": "# Agent Phone",
+   "bytes": 11304,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://agentphone.to/auth.md",
+   "finalUrl": "https://agentphone.ai/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 204,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://agentphone.to/llms.txt",
+   "finalUrl": "https://agentphone.ai/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 132,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.agentphone.ai/v1/numbers",
+   "finalUrl": "https://api.agentphone.ai/v1/numbers",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 83,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://agentphone.to/.well-known/oauth-protected-resource",
+   "finalUrl": "https://agentphone.ai/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 160,
+   "redirects": 1
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.agentphone.ai/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.agentphone.ai/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 58,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://agentphone.to/.well-known/oauth-authorization-server",
+   "finalUrl": "https://agentphone.ai/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 133,
+   "redirects": 1
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://agentphone.to/.well-known/x402",
+   "finalUrl": "https://agentphone.ai/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 142,
+   "redirects": 1
+  }
+ ]
+}

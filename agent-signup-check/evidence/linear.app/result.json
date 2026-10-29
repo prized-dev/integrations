@@ -1,0 +1,111 @@
+{
+ "site": "linear.app",
+ "checkedAt": "2026-10-28T23:58:34.649Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 0,
+ "total": 6,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://linear.app/auth.md",
+   "status": "fail",
+   "reason": "/auth.md answers with an HTML page, not Markdown"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://linear.app/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://linear.app/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "status": "skipped",
+   "reason": "GraphQL API that takes queries by POST only; this checker sends GET requests only"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://linear.app/llms.txt",
+   "heading": "# Linear",
+   "bytes": 8840,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://linear.app/auth.md",
+   "finalUrl": "https://linear.app/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 47,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://linear.app/llms.txt",
+   "finalUrl": "https://linear.app/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 138,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://linear.app/.well-known/oauth-protected-resource",
+   "finalUrl": "https://linear.app/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 162,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://linear.app/.well-known/oauth-authorization-server",
+   "finalUrl": "https://linear.app/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 223,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://linear.app/.well-known/x402",
+   "finalUrl": "https://linear.app/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 177,
+   "redirects": 0
+  }
+ ]
+}

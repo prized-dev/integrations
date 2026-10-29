@@ -1,0 +1,144 @@
+{
+ "site": "aws.amazon.com",
+ "checkedAt": "2026-10-28T23:57:41.137Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://aws.amazon.com/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://aws.amazon.com/auth.md/)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://aws.amazon.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://aws.amazon.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://ec2.us-east-1.amazonaws.com/?Action=DescribeRegions&Version=2016-11-15",
+   "httpStatus": 400,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "HTTP 400 asking for a key, instead of a 401 challenge"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://docs.aws.amazon.com/llms.txt",
+   "heading": "# Amazon Web Services (AWS) Documentation",
+   "bytes": 420424,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://aws.amazon.com/auth.md",
+   "finalUrl": "https://aws.amazon.com/auth.md/",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html;charset=UTF-8",
+   "ms": 66,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://aws.amazon.com/llms.txt",
+   "finalUrl": "https://aws.amazon.com/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html;charset=UTF-8",
+   "ms": 69,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://ec2.us-east-1.amazonaws.com/?Action=DescribeRegions&Version=2016-11-15",
+   "finalUrl": "https://ec2.us-east-1.amazonaws.com/?Action=DescribeRegions&Version=2016-11-15",
+   "status": 400,
+   "error": null,
+   "contentType": "text/xml;charset=UTF-8",
+   "ms": 173,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://docs.aws.amazon.com/llms.txt",
+   "finalUrl": "https://docs.aws.amazon.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain",
+   "ms": 115,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://aws.amazon.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://aws.amazon.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html;charset=UTF-8",
+   "ms": 102,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://ec2.us-east-1.amazonaws.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://ec2.us-east-1.amazonaws.com/.well-known/oauth-protected-resource",
+   "status": 400,
+   "error": null,
+   "contentType": "text/xml;charset=UTF-8",
+   "ms": 191,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://aws.amazon.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://aws.amazon.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html;charset=UTF-8",
+   "ms": 125,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://aws.amazon.com/.well-known/x402",
+   "finalUrl": "https://aws.amazon.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html;charset=UTF-8",
+   "ms": 105,
+   "redirects": 0
+  }
+ ]
+}

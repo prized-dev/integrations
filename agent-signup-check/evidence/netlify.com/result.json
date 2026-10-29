@@ -1,0 +1,149 @@
+{
+ "site": "netlify.com",
+ "checkedAt": "2026-10-28T23:57:31.764Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 1,
+ "partial": 2,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://netlify.com/auth.md",
+   "heading": "# Authenticating AI agents with Netlify",
+   "registrationEndpoints": [],
+   "mentions": [
+    "anonymous"
+   ],
+   "status": "partial",
+   "reason": "An agent sign-in guide is published at /auth.md, but its heading (# Authenticating AI agents with Netlify) does not name auth.md, so tools looking for the spec may skip it"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://netlify.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404)"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://netlify.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.netlify.com/api/v1/sites",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://netlify.com/llms.txt",
+   "heading": "# Netlify",
+   "bytes": 2971,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://netlify.com/auth.md",
+   "finalUrl": "https://netlify.com/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 305,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://netlify.com/llms.txt",
+   "finalUrl": "https://netlify.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=UTF-8",
+   "ms": 187,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.netlify.com/api/v1/sites",
+   "finalUrl": "https://api.netlify.com/api/v1/sites",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 261,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://netlify.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://netlify.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 200,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.netlify.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.netlify.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 213,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://netlify.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://netlify.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 281,
+   "redirects": 0
+  },
+  {
+   "label": "catch-all probe",
+   "url": "https://netlify.com/agent-signup-check-no-such-page.md",
+   "finalUrl": "https://netlify.com/agent-signup-check-no-such-page.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 411,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://netlify.com/.well-known/x402",
+   "finalUrl": "https://netlify.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 111,
+   "redirects": 0
+  }
+ ]
+}

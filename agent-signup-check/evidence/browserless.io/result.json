@@ -1,0 +1,129 @@
+{
+ "site": "browserless.io",
+ "checkedAt": "2026-10-28T23:58:17.186Z",
+ "checker": "agent-signup-check/0.2.0",
+ "passed": 2,
+ "partial": 1,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://browserless.io/auth.md",
+   "status": "fail",
+   "reason": "/auth.md not found (HTTP 404) (after a redirect to https://www.browserless.io/auth.md)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://browserless.io/.well-known/oauth-protected-resource",
+   "via": "well-known",
+   "resource": "https://www.browserless.io",
+   "authorization_servers": [
+    "https://data.browserless.io/auth/v1"
+   ],
+   "status": "pass",
+   "reason": "Names 1 authorization server"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://data.browserless.io/.well-known/oauth-authorization-server/auth/v1",
+   "status": "fail",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://production-sfo.browserless.io/sessions",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://www.browserless.io/llms.txt",
+   "heading": "# Browserless",
+   "bytes": 3255,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://browserless.io/auth.md",
+   "finalUrl": "https://www.browserless.io/auth.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 273,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://browserless.io/llms.txt",
+   "finalUrl": "https://www.browserless.io/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=UTF-8",
+   "ms": 210,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://production-sfo.browserless.io/sessions",
+   "finalUrl": "https://production-sfo.browserless.io/sessions",
+   "status": 401,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 87,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://browserless.io/.well-known/oauth-protected-resource",
+   "finalUrl": "https://www.browserless.io/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 219,
+   "redirects": 1
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://data.browserless.io/.well-known/oauth-authorization-server/auth/v1",
+   "finalUrl": "https://data.browserless.io/.well-known/oauth-authorization-server/auth/v1",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 244,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://browserless.io/.well-known/x402",
+   "finalUrl": "https://www.browserless.io/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 170,
+   "redirects": 1
+  }
+ ]
+}

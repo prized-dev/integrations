@@ -1,0 +1,306 @@
+GET https://brightdata.com/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:14.928Z
+final-url: https://brightdata.com/auth.md
+
+HTTP 200
+date: Wed, 28 Oct 2026 23:58:11 GMT
+content-type: text/markdown; charset=utf-8
+transfer-encoding: chunked
+connection: close
+server: cloudflare
+vary: Origin, Accept-Encoding
+content-security-policy: object-src 'none';frame-ancestors 'self';upgrade-insecure-requests;block-all-mixed-content
+cross-origin-opener-policy: same-origin-allow-popups
+origin-agent-cluster: ?1
+strict-transport-security: max-age=31536000; preload
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-download-options: noopen
+x-frame-options: DENY
+x-permitted-cross-domain-policies: none
+x-xss-protection: 0
+content-encoding: gzip
+cf-cache-status: DYNAMIC
+cf-ray: a51de31a0b300384-PDX
+alt-svc: h3=":443"; ma=86400
+
+# auth.md — Bright Data agent registration
+
+You are an agent. Bright Data is a web data platform: web search (SERP API), anti-bot scraping (Web Unlocker API), structured data from 250+ sites (Web Scraper APIs), and the Browser API — fully managed cloud browsers you drive with Playwright, Puppeteer, or Selenium, with proxy rotation, fingerprinting, and CAPTCHA solving handled for you. This file describes how agents onboard Bright Data without human filling forms. Bright Data uses a proprietary agent-registration flow, NOT the WorkOS ID-JAG protocol.
+
+**Canonical URL:** `https://brightdata.com/auth.md`
+
+**Status:** Component status:
+
+| Component | Status |
+| :---- | :---- |
+| Hosted MCP \+ OAuth (`mcp.brightdata.com`) | ✅ Live |
+| CLI login (browser, device flow, GitHub) | ✅ Live |
+| `/.well-known/oauth-authorization-server` | ✅ Live (includes the `agent_auth` block; `scopes_supported` is currently `["mcp"]` only) |
+| `/.well-known/oauth-protected-resource` | 🚧 NEW — not built yet |
+| `POST /auth` — email registration (`verified_email`) | ✅ Live |
+| `POST /claim` (resend) \+ `POST /claim/complete` | ✅ Live |
+| `github_id` assertion + GitHub gist verification | :white_check_mark: Live |
+| Anonymous registration | 🔜 Planned — not scheduled, out of scope for the current release |
+
+The discovery metadata now advertises `agent_auth`; use the fallback paths below to reach the email-registration endpoints directly.
+
+The email-registration endpoints also self-document at runtime: `GET https://brightdata.com/users/auth/agent_registration` returns a machine-readable Markdown copy of the endpoint contracts and the error-code table below (independently toggleable from the kill switch; returns `instructions_disabled` (404) when turned off). Treat that response as the live mirror of this section if the two ever disagree.
+
+## Current fallback paths (all live today)
+
+1. **MCP with a user present:** connect to `https://mcp.brightdata.com/mcp` and complete OAuth in the browser.  
+2. **API token:** ask the user for a Bright Data API token from `https://brightdata.com/cp/setting/users` and send it as `Authorization: Bearer <API_TOKEN>`.  
+3. **CLI with a user present:** `npx @brightdata/cli login` (browser or device flow), or `brightdata login --github` if the GitHub CLI is installed and authenticated.
+4. **Email registration, no user browser session needed:** see Steps 1-5 below — this is the fully programmatic path.
+
+## What you get
+
+A verified registration issues a standard Bright Data API token, with product access and zero account management:
+
+- **5,000 free credits/month**, renewed monthly — covers Web Unlocker, SERP, Web Scraper APIs, and Scraper Studio  
+- **$2 one-time trial credit, valid 7 days** — usable on any product, including the **Browser API** (cloud browsers via CDP). When a payment method is added, an additional $5 is granted and the trial extends 30 days  
+- Three zones pre-created — `agent_serp`, `agent_unlocker`, `agent_browser_api` — covering SERP, Web Unlocker, and the Browser API; your first call to any of those three works with zero setup. Web Scraper APIs are **not** zone-based and are **not** auto-provisioned by registration — they're served through a separate, non-zone mechanism; see your account's Web Scraper docs for how to trigger a collection.
+- Usage and billing stats: **read-only** (check your balance; no access to payment methods or invoices)  
+- Not included: proxy networks, account administration, creating/editing zones yourself
+
+Residential proxies always require a KYC-verified business account (via the Control Panel). The human can add funds and lift restrictions in the Control Panel at any time.
+
+## Step 1 — Discover
+
+### 1a. Protected resource metadata — 🚧 NEW endpoint
+
+```
+GET https://api.brightdata.com/.well-known/oauth-protected-resource
+```
+
+Planned shape:
+
+```json
+{
+    "resource": "https://api.brightdata.com/",
+    "resource_name": "Bright Data API",
+    "authorization_servers": ["https://brightdata.com"],
+    "scopes_supported": ["serp", "unlocker", "wsapi", "scraper_studio",
+        "discover", "browser", "usage:read"],
+    "bearer_methods_supported": ["header"]
+}
+```
+
+### 1b. Authorization server metadata — ✅ live, includes `agent_auth`
+
+```
+GET https://brightdata.com/.well-known/oauth-authorization-server
+```
+
+The `agent_auth` block included in the response:
+
+```json
+{
+    "agent_auth": {
+        "skill": "https://brightdata.com/auth.md",
+        "register_uri": "https://brightdata.com/users/auth/agent_registration/auth",
+        "claim_uri": "https://brightdata.com/users/auth/agent_registration/claim",
+        "identity_types_supported": ["identity_assertion"],
+        "identity_assertion": {
+            "assertion_types_supported": ["verified_email", "github_id"],
+            "credential_types_supported": ["api_key"]
+        }
+    }
+}
+```
+
+`github_id` is supported using the existing GitHub gist ownership challenge.
+`anonymous` is not currently supported. Only use methods the metadata lists.
+
+## Step 2 — Pick a method
+
+1. **You know the user's email:** use `identity_assertion` with `verified_email`. Supported today (Step 3).  
+2. **The user's machine has an authenticated GitHub CLI** (`gh auth status` succeeds): use `github_token` — zero human clicks. **Not implemented yet** (out of scope for the current release); check the metadata before using, since submitting `assertion_type: "github_token"` today is rejected as `invalid_request`.
+
+Email requirements: use the user's real mailbox address. Disposable addresses and plus-aliased addresses (`user+tag@...`) are rejected.
+
+Before sending any user identity to Bright Data, show the user the service name (Bright Data) and what the account will be able to do. Invoking these endpoints asserts acceptance of the Bright Data Terms of Service and Acceptable Use Policy on behalf of the named user (the email address supplied).
+
+Note: during a controlled rollout, `domain_whitelist`/`email_whitelist` may restrict which emails can register. This rejection is intentionally silent — the response in Step 3 looks identical to a normal success and no OTP arrives. If the user reports never receiving a code, that (or an existing account on that email — see below) is a likely cause; ask them to check their inbox/spam and confirm they don't already have a Bright Data account.
+
+## Step 3 — Register — ✅ live
+
+### Verified email
+
+```
+POST https://brightdata.com/users/auth/agent_registration/auth
+Content-Type: application/json
+
+{
+    "type": "identity_assertion",
+    "assertion_type": "verified_email",
+    "assertion": "user@example.com",
+    "client": "claude-code"
+}
+```
+
+`client` is optional but recommended: declare your agent name for better support and diagnostics (max 100 characters).
+
+Successful response — **no credential yet**:
+
+```json
+{
+    "claim_token": "<uuid-v4>",
+    "state": "pending",
+    "otp_expires_at": "<ISO 8601 timestamp>",
+    "claim_token_expires_at": "<ISO 8601 timestamp, 24 hours from registration by default>"
+}
+```
+
+`claim_token` is the registration's own identifier — keep it in memory only and use it as-is for Step 4, there is no separate `registration_id`. Bright Data emails the user a 6-character alphanumeric, mixed-case one-time code. If the email already belongs to an existing Bright Data account, or is rejected by the domain/email allow-list during a controlled rollout, this exact same response shape is returned and no OTP is sent for that email — this is intentional and not distinguishable from success (the existing account's owner instead receives a separate notice email). Repeating this call for the same email while a registration is still pending returns the same `claim_token` and unchanged expiry timestamps rather than starting a new registration — use Step 4's resend endpoint if you need a fresh code.
+
+Rate limits (all configurable, default values): 3 registration starts/hour per email, 60/hour per source IP, 30/hour per network range, 50/hour per email domain, 1,000/hour globally. Any dimension being exceeded returns `rate_limited`. Registrations also pass fraud screening; see the error table.
+
+### GitHub token — 🔜 Planned, not scheduled
+
+If the user's machine has an authenticated GitHub CLI, read the token (`gh auth token`) and register with zero human clicks:
+
+```
+POST https://brightdata.com/users/auth/agent_registration/auth
+Content-Type: application/json
+
+{
+    "type": "identity_assertion",
+    "assertion_type": "github_token",
+    "assertion": "<token from gh auth token>",
+    "client": "claude-code"
+}
+```
+
+Bright Data validates the token against GitHub server-side, reads the verified primary email, and keys the account on the GitHub numeric ID. The token is used once for validation and **never stored**. Because the identity is already verified, the credential is returned immediately — no OTP step. Prefer a minimal-scope token (`read:user`, `user:email`). A GitHub account without a verified primary email is rejected (`email_unverified`) — fall back to `verified_email`. **None of this is implemented today** — the current server only accepts `assertion_type: "verified_email"` and rejects anything else as `invalid_request`.
+
+## Step 4 — Verify — ✅ live
+
+The OTP was sent at registration. Ask the user: "Check your email and tell me the code." The code is a 6-character alphanumeric, mixed-case string, valid for 10 minutes by default. To re-send it (invalidates the previous code; does not reset your remaining attempt count; limited to 3 resends per registration with a 60-second minimum interval by default):
+
+```
+POST https://brightdata.com/users/auth/agent_registration/claim
+Content-Type: application/json
+
+{
+    "claim_token": "<uuid-v4>"
+}
+```
+
+This returns the same response shape as Step 3, with a refreshed `otp_expires_at`.
+
+Submit the code:
+
+```
+POST https://brightdata.com/users/auth/agent_registration/claim/complete
+Content-Type: application/json
+
+{
+    "claim_token": "<uuid-v4>",
+    "otp": "<6-character alphanumeric code>"
+}
+```
+
+Successful response — **credential issued here**:
+
+```json
+{
+    "claim_token": "<uuid-v4>",
+    "credential": {"token": "<api_token>", "id": "<token_id>"},
+    "zones": {
+        "serp": {"zone_id": "agent_serp", "status": "success"},
+        "unlocker": {"zone_id": "agent_unlocker", "status": "success"},
+        "browser_api": {"zone_id": "agent_browser_api", "status": "success"}
+    }
+}
+```
+
+Use `credential.token` as your bearer API token. Check each entry under `zones`: provisioning happens per-product and can fail independently, in which case that product's entry reports `"status": "failed"` while the others still succeed — retry that product later rather than assuming the whole registration failed. The token's own permission profile is read-only for admin/billing and cannot create or edit zones itself (the three zones above are pre-provisioned for you); this is intentionally the minimal scope needed to call the products above. The token does not expire quickly (on the order of a year by default), but its exact expiry is not included in this response.
+
+**Handle the credential like a secret.** Never print, log, or otherwise echo `credential.token` in chat output, transcripts, command-line arguments, or any file an unintended party could read. Store it only in a secret manager or an OS-level credential store (e.g. your platform's keychain, a `.env` file excluded from version control with restrictive file permissions, or an equivalent secrets vault) — never in plaintext source, shell history, or logs.
+
+This call is safe to retry with the same `claim_token`/`otp` after a timeout or network error: it returns the exact same result without creating a second account, re-issuing a new credential, or granting entitlements again. A retry that lands while an earlier request for the same `claim_token` is still being completed gets `claim_processing` (409, with a `Retry-After` header) instead - wait briefly and retry the exact same request rather than treating it as a failure. The account is live on the free tier plus the $2 trial credit. The human can access the Control Panel anytime via password reset on this email address. Pending registrations expire after 24 hours if never verified.
+
+## Step 5 — Use the credential
+
+Web search (SERP):
+
+```
+POST https://api.brightdata.com/request
+Authorization: Bearer <api_token>
+Content-Type: application/json
+
+{
+    "zone": "agent_serp",
+    "url": "https://www.google.com/search?q=web+scraping+tools",
+    "format": "json"
+}
+```
+
+Scrape any page (Web Unlocker):
+
+```
+POST https://api.brightdata.com/request
+Authorization: Bearer <api_token>
+Content-Type: application/json
+
+{
+    "zone": "agent_unlocker",
+    "url": "https://example.com",
+    "format": "raw"
+}
+```
+
+Cloud browser (Browser API — uses the $2 trial credit): connect Playwright, Puppeteer, or Selenium over CDP to your `agent_browser_api` zone. See `https://docs.brightdata.com/scraping-automation/scraping-browser/quickstart`.
+
+Structured data (Web Scraper APIs — trigger, poll, download): not zone-based and not auto-provisioned by registration; see `https://docs.brightdata.com/datasets/introduction`.
+
+MCP (hosted — full tool set):
+
+```
+https://mcp.brightdata.com/mcp?token=<api_token>
+```
+
+Useful starting points:
+
+- API reference: `https://docs.brightdata.com`  
+- Documentation index: `https://docs.brightdata.com/llms.txt`  
+- MCP server: `https://mcp.brightdata.com`  
+- CLI: `npm install -g @brightdata/cli`  
+- SDKs: `npm install @brightdata/sdk` / `pip install brightdata-sdk`
+
+If an API call returns `401` for a previously working credential, drop the credential and restart discovery.
+
+## Errors
+
+Every non-2xx response from `/auth`, `/claim`, and `/claim/complete` uses `{"error": "<code>", "error_description": "<actionable next step>"}`. No internal fraud thresholds, scores, or vendor names are ever included.
+
+| Code | HTTP | Where | What to do |
+| :---- | :---- | :---- | :---- |
+| `invalid_request` | 400 | `/auth`, `/claim`, `/claim/complete` | Fix the JSON body. |
+| `email_not_accepted` | 400 | `/auth` | Disposable, aliased, or invalid address. Ask the user for their real mailbox address. |
+| `registration_denied` | 403 | `/auth`, `/claim/complete` | Registration refused. Do not retry. Use a fallback path with a human present. |
+| `browser_signup_required` | 403 | `/auth` | This email must complete signup in a browser (Control Panel) instead of this automated flow. Do not retry — tell the human to sign up at the Control Panel with the same email. |
+| `fraud_check_unavailable` | 503 | `/auth` | The risk check is temporarily unavailable. Retryable: wait at least the `Retry-After` seconds given in the response header, retry the exact same request, double the wait on each subsequent failure, up to 3 attempts total, then fall back to a path involving a human. |
+| `rate_limited` | 429 | any | Back off and retry later. Defaults: resends limited to 3 per registration with a 60-second minimum interval between them. |
+| `invalid_claim_token` | 400 | `/claim`, `/claim/complete` | This claim token is invalid, unknown, or no longer usable (e.g. after exceeding the default 5 OTP attempts or the default 3 resend limit). Restart registration. |
+| `otp_invalid` | 400 | `/claim/complete` | Ask the user to re-read the code. After 5 incorrect attempts (default), the claim is permanently invalidated — start over via `/auth`. |
+| `otp_expired` | 400 | `/claim/complete` | Re-send via `/claim`. OTPs are valid for 10 minutes by default. |
+| `claim_expired` | 400 | `/claim/complete` | Pending registration passed 24 hours (default). Restart registration. |
+| `claim_processing` | 409 | `/claim/complete` | Another request for this exact `claim_token` is currently being completed. Wait for the `Retry-After` seconds given in the response header, then retry the exact same request. |
+| `registration_disabled` | 503 | `/auth` | New registrations are temporarily disabled. Use a fallback path. |
+| `instructions_disabled` | 404 | `GET` discovery endpoint | The self-documenting endpoint is turned off; rely on this file instead. |
+| `invalid_github_token` | 401 | `/auth` | **Reserved, not returned today** — `github_token` isn't implemented; using it today gets `invalid_request` instead. |
+| `email_unverified` | 401 | `/auth` | **Reserved, not returned today** — same as above. |
+
+Retry 5xx responses with exponential backoff. Do not retry the same 4xx payload unless the table says to.
+
+## Claiming the account later
+
+A human can later complete standard signup (password, GitHub, or Google) using the same email address to gain full access to that same account — this does not create a duplicate account or invalidate the issued credential.
+
+## Revocation
+
+Agents do not initiate revocation. If a credential stops working and the API returns `401`, discard it and restart discovery.

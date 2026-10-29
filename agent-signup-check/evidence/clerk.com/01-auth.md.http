@@ -1,0 +1,171 @@
+GET https://clerk.com/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:58:36.739Z
+final-url: https://clerk.com/auth.md
+
+HTTP 200
+access-control-allow-origin: *
+age: 1160
+cache-control: public, max-age=3600, s-maxage=3600
+content-disposition: inline
+content-encoding: br
+content-type: text/markdown; charset=utf-8
+date: Wed, 28 Oct 2026 23:58:33 GMT
+etag: W/"68806967bcc271695029f462ebbf6e44"
+referrer-policy: same-origin
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: Accept
+x-clerk-auth-reason: session-token-and-uat-missing
+x-clerk-auth-status: signed-out
+x-content-type-options: nosniff
+x-download-options: noopen
+x-frame-options: deny
+x-matched-path: /auth.md
+x-vercel-cache: HIT
+x-vercel-id: pdx1::cfgpg-1793231913943-7e62df780a49
+x-xss-protection: 1
+connection: close
+transfer-encoding: chunked
+
+# auth.md
+
+Not an agent? You might be looking for https://clerk.com/agents.
+
+You are an agent. This document tells you how to register a credential for a **Clerk accountless application** — a development application you can provision without a Clerk account and (optionally) have the user claim later into their Clerk workspace. Follow the steps in order; do not skip ahead.
+
+This is Clerk's equivalent of the auth.md **anonymous** method: provision anonymously, work immediately, claim when the user is available.
+
+Endpoints live at `https://api.clerk.com`. The claim ceremony happens at `https://dashboard.clerk.com`.
+
+## Shortcut: use the `clerk` CLI (recommended when Node is available)
+
+Prefer the Clerk CLI — it performs every step in this document, plus detects your framework and package manager, installs the SDK, applies framework setup (provider, middleware, auth routes), and writes the keys to the framework's default env file.
+
+```bash
+# Provision an accountless application and install Clerk into the current project.
+npx -y clerk@latest init
+
+# Later, when the user is available, sign in and claim the application.
+npx -y clerk@latest auth login
+```
+
+In agent environments, a signed-out `init` defaults to accountless setup on supported frameworks and writes a claim breadcrumb to `.clerk/keyless.json`; `auth login`, run from the project root, claims it automatically after sign-in. Pass `--accountless` to force this flow while signed in. Full instructions: https://clerk.com/SKILL.md.
+
+If Node is not available, or you need finer-grained control, follow the raw HTTP steps below.
+
+## Step 1 — Provision the application
+
+*CLI shortcut: `npx -y clerk@latest init`.*
+
+```http
+POST /v1/accountless_applications HTTP/1.1
+Host: api.clerk.com
+Content-Type: application/x-www-form-urlencoded
+
+source=<your-agent-name>
+```
+
+No authentication. All parameters are optional:
+
+- `source` — identifies the caller for attribution. Must match `^[a-z0-9._-]{1,36}$`.
+- `template` — pre-configures the application shape: `b2b-saas`, `b2c-saas`, `native`, or `waitlist`.
+- `Clerk-Framework` header — framework id (e.g. `nextjs`, `astro`) so the claim page shows the right environment variable names.
+
+Response (201):
+
+```json
+{
+  "object": "accountless_application",
+  "publishable_key": "pk_test_...",
+  "secret_key": "sk_test_...",
+  "claim_url": "https://dashboard.clerk.com/apps/claim?token=<claimToken>",
+  "api_keys_url": "https://dashboard.clerk.com/apps/<applicationId>/instances/<instanceId>/api-keys"
+}
+```
+
+What each field is:
+
+- `secret_key` — your bearer credential for the Clerk Backend API. Use it immediately ([Step 2](#step-2--use-the-credential)). Store it as `CLERK_SECRET_KEY`.
+- `publishable_key` — the public key the frontend SDK initializes with. Store it as `CLERK_PUBLISHABLE_KEY` (or the framework-prefixed variant, e.g. `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`).
+- `claim_url` — the Dashboard URL the user opens to claim the application ([Step 3](#step-3--claim-ceremony-optional)). Its `token` query parameter is the single-use claim token. Returned **exactly once** — persist it alongside `secret_key`; do not log it. Without it, the application cannot be claimed.
+- `api_keys_url` — where the user manages this instance's keys in the Dashboard after claiming. Informational.
+
+The application is a **development instance**: by default it has email code, password, and Google sign-in enabled (a `template` changes this), and its keys are development keys. Production needs a claimed application and a production instance.
+
+## Step 2 — Use the credential
+
+```http
+GET /v1/<resource> HTTP/1.1
+Host: api.clerk.com
+Authorization: Bearer <secret_key>
+```
+
+The credential works against the Backend API the moment it's issued — full scope, no degraded mode. The frontend SDK works the same way with `publishable_key`.
+
+If you get a 401 on a previously-working `secret_key`: its keys were rotated or the application was deleted. Drop the credential and do not stash and retry. Ask the user for the current secret key from the Dashboard (`api_keys_url`). Restarting at [Step 1](#step-1--provision-the-application) creates a different application without the project's users or configuration, so do it only once the user confirms the application was deleted or agrees to replace it.
+
+## Step 3 — Claim ceremony (optional)
+
+*CLI shortcut: `npx -y clerk@latest auth login`.*
+
+Claiming assigns the application to the user's Clerk workspace, giving the user a place to manage it. The keys do not change. Skip this if the user isn't available — the unclaimed credential keeps working.
+
+### 3a. Send the user to the Dashboard
+
+Surface `claim_url` from Step 1 in your agent UI. Suggested prompts:
+
+- Default ask: "Open this link to claim the application to your Clerk account: `<claim_url>`"
+- If the user has no Clerk account: "You'll be prompted to sign in or create a free account first — that's expected."
+- If the user can't open the link in-place: "Paste this URL into a browser: `<claim_url>`"
+
+The user signs in, names the application, and confirms the claim.
+
+### 3b. Poll for completion
+
+To detect completion, call the completion endpoint with the secret key every 5 seconds:
+
+```http
+POST /v1/accountless_applications/complete HTTP/1.1
+Host: api.clerk.com
+Authorization: Bearer <secret_key>
+```
+
+- 404 → still unclaimed; keep polling.
+- 200 → claimed. Stop polling; the application now belongs to the user's workspace. The response contains `publishable_key`.
+
+Time out polling after ~5 minutes. If it hasn't completed, give the user the URL again and stop blocking — they can finish asynchronously, and `secret_key` keeps working unclaimed in the meantime.
+
+### Alternative: claim with a Platform API token
+
+If the user has a Platform API token, you can claim without the browser ceremony:
+
+```http
+POST /v1/platform/accountless_applications/claim HTTP/1.1
+Host: api.clerk.com
+Authorization: Bearer <platform_api_token>
+Content-Type: application/json
+
+{ "token": "<claimToken>", "name": "<application name, max 50 chars>" }
+```
+
+Returns 200 with the claimed application. The claim token is invalidated on success.
+
+## Errors
+
+| Status | Where                                       | Meaning                                                            | What to do                                                                                   |
+| ------ | ------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| 422    | `/v1/accountless_applications`              | `source` or `template` is malformed                                | Fix the parameter and retry.                                                                 |
+| 401    | `/v1/accountless_applications/complete`     | `secret_key` invalid                                               | Get the current key from the Dashboard. Restart at Step 1 only if the user confirms the application was deleted or agrees to replace it. |
+| 404    | `/v1/accountless_applications/complete`     | Application still unclaimed                                        | Keep polling; give the user `claim_url` again.                                               |
+| 401    | `/v1/platform/accountless_applications/claim` | Platform token missing or invalid, or not tied to a workspace    | Use the Dashboard claim ceremony instead.                                                    |
+| 403    | `/v1/platform/accountless_applications/claim` | Token can't add applications to this workspace                   | Use the Dashboard claim ceremony instead.                                                    |
+| 404    | `/v1/platform/accountless_applications/claim` | Claim token invalid, or already invalidated by a prior claim     | Not proof of success. Call `/v1/accountless_applications/complete`: report the claim only on 200. On 404, keep using the unclaimed application; restart at Step 1 only if the user agrees to replace it. |
+| 422    | `/v1/platform/accountless_applications/claim` | `token` or `name` missing, or `name` rejected                    | Send both; choose a different name (max 50 characters) and retry.                            |
+
+## More
+
+- Install the SDK for the user's framework: https://clerk.com/SKILL.md
+- Backend API reference: https://clerk.com/docs/reference/backend-api
+- Platform API reference: https://clerk.com/docs/reference/platform-api
+- Everything else: https://clerk.com/llms.txt

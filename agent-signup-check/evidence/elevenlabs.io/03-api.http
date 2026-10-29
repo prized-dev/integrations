@@ -1,0 +1,23 @@
+GET https://api.elevenlabs.io/v1/user
+user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-28T23:57:19.550Z
+final-url: https://api.elevenlabs.io/v1/user
+
+HTTP 401
+date: Wed, 28 Oct 2026 23:57:17 GMT
+server: uvicorn
+content-length: 229
+content-type: application/json
+vary: Accept-Language
+access-control-allow-origin: *
+access-control-allow-headers: *
+access-control-allow-methods: POST, PATCH, OPTIONS, DELETE, GET, PUT
+access-control-max-age: 600
+strict-transport-security: max-age=1800;
+x-trace-id: 5bd9981d67bdba0ce842cb1a42280f58
+x-region: us-central1
+via: 1.1 google
+alt-svc: h3=":443"; ma=2592000
+connection: close
+
+{"detail":{"type":"authentication_error","code":"unauthorized","message":"Neither authorization header nor xi-api-key received, please provide one.","status":"needs_authorization","request_id":"5bd9981d67bdba0ce842cb1a42280f58"}}
