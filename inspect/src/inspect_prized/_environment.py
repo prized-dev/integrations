@@ -300,10 +300,7 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
         timeout_retry: bool = True,
         concurrency: bool = True,
     ) -> ExecResult[str]:
-        if user not in (None, "prized", "1001"):
-            raise SandboxUserUnsupportedError(
-                f"Prized sandboxes run commands as the user 'prized' only (no root); cannot run as {user!r}."
-            )
+        _check_user(user)
         if not cmd:
             raise ValueError("cmd must not be empty")
         token = secrets.token_hex(8)
@@ -347,7 +344,8 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
     # ------------------------------------------------------------------ files
 
     @override
-    async def write_file(self, file: str, contents: str | bytes) -> None:
+    async def write_file(self, file: str, contents: str | bytes, *, user: str | None = None) -> None:
+        _check_user(user)  # `user=` on file methods: inspect_ai PR 6107
         path = self._resolve(file)
         staged = f"{STAGE}/w-{secrets.token_hex(8)}"
         with self._available():
@@ -361,13 +359,14 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
             raise RuntimeError(f"Failed to write file {file}: {res.stderr.strip()}")
 
     @overload
-    async def read_file(self, file: str, text: Literal[True] = True) -> str: ...
+    async def read_file(self, file: str, text: Literal[True] = True, *, user: str | None = None) -> str: ...
 
     @overload
-    async def read_file(self, file: str, text: Literal[False]) -> bytes: ...
+    async def read_file(self, file: str, text: Literal[False], *, user: str | None = None) -> bytes: ...
 
     @override
-    async def read_file(self, file: str, text: bool = True) -> Union[str | bytes]:
+    async def read_file(self, file: str, text: bool = True, *, user: str | None = None) -> Union[str | bytes]:
+        _check_user(user)
         path = self._resolve(file)
         staged = f"{STAGE}/r-{secrets.token_hex(8)}"
         limit = SandboxEnvironmentLimits.MAX_READ_FILE_SIZE
@@ -498,6 +497,13 @@ async def _template(cfg: PrizedSandboxConfig) -> AsyncSandbox:
                 raise
             entry.sandbox = sandbox
         return entry.sandbox
+
+
+def _check_user(user: str | None) -> None:
+    if user not in (None, "prized", "1001"):
+        raise SandboxUserUnsupportedError(
+            f"Prized sandboxes run commands as the user 'prized' only (no root); cannot run as {user!r}."
+        )
 
 
 def _config(config: SandboxEnvironmentConfigType | None) -> PrizedSandboxConfig:
