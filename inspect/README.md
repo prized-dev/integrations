@@ -52,6 +52,17 @@ inspect eval arithmetic.py --model openai/gpt-5
 | `labels` | none | Extra labels; every sandbox also carries `created-by=inspect-prized`. |
 | `max_runtime_min` | `60` | Prized deletes the sandbox after this many running minutes, even if cleanup never ran. 60 is the free tier's maximum; on a paid plan, raise it for samples that run longer. |
 | `keep` | `False` | Pause sandboxes after each sample instead of deleting them, to inspect them later. |
+| `setup` | none | Shell commands that install what the task needs, in place of a Dockerfile. They run once, before the first sample, in a sandbox that is then paused, and every sample starts as a fork of it with the install done. |
+| `setup_timeout` | `1800` | Seconds each `setup` command may run. |
+| `python_alias` | `True` | `python` runs `python3`, as in Python images (HumanEval, MBPP and other evals call `python`). |
+
+```python
+PrizedSandboxConfig(setup=["python3 -m venv ~/venv && ~/venv/bin/pip install numpy pandas"])
+```
+
+If a fork doesn't fit on the template's machine, that sample gets a fresh sandbox and runs `setup` itself.
+
+To branch a sample's state (try several continuations from one point of a trajectory), fork its sandbox: `copies = await sandbox().as_type(PrizedSandboxEnvironment).fork(3)`. Each copy is a live copy (files, memory, processes) and is deleted with the sample.
 
 Inspect runs up to 10 sandboxes at once by default (the free tier's limit). Raise it with `--max-sandboxes`.
 
@@ -61,6 +72,7 @@ Inspect runs up to 10 sandboxes at once by default (the free tier's limit). Rais
 - Commands run as the user `prized` in `/home/prized/work`. There is no root or sudo, so `exec(user="root")` raises `SandboxUserUnsupportedError`.
 - stdin (text, binary, 50 MiB), about 1 MiB of argv, cwd, env, timeouts (the command and its children are killed, then `TimeoutError`), signal exit codes (128+n), output up to Inspect's limit (10 MiB a stream by default, then `OutputLimitExceededError`), and Inspect's file errors (`FileNotFoundError`, `PermissionError`, `IsADirectoryError`, `OutputLimitExceededError`) all behave as with the Docker sandbox. Files can be written anywhere the user `prized` can write, `/tmp` and `/var/tmp` included.
 - No Dockerfiles, compose files or custom images: use it for tasks that run on a stock Ubuntu machine. No inbound ports.
+- Every sandbox of an eval carries that eval's `inspect-run` label, and task cleanup deletes whatever is left with it, so a sample whose cleanup failed doesn't keep running.
 - `inspect sandbox cleanup prized` deletes every sandbox labelled `created-by=inspect-prized`; `inspect sandbox cleanup prized <id>` deletes one, if this package made it.
 - `connection()` gives `prized sandbox ssh <id>` for a shell into a running sample's sandbox (with the `prized` CLI).
 
