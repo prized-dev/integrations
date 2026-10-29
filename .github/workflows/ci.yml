@@ -45,6 +45,7 @@ jobs:
           - { dir: hermes, python: "3.12" }
           - { dir: dify, python: "3.12" }
           - { dir: cursor }
+          - { dir: amp-orbs }
           - { dir: claude-managed-agents }
           - { dir: langchain-js, node: "22" }
           - { dir: langchain-js, node: "24" }
@@ -77,3 +78,4 @@ jobs:
       - run: >-
           shellcheck scripts/test.sh claude-managed-agents/on-work.sh claude-managed-agents/test/test.sh
           cursor/spawn.sh cursor/test/test.sh cursor/test/stub-agent cursor/test/sandbox-bin/curl
+          amp-orbs/dispatch.sh amp-orbs/test/test.sh amp-orbs/test/stub-amp amp-orbs/test/sandbox-bin/curl

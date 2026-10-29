@@ -158,6 +158,9 @@ case $DIR in
   cursor)
     # spawn.sh against a stand-in `prized` and a stub Cursor `agent` (test/): no keys, no network.
     offline bash test/test.sh ;;
+  amp-orbs)
+    # dispatch.sh against a stand-in Prized API on 127.0.0.1 and a stub Amp CLI (test/): no keys.
+    offline bash test/test.sh ;;
   dify)
     # A Dify plugin ships as a .difypkg, not a wheel: requirements.txt is what Dify installs, and
     # pyproject.toml holds only the lint and test settings.

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Stands in for curl inside a fake sandbox: `curl -fsSL https://ampcode.com/install.sh` prints an
+# installer that puts the stub amp in ~/.amp/bin and links it from ~/.local/bin, as Amp's does.
+echo "$*" >> ~/.curl-calls
+[ "${STUB_CURL_FAIL:-0}" = 1 ] && { echo "curl: (6) Could not resolve host: ampcode.com" >&2; exit 6; }
+case "$*" in
+  *ampcode.com/install.sh*)
+    printf 'mkdir -p ~/.amp/bin ~/.local/bin && cp %q ~/.amp/bin/amp && chmod 755 ~/.amp/bin/amp && ln -sf ~/.amp/bin/amp ~/.local/bin/amp\n' "$STUB_AMP_SRC" ;;
+  *) echo "stub curl: unexpected $*" >&2; exit 22 ;;
+esac

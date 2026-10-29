@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Stands in for the Amp CLI inside a fake sandbox: `amp orb bootstrap` records how it was started
+# (whether ORB_TOKEN is the job's, never the token itself) and "connects" for STUB_RUN seconds.
+if [ "${1:-}" = --version ]; then echo "0.0.1-stub"; exit 0; fi
+[ "$*" = "orb bootstrap" ] || { echo "stub amp: unexpected $*" >&2; exit 2; }
+{
+  echo "argv=$*"
+  if [ -n "${ORB_TOKEN:-}" ] && [ "$ORB_TOKEN" = "${STUB_EXPECT_TOKEN:-}" ]; then echo "token=the job's"; else echo "token=${ORB_TOKEN:+wrong}${ORB_TOKEN:-missing}"; fi
+  echo "AMP_URL=${AMP_URL-unset}"
+  echo "PRIZED_API_KEY=${PRIZED_API_KEY:+set}"
+  echo "PWD=$PWD"
+} >> ~/.amp-orb/seen
+echo "Connected to thread"
+sleep "${STUB_RUN:-0}"
