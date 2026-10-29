@@ -163,7 +163,8 @@ async def test_create_options_and_labels():
     env, _, _ = await _env(template="prized-agent-v1", vcpu=2, memory_gb=4, env={"A": "1"}, labels={"team": "x"})
     o = FakeSandbox.made[0].options
     assert o["template"] == "prized-agent-v1" and o["vcpu"] == 2 and o["memory_gb"] == 4
-    assert o["env_vars"] == {"A": "1"} and o["auto_pause_min"] == 0 and o["max_runtime_min"] == 60
+    assert o["env_vars"]["A"] == "1" and o["auto_pause_min"] == 0 and o["max_runtime_min"] == 60
+    assert o["env_vars"]["PATH"].startswith("/home/prized/.local/bin:")
     assert o["labels"] == {"team": "x", "created-by": "inspect-prized", "inspect-task": "unit-task"}
     assert "disk_gb" not in o
 
@@ -388,3 +389,12 @@ async def test_task_cleanup_at_shutdown_deletes_by_the_eval_label(monkeypatch):
         assert len(swept) == 1
     finally:
         env_mod._run.reset(token)
+
+
+async def test_python_runs_python3():
+    env, _, _ = await _env()
+    link = os.path.join(FakeSandbox.made[0].root, ".local", "bin", "python")
+    assert os.path.realpath(link) == os.path.realpath("/usr/bin/python3")
+    await _env(python_alias=False, env={"PATH": "/usr/bin:/bin"})
+    assert not os.path.exists(os.path.join(FakeSandbox.made[1].root, ".local", "bin", "python"))
+    assert FakeSandbox.made[1].options["env_vars"] == {"PATH": "/usr/bin:/bin"}

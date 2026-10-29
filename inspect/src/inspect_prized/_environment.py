@@ -32,6 +32,9 @@ HOME = "/home/prized"
 WORKDIR = f"{HOME}/work"
 STAGE = f"{HOME}/.inspect-prized"
 LABEL = {"created-by": "inspect-prized"}
+# PATH for every command: the system default, after ~/.local/bin (python_alias, pip --user scripts).
+_PATH = f"{HOME}/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+_ALIAS = f"mkdir -p {HOME}/.local/bin && ln -sf /usr/bin/python3 {HOME}/.local/bin/python"
 RUN_LABEL = "inspect-run"  # one id per eval, so task cleanup can find everything the eval made
 _GONE = ("not_found", "sandbox_deleted")
 # prized 0.1.1+ (OutputReadError): the command ran, but its output could not be read back.
@@ -105,6 +108,10 @@ class PrizedSandboxConfig(BaseModel, frozen=True):
     keep: bool = False
     """Keep sandboxes after the sample (pause them) instead of deleting them, for debugging."""
 
+    python_alias: bool = True
+    """Make ``python`` run ``python3``, as in Python images (many evals call ``python``; the template
+    has only ``python3``). It is a link in ``~/.local/bin``, which goes first on ``PATH``."""
+
     def __hash__(self) -> int:  # Inspect caches sandbox configs by hash; the dict fields need this
         return hash(json.dumps(self.model_dump(), sort_keys=True))
 
@@ -160,13 +167,25 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
         run = _run.get()
         if run is not None and not cfg.keep:
             options["labels"][RUN_LABEL] = run
-        if cfg.env:
-            options["env_vars"] = dict(cfg.env)
+        env_vars = {"PATH": _PATH} if cfg.python_alias else {}
+        env_vars.update(cfg.env)
+        if env_vars:
+            options["env_vars"] = env_vars
         for name in ("vcpu", "memory_gb", "disk_gb"):
             if getattr(cfg, name) is not None:
                 options[name] = getattr(cfg, name)
         sandbox = await AsyncSandbox.create(**options)
         cls._live.setdefault(task_name, set()).add(sandbox.id)
+        if cfg.python_alias:
+            try:
+                res = await sandbox.exec(["bash", "-c", _ALIAS], timeout=60)
+                if res.exit_code != 0:
+                    raise RuntimeError(f"Prized sandbox {sandbox.id}: could not link python: {res.stderr.strip()}")
+            except BaseException:
+                await _delete(sandbox.id)
+                cls._live[task_name].discard(sandbox.id)
+                await sandbox.close()
+                raise
         return {"default": cls(sandbox, cfg)}
 
     @override
