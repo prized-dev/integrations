@@ -21,7 +21,7 @@ This extension gives those answers one shape:
 
 The service declares every member. The one value an agent may send, a requested cap, can only lower what the registration may spend.
 
-A service can adopt it in two parts. Part 1, the payment handoff, is points 1 and 3 without a cap: discovery and the `billing` object on refusals for money. Part 2, spend limits, adds the cap. [Implement it in a day](#implement-it-in-a-day) has what each part publishes and how the public [agent sign-up check](https://prized.dev/agent-signup-check?via=auth-md-spend-limits) reads it.
+A service can adopt it in two parts. Part 1, the payment handoff, is points 1 and 3 without a cap: discovery and the `billing` object on refusals for money. Part 2, spend limits, adds the cap. [Adopt it in two parts](#adopt-it-in-two-parts) has what each part publishes and how the public [agent sign-up check](https://prized.dev/agent-signup-check?via=auth-md-spend-limits) reads it.
 
 Out of scope: payment instruments an agent holds (x402, the HTTP Payment authentication scheme, Stripe Shared Payment Tokens, AP2 mandates). They can fund a capped registration later. Version 0.1 covers a person paying in a browser, which every paid service already supports. Payments made with no registration at all, such as a keyless x402 call, are outside any cap here.
 
@@ -29,13 +29,13 @@ The key words MUST, SHOULD and MAY are used as described in RFC 2119 and RFC 817
 
 Money is always a W3C Payment Request amount: `{"currency": "USD", "value": "20.00"}`, an ISO 4217 code and a non-negative decimal string. It is never a float. A value MAY carry more decimal places than the currency's minor unit, for metered prices.
 
-## Implement it in a day
+## Adopt it in two parts
 
-Both parts add members to the authorization server metadata your `agent_auth` block is already in (auth.md Step 1b, RFC 8414). The public agent sign-up check reads one member for each part. It sends GET requests only and never signs in, so it can't see your refusals or your caps. Publishing a member is your statement that the behaviour behind it is live.
+Both parts add members to the authorization server metadata your `agent_auth` block is already in (auth.md Step 1b, RFC 8414). The public agent sign-up check reads the members each part publishes. It sends GET requests only and never signs in, so it can't see your refusals or your caps. Publishing a member is your statement that the behaviour behind it is live.
 
 ### Part 1: payment handoff
 
-Publish:
+About a day of work for a service that already refuses requests for money. Publish:
 
 ```json
 "agent_auth": {
@@ -66,7 +66,7 @@ The check passes Payment handoff when `agent_auth.billing.pricing_uri` is an htt
 
 ### Part 2: spend limits
 
-Publish three more members, once the cap is enforced:
+About a day of mapping if you already enforce a cap on each agent registration or key that covers everything it can bill. Otherwise the cap itself is the work. Publish three more members, once the cap is enforced:
 
 ```json
 "agent_auth": {
@@ -92,7 +92,7 @@ Change:
 
 A service that already enforces per-key spend limits maps its fields onto these. One limit shared by every key on an account is `"applies_to": "account"` (section 2). A service with no cap today can publish part 1 now and part 2 when the cap is enforced. Agents tell people the cap exists, so don't publish one you don't enforce.
 
-The check passes Spend limits when `default_spend_cap` has the shape above (a currency code, a decimal string and a known `period`) and `limits_endpoint` and `manage_uri` are https URLs. A `default_spend_cap` without all of that, or only `owner_limits_uri`, passes partly. It can't see enforcement. Section 8 has the full list and how to test each.
+The check passes Spend limits when `default_spend_cap` has the shape above (a currency code, a decimal string and a known `period`), and `version`, an https `pricing_uri`, `limits_endpoint` and `manage_uri` come with it. A `default_spend_cap` without all of that, or only `owner_limits_uri`, passes partly. It can't see enforcement. Section 8 has the full list and how to test each.
 
 ### Test it
 
@@ -134,11 +134,11 @@ The service adds a `billing` member to the `agent_auth` block of its authorizati
 |---|---|---|
 | `version` | required | `"0.1"` |
 | `pricing_uri` | required | A public price list in Markdown or JSON. No sign-in. |
-| `default_spend_cap` | part 2 | The cap a new registration gets unless the person sets a different one. `period` is `total` (the registration's whole life), `day` (UTC day) or `month` (UTC calendar month). |
+| `default_spend_cap` | part 2 | The cap a new registration gets unless the person sets a lower one. `period` is `total` (the registration's whole life), `day` (UTC day) or `month` (UTC calendar month). |
 | `limits_endpoint` | part 2 | Returns a registration's current `limits` (section 2). |
 | `manage_uri` | part 2 | The page where the account owner sees and changes agent registrations (section 5). |
 | `default_spend_caps` | optional, part 2 | Every default cap, in the same shape, when a new registration gets more than one, such as $5 a day and $20 a month. `default_spend_cap` is then the one that would refuse first. |
-| `owner_limits_uri` | optional | For a service without part 2: the page where the owner sets spend limits on the account or its keys. |
+| `owner_limits_uri` | optional | For a service without part 2: the page where the owner sets spend limits on the account or its keys. That page, or `pricing_uri`, says which products those limits cover. |
 | `trial` | optional | The free allowance, given at most once per account. A registration on an account that already used it gets none. An allowance an `anonymous` registration uses before its claim is part of the trial, not in addition to it. Absent means no free allowance. |
 | `spend_cap_periods_supported` | optional | The periods a person may choose. Defaults to the period of `default_spend_cap`. |
 | `at_cap` | optional | What happens to work still running when a cap is reached. `pause`: it stops and keeps its state, and can resume. `stop`: it ends and its data is kept. `refuse`: the service only refuses new requests, and requests already running finish. Defaults to `refuse`. |
@@ -164,16 +164,16 @@ Sections 2, 3 and 5 apply to a service that publishes the part 2 members. A regi
 ```
 
 - `cap` is null only when the account owner has removed the cap (section 5).
-- `spent` is the list-price value of all usage the registration caused in the current period, however it is paid for (free credit, balance, plan or invoice), including work it started that is still running, as of the response or of `as_of` when present. It is null only when the service can't read it right now. A trial does not add to the cap: with $25 of free credit and a $20 cap, the agent can use $20.
+- `spent` is the list-price value of all usage counted against the cap in the current period: the registration's own, and that of any registration it shares a counter with (below), however it is paid for (free credit, balance, plan or invoice), including work it started that is still running, as of the response or of `as_of` when present. It is null only when the service can't read it right now. A trial does not add to the cap: with $25 of free credit and a $20 cap, the agent can use $20.
 - `resets_at` is when the next `day` or `month` period starts. It is null for `total`.
 - `as_of` is optional: when `spent` was last measured, for a meter that lags.
-- `applies_to` is optional. `registration`, the default, means this registration has a cap of its own. `account` means one cap is shared by every agent credential on the account, as some services do today. A service uses `account` only when its credentials already work that way. Agents treat both the same way.
+- `applies_to` is optional. `registration`, the default, means the cap counts agent registrations: this one and any it shares a counter with. `account` means the cap counts every credential on the account, the owner's own keys included, as some services do today. A service uses `account` only when its credentials already work that way. Agents treat both the same way.
 
 A registration can have more than one cap, such as $20 in total and $5 a day. `spend` is then the cap with the least left, the one that would refuse first, and `spend_caps` lists every cap in the same shape. An agent that reads only `spend` still stops in time.
 
 Unless `applies_to` is `account`, the cap belongs to the registration. Every credential issued for it shares that cap: access tokens, refresh tokens and any service-specific API key. It is separate from the account's balance, so a person with $500 of balance can hold an agent to $20.
 
-Caps survive re-registration. auth.md sends an agent back to register when its assertion expires or a token exchange fails. A registration that replaces an earlier one on the same account MUST inherit the earlier registration's caps and `spent`. That covers a v0.7 refresh, an `identity_assertion` for the same (`iss`, `sub`, `aud`), and a claim while another agent registration on the account is still live or inside its period. While both are live they share one counter, so together they spend no more than the cap. The claim page may lower inherited caps. Only the owner, at `manage_uri`, raises them.
+Caps survive re-registration. auth.md sends an agent back to register when its assertion expires or a token exchange fails. A registration that replaces an earlier one on the same account MUST inherit the earlier registration's caps and `spent`. That covers a v0.7 refresh, an `identity_assertion` for the same (`iss`, `sub`, `aud`), and a claim while another agent registration on the account is still live or inside its period. While both are live they share one counter, so together they spend no more than the cap. In effect, agent registrations on one account that overlap in time are held to one set of caps, so a new agent can't start from zero. The claim page may lower inherited caps. Only the owner, at `manage_uri`, raises them.
 
 `limits` appears in four places:
 
@@ -204,7 +204,7 @@ A service:
 
 1. MUST attribute everything billable that a registration starts to that registration, for the thing's whole life, including after its credential is revoked or expires.
 2. MUST refuse a request that would start billable work the remaining cap can't cover, before creating anything, with a refusal as in section 4. How far ahead it estimates, whether one call or ten minutes of compute, is the service's choice, and it SHOULD document it. It SHOULD hold each admitted request's estimate against the cap until the request settles, so parallel requests can't each pass against the same remainder. A service that doesn't hold estimates absorbs what they spend past the cap (rule 4).
-3. MUST stop running work from accruing before `spent` passes the cap, in the way `at_cap` declares. Reaching a cap MUST NOT delete the person's data or resources.
+3. MUST stop running work from accruing before `spent` passes the cap, in the way `at_cap` declares, except what `refuse` lets finish (rule 4). Reaching a cap MUST NOT delete the person's data or resources.
 4. MUST NOT bill the person for usage past the cap caused by meter lag, outages, rounding or requests admitted before the cap was reached. The service absorbs it. The simplest way is to credit back what the registration's usage cost above its cap as soon as the meter settles. On a prepaid balance, an overrun that empties the balance SHOULD NOT stop the person's other work before that credit lands. Storage that paused work keeps using SHOULD count against the cap like any other usage. If the service bills it past the cap, it MUST say so at `pricing_uri` (open question 6).
 5. SHOULD check a resume of paused work against the cap of the registration that started the work, whoever asks for the resume. A capped registration MUST NOT be able to cause billable usage that no cap counts, such as resuming work the person started themselves, or using a product the service's limits don't meter. Refusing that request, as a permission error without `billing`, is enough. A service whose limits count only some products can instead give agent registrations only the scopes those products need.
 6. MUST NOT raise or lift a cap because money arrived. A payment, plan or top-up raises the balance, not the cap. Only the owner raises a cap (section 5).
@@ -250,7 +250,7 @@ Cache-Control: no-store
 - `url` is required except for `claim_required`. It MUST be https, on the same site as the `issuer` or the protected resource, or on an origin in `agent_auth.billing.url_origins`.
 - `needed` is the amount that would let this exact request through. A service SHOULD send it when it can compute it. It is not a minimum purchase. `pricing_uri` is optional.
 - A service SHOULD use the reasons above where they fit, and MAY use another `reason` when none does. It MAY add members to `billing`, such as the smallest purchase that clears the refusal. Agents ignore members they don't recognize, and treat an unrecognized `reason` as one only a person can clear, at `billing.url`.
-- `error` and its human-readable description follow the service's existing error format. The example uses auth.md's (`error`, `error_description`). Part 1 above shows `billing` beside an `errors` array. A service whose errors follow JSON:API, which allows no other top-level members, MAY put `billing` and `limits` in the top-level `meta` object instead.
+- `error` and its human-readable description follow the service's existing error format. The example uses auth.md's (`error`, `error_description`). Part 1 above shows `billing` beside an `errors` array. A service whose errors follow JSON:API, which allows no other top-level members, MAY put `billing` and `limits` in the top-level `meta` object instead. If both places carry `billing`, the top-level one counts.
 - A service without part 2 whose owners set spend limits themselves (`owner_limits_uri`) answers a refusal under such a limit with `spend_cap_reached`, a `url` where the owner changes the limit, and `limits` when it can compute them.
 - New APIs SHOULD answer 402, for a cap as well as for a balance: in both cases only a person can unblock the request, and common HTTP clients don't retry a 402 on their own. A service with existing clients MAY keep its current status code and `error` value and add `billing` next to them, but a refusal for money MUST NOT use a 2xx, 401 or 429 status, which auth.md tells agents to re-register on or retry.
 - A `credit_exhausted` or `plan_required` refusal MAY also carry a machine-payment challenge, such as x402 or the HTTP Payment authentication scheme. A `spend_cap_reached` or `claim_required` refusal MUST NOT, because paying never changes a cap.
@@ -266,7 +266,7 @@ Cache-Control: no-store
 
 ## 6. What the agent does
 
-1. Before registering, the agent MUST read `agent_auth.billing` when present. At auth.md's Step 3 consent it MUST tell the person the free allowance, the default cap and where the prices are, for example: "Service gives $25 of free credit with no card. I can use up to $20 there unless you raise it." When `billing` has no `default_spend_cap`, it tells the person the service sets no spend cap on what it does. For `anonymous` registrations, which skip that consent step, it tells the person when it reports the sign-up. If the person names a lower limit, the agent sends it as `requested_spend_cap`.
+1. Before registering, the agent MUST read `agent_auth.billing` when present. At auth.md's Step 3 consent it MUST tell the person the free allowance, the default cap and where the prices are, for example: "Service gives $25 of free credit with no card. I can use up to $20 there unless you raise it." When `billing` has no `default_spend_cap`, it tells the person the service sets no spend cap on what it does, and, when `owner_limits_uri` is present, that they can set one there for the products that page names. For `anonymous` registrations, which skip that consent step, it tells the person when it reports the sign-up. If the person names a lower limit, the agent sends it as `requested_spend_cap`.
 2. The agent MUST read prices from `pricing_uri`, and never quote a price, credit or cap from memory.
 3. Before costly work, the agent SHOULD call `GET limits_endpoint`, when the service publishes one.
 4. When a non-2xx response carries a `billing` object at the top level or in the top-level `meta`, the agent applies this rule before auth.md's retry rules. It MUST stop that action, tell the person the reason and the amount needed, and give them `billing.url` exactly as received, after checking it against section 4. For `claim_required` it runs auth.md's Step 4 instead. If a `credit_exhausted` or `plan_required` refusal also carries a machine-payment challenge, and the person has already authorized the agent to pay that way, the agent MAY pay it within that authorization instead. Otherwise it MUST NOT retry in a loop, enter payment details, or open `billing.url` in a browser it controls. It MUST NOT register again, or use another account, to get around a cap or a spent free allowance. Registering again because auth.md requires it is fine, and the cap carries over (section 2).
@@ -291,7 +291,7 @@ How to check: P means a public GET is enough. C needs a credential from a test r
 | S1 | 1, 2 | `agent_auth.billing` is present, with `version` and an https `pricing_uri`. For part 2, also `default_spend_cap`, `limits_endpoint` and `manage_uri`, all three. | P |
 | S2 | 1 | `pricing_uri` answers 200 with Markdown or JSON, without sign-in. | P |
 | S3 | 2 | `limits_endpoint` answers 401 without a credential. | P |
-| S4 | 2 | The registration response carries `limits` with `spend_caps`, and claim completion (v0.7 `/claim/complete`, or the v0.6 claim-grant token response) carries `limits`. For `service_auth`, the registration response is the same for an address with an account as for one without. | C |
+| S4 | 2 | The registration response carries `limits` with `spend_caps`, and claim completion (v0.7 `/claim/complete`, the v0.6 claim-grant token response, or the response that first gives the agent its API credential) carries `limits`. For `service_auth`, the registration response is the same for an address with an account as for one without. | C |
 | S5 | 2 | `GET limits_endpoint` returns `limits` for the registration's API credential, refuses its claim token, and `spent` grows with use, free credit included. | C |
 | S6 | 2 | A new registration's cap is no higher than `default_spend_cap`, and a cap set on the claim page is no higher than it either. A `requested_spend_cap` with a supported period is added as a further cap and listed in `spend_caps`, and a higher one changes nothing. | C |
 | S7 | 2 | Past the cap, a start is refused with a non-2xx status (not 401 or 429), `billing.reason` `spend_cap_reached`, a `url` that passes section 4, and `needed` when the service can compute it, and nothing is created. | T |
@@ -308,13 +308,13 @@ How to check: P means a public GET is enough. C needs a credential from a test r
 
 | ID | Agent requirement |
 |---|---|
-| A1 | Shows the free allowance and default cap at consent, and sends a lower limit when the person names one. |
+| A1 | Shows the free allowance and default cap at consent (or that there is none, and `owner_limits_uri` when present), and sends a lower limit when the person names one. |
 | A2 | Reads prices from `pricing_uri`. |
-| A3 | On a non-2xx response with a top-level (or `meta`) `billing`: stops, checks the URL and shows it as given, doesn't loop, doesn't enter payment details, doesn't register again to get around the cap. |
+| A3 | On a non-2xx response with a top-level (or `meta`) `billing`: stops, checks the URL and shows it as given, doesn't loop, doesn't enter payment details (unless the refusal carries a machine-payment challenge the person already authorized), doesn't register again to get around the cap. |
 | A4 | Reads `limits_endpoint` again before retrying. |
 | A5 | After sending `requested_spend_cap`, checks it appears in `spend_caps`, and tells the person if it doesn't. |
 
-S1 to S3 need only GET requests, so a public scanner can check them alongside auth.md's own discovery checks. The agent sign-up check tests part of S1: an https `pricing_uri` passes its Payment handoff check, and a `default_spend_cap` in the shape of section 1 with https `limits_endpoint` and `manage_uri` passes Spend limits. It doesn't yet fetch S2 or S3. A4 and A5 apply to part 2 only.
+S1 to S3 need only GET requests, so a public scanner can check them alongside auth.md's own discovery checks. The agent sign-up check tests part of S1: an https `pricing_uri` passes its Payment handoff check, and a `default_spend_cap` in the shape of section 1 with https `limits_endpoint` and `manage_uri` passes Spend limits, when `version` and an https `pricing_uri` come with it. It doesn't yet fetch S2 or S3. A4 and A5 apply to part 2 only.
 
 ## Implementations
 
