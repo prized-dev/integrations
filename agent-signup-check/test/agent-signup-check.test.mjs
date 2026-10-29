@@ -365,3 +365,62 @@ test('weekly refuses a --client-ip that is not an address', async () => {
   fs.writeFileSync(path.join(root, 'targets.json'), JSON.stringify(TARGETS));
   await assert.rejects(weekly({ root, out: root, clientIps: ['not-an-ip'], date: '2026-11-04', log: () => {} }), /needs an IP address/);
 });
+
+// ---------------------------------------------------------------------------------------
+// Spend limits and payment handoff read agent_auth.billing (auth-md-spend-limits section 1).
+
+const BILLING_SITE = 'two.example';
+const billingSite = (billing) => {
+  const json = (o, status = 200, headers = {}) => ({ status, headers: { 'content-type': 'application/json', ...headers }, body: JSON.stringify(o) });
+  return {
+    'https://api.two.example/v1/me': json({ error: 'invalid_token' }, 401, { 'www-authenticate': 'Bearer resource_metadata="https://api.two.example/.well-known/oauth-protected-resource"' }),
+    'https://api.two.example/.well-known/oauth-protected-resource': json({ resource: 'https://api.two.example', authorization_servers: ['https://auth.two.example'] }),
+    'https://auth.two.example/.well-known/oauth-authorization-server': json({
+      issuer: 'https://auth.two.example',
+      agent_auth: { identity_endpoint: 'https://auth.two.example/agent/identity', identity_types_supported: ['service_auth'], ...(billing === undefined ? {} : { billing }) },
+    }),
+  };
+};
+const verdicts = async (billing) => {
+  const r = await checkSite(BILLING_SITE, { api: 'https://api.two.example/v1/me', get: stub(billingSite(billing)) });
+  const by = Object.fromEntries(r.checks.map((c) => [c.id, c]));
+  return { limits: by.limits.status, payment: by.payment.status, why: by.limits.reason };
+};
+const PART1 = { version: '0.1', pricing_uri: 'https://two.example/pricing.md' };
+const PART2 = {
+  ...PART1,
+  default_spend_cap: { amount: { currency: 'USD', value: '20.00' }, period: 'month' },
+  limits_endpoint: 'https://api.two.example/agent/limits',
+  manage_uri: 'https://two.example/settings/agents',
+};
+
+test("the extension's part 1 and part 2 examples score as the spec says", async () => {
+  assert.deepEqual(await verdicts(undefined).then(({ limits, payment }) => [limits, payment]), ['fail', 'fail']);
+  assert.deepEqual(await verdicts(PART1).then(({ limits, payment }) => [limits, payment]), ['fail', 'pass']);
+  assert.deepEqual(await verdicts(PART2).then(({ limits, payment }) => [limits, payment]), ['pass', 'pass']);
+});
+
+test('a default_spend_cap out of shape, or without its two URLs, passes only partly', async () => {
+  for (const [cap, extra, why] of [
+    [true, {}, /not an object/],
+    [null, {}, /not an object/],
+    [{ amount: null, period: 'month' }, {}, /currency/],
+    [{ amount: { currency: 'usd', value: '20.00' }, period: 'month' }, {}, /currency/],
+    [{ amount: { currency: 'USD', value: 20 }, period: 'month' }, {}, /decimal string/],
+    [{ amount: { currency: 'USD', value: '-5' }, period: 'month' }, {}, /decimal string/],
+    [{ amount: { currency: 'USD', value: '20.00' }, period: 'week' }, {}, /period/],
+    [PART2.default_spend_cap, { manage_uri: undefined }, /manage_uri/],
+    [PART2.default_spend_cap, { limits_endpoint: 'http://api.two.example/agent/limits' }, /limits_endpoint/],
+  ]) {
+    const v = await verdicts({ ...PART2, default_spend_cap: cap, ...extra });
+    assert.equal(v.limits, 'partial', JSON.stringify(cap));
+    assert.match(v.why, why);
+  }
+});
+
+test('owner_limits_uri without a default cap passes spend limits partly', async () => {
+  const v = await verdicts({ ...PART1, owner_limits_uri: 'https://two.example/settings/limits' });
+  assert.equal(v.limits, 'partial');
+  assert.match(v.why, /owner_limits_uri/);
+  assert.equal(v.payment, 'pass');
+});

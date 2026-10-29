@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Agent sign-up check, v0.2.1. Prized (https://prized.dev/agent-signup-check).
+// Agent sign-up check, v0.2.2. Prized (https://prized.dev/agent-signup-check).
 // Copyright 2026 Prized. Licensed under the Apache License, Version 2.0:
 // https://www.apache.org/licenses/LICENSE-2.0
 //
@@ -36,7 +36,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import zlib from 'node:zlib';
 
-export const VERSION = '0.2.1';
+export const VERSION = '0.2.2';
 export const USER_AGENT = `PrizedAgentSignupCheck/${VERSION} (+https://prized.dev/agent-signup-check; read-only GET)`;
 export const MAX_BYTES = 1024 * 1024;
 export const TIMEOUT_MS = 8000;
@@ -672,6 +672,21 @@ function aboutAgentAuth(text) {
   return /\bagents?\b/i.test(body) && /\bapi[ _-]?keys?\b|\baccess[ _-]token\b|\bbearer\b|\bcredentials?\b|\boauth\b|\bregist(?:er|ration)\b|\bsign[ -]?up\b/i.test(body);
 }
 
+/** Why agent_auth.billing.default_spend_cap isn't one an agent can rely on (null when it is):
+ *  auth-md-spend-limits section 1 wants {amount: {currency, value}, period} plus the two part 2
+ *  URLs that come with it. */
+export function spendCapProblem(billing) {
+  const cap = billing && billing.default_spend_cap;
+  if (!cap || typeof cap !== 'object' || Array.isArray(cap)) return 'it is not an object';
+  const a = cap.amount;
+  if (!a || typeof a !== 'object' || typeof a.currency !== 'string' || !/^[A-Z]{3}$/.test(a.currency)) return 'its amount has no ISO 4217 currency';
+  if (typeof a.value !== 'string' || !/^\d{1,15}(?:\.\d{1,12})?$/.test(a.value)) return 'its amount value is not a decimal string';
+  if (!['total', 'day', 'month'].includes(cap.period)) return 'its period is not total, day or month';
+  const missing = ['limits_endpoint', 'manage_uri'].filter((k) => !httpsUrl(billing[k]));
+  if (missing.length) return `it comes without an https ${missing.join(' or ')}`;
+  return null;
+}
+
 function moneyKeys(obj, prefix = '', depth = 0, out = []) {
   if (!obj || typeof obj !== 'object' || depth > 3) return out;
   for (const [k, v] of Object.entries(obj)) {
@@ -982,10 +997,15 @@ export async function checkSite(input, opts = {}) {
     const budgets = prm && (prm.budget_units || prm.usage_endpoint);
     const vendor = [...moneyKeys(agentAuth, 'agent_auth'), ...moneyKeys(prm && { ...prm, authorization_servers: undefined }, 'prm')]
       .filter((k) => !/^agent_auth\.billing/.test(k));
-    if (billing && billing.default_spend_cap) {
+    const capProblem = billing && 'default_spend_cap' in billing ? spendCapProblem(billing) : null;
+    if (billing && 'default_spend_cap' in billing && !capProblem) {
       set('limits', 'pass', 'agent_auth.billing declares a default spend cap', { url: asR.url, default_spend_cap: billing.default_spend_cap, periods: billing.spend_cap_periods_supported || null });
     } else if (budgets) {
       set('limits', 'pass', 'Resource metadata declares budgets (AAuth budget_units / usage_endpoint)', { url: prmR.url });
+    } else if (capProblem) {
+      set('limits', 'partial', `agent_auth.billing declares default_spend_cap, but ${capProblem} (auth-md-spend-limits section 1)`, { url: asR.url });
+    } else if (billing && httpsUrl(billing.owner_limits_uri)) {
+      set('limits', 'partial', 'agent_auth.billing names owner_limits_uri: the owner can set spend limits, but agent registrations get no default cap', { url: asR.url, owner_limits_uri: billing.owner_limits_uri });
     } else if (vendor.length) {
       set('limits', 'partial', `Metadata carries vendor fields about money or limits (${vendor.slice(0, 4).join(', ')}), not a standard spend cap`, { fields: vendor });
     } else {
