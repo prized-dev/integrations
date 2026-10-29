@@ -292,6 +292,12 @@ async def test_users():
     with pytest.raises(SandboxUserUnsupportedError):
         await env.exec(["whoami"], user="root")
     assert (await env.exec(["true"], user="prized")).success
+    await env.write_file("u.txt", "x", user="prized")
+    assert await env.read_file("u.txt", user="prized") == "x"
+    with pytest.raises(SandboxUserUnsupportedError):
+        await env.read_file("u.txt", user="root")
+    with pytest.raises(SandboxUserUnsupportedError):
+        await env.write_file("u.txt", "y", user="root")
 
 
 async def test_cwd_relative_and_default():
