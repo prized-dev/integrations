@@ -1,0 +1,4 @@
+#!/bin/sh
+# Stand-in for systemctl: records each call in $STUB_LOG and succeeds.
+echo "systemctl $*" >> "$STUB_LOG"
+exit 0

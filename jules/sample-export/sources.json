@@ -1,0 +1,25 @@
+[
+  {
+    "sourceId": "github/expressjs/cors",
+    "githubSource": {
+      "repoOwner": "expressjs",
+      "repoName": "cors",
+      "defaultBranch": "master",
+      "isPrivate": false,
+      "branches": [
+        "master"
+      ]
+    },
+    "sourceStatus": "READY"
+  },
+  {
+    "sourceId": "github/jshttp/cookie",
+    "githubSource": {
+      "repoOwner": "jshttp",
+      "repoName": "cookie",
+      "defaultBranch": "master",
+      "isPrivate": false
+    },
+    "sourceStatus": "READY"
+  }
+]

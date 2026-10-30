@@ -1,0 +1,8 @@
+#!/bin/sh
+# Stand-in for the GitHub CLI: signed in; `pr create` is recorded in $STUB_LOG.
+echo "gh $*" >> "$STUB_LOG"
+case "$1" in
+  auth) exit 0 ;;
+  pr) [ "$2" = create ] && exit 0 ;;
+esac
+exit 1

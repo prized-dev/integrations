@@ -1,0 +1,14 @@
+{
+  "environmentVariables": [
+    {
+      "sourceId": "github/expressjs/cors",
+      "name": "CORS_TEST_ORIGIN",
+      "value": "https://app.example.test"
+    },
+    {
+      "sourceId": "github/expressjs/cors",
+      "name": "FAKE_SERVICE_TOKEN",
+      "value": "fake-0000-not-a-real-token"
+    }
+  ]
+}

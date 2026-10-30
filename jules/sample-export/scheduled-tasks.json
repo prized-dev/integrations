@@ -1,0 +1,42 @@
+{
+  "scheduledTasks": [
+    {
+      "id": "6021784455",
+      "sourceId": "github/expressjs/cors",
+      "startingBranch": "master",
+      "title": "Edge-case test",
+      "prompt": "Run the test suite. If it passes, add one test for a CORS edge case the suite doesn't cover yet (for example a preflight request with no Access-Control-Request-Headers). Keep the change small.",
+      "schedule": {
+        "frequency": "DAILY",
+        "timeOfDay": {
+          "hours": 9,
+          "minutes": 30
+        },
+        "timeZone": "America/Los_Angeles"
+      },
+      "state": "ACTIVE",
+      "lastRunTime": "2026-10-29T16:30:04Z",
+      "nextRunTime": "2026-10-30T16:30:00Z"
+    },
+    {
+      "id": "6021784456",
+      "sourceId": "github/expressjs/cors",
+      "startingBranch": "master",
+      "title": "Bolt",
+      "prompt": "You are \"Bolt\" - a performance-obsessed agent who makes the codebase faster, one optimization at a time.\n\nFind ONE small, measurable performance improvement in lib/, implement it, and run the tests. Record what you learned in .jules/bolt.md. If you can't find one worth making, change nothing.",
+      "schedule": {
+        "frequency": "WEEKLY",
+        "daysOfWeek": [
+          "MONDAY",
+          "THURSDAY"
+        ],
+        "timeOfDay": {
+          "hours": 7
+        },
+        "timeZone": "UTC"
+      },
+      "state": "PAUSED",
+      "lastRunTime": "2026-10-23T07:00:11Z"
+    }
+  ]
+}

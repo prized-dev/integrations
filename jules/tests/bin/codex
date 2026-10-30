@@ -1,0 +1,7 @@
+#!/bin/sh
+# Stand-in for Codex exec: saves its prompt, leaves one uncommitted change.
+echo "codex $1 $2" >> "$STUB_LOG"
+printf '%s' "$3" > "$STUB_DIR/prompt.txt"
+pwd > "$STUB_DIR/agent-cwd.txt"
+echo "a change from the scheduled run" > agent-was-here.txt
+exit 0

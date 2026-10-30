@@ -1,0 +1,33 @@
+[
+  {
+    "userActivity": {
+      "freeFormText": {
+        "text": "Make isOriginAllowed faster for long origin lists."
+      }
+    }
+  },
+  {
+    "agentActivity": {
+      "planGenerated": {
+        "steps": [
+          {
+            "index": 0,
+            "title": "Benchmark isOriginAllowed"
+          },
+          {
+            "index": 1,
+            "title": "Use a Set for string origins"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "agentActivity": {
+      "runShell": {
+        "command": "npm test",
+        "exitCode": 0
+      }
+    }
+  }
+]

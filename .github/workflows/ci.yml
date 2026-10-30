@@ -45,6 +45,7 @@ jobs:
           - { dir: hermes, python: "3.12" }
           - { dir: dify, python: "3.12" }
           - { dir: cursor }
+          - { dir: jules, python: "3.12" }
           - { dir: claude-managed-agents }
           - { dir: langchain-js, node: "22" }
           - { dir: langchain-js, node: "24" }

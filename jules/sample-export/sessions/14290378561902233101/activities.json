@@ -1,0 +1,37 @@
+[
+  {
+    "userActivity": {
+      "freeFormText": {
+        "text": "Run the test suite. If it passes, add one test for a CORS edge case the suite doesn't cover yet."
+      }
+    }
+  },
+  {
+    "agentActivity": {
+      "planGenerated": {
+        "steps": [
+          {
+            "index": 0,
+            "title": "Run npm test"
+          },
+          {
+            "index": 1,
+            "title": "Add a preflight test"
+          },
+          {
+            "index": 2,
+            "title": "Run the tests again and submit"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "agentActivity": {
+      "runShell": {
+        "command": "npm test",
+        "exitCode": 0
+      }
+    }
+  }
+]

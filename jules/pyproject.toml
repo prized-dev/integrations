@@ -1,0 +1,20 @@
+# Lint settings only: jules_import.py is a single standard-library script, not a package.
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "PL", "RUF"]
+ignore = [
+    "S603", "S607",  # it runs git, gh, systemctl and the agents by name, with argument lists
+    "S310",          # urlopen on fixed https URLs (nodejs.org, go.dev)
+    "S202",          # tar archives from nodejs.org and go.dev, extracted with the "data" filter where Python has it
+    "PLR0911", "PLR0912", "PLR0913", "PLR0915", "PLR2004",
+    "UP045", "UP007",  # keep X | None in annotations (from __future__ import annotations)
+    "PLW1510",       # return codes are checked by hand
+    "PLW2901",
+    "E501",          # the formatter wraps code; the generated bash template keeps its long lines
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["S101", "S108", "E402", "PLC0415", "RUF059"]
