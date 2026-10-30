@@ -52,6 +52,8 @@ All keys go under `[sandbox.providers.prized.config]`. Unknown keys are refused.
 - **Ports:** Prized sandboxes have no public port URLs yet. Envs and agents reach each other over them, so `deploy_env` and `deploy_agent` wait on them too.
 - **Network policy:** Prized has no egress allowlists yet, so a policy that restricts egress is refused with `NetworkPolicyUnsupportedError`, and a fallback chain moves on to its next provider.
 - **Images:** a per-call `image` is refused; sandboxes boot the template, and OCI images run under Docker inside. `boot_mode` is ignored with a warning.
+- **Run time:** up to 7 days a sandbox; a longer `timeout` is refused before anything is created.
+- **Free tier:** a workspace on free credit alone gets sandboxes of at most 2 vCPU, 4 GB and 60 minutes, under agent-env's defaults (8 GiB, 2 hours), so set `memory_mb` and `ttl_seconds` on the steps, or add funds.
 - **Platform:** linux/amd64, no GPUs.
 
 ## Tests
