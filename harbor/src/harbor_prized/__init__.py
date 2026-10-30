@@ -3,4 +3,4 @@
 from harbor_prized._environment import PrizedEnvironment
 
 __all__ = ["PrizedEnvironment"]
-__version__ = "0.3.0"
+__version__ = "0.4.0"
