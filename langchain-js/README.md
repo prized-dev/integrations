@@ -13,7 +13,7 @@ npm install @prized/langchain deepagents @langchain/anthropic
 export PRIZED_API_KEY=dcp_...   # prized.dev/dashboard/workspace/api-keys?via=langchain-js
 ```
 
-No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=langchain-js. It can also install the Prized skill with `npx skills add https://prized.dev -g -y` (it should ask you first), so it knows when and how to use Prized the next time you ask for a sandbox.
+No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=langchain-js. It can also install the Prized skill with `npx skills add prized-dev/skills -g -y` (it should ask you first), so it knows when and how to use Prized the next time you ask for a sandbox.
 
 Needs Node.js 22 or later.
 

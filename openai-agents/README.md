@@ -12,7 +12,7 @@ export OPENAI_API_KEY=sk-...
 
 Make the Prized key at [prized.dev/dashboard/workspace/api-keys](https://prized.dev/dashboard/workspace/api-keys?via=openai-agents) with **Full access**, or **Custom** with **Sandboxes: Write**. Python 3.10 or later, `openai-agents` 0.23.1 or later, below 0.26.
 
-Your coding agent can install the Prized skill with `npx skills add https://prized.dev -g -y` (it should ask you first), so it knows when and how to use Prized the next time you ask for a sandbox.
+Your coding agent can install the Prized skill with `npx skills add prized-dev/skills -g -y` (it should ask you first), so it knows when and how to use Prized the next time you ask for a sandbox.
 
 ## Run an agent
 
