@@ -72,6 +72,7 @@ INLINE_LIMIT = 60_000  # longer scripts are uploaded instead of passed inline
 RUNTIME_FAILED = 125  # runtime.py exits with this, and says "prized runtime:"
 _ENV_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 _RUNTIME_SCRIPT = (Path(__file__).parent / "_runtime.py").read_text()
+_THROTTLED = re.compile(r"TOOMANYREQUESTS|429 Too Many Requests|rate limit", re.IGNORECASE)
 _AUTH_ERRORS = ("missing_api_key", "invalid_api_key", "unauthorized", "token_expired", "key_access_denied")
 
 
@@ -101,27 +102,36 @@ class PrizedEnvironmentConfig(BaseModel):
     startup_timeout: int = 900
     """Seconds to create the sandbox and unpack the image, per attempt."""
     pull_attempts: int = 3
-    """Attempts to pull and unpack the image (registries throttle and drop connections)."""
+    """Attempts to pull and unpack the image (connections drop)."""
+    pull_rate_limit_wait: int = 1800
+    """Seconds to keep waiting while the registry says too many requests (Docker Hub allows
+    100 anonymous pulls an hour per IP address), on top of ``pull_attempts``."""
+    api_max_retries: int = 8
+    """Retries of a Prized API call the API refused before it reached the sandbox (rate limits)."""
 
 
 def unpack_command(image: str, root: str, crane: str = "./crane") -> str:
-    """Bash that unpacks ``image`` into ``root``, keeping its file modes.
+    """Bash that pulls ``image`` once and unpacks it into ``root``, keeping its file modes.
 
-    It fails if crane fails (a pull cut short must not pass as an image), or if
-    tar reports anything but the benign errors above. Hard links that
+    One ``crane pull`` to a tarball is one pull for a registry's rate limit (Docker Hub
+    counts manifest requests); the export, the image's config and any repair read the
+    tarball. It fails if the pull or export fails (a pull cut short must not pass as an
+    image), or if tar reports anything but the benign errors above. Hard links that
     ``crane export`` left dangling are written by ``runtime.py --repair-hardlinks``.
     """
     q = shlex.quote
     return (
-        f"set +e; {crane} export --platform linux/amd64 {q(image)} - | "
+        f"rm -f image.tar; set +e; {crane} pull --platform linux/amd64 {q(image)} image.tar 2>pull.err; s=$?; set -e; "
+        'if [ "$s" != 0 ]; then tail -3 pull.err >&2; rm -f image.tar; exit 1; fi; '
+        f"set +e; {crane} export - - < image.tar | "
         f"tar --no-same-owner --preserve-permissions -x -C {q(root)} 2>tar.err; "
         's="${PIPESTATUS[0]} ${PIPESTATUS[1]}"; set -e; '
         'if [ "${s% *}" != 0 ]; then echo "crane export failed" >&2; tail -5 tar.err >&2; exit 1; fi; '
-        f'if [ "${{s#* }}" != 0 ]; then '
+        'if [ "${s#* }" != 0 ]; then '
         f"if grep -v -E {q(BENIGN_TAR_ERRORS)} tar.err | grep -v -F 'Cannot hard link to' | grep -q .; then "
         f"grep -v -E {q(BENIGN_TAR_ERRORS)} tar.err | head -5 >&2; df -h ~ >&2; exit 1; fi; "
-        f"if grep -q -F 'Cannot hard link to' tar.err; then "
-        f"python3 {RUNTIME} --repair-hardlinks {q(image)} tar.err; fi; fi; "
+        "if grep -q -F 'Cannot hard link to' tar.err; then "
+        f"python3 {RUNTIME} --repair-hardlinks image.tar tar.err; fi; fi; "
     )
 
 
@@ -149,7 +159,7 @@ def setup_command(image: str) -> str:
         f"> {ROOT}/etc/apt/apt.conf.d/99runtime-sandbox-user; fi; "
         f"if [ -d {ROOT}/etc/dpkg ]; then mkdir -p {ROOT}/etc/dpkg/dpkg.cfg.d && "
         f"echo {q(DPKG_HOOK)} > {ROOT}/etc/dpkg/dpkg.cfg.d/99runtime-modes; fi; "
-        f"./crane config --platform linux/amd64 {q(image)} | tr -d '\\n'; echo; uname -snrvm"
+        f"python3 {RUNTIME} --image-config image.tar; rm -f image.tar; uname -snrvm"
     )
 
 
@@ -198,6 +208,7 @@ class PrizedEnvironment:
                 labels={"minisweagent": "1", **self.config.labels},
                 max_runtime_min=self.config.max_runtime_min,
                 timeout=min(600, self.config.startup_timeout),
+                max_retries=self.config.api_max_retries,
             )
         except PrizedError as exc:
             if exc.code in _AUTH_ERRORS:
@@ -214,9 +225,10 @@ class PrizedEnvironment:
 
     def _prepare_image(self) -> None:
         assert self.sandbox is not None
-        started, error = time.monotonic(), ""
+        started, error, attempt, throttled = time.monotonic(), "", 0, 0.0
         self.sandbox.files.write(RUNTIME, _RUNTIME_SCRIPT)
-        for attempt in range(1, max(1, self.config.pull_attempts) + 1):
+        while True:
+            attempt += 1
             try:
                 result = self.sandbox.exec(
                     setup_command(self.config.image), timeout=self.config.startup_timeout, full_output=True
@@ -232,12 +244,20 @@ class PrizedEnvironment:
                     self._read_uname(uname)
                     break
                 error = (result.stderr or result.stdout or "").strip()[-2000:]
-            if attempt < self.config.pull_attempts:
-                self.logger.warning(f"Could not unpack {self.config.image} (attempt {attempt}): {error}")
-                time.sleep(min(60, 10 * attempt))
-        else:
-            raise RuntimeError(f"Could not unpack {self.config.image} in the sandbox: {error}")
+            if _THROTTLED.search(error) and throttled < self.config.pull_rate_limit_wait:
+                pause = min(300.0, 30.0 * 2 ** min(throttled // 60, 3))
+                self.logger.warning(f"{self.config.image}: the registry is rate limiting pulls; waiting {pause:.0f} s")
+                time.sleep(pause)
+                throttled += pause
+                attempt -= 1  # not counted against pull_attempts
+                continue
+            if attempt >= self.config.pull_attempts:
+                raise RuntimeError(f"Could not unpack {self.config.image} in the sandbox: {error}")
+            self.logger.warning(f"Could not unpack {self.config.image} (attempt {attempt}): {error}")
+            time.sleep(min(60, 10 * attempt))
         self.timings["image_s"] = time.monotonic() - started
+        if throttled:
+            self.timings["pull_throttled_s"] = throttled
 
     def _read_config(self, line: str) -> None:
         config = (json.loads(line or "{}") or {}).get("config") or {}

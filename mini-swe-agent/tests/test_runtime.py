@@ -198,18 +198,18 @@ def test_a_command_that_cannot_enter_is_removed_and_reported(tmp_path, monkeypat
 
 
 def test_open_files_limit_is_raised_to_the_hard_limit():
-    code = (
-        "import resource; from minisweagent_prized import _runtime as r; r._raise_open_files_limit(); "
-        "s, h = resource.getrlimit(resource.RLIMIT_NOFILE); print(s == h)"
-    )
+    # In a child process, as runtime.py runs: lower the soft limit, then let the runtime raise it.
     _soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
     low = 256 if hard == resource.RLIM_INFINITY else min(256, hard)
-    out = subprocess.run(
-        [sys.executable, "-c", f"import resource; resource.setrlimit(resource.RLIMIT_NOFILE, ({low}, {hard})); {code}"],
-        capture_output=True,
-        text=True,
-        check=True,
+    code = (
+        "import importlib.util, resource, sys\n"
+        f"resource.setrlimit(resource.RLIMIT_NOFILE, ({low}, {hard}))\n"
+        f"spec = importlib.util.spec_from_file_location('rt', {runtime.__file__!r})\n"
+        "rt = importlib.util.module_from_spec(spec); spec.loader.exec_module(rt)\n"
+        "rt._raise_open_files_limit()\n"
+        "s, h = resource.getrlimit(resource.RLIMIT_NOFILE); print(s == h)\n"
     )
+    out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
     assert out.stdout.strip() == "True"
 
 
@@ -223,13 +223,6 @@ def test_failed_hardlinks_are_read_in_both_quote_styles():
         "opt/pkgs/x/a.py": "opt/envs/t/x/a.py",
         "opt/pkgs/x/b.py": "opt/envs/t/x/b.py",
     }
-
-
-def test_repository_drops_tag_and_digest():
-    assert runtime._repository("swebench/sweb.eval.x86_64.a:latest") == "swebench/sweb.eval.x86_64.a"
-    assert runtime._repository("localhost:5000/a/b:v1") == "localhost:5000/a/b"
-    assert runtime._repository("ghcr.io/x/y@sha256:abc") == "ghcr.io/x/y"
-    assert runtime._repository("alpine") == "alpine"
 
 
 def _layer(path, entries):
@@ -249,47 +242,58 @@ def _layer(path, entries):
                 tar.addfile(info, io.BytesIO(b""))
 
 
+def _saved_image(tmp_path, layers):
+    """A ``crane pull`` (docker save) tarball with the given layers, like the sandbox pulls."""
+    import tarfile
+
+    names = []
+    for i, entries in enumerate(layers):
+        _layer(tmp_path / f"l{i}.tar.gz", entries)
+        names.append(f"l{i}.tar.gz")
+    (tmp_path / "cfg").write_text(json.dumps({"config": {"Env": ["A=1"], "WorkingDir": "/testbed/"}}))
+    (tmp_path / "manifest.json").write_text(json.dumps([{"Config": "cfg", "Layers": names}]))
+    image = tmp_path / "image.tar"
+    with tarfile.open(image, "w") as tar:
+        for name in ["manifest.json", "cfg", *names]:
+            tar.add(tmp_path / name, arcname=name)
+    return str(image)
+
+
+def test_image_config_is_read_from_the_tarball(tmp_path):
+    image = _saved_image(tmp_path, [[("a", "file", b"x")]])
+    assert json.loads(runtime.image_config(image)) == {"config": {"Env": ["A=1"], "WorkingDir": "/testbed/"}}
+
+
 @linux_only
 def test_dangling_hardlinks_are_written_from_their_layer(tmp_path):
-    # Layer 1 installs a package into the env and links it from the package cache; layer 2
+    # Layer 0 installs a package into the env and links it from the package cache; layer 1
     # deletes it from the env (pip replaced it). Docker keeps the cache's copy; crane export
-    # can't, so tar reports the link and the repair writes it from layer 1.
-    blobs = tmp_path / "blobs"
-    blobs.mkdir()
-    _layer(
-        blobs / "l1",
+    # can't, so tar reports the link and the repair writes it from layer 0.
+    image = _saved_image(
+        tmp_path,
         [
-            ("opt/envs/t/x/a.py", "file", b"old a"),
-            ("opt/pkgs/x/a.py", "link", "opt/envs/t/x/a.py"),
-            ("opt/envs/t/x/b.py", "file", b"b v1"),
-            ("opt/pkgs/x/b.py", "link", "opt/envs/t/x/b.py"),
+            [
+                ("opt/envs/t/x/a.py", "file", b"old a"),
+                ("opt/pkgs/x/a.py", "link", "opt/envs/t/x/a.py"),
+                ("opt/envs/t/x/b.py", "file", b"b v1"),
+                ("opt/pkgs/x/b.py", "link", "opt/envs/t/x/b.py"),
+            ],
+            [("opt/envs/t/x/.wh.a.py", "whiteout", b""), ("opt/envs/t/x/b.py", "file", b"b v2")],
+            [("./opt/envs/t/x/.wh.b.py", "whiteout", b"")],
         ],
     )
-    _layer(blobs / "l2", [("opt/envs/t/x/.wh.a.py", "whiteout", b""), ("opt/envs/t/x/b.py", "file", b"b v2")])
-    _layer(blobs / "l3", [("./opt/envs/t/x/.wh.b.py", "whiteout", b"")])
-    manifest = {"layers": [{"digest": "sha256:l1"}, {"digest": "sha256:l2"}, {"digest": "sha256:l3"}]}
-    crane = tmp_path / "crane"
-    crane.write_text(
-        "#!/bin/sh\n"
-        f"if [ \"$1\" = manifest ]; then echo '{json.dumps(manifest)}'; exit 0; fi\n"
-        f'exec cat {blobs}/"${{2##*@sha256:}}"\n'
-    )
-    crane.chmod(0o755)
     root = tmp_path / "rootfs"
     root.mkdir()
     errors = (
         "tar: opt/pkgs/x/a.py: Cannot hard link to ‘opt/envs/t/x/a.py’: No such file or directory\n"
         "tar: opt/pkgs/x/b.py: Cannot hard link to ‘opt/envs/t/x/b.py’: No such file or directory\n"
     )
-    assert runtime.repair_hardlinks("demo:latest", errors, root=str(root), crane=str(crane)) == 2
+    assert runtime.repair_hardlinks(image, errors, root=str(root)) == 2
     assert (root / "opt/pkgs/x/a.py").read_bytes() == b"old a"
     assert (root / "opt/pkgs/x/b.py").read_bytes() == b"b v1"  # what the link pointed to in its layer
     assert not (root / "opt/envs").exists()
     assert [p.name for p in tmp_path.iterdir() if p.name.startswith("hardlinks-")] == []
     with pytest.raises(RuntimeError, match="no file in any layer"):
         runtime.repair_hardlinks(
-            "demo:latest",
-            "tar: q: Cannot hard link to ‘missing’: No such file or directory\n",
-            root=str(root),
-            crane=str(crane),
+            image, "tar: q: Cannot hard link to ‘missing’: No such file or directory\n", root=str(root)
         )

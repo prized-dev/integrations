@@ -24,7 +24,8 @@ def test_start_creates_a_labelled_sandbox_and_unpacks_the_image(fake_prized):
     assert sandbox.kwargs["labels"] == {"minisweagent": "1", "run": "r1"}
     assert sandbox.kwargs["max_runtime_min"] == 60
     setup = sandbox.calls[0][0]
-    assert "crane export --platform linux/amd64 docker.io/swebench/sweb.eval.x86_64.demo:latest -" in setup
+    assert "crane pull --platform linux/amd64 docker.io/swebench/sweb.eval.x86_64.demo:latest image.tar" in setup
+    assert setup.count("crane pull") == 1 and "crane config" not in setup  # one pull per image
     assert env_module.CRANE_SHA256 in setup
     assert sandbox.files_written[env_module.RUNTIME][0].decode().startswith('"""Run one command inside')
     assert env.image_env["TZ"] == "Etc/UTC"
@@ -114,6 +115,21 @@ def test_pull_is_retried_then_fails_and_the_sandbox_is_deleted(fake_prized):
     with pytest.raises(RuntimeError, match="Could not unpack .* crane export failed"):
         make(pull_attempts=2)
     assert FakeSandbox.created[1].deleted == 1
+
+
+def test_a_throttled_registry_is_waited_out_without_spending_attempts(fake_prized, monkeypatch):
+    slept = []
+    monkeypatch.setattr(env_module.time, "sleep", slept.append)
+    fake_prized["setup_failures"] = 4
+    fake_prized["setup_error"] = (
+        "GET https://index.docker.io/v2/...: TOOMANYREQUESTS: You have reached your pull rate limit."
+    )
+    env = make(pull_attempts=1)
+    assert slept == [30.0, 30.0, 60.0, 120.0]
+    assert env.timings["pull_throttled_s"] == 240
+    fake_prized["setup_failures"] = 100
+    with pytest.raises(RuntimeError, match="TOOMANYREQUESTS"):
+        make(pull_attempts=1, pull_rate_limit_wait=100)
 
 
 def test_auth_errors_carry_the_sign_up_hint(fake_prized):

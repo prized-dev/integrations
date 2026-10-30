@@ -5,7 +5,8 @@ sandbox's own python3 (standard library only)::
 
     python3 runtime.py - BASE64_SCRIPT     # a script passed inline
     python3 runtime.py /SCRIPT/IN/IMAGE    # a script already written into the image
-    python3 runtime.py --repair-hardlinks IMAGE TAR_ERRORS   # see repair_hardlinks
+    python3 runtime.py --image-config IMAGE_TAR               # the image's config, one line of JSON
+    python3 runtime.py --repair-hardlinks IMAGE_TAR TAR_ERRORS  # see repair_hardlinks
 
 The image is unpacked at ``ROOT``. A Prized sandbox has no Docker and its user
 has no root, so a command runs chrooted into ``ROOT`` in an unprivileged user
@@ -244,33 +245,22 @@ def _member_path(name: str) -> str:
     return os.path.normpath(name.lstrip("/")).removeprefix("./")
 
 
-def _repository(image: str) -> str:
-    """The image reference without its tag or digest."""
-    name = image.split("@", 1)[0]
-    head, _, tail = name.rpartition("/")
-    if ":" in tail:
-        tail = tail.split(":", 1)[0]
-    return f"{head}/{tail}" if head else tail
+def _saved_manifest(image: tarfile.TarFile) -> dict:
+    """The entry of a ``crane pull`` (``docker save``) tarball's manifest.json."""
+    source = image.extractfile("manifest.json")
+    assert source is not None
+    return json.load(source)[0]
 
 
-def _layers(image: str, crane: str) -> list[str]:
-    def manifest(ref: str) -> dict:
-        out = subprocess.run([crane, "manifest", "--platform", "linux/amd64", ref], capture_output=True, check=True)
-        return json.loads(out.stdout)
-
-    doc = manifest(image)
-    if "manifests" in doc:  # an index: pick linux/amd64
-        for entry in doc["manifests"]:
-            platform = entry.get("platform") or {}
-            if (platform.get("os"), platform.get("architecture")) == ("linux", "amd64"):
-                doc = manifest(f"{_repository(image)}@{entry['digest']}")
-                break
-        else:
-            raise RuntimeError(f"{image} has no linux/amd64 image")
-    return [layer["digest"] for layer in doc["layers"]]
+def image_config(image_tar: str) -> str:
+    """The image's config (``Env``, ``WorkingDir``...) from a ``crane pull`` tarball, as one line of JSON."""
+    with tarfile.open(image_tar) as image:
+        source = image.extractfile(_saved_manifest(image)["Config"])
+        assert source is not None
+        return json.dumps(json.load(source), separators=(",", ":"))
 
 
-def repair_hardlinks(image: str, errors: str, root: str = ROOT, crane: str = "./crane") -> int:
+def repair_hardlinks(image_tar: str, errors: str, root: str = ROOT) -> int:
     """Writes the files of hard links that ``crane export`` left dangling.
 
     ``crane export`` flattens the image's layers into one tar stream. When a
@@ -279,8 +269,9 @@ def repair_hardlinks(image: str, errors: str, root: str = ROOT, crane: str = "./
     so tar can't make it (conda's package cache in some SWE-bench images:
     ``pip`` replaced the package that ``pkgs/`` links into). Docker applies
     layers one by one, so there the link keeps the file's contents. This reads
-    the layers in order and writes each such link from the file it pointed to
-    in its own layer, the way Docker sees it. Returns how many it wrote.
+    the layers of the pulled tarball in order and writes each such link from
+    the file it pointed to in its own layer, as Docker sees it. Returns how
+    many it wrote.
     """
     pending = failed_hardlinks(errors)
     if not pending:
@@ -290,25 +281,24 @@ def repair_hardlinks(image: str, errors: str, root: str = ROOT, crane: str = "./
     stash: dict[str, str] = {}  # target -> its latest contents so far
     found: dict[str, tuple[str, int]] = {}  # link -> (contents, mode) as of its last layer
     try:
-        for n, digest in enumerate(_layers(image, crane)):
-            blob = subprocess.Popen([crane, "blob", f"{_repository(image)}@{digest}"], stdout=subprocess.PIPE)
-            assert blob.stdout is not None
-            with tarfile.open(fileobj=blob.stdout, mode="r|*") as layer:
-                for member in layer:
-                    name = _member_path(member.name)
-                    if member.isfile() and name in targets:
-                        source = layer.extractfile(member)
-                        assert source is not None
-                        copy = os.path.join(work, f"{n}-{len(stash)}")
-                        with open(copy, "wb") as out:
-                            shutil.copyfileobj(source, out)
-                        stash[name] = copy
-                    elif member.islnk() and name in pending:
-                        target = _member_path(member.linkname)
-                        if target in stash:
-                            found[name] = (stash[target], member.mode)
-            if blob.wait() != 0:
-                raise RuntimeError(f"crane blob {digest} failed")
+        with tarfile.open(image_tar) as image:
+            for n, name in enumerate(_saved_manifest(image)["Layers"]):
+                blob = image.extractfile(name)
+                assert blob is not None
+                with tarfile.open(fileobj=blob, mode="r|*") as layer:
+                    for member in layer:
+                        path = _member_path(member.name)
+                        if member.isfile() and path in targets:
+                            source = layer.extractfile(member)
+                            assert source is not None
+                            copy = os.path.join(work, f"{n}-{len(stash)}")
+                            with open(copy, "wb") as out:
+                                shutil.copyfileobj(source, out)
+                            stash[path] = copy
+                        elif member.islnk() and path in pending:
+                            target = _member_path(member.linkname)
+                            if target in stash:
+                                found[path] = (stash[target], member.mode)
         missing = sorted(set(pending) - set(found))
         if missing:
             raise RuntimeError(f"{len(missing)} hard links have no file in any layer, e.g. {missing[0]}")
@@ -401,7 +391,9 @@ def _enter(fcntl: Any) -> None:
 
 
 if __name__ == "__main__":
-    if sys.argv[1:2] == ["--repair-hardlinks"]:
+    if sys.argv[1:2] == ["--image-config"]:
+        print(image_config(sys.argv[2]))
+    elif sys.argv[1:2] == ["--repair-hardlinks"]:
         with open(sys.argv[3], errors="replace") as f:
             print(f"repaired {repair_hardlinks(sys.argv[2], f.read())} hard links", file=sys.stderr)
     else:
