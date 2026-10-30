@@ -52,9 +52,14 @@ openhands-prized serve
 
 It prints a **Host / Base URL** (`http://127.0.0.1:8780`, or another free port if that one is taken) and an **API key**. In Agent Canvas, open **Manage Backends → Add Backend** and enter both. Then set your LLM under Settings.
 
-Ctrl-C pauses the sandbox. Its files, its conversations and the running server are kept. The next `openhands-prized serve` picks the same sandbox up in about 4 s, with the same URL and key, so Canvas reconnects as is. Use `--new` for a fresh sandbox, `--sandbox <id>` for a specific one, or `--on-exit delete` to delete it on exit.
+In Canvas, choose **Agent-server**, then **Local** (the proxy runs on your machine), and enter that URL and key. Canvas keeps LLM settings on each backend's server, so set your LLM under Settings once for the sandbox.
 
-This path is tested with HTTP and WebSocket clients that do what Canvas does: the session key, CORS from `localhost`, bash and event sockets. It has not yet been run in the Canvas app itself.
+Ctrl-C pauses the sandbox. Its files, its conversations, its settings and the running server are kept. The next `openhands-prized serve` picks the same sandbox up in a few seconds, with the same URL and key, and Canvas reconnects by itself. Use `--new` for a fresh sandbox, `--sandbox <id>` for a specific one, `--fork <id>` for a copy of one (files, conversations, settings and the running server), or `--on-exit delete` to delete it on exit.
+
+Tested with Agent Canvas `main` (October 30, 2026; Canvas 1.34.0, Agent Server 1.59.0) in Chromium. A coding task ran end to end from the Canvas UI. Then Ctrl-C, `serve` again, and a follow-up message in the same conversation. Canvas shows the backend as disconnected while the sandbox is paused and reconnects by itself, about 20 s after `serve` is back (its WebSocket retry backs off from 1 s up to 30 s). Conversations, the Files, Commits, Terminal and Usage panels, page reloads, and switching backends all work. Not on this backend yet:
+- **Automations.** Canvas expects its automation service next to the Agent Server.
+- **The browser tool**, since the sandbox has no Chromium.
+- **VS Code.**
 
 ## How it connects
 
@@ -93,8 +98,11 @@ The Agent Server's own session key passes through the proxy unchanged. The proxy
 | `pause()` + `resume()`, server still running | 0.8-2.0 s |
 | Warm start with `fork_from` (the fix is there too) | 3.8-4.4 s |
 | `serve`: Ctrl-C, then `serve` again (same sandbox, URL, key and server; files kept) | 4.1-4.4 s |
+| Agent Canvas: a task sent from the UI, to the agent's last message (a Roman numerals module with tests, 79-85 passing) | 31-33 s |
+| Agent Canvas: a follow-up in the same conversation after Ctrl-C and `serve` (94 tests passing) | 36 s |
+| Agent Canvas: `serve` after Ctrl-C, sandbox resumed and server reused (`serve --fork`: 2.3-4.8 s) | 0.8-1.1 s |
 | Sandbox cost at list price | $0.0014 |
-| LLM cost (OpenHands' own count) | $0.03-0.09 |
+| LLM cost (OpenHands' own count) | $0.03-0.09; in Canvas $0.14-0.17 per turn |
 
 A request through the proxy takes 53 ms at the median (61 ms p90), from a client in the same AWS region. Socket output arrives about 0.4 s after the event.
 
