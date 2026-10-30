@@ -30,6 +30,7 @@ DIFY_UV_VERSION=0.12.13
 OPENAI_AGENTS_UV_VERSION=0.13.0 # the uv openai-agents/tests/package_check.py builds with
 OPENAI_AGENTS_LINT="ruff==0.17.1 ty==0.0.90" # pinned: a new ruff or ty alone never turns CI red
 OPENAI_AGENTS_FLOOR="openai-agents==0.23.1 httpx==0.27.0" # the oldest versions openai-agents-prized allows
+OPENHANDS_FLOOR="openhands-sdk==1.59.0 prized==0.1.1" # the oldest versions openhands-prized allows
 
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
@@ -92,7 +93,7 @@ py() {
   [ "$sdk" = no ] || need_sdk python
   # shellcheck disable=SC2086 # pins are a word list
   pip install -q -e ".[$extras]" ${FLOOR:+$floor}
-  pip list 2>/dev/null | grep -i -E "^(prized|inspect.ai|google.adk|strands.agents|agent.framework|pydantic.ai|harbor)[-_ ]" || true
+  pip list 2>/dev/null | grep -i -E "^(prized|inspect.ai|google.adk|strands.agents|agent.framework|pydantic.ai|harbor|openhands.sdk|websockets|uvicorn)[-_ ]" || true
   if [ -z "$FLOOR" ]; then sh -c "$lint"; else echo "(lint runs on the latest-dependencies row)"; fi
   offline pytest -rs -p no:cacheprovider
 }
@@ -113,6 +114,11 @@ case $DIR in
     py "test" yes "pydantic-ai-slim==2.59.0" "pip install -q ruff && ruff check . && ruff format --check ." ;;
   harbor)
     py "test" no "harbor==0.24.0" "pip install -q ruff && ruff check . && ruff format --check ." ;;
+  openhands)
+    # Offline: fake Prized sandboxes run the package's in-sandbox scripts (probe, start, curl, the
+    # WebSocket relay) with the local bash against a fake Agent Server. The live end-to-end run
+    # (scripts/live_e2e.py) needs PRIZED_API_KEY and an LLM key, so it never runs here.
+    py "test" no "$OPENHANDS_FLOOR" "pip install -q ruff==0.17.1 && ruff check . && ruff format --check ." ;;
   devin-outposts)
     # Offline: a stand-in for Devin's Outposts service on 127.0.0.1, fake sandboxes that run the
     # in-sandbox scripts with bash, and a fake devin-remote. Live tests skip without PRIZED_LIVE=1.

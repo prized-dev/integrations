@@ -19,7 +19,7 @@ on:
       package:
         description: "Folder to publish"
         type: choice
-        options: [inspect, adk, strands, agent-framework, pydantic-ai, harbor, devin-outposts]
+        options: [inspect, adk, strands, agent-framework, pydantic-ai, harbor, devin-outposts, openhands]
       dry_run:
         description: "Test, build and test-install only; publish nothing"
         type: boolean

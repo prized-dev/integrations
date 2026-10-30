@@ -9,6 +9,7 @@ Each folder is its own package with its own README, tests and release. You need 
 | [`openai-agents`](openai-agents) | OpenAI Agents SDK: sandbox client | `openai-agents-prized` | Works now: on PyPI | [README](openai-agents/README.md) |
 | [`hermes`](hermes) | Hermes Agent: terminal backend plugin | `hermes plugins install prized-dev/integrations/hermes` | Works now | [README](hermes/README.md) |
 | [`harbor`](harbor) | Harbor (Terminal-Bench): environment | `harbor-prized` | Works now: install from this repo (not on PyPI yet) | [README](harbor/README.md) |
+| [`openhands`](openhands) | OpenHands: Agent Server workspace for the SDK, and an Agent Canvas backend | `openhands-prized` | Works now: install from this repo (not on PyPI yet) | [README](openhands/README.md) |
 | [`dify`](dify) | Dify: tool plugin (workflows and agents) | `prized_sandboxes` (`.difypkg`) | Build the `.difypkg` from this repo; tested under Dify's plugin runtime, not yet in a Dify install (self-hosted Dify takes the unsigned package only with signature checks off); Marketplace submission pending | [README](dify/README.md) |
 | [`devin-outposts`](devin-outposts) | Devin Outposts: orchestrator (one sandbox per session, paused with memory while it sleeps) | `prized-devin-outposts` | Works now: install from this repo (not on PyPI yet); Devin's one-click connect waits on Cognition | [README](devin-outposts/README.md) |
 | [`claude-managed-agents`](claude-managed-agents) | Claude Managed Agents: self-hosted environment | `on-work.sh` | Works now | [README](claude-managed-agents/README.md) |
