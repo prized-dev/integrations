@@ -1,30 +1,30 @@
 GET https://loops.so/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:03.104Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:28.811Z
 final-url: https://loops.so/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:58:00 GMT
+date: Fri, 30 Oct 2026 16:01:25 GMT
 content-type: text/plain;charset=utf-8
 transfer-encoding: chunked
 connection: close
-age: 80965
+age: 66235
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
-etag: W/"016e49c2b8765f766bc07377f742e7f8"
-last-modified: Tue, 27 Oct 2026 22:42:55 GMT
+etag: W/"23c75ef9b806f27b36f579d96abab5fa"
+last-modified: Thu, 29 Oct 2026 21:21:56 GMT
 permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()
 referrer-policy: strict-origin-when-cross-origin
 server: cloudflare
-server-timing: rewrite;desc="static", region;desc="us-west-2", version;desc="ced8dfa"
+server-timing: rewrite;desc="static", region;desc="us-west-2", version;desc="ad3cf8f"
 strict-transport-security: max-age=31536000
 vary: Accept-Encoding, Accept
 x-content-type-options: nosniff
 x-frame-options: DENY
 cf-cache-status: DYNAMIC
-cf-ray: a51de2d34a39fef6-PDX
+cf-ray: a52ba376a9dd8e63-PDX
 
 # Loops
 
@@ -203,6 +203,10 @@ cf-ray: a51de2d34a39fef6-PDX
 - [UTM Link Generator](https://loops.so/tools/utm-generator): Free UTM builder. Add utm_source, utm_medium, utm_campaign, term, and content to any link, then copy a correctly encoded tracking URL.
 
 ## Integrations
+- [Integrations](https://loops.so/integrations): Connect Loops to Stripe, Clerk, Supabase, Segment, Zapier, and more. Sync contacts, send events, and start email workflows from the tools you already use.
+- [Auth0 Email Integration: Branded Auth Emails over SMTP](https://loops.so/integrations/auth0): Send every Auth0 email through Loops SMTP. Design verification and passwordless emails in the Loops editor and see each send in Loops.
+- [Auth.js Email Integration: Magic Link Emails](https://loops.so/integrations/authjs): Send Auth.js magic link emails with the built-in Loops provider. Design the sign-in email in Loops and manage its subject, sender, and content there.
+- [Better Auth Email Integration: Auth Emails with Loops](https://loops.so/integrations/better-auth): Send Better Auth verification, password reset, magic link, and email OTP emails through Loops with the JavaScript SDK and a template for each.
 - [Clerk Email Integration: Sync Users with Webhooks](https://loops.so/integrations/clerk): Send Clerk webhooks to Loops to sync users as contacts and trigger onboarding email from signups, account deletions, and waitlist entries.
 - [Stripe Email Integration for Marketing and Payments](https://loops.so/integrations/stripe): Connect Stripe to Loops with the Loops Stripe app. Sync customers as contacts and send workflow emails from payments, subscriptions, invoices, and quotes.
 - [Supabase Email Integration: Auth and Lifecycle Email](https://loops.so/integrations/supabase): Send Supabase Auth emails through Loops with the Send Email Hook or SMTP, and sync auth.users to Loops to start onboarding and lifecycle workflows.

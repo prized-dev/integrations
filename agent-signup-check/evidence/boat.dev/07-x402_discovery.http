@@ -1,13 +1,15 @@
 GET https://boat.dev/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:48.279Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:10.778Z
 final-url: https://boat.dev/.well-known/x402
 
 HTTP 404
+date: Fri, 30 Oct 2026 16:01:10 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
 cache-control: private, no-cache, no-store, max-age=0, must-revalidate
 content-encoding: gzip
-content-type: text/html; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:47 GMT
 etag: "hczyefomo03qt9"
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
 via: 1.1 Caddy, 1.1 Caddy
@@ -15,8 +17,9 @@ x-nextjs-cache: HIT
 x-nextjs-prerender: 1, 1
 x-nextjs-stale-time: 300
 x-powered-by: Next.js
-connection: close
-transfer-encoding: chunked
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a52ba3152e1068f1-PDX
 
 <!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/_next/static/chunks/2qb7s74o46kx6.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/1ckvzn7sfprko.js"/><script src="/_next/static/chunks/2n86e7h60o0qo.js" async=""></script><script src="/_next/static/chunks/216iyidhmrh3u.js" async=""></script><script src="/_next/static/chunks/2pgxx1eld5ef_.js" async=""></script><script src="/_next/static/chunks/turbopack-2c3mg3r-05n1w.js" async=""></script><script src="/_next/static/chunks/0umf92h1sb77c.js" async=""></script><script src="/_next/static/chunks/2qtafr4kje-0a.js" async=""></script><meta name="robots" content="noindex"/><meta name="theme-color" content="#FEFEFE" media="(prefers-color-scheme: light)"/><meta name="theme-color" content="#060606" media="(prefers-color-scheme: dark)"/><title>Page not found | boat</title><meta name="description" content="No page at this address on boat.dev. See the sitemap, agent contract, docs index, or API reference."/><link rel="author" href="https://ascii.dev"/><meta name="author" content="ASCII"/><meta name="keywords" content="cheapest sandbox for agents,most powerful sandbox for agents,AI agent sandbox,devbox for agents,persistent Linux VM,cloud sandbox,agentic workflow infrastructure,E2B alternative,Codespaces alternative,Daytona alternative,cheap cloud VM,developer sandbox,boat ascii,agent runtime,parallel VM agents,SSH sandbox,Docker sandbox,cloud dev environment,bring your agent,CLI sandbox,affordable sandbox,ubuntu VM"/><meta name="creator" content="ASCII"/><meta name="publisher" content="ASCII"/><meta name="robots" content="noindex, nofollow"/><meta name="category" content="technology"/><meta property="og:title" content="boat: Cheapest, Most Powerful Sandboxes for Agents"/><meta property="og:description" content="Persistent Linux VMs for AI agents with SSH, Docker, and fast fork. Billed per second, free when stopped. 7-day free trial, then from $20/mo."/><meta property="og:url" content="https://boat.dev"/><meta property="og:site_name" content="boat"/><meta property="og:locale" content="en_US"/><meta property="og:image" content="https://boat.dev/og-boat.png"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image:alt" content="boat: cloud computers for your agents"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:site" content="@boatdotdev"/><meta name="twitter:creator" content="@boatdotdev"/><meta name="twitter:title" content="boat: Cheapest, Most Powerful Sandboxes for Agents"/><meta name="twitter:description" content="Persistent Linux VMs for AI agents with SSH, Docker, and fast fork. Billed per second, free when stopped. 7-day free trial, then from $20/mo."/><meta name="twitter:image" content="https://boat.dev/og-boat.png"/><meta name="twitter:image:alt" content="boat: cloud computers for your agents"/><meta name="twitter:image:width" content="1200"/><meta name="twitter:image:height" content="630"/><meta name="next-size-adjust" content=""/><link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48"/><link rel="icon" href="/icon.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/><script>(function () {
   var link = document.querySelector('link[rel="icon"][type="image/svg+xml"]');

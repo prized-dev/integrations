@@ -1,6 +1,6 @@
 GET https://brave.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:20.385Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:49.735Z
 redirect: 301 from https://brave.com/.well-known/x402
 final-url: https://brave.com/.well-known/x402/
 
@@ -8,28 +8,28 @@ HTTP 404
 content-type: text/html
 transfer-encoding: chunked
 connection: close
-content-encoding: br
-date: Wed, 28 Oct 2026 01:15:38 GMT
-server: AmazonS3
+date: Fri, 30 Oct 2026 15:55:58 GMT
 last-modified: Sat, 24 Oct 2026 00:15:23 GMT
-x-frame-options: SAMEORIGIN
+x-content-type-options: nosniff
+x-amz-server-side-encryption: AES256
 x-amz-meta-md5chksum: 74f997272f34c2dbc0f8cdb00ef7016b
 x-amz-version-id: 019r0t6OGApDcKU.fmgqLpx._JLO7GSb
-x-amz-server-side-encryption: AES256
-strict-transport-security: max-age=31536000; includeSubdomains; preload
-referrer-policy: strict-origin-when-cross-origin
-onion-location: https://brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion/404.html
-x-content-type-options: nosniff
-cross-origin-opener-policy: same-origin
+content-encoding: br
+server: AmazonS3
 content-security-policy: connect-src 'self' https://search.brave.com https://newsletter.brave.app https://analytics.brave.com https://api2.blocksurvey.io; default-src 'none'; media-src 'self'; font-src 'self'; frame-ancestors 'self' https://ads.brave.com https://ads.bravesoftware.com; frame-src 'self' https://blocksurvey.io https://survey.brave.app https://contact.ads.brave.com https://html5-player.libsyn.com https://player.vimeo.com https://boards.greenhouse.io https://job-boards.greenhouse.io https://www.youtube-nocookie.com https://app.boostr.com/; img-src 'self' data: https://imgs.search.brave.com https://analytics.brave.com https://boards.greenhouse.io https://job-boards.greenhouse.io; script-src 'self' https://boards.greenhouse.io https://job-boards.greenhouse.io; style-src 'self' 'unsafe-inline'; object-src 'self'; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests;
+referrer-policy: strict-origin-when-cross-origin
+cross-origin-opener-policy: same-origin
+strict-transport-security: max-age=31536000; includeSubdomains; preload
+onion-location: https://brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion/404.html
+x-frame-options: SAMEORIGIN
 etag: W/"74f997272f34c2dbc0f8cdb00ef7016b"
 vary: Accept-Encoding
 x-cache: Error from cloudfront
-via: 1.1 9b38ff4b39c6c0a269c601916dab060e.cloudfront.net (CloudFront)
-x-amz-cf-pop: HIO52-P4
+via: 1.1 77ab321410e9ddca120aaa7aadb0bc62.cloudfront.net (CloudFront)
+x-amz-cf-pop: SEA73-P3
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: DQef8AcgbgaSJR4YEf_2p99ctT5mGSamP9oZaK_uDhah1N1wl8YEVg==
-age: 81762
+x-amz-cf-id: sJBLsNWWzSYg0LZ5LTpjherumTfT6y-POa22974cVRxShO6HJ1o6-A==
+age: 352
 
 <!DOCTYPE html>
 <html lang="en">

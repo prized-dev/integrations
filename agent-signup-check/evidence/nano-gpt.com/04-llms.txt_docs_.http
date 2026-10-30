@@ -1,27 +1,27 @@
 GET https://docs.nano-gpt.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:17.161Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:42.172Z
 final-url: https://docs.nano-gpt.com/llms.txt
 
 HTTP 200
-age: 6446
+age: 2602
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a51de1b95cc153d9-PDX
+cf-ray: a52ba25b0b311bed-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:15 GMT
-etag: "_kiNraNB2bCCPfiDJT4Sg_XJc0V-zD9Aljg8rAb3Tsg"
+date: Fri, 30 Oct 2026 16:00:40 GMT
+etag: W/"Mw37D8v9UTYBFh8jKWdxJJHX6J1_PXZD9OD3QPa5RMY"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4006
+x-mintlify-client-version: 0.0.4021
 x-vercel-cache: MISS
-x-vercel-id: pdx1:fra1:iad1::iad1::bg5kv-1793231835066-f18e67e93fae
+x-vercel-id: pdx1:hnd1:iad1::iad1::ctxtj-1793376040127-3a5dab9cf988
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_2xiSHD9XEvLsPGPcfoMtkLTB3dy9
+x-version: dpl_EnxDqhjaNc9a8MVa833TGULPd9uJ
 connection: close
 transfer-encoding: chunked
 
@@ -133,9 +133,10 @@ transfer-encoding: chunked
 - [CLI Device Login](https://docs.nano-gpt.com/integrations/cli-login.md): Integrate NanoGPT device login into your CLI app
 - [Cline](https://docs.nano-gpt.com/integrations/cline.md): Using NanoGPT with Cline CLI interface
 - [Codex CLI](https://docs.nano-gpt.com/integrations/codex-cli.md): Using OpenAI Codex CLI with NanoGPT
-- [Grok CLI](https://docs.nano-gpt.com/integrations/grok-cli.md): Use Grok CLI with NanoGPT and Grok + 50 other models
+- [Grok CLI](https://docs.nano-gpt.com/integrations/grok-cli.md): Use Grok CLI with NanoGPT and current Grok models
 - [Gemini CLI](https://docs.nano-gpt.com/integrations/gemini-cli.md): Use Gemini CLI with NanoGPT via the OpenRouter compatible fork
 - [Claude Code](https://docs.nano-gpt.com/integrations/claude-code.md): Use Claude Code with NanoGPT and Claude + 400 models
+- [DeepSeek Harness](https://docs.nano-gpt.com/integrations/deepseek-harness.md): Use DeepSeek Harness (dsh) with DeepSeek V4 and other NanoGPT models
 - [Roo Code](https://docs.nano-gpt.com/integrations/roocode.md): Using NanoGPT with Roo Code interface
 - [Kilo Code](https://docs.nano-gpt.com/integrations/kilocode.md): Using NanoGPT with Kilo Code interface
 - [Cursor](https://docs.nano-gpt.com/integrations/cursor.md): Using NanoGPT with Cursor AI-powered code editor

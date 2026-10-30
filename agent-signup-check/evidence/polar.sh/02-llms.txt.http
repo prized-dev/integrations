@@ -1,15 +1,15 @@
 GET https://polar.sh/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:27.635Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:58.155Z
 redirect: 308 from https://polar.sh/llms.txt
 final-url: https://polar.sh/docs/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:58:24 GMT
+date: Fri, 30 Oct 2026 16:01:55 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-age: 1158
+age: 348
 cache-control: public
 content-encoding: br
 content-security-policy: default-src 'self';  script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net www.googletagmanager.com cdn.segment.com plausible.io  us.posthog.com tag.clearbitscripts.com cdn.heapanalytics.com chat.cdn-plain.com chat-assets.frontapp.com  browser.sentry-cdn.com js.sentry-cdn.com;  style-src 'self' 'unsafe-inline' d4tuoctqmanu0.cloudfront.net fonts.googleapis.com;  font-src 'self' d4tuoctqmanu0.cloudfront.net fonts.googleapis.com;  img-src 'self' data: blob: d3gk2c5xim1je2.cloudfront.net mintcdn.com *.mintcdn.com cdn.jsdelivr.net mintlify.s3.us-west-1.amazonaws.com;  connect-src 'self' *.mintlify.dev *.mintlify.com d1ctpt7j8wusba.cloudfront.net mintcdn.com *.mintcdn.com  api.mintlifytrieve.com www.googletagmanager.com cdn.segment.com plausible.io us.posthog.com browser.sentry-cdn.com;  frame-src 'self' *.mintlify.dev https://polar-public-assets.s3.us-east-2.amazonaws.com;
@@ -22,11 +22,11 @@ x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /_sites/[subdomain]/llms.txt
 x-vercel-cache: STALE
-x-vercel-id: pdx1:pdx1:pdx1::iad1::m4ln8-1793231904602-d3db79f00970
+x-vercel-id: pdx1:pdx1:pdx1::iad1::lqbtc-1793376115110-caf5109938f5
 cf-cache-status: DYNAMIC
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=TySvHyoQbFddS%2FYP6VxilcMyShOodUFgqmILLXID1nNkZFuCD12%2Fbjd5rTeEByixNE5JU4%2F0Pt%2FHOGX2JM7lvUxHiKU%2B7tDFwmIxsQ027tX0%2B%2BZjSkjz8sB1"}]}
-cf-ray: a51de36bb8388636-PDX
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=B2V%2F%2Furc4duME3cyBVMHc%2BxyWkLFtPSBq60GQMgOsdNTOu4%2BMHcXUC5E3jlXB4IE6G%2FCxM4pJckZW%2FBHvHQwrxBQhN19HRSGzya1l1n80x91BHzC4P4aWa9V"}]}
+cf-ray: a52ba42f6e4d147f-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Polar

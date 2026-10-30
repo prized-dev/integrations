@@ -1,23 +1,23 @@
 GET https://sentry.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:34.157Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:04.475Z
 final-url: https://sentry.io/llms.txt
 
 HTTP 200
 server: nginx
-date: Wed, 28 Oct 2026 23:58:31 GMT
+date: Fri, 30 Oct 2026 16:02:01 GMT
 content-type: text/plain; charset=utf-8
 vary: Accept-Encoding,Accept, User-Agent
 access-control-allow-origin: *
-age: 14472
+age: 18515
 cache-control: public, max-age=3600, s-maxage=3600
 content-disposition: inline; filename="llms.txt"
 x-vercel-cache: HIT
-x-vercel-id: cle1::k5lch-1793231911548-db16242cac53
-content-security-policy: upgrade-insecure-requests; default-src 'none'; script-src 'strict-dynamic' 'nonce-5uLmnwoSX8Suc930GK5dDNTSpKXM7tsZ' 'report-sample' 'self' 'unsafe-inline' 'unsafe-eval' *.sentry.dev www.googletagmanager.com plausible.io player.vimeo.com prod-assets.sequelvideo.com; connect-src 'self' sentry.io *.sentry.io *.sentry.dev reload.getsentry.net www.google.com unpkg.com vimeo.com plausible.io *.sequelvideo.com *.sequel.io; img-src 'self' sentry.io *.sentry.io data: *.sentry.dev storage.googleapis.com sentry-blog.storage.googleapis.com www.googletagmanager.com i.vimeocdn.com images.ctfassets.net images.lumacdn.com *.sequelvideo.com *.cloudinary.com; style-src 'self' 'unsafe-inline' *.sentry.dev; media-src 'self' videos.ctfassets.net; font-src 'self' *.sentry.dev data: fonts.gstatic.com; frame-src player.vimeo.com demo.arcade.software recaptcha.google.com www.google.com *.sequel.io *.sequelvideo.com; manifest-src 'self' *.sentry.dev; base-uri 'none'; frame-ancestors *.sentry.io; report-uri https://o1.ingest.sentry.io/api/1297627/security/?sentry_key=e811b9077ef64dcf8a279ec18a61b222
+x-vercel-id: cle1::vz57s-1793376121661-24c4c8b75df5
+content-security-policy: upgrade-insecure-requests; default-src 'none'; script-src 'strict-dynamic' 'nonce-f5RXPBcHmy7a8fj2TgK4v47whM2xtfwy' 'report-sample' 'self' 'unsafe-inline' 'unsafe-eval' *.sentry.dev www.googletagmanager.com plausible.io player.vimeo.com prod-assets.sequelvideo.com; connect-src 'self' sentry.io *.sentry.io *.sentry.dev reload.getsentry.net www.google.com unpkg.com vimeo.com plausible.io *.sequelvideo.com *.sequel.io; img-src 'self' sentry.io *.sentry.io data: *.sentry.dev storage.googleapis.com sentry-blog.storage.googleapis.com www.googletagmanager.com i.vimeocdn.com images.ctfassets.net images.lumacdn.com *.sequelvideo.com *.cloudinary.com; style-src 'self' 'unsafe-inline' *.sentry.dev; media-src 'self' videos.ctfassets.net; font-src 'self' *.sentry.dev data: fonts.gstatic.com; frame-src player.vimeo.com demo.arcade.software recaptcha.google.com www.google.com *.sequel.io *.sequelvideo.com; manifest-src 'self' *.sentry.dev; base-uri 'none'; frame-ancestors *.sentry.io; report-uri https://o1.ingest.sentry.io/api/1297627/security/?sentry_key=e811b9077ef64dcf8a279ec18a61b222
 content-encoding: br
 via: 1.1 google
-alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+alt-svc: h3=":443"; ma=2592000
 connection: close
 transfer-encoding: chunked
 
@@ -95,7 +95,7 @@ transfer-encoding: chunked
 - [Uptime monitoring for developers](https://sentry.io/product/uptime-monitoring/): Know when your site goes down before your users do. Sentry monitors your URLs every minute and links outages to traces s
 
 ## Solutions
-- [AI Observability: Monitor & Trace Agents and LLMs](https://sentry.io/solutions/ai-observability/): Monitor and trace AI agents, LLM calls, and tool executions in production. Catch errors, latency, token costs, and budge
+- [AI Observability: Monitor & Trace Agents and LLMs](https://sentry.io/solutions/ai-observability/): AI observability and LLM monitoring for production apps. Trace agent runs, LLM calls, and tool calls, and catch errors, 
 - [Application Observability | Sentry](https://sentry.io/solutions/application-observability/): Your observability stack accumulated over time. Sentry connects errors, traces, logs, replays, and application metrics i
 - [Application Performance Monitoring (APM) Solution](https://sentry.io/solutions/application-performance-monitoring/): Sentry for Application Performance Monitoring. See why your code is slow, not just that it's slow.
 - [Ecommerce Performance Monitoring & Error Tracking](https://sentry.io/solutions/ecommerce/): Monitor and optimize your online store with Sentry. Catch JS errors, third-party outages and checkout delays fast—resolv
@@ -461,6 +461,7 @@ transfer-encoding: chunked
 - [See you at Google Cloud Next 2026](https://sentry.io/events/google-cloud-next/): Move faster with AI — and know exactly what to do when it breaks. Sentry has the context. Seer has the answers. See us a
 - [Sentry @ Google Cloud Next 2025](https://sentry.io/events/google-cloud-next-2025/): Join Sentry at Google Cloud Next 2025 in Las Vegas.
 - [See you at HumanX 2026](https://sentry.io/events/humanx/): Your AI agent is running, then suddenly goes off the rails. Sentry has the context, and Seer has the answers. Come see u
+- [Quit Buggin’. Sentry’s at KubeCon 2026](https://sentry.io/events/kubecon-2026/): Your agents are writing code and running in your CI. When one breaks something, Sentry finds out why and helps those age
 - [Sentry @ Microsoft Build 2025](https://sentry.io/events/microsoft-build-2025/): Visit Sentry at Microsoft Build 2025 in Seattle. Find us at booth #316.
 - [Sentry @ PyCon US 2025](https://sentry.io/events/pycon-us-2025/): Visit Sentry at PyCon US 2025 in Pittsburgh. Find us at booth #608.
 - [Someone's gotta babysit the bots. Sentry's at RAISE Summit](https://sentry.io/events/raise-summit-2026/): AI agents break in ways traditional monitoring was never designed to catch. Sentry gives you full visibility into every 

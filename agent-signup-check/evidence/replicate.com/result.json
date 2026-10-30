@@ -1,7 +1,7 @@
 {
  "site": "replicate.com",
- "checkedAt": "2026-10-28T23:57:16.508Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:00:41.936Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 1,
  "total": 7,
@@ -67,7 +67,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 481,
+   "ms": 380,
    "redirects": 0
   },
   {
@@ -77,7 +77,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 382,
+   "ms": 380,
    "redirects": 0
   },
   {
@@ -87,7 +87,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/problem+json",
-   "ms": 42,
+   "ms": 45,
    "redirects": 0
   },
   {
@@ -97,7 +97,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 495,
+   "ms": 245,
    "redirects": 0
   },
   {
@@ -107,7 +107,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 33,
+   "ms": 35,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 239,
+   "ms": 295,
    "redirects": 0
   },
   {
@@ -127,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 230,
+   "ms": 223,
    "redirects": 0
   }
  ]

@@ -1,20 +1,20 @@
 GET https://assemblyai.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:20.701Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:45.846Z
 redirect: 308 from https://assemblyai.com/llms.txt
 final-url: https://www.assemblyai.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 2062
+age: 348
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: default-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://*.assemblyai.com cdn.cookielaw.org https://rs-cdn.assemblyai.com https://cdn.rudderlabs.com https://www.datadoghq-browser-agent.com https://www.googletagmanager.com/gtag/ https://widget.usepylon.com https://*.google.com https://*.google-analytics.com https://*.gstatic.com https://*.googleadservices.com https://snap.licdn.com https://www.redditstatic.com/ads/pixel https://px.ads.linkedin.com https://googleads.g.doubleclick.net https://assets.apollo.io https://vercel.live https://polyfill-fastly.io; style-src 'self' 'unsafe-inline' https://*.assemblyai.com https://widget.usepylon.com/fonts.css https://vercel.live; img-src 'self' data: blob: https://vercel.live https://vercel.com https://*.assemblyai.com cdn.cookielaw.org https://*.google-analytics.com https://*.googletagmanager.com https://*.google.com https://*.google.co.uk https://*.google.com.sg https://*.google.com.au https://*.google.co.jp https://*.google.de https://*.google.fr https://*.google.ca https://*.google.co.in https://*.doubleclick.net https://*.googleadservices.com https://*.reddit.com https://*.ytimg.com https://www.linkedin.com/px https://*.ads.linkedin.com https://*.usepylon.com https://*.gstatic.com/faviconV2 https://pylon-avatars.s3.us-west-1.amazonaws.com https://cdn.prod.website-files.com; font-src 'self' data: https://*.assemblyai.com cdn.cookielaw.org https://widget.usepylon.com/fonts/ https://fonts.gstatic.com https://vercel.live https://assets.vercel.com; connect-src 'self' https://vercel.live https://*.vercel.app https://webflow.com https://*.assemblyai.com wss://*.assemblyai.com https://rs-dp.assemblyai.com https://rs-api.assemblyai.com https://rs-cdn.assemblyai.com https://*.dataplane.rudderstack.com https://*.browser-intake-datadoghq.com https://browser-intake-datadoghq.com https://*.google.com https://*.analytics.google.com https://*.google-analytics.com https://*.doubleclick.net https://*.googleadservices.com cdn.cookielaw.org https://*.onetrust.com https://*.usepylon.com wss://*.pusher.com https://*.ads.linkedin.com https://aplo-evnt.com https://vitals.vercel-insights.com https://track.customer.io https://api.rudderstack.com https://*.livekit.cloud wss://*.livekit.cloud; frame-src 'self' https://*.assemblyai.com https://td.doubleclick.net https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://vercel.live; media-src 'self' https://*.assemblyai.com https://assemblyaiassets.com https://cdn.prod.website-files.com
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:17 GMT
+date: Fri, 30 Oct 2026 16:00:42 GMT
 etag: W/"162def5d1c43b8fe53aac42e4bde1110"
-last-modified: Wed, 28 Oct 2026 23:22:55 GMT
+last-modified: Fri, 30 Oct 2026 15:54:54 GMT
 permissions-policy: autoplay=(self), geolocation=(self), clipboard-read=(self), clipboard-write=(self)
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -24,7 +24,7 @@ x-dns-prefetch-control: off
 x-frame-options: SAMEORIGIN
 x-robots-tag: index, follow
 x-vercel-cache: HIT
-x-vercel-id: pdx1:pdx1:pdx1::fb4tr-1793231837743-c3841fdcbdf7
+x-vercel-id: pdx1:pdx1:pdx1::dhlz2-1793376042946-245f44f7c2a4
 x-xss-protection: 1; mode=block
 connection: close
 transfer-encoding: chunked

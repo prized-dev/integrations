@@ -1,7 +1,7 @@
 {
  "site": "openrouter.ai",
- "checkedAt": "2026-10-28T23:57:09.405Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:00:33.169Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 2,
  "total": 7,
@@ -71,7 +71,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 506,
+   "ms": 309,
    "redirects": 0
   },
   {
@@ -81,7 +81,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 149,
+   "ms": 111,
    "redirects": 0
   },
   {
@@ -91,7 +91,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 32,
+   "ms": 46,
    "redirects": 0
   },
   {
@@ -101,7 +101,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 195,
+   "ms": 185,
    "redirects": 0
   },
   {
@@ -111,7 +111,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 186,
+   "ms": 180,
    "redirects": 0
   },
   {
@@ -121,7 +121,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 208,
+   "ms": 77,
    "redirects": 0
   }
  ]

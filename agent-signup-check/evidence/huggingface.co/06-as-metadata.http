@@ -1,17 +1,17 @@
 GET https://huggingface.co/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:15.304Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:39.377Z
 final-url: https://huggingface.co/.well-known/oauth-authorization-server
 
 HTTP 200
 content-type: application/json; charset=utf-8
 content-length: 890
 connection: close
-date: Wed, 28 Oct 2026 23:57:14 GMT
+date: Fri, 30 Oct 2026 16:00:38 GMT
 etag: W/"37a-dttZVZA3HSuAYFH2OCoyqXSlr3k"
 x-powered-by: huggingface-moon
-x-request-id: Root=1-6ae28bda-07dd837b47ff83b475307ebc
-ratelimit: "media";r=9998;t=192
+x-request-id: Root=1-6ae4bf26-2195b9f728a4346147d445bc
+ratelimit: "media";r=9998;t=288
 ratelimit-policy: "fixed window";"media";q=10000;w=300
 cross-origin-opener-policy: same-origin
 referrer-policy: strict-origin-when-cross-origin
@@ -20,10 +20,10 @@ access-control-allow-origin: https://huggingface.co
 vary: Origin
 access-control-expose-headers: X-Repo-Commit,X-Request-Id,X-Error-Code,X-Error-Message,X-Total-Count,ETag,Link,Accept-Ranges,Content-Range,X-Linked-Size,X-Linked-ETag,X-Xet-Hash,RateLimit,RateLimit-Policy
 x-cache: Miss from cloudfront
-via: 1.1 27d63b295289835069372e1ce8f9ae9c.cloudfront.net (CloudFront)
+via: 1.1 c1e10addfd71e01a8c56f4755a03bf98.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: kKXCEbXxA0LPSaeoAqC_RqmcTW6gLWZNvnG8z-5G8tde2DCP7ijN7A==
+x-amz-cf-id: snVsMJ-pfotzour59v5pLXseTBDkMmGFCLqgu3tXs1ouUHERR9cONA==
 strict-transport-security: max-age=31536000
 
 {"issuer":"https://huggingface.co","registration_endpoint":"https://huggingface.co/oauth/register","token_endpoint":"https://huggingface.co/oauth/token","authorization_endpoint":"https://huggingface.co/oauth/authorize","userinfo_endpoint":"https://huggingface.co/oauth/userinfo","device_authorization_endpoint":"https://huggingface.co/oauth/device","jwks_uri":"https://huggingface.co/oauth/jwks","response_types_supported":["code"],"response_modes_supported":["query"],"id_token_signing_alg_values_supported":["RS256"],"subject_types_supported":["public"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post"],"client_id_metadata_document_supported":true,"grant_types_supported":["urn:ietf:params:oauth:grant-type:token-exchange","urn:ietf:params:oauth:grant-type:device_code","authorization_code","refresh_token"]}

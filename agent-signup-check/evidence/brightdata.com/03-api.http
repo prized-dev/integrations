@@ -1,11 +1,11 @@
 GET https://api.brightdata.com/zone/get_active_zones
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:14.928Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:43.448Z
 final-url: https://api.brightdata.com/zone/get_active_zones
 
 HTTP 401
 server: nginx
-date: Wed, 28 Oct 2026 23:58:12 GMT
+date: Fri, 30 Oct 2026 16:01:41 GMT
 content-type: text/html; charset=utf-8
 content-length: 23
 connection: close

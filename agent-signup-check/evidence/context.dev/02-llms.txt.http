@@ -1,20 +1,20 @@
 GET https://context.dev/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:23.090Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:52.735Z
 redirect: 301 from https://context.dev/llms.txt
 final-url: https://www.context.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 4069
+age: 350
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: frame-ancestors 'self' https://*.context.dev
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:20 GMT
+date: Fri, 30 Oct 2026 16:01:50 GMT
 etag: W/"e10690ba82bb558c6513a0f8cb54d17f"
-last-modified: Wed, 28 Oct 2026 22:50:31 GMT
+last-modified: Fri, 30 Oct 2026 15:55:59 GMT
 permissions-policy: camera=(), microphone=(), geolocation=()
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -22,7 +22,7 @@ strict-transport-security: max-age=63072000
 x-content-type-options: nosniff
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::2xkzn-1793231900730-5c5d128ae077
+x-vercel-id: pdx1::bkvdh-1793376110358-39129125c3d2
 connection: close
 transfer-encoding: chunked
 

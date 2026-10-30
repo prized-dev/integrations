@@ -1,16 +1,17 @@
 GET https://cloudinary.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:38.373Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:08.957Z
 final-url: https://cloudinary.com/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:58:35 GMT
+date: Fri, 30 Oct 2026 16:02:05 GMT
 content-type: text/plain
 transfer-encoding: chunked
 connection: close
-cf-ray: a51de3ad7cf8cb90-PDX
-cf-cache-status: REVALIDATED
+cf-ray: a52ba470689d5332-PDX
+cf-cache-status: HIT
 etag: W/"70347243e8ad1119ad01f96723185355"
+age: 347
 cache-control: public, max-age=1800
 last-modified: Tue, 27 Oct 2026 22:01:33 GMT
 server: cloudflare

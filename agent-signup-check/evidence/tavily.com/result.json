@@ -1,7 +1,7 @@
 {
  "site": "tavily.com",
- "checkedAt": "2026-10-28T23:58:20.048Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:51.100Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 2,
  "total": 7,
@@ -71,7 +71,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 592,
+   "ms": 330,
    "redirects": 1
   },
   {
@@ -81,7 +81,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 491,
+   "ms": 430,
    "redirects": 2
   },
   {
@@ -91,7 +91,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 198,
+   "ms": 215,
    "redirects": 0
   },
   {
@@ -101,7 +101,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 174,
+   "ms": 191,
    "redirects": 1
   },
   {
@@ -111,7 +111,7 @@
    "status": 404,
    "error": null,
    "contentType": null,
-   "ms": 177,
+   "ms": 190,
    "redirects": 0
   },
   {
@@ -121,7 +121,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 170,
+   "ms": 169,
    "redirects": 1
   },
   {
@@ -131,7 +131,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 191,
+   "ms": 170,
    "redirects": 1
   }
  ]

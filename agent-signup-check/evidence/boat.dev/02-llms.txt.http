@@ -1,18 +1,21 @@
 GET https://boat.dev/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:48.279Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:10.778Z
 final-url: https://boat.dev/llms.txt
 
 HTTP 200
+date: Fri, 30 Oct 2026 16:01:07 GMT
+content-type: text/markdown; charset=utf-8
+transfer-encoding: chunked
+connection: close
 cache-control: public, s-maxage=3600, stale-while-revalidate=86400
 content-encoding: gzip
-content-type: text/markdown; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:43 GMT
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
 via: 1.1 Caddy, 1.1 Caddy
 x-nextjs-cache: HIT
-connection: close
-transfer-encoding: chunked
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a52ba303ffdeac0d-PDX
 
 # boat
 

@@ -1,18 +1,18 @@
 GET https://inkbox.ai/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:08.592Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:34.387Z
 final-url: https://inkbox.ai/.well-known/oauth-protected-resource
 
 HTTP 200
 content-type: application/json
 content-length: 184
 connection: close
-date: Wed, 28 Oct 2026 23:58:07 GMT
+date: Fri, 30 Oct 2026 16:01:33 GMT
 server: uvicorn
 x-cache: Miss from cloudfront
 via: 1.1 c6aabec83f5c081149a8843767dacc52.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: JmfSDvLtfzW95FPzzHgSUA5fLqw5QJEIJQirczPg9uI6E2n1UAS-7g==
+x-amz-cf-id: yfTbiyZekgCz2EonCuXH9AZvwWbKiprpDgEemq4VZ0aJAu-5oLy_gg==
 
 {"resource":"https://inkbox.ai/mcp","authorization_servers":["https://inkbox.ai/mcp/oauth"],"bearer_methods_supported":["header"],"resource_documentation":"https://inkbox.ai/docs/mcp"}

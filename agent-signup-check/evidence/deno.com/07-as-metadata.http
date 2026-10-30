@@ -1,17 +1,17 @@
 GET https://deno.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:49.279Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:15.254Z
 final-url: https://deno.com/.well-known/oauth-authorization-server
 
 HTTP 200
 content-type: text/html; charset=utf-8
 link: </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/fresh-runtime.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/SkipToMainLink.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/HelloBar.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/OramaSearch.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/NavItemWithChildren.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/AnalyticsOptOut.js>; rel="modulepreload"; as="script"
 content-length: 58396
-date: Wed, 28 Oct 2026 23:57:48 GMT
+date: Fri, 30 Oct 2026 16:01:14 GMT
 connection: close
 age: 0
 cache-status: deno; fwd=bypass; detail=zero-ttl
-x-deno-trace-id: bec5784fdc3227b633cce6ea7b9c8a67
+x-deno-trace-id: 49b98b45f5a93ab1ebaea15efbe6852f
 via: HTTP/1.1 ord.vultr.prod.deno-cluster.net
 server: deployd
 
@@ -36,4 +36,4 @@ server: deployd
           
           lg:bg-neutral-50 lg:dark:bg-gray-900 lg:rounded-md lg:overflow-hidden lg:shadow-lg"><div data-component="
 
-[body trimmed for publication: kept 16384 of 58379 characters; sha256 of the published body 20935a3c4ae3ed258960dfed21a5c558b40716e5999eee4ba73cbeaa72625dad]
+[body trimmed for publication: kept 16384 of 58379 characters; sha256 of the published body 9d7155d6909f4b64f6d9d9bd2d22306d6a776c27005d73b8c9fdae982ae779b6]

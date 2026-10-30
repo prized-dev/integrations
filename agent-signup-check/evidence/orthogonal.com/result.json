@@ -1,7 +1,7 @@
 {
  "site": "orthogonal.com",
- "checkedAt": "2026-10-28T23:58:25.781Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:55.848Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 4,
  "total": 7,
@@ -80,7 +80,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 122,
+   "ms": 217,
    "redirects": 1
   },
   {
@@ -90,7 +90,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 103,
+   "ms": 96,
    "redirects": 1
   },
   {
@@ -100,7 +100,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 155,
+   "ms": 139,
    "redirects": 0
   },
   {
@@ -110,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 73,
+   "ms": 96,
    "redirects": 1
   },
   {
@@ -120,7 +120,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 91,
+   "ms": 126,
    "redirects": 0
   },
   {
@@ -130,7 +130,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 111,
+   "ms": 83,
    "redirects": 1
   },
   {
@@ -140,7 +140,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 79,
+   "ms": 84,
    "redirects": 1
   }
  ]

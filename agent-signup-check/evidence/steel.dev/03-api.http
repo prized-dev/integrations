@@ -1,25 +1,25 @@
 GET https://api.steel.dev/v1/sessions
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:11.596Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:38.090Z
 final-url: https://api.steel.dev/v1/sessions
 
 HTTP 401
-date: Wed, 28 Oct 2026 23:58:09 GMT
+date: Fri, 30 Oct 2026 16:01:36 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
-x-trace-id: 3e788c323a293e6c3341e66e04bbfc1b
+x-trace-id: a7af9488b165bcf9679620e23a447bd9
 vary: Origin, accept-encoding
 access-control-allow-credentials: true
-access-control-expose-headers: Next-Cursor, org-id, ETag, Location, x-trace-id
+access-control-expose-headers: Next-Cursor, org-id, ETag, Location, WWW-Authenticate, x-trace-id
 x-should-retry: false
 content-encoding: br
 access-control-allow-origin: *
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=um5CvWgX%2BC8SH3yvSQ%2FpPofn4KCyO9EMefbV%2FzMGzxmhdyc5KSTAT4fG78kGhcjoO1YpyqMxj9WOFGyF2%2BYDU1MxOlMz00WUIOGJrvFC1lCGeKWMfQgVvBO%2BY6gns7HV"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=I9Sk6anej8q95CsREXNwychkjcH8S%2FfAnlwV8kL3eo2lPFvp15tBt2F028qzQVmou7aqrpCtJJ7Qfg1z79s8ue8dQ8mHvyoj5mrcwOmRnFTrkNOHIKL2gBiKMJegiLoy"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a51de30cddf4ad66-PDX
+cf-ray: a52ba3b91cdf6c17-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"error":"Unauthorized","code":"missing_api_key","message":"Missing API key. Send your Steel API key in the 'steel-api-key' header. Create or rotate a key at https://app.steel.dev/settings/api-keys.","retryable":false,"linkToDocs":"https://docs.steel.dev/overview/authentication"}

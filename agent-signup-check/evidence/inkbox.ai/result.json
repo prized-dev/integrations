@@ -1,7 +1,7 @@
 {
  "site": "inkbox.ai",
- "checkedAt": "2026-10-28T23:58:08.592Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:34.387Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 3,
  "total": 7,
@@ -76,7 +76,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 247,
+   "ms": 207,
    "redirects": 0
   },
   {
@@ -86,7 +86,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 36,
+   "ms": 33,
    "redirects": 0
   },
   {
@@ -96,7 +96,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 103,
+   "ms": 121,
    "redirects": 0
   },
   {
@@ -106,7 +106,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 100,
+   "ms": 93,
    "redirects": 0
   },
   {
@@ -116,7 +116,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 99,
+   "ms": 94,
    "redirects": 0
   },
   {
@@ -126,7 +126,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 319,
+   "ms": 174,
    "redirects": 0
   }
  ]

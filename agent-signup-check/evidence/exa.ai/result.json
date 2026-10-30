@@ -1,9 +1,9 @@
 {
  "site": "exa.ai",
- "checkedAt": "2026-10-28T23:58:17.466Z",
- "checker": "agent-signup-check/0.2.0",
- "passed": 1,
- "partial": 1,
+ "checkedAt": "2026-10-30T16:01:47.304Z",
+ "checker": "agent-signup-check/0.2.2",
+ "passed": 2,
+ "partial": 3,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -11,22 +11,31 @@
    "id": "authmd",
    "name": "auth.md",
    "url": "https://exa.ai/auth.md",
-   "status": "fail",
-   "reason": "/auth.md not found (HTTP 404)"
+   "heading": "# Exa authentication for agents",
+   "registrationEndpoints": [],
+   "mentions": [],
+   "quote": ", not an auth.md agent-registration document: Exa does not support agent registration. It publishes no `agent_auth` metadata and offers no agent registration or",
+   "status": "partial",
+   "reason": "auth.md is published, and says agents cannot register here yet"
   },
   {
    "id": "prm",
    "name": "Protected resource metadata",
    "url": "https://exa.ai/.well-known/oauth-protected-resource",
-   "status": "fail",
-   "reason": "Protected resource metadata not found (HTTP 404)"
+   "via": "well-known",
+   "resource": "https://mcp.exa.ai/mcp",
+   "authorization_servers": [
+    "https://auth.exa.ai"
+   ],
+   "status": "pass",
+   "reason": "Names 1 authorization server"
   },
   {
    "id": "register",
    "name": "Sign-up by API",
-   "url": "https://exa.ai/.well-known/oauth-authorization-server",
+   "url": "https://auth.exa.ai/.well-known/oauth-authorization-server",
    "status": "fail",
-   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
   },
   {
    "id": "challenge",
@@ -46,15 +55,19 @@
   {
    "id": "payment",
    "name": "Payment handoff",
-   "status": "fail",
-   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+   "where": "auth.md",
+   "url": "https://exa.ai/auth.md",
+   "match": "`402`",
+   "snippet": "`/search` or `/contents` with no API key returns `402` with tag `X402_PAYMENT_REQUIRED` and a `PAYMENT-REQUIRED` header that lists the price and the accepted U",
+   "status": "partial",
+   "reason": "auth.md mentions a payment path (`402`) in prose; nothing machine-readable"
   },
   {
    "id": "markdown",
    "name": "Docs in Markdown",
    "url": "https://exa.ai/llms.txt",
    "heading": "# Exa",
-   "bytes": 8808,
+   "bytes": 9912,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -64,10 +77,10 @@
    "label": "auth.md",
    "url": "https://exa.ai/auth.md",
    "finalUrl": "https://exa.ai/auth.md",
-   "status": 404,
+   "status": 200,
    "error": null,
-   "contentType": "text/html; charset=utf-8",
-   "ms": 116,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 259,
    "redirects": 0
   },
   {
@@ -77,7 +90,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 50,
+   "ms": 192,
    "redirects": 0
   },
   {
@@ -87,37 +100,37 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 37,
+   "ms": 53,
    "redirects": 0
   },
   {
    "label": "prm",
    "url": "https://exa.ai/.well-known/oauth-protected-resource",
-   "finalUrl": "https://exa.ai/.well-known/oauth-protected-resource",
-   "status": 404,
+   "finalUrl": "https://mcp.exa.ai/.well-known/oauth-protected-resource/mcp",
+   "status": 200,
    "error": null,
-   "contentType": "text/html; charset=utf-8",
-   "ms": 52,
-   "redirects": 0
-  },
-  {
-   "label": "prm (API host)",
-   "url": "https://api.exa.ai/.well-known/oauth-protected-resource",
-   "finalUrl": "https://api.exa.ai/.well-known/oauth-protected-resource",
-   "status": 404,
-   "error": null,
-   "contentType": "application/json; charset=utf-8",
-   "ms": 40,
-   "redirects": 0
+   "contentType": "application/json",
+   "ms": 56,
+   "redirects": 1
   },
   {
    "label": "as-metadata",
-   "url": "https://exa.ai/.well-known/oauth-authorization-server",
-   "finalUrl": "https://exa.ai/.well-known/oauth-authorization-server",
+   "url": "https://auth.exa.ai/.well-known/oauth-authorization-server",
+   "finalUrl": "https://auth.exa.ai/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 53,
+   "redirects": 0
+  },
+  {
+   "label": "catch-all probe",
+   "url": "https://exa.ai/agent-signup-check-no-such-page.md",
+   "finalUrl": "https://exa.ai/agent-signup-check-no-such-page.md",
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 72,
+   "ms": 86,
    "redirects": 0
   },
   {
@@ -127,7 +140,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 59,
+   "ms": 165,
    "redirects": 0
   }
  ]

@@ -1,19 +1,19 @@
 GET https://render.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:27.235Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:51.200Z
 final-url: https://render.com/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:57:25 GMT
+date: Fri, 30 Oct 2026 16:00:49 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
 cache-control: s-maxage=1, stale-while-revalidate=31535999
 x-xss-protection: 1; mode=block
 content-encoding: br
-content-security-policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://assets.calendly.com https://scout-cdn.salesloft.com https://snap.licdn.com https://www.google.com https://www.googletagmanager.com https://www.gstatic.com ; connect-src 'self' https://*.algolia.net https://*.algolianet.com https://*.google-analytics.com https://*.google.com https://*.googletagmanager.com https://*.hsforms.com https://*.inkeep.com https://*.linkedin.com https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://*.segment.com https://*.segment.io https://api.unifyintent.com https://api.ashbyhq.com https://cdn.growthbook.io https://cdn.sanity.io https://hubspot-forms-static-embed.s3.amazonaws.com https://pagead2.googlesyndication.com https://scout.salesloft.com https://translate.googleapis.com ; worker-src 'self' blob: https://*.osano.com; report-uri https://render.report-uri.com/r/t/csp/reportOnly; report-to wizard;
+content-security-policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://assets.calendly.com https://scout-cdn.salesloft.com https://snap.licdn.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://www.googletagmanager.com https://www.gstatic.com ; connect-src 'self' https://*.algolia.net https://*.algolianet.com https://*.google-analytics.com https://*.google.com https://*.googletagmanager.com https://*.doubleclick.net https://www.googleadservices.com https://*.hsforms.com https://*.inkeep.com https://*.linkedin.com https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://*.segment.com https://*.segment.io https://api.unifyintent.com https://api.ashbyhq.com https://cdn.growthbook.io https://cdn.sanity.io https://hubspot-forms-static-embed.s3.amazonaws.com https://pagead2.googlesyndication.com https://scout.salesloft.com https://translate.googleapis.com ; worker-src 'self' blob: https://*.osano.com; report-uri https://render.report-uri.com/r/t/csp/reportOnly; report-to wizard;
 referrer-policy: same-origin
-rndr-id: 0ba60fcc-f08f-405b
+rndr-id: a13e554c-e1d8-4a7c
 server: cloudflare
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
@@ -22,7 +22,7 @@ x-frame-options: SAMEORIGIN
 x-nextjs-cache: HIT
 x-render-origin-server: Render
 cf-cache-status: DYNAMIC
-cf-ray: a51de1f7ce0a0d8d-SEA
+cf-ray: a52ba2927909b9f4-SEA
 alt-svc: h3=":443"; ma=86400
 
 # Render
@@ -411,6 +411,7 @@ Do not fetch it for single-topic lookups (it is over 900 KB). Instead, fetch ind
 - [Deploy a Vue.js App](https://render.com/docs/deploy-vue-js.md)
 - [Deploy Webdis and Redis with Docker](https://render.com/docs/deploy-webdis-docker.md)
 - [Deploy WordPress](https://render.com/docs/deploy-wordpress.md)
+- [Deploy QM by YC Labs](https://render.com/docs/deploy-yc-qm.md): Run YC Labs' multiplayer agent harness for your team on Render.
 - [Deploy Zulip](https://render.com/docs/deploy-zulip.md)
 
 ### Advisories
@@ -458,8 +459,8 @@ https://render.com/articles
 
 - [SSE vs WebSockets for Streaming Responses](https://render.com/articles/sse-vs-websockets-llm-streaming.md)
 - [Managed PostgreSQL Pricing in 2026: Compute, Storage, Backups, and Egress](https://render.com/articles/managed-postgresql-pricing-2026.md)
-- [Render Workflows vs Inngest: durable compute vs durable orchestration](https://render.com/articles/render-vs-inngest.md)
-- [Render Workflows vs Trigger.dev: durable steps vs checkpointed tasks](https://render.com/articles/render-vs-trigger.md)
+- [Render Workflows vs Inngest: durable compute vs durable orchestration](https://render.com/articles/render-workflows-vs-inngest.md)
+- [Render Workflows vs Trigger.dev: durable steps vs checkpointed tasks](https://render.com/articles/render-workflows-vs-trigger.md)
 - [Render Workflows vs Temporal: managed compute vs your own workers](https://render.com/articles/render-workflows-vs-temporal.md)
 - [Best durable workflow platforms for AI agents and LLM workloads](https://render.com/articles/best-durable-workflow-platforms-for-ai-agents-and-llm-workloads.md)
 - [Fly.io vs Vercel](https://render.com/articles/fly-io-vs-vercel.md)
@@ -619,7 +620,7 @@ https://render.com/articles
 
 site: https://render.com
 owner: Render Services, Inc.
-last-generated: "2026-10-28"
+last-generated: "2026-10-30"
 
 ### Permissions
 

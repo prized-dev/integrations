@@ -1,13 +1,13 @@
 GET https://railway.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:27.392Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:51.094Z
 final-url: https://railway.com/.well-known/oauth-protected-resource
 
 HTTP 406
 content-type: application/json
-date: Wed, 28 Oct 2026 23:57:25 GMT
+date: Fri, 30 Oct 2026 16:00:49 GMT
 server: railway-hikari
-x-railway-request-id: XDwCM6C_SIm0tk452h0iww
+x-railway-request-id: aq6HxWY0S-iYZb9-YqVb7A
 x-cache: DYNAMIC
 transfer-encoding: chunked
 x-hikari-trace: lax1.e74w,lax1.z1hw

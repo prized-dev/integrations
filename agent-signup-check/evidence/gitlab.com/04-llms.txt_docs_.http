@@ -1,25 +1,25 @@
 GET https://docs.gitlab.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:33.830Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:03.868Z
 final-url: https://docs.gitlab.com/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:58:32 GMT
+date: Fri, 30 Oct 2026 16:02:02 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 cache-control: public, max-age=14400
-expires: Thu, 29 Oct 2026 03:58:32 GMT
-last-modified: Wed, 28 Oct 2026 23:25:24 GMT
+expires: Fri, 30 Oct 2026 20:02:02 GMT
+last-modified: Fri, 30 Oct 2026 15:21:53 GMT
 permissions-policy: interest-cohort=()
 vary: Origin, Accept-Encoding
-x-request-id: 01M62DXGYE95TRRM6CVKPN8T7Z
-etag: W/"7fb66a615b7eb906dc93e28063d23cda5bfd2d21f4038ce33eeff76da0c30ade"
-age: 292
+x-request-id: 01M66RD8JW3A6B7DDJGKW32WGX
+etag: W/"fc7d2c1e7e21ec36122f3c5b5c5b1b8398eafa7c44fe21ae60d20b048e312941"
+age: 348
 cf-cache-status: HIT
 content-encoding: gzip
 server: cloudflare
-cf-ray: a51de39c0adefeff-PDX
+cf-ray: a52ba45c5bba20eb-PDX
 
 # GitLab Documentation
 Learn how to use and administer GitLab, the most scalable Git-based integrated platform for software development.
@@ -322,7 +322,7 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 ### Queries
 
 [Queries](https://docs.gitlab.com/orbit/queries): Query the GitLab Orbit graph with GQL.
-[Query language](https://docs.gitlab.com/orbit/queries/query-language): Query GitLab Orbit with GQL, a read-only, openCypher-like query language. Learn what GQL supports, the statement shape, filters, aggregations, pagination, and limits.
+[Query language](https://docs.gitlab.com/orbit/queries/query-language): Query GitLab Orbit with GQL, a read-only, OpenCypher-like query language. Learn what GQL supports, the statement shape, filters, aggregations, pagination, and limits.
 
 ### GitLab Orbit architecture
 
@@ -334,6 +334,10 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 ### Troubleshooting
 
 [Troubleshooting](https://docs.gitlab.com/orbit/troubleshooting): Fix common errors in queries, the CLI, and the local graph.
+
+### Deprecations and removals
+
+[Deprecations and removals](https://docs.gitlab.com/orbit/deprecations): What changed in GitLab Orbit between the beta and general availability, and what to use instead.
 
 
 ## Extend
@@ -601,7 +605,7 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 ### Configure GitLab Duo
 
 [Configure GitLab Duo](https://docs.gitlab.com/administration/gitlab_duo/configure): Configure GitLab Duo for your GitLab instance.
-[AI Gateway](https://docs.gitlab.com/administration/gitlab_duo/gateway): Learn more about AI Gateway in the GitLab documentation.
+[GitLab-managed AI Gateway](https://docs.gitlab.com/administration/gitlab_duo/gateway): The default GitLab-managed AI Gateway with vendor language models.
 [GitLab Dedicated for Government](https://docs.gitlab.com/administration/gitlab_duo/configure/gitlab_dedicated_for_government): Ensure GitLab Duo is configured and operating correctly on GitLab Dedicated for Government.
 [Model selection](https://docs.gitlab.com/administration/gitlab_duo/model_selection): Configure large language models for GitLab Duo features.
 [Semantic code search](https://docs.gitlab.com/administration/semantic_code_search): Administer and configure semantic code search on GitLab Self-Managed instances.
@@ -798,7 +802,7 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 
 [Manage subscription](https://docs.gitlab.com/subscriptions/manage_subscription): Buy, view, and renew your GitLab subscriptions.
 [Activate Enterprise Edition](https://docs.gitlab.com/administration/license): Activate GitLab Enterprise Edition with an activation code to unlock paid features. Learn to activate your subscription for new, scaled, or offline instances.
-[Troubleshooting](https://docs.gitlab.com/subscriptions/gitlab_com/gitlab_subscription_troubleshooting): Seat usage, compute minutes, storage limits, renewal info.
+[Troubleshooting](https://docs.gitlab.com/subscriptions/gitlab_com/gitlab_subscription_troubleshooting): Resolve payment, purchase, namespace linking, and synchronization errors for GitLab subscriptions.
 
 ### Manage billing account
 

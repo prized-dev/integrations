@@ -1,7 +1,7 @@
 {
  "site": "mongodb.com",
- "checkedAt": "2026-10-28T23:58:00.122Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:25.022Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 2,
  "partial": 0,
  "total": 7,
@@ -33,7 +33,7 @@
    "name": "Key works without a browser",
    "url": "https://cloud.mongodb.com/api/atlas/v2/groups",
    "httpStatus": 401,
-   "www_authenticate": "Digest realm=\"MMS Public API\", domain=\"\", nonce=\"7jLXaKpcJcpbdEkBuLyJLTQSMU0NNY+g\", algorithm=MD5, qop=\"auth\", stale=false",
+   "www_authenticate": "Digest realm=\"MMS Public API\", domain=\"\", nonce=\"sYZOeWGHszKiFkFg1kzcALefruwu6pSE\", algorithm=MD5, qop=\"auth\", stale=false",
    "status": "pass",
    "reason": "401 with a Digest challenge"
   },
@@ -54,7 +54,7 @@
    "name": "Docs in Markdown",
    "url": "https://www.mongodb.com/llms.txt",
    "heading": "# MongoDB",
-   "bytes": 10381,
+   "bytes": 11095,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -67,7 +67,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 961,
+   "ms": 1125,
    "redirects": 1
   },
   {
@@ -77,7 +77,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 928,
+   "ms": 373,
    "redirects": 1
   },
   {
@@ -87,7 +87,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 201,
+   "ms": 191,
    "redirects": 0
   },
   {
@@ -97,7 +97,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 203,
+   "ms": 140,
    "redirects": 1
   },
   {
@@ -107,7 +107,7 @@
    "status": 401,
    "error": null,
    "contentType": null,
-   "ms": 174,
+   "ms": 175,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 121,
+   "ms": 310,
    "redirects": 1
   },
   {
@@ -127,7 +127,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 376,
+   "ms": 141,
    "redirects": 1
   }
  ]

@@ -1,7 +1,7 @@
 {
  "site": "aws.amazon.com",
- "checkedAt": "2026-10-28T23:57:41.137Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:05.409Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 1,
  "total": 7,
@@ -54,7 +54,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.aws.amazon.com/llms.txt",
    "heading": "# Amazon Web Services (AWS) Documentation",
-   "bytes": 420424,
+   "bytes": 411652,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -67,7 +67,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html;charset=UTF-8",
-   "ms": 66,
+   "ms": 70,
    "redirects": 1
   },
   {
@@ -77,7 +77,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html;charset=UTF-8",
-   "ms": 69,
+   "ms": 86,
    "redirects": 0
   },
   {
@@ -96,8 +96,8 @@
    "finalUrl": "https://docs.aws.amazon.com/llms.txt",
    "status": 200,
    "error": null,
-   "contentType": "text/plain",
-   "ms": 115,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 91,
    "redirects": 0
   },
   {
@@ -107,7 +107,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html;charset=UTF-8",
-   "ms": 102,
+   "ms": 135,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 400,
    "error": null,
    "contentType": "text/xml;charset=UTF-8",
-   "ms": 191,
+   "ms": 201,
    "redirects": 0
   },
   {
@@ -127,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html;charset=UTF-8",
-   "ms": 125,
+   "ms": 106,
    "redirects": 0
   },
   {
@@ -137,7 +137,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html;charset=UTF-8",
-   "ms": 105,
+   "ms": 99,
    "redirects": 0
   }
  ]

@@ -1,7 +1,7 @@
 {
  "site": "sprites.dev",
- "checkedAt": "2026-10-28T23:57:47.991Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:13.573Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 0,
  "partial": 1,
  "total": 7,
@@ -69,7 +69,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 240,
+   "ms": 233,
    "redirects": 0
   },
   {
@@ -79,7 +79,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 169,
+   "ms": 182,
    "redirects": 0
   },
   {
@@ -89,7 +89,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 194,
+   "ms": 301,
    "redirects": 0
   },
   {
@@ -99,7 +99,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 155,
+   "ms": 181,
    "redirects": 0
   },
   {
@@ -109,7 +109,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 152,
+   "ms": 182,
    "redirects": 0
   },
   {
@@ -119,7 +119,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 155,
+   "ms": 165,
    "redirects": 0
   },
   {
@@ -129,7 +129,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 156,
+   "ms": 168,
    "redirects": 0
   },
   {
@@ -139,7 +139,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 170,
+   "ms": 172,
    "redirects": 0
   }
  ]

@@ -1,27 +1,27 @@
 GET https://docs.beam.cloud/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:39.922Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:04.592Z
 final-url: https://docs.beam.cloud/llms.txt
 
 HTTP 200
-age: 4061
+age: 1585
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a51de246ff10b8b9-PDX
+cf-ray: a52ba2e5eb6ef896-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:37 GMT
+date: Fri, 30 Oct 2026 16:01:02 GMT
 etag: "bevzJGXcReHsdsfRS55YvwojQfqqRFQy4pInZN-xP20"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4006
+x-mintlify-client-version: 0.0.4021
 x-vercel-cache: MISS
-x-vercel-id: pdx1:cle1:iad1::iad1::rk9z7-1793231857706-f21e08a471d5
+x-vercel-id: pdx1:bom1:iad1::iad1::m87v8-1793376062343-708fbe1884fc
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_2xiSHD9XEvLsPGPcfoMtkLTB3dy9
+x-version: dpl_EnxDqhjaNc9a8MVa833TGULPd9uJ
 connection: close
 transfer-encoding: chunked
 

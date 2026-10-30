@@ -1,12 +1,12 @@
 GET https://docs.anthropic.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:05.393Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:30.457Z
 redirect: 301 from https://docs.anthropic.com/llms.txt
 redirect: 308 from https://platform.claude.com/docs/llms.txt
 final-url: https://platform.claude.com/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:57:02 GMT
+date: Fri, 30 Oct 2026 16:00:27 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -18,10 +18,11 @@ referrer-policy: strict-origin
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 cache-control: public, max-age=600
 server: cloudflare
-last-modified: Wed, 28 Oct 2026 23:57:02 GMT
+age: 375
+last-modified: Fri, 30 Oct 2026 15:54:37 GMT
 cf-cache-status: HIT
 content-encoding: gzip
-cf-ray: a51de169e9829314-PDX
+cf-ray: a52ba20a0940de1d-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Anthropic Developer Documentation
@@ -46,18 +47,18 @@ The latest version of each Claude Platform SDK and of the ant CLI is at https://
 
 The full documentation is available in the following languages on https://platform.claude.com/docs:
 
-- English (en) - 821 pages - /docs - Content included below
-- German (Deutsch) (de) - 305 pages - /docs/de - Visit website for content
-- Spanish (Español) (es) - 305 pages - /docs/es - Visit website for content
-- French (Français) (fr) - 305 pages - /docs/fr - Visit website for content
-- Italian (Italiano) (it) - 305 pages - /docs/it - Visit website for content
-- Japanese (日本語) (ja) - 305 pages - /docs/ja - Visit website for content
-- Korean (한국어) (ko) - 305 pages - /docs/ko - Visit website for content
-- Portuguese (Português) (pt-BR) - 305 pages - /docs/pt-BR - Visit website for content
-- Russian (Русский) (ru) - 305 pages - /docs/ru - Visit website for content
-- Chinese Simplified (简体中文) (zh-CN) - 305 pages - /docs/zh-CN - Visit website for content
-- Chinese Traditional (繁體中文) (zh-TW) - 305 pages - /docs/zh-TW - Visit website for content
-- Indonesian (Bahasa Indonesia) (id) - 305 pages - /docs/id - Visit website for content
+- English (en) - 826 pages - /docs - Content included below
+- German (Deutsch) (de) - 306 pages - /docs/de - Visit website for content
+- Spanish (Español) (es) - 306 pages - /docs/es - Visit website for content
+- French (Français) (fr) - 306 pages - /docs/fr - Visit website for content
+- Italian (Italiano) (it) - 306 pages - /docs/it - Visit website for content
+- Japanese (日本語) (ja) - 306 pages - /docs/ja - Visit website for content
+- Korean (한국어) (ko) - 306 pages - /docs/ko - Visit website for content
+- Portuguese (Português) (pt-BR) - 306 pages - /docs/pt-BR - Visit website for content
+- Russian (Русский) (ru) - 306 pages - /docs/ru - Visit website for content
+- Chinese Simplified (简体中文) (zh-CN) - 306 pages - /docs/zh-CN - Visit website for content
+- Chinese Traditional (繁體中文) (zh-TW) - 306 pages - /docs/zh-TW - Visit website for content
+- Indonesian (Bahasa Indonesia) (id) - 306 pages - /docs/id - Visit website for content
 
 ---
 
@@ -249,7 +250,8 @@ The full documentation is available in the following languages on https://platfo
 - [Set up the Compliance API](https://platform.claude.com/docs/en/manage-claude/compliance-api-access.md)
 - [Spend Limits API](https://platform.claude.com/docs/en/manage-claude/spend-limits-api.md)
 - [Troubleshooting](https://platform.claude.com/docs/en/manage-claude/cmek-troubleshooting.md) - Troubleshoot CMEK
-- [Usage and Cost API](https://platform.claude.com/docs/en/manage-claude/usage-cost-api.md)
+- [Usage and Cost Analytics API](https://platform.claude.com/docs/en/manage-claude/usage-cost-analytics-api.md)
+- [Usage and Cost API (legacy)](https://platform.claude.com/docs/en/manage-claude/usage-cost-api.md) - Usage and Cost API
 - [AWS](https://platform.claude.com/docs/en/manage-claude/wif-providers/aws.md) - Use WIF with AWS
 - [GitHub Actions](https://platform.claude.com/docs/en/manage-claude/wif-providers/github-actions.md) - Use WIF with GitHub Actions
 - [Google Cloud](https://platform.claude.com/docs/en/manage-claude/wif-providers/gcp.md) - Use WIF with Google Cloud
@@ -458,6 +460,7 @@ The full documentation is available in the following languages on https://platfo
 - [Compliance Settings](https://platform.claude.com/docs/en/api/organization/compliance_settings.md)
 - [Compliance Settings (Beta)](https://platform.claude.com/docs/en/api/beta/organization/compliance_settings.md)
 - [Connectors (Beta)](https://platform.claude.com/docs/en/api/beta/organization/analytics/connectors.md)
+- [Cost (Beta)](https://platform.claude.com/docs/en/api/beta/organization/analytics/cost.md)
 - [Cost Report (Beta)](https://platform.claude.com/docs/en/api/beta/organization/cost_report.md)
 - [Cost Report (Beta)](https://platform.claude.com/docs/en/api/beta/organization/analytics/cost_report.md)
 - [Count tokens in a Message](https://platform.claude.com/docs/en/api/messages/count_tokens.md)
@@ -587,6 +590,7 @@ The full documentation is available in the following languages on https://platfo
 - [Get Compliance Settings](https://platform.claude.com/docs/en/api/organization/compliance_settings/retrieve.md)
 - [Get Compliance Settings (Beta)](https://platform.claude.com/docs/en/api/beta/organization/compliance_settings/retrieve.md)
 - [Get Connector Usage (Beta)](https://platform.claude.com/docs/en/api/beta/organization/analytics/connectors/list.md)
+- [Get Cost By Dimension (Beta)](https://platform.claude.com/docs/en/api/beta/organization/analytics/cost/list.md)
 - [Get Cost Over Time (Beta)](https://platform.claude.com/docs/en/api/beta/organization/analytics/cost_report/list.md)
 - [Get Cost Report (Beta)](https://platform.claude.com/docs/en/api/beta/organization/cost_report/retrieve.md)
 - [Get Current Organization](https://platform.claude.com/docs/en/api/organization/retrieve.md)
@@ -634,6 +638,7 @@ The full documentation is available in the following languages on https://platfo
 - [Get Skill Version (Beta)](https://platform.claude.com/docs/en/api/beta/skills/versions/retrieve.md)
 - [Get Spend Limit (Beta)](https://platform.claude.com/docs/en/api/beta/organization/spend_limits/retrieve.md)
 - [Get Spend Limit Increase Request (Beta)](https://platform.claude.com/docs/en/api/beta/organization/spend_limits/increase_requests/retrieve.md)
+- [Get Token Usage By Dimension (Beta)](https://platform.claude.com/docs/en/api/beta/organization/analytics/usage/list.md)
 - [Get Token Usage Over Time (Beta)](https://platform.claude.com/docs/en/api/beta/organization/analytics/usage_report/list.md)
 - [Get Tunnel (Beta)](https://platform.claude.com/docs/en/api/beta/tunnels/retrieve.md)
 - [Get Tunnel (Beta)](https://platform.claude.com/docs/en/api/beta/organization/mcp_tunnels/retrieve.md)
@@ -884,6 +889,7 @@ The full documentation is available in the following languages on https://platfo
 - [Update Workspace Member (Beta)](https://platform.claude.com/docs/en/api/beta/organization/workspaces/members/update.md)
 - [Upload File](https://platform.claude.com/docs/en/api/files/upload.md)
 - [Upload File (Beta)](https://platform.claude.com/docs/en/api/beta/files/upload.md)
+- [Usage (Beta)](https://platform.claude.com/docs/en/api/beta/organization/analytics/usage.md)
 - [Usage Report (Beta)](https://platform.claude.com/docs/en/api/beta/organization/usage_report.md)
 - [Usage Report (Beta)](https://platform.claude.com/docs/en/api/beta/organization/analytics/usage_report.md)
 - [User Cost Report (Beta)](https://platform.claude.com/docs/en/api/beta/organization/analytics/user_cost_report.md)

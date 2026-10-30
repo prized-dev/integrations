@@ -1,7 +1,7 @@
 {
  "site": "blaxel.ai",
- "checkedAt": "2026-10-28T23:57:34.491Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:00:58.581Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 2,
  "total": 7,
@@ -72,7 +72,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 99,
+   "ms": 120,
    "redirects": 0
   },
   {
@@ -82,7 +82,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 71,
+   "ms": 104,
    "redirects": 0
   },
   {
@@ -92,7 +92,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 143,
+   "ms": 147,
    "redirects": 0
   },
   {
@@ -102,7 +102,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 85,
+   "ms": 118,
    "redirects": 0
   },
   {
@@ -112,7 +112,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 36,
+   "ms": 35,
    "redirects": 0
   },
   {
@@ -122,7 +122,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 105,
+   "ms": 247,
    "redirects": 0
   },
   {
@@ -132,7 +132,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 83,
+   "ms": 120,
    "redirects": 0
   }
  ]

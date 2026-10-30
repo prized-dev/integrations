@@ -1,14 +1,14 @@
 GET https://api.supabase.com/v1/projects
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:51.576Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:16.889Z
 final-url: https://api.supabase.com/v1/projects
 
 HTTP 401
-date: Wed, 28 Oct 2026 23:57:49 GMT
+date: Fri, 30 Oct 2026 16:01:14 GMT
 content-type: application/json; charset=utf-8
 content-length: 38
 connection: close
-cf-ray: a51de28dfcfc613d-PDX
+cf-ray: a52ba330daf7706c-PDX
 cf-cache-status: DYNAMIC
 etag: W/"26-HYCAdUgPxW7agu8/LAglkqYHbm8"
 server: cloudflare

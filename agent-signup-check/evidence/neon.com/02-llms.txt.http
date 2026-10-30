@@ -1,24 +1,24 @@
 GET https://neon.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:52.166Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:18.333Z
 final-url: https://neon.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 3552
+age: 349
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:49 GMT
-etag: W/"6852b561052b45856b18b8843270b8b3"
-last-modified: Wed, 28 Oct 2026 22:58:37 GMT
+date: Fri, 30 Oct 2026 16:01:15 GMT
+etag: W/"e5a043b80ce089d80eaa17c4f215c5d8"
+last-modified: Fri, 30 Oct 2026 15:55:26 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /docs/llms.txt
 x-nextjs-rewritten-path: /docs/llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::rk9z7-1793231869515-7fff57dee6c4
+x-vercel-id: pdx1::vb2fq-1793376075699-a21340b845a3
 connection: close
 transfer-encoding: chunked
 
@@ -143,7 +143,7 @@ Managed authentication built on Better Auth that branches with your database.
 - [Managed Better Auth](https://neon.com/docs/auth/overview.md): Managed authentication that branches with your database
 - [Use Managed Better Auth with Next.js (API methods)](https://neon.com/docs/auth/quick-start/nextjs-api-only.md): Build your own auth UI using SDK methods
 - [Use Managed Better Auth with React (API methods)](https://neon.com/docs/auth/quick-start/react.md): Build your own auth UI
-- [Set up OAuth](https://neon.com/docs/auth/guides/setup-oauth.md): Add Google, GitHub, or Vercel sign-in to your application
+- [Set up OAuth](https://neon.com/docs/auth/guides/setup-oauth.md): Add Google, GitHub, Vercel, Microsoft, or Apple sign-in to your application
 - [Auth production checklist](https://neon.com/docs/auth/production-checklist.md): Required configuration before launching with Managed Better Auth
 
 ## Neon Functions

@@ -1,121 +1,120 @@
 GET https://exa.ai/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:17.466Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:47.304Z
 final-url: https://exa.ai/auth.md
 
-HTTP 404
+HTTP 200
+access-control-allow-origin: *
 age: 0
-cache-control: private, no-cache, no-store, max-age=0, must-revalidate
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
-content-type: text/html; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:15 GMT
+content-type: text/markdown; charset=utf-8
+date: Fri, 30 Oct 2026 16:01:44 GMT
+etag: W/"79e08a1216d5f6146e1687940e834441"
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-content-type-options: nosniff
 x-frame-options: DENY
-x-matched-path: /api/missing
-x-nextjs-rewritten-path: /api/missing
-x-vercel-cache: MISS
-x-vercel-id: pdx1::pdx1::qn6mf-1793231894973-b7f1241bf473
+x-matched-path: /auth.md
+x-vercel-cache: PRERENDER
+x-vercel-id: pdx1::fxxrc-1793376104335-664307b749cd
 connection: close
 transfer-encoding: chunked
 
-<!DOCTYPE html><html lang="en" class="__variable_d8ebd1"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/e4af272ccee01ff0-s.p.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/fonts/ABCArizonaFlare-Regular.woff2" as="font" crossorigin="anonymous" type="font/woff2"/><link rel="preload" href="/fonts/ABCDiatype-Regular.woff2" as="font" crossorigin="anonymous" type="font/woff2"/><link rel="preload" as="image" href="/images/logo/exa-logo-blue.svg"/><link rel="stylesheet" href="/_next/static/css/526eb32230f31761.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/css/51dccd5ba6174469.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/css/310b7cad5ce53a11.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/webpack-e7622807f2149ea2.js"/><script src="/_next/static/chunks/8df046ea-d6357a05c42e86cd.js" async=""></script><script src="/_next/static/chunks/80040-b95e2ad207024d5a.js" async=""></script><script src="/_next/static/chunks/main-app-2280b70bad25d35f.js" async=""></script><script src="/_next/static/chunks/c2b750b4-3c62a0c706321c2c.js" async=""></script><script src="/_next/static/chunks/65776-3b79f1276ef23947.js" async=""></script><script src="/_next/static/chunks/23682-f7aca40019b63534.js" async=""></script><script src="/_next/static/chunks/16077-e62b6161ab18238d.js" async=""></script><script src="/_next/static/chunks/15473-2c98031042410664.js" async=""></script><script src="/_next/static/chunks/69295-c3beb37cfdc1f3c5.js" async=""></script><script src="/_next/static/chunks/64183-5208b57d982c5ede.js" async=""></script><script src="/_next/static/chunks/app/layout-c9585ed6ddf84a35.js" async=""></script><script src="/_next/static/chunks/app/not-found-f0f42fd993dd129d.js" async=""></script><link rel="search" type="application/opensearchdescription+xml" title="Exa" href="https://exa.ai/search/opensearch.xml"/><link rel="preload" href="/fonts/ABCArizonaFlare-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"/><link rel="preload" href="/fonts/ABCDiatype-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"/><meta name="robots" content="noindex"/><meta name="next-size-adjust" content=""/><title>Exa | Search API for AI Agents — Real-Time Web Data</title><meta name="description" content="Search API for AI agents that need real-time web data, deep research, and structured content from one endpoint. Try our API for free."/><meta name="application-name" content="Exa"/><link rel="author" href="https://exa.ai"/><meta name="author" content="Exa Labs"/><meta name="keywords" content="ai search engine,serp api,best ai search engine,search api,deep research api,web search api,web search ai,ai search api,deepresearch api,web crawling api,website crawler,metaphor,exa,api,search,ai,llms,webcrawler,web api,google search api,google serp api,people search engines,perplexity ai search engine features,ai search engine free,search engine ai,free people search engines,web api security,ai search engines,free ai search engine,web scraping api,bing search api,webcrawler search engine,search engine rankings api"/><link rel="canonical" href="https://exa.ai/_not-found"/><meta property="og:title" content="Exa"/><meta property="og:description" content="The Exa Web search API retrieves the best, realtime data from the web for your AI"/><meta property="og:url" content="https://exa.ai"/><meta property="og:site_name" content="Exa"/><meta property="og:image" content="https://exa.imgix.net/og-image-v4.png/"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:site" content="@exaailabs"/><meta name="twitter:creator" content="@exaailabs"/><meta name="twitter:title" content="Exa"/><meta name="twitter:description" content="The Exa API retrieves the best, realtime data from the web for your AI"/><meta name="twitter:image" content="https://exa.imgix.net/og-image-v4.png/"/><link rel="icon" href="/images/favicon-32x32.png"/><script id="url-sanitizer">(function(){
-  try {
-    var global = ["gclid","gclsrc","gbraid","wbraid","dclid","gad_source","gad_campaignid","fbclid","msclkid","li_fat_id","twclid","rdt_cid","ttclid","irclickid","mc_cid","mc_eid","_gl","grclid","graid","grcpid","gruid","grpuid","bfcid"];
-    var scoped = [["/blog",["category"],null],["/careers",["location"],null],["/claude",["ref"],null],["/pricing",["partner"],{"partner":["A16Z","SPC","ODF","GMI"]}],["/library",["date","latitude","longitude","team","season","t"],null],["/library/places",["q"],null]];
-    var url = new URL(window.location.href);
-    var path = url.pathname;
-    var onPath = function(prefix){ return path === prefix || path.indexOf(prefix + '/') === 0; };
-    var allowed = function(lower){
-      if (lower.indexOf('utm_') === 0 || global.indexOf(lower) !== -1) return true;
-      for (var s = 0; s < scoped.length; s++) {
-        if (onPath(scoped[s][0]) && scoped[s][1].indexOf(lower) !== -1) return true;
-      }
-      return false;
-    };
-    var valueAllowed = function(lower, value){
-      var upper = value.trim().toUpperCase();
-      for (var s = 0; s < scoped.length; s++) {
-        var legal = scoped[s][2] && scoped[s][2][lower];
-        if (legal && onPath(scoped[s][0]) && legal.indexOf(upper) === -1) return false;
-      }
-      return true;
-    };
-    var changed = false;
-    var keys = [];
-    url.searchParams.forEach(function(_, k){ if (keys.indexOf(k) === -1) keys.push(k); });
-    for (var i = 0; i < keys.length; i++) {
-      var lower = keys[i].toLowerCase();
-      var keep = allowed(lower);
-      var vals = url.searchParams.getAll(keys[i]);
-      for (var j = 0; keep && j < vals.length; j++) {
-        if (!valueAllowed(lower, vals[j])) keep = false;
-      }
-      if (!keep) {
-        url.searchParams.delete(keys[i]);
-        changed = true;
-      }
-    }
-    var fragment = url.hash ? url.hash.slice(1) : '';
-    if (url.hash) {
-      url.hash = '';
-      changed = true;
-    }
-    if (changed) {
-      window.history.replaceState(window.history.state, '', url.href);
-    }
-    if (fragment && /^(?=[\w.:-]*[A-Za-z])[\w.:-]{1,64}$/.test(fragment)) {
-      var scrollToAnchor = function(){
-        var id;
-        try { id = decodeURIComponent(fragment); } catch (_) { id = fragment; }
-        var el = document.getElementById(id);
-        if (el) el.scrollIntoView();
-      };
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', scrollToAnchor);
-      } else {
-        scrollToAnchor();
-      }
-    }
-  } catch (_) {}
-})();</script><script id="translate-crash-fix">(function(){
-            var rc = Node.prototype.removeChild;
-            Node.prototype.removeChild = function(c){
-              return c.parentNode !== this ? c : rc.call(this,c);
-            };
-            var ib = Node.prototype.insertBefore;
-            Node.prototype.insertBefore = function(n,r){
-              return r && r.parentNode !== this ? n : ib.call(this,n,r);
-            };
-          })();</script><script id="announcement-banner-dismissal-bootstrap">(function(){
-            try {
-              var key = "banner_dismissed_exa_3";
-              if (localStorage.getItem(key) === 'true') {
-                document.documentElement.setAttribute('data-announcement-banner-dismissed', 'true');
-              }
-            } catch (_) {}
-          })();</script><style id="announcement-banner-dismissal-style">
-              html[data-announcement-banner-dismissed="true"] .announcement-banner {
-                display: none !important;
-                height: 0 !important;
-                padding: 0 !important;
-                overflow: hidden !important;
-              }
-            </style><script>(({protect:a})=>{function b(a){return new Promise((b,c)=>{if(document.querySelector(`script[src="${a}"]`))return void b();let d=document.createElement("script");d.src=a,d.async=!0,d.onload=()=>b(),d.onerror=a=>{console.error("Error loading script",a),c(a)},document.head.appendChild(d)})}var c=class a{#a;#b;#c=0;constructor(){let{promise:b,resolve:c}=a.#d();this.#a=b,this.#b=c,this.#e(),window.addEventListener("online",this.#f),window.addEventListener("visibilitychange",this.#f)}getChallenge=async()=>(await this.#g(),await this.#a.then(a=>"function"==typeof a?a():a));#f=()=>{if(document.hidden)return;let{promise:b,resolve:c}=a.#d();this.#a=b,this.#b=c,window.V_C=[],window.V_C.push=c;let d=document.querySelector('script[src*="c.js"]');d&&d.remove(),this.#c+=1};#e=()=>{if(window.V_C){let a=window.V_C.pop();a&&this.#b(a)}else window.V_C=[],window.V_C.push=this.#b};#g=()=>{let a=new URL("/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/a-4-a/c.js",window.location.origin);return a.searchParams.set("i",String(this.#c)),a.searchParams.set("v",String(3)),a.searchParams.set("h",window.location.host),b(a.pathname+a.search)};#h=()=>{window.V_C=void 0};static #d(){let a,b;return{promise:new Promise((c,d)=>{a=c,b=d}),resolve:a,reject:b}}},d=class a{#a=!1;#b;constructor(a){this.#b=a}get loaded(){return this.#a}load=async()=>{this.#a||await this.#f()};#c=()=>{if(typeof globalThis.window>"u")throw Error("KPSDK is not available in the server");if(!window.KPSDK)throw Error("KPSDK is not loaded");let b=this.#b.map(b=>{let c=a.#e(b.path);return{domain:c.host,path:c.pathname,method:b.method}});try{window.KPSDK.configure(b)}catch(a){console.error("Error configuring KPSDK...",a)}};#f=async()=>{let a=this;return new Promise((c,d)=>{let e=()=>{document.removeEventListener("kpsdk-load",e),this.#c()},f=()=>{document.removeEventListener("kpsdk-ready",f),a.#a=!0,c()};document.addEventListener("kpsdk-load",e,{once:!0}),document.addEventListener("kpsdk-ready",f,{once:!0}),b("/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/p.js").catch(a=>{document.removeEventListener("kpsdk-load",e),document.removeEventListener("kpsdk-ready",f),d(a)})})};static #e(a){let b;try{b=new URL(a)}catch{b=new URL(a,location.origin)}return b}},e=a=>{let b=a.replace(/[.?+^$[\]\\(){}|-]/g,"\\$&").split("*").join(".*");return RegExp(`^${b}$`)},f=({path:a,pattern:b})=>-1!==a.search(b);async function g(a,b,c){let d=XMLHttpRequest.prototype.open,g=XMLHttpRequest.prototype.send;XMLHttpRequest.prototype.open=function(a,b,c,e,f){return this._requestUrl=b.toString(),this._requestMethod=a,d.call(this,a,b,c??!0,e,f)},XMLHttpRequest.prototype.send=async function(d){let h=this._requestUrl;if(!h||this._isReexecution)return g.call(this,d);let i=new URL(h,location.href),j=i.origin===location.origin,k=this._requestMethod??"GET",l=c.find(a=>{let b=f({path:i.pathname,pattern:e(a.path)}),c=a.method.toLowerCase()===k.toLowerCase()||"*"===a.method;return b&&c});if(!l||!j)return g.call(this,d);let m=await a.getChallenge();if(this.setRequestHeader("x-is-human",JSON.stringify(m)),this.setRequestHeader("x-path",i.pathname),this.setRequestHeader("x-method",k),0!==m.b||b.loaded||((1===m.d||l?.advancedOptions?.checkLevel==="deepAnalysis")&&await b.load(),!b.loaded))return g.call(this,d);this.setRequestHeader("x-is-human",JSON.stringify(m)),this.setRequestHeader("x-path",i.pathname),this.setRequestHeader("x-method",k);let n=new XMLHttpRequest;return n._isReexecution=!0,n.open(k,h,!0),n.setRequestHeader("x-is-human",JSON.stringify(m)),n.setRequestHeader("x-path",i.pathname),n.setRequestHeader("x-method",k),this.timeout&&(n.timeout=this.timeout),this.responseType&&(n.responseType=this.responseType),this.withCredentials&&(n.withCredentials=this.withCredentials),n.onreadystatechange=()=>{Object.defineProperty(this,"readyState",{value:n.readyState,writable:!0,configurable:!0}),n.readyState===XMLHttpRequest.DONE&&(Object.defineProperty(this,"status",{value:n.status,writable:!0,configurable:!0}),Object.defineProperty(this,"statusText",{value:n.statusText,writable:!0,configurable:!0}),Object.defineProperty(this,"response",{value:n.response,writable:!0,configurable:!0}),Object.defineProperty(this,"responseText",{value:n.responseText,writable:!0,configurable:!0}),Object.defineProperty(this,"responseXML",{value:n.responseXML,writable:!0,configurable:!0}),this.getAllResponseHeaders=()=>n.getAllResponseHeaders(),this.getResponseHeader=a=>n.getResponseHeader(a)),this.onreadystatechange&&this.onreadystatechange.call(this,new Event("readystatechange"))},n.onload=a=>{this.onload&&this.onload.call(this,a)},n.onerror=a=>{this.onerror&&this.onerror.call(this,a)},n.onabort=a=>{this.onabort&&this.onabort.call(this,a)},n.ontimeout=a=>{this.ontimeout&&this.ontimeout.call(this,a)},n.onloadstart=a=>{this.onloadstart&&this.onloadstart.call(this,a)},n.onloadend=a=>{this.onloadend&&this.onloadend.call(this,a)},n.onprogress=a=>{this.onprogress&&this.onprogress.call(this,a)},n.send(d)}}!function({protect:a=[]}){let b;for(let b of a)if(b.advancedOptions?.checkLevel!==void 0&&"deepAnalysis"!==b.advancedOptions.checkLevel&&"basic"!==b.advancedOptions.checkLevel)throw Error(`Invalid checkLevel "${b.advancedOptions.checkLevel}" for route "${b.path}". Must be one of: deepAnalysis, basic`);let h=new c,i=new d(a);g(h,i,a).catch(a=>{console.error("Error patching XMLHttpRequest:",a)}),b=window.fetch,window.fetch=async(c,d)=>{let g=new URL(c instanceof Request?c.url:c,location.href),j=g.origin===location.origin,k=d?.method??(c instanceof Request?c.method:"GET"),l=a.find(a=>{let b=f({path:g.pathname,pattern:e(a.path)}),c=a.method.toLowerCase()===k.toLowerCase()||"*"===a.method;return b&&c});if(null==l||!j)return b(c,d);let m=await h.getChallenge(),n=new Headers(d?.headers||(c instanceof Request?c.headers:void 0));n.set("x-is-human",JSON.stringify(m)),n.set("x-path",g.pathname),n.set("x-method",k);let o={...d,headers:n};return i.loaded||0!==m.b?b(c,o):1===m.d||l?.advancedOptions?.checkLevel==="deepAnalysis"?(await i.load(),window.fetch(c,o)):b(c,o)}}({protect:a})})({ protect: [{"path":"/api/token/issue","method":"POST"},{"path":"/api/library/suggest-edit","method":"POST"},{"path":"/api/library/data-partner","method":"POST"},{"path":"/api/contact/partner","method":"POST"},{"path":"/api/contact/partners","method":"POST"}] });</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebAPI","@id":"https://exa.ai/#api","name":"Exa API","description":"AI search engine with website crawler, search API, SERP API, and deep research API. Built for querying, crawling, and extracting structured web data.","category":"Search API","url":"https://exa.ai","provider":{"@type":"Organization","@id":"https://exa.ai/#organization","name":"Exa","url":"https://exa.ai"},"offers":{"@type":"Offer","url":"https://exa.ai/pricing"}}</script><script src="/_next/static/chunks/polyfills-42372ed130431b0a.js" noModule=""></script><style data-styled="" data-styled-version="6.4.0">.Sdgji{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1 1 auto;padding:80px 24px;min-height:calc(100vh - var(--nav-height) - var(--announcement-banner-height,0px));position:relative;}/*!sc*/
-data-styled.g1[id="sc-838c015c-0"]{content:"Sdgji,"}/*!sc*/
-.cbhyFZ{font-family:"GeistMono",monospace;font-size:18.5px;font-weight:300;line-height:1.2;letter-spacing:-0.02em;color:var(--gray-700);text-align:center;margin-bottom:40px;}/*!sc*/
-@media (max-width:767px){.cbhyFZ{font-size:16.5px;letter-spacing:-0.02em;}}/*!sc*/
-data-styled.g2[id="sc-838c015c-1"]{content:"cbhyFZ,"}/*!sc*/
-.iziuuJ{font-family:var(--font-family-sans);font-size:18px;font-weight:400;line-height:1.2;color:var(--text-light-default);margin-bottom:4px;text-align:center;}/*!sc*/
-data-styled.g3[id="sc-838c015c-2"]{content:"iziuuJ,"}/*!sc*/
-.faAUBW{font-family:var(--font-family-sans);font-size:16px;font-weight:400;line-height:1.2;color:var(--text-light-muted);margin-bottom:20px;text-align:center;}/*!sc*/
-data-styled.g4[id="sc-838c015c-3"]{content:"faAUBW,"}/*!sc*/
-.mZVNl{font-family:var(--font-family-sans);font-size:14px;font-weight:400;line-height:1.4;color:var(--text-light-muted);text-align:center;position:absolute;bottom:48px;left:24px;right:24px;}/*!sc*/
-@media (max-height:640px),(max-width:767px){.mZVNl{position:static;margin-top:48px;}}/*!sc*/
-.mZVNl a{color:var(--text-light-default);text-decoration:underline;text-underline-offset:2px;}/*!sc*/
-da
+# Exa authentication for agents
 
-[body trimmed for publication: kept 16384 of 69034 characters; sha256 of the published body be2de209ba244fa1b2b7900a1b47c14769951d026bd9343535f5b4e1f70af436]
+This page explains how an agent can authenticate to Exa today. It is an authentication guide, not an auth.md agent-registration document: Exa does not support agent registration. It publishes no `agent_auth` metadata and offers no agent registration or claim flow. An agent can get an API key from the user, or provision one through Stripe Projects with a Stripe CLI the user has signed in to.
+
+Exa runs these hosts:
+
+- `https://api.exa.ai`: the Exa API (`/search`, `/contents`, `/answer`, `/agent/runs` and the rest).
+- `https://mcp.exa.ai/mcp`: the hosted MCP server.
+- `https://auth.exa.ai`: the OAuth authorization server for the hosted MCP server.
+
+## OAuth metadata
+
+The Exa API authenticates with API keys and does not publish OAuth metadata. The hosted MCP server is an OAuth protected resource:
+
+```http
+GET https://mcp.exa.ai/.well-known/oauth-protected-resource/mcp
+```
+
+```json
+{
+  "resource": "https://mcp.exa.ai/mcp",
+  "authorization_servers": ["https://auth.exa.ai"],
+  "scopes_supported": ["mcp:tools"],
+  "bearer_methods_supported": ["header"]
+}
+```
+
+Read the authorization server's endpoints from its metadata. If anything in this file conflicts with the metadata, the metadata wins.
+
+```http
+GET https://auth.exa.ai/.well-known/oauth-authorization-server
+```
+
+## Choose a method
+
+| You have | Use | Works on |
+| --- | --- | --- |
+| An Exa API key from the user | An API key | Every Exa API endpoint and the MCP server |
+| An MCP client that supports OAuth | OAuth on the MCP server | The hosted MCP server only |
+| Nothing | The MCP server without credentials, or ask the user for an API key | Rate-limited MCP search and fetch tools |
+| A wallet that can pay USDC with x402 | An x402 payment, if no API key is available | `/search` and `/contents` |
+| The Stripe CLI, signed in to the user's Stripe account | Stripe Projects, to provision an API key | Every Exa API endpoint and the MCP server |
+
+To get an API key, ask the user to create one at https://dashboard.exa.ai/api-keys and give it to you. Keep it in the `EXA_API_KEY` environment variable. The Python (`exa-py`) and JavaScript (`exa-js`) SDKs read it from there.
+
+## Call the Exa API
+
+Send the key in the `x-api-key` header. `Authorization: Bearer <EXA_API_KEY>` also works.
+
+```http
+POST https://api.exa.ai/search
+x-api-key: <EXA_API_KEY>
+Content-Type: application/json
+
+{"query": "PostgreSQL transaction isolation levels", "contents": {"highlights": true}}
+```
+
+## Connect to the hosted MCP server
+
+| Mode | Connect to | Tools |
+| --- | --- | --- |
+| OAuth | `https://mcp.exa.ai/mcp?login` | Default tools, including `agent_run`, billed to the user's Exa team |
+| API key | `https://mcp.exa.ai/mcp` with the `x-api-key` header | Default tools, including `agent_run`, billed to the key's team |
+| No credentials | `https://mcp.exa.ai/mcp` | Rate-limited web search and fetch, without `agent_run` |
+
+For OAuth, register a client at the authorization server's `registration_endpoint` or with a client ID metadata document, run the authorization code flow with PKCE (`S256`) and the `mcp:tools` scope, and send the access token as `Authorization: Bearer <access_token>` to `https://mcp.exa.ai/mcp`. The user signs in to Exa in the browser during this flow. For the Exa API, use an API key. Setup guide: https://exa.ai/docs/get-started/exa-mcp
+
+## Pay per request with x402
+
+A request to `/search` or `/contents` with no API key returns `402` with tag `X402_PAYMENT_REQUIRED` and a `PAYMENT-REQUIRED` header that lists the price and the accepted USDC networks. Sign a payment and retry the same request with it. Guide: https://exa.ai/docs/integrations/payments/x402/quickstart
+
+## Provision an API key with Stripe Projects
+
+Stripe Projects creates an Exa account owned by the user, or uses the Exa team they linked, and writes an API key to the project's `.env` as `EXA_API_KEY`. It needs the Stripe CLI with the Projects plugin, signed in to the user's Stripe account. From the project directory:
+
+```bash
+stripe projects init
+stripe projects add exa/api
+stripe projects env --pull
+```
+
+To provision the key under an existing Exa team, run `stripe projects link exa` before `add`; the user authenticates to Exa in the browser. Guide: https://exa.ai/docs/integrations/marketplaces/stripe-projects
+
+## Errors
+
+| Status | Tag | Returned by | What to do |
+| --- | --- | --- | --- |
+| `401` | `INVALID_API_KEY` | `https://api.exa.ai` | The API key is missing, wrong or revoked. Ask the user for a valid key. Do not retry with the same key. |
+| `402` | `X402_PAYMENT_REQUIRED` | `/search`, `/contents` | The request carried no API key. Ask the user for an API key, or pay with x402. |
+
+## Revoking access
+
+The user revokes API keys at https://dashboard.exa.ai/api-keys. A key that worked before and now returns `401` has been revoked or rotated: drop it and ask the user for a new one. OAuth refresh tokens can be revoked at the authorization server's `revocation_endpoint`.

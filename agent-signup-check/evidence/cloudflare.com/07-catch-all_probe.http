@@ -1,10 +1,10 @@
 GET https://www.cloudflare.com/agent-signup-check-no-such-page.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:30.956Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:55.207Z
 final-url: https://www.cloudflare.com/agent-signup-check-no-such-page.md
 
 HTTP 404
-date: Wed, 28 Oct 2026 23:57:30 GMT
+date: Fri, 30 Oct 2026 16:00:54 GMT
 content-type: text/plain; charset=UTF-8
 content-length: 12
 connection: close
@@ -15,12 +15,10 @@ x-content-type-options: nosniff
 x-frame-options: SAMEORIGIN
 x-xss-protection: 1; mode=block
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=2afepboS1Hfkc5NwrLyegj10O1eNYmjxdcsRRqtl7eybG8EPRUS621j5YLnggui5TT%2B1cSKDJttcK01%2F%2Fkps29SkKBrT11J6WN2I%2B4yEM4zxGVczlMsdTcceYHwGsH9JG4xWsA%3D%3D"}]}, {"group":"cf-csp-endpoint","max_age":86400,"endpoints":[{"url":"https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=9_uyc52yE3cGBZaHVpy2eDPARk96NPNwpw8HfP1FE1s-1793231849.8884275-1.0.1.1-DIxzVDNK.xw0XDJoBBaWK99h_mgvFrdU.0Q0e.Sdd05KlS93_N69YpeE11LfYHt58huoppleSkIiCuyI7.3EycOLGmuU7L_Ie5bTIOu5xx6IEvL6qXlAIhwd0aCVGYyOhK9xgYk98_srh1972JMC0dmVi2N6fs0DmYyo9wrpO4rVxOoS.09QG6S0YWKEaDqZ"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=fVAj8NExWtGiZIbr6jY9Q62zLRiTZ4hnLRYVMv%2BAhlJOJHk%2ByU4Pm2skEy64IkHtpdh63bUs2SKqacufPiLIBpsvYW%2FqiF85qR72v%2BzQxOaequkJA0XZseIn6elJTVFHxBqkUg%3D%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-reporting-endpoints: cf-csp-endpoint="https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=9_uyc52yE3cGBZaHVpy2eDPARk96NPNwpw8HfP1FE1s-1793231849.8884275-1.0.1.1-DIxzVDNK.xw0XDJoBBaWK99h_mgvFrdU.0Q0e.Sdd05KlS93_N69YpeE11LfYHt58huoppleSkIiCuyI7.3EycOLGmuU7L_Ie5bTIOu5xx6IEvL6qXlAIhwd0aCVGYyOhK9xgYk98_srh1972JMC0dmVi2N6fs0DmYyo9wrpO4rVxOoS.09QG6S0YWKEaDqZ"
-content-security-policy-report-only: script-src 'unsafe-inline' 'unsafe-eval'; connect-src 'none'; report-uri https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=9_uyc52yE3cGBZaHVpy2eDPARk96NPNwpw8HfP1FE1s-1793231849.8884275-1.0.1.1-DIxzVDNK.xw0XDJoBBaWK99h_mgvFrdU.0Q0e.Sdd05KlS93_N69YpeE11LfYHt58huoppleSkIiCuyI7.3EycOLGmuU7L_Ie5bTIOu5xx6IEvL6qXlAIhwd0aCVGYyOhK9xgYk98_srh1972JMC0dmVi2N6fs0DmYyo9wrpO4rVxOoS.09QG6S0YWKEaDqZ; report-to cf-csp-endpoint
 server: cloudflare
-cf-ray: a51de215cad51509-PDX
+cf-ray: a52ba2b19cc3eedd-PDX
 alt-svc: h3=":443"; ma=86400
 
 not found :(

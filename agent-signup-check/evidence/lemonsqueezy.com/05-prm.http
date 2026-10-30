@@ -1,19 +1,19 @@
 GET https://lemonsqueezy.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:29.321Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:59.913Z
 redirect: 301 from https://lemonsqueezy.com/.well-known/oauth-protected-resource
 final-url: https://www.lemonsqueezy.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Wed, 28 Oct 2026 23:58:27 GMT
+date: Fri, 30 Oct 2026 16:01:57 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a51de37c4ebc7b78-PDX
+cf-ray: a52ba43e69a83e6d-PDX
 cf-cache-status: DYNAMIC
 cache-control: no-transform
 content-encoding: gzip
-etag: W/"6ae111d6-58"
+etag: W/"6ae3fd24-58"
 server: cloudflare
 strict-transport-security: max-age=31536000; includeSubDomains
 vary: accept-encoding

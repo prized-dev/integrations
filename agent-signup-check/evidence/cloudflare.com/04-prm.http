@@ -1,12 +1,12 @@
 GET https://cloudflare.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:30.956Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:55.207Z
 redirect: 301 from https://cloudflare.com/.well-known/oauth-protected-resource
 redirect: 301 from https://www.cloudflare.com/.well-known/oauth-protected-resource
 final-url: https://www.cloudflare.com/.well-known/oauth-protected-resource/
 
 HTTP 404
-date: Wed, 28 Oct 2026 23:57:28 GMT
+date: Fri, 30 Oct 2026 16:00:52 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -26,10 +26,10 @@ x-frame-options: SAMEORIGIN
 x-served-by: marketing-site
 x-xss-protection: 1; mode=block
 x-rm: GW
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=1ju%2FhPxN4QcGHwkjBRS2J5%2BJgX%2FprXRpIW88Vo03WmNBV%2FIsmBgjP3eLW8wllaqiMEGZb0FX%2BCbrZ9V40TZiNNdenF0lAoXj5CxmAs8zsjQfeCZ6vGHgFZO1SY9GdC1zypdMRg%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=iq2JbzloyneTLLCbINzQWsqScQSSxVLn3MMSjR5gQh9JZJcDVEWQU5zYhHBn8Jy6oCHpwa3RgM4%2BWPY4la%2BRNNmTTm2MvPxHf8Hbicze2fAQd47xvXsJJGsolYoNdvPQohRkLw%3D%3D"}]}
 content-encoding: br
 server: cloudflare
-cf-ray: a51de20cb8b5121f-PDX
+cf-ray: a52ba2a72dd531df-PDX
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html><html lang="en" class="font-stk-bureau-sans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><link rel="preconnect" href="https://imagedelivery.net" crossorigin><link rel="preconnect" href="https://ot.www.cloudflare.com" crossorigin><link rel="preload" href="/icons.svg" as="image" type="image/svg+xml"><link rel="preload" href="/fonts/STKBureauSans-Book.otf" as="font" type="font/otf" crossorigin><link rel="preload" href="/fonts/STKBureauSans-Regular.otf" as="font" type="font/otf" crossorigin><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><script>
@@ -375,4 +375,4 @@ const gtmContainerSrc = "https://www.googletagmanager.com/gtm.js?id=GTM-NDGPDFZ"
       })();
     })();</script><script type="module">globalThi
 
-[body trimmed for publication: kept 16384 of 176432 characters; sha256 of the published body 675f529b64209e377fb06bcdd7bd05b1d898a68b7d8f1fd778ad0ed65911c8b7]
+[body trimmed for publication: kept 16384 of 176432 characters; sha256 of the published body fec6c3057c725b1ea8adcd442de0d69420d52689e804ce0318fb3822d8bc1c16]

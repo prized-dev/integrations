@@ -1,23 +1,23 @@
 GET https://browser-use.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:13.803Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:41.788Z
 final-url: https://browser-use.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 2065
+age: 349
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:10 GMT
-etag: W/"7f7f117cb717f4b620363bb5032ae21c"
-last-modified: Wed, 28 Oct 2026 23:23:45 GMT
+date: Fri, 30 Oct 2026 16:01:38 GMT
+etag: W/"86c8058364357712d41fe1119d42221a"
+last-modified: Fri, 30 Oct 2026 15:55:48 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::bg5kv-1793231890449-4d8efc3b1d38
+x-vercel-id: pdx1::wk2dc-1793376098173-78bd55d30723
 connection: close
 transfer-encoding: chunked
 
@@ -48,6 +48,7 @@ Step-by-step setup and usage: [SKILL.md](https://browser-use.com/SKILL.md). This
 - **What does it cost to run hundreds of cloud browsers in parallel?** Browser time for 300 browsers, 8 hours a day, 22 days a month: about $1,056 on Browser Use Cloud at $0.02/hour, $5,280 at Browserbase's listed $0.10 Startup-plan overage rate (past 250 browsers Browserbase sells a Scale plan through sales, at a price it does not publish), before plan fees, included hours, proxies and discounts. Costs at 100, 300 and 1,000 browsers for 7 providers, and how each grants concurrency: [What does it cost to run hundreds of browsers in parallel?](https://browser-use.com/cloud-browsers.md).
 - **Is self-hosting headless Chrome cheaper?** For steady workloads on unprotected sites, it can be: an estimated $0.010 per browser-hour on an AWS c7i.xlarge with 20 browsers 90% busy, instance cost only (no proxies, engineering time or licenses). Plain headless Chrome got through on 3% of Stealth Bench V2 visits vs 90.5% for Browser Use Cloud; the sites were picked where Browser Use Cloud historically got through and stock Chrome did not, so they are hard on purpose and not a balanced sample: [When is self-hosting cheaper?](https://browser-use.com/cloud-browsers.md).
 - **What should I check before running cloud browsers in production?** Timeouts that do not leave runs behind, stopping every browser explicitly (closing CDP does not stop it or its billing), saved login profiles, proxy GB in the budget, a job queue capped at your concurrency limit, and retries with backoff that honor Retry-After. Plus a Browser Use Cloud vs Browserbase table, its feature rows linked to each provider's docs: both have live view, cookie sync, SOC 2 Type II and Playwright connect; both record video, but only Browserbase shows network requests next to its replay, while Browser Use Cloud records MP4 only: [Production checklist](https://browser-use.com/cloud-browsers.md).
+- **How do I keep a browser agent logged in across runs?** Save the browser's state after the first login and load it on the next run. In your own Playwright scripts, `storageState` saves cookies and localStorage to a JSON file (IndexedDB with `indexedDB: true`, not sessionStorage) and `launchPersistentContext` keeps a whole user data folder. The Browser Use library takes `storage_state='session.json'`, and a Browser Use Cloud profile keeps cookies, local storage and login state for runs in the same project that pass its `profileId`: [Keep logins across runs](https://browser-use.com/login-automation).
 - **Is Browser Use Cloud secure enough for enterprise?** SOC 2 Type II, a fresh isolated browser per run, credentials typed server-side only on hosts you allow (the model sees an alias), recording off by default, Zero Data Retention on enterprise agreements, an EU region in Frankfurt and a DPA. Each claim is linked to its source on [Browser agent security](https://browser-use.com/security).
 - **Which browser should OpenClaw use, and how does it get past bot checks?** On your own laptop, OpenClaw's built-in local browser is free and uses your own IP; its user and chrome profiles use your signed-in Chrome. On a VPS or in Docker, run an OpenClaw node host on a machine that has Chrome, or set an OpenClaw browser profile's cdpUrl to a hosted browser; for Browser Use Cloud that is `wss://connect.browser-use.com?apiKey=<BROWSER_USE_API_KEY>&proxyCountryCode=us`, with `profileId` for a saved login and `timeout` in minutes. It costs $0.02 per browser-hour plus $5/GB for residential proxy traffic, and got through on 90.5% of visits on Stealth Bench V2 versus 82% for Anchor, the best of six other providers (sites picked where Browser Use Cloud historically got through and stock Chrome did not, so not a balanced sample). Config and prices with sources: [OpenClaw browser](https://browser-use.com/openclaw).
 - **What is a cloud browser?** A real Chrome running on someone else's servers that your code or agent controls remotely, usually over CDP. Browser Use Cloud browsers cost $0.02 per browser-hour with stealth and CAPTCHA solving included; residential proxies in 195+ countries are $5/GB of traffic.
@@ -185,7 +186,7 @@ Benchmark numbers come from the linked Browser Use posts; competitor prices come
 
 ### Shopping benchmark
 
-- [Shopping benchmark](https://browser-use.com/benchmarks/consumer): one shopping task per site, the same for Cloud, Dot, Meta Muse and Instinct; CAPTCHA counts for Cloud and Dot only
+- [Shopping benchmark](https://browser-use.com/benchmarks/consumer): the same shopping task on 500 sites for Browser Use Cloud, Browser Use on-prem, Dot, Meta Muse and Instinct; every site's result: https://browser-use.com/benchmarks/consumer.md
 - [Alza](https://browser-use.com/benchmarks/consumer/sites/alza)
 - [Amazon Japan](https://browser-use.com/benchmarks/consumer/sites/amazon)
 - [Bath & Body Works](https://browser-use.com/benchmarks/consumer/sites/bath-and-body-works)

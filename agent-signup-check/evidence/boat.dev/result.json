@@ -1,7 +1,7 @@
 {
  "site": "boat.dev",
- "checkedAt": "2026-10-28T23:57:48.279Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:10.778Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 4,
  "partial": 2,
  "total": 7,
@@ -94,7 +94,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 735,
+   "ms": 294,
    "redirects": 0
   },
   {
@@ -104,7 +104,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 540,
+   "ms": 372,
    "redirects": 0
   },
   {
@@ -114,7 +114,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json;charset=utf-8",
-   "ms": 497,
+   "ms": 199,
    "redirects": 0
   },
   {
@@ -124,7 +124,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json;charset=utf-8",
-   "ms": 503,
+   "ms": 194,
    "redirects": 0
   },
   {
@@ -134,7 +134,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json;charset=utf-8",
-   "ms": 521,
+   "ms": 252,
    "redirects": 0
   },
   {
@@ -144,7 +144,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json;charset=utf-8",
-   "ms": 520,
+   "ms": 239,
    "redirects": 0
   },
   {
@@ -154,7 +154,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 825,
+   "ms": 547,
    "redirects": 0
   }
  ]

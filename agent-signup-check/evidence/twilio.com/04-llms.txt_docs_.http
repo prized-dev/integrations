@@ -1,27 +1,27 @@
 GET https://www.twilio.com/docs/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:05.878Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:31.860Z
 final-url: https://www.twilio.com/docs/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=UTF-8
 transfer-encoding: chunked
 connection: close
-date: Wed, 28 Oct 2026 22:59:21 GMT
-server: istio-envoy
-x-envoy-decorator-operation: docs-site.docs-site.svc.cluster.local:3000/*
+date: Fri, 30 Oct 2026 10:57:44 GMT
 cache-control: public, s-maxage=86400, stale-while-revalidate=86400
 accept-ranges: bytes
-last-modified: Wed, 28 Oct 2026 21:38:30 GMT
-etag: W/"5d1ff-1a1847347f0"
+last-modified: Fri, 30 Oct 2026 07:17:31 GMT
+etag: W/"5d1ff-1a18babbef8"
 content-encoding: gzip
-x-envoy-upstream-service-time: 3
+x-envoy-upstream-service-time: 4
+server: istio-envoy
+x-envoy-decorator-operation: docs-site.docs-site.svc.cluster.local:3000/*
 vary: Accept-Encoding
-via: 1.1 1f941fcf288b6d0259a0f708c955afae.cloudfront.net (CloudFront)
-age: 3521
+via: 1.1 2e87eef03ab555daefa684d946e111b4.cloudfront.net (CloudFront)
+age: 18223
 x-cache: Hit from cloudfront
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: A3Cq4JzsoWj7rRil8BroepUdOWxxLBkd-IotK6obiAmYDtkmUlQqqQ==
+x-amz-cf-id: NBB5m3uIHIbCiPZYtX4FNcsgdazW3Oaa1cf5KMxGn-oe2cNM2nO2uA==
 
 # Twilio Documentation
 

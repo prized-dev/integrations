@@ -1,6 +1,6 @@
 GET https://cdp.coinbase.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:31.100Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:00.516Z
 redirect: 302 from https://cdp.coinbase.com/.well-known/x402
 final-url: https://coinbase.com/developer-platform
 

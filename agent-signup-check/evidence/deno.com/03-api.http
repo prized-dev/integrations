@@ -1,24 +1,13 @@
-GET https://api.deno.com/v1/organizations/me
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:49.279Z
-final-url: https://api.deno.com/v1/organizations/me
+GET https://api.deno.com/v2/apps
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:15.254Z
+final-url: https://api.deno.com/v2/apps
 
 HTTP 401
+x-deno-trace-id: b49916c53ec0fac43a881a59f8f50623
 content-type: application/json
-x-frame-options: deny
-x-xss-protection: 1; mode=block
-x-content-type-options: no-sniff
-cache-control: no-store, max-age=0
-content-security-policy: default-src 'none'; script-src 'self' ; child-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: *.githubusercontent.com; block-all-mixed-content; base-uri 'self'; form-action 'none'; font-src 'self' data:; frame-src *.deno.dev
-x-robots-tag: noindex
-x-deno-ray: 5c4c7458bed79209865e76760ce1ab3c
-content-length: 108
-date: Wed, 28 Oct 2026 23:57:46 GMT
-via: 1.1 google
-alt-svc: h3=":443"; ma=2592000
+content-length: 97
+date: Fri, 30 Oct 2026 16:01:12 GMT
 connection: close
 
-{
-  "code": "unauthorized",
-  "message": "The request requires authorization by means of an access token."
-}
+{"code":"INVALID_TOKEN","message":"The provided access token is malformed, invalid, or expired."}

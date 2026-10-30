@@ -1,6 +1,6 @@
 GET https://tavily.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:20.048Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:51.100Z
 redirect: 302 from https://tavily.com/llms.txt
 redirect: 308 from https://www.tavily.com/llms.txt
 final-url: https://docs.tavily.com/llms.txt
@@ -8,21 +8,21 @@ final-url: https://docs.tavily.com/llms.txt
 HTTP 200
 cache-control: public, max-age=0, must-revalidate
 cf-cache-status: EXPIRED
-cf-ray: a51de33a29ffff19-PDX
+cf-ray: a52ba4010a944afe-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:16 GMT
-last-modified: Wed, 28 Oct 2026 23:58:16 GMT
+date: Fri, 30 Oct 2026 16:01:47 GMT
+last-modified: Fri, 30 Oct 2026 16:01:48 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4006
+x-mintlify-client-version: 0.0.4021
 x-vercel-cache: MISS
-x-vercel-id: pdx1:pdx1:iad1::iad1::cfgpg-1793231896534-31f81f2851f4
+x-vercel-id: pdx1:pdx1:iad1::iad1::c6w5l-1793376107648-80a04f29cdcc
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_2xiSHD9XEvLsPGPcfoMtkLTB3dy9
+x-version: dpl_EnxDqhjaNc9a8MVa833TGULPd9uJ
 connection: close
 transfer-encoding: chunked
 

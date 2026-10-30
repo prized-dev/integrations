@@ -1,7 +1,7 @@
 {
  "site": "heroku.com",
- "checkedAt": "2026-10-28T23:57:37.726Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:01.435Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 1,
  "total": 7,
@@ -67,7 +67,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 1669,
+   "ms": 1483,
    "redirects": 1
   },
   {
@@ -77,7 +77,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 37,
+   "ms": 35,
    "redirects": 0
   },
   {
@@ -87,7 +87,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 226,
+   "ms": 171,
    "redirects": 0
   },
   {
@@ -97,7 +97,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 1443,
+   "ms": 1448,
    "redirects": 1
   },
   {
@@ -107,7 +107,7 @@
    "status": 400,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 109,
+   "ms": 103,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 1350,
+   "ms": 1175,
    "redirects": 1
   },
   {
@@ -127,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 1177,
+   "ms": 1203,
    "redirects": 1
   }
  ]

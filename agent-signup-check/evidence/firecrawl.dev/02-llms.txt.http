@@ -1,20 +1,20 @@
 GET https://firecrawl.dev/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:13.325Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:40.969Z
 redirect: 308 from https://firecrawl.dev/llms.txt
 final-url: https://www.firecrawl.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 0
+age: 349
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
-content-security-policy: default-src 'self' https://docs.firecrawl.dev; script-src 'nonce-db0988f3-2591-43b3-a3d7-ad55076460bd' 'strict-dynamic' 'wasm-unsafe-eval' 'report-sample' 'self' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://googleads.g.doubleclick.net https://static.ads-twitter.com https://www.clarity.ms https://scripts.clarity.ms https://us-assets.i.posthog.com https://www.dubcdn.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.chatbase.co https://assets.calendly.com https://platform.twitter.com https://bugcrowd.com https://assets.bugcrowdusercontent.com https://*.quarterzip.ai; script-src-elem 'nonce-db0988f3-2591-43b3-a3d7-ad55076460bd' 'strict-dynamic' 'wasm-unsafe-eval' 'report-sample' 'self' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://googleads.g.doubleclick.net https://static.ads-twitter.com https://www.clarity.ms https://scripts.clarity.ms https://us-assets.i.posthog.com https://www.dubcdn.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.chatbase.co https://assets.calendly.com https://platform.twitter.com https://bugcrowd.com https://assets.bugcrowdusercontent.com https://*.quarterzip.ai; style-src 'self' 'unsafe-inline' 'report-sample' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' 'report-sample' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob:; font-src 'self' data: https:; connect-src 'self' https: wss: data: blob: https://www.google.com/recaptcha/; frame-src 'self' https://docs.firecrawl.dev https://www.youtube.com https://www.youtube-nocookie.com https://platform.twitter.com https://www.linkedin.com https://www.google.com https://accounts.google.com https://recaptcha.google.com https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://js.stripe.com https://verify.didit.me https://www.googletagmanager.com https://vercel.live https://liveview.firecrawl.dev https://hangar.firecrawl.dev https://bugcrowd.com https://assets.bugcrowdusercontent.com https://renderer.gist.build https://code.gist.build https://www.chatbase.co https://calendly.com https://*.quarterzip.ai https://www.g2.com; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests; report-uri /api/csp-report; report-to csp-endpoint
+content-security-policy: default-src 'self' https://docs.firecrawl.dev; script-src 'nonce-f446f9df-520b-4d5b-a865-860dc0f94d38' 'strict-dynamic' 'wasm-unsafe-eval' 'report-sample' 'self' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://googleads.g.doubleclick.net https://static.ads-twitter.com https://www.clarity.ms https://scripts.clarity.ms https://us-assets.i.posthog.com https://www.dubcdn.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.chatbase.co https://assets.calendly.com https://platform.twitter.com https://bugcrowd.com https://assets.bugcrowdusercontent.com https://*.quarterzip.ai; script-src-elem 'nonce-f446f9df-520b-4d5b-a865-860dc0f94d38' 'strict-dynamic' 'wasm-unsafe-eval' 'report-sample' 'self' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://googleads.g.doubleclick.net https://static.ads-twitter.com https://www.clarity.ms https://scripts.clarity.ms https://us-assets.i.posthog.com https://www.dubcdn.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.chatbase.co https://assets.calendly.com https://platform.twitter.com https://bugcrowd.com https://assets.bugcrowdusercontent.com https://*.quarterzip.ai; style-src 'self' 'unsafe-inline' 'report-sample' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' 'report-sample' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob:; font-src 'self' data: https:; connect-src 'self' https: wss: data: blob: https://www.google.com/recaptcha/; frame-src 'self' https://docs.firecrawl.dev https://www.youtube.com https://www.youtube-nocookie.com https://platform.twitter.com https://www.linkedin.com https://www.google.com https://accounts.google.com https://recaptcha.google.com https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://js.stripe.com https://verify.didit.me https://www.googletagmanager.com https://vercel.live https://liveview.firecrawl.dev https://hangar.firecrawl.dev https://bugcrowd.com https://assets.bugcrowdusercontent.com https://renderer.gist.build https://code.gist.build https://www.chatbase.co https://calendly.com https://*.quarterzip.ai https://www.g2.com; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests; report-uri /api/csp-report; report-to csp-endpoint
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:10 GMT
-etag: W/"2686c426e81427b39bffc98e14c72c62"
-last-modified: Wed, 28 Oct 2026 23:58:11 GMT
+date: Fri, 30 Oct 2026 16:01:38 GMT
+etag: W/"3e83a9e710aec0879fe6cf4ee8aa2b49"
+last-modified: Fri, 30 Oct 2026 15:55:48 GMT
 permissions-policy: geolocation=(self), microphone=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), display-capture=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), autoplay=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), speaker-selection=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), storage-access=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai")
 referrer-policy: strict-origin-when-cross-origin
 report-to: {"group":"csp-endpoint","max_age":10886400,"endpoints":[{"url":"/api/csp-report"}]}
@@ -22,12 +22,12 @@ reporting-endpoints: csp-endpoint="/api/csp-report"
 server: Vercel
 strict-transport-security: max-age=63072000
 x-content-type-options: nosniff
-x-csp-nonce: db0988f3-2591-43b3-a3d7-ad55076460bd
+x-csp-nonce: f446f9df-520b-4d5b-a865-860dc0f94d38
 x-frame-options: DENY
 x-matched-path: /llms.txt
-x-nonce: db0988f3-2591-43b3-a3d7-ad55076460bd
-x-vercel-cache: MISS
-x-vercel-id: pdx1::cv5n8-1793231890930-6d63a3624cea
+x-nonce: f446f9df-520b-4d5b-a865-860dc0f94d38
+x-vercel-cache: HIT
+x-vercel-id: pdx1::dhlz2-1793376098685-e2ba2ce85b68
 connection: close
 transfer-encoding: chunked
 
@@ -102,6 +102,14 @@ Official libraries maintained by the Firecrawl team. See the [SDKs overview](htt
 - Each provider has a public page at `https://www.firecrawl.dev/alexandria/<provider>` with its capabilities, inputs, sample responses and code, and an agent-readable guide at `https://www.firecrawl.dev/alexandria/agents/providers/<provider>`.
 - Each topic category (finance, people, real estate and more; not the catch-all Other) has a public page at `https://www.firecrawl.dev/alexandria/categories/<category>` listing every provider in it, and an agent-readable guide at `https://www.firecrawl.dev/alexandria/agents/categories/<category>`.
 
+## Benchmarks
+
+- [Benchmarks](https://www.firecrawl.dev/benchmarks): Benchmarks Firecrawl runs or appears in, with methodology and results. Firecrawl-run benchmarks are vendor-run; each page says which data and code are published.
+- [DevDex](https://www.firecrawl.dev/benchmarks/devdex): Developer retrieval benchmark (Recall@10 and MRR@10 across repo, issue-to-fix and docs retrieval) comparing Firecrawl, Parallel, Exa and Context7.
+- [Company Enrichment Benchmark](https://www.firecrawl.dev/benchmarks/company-enrichment): Apollo.io, Ocean.io, People Data Labs, ContactOut, FullEnrich and Data Legion compared on 200 US companies, scored against SEC filings and federal records. Firecrawl resells four of the six providers through Alexandria.
+- [Fantasy Data Benchmark](https://www.firecrawl.dev/benchmarks/fantasy): Firecrawl with Alexandria, web search and Flaim on 272 NFL fantasy questions, graded against nflverse and 7 sites.
+- [SimpleQA results for /search](https://www.firecrawl.dev/blog/introducing-our-most-accurate-search-yet): A GPT-5.4 agent with up to 20 tool calls using Firecrawl Search and Scrape scored 94.7% on the full SimpleQA set (best of two sessions). This is a multi-step agent result, not a single-search score.
+
 ## Pricing
 
 - [Pricing](https://www.firecrawl.dev/pricing): Free (1,000 credits every month, refreshed monthly, no card required), Hobby ($19/month billed monthly, or $16/month billed annually, 5,000 credits), Standard ($99/month billed monthly, or $83/month billed annually, 100,000 credits), Growth ($399/month billed monthly, or $333/month billed annually, 500,000 credits), Scale ($749/month billed monthly, or $599/month billed annually, 1,000,000 credits), Enterprise (custom). Effective 2026-09-04.
@@ -111,8 +119,8 @@ Official libraries maintained by the Firecrawl team. See the [SDKs overview](htt
 
 ## Security and compliance
 
-- Firecrawl is SOC 2 Type II certified. The [Enterprise docs](https://docs.firecrawl.dev/enterprise) list the security, compliance, and access controls on Enterprise plans.
-- Zero data retention (ZDR): page content and extracted data are processed in memory and never persisted beyond the request, for [scrape](https://docs.firecrawl.dev/features/scrape#zero-data-retention-zdr), [interact](https://docs.firecrawl.dev/features/interact#zero-data-retention-zdr), and [search](https://docs.firecrawl.dev/features/search#zero-data-retention-zdr). End-to-end search ZDR also has the upstream search provider enforce zero data retention. Available on Enterprise plans.
+- Firecrawl is SOC 2 Type II compliant (renewal in progress). The [Enterprise docs](https://docs.firecrawl.dev/enterprise) list the security, compliance, and access controls on Enterprise plans.
+- Zero data retention (ZDR): page content and extracted data are processed in memory and never persisted beyond the request, for [scrape](https://docs.firecrawl.dev/features/scrape#zero-data-retention-zdr), batch scrape, crawl, parse, [search](https://docs.firecrawl.dev/features/search#zero-data-retention-zdr), [interact](https://docs.firecrawl.dev/features/interact#zero-data-retention-zdr), and [agent](https://docs.firecrawl.dev/features/agent#zero-data-retention-zdr). An agent result stays retrievable for 24 hours and is then deleted. Agent ZDR needs Scrape and Search ZDR enabled and uses only Alexandria data providers that support ZDR. End-to-end search ZDR also has the upstream search provider enforce zero data retention; in anonymized mode, the provider may cache an anonymized query. ZDR searches do not return Alexandria data tools. Available on Enterprise plans.
 - [PII redaction](https://docs.firecrawl.dev/features/scrape#pii-redaction) removes personally identifiable information from scrape output.
 - Data Processing Agreements (DPA), custom MSAs, and vendor security reviews for Enterprise customers.
 - [SSO and SCIM](https://docs.firecrawl.dev/features/sso): SAML and OIDC single sign-on (Okta, Entra ID, Google Workspace, and more) and SCIM directory sync.
@@ -124,6 +132,7 @@ Official libraries maintained by the Firecrawl team. See the [SDKs overview](htt
 ## Integrations
 
 - [Integrations](https://www.firecrawl.dev/integrations): Native integrations with LlamaIndex, LangChain, Claude Code, Cursor, n8n, Make, Zapier, and Stripe Projects.
+- [Plugins](https://www.firecrawl.dev/plugins): Install links for Firecrawl integrations in ChatGPT, Claude, Grok Bot, Muse, Codex, Claude Code, Cursor and Gemini CLI, plus a setup prompt for any other agent.
 - [LangGraph](https://www.firecrawl.dev/integrations/langgraph): Add web search to a LangGraph agent with the FirecrawlSearch tool and a ToolNode, with Python code.
 - [LangChain](https://www.firecrawl.dev/integrations/langchain): The official langchain-firecrawl package. FirecrawlSearch and FirecrawlScrape agent tools for create_agent, plus a document loader with a search mode.
 - [LlamaIndex](https://www.firecrawl.dev/integrations/llamaindex): Give a LlamaIndex FunctionAgent web search with Firecrawl, or load search results as documents with FireCrawlWebReader.
@@ -141,6 +150,8 @@ Official libraries maintained by the Firecrawl team. See the [SDKs overview](htt
 - [Fantasy football start/sit](https://www.firecrawl.dev/alexandria/fantasy): Live fantasy football rankings, projections and lineup advice from six expert sources, built on Alexandria providers.
 - [Fireround: startup funding news](https://www.firecrawl.dev/tools/fireround): Who just raised: the newest startup funding rounds with their amounts, stages and lead investors, and the last 30 days in numbers, live from the Fireround provider on Alexandria.
 - [Prompts to try in ChatGPT and Claude](https://www.firecrawl.dev/prompts): Ready-to-copy prompts for ChatGPT, Claude and MCP clients, each with the answer it got back: ticket prices, prediction market odds, fantasy projections, open restaurant tables, flood zones and more, using Firecrawl Alexandria. Each prompt has its own page at `https://www.firecrawl.dev/prompts/<slug>`.
+- [Product and price data for AI agents](https://www.firecrawl.dev/use-cases/product-teams): Retailer prices and store availability (Best Buy, Walmart, Newegg, Micro Center, Nike, Shopify), marketplace sold prices (StockX, HiBid, Cars & Bids) and catalog scraping through Firecrawl Alexandria and Firecrawl Scrape.
+- [Real estate and property data for AI agents](https://www.firecrawl.dev/use-cases/real-estate): Auction.com listings with valuations and comparable sales, ArcGIS parcel, zoning and flood zone layers, NYC property records, weather history and wildfire risk through Firecrawl Alexandria.
 
 ## Alternatives
 
@@ -153,19 +164,21 @@ Official libraries maintained by the Firecrawl team. See the [SDKs overview](htt
 ## Blog
 
 - [Blog](https://www.firecrawl.dev/blog): Tutorials, guides, and product updates on web search, scrape, crawl, and building AI agent workflows.
+- [Best RapidAPI alternatives for AI agents](https://www.firecrawl.dev/blog/rapidapi-alternatives): Firecrawl Alexandria compared with RapidAPI (Nokia API Hub) and Apify Store for AI agents that need data APIs.
 - [How to add web search to an AI app](https://www.firecrawl.dev/blog/add-web-search-to-ai-app): Python and TypeScript code for Firecrawl Search, a chatbot tool-calling loop, web search for local LLMs on Ollama, and citing sources from search results.
+- [Zero Data Retention across Firecrawl](https://www.firecrawl.dev/blog/zero-data-retention): which endpoints support ZDR, the two search ZDR modes (end-to-end and anonymized), and how to enable it per request.
 
 ## Changelog
 
 - [Changelog](https://www.firecrawl.dev/changelog): Latest product updates, new endpoint launches, and engine upgrades. Every entry has its own markdown page; the full list is at https://www.firecrawl.dev/changelog.md.
+- [Firecrawl is now live in eve](https://www.firecrawl.dev/changelog/eve-integration.md): Firecrawl is now an integration in eve, Vercel's open-source agent framework. One command gives your agents the web and beyond with Alexandria. (October 30, 2026)
+- [Introducing Cybersecurity Data in Alexandria](https://www.firecrawl.dev/changelog/cyber-security-data-pack.md): Your Codex and Claude Code agents can now check your code's dependencies for 400,000+ vulnerabilities and patch them before attackers find them. (October 29, 2026)
 - [Introducing Directory](https://www.firecrawl.dev/changelog/introducing-directory.md): Free recruiting data for ChatGPT and Claude. Describe a role and get a shortlist from 250M+ profiles in Alexandria, with experience and work emails. (October 28, 2026)
 - [Introducing the Government & Legal Index](https://www.firecrawl.dev/changelog/government-legal-index.md): Give your AI agents statutes, regulations, local codes and court opinions from 30 million US government pages, free to search in ChatGPT, Claude and the API. (October 22, 2026)
 - [The Company Enrichment Benchmark](https://www.firecrawl.dev/changelog/company-enrichment-benchmark.md): We tested the leading company enrichment providers on hundreds of U.S. companies to see who delivers accurate data and where information is missing. (October 21, 2026)
 - [Free People Data for ChatGPT and Claude](https://www.firecrawl.dev/changelog/people-data-relaunch.md): Give your AI agents access to 270M+ company and people records in Alexandria, with 1,000 free credits a month through the Firecrawl plugin. (October 20, 2026)
 - [Firecrawl for Google Cloud](https://www.firecrawl.dev/changelog/google-cloud-launch.md): We're partnering with Google Cloud to give Gemini and ADK agents data from the web and beyond, available on Google Cloud Marketplace. (October 19, 2026)
 - [Introducing Fireround](https://www.firecrawl.dev/changelog/fireround.md): Fireround is a new company funding data provider built by Firecrawl. Follow new rounds and research investors in ChatGPT and Claude through Alexandria. (October 15, 2026)
-- [Introducing the Marketing Data Pack in Alexandria](https://www.firecrawl.dev/changelog/alexandria-marketing-data-pack.md): Uncover what gets traffic and attention, shape your SEO and GEO strategy, and create content and visuals with better references in ChatGPT or Claude. (October 13, 2026)
-- [Introducing Universal Scrape](https://www.firecrawl.dev/changelog/universal-scrape.md): Web pages, files and a growing set of Alexandria providers, all with one Firecrawl API. (October 8, 2026)
 
 ## Legal
 

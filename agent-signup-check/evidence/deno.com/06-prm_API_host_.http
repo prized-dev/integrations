@@ -1,19 +1,14 @@
 GET https://api.deno.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:49.279Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:15.254Z
 final-url: https://api.deno.com/.well-known/oauth-protected-resource
 
 HTTP 404
-x-frame-options: deny
-x-xss-protection: 1; mode=block
-x-content-type-options: no-sniff
-cache-control: no-store, max-age=0
-content-security-policy: default-src 'none'; script-src 'self' ; child-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: *.githubusercontent.com; block-all-mixed-content; base-uri 'self'; form-action 'none'; font-src 'self' data:; frame-src *.deno.dev
-x-robots-tag: noindex
-x-deno-ray: b69e8c5578db551afc818ea75019b207
-content-length: 0
-date: Wed, 28 Oct 2026 23:57:46 GMT
-via: 1.1 google
-alt-svc: h3=":443"; ma=2592000
+content-type: text/plain;charset=UTF-8
+x-deno-trace-id: 626a5aae12fe0987589907aef050141a
+content-security-policy: frame-ancestors 'none';
+content-length: 9
+date: Fri, 30 Oct 2026 16:01:13 GMT
 connection: close
 
+Not Found

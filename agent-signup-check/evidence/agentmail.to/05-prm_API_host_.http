@@ -1,18 +1,18 @@
 GET https://api.agentmail.to/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:58.219Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:24.309Z
 final-url: https://api.agentmail.to/.well-known/oauth-protected-resource
 
 HTTP 404
 content-type: application/json
 content-length: 328
 connection: close
-date: Wed, 28 Oct 2026 23:57:57 GMT
-apigw-requestid: F-rQ3i6cyK4EMzw=
+date: Fri, 30 Oct 2026 16:01:23 GMT
+apigw-requestid: GELVDisiSK4EMCw=
 x-cache: Error from cloudfront
-via: 1.1 d71a9f9985c04c59760fd5574a6fe436.cloudfront.net (CloudFront)
+via: 1.1 38789cdd14ddea5c4c609cb0e6656396.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P4
-x-amz-cf-id: Ne0GyueXDPs4LAdpsX3ejdiU545Tivu1fQCE_-dh3nUhyliMb5V1Kg==
+x-amz-cf-id: DIVmrwHk9oWQPdNtvale0-CqnUtJ2R15Sop5ysdzIv5lYdrrpUdwBQ==
 strict-transport-security: max-age=31536000; includeSubDomains
 
 {"name":"NotFoundError","code":"not_found","message":"Route not found","fix":"No route matches this path and HTTP method. Check both against the API reference at https://docs.agentmail.to — a typo in the path (e.g. /inbox vs /inboxes) or a wrong method is the usual cause.","docs":"https://docs.agentmail.to/errors#not_found"}

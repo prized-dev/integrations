@@ -1,7 +1,7 @@
 {
  "site": "loops.so",
- "checkedAt": "2026-10-28T23:58:03.104Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:28.811Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 2,
  "partial": 2,
  "total": 7,
@@ -63,7 +63,7 @@
    "name": "Docs in Markdown",
    "url": "https://loops.so/llms.txt",
    "heading": "# Loops",
-   "bytes": 25616,
+   "bytes": 26535,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -76,7 +76,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain;charset=utf-8",
-   "ms": 226,
+   "ms": 200,
    "redirects": 0
   },
   {
@@ -86,7 +86,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain;charset=utf-8",
-   "ms": 184,
+   "ms": 288,
    "redirects": 0
   },
   {
@@ -96,7 +96,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 137,
+   "ms": 140,
    "redirects": 0
   },
   {
@@ -106,7 +106,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 300,
+   "ms": 336,
    "redirects": 1
   },
   {
@@ -116,7 +116,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 148,
+   "ms": 124,
    "redirects": 0
   },
   {
@@ -126,7 +126,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 259,
+   "ms": 465,
    "redirects": 0
   },
   {
@@ -136,7 +136,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 47,
+   "ms": 50,
    "redirects": 0
   }
  ]

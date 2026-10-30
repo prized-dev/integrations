@@ -1,10 +1,10 @@
 GET https://api.paddle.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:31.035Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:01.199Z
 final-url: https://api.paddle.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Wed, 28 Oct 2026 23:58:27 GMT
+date: Fri, 30 Oct 2026 16:01:58 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
@@ -16,7 +16,7 @@ cross-origin-resource-policy: same-site
 permissions-policy: accelerometer=(),ambient-light-sensor=(),autoplay=(),battery=(),camera=(),display-capture=(),document-domain=(),encrypted-media=(),fullscreen=(),gamepad=(),geolocation=(),gyroscope=(),layout-animations=(self),legacy-image-formats=(self),magnetometer=(),microphone=(),midi=(),oversized-images=(self),payment=(),picture-in-picture=(),publickey-credentials-get=(),screen-wake-lock=(),speaker-selection=(),sync-xhr=(self),unoptimized-images=(self),unsized-media=(self),usb=(),web-share=(),xr-spatial-tracking=()
 pragma: no-cache
 referrer-policy: no-referrer
-request-id: fd683939-7e50-4a89-840c-3adcc55c447c
+request-id: 6927b297-8b53-40d0-b960-2e2effc52636
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-content-type-options: nosniff
 x-frame-options: deny
@@ -25,6 +25,6 @@ x-robots-tag: noindex, nofollow
 cf-cache-status: DYNAMIC
 content-encoding: br
 server: cloudflare
-cf-ray: a51de37dfeb7b7b9-PDX
+cf-ray: a52ba44118bffdb1-PDX
 
-{"error":{"type":"request_error","code":"invalid_url","detail":"URL called is invalid.","documentation_url":"https://developer.paddle.com/v1/errors/shared/invalid_url"},"meta":{"request_id":"fd683939-7e50-4a89-840c-3adcc55c447c"}}
+{"error":{"type":"request_error","code":"invalid_url","detail":"URL called is invalid.","documentation_url":"https://developer.paddle.com/v1/errors/shared/invalid_url"},"meta":{"request_id":"6927b297-8b53-40d0-b960-2e2effc52636"}}

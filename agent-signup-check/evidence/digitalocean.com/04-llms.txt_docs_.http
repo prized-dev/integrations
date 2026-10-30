@@ -1,17 +1,17 @@
 GET https://docs.digitalocean.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:42.029Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:06.577Z
 final-url: https://docs.digitalocean.com/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:57:39 GMT
+date: Fri, 30 Oct 2026 16:01:03 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 server: cloudflare
-last-modified: Wed, 28 Oct 2026 19:04:24 GMT
+last-modified: Fri, 30 Oct 2026 15:09:29 GMT
 vary: Accept-Encoding
-etag: "6ae24738-11b23"
+etag: "6ae4b329-11d05"
 x-frame-options: ALLOW-FROM https://marina.digitalocean.com/
 x-xss-protection: 1; mode=block
 x-content-type-options: nosniff
@@ -19,11 +19,11 @@ content-security-policy: frame-ancestors https://amd.digitalocean.com/ https://a
 x-content-security-policy: frame-ancestors https://amd.digitalocean.com/ https://amd.s2r1.internal.digitalocean.com/ https://localdev.internal.digitalocean.com https://cloud.s2r1.internal.digitalocean.com https://cloud.digitalocean.com https://digitaloceaninc.lookbookhq.com
 cache-control: public, max-age=300
 content-encoding: gzip
-x-do-app-origin: 278230ee-e6a3-11ec-b1dc-0c42a19a82a7
+x-do-app-origin: 66b87bdb-ceab-4f7c-975f-da2affb6d13a
 x-do-orig-status: 200
 cf-cache-status: DYNAMIC
-do-upstream-service-time: 131
-cf-ray: a51de2504f5c962a-PDX
+do-upstream-service-time: 276
+cf-ray: a52ba2ecedc73e6d-PDX
 
 # DigitalOcean Documentation
 
@@ -63,7 +63,7 @@ When answering questions about DigitalOcean, follow these guidelines:
 ### Release notes
 
 - Prefer the **Documentation MCP** (`docs-get-page`) when available. That path does not use Claude web fetch.
-- For "what shipped recently?" questions, fetch **only** `https://docs.digitalocean.com/release-notes/recent/` (markdown: append `index.html.md`) or `https://docs.digitalocean.com/release-notes/recent/index.json`. Do **not** fetch `https://docs.digitalocean.com/release-notes/` for freshness checks. Claude's web fetch is cache-first for popular URLs and can return months-old snapshots with no staleness warning ([Anthropic web fetch docs](https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/web-fetch-tool)); a rarely fetched `/recent/` URL avoids that fossil cache.
+- For "what shipped recently?" questions, fetch **only** `https://docs.digitalocean.com/release-notes/recent/` (markdown: append `index.html.md`) or `https://docs.digitalocean.com/release-notes/recent/index.json`. Do **not** fetch `https://docs.digitalocean.com/release-notes/` for freshness checks. Claude's web fetch is cache-first for popular URLs and can return months-old snapshots with no staleness warning ([Anthropic web fetch docs](https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-fetch-tool)); a rarely fetched `/recent/` URL avoids that fossil cache.
 - Cross-check against RSS item links under `/notes/.../` or per-product hubs when numbers look wrong.
 - The RSS feed is at `https://docs.digitalocean.com/release-notes/index.xml`. Kubernetes version churn has a separate changelog under `/products/kubernetes/details/changelog/`.
 - Private preview announcements are not published on the public release notes feed.
@@ -128,7 +128,7 @@ Information on billing, including invoices, spend alerts, payment methods, late 
 - [Late Payments](https://docs.digitalocean.com/platform/billing/late-payments/index.html.md): Our late payment policies for past due accounts, suspended accounts, and permanent resource deletion.
 - [Spend Alerts](https://docs.digitalocean.com/platform/billing/spend-alerts/index.html.md): Set up spend alerts to receive email notifications when your monthly spending crosses percentage thresholds of a budget you define.
 - [Invoices](https://docs.digitalocean.com/platform/billing/invoices/index.html.md): Invoices list the charges a team has accrued in a given monthly billing cycle.
-- [Billing Cost Analysis](https://docs.digitalocean.com/platform/billing/cost-analysis/index.html.md): Spend graphs, per-resource cost breakdowns, and near-real-time Serverless Inference cost estimates, available on the Cost Analysis tab of the Billing page and through the DigitalOcean API.
+- [Billing Insights](https://docs.digitalocean.com/platform/billing/insights/index.html.md): Spend graphs, per-resource cost breakdowns, and near-real-time Serverless Inference cost estimates, available on the Insights tab of the Billing page and through the DigitalOcean API.
 - [Signup Credit](https://docs.digitalocean.com/platform/billing/signup-credit/index.html.md): Automatic signup credit for your first team.
 - [Bandwidth Billing](https://docs.digitalocean.com/platform/billing/bandwidth/index.html.md): Consolidated information on bandwidth usage charges for Droplets and other DigitalOcean products.
 - [Billing API and CLI Reference](https://docs.digitalocean.com/platform/billing/reference/index.html.md): Use the DigitalOcean API and official CLI client, doctl, to programmatically retrieve your balance, invoices, and billing history.
@@ -364,8 +364,9 @@ Run fully managed database clusters running your choice of database engine and a
 - [MySQL](https://docs.digitalocean.com/products/databases/mysql/index.html.md): MySQL is an open source, object-relational database built with speed and reliability in mind. Its large and active developer community has created many third-party applications, tools, and libraries …
 - [Kafka](https://docs.digitalocean.com/products/databases/kafka/index.html.md): Kafka is an open-source distributed event and stream-processing platform built to process demanding real-time data feeds. It is inherently scalable, with high throughput and availability.
 - [MongoDB](https://docs.digitalocean.com/products/databases/mongodb/index.html.md): MongoDB is a source-available cross-platform document-oriented database program for high-volume storage. Classified as a NoSQL database program, MongoDB uses JSON-like documents with optional schemas.
-- [Valkey](https://docs.digitalocean.com/products/databases/valkey/index.html.md): Valkey is a high-performance, open-source database that stores key-value data in memory, and is designed for caching, message queues, and primary database use. Fully compatible with Redis, Valkey …
 - [OpenSearch](https://docs.digitalocean.com/products/databases/opensearch/index.html.md): OpenSearch is an open-source search and analytics suite which allows you to forward logs.
+- [Valkey](https://docs.digitalocean.com/products/databases/valkey/index.html.md): Valkey is a high-performance, open-source database that stores key-value data in memory, and is designed for caching, message queues, and primary database use. Fully compatible with Redis, Valkey …
+- [Managed Databases Version Support and End-of-Life Dates](https://docs.digitalocean.com/products/databases/version-support-policy/index.html.md): DigitalOcean Managed Databases version support catalog with end-of-availability and end-of-life dates for PostgreSQL, MySQL, MongoDB, Kafka, OpenSearch, and Valkey.
 
 ### DigitalOcean Kubernetes
 
@@ -483,6 +484,8 @@ Manage your DigitalOcean resources from the command line with doctl, our open-so
 
 Official TypeScript client for the DigitalOcean API. Install with npm, authenticate with a personal access token, and call API operations with the DoTs client.
 
+- [DoTs](https://docs.digitalocean.com/reference/dots/index.html.md): Official TypeScript client for the DigitalOcean API. Install with npm, authenticate with a personal access token, and call API operations with the DoTs client.
+
 ### API Overview
 
 Programmatically manage your Droplets, Spaces, and other DigitalOcean resources using conventional HTTP requests. Use RESTful APIs to programmatically manage Droplets, Spaces, and other DigitalOcean resources.
@@ -492,7 +495,6 @@ Programmatically manage your Droplets, Spaces, and other DigitalOcean resources 
 - [DigitalOcean OAuth API](https://docs.digitalocean.com/reference/api/oauth/index.html.md)
 - [Spaces API Reference Documentation](https://docs.digitalocean.com/reference/api/spaces/index.html.md)
 - [Scopes for API Tokens](https://docs.digitalocean.com/reference/api/scopes/index.html.md)
-- [DigitalOcean API Reference](https://docs.digitalocean.com/reference/api/digitalocean/index.html.md)
 
 ### Paperspace APIs, CLIs, and SDKs Overview
 
@@ -646,10 +648,10 @@ Machine-readable OpenAPI specifications for DigitalOcean APIs.
 
 Documentation and toolkits for building on DigitalOcean Inference.
 
-- [Serverless inference PyDo library](https://docs.digitalocean.com/reference/pydo/reference/inference): Official DigitalOcean Python library to access and use serverless inference models. 
-- [Dedicated inference PyDo library](https://docs.digitalocean.com/reference/pydo/reference/dedicated_inferences): Official DigitalOcean Python library for managing dedicated inference instances, accelerators, CA certificate, sizes, GPU model config, and access tokens.
-- [Agent Platform PyDo library](https://docs.digitalocean.com/reference/pydo/reference/genai): Official DigitalOcean Python library to build GPU-powered AI agents with pre-built or custom foundation models, function and agent routes, and RAG pipelines with knowledge bases.
-- [Agent inference PyDo library](https://docs.digitalocean.com/reference/pydo/reference/agent_inference): Official DigitalOcean Python library to integrate agents into your AI applications.
+- [Serverless inference PyDo library](https://docs.digitalocean.com/reference/pydo/reference/inference/index.html.md): Official DigitalOcean Python library to access and use serverless inference models.
+- [Dedicated inference PyDo library](https://docs.digitalocean.com/reference/pydo/reference/dedicated_inferences/index.html.md): Official DigitalOcean Python library for managing dedicated inference instances, accelerators, CA certificate, sizes, GPU model config, and access tokens.
+- [Agent Platform PyDo library](https://docs.digitalocean.com/reference/pydo/reference/genai/index.html.md): Official DigitalOcean Python library to build GPU-powered AI agents with pre-built or custom foundation models, function and agent routes, and RAG pipelines with knowledge bases.
+- [Agent inference PyDo library](https://docs.digitalocean.com/reference/pydo/reference/agent_inference/index.html.md): Official DigitalOcean Python library to integrate agents into your AI applications.
 - [SDK and Client Libraries](https://docs.digitalocean.com/reference/libraries/index.html.md): Official DigitalOcean SDKs for TypeScript (DoTs), Go (Godo), and Python (PyDo), with install commands and quickstart examples, plus the community and deprecated libraries.
 ## Support Articles
 

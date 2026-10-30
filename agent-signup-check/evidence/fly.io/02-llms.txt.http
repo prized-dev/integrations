@@ -1,6 +1,6 @@
 GET https://fly.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:26.123Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:50.660Z
 final-url: https://fly.io/llms.txt
 
 HTTP 200
@@ -8,10 +8,10 @@ accept-ranges: bytes
 cache-control: max-age=0, private, must-revalidate
 content-encoding: br
 content-type: text/plain
-date: Wed, 28 Oct 2026 23:57:23 GMT
-etag: "6ae23c2e-162f"
-fly-request-id: 01M62F4VTJ3YWPY41T77684FQW-lax
-last-modified: Wed, 28 Oct 2026 18:17:18 GMT
+date: Fri, 30 Oct 2026 16:00:47 GMT
+etag: "6ae3e3f9-162f"
+fly-request-id: 01M66RNMJGB33YGKFKBBRG56NN-lax
+last-modified: Fri, 30 Oct 2026 00:25:29 GMT
 server: Fly/366e4bf88 (2026-10-27)
 transfer-encoding: chunked
 via: 1.1 fly.io, 1.1 fly.io, 1.1 fly.io

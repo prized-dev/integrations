@@ -1,8 +1,8 @@
 {
  "site": "deno.com",
- "checkedAt": "2026-10-28T23:57:49.279Z",
- "checker": "agent-signup-check/0.2.0",
- "passed": 0,
+ "checkedAt": "2026-10-30T16:01:15.254Z",
+ "checker": "agent-signup-check/0.2.2",
+ "passed": 1,
  "partial": 1,
  "total": 7,
  "whoActs": null,
@@ -31,7 +31,7 @@
   {
    "id": "challenge",
    "name": "Key works without a browser",
-   "url": "https://api.deno.com/v1/organizations/me",
+   "url": "https://api.deno.com/v2/apps",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -53,12 +53,10 @@
    "id": "markdown",
    "name": "Docs in Markdown",
    "url": "https://docs.deno.com/llms.txt",
-   "tried": [
-    "https://deno.com/llms.txt",
-    "https://docs.deno.com/llms.txt"
-   ],
-   "status": "fail",
-   "reason": "https://deno.com/llms.txt answers with an HTML page; https://docs.deno.com/llms.txt answers HTTP 500"
+   "heading": "# Deno",
+   "bytes": 5053,
+   "status": "pass",
+   "reason": "llms.txt found at a docs path"
   }
  ],
  "requests": [
@@ -69,7 +67,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 332,
+   "ms": 358,
    "redirects": 0
   },
   {
@@ -79,27 +77,27 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 273,
+   "ms": 313,
    "redirects": 0
   },
   {
    "label": "api",
-   "url": "https://api.deno.com/v1/organizations/me",
-   "finalUrl": "https://api.deno.com/v1/organizations/me",
+   "url": "https://api.deno.com/v2/apps",
+   "finalUrl": "https://api.deno.com/v2/apps",
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 204,
+   "ms": 163,
    "redirects": 0
   },
   {
    "label": "llms.txt (docs)",
    "url": "https://docs.deno.com/llms.txt",
    "finalUrl": "https://docs.deno.com/llms.txt",
-   "status": 500,
+   "status": 200,
    "error": null,
-   "contentType": "text/plain;charset=UTF-8",
-   "ms": 235,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 197,
    "redirects": 0
   },
   {
@@ -109,7 +107,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 256,
+   "ms": 260,
    "redirects": 0
   },
   {
@@ -118,8 +116,8 @@
    "finalUrl": "https://api.deno.com/.well-known/oauth-protected-resource",
    "status": 404,
    "error": null,
-   "contentType": null,
-   "ms": 101,
+   "contentType": "text/plain;charset=UTF-8",
+   "ms": 149,
    "redirects": 0
   },
   {
@@ -129,7 +127,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 280,
+   "ms": 265,
    "redirects": 0
   },
   {
@@ -139,7 +137,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 276,
+   "ms": 369,
    "redirects": 0
   }
  ]

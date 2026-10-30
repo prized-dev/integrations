@@ -1,6 +1,6 @@
 GET https://fal.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:19.040Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:42.848Z
 final-url: https://fal.ai/llms.txt
 
 HTTP 200
@@ -10,16 +10,16 @@ cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:16 GMT
-etag: W/"9195aa878bc3e03f5affe766eeb5bee8"
-last-modified: Wed, 28 Oct 2026 23:57:16 GMT
+date: Fri, 30 Oct 2026 16:00:39 GMT
+etag: W/"34c4d4698a3cd52b786b73361783efcb"
+last-modified: Fri, 30 Oct 2026 16:00:40 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-fal-request-url: /llms.txt
 x-frame-options: SAMEORIGIN
 x-matched-path: /llms.txt
 x-vercel-cache: MISS
-x-vercel-id: pdx1::8jddd-1793231836062-6718b10ff093
+x-vercel-id: pdx1::85s9f-1793376039931-06b3d1178251
 connection: close
 transfer-encoding: chunked
 
@@ -31,7 +31,7 @@ Every model is an endpoint ID such as `fal-ai/flux/dev`. To get from "which mode
 
 To call it: create an API key at [fal.ai/dashboard/keys](https://fal.ai/dashboard/keys) and set it as the `FAL_KEY` environment variable. Install a client with `npm install @fal-ai/client` or `pip install fal-client`, then use `fal.subscribe()` or `fal_client.subscribe()`. Over plain HTTP, POST to `https://queue.fal.run/<endpoint-id>` with an `Authorization: Key $FAL_KEY` header. Long-running generations go through a queue you poll or receive webhooks from; some models stream.
 
-Model API billing is per output, priced per model, drawn from prepaid credits. You are not charged for server errors or for time spent waiting in the queue. Current prices live in each model's `llms.txt` and on the pricing page — do not infer them from anywhere else.
+Model API billing is per output, priced per model, drawn from prepaid credits. You are not charged for server errors or for time spent waiting in the queue. Current prices live in each model's `llms.txt` and on the [pricing page](https://fal.ai/pricing.md) — do not infer them from anywhere else.
 
 To deploy your own model, pipeline, or HTTP server, use fal Serverless: it runs on the same GPU infrastructure that serves the Model APIs and autoscales from zero to thousands of runners. A deployed app is an endpoint you call with the same clients and queue as the Model APIs. Serverless is billed per second of runner time by machine type, not per output, and needs Serverless access enabled on the account, which you request from the dashboard.
 
@@ -81,8 +81,8 @@ The model sections below list representative endpoint IDs, not the full catalog 
 
 ## Video generation
 
-- [Veo 3.1](https://fal.ai/models/fal-ai/veo3.1): `fal-ai/veo3.1`, Google's video model, generates synchronised audio with the video
-- [Kling 3 pro](https://fal.ai/models/fal-ai/kling-video/v3/pro/text-to-video): `fal-ai/kling-video/v3/pro/text-to-video`, cinematic quality, also generates synchronised audio and costs less per second than Veo
+- [MiniMax H3 Max](https://fal.ai/models/minimax/h3-max/text-to-video): `minimax/h3-max/text-to-video`, fal's post-trained MiniMax H3, tuned for prompt adherence and aesthetics; `minimax/h3-max/image-to-video` animates an image
+- [Kling 3 pro](https://fal.ai/models/fal-ai/kling-video/v3/pro/text-to-video): `fal-ai/kling-video/v3/pro/text-to-video`, cinematic quality, also generates synchronised audio
 - [Kling 3 pro image-to-video](https://fal.ai/models/fal-ai/kling-video/v3/pro/image-to-video): `fal-ai/kling-video/v3/pro/image-to-video`, animates a supplied image, audio optional
 - [Seedance 1 pro](https://fal.ai/models/fal-ai/bytedance/seedance/v1/pro/text-to-video): `fal-ai/bytedance/seedance/v1/pro/text-to-video`, ByteDance video model, also has lite and fast tiers
 
@@ -90,20 +90,21 @@ The model sections below list representative endpoint IDs, not the full catalog 
 
 - [MiniMax Speech 02 HD](https://fal.ai/models/fal-ai/minimax/speech-02-hd): `fal-ai/minimax/speech-02-hd`, text to speech
 - [MiniMax Voice Clone](https://fal.ai/models/fal-ai/minimax/voice-clone): `fal-ai/minimax/voice-clone`, clone a voice from a sample
-- [Whisper](https://fal.ai/models/fal-ai/whisper): `fal-ai/whisper`, speech to text
+- [ElevenLabs Scribe v2](https://fal.ai/models/fal-ai/elevenlabs/speech-to-text/scribe-v2): `fal-ai/elevenlabs/speech-to-text/scribe-v2`, speech to text
 
 ## Avatars, 3D, and training
 
-- [AI Avatar](https://fal.ai/models/fal-ai/ai-avatar): `fal-ai/ai-avatar`, lip-synced talking avatars from audio
+- [OmniHuman v2](https://fal.ai/models/bytedance/omnihuman/v2): `bytedance/omnihuman/v2`, talking-human video from an image and an audio file
 - [TRELLIS](https://fal.ai/models/fal-ai/trellis): `fal-ai/trellis`, image to 3D
 - [FLUX LoRA fast training](https://fal.ai/models/fal-ai/flux-lora-fast-training): `fal-ai/flux-lora-fast-training`, train a custom style, then call it as your own endpoint
 
 ## Language models
 
-- [Any LLM](https://fal.ai/models/fal-ai/any-llm): `fal-ai/any-llm`, one endpoint fronting Claude, GPT, Gemini, and Llama
+- [OpenRouter](https://fal.ai/models/openrouter/router): `openrouter/router`, one endpoint fronting Claude, GPT, Gemini, Llama, and 200+ more LLMs; `openrouter/router/openai/v1/chat/completions` is OpenAI-compatible
 
 ## Deploying your own models
 
+- [fal Serverless for agents](https://fal.ai/serverless.md): GPU prices and specs, billing and deploy steps on one page
 - [Serverless overview](https://fal.ai/docs/documentation/serverless): What Serverless is and the paths for deploying new or existing code
 - [Serverless access](https://fal.ai/serverless/demo): How access is reviewed, with a live dashboard demo and the request button (the request form needs sign-in)
 - [Quickstart](https://fal.ai/docs/documentation/development/getting-started/quick-start): Install the CLI with `pip install fal`, test a Hello World app with `fal run`, and ship it with `fal deploy`
@@ -113,7 +114,7 @@ The model sections below list representative endpoint IDs, not the full catalog 
 - [Machine types](https://fal.ai/docs/documentation/deployment/machine-types): Available GPUs and CPUs and how to choose one
 - [Scaling parameters](https://fal.ai/docs/documentation/deployment/scale-your-application): Runners, concurrency, keep-alive, and cold starts
 - [Serverless pricing](https://fal.ai/docs/documentation/serverless/pricing): Per-second billing by runner state
-- [GPU pricing](https://fal.ai/pricing): Published hourly rates by GPU type
+- [GPU pricing](https://fal.ai/pricing.md): Published hourly rates by GPU type, with Model API prices
 - [Custom containers](https://fal.ai/docs/documentation/development/use-custom-container-image): Bring your own Docker image
 - [Migrate an existing Docker server](https://fal.ai/docs/documentation/development/migrate-external-docker-server): Deploy an existing Docker image or HTTP server with minimal changes
 - [Migrating to fal](https://fal.ai/docs/documentation/development/migrating-to-fal): Move an existing Docker server or another platform's deployment to fal
@@ -134,7 +135,10 @@ The model sections below list representative endpoint IDs, not the full catalog 
 ## Optional
 
 - [Workflows](https://fal.ai/docs/documentation/model-apis/workflows): Chaining models into pipelines
-- [Enterprise](https://fal.ai/enterprise): Private deployments, SOC 2, and dedicated capacity
+- [Enterprise](https://fal.ai/enterprise-hub): Private deployments, SOC 2, and dedicated capacity
+- [Contact sales](https://fal.ai/contact-sales): Reach the fal sales team
 - [Changelog](https://fal.ai/docs/changelog): Platform and model updates
+- [Blog](https://fal.ai/blog): Launches, technical deep dives, and company news
 - [GitHub](https://github.com/fal-ai): Client libraries and examples
 - [Trust and security](https://trust.fal.ai/): Certifications and security posture
+- [Legal](https://fal.ai/legal): Terms of service, privacy policy, acceptable use policy, and data processing addendum

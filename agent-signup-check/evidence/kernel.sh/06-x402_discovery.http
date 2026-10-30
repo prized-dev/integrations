@@ -1,24 +1,24 @@
 GET https://kernel.sh/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:10.204Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:37.100Z
 redirect: 301 from https://kernel.sh/.well-known/x402
 final-url: https://www.kernel.sh/.well-known/x402
 
 HTTP 404
 access-control-allow-origin: *
-age: 1158
+age: 145365
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="404"
 content-encoding: br
 content-type: text/html; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:09 GMT
+date: Fri, 30 Oct 2026 16:01:36 GMT
 etag: W/"7182586e33502c159e7a030d296224da"
 last-modified: Wed, 28 Oct 2026 23:38:51 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /404
 x-vercel-cache: HIT
-x-vercel-id: pdx1::nz8ds-1793231889888-d254bf7a1a3f
+x-vercel-id: pdx1::zr56d-1793376096774-2a24a20ecfbc
 connection: close
 transfer-encoding: chunked
 

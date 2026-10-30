@@ -1,10 +1,10 @@
 GET https://api.apify.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:15.223Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:44.293Z
 final-url: https://api.apify.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Wed, 28 Oct 2026 23:58:13 GMT
+date: Fri, 30 Oct 2026 16:01:42 GMT
 content-type: application/json; charset=utf-8
 content-length: 153
 connection: close

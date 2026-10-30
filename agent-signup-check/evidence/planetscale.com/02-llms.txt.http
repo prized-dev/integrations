@@ -1,31 +1,31 @@
 GET https://planetscale.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:52.282Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:19.380Z
 redirect: 307 from https://planetscale.com/llms.txt
 final-url: https://planetscale.com/docs/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:57:49 GMT
+date: Fri, 30 Oct 2026 16:01:16 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a51de291dfdeef1c-PDX
+cf-ray: a52ba33f1f6dc4ac-PDX
 cf-cache-status: DYNAMIC
-age: 5939
+age: 349
 cache-control: public
 content-encoding: br
-etag: "4mj7Z6lM4BaoERT2yVa8SqrajTDZX6qgv5ioE0NEUcM"
+etag: W/"eYQNmCv15t-uVGj65PCHG-j2WRSCZgwP_A-QAKKQL6Q"
 server: cloudflare
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 cf-placement: local-PDX
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4006
+x-mintlify-client-version: 0.0.4021
 x-vercel-cache: MISS
-x-vercel-id: pdx1:iad1:iad1::iad1::9vt52-1793231869789-c5147cf9a292
+x-vercel-id: pdx1:pdx1:iad1::iad1::hjmbz-1793376076780-f29738ad8f9d
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
-x-version: dpl_AUojGTPodKNPTVaxVPcxnNvkSVqo
+x-version: dpl_DGmhKsAzJdVqypJzon18vViniWRY
 alt-svc: h3=":443"; ma=86400
 
 # PlanetScale
@@ -136,7 +136,12 @@ alt-svc: h3=":443"; ma=86400
 - [Audit log](https://planetscale.com/docs/security/audit-log.md): The organization audit log grants [Organization Administrators](/docs/security/access-control#organization-administrator) access to review **actions** performed by individual members of the organization.
 - [Teams](https://planetscale.com/docs/security/teams.md): PlanetScale allows you to create teams within organizations.
 
-- [Vitess (186 pages)](https://planetscale.com/docs/_llms/vitess.txt): Documentation for Vitess.
+#### Database protection
+
+- [Deletion protection](https://planetscale.com/docs/security/deletion-protection.md): Block database and branch deletion until protection is turned off
+- [Require multiple administrators for deletion](https://planetscale.com/docs/security/multiple-admins-required-for-deletion.md): Require two administrators to approve database deletion
+
+- [Vitess (188 pages)](https://planetscale.com/docs/_llms/vitess.txt): Documentation for Vitess.
 
 ## Neki
 
@@ -249,7 +254,7 @@ alt-svc: h3=":443"; ma=86400
 - [Connect Cloudflare Workers to Neki](https://planetscale.com/docs/neki/guides/cloudflare-workers.md): Cloudflare Workers connection pooling through Hyperdrive
 
 - [Postgres (108 pages)](https://planetscale.com/docs/_llms/postgres.txt): Documentation for Postgres.
-- [API Reference (262 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Documentation for API Reference.
+- [API Reference (268 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Documentation for API Reference.
 
 ## CLI Reference
 
@@ -323,9 +328,9 @@ alt-svc: h3=":443"; ma=86400
 
 ## Indexes
 
-- [Vitess (186 pages)](https://planetscale.com/docs/_llms/vitess.txt): Documentation for Vitess.
+- [Vitess (188 pages)](https://planetscale.com/docs/_llms/vitess.txt): Documentation for Vitess.
 - [Postgres (108 pages)](https://planetscale.com/docs/_llms/postgres.txt): Documentation for Postgres.
-- [API Reference (262 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Documentation for API Reference.
+- [API Reference (268 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Documentation for API Reference.
 
 
 This documentation is built and hosted on [Mintlify](https://mintlify.com), a developer documentation platform.

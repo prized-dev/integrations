@@ -1,7 +1,7 @@
 {
  "site": "workos.com",
- "checkedAt": "2026-10-28T23:58:37.407Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:02:08.325Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 3,
  "partial": 1,
  "total": 7,
@@ -81,7 +81,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 149,
+   "ms": 407,
    "redirects": 0
   },
   {
@@ -91,7 +91,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 77,
+   "ms": 85,
    "redirects": 1
   },
   {
@@ -101,7 +101,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 123,
+   "ms": 136,
    "redirects": 0
   },
   {
@@ -111,7 +111,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 175,
+   "ms": 228,
    "redirects": 0
   },
   {
@@ -121,7 +121,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 128,
+   "ms": 127,
    "redirects": 0
   },
   {
@@ -131,7 +131,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 81,
+   "ms": 157,
    "redirects": 1
   },
   {
@@ -141,7 +141,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 181,
+   "ms": 342,
    "redirects": 0
   }
  ]

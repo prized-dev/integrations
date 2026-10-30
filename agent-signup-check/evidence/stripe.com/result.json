@@ -1,7 +1,7 @@
 {
  "site": "stripe.com",
- "checkedAt": "2026-10-28T23:58:25.107Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:54.767Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 1,
  "total": 6,
@@ -68,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 118,
+   "ms": 109,
    "redirects": 0
   },
   {
@@ -78,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 86,
+   "ms": 100,
    "redirects": 0
   },
   {
@@ -88,7 +88,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 95,
+   "ms": 109,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 99,
+   "ms": 106,
    "redirects": 0
   },
   {
@@ -108,7 +108,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 111,
+   "ms": 104,
    "redirects": 0
   }
  ]

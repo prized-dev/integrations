@@ -1,26 +1,26 @@
 GET https://useautumn.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:30.640Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:01.154Z
 final-url: https://useautumn.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 15003
+age: 13233
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-security-policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://ddwl4m2hdecbv.cloudfront.net https://app.rb2b.com https://b2bjsstore.s3.us-west-2.amazonaws.com https://s3-us-west-2.amazonaws.com https://a.usbrowserspeed.com https://alocdn.com https://pro.ip-api.com https://liadm.com https://*.liadm.com https://9xgnrndqve.execute-api.us-west-2.amazonaws.com https://us.i.posthog.com https://us-assets.i.posthog.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://framerusercontent.com https://ddwl4m2hdecbv.cloudfront.net https://app.rb2b.com https://b2bjsstore.s3.us-west-2.amazonaws.com https://s3-us-west-2.amazonaws.com https://a.usbrowserspeed.com https://alocdn.com https://pro.ip-api.com https://liadm.com https://*.liadm.com https://9xgnrndqve.execute-api.us-west-2.amazonaws.com; font-src 'self' data:; media-src 'self'; connect-src 'self' https://*.vercel.app https://vitals.vercel-insights.com https://ddwl4m2hdecbv.cloudfront.net https://app.rb2b.com https://b2bjsstore.s3.us-west-2.amazonaws.com https://s3-us-west-2.amazonaws.com https://a.usbrowserspeed.com https://alocdn.com https://pro.ip-api.com https://liadm.com https://*.liadm.com https://9xgnrndqve.execute-api.us-west-2.amazonaws.com https://us.i.posthog.com https://us-assets.i.posthog.com; frame-src 'self' https://ddwl4m2hdecbv.cloudfront.net https://app.rb2b.com https://b2bjsstore.s3.us-west-2.amazonaws.com https://s3-us-west-2.amazonaws.com https://a.usbrowserspeed.com https://alocdn.com https://pro.ip-api.com https://liadm.com https://*.liadm.com https://9xgnrndqve.execute-api.us-west-2.amazonaws.com; frame-ancestors 'none'
 content-type: text/plain; charset=utf-8
 cross-origin-opener-policy: same-origin
-date: Wed, 28 Oct 2026 23:58:28 GMT
-etag: W/"d8c8a0002bd8d946152935b26b144305"
+date: Fri, 30 Oct 2026 16:01:58 GMT
+etag: W/"4fda709afd3146f6a6b9b81c7118c655"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-frame-options: DENY
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::rjnxh-1793231908058-2afccf96905b
+x-vercel-id: pdx1::6mpgq-1793376118580-33581218bd68
 connection: close
 transfer-encoding: chunked
 

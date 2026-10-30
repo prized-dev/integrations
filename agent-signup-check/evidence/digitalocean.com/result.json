@@ -1,7 +1,7 @@
 {
  "site": "digitalocean.com",
- "checkedAt": "2026-10-28T23:57:42.029Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:06.577Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 1,
  "total": 7,
@@ -54,7 +54,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.digitalocean.com/llms.txt",
    "heading": "# DigitalOcean Documentation",
-   "bytes": 72437,
+   "bytes": 72919,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -67,7 +67,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 590,
+   "ms": 443,
    "redirects": 1
   },
   {
@@ -77,7 +77,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 323,
+   "ms": 451,
    "redirects": 1
   },
   {
@@ -87,7 +87,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 138,
+   "ms": 142,
    "redirects": 0
   },
   {
@@ -97,7 +97,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 213,
+   "ms": 366,
    "redirects": 0
   },
   {
@@ -107,7 +107,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 321,
+   "ms": 398,
    "redirects": 1
   },
   {
@@ -117,7 +117,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 150,
+   "ms": 142,
    "redirects": 0
   },
   {
@@ -127,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 269,
+   "ms": 229,
    "redirects": 1
   },
   {
@@ -137,7 +137,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 242,
+   "ms": 304,
    "redirects": 1
   }
  ]

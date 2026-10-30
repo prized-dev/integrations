@@ -1,7 +1,7 @@
 {
  "site": "browser-use.com",
- "checkedAt": "2026-10-28T23:58:13.803Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:41.788Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 4,
  "total": 7,
@@ -66,7 +66,7 @@
    "name": "Docs in Markdown",
    "url": "https://browser-use.com/llms.txt",
    "heading": "# Browser Use",
-   "bytes": 38591,
+   "bytes": 39262,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -79,7 +79,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 172,
+   "ms": 173,
    "redirects": 0
   },
   {
@@ -89,7 +89,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 66,
+   "ms": 51,
    "redirects": 0
   },
   {
@@ -99,7 +99,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 202,
+   "ms": 222,
    "redirects": 0
   },
   {
@@ -109,7 +109,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 198,
+   "ms": 211,
    "redirects": 1
   },
   {
@@ -119,7 +119,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 218,
+   "ms": 213,
    "redirects": 0
   },
   {
@@ -129,7 +129,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 195,
+   "ms": 209,
    "redirects": 1
   },
   {
@@ -139,7 +139,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 214,
+   "ms": 321,
    "redirects": 0
   },
   {
@@ -149,7 +149,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 95,
+   "ms": 208,
    "redirects": 0
   }
  ]

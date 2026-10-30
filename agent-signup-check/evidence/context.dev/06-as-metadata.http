@@ -1,20 +1,20 @@
 GET https://context.dev/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:23.090Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:52.735Z
 redirect: 301 from https://context.dev/.well-known/oauth-authorization-server
 final-url: https://www.context.dev/.well-known/oauth-authorization-server
 
 HTTP 200
 accept-ranges: bytes
 access-control-allow-origin: *
-age: 6942
+age: 350
 cache-control: public, max-age=3600
 content-disposition: inline
 content-length: 914
 content-security-policy: frame-ancestors 'self' https://*.context.dev
 content-type: application/json
-date: Wed, 28 Oct 2026 23:58:22 GMT
-etag: "4619f7d243c1156b8b571deca5481fa1"
+date: Fri, 30 Oct 2026 16:01:51 GMT
+etag: "15cb54b8122dacb2ae6f3c134498803e"
 permissions-policy: camera=(), microphone=(), geolocation=()
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -23,7 +23,7 @@ vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-pre
 x-content-type-options: nosniff
 x-matched-path: /.well-known/oauth-authorization-server
 x-vercel-cache: HIT
-x-vercel-id: pdx1::w4fxv-1793231902319-4ba2a1a48dff
+x-vercel-id: pdx1::swn4x-1793376111949-60b82b938b06
 connection: close
 
 {"resource":"https://api.context.dev/","authorization_servers":["https://www.context.dev/"],"scopes_supported":["api.read","api.write"],"bearer_methods_supported":["header"],"issuer":"https://www.context.dev","token_endpoint":"https://www.context.dev/oauth2/token","revocation_endpoint":"https://www.context.dev/oauth2/revoke","grant_types_supported":["authorization_code","refresh_token","urn:ietf:params:oauth:grant-type:jwt-bearer","urn:workos:agent-auth:grant-type:claim"],"authorization_endpoint":"https://www.context.dev/oauth2/authorize","response_types_supported":["code"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["client_secret_post"],"agent_auth":{"skill":"https://www.context.dev/auth.md","identity_endpoint":"https://www.context.dev/agent/identity","claim_endpoint":"https://www.context.dev/agent/identity/claim","identity_types_supported":["service_auth"]}}

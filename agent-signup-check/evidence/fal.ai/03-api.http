@@ -1,6 +1,6 @@
 GET https://api.fal.ai/v1/models/usage
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:19.040Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:42.848Z
 final-url: https://api.fal.ai/v1/models/usage
 
 HTTP 401
@@ -8,11 +8,11 @@ access-control-allow-origin: *
 age: 0
 cache-control: public, max-age=0, must-revalidate
 content-type: application/json
-date: Wed, 28 Oct 2026 23:57:16 GMT
+date: Fri, 30 Oct 2026 16:00:40 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::xghnw-1793231836549-52f4593abcca
+x-vercel-id: pdx1::iad1::dqnr9-1793376040436-87fddef7c6db
 connection: close
 transfer-encoding: chunked
 

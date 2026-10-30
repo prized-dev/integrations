@@ -1,7 +1,7 @@
 {
  "site": "kernel.sh",
- "checkedAt": "2026-10-28T23:58:10.204Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:37.100Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 5,
  "partial": 0,
  "total": 7,
@@ -87,7 +87,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 62,
+   "ms": 71,
    "redirects": 1
   },
   {
@@ -97,7 +97,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 59,
+   "ms": 53,
    "redirects": 1
   },
   {
@@ -107,7 +107,7 @@
    "status": 401,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 220,
+   "ms": 171,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 170,
+   "ms": 190,
    "redirects": 0
   },
   {
@@ -127,7 +127,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 191,
+   "ms": 171,
    "redirects": 0
   },
   {
@@ -137,7 +137,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 51,
+   "ms": 69,
    "redirects": 1
   }
  ]

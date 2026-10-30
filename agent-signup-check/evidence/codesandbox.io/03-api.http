@@ -1,19 +1,19 @@
 GET https://api.codesandbox.io/sandbox
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:37.192Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:01.687Z
 final-url: https://api.codesandbox.io/sandbox
 
 HTTP 401
-date: Wed, 28 Oct 2026 23:57:35 GMT
+date: Fri, 30 Oct 2026 16:00:59 GMT
 content-type: application/json; charset=utf-8
 content-length: 71
 connection: close
 cache-control: max-age=0, private, must-revalidate
 server: cloudflare
-x-request-id: GOLW3wCnfQwaPUCYAi2B
+x-request-id: GONaBjnuvtn1V5KmPQuB
 via: 1.1 google
 alt-svc: h3=":443"; ma=86400
 cf-cache-status: DYNAMIC
-cf-ray: a51de2348fb29873-PDX
+cf-ray: a52ba2d2bb59b18c-PDX
 
 {"data":null,"success":false,"errors":["Unauthorized (invalid token)"]}

@@ -1,23 +1,23 @@
 GET https://northflank.com/docs/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:29.449Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:53.559Z
 final-url: https://northflank.com/docs/llms.txt
 
 HTTP 200
 connection: close
-content-length: 76730
+content-length: 78395
 x-powered-by: Express
 content-type: text/markdown
-x-envoy-upstream-service-time: 733
+x-envoy-upstream-service-time: 698
 server: istio-envoy
 via: 1.1 varnish, 1.1 varnish
 accept-ranges: bytes
-age: 1157
-date: Wed, 28 Oct 2026 23:57:26 GMT
-x-served-by: cache-lhr-egll1980078-LHR, cache-bfi-krnt7300038-BFI
+age: 349
+date: Fri, 30 Oct 2026 16:00:50 GMT
+x-served-by: cache-lhr-egll1980078-LHR, cache-bfi-kbfi7400040-BFI
 x-cache: HIT, HIT
-x-cache-hits: 4, 0
-x-timer: S1793231847.820358,VS0,VE2
+x-cache-hits: 8, 0
+x-timer: S1793376051.976800,VS0,VE1
 strict-transport-security: max-age=31557600
 
 # Northflank Documentation
@@ -637,6 +637,14 @@ curl -H "Accept: text/markdown" https://northflank.com/docs/v1/application/getti
 - [Get load balancer](https://northflank.com/docs/v1/api/team/load-balancers/get-load-balancer.md)
 - [Patch load balancer](https://northflank.com/docs/v1/api/team/load-balancers/patch-load-balancer.md)
 - [Delete load balancer](https://northflank.com/docs/v1/api/team/load-balancers/delete-load-balancer.md)
+- [List security policies](https://northflank.com/docs/v1/api/team/security-policies/list-security-policies.md)
+- [Create security policy](https://northflank.com/docs/v1/api/team/security-policies/create-security-policy.md)
+- [Put security policy](https://northflank.com/docs/v1/api/team/security-policies/put-security-policy.md)
+- [Preview team security policy](https://northflank.com/docs/v1/api/team/security-policies/preview-team-security-policy.md)
+- [Get security policy](https://northflank.com/docs/v1/api/team/security-policies/get-security-policy.md)
+- [Patch security policy](https://northflank.com/docs/v1/api/team/security-policies/patch-security-policy.md)
+- [Delete security policy](https://northflank.com/docs/v1/api/team/security-policies/delete-security-policy.md)
+- [Get security policy spec](https://northflank.com/docs/v1/api/team/security-policies/get-security-policy-spec.md)
 - [List egress IPs](https://northflank.com/docs/v1/api/team/egress-ips/list-egress-ips.md)
 - [Create egress IP](https://northflank.com/docs/v1/api/team/egress-ips/create-egress-ip.md)
 - [Put egress IP](https://northflank.com/docs/v1/api/team/egress-ips/put-egress-ip.md)
@@ -733,6 +741,13 @@ curl -H "Accept: text/markdown" https://northflank.com/docs/v1/application/getti
 - [Verify encryption configuration](https://northflank.com/docs/v1/api/org/encryption-configurations/verify-encryption-configuration.md)
 - [Enable Northflank-managed envelope encryption](https://northflank.com/docs/v1/api/org/encryption-configurations/enable-northflank-managed-envelope-encryption.md)
 - [Get encryption configuration usage](https://northflank.com/docs/v1/api/org/encryption-configurations/get-encryption-configuration-usage.md)
+- [List security policies](https://northflank.com/docs/v1/api/org/security-policies/list-security-policies.md)
+- [Create security policy](https://northflank.com/docs/v1/api/org/security-policies/create-security-policy.md)
+- [Put security policy](https://northflank.com/docs/v1/api/org/security-policies/put-security-policy.md)
+- [Get security policy](https://northflank.com/docs/v1/api/org/security-policies/get-security-policy.md)
+- [Patch security policy](https://northflank.com/docs/v1/api/org/security-policies/patch-security-policy.md)
+- [Delete security policy](https://northflank.com/docs/v1/api/org/security-policies/delete-security-policy.md)
+- [Get security policy spec](https://northflank.com/docs/v1/api/org/security-policies/get-security-policy-spec.md)
 - [Get credit balance](https://northflank.com/docs/v1/api/org/billing/get-credit-balance.md)
 - [List invoices](https://northflank.com/docs/v1/api/org/billing/list-invoices.md)
 - [Get invoice](https://northflank.com/docs/v1/api/org/billing/get-invoice.md)

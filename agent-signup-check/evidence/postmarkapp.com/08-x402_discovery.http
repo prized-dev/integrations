@@ -1,10 +1,10 @@
 GET https://postmarkapp.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:59.656Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:26.221Z
 final-url: https://postmarkapp.com/.well-known/x402
 
 HTTP 404
-date: Wed, 28 Oct 2026 23:57:59 GMT
+date: Fri, 30 Oct 2026 16:01:25 GMT
 content-type: application/json; charset=UTF-8
 transfer-encoding: chunked
 connection: close
@@ -15,7 +15,7 @@ x-content-type-options: nosniff
 cf-cache-status: DYNAMIC
 vary: accept-encoding
 server: cloudflare
-cf-ray: a51de2cc6caafc66-SEA
+cf-ray: a52ba3783a67b89e-SEA
 alt-svc: h3=":443"; ma=86400
 
 {"name":"Not Found","message":"Page not found.","code":0,"error":"Page not found.","status":404}

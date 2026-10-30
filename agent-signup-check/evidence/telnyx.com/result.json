@@ -1,7 +1,7 @@
 {
  "site": "telnyx.com",
- "checkedAt": "2026-10-28T23:58:04.929Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:31.364Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 6,
  "partial": 0,
  "total": 7,
@@ -90,7 +90,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 218,
+   "ms": 337,
    "redirects": 0
   },
   {
@@ -100,7 +100,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 181,
+   "ms": 285,
    "redirects": 0
   },
   {
@@ -110,7 +110,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 176,
+   "ms": 107,
    "redirects": 0
   },
   {
@@ -120,7 +120,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 98,
+   "ms": 106,
    "redirects": 0
   },
   {
@@ -130,7 +130,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 97,
+   "ms": 111,
    "redirects": 0
   },
   {
@@ -140,7 +140,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 172,
+   "ms": 239,
    "redirects": 0
   }
  ]

@@ -1,17 +1,17 @@
 GET https://api.polar.sh/v1/products/
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:27.635Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:58.155Z
 final-url: https://api.polar.sh/v1/products/
 
 HTTP 401
-date: Wed, 28 Oct 2026 23:58:25 GMT
+date: Fri, 30 Oct 2026 16:01:55 GMT
 content-type: application/json
 content-length: 41
 connection: close
 cache-control: private, no-store
 content-encoding: br
 polar-version: 2026-10
-rndr-id: e13142c9-5d54-41e6
+rndr-id: 421a639d-a597-484a
 server: cloudflare
 strict-transport-security: max-age=63072000; includeSubDomains
 vary: Accept-Encoding
@@ -19,8 +19,8 @@ www-authenticate: Bearer realm="polar", resource_metadata="https://api.polar.sh/
 x-render-origin-server: uvicorn
 cf-cache-status: DYNAMIC
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=J1RtEP9aRHXVVFTGSuAF4RlAY4S8teBKPXlTN%2B99WvFcQE1tkgY6CB5B5gfKyKxhdJ9XqsHicm%2BTxtAzFQ1X4m1Gqon0bNgDcpq4lk2QGpXO%2BNNvkzVQMmCoBSCIrg%3D%3D"}]}
-cf-ray: a51de3704d3eb57f-PDX
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=emNhkPMWAX1PS%2BO31h5P5xTJwQitXgqSH5Vdvu%2B2fRwHap3J5fh1PhCdcvHsGo0OpQABy8UA%2Bet%2F90X%2FHsDlLKTvsMPHpEuqVJYuCQlQPgYB0x27S141lll%2BlrqZeg%3D%3D"}]}
+cf-ray: a52ba43248153e6d-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"error":"Unauthorized","detail":"Unauthorized"}

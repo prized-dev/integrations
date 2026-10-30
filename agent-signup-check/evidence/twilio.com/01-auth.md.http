@@ -1,17 +1,17 @@
 GET https://twilio.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:05.878Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:31.860Z
 redirect: 301 from https://twilio.com/auth.md
 final-url: https://www.twilio.com/auth.md
 
 HTTP 404
 content-type: text/html; charset=utf-8
-content-length: 619922
+content-length: 619994
 connection: close
-date: Wed, 28 Oct 2026 23:58:00 GMT
+date: Fri, 30 Oct 2026 16:01:26 GMT
 content-security-policy-report-only: frame-ancestors 'self' https://console.twilio.com;report-uri https://www.twilio.com/console/api/cspr
 cache-control: max-age=60,public
-t-request-id: RQ7aef28acdc2548269f88b1428581e8b0
+t-request-id: RQ2b938a497f844618bb7ac0d8f8832f8e
 x-content-type-options: nosniff
 strict-transport-security: max-age=63072000; includeSubDomains; preload
 access-control-allow-origin: https://console.twilio.com
@@ -21,9 +21,9 @@ access-control-allow-methods: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TR
 access-control-expose-headers: console-name
 content-security-policy: frame-ancestors 'self' https://*.twilio.com https://www.twilio.com;report-uri https://www.twilio.com/console/api/cspr
 x-cache: Error from cloudfront
-via: 1.1 05cf67c96e96cd376921ba5b65795a56.cloudfront.net (CloudFront)
+via: 1.1 182d3a3dbb6658c964ee75cd45a42242.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: vjmPmYfFP-FZ2oqGrJwPsBQZ6qtG6A8WJDW9TwuZM1KFuudR8J9RAg==
+x-amz-cf-id: LBu7RwwdyAvp3KVygapU9eaiRWCMECI1SZqIMU9BwEVShTDyo5OaNg==
 
 <!DOCTYPE HTML>
 <html lang="en" class="full-width-dark">
@@ -405,4 +405,4 @@ x-amz-cf-id: vjmPmYfFP-FZ2oqGrJwPsBQZ6qtG6A8WJDW9TwuZM1KFuudR8J9RAg==
     <div class="navigation-v2__topnav">
         <div c
 
-[body trimmed for publication: kept 16384 of 619577 characters; sha256 of the published body 6a80ce9c3361ae742025167a00562afd93553fa1eb1a7d987c7391d50f99f125]
+[body trimmed for publication: kept 16384 of 619649 characters; sha256 of the published body fb158835837b3706fd4a1f1385526ccb5d78477e88de3ff4885a39a41cca45ba]

@@ -1,23 +1,26 @@
 GET https://boat.dev/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:48.279Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:10.778Z
 final-url: https://boat.dev/.well-known/oauth-authorization-server
 
 HTTP 200
+date: Fri, 30 Oct 2026 16:01:09 GMT
+content-type: application/json;charset=utf-8
+content-length: 365
+connection: close
 access-control-allow-credentials: false
 access-control-allow-headers: Content-Type, Authorization, X-Ascii-Confirm-Delete, X-Box-Org, X-Boat-Org, If-None-Match
 access-control-allow-methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
 access-control-allow-origin: http://localhost:1420
 access-control-expose-headers: ETag, RateLimit-Policy, RateLimit, Retry-After
 access-control-max-age: 86400
+cf-cache-status: DYNAMIC
 content-encoding: gzip
-content-length: 365
-content-type: application/json;charset=utf-8
-date: Wed, 28 Oct 2026 23:57:45 GMT
-ratelimit: "ip";r=9997;t=60
+ratelimit: "ip";r=9998;t=60
 ratelimit-policy: "ip";q=10000;w=60
+server: cloudflare
 vary: Accept-Encoding
 via: 1.1 Caddy, 1.1 Caddy
-connection: close
+cf-ray: a52ba311dd8e96ba-PDX
 
 {"resource":"https://boat.dev/api/box/v1/","resource_name":"Boat","resource_logo_uri":"https://boat.dev/logo/full_logo.json","authorization_servers":["https://boat.dev/"],"scopes_supported":["box.me","box.limits","box.write","box.billing"],"bearer_methods_supported":["header"],"issuer":"https://boat.dev","token_endpoint":"https://boat.dev/api/box/oauth2/token","revocation_endpoint":"https://boat.dev/api/box/oauth2/revoke","grant_types_supported":["urn:ietf:params:oauth:grant-type:jwt-bearer","urn:workos:agent-auth:grant-type:claim"],"agent_auth":{"skill":"https://boat.dev/auth.md","identity_endpoint":"https://boat.dev/api/box/agent/identity","claim_endpoint":"https://boat.dev/api/box/agent/identity/claim","events_endpoint":"https://boat.dev/api/box/agent/event/notify","identity_types_supported":["anonymous","service_auth"],"identity_assertion":{"assertion_types_supported":[]},"events_supported":[]}}

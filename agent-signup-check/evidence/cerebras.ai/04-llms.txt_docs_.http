@@ -1,27 +1,27 @@
 GET https://inference-docs.cerebras.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:16.736Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:40.826Z
 final-url: https://inference-docs.cerebras.ai/llms.txt
 
 HTTP 200
-age: 1428
+age: 1696
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a51de1b0c9a69935-PDX
+cf-ray: a52ba24e4c8f68f1-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:13 GMT
+date: Fri, 30 Oct 2026 16:00:38 GMT
 etag: "iMllQCDBdrxrLGrj_QiC5CDkQPG6LRgZXn0UsIro1z4"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4006
+x-mintlify-client-version: 0.0.4021
 x-vercel-cache: MISS
-x-vercel-id: pdx1:fra1:iad1::iad1::6x9sm-1793231833689-ac89b69f1b2e
+x-vercel-id: pdx1:bom1:iad1::iad1::bkvdh-1793376037970-3b1a974f93c2
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_2xiSHD9XEvLsPGPcfoMtkLTB3dy9
+x-version: dpl_EnxDqhjaNc9a8MVa833TGULPd9uJ
 connection: close
 transfer-encoding: chunked
 

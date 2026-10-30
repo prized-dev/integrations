@@ -1,19 +1,21 @@
 GET https://api.cdp.coinbase.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:31.100Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:00.516Z
 final-url: https://api.cdp.coinbase.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Wed, 28 Oct 2026 23:58:28 GMT
+date: Fri, 30 Oct 2026 16:01:58 GMT
 content-type: text/plain; charset=utf-8
 content-length: 19
 connection: close
+content-security-policy-report-only: script-src 'unsafe-inline' 'unsafe-eval'; report-uri https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=phdN8ip6TOjuq00xtdvALDBChwvDKS03oLXNAH20TXk-1793376118.4998937-1.0.1.1-1u1_fn31HEyYFqWVFEKTnAIqnqL7qzzzRRXK4_PYy6ZGox6z7BFv2ZII4OiBb4mxVBq7R2FEkkvl5TpWI5WjYexgb7Yu72Wp8VK8x5JYA5zBKJ1OndNqDNQAlP1O5C8kD2144zrmQl9iSA8hn57mewfgi1e0jXYDISc8k5PADFVwOUXDA5QPtqIcZ3egc9Ie; report-to cf-csp-endpoint
 x-content-type-options: nosniff
 server: cloudflare
+reporting-endpoints: cf-csp-endpoint="https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=phdN8ip6TOjuq00xtdvALDBChwvDKS03oLXNAH20TXk-1793376118.4998937-1.0.1.1-1u1_fn31HEyYFqWVFEKTnAIqnqL7qzzzRRXK4_PYy6ZGox6z7BFv2ZII4OiBb4mxVBq7R2FEkkvl5TpWI5WjYexgb7Yu72Wp8VK8x5JYA5zBKJ1OndNqDNQAlP1O5C8kD2144zrmQl9iSA8hn57mewfgi1e0jXYDISc8k5PADFVwOUXDA5QPtqIcZ3egc9Ie"
 cf-cache-status: DYNAMIC
-nel: {"report_to":"cf-nel","success_fraction":0.01,"max_age":604800}
 strict-transport-security: max-age=31536000; includeSubDomains; preload
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=KxdJYi%2B7Gfj7cFNttKQurvrygogAsGZjJi15r4oFGHG7Adltr1bUxyd0qS%2Fe0pGSe%2BcjHmXmk1nvo2V2hjtD%2FGLPD1xlAzrwSq0vJbwKUkX5u%2Bk0q%2FJHv%2BipvAY4dpT%2ByV%2BnhbhZ"}]}
-cf-ray: a51de3842a3adabf-PDX
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=wTvkrekRsawN9jfb3dtDIxbJsAKQoQoQGtU43hUxqaqhvR7kBl3QSwnltUz%2FoTd29OzNWuRQSoGZimiURo13A0XZzk%2F38BtTNLKIyMBA2NVCrhGM1nXwplZyPmSNY%2B0AoInx7Q38"}]}, {"group":"cf-csp-endpoint","max_age":86400,"endpoints":[{"url":"https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=phdN8ip6TOjuq00xtdvALDBChwvDKS03oLXNAH20TXk-1793376118.4998937-1.0.1.1-1u1_fn31HEyYFqWVFEKTnAIqnqL7qzzzRRXK4_PYy6ZGox6z7BFv2ZII4OiBb4mxVBq7R2FEkkvl5TpWI5WjYexgb7Yu72Wp8VK8x5JYA5zBKJ1OndNqDNQAlP1O5C8kD2144zrmQl9iSA8hn57mewfgi1e0jXYDISc8k5PADFVwOUXDA5QPtqIcZ3egc9Ie"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.01,"max_age":604800}
+cf-ray: a52ba4449e13150f-PDX
 
 404 page not found

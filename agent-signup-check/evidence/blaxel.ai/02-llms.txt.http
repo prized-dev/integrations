@@ -1,15 +1,15 @@
 GET https://blaxel.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:34.491Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:58.581Z
 final-url: https://blaxel.ai/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:57:32 GMT
+date: Fri, 30 Oct 2026 16:00:56 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 x-content-type-options: nosniff
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=m19NfiXfVjZbu42kdYt7sS2a7nTNf0z5uTxEJrGkqvvMmIXWJHwDK10J1YkVGuUGMnR%2FhW6NIV3j9A7IcoffjmKBUz1xU4vcpEn%2FySqbmVDlOCHFcv5YDqcxz%2Fw%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=elcDXkfUet3H7VLKoBz5Hr%2BKtsJocxeBDqNhoiUL59i%2BKlyONCMGA0c9LWE24ROL5qSyPmbILBCFtU4t7UOJjb%2FemNVZkP2EJSnkhZnXJHbnokWMRYpQYnzH4WY%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 access-control-allow-origin: *
 cache-control: public, max-age=0, must-revalidate
@@ -20,7 +20,7 @@ server: cloudflare
 cf-cache-status: DYNAMIC
 vary: accept-encoding
 speculation-rules: "/cdn-cgi/speculation"
-cf-ray: a51de22428e3503f-PDX
+cf-ray: a52ba2be3cfeacc8-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Blaxel

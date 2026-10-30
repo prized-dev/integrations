@@ -1,6 +1,6 @@
 GET https://morph.so/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:29.503Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:54.038Z
 redirect: 307 from https://morph.so/.well-known/oauth-protected-resource
 final-url: https://www.morph.so/.well-known/oauth-protected-resource
 
@@ -8,12 +8,12 @@ HTTP 404
 cache-control: public, max-age=0, must-revalidate
 content-length: 68
 content-type: application/json
-date: Wed, 28 Oct 2026 23:57:27 GMT
+date: Fri, 30 Oct 2026 16:00:52 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-robots-tag: noindex, nofollow, noarchive, nosnippet
 x-vercel-error: NOT_FOUND
-x-vercel-id: pdx1::4ngpn-1793231847947-d8ef6a002b45
+x-vercel-id: pdx1::sqr7w-1793376052509-24afc1e4dc4e
 connection: close
 
 {"error": {"code": "404", "message": "The page could not be found"}}

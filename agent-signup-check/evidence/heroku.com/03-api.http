@@ -1,6 +1,6 @@
 GET https://api.heroku.com/account
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:37.726Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:01.435Z
 final-url: https://api.heroku.com/account
 
 HTTP 401
@@ -10,15 +10,15 @@ connection: close
 cache-control: private, no-cache
 content-encoding: gzip
 content-security-policy: default-src 'none'; frame-ancestors 'none'
-date: Wed, 28 Oct 2026 23:57:31 GMT
-request-id: f7761f46-b4ac-4f6d-8cf4-5eb7e6879c37,a77aef66-8dbd-ccdc-6f77-3d01068f4fde,fe3c0017-27e3-5454-af54-0b5be65fc169,793a3160-8bcb-d394-62eb-6841c75b7cbf
+date: Fri, 30 Oct 2026 16:00:55 GMT
+request-id: b754e3dd-1ba8-49b2-929f-a2065785c2f2,80d35bc3-51b3-ba6d-a837-934a7f402a43,f608aaee-712d-5ca5-8ee7-ac418b26213f,974df135-3175-0216-bdad-f48cb94ad5a1
 strict-transport-security: max-age=31536000; includeSubDomains, max-age=31536000; includeSubDomains
 vary: Authorization,Accept-Encoding
-via: 1.1 spaces-router (0ec3aaa24c5a), 1.1 spaces-router (0ec3aaa24c5a), 1.1 318fe93142e3d774ccec57a011070fba.cloudfront.net (CloudFront)
+via: 1.1 spaces-router (0ec3aaa24c5a), 1.1 spaces-router (0b8a9a9e03f1), 1.1 4344f0c5a88fb8e9a8bd30a3759d78e8.cloudfront.net (CloudFront)
 x-content-type-options: nosniff
-x-runtime: 0.011003367
+x-runtime: 0.009494141
 x-cache: Error from cloudfront
 x-amz-cf-pop: HIO52-P5
-x-amz-cf-id: v0CAaFjaXZgQPdtcLf67mHajQjRu9ju3oDnYE_XXLSGz7LmE7BZZNw==
+x-amz-cf-id: gDPGYqY7Vnkcyy-YlZaXMo1gN7oK5N18HMdH-niZF5bkqVZeZFRgFg==
 
 {"id":"unauthorized","message":"There were no credentials in your `Authorization` header. Try `Authorization: Bearer <OAuth access token>` or `Authorization: Basic <base64-encoded email + \":\" + password>`."}

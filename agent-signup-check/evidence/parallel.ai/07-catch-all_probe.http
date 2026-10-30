@@ -1,6 +1,6 @@
 GET https://parallel.ai/agent-signup-check-no-such-page.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:22.665Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:52.625Z
 final-url: https://parallel.ai/agent-signup-check-no-such-page.md
 
 HTTP 404
@@ -9,14 +9,14 @@ cache-control: no-store
 content-encoding: br
 content-security-policy: frame-ancestors 'self' https://parallel-v2.sanity.studio https://sanity.io https://www.sanity.io
 content-type: text/markdown; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:21 GMT
+date: Fri, 30 Oct 2026 16:01:51 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept
 x-matched-path: /agent-md/[[...slug]]
 x-robots-tag: noindex, nofollow
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::n687b-1793231901722-72ba13a1bdfc
+x-vercel-id: pdx1::iad1::zxdbk-1793376111580-c36f302a9c72
 connection: close
 transfer-encoding: chunked
 

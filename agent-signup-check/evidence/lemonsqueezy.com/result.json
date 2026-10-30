@@ -1,7 +1,7 @@
 {
  "site": "lemonsqueezy.com",
- "checkedAt": "2026-10-28T23:58:29.321Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:59.913Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 0,
  "partial": 1,
  "total": 7,
@@ -69,7 +69,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 69,
+   "ms": 281,
    "redirects": 1
   },
   {
@@ -79,7 +79,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 62,
+   "ms": 263,
    "redirects": 1
   },
   {
@@ -89,7 +89,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/vnd.api+json",
-   "ms": 159,
+   "ms": 181,
    "redirects": 0
   },
   {
@@ -99,7 +99,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 266,
+   "ms": 416,
    "redirects": 2
   },
   {
@@ -109,7 +109,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 177,
+   "ms": 462,
    "redirects": 1
   },
   {
@@ -119,7 +119,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 273,
+   "ms": 270,
    "redirects": 0
   },
   {
@@ -129,7 +129,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 186,
+   "ms": 215,
    "redirects": 1
   },
   {
@@ -139,7 +139,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 176,
+   "ms": 212,
    "redirects": 1
   }
  ]

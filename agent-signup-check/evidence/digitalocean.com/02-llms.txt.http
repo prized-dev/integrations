@@ -1,11 +1,11 @@
 GET https://digitalocean.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:42.029Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:06.577Z
 redirect: 301 from https://digitalocean.com/llms.txt
 final-url: https://www.digitalocean.com/llms.txt
 
 HTTP 404
-date: Wed, 28 Oct 2026 23:57:38 GMT
+date: Fri, 30 Oct 2026 16:01:02 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -18,11 +18,11 @@ x-powered-by: Next.js
 cache-control: s-maxage=300, stale-while-revalidate=31535700
 etag: "xhvqkwrx4x1h18"
 content-encoding: gzip
-x-envoy-upstream-service-time: 70
+x-envoy-upstream-service-time: 143
 server: cloudflare
-do-upstream-service-time: 139
+do-upstream-service-time: 217
 cf-cache-status: BYPASS
-cf-ray: a51de249ab68ff07-PDX
+cf-ray: a52ba2e56e3d0055-PDX
 
 <!DOCTYPE html><html data-dpl-id="3ea1fb0a" id="__next_error__"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"/><link rel="preload" as="script" fetchPriority="low" href="/_do-www-marketing/3ea1fb0a/_next/static/chunks/webpack-f1a7a6db12be9230.js?dpl=3ea1fb0a"/><script src="/_do-www-marketing/3ea1fb0a/_next/static/chunks/5a58016b-7d1d00732c3d1ae8.js?dpl=3ea1fb0a" async=""></script><script src="/_do-www-marketing/3ea1fb0a/_next/static/chunks/47602-b9e964f863f16d2c.js?dpl=3ea1fb0a" async=""></script><script src="/_do-www-marketing/3ea1fb0a/_next/static/chunks/main-app-fc426feb3191f427.js?dpl=3ea1fb0a" async=""></script><script src="/_do-www-marketing/3ea1fb0a/_next/static/chunks/13382-2977615a01c9e70d.js?dpl=3ea1fb0a" async=""></script><script src="/_do-www-marketing/3ea1fb0a/_next/static/chunks/83248-f34c52f75475f62e.js?dpl=3ea1fb0a" async=""></script><script src="/_do-www-marketing/3ea1fb0a/_next/static/chunks/56816-b10b522afcd72ece.js?dpl=3ea1fb0a" async=""></script><script src="/_do-www-marketing/3ea1fb0a/_next/static/chunks/57908-34d6b136372934fe.js?dpl=3ea1fb0a" async=""></script><script src="/_do-www-marketing/3ea1fb0a/_next/static/chunks/35800-cf25ada8c2ea06c2.js?dpl=3ea1fb0a" async=""></script><script src="/_do-www-marketing/3ea1fb0a/_next/static/chunks/7608-840eef22a294e93a.js?dpl=3ea1fb0a" async=""></script><script src="/_do-www-marketing/3ea1fb0a/_next/static/chunks/69613-d62b3df9471c76dd.js?dpl=3ea1fb0a" async=""></script><script src="/_do-www-marketing/3ea1fb0a/_next/static/chunks/31377-645dbaa70a54afa1.js?dpl=3ea1fb0a" async=""></script><script src="/_do-www-marketing/3ea1fb0a/_next/static/chunks/app/global-error-86ac7ea7770e2c37.js?dpl=3ea1fb0a" async=""></script><link rel="preload" href="/_do-www-marketing/3ea1fb0a/_next/static/css/4d8a8ab0cf6c1938.css?dpl=3ea1fb0a" as="style"/><link rel="preload" href="/_do-www-marketing/3ea1fb0a/_next/static/css/29c86a9fa12e42e8.css?dpl=3ea1fb0a" as="style"/><meta name="robots" content="noindex"/><meta name="theme-color" content="#000000"/><title>404 - Page not found</title><meta name="description" content="The page you requested could not be found."/><meta property="og:title" content="DigitalOcean"/><meta property="og:description" content="Helping millions of developers easily build, test, manage, and scale applications of any size - faster than ever before."/><meta property="og:image" content="https://www.digitalocean.com/_do-www-marketing/3ea1fb0a/_next/static/media/social-share-default.e8530e9e.jpeg"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary"/><meta name="twitter:title" content="DigitalOcean"/><meta name="twitter:description" content="Helping millions of developers easily build, test, manage, and scale applications of any size - faster than ever before."/><meta name="twitter:image" content="https://www.digitalocean.com/_do-www-marketing/3ea1fb0a/_next/static/media/social-share-default.e8530e9e.jpeg"/><link rel="icon" href="/_do-www-marketing/3ea1fb0a/_next/static/media/favicon.91372345.svg" type="image/svg+xml"/><link rel="icon" href="/_do-www-marketing/3ea1fb0a/_next/static/media/favicon.00b9c167.ico" type="image/x-icon" sizes="32x32"/><link rel="apple-touch-icon" href="/_do-www-marketing/3ea1fb0a/_next/static/media/apple-touch-icon.9537f22a.png" sizes="180x180"/><script src="/_do-www-marketing/3ea1fb0a/_next/static/chunks/polyfills-42372ed130431b0a.js?dpl=3ea1fb0a" noModule=""></script><style data-styled="" data-styled-version="6.4.2">.iMWrUY{text-decoration:none;}/*!sc*/
 .iMWrUY.button-link{align-items:center;background-color:transparent;border:1px solid var(--border-brand);border-radius:100px;color:var(--text-accent);cursor:pointer;display:flex;font-size:1em;font-weight:700;justify-content:center;padding:16px 32px;transition:all 0.3s ease;}/*!sc*/

@@ -1,14 +1,14 @@
 GET https://api.workos.com/organizations
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:37.407Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:08.325Z
 final-url: https://api.workos.com/organizations
 
 HTTP 401
-date: Wed, 28 Oct 2026 23:58:35 GMT
+date: Fri, 30 Oct 2026 16:02:05 GMT
 content-type: application/json; charset=utf-8
 content-length: 26
 connection: close
-cf-ray: a51de3adfe31c3af-PDX
+cf-ray: a52ba47229253d1b-PDX
 cf-cache-status: DYNAMIC
 etag: W/"1a-pljHtlo127JYJR4E/RYOPb6ucbw"
 server: cloudflare
@@ -21,13 +21,13 @@ referrer-policy: no-referrer
 x-content-type-options: nosniff
 x-dns-prefetch-control: off
 x-download-options: noopen
-x-envoy-upstream-service-time: 3
+x-envoy-upstream-service-time: 2
 x-frame-options: SAMEORIGIN
 x-permitted-cross-domain-policies: none
-x-ratelimit-limit: 50, 50;w=1
-x-ratelimit-remaining: 42
+x-ratelimit-limit: 500, 500;w=1
+x-ratelimit-remaining: 347
 x-ratelimit-reset: 1
-x-request-id: 02cdd8b7-8f90-4980-a72a-a85b22879c1b
+x-request-id: b2cf5c39-4cd8-4a41-9ee5-d0e4a596e786
 x-xss-protection: 0
 
 {"message":"Unauthorized"}

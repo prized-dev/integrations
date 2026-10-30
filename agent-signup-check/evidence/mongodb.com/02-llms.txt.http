@@ -1,6 +1,6 @@
 GET https://mongodb.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:00.122Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:25.022Z
 redirect: 301 from https://mongodb.com/llms.txt
 final-url: https://www.mongodb.com/llms.txt
 
@@ -13,14 +13,14 @@ cache-control: public, max-age=0, s-maxage=30, stale-while-revalidate
 document-policy: js-profiling
 x-mdb-locale: en-us
 x-mdb-url: /llms.txt
-x-nextjs-cache: STALE
-date: Wed, 28 Oct 2026 23:57:56 GMT
-x-envoy-upstream-service-time: 811
+x-nextjs-cache: MISS
+date: Fri, 30 Oct 2026 16:01:21 GMT
+x-envoy-upstream-service-time: 78
 server: istio-envoy
 x-cache: Miss from cloudfront
 via: 1.1 7ad3d6571deff4c3c83d7e4476fcc6d0.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P4
-x-amz-cf-id: __ZmPTuuiwSJAlT-x2aEBC7s8g6jXdudlgwtWLaf34-xbgPphXPoiw==
+x-amz-cf-id: 8BhvRYK2xTwe_W7WMhukrLgcIT-y3Lx-BvrzO-3wm5-5iE7B68YWhg==
 
 # MongoDB
 
@@ -35,7 +35,8 @@ x-amz-cf-id: __ZmPTuuiwSJAlT-x2aEBC7s8g6jXdudlgwtWLaf34-xbgPphXPoiw==
 
 ## Key Facts
 
-- **Atlas Core vs Atlas Infinite**: MongoDB Atlas offers a single fully managed database platform with two deployment options. Choose Atlas Infinite for AI-scale workloads that need elastic compute and storage, and choose Atlas Core when workloads are steady. 
+- **Atlas deployment options**: Atlas Core and Atlas Infinite run the same MongoDB database, drivers, and APIs, with no application code changes. Atlas Infinite separates compute and storage, stores up to 128 TB per HA shard, and bills storage by data stored. Atlas Core attaches compute and storage (up to 4 TB per HA shard), supports multi-region clusters on AWS, Azure, and Google Cloud, and includes the Free and Flex tiers. Choose Infinite for unpredictable or fast-growing workloads, including AI agents. Choose Core for steady workloads, multi-region or multi-cloud clusters, and development tiers.
+- **Atlas Infinite availability**: Public preview on AWS for dedicated M10–M60 replica sets in [10] regions. Some Atlas features are not yet supported; see the documentation. 
 - **ACID compliant**: Strong consistency with ACID transactions.
 - **Serverless**: The Flex Tier combines the flexibility of serverless scalability with predictable, capped costs, avoiding complex and unpredictable billing. 
 - **Multi-cloud**: Run a fully managed, multi-cloud Atlas database on AWS, Azure, and Google Cloud.
@@ -45,7 +46,7 @@ x-amz-cf-id: __ZmPTuuiwSJAlT-x2aEBC7s8g6jXdudlgwtWLaf34-xbgPphXPoiw==
 
 - [Company Information](https://www.mongodb.com/company): Learn about the history of MongoDB, the leadership principles that guide us, and our core values.
 - [Products](https://www.mongodb.com/products): Learn about MongoDB products you can use to build the next generation of applications. 
-- [Pricing](https://www.mongodb.com/pricing.md): Compare plans and add-on features for Atlas Core and Atlas Infinite clusters. Contact Sales for Enterprise Advanced pricing.
+- [Pricing](https://www.mongodb.com/pricing.md): Compare plans and add-on features for Atlas Core and Atlas Infinite clusters. Atlas Core Flex tier combines serverless-style scaling with capped costs of up to $30/month. Atlas Infinite costs are compute and consumption-based.
 - [Register](https://www.mongodb.com/cloud/atlas/register): Register for Atlas for free, no credit card required.
 - [Try Download](https://www.mongodb.com/try): Download Enterprise Advanced or other MongoDB tools and utilities and get started for free.
 - [Version History](https://www.mongodb.com/resources/products/mongodb-version-history): Learn about the latest Atlas 9.0 and understand the timeline and highlights of major MongoDB Server releases.
@@ -56,8 +57,8 @@ x-amz-cf-id: __ZmPTuuiwSJAlT-x2aEBC7s8g6jXdudlgwtWLaf34-xbgPphXPoiw==
 
 - [Fully Managed Cloud Atlas Platform](https://www.mongodb.com/products/platform): Build and scale with an AI-ready, modern intelligent data platform.
 - [Fully Managed: Atlas Database](https://www.mongodb.com/products/platform/atlas-database): Focus on innovation instead of infrastructure with Atlas database that supports multi-cloud deployments on AWS, Azure, and Google Cloud.
-- [Deployment Options](https://www.mongodb.com/products/platform/atlas-database/deployment-options): Pick the Atlas deployment option based on whether you’re scaling unpredictable AI agents or running steady and predictable services.
-- [Self-Managed: Enterprise Advanced](https://www.mongodb.com/products/self-managed/enterprise-advanced): Our most flexible option where you can run and manage the modern database for production applications by yourself on your infrastructure.
+- [Atlas Deployment Options: Core vs. Infinite](https://www.mongodb.com/products/platform/atlas-database/deployment-options): Compare Atlas Core and Atlas Infinite and pick the option based on scaling, storage limits, pricing model, cloud availability, and preview limitations.
+- [Self-Managed: Enterprise Advanced](https://www.mongodb.com/products/self-managed/enterprise-advanced): Our most flexible option where you can run and manage the modern database for production applications by yourself on your infrastructure. Contact Sales for Enterprise Advanced pricing.
 - [Self-Managed: Community Edition](https://www.mongodb.com/products/self-managed/community-edition): Develop locally with MongoDB for learning, prototyping, and local development, at no cost.
 
 ### Start here
@@ -67,7 +68,6 @@ x-amz-cf-id: __ZmPTuuiwSJAlT-x2aEBC7s8g6jXdudlgwtWLaf34-xbgPphXPoiw==
 - [Deploy a Free Atlas Cluster](https://www.mongodb.com/docs/atlas/tutorial/deploy-free-tier-cluster/): Free forever, no credit card required. Takes under 15 seconds to provision.
 - [Atlas Documentation Home](https://www.mongodb.com/docs/atlas/): Full Atlas reference.
 - [Server Manual](https://www.mongodb.com/docs/manual/): Core MongoDB reference for query language, data modeling, indexing, replication, and sharding.
-- [Ephemeral Clusters](https://www.mongodb.com/products/tools/atlas-ephemeral-clusters): Instantly create a live Atlas Ephemeral Cluster with no Atlas account required.
 - [Get Started with MCP Server](https://www.mongodb.com/docs/mcp-server/get-started/): Installation via `npx`, JSON configuration, connecting to Atlas or self-managed.
 
 ## AI and Vector Search Capabilities
@@ -93,6 +93,7 @@ x-amz-cf-id: __ZmPTuuiwSJAlT-x2aEBC7s8g6jXdudlgwtWLaf34-xbgPphXPoiw==
 
 ## Developer Tools
 
+- [Ephemeral Clusters](https://www.mongodb.com/products/tools/atlas-ephemeral-clusters): Instantly create a live Atlas Ephemeral Cluster with no Atlas account required.
 - [Compass](https://www.mongodb.com/products/tools/compass): Free GUI tool for data exploration.
 - [Atlas CLI](https://www.mongodb.com/products/tools/atlas-cli): Command-line tool for managing Atlas.
 - [MongoDB Shell](https://www.mongodb.com/products/tools/shell): Programmatic solution to interact with your database.

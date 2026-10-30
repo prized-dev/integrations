@@ -1,19 +1,19 @@
 GET https://replicate.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:16.508Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:41.936Z
 final-url: https://replicate.com/auth.md
 
 HTTP 404
-date: Wed, 28 Oct 2026 23:57:12 GMT
+date: Fri, 30 Oct 2026 16:00:38 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a51de1a9abc3ff03-PDX
+cf-ray: a52ba24f2ca45ecc-PDX
 cf-cache-status: DYNAMIC
 server: cloudflare
 strict-transport-security: max-age=15552000
 vary: Cookie, origin, accept-encoding
-content-security-policy-report-only: script-src 'report-sample' 'self' 'nonce-ZF0iubPFmDiR1vyxi2+s8Q==' https://static.replicateassets.com https://www.googletagmanager.com https://tagmanager.google.com https://*.googletagmanager.com https://challenges.cloudflare.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; media-src 'report-sample' 'self' https://replicate.delivery https://*.replicate.delivery https://static.replicateassets.com https://*.sentry.io https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; img-src 'report-sample' 'self' blob: data: https://replicate.delivery https://*.replicate.delivery https://og.replicateassets.com https://static.replicateassets.com https://*.githubusercontent.com https://github.com https://www.googletagmanager.com https://ssl.gstatic.com https://www.gstatic.com https://*.google-analytics.com https://*.googletagmanager.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; connect-src 'report-sample' 'self' https://stream.replicate.com https://replicate.delivery https://*.replicate.delivery https://*.sentry.io https://og.replicateassets.com https://static.replicateassets.com https://www.googletagmanager.com https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://www.cloudflarestatus.com https://replicate-search.replicate-search.workers.dev; style-src 'report-sample' 'self' 'unsafe-inline' https://static.replicateassets.com https://googletagmanager.com https://tagmanager.google.com https://fonts.googleapis.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; frame-src 'report-sample' 'self' https://replicate-search.replicate-search.workers.dev; default-src 'self'; worker-src https://static.replicateassets.com; font-src 'report-sample' 'self' data: https://fonts.replicateassets.com https://fonts.gstatic.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net
+content-security-policy-report-only: style-src 'report-sample' 'self' 'unsafe-inline' https://static.replicateassets.com https://googletagmanager.com https://tagmanager.google.com https://fonts.googleapis.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; script-src 'report-sample' 'self' 'nonce-c7c2e8A7bzK1os+4k9XlOQ==' https://static.replicateassets.com https://www.googletagmanager.com https://tagmanager.google.com https://*.googletagmanager.com https://challenges.cloudflare.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; img-src 'report-sample' 'self' blob: data: https://replicate.delivery https://*.replicate.delivery https://og.replicateassets.com https://static.replicateassets.com https://*.githubusercontent.com https://github.com https://www.googletagmanager.com https://ssl.gstatic.com https://www.gstatic.com https://*.google-analytics.com https://*.googletagmanager.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; default-src 'self'; font-src 'report-sample' 'self' data: https://fonts.replicateassets.com https://fonts.gstatic.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; frame-src 'report-sample' 'self' https://replicate-search.replicate-search.workers.dev; connect-src 'report-sample' 'self' https://stream.replicate.com https://replicate.delivery https://*.replicate.delivery https://*.sentry.io https://og.replicateassets.com https://static.replicateassets.com https://www.googletagmanager.com https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://www.cloudflarestatus.com https://replicate-search.replicate-search.workers.dev; worker-src https://static.replicateassets.com; media-src 'report-sample' 'self' https://replicate.delivery https://*.replicate.delivery https://static.replicateassets.com https://*.sentry.io https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net
 cross-origin-opener-policy: same-origin
 expect-ct: max-age=86400, enforce
 referrer-policy: same-origin
@@ -62,7 +62,7 @@ alt-svc: h3=":443"; ma=86400
           href="https://d31rfu1d3w8e4q.cloudfront.net/static/apple-touch-icon.39c0aa0659e3.png" />
 
     
-  <script nonce="ZF0iubPFmDiR1vyxi2+s8Q==">
+  <script nonce="c7c2e8A7bzK1os+4k9XlOQ==">
     /* beautify ignore:start */
     window.dataLayer = window.dataLayer || [];
     
@@ -77,7 +77,7 @@ alt-svc: h3=":443"; ma=86400
     
     /* beautify ignore:end */
   </script>
-  <script nonce="ZF0iubPFmDiR1vyxi2+s8Q==">
+  <script nonce="c7c2e8A7bzK1os+4k9XlOQ==">
     (function(w, d, s, l, i) {
       w[l] = w[l] || [];
       w[l].push({
@@ -151,11 +151,11 @@ alt-svc: h3=":443"; ma=86400
     
     
       <meta name="anonymous-id"
-            content="cb74861a-c8b4-40f2-aadd-a60ad3a9bc09" />
+            content="01d4bf8d-9b71-40d8-94cb-eb4df99225b5" />
     
 
     
-      <script nonce="ZF0iubPFmDiR1vyxi2+s8Q==">
+      <script nonce="c7c2e8A7bzK1os+4k9XlOQ==">
         const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
         if (prefersDarkScheme) {
@@ -188,10 +188,10 @@ alt-svc: h3=":443"; ma=86400
 
 <div class="h-[var(--header-height)] mb-6 no-focus">
   
-    <script id="react-component-props-ae30ab11-0712-4539-b566-171ad38251e3" type="application/json">{"activePath": "/auth.md", "isAuthenticated": false, "theme": "", "showSeedanceBanner": true, "__flags": {"show-open-ai-api-instructions": false, "web-api-token-show-once": true}}</script>
+    <script id="react-component-props-794b33d6-5f2c-4f99-aa67-89baa65af048" type="application/json">{"activePath": "/auth.md", "isAuthenticated": false, "theme": "", "showSeedanceBanner": true, "__flags": {"web-api-token-show-once": true, "show-open-ai-api-instructions": false}}</script>
 
 <div data-component="Navigation"
-     data-props="react-component-props-ae30ab11-0712-4539-b566-171ad38251e3">
+     data-props="react-component-props-794b33d6-5f2c-4f99-aa67-89baa65af048">
   
 </div>
 
@@ -243,15 +243,15 @@ alt-svc: h3=":443"; ma=86400
     
 
 <a class="no-default flex flex-col group border border-r8-gray-12 hover:bg-r8-gray-3 focus:bg-r8-gray-12"
-   href="/bytedance/seedream-5-lite"
-   title="bytedance/seedream-5-lite">
+   href="/recraft-ai/recraft-v4-styles-pro"
+   title="recraft-ai/recraft-v4-styles-pro">
   <div class="h-80 group-focus:ring ring-r8-gray-12 flex-shrink-0 bg-r8-gray-3">
     
 
 
   <div class=" h-full w-full overflow-hidden">
     
-      <img data-src="https://tjzk.replicate.delivery/models_models_featured_image/a21f19af-c659-4598-a0f7-093d32011814/replicate-prediction-nmj3175dt.png"
+      <img data-src="https://tjzk.replicate.delivery/models_models_featured_image/dbd9d8e2-7785-4e50-86af-248a58b11985/tmp7v9r3gq3.png"
            alt=""
            role="presentation"
            class="object-cover object-center w-full h-full lazy" />
@@ -278,12 +278,12 @@ alt-svc: h3=":443"; ma=86400
 
             </span>
           
-          <span class="text-r8-gray-11 group-focus:text-r8-gray-1">bytedance</span>
+          <span class="text-r8-gray-11 group-focus:text-r8-gray-1">recraft-ai</span>
           <span class="text-r8-gray-11 group-focus:text-r8-gray-1">/</span>
-          <span class="font-semibold text-r8-gray-12 group-focus:text-r8-gray-1">seedream-5-lite</span>
+          <span class="font-semibold text-r8-gray-12 group-focus:text-r8-gray-1">recraft-v4-styles-pro</span>
         </h4>
         <p class="mt-2 text-r8-sm text-r8-gray-12 group-focus:text-r8-gray-1">
-          Seedream 5.0 lite: image generation with built-in reasoning, example-based editing, and deep domain knowledge
+          Recraft V4 Styles Pro generates 2K raster images that match a reusable style or attached reference images. Built for print-ready, style-consistent assets.
         </p>
         
       </div>
@@ -299,7 +299,7 @@ alt-svc: h3=":443"; ma=86400
   </path>
 </svg>
 
-          3.6M runs
+          243 runs
         </div>
         
       </div>
@@ -320,10 +320,10 @@ alt-svc: h3=":443"; ma=86400
         
 
 <div class="footer no-focus">
-  <script id="react-component-props-ee46aa41-a1d4-4a43-b1be-55ec775bf498" type="application/json">{"theme": "", "__flags": {"show-open-ai-api-instructions": false, "web-api-token-show-once": true}}</script>
+  <script id="react-component-props-831175de-5e9d-49ec-b507-20f5af356be7" type="application/json">{"theme": "", "__flags": {"web-api-token-show-once": true, "show-open-ai-api-instructions": false}}</script>
 
 <div data-component="Footer"
-     data-props="react-component-props-ee46aa41-a1d4-4a43-b1be-55ec775bf498">
+     data-props="react-component-props-831175de-5e9d-49ec-b507-20f5af356be7">
   
 </div>
 
@@ -333,11 +333,11 @@ alt-svc: h3=":443"; ma=86400
 
     
 
-    <script nonce="ZF0iubPFmDiR1vyxi2+s8Q==">
+    <script nonce="c7c2e8A7bzK1os+4k9XlOQ==">
       window.VIDEOJS_NO_DYNAMIC_STYLE = true;
     </script>
 
-    <script nonce="ZF0iubPFmDiR1vyxi2+s8Q==">
+    <script nonce="c7c2e8A7bzK1os+4k9XlOQ==">
       const header = document.getElementById("app-header");
 
       function monitorHeaderStickiness() {

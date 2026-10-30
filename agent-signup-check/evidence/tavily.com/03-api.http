@@ -1,10 +1,10 @@
 GET https://api.tavily.com/usage
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:20.048Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:51.100Z
 final-url: https://api.tavily.com/usage
 
 HTTP 401
-date: Wed, 28 Oct 2026 23:58:17 GMT
+date: Fri, 30 Oct 2026 16:01:48 GMT
 content-type: application/json
 content-length: 53
 connection: close

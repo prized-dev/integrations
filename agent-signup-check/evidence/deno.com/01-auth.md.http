@@ -1,17 +1,17 @@
 GET https://deno.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:49.279Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:15.254Z
 final-url: https://deno.com/auth.md
 
 HTTP 200
 content-type: text/html; charset=utf-8
 link: </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/fresh-runtime.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/SkipToMainLink.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/HelloBar.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/OramaSearch.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/NavItemWithChildren.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/AnalyticsOptOut.js>; rel="modulepreload"; as="script"
 content-length: 58365
-date: Wed, 28 Oct 2026 23:57:45 GMT
+date: Fri, 30 Oct 2026 16:01:11 GMT
 connection: close
 age: 0
 cache-status: deno; fwd=bypass; detail=zero-ttl
-x-deno-trace-id: 8fd37acab9548602a9abf1d59bb32695
+x-deno-trace-id: 518a42d11ca297f166e28519424df844
 via: HTTP/1.1 ord.vultr.prod.deno-cluster.net
 server: deployd
 
@@ -36,4 +36,4 @@ server: deployd
           
           lg:bg-neutral-50 lg:dark:bg-gray-900 lg:rounded-md lg:overflow-hidden lg:shadow-lg"><div data-component="
 
-[body trimmed for publication: kept 16384 of 58348 characters; sha256 of the published body 6a9e3c4eda6b4772e3ca25743e034789195a0758a6bb1f9a79c3a2cf447776d5]
+[body trimmed for publication: kept 16384 of 58348 characters; sha256 of the published body 2464057d4a99872442053e7ba9dcb357a1347214fe300ee08249a1144dd9ff7f]

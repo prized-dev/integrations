@@ -1,15 +1,15 @@
 GET https://docs.fireworks.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:09.729Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:34.790Z
 final-url: https://docs.fireworks.ai/llms.txt
 
 HTTP 200
-age: 37
+age: 350
 cache-control: public
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:56:30 GMT
+date: Fri, 30 Oct 2026 15:54:42 GMT
 etag: W/"T_gZZTeXma2oPNZmW2s3wtvipiyBzneCigh8cf93DEs"
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -17,8 +17,8 @@ vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-pre
 x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /_sites/[subdomain]/llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::iad1::cmxhh-1793231826994-8044938b09dd
+x-vercel-cache: STALE
+x-vercel-id: pdx1::iad1::vkbx8-1793376031992-c764778f9eb5
 connection: close
 transfer-encoding: chunked
 

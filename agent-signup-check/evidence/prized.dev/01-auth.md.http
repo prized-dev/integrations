@@ -1,6 +1,6 @@
 GET https://prized.dev/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:21.811Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:45.780Z
 final-url: https://prized.dev/auth.md
 
 HTTP 200
@@ -9,14 +9,14 @@ cache-control: public, max-age=300
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/markdown; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:19 GMT
+date: Fri, 30 Oct 2026 16:00:43 GMT
 referrer-policy: no-referrer
 server: Vercel
 strict-transport-security: max-age=63072000
 x-frame-options: DENY
 x-matched-path: /auth.md
 x-vercel-cache: MISS
-x-vercel-id: pdx1::pdx1::mwdmk-1793231839095-7395bb5c6448
+x-vercel-id: pdx1::pdx1::m87v8-1793376042942-81e241e34691
 connection: close
 transfer-encoding: chunked
 
@@ -130,7 +130,7 @@ The answer:
 }
 ```
 
-The account now exists, in a workspace of its own, and the key works. `free_credit` says whether this call granted the free credit (one per inbox). If the address already had an account, the answer is `409 sign_in_required` and no key is made.
+The account now exists, in a workspace of its own, and the key works. `free_credit` says whether this call granted the free credit (one per inbox, and one a day per email domain or mail server). If the address already had an account, the answer is `409 sign_in_required` and no key is made.
 
 ## Step 5. Exchange the assertion (optional)
 
@@ -177,6 +177,7 @@ POST `token=<key>` (form-encoded) to the `revocation_endpoint`, https://api.priz
 | `invalid_claim_token` | Send the claim token registration returned. |
 | `sign_in_required` | The address already has an account: your person makes a key at https://prized.dev/dashboard/workspace/api-keys (from a shell, delete `~/.prized-signup.json`). |
 | `account_unavailable` | Ask your person to sign in at https://prized.dev. |
+| `unavailable` | Try again in a minute (`Retry-After`) with the same code; the message says why. |
 
 ## Earlier routes
 

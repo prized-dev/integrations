@@ -1,24 +1,24 @@
 GET https://netlify.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:31.764Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:55.588Z
 final-url: https://netlify.com/llms.txt
 
 HTTP 200
 accept-ranges: bytes
-age: 0
+age: 2167
 cache-control: public,max-age=0,must-revalidate
-cache-status: "Netlify Edge"; fwd=miss; fwd-status=200; stored
+cache-status: "Netlify Edge"; hit; ttl=31533833
 content-encoding: gzip
 content-type: text/plain; charset=UTF-8
-date: Wed, 28 Oct 2026 23:57:28 GMT
-etag: W/"338978b0c7a771c1dcc81300dccb6779-ssl-df"
+date: Fri, 30 Oct 2026 16:00:51 GMT
+etag: W/"3434c26a871de47d3a389db1decdf025-ssl-df"
 link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/ard.json>; rel="ard"; type="application/ai-catalog+json"
 netlify-vary: header=x-forwarded-proto
+permissions-policy: browsing-topics=()
 server: Netlify
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: Accept-Encoding
-x-nf-request-id: 01M62F50MAQ2N63QF3Q1RXZGKC
-x-robots-tag: noindex
+x-nf-request-id: 01M66RNRPAEN9CK4V4V8NT9S04
 connection: close
 transfer-encoding: chunked
 

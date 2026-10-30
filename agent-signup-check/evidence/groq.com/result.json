@@ -1,7 +1,7 @@
 {
  "site": "groq.com",
- "checkedAt": "2026-10-28T23:57:07.423Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:00:32.773Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 2,
  "total": 7,
@@ -71,7 +71,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 248,
+   "ms": 251,
    "redirects": 0
   },
   {
@@ -81,7 +81,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 198,
+   "ms": 218,
    "redirects": 0
   },
   {
@@ -91,7 +91,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 51,
+   "ms": 59,
    "redirects": 0
   },
   {
@@ -101,7 +101,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 85,
+   "ms": 123,
    "redirects": 0
   },
   {
@@ -111,7 +111,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 239,
+   "ms": 214,
    "redirects": 0
   },
   {
@@ -131,7 +131,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 227,
+   "ms": 223,
    "redirects": 0
   },
   {
@@ -141,7 +141,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 226,
+   "ms": 214,
    "redirects": 0
   }
  ]

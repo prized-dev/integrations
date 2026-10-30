@@ -1,27 +1,27 @@
 GET https://exa.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:17.466Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:47.304Z
 final-url: https://exa.ai/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 2064
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:15 GMT
-etag: W/"d43808acafc362153cea98a858368721"
-last-modified: Wed, 28 Oct 2026 23:23:50 GMT
+date: Fri, 30 Oct 2026 16:01:45 GMT
+etag: W/"7932686ce1884bedcb9cc7957c08a23d"
+last-modified: Fri, 30 Oct 2026 16:01:45 GMT
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::n687b-1793231895379-373d06fe0912
+x-vercel-cache: MISS
+x-vercel-id: pdx1::4s4xt-1793376104887-d1e204de7113
 connection: close
 transfer-encoding: chunked
 
@@ -33,6 +33,13 @@ transfer-encoding: chunked
 
 For AI agents and automation, start with the agent-native interfaces below. For complete technical documentation, use the Exa documentation index.
 
+## Authentication
+
+The Exa API takes an API key, which a user creates in the dashboard. The hosted MCP server also takes OAuth. /search and /contents also accept x402 pay-per-request payments.
+
+- [Authentication guide for agents](https://exa.ai/auth.md)
+- [API keys](https://dashboard.exa.ai/api-keys)
+
 ## MCP Server
 
 Connect Exa search, code search, content retrieval, and research tools to Claude, Cursor, Codex, VS Code, and other MCP-compatible clients.
@@ -40,7 +47,7 @@ Connect Exa search, code search, content retrieval, and research tools to Claude
 The hosted MCP server can be tried without an API key at limited usage levels.
 
 - [Exa MCP](https://exa.ai/mcp)
-- [MCP documentation](https://exa.ai/docs/reference/exa-mcp.md)
+- [MCP documentation](https://exa.ai/docs/get-started/exa-mcp.md)
 - [Hosted MCP server](https://mcp.exa.ai/mcp)
 - [MCP server repository](https://github.com/exa-labs/exa-mcp-server)
 
@@ -48,18 +55,31 @@ The hosted MCP server can be tried without an API key at limited usage levels.
 
 Install reusable skills that teach coding agents how to search, retrieve content, research companies, generate leads, and build applications with Exa.
 
-- [Agent Skills](https://exa.ai/docs/reference/agent-skills.md)
+- [Agent Skills](https://exa.ai/docs/get-started/agent-skills/overview.md)
 - [Agent Skills repository](https://github.com/exa-labs/agent-skills)
 
 ## Documentation
 
 Exa's complete technical documentation, including quickstarts, coding-agent references, API guides, SDKs, integrations, examples, and API reference.
 
-Use `/docs/llms.txt` to discover the full technical documentation corpus. Exa docs pages are also available as Markdown by appending `.md` to the docs URL.
+Use `/docs/llms.txt` to discover the full technical documentation corpus. Exa docs pages are also available as Markdown by appending `.md` to the docs URL, or by requesting the docs URL with `Accept: text/markdown`.
 
 - [Documentation index](https://exa.ai/docs/llms.txt)
 - [Full documentation corpus](https://exa.ai/docs/llms-full.txt)
 - [API dashboard and keys](https://dashboard.exa.ai/api-keys)
+- [Agentic onboarding with Stripe Projects](https://exa.ai/docs/integrations/marketplaces/stripe-projects.md)
+
+## API Reference
+
+Markdown endpoint references, each with the endpoint's full OpenAPI request and response schema. `/docs/llms.txt` lists the reference for every endpoint.
+
+- [Search](https://exa.ai/docs/reference/search.md)
+- [Contents](https://exa.ai/docs/reference/get-contents.md)
+- [Answer](https://exa.ai/docs/reference/answer.md)
+- [Create an Agent run](https://exa.ai/docs/reference/agent-api/create-a-run.md)
+- [Get an Agent run](https://exa.ai/docs/reference/agent-api/get-a-run.md)
+- [Create a monitor](https://exa.ai/docs/reference/monitors/create-a-monitor.md)
+- [Create a batch](https://exa.ai/docs/reference/batches/create-a-batch.md)
 
 ## Products
 
@@ -68,7 +88,7 @@ Use `/docs/llms.txt` to discover the full technical documentation corpus. Exa do
 Search the web and extract contents from the results. Built for AI applications and agents. Use Deep Search for multi-step web search with reasoning and structured outputs for complex research tasks.
 
 - [Search API](https://exa.ai/products/search)
-- [Search documentation](https://exa.ai/docs/reference/search-api-guide.md)
+- [Search documentation](https://exa.ai/docs/search/quickstart.md)
 - [Deep Search](https://exa.ai/products/deep)
 - [Search best practices](https://exa.ai/docs/search/best-practices.md)
 
@@ -83,14 +103,14 @@ Extract clean, LLM-ready web content from any URL, including JavaScript-rendered
 Run multi-step web research, list-building, and enrichment workflows with natural-language answers, structured outputs, and citations.
 
 - [Agent](https://exa.ai/products/agent)
-- [Agent documentation](https://exa.ai/docs/reference/agent-api-guide.md)
+- [Agent documentation](https://exa.ai/docs/agent/quickstart.md)
 
 ### Exa Connect
 
 Connect your agents to the world's public and private data, including web analytics, private markets, company and contact data, financial data, healthcare intelligence, compliance data, and other specialized datasets from leading providers.
 
 - [Exa Connect](https://exa.ai/connect)
-- [Connect documentation](https://exa.ai/docs/reference/agent-api/connect/overview.md)
+- [Connect documentation](https://exa.ai/docs/agent/connect/overview.md)
 
 ### Exa Library
 
@@ -135,7 +155,7 @@ Use Exa with agent frameworks, SDKs, automation tools, AI assistants, and develo
 Coding agents can also use Stripe Projects for agentic onboarding to create an Exa account, provision an API key, and sync it directly into a project.
 
 - [Integrations directory](https://exa.ai/integrations)
-- [Agentic onboarding with Stripe](https://exa.ai/docs/reference/stripe-projects)
+- [Agentic onboarding with Stripe](https://exa.ai/docs/integrations/marketplaces/stripe-projects.md)
 
 ## SDKs
 
@@ -143,8 +163,8 @@ Official Exa SDKs for Python and JavaScript/TypeScript.
 
 - [Python SDK](https://github.com/exa-labs/exa-py)
 - [JavaScript SDK](https://github.com/exa-labs/exa-js)
-- [Python SDK documentation](https://exa.ai/docs/sdks/python-sdk.md)
-- [JavaScript SDK documentation](https://exa.ai/docs/sdks/javascript-sdk.md)
+- [Python SDK documentation](https://exa.ai/docs/sdks/quickstart.md)
+- [JavaScript SDK documentation](https://exa.ai/docs/sdks/quickstart.md)
 
 ## OpenAPI
 
@@ -161,9 +181,9 @@ Exa can be started for free. New accounts receive $10 in free credits every mont
 Paid API usage is pay-as-you-go, with enterprise plans available for higher limits, custom infrastructure, security requirements, and support.
 
 - [Pricing](https://exa.ai/pricing)
-- [Pricing documentation](https://exa.ai/docs/reference/pricing.md)
-- [Billing](https://exa.ai/docs/reference/billing.md)
-- [Rate limits](https://exa.ai/docs/reference/rate-limits.md)
+- [Pricing documentation](https://exa.ai/docs/admin/pricing.md)
+- [Billing](https://exa.ai/docs/admin/billing.md)
+- [Rate limits](https://exa.ai/docs/admin/billing.md)
 
 ## Evals and Benchmarks
 

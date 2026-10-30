@@ -1,10 +1,10 @@
 GET https://api.onkernel.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:10.204Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:37.100Z
 final-url: https://api.onkernel.com/.well-known/oauth-protected-resource
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:58:08 GMT
+date: Fri, 30 Oct 2026 16:01:35 GMT
 content-type: application/json
 content-length: 325
 connection: close

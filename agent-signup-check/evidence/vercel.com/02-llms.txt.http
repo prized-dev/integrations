@@ -1,18 +1,18 @@
 GET https://vercel.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:24.633Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:48.620Z
 final-url: https://vercel.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 1450
+age: 2213
 cache-control: public, max-age=0, s-maxage=3600, stale-while-revalidate=86400
 content-disposition: inline
 content-encoding: br
 content-security-policy: default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live wss://*.vercel.com localhost:*;script-src 'self' 'unsafe-eval' 'unsafe-inline' www.google.com https://news.google.com www.google-analytics.com www.googleadservices.com www.gstatic.com *.youtube.com *.youtube-nocookie.com *.ytimg.com *.twimg.com cdn.ampproject.org www.googletagmanager.com *.googleapis.com *.fides-cdn.ethyca.com *.ethyca.com cdn.ethyca.com cdn.vercel-insights.com va.vercel-scripts.com app.cal.com *.cr-relay.com blob: vercel.com *.vercel.com *.vercel.sh vercel.live localhost:* chrome-extension://*;child-src *.youtube.com *.youtube-nocookie.com *.stripe.com www.google.com https://news.google.com td.doubleclick.net github.com calendly.com vercel.cal.com *.codesandbox.io vercel.com *.vercel.com *.vercel.sh vercel.live wss://*.vercel.com localhost:*;style-src 'self' 'unsafe-inline' *.googleapis.com vercel.com *.vercel.com *.vercel.sh vercel.live wss://*.vercel.com localhost:*;img-src * blob: data: https://images.ctfassets.net;media-src 'self' 7nyt0uhk7sse4zvn.public.blob.vercel-storage.com videos.ctfassets.net user-images.githubusercontent.com replicate.delivery stream.mux.com *.mux.com blob: data: vercel.com *.vercel.com *.vercel.sh vercel.live wss://*.vercel.com localhost:*;connect-src 'self' data: vercel.com *.vercel.com *.vercel.sh vercel.live wss://*.vercel.com www.vercel-status.com cdn.vercel-insights.com va.vercel-scripts.com cdp.vercel.com www.google-analytics.com https://news.google.com www.googletagmanager.com *.googleapis.com *.cr-relay.com *.ethyca.com cdn.ethyca.com https://*.contentful.com *.upstash.io vercel.cal.com app.cal.com api.vercel.com *.ingest.sentry.io *.ingest.us.sentry.io stream.mux.com *.mux.com *.codesandbox.io react-tweet.vercel.app;font-src 'self' *.vercel.com *.gstatic.com vercel.live *.vercel.sh;worker-src 'self' *.vercel.com blob:;frame-ancestors  'self'  https://vercel.com  https://app.contentful.com  https://*.contentful.com  https://*.vercel.sh  https://*.vercel.com
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:22 GMT
-etag: W/"565b7348f880ecf57e1dc09eabbb486b"
+date: Fri, 30 Oct 2026 16:00:46 GMT
+etag: W/"fdc60fa8ba8f331a8473199b8b8111a0"
 feature-policy: fullscreen 'self'; camera 'none'
 referrer-policy: origin-when-cross-origin
 server: Vercel
@@ -21,9 +21,9 @@ vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-pre
 x-content-type-options: nosniff
 x-dns-prefetch-control: on
 x-download-options: noopen
-x-matched-path: /flg~eyJhbGciOiJIUzI1NiJ9._v79_v39_v7-_v7-_v39_f7-_v7-_v3-_v39_f3-_v3-_v3-_v7-.skianE-IQ-CI8zvFPQNdEP6-gC5m8HVEaqpvjAvnb64/llms.txt
+x-matched-path: /flg~eyJhbGciOiJIUzI1NiJ9._v79_v39_f7-_v7-_v79_f7-_v7-_v79_v79_f39_v79_v79_v7-_g.fn6nYUGhigXaSd2wnfkdTaqD9utHfNFUHmhghgujn6c/llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::cmxhh-1793231842237-fb7c93afa721
+x-vercel-id: pdx1::8vqn5-1793376046273-6257092eab2d
 x-xss-protection: 0
 connection: close
 transfer-encoding: chunked

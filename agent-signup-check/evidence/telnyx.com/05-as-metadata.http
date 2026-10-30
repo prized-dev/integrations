@@ -1,16 +1,16 @@
 GET https://api.telnyx.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:04.929Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:31.364Z
 final-url: https://api.telnyx.com/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:58:04 GMT
+date: Fri, 30 Oct 2026 16:01:30 GMT
 content-type: application/json; charset=utf-8
 content-length: 681
 connection: close
 content-encoding: gzip
 vary: accept-encoding
-x-request-id: 988bac7f-3400-4ac8-95cd-d76f222ddd46
+x-request-id: d54de7aa-900c-446a-96c9-b438f82bebc1
 access-control-allow-credentials: true
 access-control-allow-origin: *
 access-control-expose-headers: 
@@ -22,9 +22,9 @@ ratelimit-remaining: 4
 x-ratelimit-reset: 1
 ratelimit-reset: 1
 server: cloudflare
-x-envoy-upstream-service-time: 8
+x-envoy-upstream-service-time: 9
 cf-cache-status: DYNAMIC
 strict-transport-security: max-age=31536000
-cf-ray: a51de2eb7995fef6-PDX
+cf-ray: a52ba39539575913-PDX
 
 {"issuer":"https://api.telnyx.com","registration_endpoint":"https://api.telnyx.com/v2/oauth/register","agent_auth":{"anonymous":{"credential_types_supported":["x402_pay_per_call"]},"service_auth":{"claim":"magic_link_email","challenge_endpoint":"https://api.telnyx.com/v2/bot_challenge","credential_types_supported":["bearer_api_key","oauth_pkce"],"registration_endpoint":"https://api.telnyx.com/v2/bot_signup","runbook":"https://telnyx.com/agent-signup.md"},"auth_md":"https://telnyx.com/auth.md","events_supported":["credential_issued","credential_revoked"],"grants_supported":["authorization_code","client_credentials","refresh_token"],"identity_assertion_supported":false,"identity_endpoint":"https://api.telnyx.com/v2/bot_signup","identity_types_supported":["service_auth","anonymous"],"protected_resource_metadata_uri":"https://api.telnyx.com/.well-known/oauth-protected-resource","register_uri":"https://telnyx.com/agent-signup.md","skill":"https://telnyx.com/auth.md"},"authorization_endpoint":"https://api.telnyx.com/v2/oauth/authorize","code_challenge_methods_supported":["S256"],"grant_types_supported":["client_credentials","authorization_code","refresh_token"],"introspection_endpoint":"https://api.telnyx.com/v2/oauth/introspect","jwks_uri":"https://api.telnyx.com/v2/oauth/jwks","protected_resources":["https://api.telnyx.com","https://api.telnyx.com/v2/mcp"],"response_types_supported":["code"],"scopes_supported":["account_management.read","account_management.write","ai.read","ai.write","authentication_and_access.read","billing.read","edge_compute.read","edge_compute.write","enterprise_integrations.read","enterprise_integrations.write","fax.read","fax.write","messaging.read","messaging.write","networking.read","networking.write","numbers.read","numbers.write","reporting.read","reporting.write","speech.read","speech.write","storage.read","storage.write","verify.read","verify.write","video.read","video.write","voice.read","voice.write","wireless.read","wireless.write"],"token_endpoint":"https://api.telnyx.com/v2/oauth/token","token_endpoint_auth_methods_supported":["none","client_secret_basic","client_secret_post"]}

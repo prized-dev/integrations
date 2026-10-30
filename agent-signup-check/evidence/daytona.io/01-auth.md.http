@@ -1,6 +1,6 @@
 GET https://daytona.io/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:24.746Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:49.193Z
 redirect: 301 from https://daytona.io/auth.md
 final-url: https://www.daytona.io/auth.md
 
@@ -8,19 +8,19 @@ HTTP 404
 content-type: text/markdown; charset=utf-8
 content-length: 2619
 connection: close
-date: Wed, 28 Oct 2026 23:57:21 GMT
+date: Fri, 30 Oct 2026 16:00:45 GMT
 server: nginx/1.29.0
 x-content-type-options: nosniff
 cache-control: public, max-age=0, must-revalidate
 framer-site-id: c913edbf9fe925c1e688b580a21cb71930183ad1b0576ba092a88ef209378c4f
 last-modified: Tue, 20 Oct 2026 21:26:30 GMT
-server-timing: region;desc="us-east-1", cache;desc="cached", ssg-status;desc="optimized", version;desc="ced8dfa", instance;desc="2b9dfa2", route;desc="id=Ovp8sCFkO&locale=default", country;desc="US", ss-only-routes
+server-timing: region;desc="us-east-1", cache;desc="cached", ssg-status;desc="optimized", version;desc="ad3cf8f", instance;desc="fba1767", route;desc="id=Ovp8sCFkO&locale=default", country;desc="US", ss-only-routes
 strict-transport-security: max-age=31536000
 vary: Accept-Encoding,Accept
 x-cache: Error from cloudfront
-via: 1.1 f36cc119cb86b2f70c315ca53fd1b4ee.cloudfront.net (CloudFront)
+via: 1.1 49798ef4b8dd64fece36e067d09f69ec.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: ERftuZnOyFtPePz4YOCGKV1-xR8W7xLaZVBYRoynVLHi4ab7k6kEbw==
+x-amz-cf-id: hmGXCG24fo_eyRFPPeMmcEVwMeaRljt3s6pHxLhJSaZrjoHH25wwEA==
 
 ---
 title: Daytona - Secure Infrastructure for Running AI-Generated Code

@@ -1,24 +1,24 @@
 GET https://posthog.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:34.818Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:05.012Z
 final-url: https://posthog.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 2064
+age: 2393
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy-report-only: default-src 'self'; script-src 'self' https://*.posthog.com https://www.youtube.com https://fast.wistia.com https://fast.wistia.net https://import-cdn.default.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.posthog.com https://res.cloudinary.com https://www.gravatar.com https://raw.githubusercontent.com https://obuldanrptloktxcffvn.supabase.co https://cdn.shopify.com https://i.ytimg.com https://embed-ssl.wistia.com https://fast.wistia.com https://cdn.jsdelivr.net https://user-images.githubusercontent.com https://brandbadge.clearbit.com; font-src 'self' data: https://d27nj4tzr3d5tm.cloudfront.net https://res.cloudinary.com https://fonts.gstatic.com https://r2cdn.perplexity.ai https://fast.wistia.com https://fast.wistia.net https://use.typekit.net; connect-src 'self' https://*.posthog.com https://api.github.com https://lottie.host https://better-animal-d658c56969.strapiapp.com https://forms.default.com https://nucleus.default.com https://import-cdn.default.com https://posthog.myshopify.com https://*.algolia.net https://*.algolianet.com https://api.io.inkeep.com https://fast.wistia.net https://fast.wistia.com https://embed-cloudfront.wistia.com https://api.inkeep.com; media-src 'self' https://d1hovhsvet4m1p.cloudfront.net https://res.cloudinary.com blob:; frame-src 'self' https://www.youtube-nocookie.com https://hogwars.vercel.app https://hedgehog-mode-playground.vercel.app; worker-src 'self' blob:; child-src 'self' blob:; object-src 'none'; frame-ancestors 'none'; report-uri https://us.i.posthog.com/report/?token=sTMFPsFhdP1Ssg&sample_rate=0.1&v=1; report-to posthog
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:31 GMT
-etag: W/"a4d4ea968b52aff2b5dd23c6a76868c2"
-last-modified: Wed, 28 Oct 2026 23:24:07 GMT
+date: Fri, 30 Oct 2026 16:02:01 GMT
+etag: W/"4d234dbe148c0351547ab85c6462d274"
+last-modified: Fri, 30 Oct 2026 15:22:08 GMT
 reporting-endpoints: posthog="https://us.i.posthog.com/report/?token=sTMFPsFhdP1Ssg&sample_rate=0.1&v=1"
 server: Vercel
 strict-transport-security: max-age=63072000
 x-vercel-cache: HIT
-x-vercel-id: pdx1::tbqfc-1793231911515-074d589cd3b9
+x-vercel-id: pdx1::w9pl2-1793376121661-fc4c36a1fbf7
 connection: close
 transfer-encoding: chunked
 
@@ -357,6 +357,7 @@ What's new in PostHog — new features, products, and tools, updated with every 
 - [Linking AgileCRM as a source](https://posthog.com/docs/data-pipelines/sources/agilecrm.md)
 - [Linking Aha! as a source](https://posthog.com/docs/data-pipelines/sources/aha.md)
 - [Linking Aha! Ideas as a source](https://posthog.com/docs/data-pipelines/sources/aha-ideas.md)
+- [Linking Ahrefs as a source](https://posthog.com/docs/data-pipelines/sources/ahrefs.md)
 - [Linking Airbrake as a source](https://posthog.com/docs/data-pipelines/sources/airbrake.md)
 - [Linking Aircall as a source](https://posthog.com/docs/data-pipelines/sources/aircall.md)
 - [Linking AirOps as a source](https://posthog.com/docs/data-pipelines/sources/airops.md)
@@ -909,6 +910,7 @@ What's new in PostHog — new features, products, and tools, updated with every 
 - [Linking pganalyze as a source](https://posthog.com/docs/data-pipelines/sources/pganalyze.md)
 - [Linking Phyllo as a source](https://posthog.com/docs/data-pipelines/sources/phyllo.md)
 - [Linking Picqer as a source](https://posthog.com/docs/data-pipelines/sources/picqer.md)
+- [Linking Pinecone as a source](https://posthog.com/docs/data-pipelines/sources/pinecone.md)
 - [Linking Pingdom as a source](https://posthog.com/docs/data-pipelines/sources/pingdom.md)
 - [Linking Pinterest Ads as a source](https://posthog.com/docs/data-pipelines/sources/pinterest-ads.md)
 - [Linking Pipedrive as a source](https://posthog.com/docs/data-pipelines/sources/pipedrive.md)
@@ -1251,6 +1253,7 @@ What's new in PostHog — new features, products, and tools, updated with every 
 - [Data Warehouse troubleshooting](https://posthog.com/docs/data-warehouse/troubleshooting.md)
 - [Get started with data quality](https://posthog.com/docs/data-warehouse/data-quality/start-here.md)
 - [Getting started with data warehouse](https://posthog.com/docs/data-warehouse/start-here.md)
+- [Is PostHog warehouse native?](https://posthog.com/docs/data-warehouse/warehouse-native.md)
 - [Joining data](https://posthog.com/docs/data-warehouse/join.md)
 - [Materialization troubleshooting](https://posthog.com/docs/data-warehouse/views/materialize-troubleshooting.md)
 - [Performance](https://posthog.com/docs/data-warehouse/warehouse/performance-tuning.md)
@@ -2378,9 +2381,18 @@ The following API reference pages document individual REST API endpoints. Only f
 - [ai_observability_offline_experiments_scorer_summaries_list](https://posthog.com/docs/open-api-spec/ai_observability_offline_experiments_scorer_summaries_list.md)
 - [ai_observability_offline_experiments_upload_create](https://posthog.com/docs/open-api-spec/ai_observability_offline_experiments_upload_create.md)
 - [ai_observability_offline_scorers_history_list](https://posthog.com/docs/open-api-spec/ai_observability_offline_scorers_history_list.md)
+- [ai_observability_traces_clusters_retrieve](https://posthog.com/docs/open-api-spec/ai_observability_traces_clusters_retrieve.md)
 - [ai_observability_traces_evaluations_retrieve](https://posthog.com/docs/open-api-spec/ai_observability_traces_evaluations_retrieve.md)
+- [ai_observability_traces_exports_content_retrieve](https://posthog.com/docs/open-api-spec/ai_observability_traces_exports_content_retrieve.md)
+- [ai_observability_traces_exports_create](https://posthog.com/docs/open-api-spec/ai_observability_traces_exports_create.md)
+- [ai_observability_traces_exports_retrieve](https://posthog.com/docs/open-api-spec/ai_observability_traces_exports_retrieve.md)
+- [ai_observability_traces_feedback_retrieve](https://posthog.com/docs/open-api-spec/ai_observability_traces_feedback_retrieve.md)
 - [ai_observability_traces_nodes_retrieve](https://posthog.com/docs/open-api-spec/ai_observability_traces_nodes_retrieve.md)
+- [ai_observability_traces_pull_request_retrieve](https://posthog.com/docs/open-api-spec/ai_observability_traces_pull_request_retrieve.md)
 - [ai_observability_traces_retrieve](https://posthog.com/docs/open-api-spec/ai_observability_traces_retrieve.md)
+- [ai_observability_traces_search_retrieve](https://posthog.com/docs/open-api-spec/ai_observability_traces_search_retrieve.md)
+- [ai_observability_traces_summary_create](https://posthog.com/docs/open-api-spec/ai_observability_traces_summary_create.md)
+- [ai_observability_traces_summary_retrieve](https://posthog.com/docs/open-api-spec/ai_observability_traces_summary_retrieve.md)
 - [alerts_create](https://posthog.com/docs/open-api-spec/alerts_create.md)
 - [alerts_destinations_create](https://posthog.com/docs/open-api-spec/alerts_destinations_create.md)
 - [alerts_destinations_delete_create](https://posthog.com/docs/open-api-spec/alerts_destinations_delete_create.md)
@@ -2904,6 +2916,7 @@ The following API reference pages document individual REST API endpoints. Only f
 - [engineering_analytics_attention_pull_requests](https://posthog.com/docs/open-api-spec/engineering_analytics_attention_pull_requests.md)
 - [engineering_analytics_author_friction](https://posthog.com/docs/open-api-spec/engineering_analytics_author_friction.md)
 - [engineering_analytics_author_friction_detail](https://posthog.com/docs/open-api-spec/engineering_analytics_author_friction_detail.md)
+- [engineering_analytics_author_llm_spend](https://posthog.com/docs/open-api-spec/engineering_analytics_author_llm_spend.md)
 - [engineering_analytics_author_workflow_costs](https://posthog.com/docs/open-api-spec/engineering_analytics_author_workflow_costs.md)
 - [engineering_analytics_broken_tests](https://posthog.com/docs/open-api-spec/engineering_analytics_broken_tests.md)
 - [engineering_analytics_ci_cards](https://posthog.com/docs/open-api-spec/engineering_analytics_ci_cards.md)
@@ -2919,6 +2932,7 @@ The following API reference pages document individual REST API endpoints. Only f
 - [engineering_analytics_flaky_tests](https://posthog.com/docs/open-api-spec/engineering_analytics_flaky_tests.md)
 - [engineering_analytics_job_aggregates](https://posthog.com/docs/open-api-spec/engineering_analytics_job_aggregates.md)
 - [engineering_analytics_job_log_insights](https://posthog.com/docs/open-api-spec/engineering_analytics_job_log_insights.md)
+- [engineering_analytics_llm_spend_coverage](https://posthog.com/docs/open-api-spec/engineering_analytics_llm_spend_coverage.md)
 - [engineering_analytics_master_failures](https://posthog.com/docs/open-api-spec/engineering_analytics_master_failures.md)
 - [engineering_analytics_pr_cost](https://posthog.com/docs/open-api-spec/engineering_analytics_pr_cost.md)
 - [engineering_analytics_pr_lifecycle](https://posthog.com/docs/open-api-spec/engineering_analytics_pr_lifecycle.md)
@@ -3103,6 +3117,7 @@ The following API reference pages document individual REST API endpoints. Only f
 - [event_streams_update](https://posthog.com/docs/open-api-spec/event_streams_update.md)
 - [events_list](https://posthog.com/docs/open-api-spec/events_list.md)
 - [events_retention_retrieve](https://posthog.com/docs/open-api-spec/events_retention_retrieve.md)
+- [events_retention_update](https://posthog.com/docs/open-api-spec/events_retention_update.md)
 - [events_retrieve](https://posthog.com/docs/open-api-spec/events_retrieve.md)
 - [events_values_retrieve](https://posthog.com/docs/open-api-spec/events_values_retrieve.md)
 - [experiment_holdouts_create](https://posthog.com/docs/open-api-spec/experiment_holdouts_create.md)
@@ -3448,6 +3463,7 @@ The following API reference pages document individual REST API endpoints. Only f
 - [insights_data_checks_create](https://posthog.com/docs/open-api-spec/insights_data_checks_create.md)
 - [insights_data_checks_retrieve](https://posthog.com/docs/open-api-spec/insights_data_checks_retrieve.md)
 - [insights_destroy](https://posthog.com/docs/open-api-spec/insights_destroy.md)
+- [insights_explain_create](https://posthog.com/docs/open-api-spec/insights_explain_create.md)
 - [insights_generate_metadata_create](https://posthog.com/docs/open-api-spec/insights_generate_metadata_create.md)
 - [insights_list](https://posthog.com/docs/open-api-spec/insights_list.md)
 - [insights_my_last_viewed_retrieve](https://posthog.com/docs/open-api-spec/insights_my_last_viewed_retrieve.md)
@@ -3486,6 +3502,7 @@ The following API reference pages document individual REST API endpoints. Only f
 - [integrations_github_prepare_callback_create](https://posthog.com/docs/open-api-spec/integrations_github_prepare_callback_create.md)
 - [integrations_github_repos_refresh_create](https://posthog.com/docs/open-api-spec/integrations_github_repos_refresh_create.md)
 - [integrations_github_repos_retrieve](https://posthog.com/docs/open-api-spec/integrations_github_repos_retrieve.md)
+- [integrations_github_repository_access_retrieve](https://posthog.com/docs/open-api-spec/integrations_github_repository_access_retrieve.md)
 - [integrations_github_teams_retrieve](https://posthog.com/docs/open-api-spec/integrations_github_teams_retrieve.md)
 - [integrations_gitlab_members_retrieve](https://posthog.com/docs/open-api-spec/integrations_gitlab_members_retrieve.md)
 - [integrations_google_accessible_accounts_retrieve](https://posthog.com/docs/open-api-spec/integrations_google_accessible_accounts_retrieve.md)
@@ -3802,6 +3819,9 @@ The following API reference pages document individual REST API endpoints. Only f
 - [messaging_templates_retrieve](https://posthog.com/docs/open-api-spec/messaging_templates_retrieve.md)
 - [messaging_templates_send_create](https://posthog.com/docs/open-api-spec/messaging_templates_send_create.md)
 - [messaging_templates_update](https://posthog.com/docs/open-api-spec/messaging_templates_update.md)
+- [metrics_alerts_destinations_create](https://posthog.com/docs/open-api-spec/metrics_alerts_destinations_create.md)
+- [metrics_alerts_destinations_delete_create](https://posthog.com/docs/open-api-spec/metrics_alerts_destinations_delete_create.md)
+- [metrics_alerts_destinations_list](https://posthog.com/docs/open-api-spec/metrics_alerts_destinations_list.md)
 - [metrics_attribute_values_retrieve](https://posthog.com/docs/open-api-spec/metrics_attribute_values_retrieve.md)
 - [metrics_attributes_retrieve](https://posthog.com/docs/open-api-spec/metrics_attributes_retrieve.md)
 - [metrics_characterize_create](https://posthog.com/docs/open-api-spec/metrics_characterize_create.md)
@@ -3884,6 +3904,8 @@ The following API reference pages document individual REST API endpoints. Only f
 - [org_organizations_desktop_beta_terms_list](https://posthog.com/docs/open-api-spec/org_organizations_desktop_beta_terms_list.md)
 - [org_organizations_integrations_list](https://posthog.com/docs/open-api-spec/org_organizations_integrations_list.md)
 - [org_organizations_integrations_retrieve](https://posthog.com/docs/open-api-spec/org_organizations_integrations_retrieve.md)
+- [organization_events_retention_retrieve](https://posthog.com/docs/open-api-spec/organization_events_retention_retrieve.md)
+- [organization_events_retention_update](https://posthog.com/docs/open-api-spec/organization_events_retention_update.md)
 - [organizations_projects_access_control_default_objects_retrieve](https://posthog.com/docs/open-api-spec/organizations_projects_access_control_default_objects_retrieve.md)
 - [organizations_projects_access_control_default_properties_retrieve](https://posthog.com/docs/open-api-spec/organizations_projects_access_control_default_properties_retrieve.md)
 - [organizations_projects_access_control_defaults_retrieve](https://posthog.com/docs/open-api-spec/organizations_projects_access_control_defaults_retrieve.md)
@@ -4158,7 +4180,6 @@ The following API reference pages document individual REST API endpoints. Only f
 - [signals_onboarding_create](https://posthog.com/docs/open-api-spec/signals_onboarding_create.md)
 - [signals_onboarding_expose_create](https://posthog.com/docs/open-api-spec/signals_onboarding_expose_create.md)
 - [signals_onboarding_list](https://posthog.com/docs/open-api-spec/signals_onboarding_list.md)
-- [signals_onboarding_reconcile_create](https://posthog.com/docs/open-api-spec/signals_onboarding_reconcile_create.md)
 - [signals_processing_list](https://posthog.com/docs/open-api-spec/signals_processing_list.md)
 - [signals_processing_pause_destroy](https://posthog.com/docs/open-api-spec/signals_processing_pause_destroy.md)
 - [signals_processing_pause_update](https://posthog.com/docs/open-api-spec/signals_processing_pause_update.md)
@@ -4183,6 +4204,7 @@ The following API reference pages document individual REST API endpoints. Only f
 - [signals_reports_actions_list](https://posthog.com/docs/open-api-spec/signals_reports_actions_list.md)
 - [signals_reports_actions_run_create](https://posthog.com/docs/open-api-spec/signals_reports_actions_run_create.md)
 - [signals_reports_available_reviewers_retrieve](https://posthog.com/docs/open-api-spec/signals_reports_available_reviewers_retrieve.md)
+- [signals_reports_bulk_claim](https://posthog.com/docs/open-api-spec/signals_reports_bulk_claim.md)
 - [signals_reports_bulk_state_create](https://posthog.com/docs/open-api-spec/signals_reports_bulk_state_create.md)
 - [signals_reports_claim](https://posthog.com/docs/open-api-spec/signals_reports_claim.md)
 - [signals_reports_destroy](https://posthog.com/docs/open-api-spec/signals_reports_destroy.md)
@@ -4604,6 +4626,8 @@ The following API reference pages document individual REST API endpoints. Only f
 - [vision_scanners_draft_create](https://posthog.com/docs/open-api-spec/vision_scanners_draft_create.md)
 - [vision_scanners_duplicate_create](https://posthog.com/docs/open-api-spec/vision_scanners_duplicate_create.md)
 - [vision_scanners_estimate_create](https://posthog.com/docs/open-api-spec/vision_scanners_estimate_create.md)
+- [vision_scanners_highlight_feed_impressions_create](https://posthog.com/docs/open-api-spec/vision_scanners_highlight_feed_impressions_create.md)
+- [vision_scanners_highlight_feed_retrieve](https://posthog.com/docs/open-api-spec/vision_scanners_highlight_feed_retrieve.md)
 - [vision_scanners_impact_retrieve](https://posthog.com/docs/open-api-spec/vision_scanners_impact_retrieve.md)
 - [vision_scanners_inline_scan_create](https://posthog.com/docs/open-api-spec/vision_scanners_inline_scan_create.md)
 - [vision_scanners_list](https://posthog.com/docs/open-api-spec/vision_scanners_list.md)
@@ -4628,8 +4652,6 @@ The following API reference pages document individual REST API endpoints. Only f
 - [vision_scanners_self_driving_stats_retrieve](https://posthog.com/docs/open-api-spec/vision_scanners_self_driving_stats_retrieve.md)
 - [vision_scanners_stats_retrieve](https://posthog.com/docs/open-api-spec/vision_scanners_stats_retrieve.md)
 - [vision_scanners_variants_list](https://posthog.com/docs/open-api-spec/vision_scanners_variants_list.md)
-- [vision_scanners_watch_feed_impressions_create](https://posthog.com/docs/open-api-spec/vision_scanners_watch_feed_impressions_create.md)
-- [vision_scanners_watch_feed_retrieve](https://posthog.com/docs/open-api-spec/vision_scanners_watch_feed_retrieve.md)
 - [visual_review_repos_baselines_retrieve](https://posthog.com/docs/open-api-spec/visual_review_repos_baselines_retrieve.md)
 - [visual_review_repos_create](https://posthog.com/docs/open-api-spec/visual_review_repos_create.md)
 - [visual_review_repos_flakiness_retrieve](https://posthog.com/docs/open-api-spec/visual_review_repos_flakiness_retrieve.md)
@@ -4797,9 +4819,12 @@ The following API reference pages document individual REST API endpoints. Only f
 - [wizard_sessions_stream_retrieve](https://posthog.com/docs/open-api-spec/wizard_sessions_stream_retrieve.md)
 - [wizard_tool_catalog_list](https://posthog.com/docs/open-api-spec/wizard_tool_catalog_list.md)
 - [workflow_data_suggestions_build](https://posthog.com/docs/open-api-spec/workflow_data_suggestions_build.md)
+- [workflow_data_suggestions_build_for_events](https://posthog.com/docs/open-api-spec/workflow_data_suggestions_build_for_events.md)
 - [workflow_data_suggestions_current](https://posthog.com/docs/open-api-spec/workflow_data_suggestions_current.md)
 - [workflow_data_suggestions_generate](https://posthog.com/docs/open-api-spec/workflow_data_suggestions_generate.md)
 - [workflow_email_drafts_create](https://posthog.com/docs/open-api-spec/workflow_email_drafts_create.md)
+- [workflow_imports_create](https://posthog.com/docs/open-api-spec/workflow_imports_create.md)
+- [workflow_imports_for_workflow_retrieve](https://posthog.com/docs/open-api-spec/workflow_imports_for_workflow_retrieve.md)
 - [workflow_people_imports_create](https://posthog.com/docs/open-api-spec/workflow_people_imports_create.md)
 - [workflow_sending_rules_partial_update](https://posthog.com/docs/open-api-spec/workflow_sending_rules_partial_update.md)
 - [workflow_sending_rules_retrieve](https://posthog.com/docs/open-api-spec/workflow_sending_rules_retrieve.md)

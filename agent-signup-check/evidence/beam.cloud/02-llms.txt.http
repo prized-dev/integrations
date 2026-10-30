@@ -1,17 +1,17 @@
 GET https://beam.cloud/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:39.922Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:04.592Z
 redirect: 307 from https://beam.cloud/llms.txt
 final-url: https://www.beam.cloud/llms.txt
 
 HTTP 404
 access-control-allow-origin: *
-age: 2064
+age: 146268
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="404"
 content-encoding: br
 content-type: text/html; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:36 GMT
+date: Fri, 30 Oct 2026 16:01:01 GMT
 etag: W/"77f047a0914ac6b39865f8ce07f14624"
 last-modified: Wed, 28 Oct 2026 23:23:12 GMT
 server: Vercel
@@ -19,7 +19,7 @@ strict-transport-security: max-age=63072000
 x-matched-path: /404
 x-next-error-status: 404
 x-vercel-cache: HIT
-x-vercel-id: pdx1::2cg6k-1793231856854-7b5aeffe5509
+x-vercel-id: pdx1::582mj-1793376061478-7ef81a98caac
 connection: close
 transfer-encoding: chunked
 

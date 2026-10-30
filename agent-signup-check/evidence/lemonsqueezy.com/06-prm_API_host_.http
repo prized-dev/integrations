@@ -1,21 +1,21 @@
 GET https://api.lemonsqueezy.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:29.321Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:59.913Z
 final-url: https://api.lemonsqueezy.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Wed, 28 Oct 2026 23:58:27 GMT
+date: Fri, 30 Oct 2026 16:01:58 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
 x-powered-by: PHP/8.4.27
 cache-control: no-cache, private
 vary: Origin
-apigw-requestid: F-rVqgUuiYcEPeQ=
+apigw-requestid: GELakgruiYcEJYg=
 cf-cache-status: DYNAMIC
 content-encoding: br
 server: cloudflare
-cf-ray: a51de37f4ba4ef4b-PDX
+cf-ray: a52ba4432e2096ba-PDX
 
 {
     "message": "The route .well-known/oauth-protected-resource could not be found."

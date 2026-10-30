@@ -1,10 +1,10 @@
 GET https://groq.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:07.423Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:32.773Z
 final-url: https://groq.com/.well-known/x402
 
 HTTP 404
-age: 1157
+age: 349
 cache-control: public, max-age=0, must-revalidate
 content-encoding: br
 content-security-policy: default-src 'self' ; script-src 'self' 'unsafe-inline' 'unsafe-eval' groq.com *.groq.com groqcloud.com *.groqcloud.com groqcloud.net *.groqcloud.net *.vercel.groqcloud.net sanity.io *.sanity.io *.sanity.studio cdn.sanity.io *.api.sanity.io *.sanity-cdn.com api.consentjs.datagrail.io js.hs-analytics.net js.hs-banner.com js.hs-scripts.com js.hsadspixel.net js.hscollectedforms.net js.hsforms.net js.hubspot.com edge.marker.io *.posthog.com static.cloudflareinsights.com www.googletagmanager.com googleads.g.doubleclick.net static.hsappstatic.net *.hubspotusercontent-na1.net *.vimeocdn.com player.vimeo.com www.redditstatic.com static.hsappstatic.net ; connect-src 'self' groq.com *.groq.com groqcloud.com *.groqcloud.com groqcloud.net *.groqcloud.net *.vercel.groqcloud.net sanity.io *.sanity.io *.sanity.studio cdn.sanity.io *.api.sanity.io *.sanity-cdn.com boards-api.greenhouse.io api.consentjs.datagrail.io *.hs-analytics.net *.hs-banner.com *.hs-scripts.com *.hsadspixel.net *.hscollectedforms.net *.hsforms.com *.hsforms.net api.hubapi.com *.hubspot.com *.marker.io *.posthog.com www.google.ca www.google.com google.com *.google-analytics.com analytics.google.com stats.g.doubleclick.net ad.doubleclick.net *.googleapis.com *.googlesyndication.com *.googletagmanager.com *.gstatic.com *.youtube.com *.vimeocdn.com vimeo.com *.reddit.com www.redditstatic.com static.hsappstatic.net ; worker-src 'self' blob: data: groq.com *.groq.com groqcloud.com *.groqcloud.com groqcloud.net *.groqcloud.net *.vercel.groqcloud.net sanity.io *.sanity.io *.sanity.studio cdn.sanity.io *.api.sanity.io *.sanity-cdn.com ; style-src 'self' 'unsafe-inline' groq.com *.groq.com groqcloud.com *.groqcloud.com groqcloud.net *.groqcloud.net *.vercel.groqcloud.net sanity.io *.sanity.io *.sanity.studio cdn.sanity.io *.api.sanity.io *.sanity-cdn.com app.marker.io *.posthog.com google.com fonts.googleapis.com fonts.gstatic.com *.vimeocdn.com ; img-src 'self' blob: data: groq.com *.groq.com groqcloud.com *.groqcloud.com groqcloud.net *.groqcloud.net *.vercel.groqcloud.net sanity.io *.sanity.io *.sanity.studio cdn.sanity.io *.api.sanity.io *.sanity-cdn.com *.hsforms.com track.hubspot.com app.marker.io *.posthog.com *.google.ca *.google.com google.com www.googletagmanager.com *.youtube.com *.vimeocdn.com *.reddit.com ; media-src 'self' blob: data: groq.com *.groq.com groqcloud.com *.groqcloud.com groqcloud.net *.groqcloud.net *.vercel.groqcloud.net sanity.io *.sanity.io *.sanity.studio cdn.sanity.io *.api.sanity.io *.sanity-cdn.com *.posthog.com google.com *.vimeocdn.com ; font-src 'self' groq.com *.groq.com groqcloud.com *.groqcloud.com groqcloud.net *.groqcloud.net *.vercel.groqcloud.net sanity.io *.sanity.io *.sanity.studio cdn.sanity.io *.api.sanity.io *.sanity-cdn.com app.marker.io *.posthog.com fonts.googleapis.com fonts.gstatic.com *.vimeocdn.com ; object-src 'none' ; base-uri 'self' ; form-action 'self' groq.com *.groq.com groqcloud.com *.groqcloud.com groqcloud.net *.groqcloud.net *.vercel.groqcloud.net sanity.io *.sanity.io *.sanity.studio cdn.sanity.io *.api.sanity.io *.sanity-cdn.com app.marker.io ssr.marker.io forms.hsforms.com ; frame-src 'self' groq.com *.groq.com groqcloud.com *.groqcloud.com groqcloud.net *.groqcloud.net *.vercel.groqcloud.net sanity.io *.sanity.io *.sanity.studio cdn.sanity.io *.api.sanity.io *.sanity-cdn.com app.marker.io forms.hsforms.com www.googletagmanager.com js.hsforms.net td.doubleclick.net player.vimeo.com ; frame-ancestors 'self' groq.com *.groq.com groqcloud.com *.groqcloud.com groqcloud.net *.groqcloud.net *.vercel.groqcloud.net sanity.io *.sanity.io *.sanity.studio cdn.sanity.io *.api.sanity.io *.sanity-cdn.com ; upgrade-insecure-requests;
@@ -19,7 +19,7 @@ x-nextjs-prerender: 1
 x-nextjs-stale-time: 300
 x-powered-by: Next.js
 x-vercel-cache: STALE
-x-vercel-id: pdx1::iad1::4ngpn-1793231826933-9d155645d265
+x-vercel-id: pdx1::iad1::tcp99-1793376032295-8522f3d927ed
 connection: close
 transfer-encoding: chunked
 

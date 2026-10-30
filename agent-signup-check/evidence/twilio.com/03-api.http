@@ -1,24 +1,24 @@
 GET https://api.twilio.com/2010-04-01/Accounts.json
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:05.878Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:31.860Z
 final-url: https://api.twilio.com/2010-04-01/Accounts.json
 
 HTTP 401
 content-type: application/json
 content-length: 141
 connection: close
-date: Wed, 28 Oct 2026 23:58:02 GMT
+date: Fri, 30 Oct 2026 16:01:28 GMT
 x-twilio-error-code: 20003
-twilio-request-id: RQ492f3513ceaa8e9fbfe607b1e7f83e88
-twilio-request-duration: 0.005
+twilio-request-id: RQe40d8b8c9b20989792520fe500d83c17
+twilio-request-duration: 0.007
 x-home-region: us1
 x-api-domain: api.twilio.com
 strict-transport-security: max-age=31536000
 www-authenticate: Basic realm="Twilio API"
 x-cache: Error from cloudfront
-via: 1.1 31d47f77afe1d37fe242b822fcd944d0.cloudfront.net (CloudFront)
-x-amz-cf-pop: HIO52-P5
-x-amz-cf-id: UiqA_z1Jh8ApEza9CafAnBXllWpJ39HdeQb8LHTI3p6RaEiBfgO1TA==
+via: 1.1 08193d741a1ee26c807b4f48b77fcd40.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P3
+x-amz-cf-id: xIWATbNqJB-tA7IJDFm7NU-pQZmzjt9wI7JmKorlpqg0nD3tT5Dn7A==
 x-powered-by: AT-5000
 x-shenanigans: none
 vary: Origin

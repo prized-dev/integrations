@@ -1,6 +1,6 @@
 GET https://daytona.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:24.746Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:49.193Z
 redirect: 301 from https://daytona.io/llms.txt
 redirect: 308 from https://www.daytona.io/llms.txt
 final-url: https://www.daytona.io/docs/llms.txt
@@ -9,18 +9,18 @@ HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Wed, 28 Oct 2026 23:57:21 GMT
+date: Fri, 30 Oct 2026 16:00:46 GMT
 content-encoding: br
 x-powered-by: Express
 x-frame-options: SAMEORIGIN
 cache-control: public, max-age=0
-last-modified: Tue, 27 Oct 2026 21:36:49 GMT
-etag: W/"36c6c-1a17f4b6168"
+last-modified: Fri, 30 Oct 2026 11:26:07 GMT
+etag: W/"3712d-1a18c8f5898"
 vary: Accept-Encoding
 x-cache: Miss from cloudfront
-via: 1.1 eb6e5a827e45274130b33c12b0d48aaa.cloudfront.net (CloudFront)
+via: 1.1 f94332f6513a4c7b3f2217e6b2ddc08c.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: 7FyDxvYa7E5iPJVGtCTb3K5a9mKO69KX-FCOzHgZXMCKn691zGEY4g==
+x-amz-cf-id: NF23SXckQP3AOzA8PaX3bmbx7zgzsNphBxH_SHjYNiJigNGBsjgJmA==
 
 # Daytona
 
@@ -123,9 +123,6 @@ Full documentation: https://www.daytona.io/docs/llms-full.txt
 - [Fork](https://www.daytona.io/docs/en/windows-sandboxes.md#fork)
 - [Delete](https://www.daytona.io/docs/en/windows-sandboxes.md#delete)
 - [Timeouts](https://www.daytona.io/docs/en/windows-sandboxes.md#timeouts)
-- [macOS Sandboxes](https://www.daytona.io/docs/en/macos-sandboxes.md)
-- [Use cases](https://www.daytona.io/docs/en/macos-sandboxes.md#use-cases)
-- [Create a macOS sandbox](https://www.daytona.io/docs/en/macos-sandboxes.md#create-a-macos-sandbox)
 - [GPU Sandboxes](https://www.daytona.io/docs/en/gpu-sandboxes.md)
 - [Use cases](https://www.daytona.io/docs/en/gpu-sandboxes.md#use-cases)
 - [Create a GPU sandbox](https://www.daytona.io/docs/en/gpu-sandboxes.md#create-a-gpu-sandbox)
@@ -540,6 +537,17 @@ Full documentation: https://www.daytona.io/docs/llms-full.txt
 - [1. Workflow Overview](https://www.daytona.io/docs/en/guides/pi/pi-extension.md#1-workflow-overview)
 - [2. Setup](https://www.daytona.io/docs/en/guides/pi/pi-extension.md#2-setup)
 - [3. Understanding the Extension Architecture](https://www.daytona.io/docs/en/guides/pi/pi-extension.md#3-understanding-the-extension-architecture)
+- [Generate and Test Code With Pydantic AI](https://www.daytona.io/docs/en/guides/pydantic-ai/pydantic-ai-coding-agent.md)
+- [1. Workflow Overview](https://www.daytona.io/docs/en/guides/pydantic-ai/pydantic-ai-coding-agent.md#1-workflow-overview)
+- [2. Project Setup](https://www.daytona.io/docs/en/guides/pydantic-ai/pydantic-ai-coding-agent.md#2-project-setup)
+- [3. Understanding the Core Components](https://www.daytona.io/docs/en/guides/pydantic-ai/pydantic-ai-coding-agent.md#3-understanding-the-core-components)
+- [4. Initialize the Agent](https://www.daytona.io/docs/en/guides/pydantic-ai/pydantic-ai-coding-agent.md#4-initialize-the-agent)
+- [5. Define the Coding Task](https://www.daytona.io/docs/en/guides/pydantic-ai/pydantic-ai-coding-agent.md#5-define-the-coding-task)
+- [6. Run and Reattach to the Workspace](https://www.daytona.io/docs/en/guides/pydantic-ai/pydantic-ai-coding-agent.md#6-run-and-reattach-to-the-workspace)
+- [7. Clean up](https://www.daytona.io/docs/en/guides/pydantic-ai/pydantic-ai-coding-agent.md#7-clean-up)
+- [8. Running the Example](https://www.daytona.io/docs/en/guides/pydantic-ai/pydantic-ai-coding-agent.md#8-running-the-example)
+- [9. Alternative: pydantic-ai-daytona](https://www.daytona.io/docs/en/guides/pydantic-ai/pydantic-ai-coding-agent.md#9-alternative-pydantic-ai-daytona)
+- [10. Complete Implementation](https://www.daytona.io/docs/en/guides/pydantic-ai/pydantic-ai-coding-agent.md#10-complete-implementation)
 - [Analyze Data With LangChain AI Agent](https://www.daytona.io/docs/en/guides/langchain/langchain-data-analysis.md)
 - [1. Workflow Overview](https://www.daytona.io/docs/en/guides/langchain/langchain-data-analysis.md#1-workflow-overview)
 - [2. Project Setup](https://www.daytona.io/docs/en/guides/langchain/langchain-data-analysis.md#2-project-setup)

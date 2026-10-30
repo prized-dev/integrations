@@ -1,22 +1,25 @@
 GET https://boat.dev/api/v1/me
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:48.279Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:10.778Z
 final-url: https://boat.dev/api/v1/me
 
 HTTP 401
+date: Fri, 30 Oct 2026 16:01:08 GMT
+content-type: application/json;charset=utf-8
+content-length: 251
+connection: close
 access-control-allow-credentials: false
 access-control-allow-headers: Content-Type, Authorization, X-Ascii-Confirm-Delete, X-Box-Org, X-Boat-Org, If-None-Match
 access-control-allow-methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
 access-control-allow-origin: http://localhost:1420
 access-control-expose-headers: ETag, RateLimit-Policy, RateLimit, Retry-After
 access-control-max-age: 86400
-content-length: 251
-content-type: application/json;charset=utf-8
-date: Wed, 28 Oct 2026 23:57:43 GMT
 ratelimit: "ip";r=9999;t=60
 ratelimit-policy: "ip";q=10000;w=60
 via: 1.1 Caddy
 www-authenticate: Bearer resource_metadata="https://boat.dev/api/box/.well-known/oauth-protected-resource"
-connection: close
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a52ba3082e42816e-PDX
 
-{"ok":false,"type":"sandbox.error","status":401,"code":"unauthorized","message":"unauthorized","error":{"code":"unauthorized","message":"unauthorized","status":401,"details":{"error":"unauthorized"}},"requestId":"req_35aabf81f9714da7996c0df6fde873fe"}
+{"ok":false,"type":"sandbox.error","status":401,"code":"unauthorized","message":"unauthorized","error":{"code":"unauthorized","message":"unauthorized","status":401,"details":{"error":"unauthorized"}},"requestId":"req_24c3e5c1e6074d57810d2a09462b88f6"}

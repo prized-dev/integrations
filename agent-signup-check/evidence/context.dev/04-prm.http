@@ -1,20 +1,20 @@
 GET https://context.dev/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:23.090Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:52.735Z
 redirect: 301 from https://context.dev/.well-known/oauth-protected-resource
 final-url: https://www.context.dev/.well-known/oauth-protected-resource
 
 HTTP 200
 accept-ranges: bytes
 access-control-allow-origin: *
-age: 6942
+age: 350
 cache-control: public, max-age=3600
 content-disposition: inline
 content-length: 259
 content-security-policy: frame-ancestors 'self' https://*.context.dev
 content-type: application/json
-date: Wed, 28 Oct 2026 23:58:21 GMT
-etag: "f0891bbfa716d5c33f311f7561f2af34"
+date: Fri, 30 Oct 2026 16:01:51 GMT
+etag: "6621acdeb3661300cc2bcb35f796a2af"
 permissions-policy: camera=(), microphone=(), geolocation=()
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -23,7 +23,7 @@ vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-pre
 x-content-type-options: nosniff
 x-matched-path: /.well-known/oauth-protected-resource
 x-vercel-cache: HIT
-x-vercel-id: pdx1::8jddd-1793231901578-c6cd09e65ba7
+x-vercel-id: pdx1::np2rn-1793376111199-31012739b01b
 connection: close
 
 {"resource":"https://api.context.dev/","resource_name":"Context.dev","resource_logo_uri":"https://www.context.dev/logo.png","authorization_servers":["https://www.context.dev/"],"scopes_supported":["api.read","api.write"],"bearer_methods_supported":["header"]}

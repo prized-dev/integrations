@@ -1,11 +1,11 @@
 GET https://mailgun.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:08.485Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:35.279Z
 redirect: 301 from https://mailgun.com/.well-known/oauth-authorization-server
 final-url: https://www.mailgun.com/.well-known/oauth-authorization-server/
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:58:05 GMT
+date: Fri, 30 Oct 2026 16:01:30 GMT
 content-type: application/json; charset=UTF-8
 transfer-encoding: chunked
 connection: close
@@ -25,12 +25,13 @@ x-permitted-cross-domain-policies: none
 x-powered-by: WP Engine
 x-cacheable: SHORT
 cache-control: max-age=600, must-revalidate
-x-cache: HIT: 1
+x-cache: MISS
 x-cache-group: normal
-last-modified: Wed, 28 Oct 2026 23:58:05 GMT
+last-modified: Fri, 30 Oct 2026 15:55:44 GMT
 content-encoding: gzip
-cf-cache-status: EXPIRED
-cf-ray: a51de2f65dab7612-SEA
+age: 346
+cf-cache-status: HIT
+cf-ray: a52ba3989caa2537-SEA
 alt-svc: h3=":443"; ma=86400
 
 {"issuer":"https:\/\/www.mailgun.com","authorization_endpoint":"https:\/\/www.mailgun.com\/oauth\/authorize","token_endpoint":"https:\/\/www.mailgun.com\/oauth\/token","revocation_endpoint":"https:\/\/www.mailgun.com\/oauth\/revoke","response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token"],"code_challenge_methods_supported":["S256"],"scopes_supported":["mcp"],"token_endpoint_auth_methods_supported":["none"],"client_id_metadata_document_supported":true,"authorization_response_iss_parameter_supported":true}

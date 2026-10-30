@@ -1,7 +1,7 @@
 {
  "site": "x.ai",
- "checkedAt": "2026-10-28T23:57:11.426Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:00:36.473Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 2,
  "total": 7,
@@ -71,7 +71,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 123,
+   "ms": 137,
    "redirects": 0
   },
   {
@@ -81,7 +81,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 107,
+   "ms": 129,
    "redirects": 0
   },
   {
@@ -91,7 +91,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 121,
+   "ms": 170,
    "redirects": 0
   },
   {
@@ -101,7 +101,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 204,
+   "ms": 132,
    "redirects": 0
   },
   {
@@ -111,7 +111,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 108,
+   "ms": 126,
    "redirects": 0
   },
   {
@@ -121,7 +121,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 62,
+   "ms": 67,
    "redirects": 0
   },
   {
@@ -131,7 +131,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 112,
+   "ms": 133,
    "redirects": 0
   },
   {
@@ -141,7 +141,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 120,
+   "ms": 127,
    "redirects": 0
   }
  ]

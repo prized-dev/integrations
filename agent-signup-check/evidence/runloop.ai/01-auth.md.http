@@ -1,16 +1,15 @@
 GET https://runloop.ai/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:34.099Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:58.933Z
 final-url: https://runloop.ai/auth.md
 
 HTTP 404
-date: Wed, 28 Oct 2026 23:57:31 GMT
+date: Fri, 30 Oct 2026 16:00:55 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a51de21ccbb2346b-SEA
-cf-cache-status: HIT
-age: 1158
+cf-ray: a52ba2b93b32ebc1-SEA
+cf-cache-status: MISS
 cache-control: max-age=43200
 content-encoding: gzip
 etag: W/"6f644770c245e443bf8504d11e89671c"

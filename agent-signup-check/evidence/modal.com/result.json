@@ -1,7 +1,7 @@
 {
  "site": "modal.com",
- "checkedAt": "2026-10-28T23:57:24.678Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:00:48.390Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 1,
  "total": 6,
@@ -55,7 +55,7 @@
    "name": "Docs in Markdown",
    "url": "https://modal.com/llms.txt",
    "heading": "# Modal Documentation",
-   "bytes": 28213,
+   "bytes": 28003,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -68,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 437,
+   "ms": 398,
    "redirects": 0
   },
   {
@@ -78,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 162,
+   "ms": 104,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 339,
+   "ms": 106,
    "redirects": 0
   },
   {
@@ -108,7 +108,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 110,
+   "ms": 104,
    "redirects": 0
   }
  ]

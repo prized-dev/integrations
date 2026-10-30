@@ -1,17 +1,17 @@
 GET https://deno.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:49.279Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:15.254Z
 final-url: https://deno.com/llms.txt
 
 HTTP 200
 content-type: text/html; charset=utf-8
 link: </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/fresh-runtime.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/SkipToMainLink.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/HelloBar.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/OramaSearch.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/NavItemWithChildren.js>; rel="modulepreload"; as="script", </_fresh/js/ba3bc66b1456a2a2caff15a7f9da8773ea6ae3fc/AnalyticsOptOut.js>; rel="modulepreload"; as="script"
 content-length: 58366
-date: Wed, 28 Oct 2026 23:57:45 GMT
+date: Fri, 30 Oct 2026 16:01:10 GMT
 connection: close
-age: 0
+age: 1
 cache-status: deno; fwd=bypass; detail=zero-ttl
-x-deno-trace-id: 83f2da706c4d44e925dd9ff76865d800
+x-deno-trace-id: ad7882dbed05a85df8b67ed2f4e8d93c
 via: HTTP/1.1 ord.vultr.prod.deno-cluster.net
 server: deployd
 
@@ -36,4 +36,4 @@ server: deployd
           
           lg:bg-neutral-50 lg:dark:bg-gray-900 lg:rounded-md lg:overflow-hidden lg:shadow-lg"><div data-component="
 
-[body trimmed for publication: kept 16384 of 58349 characters; sha256 of the published body 40125bc3e2f406a7a6246c487b6d1011fda3c099d3648c00996c3386c67ded86]
+[body trimmed for publication: kept 16384 of 58349 characters; sha256 of the published body a9e5862ef9475e7007f2bc05960479164affe929a5e015341c860b516e0eabea]

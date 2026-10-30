@@ -1,6 +1,6 @@
 GET https://modal.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:24.678Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:48.390Z
 final-url: https://modal.com/llms.txt
 
 HTTP 200
@@ -14,16 +14,16 @@ referrer-policy: no-referrer
 strict-transport-security: max-age=63072000; includeSubDomains; preload
 cross-origin-opener-policy: same-origin
 cache-control: no-cache
-date: Wed, 28 Oct 2026 23:57:22 GMT
-x-envoy-upstream-service-time: 55
+date: Fri, 30 Oct 2026 16:00:46 GMT
+x-envoy-upstream-service-time: 1
 content-encoding: gzip
 server: envoy
 vary: Accept-Encoding
 x-cache: Miss from cloudfront
-via: 1.1 c1e10addfd71e01a8c56f4755a03bf98.cloudfront.net (CloudFront)
-x-amz-cf-pop: HIO52-P5
+via: 1.1 d220e3f3d93439a8c69225156c6ae800.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P2
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: Yjvn0kMkDOjTsZV-X_e0QMA3NXeh9uz7xCrBV1OG17CFzWp-A9937w==
+x-amz-cf-id: VKjx4iDrWBXkILAWchf9y6HkZu2UBmw8Hwya_3TikpSe1ORIFMRlKg==
 
 # Modal Documentation
 
@@ -230,7 +230,6 @@ The docs are organized into three main sections:
 - Embeddings
   - [Serve Liquid AI embeddings with Modal Servers](https://modal.com/docs/examples/liquidai_embeddings_server.md)
   - [Embed millions of documents with TEI](https://modal.com/docs/examples/amazon_embeddings.md)
-  - [Turn satellite images into vectors and store them in MongoDB](https://modal.com/docs/examples/mongodb-search.md)
 - Parallel processing and job scheduling
   - [Deploy a Hacker News Slackbot](https://modal.com/docs/examples/hackernews_alerts.md)
   - [Run a Document OCR job queue](https://modal.com/docs/examples/doc_ocr_jobs.md)
@@ -245,7 +244,6 @@ The docs are organized into three main sections:
   - [SQLite: Publish explorable data with Datasette](https://modal.com/docs/examples/cron_datasette.md)
   - [Algolia: Build docsearch with a crawler](https://modal.com/docs/examples/algolia_indexer.md)
 - Connecting to other APIs
-  - [Discord: Deploy and run a Discord Bot](https://modal.com/docs/examples/discord_bot.md)
   - [Google Sheets: Sync databases and APIs to a Google Sheet](https://modal.com/docs/examples/db_to_sheet.md)
   - [OpenAI: Run a RAG Q&A chatbot](https://modal.com/docs/examples/potus_speech_qanda.md)
   - [Tailscale: Add Modal Apps to your VPN](https://modal.com/docs/examples/modal_tailscale.md)

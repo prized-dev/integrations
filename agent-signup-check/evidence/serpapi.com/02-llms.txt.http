@@ -1,10 +1,10 @@
 GET https://serpapi.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:19.942Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:49.792Z
 final-url: https://serpapi.com/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:58:17 GMT
+date: Fri, 30 Oct 2026 16:01:47 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -15,15 +15,15 @@ x-download-options: noopen
 x-permitted-cross-domain-policies: none
 referrer-policy: strict-origin-when-cross-origin
 cache-control: max-age=604800, public
-etag: W/"18b39e68e980c4df368b9e9f72f32ff8"
-x-request-id: 658cb15d-3168-4700-bb18-a182a17e3194
-x-runtime: 0.009338
+etag: W/"de99657e87bf9345dd1932be57e2596b"
+x-request-id: 51bba558-1feb-4d17-be89-16b6c27932cc
+x-runtime: 0.008969
 vary: accept-encoding
-age: 2815
+age: 351
 cf-cache-status: HIT
 content-encoding: br
 server: cloudflare
-cf-ray: a51de341edf91d89-PDX
+cf-ray: a52ba4017deab298-PDX
 alt-svc: h3=":443"; ma=86400
 
 # SerpApi
@@ -46,7 +46,7 @@ alt-svc: h3=":443"; ma=86400
 
 ## Markdown Output
 
-- [Markdown Output for AI Agents](https://serpapi.com/markdown-output.md): Get search results as clean, token-efficient markdown instead of JSON. Built for LLMs, AI agents, and agentic workflows.
+- [Markdown Output for AI Agents](https://serpapi.com/markdown-output.md): Get search results as clean, token-efficient Markdown instead of JSON. Built for LLMs, AI agents, and agentic workflows.
 - Usage: Add `output=md` to any search request, or use `/search.md`, or request `Accept: text/markdown`
 
 ## API Documentation
@@ -59,6 +59,7 @@ alt-svc: h3=":443"; ma=86400
 - [Google Ads API](https://serpapi.com/google-ads-api.md): Scrape sponsored results from Google search pages at a higher rate than the standard Google Search API.
 - [Google Ads Transparency API](https://serpapi.com/google-ads-transparency-center-api.md): Use SerpApi's Google Ads Transparency Center API to scrape Ads information display on Google.
 - [Google Autocomplete API](https://serpapi.com/google-autocomplete-api.md): Scrape Google Autocomplete suggestion results with SerpApi's Google Autocomplete API. Chrome, Safari, Firefox, YouTube and more clients supported.
+- [Google Books API](https://serpapi.com/google-books-api.md): Scrape Google Books results with SerpApi's Google Books API. Books, magazines, and newspapers with their titles, authors, publication dates, snippets, thumbnails, and more.
 - [Google Events API](https://serpapi.com/google-events-api.md): Use SerpApi's Google Events Engine Results API to scrape Google's Events Platform. Event titles, dates, links, ticket info and more.
 - [Google Finance API](https://serpapi.com/google-finance-api.md): Scrape Google Finance API with SerpApi's Google Finance API. Extract stock performance, values, price movements, related news, and more.
 - [Google Finance Autocomplete API](https://serpapi.com/google-finance-autocomplete-api.md): Scrape Google Finance Autocomplete suggestions with SerpApi's Google Finance Autocomplete API. Get tickers, names, exchanges, prices, and price movements of stocks, indexes, mutual funds, currencies, futures, prediction markets, and private markets.

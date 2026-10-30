@@ -1,6 +1,6 @@
 GET https://browser-use.com/agent-signup-check-no-such-page.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:13.803Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:41.788Z
 final-url: https://browser-use.com/agent-signup-check-no-such-page.md
 
 HTTP 404
@@ -8,7 +8,7 @@ age: 0
 cache-control: public, max-age=0, must-revalidate
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:13 GMT
+date: Fri, 30 Oct 2026 16:01:40 GMT
 link: <https://browser-use.com/agent-signup-check-no-such-page>; rel="canonical"
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -16,7 +16,7 @@ vary: Accept-Encoding
 x-matched-path: /api/md/[[...path]]
 x-robots-tag: noindex
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::lrq2l-1793231892933-5e2668a97327
+x-vercel-id: pdx1::iad1::m8ddg-1793376100695-d17bed2d78ae
 connection: close
 transfer-encoding: chunked
 

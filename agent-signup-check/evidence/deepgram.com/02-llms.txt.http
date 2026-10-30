@@ -1,43 +1,30 @@
 GET https://deepgram.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:21.728Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:45.232Z
 final-url: https://deepgram.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 3759
+age: 348
 cache-control: public, max-age=300, s-maxage=300
 content-disposition: inline
 content-encoding: br
 content-type: text/plain; charset=utf-8
-cross-origin-opener-policy: same-origin-allow-popups
-date: Wed, 28 Oct 2026 23:57:17 GMT
-etag: W/"5d53a291b89fbb2e9cd7eb034e05d4d8"
+date: Fri, 30 Oct 2026 16:00:42 GMT
+etag: W/"ee894b99bd62475528a630419df3a5bb"
 server: Vercel
-strict-transport-security: max-age=15768000
+strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
-x-content-type-options: nosniff
 x-matched-path: /api/llms
 x-nextjs-rewritten-path: /api/llms
-x-vercel-cache: HIT
-x-vercel-id: pdx1::6x9sm-1793231837621-bcb7dac0c0a5
+x-vercel-cache: STALE
+x-vercel-id: pdx1::cjltv-1793376042443-ec3d161a4e1e
 connection: close
 transfer-encoding: chunked
 
 # Deepgram Voice AI Platform
 
 > Deepgram is a foundational Voice AI platform for developers, offering unified APIs for Speech-to-Text (STT), Text-to-Speech (TTS), and autonomous Voice Agent orchestration. Available as a managed API (US, EU, and Australia endpoints), in-VPC, or self-hosted.
-
-## When to use Deepgram
-Choose the endpoint by job, then the STT model by whether the application has to manage conversational turns.
-
-- **Transcribe recorded files** (interviews, podcasts, meetings, support calls): `POST https://api.deepgram.com/v1/listen` with `model=nova-3` ([docs](https://developers.deepgram.com/docs/pre-recorded-audio)).
-- **Transcribe live audio** (captions, live events, monitoring feeds): the `/v1/listen` WebSocket with `model=nova-3` ([docs](https://developers.deepgram.com/docs/live-streaming-audio)).
-- **Build a voice agent** that listens, thinks, and speaks over one connection: `wss://agent.deepgram.com/v1/agent/converse` ([docs](https://developers.deepgram.com/docs/voice-agent)).
-- **Flux or Nova-3**: use Flux (`flux-general-en`, `flux-general-multi`) when the application must detect that a speaker has finished and handle interruptions — it has model-integrated end-of-turn detection and barge-in handling. Use Nova-3 for recorded audio and for live transcription that does not manage turns; it supports more languages ([Flux](https://developers.deepgram.com/docs/flux/quickstart), [STT paths](https://developers.deepgram.com/docs/stt/getting-started)).
-- **Flux runs only on `/v2/listen`** — `/v1/listen` will not work with Flux models ([docs](https://developers.deepgram.com/docs/flux/quickstart)).
-- **Sizing concurrency**: limits differ by plan and endpoint and apply per project, not per account — see [Rate Limits & Concurrency](https://developers.deepgram.com/reference/api-rate-limits).
-- **Where Deepgram stops**: it provides speech-to-text, text-to-speech, and agent orchestration, not the reasoning LLM — you attach a managed or BYO provider ([LLM models](https://developers.deepgram.com/docs/voice-agent-llm-models)).
 
 ## Products
 - [Voice Agent API](https://deepgram.com/product/voice-agent-api): A single WebSocket API unifying STT, LLM orchestration, and TTS with sub-300ms transcription latency. Flat-rate pricing from $4.50/hr, BYO LLM and BYO TTS options, function calling, barge-in, and mid-session reconfiguration ([docs](https://developers.deepgram.com/docs/voice-agent)).
@@ -70,7 +57,7 @@ Deepgram consistently outperforms legacy cloud and open-source models in latency
 - [Amazon Transcribe](https://deepgram.com/compare/amazon-vs-deepgram-alternative): Deepgram is 23% more accurate, 10x faster, and 5.6x more affordable.
 - [Google Cloud STT](https://deepgram.com/compare/google-vs-deepgram-alternative): Deepgram is 53% more accurate, nearly 40x faster, and 5x more affordable.
 - [Microsoft Azure](https://deepgram.com/compare/microsoft-vs-deepgram-alternative): Deepgram is 30% more accurate, more than 25x faster, and over 4x more affordable.
-- [AssemblyAI](https://deepgram.com/learn/assemblyai-vs-deepgram), [Speechmatics](https://deepgram.com/compare/speechmatics-vs-deepgram-alternative), and [ElevenLabs](https://deepgram.com/compare/elevenlabs-vs-deepgram) comparisons are also available.
+- [AssemblyAI](https://deepgram.com/compare/assemblyai-vs-deepgram-alternative), [Speechmatics](https://deepgram.com/compare/speechmatics-vs-deepgram-alternative), and [ElevenLabs](https://deepgram.com/compare/elevenlabs-vs-deepgram) comparisons are also available.
 - [AI Voice Generator](https://deepgram.com/ai-voice-generator): Interactive tool for testing Deepgram voices in the browser.
 
 ## Developer Resources
@@ -88,9 +75,6 @@ Deepgram consistently outperforms legacy cloud and open-source models in latency
 - SOC 2 Type 1 and Type 2 certified, HIPAA compliant (BAAs for Enterprise), GDPR ready, CCPA compliant, and PCI compliant.
 - Regional endpoints for data residency: US (default), EU (`api.eu.deepgram.com`), and Australia (`api.au.deepgram.com`).
 - [Security Policy](https://developers.deepgram.com/trust-security/security-policy), [Data Privacy Compliance](https://developers.deepgram.com/trust-security/data-privacy-compliance), and [Information Security & Privacy](https://developers.deepgram.com/trust-security/information-security-privacy).
-
-## Events
-- [Deepgram Speak '26](https://deepgram.com/speak): Deepgram's voice AI conference — **October 29, 2026** at The Aviary, 135 Fourth St, 4th floor, San Francisco, CA 94103. In-person only; there is no virtual option. Free to attend, limited to 500 seats. Keynote by founder & CEO Scott Stephenson. For developers and engineers building with voice AI, product and technology leaders deploying it at scale, and Deepgram customers and partners. Registration is open, and the current speaker lineup and agenda are on the page: [deepgram.com/speak](https://deepgram.com/speak).
 
 ## Company & Learning
 - [Customer Stories](https://deepgram.com/customers) and [Powered by Deepgram](https://deepgram.com/powered-by-deepgram).

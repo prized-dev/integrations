@@ -1,7 +1,7 @@
 {
  "site": "hyperbrowser.ai",
- "checkedAt": "2026-10-28T23:58:11.489Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:40.009Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 1,
  "total": 7,
@@ -67,7 +67,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 72,
+   "ms": 81,
    "redirects": 1
   },
   {
@@ -77,7 +77,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 58,
+   "ms": 54,
    "redirects": 1
   },
   {
@@ -87,7 +87,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 98,
+   "ms": 114,
    "redirects": 0
   },
   {
@@ -97,7 +97,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 64,
+   "ms": 65,
    "redirects": 1
   },
   {
@@ -107,7 +107,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 94,
+   "ms": 103,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 53,
+   "ms": 49,
    "redirects": 1
   },
   {
@@ -127,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 52,
+   "ms": 53,
    "redirects": 1
   }
  ]

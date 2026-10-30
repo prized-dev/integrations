@@ -1,23 +1,23 @@
 GET https://steel.dev/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:11.596Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:38.090Z
 final-url: https://steel.dev/.well-known/oauth-authorization-server
 
 HTTP 404
 access-control-allow-origin: *
-age: 11638
+age: 104321
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="404"
 content-encoding: br
 content-type: text/html; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:10 GMT
+date: Fri, 30 Oct 2026 16:01:37 GMT
 etag: W/"90091cb7b5bd166b752bae05915d2136"
-last-modified: Wed, 28 Oct 2026 20:44:12 GMT
+last-modified: Thu, 29 Oct 2026 11:02:56 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /404
 x-vercel-cache: HIT
-x-vercel-id: pdx1::btblc-1793231890929-5170043cdc37
+x-vercel-id: pdx1::94p8t-1793376097417-4f9a2f5a3e59
 connection: close
 transfer-encoding: chunked
 

@@ -1,13 +1,13 @@
 GET https://apify.com/agent-signup-check-no-such-page.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:15.223Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:44.293Z
 final-url: https://apify.com/agent-signup-check-no-such-page.md
 
 HTTP 404
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Wed, 28 Oct 2026 23:58:14 GMT
+date: Fri, 30 Oct 2026 16:01:43 GMT
 access-control-expose-headers: Link
 cache-control: public, s-maxage=300, max-age=0, must-revalidate
 strict-transport-security: max-age=15768000
@@ -23,10 +23,10 @@ access-control-allow-headers: Content-Type
 access-control-allow-methods: GET, OPTIONS
 access-control-allow-origin: *
 x-cache: Error from cloudfront
-via: 1.1 55b0e3c2a13348bfa0a68f73d4a25970.cloudfront.net (CloudFront)
+via: 1.1 f17401b1ec04d969fad954494abb89fc.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: fa9KEz7uaVxFJOrnJSaJDXwpx5e95tYUVTAEJCyHfFgpu3t-7RIiSQ==
+x-amz-cf-id: r9iCm_96nkYRF_yxarQUrSJyC4T4gi_kSwshYCtTlrnaPvjN7SUKTw==
 
 # 404 Not Found
 

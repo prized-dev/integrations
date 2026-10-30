@@ -1,7 +1,7 @@
 {
  "site": "anthropic.com",
- "checkedAt": "2026-10-28T23:57:05.393Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:00:30.457Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 2,
  "total": 7,
@@ -58,7 +58,7 @@
    "name": "Docs in Markdown",
    "url": "https://platform.claude.com/llms.txt",
    "heading": "# Anthropic Developer Documentation",
-   "bytes": 90894,
+   "bytes": 91462,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -71,7 +71,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 326,
+   "ms": 314,
    "redirects": 1
   },
   {
@@ -81,7 +81,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 298,
+   "ms": 578,
    "redirects": 1
   },
   {
@@ -91,7 +91,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 93,
+   "ms": 114,
    "redirects": 0
   },
   {
@@ -101,7 +101,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 124,
+   "ms": 55,
    "redirects": 2
   },
   {
@@ -111,7 +111,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 285,
+   "ms": 546,
    "redirects": 1
   },
   {
@@ -121,7 +121,7 @@
    "status": 404,
    "error": null,
    "contentType": null,
-   "ms": 111,
+   "ms": 120,
    "redirects": 0
   },
   {
@@ -131,7 +131,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 542,
+   "ms": 441,
    "redirects": 1
   },
   {
@@ -141,7 +141,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 357,
+   "ms": 491,
    "redirects": 1
   }
  ]

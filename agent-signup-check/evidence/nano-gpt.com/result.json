@@ -1,7 +1,7 @@
 {
  "site": "nano-gpt.com",
- "checkedAt": "2026-10-28T23:57:17.161Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:00:42.172Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 5,
  "total": 7,
@@ -73,7 +73,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.nano-gpt.com/llms.txt",
    "heading": "# NanoGPT API Documentation",
-   "bytes": 21086,
+   "bytes": 21234,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -86,7 +86,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 111,
+   "ms": 133,
    "redirects": 0
   },
   {
@@ -96,7 +96,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 82,
+   "ms": 98,
    "redirects": 0
   },
   {
@@ -106,7 +106,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 248,
+   "ms": 260,
    "redirects": 0
   },
   {
@@ -116,7 +116,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 263,
+   "ms": 199,
    "redirects": 0
   },
   {
@@ -126,7 +126,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 89,
+   "ms": 91,
    "redirects": 0
   },
   {
@@ -136,7 +136,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 77,
+   "ms": 102,
    "redirects": 0
   },
   {
@@ -146,7 +146,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 100,
+   "ms": 87,
    "redirects": 0
   },
   {
@@ -156,7 +156,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 110,
+   "ms": 116,
    "redirects": 0
   }
  ]

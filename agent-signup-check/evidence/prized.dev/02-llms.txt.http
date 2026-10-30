@@ -1,18 +1,18 @@
 GET https://prized.dev/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:21.811Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:45.780Z
 final-url: https://prized.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 1158
+age: 22951
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/plain; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:20 GMT
-etag: W/"f43f11274c94fd328f7d5ff0ce3b1b77"
+date: Fri, 30 Oct 2026 16:00:44 GMT
+etag: W/"39252b10cb3bcac395fc48edec11f5d0"
 referrer-policy: no-referrer
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -20,7 +20,7 @@ vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-pre
 x-frame-options: DENY
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::hnzkk-1793231840100-07910c32794b
+x-vercel-id: pdx1::dnjf5-1793376043987-41249685764f
 connection: close
 transfer-encoding: chunked
 
@@ -47,10 +47,11 @@ No Prized account yet? If you are an agent, you can sign your person up with the
 - A persistent cloud computer for an AI agent, one it keeps coming back to with its files, installed packages and running processes: a box, created and driven through the API, with no maximum run time; Nano to Small keep their running processes through a pause of up to 3 days ([Persistent cloud computer](https://prized.dev/docs/persistent-cloud-computer.md), [API reference](https://prized.dev/docs/api.md)).
 - Working on a cloud machine from your own editor and terminal: a box, with the project synced both ways and its ports on localhost ([Remote dev box](https://prized.dev/docs/remote-dev-box.md)).
 - A hosted cloud dev environment in place of GitHub Codespaces, Ona (formerly Gitpod) or Coder: a box per developer that keeps its disk, has no maximum run time, and builds a repo's devcontainer.json with the Dev Containers CLI ([GitHub Codespaces alternatives](https://prized.dev/docs/codespaces-alternatives.md), [Gitpod and Ona Cloud alternatives](https://prized.dev/docs/gitpod-ona-alternatives.md), [Prized vs GitHub Codespaces, Coder and DevPod](https://prized.dev/docs/boxes-vs-codespaces-coder-devpod.md), [Use your devcontainer.json](https://prized.dev/docs/devcontainers.md), [Moving from Ona (Gitpod)](https://prized.dev/docs/moving-from-ona.md)).
+- Moving off Google's Jules (it runs sessions until November 11, 2026): Claude Code or Codex on a box that keeps its disk between tasks, handed a task from a browser tab or `prized prompt`, opening the pull request itself ([Jules alternatives](https://prized.dev/docs/jules-alternatives.md), [Moving from Jules](https://prized.dev/docs/moving-from-jules.md)).
 - Running Claude Code on a schedule (nightly, hourly) on a machine that is on when it fires: cron on a box kept awake, or any scheduler calling the API, which wakes a sleeping box and runs Claude Code headless ([Run Claude Code on a schedule](https://prized.dev/docs/run-claude-code-on-a-schedule.md)).
 - Running model-written or untrusted code in an isolated VM: a sandbox, a hosted Firecracker microVM per job driven through the API, billed per second, 24 hours of run time by default and up to 7 days ([Run agent code in a VM](https://prized.dev/docs/sandboxes-run-agent-code.md), [Hosted Firecracker microVMs through an API](https://prized.dev/docs/sandboxes-firecracker-api.md)).
 - Letting Claude Code or Codex run without permission prompts (`--dangerously-skip-permissions`) away from your machine: a sandbox with both agents installed, holding only the repo and key you pass, deleted afterwards ([Skip permissions in an isolated VM](https://prized.dev/docs/sandboxes-claude-code-skip-permissions.md)).
-- A sandbox an agent keeps across sessions for days: it pauses with its memory and processes for storage only, resumes with the next command, and runs up to 7 days at a time, extendable ([Run a sandbox for days](https://prized.dev/docs/sandboxes-long-running.md)).
+- A sandbox an agent keeps across sessions for days, past E2B Pro's 24-hour sessions: it pauses with its memory and processes for storage only, resumes with the next command, and runs up to 7 days at a time, extendable ([AI agent sandbox that pauses with memory and runs past 24 hours](https://prized.dev/docs/sandboxes-long-running.md)).
 - Trying several approaches from the same point: fork a running sandbox into live copies, memory and processes included ([Fork a running VM](https://prized.dev/docs/sandboxes-fork-parallel.md)).
 - Moving off E2B or Runloop, or choosing among their alternatives: the Prized call for their common ones, or a box when the agent needs the machine to stay ([E2B alternatives](https://prized.dev/docs/e2b-alternatives.md), [Runloop alternatives](https://prized.dev/docs/runloop-alternatives.md), [Moving from E2B](https://prized.dev/docs/moving-from-e2b.md), [Moving from Runloop](https://prized.dev/docs/moving-from-runloop.md)).
 - Not in sandboxes yet: GPUs, your own image, root, regions other than Oregon (us-west-2), and preview links to ports ([Sandboxes FAQ](https://prized.dev/docs/sandboxes-faq.md)).
@@ -88,6 +89,7 @@ several hundred KB and gets cut short by tools that stop near 100 KB.
 - [Integrations](https://prized.dev/docs/integrations.md): Every coding agent, editor, agent app, framework and service with a Prized guide, and where it runs.
 - [Keep Claude Code running with your laptop closed](https://prized.dev/docs/keep-claude-code-running.md): Why closing the lid stops Claude Code, the ways to keep it working, and how to run it on a box that stays on: your sign-in carried over, permission modes for a run you leave alone, following it from the Claude app, and what it costs.
 - [Run Codex in the cloud](https://prized.dev/docs/run-codex-in-the-cloud.md): Keep Codex working with your laptop closed: Codex Cloud, or the Codex CLI on a box that stays on with a ChatGPT sign-in of its own, the sandbox and approvals to set before you leave it, the ChatGPT app on your phone, and what it costs.
+- [Use Claude Code and Codex from your phone](https://prized.dev/docs/claude-code-codex-from-your-phone.md): Run Claude Code or Codex on a box that stays on and drive it from your phone's browser, with no SSH app or VPN: start the agent, open it on the phone, keep it working while the phone sleeps, preview your app, and how it compares with Tailscale, Termius and tmux.
 - [Run OpenCode in the cloud](https://prized.dev/docs/run-opencode-in-the-cloud.md): Run OpenCode on a cloud box that stays on: its free models or your own provider signed in on the box, the permissions it starts with and how to change them, headless runs with opencode run, and what it costs.
 - [Run the pi coding agent in the cloud](https://prized.dev/docs/run-pi-in-the-cloud.md): Run pi on a cloud box that stays on: sign in with a subscription or a provider key on the box, why a box suits an agent with no approval prompts, sessions you can pick back up, headless runs, and what it costs.
 - [Run the Cursor CLI in the cloud](https://prized.dev/docs/run-cursor-cli-in-the-cloud.md): Keep Cursor's CLI agent working with your laptop closed: Cursor's Cloud Agents, or the CLI on a box that stays on, signed in there with a link or a QR code, with the permissions to set before you leave it, and what it costs.
@@ -111,10 +113,11 @@ several hundred KB and gets cut short by tools that stop near 100 KB.
 - [Run an orchestrator agent with a sandbox per task](https://prized.dev/docs/sandboxes-orchestrator.md): Keep the orchestrator agent on a box and give each builder or task its own sandbox, deleted when the task ends: a Python fan-out script, cleanup, costs, and limits.
 - [Fork a running VM to run work in parallel](https://prized.dev/docs/sandboxes-fork-parallel.md): Set up one sandbox, fork it into live copies with the setup done, run a different job in each, collect the results, and delete them all, with what it costs.
 - [Run Claude Code with --dangerously-skip-permissions in an isolated VM](https://prized.dev/docs/sandboxes-claude-code-skip-permissions.md): Let Claude Code or Codex run every command without asking, in a cloud microVM that holds only the repo and key you give it: create the sandbox, copy the project in, run the agent, take the diff out, and delete it, with what it costs.
-- [Run a sandbox for days without losing your agent's state](https://prized.dev/docs/sandboxes-long-running.md): A sandbox your agent keeps across sessions: run it up to 7 days at a time and extend it, pause it with its memory and processes while the agent is idle, resume it with the next command, and what it costs.
+- [AI agent sandbox that pauses with memory and runs past 24 hours](https://prized.dev/docs/sandboxes-long-running.md): A sandbox for an AI agent that pauses with its memory and running processes, resumes on the next command, and runs up to 7 days at a time, past E2B Pro's 24-hour sessions: the commands, the limits, and what it costs.
 - [Run hosted Firecracker microVMs for AI agents through an API](https://prized.dev/docs/sandboxes-firecracker-api.md): Firecracker microVMs your agent creates, runs commands in, pauses with their memory, forks and deletes through an HTTP API or the CLI, with no hosts, kernels or images of your own to run, billed per second.
 - [Use a sandbox as your own template](https://prized.dev/docs/sandboxes-own-template.md): Set up one sandbox with your packages, repo and system libraries, pause it, and start every job as a fork of it, with the install done.
 - [Moving from Ona (Gitpod)](https://prized.dev/docs/moving-from-ona.md): Use a Prized box as an Ona or Gitpod alternative before Ona Cloud closes on October 31, 2026: save your work, turn .gitpod.yml, devcontainer.json, and .ona/config.yaml into a setup script, and run it on a box.
+- [Moving from Jules](https://prized.dev/docs/moving-from-jules.md): Google's Jules runs sessions until November 11, 2026. Export your Jules data, then hand Claude Code or Codex a task on a Prized box from your browser, close the tab, and get a pull request back.
 - [Moving from Runloop](https://prized.dev/docs/moving-from-runloop.md): Use Prized sandboxes as a Runloop alternative: the Prized command for each Runloop devbox call, a short ported script, and what is not on Prized yet.
 - [Moving from E2B](https://prized.dev/docs/moving-from-e2b.md): Run most E2B Python and TypeScript code on Prized sandboxes by changing its imports, map each E2B call to the Prized API and CLI, and see what works differently and what is not on Prized yet.
 
@@ -147,6 +150,7 @@ several hundred KB and gets cut short by tools that stop near 100 KB.
 - [Prized vs GitHub Codespaces, Coder and DevPod](https://prized.dev/docs/boxes-vs-codespaces-coder-devpod.md): How a Prized box compares with GitHub Codespaces, Coder and DevPod as a cloud dev environment: who runs it, devcontainer.json, how long it runs, files and ports, price and free use, each fact from the vendor's own pages, checked October 27, 2026.
 - [GitHub Codespaces alternatives](https://prized.dev/docs/codespaces-alternatives.md): Five GitHub Codespaces alternatives for a cloud dev environment (Prized, Coder, DevPod, Google Cloud Workstations, and a VM of your own) with when each fits better and where Codespaces still wins, each fact from the vendor's own pages, checked October 27, 2026.
 - [Gitpod and Ona Cloud alternatives](https://prized.dev/docs/gitpod-ona-alternatives.md): Where to take your environments when Ona Cloud, formerly Gitpod, closes on October 31, 2026: Prized, Codex Cloud, GitHub Codespaces, Coder and DevPod, with when each fits better, each fact from the vendor's own pages, checked October 27, 2026.
+- [Jules alternatives](https://prized.dev/docs/jules-alternatives.md): Google's Jules runs sessions until November 11, 2026 and winds down December 31. Six Jules alternatives for async coding tasks (Prized, Claude Code cloud sessions, Codex Cloud, GitHub Copilot, Cursor and Devin), with when each fits, from the vendors' own pages, checked October 29, 2026.
 
 ## Sandboxes
 

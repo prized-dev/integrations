@@ -1,7 +1,7 @@
 {
  "site": "posthog.com",
- "checkedAt": "2026-10-28T23:58:34.818Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:02:05.012Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 3,
  "partial": 2,
  "total": 7,
@@ -72,7 +72,7 @@
    "name": "Docs in Markdown",
    "url": "https://posthog.com/llms.txt",
    "heading": "# PostHog",
-   "bytes": 476704,
+   "bytes": 479706,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -85,7 +85,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 73,
+   "ms": 127,
    "redirects": 0
   },
   {
@@ -95,7 +95,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 62,
+   "ms": 80,
    "redirects": 0
   },
   {
@@ -105,7 +105,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 199,
+   "ms": 177,
    "redirects": 0
   },
   {
@@ -115,7 +115,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 183,
+   "ms": 184,
    "redirects": 0
   },
   {
@@ -125,7 +125,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 181,
+   "ms": 202,
    "redirects": 0
   },
   {
@@ -145,7 +145,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 251,
+   "ms": 254,
    "redirects": 0
   },
   {
@@ -155,7 +155,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 80,
+   "ms": 110,
    "redirects": 0
   }
  ]

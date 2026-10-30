@@ -1,19 +1,19 @@
 GET https://fly.io/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:26.123Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:50.660Z
 final-url: https://fly.io/.well-known/x402
 
 HTTP 404
 cache-control: max-age=0, private, must-revalidate
 content-encoding: br
 content-type: application/json; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:25 GMT
+date: Fri, 30 Oct 2026 16:00:49 GMT
 server: Fly/366e4bf88 (2026-10-27)
 vary: Accept
-x-request-id: GOLW3OFEjWEpUvMABkxx
+x-request-id: GONaBB1bg_QD3OcAACQB
 transfer-encoding: chunked
 via: 1.1 fly.io
-fly-request-id: 01M62F4YDCGY715JGZFTZHW09Q-lax
+fly-request-id: 01M66RNQ55CPBE745SWTAM6BP9-lax
 connection: close
 
 {"errors":{"detail":"not found"}}

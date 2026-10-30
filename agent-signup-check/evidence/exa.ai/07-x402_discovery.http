@@ -1,34 +1,34 @@
 GET https://exa.ai/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:17.466Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:47.304Z
 final-url: https://exa.ai/.well-known/x402
 
 HTTP 404
 access-control-allow-origin: *
-age: 2065
+age: 0
 cache-control: public, max-age=3600, stale-while-revalidate=86400
 content-disposition: inline; filename="404"
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/html; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:17 GMT
-etag: W/"75de87a6c0693f099ecbd66f6ac938a6"
-last-modified: Wed, 28 Oct 2026 23:23:51 GMT
+date: Fri, 30 Oct 2026 16:01:46 GMT
+etag: W/"b38c7cd843d4465f1c7c7097fa8822e3"
+last-modified: Fri, 30 Oct 2026 16:01:46 GMT
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /404
-x-vercel-cache: HIT
-x-vercel-id: pdx1::s7mfl-1793231897144-f2cd7839f22f
+x-vercel-cache: MISS
+x-vercel-id: pdx1::vb2fq-1793376106871-08b8e7af68c2
 connection: close
 transfer-encoding: chunked
 
-<!DOCTYPE html><html lang="en" class="__variable_d8ebd1"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/e4af272ccee01ff0-s.p.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/fonts/ABCArizonaFlare-Regular.woff2" as="font" crossorigin="anonymous" type="font/woff2"/><link rel="preload" href="/fonts/ABCDiatype-Regular.woff2" as="font" crossorigin="anonymous" type="font/woff2"/><link rel="preload" as="image" href="/images/logo/exa-logo-blue.svg"/><link rel="stylesheet" href="/_next/static/css/526eb32230f31761.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/css/51dccd5ba6174469.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/css/310b7cad5ce53a11.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/webpack-e7622807f2149ea2.js"/><script src="/_next/static/chunks/8df046ea-d6357a05c42e86cd.js" async=""></script><script src="/_next/static/chunks/80040-b95e2ad207024d5a.js" async=""></script><script src="/_next/static/chunks/main-app-2280b70bad25d35f.js" async=""></script><script src="/_next/static/chunks/c2b750b4-3c62a0c706321c2c.js" async=""></script><script src="/_next/static/chunks/65776-3b79f1276ef23947.js" async=""></script><script src="/_next/static/chunks/23682-f7aca40019b63534.js" async=""></script><script src="/_next/static/chunks/16077-e62b6161ab18238d.js" async=""></script><script src="/_next/static/chunks/15473-2c98031042410664.js" async=""></script><script src="/_next/static/chunks/69295-c3beb37cfdc1f3c5.js" async=""></script><script src="/_next/static/chunks/64183-5208b57d982c5ede.js" async=""></script><script src="/_next/static/chunks/app/layout-c9585ed6ddf84a35.js" async=""></script><script src="/_next/static/chunks/app/not-found-f0f42fd993dd129d.js" async=""></script><link rel="search" type="application/opensearchdescription+xml" title="Exa" href="https://exa.ai/search/opensearch.xml"/><link rel="preload" href="/fonts/ABCArizonaFlare-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"/><link rel="preload" href="/fonts/ABCDiatype-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"/><meta name="robots" content="noindex"/><meta name="next-size-adjust" content=""/><title>Exa | Search API for AI Agents — Real-Time Web Data</title><meta name="description" content="Search API for AI agents that need real-time web data, deep research, and structured content from one endpoint. Try our API for free."/><meta name="application-name" content="Exa"/><link rel="author" href="https://exa.ai"/><meta name="author" content="Exa Labs"/><meta name="keywords" content="ai search engine,serp api,best ai search engine,search api,deep research api,web search api,web search ai,ai search api,deepresearch api,web crawling api,website crawler,metaphor,exa,api,search,ai,llms,webcrawler,web api,google search api,google serp api,people search engines,perplexity ai search engine features,ai search engine free,search engine ai,free people search engines,web api security,ai search engines,free ai search engine,web scraping api,bing search api,webcrawler search engine,search engine rankings api"/><link rel="canonical" href="https://exa.ai/_not-found"/><meta property="og:title" content="Exa"/><meta property="og:description" content="The Exa Web search API retrieves the best, realtime data from the web for your AI"/><meta property="og:url" content="https://exa.ai"/><meta property="og:site_name" content="Exa"/><meta property="og:image" content="https://exa.imgix.net/og-image-v4.png/"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:site" content="@exaailabs"/><meta name="twitter:creator" content="@exaailabs"/><meta name="twitter:title" content="Exa"/><meta name="twitter:description" content="The Exa API retrieves the best, realtime data from the web for your AI"/><meta name="twitter:image" content="https://exa.imgix.net/og-image-v4.png/"/><link rel="icon" href="/images/favicon-32x32.png"/><script id="url-sanitizer">(function(){
+<!DOCTYPE html><html lang="en" class="__variable_d8ebd1"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/e4af272ccee01ff0-s.p.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/fonts/ABCArizonaFlare-Regular.woff2" as="font" crossorigin="anonymous" type="font/woff2"/><link rel="preload" href="/fonts/ABCDiatype-Regular.woff2" as="font" crossorigin="anonymous" type="font/woff2"/><link rel="preload" as="image" href="/images/logo/exa-logo-blue.svg"/><link rel="stylesheet" href="/_next/static/css/526eb32230f31761.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/css/51dccd5ba6174469.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/css/310b7cad5ce53a11.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/webpack-e7622807f2149ea2.js"/><script src="/_next/static/chunks/8df046ea-d6357a05c42e86cd.js" async=""></script><script src="/_next/static/chunks/80040-b95e2ad207024d5a.js" async=""></script><script src="/_next/static/chunks/main-app-2280b70bad25d35f.js" async=""></script><script src="/_next/static/chunks/c2b750b4-3c62a0c706321c2c.js" async=""></script><script src="/_next/static/chunks/65776-3b79f1276ef23947.js" async=""></script><script src="/_next/static/chunks/23682-f7aca40019b63534.js" async=""></script><script src="/_next/static/chunks/16077-e62b6161ab18238d.js" async=""></script><script src="/_next/static/chunks/15473-2c98031042410664.js" async=""></script><script src="/_next/static/chunks/69295-c3beb37cfdc1f3c5.js" async=""></script><script src="/_next/static/chunks/12693-0b64c60af40aadc5.js" async=""></script><script src="/_next/static/chunks/app/layout-0d5990803703bd25.js" async=""></script><script src="/_next/static/chunks/app/not-found-f0f42fd993dd129d.js" async=""></script><link rel="search" type="application/opensearchdescription+xml" title="Exa" href="https://exa.ai/search/opensearch.xml"/><link rel="preload" href="/fonts/ABCArizonaFlare-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"/><link rel="preload" href="/fonts/ABCDiatype-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"/><meta name="robots" content="noindex"/><meta name="next-size-adjust" content=""/><title>Exa | Search API for AI Agents — Real-Time Web Data</title><meta name="description" content="Search API for AI agents that need real-time web data, deep research, and structured content from one endpoint. Try our API for free."/><meta name="application-name" content="Exa"/><link rel="author" href="https://exa.ai"/><meta name="author" content="Exa Labs"/><meta name="keywords" content="ai search engine,serp api,best ai search engine,search api,deep research api,web search api,web search ai,ai search api,deepresearch api,web crawling api,website crawler,metaphor,exa,api,search,ai,llms,webcrawler,web api,google search api,google serp api,people search engines,perplexity ai search engine features,ai search engine free,search engine ai,free people search engines,web api security,ai search engines,free ai search engine,web scraping api,bing search api,webcrawler search engine,search engine rankings api"/><link rel="canonical" href="https://exa.ai/_not-found"/><meta property="og:title" content="Exa"/><meta property="og:description" content="The Exa Web search API retrieves the best, realtime data from the web for your AI"/><meta property="og:url" content="https://exa.ai"/><meta property="og:site_name" content="Exa"/><meta property="og:image" content="https://exa.imgix.net/og-image-v4.png/"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:site" content="@exaailabs"/><meta name="twitter:creator" content="@exaailabs"/><meta name="twitter:title" content="Exa"/><meta name="twitter:description" content="The Exa API retrieves the best, realtime data from the web for your AI"/><meta name="twitter:image" content="https://exa.imgix.net/og-image-v4.png/"/><link rel="icon" href="/images/favicon-32x32.png"/><script id="url-sanitizer">(function(){
   try {
     var global = ["gclid","gclsrc","gbraid","wbraid","dclid","gad_source","gad_campaignid","fbclid","msclkid","li_fat_id","twclid","rdt_cid","ttclid","irclickid","mc_cid","mc_eid","_gl","grclid","graid","grcpid","gruid","grpuid","bfcid"];
-    var scoped = [["/blog",["category"],null],["/careers",["location"],null],["/claude",["ref"],null],["/pricing",["partner"],{"partner":["A16Z","SPC","ODF","GMI"]}],["/library",["date","latitude","longitude","team","season","t"],null],["/library/places",["q"],null]];
+    var scoped = [["/blog",["category"],null,null],["/careers",["location"],null,null],["/claude",["ref"],null,null],["/pricing",["partner"],{"partner":["A16Z","SPC","ODF","GMI"]},null],["/library",["date","latitude","longitude","team","season","t"],null,null],["/library/places",["q"],null,null],["/library/flights",["direction","end","v"],{"direction":["DEPARTURES","ARRIVALS"]},{"end":"^[0-9]{4}-[0-9]{2}-[0-9]{2}$","v":"^[0-9a-f]{8}$"}],["/library/transit",["view","v"],{"view":["STATUS","SCHEDULE","BOARD","FARES","TRIP","OVERVIEW"]},{"v":"^[0-9a-f]{8}$"}]];
     var url = new URL(window.location.href);
     var path = url.pathname;
     var onPath = function(prefix){ return path === prefix || path.indexOf(prefix + '/') === 0; };
@@ -42,8 +42,11 @@ transfer-encoding: chunked
     var valueAllowed = function(lower, value){
       var upper = value.trim().toUpperCase();
       for (var s = 0; s < scoped.length; s++) {
+        if (!onPath(scoped[s][0])) continue;
         var legal = scoped[s][2] && scoped[s][2][lower];
-        if (legal && onPath(scoped[s][0]) && legal.indexOf(upper) === -1) return false;
+        if (legal && legal.indexOf(upper) === -1) return false;
+        var pattern = scoped[s][3] && scoped[s][3][lower];
+        if (pattern && !new RegExp(pattern).test(value)) return false;
       }
       return true;
     };
@@ -115,10 +118,6 @@ data-styled.g2[id="sc-838c015c-1"]{content:"cbhyFZ,"}/*!sc*/
 .iziuuJ{font-family:var(--font-family-sans);font-size:18px;font-weight:400;line-height:1.2;color:var(--text-light-default);margin-bottom:4px;text-align:center;}/*!sc*/
 data-styled.g3[id="sc-838c015c-2"]{content:"iziuuJ,"}/*!sc*/
 .faAUBW{font-family:var(--font-family-sans);font-size:16px;font-weight:400;line-height:1.2;color:var(--text-light-muted);margin-bottom:20px;text-align:center;}/*!sc*/
-data-styled.g4[id="sc-838c015c-3"]{content:"faAUBW,"}/*!sc*/
-.mZVNl{font-family:var(--font-family-sans);font-size:14px;font-weight:400;line-height:1.4;color:var(--text-light-muted);text-align:center;position:absolute;bottom:48px;left:24px;right:24px;}/*!sc*/
-@media (max-height:640px),(max-width:767px){.mZVNl{position:static;margin-top:48px;}}/*!sc*/
-.mZVNl a{color:var(--text-light-default);text-decoration:underline;text-underline-offset:2px;}/*!sc*/
-da
+data-style
 
-[body trimmed for publication: kept 16384 of 69034 characters; sha256 of the published body be2de209ba244fa1b2b7900a1b47c14769951d026bd9343535f5b4e1f70af436]
+[body trimmed for publication: kept 16384 of 70313 characters; sha256 of the published body 0e40dd0ed21cae09ed409b4be98422757fafb908ded5a457920830693152e5c1]

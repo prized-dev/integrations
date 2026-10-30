@@ -1,6 +1,6 @@
 GET https://cloudresourcemanager.googleapis.com/v1/projects
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:44.193Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:13.070Z
 final-url: https://cloudresourcemanager.googleapis.com/v1/projects
 
 HTTP 401
@@ -8,12 +8,12 @@ www-authenticate: Bearer realm="https://accounts.google.com/"
 vary: Origin, X-Origin, Referer
 content-type: application/json; charset=UTF-8
 content-encoding: gzip
-date: Wed, 28 Oct 2026 23:57:41 GMT
+date: Fri, 30 Oct 2026 16:02:10 GMT
 server: ESF
 x-xss-protection: 0
 x-frame-options: SAMEORIGIN
 x-content-type-options: nosniff
-server-timing: gfet4t7; dur=5
+server-timing: gfet4t7; dur=3
 alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
 connection: close
 transfer-encoding: chunked

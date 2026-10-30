@@ -1,10 +1,10 @@
 GET https://docs.jina.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:24.013Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:54.445Z
 final-url: https://docs.jina.ai/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:58:22 GMT
+date: Fri, 30 Oct 2026 16:01:52 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -27,9 +27,9 @@ x-debug-accept: text/markdown, text/plain;q=0.9, */*;q=0.1
 x-debug-is-bot: false
 x-debug-is-browser: false
 x-debug-referrer: 
-x-debug-user-agent: prizedagentsignupcheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only get)
+x-debug-user-agent: prizedagentsignupcheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only get)
 x-documentation-type: implementation-guide
-x-generated-at: 2026-10-28T23:58:22.000Z
+x-generated-at: 2026-10-30T16:01:52.665Z
 x-guide-sections: core-apis,recommended-patterns,integration-guidelines,anti-patterns,limitations
 x-human-access: not-intended
 x-implementation-patterns: basic-search,rag-pipeline,fact-checking,classification,content-processing
@@ -44,11 +44,11 @@ x-robots-tag: noindex, follow
 x-signup-url: https://jina.ai/?sui=apikey
 x-supported-features: semantic-search,rag,fact-verification,webscraping,classification,content-processing,multilingual,multimodal
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=1zRyhpcYDTDYaQG132RH3af1gHtEsrCIQ9DaxLkMZ81BBmodjAt6tAlx8TvnjvP9iS0QZiCYleSu2WmLLYroyJyA%2FM6%2FAx3XpxgMJGDlzEpe5%2FFIm3s%2BxFO5G1dY8A%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=bFSgu%2BrV7PuD8oOPKgsuQ8syQiyI0Y0n%2BM7nMTAsMMdkLhqcF5H0lTW3nthSGtaZIQ5cXmb2pT6mYQWLrD%2ByR4rYktrBCZ6%2Bto12KbTfFDabZvL%2Bjzw3Yr6%2FMn49AQ%3D%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 content-encoding: br
 server: cloudflare
-cf-ray: a51de359dfba4afe-PDX
+cf-ray: a52ba41dcc120bee-PDX
 alt-svc: h3=":443"; ma=86400
 
 You are an AI engineer designed to help users use Jina AI Search Foundation API's for their specific use case.

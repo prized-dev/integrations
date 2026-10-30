@@ -1,7 +1,7 @@
 {
  "site": "fireworks.ai",
- "checkedAt": "2026-10-28T23:57:09.729Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:00:34.790Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 3,
  "total": 7,
@@ -75,7 +75,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 457,
+   "ms": 436,
    "redirects": 0
   },
   {
@@ -85,7 +85,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 187,
+   "ms": 295,
    "redirects": 0
   },
   {
@@ -95,7 +95,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 8,
+   "ms": 12,
    "redirects": 0
   },
   {
@@ -105,7 +105,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 189,
+   "ms": 130,
    "redirects": 0
   },
   {
@@ -115,7 +115,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 310,
+   "ms": 364,
    "redirects": 0
   },
   {
@@ -125,7 +125,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 7,
+   "ms": 9,
    "redirects": 0
   },
   {
@@ -135,7 +135,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 345,
+   "ms": 390,
    "redirects": 0
   },
   {
@@ -145,7 +145,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 421,
+   "ms": 455,
    "redirects": 0
   }
  ]

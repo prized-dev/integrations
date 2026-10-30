@@ -1,6 +1,6 @@
 GET https://parallel.ai/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:22.665Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:52.625Z
 final-url: https://parallel.ai/auth.md
 
 HTTP 200
@@ -13,13 +13,13 @@ cache-control: no-store
 content-encoding: br
 content-security-policy: frame-ancestors 'self' https://parallel-v2.sanity.studio https://sanity.io https://www.sanity.io
 content-type: text/markdown; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:18 GMT
+date: Fri, 30 Oct 2026 16:01:48 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: Origin, Access-Control-Request-Headers
 x-matched-path: /auth.md
 x-vercel-cache: MISS
-x-vercel-id: pdx1:pdx1:pdx1::iad1::cv5n8-1793231898312-fb47e7a42328
+x-vercel-id: pdx1:pdx1:pdx1::iad1::bj4g9-1793376108187-5d990e0f58ea
 connection: close
 transfer-encoding: chunked
 

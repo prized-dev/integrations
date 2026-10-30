@@ -1,9 +1,9 @@
 {
  "site": "agentphone.to",
- "checkedAt": "2026-10-28T23:58:06.398Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:48.144Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
- "partial": 2,
+ "partial": 1,
  "total": 7,
  "whoActs": "the person confirms an email code (from llms.txt prose)",
  "checks": [
@@ -36,10 +36,10 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://api.agentphone.ai/v1/numbers",
-   "httpStatus": 401,
+   "httpStatus": null,
    "www_authenticate": null,
-   "status": "partial",
-   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+   "status": "fail",
+   "reason": "API: timeout"
   },
   {
    "id": "limits",
@@ -71,7 +71,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 204,
+   "ms": 195,
    "redirects": 1
   },
   {
@@ -88,10 +88,10 @@
    "label": "api",
    "url": "https://api.agentphone.ai/v1/numbers",
    "finalUrl": "https://api.agentphone.ai/v1/numbers",
-   "status": 401,
-   "error": null,
-   "contentType": "application/json",
-   "ms": 83,
+   "status": null,
+   "error": "timeout",
+   "contentType": null,
+   "ms": 8001,
    "redirects": 0
   },
   {
@@ -101,17 +101,17 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 160,
+   "ms": 281,
    "redirects": 1
   },
   {
    "label": "prm (API host)",
    "url": "https://api.agentphone.ai/.well-known/oauth-protected-resource",
    "finalUrl": "https://api.agentphone.ai/.well-known/oauth-protected-resource",
-   "status": 404,
-   "error": null,
-   "contentType": "application/json",
-   "ms": 58,
+   "status": null,
+   "error": "timeout",
+   "contentType": null,
+   "ms": 8000,
    "redirects": 0
   },
   {
@@ -121,7 +121,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 133,
+   "ms": 183,
    "redirects": 1
   },
   {
@@ -131,7 +131,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 142,
+   "ms": 136,
    "redirects": 1
   }
  ]

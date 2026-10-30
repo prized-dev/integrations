@@ -1,15 +1,15 @@
 GET https://api.planetscale.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:52.282Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:19.380Z
 final-url: https://api.planetscale.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Wed, 28 Oct 2026 23:57:51 GMT
+date: Fri, 30 Oct 2026 16:01:18 GMT
 content-type: application/json; charset=UTF-8
 transfer-encoding: chunked
 connection: close
-x-request-id: eba722ec-6eed-4ceb-8e45-034681a430e1
-x-runtime: 0.004267
+x-request-id: d47399f0-98a9-4191-99ec-4b23ad2c26a2
+x-runtime: 0.003693
 strict-transport-security: max-age=63072000; includeSubDomains; preload
 vary: Origin,Accept-Encoding
 content-encoding: gzip

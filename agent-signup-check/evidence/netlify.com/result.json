@@ -1,7 +1,7 @@
 {
  "site": "netlify.com",
- "checkedAt": "2026-10-28T23:57:31.764Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:00:55.588Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 2,
  "total": 7,
@@ -72,7 +72,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 305,
+   "ms": 329,
    "redirects": 0
   },
   {
@@ -82,7 +82,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=UTF-8",
-   "ms": 187,
+   "ms": 113,
    "redirects": 0
   },
   {
@@ -92,7 +92,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 261,
+   "ms": 215,
    "redirects": 0
   },
   {
@@ -102,7 +102,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 200,
+   "ms": 309,
    "redirects": 0
   },
   {
@@ -112,7 +112,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 213,
+   "ms": 219,
    "redirects": 0
   },
   {
@@ -122,7 +122,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 281,
+   "ms": 204,
    "redirects": 0
   },
   {
@@ -132,7 +132,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 411,
+   "ms": 288,
    "redirects": 0
   },
   {
@@ -142,7 +142,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 111,
+   "ms": 305,
    "redirects": 0
   }
  ]

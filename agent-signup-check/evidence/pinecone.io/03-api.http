@@ -1,17 +1,17 @@
 GET https://api.pinecone.io/indexes
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:55.375Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:22.259Z
 final-url: https://api.pinecone.io/indexes
 
 HTTP 401
 content-type: application/json
 x-pinecone-api-version: 2024-04
-x-cloud-trace-context: 15ef6b11e1dc16ee280b8b8329fb03a1
-date: Wed, 28 Oct 2026 23:57:53 GMT
+x-cloud-trace-context: 8d10a6f7f2140865db72d188c9700800
+date: Fri, 30 Oct 2026 16:01:20 GMT
 server: Google Frontend
 content-length: 84
 via: 1.1 google
-alt-svc: h3=":443"; ma=2592000
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
 connection: close
 
 {"error":{"code":"UNAUTHENTICATED","message":"Missing api-key header"},"status":401}

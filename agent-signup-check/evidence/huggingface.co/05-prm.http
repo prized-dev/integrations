@@ -1,17 +1,17 @@
 GET https://huggingface.co/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:15.304Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:39.377Z
 final-url: https://huggingface.co/.well-known/oauth-protected-resource
 
 HTTP 200
 content-type: application/json; charset=utf-8
 content-length: 236
 connection: close
-date: Wed, 28 Oct 2026 23:57:14 GMT
+date: Fri, 30 Oct 2026 16:00:38 GMT
 etag: W/"ec-P86f86b17VhYQiJ1sIDmoDRJcpg"
 x-powered-by: huggingface-moon
-x-request-id: Root=1-6ae28bda-4bc7cb222b89175105bf2d20
-ratelimit: "media";r=9999;t=192
+x-request-id: Root=1-6ae4bf26-1078a51c307cda661370a5ed
+ratelimit: "media";r=9999;t=288
 ratelimit-policy: "fixed window";"media";q=10000;w=300
 cross-origin-opener-policy: same-origin
 referrer-policy: strict-origin-when-cross-origin
@@ -20,10 +20,10 @@ access-control-allow-origin: https://huggingface.co
 vary: Origin
 access-control-expose-headers: X-Repo-Commit,X-Request-Id,X-Error-Code,X-Error-Message,X-Total-Count,ETag,Link,Accept-Ranges,Content-Range,X-Linked-Size,X-Linked-ETag,X-Xet-Hash,RateLimit,RateLimit-Policy
 x-cache: Miss from cloudfront
-via: 1.1 55b0e3c2a13348bfa0a68f73d4a25970.cloudfront.net (CloudFront)
+via: 1.1 a1f8044693d3f7f5c5e4c6cb7ec5cb9c.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: n0GkM8Z0Cl0yN4r5GFpS8iX58AMO4mcCf_jjWGOfCYM28VNj6WHkPw==
+x-amz-cf-id: 14Rv1OvBYrDhQuVJXkqM-7DLg4wV-RKz7Dy3wu3u3IiQwTU-tcXLGg==
 strict-transport-security: max-age=31536000
 
 {"resource":"https://huggingface.co/mcp","authorization_servers":["https://huggingface.co"],"bearer_methods_supported":["header"],"scopes_supported":["openid","profile","read-mcp","read-repos","jobs","contribute-repos","inference-api"]}

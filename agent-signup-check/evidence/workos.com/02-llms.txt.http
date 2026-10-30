@@ -1,23 +1,23 @@
 GET https://workos.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:37.407Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:08.325Z
 redirect: 301 from https://workos.com/llms.txt
 final-url: https://workos.com/docs/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:58:34 GMT
+date: Fri, 30 Oct 2026 16:02:05 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a51de3abac36b8b9-PDX
+cf-ray: a52ba46fcb411bed-PDX
 cf-cache-status: HIT
 cache-control: public, no-cache
-last-modified: Wed, 28 Oct 2026 23:11:44 GMT
+last-modified: Fri, 30 Oct 2026 15:34:33 GMT
 link: <https://workos.com/llms.txt>; rel="alternate"; type="text/markdown"; title="LLM-friendly documentation index", <https://workos.com/docs/.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </docs/openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json"
 server: cloudflare
 vary: Accept
 cache-tag: docs-content
-x-request-id: d87d3193-c96c-4b90-be68-95de3d152ac7
+x-request-id: 2f8eb362-76b8-4a0e-9476-2d5eb62a84a6
 content-security-policy-report-only: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://www.google.com https://cdn.segment.com https://js.hs-scripts.com https://js.hs-analytics.net https://js.hs-banner.com https://js.hsadspixel.net https://js.usemessages.com https://snap.licdn.com https://px.ads.linkedin.com https://tag.unifyintent.com https://*.unifyintent.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https://cdn.workos.com; connect-src 'self' https://forwarder.workos.com https://api.workos.com https://*.algolia.net https://*.algolianet.com https://*.launchdarkly.com https://cdn.segment.com https://api.segment.io https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.google.com https://stats.g.doubleclick.net https://api.hubapi.com https://*.hubspot.com https://*.unifyintent.com https://px.ads.linkedin.com https://d2nis22zuf6xa7.cloudfront.net; worker-src 'self' blob:; frame-src 'self' https://workos.com https://www.googletagmanager.com https://td.doubleclick.net https://*.hsforms.net https://app.hubspot.com; base-uri 'self'; object-src 'none'; frame-ancestors 'self'
 content-signal: ai-train=yes, search=yes, ai-input=yes
 etag: W/"8848ad8834e3ca7b03c6d365f6ef8355"

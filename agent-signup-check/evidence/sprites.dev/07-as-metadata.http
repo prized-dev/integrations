@@ -1,19 +1,19 @@
 GET https://sprites.dev/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:47.991Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:13.573Z
 final-url: https://sprites.dev/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:57:46 GMT
+date: Fri, 30 Oct 2026 16:01:12 GMT
 content-length: 254
 content-encoding: gzip
 vary: accept-encoding
 content-type: application/json; charset=utf-8
 cache-control: max-age=0, private, must-revalidate
-x-request-id: GOLW4dq2aJEtGekGnSxl
+x-request-id: GONaCVWFzePH9-QABYuk
 server: Fly/366e4bf88 (2026-10-27)
 via: 1.1 fly.io, 1.1 fly.io
-fly-request-id: 01M62F5K7GTY8DB3Z2Z5Q5M663-sjc
+fly-request-id: 01M66RPD0HT1BPG6KF12YQGQY5-lax
 connection: close
 
 {"authorization_endpoint":"https://sprites.dev/oauth/authorize","client_id_metadata_document_supported":true,"code_challenge_methods_supported":["S256"],"grant_types_supported":["authorization_code","refresh_token"],"issuer":"https://sprites.dev","registration_endpoint":"https://sprites.dev/oauth/register","response_modes_supported":["query"],"response_types_supported":["code"],"scopes_supported":["sprites:read","sprites:write"],"token_endpoint":"https://sprites.dev/oauth/token","token_endpoint_auth_methods_supported":["none","client_secret_post","client_secret_basic"]}

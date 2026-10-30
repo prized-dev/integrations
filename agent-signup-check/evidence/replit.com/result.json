@@ -1,7 +1,7 @@
 {
  "site": "replit.com",
- "checkedAt": "2026-10-28T23:57:50.665Z",
- "checker": "agent-signup-check/0.2.0",
+ "checkedAt": "2026-10-30T16:01:16.197Z",
+ "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 0,
  "total": 6,
@@ -64,7 +64,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 296,
+   "ms": 295,
    "redirects": 0
   },
   {
@@ -74,7 +74,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 297,
+   "ms": 300,
    "redirects": 0
   },
   {
@@ -84,7 +84,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 228,
+   "ms": 242,
    "redirects": 0
   },
   {
@@ -94,7 +94,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 107,
+   "ms": 124,
    "redirects": 0
   },
   {
@@ -104,7 +104,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 242,
+   "ms": 262,
    "redirects": 0
   }
  ]

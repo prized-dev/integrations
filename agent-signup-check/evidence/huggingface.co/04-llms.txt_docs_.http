@@ -1,28 +1,28 @@
 GET https://huggingface.co/docs/hub/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:15.304Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:39.377Z
 final-url: https://huggingface.co/docs/hub/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Wed, 28 Oct 2026 23:57:13 GMT
+date: Fri, 30 Oct 2026 16:00:37 GMT
 content-encoding: gzip
 etag: W/"57de-SpPpELqM9hAp++2Epqv3fKMn+sI"
 x-powered-by: huggingface-moon
-x-request-id: Root=1-6ae28bd9-265598ea25c02c755b5d1163
-ratelimit: "pages";r=97;t=193
+x-request-id: Root=1-6ae4bf25-094b6c490a41909464455918
+ratelimit: "pages";r=97;t=289
 ratelimit-policy: "fixed window";"pages";q=100;w=300
 cross-origin-opener-policy: same-origin
 referrer-policy: strict-origin-when-cross-origin
 content-language: en
 vary: Accept-Encoding
 x-cache: Miss from cloudfront
-via: 1.1 d30f4a165486dd51ac7a7bdc41487d7c.cloudfront.net (CloudFront)
+via: 1.1 a1f8044693d3f7f5c5e4c6cb7ec5cb9c.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: I9B03-ns2E51l5kSw9Z9UiIrXGRm3zu419z7r3ZgFqAPfT4de83A6g==
+x-amz-cf-id: PzR3o0ySn2RjAMxhxvZKu_XZoCuXQGtKcuarWprfAWhIPKQCc50gdg==
 strict-transport-security: max-age=31536000
 
 # Hub

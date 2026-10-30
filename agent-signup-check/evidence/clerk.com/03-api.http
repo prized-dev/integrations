@@ -1,14 +1,14 @@
 GET https://api.clerk.com/v1/users
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:36.739Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:06.643Z
 final-url: https://api.clerk.com/v1/users
 
 HTTP 401
-date: Wed, 28 Oct 2026 23:58:34 GMT
+date: Fri, 30 Oct 2026 16:02:04 GMT
 content-type: application/json
 content-length: 255
 connection: close
-cf-ray: a51de3ab09581509-PDX
+cf-ray: a52ba46b6d043416-PDX
 cf-cache-status: DYNAMIC
 server: cloudflare
 via: 1.1 google
@@ -16,9 +16,9 @@ x-cfworker: 1
 content-security-policy: default-src 'none'; frame-ancestors 'none'
 permissions-policy: camera=(), microphone=(), geolocation=(), usb=()
 referrer-policy: strict-origin-when-cross-origin
-x-clerk-trace-id: babb5819848ab0ca24e469e23362f5a2
-x-cloud-trace-context: babb5819848ab0ca24e469e23362f5a2
+x-clerk-trace-id: 447f3bd03f769693e3b30e9cfb707182
+x-cloud-trace-context: 447f3bd03f769693e3b30e9cfb707182
 x-content-type-options: nosniff
 x-frame-options: DENY
 
-{"errors":[{"message":"Invalid Authorization header format","long_message":"Invalid Authorization header format. Must be 'Bearer \u003cYOUR_API_KEY\u003e'","code":"authorization_header_format_invalid"}],"clerk_trace_id":"babb5819848ab0ca24e469e23362f5a2"}
+{"errors":[{"message":"Invalid Authorization header format","long_message":"Invalid Authorization header format. Must be 'Bearer \u003cYOUR_API_KEY\u003e'","code":"authorization_header_format_invalid"}],"clerk_trace_id":"447f3bd03f769693e3b30e9cfb707182"}

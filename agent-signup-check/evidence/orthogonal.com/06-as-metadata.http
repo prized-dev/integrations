@@ -1,17 +1,17 @@
 GET https://orthogonal.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:25.781Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:55.848Z
 redirect: 307 from https://orthogonal.com/.well-known/oauth-authorization-server
 final-url: https://www.orthogonal.com/.well-known/oauth-authorization-server
 
 HTTP 404
 access-control-allow-origin: *
-age: 2067
+age: 146277
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="404"
 content-encoding: br
 content-type: text/html; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:25 GMT
+date: Fri, 30 Oct 2026 16:01:55 GMT
 etag: W/"e2981411e560375a8c349a03ea9eb03e"
 last-modified: Wed, 28 Oct 2026 23:23:57 GMT
 server: Vercel
@@ -21,7 +21,7 @@ x-clerk-auth-status: signed-out
 x-matched-path: /404
 x-next-error-status: 404
 x-vercel-cache: HIT
-x-vercel-id: pdx1::fb4tr-1793231904998-256e7006f444
+x-vercel-id: pdx1::c6w5l-1793376115066-4edf7fd2a592
 connection: close
 transfer-encoding: chunked
 

@@ -1,13 +1,13 @@
 GET https://apify.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:15.223Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:44.293Z
 final-url: https://apify.com/auth.md
 
 HTTP 200
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Wed, 28 Oct 2026 22:02:32 GMT
+date: Fri, 30 Oct 2026 15:55:49 GMT
 content-encoding: gzip
 strict-transport-security: max-age=15768000
 x-permitted-cross-domain-policies: none
@@ -24,15 +24,15 @@ access-control-allow-headers: Content-Type
 access-control-expose-headers: Link
 cache-control: public, max-age=7200
 accept-ranges: bytes
-last-modified: Tue, 27 Oct 2026 16:27:44 GMT
-etag: W/"2041-1a17e306800"
+last-modified: Fri, 30 Oct 2026 14:02:53 GMT
+etag: W/"2041-1a18d1edec8"
 vary: Accept-Encoding
 x-cache: Hit from cloudfront
-via: 1.1 699a0ab8b179c33d5bf800b6f12b0344.cloudfront.net (CloudFront)
+via: 1.1 c1e10addfd71e01a8c56f4755a03bf98.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: iYRytNsZjaXB7EkN4XjUPyTRv5hRpfUpQPzRhjBnlZLhCtgP4R_Omg==
-age: 6939
+x-amz-cf-id: CnPzvI9pb-PqaM0fvVjvCJmp6bFwHXPlbVQ3RPUjmj_5vcaRXAg10w==
+age: 352
 
 # auth.md — how an agent gets an Apify credential
 

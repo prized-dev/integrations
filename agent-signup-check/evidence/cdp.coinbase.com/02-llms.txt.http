@@ -1,36 +1,38 @@
 GET https://cdp.coinbase.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:31.100Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:00.516Z
 redirect: 302 from https://cdp.coinbase.com/llms.txt
 redirect: 302 from https://coinbase.com/developer-platform
 final-url: https://www.coinbase.com/developer-platform
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:58:26 GMT
+date: Fri, 30 Oct 2026 16:01:57 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
+content-security-policy-report-only: script-src 'unsafe-inline' 'unsafe-eval'; report-uri https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=jOHjoA8lZ7p41wh9xh_s7xGbfn2xA9Ov6Al2UZAoYls-1793376116.9060867-1.0.1.1-j3DbEnm7XZ5DsWyaXS05lk4WQWSttjYeXwiINuVtL3T.dpjHZcwTV_sRi45hkPxvr2TknFuG3ygpg3vWIc3QUEMJIXJ0Wlru4NufyRWEp1BnbxDu2OfFy2kDLtsLWcXhkmtamQibtKLkY9R01dNs3gXtO8H25P2UhRa2KffKAhr6Zb1YSOQmkPD2D.Cq0_o_; report-to cf-csp-endpoint
 cache-control: no-store, no-cache, must-revalidate, proxy-revalidate
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=cCXfAnsC4j229ElUK11dQ86qhhDweH66TGzYa%2BWHViCjACb0oUJXR3r2%2FaxCsCNPr7XVz4XonfOmbAr6o6NN2%2F5z2P8yeECxByO%2F6tDT70iLsw3mEoWMRjIqafBGsgX1nks%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.01,"max_age":604800}
 content-security-policy: default-src 'self' https://*.coinbase.com https://sdk.onfido.com https://assets.onfido.com https://*.withpersona.com; child-src 'self' https://*.coinbase.com https://accounts.google.com/ https://www.googletagmanager.com/ https://paywithmybank.com/start/ https://cdn1.paywithmybank.com/frontend/build/index.html https://fast.wistia.net https://ui.solaris-p.finleap.cloud https://fts-payment-initiation-wizard.solarisbank.de/ https://payment.truelayer.com https://*.sardine.ai https://sdk.onfido.com/ https://*.cb-device-intelligence.com https://*.wpstn.com https://platform.twitter.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://recaptcha.net https://www.recaptcha.net https://cdn.plaid.com/link/ https://*.doubleclick.net/ blob: https://www.youtube.com https://player.vimeo.com/video/ https://datawrapper.dwcdn.net/ https://widgets.marqeta.com https://*.paypal.com https://pay.google.com/ https://transact.atomicfi.com/ https://centinelapi.cardinalcommerce.com/V1/Cruise/Collect https://p2a.co/ https://docs.google.com/forms/ https://a.sprig.com/SmJKcmh5cDRYZX5zaWQ6YWE3ZDJhZjYtMjYxYS00NjkwLWE3ZWMtMGRjMGQyMGY2ZDk5 https://calendly.com/ https://link.tink.com/ https://jsv3.recruitics.com/ https://js.stripe.com/ https://*.withpersona.com https://embedded.cardless.com/; connect-src 'self' https://browser-intake-datadoghq.com/ https://accounts.google.com/gsi/ https://*.coinbase.com wss://*.coinbase.com https://www.tradingview.com/snapshot/ https://beacon.riskified.com https://c.riskified.com https://player.vimeo.com/api/player.js https://api.web3modal.org https://d1dwhf283nul1c.cloudfront.net/ https://cdnjs.cloudflare.com/ https://analytics.google.com https://*.google-analytics.com https://maps.googleapis.com https://www.googletagmanager.com/gtag/js https://www.googletagmanager.com/gtm.js https://www.googleadservices.com https://googleads.g.doubleclick.net https://*.braintree-api.com https://api.braintreegateway.com https://cdn.contentful.com/ https://api.userleap.com/ https://api.sprig.com/ https://widgets.marqeta.com/client/api/v1/ https://assets.ctfassets.net/ https://images.ctfassets.net/ https://pay.google.com/ https://google.com/pay https://c.tvpixel.com/ https://p.tvpixel.com/ https://*.salesforce.com https://pulse.walletconnect.org https://verify.walletconnect.org https://mempool.space wss://relay.walletconnect.com wss://relay.walletconnect.org https://rpc.walletconnect.org https://explorer-api.walletconnect.com wss://www.walletlink.org https://metamask-sdk.api.cx.metamask.io/evt https://api.onfido.com wss://sync.onfido.com https://sdk.onfido.com/ https://cdn.sprig.com/session-replay/ https://www.google.com/pay https://api2.branch.io https://pixel-config.reddit.com/pixels/a2_gn0ni8qm85z4/config https://www.redditstatic.com/ads/conversions-config/v1/pixel/config/a2_gn0ni8qm85z4_telemetry https://conversions-config.reddit.com/v1/pixel/error https://px.ads.linkedin.com/attribution_trigger https://www.google.com/ccm/collect https://px.ads.linkedin.com/wa/ https://cdn.cookielaw.org/ https://geolocation.onetrust.com/ https://privacyportal.onetrust.com/ https://consent-api.onetrust.com/ https://*.withpersona.com https://inquiry.withpersona.com https://wa.appsflyer.com https://websdk.appsflyer.com https://api-secure.amplitude.com https://sr-client-cfg.amplitude.com https://api-sr.amplitude.com https://api.amplitude.com/ https://rba-authed-278491357830-production.s3.us-east-1.amazonaws.com wss://www.deribit.com https://history.deribit.com https://www.deribit.com https://metrics.deribit.com https://data.deribit.com wss://retail-ws-order-stargate.aws.cbhq.net; font-src * data: blob:; img-src * data: blob:; media-src * data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.coinbase.com https://www.googletagmanager.com/ https://accounts.google.com/gsi/client https://accounts.google.com/gsi/ https://*.sardine.ai https://beacon.riskified.com https://*.cb-device-intelligence.com https://player.vimeo.com/api/player.js https://sdk.onfido.com/ https://www.youtube.com/iframe_api https://*.google-analytics.com https://www.google.com https://www.gstatic.com https://maps.googleapis.com https://cdn.plaid.com/link/ https://www.googletagmanager.com/gtag/js https://www.googletagmanager.com/gtm.js https://www.googleadservices.com https://googleads.g.doubleclick.net https://connect.facebook.net/en_US/fbevents.js https://connect.facebook.net/signals/config/ https://*.paypal.com https://images.ctfassets.net/ https://pay.google.com/ https://c.tvpixel.com/ https://p.tvpixel.com/ https://jsv3.recruitics.com/0778138b-cc59-11ef-a514-fd1759833eec.js https://static.ads-twitter.com/oct.js https://platform.twitter.com/uwt.js https://static.ads-twitter.com/uwt.js https://redditstatic.com/ads/pixel.js https://www.redditstatic.com/ads/pixel.js https://snap.licdn.com/li.lms-analytics/insight.min.js https://cdn.cookielaw.org/ https://js.stripe.com/ https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://recaptcha.net https://www.recaptcha.net https://*.withpersona.com https://wa.appsflyer.com https://websdk.appsflyer.com; style-src * data: blob: 'unsafe-inline'; frame-ancestors 'self' https://*.coinbase.com https://coinbase.com https://*.withpersona.com; report-uri /csp-logging
 expect-ct: enforce, max-age=86400, report-uri="https://coinbase.report-uri.io/r/default/ct/reportOnly"
 expires: 0
 referrer-policy: strict-origin-when-cross-origin
-nel: {"report_to":"cf-nel","success_fraction":0.01,"max_age":604800}
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 surrogate-control: no-store
-trace-id: 3947394610259438353
+trace-id: 17066006904715442
 x-content-type-options: nosniff
 x-dns-prefetch-control: off
 x-download-options: noopen
 x-frame-options: SAMEORIGIN
 x-xss-protection: 0
 server: cloudflare
-cf-cache-status: DYNAMIC
 vary: accept-encoding, accept
+reporting-endpoints: cf-csp-endpoint="https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=jOHjoA8lZ7p41wh9xh_s7xGbfn2xA9Ov6Al2UZAoYls-1793376116.9060867-1.0.1.1-j3DbEnm7XZ5DsWyaXS05lk4WQWSttjYeXwiINuVtL3T.dpjHZcwTV_sRi45hkPxvr2TknFuG3ygpg3vWIc3QUEMJIXJ0Wlru4NufyRWEp1BnbxDu2OfFy2kDLtsLWcXhkmtamQibtKLkY9R01dNs3gXtO8H25P2UhRa2KffKAhr6Zb1YSOQmkPD2D.Cq0_o_"
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=isJV1C%2FhpxFE10BntyEJ%2FUiPOrQdc6ZwkNZbEQ%2F%2BI9FD9SXZBfU60Wcy0LFquhEjaMm%2Bx8KKJXAJOE5sfTGmFtn3rv3VpTdq5XeWEd67NysZSjLAd9zw2%2BOFIyV4ovLNkxE%3D"}]}, {"group":"cf-csp-endpoint","max_age":86400,"endpoints":[{"url":"https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=jOHjoA8lZ7p41wh9xh_s7xGbfn2xA9Ov6Al2UZAoYls-1793376116.9060867-1.0.1.1-j3DbEnm7XZ5DsWyaXS05lk4WQWSttjYeXwiINuVtL3T.dpjHZcwTV_sRi45hkPxvr2TknFuG3ygpg3vWIc3QUEMJIXJ0Wlru4NufyRWEp1BnbxDu2OfFy2kDLtsLWcXhkmtamQibtKLkY9R01dNs3gXtO8H25P2UhRa2KffKAhr6Zb1YSOQmkPD2D.Cq0_o_"}]}
 content-signal: ai-train=yes, search=yes, ai-input=yes
 content-encoding: gzip
-cf-ray: a51de3791f4ea32d-PDX
+cf-ray: a52ba43aa8c8ff17-PDX
 
 ---
 title: Coinbase Developer Platform (CDP)

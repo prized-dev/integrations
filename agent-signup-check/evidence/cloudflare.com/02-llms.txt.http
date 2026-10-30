@@ -1,11 +1,11 @@
 GET https://cloudflare.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:30.956Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:55.207Z
 redirect: 301 from https://cloudflare.com/llms.txt
 final-url: https://www.cloudflare.com/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:57:27 GMT
+date: Fri, 30 Oct 2026 16:00:51 GMT
 content-type: text/plain
 transfer-encoding: chunked
 connection: close
@@ -24,11 +24,11 @@ x-content-type-options: nosniff
 x-frame-options: SAMEORIGIN
 x-xss-protection: 1; mode=block
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=iFycDf38RUm3H6mmyxcYCYbAjx8fGh1POWvZZDgMhV%2FoSes%2FTAPRg2K8B9Pw5p0LDU5sqTDNLIjNF4ORUT3xTwoiZ5ETkp5ftOzfrSaFTtmss9RKscRAvaWKYTNsQtg52P6%2BGw%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=KaEmTWXcaeQTst%2FCYLT3tf4fck%2B7cw4KtEGPuFhF672mOpxpw9jIY9Cpz2d9XOTSshUn1v55nGK3Q5QO8xFSZQ7eefe30%2B%2BnniBAz7ysrfvcH5qQJXJX1UFPw0a1F8N5r4zgZw%3D%3D"}]}
 etag: W/"349834b26a4088d4f873fbc5e88489e9"
 content-encoding: br
 server: cloudflare
-cf-ray: a51de207fb325509-PDX
+cf-ray: a52ba2a23c81cf48-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Cloudflare

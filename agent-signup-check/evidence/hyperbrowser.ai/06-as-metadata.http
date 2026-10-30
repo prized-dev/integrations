@@ -1,24 +1,24 @@
 GET https://hyperbrowser.ai/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:11.489Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:01:40.009Z
 redirect: 307 from https://hyperbrowser.ai/.well-known/oauth-authorization-server
 final-url: https://www.hyperbrowser.ai/.well-known/oauth-authorization-server
 
 HTTP 404
 access-control-allow-origin: *
-age: 2338
+age: 146547
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="404"
 content-encoding: br
 content-type: text/html; charset=utf-8
-date: Wed, 28 Oct 2026 23:58:10 GMT
+date: Fri, 30 Oct 2026 16:01:39 GMT
 etag: W/"0f0e44bd4fe50babb421db6a8e89460b"
 last-modified: Wed, 28 Oct 2026 23:19:11 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /404
 x-vercel-cache: HIT
-x-vercel-id: pdx1::ngn9g-1793231890774-59aed90568bf
+x-vercel-id: pdx1::js85n-1793376099287-8cbb9cfd4dac
 connection: close
 transfer-encoding: chunked
 

@@ -1,14 +1,14 @@
 GET https://linear.app/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:58:34.649Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:02:05.280Z
 final-url: https://linear.app/llms.txt
 
 HTTP 200
-date: Wed, 28 Oct 2026 23:58:32 GMT
+date: Fri, 30 Oct 2026 16:02:03 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a51de39ed982efb0-PDX
+cf-ray: a52ba4631ae0b8b9-PDX
 cf-cache-status: DYNAMIC
 cache-control: private, no-cache, no-store, max-age=0, must-revalidate
 content-encoding: gzip
@@ -22,6 +22,60 @@ referrer-policy: same-origin
 # Linear
 
 > Linear is a purpose-built tool for planning and building products. Meet the system for modern software development. Streamline issues, projects, and product roadmaps.
+
+> For agents: connect to the Linear MCP server at https://mcp.linear.app/mcp to read and change issues, projects, and documents. Setup guide: https://linear.app/docs/mcp.md. Index of all docs: https://linear.app/llms.txt.
+
+Each page on linear.app is also available as Markdown. Add `.md` to the URL (use `/index.md` for the homepage), or send the `Accept: text/markdown` header.
+
+## Website
+
+- [/](https://linear.app/index.md)
+- [/about](https://linear.app/about.md)
+- [/agents](https://linear.app/agents.md)
+- [/ai](https://linear.app/ai.md)
+- [/careers](https://linear.app/careers.md)
+- [/changelog](https://linear.app/changelog.md)
+- [/coding-sessions](https://linear.app/coding-sessions.md)
+- [/resource-kit](https://linear.app/resource-kit.md)
+- [/contact](https://linear.app/contact.md)
+- [/contact/sales](https://linear.app/contact/sales.md)
+- [/contact/support](https://linear.app/contact/support.md)
+- [/customers](https://linear.app/customers.md)
+- [/customer-requests](https://linear.app/customer-requests.md)
+- [/data](https://linear.app/data.md)
+- [/enterprise](https://linear.app/enterprise.md)
+- [/features](https://linear.app/features.md)
+- [/asks](https://linear.app/asks.md)
+- [/insights](https://linear.app/insights.md)
+- [/intake](https://linear.app/intake.md)
+- [/integrations](https://linear.app/integrations.md)
+- [/method](https://linear.app/method.md)
+- [/releases/2020-12](https://linear.app/releases/2020-12.md)
+- [/releases/2021-06](https://linear.app/releases/2021-06.md)
+- [/releases/2022](https://linear.app/releases/2022.md)
+- [/releases/figma](https://linear.app/releases/figma.md)
+- [/security](https://linear.app/security.md)
+- [/security/vulnerability](https://linear.app/security/vulnerability.md)
+- [/startups](https://linear.app/startups.md)
+- [/dpa](https://linear.app/dpa.md)
+- [/legal](https://linear.app/legal.md)
+- [/privacy](https://linear.app/privacy.md)
+- [/terms](https://linear.app/terms.md)
+- [/brand](https://linear.app/brand.md)
+- [/change](https://linear.app/change.md)
+- [/download](https://linear.app/download.md)
+- [/now](https://linear.app/now.md)
+- [/fm](https://linear.app/fm.md)
+- [/pricing](https://linear.app/pricing.md)
+- [/readme](https://linear.app/readme.md)
+- [/plan](https://linear.app/plan.md)
+- [/build](https://linear.app/build.md)
+- [/mobile](https://linear.app/mobile.md)
+- [/quality](https://linear.app/quality.md)
+- [/switch](https://linear.app/switch.md)
+- [/switch/migration-guide](https://linear.app/switch/migration-guide.md)
+- [/switch/pilot-guide](https://linear.app/switch/pilot-guide.md)
+- [/switch/pitch-guide](https://linear.app/switch/pitch-guide.md)
 
 ## Documentation
 

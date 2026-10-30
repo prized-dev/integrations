@@ -1,6 +1,6 @@
 GET https://netlify.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.0 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-28T23:57:31.764Z
+user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-10-30T16:00:55.588Z
 final-url: https://netlify.com/auth.md
 
 HTTP 200
@@ -11,15 +11,15 @@ cache-control: public,max-age=0,must-revalidate
 cache-status: "Netlify Edge"; fwd=miss; fwd-status=200; stored
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Wed, 28 Oct 2026 23:57:27 GMT
-etag: "3d1129c25614189b7236e4cca9c03798-ssl-df"
+date: Fri, 30 Oct 2026 16:00:51 GMT
+etag: "4d7791937003889940ae83aabc8f7c78-ssl-df"
 link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/ard.json>; rel="ard"; type="application/ai-catalog+json"
 netlify-vary: header=x-forwarded-proto
+permissions-policy: browsing-topics=()
 server: Netlify
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: Accept-Encoding
-x-nf-request-id: 01M62F502592VFEF8SPV5J0TZQ
-x-robots-tag: noindex
+x-nf-request-id: 01M66RNR2G4JB5DH53WRPGSBT7
 connection: close
 transfer-encoding: chunked
 
