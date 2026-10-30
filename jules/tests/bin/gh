@@ -1,7 +1,14 @@
 #!/bin/sh
 # Stand-in for the GitHub CLI, signed in as "me". Every call is recorded in $STUB_LOG; `pr create` prints a
 # pull request URL. For the issue poller it answers from files in $STUB_DIR: issues.json (gh issue list),
-# events-N.json (issue N's events) and permission-USER.json (a user's access; missing means gh fails).
+# graphql-N.json (issue N as the GraphQL query returns it) and permission-USER.json (a user's access; a file
+# holding "fail" makes gh fail with that HTTP status line; no file means 404).
+if [ "$1 $2" = "api graphql" ]; then
+  for a in "$@"; do case "$a" in n=*) n=${a#n=} ;; esac; done
+  echo "gh api graphql issue $n" >> "$STUB_LOG"
+  cat "$STUB_DIR/graphql-$n.json" 2>/dev/null || { echo "gh: Could not resolve to an Issue" >&2; exit 1; }
+  exit 0
+fi
 echo "gh $*" >> "$STUB_LOG"
 case "$1 $2" in
   "auth "*) exit 0 ;;
@@ -12,14 +19,12 @@ case "$1 $2" in
 esac
 if [ "$1" = api ]; then
   case "$2" in
-    repos/*/issues/*/events*)
-      n=$(echo "$2" | sed 's|.*/issues/\([0-9]*\)/events.*|\1|')
-      cat "$STUB_DIR/events-$n.json" 2>/dev/null || echo "[]"
-      exit 0 ;;
     repos/*/collaborators/*/permission)
       u=$(echo "$2" | sed 's|.*/collaborators/\([^/]*\)/permission|\1|')
-      [ -f "$STUB_DIR/permission-$u.json" ] || { echo "gh: Not Found (HTTP 404)" >&2; exit 1; }
-      cat "$STUB_DIR/permission-$u.json"
+      f="$STUB_DIR/permission-$u.json"
+      [ -f "$f" ] || { echo "gh: Not Found (HTTP 404)" >&2; exit 1; }
+      if grep -q '^fail' "$f"; then sed 's/^fail //' "$f" >&2; exit 1; fi
+      cat "$f"
       exit 0 ;;
   esac
 fi

@@ -39,6 +39,7 @@ Standard library only; Python 3.9+.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import datetime as dt
 import fcntl
 import hashlib
@@ -921,7 +922,7 @@ class Run:
         path.parent.mkdir(parents=True, exist_ok=True)
         tmp = path.with_name(f".{path.name}.{secrets.token_hex(4)}")
         fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_EXCL, mode if mode is not None else 0o644)
-        with os.fdopen(fd, "w") as fh:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
             fh.write(content)
         os.replace(tmp, path)
         if mode is not None:
@@ -1231,11 +1232,13 @@ stamp=$(date -u +%Y%m%d-%H%M%S)
 branch="{branch_prefix}-$stamp"
 work="$runs/{slug}-$stamp"
 log="$HOME/.jules-import/logs/{slug}-$stamp.log"
+log_shown='~'"${{log#"$HOME"}}"
 mkdir -p "$runs" "$(dirname "$log")"
 exec > >(tee -a "$log") 2>&1
 echo "== {title}: $stamp, branch $branch"
 # How the run ended, for whoever started it (the issue poller): a status, a detail and this run's log.
 result() {{ if [ -n "${{JULES_RESULT:-}}" ]; then printf '%s\t%s\t%s\n' "$1" "${{2:-}}" "$log" > "$JULES_RESULT"; fi; }}
+result running
 
 # One git operation on the clone at a time: timers missed while the box slept all fire when it wakes.
 exec 9>"$runs/.{repo_key}.lock"
@@ -1259,9 +1262,9 @@ NOTE="{context} Nobody is watching, so don't ask questions: make your best call 
 [ -n "$TEST_CMD" ] && NOTE="$NOTE Run the tests with \`$TEST_CMD\` before you finish."
 NOTE="$NOTE When you're done, commit your work on this branch. Don't push or open a pull request: the script that started you does that. If nothing is worth changing, commit nothing."
 case "$AGENT" in
-  codex) codex exec --dangerously-bypass-approvals-and-sandbox "$PROMPT
+  codex) env -u JULES_RESULT codex exec --dangerously-bypass-approvals-and-sandbox "$PROMPT
 $NOTE" 9>&- ;;
-  *) claude -p --dangerously-skip-permissions "$PROMPT
+  *) env -u JULES_RESULT claude -p --dangerously-skip-permissions "$PROMPT
 $NOTE" 9>&- ;;
 esac
 agent_rc=$?
@@ -1299,7 +1302,7 @@ if ! git push --quiet -u origin "$branch"; then
 fi
 cd "$HOME" || exit 1
 flock 9
-git -C "$REPO" worktree remove --force "$work"
+git -C "$REPO" worktree remove --force "$work" && git -C "$REPO" branch -D "$branch" >/dev/null
 flock -u 9
 if url=$(gh pr create --repo {repo} --base "$BASE" --head "$branch" --title "$title" \
     --body "{pr_body}"); then
@@ -1333,7 +1336,7 @@ def task_script(t: ScheduledTask, src: Source, agent: str) -> str:
         context="You are running unattended on a schedule (a task carried over from Jules), "
         f"in a fresh git worktree of {src.full} on branch $branch, based on $BASE.",
         pr_body=f"Scheduled task **{title}** (carried over from Jules), run $stamp on $(hostname) by $AGENT. "
-        "Log: \\`$log\\`",
+        "Log: \\`$log_shown\\`",
         repo=src.full,
         repo_dir=shlex.quote(str(src.dir)),
         base=shlex.quote(t.branch or src.branch or "main"),
@@ -1681,6 +1684,18 @@ ISSUE_TIMEOUT = 3 * 3600  # one issue's run, setup script and agent included
 LABEL_OK = re.compile(r"[\w.-][\w .-]{0,49}")
 LOGIN_OK = re.compile(r"[A-Za-z0-9-]+(\[bot\])?")
 POLL_CALENDAR = "*-*-* *:00/2:00"  # every 2 minutes
+# Characters that don't show on github.com: zero-width, bidi controls, Unicode tags.
+INVISIBLE = re.compile("[\u200b-\u200f\u202a-\u202e\u2060-\u2064\u2066-\u2069\ufeff\U000e0000-\U000e007f]")
+ISSUE_QUERY = """query($owner: String!, $name: String!, $n: Int!) {
+  repository(owner: $owner, name: $name) {
+    issue(number: $n) {
+      title bodyText lastEditedAt state
+      timelineItems(itemTypes: [LABELED_EVENT, RENAMED_TITLE_EVENT], last: 100) {
+        nodes { __typename ... on LabeledEvent { id createdAt actor { login } label { name } } ... on RenamedTitleEvent { createdAt } }
+      }
+    }
+  }
+}"""
 
 
 def utc_now() -> str:
@@ -1694,17 +1709,28 @@ def gh_json(args: list[str], timeout=60):
     except (OSError, subprocess.TimeoutExpired) as e:
         return None, str(e)
     if r.returncode != 0:
-        return None, (r.stderr.strip() or f"gh exited {r.returncode}").splitlines()[-1][:200]
+        return None, ((r.stderr.strip() or f"gh exited {r.returncode}").splitlines() or [""])[-1][:200]
     try:
         return json.loads(r.stdout or "null"), ""
     except ValueError:
         return None, "gh printed something that isn't JSON"
 
 
+@contextlib.contextmanager
+def issues_state():
+    """issues.json, read and written under a lock: `issues` and a running poll both change it."""
+    STATE.mkdir(parents=True, exist_ok=True)
+    with open(STATE / ".issues.json.lock", "w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        cfg = load_issues()
+        yield cfg
+        save_issues(cfg)
+
+
 def load_issues() -> dict:
     """Watched repos, the label and agent, and what happened to each labeled issue."""
     try:
-        data = json.loads(ISSUES.read_text())
+        data = json.loads(ISSUES.read_text(encoding="utf-8"))
         if isinstance(data, dict) and isinstance(data.get("repos"), dict):
             data.setdefault("issues", {})
             return data
@@ -1715,6 +1741,16 @@ def load_issues() -> dict:
 
 def save_issues(cfg: dict) -> None:
     Run(argparse.Namespace(dry_run=False)).write(ISSUES, json.dumps(cfg, indent=2) + "\n", 0o600)
+
+
+def set_issue(key: str, value: dict) -> None:
+    with issues_state() as cfg:
+        cfg["issues"][key] = value
+
+
+def home_path(path: str) -> str:
+    """A path as ~/..., so public comments don't show the box's user name."""
+    return "~" + path[len(str(HOME)) :] if path.startswith(str(HOME) + "/") else path
 
 
 def same_repo(url: str, src: Source) -> bool:
@@ -1802,8 +1838,9 @@ def main_issues(args) -> int:
             print("Not watching any repo yet: jules_import.py issues OWNER/REPO [OWNER/REPO ...]")
             return 0
         print(f"Label: {cfg.get('label')}; agent: {cfg.get('agent')}; repos: {', '.join(cfg['repos'])}")
-        for key, st in sorted(cfg["issues"].items(), key=lambda kv: kv[1].get("at", ""))[-20:]:
-            print(f"  {st.get('at', '')[:16]}  {key}  {st.get('status', '')}  {st.get('pr', '')}")
+        ran = [(k, st) for k, st in cfg["issues"].items() if st.get("status")]
+        for key, st in sorted(ran, key=lambda kv: kv[1].get("at", ""))[-20:]:
+            print(f"  {st.get('at', '')[:16]}  {key}  {st['status']}  {st.get('pr', '')}")
         return 0
     label = args.label or cfg.get("label") or "jules"
     if not LABEL_OK.fullmatch(label):
@@ -1815,7 +1852,9 @@ def main_issues(args) -> int:
         if not found or not GH_NAME.fullmatch("/".join(found)):
             print(f"{ref!r} isn't a GitHub repo (OWNER/REPO)", file=sys.stderr)
             return 2
-        sources.append(Source(*found))
+        # One spelling per repo: GitHub names are case-insensitive, and the state is keyed by name.
+        known = next((k for k in cfg["repos"] if k.lower() == "/".join(found).lower()), "")
+        sources.append(Source(*(known.split("/") if known else found)))
     agent = (
         args.agent or cfg.get("agent") or ("claude" if shutil.which("claude") or not shutil.which("codex") else "codex")
     )
@@ -1828,26 +1867,24 @@ def main_issues(args) -> int:
         return 2
     me, _ = gh_json(["api", "user"])
     code = Path(args.code_dir).expanduser()
+    watched = {}
     for src in sources:
         src.dir = clone_dir(src, code)
         if not clone(run, src, code, True):
             continue
         ensure_label(run, src.full, label)
-        before = cfg["repos"].get(src.full, {})
-        # Only labels added from now on count: issues Jules already worked on stay as they are.
-        cfg["repos"][src.full] = {
-            "dir": str(src.dir),
-            "branch": src.branch or "main",
-            "since": before.get("since") or utc_now(),
-        }
+        watched[src.full] = {"dir": str(src.dir), "branch": src.branch or "main"}
         run.log(
             f"{src.full}: watching for issues labeled {label!r} ({src.dir}, pull requests against {src.branch or 'main'})"
         )
-    cfg.update(label=label, agent=agent, me=me.get("login", "") if isinstance(me, dict) else "")
     if run.dry:
         print("\nDry run: nothing was changed.")
         return 0
-    save_issues(cfg)
+    with issues_state() as cfg:
+        for full, entry in watched.items():
+            # Only labels added from now on count: issues Jules already worked on stay as they are.
+            cfg["repos"][full] = {**entry, "since": cfg["repos"].get(full, {}).get("since") or utc_now()}
+        cfg.update(label=label, agent=agent, me=me.get("login", "") if isinstance(me, dict) else "")
     if Path(__file__).is_file() and Path(__file__).resolve() != (STATE / "jules_import.py").resolve():
         shutil.copy(__file__, STATE / "jules_import.py")
     if not systemd_user():
@@ -1858,10 +1895,13 @@ def main_issues(args) -> int:
     elif not install_poll_timer(run):
         run.notes.append("systemctl couldn't start jules-issues.timer: `systemctl --user status jules-issues.timer`")
     print(
-        f"\nDone. Add the label {label!r} to an issue in {', '.join(s.full for s in sources)} (the GitHub app works "
+        f"\nDone. Add the label {label!r} to an issue in {', '.join(watched) or 'these repos'} (the GitHub app works "
         f"too). Within 2 minutes the box comments on it, runs {agent} on it in a fresh worktree, and opens a pull "
         "request that closes the issue. Only labels added by you or someone with write access count; labels added "
-        "before now don't. To run an issue again, remove the label and add it back.\n"
+        "before now don't, and neither does a label on an issue edited after it went on. To run an issue again, "
+        "remove the label and add it back.\n"
+        "  The issue's text becomes the agent's prompt on this box, which holds your GitHub sign-in: label only "
+        "issues you'd paste into the agent yourself.\n"
         "  `python3 ~/.jules-import/jules_import.py issues` shows what ran; logs are in ~/.jules-import/logs.\n"
         "  A paused box checks nothing: turn auto-pause off for it (`prized box auto-pause BOX off` on your laptop)."
     )
@@ -1877,47 +1917,71 @@ def main_issues(args) -> int:
     return 0
 
 
-def last_label_event(full: str, number: int, label: str):
-    """The latest time the label went on this issue: (event, "") or (None, why)."""
-    last = None
-    for page in range(1, 11):
-        events, why = gh_json(["api", f"repos/{full}/issues/{number}/events?per_page=100&page={page}"])
-        if events is None:
-            return None, why
-        for e in events if isinstance(events, list) else []:
-            if (
-                isinstance(e, dict)
-                and e.get("event") == "labeled"
-                and str((e.get("label") or {}).get("name", "")).lower() == label.lower()
-            ):
-                last = e
-        if not isinstance(events, list) or len(events) < 100:
-            break
-    return last, ""
+def fetch_issue(full: str, number: int):
+    """The issue as github.com shows it, with its label and rename history: (issue, "") or (None, why)."""
+    owner, name = full.split("/")
+    data, why = gh_json(
+        [
+            "api",
+            "graphql",
+            "-f",
+            f"query={ISSUE_QUERY}",
+            "-F",
+            f"owner={owner}",
+            "-F",
+            f"name={name}",
+            "-F",
+            f"n={number}",
+        ]
+    )
+    issue = (((data or {}).get("data") or {}).get("repository") or {}).get("issue") if isinstance(data, dict) else None
+    if not isinstance(issue, dict):
+        return None, why or "no such issue"
+    return issue, ""
 
 
-def may_assign(full: str, actor: str, me: str) -> tuple[bool, str]:
-    """Whether whoever added the label could have pushed the change themselves."""
+def label_event(issue: dict, label: str):
+    """The latest time the label went on, and the latest rename or edit (an ISO time or "")."""
+    nodes = [n for n in ((issue.get("timelineItems") or {}).get("nodes") or []) if isinstance(n, dict)]
+    labeled = [
+        n
+        for n in nodes
+        if n.get("__typename") == "LabeledEvent"
+        and str((n.get("label") or {}).get("name", "")).lower() == label.lower()
+    ]
+    # Timeline order breaks a tie within the same second (the label removed and added back).
+    event = sorted(labeled, key=lambda n: str(n.get("createdAt", "")))[-1] if labeled else None
+    changes = [str(n.get("createdAt", "")) for n in nodes if n.get("__typename") == "RenamedTitleEvent"]
+    changes.append(str(issue.get("lastEditedAt") or ""))
+    return event, max(changes)
+
+
+def may_assign(full: str, actor: str, me: str):
+    """(True, who) or (False, why) for whoever added the label; (None, why) when GitHub couldn't say just now."""
     if me and actor.lower() == me.lower():
         return True, "you"
     if not LOGIN_OK.fullmatch(actor):
-        return False, f"unrecognised user {actor[:40]!r}"
+        return False, f"the label was added by an unrecognised user {actor[:40]!r}"
     perm, why = gh_json(["api", f"repos/{full}/collaborators/{actor}/permission"])
     if not isinstance(perm, dict):
-        return False, f"couldn't check the access of {actor}, who added the label ({why})"
-    level = perm.get("role_name") or perm.get("permission") or "none"
-    return level in ("admin", "maintain", "write"), f"the label was added by {actor}, who has {level} access"
+        if "HTTP 403" in why or "HTTP 404" in why:
+            return False, f"couldn't see the access of {actor}, who added the label ({why})"
+        return None, f"couldn't check the access of {actor}, who added the label ({why}); trying again next time"
+    # "permission" folds maintain into write and triage into read, custom roles included.
+    level = perm.get("permission") or "none"
+    shown = perm.get("role_name") or level
+    return level in ("admin", "write"), f"the label was added by {actor}, who has {shown} access"
 
 
-def issue_prompt(full: str, issue: dict, label: str, actor: str) -> str:
+def issue_prompt(full: str, number: int, issue: dict, label: str, actor: str) -> str:
     def clean(s, limit):
-        s = str(s or "").replace("\r\n", "\n").replace("\r", "\n").replace("\x00", "")
+        s = INVISIBLE.sub("", str(s or "")).replace("\r\n", "\n").replace("\r", "\n").replace("\x00", "")
         return s if len(s) <= limit else s[:limit] + "\n[... cut here: the rest is on GitHub]"
 
     title = " ".join(clean(issue.get("title"), 300).split())
-    body = clean(issue.get("body"), 30000).strip() or "(no description)"
+    body = clean(issue.get("bodyText"), 30000).strip() or "(no description)"
     return (
-        f"GitHub issue #{int(issue['number'])} in {full}: {title}\n\n{body}\n\n"
+        f"GitHub issue #{number} in {full}: {title}\n\n{body}\n\n"
         f"(@{actor} added the `{label}` label to hand this issue to you.)"
     )
 
@@ -1931,8 +1995,9 @@ def issue_script(src: Source, number: int, agent: str, prompt: str) -> str:
         slug=f"issue-{src.key}-{number}",
         branch_prefix=f"jules/issue-{number}",
         context=f"You are running unattended on GitHub issue #{number} of {src.full}, in a fresh git worktree on "
-        "branch $branch, based on $BASE.",
-        pr_body=f"Closes #{number}. Worked on by $AGENT on $(hostname), run $stamp. Log on the box: \\`$log\\`",
+        "branch $branch, based on $BASE. Work from the issue as written above; don't fetch its comments or other "
+        "issues.",
+        pr_body=f"Closes #{number}. Worked on by $AGENT, run $stamp. Log on the box: \\`$log_shown\\`",
         repo=src.full,
         repo_dir=shlex.quote(str(src.dir)),
         base=shlex.quote(src.branch or "main"),
@@ -1950,39 +2015,42 @@ def comment(full: str, number: int, text: str) -> None:
     subprocess.run(["gh", "issue", "comment", str(number), "--repo", full, "--body", text], capture_output=True)
 
 
-def run_issue(cfg: dict, full: str, repo: dict, issue: dict, actor: str) -> dict:
-    number = int(issue["number"])
-    owner, name = full.split("/")
-    src = Source(owner, name, repo.get("branch") or "main")
-    src.dir = Path(repo["dir"])
+def run_issue(cfg: dict, full: str, repo: dict, number: int, prompt: str) -> dict:
+    """Run one issue to the end; never raises. Returns its record: status, and the PR or the log."""
     agent = cfg.get("agent") or "claude"
     who = {"claude": "Claude Code", "codex": "Codex"}.get(agent, agent)
-    script = STATE / "issues" / f"{src.key}-{number}.sh"
-    Run(argparse.Namespace(dry_run=False)).write(
-        script, issue_script(src, number, agent, issue_prompt(full, issue, cfg["label"], actor)), 0o700
-    )
-    comment(full, number, f"{who} is working on this. The pull request will be linked here.")
-    fd, result_path = tempfile.mkstemp(prefix="issue-result-", dir=STATE)
-    os.close(fd)
     status, detail, log = "failed", "", ""
     try:
-        p = subprocess.Popen(
-            ["bash", "-l", str(script)], env={**os.environ, "JULES_RESULT": result_path}, start_new_session=True
-        )
+        owner, name = full.split("/")
+        src = Source(owner, name, repo.get("branch") or "main")
+        src.dir = Path(repo["dir"])
+        script = STATE / "issues" / f"{src.key}-{number}.sh"
+        Run(argparse.Namespace(dry_run=False)).write(script, issue_script(src, number, agent, prompt), 0o700)
+        comment(full, number, f"{who} is working on this. The pull request will be linked here.")
+        fd, result_path = tempfile.mkstemp(prefix=".issue-result-", dir=STATE)
+        os.close(fd)
         try:
-            p.wait(timeout=ISSUE_TIMEOUT)
-        except subprocess.TimeoutExpired:
-            os.killpg(p.pid, 9)
-            p.wait()
-            detail = f"stopped after {ISSUE_TIMEOUT // 3600} hours"
-        parts = Path(result_path).read_text().rstrip("\n").split("\t")
-        if parts and parts[0]:
-            status, detail, log = [*parts, "", ""][:3]
-        elif not detail:
-            detail = f"the run script exited {p.returncode}"
-    finally:
-        os.unlink(result_path)
-    where = f" Log on the box: `{log}`." if log else ""
+            p = subprocess.Popen(
+                ["bash", "-l", str(script)], env={**os.environ, "JULES_RESULT": result_path}, start_new_session=True
+            )
+            try:
+                p.wait(timeout=ISSUE_TIMEOUT)
+            except subprocess.TimeoutExpired:
+                with contextlib.suppress(ProcessLookupError):
+                    os.killpg(p.pid, 9)
+                p.wait()
+                detail = f"stopped after {ISSUE_TIMEOUT // 3600} hours"
+            parts = Path(result_path).read_text(encoding="utf-8").rstrip("\n").split("\t")
+            if parts and parts[0] and parts[0] != "running":
+                status, detail, log = [*parts, "", ""][:3]
+            else:
+                log = parts[2] if len(parts) > 2 else ""
+                detail = detail or f"the run script exited {p.returncode}"
+        finally:
+            os.unlink(result_path)
+    except Exception as e:  # whatever happens, the issue hears about it
+        status, detail = "failed", f"{type(e).__name__}: {e}"[:200]
+    where = f" Log on the box: `{home_path(log)}`." if log else ""
     if status == "pr":
         comment(full, number, f"Pull request: {detail}" if detail else "Opened a pull request for this issue.")
     elif status == "none":
@@ -2001,23 +2069,32 @@ def run_issue(cfg: dict, full: str, repo: dict, issue: dict, actor: str) -> dict
 
 
 def main_poll(args) -> int:
-    """Run each newly labeled issue in the watched repos, one at a time."""
-    cfg = load_issues()
-    if not cfg["repos"]:
+    """Run the oldest newly labeled issue in the watched repos; the timer comes back for the next one."""
+    if not load_issues()["repos"]:
         print("Not watching any repo: jules_import.py issues OWNER/REPO")
         return 0
     if not args.dry_run:
         STATE.mkdir(parents=True, exist_ok=True)
-        lock = open(STATE / ".issues.lock", "w")  # held until the process exits
+        lock = open(STATE / ".issues.lock", "w")  # held until the process exits: one poll at a time
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             print("another poll is running")
             return 0
+        # A record still "running" here belongs to a poll that died mid-run (a reboot, a kill): say so once.
+        with issues_state() as cfg:
+            for key, st in cfg["issues"].items():
+                if st.get("status") == "running":
+                    st.update(status="failed", at=utc_now())
+                    full, _, n = key.rpartition("#")
+                    comment(
+                        full, int(n), "The run on the box was interrupted. Remove the label and add it again to retry."
+                    )
+            if not cfg.get("me"):
+                me, _ = gh_json(["api", "user"])
+                cfg["me"] = me.get("login", "") if isinstance(me, dict) else ""
+    cfg = load_issues()
     label = cfg.get("label") or "jules"
-    if not cfg.get("me"):
-        me, _ = gh_json(["api", "user"])
-        cfg["me"] = me.get("login", "") if isinstance(me, dict) else ""
     tag = "[dry run] " if args.dry_run else ""
     for full, repo in cfg["repos"].items():
         issues, why = gh_json(
@@ -2033,53 +2110,66 @@ def main_poll(args) -> int:
                 "--limit",
                 "100",
                 "--json",
-                "number,title,body,updatedAt",
+                "number,updatedAt",
             ]
         )
         if not isinstance(issues, list):
             print(f"{full}: couldn't list issues ({why})")
             continue
-        for issue in sorted(issues, key=lambda i: i.get("number", 0)):
-            key = f"{full}#{issue.get('number')}"
+        for listed in sorted(issues, key=lambda i: i.get("number", 0) if isinstance(i, dict) else 0):
+            number = listed.get("number") if isinstance(listed, dict) else None
+            key = f"{full}#{number}"
             st = cfg["issues"].get(key, {})
-            if not isinstance(issue.get("number"), int) or st.get("checked") == issue.get("updatedAt"):
+            if not isinstance(number, int) or st.get("checked") == listed.get("updatedAt"):
                 continue
-            event, why = last_label_event(full, issue["number"], label)
-            if why:
-                print(f"{key}: couldn't read its events ({why})")
+            issue, why = fetch_issue(full, number)
+            if issue is None:
+                print(f"{key}: couldn't read it ({why})")
                 continue
+            event, changed = label_event(issue, label)
             actor = str(((event or {}).get("actor") or {}).get("login", ""))
-            decision = ""
+            decision, record, say = "", {}, ""
             if not event:
                 decision = "no label event found"
-            elif str(event.get("created_at", "")) < repo.get("since", ""):
+            elif str(event.get("createdAt", "")) < repo.get("since", ""):
                 decision = "labeled before watching started"
             elif event.get("id") == st.get("event"):
                 decision = "already handled"
+            elif changed > str(event.get("createdAt", "")):
+                decision = "skipped: the issue changed after the label went on"
+                say = (
+                    f"This issue changed after the `{label}` label went on, so it didn't run. Remove the label and "
+                    "add it again to run it as it reads now."
+                )
             else:
-                ok, who = may_assign(full, actor, cfg["me"])
+                ok, who = may_assign(full, actor, cfg.get("me", ""))
+                if ok is None:
+                    print(f"{tag}{key}: {who}")
+                    continue
                 if not ok:
                     decision = f"skipped: {who}"
             if decision:
                 print(f"{tag}{key}: {decision}")
                 if not args.dry_run:
-                    new = {**st, "checked": issue.get("updatedAt")}
+                    record = {**st, "checked": listed.get("updatedAt")}
                     if decision.startswith("skipped") and event.get("id") != st.get("event"):
-                        new.update(event=event.get("id"), status=decision, at=utc_now())
-                    cfg["issues"][key] = new
-                    save_issues(cfg)
+                        record.update(event=event.get("id"), status=decision, at=utc_now())
+                        if say:
+                            comment(full, number, say)
+                    set_issue(key, record)
                 continue
-            print(f"{tag}{key}: labeled by {actor}; {'would run' if args.dry_run else 'running'} {cfg.get('agent')} on it")
+            print(
+                f"{tag}{key}: labeled by {actor}; {'would run' if args.dry_run else 'running'} {cfg.get('agent')} on it"
+            )
             if args.dry_run:
                 continue
             # Recorded before the run: a crash or a reboot mid-run doesn't start it twice.
-            cfg["issues"][key] = {"event": event.get("id"), "status": "running", "at": utc_now()}
-            save_issues(cfg)
-            outcome = run_issue(cfg, full, repo, issue, actor)
+            set_issue(key, {"event": event.get("id"), "status": "running", "at": utc_now()})
+            outcome = run_issue(cfg, full, repo, number, issue_prompt(full, number, issue, label, actor))
             print(f"{key}: {outcome['status']} {outcome.get('pr', '')}".rstrip())
             # Our own comments changed updatedAt; the next poll looks once more and finds it handled.
-            cfg["issues"][key] = {"event": event.get("id"), "at": utc_now(), **outcome}
-            save_issues(cfg)
+            set_issue(key, {"event": event.get("id"), "at": utc_now(), **outcome})
+            return 0  # one issue per poll: each gets the whole timeout, and the timer brings the next
     return 0
 
 

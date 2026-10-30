@@ -58,7 +58,8 @@ python3 jules_import.py issues OWNER/REPO
 It clones the repo, creates the `jules` label if the repo lacks it, and checks for labeled issues every 2 minutes. Add the label to an issue, from the GitHub app if you like. The box comments on the issue, runs Claude Code (or Codex, with `--agent codex`) on it in a fresh worktree, the way scheduled tasks run, and opens a pull request that closes the issue. If nothing changed or the run failed, it says so on the issue.
 
 - **Who can hand it work.** Only labels you added, or that someone with write access added, count. A label from an issue template or a triager is skipped. Labels added before you ran `issues` don't count, so issues Jules already worked on stay as they are. To run an issue again, remove the label and add it back.
-- **One at a time.** Issues run one after another, each for up to 3 hours. If the repo was imported from your export, its setup script and variables are used too.
+- **What the agent reads.** It gets the issue's title and text as github.com shows them, so HTML comments and invisible characters stay out. If the title or text changed after the label went on, the issue doesn't run, and the box comments so; add the label again to run it as it reads now.
+- **One at a time.** Each check runs at most one issue, for up to 3 hours, and the next check takes the next one. If the repo was imported from your export, its setup script and variables are used too.
 - **Keep the box awake.** A paused box checks nothing: `prized box auto-pause BOX off`.
 - `python3 ~/.jules-import/jules_import.py issues` lists what ran. `issues --off` stops it. Logs are in `~/.jules-import/logs`.
 

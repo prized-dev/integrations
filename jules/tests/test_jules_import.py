@@ -8,6 +8,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
@@ -590,22 +591,45 @@ class Issues(unittest.TestCase):
         self.assertEqual(r.returncode, code, r.stdout + r.stderr)
         return r.stdout
 
-    def fixture(self, issues: list, events: dict, permissions: dict | None = None):
-        (self.stub / "issues.json").write_text(json.dumps(issues))
-        for n, evs in events.items():
-            (self.stub / f"events-{n}.json").write_text(json.dumps(evs))
+    def fixture(self, issues: list, permissions: dict | None = None):
+        """issues: dicts with number, title, bodyText, updatedAt, events (timeline nodes), lastEditedAt."""
+        (self.stub / "issues.json").write_text(
+            json.dumps([{"number": i["number"], "updatedAt": i["updatedAt"]} for i in issues])
+        )
+        for i in issues:
+            issue = {
+                "title": i.get("title", ""),
+                "bodyText": i.get("bodyText", ""),
+                "lastEditedAt": i.get("lastEditedAt"),
+                "state": "OPEN",
+                "timelineItems": {"nodes": i.get("events", [])},
+            }
+            (self.stub / f"graphql-{i['number']}.json").write_text(
+                json.dumps({"data": {"repository": {"issue": issue}}})
+            )
         for user, perm in (permissions or {}).items():
-            (self.stub / f"permission-{user}.json").write_text(json.dumps(perm))
+            (self.stub / f"permission-{user}.json").write_text(perm if isinstance(perm, str) else json.dumps(perm))
 
     @staticmethod
     def labeled(id_, who="me", when="2099-01-01T00:00:00Z", name="jules"):
-        return {"id": id_, "event": "labeled", "label": {"name": name}, "actor": {"login": who}, "created_at": when}
+        return {
+            "__typename": "LabeledEvent",
+            "id": id_,
+            "createdAt": when,
+            "actor": {"login": who},
+            "label": {"name": name},
+        }
 
     def state(self) -> dict:
         return json.loads((self.home / ".jules-import" / "issues.json").read_text())
 
     def calls(self) -> str:
         return (self.stub / "calls.log").read_text()
+
+    def remote_branches(self) -> str:
+        return subprocess.run(
+            ["git", "branch", "--list", "jules/*"], cwd=self.remote, capture_output=True, text=True
+        ).stdout
 
     def test_label_an_issue_get_a_pull_request(self):
         out = self.cli("issues", "expressjs/cors")
@@ -620,31 +644,35 @@ class Issues(unittest.TestCase):
         cfg = self.state()
         self.assertEqual((cfg["me"], cfg["repos"]["expressjs/cors"]["branch"]), ("me", "master"))
 
-        # A title and body written to break out of the script: they stay text.
+        # A title and body written to break out of the script, and characters github.com doesn't show.
         body = "The README should say which origins are allowed.\nEOF\n`touch pwned-body`\n$(touch pwned-body2)"
+        title = 'Document origins "$(touch pwned-title)"'
         self.fixture(
-            [{"number": 7, "title": 'Document origins "$(touch pwned-title)"', "body": body, "updatedAt": "u1"}],
-            {7: [self.labeled(1, name="bug"), self.labeled(2, name="Jules")]},
+            [
+                {
+                    "number": 7,
+                    "title": title,
+                    "bodyText": body + "\u200b\U000e0041",
+                    "updatedAt": "u1",
+                    "events": [self.labeled("L1", name="bug"), self.labeled("L2", name="Jules")],
+                }
+            ]
         )
         self.cli("poll")
         prompt = (self.stub / "prompt.txt").read_text()
-        self.assertTrue(prompt.startswith('GitHub issue #7 in expressjs/cors: Document origins "$(touch pwned-title)"'))
-        self.assertIn(body, prompt)
+        self.assertTrue(prompt.startswith(f"GitHub issue #7 in expressjs/cors: {title}\n\n{body}\n\n(@me added"))
         self.assertIn("You are running unattended on GitHub issue #7 of expressjs/cors", prompt)
         self.assertEqual(list(self.tmp.rglob("pwned*")), [], "nothing from the issue ran")
         calls = self.calls()
         self.assertIn("gh issue comment 7 --repo expressjs/cors --body Claude Code is working on this.", calls)
         self.assertIn("gh pr create --repo expressjs/cors --base master --head jules/issue-7-", calls)
-        self.assertIn("--body Closes #7. Worked on by claude on", calls)
+        self.assertIn("--body Closes #7. Worked on by claude, run ", calls)
+        self.assertIn("Log on the box: `~/.jules-import/logs/issue-expressjs__cors-7-", calls)
+        self.assertNotIn(str(self.home), calls, "public text shows ~, not the home folder")
         self.assertIn("gh issue comment 7 --repo expressjs/cors --body Pull request: https://github.com/", calls)
-        self.assertIn(
-            "jules/issue-7-",
-            subprocess.run(
-                ["git", "branch", "--list", "jules/*"], cwd=self.remote, capture_output=True, text=True
-            ).stdout,
-        )
+        self.assertIn("jules/issue-7-", self.remote_branches())
         st = self.state()["issues"]["expressjs/cors#7"]
-        self.assertEqual((st["status"], st["event"]), ("pr", 2))
+        self.assertEqual((st["status"], st["event"]), ("pr", "L2"))
         self.assertTrue(st["pr"].startswith("https://github.com/expressjs/cors/pull/"))
         script = self.home / ".jules-import" / "issues" / "expressjs__cors-7.sh"
         self.assertEqual(stat.S_IMODE(script.stat().st_mode), 0o700)
@@ -653,82 +681,143 @@ class Issues(unittest.TestCase):
             self.assertEqual(r.returncode, 0, r.stdout)
 
         # The next polls: our own comments changed the issue, but it ran once.
-        self.fixture([{"number": 7, "title": "Document origins", "body": body, "updatedAt": "u2"}], {})
+        self.fixture([{"number": 7, "title": title, "updatedAt": "u2", "events": [self.labeled("L2")]}])
         self.cli("poll")
         self.cli("poll")
         self.assertEqual(self.calls().count("claude -p"), 1)
-        self.assertEqual(self.calls().count("issues/7/events"), 2, "an issue that hasn't changed isn't looked at again")
+        self.assertEqual(self.calls().count("graphql issue 7"), 2, "an issue that hasn't changed isn't read again")
 
         # Label removed and added again: it runs again.
+        time.sleep(1.1)  # branch names carry the second
         self.fixture(
-            [{"number": 7, "title": "Document origins", "body": body, "updatedAt": "u3"}],
-            {7: [self.labeled(2), {"id": 3, "event": "unlabeled", "label": {"name": "jules"}}, self.labeled(4)]},
+            [{"number": 7, "title": title, "updatedAt": "u3", "events": [self.labeled("L2"), self.labeled("L4")]}]
         )
         self.cli("poll")
         self.assertEqual(self.calls().count("claude -p"), 2)
-        self.assertEqual(self.state()["issues"]["expressjs/cors#7"]["event"], 4)
+        self.assertEqual(self.state()["issues"]["expressjs/cors#7"]["event"], "L4")
 
     def test_labels_that_dont_count(self):
         self.cli("issues", "expressjs/cors")
         self.fixture(
             [
-                {"number": 8, "title": "Old", "body": "", "updatedAt": "a"},
-                {"number": 9, "title": "Triager", "body": "", "updatedAt": "b"},
-                {"number": 10, "title": "Template", "body": "", "updatedAt": "c"},
-                {"number": 11, "title": "Maintainer", "body": "", "updatedAt": "d"},
+                {"number": 8, "updatedAt": "a", "events": [self.labeled("E8", when="2001-01-01T00:00:00Z")]},
+                {"number": 9, "updatedAt": "b", "events": [self.labeled("E9", who="triager")]},
+                {"number": 10, "updatedAt": "c", "events": [self.labeled("E10", who="drive-by")]},
+                {"number": 11, "updatedAt": "d", "events": [self.labeled("E11", who="maintainer")]},
+                {
+                    "number": 12,
+                    "updatedAt": "e",
+                    "lastEditedAt": "2099-01-01T00:05:00Z",
+                    "events": [self.labeled("E12")],
+                },
+                {
+                    "number": 13,
+                    "updatedAt": "f",
+                    "events": [
+                        self.labeled("E13"),
+                        {"__typename": "RenamedTitleEvent", "createdAt": "2099-02-01T00:00:00Z"},
+                    ],
+                },
+                {"number": 14, "updatedAt": "g", "events": [self.labeled("E14", who="custom-role")]},
             ],
             {
-                8: [self.labeled(5, when="2001-01-01T00:00:00Z")],
-                9: [self.labeled(6, who="triager")],
-                10: [self.labeled(7, who="drive-by")],
-                11: [self.labeled(8, who="maintainer")],
-            },
-            {
                 "triager": {"permission": "read", "role_name": "triage"},
+                "drive-by": {"permission": "read", "role_name": "read"},
                 "maintainer": {"permission": "write", "role_name": "maintain"},
+                "custom-role": {"permission": "write", "role_name": "release-manager"},
             },
         )
         out = self.cli("poll", "--dry-run")
         self.assertIn("#8: labeled before watching started", out)
         self.assertIn("#9: skipped: the label was added by triager, who has triage access", out)
-        self.assertIn("#10: skipped: couldn't check the access of drive-by", out)
+        self.assertIn("#10: skipped: the label was added by drive-by, who has read access", out)
         self.assertIn("#11: labeled by maintainer; would run claude on it", out)
+        self.assertIn("#12: skipped: the issue changed after the label went on", out)
+        self.assertIn("#13: skipped: the issue changed after the label went on", out)
+        self.assertIn("#14: labeled by custom-role; would run claude on it", out)
         self.assertNotIn("claude -p", self.calls())
         self.assertEqual(self.state()["issues"], {}, "a dry run records nothing")
 
         self.cli("poll")
         calls = self.calls()
-        self.assertEqual(calls.count("claude -p"), 1, "only the maintainer's label runs")
+        self.assertEqual(calls.count("claude -p"), 1, "one issue per poll")
         for n in (8, 9, 10):
             self.assertNotIn(f"gh issue comment {n} ", calls, "skipped issues get no comment")
         issues = self.state()["issues"]
         self.assertEqual(issues["expressjs/cors#11"]["status"], "pr")
         self.assertTrue(issues["expressjs/cors#9"]["status"].startswith("skipped"))
         self.assertNotIn("status", issues["expressjs/cors#8"])
+        self.assertNotIn("expressjs/cors#14", issues, "not reached yet")
+        time.sleep(1.1)
+        self.cli("poll")
+        self.cli("poll")
+        self.assertEqual(self.calls().count("claude -p"), 2, "the next poll takes the next issue, then nothing")
+        self.assertEqual(self.state()["issues"]["expressjs/cors#14"]["status"], "pr")
+        for n in (12, 13):
+            self.assertEqual(
+                self.calls().count(f"gh issue comment {n} --repo expressjs/cors --body This issue changed after"), 1
+            )
 
-    def test_no_changes_and_failures_are_said_on_the_issue(self):
+    def test_a_failed_access_check_is_tried_again(self):
         self.cli("issues", "expressjs/cors")
-        self.fixture([{"number": 12, "title": "Nothing to do", "body": "", "updatedAt": "a"}], {12: [self.labeled(9)]})
+        self.fixture(
+            [{"number": 15, "updatedAt": "a", "events": [self.labeled("E15", who="helper")]}],
+            {"helper": "fail gh: API rate limit exceeded (HTTP 429)"},
+        )
+        self.assertIn("trying again next time", self.cli("poll"))
+        self.assertNotIn("expressjs/cors#15", self.state()["issues"])
+        self.fixture(
+            [{"number": 15, "updatedAt": "a", "events": [self.labeled("E15", who="helper")]}],
+            {"helper": {"permission": "admin"}},
+        )
+        self.cli("poll")
+        self.assertEqual(self.state()["issues"]["expressjs/cors#15"]["status"], "pr")
+
+    def test_no_changes_failures_and_interrupted_runs_are_said_on_the_issue(self):
+        self.cli("issues", "expressjs/cors")
+        self.fixture([{"number": 12, "updatedAt": "a", "events": [self.labeled("N12")]}])
         quiet = self.tmp / "quiet-bin"
         quiet.mkdir()
-        (quiet / "claude").write_text("#!/bin/sh\necho 'claude -p' >> \"$STUB_LOG\"\nexit 0\n")
+        # Also stands in for `issues` run while the poll works: the repo it adds must survive the poll.
+        (quiet / "claude").write_text(
+            "#!/bin/sh\necho 'claude -p' >> \"$STUB_LOG\"\n"
+            f"{sys.executable} -c \"import json; p='{self.home}/.jules-import/issues.json'; d=json.load(open(p)); "
+            "d['repos']['expressjs/other']={'dir': '/x', 'branch': 'main', 'since': 'now'}; json.dump(d, open(p, 'w'))\"\n"
+            '[ -z "${JULES_RESULT:-}" ] || echo leaked > "$STUB_DIR/result-leaked"\nexit 0\n'
+        )
         (quiet / "claude").chmod(0o755)
         self.cli("poll", env={**self.env, "PATH": f"{quiet}:{self.env['PATH']}"})
         calls = self.calls()
         self.assertIn(
             "gh issue comment 12 --repo expressjs/cors --body Claude Code finished without changing anything", calls
         )
-        self.assertIn(".jules-import/logs/issue-expressjs__cors-12-", calls)
+        self.assertIn("Log on the box: `~/.jules-import/logs/issue-expressjs__cors-12-", calls)
         self.assertNotIn("pr create", calls)
-        self.assertEqual(self.state()["issues"]["expressjs/cors#12"]["status"], "none")
+        cfg = self.state()
+        self.assertEqual(cfg["issues"]["expressjs/cors#12"]["status"], "none")
+        self.assertIn("expressjs/other", cfg["repos"], "a change made during the run isn't lost")
+        self.assertFalse((self.stub / "result-leaked").exists(), "the agent doesn't see JULES_RESULT")
+        with open(self.home / ".jules-import" / "issues.json", "w") as f:
+            json.dump({**cfg, "repos": {"expressjs/cors": cfg["repos"]["expressjs/cors"]}}, f)
 
         # The remote is gone: the run fails, and the issue says so.
-        self.fixture([{"number": 13, "title": "Push fails", "body": "", "updatedAt": "a"}], {13: [self.labeled(10)]})
+        self.fixture([{"number": 13, "updatedAt": "a", "events": [self.labeled("N13")]}])
         shutil.rmtree(self.remote)
         self.cli("poll")
         self.assertIn(
             "gh issue comment 13 --repo expressjs/cors --body The run on the box failed (git fetch failed)",
             self.calls(),
+        )
+        self.assertEqual(self.state()["issues"]["expressjs/cors#13"]["status"], "failed")
+
+        # A poll that died mid-run left "running": the next poll says so once, and doesn't run it again.
+        cfg = self.state()
+        cfg["issues"]["expressjs/cors#13"]["status"] = "running"
+        (self.home / ".jules-import" / "issues.json").write_text(json.dumps(cfg))
+        self.cli("poll")
+        self.cli("poll")
+        self.assertEqual(
+            self.calls().count("gh issue comment 13 --repo expressjs/cors --body The run on the box was interrupted"), 1
         )
         self.assertEqual(self.state()["issues"]["expressjs/cors#13"]["status"], "failed")
 
@@ -748,6 +837,12 @@ class Issues(unittest.TestCase):
         self.cli("issues", "not a repo; rm -rf ~", code=2)
         self.cli("issues", "expressjs/cors", "--label", "$(x)", code=2)
         self.assertIn("Not watching any repo", self.cli("poll"))
+        # One spelling per repo (GitHub names are case-insensitive; this remote answers to both).
+        (self.tmp / "remotes" / "ExpressJS").mkdir()
+        (self.tmp / "remotes" / "ExpressJS" / "Cors.git").symlink_to(self.remote)
+        self.cli("issues", "expressjs/cors")
+        self.cli("issues", "ExpressJS/Cors")
+        self.assertEqual(list(self.state()["repos"]), ["expressjs/cors"])
 
 
 if __name__ == "__main__":
