@@ -52,11 +52,11 @@ openhands-prized serve
 
 It prints a **Host / Base URL** (`http://127.0.0.1:8780`, or another free port if that one is taken) and an **API key**. In Agent Canvas, open **Add Backend** (in the backend switcher, or under **Manage Backends**), choose **Agent-server**, then **Local** (the proxy runs on your machine). Enter a **Host Name**, the **Host** (the URL) and the **API key**, and click **Connect**. Canvas keeps LLM settings on each backend's server, so set your LLM under Settings once for the sandbox.
 
-Ctrl-C pauses the sandbox. Its files, its conversations, its settings and the running server are kept. The next `openhands-prized serve` picks the same sandbox up in a few seconds, with the same URL and key, and Canvas reconnects by itself. Use `--new` for a fresh sandbox, `--sandbox <id>` for a specific one, `--fork <id>` for a copy of one (files, conversations, settings and the running server), or `--on-exit delete` to delete it on exit.
+Ctrl-C pauses the sandbox. Its files, its conversations, its settings and the running server are kept. The next `openhands-prized serve` picks the same sandbox up in a few seconds, with the same URL and key, and the chat reconnects by itself. Use `--new` for a fresh sandbox, `--sandbox <id>` for a specific one, `--fork <id>` for a copy of one (files, conversations, settings and the running server), or `--on-exit delete` to delete it on exit.
 
-Tested with Agent Canvas `main` (October 30, 2026; Canvas 1.34.0, Agent Server 1.59.0) in Chromium, using the web app: there, Add Backend offers only "OpenHands Cloud" and "Agent-server". (Canvas's **Providers** tab, which has DigitalOcean, appears only in the desktop app or a web build run with `MARS_WEB=1`.) A coding task ran end to end from the Canvas UI. Then Ctrl-C, `serve` again, and a follow-up message in the same conversation. While the sandbox is paused, Canvas shows the conversation as disconnected. It reconnected by itself about 22 s after `serve` was back in our recorded run (one sample; it can take up to about 40 s). That is probably Canvas's WebSocket retry, which waits 1 s, doubling to a 30 s cap, plus up to 30% jitter (read in its source, not tested); Canvas's Retry button was not tried. Conversations, the Files, Commits, Terminal and Usage panels, page reloads, and switching backends all work.
+Tested with Agent Canvas `main` (October 30, 2026; Canvas 1.34.0, Agent Server 1.59.0) in Chromium, using the web app: there, Add Backend offers only "OpenHands Cloud" and "Agent-server". (Canvas's **Providers** tab, which has DigitalOcean, appears only in the desktop app or a web build run with `MARS_WEB=1`.) A coding task ran end to end from the Canvas UI. Then Ctrl-C, `serve` again, and a follow-up message in the same conversation. While the sandbox is paused, Canvas shows the conversation as disconnected. In our recorded run, after `serve` printed its URL again, the chat showed connected within 4 s and the sidebar's green dot for the backend followed 22 s after (one sample). Probably the chat follows Canvas's WebSocket retry (it waits 1 s, doubling to a 30 s cap, plus up to 30% jitter) and the dot follows its backend health check (it polls every 30 s); that is read from its source (`use-websocket.ts`, `use-backends-health.ts`), not tested. The source also says the health check stops after 5 failed polls until you open Manage Backends or edit the backend, so a pause of more than a couple of minutes may leave the dot red: we only tried a pause of about 15 s. Canvas's Retry button was not tried. Conversations, the Files, Commits, Terminal and Usage panels, page reloads, and switching backends all work.
 
-The agent in that run was not a stock OpenHands agent: it used a custom system prompt (Claude Code's identity line plus OpenHands' own sections), because the model ran through Prized's LLM gateway, which requires that line. Setting an ordinary LLM key under Settings, as described above, was not tried. Not on this backend yet:
+The agent in that run was not a stock OpenHands agent: it used a custom system prompt (Claude Code's identity line plus OpenHands' own sections), because Prized's LLM gateway expects that line at the head of the system prompt (a bare one-line probe without it also worked, so we have not shown it is enforced for long prompts). Setting an ordinary LLM key under Settings, as described above, was not tried. Not on this backend yet:
 - **Automations.** Canvas expects its automation service next to the Agent Server.
 - **The browser tool**, since the sandbox has no Chromium.
 - **VS Code.**
@@ -65,7 +65,7 @@ The agent in that run was not a stock OpenHands agent: it used a custom system p
 
 Your machine can't open a connection into a sandbox, so a proxy on `127.0.0.1` carries each request:
 
-- **`exec`** (the default, on every plan): each HTTP request runs `curl` in the sandbox through Prized's command API. Each WebSocket (the SDK's event stream) is relayed by a small background script there. This adds about one command round trip per request (53 ms at the median in our runs), and WebSocket output arrived about 0.4 s after the event.
+- **`exec`** (the default, on every plan): each HTTP request runs `curl` in the sandbox through Prized's command API. Each WebSocket (the SDK's event stream) is relayed by a small background script there. This adds about one command round trip per request (52-68 ms at the median in our runs), and WebSocket output arrived about 0.4 s after the event.
 - **`ingress`** (`connection="ingress"`, or `"auto"` to use it when it answers): requests go straight to the sandbox's port URL, with the `Prized-Key` header added by the proxy. It needs sandbox port URLs, which are not turned on yet, so it has only been tested offline.
 
 The Agent Server's own session key passes through the proxy unchanged. The proxy only answers to `127.0.0.1` and `localhost` Host headers. While the workspace is paused it answers 503, because anything reaching the sandbox would wake it.
@@ -89,7 +89,7 @@ The Agent Server's own session key passes through the proxy unchanged. The proxy
 
 ## Results
 
-The first rows come from `scripts/live_e2e.py`, 2 vCPU / 4 GB, exec transport, OpenHands 1.59.0, October 30, 2026. The model was `claude-opus-5-5` through Prized's LLM gateway, which needed Claude Code's identity line added to the head of OpenHands' system prompt; nothing else changed. Five runs in a row passed, the last two on this exact code. Two earlier runs had failed on a `pause()` bug, which is now fixed. In every passing run the agent fixed two bugs so the unit tests pass, without editing the tests. In the last two runs, a 200 KB upload and a 3 MB download through the Agent Server also arrived intact.
+The first rows come from `scripts/live_e2e.py`, 2 vCPU / 4 GB, exec transport, OpenHands 1.59.0, October 30, 2026. The model was `claude-opus-5-5` through Prized's LLM gateway, with Claude Code's identity line added to the head of OpenHands' system prompt, as the gateway expects (a bare one-line probe without it also worked); nothing else changed. Five runs in a row passed, the last two on this exact code. Two earlier runs had failed on a `pause()` bug, which is now fixed. In every passing run the agent fixed two bugs so the unit tests pass, without editing the tests. In the last two runs, a 200 KB upload and a 3 MB download through the Agent Server also arrived intact.
 
 | | Each run |
 |---|---|
@@ -113,7 +113,7 @@ Agent Canvas runs (two runs, `serve` through the CLI; each time is labelled by w
 | `serve` on a fresh sandbox: printed "workspace ready" / Enter to the URL | 15.7 s / 20.1 s (20.7-22.1 s to the URL in three harness runs) |
 | LLM cost in Canvas (OpenHands' own count) | $0.14-0.25 per turn; $0.32-0.43 for both turns |
 
-A request through the proxy takes 53 ms at the median (61 ms p90), from a client in the same AWS region. Socket output arrives about 0.4 s after the event.
+A request through the proxy takes 52-68 ms at the median (59-85 ms p90) across three `serve` runs, from a client in the same AWS region. Socket output arrives 0.42-0.46 s after the event.
 
 ## Limits
 

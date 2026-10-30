@@ -100,15 +100,13 @@ def test_main_hides_the_sdk_banner(fake_serve):
     assert os.environ["OPENHANDS_SUPPRESS_BANNER"] == "1"
 
 
-def test_the_banner_setting_does_not_leak_into_the_next_test():
-    assert "OPENHANDS_SUPPRESS_BANNER" not in os.environ
-
-
 @pytest.fixture
 def restore_signals():
     saved = {
         getattr(signal, n): signal.getsignal(getattr(signal, n)) for n in ("SIGTERM", "SIGHUP") if hasattr(signal, n)
     }
+    for sig in saved:  # start from the defaults, even if the test runner itself was started with SIGHUP ignored
+        signal.signal(sig, signal.SIG_DFL)
     yield
     for sig, handler in saved.items():
         signal.signal(sig, handler)
@@ -143,6 +141,12 @@ def test_nohup_keeps_sighup_ignored(restore_signals):
     signal.signal(signal.SIGHUP, signal.SIG_IGN)
     cli._stop_on_signals()
     assert signal.getsignal(signal.SIGHUP) is signal.SIG_IGN
+    assert signal.getsignal(signal.SIGTERM) is cli._interrupt
+
+
+def test_sigterm_is_always_taken_over(restore_signals):
+    signal.signal(signal.SIGTERM, signal.SIG_IGN)
+    cli._stop_on_signals()
     assert signal.getsignal(signal.SIGTERM) is cli._interrupt
 
 

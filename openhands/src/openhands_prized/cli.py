@@ -94,7 +94,7 @@ def _stop_on_signals() -> None:
         if sig is None:
             continue
         try:
-            if signal.getsignal(sig) is signal.SIG_IGN:
+            if name == "SIGHUP" and signal.getsignal(sig) is signal.SIG_IGN:
                 continue
             signal.signal(sig, _interrupt)
         except ValueError:
