@@ -28,8 +28,9 @@ openhands-prized = "openhands_prized.cli:main"
 
 [project.urls]
 Homepage = "https://prized.dev/sandboxes?via=openhands"
-Documentation = "https://github.com/prized-dev/integrations/tree/main/openhands#readme"
-Source = "https://github.com/prized-dev/integrations/tree/main/openhands"
+# On the `openhands` branch until the PR merges (main has no openhands/ folder yet); then use tree/main/openhands.
+Documentation = "https://github.com/prized-dev/integrations/tree/openhands/openhands#readme"
+Source = "https://github.com/prized-dev/integrations/tree/openhands/openhands"
 Issues = "https://github.com/prized-dev/integrations/issues"
 
 [tool.hatch.version]

@@ -8,7 +8,7 @@ Run the [OpenHands](https://github.com/OpenHands/OpenHands) Agent Server in [Pri
 You don't need an OpenHands fork, Docker or a public URL.
 
 ```bash
-pip install openhands-sdk openhands-tools openhands-prized   # not on PyPI yet: until then, "openhands-prized @ git+https://github.com/prized-dev/integrations#subdirectory=openhands"
+pip install openhands-sdk openhands-tools openhands-prized   # not on PyPI yet: until then, "openhands-prized @ git+https://github.com/prized-dev/integrations@openhands#subdirectory=openhands"
 export PRIZED_API_KEY=dcp_...   # https://prized.dev/onboarding/sandboxes?via=openhands
 ```
 
@@ -50,13 +50,13 @@ The agent loop, its tools and your LLM calls run in the sandbox. Your Prized key
 openhands-prized serve
 ```
 
-It prints a **Host / Base URL** (`http://127.0.0.1:8780`, or another free port if that one is taken) and an **API key**. In Agent Canvas, open **Manage Backends → Add Backend** and enter both. Then set your LLM under Settings.
-
-In Canvas, choose **Agent-server**, then **Local** (the proxy runs on your machine), and enter that URL and key. Canvas keeps LLM settings on each backend's server, so set your LLM under Settings once for the sandbox.
+It prints a **Host / Base URL** (`http://127.0.0.1:8780`, or another free port if that one is taken) and an **API key**. In Agent Canvas, open **Add Backend** (in the backend switcher, or under **Manage Backends**), choose **Agent-server**, then **Local** (the proxy runs on your machine). Enter a **Host Name**, the **Host** (the URL) and the **API key**, and click **Connect**. Canvas keeps LLM settings on each backend's server, so set your LLM under Settings once for the sandbox.
 
 Ctrl-C pauses the sandbox. Its files, its conversations, its settings and the running server are kept. The next `openhands-prized serve` picks the same sandbox up in a few seconds, with the same URL and key, and Canvas reconnects by itself. Use `--new` for a fresh sandbox, `--sandbox <id>` for a specific one, `--fork <id>` for a copy of one (files, conversations, settings and the running server), or `--on-exit delete` to delete it on exit.
 
-Tested with Agent Canvas `main` (October 30, 2026; Canvas 1.34.0, Agent Server 1.59.0) in Chromium. A coding task ran end to end from the Canvas UI. Then Ctrl-C, `serve` again, and a follow-up message in the same conversation. Canvas shows the backend as disconnected while the sandbox is paused and reconnects by itself, about 20 s after `serve` is back (its WebSocket retry backs off from 1 s up to 30 s). Conversations, the Files, Commits, Terminal and Usage panels, page reloads, and switching backends all work. Not on this backend yet:
+Tested with Agent Canvas `main` (October 30, 2026; Canvas 1.34.0, Agent Server 1.59.0) in Chromium, using the web app: there, Add Backend offers only "OpenHands Cloud" and "Agent-server". (Canvas's **Providers** tab, which has DigitalOcean, appears only in the desktop app or a web build run with `MARS_WEB=1`.) A coding task ran end to end from the Canvas UI. Then Ctrl-C, `serve` again, and a follow-up message in the same conversation. While the sandbox is paused, Canvas shows the conversation as disconnected. It reconnected by itself about 22 s after `serve` was back in our recorded run (one sample; it can take up to about 40 s). That is probably Canvas's WebSocket retry, which waits 1 s, doubling to a 30 s cap, plus up to 30% jitter (read in its source, not tested); Canvas's Retry button was not tried. Conversations, the Files, Commits, Terminal and Usage panels, page reloads, and switching backends all work.
+
+The agent in that run was not a stock OpenHands agent: it used a custom system prompt (Claude Code's identity line plus OpenHands' own sections), because the model ran through Prized's LLM gateway, which requires that line. Setting an ordinary LLM key under Settings, as described above, was not tried. Not on this backend yet:
 - **Automations.** Canvas expects its automation service next to the Agent Server.
 - **The browser tool**, since the sandbox has no Chromium.
 - **VS Code.**
@@ -65,7 +65,7 @@ Tested with Agent Canvas `main` (October 30, 2026; Canvas 1.34.0, Agent Server 1
 
 Your machine can't open a connection into a sandbox, so a proxy on `127.0.0.1` carries each request:
 
-- **`exec`** (the default, on every plan): each HTTP request runs `curl` in the sandbox through Prized's command API. Each WebSocket (the SDK's event stream) is relayed by a small background script there. This adds about one command round trip per request and up to a second of event latency.
+- **`exec`** (the default, on every plan): each HTTP request runs `curl` in the sandbox through Prized's command API. Each WebSocket (the SDK's event stream) is relayed by a small background script there. This adds about one command round trip per request (53 ms at the median in our runs), and WebSocket output arrived about 0.4 s after the event.
 - **`ingress`** (`connection="ingress"`, or `"auto"` to use it when it answers): requests go straight to the sandbox's port URL, with the `Prized-Key` header added by the proxy. It needs sandbox port URLs, which are not turned on yet, so it has only been tested offline.
 
 The Agent Server's own session key passes through the proxy unchanged. The proxy only answers to `127.0.0.1` and `localhost` Host headers. While the workspace is paused it answers 503, because anything reaching the sandbox would wake it.
@@ -89,7 +89,7 @@ The Agent Server's own session key passes through the proxy unchanged. The proxy
 
 ## Results
 
-`scripts/live_e2e.py`, 2 vCPU / 4 GB, exec transport, OpenHands 1.59.0, October 30, 2026. The model was `claude-opus-5-5` through Prized's LLM gateway, which needed Claude Code's identity line added to the head of OpenHands' system prompt; nothing else changed. Five runs in a row passed, the last two on this exact code. Two earlier runs had failed on a `pause()` bug, which is now fixed. In every passing run the agent fixed two bugs so the unit tests pass, without editing the tests. In the last two runs, a 200 KB upload and a 3 MB download through the Agent Server also arrived intact.
+The first rows come from `scripts/live_e2e.py`, 2 vCPU / 4 GB, exec transport, OpenHands 1.59.0, October 30, 2026. The model was `claude-opus-5-5` through Prized's LLM gateway, which needed Claude Code's identity line added to the head of OpenHands' system prompt; nothing else changed. Five runs in a row passed, the last two on this exact code. Two earlier runs had failed on a `pause()` bug, which is now fixed. In every passing run the agent fixed two bugs so the unit tests pass, without editing the tests. In the last two runs, a 200 KB upload and a 3 MB download through the Agent Server also arrived intact.
 
 | | Each run |
 |---|---|
@@ -97,12 +97,21 @@ The Agent Server's own session key passes through the proxy unchanged. The proxy
 | The task (agent fixes the bugs and runs the tests) | 9.0-10.8 s |
 | `pause()` + `resume()`, server still running | 0.8-2.0 s |
 | Warm start with `fork_from` (the fix is there too) | 3.8-4.4 s |
-| `serve`: Ctrl-C, then `serve` again (same sandbox, URL, key and server; files kept) | 4.1-4.4 s |
-| Agent Canvas: a task sent from the UI, to the agent's last message (a Roman numerals module with tests, 79-85 passing) | 31-33 s |
-| Agent Canvas: a follow-up in the same conversation after Ctrl-C and `serve` (94 tests passing) | 36 s |
-| Agent Canvas: `serve` after Ctrl-C, sandbox resumed and server reused (`serve --fork`: 2.3-4.8 s) | 0.8-1.1 s |
+| `serve`: Ctrl-C, then `serve` again, from process start to the URL printed (same sandbox, URL, key and server; files kept; three harness runs) | 4.1-4.4 s |
 | Sandbox cost at list price | $0.0014 |
-| LLM cost (OpenHands' own count) | $0.03-0.09; in Canvas $0.14-0.17 per turn |
+| LLM cost (OpenHands' own count) | $0.03-0.09 |
+
+Agent Canvas runs (two runs, `serve` through the CLI; each time is labelled by what it measures):
+
+| | Each run |
+|---|---|
+| A task sent from the UI, to the agent's last message (a Roman numerals module with tests, 79-85 passing) | 31-33 s |
+| A follow-up in the same conversation after Ctrl-C and `serve` (94 and 102 tests passing) | 36-46 s |
+| `serve` again after Ctrl-C: the printed "workspace ready" time (sandbox resumed, server reused) | 0.8-1.1 s |
+| The same, wall time from Enter to the URL (CLI start and login included) | 6.2 s in the recorded run |
+| `serve --fork <sandbox>`: printed "workspace ready" / Enter to the URL | 2.3-4.8 s / about 7-9 s |
+| `serve` on a fresh sandbox: printed "workspace ready" / Enter to the URL | 15.7 s / 20.1 s (20.7-22.1 s to the URL in three harness runs) |
+| LLM cost in Canvas (OpenHands' own count) | $0.14-0.25 per turn; $0.32-0.43 for both turns |
 
 A request through the proxy takes 53 ms at the median (61 ms p90), from a client in the same AWS region. Socket output arrives about 0.4 s after the event.
 

@@ -2,7 +2,7 @@
 
 Starts (or reattaches to) a sandbox running the Agent Server and serves it on
 ``http://127.0.0.1:<port>`` until Ctrl-C. Add that URL and the printed API key in
-Agent Canvas (Manage Backends > Add Backend).
+Agent Canvas (Add Backend > Agent-server > Local).
 """
 
 from __future__ import annotations
@@ -85,6 +85,27 @@ def _interrupt(*_: object) -> None:
     raise KeyboardInterrupt
 
 
+def _stop_on_signals() -> None:
+    """Make SIGTERM and SIGHUP (the terminal closing) stop serve like Ctrl-C does, so the sandbox is
+    still paused. SIGHUP does not exist on Windows, a SIGHUP that was ignored on purpose (``nohup``)
+    stays ignored, and ``signal.signal`` raises ValueError off the main thread."""
+    for name in ("SIGTERM", "SIGHUP"):
+        sig = getattr(signal, name, None)
+        if sig is None:
+            continue
+        try:
+            if signal.getsignal(sig) is signal.SIG_IGN:
+                continue
+            signal.signal(sig, _interrupt)
+        except ValueError:
+            return  # not the main thread: the caller owns the signals
+
+
+def _wait_for_interrupt() -> None:
+    while True:
+        time.sleep(3600)
+
+
 def _previous_sandbox() -> str | None:
     """The newest sandbox an earlier serve left (paused or running), so a plain
     ``serve`` picks up where the last one stopped instead of piling up paused ones."""
@@ -101,8 +122,8 @@ def _previous_sandbox() -> str | None:
 def serve(args: argparse.Namespace) -> int:
     from .workspace import PrizedWorkspace
 
-    # SIGTERM during the ~20 s startup must still clean up (KeyboardInterrupt does).
-    signal.signal(signal.SIGTERM, _interrupt)
+    # A signal during the ~20 s startup must still clean up (KeyboardInterrupt does).
+    _stop_on_signals()
     sandbox_id = args.sandbox
     if not sandbox_id and not args.fork and not args.new:
         sandbox_id = _previous_sandbox()
@@ -128,14 +149,13 @@ def serve(args: argparse.Namespace) -> int:
             f"\nAgent Server for Agent Canvas, in Prized sandbox {ws.sandbox.id} ({ws.transport}):\n"
             f"  Host / Base URL:  {ws.host}\n"
             f"  API key:          {ws.api_key}\n\n"
-            "Add it in Agent Canvas: Manage Backends > Add Backend.\n"
+            "Add it in Agent Canvas: Add Backend > Agent-server > Local (a name, this Host, this API key).\n"
             f"Ctrl-C to stop; the sandbox is then {'paused' if args.on_exit == 'pause' else args.on_exit + 'd'}"
             + (" (serve again to pick it up)." if args.on_exit != "delete" else "."),
             flush=True,
         )
         try:
-            while True:
-                time.sleep(3600)
+            _wait_for_interrupt()
         except KeyboardInterrupt:
             pass
     finally:
