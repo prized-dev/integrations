@@ -27,6 +27,8 @@ class Result:
     stderr: str = ""
     exit_code: int = 0
     timed_out: bool = False
+    truncated: bool = False
+    truncated_reason: str | None = None
 
 
 @dataclass

@@ -217,6 +217,12 @@ class PrizedSandbox(VmSandbox):
             if exc.code in LOST_CODES:
                 return CompletedProcess(b"", f"Prized {exc.code}: {exc}".encode(), UNKNOWN_EXIT_CODE)
             raise
+        if result.truncated:
+            # Partial output never reads as the whole.
+            raise RuntimeError(
+                f"A command's output in Prized sandbox {self.sandbox_id} passed what an exec returns "
+                f"({result.truncated_reason}); write it to a file and read that instead"
+            )
         return CompletedProcess(
             result.stdout.encode("utf-8", "surrogateescape"),
             result.stderr.encode("utf-8", "surrogateescape"),

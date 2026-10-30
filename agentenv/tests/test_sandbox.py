@@ -70,6 +70,12 @@ async def test_a_real_failure_is_not_retried(box, cloud):
     assert (cloud.workdir / "tries").read_text() == "once\n"
 
 
+async def test_cut_off_output_is_never_returned_as_whole(box, cloud):
+    cloud.answer(lambda command: Result("part", truncated=True, truncated_reason="limit") if "big" in command else None)
+    with pytest.raises(RuntimeError, match="passed what an exec returns"):
+        await box.exec_with_output("bash", "-c", "echo big")
+
+
 async def test_a_gone_sandbox_raises(box, cloud):
     cloud.sandboxes[box.sandbox_id].state = "deleted"
     with pytest.raises(PrizedError) as caught:
