@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import signal
 import socket
 import sys
@@ -138,13 +139,18 @@ def serve(args: argparse.Namespace) -> int:
         except KeyboardInterrupt:
             pass
     finally:
-        print("\nStopping...", file=sys.stderr, flush=True)
+        try:
+            print("\nStopping...", file=sys.stderr, flush=True)
+        except OSError:
+            pass  # stderr already gone (a closed pipe or terminal): the sandbox must still be paused
         ws.cleanup()
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    # The OpenHands SDK prints a banner box when it is imported; serve's output is the URL and key.
+    os.environ.setdefault("OPENHANDS_SUPPRESS_BANNER", "1")
     logging.basicConfig(level=logging.INFO if args.verbose else logging.WARNING, format="%(message)s")
     if args.command == "serve":
         return serve(args)
