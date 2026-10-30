@@ -34,7 +34,7 @@ def provider(cloud):
 
 def root_mode(cloud: FakeCloud, mode: str) -> None:
     """Have the sandbox answer the root probe with ``mode``."""
-    cloud.answer(lambda command: Result(f"{mode}\n") if "sudo -n true" in command and "echo sudo" in command else None)
+    cloud.answer(lambda command: Result(f"{mode}\n") if "echo none" in command and "docker info" in command else None)
 
 
 def docker_ready(cloud: FakeCloud, ok: bool = True) -> None:

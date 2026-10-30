@@ -31,7 +31,7 @@ from agentenv_prized.provider import (
 from agentenv_prized.sandbox import PrizedSandbox
 
 from .conftest import FAKE_KEY, docker_ready, root_mode
-from .fakes import error
+from .fakes import Result, error
 
 PREVIEW = {"previewUrlTemplate": "https://{port}-sbx-0000000000000001.p.example.test/"}
 
@@ -115,6 +115,12 @@ def test_labels_carry_the_mark_ports_and_attribution_within_limits(caplog):
     assert "left off" in caplog.text
 
 
+def test_attribution_cant_pose_as_the_ports_label():
+    labels = sandbox_labels({"ports": "8080", "agentenv.ports": "1"}, [])
+    assert PORTS_LABEL not in labels
+    assert labels["agentenv-ports"] == "8080"
+
+
 # --- create -----------------------------------------------------------------------------------
 
 
@@ -137,25 +143,25 @@ async def test_create_vm_sends_template_shape_runtime_and_labels(provider, cloud
 
 async def test_create_vm_with_setup_waits_for_docker_and_settles_root(provider, cloud):
     docker_ready(cloud)
-    root_mode(cloud, "sudo")
+    root_mode(cloud, "docker")
+    cloud.answer(lambda command: Result() if "--name agentenv-prized-root" in command else None)
     sandbox = await provider.create_vm(timeout=600)
     assert any("docker compose version" in command for command in cloud.commands)
-    assert await sandbox.root_mode() == "sudo"
+    assert await sandbox.root_mode() == "docker"
 
 
-async def test_exposed_ports_get_the_api_port_urls(provider, cloud):
+async def test_port_urls_that_need_a_key_are_refused_and_the_sandbox_deleted(provider, cloud):
+    """The API names port URLs once ingress is on, but they answer only requests with a Prized key."""
     cloud.document = dict(PREVIEW)
-    sandbox = await provider.create_vm(exposed_ports=[8080, 8080, 3000], setup_for_gateway=False)
-    assert sandbox.tunnel_urls == {
-        8080: "https://8080-sbx-0000000000000001.p.example.test",
-        3000: "https://3000-sbx-0000000000000001.p.example.test",
-    }
+    with pytest.raises(ValueError, match="carry a Prized API key"):
+        await provider.create_vm(exposed_ports=[8080, 8080, 3000], setup_for_gateway=False)
     (record,) = cloud.sandboxes.values()
+    assert record.state == "deleted"
     assert record.labels[PORTS_LABEL] == "8080,3000"
 
 
 async def test_exposed_ports_without_port_urls_delete_the_sandbox(provider, cloud):
-    with pytest.raises(ValueError, match="no public port URLs"):
+    with pytest.raises(ValueError, match="no port URLs"):
         await provider.create_vm(exposed_ports=[8080], setup_for_gateway=False)
     (record,) = cloud.sandboxes.values()
     assert record.state == "deleted"
@@ -235,27 +241,87 @@ async def test_cancelled_setup_deletes_the_sandbox(provider, cloud):
     assert record.state == "deleted"
 
 
-async def test_create_sandbox_is_a_vm_with_the_agent_port(provider, cloud):
-    cloud.document = dict(PREVIEW)
+async def test_an_agent_sandbox_needs_its_port_reachable(provider, cloud):
+    """create_sandbox is a VM exposing the agent's port, so it waits on port URLs like any exposed port."""
     docker_ready(cloud)
-    root_mode(cloud, "sudo")
-    sandbox = await provider.create_sandbox(image_name="agent:latest", port=8000, env={"A": "b"}, timeout=600)
-    assert sandbox.mode == "vm"
-    assert list(sandbox.tunnel_urls) == [8000]
+    with pytest.raises(ValueError, match="exposed ports can't be reached yet"):
+        await provider.create_sandbox(image_name="agent:latest", port=8000, env={"A": "b"}, timeout=600)
+    (record,) = cloud.sandboxes.values()
+    assert (record.state, record.labels[PORTS_LABEL]) == ("deleted", "8000")
+    assert cloud.commands == []
+
+
+async def test_a_second_cancellation_still_deletes_the_sandbox(provider, cloud):
+    started = asyncio.Event()
+    original = cloud.run
+
+    async def slow_run(command: str):
+        if "docker compose version" in command:
+            started.set()
+            await asyncio.sleep(3600)
+        return await original(command)
+
+    cloud.run = slow_run
+    cloud.delete_delay = 0.2
+    task = asyncio.ensure_future(provider.create_vm(timeout=600))
+    await asyncio.wait_for(started.wait(), 5)
+    task.cancel()
+    await asyncio.sleep(0.05)
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    for _ in range(50):
+        if all(record.state == "deleted" for record in cloud.sandboxes.values()):
+            break
+        await asyncio.sleep(0.05)
+    (record,) = cloud.sandboxes.values()
+    assert record.state == "deleted"
+
+
+def test_a_run_that_ends_right_after_a_double_cancel_still_deletes(cloud):
+    """asyncio.run cancels the tasks left when its main coroutine returns; the cleanup delete finishes anyway."""
+    provider = PrizedSandboxProvider(api_key=FAKE_KEY, sandbox_cls=cloud.cls())
+
+    async def main():
+        started = asyncio.Event()
+        original = cloud.run
+
+        async def slow_run(command: str):
+            if "docker compose version" in command:
+                started.set()
+                await asyncio.sleep(3600)
+            return await original(command)
+
+        cloud.run = slow_run
+        cloud.delete_delay = 0.3
+        task = asyncio.ensure_future(provider.create_vm(timeout=600))
+        await asyncio.wait_for(started.wait(), 5)
+        task.cancel()
+        await asyncio.sleep(0.05)
+        task.cancel()
+        await asyncio.sleep(0)
+
+    asyncio.run(main())
+    (record,) = cloud.sandboxes.values()
+    assert record.state == "deleted"
 
 
 # --- reconnect and teardown -------------------------------------------------------------------
 
 
-async def test_get_sandbox_from_a_fresh_provider_restores_ports_and_policy(cloud):
-    cloud.document = dict(PREVIEW)
+async def test_get_sandbox_from_a_fresh_provider_restores_the_handle(cloud, caplog):
     first = PrizedSandboxProvider(api_key=FAKE_KEY, sandbox_cls=cloud.cls())
-    made = await first.create_vm(exposed_ports=[8080], setup_for_gateway=False)
+    made = await first.create_vm(setup_for_gateway=False)
     fresh = PrizedSandboxProvider(api_key=FAKE_KEY, sandbox_cls=cloud.cls())
     again = await fresh.get_sandbox(made.sandbox_id)
-    assert again.tunnel_urls == made.tunnel_urls
+    assert (again.type, again.mode, again.sandbox_id) == ("prized", "vm", made.sandbox_id)
     assert again.network_policy == NetworkPolicy()
-    assert (again.type, again.mode) == ("prized", "vm")
+    assert again.tunnel_urls == {}
+    # A sandbox whose labels name ports it has no usable URLs for reconnects with none, saying so.
+    cloud.sandboxes[made.sandbox_id].labels[PORTS_LABEL] = "8080"
+    with caplog.at_level(logging.WARNING):
+        assert (await fresh.get_sandbox(made.sandbox_id)).tunnel_urls == {}
+    assert "no port URLs" in caplog.text
 
 
 async def test_get_sandbox_of_a_gone_sandbox_raises_not_found(provider, cloud):
@@ -284,8 +350,24 @@ async def test_terminate_sandbox_deletes_by_id_even_in_error(provider, cloud):
     assert cloud.sandboxes[made.sandbox_id].state == "deleted"
 
 
-async def test_close_releases_sdk_handles_and_keeps_sandboxes(provider, cloud):
+async def test_close_releases_sdk_handles_and_the_loop_client_and_keeps_sandboxes(cloud):
+    clients = []
+
+    class Client:
+        closed = False
+
+        async def aclose(self):
+            self.closed = True
+
+    def factory():
+        clients.append(Client())
+        return clients[-1]
+
+    provider = PrizedSandboxProvider(api_key=FAKE_KEY, sandbox_cls=cloud.cls(), http_client_factory=factory)
     made = await provider.create_vm(setup_for_gateway=False)
+    await provider.get_sandbox(made.sandbox_id)
+    assert len(clients) == 1
+    assert all(r.create_kwargs["http_client"] is clients[0] for r in cloud.sandboxes.values())
     await provider.close()
-    assert cloud.closed == 1
+    assert cloud.closed == 2 and clients[0].closed
     assert cloud.sandboxes[made.sandbox_id].state == "running"

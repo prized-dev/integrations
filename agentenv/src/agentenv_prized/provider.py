@@ -11,9 +11,11 @@ import asyncio
 import logging
 import math
 import re
-from collections.abc import Mapping
+import weakref
+from collections.abc import Callable, Mapping
 from typing import Any, ClassVar, Self
 
+import httpx
 from agent_env.attribution import Attribution
 from agent_env.config.errors import ConfigError
 from agent_env.providers.sandbox_providers.sandbox import NetworkPolicy
@@ -51,14 +53,16 @@ RESERVED_PORTS = frozenset({22, 81})
 # Labels every sandbox carries: one marking it as agent-env's, and the exposed ports, which get_sandbox reads back on a
 # freshly built provider. Attribution goes in labels under ATTRIBUTION_PREFIX.
 MARK_LABEL = "agentenv"
-PORTS_LABEL = "agentenv-ports"
+# The ports label has a dot, so no attribution label (always "agentenv-<key>") can take its name.
+PORTS_LABEL = "agentenv.ports"
 ATTRIBUTION_PREFIX = "agentenv-"
 MAX_LABELS = 32
 MAX_LABEL_KEY = 64
 MAX_LABEL_VALUE = 256
 _LABEL_KEY_UNSAFE = re.compile(r"[^A-Za-z0-9_.-]")
-# How long a create may take to reach running before it is given up (and its sandbox deleted).
-CREATE_TIMEOUT_SEC = 180.0
+# How long a create may take to reach running before it is given up (and its sandbox deleted): sandboxes over 16 vCPU
+# can take a minute or two to start.
+CREATE_TIMEOUT_SEC = 300.0
 # Codes of a create the request itself can't satisfy, as opposed to a platform failure.
 _UNSATISFIABLE_CODES = frozenset(
     {"invalid_resources", "template_not_found", "template_inactive", "invalid_max_runtime"}
@@ -66,8 +70,8 @@ _UNSATISFIABLE_CODES = frozenset(
 
 
 def sandbox_shape(cpu: float, memory_mb: int, disk_size_gb: float) -> tuple[int, int, int]:
-    """``(vcpu, memory_mb, disk_gb)`` covering the request: whole vCPUs and GiB, rounded up. A request past the API's
-    ceiling is refused, not shrunk; the template's own range is checked by the API."""
+    """``(vcpu, memory_mb, disk_gb)`` covering the request: whole vCPUs, MiB and GB, rounded up. A request past the
+    API's ceiling is refused, not shrunk; the template's own range is checked by the API."""
     vcpu = max(1, math.ceil(cpu))
     memory = max(1, math.ceil(memory_mb))
     disk = max(1, math.ceil(disk_size_gb))
@@ -144,6 +148,7 @@ class PrizedSandboxProvider(SandboxProvider):
         edge_url: str | None = None,
         root_helper_image: str = ROOT_HELPER_IMAGE,
         sandbox_cls: Any = AsyncSandbox,
+        http_client_factory: Callable[[], httpx.AsyncClient] = httpx.AsyncClient,
     ):
         if not isinstance(api_key, str) or not api_key.strip():
             raise ValueError("Prized api_key must be a non-empty resolved secret")
@@ -156,6 +161,12 @@ class PrizedSandboxProvider(SandboxProvider):
         self._root_helper_image = root_helper_image
         # Injectable so unit tests never reach the API.
         self._sandbox_cls = sandbox_cls
+        self._http_client_factory = http_client_factory
+        # One HTTP client per event loop, shared by every sandbox this provider creates or reconnects to: a client
+        # belongs to the loop it was made in, and the agent-env CLI runs several loops in one process.
+        self._clients: weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, httpx.AsyncClient] = (
+            weakref.WeakKeyDictionary()
+        )
         self._made: list[PrizedSandbox] = []
 
     @classmethod
@@ -172,7 +183,11 @@ class PrizedSandboxProvider(SandboxProvider):
         return cls(**config)
 
     def _auth(self) -> dict[str, Any]:
-        return {"api_key": self._api_key, "base_url": self._base_url, "edge_url": self._edge_url}
+        loop = asyncio.get_running_loop()
+        client = self._clients.get(loop)
+        if client is None:
+            client = self._clients[loop] = self._http_client_factory()
+        return {"api_key": self._api_key, "base_url": self._base_url, "edge_url": self._edge_url, "http_client": client}
 
     async def _connect(self, sandbox_id: str) -> AsyncSandbox:
         return await self._sandbox_cls.connect(sandbox_id, **self._auth())
@@ -197,6 +212,9 @@ class PrizedSandboxProvider(SandboxProvider):
         made, self._made = self._made, []
         for sandbox in made:
             await sandbox.close()
+        client = self._clients.pop(asyncio.get_running_loop(), None)
+        if client is not None:
+            await client.aclose()
 
     async def create_vm(
         self,
@@ -258,9 +276,9 @@ class PrizedSandboxProvider(SandboxProvider):
             if setup_for_gateway:
                 await sandbox.setup_vm_for_gateway(ports)
         except BaseException:
-            # Deleted before the create's own error or cancellation is raised; shielded so a second cancellation
-            # can't leave it running until its run time ends.
-            await asyncio.shield(_delete_quietly(sandbox))
+            # Deleted before the create's own error or cancellation is raised, and finished even through a second
+            # cancellation, so it isn't left running until its run time ends.
+            await _finish_despite_cancel(_delete_quietly(sandbox))
             raise
         return sandbox
 
@@ -325,12 +343,39 @@ class PrizedSandboxProvider(SandboxProvider):
             await sdk.close()
 
 
-async def _delete_quietly(sandbox: PrizedSandbox) -> None:
+_cleanups: set[asyncio.Task] = set()
+_DELETE_ATTEMPTS = 3
+
+
+async def _finish_despite_cancel(work: Any) -> None:
+    """Run ``work`` to its end even if the caller is cancelled meanwhile, then let the cancellation go on. The task is
+    kept referenced until it ends."""
+    task = asyncio.ensure_future(work)
+    _cleanups.add(task)
+    task.add_done_callback(_cleanups.discard)
     try:
-        await sandbox.terminate()
-    except Exception as exc:  # noqa: BLE001 - logged; its run time still ends it
-        logger.error(
-            "Prized sandbox %s from a failed create could not be deleted (%s); its run time ends it",
-            sandbox.sandbox_id,
-            exc,
-        )
+        await asyncio.shield(task)
+    except asyncio.CancelledError:
+        await asyncio.wait([task])
+        raise
+
+
+async def _delete_quietly(sandbox: PrizedSandbox) -> None:
+    """Delete a sandbox whose create failed, retrying. A cancellation, as ``asyncio.run`` sends every task left when it
+    ends, is honored only after the delete settles."""
+    cancelled = False
+    for attempt in range(_DELETE_ATTEMPTS):
+        try:
+            await sandbox.terminate()
+            break
+        except asyncio.CancelledError:
+            cancelled = True
+        except Exception as exc:  # noqa: BLE001 - retried, then logged; its run time still ends it
+            if attempt + 1 == _DELETE_ATTEMPTS:
+                logger.error(
+                    "Prized sandbox %s from a failed create could not be deleted (%s); its run time ends it",
+                    sandbox.sandbox_id,
+                    exc,
+                )
+    if cancelled:
+        raise asyncio.CancelledError

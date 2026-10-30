@@ -66,6 +66,7 @@ class FakeCloud:
         self.create_error: PrizedError | None = None
         self.exec_error: Callable[[str], PrizedError | None] | None = None
         self.write_hook: Callable[[str, bytes], bytes] | None = None
+        self.delete_delay = 0.0
 
     def answer(self, responder: ANSWER) -> None:
         """Answer the commands ``responder`` returns a ``Result`` for, before running anything."""
@@ -182,6 +183,8 @@ class FakeSandbox:
         return await self._cloud.run(command)
 
     async def delete(self, *, wait: bool = False, timeout: float = 120.0) -> None:
+        if self._cloud.delete_delay:
+            await asyncio.sleep(self._cloud.delete_delay)
         self._cloud.deletes.append(self._record.id)
         if self._record.state == "deleted":
             # The SDK reads a 404 on delete as already deleted.

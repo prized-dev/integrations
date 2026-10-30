@@ -151,7 +151,7 @@ async def test_exposed_ports_need_port_urls(run_label):
             attribution={**ATTRIBUTION, "case": "ports"},
         )
     except ValueError as exc:
-        assert "no public port URLs" in str(exc)
+        assert "exposed ports can't be reached yet" in str(exc)
         assert await _alive({"agentenv-live-run": RUN, "agentenv-case": "ports"}) == []
         pytest.skip("agentenv-capability-missing: prized_public_ports (the workspace has no sandbox port URLs)")
     try:

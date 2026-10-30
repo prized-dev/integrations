@@ -2,8 +2,9 @@
 
 Each sandbox is one Prized microVM. Commands run as the sandbox user ``prized`` through the Prized API, each one
 detached and followed to its end, so a long ``docker compose up`` or image build is never cut off by a request
-timeout. agent-env prefixes the commands that need root with ``sudo``; how this handle gives them root depends on the
-template (``RootMode``).
+timeout. agent-env prefixes the commands that need root with ``sudo``. Prized's command runner has no sudo (it runs with
+NoNewPrivileges and a read-only system), so on a template with Docker those commands run through a privileged helper
+container in the VM's own namespaces (``RootMode``).
 """
 
 from __future__ import annotations
@@ -46,6 +47,10 @@ LOST_CODES = frozenset(
 )
 # SDK error codes that mean the sandbox is gone.
 GONE_CODES = frozenset({"not_found", "sandbox_deleted"})
+# Codes of a sandbox that can't take commands, which no retry fixes.
+_SETTLED_CODES = GONE_CODES | {"sandbox_not_running"}
+# Codes of a request that got no readable answer.
+_NO_ANSWER_CODES = frozenset({"network_error", "timeout", "bad_response"})
 # States in which a sandbox no longer exists for agent-env.
 GONE_STATES = frozenset({"deleting", "deleted"})
 
@@ -73,37 +78,70 @@ DOCKER_READY = (
     "exit 1\n"
 )
 
-# How root is had, probed once per handle: sudo where the template gives it, else through the Docker daemon (root in
-# this sandbox's own VM), else not at all.
-ROOT_PROBE = (
-    "if sudo -n true >/dev/null 2>&1; then echo sudo; "
-    "elif docker info >/dev/null 2>&1; then echo docker; "
-    "else echo none; fi"
-)
-# The container that runs root commands on a template whose user has the Docker socket but no sudo: privileged, in
-# the VM's PID and network namespaces, with the VM's root filesystem at /host, which each command chroots into.
+# How root is had, probed once per handle: through the Docker daemon (root in this sandbox's own VM) when the
+# template has one, else not at all.
+ROOT_PROBE = "if docker info >/dev/null 2>&1; then echo docker; else echo none; fi"
+# The container that runs root commands on a template whose user has the Docker socket: privileged and in the VM's PID
+# and network namespaces, so each command enters PID 1's namespaces (nsenter) and runs as root on the VM itself, with
+# its live mounts. Pinned by digest, since it gets root; Debian's util-linux, which has nsenter, is essential.
 ROOT_HELPER = "agentenv-prized-root"
-ROOT_HELPER_IMAGE = "public.ecr.aws/docker/library/debian:bookworm-slim"
+ROOT_HELPER_IMAGE = (
+    "public.ecr.aws/docker/library/debian:bookworm-slim"
+    "@sha256:99c0b25c46d0214d5a2091092e7908907dcaecd6a962cde0ac700acee222b6f3"
+)
+ROOT_ENTER = ("nsenter", "--target", "1", "--mount", "--uts", "--ipc", "--net", "--pid", "--")
+# What docker exec says when the helper container is gone or stopped; the helper is then started again, once.
+_HELPER_GONE = ("No such container", "is not running", "is restarting")
 
 
 def start_root_helper_script(image: str) -> str:
-    """A script that starts the root helper container unless it is already running."""
+    """A script that starts the root helper container unless it is running: the image pulled with retries, a stopped
+    container of that name removed, then started and waited for. Two handles starting it at once end with one
+    container: the second's run fails on the name and waits for the first's."""
     name = ROOT_HELPER
+    quoted = shlex.quote(image)
     return (
-        "if [ \"$(docker inspect -f '{{.State.Running}}' " + name + ' 2>/dev/null)" != true ]; then\n'
-        "  docker rm -f " + name + " >/dev/null 2>&1 || true\n"
-        "  docker run -d --name " + name + " --privileged --pid=host --net=host --ipc=host --restart=unless-stopped "
-        "-v /:/host " + shlex.quote(image) + " sleep infinity >/dev/null\n"
-        "fi\n"
+        "running() { [ \"$(docker inspect -f '{{.State.Running}}' " + name + ' 2>/dev/null)" = true ]; }\n'
+        "running && exit 0\n"
+        "for attempt in 1 2 3; do docker pull -q "
+        + quoted
+        + " >/dev/null 2>&1 && break; sleep $((attempt * 2)); done\n"
+        "if docker inspect "
+        + name
+        + " >/dev/null 2>&1 && ! running; then docker rm -f "
+        + name
+        + " >/dev/null 2>&1; fi\n"
+        "err=$(mktemp); trap 'rm -f \"$err\"' EXIT\n"
+        "docker run -d --name "
+        + name
+        + " --privileged --pid=host --net=host --ipc=host --restart=unless-stopped "
+        + quoted
+        + ' sleep infinity >/dev/null 2>"$err" || true\n'
+        "for _ in $(seq 20); do running && exit 0; sleep 1; done\n"
+        'cat "$err" >&2\n'
+        'echo "the root helper container did not start" >&2\n'
+        "exit 1\n"
     )
 
 
 class RootMode(StrEnum):
     """How a ``sudo`` command runs in this sandbox."""
 
-    SUDO = "sudo"  # the template's sudo
-    DOCKER = "docker"  # through the root helper container, over the Docker socket
+    DOCKER = "docker"  # as root on the VM, through the root helper container over the Docker socket
     NONE = "none"  # as the sandbox user: root-owned paths are refused
+
+
+def answer_lost(exc: PrizedError) -> bool:
+    """Whether ``exc`` leaves a command's outcome unknown, the answer lost on the way, so an idempotent script may be
+    run again: no readable answer, a rate limit or any 5xx, as the SDK's own polling rides out. A sandbox that is gone
+    or can't run commands is not."""
+    if exc.code in _SETTLED_CODES:
+        return False
+    if exc.code in LOST_CODES:
+        return True
+    if exc.status is None:
+        return exc.code in _NO_ANSWER_CODES
+    return exc.status >= 500 or exc.status == 429
 
 
 class _BytesReader:
@@ -122,25 +160,28 @@ class CompletedProcess:
     def __init__(self, stdout: bytes, stderr: bytes, exit_code: int):
         self.stdout = _BytesReader(stdout)
         self.stderr = _BytesReader(stderr)
-        self._exit_code = exit_code
+        self.exit_code = exit_code
+        self.stderr_text = stderr.decode(errors="replace")
 
     async def wait(self) -> int:
-        return self._exit_code
+        return self.exit_code
 
 
 def tunnel_urls_for(document: Mapping[str, Any], ports: list[int]) -> dict[int, str]:
-    """``{port: url}`` for ``ports`` from the sandbox document's ``previewUrlTemplate`` (``https://{port}-…/``), the
-    form the Prized API gives a sandbox's port URLs in. Empty when no port is asked for; a ``ValueError`` when ports are
-    asked for and the API gives no URLs for them."""
+    """``{port: url}`` for ``ports``: empty when none are asked for. Prized gives no port URLs that agent-env can use
+    yet: where the API names them (``previewUrlTemplate``) they answer only requests carrying a Prized API key, which
+    agent-env's gateways and agents don't send, and putting a key in every workload is no answer. So exposed ports are
+    refused, with the reason, until Prized serves public port URLs."""
     if not ports:
         return {}
-    template = document.get("previewUrlTemplate")
-    if not isinstance(template, str) or "{port}" not in template or not template.startswith("https://"):
-        raise ValueError(
-            "this Prized workspace has no public port URLs for sandboxes yet, so exposed ports can't be reached; "
-            "create the sandbox without exposed_ports"
+    if document.get("previewUrlTemplate"):
+        reason = (
+            "Prized's sandbox port URLs answer only requests that carry a Prized API key, which agent-env's "
+            "gateways and agents don't send"
         )
-    return {port: template.replace("{port}", str(port)).rstrip("/") for port in ports}
+    else:
+        reason = "this Prized workspace has no port URLs for sandboxes"
+    raise ValueError(f"{reason}, so exposed ports can't be reached yet; create the sandbox without exposed_ports")
 
 
 class PrizedSandbox(VmSandbox):
@@ -193,7 +234,7 @@ class PrizedSandbox(VmSandbox):
             sdk = await self._sdk()
             await sdk.delete()
         except PrizedError as exc:
-            if exc.code not in GONE_CODES:
+            if exc.code not in GONE_CODES and exc.status != 404:
                 raise
             logger.info("Prized sandbox %s was already gone at terminate", self.sandbox_id)
         finally:
@@ -206,15 +247,26 @@ class PrizedSandbox(VmSandbox):
         A ``sudo`` prefix runs the rest as root (``RootMode``). An answer lost on the way is exit -1, which
         ``exec_script`` retries; a sandbox that is gone raises."""
         argv = list(command)
-        if argv[:1] == ["sudo"]:
+        as_root = argv[:1] == ["sudo"]
+        if as_root:
             argv = await self._as_root(argv[1:])
         if not argv:
             raise ValueError("exec needs a command")
+        process = await self._run(argv)
+        if as_root and self._root_mode is RootMode.DOCKER and _helper_gone(process):
+            # The helper stopped (a Docker restart, say): start it again, and run the command once more, which never
+            # ran, since docker exec found no container to run it in.
+            logger.warning("The root helper in Prized sandbox %s was gone; starting it again", self.sandbox_id)
+            await self._start_root_helper()
+            process = await self._run(argv)
+        return process
+
+    async def _run(self, argv: list[str]) -> CompletedProcess:
         sdk = await self._sdk()
         try:
             result = await sdk.exec([*UMASK_PREFIX, *argv], timeout=0)
         except PrizedError as exc:
-            if exc.code in LOST_CODES:
+            if answer_lost(exc):
                 return CompletedProcess(b"", f"Prized {exc.code}: {exc}".encode(), UNKNOWN_EXIT_CODE)
             raise
         if result.truncated:
@@ -246,7 +298,11 @@ class PrizedSandbox(VmSandbox):
             self._root_lock = asyncio.Lock()
         async with self._root_lock:
             if self._root_mode is None:
-                code, out, err = await self.exec_with_output("bash", "-c", ROOT_PROBE)
+                # The probe only reads, so an answer lost on the way is asked again.
+                for _ in range(3):
+                    code, out, err = await self.exec_with_output("bash", "-c", ROOT_PROBE)
+                    if code != UNKNOWN_EXIT_CODE:
+                        break
                 if code != 0:
                     raise RuntimeError(
                         f"Could not tell how to run root commands in Prized sandbox "
@@ -255,10 +311,10 @@ class PrizedSandbox(VmSandbox):
                 mode = RootMode(out.strip())
                 if mode is RootMode.DOCKER:
                     await self._start_root_helper()
-                elif mode is RootMode.NONE:
+                else:
                     logger.warning(
-                        "Prized sandbox %s has neither sudo nor Docker: commands agent-env runs as root run "
-                        "as the sandbox user, so root-owned paths are refused",
+                        "Prized sandbox %s has no Docker, so commands agent-env runs as root run as the sandbox "
+                        "user, and root-owned paths are refused",
                         self.sandbox_id,
                     )
                 self._root_mode = mode
@@ -278,13 +334,10 @@ class PrizedSandbox(VmSandbox):
         """``argv`` as this sandbox runs it as root."""
         if not argv:
             raise ValueError("sudo needs a command")
-        mode = await self.root_mode()
-        if mode is RootMode.SUDO:
-            return ["sudo", *argv]
         if argv[0].startswith("-"):
             raise ValueError(f"sudo options are not supported in Prized sandbox {self.sandbox_id}: {argv[0]}")
-        if mode is RootMode.DOCKER:
-            return ["docker", "exec", ROOT_HELPER, "chroot", "/host", *argv]
+        if await self.root_mode() is RootMode.DOCKER:
+            return ["docker", "exec", ROOT_HELPER, *ROOT_ENTER, *argv]
         return argv
 
     # --- Docker readiness ------------------------------------------------------------------
@@ -323,27 +376,32 @@ class PrizedSandbox(VmSandbox):
             source.close()
 
     async def _upload(self, parts: AsyncIterator[bytes], vm_path: str) -> None:
-        """Upload ``parts`` to files under the sandbox user's home, the files API's root, then join them at ``vm_path``
-        as root, as an exec would write it, and check the result's sha256."""
+        """Upload ``parts`` one at a time to a file under the sandbox user's home, the files API's root, appending each
+        to a file beside ``vm_path`` as root (as an exec would write it) and removing it, so the disk holds the object
+        once plus a part; then move it into place and check its sha256."""
         sdk = await self._sdk()
-        stage = f"{HOME}/.agentenv-upload-{uuid.uuid4().hex}"
-        staged: list[str] = []
+        token = uuid.uuid4().hex
+        building = f"{vm_path}.agentenv-{token}"
+        target, partial = shlex.quote(vm_path), shlex.quote(building)
         digest = hashlib.sha256()
+        staged: str | None = None
+        parts_seen = 0
         try:
             async for part in parts:
-                path = f"{stage}.{len(staged):05d}"
-                staged.append(path)
-                await sdk.files.write(path, part)
+                staged = f"{HOME}/.agentenv-upload-{token}.{parts_seen:05d}"
+                await sdk.files.write(staged, part)
                 digest.update(part)
-            if not staged:
+                into = ">" if parts_seen == 0 else ">>"
+                await self.exec_script(f"cat {shlex.quote(staged)} {into} {partial} && rm -f {shlex.quote(staged)}")
+                staged = None
+                parts_seen += 1
+            if not parts_seen:
                 await super()._write_bytes_to_vm_path(b"", vm_path)
                 return
-            quoted = " ".join(shlex.quote(path) for path in staged)
-            target = shlex.quote(vm_path)
-            written = await self.exec_script(f"cat {quoted} > {target} && rm -f {quoted} && sha256sum {target}")
+            written = await self.exec_script(f"mv -f {partial} {target} && sha256sum {target}")
         except BaseException:
-            if staged:
-                await self._remove_vm_temp_file(*staged)
+            leftovers = [building] + ([staged] if staged else [])
+            await self._remove_vm_temp_file(*leftovers)
             raise
         actual = written.split()[0] if written.split() else ""
         if actual != digest.hexdigest():
@@ -353,12 +411,30 @@ class PrizedSandbox(VmSandbox):
             )
 
 
+def _helper_gone(process: CompletedProcess) -> bool:
+    """Whether docker exec found the root helper container gone or stopped."""
+    return process.exit_code not in (0, UNKNOWN_EXIT_CODE) and any(sign in process.stderr_text for sign in _HELPER_GONE)
+
+
 async def _bytes_parts(data: bytes) -> AsyncIterator[bytes]:
     for offset in range(0, len(data), UPLOAD_PART_BYTES):
         yield data[offset : offset + UPLOAD_PART_BYTES]
 
 
 async def _read_parts(source: IO[bytes]) -> AsyncIterator[bytes]:
-    """``source`` in upload-sized parts, read off the event loop."""
-    while part := await asyncio.to_thread(source.read, UPLOAD_PART_BYTES):
+    """``source`` in upload-sized parts, each read in full (a reader may return less than asked), off the event loop."""
+    while part := await asyncio.to_thread(_read_full, source, UPLOAD_PART_BYTES):
         yield part
+
+
+def _read_full(source: IO[bytes], size: int) -> bytes:
+    """Up to ``size`` bytes of ``source``, fewer only at its end."""
+    chunks: list[bytes] = []
+    left = size
+    while left > 0:
+        chunk = source.read(left)
+        if not chunk:
+            break
+        chunks.append(chunk)
+        left -= len(chunk)
+    return b"".join(chunks)
