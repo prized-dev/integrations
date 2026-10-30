@@ -59,7 +59,7 @@ Open an issue titled `agent-signup-check: <platform>` with the check, what you e
 
 To add a platform, open a pull request that adds it to `targets.json`: its name, category, domain, and one documented API URL that needs a key. It joins the next weekly run.
 
-## Re-run the index
+## Re-run the 100
 
 ```sh
 node agent-signup-check/weekly.mjs

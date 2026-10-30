@@ -20,7 +20,7 @@ GET only, with `Accept` set for what is expected (Markdown, JSON). In order, sto
 6. When `/auth.md` is Markdown but not in the spec's shape, one made-up path (`/agent-signup-check-no-such-page.md`) to tell a real auth.md from a site that answers every path with the same page.
 7. x402 discovery: the `/.well-known/x402` URL the platform's auth.md or llms.txt names on its own site, else `https://<domain>/.well-known/x402`.
 
-At most 16 requests per platform, redirect hops included; most use 7 to 9. https on port 443 only; every address a name resolves to must be public, checked again on each connection and redirect; at most 4 redirects; 1 MB and 8 seconds per response. The index runs 4 platforms at a time with 300 ms between requests to the same platform.
+At most 16 requests per platform, redirect hops included; most use 7 to 9. https on port 443 only; every address a name resolves to must be public, checked again on each connection and redirect; at most 4 redirects; 1 MB and 8 seconds per response. A run does 4 platforms at a time with 300 ms between requests to the same platform.
 
 ## The verdicts
 
