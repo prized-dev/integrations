@@ -92,7 +92,7 @@ py() {
   [ "$sdk" = no ] || need_sdk python
   # shellcheck disable=SC2086 # pins are a word list
   pip install -q -e ".[$extras]" ${FLOOR:+$floor}
-  pip list 2>/dev/null | grep -i -E "^(prized|inspect.ai|google.adk|strands.agents|agent.framework|pydantic.ai|harbor)[-_ ]" || true
+  pip list 2>/dev/null | grep -i -E "^(prized|inspect.ai|google.adk|strands.agents|agent.framework|pydantic.ai|harbor|agentenv.framework)[-_ ]" || true
   if [ -z "$FLOOR" ]; then sh -c "$lint"; else echo "(lint runs on the latest-dependencies row)"; fi
   offline pytest -rs -p no:cacheprovider
 }
@@ -113,6 +113,10 @@ case $DIR in
     py "test" yes "pydantic-ai-slim==2.59.0" "pip install -q ruff && ruff check . && ruff format --check ." ;;
   harbor)
     py "test" no "harbor==0.24.0" "pip install -q ruff && ruff check . && ruff format --check ." ;;
+  agentenv)
+    # agent-env needs Python 3.11.4+. The provider runs against a stand-in for the Prized SDK whose commands run
+    # under bash in a temporary directory; the live tests skip without PRIZED_LIVE=1.
+    py "test" yes "agentenv-framework==0.9.1389" "pip install -q ruff==0.17.2 && ruff check . && ruff format --check ." ;;
   devin-outposts)
     # Offline: a stand-in for Devin's Outposts service on 127.0.0.1, fake sandboxes that run the
     # in-sandbox scripts with bash, and a fake devin-remote. Live tests skip without PRIZED_LIVE=1.

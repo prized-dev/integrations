@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agentenv-prized"
+version = "0.1.0"
+description = "Prized Sandboxes as a sandbox provider for Scale's AgentEnv Framework: run environments and agents in Firecracker microVMs."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.11.4"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["agentenv", "agent-env", "prized", "sandbox", "evals", "rl"]
+dependencies = ["agentenv-framework>=0.9.1389", "prized>=0.1.1,<0.2"]
+
+[project.optional-dependencies]
+test = ["pytest>=8", "pytest-asyncio>=0.23"]
+
+[project.entry-points."agent_env.sandbox_providers"]
+prized = "agentenv_prized.provider:PrizedSandboxProvider"
+
+[project.urls]
+Homepage = "https://prized.dev/sandboxes?via=agentenv"
+Documentation = "https://prized.dev/docs/sandboxes?via=agentenv"
+Source = "https://github.com/prized-dev/integrations/tree/main/agentenv"
+Issues = "https://github.com/prized-dev/integrations/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentenv_prized"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = ["live: runs against the real Prized API (PRIZED_LIVE=1 and PRIZED_API_KEY)"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
