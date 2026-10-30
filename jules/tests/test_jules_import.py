@@ -342,7 +342,7 @@ class EndToEnd(unittest.TestCase):
         self.assertIn("jules/edge-case-test-", branches)
         calls = (self.stub / "calls.log").read_text()
         self.assertIn("claude -p --dangerously-skip-permissions", calls)
-        self.assertIn("gh pr create --base master --head jules/edge-case-test-", calls)
+        self.assertIn("gh pr create --repo expressjs/cors --base master --head jules/edge-case-test-", calls)
         self.assertFalse(any((state / "runs").iterdir()), "worktree removed after the pull request")
         logs = list((state / "logs").glob("edge-case-test-*.log"))
         self.assertTrue(logs and "pull request opened" in logs[0].read_text())
@@ -367,6 +367,22 @@ class EndToEnd(unittest.TestCase):
         self.assertNotIn(
             "timer", " ".join(os.listdir(self.home / ".config")) if (self.home / ".config").exists() else ""
         )
+
+    def test_pull_request_refused_after_push(self):
+        self.run_import("--no-schedule")
+        script = self.home / ".jules-import" / "tasks" / "edge-case-test.sh"
+        nogh = self.tmp / "nogh-bin"
+        nogh.mkdir()
+        (nogh / "gh").write_text("#!/bin/sh\necho 'gh: not logged in' >&2\nexit 4\n")
+        (nogh / "gh").chmod(0o755)
+        env = {**self.env, "PATH": f"{nogh}:{self.env['PATH']}"}
+        r = subprocess.run(["bash", "-l", str(script)], env=env, capture_output=True, text=True, timeout=120)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("but gh couldn't open the pull request", r.stdout)
+        branches = subprocess.run(
+            ["git", "branch", "--list", "jules/*"], cwd=self.remote, capture_output=True, text=True
+        ).stdout
+        self.assertIn("jules/edge-case-test-", branches, "the branch is pushed anyway")
 
     def test_dry_run_changes_nothing(self):
         out = self.run_import("--dry-run")

@@ -1053,12 +1053,16 @@ if [ "$(git rev-list --count "origin/$BASE..HEAD")" -eq 0 ]; then
   exit "$agent_rc"
 fi
 title=$(git log --reverse --format=%s "origin/$BASE..HEAD" | head -n 1)
-if git push --quiet -u origin "$branch" && gh pr create --base "$BASE" --head "$branch" --title "$title" \
+if ! git push --quiet -u origin "$branch"; then
+  echo "== git push failed; the work stays in $work on branch $branch"
+  exit 1
+fi
+cd "$HOME" && git -C "$REPO" worktree remove --force "$work"
+if gh pr create --repo {repo} --base "$BASE" --head "$branch" --title "$title" \
     --body "Scheduled task **{title}** (carried over from Jules), run $stamp on $(hostname) by $AGENT. Log: \`$log\`"; then
-  cd "$HOME" && git -C "$REPO" worktree remove --force "$work"
   echo "== pull request opened"
 else
-  echo "== push or pull request failed; the work stays in $work on branch $branch"
+  echo "== pushed $branch, but gh couldn't open the pull request; open it on GitHub"
   exit 1
 fi
 """

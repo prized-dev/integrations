@@ -1,2 +1,2 @@
-npm ci
+npm install
 npm run lint
