@@ -49,6 +49,10 @@ GONE_CODES = frozenset({"not_found", "sandbox_deleted"})
 # States in which a sandbox no longer exists for agent-env.
 GONE_STATES = frozenset({"deleting", "deleted"})
 
+# Every command runs under umask 022, as on a machine of its own. Prized's command runner keeps 077, which would leave
+# the files agent-env writes on the host, and copies into containers, unreadable to a container's non-root user.
+UMASK_PREFIX = ("bash", "-c", 'umask 022 && exec "$@"', "agentenv")
+
 # The sandbox user's home: the only place Prized's files API writes, so uploads are staged there.
 HOME = "/home/prized"
 # Prized's files API takes up to 100 MiB a request; bigger files go in parts of this size, joined in the sandbox.
@@ -198,9 +202,9 @@ class PrizedSandbox(VmSandbox):
     # --- commands --------------------------------------------------------------------------
 
     async def exec(self, *command: str) -> CompletedProcess:
-        """Run argv to its end, detached in the sandbox and followed, with no input and no time limit. A ``sudo``
-        prefix runs the rest as root (``RootMode``). An answer lost on the way is exit -1, which ``exec_script``
-        retries; a sandbox that is gone raises."""
+        """Run argv to its end, detached in the sandbox and followed, with no input, no time limit and umask 022.
+        A ``sudo`` prefix runs the rest as root (``RootMode``). An answer lost on the way is exit -1, which
+        ``exec_script`` retries; a sandbox that is gone raises."""
         argv = list(command)
         if argv[:1] == ["sudo"]:
             argv = await self._as_root(argv[1:])
@@ -208,7 +212,7 @@ class PrizedSandbox(VmSandbox):
             raise ValueError("exec needs a command")
         sdk = await self._sdk()
         try:
-            result = await sdk.exec(argv, timeout=0)
+            result = await sdk.exec([*UMASK_PREFIX, *argv], timeout=0)
         except PrizedError as exc:
             if exc.code in LOST_CODES:
                 return CompletedProcess(b"", f"Prized {exc.code}: {exc}".encode(), UNKNOWN_EXIT_CODE)

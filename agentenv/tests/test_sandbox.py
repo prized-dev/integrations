@@ -6,13 +6,14 @@ import asyncio
 import hashlib
 import io
 import os
+import shlex
 import threading
 
 import pytest
 from prized import PrizedError
 
 from agentenv_prized import sandbox as sandbox_module
-from agentenv_prized.sandbox import ROOT_HELPER, RootMode, start_root_helper_script, tunnel_urls_for
+from agentenv_prized.sandbox import ROOT_HELPER, UMASK_PREFIX, RootMode, start_root_helper_script, tunnel_urls_for
 
 from .conftest import root_mode
 from .fakes import Result, error
@@ -39,6 +40,13 @@ async def test_exec_keeps_each_argument_whole(box):
     tricky = 'it\'s a "quoted" $HOME `x` ; rm -rf /'
     code, out, _ = await box.exec_with_output("printf", "%s", tricky)
     assert (code, out) == (0, tricky)
+
+
+async def test_commands_run_under_umask_022(box, tmp_path):
+    assert await box.exec_with_output("bash", "-c", "umask") == (0, "0022\n", "")
+    await box.exec_with_output("bash", "-c", f"umask 077; echo x > {tmp_path}/before")
+    code, _, _ = await box.exec_with_output("touch", str(tmp_path / "made"))
+    assert code == 0 and (tmp_path / "made").stat().st_mode & 0o777 == 0o644
 
 
 async def test_exec_reads_no_input(box):
@@ -81,20 +89,20 @@ async def test_concurrent_commands_each_finish(box):
 
 async def test_sudo_mode_keeps_sudo(box, cloud):
     root_mode(cloud, "sudo")
-    cloud.answer(lambda command: Result("root\n") if command.startswith("sudo ") else None)
+    cloud.answer(lambda command: Result("root\n") if command.startswith(sent("sudo")) else None)
     assert await box.exec_script("whoami") == "root\n"
-    assert cloud.commands[-1] == "sudo bash -c whoami"
+    assert cloud.commands[-1] == sent("sudo", "bash", "-c", "whoami")
 
 
 async def test_docker_mode_runs_root_commands_in_the_helper(box, cloud):
     root_mode(cloud, "docker")
     cloud.answer(lambda command: Result() if f"--name {ROOT_HELPER}" in command else None)
-    cloud.answer(lambda command: Result("root\n") if command.startswith(f"docker exec {ROOT_HELPER} ") else None)
+    cloud.answer(lambda command: Result("root\n") if command.startswith(sent("docker", "exec", ROOT_HELPER)) else None)
     assert await box.exec_script("whoami") == "root\n"
     assert await box.exec_script("whoami") == "root\n"
     helper_starts = [c for c in cloud.commands if f"--name {ROOT_HELPER}" in c]
     assert len(helper_starts) == 1
-    assert cloud.commands[-1] == f"docker exec {ROOT_HELPER} chroot /host bash -c whoami"
+    assert cloud.commands[-1] == sent("docker", "exec", ROOT_HELPER, "chroot", "/host", "bash", "-c", "whoami")
     assert await box.root_mode() is RootMode.DOCKER
 
 
@@ -117,7 +125,7 @@ async def test_a_helper_that_cannot_start_is_an_error(box, cloud):
 async def test_none_mode_runs_as_the_user(box, cloud):
     root_mode(cloud, "none")
     assert await box.exec_script("echo hi") == "hi\n"
-    assert cloud.commands[-1] == "bash -c 'echo hi'"
+    assert cloud.commands[-1] == sent("bash", "-c", "echo hi")
 
 
 async def test_the_root_probe_runs_once_under_concurrency(box, cloud):
@@ -261,3 +269,8 @@ def test_port_urls_come_from_the_api_template():
 
 async def _no_sleep(_seconds: float, *args, **kwargs) -> None:
     return None
+
+
+def sent(*argv: str) -> str:
+    """The command text the provider sends for ``argv``."""
+    return shlex.join([*UMASK_PREFIX, *argv])

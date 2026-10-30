@@ -47,8 +47,18 @@ async def _template_has_docker(sandbox) -> bool:
 def run_label():
     yield RUN
     if LIVE:
-        left = asyncio.run(AsyncSandbox.delete_by_labels({"agentenv-live-run": RUN}))
-        assert left == [], f"sandboxes left by the live run were deleted: {left}"
+        left = asyncio.run(_alive({"agentenv-live-run": RUN}))
+        if left:
+            asyncio.run(AsyncSandbox.delete_by_labels({"agentenv-live-run": RUN}))
+        assert left == [], f"the live run left sandboxes, now deleted: {left}"
+
+
+async def _alive(labels: dict[str, str]) -> list[str]:
+    """Ids of the sandboxes with ``labels`` that are not deleted or being deleted."""
+    found = await AsyncSandbox.list(labels=labels, state=["starting", "running", "pausing", "paused", "error"])
+    for sandbox in found:
+        await sandbox.close()
+    return [sandbox.id for sandbox in found]
 
 
 async def test_lifecycle_commands_files_reconnect_and_teardown(run_label, tmp_path):
@@ -125,11 +135,7 @@ async def test_setup_without_docker_fails_and_deletes_its_sandbox(run_label):
     marker = {**ATTRIBUTION, "case": "no-docker"}
     with pytest.raises(RuntimeError, match="prized-docker-v1"):
         await provider().create_vm(cpu=1, memory=1024, timeout=600, attribution=marker)
-    alive = await AsyncSandbox.list(
-        labels={"agentenv-live-run": RUN, "agentenv-case": "no-docker"},
-        state=["starting", "running", "pausing", "paused"],
-    )
-    assert alive == []
+    assert await _alive({"agentenv-live-run": RUN, "agentenv-case": "no-docker"}) == []
 
 
 async def test_exposed_ports_need_port_urls(run_label):
@@ -146,11 +152,7 @@ async def test_exposed_ports_need_port_urls(run_label):
         )
     except ValueError as exc:
         assert "no public port URLs" in str(exc)
-        alive = await AsyncSandbox.list(
-            labels={"agentenv-live-run": RUN, "agentenv-case": "ports"},
-            state=["starting", "running", "pausing", "paused"],
-        )
-        assert alive == []
+        assert await _alive({"agentenv-live-run": RUN, "agentenv-case": "ports"}) == []
         pytest.skip("agentenv-capability-missing: prized_public_ports (the workspace has no sandbox port URLs)")
     try:
         assert list(made.tunnel_urls) == [8080]
