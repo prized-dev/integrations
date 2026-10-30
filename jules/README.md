@@ -54,11 +54,11 @@ Google's Jules runs sessions until November 11, 2026, then turns read-only and s
 | `repos/*/setup.sh` | Run once in the clone. Runtimes the Jules VM had but the box lacks (Node.js 22, Bun, Go, Rust, uv) are installed first, for your user only. It runs again in each scheduled run's fresh worktree, as Jules ran it per task |
 | `env-variables.json` | `~/.jules-import/env/OWNER__REPO.env`, mode 600, outside the repo, loaded for setup and scheduled runs. The importer prints names only, never values. To use them in a shell: `set -a; . FILE; set +a` |
 | `repos/*/memories.json`, `test-command.txt` | A block per repo in `~/.claude/CLAUDE.md` (Claude Code) and `~/.codex/AGENTS.md` (Codex). No repo file changes. Archived memories are left out |
-| `scheduled-tasks.json` | For each task, a script `~/.jules-import/tasks/NAME.sh` and a systemd user timer in the task's time zone. Tasks paused in Jules are written but left off. A run makes a fresh git worktree from the task's branch, runs the setup script, then runs `claude -p --dangerously-skip-permissions` (or `codex exec --dangerously-bypass-approvals-and-sandbox` with `--agent codex`) with the task's prompt. If the agent changed anything, the script pushes a `jules/NAME-DATE` branch and opens a pull request with `gh` |
+| `scheduled-tasks.json` | For each task, a script `~/.jules-import/tasks/NAME.sh` and a systemd user timer in the task's time zone. Tasks paused in Jules are written but left off. A run makes a fresh git worktree from the task's branch, runs the setup script, then runs `claude -p --dangerously-skip-permissions` (or `codex exec --dangerously-bypass-approvals-and-sandbox` with `--agent codex`) with the task's prompt. If the agent changed anything, the script makes one commit with the agent's message, pushes a `jules/NAME-DATE` branch and opens a pull request with `gh`. What the setup script left in the worktree is never committed unless the agent changed it again. A run that fails keeps its worktree in `~/.jules-import/runs` for a week |
 | `sessions/*` | `~/.jules-import/sessions.md` lists every session, unfinished ones first, with the branch and `summary.md` of each. To pick one up, ask your agent in the repo to read that summary and finish the work. Its patches are in the same folder |
 | `user-settings.json` | Not used |
 
-Running the importer again is safe: it updates clones, files and timers in place.
+Running the importer again updates clones, files and timers in place. It keeps variables you added to the `.env` files, keeps a task's name when it was renamed in Jules, and leaves a task script you edited alone (its new version goes next to it as `NAME.sh.new`).
 
 ## Or hand it to your agent
 

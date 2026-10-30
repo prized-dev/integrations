@@ -26,7 +26,7 @@ class Schedules(unittest.TestCase):
         return ji.parse_schedule(raw)
 
     def test_daily_time_of_day_and_zone(self):
-        cal, human, tz, paused, guess = self.cal(
+        cal, human, tz, paused, guess, why = self.cal(
             {
                 "schedule": {
                     "frequency": "DAILY",
@@ -41,7 +41,7 @@ class Schedules(unittest.TestCase):
         self.assertEqual(guess, "")
 
     def test_weekly_days_paused_and_zero_minutes_dropped(self):
-        cal, _, _, paused, _ = self.cal(
+        cal, _, _, paused, _, _ = self.cal(
             {
                 "schedule": {"frequency": "WEEKLY", "daysOfWeek": ["MONDAY", "THURSDAY"], "timeOfDay": {"hours": 7}},
                 "state": "PAUSED",
@@ -58,7 +58,7 @@ class Schedules(unittest.TestCase):
 
     def test_weekdays_hourly_monthly(self):
         self.assertEqual(self.cal({"frequency": "WEEKDAYS", "time": "08:00"})[0], ["Mon..Fri *-*-* 08:00:00 UTC"])
-        self.assertEqual(self.cal({"frequency": "HOURLY", "timeOfDay": {"minutes": 5}})[0], ["*-*-* *:05:00"])
+        self.assertEqual(self.cal({"frequency": "HOURLY", "timeOfDay": {"minutes": 5}})[0], ["*-*-* *:05:00 UTC"])
         self.assertEqual(
             self.cal({"frequency": "MONTHLY", "dayOfMonth": 15, "time": "02:00"})[0], ["*-*-15 02:00:00 UTC"]
         )
@@ -79,11 +79,66 @@ class Schedules(unittest.TestCase):
         )
 
     def test_time_from_next_run_is_a_guess(self):
-        cal, _, _, _, guess = self.cal(
+        cal, _, _, _, guess, _ = self.cal(
             {"frequency": "DAILY", "nextRunTime": "2026-10-30T16:30:00Z", "timeZone": "America/Los_Angeles"}
         )
         self.assertEqual(cal, ["*-*-* 09:30:00 America/Los_Angeles"])
         self.assertIn("taken from", guess)
+
+    def test_rrule_details(self):
+        cases = {
+            "FREQ=HOURLY;INTERVAL=6;BYMINUTE=15": ["*-*-* 00/6:15:00 UTC"],
+            "FREQ=DAILY;BYHOUR=9,17;BYMINUTE=0": ["*-*-* 09,17:00:00 UTC"],
+            "FREQ=MONTHLY;BYDAY=1MO;BYHOUR=8": ["Mon *-*-01..07 08:00:00 UTC"],
+            "FREQ=YEARLY;BYMONTH=3;BYMONTHDAY=15;BYHOUR=6": ["*-03-15 06:00:00 UTC"],
+            "DTSTART;TZID=America/New_York:20261030T091500\nRRULE:FREQ=WEEKLY;BYDAY=TU": [
+                "Tue *-*-* 09:15:00 America/New_York"
+            ],
+        }
+        for rule, want in cases.items():
+            cal, human, *_ = self.cal({"recurrence": rule})
+            self.assertEqual(cal, want, rule)
+            self.assertNotIn("\n", human)
+
+    def test_what_a_timer_cant_say_is_refused(self):
+        for raw in (
+            {"recurrence": "FREQ=WEEKLY;INTERVAL=2;BYDAY=MO"},
+            {"recurrence": "FREQ=MONTHLY;BYDAY=-1FR"},
+            {"recurrence": "FREQ=DAILY;BYHOUR=9AM"},
+            {"frequency": "BIWEEKLY", "time": "09:00"},
+            {"frequency": "WEEKLY", "interval": 2, "dayOfWeek": "MONDAY"},
+            {"cron": "0 9 * * FRI-MON"},
+            {"cron": "0 9 L * *"},
+            {"frequency": "WEEKLY", "daysOfWeek": "1MO"},
+            {"frequency": "DAILY", "minute": "30m", "hour": 9},
+        ):
+            cal, _, _, _, _, why = self.cal(raw)
+            self.assertIsNone(cal, raw)
+            self.assertTrue(why, raw)
+
+    def test_cron_dom_and_dow(self):
+        # Cron ORs the two day fields only when neither starts with "*".
+        self.assertEqual(ji.cron_to_calendar("0 0 */10 * 1", "UTC"), ["Mon *-*-01,11,21,31 00:00:00 UTC"])
+
+    def test_zones_days_and_sanitising(self):
+        cal, _, tz, _, guess, _ = self.cal({"frequency": "DAILY", "time": "09:00", "timeZone": "america/los_angeles"})
+        self.assertEqual((cal, guess), (["*-*-* 09:00:00 America/Los_Angeles"], ""))
+        cal, _, _, _, guess, _ = self.cal({"frequency": "DAILY", "time": "09:00", "timeZone": "-07:00"})
+        self.assertEqual(cal, ["*-*-* 09:00:00 Etc/GMT+7"])
+        self.assertIn("no daylight saving", guess)
+        cal, _, _, _, guess, _ = self.cal({"frequency": "DAILY", "time": "09:00", "timeZone": "Mars/Olympus"})
+        self.assertEqual(cal, ["*-*-* 09:00:00 UTC"])
+        self.assertIn("not recognised", guess)
+        self.assertEqual(
+            self.cal({"frequency": "WEEKLY", "daysOfWeek": "MON-FRI", "time": "8:00"})[0],
+            ["Mon,Tue,Wed,Thu,Fri *-*-* 08:00:00 UTC"],
+        )
+        cal, _, _, _, guess, _ = self.cal(
+            {"frequency": "DAILY", "time": {"seconds": 1793350800}, "nextRunTime": "2026-10-30T16:30:00Z"}
+        )
+        self.assertEqual(cal, ["*-*-* 16:30:00 UTC"])
+        _, human, *_ = self.cal({"frequency": "DAILY\ntouch /tmp/pwned #", "time": "09:00"})
+        self.assertNotIn("\n", human)
 
     def test_no_schedule(self):
         self.assertIsNone(self.cal({"frequency": "sometimes"})[0])
@@ -220,6 +275,16 @@ class Shapes(unittest.TestCase):
         ji.read_repo_folders(d, sources, notes)
         self.assertEqual(sources[0].memories, ["Use pnpm"])
 
+    def test_prompt_survives_the_heredoc(self):
+        src = ji.Source("o", "r", "main")
+        src.dir = Path("/tmp/r")
+        t = ji.ScheduledTask({"prompt": "-- careful\n  indented line\n", "cron": "0 9 * * *"}, src)
+        t.slug = "careful"
+        script = ji.task_script(t, src, "claude")
+        head = script[: script.index("# shellcheck source=/dev/null")]
+        r = subprocess.run(["bash", "-c", head + 'printf "%s" "$PROMPT"'], capture_output=True, text=True)
+        self.assertEqual(r.stdout, "Task:\n-- careful\n  indented line\n")
+
     def test_not_an_export(self):
         d = self.export({"other.txt": "x"})
         r = subprocess.run([sys.executable, str(SCRIPT), str(d)], capture_output=True, text=True)
@@ -344,7 +409,11 @@ class EndToEnd(unittest.TestCase):
         calls = (self.stub / "calls.log").read_text()
         self.assertIn("claude -p --dangerously-skip-permissions", calls)
         self.assertIn("gh pr create --repo expressjs/cors --base master --head jules/edge-case-test-", calls)
-        self.assertFalse(any((state / "runs").iterdir()), "worktree removed after the pull request")
+        self.assertEqual(
+            [p for p in (state / "runs").iterdir() if not p.name.startswith(".")],
+            [],
+            "worktree removed after the pull request",
+        )
         logs = list((state / "logs").glob("edge-case-test-*.log"))
         self.assertTrue(logs and "pull request opened" in logs[0].read_text())
 
@@ -384,6 +453,109 @@ class EndToEnd(unittest.TestCase):
             ["git", "branch", "--list", "jules/*"], cwd=self.remote, capture_output=True, text=True
         ).stdout
         self.assertIn("jules/edge-case-test-", branches, "the branch is pushed anyway")
+
+    def with_stub(self, name: str, body: str) -> dict:
+        """self.env with a one-off stand-in for `name` first on PATH."""
+        d = self.tmp / f"bin-{name}"
+        d.mkdir(exist_ok=True)
+        (d / name).write_text("#!/bin/sh\n" + body)
+        (d / name).chmod(0o755)
+        return {**self.env, "PATH": f"{d}:{self.env['PATH']}"}
+
+    def run_task(self, slug: str, env=None):
+        script = self.home / ".jules-import" / "tasks" / f"{slug}.sh"
+        return subprocess.run(
+            ["bash", "-l", str(script)], env=env or self.env, capture_output=True, text=True, timeout=120
+        )
+
+    def remote_files(self, prefix: str) -> tuple[str, list[str], str]:
+        branch = subprocess.run(
+            ["git", "branch", "--list", f"{prefix}*", "--format=%(refname:short)"],
+            cwd=self.remote,
+            capture_output=True,
+            text=True,
+        ).stdout.split()[-1]
+        files = subprocess.run(
+            ["git", "ls-tree", "-r", "--name-only", branch], cwd=self.remote, capture_output=True, text=True
+        ).stdout.split()
+        subject = subprocess.run(
+            ["git", "log", "-1", "--format=%s", branch], cwd=self.remote, capture_output=True, text=True
+        ).stdout.strip()
+        return branch, files, subject
+
+    def test_setup_leftovers_never_reach_the_branch(self):
+        (self.export / "repos" / "github_expressjs_cors" / "setup.sh").write_text(
+            'echo "TOKEN=$FAKE_SERVICE_TOKEN" > .env.local\necho "// setup" >> package.json\n'
+        )
+        self.run_import("--no-schedule")
+        # An agent that commits everything itself, setup output included.
+        env = self.with_stub(
+            "claude", 'echo change > agent-was-here.txt\ngit add -A && git commit -q -m "Add the edge case"\n'
+        )
+        r = self.run_task("edge-case-test", env)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        branch, files, subject = self.remote_files("jules/edge-case-test-")
+        self.assertIn("agent-was-here.txt", files)
+        self.assertNotIn(".env.local", files)
+        self.assertEqual(subject, "Add the edge case")
+        package = subprocess.run(
+            ["git", "show", f"{branch}:package.json"], cwd=self.remote, capture_output=True, text=True
+        ).stdout
+        self.assertNotIn("// setup", package)
+
+    def test_a_refused_commit_keeps_the_work(self):
+        self.run_import("--no-schedule")
+        hook = self.home / "code" / "cors" / ".git" / "hooks" / "pre-commit"
+        hook.write_text("#!/bin/sh\nexit 1\n")
+        hook.chmod(0o755)
+        r = self.run_task("edge-case-test")
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("git commit failed", r.stdout)
+        runs = [p for p in (self.home / ".jules-import" / "runs").iterdir() if p.is_dir()]
+        self.assertTrue(runs and (runs[0] / "agent-was-here.txt").exists())
+
+    def test_runs_that_fire_together(self):
+        self.run_import("--no-schedule")
+        script = self.home / ".jules-import" / "tasks"
+        procs = [
+            subprocess.Popen(
+                ["bash", "-l", str(script / f"{slug}.sh")],
+                env=self.env,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+            )
+            for slug in ("edge-case-test", "bolt")
+        ]
+        outs = [p.communicate(timeout=120)[0] for p in procs]
+        self.assertEqual([p.returncode for p in procs], [0, 0], outs)
+        branches = subprocess.run(
+            ["git", "branch", "--list", "jules/*"], cwd=self.remote, capture_output=True, text=True
+        ).stdout
+        self.assertIn("jules/edge-case-test-", branches)
+        self.assertIn("jules/bolt-", branches)
+
+    def test_running_it_again_keeps_what_you_changed(self):
+        sources = json.loads((self.export / "sources.json").read_text())
+        for s in sources:
+            s["githubSource"].pop("defaultBranch")
+        (self.export / "sources.json").write_text(json.dumps(sources))
+        self.run_import()
+        state = self.home / ".jules-import"
+        (state / "env" / "expressjs__cors.env").open("a").write("CLAUDE_CODE_OAUTH_TOKEN=keep-me\n")
+        (state / "tasks" / "edge-case-test.sh").open("a").write("# my edit\n")
+        tasks = json.loads((self.export / "scheduled-tasks.json").read_text())
+        tasks["scheduledTasks"][1]["title"] = "Bolt renamed"
+        (self.export / "scheduled-tasks.json").write_text(json.dumps(tasks))
+        out = self.run_import()
+        env = (state / "env" / "expressjs__cors.env").read_text()
+        self.assertIn("CLAUDE_CODE_OAUTH_TOKEN=keep-me", env)
+        self.assertEqual(env.count("FAKE_SERVICE_TOKEN="), 1)
+        self.assertTrue((state / "tasks" / "edge-case-test.sh").read_text().endswith("# my edit\n"))
+        self.assertTrue((state / "tasks" / "edge-case-test.sh.new").exists())
+        self.assertIn("changed since the last import", out)
+        self.assertFalse((state / "tasks" / "bolt-renamed.sh").exists(), "a renamed task keeps its name")
+        self.assertIn("BASE=master", (state / "tasks" / "bolt.sh").read_text(), "base branch from the clone")
 
     def test_dry_run_changes_nothing(self):
         out = self.run_import("--dry-run")

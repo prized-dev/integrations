@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import json
 import os
 import re
@@ -50,9 +51,9 @@ import urllib.request
 from pathlib import Path
 
 try:
-    from zoneinfo import ZoneInfo
+    from zoneinfo import ZoneInfo, available_timezones
 except ImportError:  # pragma: no cover - Python < 3.9
-    ZoneInfo = None  # type: ignore
+    ZoneInfo = available_timezones = None  # type: ignore
 
 HOME = Path(os.environ.get("HOME", str(Path.home())))
 STATE = Path(os.environ.get("JULES_IMPORT_HOME", str(HOME / ".jules-import")))
@@ -393,7 +394,7 @@ class ScheduledTask:
                 b = lower_keys(d).get("startingbranch")
                 if isinstance(b, str):
                     self.branch = b
-        self.calendar, self.human, self.tz, self.paused, self.guess = parse_schedule(raw)
+        self.calendar, self.human, self.tz, self.paused, self.guess, self.why = parse_schedule(raw)
         self.slug = ""
 
 
@@ -406,7 +407,11 @@ def is_task(d: dict) -> bool:
     return any(h in keys for h in SCHEDULE_HINTS)
 
 
-def read_tasks(export: Path, sources: list[Source], notes: list[str]) -> list[ScheduledTask]:
+def read_tasks(
+    export: Path, sources: list[Source], notes: list[str], known: dict[str, str] | None = None
+) -> list[ScheduledTask]:
+    """Every task with a prompt and a schedule. `known` maps Jules task ids to the names an earlier import gave
+    them, so a renamed task keeps its script and timer."""
     raw = load_json(export / "scheduled-tasks.json", notes)
     tasks: list[ScheduledTask] = []
     taken: list[dict] = []
@@ -414,7 +419,10 @@ def read_tasks(export: Path, sources: list[Source], notes: list[str]) -> list[Sc
         if any(a is t for a in anc for t in taken) or not is_task(d):
             continue
         taken.append(d)
-        tasks.append(ScheduledTask(d, repo_of(d, anc, sources)))
+        try:
+            tasks.append(ScheduledTask(d, repo_of(d, anc, sources)))
+        except Exception as e:  # one odd entry must not stop the import
+            notes.append(f"scheduled-tasks.json: couldn't read an entry ({e}): {json.dumps(d)[:200]}")
     if raw not in (None, {}, []) and not tasks:
         notes.append(
             "scheduled-tasks.json: found no task with a prompt and a schedule in it; read it and use "
@@ -422,6 +430,12 @@ def read_tasks(export: Path, sources: list[Source], notes: list[str]) -> list[Sc
         )
     used: set[str] = set()
     for t in tasks:
+        if known and t.id and known.get(t.id) and known[t.id] not in used:
+            t.slug = known[t.id]
+            used.add(t.slug)
+    for t in tasks:
+        if t.slug:
+            continue
         base = re.sub(r"[^a-z0-9]+", "-", (t.title or " ".join(t.prompt.split()[:6])).lower()).strip("-")[:40]
         base = base.strip("-") or "task"
         slug, n = base, 2
@@ -432,21 +446,38 @@ def read_tasks(export: Path, sources: list[Source], notes: list[str]) -> list[Sc
     return tasks
 
 
-def tz_name(value) -> str:
+class Unsupported(ValueError):
+    """A schedule a systemd timer can't express, or one we can't read with confidence: the user sets it."""
+
+
+def tz_name(value) -> tuple[str, str]:
+    """(an IANA zone systemd and Python accept, a note when it had to be adapted); ("", note) if unknown."""
     if isinstance(value, dict):
         value = value.get("id") or value.get("name") or value.get("timeZone")
     if not isinstance(value, str) or not value.strip():
-        return ""
+        return "", ""
     value = value.strip()
-    if value.upper() in ("UTC", "GMT", "Z", "ETC/UTC"):
-        return "UTC"
-    if ZoneInfo is None:
-        return value
+    if value.upper() in ("UTC", "GMT", "Z", "ETC/UTC", "UTC+0", "UTC+00:00", "+00:00"):
+        return "UTC", ""
+    if ZoneInfo is None:  # pragma: no cover - Python < 3.9
+        return value, ""
     try:
         ZoneInfo(value)
-        return value
+        return value, ""
+    except Exception:  # noqa: S110 - try the other spellings below
+        pass
+    try:
+        match = {z.lower(): z for z in available_timezones()}.get(value.lower())
     except Exception:
-        return ""
+        match = None
+    if match:
+        return match, ""
+    m = re.fullmatch(r"(?:UTC|GMT)?\s*([+-])(\d{1,2})(?::?(\d{2}))?", value, re.I)
+    if m and int(m.group(3) or 0) == 0 and int(m.group(2)) <= 12:
+        # Etc/GMT zones have the sign inverted: UTC-7 is Etc/GMT+7.
+        name = f"Etc/GMT{'-' if m.group(1) == '+' else '+'}{int(m.group(2))}" if int(m.group(2)) else "UTC"
+        return name, f"fixed offset {value} used as {name}, with no daylight saving"
+    return "", f"time zone {value!r} not recognised"
 
 
 def parse_time(value) -> tuple[int, int] | None:
@@ -454,10 +485,13 @@ def parse_time(value) -> tuple[int, int] | None:
     "9:30 PM" or "9am"."""
     if isinstance(value, dict):
         low = lower_keys(value)
+        if set(low) - {"hours", "hour", "minutes", "minute", "seconds", "nanos"} or low.get("seconds", 0) >= 60:
+            return None  # a timestamp or something else, not a time of day
         h, m = low.get("hours", low.get("hour")), low.get("minutes", low.get("minute"))
-        if not all(isinstance(x, (int, float)) or x is None for x in (h, m)):
+        if not all((isinstance(x, (int, float)) and not isinstance(x, bool)) or x is None for x in (h, m)):
             return None
-        return int(h or 0), int(m or 0)
+        h, m = int(h or 0), int(m or 0)
+        return (h, m) if 0 <= h < 24 and 0 <= m < 60 else None
     if not isinstance(value, str):
         return None
     m = re.fullmatch(r"\s*(\d{1,2})(?::(\d{2}))?(?::\d{2}(?:\.\d+)?)?\s*([ap]\.?m\.?)?\s*", value, re.I)
@@ -473,34 +507,53 @@ def parse_timestamp(value) -> dt.datetime | None:
     if isinstance(value, dict) and "seconds" in value:
         try:
             return dt.datetime.fromtimestamp(int(value["seconds"]), dt.timezone.utc)
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, OverflowError, OSError):
             return None
     if not isinstance(value, str):
         return None
     try:
-        return dt.datetime.fromisoformat(re.sub(r"(\.\d{6})\d+", r"\1", value.replace("Z", "+00:00")))
+        when = dt.datetime.fromisoformat(re.sub(r"(\.\d{6})\d+", r"\1", value.replace("Z", "+00:00")))
     except ValueError:
         return None
+    return when if when.tzinfo else when.replace(tzinfo=dt.timezone.utc)
+
+
+DAY_ABBR = {"MO": "MON", "TU": "TUE", "WE": "WED", "TH": "THU", "FR": "FRI", "SA": "SAT", "SU": "SUN"}
+
+
+def one_day(item) -> int:
+    """Index into DAYS for MONDAY / mon / MO / 1 (google.type.DayOfWeek: 1 = Monday, 7 = Sunday)."""
+    if isinstance(item, int) and not isinstance(item, bool) and 1 <= item <= 7:
+        return item - 1
+    if isinstance(item, str):
+        s = item.strip().upper()
+        if s.isdigit() and 1 <= int(s) <= 7:
+            return int(s) - 1
+        s = DAY_ABBR.get(s, s)
+        for i, d in enumerate(DAYS):
+            full = ("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY")[i]
+            if s in (d.upper(), full):
+                return i
+    raise Unsupported(f"can't read the day {item!r}")
 
 
 def day_names(value) -> list[str]:
-    """Weekday names (Mon..Sun) from MONDAY / mon / 1 (google.type.DayOfWeek: 1 = Monday, 7 = Sunday)."""
+    """Weekday names (Mon..Sun) from a list, "MO,WE", "MON-FRI" or "MONDAY". Raises Unsupported on anything else."""
     items = value if isinstance(value, list) else re.split(r"[,\s]+", value) if isinstance(value, str) else [value]
-    out = []
+    out: set[int] = set()
     for item in items:
         if isinstance(item, dict):
             item = item.get("day") or item.get("dayOfWeek") or item.get("value")
-        if isinstance(item, bool):
+        if item in ("", None):
             continue
-        if isinstance(item, int) and 1 <= item <= 7:
-            out.append(DAYS[item - 1])
-        elif isinstance(item, str) and item.strip():
-            s = item.strip().upper()
-            s = {"MO": "MON", "TU": "TUE", "WE": "WED", "TH": "THU", "FR": "FRI", "SA": "SAT", "SU": "SUN"}.get(s, s)
-            for d in DAYS:
-                if s.startswith(d.upper()):
-                    out.append(d)
-    return sorted(set(out), key=DAYS.index)
+        if isinstance(item, str) and "-" in item.strip("-"):
+            a, b = (one_day(x) for x in item.split("-", 1))
+            if a > b:
+                raise Unsupported(f"the day range {item!r} wraps the week")
+            out.update(range(a, b + 1))
+        else:
+            out.add(one_day(item))
+    return [DAYS[i] for i in sorted(out)]
 
 
 CRON_MACROS = {
@@ -516,7 +569,7 @@ MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", 
 
 
 def cron_field(field: str, lo: int, hi: int, names: list[str] | None = None, base: int = 0) -> list[int] | None:
-    """Expand one cron field to its values; None means '*'."""
+    """Expand one cron field to its values; None means '*'. Raises ValueError on what it can't read."""
     if field == "*":
         return None
     values: set[int] = set()
@@ -532,9 +585,11 @@ def cron_field(field: str, lo: int, hi: int, names: list[str] | None = None, bas
         else:
             a = cron_value(part, names, base)
             b = hi if step != 1 else a
-        if not (lo <= a <= hi and lo <= b <= hi) or step < 1:
+        if not (lo <= a <= b <= hi) or step < 1:
             raise ValueError(field)
         values.update(range(a, b + 1, step))
+    if not values:
+        raise ValueError(field)
     return sorted(values)
 
 
@@ -560,44 +615,134 @@ def cron_to_calendar(expr: str, tz: str) -> list[str]:
 
     days = None if dow is None else sorted({DAYS[(d - 1) % 7] for d in dow}, key=DAYS.index)
     tail = f" {j(hour)}:{j(minute)}:00" + (f" {tz}" if tz else "")
-    if dom is not None and days is not None:  # cron runs when either matches: two expressions
+    if dom is not None and days is not None and not f[2].startswith("*") and not f[4].startswith("*"):
+        # Both restricted: cron runs when either matches, so two expressions (a timer fires on any of them).
         return [f"*-{j(month)}-{j(dom)}{tail}", f"{','.join(days)} *-{j(month)}-*{tail}"]
     prefix = f"{','.join(days)} " if days else ""
     return [f"{prefix}*-{j(month)}-{j(dom)}{tail}"]
 
 
-def rrule_to_calendar(rule: str, tz: str, at: tuple[int, int] | None) -> list[str] | None:
+def rrule_to_calendar(text: str, tz: str, at: tuple[int, int] | None) -> tuple[list[str], str, str]:
+    """(calendar, tz, guess) for an RRULE, with its DTSTART line when there is one. Raises Unsupported."""
+    lines = [ln.strip() for ln in re.split(r"[\r\n]+", text) if ln.strip()]
+    rule = next((ln for ln in lines if "FREQ=" in ln.upper()), "")
+    guess = []
+    dtstart = next((ln for ln in lines if ln.upper().startswith("DTSTART")), "")
+    m = re.match(r"DTSTART(?:;TZID=([^:;]+))?:(\d{8})T(\d{2})(\d{2})\d{2}(Z?)", dtstart, re.I)
+    if m:
+        if m.group(1):
+            tz2, note = tz_name(m.group(1))
+            if not tz2:
+                raise Unsupported(note)
+            tz = tz2
+        elif m.group(5):
+            tz = "UTC"
+        at = at or (int(m.group(3)), int(m.group(4)))
+    if any(ln.upper().startswith(("EXDATE", "RDATE", "EXRULE")) for ln in lines):
+        guess.append("its EXDATE/RDATE lines were left out")
     parts = dict(p.split("=", 1) for p in rule.upper().replace("RRULE:", "").split(";") if "=" in p)
     freq = parts.get("FREQ", "")
-    h = int(parts["BYHOUR"].split(",")[0]) if parts.get("BYHOUR") else (at or (9, 0))[0]
-    m = int(parts["BYMINUTE"].split(",")[0]) if parts.get("BYMINUTE") else (at or (9, 0))[1]
-    days = day_names(parts.get("BYDAY", ""))
-    return build_calendar(freq, (h, m), days, int(parts.get("BYMONTHDAY", "1").split(",")[0]), tz)
+    interval = int(parts.get("INTERVAL", "1") or 1)
+    for key in ("BYSETPOS", "BYWEEKNO", "BYYEARDAY", "BYSECOND"):
+        if key in parts:
+            raise Unsupported(f"RRULE {key} can't be a systemd timer")
+    if "COUNT" in parts or "UNTIL" in parts:
+        guess.append("it runs with no end date (the RRULE's COUNT/UNTIL was left out)")
+
+    def nums(key: str, lo: int, hi: int) -> list[int] | None:
+        if not parts.get(key):
+            return None
+        vals = [int(x) for x in parts[key].split(",")]
+        if not all(lo <= v <= hi for v in vals):
+            raise Unsupported(f"RRULE {key}={parts[key]}")
+        return sorted(set(vals))
+
+    hours, minutes = nums("BYHOUR", 0, 23), nums("BYMINUTE", 0, 59)
+    if hours is None and minutes is None and at is None and freq != "HOURLY":
+        at = (9, 0)
+        guess.append("no time of day in the export: 09:00 picked")
+    hh = ",".join(f"{h:02d}" for h in hours) if hours else f"{(at or (0, 0))[0]:02d}"
+    mm = ",".join(f"{x:02d}" for x in minutes) if minutes else f"{(at or (0, 0))[1]:02d}"
+    month = nums("BYMONTH", 1, 12)
+    mon = ",".join(f"{x:02d}" for x in month) if month else "*"
+    mdays = nums("BYMONTHDAY", 1, 31)
+    dom = ",".join(f"{x:02d}" for x in mdays) if mdays else "*"
+    days, nth = [], []
+    for d in parts.get("BYDAY", "").split(",") if parts.get("BYDAY") else []:
+        n = re.fullmatch(r"([+-]?\d)?([A-Z]{2})", d)
+        if not n:
+            raise Unsupported(f"RRULE BYDAY={parts['BYDAY']}")
+        days.append(day_names(n.group(2))[0])
+        if n.group(1):
+            nth.append(int(n.group(1)))
+    t = f" {hh}:{mm}:00 {tz}"
+    wd = f"{','.join(days)} " if days else ""
+    if freq == "HOURLY":
+        if interval > 1 and 24 % interval:
+            raise Unsupported(f"every {interval} hours doesn't divide the day")
+        hour = f"00/{interval}" if interval > 1 else (hh if hours else "*")
+        cal = [f"{wd}*-{mon}-{dom} {hour}:{mm}:00 {tz}"]
+    elif interval > 1 and freq in ("DAILY", "WEEKLY", "YEARLY"):
+        raise Unsupported(
+            f"every {interval} {freq.lower().rstrip('ly').replace('dai', 'day')}s can't be a systemd timer"
+        )
+    elif freq in ("DAILY", "WEEKLY"):
+        if freq == "WEEKLY" and not days:
+            raise Unsupported("a weekly RRULE without BYDAY")
+        cal = [f"{wd}*-{mon}-{dom}{t}"]
+    elif freq == "MONTHLY":
+        if nth:
+            if len(set(nth)) != 1 or not 1 <= nth[0] <= 4:
+                raise Unsupported(f"RRULE BYDAY={parts['BYDAY']}")
+            dom = f"{(nth[0] - 1) * 7 + 1:02d}..{nth[0] * 7:02d}"
+        elif not days and dom == "*":
+            raise Unsupported("a monthly RRULE without a day")
+        mon = f"01/{interval}" if interval > 1 and mon == "*" else mon
+        if interval > 1:
+            guess.append(f"every {interval} months counted from January")
+        cal = [f"{wd}*-{mon}-{dom}{t}"]
+    elif freq == "YEARLY":
+        if mon == "*" or dom == "*":
+            raise Unsupported("a yearly RRULE without BYMONTH and BYMONTHDAY")
+        cal = [f"*-{mon}-{dom}{t}"]
+    else:
+        raise Unsupported(f"RRULE FREQ={freq or '?'}")
+    return cal, tz, "; ".join(guess)
 
 
-def build_calendar(freq: str, at: tuple[int, int], days: list[str], dom: int, tz: str) -> list[str] | None:
-    freq = freq.upper()
-    t = f"{at[0]:02d}:{at[1]:02d}:00" + (f" {tz}" if tz else "")
-    if "HOUR" in freq:
-        return [f"*-*-* *:{at[1]:02d}:00"]
-    if "WEEKDAY" in freq or "BUSINESS" in freq:
+FREQ_WORDS = (  # checked in order: the first pattern that matches names the frequency
+    (r"BI-?WEEK|FORTNIGHT|EVERY.?OTHER|EVERY.?2|BI-?MONTH|SEMI|QUARTER", None),
+    (r"HOUR", "HOURLY"),
+    (r"WEEKDAY|BUSINESS|WORKDAY", "WEEKDAYS"),
+    (r"WEEK", "WEEKLY"),
+    (r"MONTH", "MONTHLY"),
+    (r"YEAR|ANNUAL", "YEARLY"),
+    (r"DAI|\bDAY\b|EVERY.?DAY|^DAY$", "DAILY"),
+)
+
+
+def build_calendar(freq: str, at: tuple[int, int], days: list[str], dom: int, tz: str) -> list[str]:
+    t = f"{at[0]:02d}:{at[1]:02d}:00 {tz}"
+    wd = f"{','.join(days)} " if days and len(days) < 7 else ""
+    if freq == "HOURLY":
+        return [f"{wd}*-*-* *:{at[1]:02d}:00 {tz}"]
+    if freq == "WEEKDAYS":
         return [f"Mon..Fri *-*-* {t}"]
-    if "DAI" in freq or "DAY" == freq or "EVERY_DAY" in freq:
-        return [f"{','.join(days)} *-*-* {t}" if days and len(days) < 7 else f"*-*-* {t}"]
-    if "WEEK" in freq:
-        return [f"{','.join(days or ['Mon'])} *-*-* {t}"]
-    if "MONTH" in freq:
+    if freq == "DAILY":
+        return [f"{wd}*-*-* {t}"]
+    if freq == "WEEKLY":
+        return [f"{','.join(days)} *-*-* {t}"]
+    if freq == "MONTHLY":
         return [f"*-*-{dom:02d} {t}"]
-    return None
+    raise Unsupported(f"a {freq.lower()} schedule needs a month and day")
 
 
 def parse_schedule(raw: dict):
-    """(calendar expressions or None, a readable summary, tz, paused, what was guessed)."""
+    """(calendar expressions or None, a readable summary, tz, paused, what was guessed, why it's None)."""
     flat: dict = {}
     for d, _ in walk(raw):
         for k, v in lower_keys(d).items():
             flat.setdefault(k, v)
-    tz = next((tz_name(flat[k]) for k in ("timezone", "timezoneid", "tz", "zone") if k in flat), "") or "UTC"
     state = " ".join(str(flat.get(k, "")) for k in ("state", "status", "schedulestate")).upper()
     paused = (
         flat.get("paused") is True
@@ -605,85 +750,122 @@ def parse_schedule(raw: dict):
         or flat.get("active") is False
         or any(w in state for w in ("PAUS", "DISABL", "INACTIVE", "STOPPED"))
     )
-    guess = ""
-    # 1. a cron expression
-    for k in ("cron", "cronexpression", "cronschedule", "crontab", "schedule", "expression", "spec"):
-        v = flat.get(k)
-        if isinstance(v, str) and (v.strip().startswith("@") or len(v.split()) == 5):
-            try:
-                return cron_to_calendar(v, tz), f"cron `{v.strip()}` ({tz})", tz, paused, guess
-            except (ValueError, IndexError):
-                pass
-    at = None
-    for k in ("timeofday", "time", "starttime", "runtime", "scheduledtime", "localtime", "runat", "at", "runtimeofday"):
+    guesses: list[str] = []
+    tz, note = "", ""
+    for k in ("timezone", "timezoneid", "tz", "zone"):
         if k in flat:
-            at = parse_time(flat[k])
-            if at:
-                break
-    if at is None and isinstance(flat.get("hour", flat.get("hours")), (int, float)):
-        at = (int(flat.get("hour", flat.get("hours"))), int(flat.get("minute", flat.get("minutes", 0)) or 0))
-    when = next(
-        (
-            parse_timestamp(flat[k])
-            for k in ("nextruntime", "nextrun", "nextrunat", "lastruntime", "lastrun", "createtime", "createdat")
-            if parse_timestamp(flat.get(k))
-        ),
-        None,
-    )
-    if when and ZoneInfo is not None:
-        when = when.astimezone(ZoneInfo(tz))
-    # 2. an RRULE
-    for v in flat.values():
-        if isinstance(v, str) and "FREQ=" in v.upper():
-            cal = rrule_to_calendar(v, tz, at)
-            if cal:
-                return cal, f"`{v.strip()}` ({tz})", tz, paused, guess
-    # 3. a frequency word, a time, days
-    freq = ""
-    for k in (
-        "frequency",
-        "cadence",
-        "recurrence",
-        "repeat",
-        "period",
-        "interval",
-        "type",
-        "schedule",
-        "frequencytype",
-        "recurrencetype",
-        "unit",
-    ):
-        v = flat.get(k)
-        if isinstance(v, str) and re.search(r"HOUR|DAI|DAY|WEEK|MONTH", v.upper()):
-            freq = v
+            tz, note = tz_name(flat[k])
             break
-    if not freq:
-        return None, "", tz, paused, guess
-    days = []
-    for k in ("daysofweek", "dayofweek", "weekdays", "weekday", "days", "byday", "day"):
-        if k in flat:
-            days = day_names(flat[k])
-            if days:
+    if note:
+        guesses.append(note + ("" if tz else ": UTC used"))
+    tz = tz or "UTC"
+
+    def done(cal, human):
+        human = re.sub(r"[^\w .,:;=+/@()*-]", "", " ".join(str(human).split()))[:160]
+        return cal, human, tz, paused, "; ".join(g for g in guesses if g), ""
+
+    def refuse(why):
+        return None, "", tz, paused, "", re.sub(r"[^\w .,:;=+/@()*'-]", "", " ".join(str(why).split()))[:200]
+
+    try:
+        # 1. a cron expression
+        for k in ("cron", "cronexpression", "cronschedule", "crontab", "schedule", "expression", "spec"):
+            v = flat.get(k)
+            if isinstance(v, str) and (v.strip().startswith("@") or len(v.split()) == 5) and "FREQ=" not in v.upper():
+                try:
+                    return done(cron_to_calendar(v, tz), f"cron {v.strip()} ({tz})")
+                except (ValueError, IndexError):
+                    return refuse(f"can't read the cron line {v.strip()!r}")
+        at = None
+        for k in ("timeofday", "time", "starttime", "runtime", "scheduledtime", "localtime", "runat", "at"):
+            if k in flat:
+                at = parse_time(flat[k])
+                if at:
+                    break
+        hour = flat.get("hour", flat.get("hours"))
+        if at is None and isinstance(hour, int) and not isinstance(hour, bool):
+            minute = flat.get("minute", flat.get("minutes", 0)) or 0
+            if not isinstance(minute, int):
+                return refuse(f"can't read the minute {minute!r}")
+            at = parse_time({"hours": hour, "minutes": minute})
+        when = next(
+            (
+                parse_timestamp(flat[k])
+                for k in ("nextruntime", "nextrun", "nextrunat", "lastruntime", "lastrun")
+                if parse_timestamp(flat.get(k))
+            ),
+            None,
+        )
+        if when and ZoneInfo is not None:
+            when = when.astimezone(ZoneInfo(tz))
+        # 2. an RRULE (never falls through to the frequency words: BYMONTH would read as monthly)
+        for v in flat.values():
+            if isinstance(v, str) and "FREQ=" in v.upper():
+                cal, tz, g = rrule_to_calendar(v, tz, at)
+                guesses.append(g)
+                return done(cal, f"{' '.join(v.split())} ({tz})")
+        # 3. a frequency word, a time, days
+        freq, word = "", ""
+        for k in (
+            "frequency",
+            "cadence",
+            "recurrence",
+            "repeat",
+            "period",
+            "interval",
+            "type",
+            "schedule",
+            "frequencytype",
+            "recurrencetype",
+            "unit",
+        ):
+            v = flat.get(k)
+            if isinstance(v, str) and v.strip():
+                for pattern, name in FREQ_WORDS:
+                    if re.search(pattern, v.upper()):
+                        if name is None:
+                            return refuse(f"a {v.strip().lower()} schedule can't be a systemd timer")
+                        freq, word = name, v.strip()
+                        break
+            if freq:
                 break
-    if at is None:
-        if when:
-            at, guess = (when.hour, when.minute), "time of day taken from the last or next run"
-        else:
-            at, guess = (9, 0), "no time of day in the export: 09:00 picked"
-    if "WEEK" in freq.upper() and "WEEKDAY" not in freq.upper() and not days:
-        if when:
-            days, guess = (
-                [DAYS[when.weekday()]],
-                (guess + "; " if guess else "") + "weekday taken from the last or next run",
+        if not freq:
+            return refuse("no schedule found")
+        every = next(
+            (flat[k] for k in ("interval", "every", "repeatevery", "intervalcount", "multiplier") if k in flat), 1
+        )
+        if isinstance(every, int) and not isinstance(every, bool) and every > 1:
+            return refuse(f"every {every} {word.lower()} can't be a systemd timer")
+        days: list[str] = []
+        for k in ("daysofweek", "dayofweek", "weekdays", "weekday", "days", "byday"):
+            if k in flat and flat[k] not in ("", None, []):
+                days = day_names(flat[k])
+                break
+        if at is None:
+            if when:
+                at = (when.hour, when.minute)
+                guesses.append("time of day taken from the last or next run")
+            else:
+                at = (9, 0)
+                guesses.append("no time of day in the export: 09:00 picked")
+        if freq == "WEEKLY" and not days:
+            if when:
+                days = [DAYS[when.weekday()]]
+                guesses.append("weekday taken from the last or next run")
+            else:
+                days = ["Mon"]
+                guesses.append("no weekday in the export: Monday picked")
+        dom = next((int(flat[k]) for k in ("dayofmonth", "monthday", "daysofmonth") if isinstance(flat.get(k), int)), 0)
+        if freq == "MONTHLY" and not dom:
+            dom = when.day if when else 1
+            guesses.append(
+                f"day of the month {'taken from the last or next run' if when else 'not in the export: 1 picked'}"
             )
-        else:
-            days, guess = ["Mon"], (guess + "; " if guess else "") + "no weekday in the export: Monday picked"
-    dom = next((int(flat[k]) for k in ("dayofmonth", "monthday", "daysofmonth") if isinstance(flat.get(k), int)), 0)
-    if "MONTH" in freq.upper() and not dom:
-        dom = when.day if when else 1
-    cal = build_calendar(freq, at, days, dom or 1, tz)
-    human = f"{freq.lower()}" + (f" on {', '.join(days)}" if days else "") + f" at {at[0]:02d}:{at[1]:02d} {tz}"
-    return cal, human, tz, paused, guess
+        cal = build_calendar(freq, at, days, dom or 1, tz)
+        human = word.lower() + (f" on {', '.join(days)}" if days else "") + f" at {at[0]:02d}:{at[1]:02d} {tz}"
+        return done(cal, human)
+    except (Unsupported, ValueError, TypeError, KeyError, IndexError, OverflowError) as e:
+        return refuse(str(e) or type(e).__name__)
 
 
 def check_calendar(specs: list[str]) -> str:
@@ -715,8 +897,8 @@ class Run:
         if self.dry:
             return 0
         if log:
-            log.parent.mkdir(parents=True, exist_ok=True)
-            with open(log, "a") as fh:
+            log.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            with os.fdopen(os.open(log, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600), "a") as fh:
                 fh.write(f"\n$ {' '.join(shlex.quote(c) for c in cmd)}\n")
                 fh.flush()
                 try:
@@ -752,6 +934,7 @@ def clone(run: Run, src: Source, code: Path, use_gh: bool) -> bool:
     if (dest / ".git").exists():
         run.log(f"{src.full}: already cloned in {dest}; fetching")
         run.sh(["git", "-C", str(dest), "fetch", "--quiet", "origin"])
+        default_branch(src)
         return True
     run.log(f"{src.full}: cloning into {dest}")
     if run.dry:
@@ -777,14 +960,20 @@ def clone(run: Run, src: Source, code: Path, use_gh: bool) -> bool:
             )
         )
         return False
-    if not src.branch:
-        r = subprocess.run(
-            ["git", "-C", str(dest), "symbolic-ref", "--short", "refs/remotes/origin/HEAD"],
-            capture_output=True,
-            text=True,
-        )
-        src.branch = r.stdout.strip().removeprefix("origin/") or "main"
+    default_branch(src)
     return True
+
+
+def default_branch(src: Source) -> None:
+    """The export's default branch, else the clone's origin/HEAD."""
+    if src.branch or not src.dir:
+        return
+    r = subprocess.run(
+        ["git", "-C", str(src.dir), "symbolic-ref", "--short", "refs/remotes/origin/HEAD"],
+        capture_output=True,
+        text=True,
+    )
+    src.branch = r.stdout.strip().removeprefix("origin/") or "main"
 
 
 # Runtimes a Jules VM had that a fresh box doesn't; installed per user, never with sudo.
@@ -909,18 +1098,31 @@ def env_file(src: Source | None) -> Path:
     return STATE / "env" / (f"{src.key}.env" if src else "_all.env")
 
 
+def sh_value(v: str) -> str:
+    """A shell word for v on one line: $'...' when it holds newlines or other control characters."""
+    if not re.search(r"[\x00-\x1f\x7f]", v):
+        return shlex.quote(v)
+    out = "".join(
+        {"\\": "\\\\", "'": "\\'", "\n": "\\n", "\t": "\\t", "\r": "\\r"}.get(c)
+        or (f"\\x{ord(c):02x}" if ord(c) < 32 or ord(c) == 127 else c)
+        for c in v
+    )
+    return f"$'{out}'"
+
+
 def write_env(run: Run, src: Source | None, env: dict[str, str]):
+    """Write the export's variables, keeping any line the user added to the file since."""
     if not env:
         return
     path = env_file(src)
-    body = (
-        "# Jules environment variables"
-        + (f" for {src.full}" if src else " for every repo")
-        + ". Load with: set -a; . "
-        + str(path)
-        + "; set +a\n"
-    )
-    body += "".join(f"{k}={shlex.quote(v)}\n" for k, v in sorted(env.items()))
+    header = "# Jules environment variables" + (f" for {src.full}" if src else " for every repo")
+    body = header + ". Load with: set -a; . " + str(path) + "; set +a\n"
+    if path.exists():
+        for line in path.read_text().splitlines():
+            m = re.match(r"\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)=", line)
+            if not line.startswith("# Jules environment variables") and not (m and m.group(1) in env):
+                body += line + "\n"
+    body += "".join(f"{k}={sh_value(v)}\n" for k, v in sorted(env.items()))
     if not run.dry:
         (STATE / "env").mkdir(parents=True, exist_ok=True)
         os.chmod(STATE / "env", 0o700)
@@ -931,9 +1133,8 @@ def write_env(run: Run, src: Source | None, env: dict[str, str]):
     )
 
 
-def run_setup(run: Run, src: Source, log: Path) -> None:
-    if not src.setup.strip():
-        return
+def write_setup(run: Run, src: Source) -> Path:
+    """The repo's setup script as ~/.jules-import/setup/OWNER__REPO.sh, with Jules' /home/jules as $HOME."""
     script = STATE / "setup" / f"{src.key}.sh"
     body = src.setup.replace("/home/jules/", "$HOME/").replace("/home/jules", "$HOME")
     run.write(
@@ -941,6 +1142,13 @@ def run_setup(run: Run, src: Source, log: Path) -> None:
         "#!/bin/bash\n# Jules setup script for " + src.full + "\n" + body + ("" if body.endswith("\n") else "\n"),
         0o755,
     )
+    return script
+
+
+def run_setup(run: Run, src: Source, log: Path) -> None:
+    if not src.setup.strip():
+        return
+    script = write_setup(run, src)
     run.log(f"{src.full}: running its Jules setup script (log: {log})")
     if run.dry:
         return
@@ -1000,13 +1208,14 @@ TASK_TEMPLATE = r"""#!/bin/bash -l
 # Each run: a fresh worktree of {repo} from origin/{base}, the setup script, {agent} with the prompt
 # below, then a pushed branch and a pull request with gh. Edit the prompt or the agent freely.
 set -uo pipefail
+umask 077
 REPO={repo_dir}
 BASE={base}
 AGENT={agent}
 SETUP={setup}
 TEST_CMD={test_cmd}
 ENV_FILES=({env_files})
-read -r -d '' PROMPT <<'{eof}'
+IFS= read -r -d '' PROMPT <<'{eof}'
 {prompt}
 {eof}
 
@@ -1014,51 +1223,76 @@ read -r -d '' PROMPT <<'{eof}'
 [ -f "$HOME/.jules-import/toolchain.sh" ] && . "$HOME/.jules-import/toolchain.sh"
 # shellcheck source=/dev/null
 for f in "${{ENV_FILES[@]}}"; do [ -f "$f" ] && {{ set -a; . "$f"; set +a; }}; done
+runs="$HOME/.jules-import/runs"
 stamp=$(date -u +%Y%m%d-%H%M%S)
 branch="jules/{slug}-$stamp"
-work="$HOME/.jules-import/runs/{slug}-$stamp"
+work="$runs/{slug}-$stamp"
 log="$HOME/.jules-import/logs/{slug}-$stamp.log"
-mkdir -p "$(dirname "$log")"
+mkdir -p "$runs" "$(dirname "$log")"
 exec > >(tee -a "$log") 2>&1
 echo "== {title}: $stamp, branch $branch"
 
-git -C "$REPO" fetch --quiet origin "$BASE" || {{ echo "git fetch failed"; exit 1; }}
+# One git operation on the clone at a time: timers missed while the box slept all fire when it wakes.
+exec 9>"$runs/.{repo_key}.lock"
+flock 9
+# A failed run keeps its worktree for a look; a week later it goes.
+find "$runs" -mindepth 1 -maxdepth 1 -type d -name '{slug}-*' -mtime +7 -exec git -C "$REPO" worktree remove --force {{}} \; 2>/dev/null
+git -C "$REPO" worktree prune
+git -C "$REPO" fetch --quiet origin "$BASE" || {{ echo "== git fetch failed"; exit 1; }}
 git -C "$REPO" worktree add --quiet -b "$branch" "$work" "origin/$BASE" || exit 1
+flock -u 9
 cd "$work" || exit 1
-[ -n "$SETUP" ] && [ -f "$SETUP" ] && {{ bash "$SETUP" || echo "setup script exited $? (continuing)"; }}
-# What the setup script left behind (installs, build output) is not the agent's work: never commit it.
-setup_left="$HOME/.jules-import/logs/{slug}-$stamp.setup-files"
-{{ git ls-files --others --exclude-standard -z; git diff --name-only -z; }} > "$setup_left"
+start_sha=$(git rev-parse HEAD)
+[ -n "$SETUP" ] && [ -f "$SETUP" ] && {{ bash "$SETUP" 9>&- || echo "== setup script exited $? (continuing)"; }}
+# What the setup script leaves (installs, a lockfile it rewrote, build output) is not the agent's work: note
+# each file's content now, and keep it out of the commit unless the agent changes it again.
+setup_left="$work.setup-files"
+{{ git ls-files --others --exclude-standard -z; git diff --name-only -z; }} |
+  while IFS= read -r -d '' f; do [ -f "$f" ] && printf '%s\t%s\0' "$(git hash-object -- "$f")" "$f"; done > "$setup_left"
 
 NOTE="You are running unattended on a schedule (a task carried over from Jules), in a fresh git worktree of {repo} on branch $branch, based on $BASE. Nobody is watching, so don't ask questions: make your best call and say why in the commit message."
 [ -n "$TEST_CMD" ] && NOTE="$NOTE Run the tests with \`$TEST_CMD\` before you finish."
 NOTE="$NOTE When you're done, commit your work on this branch. Don't push or open a pull request: the script that started you does that. If nothing is worth changing, commit nothing."
 case "$AGENT" in
   codex) codex exec --dangerously-bypass-approvals-and-sandbox "$PROMPT
-
-$NOTE" ;;
+$NOTE" 9>&- ;;
   *) claude -p --dangerously-skip-permissions "$PROMPT
-
-$NOTE" ;;
+$NOTE" 9>&- ;;
 esac
 agent_rc=$?
 echo "== agent exited $agent_rc"
 
+# One commit with everything the agent changed, its own commits included, minus what the setup script left.
+msg="$work.message"
+git log --reverse --format=%B "$start_sha..HEAD" > "$msg"
+git reset --quiet --soft "$start_sha"
 git add -A
-[ -s "$setup_left" ] && git reset --quiet --pathspec-from-file="$setup_left" --pathspec-file-nul
-git diff --cached --quiet || git commit --quiet -m "{title}: changes from the $stamp run"
-rm -f "$setup_left"
-if [ "$(git rev-list --count "origin/$BASE..HEAD")" -eq 0 ]; then
+while IFS=$'\t' read -r -d '' sum f; do
+  if [ -f "$f" ] && [ "$(git hash-object -- "$f")" = "$sum" ]; then git reset --quiet -- "$f"; fi
+done < "$setup_left"
+if git diff --cached --quiet; then
   echo "== no changes; nothing to push"
-  cd "$HOME" && git -C "$REPO" worktree remove --force "$work" && git -C "$REPO" branch -D "$branch" >/dev/null
+  cd "$HOME" || exit 1
+  flock 9
+  git -C "$REPO" worktree remove --force "$work" && git -C "$REPO" branch -D "$branch" >/dev/null
+  rm -f "$setup_left" "$msg"
   exit "$agent_rc"
 fi
-title=$(git log --reverse --format=%s "origin/$BASE..HEAD" | head -n 1)
+grep -q '[^[:space:]]' "$msg" || echo "{title}: changes from the $stamp run" > "$msg"
+if ! git commit --quiet -F "$msg"; then
+  echo "== git commit failed (a commit hook?); the work stays in $work on branch $branch"
+  exit 1
+fi
+rm -f "$setup_left" "$msg"
+title=$(git log -1 --format=%s)
 if ! git push --quiet -u origin "$branch"; then
   echo "== git push failed; the work stays in $work on branch $branch"
   exit 1
 fi
-cd "$HOME" && git -C "$REPO" worktree remove --force "$work"
+cd "$HOME" || exit 1
+flock 9
+git -C "$REPO" worktree remove --force "$work"
+flock -u 9
 if gh pr create --repo {repo} --base "$BASE" --head "$branch" --title "$title" \
     --body "Scheduled task **{title}** (carried over from Jules), run $stamp on $(hostname) by $AGENT. Log: \`$log\`"; then
   echo "== pull request opened"
@@ -1092,8 +1326,27 @@ def task_script(t: ScheduledTask, src: Source, agent: str) -> str:
         test_cmd=shlex.quote(src.test),
         env_files=env_files,
         eof=eof,
-        prompt=t.prompt.rstrip("\n"),
+        repo_key=src.key,
+        prompt=("Task:\n" if t.prompt.lstrip().startswith("-") else "") + t.prompt.rstrip("\n"),
     )
+
+
+MANIFEST = STATE / "manifest.json"
+
+
+def sha256(text: str) -> str:
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def load_manifest() -> dict:
+    """What earlier imports wrote: task name -> Jules id, repo and the script's hash (to spot hand edits)."""
+    try:
+        data = json.loads(MANIFEST.read_text())
+        if isinstance(data, dict) and isinstance(data.get("tasks"), dict):
+            return data
+    except (OSError, ValueError):
+        pass
+    return {"tasks": {}}
 
 
 def systemd_user() -> bool:
@@ -1214,7 +1467,9 @@ def main_import(args) -> int:
     sources = read_sources(export, notes)
     read_repo_folders(export, sources, notes)
     glob_env = read_env(export, sources, notes)
-    tasks = read_tasks(export, sources, notes)
+    manifest = load_manifest()
+    known = {v.get("id"): k for k, v in manifest["tasks"].items() if v.get("id")}
+    tasks = read_tasks(export, sources, notes, known)
     sessions = read_sessions(export, sources)
 
     agent = args.agent or ("claude" if shutil.which("claude") or not shutil.which("codex") else "codex")
@@ -1288,7 +1543,7 @@ def main_import(args) -> int:
     else:
         for s in cloned:
             if s.setup.strip():
-                run.write(STATE / "setup" / f"{s.key}.sh", "#!/bin/bash\n" + s.setup, 0o755)
+                write_setup(run, s)
     write_memories(run, chosen)
     write_sessions(run, export, sessions)
 
@@ -1311,8 +1566,18 @@ def main_import(args) -> int:
                 )
                 continue
             path = STATE / "tasks" / f"{t.slug}.sh"
-            run.write(path, task_script(t, src, agent), 0o755)
-            problem = check_calendar(t.calendar) if t.calendar else "no schedule found"
+            content = task_script(t, src, agent)
+            before = manifest["tasks"].get(t.slug, {})
+            if path.exists() and sha256(path.read_text()) != before.get("sha256"):
+                run.write(path.with_name(path.name + ".new"), content, 0o755)
+                notes.append(
+                    f"scheduled task {t.slug}: {path} changed since the last import, so it was left alone; "
+                    f"this import's version is next to it as {path.name}.new"
+                )
+            else:
+                run.write(path, content, 0o755)
+                manifest["tasks"][t.slug] = {"id": t.id, "repo": src.full, "sha256": sha256(content)}
+            problem = check_calendar(t.calendar) if t.calendar else (t.why or "no schedule found")
             state = "paused in Jules, timer left off" if t.paused else ""
             if problem:
                 notes.append(
@@ -1334,6 +1599,14 @@ def main_import(args) -> int:
                 )
             else:
                 run.log(f"task {t.slug} -> {path}: {t.human}")
+    current = {t.slug for t in tasks}
+    for slug, entry in sorted(manifest["tasks"].items()):
+        if slug not in current and entry.get("repo") in {s.full for s in cloned}:
+            notes.append(
+                f"scheduled task {slug} came from an earlier import and isn't in this export; its timer stays "
+                f"as it was. To drop it: systemctl --user disable --now jules-{slug}.timer"
+            )
+    run.write(MANIFEST, json.dumps(manifest, indent=2) + "\n")
     if not run.dry and Path(__file__).is_file() and Path(__file__).resolve() != (STATE / "jules_import.py").resolve():
         STATE.mkdir(parents=True, exist_ok=True)
         shutil.copy(__file__, STATE / "jules_import.py")
