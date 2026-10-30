@@ -67,6 +67,7 @@ class FakeCloud:
         self.exec_error: Callable[[str], PrizedError | None] | None = None
         self.write_hook: Callable[[str, bytes], bytes] | None = None
         self.delete_delay = 0.0
+        self.default_root_mode = "none"
 
     def answer(self, responder: ANSWER) -> None:
         """Answer the commands ``responder`` returns a ``Result`` for, before running anything."""
@@ -96,6 +97,10 @@ class FakeCloud:
         for responder in self._answers:
             if (result := responder(command)) is not None:
                 return result
+        if "docker info" in command and "echo none" in command:
+            # The root probe is always answered here: run for real on a machine with Docker (a CI runner), it would
+            # send the provider on to start a privileged container there.
+            return Result(f"{self.default_root_mode}\n")
         process = await asyncio.create_subprocess_exec(
             "bash",
             "-c",
