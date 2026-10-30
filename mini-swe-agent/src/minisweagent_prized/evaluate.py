@@ -20,6 +20,7 @@ whose datasets carry each instance's image and eval script, and
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import threading
@@ -30,7 +31,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
-from prized import CommandTimeoutError, Sandbox
+from prized import CommandTimeoutError, PrizedError, Sandbox
 from swebench.harness.constants import (
     APPLY_PATCH_FAIL,
     APPLY_PATCH_PASS,
@@ -47,16 +48,24 @@ from swebench.harness.utils import EvaluationError, get_predictions_from_file, l
 from swebench.image_builder.constants import CONTAINER_WORKDIR
 from swebench.logger import close_logger, setup_logger
 
-from .environment import PrizedEnvironment, command_script
+from .environment import RUNTIME_FAILED, PrizedEnvironment, command_script
 
 PRIZED_LOG = "prized.json"
 # The workspace is full or busy: wait for a slot instead of spending a retry.
 WAIT_CODES = ("sandbox_quota_exceeded", "rate_limited")
 _LABEL_VALUE = re.compile(r"[^A-Za-z0-9._-]")
+# Startup (pull and unpack) plus the eval timeout plus slack: past this a sandbox deletes itself.
+SANDBOX_SLACK_MIN = 10
+
+
+class InfraError(Exception):
+    """Prized, not the prediction, failed after the sandbox started: nothing was graded."""
 
 
 def label_value(text: str) -> str:
-    return _LABEL_VALUE.sub("-", text)[:63] or "run"
+    """A label value for the run: safe characters, and a hash so two run ids never share one."""
+    digest = hashlib.sha1(text.encode()).hexdigest()[:8]
+    return f"{_LABEL_VALUE.sub('-', text)[:54]}-{digest}"
 
 
 def image_for(test_spec, image_template: str | None) -> str:
@@ -74,6 +83,11 @@ def _exec(env: PrizedEnvironment, command: str, cwd: str, timeout: float) -> tup
         result = env.run_script(script, timeout)
     except CommandTimeoutError as exc:
         return (exc.result.stdout or "") + (exc.result.stderr or ""), -1, True
+    except PrizedError as exc:
+        raise InfraError(f"{command[:60]}: {exc}") from exc
+    if result.exit_code == RUNTIME_FAILED and (result.stderr or "").startswith("prized runtime:"):
+        # runtime.py could not enter the image: the command never ran.
+        raise InfraError(f"{command[:60]}: {result.stderr.strip()[:300]}")
     return result.stdout + result.stderr, result.exit_code, False
 
 
@@ -88,8 +102,9 @@ def run_instance(
     log_root: Path = RUN_EVALUATION_LOG_DIR,
 ) -> dict[str, Any]:
     """Evaluates one prediction. Returns what happened: ``status`` is ``resolved``, ``unresolved``,
-    ``error`` (the harness's own error, as swebench counts it) or ``infra`` (no sandbox or image:
-    nothing was evaluated, worth a retry); ``cached`` if a report was already there."""
+    ``error`` (the harness's own error, as swebench counts it) or ``infra`` (Prized failed: no
+    sandbox or image, or a command that never ran; nothing was graded, worth a retry); ``cached``
+    if a report was already there."""
     test_spec = make_test_spec(instance)
     instance_id = test_spec.instance_id
     model = pred.get("model_name_or_path", "None").replace("/", "__")
@@ -99,7 +114,8 @@ def run_instance(
         report = json.loads(report_path.read_text())
         return {"instance_id": instance_id, "status": "cached", "resolved": report[instance_id]["resolved"]}
     if test_spec.image_assets:
-        raise ValueError(f"{instance_id} needs image assets (SWE-bench Multimodal), which this runner doesn't stage")
+        msg = "needs image assets (SWE-bench Multimodal), which this runner doesn't stage"
+        return {"instance_id": instance_id, "status": "error", "error": msg}
 
     log_dir.mkdir(parents=True, exist_ok=True)
     logger = setup_logger(instance_id, log_dir / LOG_INSTANCE)
@@ -116,7 +132,11 @@ def run_instance(
                 image=info["image"],
                 cwd=CONTAINER_WORKDIR,
                 logger=logger,
-                **{"labels": {"swebench-run": label_value(run_id)}, **(env_options or {})},
+                **{
+                    "labels": {"swebench-run": label_value(run_id)},
+                    "max_runtime_min": (900 + timeout) // 60 + SANDBOX_SLACK_MIN,
+                    **(env_options or {}),
+                },
             )
         except Exception as exc:  # noqa: BLE001 - nothing was evaluated: reported, and retried by run()
             info.update(status="infra", error=f"{type(exc).__name__}: {exc}", error_code=getattr(exc, "code", None))
@@ -184,6 +204,10 @@ def run_instance(
         logger.info(f"report: {report}\nResult for {instance_id}: resolved: {resolved}")
         report_path.write_text(json.dumps(report, indent=4))
         info.update(status="resolved" if resolved else "unresolved", resolved=resolved)
+        return info
+    except InfraError as exc:
+        info.update(status="infra", error=f"InfraError: {exc}"[:500])
+        logger.error(f"Prized failed while evaluating {instance_id} (not graded): {exc}")
         return info
     except EvaluationError as exc:
         info["error"] = str(exc).splitlines()[0][:500] if str(exc) else type(exc).__name__
@@ -254,10 +278,16 @@ def run(
                 on_result(info)
         return info
 
-    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+    pool = ThreadPoolExecutor(max_workers=max_workers)
+    try:
         futures = [pool.submit(one, instance) for instance in todo]
         for future in as_completed(futures):
             future.result()
+    except BaseException:
+        # Interrupted: drop what hasn't started; running instances clean up their sandboxes.
+        pool.shutdown(wait=True, cancel_futures=True)
+        raise
+    pool.shutdown(wait=True)
     return results
 
 

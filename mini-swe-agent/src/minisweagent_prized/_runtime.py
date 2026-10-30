@@ -272,13 +272,18 @@ def repair_hardlinks(image_tar: str, errors: str, root: str = ROOT) -> int:
     the layers of the pulled tarball in order and writes each such link from
     the file it pointed to in its own layer, as Docker sees it. Returns how
     many it wrote.
+
+    Only links tar could not make are repaired. A link whose target a later
+    layer replaced (rather than deleted) is made by tar to the new file, where
+    Docker keeps the old contents; no SWE-bench image needs that case.
     """
-    pending = failed_hardlinks(errors)
+    pending = {_member_path(link): _member_path(target) for link, target in failed_hardlinks(errors).items()}
     if not pending:
         return 0
     targets = set(pending.values())
     work = tempfile.mkdtemp(prefix="hardlinks-", dir=os.path.dirname(root))
     stash: dict[str, str] = {}  # target -> its latest contents so far
+    copies = 0
     found: dict[str, tuple[str, int]] = {}  # link -> (contents, mode) as of its last layer
     try:
         with tarfile.open(image_tar) as image:
@@ -291,7 +296,8 @@ def repair_hardlinks(image_tar: str, errors: str, root: str = ROOT) -> int:
                         if member.isfile() and path in targets:
                             source = layer.extractfile(member)
                             assert source is not None
-                            copy = os.path.join(work, f"{n}-{len(stash)}")
+                            copies += 1
+                            copy = os.path.join(work, f"{n}-{copies}")
                             with open(copy, "wb") as out:
                                 shutil.copyfileobj(source, out)
                             stash[path] = copy
@@ -353,7 +359,7 @@ def main(argv: list[str]) -> None:
         install_filter()
         _raise_open_files_limit()
         os.umask(0o022)
-        env = {"PATH": _PATH, "HOME": "/root", "TAR_OPTIONS": "--no-same-owner"}
+        env = {"PATH": _PATH, "HOME": "/root"}
         # Python ignores SIGPIPE and SIGXFSZ, and an exec keeps ignored signals.
         signal.signal(signal.SIGPIPE, signal.SIG_DFL)
         signal.signal(signal.SIGXFSZ, signal.SIG_DFL)

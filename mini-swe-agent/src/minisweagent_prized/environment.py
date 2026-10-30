@@ -34,6 +34,7 @@ import os
 import platform
 import re
 import shlex
+import threading
 import time
 import uuid
 from pathlib import Path
@@ -73,6 +74,34 @@ RUNTIME_FAILED = 125  # runtime.py exits with this, and says "prized runtime:"
 _ENV_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 _RUNTIME_SCRIPT = (Path(__file__).parent / "_runtime.py").read_text()
 _THROTTLED = re.compile(r"TOOMANYREQUESTS|429 Too Many Requests|rate limit", re.IGNORECASE)
+# One backoff for every environment in this process: when a pull is throttled, nobody pulls
+# (or holds a sandbox) until it passes.
+_REGISTRY_LOCK = threading.Lock()
+_REGISTRY_RETRY_AT = [0.0]
+
+
+class _Throttled(Exception):
+    """The registry refused the pull: too many requests."""
+
+
+def _wait_for_registry() -> float:
+    """Sleeps until the shared backoff has passed; returns the seconds slept."""
+    with _REGISTRY_LOCK:
+        wait = _REGISTRY_RETRY_AT[0] - time.monotonic()
+    if wait <= 0:
+        return 0.0
+    time.sleep(wait)
+    return wait
+
+
+def _throttle_registry(throttled_so_far: float) -> float:
+    """Pushes the shared backoff out (30 s, doubling to 240 s as the throttling goes on)."""
+    pause = min(240.0, 30.0 * 2 ** min(int(throttled_so_far // 60), 3))
+    with _REGISTRY_LOCK:
+        _REGISTRY_RETRY_AT[0] = max(_REGISTRY_RETRY_AT[0], time.monotonic() + pause)
+    return pause
+
+
 _AUTH_ERRORS = ("missing_api_key", "invalid_api_key", "unauthorized", "token_expired", "key_access_denied")
 
 
@@ -104,8 +133,8 @@ class PrizedEnvironmentConfig(BaseModel):
     pull_attempts: int = 3
     """Attempts to pull and unpack the image (connections drop)."""
     pull_rate_limit_wait: int = 1800
-    """Seconds to keep waiting while the registry says too many requests (Docker Hub allows
-    100 anonymous pulls an hour per IP address), on top of ``pull_attempts``."""
+    """Seconds to keep waiting, with no sandbox held, while the registry says too many requests
+    (Docker Hub limits anonymous pulls per IP address), on top of ``pull_attempts``."""
     api_max_retries: int = 8
     """Retries of a Prized API call the API refused before it reached the sandbox (rate limits)."""
 
@@ -198,6 +227,33 @@ class PrizedEnvironment:
     # -- lifecycle ---------------------------------------------------------
 
     def _start(self) -> None:
+        """Creates the sandbox and unpacks the image. While the registry throttles pulls, the
+        sandbox is deleted and every environment in this process waits out one shared backoff
+        before trying again, so no billed sandbox sits idle and the registry isn't hammered."""
+        started, throttled = time.monotonic(), 0.0
+        while True:
+            throttled += _wait_for_registry()
+            self._create_sandbox()
+            try:
+                self._prepare_image()
+                break
+            except _Throttled as exc:
+                self.cleanup()
+                if throttled >= self.config.pull_rate_limit_wait:
+                    raise RuntimeError(
+                        f"Could not pull {self.config.image}: the registry kept rate limiting pulls "
+                        f"for {throttled:.0f} s: {exc}"
+                    ) from None
+                pause = _throttle_registry(throttled)
+                self.logger.warning(f"{self.config.image}: the registry is rate limiting pulls; waiting {pause:.0f} s")
+            except BaseException:
+                self.cleanup()
+                raise
+        if throttled:
+            self.timings["pull_throttled_s"] = throttled
+        self.timings["startup_s"] = time.monotonic() - started
+
+    def _create_sandbox(self) -> None:
         started = time.monotonic()
         try:
             self.sandbox = Sandbox.create(
@@ -216,19 +272,12 @@ class PrizedEnvironment:
             raise
         self.timings["sandbox_s"] = time.monotonic() - started
         self.logger.info(f"Started Prized sandbox {self.sandbox.id} for {self.config.image}")
-        try:
-            self._prepare_image()
-        except BaseException:
-            self.cleanup()
-            raise
-        self.timings["startup_s"] = time.monotonic() - started
 
     def _prepare_image(self) -> None:
         assert self.sandbox is not None
-        started, error, attempt, throttled = time.monotonic(), "", 0, 0.0
+        started, error = time.monotonic(), ""
         self.sandbox.files.write(RUNTIME, _RUNTIME_SCRIPT)
-        while True:
-            attempt += 1
+        for attempt in range(1, max(1, self.config.pull_attempts) + 1):
             try:
                 result = self.sandbox.exec(
                     setup_command(self.config.image), timeout=self.config.startup_timeout, full_output=True
@@ -242,22 +291,15 @@ class PrizedEnvironment:
                     config_line, _, uname = result.stdout.strip().rpartition("\n")
                     self._read_config(config_line)
                     self._read_uname(uname)
-                    break
+                    self.timings["image_s"] = time.monotonic() - started
+                    return
                 error = (result.stderr or result.stdout or "").strip()[-2000:]
-            if _THROTTLED.search(error) and throttled < self.config.pull_rate_limit_wait:
-                pause = min(300.0, 30.0 * 2 ** min(throttled // 60, 3))
-                self.logger.warning(f"{self.config.image}: the registry is rate limiting pulls; waiting {pause:.0f} s")
-                time.sleep(pause)
-                throttled += pause
-                attempt -= 1  # not counted against pull_attempts
-                continue
-            if attempt >= self.config.pull_attempts:
-                raise RuntimeError(f"Could not unpack {self.config.image} in the sandbox: {error}")
-            self.logger.warning(f"Could not unpack {self.config.image} (attempt {attempt}): {error}")
-            time.sleep(min(60, 10 * attempt))
-        self.timings["image_s"] = time.monotonic() - started
-        if throttled:
-            self.timings["pull_throttled_s"] = throttled
+            if _THROTTLED.search(error):
+                raise _Throttled(error)
+            if attempt < self.config.pull_attempts:
+                self.logger.warning(f"Could not unpack {self.config.image} (attempt {attempt}): {error}")
+                time.sleep(min(60, 10 * attempt))
+        raise RuntimeError(f"Could not unpack {self.config.image} in the sandbox: {error}")
 
     def _read_config(self, line: str) -> None:
         config = (json.loads(line or "{}") or {}).get("config") or {}

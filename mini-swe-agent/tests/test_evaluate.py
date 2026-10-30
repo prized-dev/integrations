@@ -69,6 +69,10 @@ class FakeEnv:
         if command.startswith(("git apply", "patch ")) and FakeEnv.scenario.get("apply_fails"):
             return Result("error: patch failed", exit_code=1)
         if command == "/bin/bash /eval.sh":
+            if FakeEnv.scenario.get("runtime_fails"):
+                return Result("", "prized runtime: RuntimeError('could not start the namespace holder')", 125)
+            if FakeEnv.scenario.get("api_fails"):
+                raise PrizedError("sandbox_error", "the sandbox stopped")
             if FakeEnv.scenario.get("eval_times_out"):
                 raise evaluate.CommandTimeoutError(Result("half"), timeout)
             return Result(FakeEnv.scenario.get("test_output", PASSING))
@@ -94,8 +98,9 @@ def test_resolved_like_the_docker_harness(fake, tmp_path):
     info = evaluate.run_instance(INSTANCE, PRED, "r1", 1800, env_options={"vcpu": 4})
     assert info["status"] == "resolved" and info["resolved"] is True
     env = FakeEnv.made[0]
-    assert env.image == INSTANCE["image"] and env.cwd == "/testbed" and env.options == {"vcpu": 4}
-    assert env.labels == {"swebench-run": "r1"}
+    assert env.image == INSTANCE["image"] and env.cwd == "/testbed"
+    assert env.options == {"vcpu": 4, "max_runtime_min": (900 + 1800) // 60 + 10}  # gone soon after its timeout
+    assert env.labels == {"swebench-run": evaluate.label_value("r1")}
     assert env.files["/tmp/patch.diff"] == PRED["model_patch"].encode()
     assert "SWEBENCH_TEST_EXIT_CODE=$?" in env.files["/eval.sh"]  # swebench's own eval script
     commands = [c for c, _, _ in env.commands]
@@ -163,8 +168,9 @@ def test_mirror_image_template():
     assert evaluate.image_for(spec, "ghcr.io/m/{instance_id}:latest") == "ghcr.io/m/a__b-1:latest"
 
 
-def test_label_values_are_safe():
-    assert evaluate.label_value("gold run/1") == "gold-run-1"
+def test_label_values_are_safe_and_distinct():
+    assert evaluate.label_value("gold run/1").startswith("gold-run-1-")
+    assert evaluate.label_value("gold run/1") != evaluate.label_value("gold-run-1")
     assert len(evaluate.label_value("x" * 100)) == 63
 
 
@@ -179,3 +185,19 @@ def test_a_full_workspace_is_waited_for_without_spending_retries(fake, tmp_path,
     fake["quota_fails"] = 100
     results = evaluate.run([INSTANCE], {"demo__demo-1": PRED}, "r2", retries=0, quota_wait_s=10)
     assert results[0]["status"] == "infra" and "sandbox_quota_exceeded" in results[0]["error"]
+
+
+@pytest.mark.parametrize("failure", ["runtime_fails", "api_fails"])
+def test_a_prized_failure_mid_eval_is_infra_not_graded(fake, tmp_path, failure):
+    fake[failure] = True
+    info = evaluate.run_instance(INSTANCE, PRED, "r1", 1800)
+    assert info["status"] == "infra" and "InfraError" in info["error"]
+    assert not (logs(tmp_path) / "test_output.txt").exists()
+    assert not (logs(tmp_path) / "report.json").exists()
+    assert FakeEnv.made[0].cleaned == 1
+
+
+def test_image_assets_fail_one_instance_not_the_run(fake):
+    multimodal = {**INSTANCE, "image_assets": json.dumps({"test_patch": [{"path": "a.png", "url": "u"}]})}
+    info = evaluate.run_instance(multimodal, PRED, "r1", 1800)
+    assert info["status"] == "error" and "image assets" in info["error"]

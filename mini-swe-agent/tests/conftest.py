@@ -46,14 +46,13 @@ class FakeFiles:
 class FakeSandbox:
     created: ClassVar[list[FakeSandbox]] = []
 
-    def __init__(self, *, setup_failures: int = 0, setup_error: str = "crane export failed", **kwargs):
+    def __init__(self, *, shared: dict, **kwargs):
         self.id = f"sbx_fake{len(FakeSandbox.created)}"
         self.kwargs = kwargs
         self.calls: list[tuple[str, float | None]] = []
         self.files_written: dict[str, tuple[bytes, int | None]] = {}
         self.files = FakeFiles(self)
-        self.setup_failures = setup_failures
-        self.setup_error = setup_error
+        self.shared = shared  # setup_failures / setup_error, counted across sandboxes
         self.deleted = 0
         self.closed = 0
         self.timeout_next = False
@@ -62,9 +61,9 @@ class FakeSandbox:
     def exec(self, cmd, *, timeout=None, full_output=False):
         self.calls.append((cmd, timeout))
         if cmd.startswith("set -e; cd ~;"):
-            if self.setup_failures:
-                self.setup_failures -= 1
-                return Result(stderr=self.setup_error, exit_code=1)
+            if self.shared.get("setup_failures"):
+                self.shared["setup_failures"] -= 1
+                return Result(stderr=self.shared.get("setup_error", "crane export failed"), exit_code=1)
             return Result(stdout=json.dumps(IMAGE_CONFIG) + "\n" + UNAME + "\n")
         prefix = f"python3 {environment_module.RUNTIME} "
         assert cmd.startswith(prefix), cmd
@@ -100,8 +99,9 @@ def fake_prized(monkeypatch):
     def create(template, **kwargs):
         if "raise" in options:
             raise options["raise"]
-        return FakeSandbox(template=template, **kwargs, **options)
+        return FakeSandbox(template=template, shared=options, **kwargs)
 
     monkeypatch.setattr(environment_module.Sandbox, "create", staticmethod(create))
     monkeypatch.setattr(environment_module.time, "sleep", lambda s: None)
+    monkeypatch.setattr(environment_module, "_REGISTRY_RETRY_AT", [0.0])
     return options

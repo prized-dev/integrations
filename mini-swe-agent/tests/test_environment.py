@@ -117,9 +117,10 @@ def test_pull_is_retried_then_fails_and_the_sandbox_is_deleted(fake_prized):
     assert FakeSandbox.created[1].deleted == 1
 
 
-def test_a_throttled_registry_is_waited_out_without_spending_attempts(fake_prized, monkeypatch):
+def test_a_throttled_registry_is_waited_out_with_no_sandbox_held(fake_prized, monkeypatch):
     slept = []
     monkeypatch.setattr(env_module.time, "sleep", slept.append)
+    monkeypatch.setattr(env_module.time, "monotonic", lambda: 1000.0)  # sleeps don't advance the clock
     fake_prized["setup_failures"] = 4
     fake_prized["setup_error"] = (
         "GET https://index.docker.io/v2/...: TOOMANYREQUESTS: You have reached your pull rate limit."
@@ -127,9 +128,20 @@ def test_a_throttled_registry_is_waited_out_without_spending_attempts(fake_prize
     env = make(pull_attempts=1)
     assert slept == [30.0, 30.0, 60.0, 120.0]
     assert env.timings["pull_throttled_s"] == 240
+    # A fresh sandbox per try: each throttled one is deleted before the wait.
+    assert len(FakeSandbox.created) == 5
+    assert [sb.deleted for sb in FakeSandbox.created] == [1, 1, 1, 1, 0]
+    assert env.sandbox is FakeSandbox.created[-1]
+    # The backoff is shared: another environment waits before creating its sandbox.
+    env_module._REGISTRY_RETRY_AT[0] = 1000.0 + 45
+    slept.clear()
+    make(pull_attempts=1)
+    assert slept == [45.0]
+    env_module._REGISTRY_RETRY_AT[0] = 0.0
     fake_prized["setup_failures"] = 100
-    with pytest.raises(RuntimeError, match="TOOMANYREQUESTS"):
+    with pytest.raises(RuntimeError, match="kept rate limiting pulls"):
         make(pull_attempts=1, pull_rate_limit_wait=100)
+    assert all(sb.deleted == 1 for sb in FakeSandbox.created[6:])
 
 
 def test_auth_errors_carry_the_sign_up_hint(fake_prized):
