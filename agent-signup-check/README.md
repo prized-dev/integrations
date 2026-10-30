@@ -15,10 +15,10 @@ node agent-signup-check.mjs example.com --api https://api.example.com/v1/me
 
 The same file is served at `https://prized.dev/agent-signup-check.mjs`. `--api` is one endpoint of your API that needs a key. The checker calls it without one, to see how a signed-out agent is turned away. Without `--api` it tries `https://api.<your domain>/`.
 
-From the 2026-10-28 run:
+From a run on 2026-10-30:
 
 ```text
-prized.dev: 5 of 7 pass, 1 partial  (agent-signup-check/0.2.0, 2026-10-28T23:57:21.811Z)
+prized.dev: 5 of 7 pass, 1 partial  (agent-signup-check/0.2.2, 2026-10-30T17:48:56.792Z)
   PASS  auth.md                      auth.md documents agent registration (https://api.prized.dev/api/v1/agent/identity)
   PASS  Protected resource metadata  Names 1 authorization server
   PASS  Sign-up by API               agent_auth names a registration endpoint (service_auth, identity_assertion)
