@@ -22,6 +22,10 @@ What it does, per repository that has Jules configuration or sessions:
   the way Jules did. Paused tasks are written but not enabled;
 - lists every Jules session in ~/.jules-import/sessions.md, unfinished ones first.
 
+`jules_import.py issues OWNER/REPO` brings back Jules' GitHub label, with or without an export: add the
+label `jules` to an issue and, within 2 minutes, the box runs Claude Code or Codex on it in a fresh worktree
+and opens a pull request that closes it. Only labels added by you or someone with write access count.
+
 Running it again is safe: clones, files and timers are updated in place.
 
 The Jules export's env-variables.json and scheduled-tasks.json are raw responses from Jules'
@@ -36,6 +40,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import fcntl
 import hashlib
 import json
 import os
@@ -1202,9 +1207,7 @@ def write_memories(run: Run, sources: list[Source]):
 
 
 TASK_TEMPLATE = r"""#!/bin/bash -l
-# Jules scheduled task "{title}", imported by jules_import.py on {today}.
-# {schedule_line}
-# Run it now: systemctl --user start jules-{slug}   (or: bash -l {self_path})
+{about}
 # Each run: a fresh worktree of {repo} from origin/{base}, the setup script, {agent} with the prompt
 # below, then a pushed branch and a pull request with gh. Edit the prompt or the agent freely.
 set -uo pipefail
@@ -1225,12 +1228,14 @@ IFS= read -r -d '' PROMPT <<'{eof}'
 for f in "${{ENV_FILES[@]}}"; do [ -f "$f" ] && {{ set -a; . "$f"; set +a; }}; done
 runs="$HOME/.jules-import/runs"
 stamp=$(date -u +%Y%m%d-%H%M%S)
-branch="jules/{slug}-$stamp"
+branch="{branch_prefix}-$stamp"
 work="$runs/{slug}-$stamp"
 log="$HOME/.jules-import/logs/{slug}-$stamp.log"
 mkdir -p "$runs" "$(dirname "$log")"
 exec > >(tee -a "$log") 2>&1
 echo "== {title}: $stamp, branch $branch"
+# How the run ended, for whoever started it (the issue poller): a status, a detail and this run's log.
+result() {{ if [ -n "${{JULES_RESULT:-}}" ]; then printf '%s\t%s\t%s\n' "$1" "${{2:-}}" "$log" > "$JULES_RESULT"; fi; }}
 
 # One git operation on the clone at a time: timers missed while the box slept all fire when it wakes.
 exec 9>"$runs/.{repo_key}.lock"
@@ -1238,8 +1243,8 @@ flock 9
 # A failed run keeps its worktree for a look; a week later it goes.
 find "$runs" -mindepth 1 -maxdepth 1 -type d -name '{slug}-*' -mtime +7 -exec git -C "$REPO" worktree remove --force {{}} \; 2>/dev/null
 git -C "$REPO" worktree prune
-git -C "$REPO" fetch --quiet origin "$BASE" || {{ echo "== git fetch failed"; exit 1; }}
-git -C "$REPO" worktree add --quiet -b "$branch" "$work" "origin/$BASE" || exit 1
+git -C "$REPO" fetch --quiet origin "$BASE" || {{ echo "== git fetch failed"; result failed "git fetch failed"; exit 1; }}
+git -C "$REPO" worktree add --quiet -b "$branch" "$work" "origin/$BASE" || {{ result failed "git worktree add failed"; exit 1; }}
 flock -u 9
 cd "$work" || exit 1
 start_sha=$(git rev-parse HEAD)
@@ -1250,7 +1255,7 @@ setup_left="$work.setup-files"
 {{ git ls-files --others --exclude-standard -z; git diff --name-only -z; }} |
   while IFS= read -r -d '' f; do [ -f "$f" ] && printf '%s\t%s\0' "$(git hash-object -- "$f")" "$f"; done > "$setup_left"
 
-NOTE="You are running unattended on a schedule (a task carried over from Jules), in a fresh git worktree of {repo} on branch $branch, based on $BASE. Nobody is watching, so don't ask questions: make your best call and say why in the commit message."
+NOTE="{context} Nobody is watching, so don't ask questions: make your best call and say why in the commit message."
 [ -n "$TEST_CMD" ] && NOTE="$NOTE Run the tests with \`$TEST_CMD\` before you finish."
 NOTE="$NOTE When you're done, commit your work on this branch. Don't push or open a pull request: the script that started you does that. If nothing is worth changing, commit nothing."
 case "$AGENT" in
@@ -1276,28 +1281,33 @@ if git diff --cached --quiet; then
   flock 9
   git -C "$REPO" worktree remove --force "$work" && git -C "$REPO" branch -D "$branch" >/dev/null
   rm -f "$setup_left" "$msg"
+  if [ "$agent_rc" = 0 ]; then result none; else result failed "$AGENT exited $agent_rc"; fi
   exit "$agent_rc"
 fi
 grep -q '[^[:space:]]' "$msg" || echo "{title}: changes from the $stamp run" > "$msg"
 if ! git commit --quiet -F "$msg"; then
   echo "== git commit failed (a commit hook?); the work stays in $work on branch $branch"
+  result failed "git commit failed"
   exit 1
 fi
 rm -f "$setup_left" "$msg"
 title=$(git log -1 --format=%s)
 if ! git push --quiet -u origin "$branch"; then
   echo "== git push failed; the work stays in $work on branch $branch"
+  result failed "git push failed"
   exit 1
 fi
 cd "$HOME" || exit 1
 flock 9
 git -C "$REPO" worktree remove --force "$work"
 flock -u 9
-if gh pr create --repo {repo} --base "$BASE" --head "$branch" --title "$title" \
-    --body "Scheduled task **{title}** (carried over from Jules), run $stamp on $(hostname) by $AGENT. Log: \`$log\`"; then
-  echo "== pull request opened"
+if url=$(gh pr create --repo {repo} --base "$BASE" --head "$branch" --title "$title" \
+    --body "{pr_body}"); then
+  echo "== pull request opened${{url:+: $url}}"
+  result pr "$url"
 else
   echo "== pushed $branch, but gh couldn't open the pull request; open it on GitHub"
+  result pushed "$branch"
   exit 1
 fi
 """
@@ -1312,12 +1322,18 @@ def task_script(t: ScheduledTask, src: Source, agent: str) -> str:
         if t.calendar
         else "Schedule: none yet; set one with jules_import.py schedule " + t.slug + " 'SPEC'"
     )
+    title = (t.title or t.slug).replace('"', "'")
     return TASK_TEMPLATE.format(
-        title=(t.title or t.slug).replace('"', "'"),
-        today=dt.date.today().isoformat(),
-        schedule_line=sched,
+        about=f'# Jules scheduled task "{title}", imported by jules_import.py on {dt.date.today().isoformat()}.\n'
+        f"# {sched}\n"
+        f"# Run it now: systemctl --user start jules-{t.slug}   (or: bash -l {STATE / 'tasks' / f'{t.slug}.sh'})",
+        title=title,
         slug=t.slug,
-        self_path=STATE / "tasks" / f"{t.slug}.sh",
+        branch_prefix=f"jules/{t.slug}",
+        context="You are running unattended on a schedule (a task carried over from Jules), "
+        f"in a fresh git worktree of {src.full} on branch $branch, based on $BASE.",
+        pr_body=f"Scheduled task **{title}** (carried over from Jules), run $stamp on $(hostname) by $AGENT. "
+        "Log: \\`$log\\`",
         repo=src.full,
         repo_dir=shlex.quote(str(src.dir)),
         base=shlex.quote(t.branch or src.branch or "main"),
@@ -1657,6 +1673,416 @@ def main_schedule(args) -> int:
     return 0
 
 
+# ---------------------------------------------------------------------------------------------
+# GitHub issues: add the "jules" label to an issue, and the box's agent opens the pull request
+
+ISSUES = STATE / "issues.json"
+ISSUE_TIMEOUT = 3 * 3600  # one issue's run, setup script and agent included
+LABEL_OK = re.compile(r"[\w.-][\w .-]{0,49}")
+LOGIN_OK = re.compile(r"[A-Za-z0-9-]+(\[bot\])?")
+POLL_CALENDAR = "*-*-* *:00/2:00"  # every 2 minutes
+
+
+def utc_now() -> str:
+    return dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def gh_json(args: list[str], timeout=60):
+    """(data, "") from a gh command that prints JSON, or (None, why) when it fails."""
+    try:
+        r = subprocess.run(["gh", *args], capture_output=True, text=True, timeout=timeout)
+    except (OSError, subprocess.TimeoutExpired) as e:
+        return None, str(e)
+    if r.returncode != 0:
+        return None, (r.stderr.strip() or f"gh exited {r.returncode}").splitlines()[-1][:200]
+    try:
+        return json.loads(r.stdout or "null"), ""
+    except ValueError:
+        return None, "gh printed something that isn't JSON"
+
+
+def load_issues() -> dict:
+    """Watched repos, the label and agent, and what happened to each labeled issue."""
+    try:
+        data = json.loads(ISSUES.read_text())
+        if isinstance(data, dict) and isinstance(data.get("repos"), dict):
+            data.setdefault("issues", {})
+            return data
+    except (OSError, ValueError):
+        pass
+    return {"repos": {}, "issues": {}}
+
+
+def save_issues(cfg: dict) -> None:
+    Run(argparse.Namespace(dry_run=False)).write(ISSUES, json.dumps(cfg, indent=2) + "\n", 0o600)
+
+
+def same_repo(url: str, src: Source) -> bool:
+    if GIT_URL and url == GIT_URL.format(owner=src.owner, repo=src.repo):
+        return True
+    found = owner_repo(url)
+    return bool(found) and (found[0].lower(), found[1].lower()) == (src.owner.lower(), src.repo.lower())
+
+
+def clone_dir(src: Source, code: Path) -> Path:
+    """An existing clone of the repo under code (named as the importer names them), else a free folder for one."""
+    for d in (code / src.repo, code / f"{src.owner}-{src.repo}"):
+        if (d / ".git").exists():
+            url = subprocess.run(
+                ["git", "-C", str(d), "remote", "get-url", "origin"], capture_output=True, text=True
+            ).stdout.strip()
+            if same_repo(url, src):
+                return d
+    return code / src.repo if not (code / src.repo).exists() else code / f"{src.owner}-{src.repo}"
+
+
+def ensure_label(run: Run, full: str, label: str) -> None:
+    if run.dry:
+        run.log(f"{full}: would create the label {label!r} if it's missing")
+        return
+    r = subprocess.run(
+        [
+            "gh",
+            "label",
+            "create",
+            label,
+            "--repo",
+            full,
+            "--color",
+            "7c3aed",
+            "--description",
+            "The coding agent on your Prized box works on this issue and opens a pull request",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    if r.returncode == 0:
+        run.log(f"{full}: created the label {label!r}")
+    elif "already exists" in r.stderr:
+        run.log(f"{full}: has the label {label!r}")
+    else:
+        run.notes.append(
+            f"{full}: couldn't create the label {label!r} ({r.stderr.strip()[:200]}); add it on GitHub under "
+            "Issues > Labels"
+        )
+
+
+def install_poll_timer(run: Run) -> bool:
+    unit_dir = HOME / ".config" / "systemd" / "user"
+    run.write(
+        unit_dir / "jules-issues.service",
+        "[Unit]\nDescription=Run GitHub issues labeled for the box's coding agent\n\n[Service]\nType=oneshot\n"
+        "ExecStart=/bin/bash -lc 'exec python3 %h/.jules-import/jules_import.py poll'\n"
+        f"TimeoutStartSec={ISSUE_TIMEOUT + 600}\n",
+    )
+    run.write(
+        unit_dir / "jules-issues.timer",
+        "[Unit]\nDescription=Look for labeled GitHub issues every 2 minutes\n\n[Timer]\n"
+        f"OnCalendar={POLL_CALENDAR}\nAccuracySec=5s\nPersistent=true\n\n[Install]\nWantedBy=timers.target\n",
+    )
+    if run.dry:
+        return True
+    return (
+        run.sh(["systemctl", "--user", "daemon-reload"]) == 0
+        and run.sh(["systemctl", "--user", "enable", "--now", "jules-issues.timer"]) == 0
+    )
+
+
+def main_issues(args) -> int:
+    """Watch repos for issues with the label; the timer runs `poll`."""
+    cfg = load_issues()
+    run = Run(args)
+    if args.off:
+        if not run.dry:
+            run.sh(["systemctl", "--user", "disable", "--now", "jules-issues.timer"])
+        print("Stopped watching for labeled issues. `jules_import.py issues` with no repos shows what ran.")
+        return 0
+    if not args.repos:
+        if not cfg["repos"]:
+            print("Not watching any repo yet: jules_import.py issues OWNER/REPO [OWNER/REPO ...]")
+            return 0
+        print(f"Label: {cfg.get('label')}; agent: {cfg.get('agent')}; repos: {', '.join(cfg['repos'])}")
+        for key, st in sorted(cfg["issues"].items(), key=lambda kv: kv[1].get("at", ""))[-20:]:
+            print(f"  {st.get('at', '')[:16]}  {key}  {st.get('status', '')}  {st.get('pr', '')}")
+        return 0
+    label = args.label or cfg.get("label") or "jules"
+    if not LABEL_OK.fullmatch(label):
+        print(f"--label {label!r}: use letters, digits, spaces, dots, dashes and underscores", file=sys.stderr)
+        return 2
+    sources = []
+    for ref in args.repos:
+        found = owner_repo(ref)
+        if not found or not GH_NAME.fullmatch("/".join(found)):
+            print(f"{ref!r} isn't a GitHub repo (OWNER/REPO)", file=sys.stderr)
+            return 2
+        sources.append(Source(*found))
+    agent = (
+        args.agent or cfg.get("agent") or ("claude" if shutil.which("claude") or not shutil.which("codex") else "codex")
+    )
+    if not gh_ready():
+        print(
+            "The GitHub CLI isn't signed in here. From your laptop: `prized agents handoff claude --gh`; "
+            "or on the box: `gh auth login`, then `gh auth setup-git`",
+            file=sys.stderr,
+        )
+        return 2
+    me, _ = gh_json(["api", "user"])
+    code = Path(args.code_dir).expanduser()
+    for src in sources:
+        src.dir = clone_dir(src, code)
+        if not clone(run, src, code, True):
+            continue
+        ensure_label(run, src.full, label)
+        before = cfg["repos"].get(src.full, {})
+        # Only labels added from now on count: issues Jules already worked on stay as they are.
+        cfg["repos"][src.full] = {
+            "dir": str(src.dir),
+            "branch": src.branch or "main",
+            "since": before.get("since") or utc_now(),
+        }
+        run.log(
+            f"{src.full}: watching for issues labeled {label!r} ({src.dir}, pull requests against {src.branch or 'main'})"
+        )
+    cfg.update(label=label, agent=agent, me=me.get("login", "") if isinstance(me, dict) else "")
+    if run.dry:
+        print("\nDry run: nothing was changed.")
+        return 0
+    save_issues(cfg)
+    if Path(__file__).is_file() and Path(__file__).resolve() != (STATE / "jules_import.py").resolve():
+        shutil.copy(__file__, STATE / "jules_import.py")
+    if not systemd_user():
+        run.notes.append(
+            "no systemd user session here, so nothing checks for issues on its own: run "
+            f"`python3 {STATE / 'jules_import.py'} poll` from cron every few minutes"
+        )
+    elif not install_poll_timer(run):
+        run.notes.append("systemctl couldn't start jules-issues.timer: `systemctl --user status jules-issues.timer`")
+    print(
+        f"\nDone. Add the label {label!r} to an issue in {', '.join(s.full for s in sources)} (the GitHub app works "
+        f"too). Within 2 minutes the box comments on it, runs {agent} on it in a fresh worktree, and opens a pull "
+        "request that closes the issue. Only labels added by you or someone with write access count; labels added "
+        "before now don't. To run an issue again, remove the label and add it back.\n"
+        "  `python3 ~/.jules-import/jules_import.py issues` shows what ran; logs are in ~/.jules-import/logs.\n"
+        "  A paused box checks nothing: turn auto-pause off for it (`prized box auto-pause BOX off` on your laptop)."
+    )
+    if not agent_signed_in(agent):
+        run.notes.append(
+            f"{agent} isn't signed in on this box yet: run `{agent}` once here, or from your laptop "
+            f"`prized agents handoff {agent}`"
+        )
+    if run.notes:
+        print("\nNeeds you:")
+        for n in run.notes:
+            print(f"  - {n}")
+    return 0
+
+
+def last_label_event(full: str, number: int, label: str):
+    """The latest time the label went on this issue: (event, "") or (None, why)."""
+    last = None
+    for page in range(1, 11):
+        events, why = gh_json(["api", f"repos/{full}/issues/{number}/events?per_page=100&page={page}"])
+        if events is None:
+            return None, why
+        for e in events if isinstance(events, list) else []:
+            if (
+                isinstance(e, dict)
+                and e.get("event") == "labeled"
+                and str((e.get("label") or {}).get("name", "")).lower() == label.lower()
+            ):
+                last = e
+        if not isinstance(events, list) or len(events) < 100:
+            break
+    return last, ""
+
+
+def may_assign(full: str, actor: str, me: str) -> tuple[bool, str]:
+    """Whether whoever added the label could have pushed the change themselves."""
+    if me and actor.lower() == me.lower():
+        return True, "you"
+    if not LOGIN_OK.fullmatch(actor):
+        return False, f"unrecognised user {actor[:40]!r}"
+    perm, why = gh_json(["api", f"repos/{full}/collaborators/{actor}/permission"])
+    if not isinstance(perm, dict):
+        return False, f"couldn't check the access of {actor}, who added the label ({why})"
+    level = perm.get("role_name") or perm.get("permission") or "none"
+    return level in ("admin", "maintain", "write"), f"the label was added by {actor}, who has {level} access"
+
+
+def issue_prompt(full: str, issue: dict, label: str, actor: str) -> str:
+    def clean(s, limit):
+        s = str(s or "").replace("\r\n", "\n").replace("\r", "\n").replace("\x00", "")
+        return s if len(s) <= limit else s[:limit] + "\n[... cut here: the rest is on GitHub]"
+
+    title = " ".join(clean(issue.get("title"), 300).split())
+    body = clean(issue.get("body"), 30000).strip() or "(no description)"
+    return (
+        f"GitHub issue #{int(issue['number'])} in {full}: {title}\n\n{body}\n\n"
+        f"(@{actor} added the `{label}` label to hand this issue to you.)"
+    )
+
+
+def issue_script(src: Source, number: int, agent: str, prompt: str) -> str:
+    setup = STATE / "setup" / f"{src.key}.sh"
+    return TASK_TEMPLATE.format(
+        about=f"# GitHub issue #{number} of {src.full}, written by jules_import.py poll on {utc_now()}.\n"
+        f"# https://github.com/{src.full}/issues/{number}",
+        title=f"issue #{number}",
+        slug=f"issue-{src.key}-{number}",
+        branch_prefix=f"jules/issue-{number}",
+        context=f"You are running unattended on GitHub issue #{number} of {src.full}, in a fresh git worktree on "
+        "branch $branch, based on $BASE.",
+        pr_body=f"Closes #{number}. Worked on by $AGENT on $(hostname), run $stamp. Log on the box: \\`$log\\`",
+        repo=src.full,
+        repo_dir=shlex.quote(str(src.dir)),
+        base=shlex.quote(src.branch or "main"),
+        agent=agent,
+        setup=shlex.quote(str(setup) if setup.exists() else ""),
+        test_cmd="''",
+        env_files=" ".join(shlex.quote(str(p)) for p in (env_file(None), env_file(src))),
+        eof="ISSUE_PROMPT_" + secrets.token_hex(8).upper(),
+        repo_key=src.key,
+        prompt=prompt,
+    )
+
+
+def comment(full: str, number: int, text: str) -> None:
+    subprocess.run(["gh", "issue", "comment", str(number), "--repo", full, "--body", text], capture_output=True)
+
+
+def run_issue(cfg: dict, full: str, repo: dict, issue: dict, actor: str) -> dict:
+    number = int(issue["number"])
+    owner, name = full.split("/")
+    src = Source(owner, name, repo.get("branch") or "main")
+    src.dir = Path(repo["dir"])
+    agent = cfg.get("agent") or "claude"
+    who = {"claude": "Claude Code", "codex": "Codex"}.get(agent, agent)
+    script = STATE / "issues" / f"{src.key}-{number}.sh"
+    Run(argparse.Namespace(dry_run=False)).write(
+        script, issue_script(src, number, agent, issue_prompt(full, issue, cfg["label"], actor)), 0o700
+    )
+    comment(full, number, f"{who} is working on this. The pull request will be linked here.")
+    fd, result_path = tempfile.mkstemp(prefix="issue-result-", dir=STATE)
+    os.close(fd)
+    status, detail, log = "failed", "", ""
+    try:
+        p = subprocess.Popen(
+            ["bash", "-l", str(script)], env={**os.environ, "JULES_RESULT": result_path}, start_new_session=True
+        )
+        try:
+            p.wait(timeout=ISSUE_TIMEOUT)
+        except subprocess.TimeoutExpired:
+            os.killpg(p.pid, 9)
+            p.wait()
+            detail = f"stopped after {ISSUE_TIMEOUT // 3600} hours"
+        parts = Path(result_path).read_text().rstrip("\n").split("\t")
+        if parts and parts[0]:
+            status, detail, log = [*parts, "", ""][:3]
+        elif not detail:
+            detail = f"the run script exited {p.returncode}"
+    finally:
+        os.unlink(result_path)
+    where = f" Log on the box: `{log}`." if log else ""
+    if status == "pr":
+        comment(full, number, f"Pull request: {detail}" if detail else "Opened a pull request for this issue.")
+    elif status == "none":
+        comment(full, number, f"{who} finished without changing anything, so there's no pull request.{where}")
+    elif status == "pushed":
+        comment(
+            full, number, f"Pushed the branch `{detail}`, but couldn't open the pull request: open it from the branch."
+        )
+    else:
+        comment(
+            full,
+            number,
+            f"The run on the box failed ({detail or 'no reason given'}).{where} Remove the label and add it again to retry.",
+        )
+    return {"status": status, **({"pr": detail} if status == "pr" else {}), "log": log}
+
+
+def main_poll(args) -> int:
+    """Run each newly labeled issue in the watched repos, one at a time."""
+    cfg = load_issues()
+    if not cfg["repos"]:
+        print("Not watching any repo: jules_import.py issues OWNER/REPO")
+        return 0
+    if not args.dry_run:
+        STATE.mkdir(parents=True, exist_ok=True)
+        lock = open(STATE / ".issues.lock", "w")  # held until the process exits
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            print("another poll is running")
+            return 0
+    label = cfg.get("label") or "jules"
+    if not cfg.get("me"):
+        me, _ = gh_json(["api", "user"])
+        cfg["me"] = me.get("login", "") if isinstance(me, dict) else ""
+    tag = "[dry run] " if args.dry_run else ""
+    for full, repo in cfg["repos"].items():
+        issues, why = gh_json(
+            [
+                "issue",
+                "list",
+                "--repo",
+                full,
+                "--label",
+                label,
+                "--state",
+                "open",
+                "--limit",
+                "100",
+                "--json",
+                "number,title,body,updatedAt",
+            ]
+        )
+        if not isinstance(issues, list):
+            print(f"{full}: couldn't list issues ({why})")
+            continue
+        for issue in sorted(issues, key=lambda i: i.get("number", 0)):
+            key = f"{full}#{issue.get('number')}"
+            st = cfg["issues"].get(key, {})
+            if not isinstance(issue.get("number"), int) or st.get("checked") == issue.get("updatedAt"):
+                continue
+            event, why = last_label_event(full, issue["number"], label)
+            if why:
+                print(f"{key}: couldn't read its events ({why})")
+                continue
+            actor = str(((event or {}).get("actor") or {}).get("login", ""))
+            decision = ""
+            if not event:
+                decision = "no label event found"
+            elif str(event.get("created_at", "")) < repo.get("since", ""):
+                decision = "labeled before watching started"
+            elif event.get("id") == st.get("event"):
+                decision = "already handled"
+            else:
+                ok, who = may_assign(full, actor, cfg["me"])
+                if not ok:
+                    decision = f"skipped: {who}"
+            if decision:
+                print(f"{tag}{key}: {decision}")
+                if not args.dry_run:
+                    new = {**st, "checked": issue.get("updatedAt")}
+                    if decision.startswith("skipped") and event.get("id") != st.get("event"):
+                        new.update(event=event.get("id"), status=decision, at=utc_now())
+                    cfg["issues"][key] = new
+                    save_issues(cfg)
+                continue
+            print(f"{tag}{key}: labeled by {actor}; {'would run' if args.dry_run else 'running'} {cfg.get('agent')} on it")
+            if args.dry_run:
+                continue
+            # Recorded before the run: a crash or a reboot mid-run doesn't start it twice.
+            cfg["issues"][key] = {"event": event.get("id"), "status": "running", "at": utc_now()}
+            save_issues(cfg)
+            outcome = run_issue(cfg, full, repo, issue, actor)
+            print(f"{key}: {outcome['status']} {outcome.get('pr', '')}".rstrip())
+            # Our own comments changed updatedAt; the next poll looks once more and finds it handled.
+            cfg["issues"][key] = {"event": event.get("id"), "at": utc_now(), **outcome}
+            save_issues(cfg)
+    return 0
+
+
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if argv[:1] == ["schedule"]:
@@ -1667,10 +2093,33 @@ def main(argv=None) -> int:
         s.add_argument("spec", help="systemd OnCalendar ('Mon *-*-* 09:00:00 America/New_York') or cron ('0 9 * * 1')")
         s.add_argument("--tz", help="time zone for a cron line (default UTC)")
         return main_schedule(s.parse_args(argv[1:]))
+    if argv[:1] == ["issues"]:
+        s = argparse.ArgumentParser(
+            prog="jules_import.py issues",
+            description="Hand GitHub issues to the box's agent with a label, as Jules did: each labeled issue gets "
+            "a run in a fresh worktree and a pull request that closes it.",
+        )
+        s.add_argument(
+            "repos", nargs="*", help="OWNER/REPO to watch (added to the ones already watched); none: show what ran"
+        )
+        s.add_argument("--label", help="the label that hands an issue over (default: jules)")
+        s.add_argument("--agent", choices=["claude", "codex"], help="agent for issue runs (default: claude)")
+        s.add_argument("--code-dir", default=str(HOME / "code"), help="where repos are cloned (~/code)")
+        s.add_argument("--dry-run", action="store_true", help="print what it would do; change nothing")
+        s.add_argument("--off", action="store_true", help="stop watching (turns the timer off)")
+        return main_issues(s.parse_args(argv[1:]))
+    if argv[:1] == ["poll"]:
+        s = argparse.ArgumentParser(
+            prog="jules_import.py poll",
+            description="Look once for newly labeled issues and run them (the timer runs this).",
+        )
+        s.add_argument("--dry-run", action="store_true", help="say what it would run; run and change nothing")
+        return main_poll(s.parse_args(argv[1:]))
     p = argparse.ArgumentParser(
         prog="jules_import.py",
         description=__doc__.split("\n\n")[0],
-        epilog="Also: jules_import.py schedule NAME SPEC sets an imported task's schedule.",
+        epilog="Also: `jules_import.py schedule NAME SPEC` sets an imported task's schedule, and "
+        "`jules_import.py issues OWNER/REPO` runs issues you label 'jules' (no export needed).",
     )
     p.add_argument("export", nargs="?", default=str(HOME / "jules-export"), help="the export folder (~/jules-export)")
     p.add_argument("--dry-run", action="store_true", help="print what it would do; change nothing")

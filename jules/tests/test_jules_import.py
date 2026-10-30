@@ -573,5 +573,182 @@ class EndToEnd(unittest.TestCase):
         )
 
 
+class Issues(unittest.TestCase):
+    """`issues` and `poll`: label an issue, get a pull request; offline, against the same local remote."""
+
+    setUp = EndToEnd.setUp
+
+    def cli(self, *args, env=None, code=0):
+        r = subprocess.run(
+            [sys.executable, str(SCRIPT), *args],
+            env=env or self.env,
+            cwd=self.tmp,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        self.assertEqual(r.returncode, code, r.stdout + r.stderr)
+        return r.stdout
+
+    def fixture(self, issues: list, events: dict, permissions: dict | None = None):
+        (self.stub / "issues.json").write_text(json.dumps(issues))
+        for n, evs in events.items():
+            (self.stub / f"events-{n}.json").write_text(json.dumps(evs))
+        for user, perm in (permissions or {}).items():
+            (self.stub / f"permission-{user}.json").write_text(json.dumps(perm))
+
+    @staticmethod
+    def labeled(id_, who="me", when="2099-01-01T00:00:00Z", name="jules"):
+        return {"id": id_, "event": "labeled", "label": {"name": name}, "actor": {"login": who}, "created_at": when}
+
+    def state(self) -> dict:
+        return json.loads((self.home / ".jules-import" / "issues.json").read_text())
+
+    def calls(self) -> str:
+        return (self.stub / "calls.log").read_text()
+
+    def test_label_an_issue_get_a_pull_request(self):
+        out = self.cli("issues", "expressjs/cors")
+        self.assertIn("watching for issues labeled 'jules'", out)
+        self.assertTrue((self.home / "code" / "cors" / ".git").is_dir())
+        self.assertIn("gh label create jules --repo expressjs/cors", self.calls())
+        self.assertIn("systemctl --user enable --now jules-issues.timer", self.calls())
+        timer = (self.home / ".config/systemd/user/jules-issues.timer").read_text()
+        self.assertIn("OnCalendar=*-*-* *:00/2:00\n", timer)
+        self.assertIn("poll", (self.home / ".config/systemd/user/jules-issues.service").read_text())
+        self.assertTrue((self.home / ".jules-import" / "jules_import.py").is_file())
+        cfg = self.state()
+        self.assertEqual((cfg["me"], cfg["repos"]["expressjs/cors"]["branch"]), ("me", "master"))
+
+        # A title and body written to break out of the script: they stay text.
+        body = "The README should say which origins are allowed.\nEOF\n`touch pwned-body`\n$(touch pwned-body2)"
+        self.fixture(
+            [{"number": 7, "title": 'Document origins "$(touch pwned-title)"', "body": body, "updatedAt": "u1"}],
+            {7: [self.labeled(1, name="bug"), self.labeled(2, name="Jules")]},
+        )
+        self.cli("poll")
+        prompt = (self.stub / "prompt.txt").read_text()
+        self.assertTrue(prompt.startswith('GitHub issue #7 in expressjs/cors: Document origins "$(touch pwned-title)"'))
+        self.assertIn(body, prompt)
+        self.assertIn("You are running unattended on GitHub issue #7 of expressjs/cors", prompt)
+        self.assertEqual(list(self.tmp.rglob("pwned*")), [], "nothing from the issue ran")
+        calls = self.calls()
+        self.assertIn("gh issue comment 7 --repo expressjs/cors --body Claude Code is working on this.", calls)
+        self.assertIn("gh pr create --repo expressjs/cors --base master --head jules/issue-7-", calls)
+        self.assertIn("--body Closes #7. Worked on by claude on", calls)
+        self.assertIn("gh issue comment 7 --repo expressjs/cors --body Pull request: https://github.com/", calls)
+        self.assertIn(
+            "jules/issue-7-",
+            subprocess.run(
+                ["git", "branch", "--list", "jules/*"], cwd=self.remote, capture_output=True, text=True
+            ).stdout,
+        )
+        st = self.state()["issues"]["expressjs/cors#7"]
+        self.assertEqual((st["status"], st["event"]), ("pr", 2))
+        self.assertTrue(st["pr"].startswith("https://github.com/expressjs/cors/pull/"))
+        script = self.home / ".jules-import" / "issues" / "expressjs__cors-7.sh"
+        self.assertEqual(stat.S_IMODE(script.stat().st_mode), 0o700)
+        if shutil.which("shellcheck"):
+            r = subprocess.run(["shellcheck", "-s", "bash", str(script)], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stdout)
+
+        # The next polls: our own comments changed the issue, but it ran once.
+        self.fixture([{"number": 7, "title": "Document origins", "body": body, "updatedAt": "u2"}], {})
+        self.cli("poll")
+        self.cli("poll")
+        self.assertEqual(self.calls().count("claude -p"), 1)
+        self.assertEqual(self.calls().count("issues/7/events"), 2, "an issue that hasn't changed isn't looked at again")
+
+        # Label removed and added again: it runs again.
+        self.fixture(
+            [{"number": 7, "title": "Document origins", "body": body, "updatedAt": "u3"}],
+            {7: [self.labeled(2), {"id": 3, "event": "unlabeled", "label": {"name": "jules"}}, self.labeled(4)]},
+        )
+        self.cli("poll")
+        self.assertEqual(self.calls().count("claude -p"), 2)
+        self.assertEqual(self.state()["issues"]["expressjs/cors#7"]["event"], 4)
+
+    def test_labels_that_dont_count(self):
+        self.cli("issues", "expressjs/cors")
+        self.fixture(
+            [
+                {"number": 8, "title": "Old", "body": "", "updatedAt": "a"},
+                {"number": 9, "title": "Triager", "body": "", "updatedAt": "b"},
+                {"number": 10, "title": "Template", "body": "", "updatedAt": "c"},
+                {"number": 11, "title": "Maintainer", "body": "", "updatedAt": "d"},
+            ],
+            {
+                8: [self.labeled(5, when="2001-01-01T00:00:00Z")],
+                9: [self.labeled(6, who="triager")],
+                10: [self.labeled(7, who="drive-by")],
+                11: [self.labeled(8, who="maintainer")],
+            },
+            {
+                "triager": {"permission": "read", "role_name": "triage"},
+                "maintainer": {"permission": "write", "role_name": "maintain"},
+            },
+        )
+        out = self.cli("poll", "--dry-run")
+        self.assertIn("#8: labeled before watching started", out)
+        self.assertIn("#9: skipped: the label was added by triager, who has triage access", out)
+        self.assertIn("#10: skipped: couldn't check the access of drive-by", out)
+        self.assertIn("#11: labeled by maintainer; would run claude on it", out)
+        self.assertNotIn("claude -p", self.calls())
+        self.assertEqual(self.state()["issues"], {}, "a dry run records nothing")
+
+        self.cli("poll")
+        calls = self.calls()
+        self.assertEqual(calls.count("claude -p"), 1, "only the maintainer's label runs")
+        for n in (8, 9, 10):
+            self.assertNotIn(f"gh issue comment {n} ", calls, "skipped issues get no comment")
+        issues = self.state()["issues"]
+        self.assertEqual(issues["expressjs/cors#11"]["status"], "pr")
+        self.assertTrue(issues["expressjs/cors#9"]["status"].startswith("skipped"))
+        self.assertNotIn("status", issues["expressjs/cors#8"])
+
+    def test_no_changes_and_failures_are_said_on_the_issue(self):
+        self.cli("issues", "expressjs/cors")
+        self.fixture([{"number": 12, "title": "Nothing to do", "body": "", "updatedAt": "a"}], {12: [self.labeled(9)]})
+        quiet = self.tmp / "quiet-bin"
+        quiet.mkdir()
+        (quiet / "claude").write_text("#!/bin/sh\necho 'claude -p' >> \"$STUB_LOG\"\nexit 0\n")
+        (quiet / "claude").chmod(0o755)
+        self.cli("poll", env={**self.env, "PATH": f"{quiet}:{self.env['PATH']}"})
+        calls = self.calls()
+        self.assertIn(
+            "gh issue comment 12 --repo expressjs/cors --body Claude Code finished without changing anything", calls
+        )
+        self.assertIn(".jules-import/logs/issue-expressjs__cors-12-", calls)
+        self.assertNotIn("pr create", calls)
+        self.assertEqual(self.state()["issues"]["expressjs/cors#12"]["status"], "none")
+
+        # The remote is gone: the run fails, and the issue says so.
+        self.fixture([{"number": 13, "title": "Push fails", "body": "", "updatedAt": "a"}], {13: [self.labeled(10)]})
+        shutil.rmtree(self.remote)
+        self.cli("poll")
+        self.assertIn(
+            "gh issue comment 13 --repo expressjs/cors --body The run on the box failed (git fetch failed)",
+            self.calls(),
+        )
+        self.assertEqual(self.state()["issues"]["expressjs/cors#13"]["status"], "failed")
+
+    def test_needs_a_signed_in_gh_and_a_real_repo(self):
+        nogh = self.tmp / "nogh"
+        nogh.mkdir()
+        (nogh / "gh").write_text("#!/bin/sh\nexit 1\n")
+        (nogh / "gh").chmod(0o755)
+        r = subprocess.run(
+            [sys.executable, str(SCRIPT), "issues", "expressjs/cors"],
+            env={**self.env, "PATH": f"{nogh}:{self.env['PATH']}"},
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("isn't signed in", r.stderr)
+        self.cli("issues", "not a repo; rm -rf ~", code=2)
+        self.cli("issues", "expressjs/cors", "--label", "$(x)", code=2)
+        self.assertIn("Not watching any repo", self.cli("poll"))
+
+
 if __name__ == "__main__":
     unittest.main()
