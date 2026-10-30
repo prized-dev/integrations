@@ -10,28 +10,28 @@ harbor run -d terminal-bench/terminal-bench-2-1 -a oracle -e harbor_prized:Prize
 
 No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=harbor.
 
-Each trial gets its own sandbox, sized from the task's `cpus`, `memory_mb` and `storage_mb`, plus 20 GB of disk for the image, and deleted when the trial ends. The task's prebuilt `docker_image` is unpacked with `crane`, and every command runs chrooted into it as uid 0 of one unprivileged user namespace per trial, with the image's `ENV` and `WORKDIR`. A seccomp filter makes `chown`, setuid/setgid bits and switches to other users succeed without effect, as fakeroot does, so `apt-get`, `useradd` and `sudo` work. Long commands run detached through the [`prized` SDK](https://pypi.org/project/prized/), so an hour-long agent run outlives a dropped connection.
+Each trial gets its own sandbox, sized from the task's `cpus`, `memory_mb` and `storage_mb`, plus 20 GB of disk for the image, and deleted when the trial ends (`--no-delete` pauses it instead, at storage cost only, and it is deleted after a week paused). The task's prebuilt `docker_image` is unpacked with `crane`, keeping its file modes, and every command runs chrooted into it with the image's `ENV`, `WORKDIR` and `USER`, the task's env, Docker's umask (022) and a Docker-style `/etc/hosts`. Root commands run as uid 0 of an unprivileged user namespace, under a seccomp filter that makes `chown`, setuid/setgid bits and switches to other users succeed without effect, as fakeroot does, so `apt-get`, `useradd` and `sudo` work. A command for another user (`user=agent`, the task's `[agent] user`, or the image's `USER`) runs as that user's uid and gid in a namespace nested in root's. All commands of a trial share these namespaces, so processes they leave running (tmux, servers) stay visible to later commands. Long commands run detached through the [`prized` SDK](https://pypi.org/project/prized/), so an hour-long agent run outlives a dropped connection, and files over 64 MiB move in parts.
 
-Options (`--ek key=value`): `template` (default `prized-base-v1`), `max_runtime_min` (180), `image_headroom_gb` (20), `labels` (`k=v,k=v`).
+Options (`--ek key=value`): `template` (default `prized-base-v1`), `max_runtime_min` (1440; up to 10080, 7 days), `paused_ttl_min` (10080), `min_vcpu` (1), `image_headroom_gb` (20), `labels` (`k=v,k=v`). Each sandbox is labelled `harbor=1` and `harbor-session=<trial>`, so `prized sandbox rm --label harbor=1` removes any a crashed run left behind.
 
 ## Results
 
-Terminal-Bench 2.1, all 89 tasks, oracle agent, no retries, `-n 6`, Harbor main f3a5a923, October 28, 2026: **79 of 89 pass (88.8%)** in 56 minutes, 3.95 sandbox-hours (about $0.56 at list price). Six of the ten failures are task rot that Sail also hit on Modal ([harbor#3475](https://github.com/harbor-framework/harbor/pull/3475#issuecomment-6022288555)); without them, 79 of 83 pass (95.2%).
+Terminal-Bench 2.1, all 89 tasks, oracle agent, no retries, `-n 6`, October 30, 2026, with this code as the built-in `-e prized` of a Harbor branch (main c65b9f6d): **79 of 89 pass (88.8%)** in 46 minutes, 3.67 sandbox-hours (about $0.47 at list price). Six of the failures are task rot that Sail also hit on Modal ([harbor#3475](https://github.com/harbor-framework/harbor/pull/3475#issuecomment-6022288555)); without them, 79 of 83 pass (95.2%).
 
 | Fails | Why |
 |---|---|
 | build-cython-ext, crack-7z-hash, mcmc-sampling-stan, protein-assembly, qemu-alpine-ssh, qemu-startup | The task itself: dependencies moved, Debian 404s, or the reference solution runs past its timeout. They fail on Modal too |
 | configure-git-webserver, git-multibranch | `git push` over ssh: sshd's login needs a real switch to the git user |
 | mailman | Postfix checks that `postdrop` is group-owned and setgid |
-| torch-tensor-parallelism | The verifier runs past its 900 s timeout on the task's 1 vCPU |
+| torch-tensor-parallelism | gloo's teardown deadlocks on fewer than 4 vCPUs (the task asks for 1); it passes with `--ek min_vcpu=4` |
 
-The same run on 0.1.0 passed 70 of 89: ten tasks failed on `chown`, `dpkg` or `sudo`, and three on commands longer than about 15 minutes.
+0.1.0 passed 70 of 89: ten tasks failed on `chown`, `dpkg` or `sudo`, and three on commands longer than about 15 minutes.
 
 ## Limits
 
-- Prebuilt `docker_image` tasks only. Dockerfile builds and Docker Compose tasks are refused before a sandbox starts.
-- One user: commands run as root and `user=` is ignored. Switching users succeeds without effect, so programs that check the switch (an `sshd` login, `postgres`, Postfix's ownership checks) fail.
-- No GPUs or network policies (Harbor refuses those tasks).
+- Prebuilt `docker_image` tasks only, pulled without credentials. Dockerfile builds (including a verifier image built from `tests/Dockerfile`) and Docker Compose tasks are refused before a sandbox starts. The image's `ENTRYPOINT` and `CMD` don't run.
+- One id underneath: a non-root user runs as its own uid and gid, but owns every file root owns, has no supplementary groups, can't `sudo`, and doesn't see other users' processes (root sees everyone's). Programs that check a real user switch (an `sshd` login, Postfix) fail.
+- No network policies (`no-network`, `allow_internet = false`, allowlists) or GPUs: Harbor refuses those tasks before a sandbox starts. Storage is at most 128 GB.
 - Concurrency: each Terminal-Bench trial takes 1 vCPU, 2 GB of memory and 30 GB of disk, so the workspace's sandbox and disk quotas set how many run at once. Lower `image_headroom_gb` to fit more, or ask team@prized.dev to raise the quota for large runs. On the free tier pass `--ek max_runtime_min=60` (its limit); its 100 GB of disk fits three trials at a time.
 
 License: Apache-2.0.

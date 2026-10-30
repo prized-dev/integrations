@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "harbor-prized"
-version = "0.2.0"
+version = "0.3.0"
 description = "Prized Sandboxes as a Harbor environment: run Terminal-Bench and other Harbor tasks in Firecracker microVMs."
 readme = "README.md"
 license = "Apache-2.0"
