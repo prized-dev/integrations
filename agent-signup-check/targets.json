@@ -329,7 +329,7 @@
   "name": "Deno Deploy",
   "category": "Sandboxes and compute",
   "site": "deno.com",
-  "api": "https://api.deno.com/v1/organizations/me",
+  "api": "https://api.deno.com/v2/apps",
   "docs": "https://docs.deno.com/llms.txt"
  },
  {
