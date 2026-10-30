@@ -185,6 +185,8 @@ def test_reattach_with_new_env_restarts(fake_prized):
     try:
         assert second.api_key != first.api_key
         assert second.alive
+        assert sb.handles[0].status().running is False, "the old server was stopped before the new one started"
+        assert second.git_changes(str(fake_prized.tmp / "work")) == [], "the new key works"
     finally:
         second.cleanup()
 
@@ -204,11 +206,12 @@ def test_fork_from(fake_prized):
     parent = _ws(fake_prized, on_exit="keep")
     parent_sb = parent.sandbox
     parent.cleanup()
-    child = _ws(fake_prized, fork_from=parent_sb.id, labels={"run": "7"})
+    child = _ws(fake_prized, fork_from=parent_sb.id, labels={"run": "7"}, server_port=parent.server_port)
     try:
         assert ("fork", 1, {"openhands": "workspace", "run": "7"}) in parent_sb.log
         assert child.sandbox is not parent_sb
         assert child.alive
+        assert child.api_key == parent.api_key, "a fork carries the running server: reused, not restarted"
     finally:
         child.cleanup()
     assert ("delete",) in child.sandbox.log

@@ -84,15 +84,15 @@ The Agent Server's own session key passes through the proxy unchanged. The proxy
 
 ## Results
 
-`scripts/live_e2e.py`, 2 vCPU / 4 GB, exec transport, OpenHands 1.59.0, October 30, 2026. The model was `claude-opus-5-5` through Prized's LLM gateway, which needed Claude Code's identity line added to the head of OpenHands' system prompt; nothing else changed. Four runs in a row passed, the last one on this exact code. Two earlier runs had failed on a `pause()` bug, which is now fixed. In every passing run the agent fixed two bugs so the unit tests pass, without editing the tests. In the last run, a 200 KB upload and a 3 MB download through the Agent Server also arrived intact.
+`scripts/live_e2e.py`, 2 vCPU / 4 GB, exec transport, OpenHands 1.59.0, October 30, 2026. The model was `claude-opus-5-5` through Prized's LLM gateway, which needed Claude Code's identity line added to the head of OpenHands' system prompt; nothing else changed. Five runs in a row passed, the last two on this exact code. Two earlier runs had failed on a `pause()` bug, which is now fixed. In every passing run the agent fixed two bugs so the unit tests pass, without editing the tests. In the last two runs, a 200 KB upload and a 3 MB download through the Agent Server also arrived intact.
 
 | | Each run |
 |---|---|
 | Cold start (new sandbox to a ready workspace) | 17.1-17.9 s |
 | The task (agent fixes the bugs and runs the tests) | 9.0-10.8 s |
-| `pause()` + `resume()`, server still running | 0.8-1.7 s |
-| Warm start with `fork_from` (the fix is there too) | 4.1-4.4 s |
-| `serve`: Ctrl-C, then `serve` again (same sandbox, same server, files kept) | 4.1 s |
+| `pause()` + `resume()`, server still running | 0.8-2.0 s |
+| Warm start with `fork_from` (the fix is there too) | 3.8-4.4 s |
+| `serve`: Ctrl-C, then `serve` again (same sandbox, URL, key and server; files kept) | 4.1-4.4 s |
 | Sandbox cost at list price | $0.0014 |
 | LLM cost (OpenHands' own count) | $0.03-0.09 |
 

@@ -92,13 +92,25 @@ def stop_script() -> str:
 pid=$(sed -n 's/.*"pid": *\\([0-9]*\\).*/\\1/p' "$S/server.json" 2>/dev/null)
 if [ -n "$pid" ] && grep -qa agent-server "/proc/$pid/cmdline" 2>/dev/null; then
   kill -TERM -- "-$pid" 2>/dev/null || kill -TERM "$pid" 2>/dev/null || true
+  # Wait for it to go (it holds the port the next server binds), then insist. A zombie
+  # (exited, not yet reaped) counts as gone.
+  running() {{ kill -0 "$1" 2>/dev/null && ! grep -q '^State:.*Z' "/proc/$1/status" 2>/dev/null; }}
+  i=0
+  while running "$pid" && [ $i -lt 50 ]; do sleep 0.2; i=$((i + 1)); done
+  if running "$pid"; then kill -KILL -- "-$pid" 2>/dev/null || kill -KILL "$pid" 2>/dev/null || true; fi
 fi
 rm -f "$S/server.json"
 """
 
 
 def health_script(port: int) -> str:
-    return f"curl -fsS -m 3 -o /dev/null -w '%{{http_code}}' http://127.0.0.1:{int(port)}/health"
+    """HTTP status of an authenticated call with the key in server.json: 200 only from
+    the server just started (an old one still shutting down has another key)."""
+    return f"""S="$HOME/{STATE}"
+key=$(sed -n 's/.*"key": *"\\([^"]*\\)".*/\\1/p' "$S/server.json" 2>/dev/null)
+curl -sS -m 3 -o /dev/null -w '%{{http_code}}' -H "X-Session-API-Key: $key" \\
+  "http://127.0.0.1:{int(port)}/api/conversations/search?limit=1" 2>/dev/null
+"""
 
 
 @dataclass
