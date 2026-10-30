@@ -46,6 +46,22 @@ Google's Jules runs sessions until November 11, 2026, then turns read-only and s
 
 `systemctl --user list-timers 'jules-*'` lists the next runs. `systemctl --user start jules-NAME` runs one now. Logs go to `~/.jules-import/logs`.
 
+## Label an issue `jules`, get a pull request
+
+Jules took a task from any GitHub issue you labeled `jules`. This brings that back, with or without an export. On the box, after `prized agents handoff claude --gh` from your laptop (it copies your Claude Code and GitHub sign-ins):
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/prized-dev/integrations/main/jules/jules_import.py
+python3 jules_import.py issues OWNER/REPO
+```
+
+It clones the repo, creates the `jules` label if the repo lacks it, and checks for labeled issues every 2 minutes. Add the label to an issue, from the GitHub app if you like. The box comments on the issue, runs Claude Code (or Codex, with `--agent codex`) on it in a fresh worktree, the way scheduled tasks run, and opens a pull request that closes the issue. If nothing changed or the run failed, it says so on the issue.
+
+- **Who can hand it work.** Only labels you added, or that someone with write access added, count. A label from an issue template or a triager is skipped. Labels added before you ran `issues` don't count, so issues Jules already worked on stay as they are. To run an issue again, remove the label and add it back.
+- **One at a time.** Issues run one after another, each for up to 3 hours. If the repo was imported from your export, its setup script and variables are used too.
+- **Keep the box awake.** A paused box checks nothing: `prized box auto-pause BOX off`.
+- `python3 ~/.jules-import/jules_import.py issues` lists what ran. `issues --off` stops it. Logs are in `~/.jules-import/logs`.
+
 ## What goes where
 
 | In the Jules export | On the box |
@@ -74,6 +90,7 @@ Move my Jules setup to my Prized box BOX. Copy ~/jules-export there with `prized
 - **GitHub only.** The importer clones from GitHub, as Jules did. Pull requests need `gh` signed in on the box.
 - **Agent usage is on your plan.** Scheduled runs use your Claude or ChatGPT plan's limits, or your API key, not Jules' daily task quota. A long-lived token from `claude setup-token`, set as `CLAUDE_CODE_OAUTH_TOKEN` in `~/.jules-import/env/_all.env`, keeps unattended runs from needing a fresh `/login`.
 - **Unattended means no permission prompts.** A scheduled run can run any command your user on the box can, the way Jules ran tasks in its own VM. To limit it, edit the agent line in the task's script, for example `claude -p "$PROMPT" --allowedTools "Bash(npm test)" Edit`.
+- **An issue's text is the prompt.** Unlike Jules' VM, the box holds your GitHub sign-in, and the agent can read it. Label only issues whose text you would paste into Claude Code yourself, including on public repos where anyone can write the issue.
 
 ## Tests
 
@@ -81,4 +98,4 @@ Move my Jules setup to my Prized box BOX. Copy ~/jules-export there with `prized
 scripts/test.sh jules
 ```
 
-They run offline, against `sample-export/`, a local git remote, and stand-ins for `systemctl`, `gh`, `claude` and `codex` in `tests/bin`. They cover the schedule parsers, other shapes the export's files could take, a full import into a throwaway home folder, and one scheduled run through to the pull request.
+They run offline, against `sample-export/`, a local git remote, and stand-ins for `systemctl`, `gh`, `claude` and `codex` in `tests/bin`. They cover the schedule parsers, other shapes the export's files could take, a full import into a throwaway home folder, one scheduled run through to the pull request, and labeled issues: who may hand one over, re-runs, text that tries to break out of the script, and runs that change nothing or fail.
