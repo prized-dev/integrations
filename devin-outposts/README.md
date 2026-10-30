@@ -6,7 +6,7 @@ Run each [Devin Outposts](https://docs.devin.ai/cloud/outposts/overview) session
 
 1. In Devin, create an outpost for Linux (**Settings → Environment → Outposts → Create Outpost**) and copy its ID (`outpost_env-…`). Under **Settings → Devin API → Service users**, make a service user whose role has **Outposts write**, and copy its token (`cog_…`).
 
-2. Make a Prized API key with **Sandboxes: Write** at https://prized.dev/dashboard/workspace/api-keys?via=devin-outposts. No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=devin-outposts.
+2. Make a Prized API key with **Sandboxes: Write** at https://prized.dev/dashboard/workspace/api-keys?via=devin-outposts. No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=devin-outposts. It can also install the Prized skill with `npx skills add https://prized.dev -g -y` (it should ask you first), so it knows when and how to use Prized the next time you ask for a sandbox.
 
 3. On a machine that stays on (a laptop, a VM, a container; it needs only outbound HTTPS), install the orchestrator and export the three values:
 

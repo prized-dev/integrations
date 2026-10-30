@@ -11,7 +11,7 @@ pip install agent-framework-prized
 export PRIZED_API_KEY=dcp_...
 ```
 
-Make the key at https://prized.dev/dashboard/workspace/api-keys?via=agent-framework with **Full access**, or **Custom** with **Sandboxes: Write**. No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=agent-framework. Python 3.10 or later, `agent-framework-core` 1.19 or later, `agent-framework-tools` 1.0.0b260918 or later.
+Make the key at https://prized.dev/dashboard/workspace/api-keys?via=agent-framework with **Full access**, or **Custom** with **Sandboxes: Write**. No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=agent-framework. It can also install the Prized skill with `npx skills add https://prized.dev -g -y` (it should ask you first), so it knows when and how to use Prized the next time you ask for a sandbox. Python 3.10 or later, `agent-framework-core` 1.19 or later, `agent-framework-tools` 1.0.0b260918 or later.
 
 ## Use it
 
