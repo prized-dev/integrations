@@ -7,6 +7,7 @@ Everything lives under ``~/.openhands-prized`` in the sandbox:
     python                     the tool environment's Python (it has websockets)
     ws_relay.py                the WebSocket relay of the exec transport
     server.json                pid, port, version and session key of the running server
+    tmp/                       the proxy's request and WebSocket files
     server/                    the server's working directory (its conversations live here,
                                not in your project)
 """
@@ -38,7 +39,7 @@ def install_script(version: str, packages: list[str] | None = None) -> str:
     withs = " ".join(f"--with {shlex.quote(p)}" for p in pins)
     return f"""set -eu
 S="$HOME/{STATE}"
-mkdir -p "$S/bin" "$S/server"
+mkdir -p "$S/bin" "$S/server" "$S/tmp"
 export UV_TOOL_BIN_DIR="$S/bin" UV_TOOL_DIR="$S/tools" PATH="$S/bin:$HOME/.local/bin:$PATH"
 installed=0
 if [ "$(cat "$S/version" 2>/dev/null)" != {shlex.quote(v)} ] || [ ! -x "$S/bin/agent-server" ]; then
@@ -71,12 +72,17 @@ def start_command(port: int, args: list[str]) -> str:
 
 
 def probe_script(port: int) -> str:
-    """Prints server.json (base64) and whether its process and port still answer."""
+    """Prints server.json (base64), whether its pid is still an agent-server, and whether
+    the server answers an authenticated call with the recorded key."""
     return f"""S="$HOME/{STATE}"
 printf 'STATE '; base64 -w0 < "$S/server.json" 2>/dev/null; echo
 pid=$(sed -n 's/.*"pid": *\\([0-9]*\\).*/\\1/p' "$S/server.json" 2>/dev/null)
-if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then echo ALIVE=1; else echo ALIVE=0; fi
-if curl -fsS -m 3 -o /dev/null http://127.0.0.1:{int(port)}/health; then echo HEALTH=1; else echo HEALTH=0; fi
+key=$(sed -n 's/.*"key": *"\\([^"]*\\)".*/\\1/p' "$S/server.json" 2>/dev/null)
+# The pid must still be our agent-server (a pid can be reused), and the key must work.
+if [ -n "$pid" ] && grep -qa agent-server "/proc/$pid/cmdline" 2>/dev/null; then echo ALIVE=1; else echo ALIVE=0; fi
+code=$(curl -sS -m 5 -o /dev/null -w '%{{http_code}}' -H "X-Session-API-Key: $key" \\
+  "http://127.0.0.1:{int(port)}/api/conversations/search?limit=1" 2>/dev/null)
+if [ "$code" = 200 ]; then echo HEALTH=1; else echo HEALTH=0; fi
 """
 
 
@@ -84,7 +90,9 @@ def stop_script() -> str:
     """Stop the server server.json names (its whole process group)."""
     return f"""S="$HOME/{STATE}"
 pid=$(sed -n 's/.*"pid": *\\([0-9]*\\).*/\\1/p' "$S/server.json" 2>/dev/null)
-if [ -n "$pid" ]; then kill -TERM -- "-$pid" 2>/dev/null || kill -TERM "$pid" 2>/dev/null || true; fi
+if [ -n "$pid" ] && grep -qa agent-server "/proc/$pid/cmdline" 2>/dev/null; then
+  kill -TERM -- "-$pid" 2>/dev/null || kill -TERM "$pid" 2>/dev/null || true
+fi
 rm -f "$S/server.json"
 """
 

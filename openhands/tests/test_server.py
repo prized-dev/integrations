@@ -4,6 +4,7 @@ import base64
 import json
 import os
 import subprocess
+import time
 
 import pytest
 
@@ -57,20 +58,32 @@ def test_probe_parsing_and_reuse_rule():
     assert _server.parse_probe("STATE bm90IGpzb24=\nALIVE=1\n").state == {}
 
 
-def test_probe_script_reads_a_real_state_file(tmp_path):
+def test_probe_script_checks_the_pid_is_an_agent_server(tmp_path):
     state_dir = tmp_path / ".openhands-prized"
     state_dir.mkdir()
-    (state_dir / "server.json").write_text(json.dumps({"pid": os.getpid(), "port": 1, "version": "1.59.0", "key": "k"}))
-    out = subprocess.run(
-        ["bash", "-c", _server.probe_script(1)],
-        capture_output=True,
-        text=True,
-        env={"HOME": str(tmp_path), "PATH": "/usr/bin:/bin"},
-        check=False,
-    ).stdout
-    p = _server.parse_probe(out)
-    assert p.state["key"] == "k" and p.alive  # this test's own pid
-    assert not p.healthy
+    env = {"HOME": str(tmp_path), "PATH": "/usr/bin:/bin"}
+
+    def probe(pid):
+        state = {"pid": pid, "port": 1, "version": "1.59.0", "key": "k"}
+        (state_dir / "server.json").write_text(json.dumps(state))
+        run = subprocess.run(
+            ["bash", "-c", _server.probe_script(1)], capture_output=True, text=True, env=env, check=False
+        )
+        return _server.parse_probe(run.stdout)
+
+    p = probe(os.getpid())
+    assert p.state["key"] == "k"
+    assert not p.alive, "a live pid that is not an agent-server (pid reuse) does not count"
+    server = subprocess.Popen(["bash", "-c", "exec -a agent-server sleep 30"])
+    try:
+        time.sleep(0.2)
+        p = probe(server.pid)
+        assert p.alive and not p.healthy  # nothing answers on port 1
+        subprocess.run(["bash", "-c", _server.stop_script()], env=env, check=True)
+        assert server.wait(5) is not None
+        assert not (state_dir / "server.json").exists()
+    finally:
+        server.kill()
 
 
 def test_install_output_needs_paths():

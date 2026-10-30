@@ -116,7 +116,8 @@ class FakeSandbox:
         (state / "server").mkdir(parents=True, exist_ok=True)
         server = Path(__file__).with_name("fake_agent_server.py")
         script = state / "bin" / "agent-server"
-        script.write_text(f'#!/bin/sh\nexec {sys.executable} {server} "$@"\n')
+        # "agent-server" on the command line, as the real entry point's has.
+        script.write_text(f'#!/bin/sh\nexec {sys.executable} {server} --as agent-server "$@"\n')
         script.chmod(0o755)
         return Result(self.install_stdout or f"HOME={self.home}\nPY={sys.executable}\nINSTALLED=1\n", "", 0)
 
@@ -243,7 +244,7 @@ class FakeAsyncFiles:
     async def write(self, path: str, data, mode: Any = None):
         p = Path(path)
         p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_bytes(bytes(data))
+        p.write_bytes(data.encode() if isinstance(data, str) else bytes(data))
         self.writes.append(path)
 
     async def read_bytes(self, path: str) -> bytes:

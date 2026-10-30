@@ -125,11 +125,25 @@ def test_commands_and_files_go_straight_to_the_sandbox(fake_prized):
         assert not missing.success and missing.error
 
 
-def test_key_never_serialized_or_shown(fake_prized):
+def test_keys_never_serialized_or_shown(fake_prized):
     with _ws(fake_prized, env={"SECRET_TOKEN": "s3cret"}) as ws:
         dumped = json.dumps(ws.model_dump(mode="json"))
-        assert PRIZED_KEY not in dumped and PRIZED_KEY not in repr(ws)
-        assert "s3cret" not in dumped and "s3cret" not in repr(ws)
+        for secret in (PRIZED_KEY, "s3cret", ws.api_key):
+            assert secret not in dumped and secret not in repr(ws)
+
+
+def test_commands_see_forwarded_env(fake_prized, monkeypatch):
+    monkeypatch.setenv("MY_TOKEN", "fwd-1")
+    with _ws(fake_prized, forward_env=["MY_TOKEN", "NOT_SET"]) as ws:
+        assert ws.execute_command("echo $MY_TOKEN").stdout.strip() == "fwd-1"
+
+
+def test_a_command_while_paused_resumes_properly(fake_prized):
+    with _ws(fake_prized) as ws:
+        ws.pause()
+        assert ws.execute_command("echo back").stdout.strip() == "back"
+        assert ("resume",) in ws.sandbox.log
+        assert httpx.get(ws.host + "/health").status_code == 200, "the proxy is open again"
 
 
 def test_key_from_environment_and_missing_key(fake_prized, monkeypatch):
@@ -235,6 +249,8 @@ def test_connection_choice(fake_prized, monkeypatch):
     fake_prized.opts.raw = {"previewUrlTemplate": "https://{port}-sbx-00000000000000aa.p.prized.dev/"}
     monkeypatch.setattr(PrizedWorkspace, "_probe_ingress", staticmethod(lambda base, key: 402))
     with _ws(fake_prized) as ws:
+        assert ws.transport == "exec", "exec is the default"
+    with _ws(fake_prized, connection="auto") as ws:
         assert ws.transport == "exec", "auto falls back when the port URL refuses"
     with pytest.raises(RuntimeError, match="answered 402"):
         _ws(fake_prized, connection="ingress")
@@ -258,6 +274,24 @@ def test_sdk_websocket_client_through_the_proxy(fake_prized):
         assert isinstance(events[0], ConversationStateUpdateEvent)
 
 
+def test_serve_reattaches_to_the_newest_canvas_sandbox(monkeypatch):
+    import prized
+
+    from openhands_prized import cli
+
+    seen = {}
+
+    def fake_list(**kw):
+        seen.update(kw)
+        return [SimpleNamespace(id="sbx_failed", state="failed"), SimpleNamespace(id="sbx_new", state="paused")]
+
+    monkeypatch.setattr(prized, "Sandbox", SimpleNamespace(list=fake_list))
+    assert cli._previous_sandbox() == "sbx_new"
+    assert seen["labels"] == {"openhands": "canvas"}
+    monkeypatch.setattr(prized, "Sandbox", SimpleNamespace(list=lambda **kw: []))
+    assert cli._previous_sandbox() is None
+
+
 def test_cli_parser():
     from openhands_prized.cli import _labels, build_parser
 
@@ -268,3 +302,15 @@ def test_cli_parser():
         _labels(["nope"])
     with pytest.raises(SystemExit):
         build_parser().parse_args(["serve", "--sandbox", "a", "--fork", "b"])
+    with pytest.raises(SystemExit):
+        build_parser().parse_args(["serve", "--sandbox", "a", "--new"])
+    assert build_parser().parse_args(["serve"]).connection == "exec"
+    from openhands_prized.cli import _free
+
+    taken = socket.socket()
+    taken.bind(("127.0.0.1", 0))
+    taken.listen()
+    try:
+        assert not _free(taken.getsockname()[1])
+    finally:
+        taken.close()

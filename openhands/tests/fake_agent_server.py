@@ -23,7 +23,7 @@ def _headers(scope):
 
 async def _send_json(send, status, obj, extra=()):
     body = json.dumps(obj).encode()
-    headers = [(b"content-type", b"application/json"), *extra]
+    headers = [(b"content-type", b"application/json"), (b"content-length", str(len(body)).encode()), *extra]
     await send({"type": "http.response.start", "status": status, "headers": headers})
     await send({"type": "http.response.body", "body": body})
 
@@ -49,12 +49,15 @@ async def app(scope, receive, send):
             return await _send_json(send, 200, "OK")
         if path.startswith("/api/") and KEY and headers.get("x-session-api-key") != KEY:
             return await _send_json(send, 401, {"detail": "Unauthorized"})
-        if path == "/api/echo":
+        if path == "/api/conversations/search":
+            return await _send_json(send, 200, {"items": [], "next_page_id": None})
+        if path.startswith("/api/echo"):
             return await _send_json(
                 send,
                 201,
                 {
                     "method": scope["method"],
+                    "path": scope["raw_path"].decode(),
                     "query": scope["query_string"].decode(),
                     "headers": headers,
                     "body_b64": base64.b64encode(body).decode(),

@@ -4,7 +4,7 @@ The proxy on the user's machine cannot open a socket into the sandbox, so for ea
 WebSocket a client opens it starts this script as a background command in the
 sandbox, with the Agent Server's own Python (which has ``websockets``):
 
-    python ws_relay.py PORT TARGET_B64 HEADERS_B64 INBOX
+    python ws_relay.py PORT TARGET_B64 HEADERS_B64 INBOX [MAX_BYTES]
 
 It connects to ``ws://127.0.0.1:PORT`` + TARGET with HEADERS, then:
 
@@ -13,6 +13,9 @@ It connects to ``ws://127.0.0.1:PORT`` + TARGET with HEADERS, then:
   ``C <code> <reason b64>`` (closed; always the last line);
 - sends every line appended to INBOX (``T <b64>`` / ``B <b64>``) to the server, in
   order. The proxy appends a client's messages there.
+
+Past MAX_BYTES of output (default 32 MiB) it closes with 1012, and the client
+reconnects: the proxy holds a relay's output in memory, so one never grows without end.
 
 Standard library plus ``websockets`` (12 or later) only: it is uploaded as is.
 """
@@ -80,6 +83,7 @@ async def _pump_inbox(ws, inbox: str) -> None:
 
 async def main() -> int:
     port, target_b64, headers_b64, inbox = sys.argv[1:5]
+    max_bytes = int(sys.argv[5]) if len(sys.argv) > 5 else 32 * 1024 * 1024
     target = base64.b64decode(target_b64).decode("utf-8")
     headers = [tuple(h) for h in json.loads(base64.b64decode(headers_b64))]
     url = f"ws://127.0.0.1:{int(port)}{target}"
@@ -92,19 +96,26 @@ async def main() -> int:
         return 0
     _out("O")
     pump = asyncio.ensure_future(_pump_inbox(ws, inbox))
-    code, reason = 1000, ""
+    code, reason, sent, rotated = 1000, "", 0, False
     try:
         async for message in ws:
             if isinstance(message, str):
-                _out("T " + _b64(message.encode("utf-8")))
+                line = "T " + _b64(message.encode("utf-8"))
             else:
-                _out("B " + _b64(bytes(message)))
+                line = "B " + _b64(bytes(message))
+            _out(line)
+            sent += len(line) + 1
+            if sent > max_bytes:
+                rotated = True
+                break
     except Exception:  # connection dropped without a close frame
         code = 1011
     finally:
         pump.cancel()
     rcvd = getattr(ws, "close_code", None)
-    if rcvd is not None:
+    if rotated:
+        code, reason = 1012, "relay rotation: reconnect"
+    elif rcvd is not None:
         code, reason = rcvd, getattr(ws, "close_reason", "") or ""
     _out(f"C {code} {_b64(reason.encode('utf-8'))}")
     try:

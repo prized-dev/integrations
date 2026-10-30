@@ -171,12 +171,15 @@ class ExecUpstream:
         port: int,
         python: str,
         relay: str,
-        tmp: str = "/tmp",
+        tmp: str,
+        relay_max_bytes: int = 32 * 1024 * 1024,
     ):
         """``connect`` returns an AsyncSandbox (or a stand-in) for this proxy's loop;
-        ``python`` and ``relay`` are absolute paths in the sandbox."""
+        ``python``, ``relay`` and ``tmp`` are absolute paths in the sandbox. ``tmp`` must be
+        under the sandbox user's home: Prized's file calls refuse paths outside it."""
         self._connect = connect
         self.port, self.python, self.relay, self.tmp = port, python, relay, tmp
+        self.relay_max_bytes = relay_max_bytes
         self.sb: Any = None
         self._slots = asyncio.Semaphore(MAX_CONCURRENT)
 
@@ -198,13 +201,15 @@ class ExecUpstream:
         if not target.startswith("/") or any(c in target for c in " \r\n\t\x00"):
             return _json_error(400, "bad request target")
         d = f"{self.tmp}/ohp-{secrets.token_hex(8)}"
+        staged = f"{d}.body" if body and len(body) > INLINE_BODY else None
         steps = [f"d={shlex.quote(d)}", 'mkdir -m 700 -p "$d" || exit 90']
-        if body and len(body) > INLINE_BODY:
-            await self.sb.files.write(f"{d}.body", body)
-            steps.append(f'mv {shlex.quote(d + ".body")} "$d/b"')
+        if staged:
+            await self.sb.files.write(staged, body)
+            steps.append(f'mv {shlex.quote(staged)} "$d/b"')
         elif body:
             steps.append(f'printf %s {shlex.quote(_b64(body))} | base64 -d > "$d/b"')
-        curl = ["curl", "-sS", "--path-as-is", "-H", "Expect:"]
+        # -g: brackets and braces in a path ([id], {a,b}) are not curl URL patterns.
+        curl = ["curl", "-sS", "-g", "--path-as-is", "-H", "Expect:"]
         curl += ["--head"] if method == "HEAD" else ["-X", method]
         sent = _filter(headers, _REQ_DROP)
         for k, v in sent:
@@ -220,7 +225,9 @@ class ExecUpstream:
         line += shlex.quote(f"http://127.0.0.1:{self.port}{target}")
         steps += [
             line,
-            'echo "RC $?"',
+            "rc=$?",
+            'echo "RC $rc"',
+            'if [ "$rc" -ne 0 ]; then rm -rf "$d"; exit 0; fi',
             "printf 'H '; base64 -w0 < \"$d/h\" 2>/dev/null; echo",
             's=$(stat -c %s "$d/o" 2>/dev/null || echo 0)',
             (
@@ -231,6 +238,8 @@ class ExecUpstream:
         try:
             result = await self._exec("\n".join(steps), EXEC_TIMEOUT)
         except Exception as exc:  # the command API itself failed
+            if staged:
+                await self._quiet(f"rm -rf {shlex.quote(d)} {shlex.quote(staged)}")
             return _json_error(502, f"Prized exec failed: {exc}")
         fields = {}
         for out in result.stdout.splitlines():
@@ -254,7 +263,29 @@ class ExecUpstream:
                 await self._exec(f"rm -rf {shlex.quote(path.rsplit('/', 1)[0])}", 30)
         else:
             data = base64.b64decode(fields.get("B", ""))
-        return status, _filter(resp_headers, _HOP | {"content-encoding"}), data
+        out = _filter(resp_headers, _HOP | {"content-encoding"})
+        if method == "HEAD":
+            # With --head curl writes the headers where the body would go; the body is
+            # empty and the length is the server's.
+            data = b""
+            out += [(k, v) for k, v in resp_headers if k.lower() == "content-length"]
+        return status, out, data
+
+    async def _quiet(self, cmd: str) -> None:
+        try:
+            await self._exec(cmd, 30)
+        except Exception:
+            pass
+
+    async def _append(self, inbox: str, msg: str | bytes) -> None:
+        """Queue a client message for the relay (large ones go up as a file)."""
+        frame = _frame(msg)
+        if len(frame) <= INLINE_BODY:
+            await self._exec(f"printf '%s\\n' {shlex.quote(frame)} >> {shlex.quote(inbox)}", 30)
+            return
+        part = f"{inbox}.{secrets.token_hex(4)}"
+        await self.sb.files.write(part, frame + "\n")
+        await self._exec(f"cat {shlex.quote(part)} >> {shlex.quote(inbox)} && rm -f {shlex.quote(part)}", 30)
 
     async def websocket(self, target: str, headers: list[Header], client: ClientSocket) -> None:
         await client.accept()
@@ -267,7 +298,14 @@ class ExecUpstream:
         if client.closed:
             return
         inbox = f"{self.tmp}/ohp-ws-{secrets.token_hex(8)}.in"
-        seed = f"printf '%s\\n' {shlex.quote(_frame(first))}" if first is not None else ":"
+        q = shlex.quote
+        if first is None:
+            seed = f": > {q(inbox)}"
+        elif len(_frame(first)) <= INLINE_BODY:
+            seed = f"printf '%s\\n' {q(_frame(first))} > {q(inbox)}"
+        else:
+            await self.sb.files.write(inbox, _frame(first) + "\n")
+            seed = ":"
         argv = [
             self.python,
             self.relay,
@@ -275,8 +313,9 @@ class ExecUpstream:
             _b64(target.encode()),
             _b64(json.dumps(_filter(headers, _WS_DROP)).encode()),
             inbox,
+            str(self.relay_max_bytes),
         ]
-        cmd = f"umask 077; {seed} > {shlex.quote(inbox)}; exec " + " ".join(shlex.quote(a) for a in argv)
+        cmd = f"umask 077; {seed}; exec " + " ".join(q(a) for a in argv)
         async with self._slots:
             handle = await self.sb.exec(cmd, background=True)
         lines: asyncio.Queue[str | None] = asyncio.Queue()
@@ -316,7 +355,12 @@ class ExecUpstream:
                 msg = await client.receive()
                 if msg is None:
                     return
-                await self._exec(f"printf '%s\\n' {shlex.quote(_frame(msg))} >> {shlex.quote(inbox)}", 30)
+                try:
+                    await self._append(inbox, msg)
+                except Exception:
+                    logger.exception("could not pass a WebSocket message to the sandbox")
+                    await client.close(1011, "proxy could not deliver a message")
+                    return
 
         follower = asyncio.ensure_future(follow())
         tasks = {asyncio.ensure_future(downstream()), asyncio.ensure_future(upstream())}
@@ -329,16 +373,25 @@ class ExecUpstream:
                 await handle.kill()
             except Exception:
                 pass
-            follower.cancel()
+            # Prized keeps a run's files until the run has recorded its end: wait for
+            # the relay to be gone (the follower returns then) before cleaning up.
+            try:
+                await asyncio.wait_for(asyncio.shield(follower), 15)
+            except Exception:
+                follower.cancel()
             try:
                 await handle.cleanup()
             except Exception:
                 pass
-            try:
-                await self._exec(f"rm -f {shlex.quote(inbox)}", 30)
-            except Exception:
-                pass
+            await self._quiet(f"rm -f {shlex.quote(inbox)} {shlex.quote(inbox)}.*")
             await client.close(1000)
+
+
+def _host(scope: dict) -> str:
+    for k, v in scope.get("headers", []):
+        if k.lower() == b"host":
+            return v.decode("latin-1").lower()
+    return ""
 
 
 def _frame(msg: str | bytes) -> str:
@@ -431,8 +484,11 @@ async def _ws_connect(url: str, headers: list[Header]) -> Any:
 class ProxyApp:
     """The ASGI app: every HTTP request and WebSocket goes to the upstream."""
 
-    def __init__(self, upstream: Upstream):
+    def __init__(self, upstream: Upstream, hosts: frozenset[str] | None = None):
         self.upstream = upstream
+        # Host headers this proxy answers to (None: any). A page on another site that
+        # rebinds its name to 127.0.0.1 sends its own name, and gets a 403.
+        self.hosts = hosts
         self.loop: asyncio.AbstractEventLoop | None = None
         # While the sandbox is paused nothing may reach it: any command would resume it.
         self.paused = False
@@ -445,6 +501,9 @@ class ProxyApp:
         if kind == "lifespan":
             await self._lifespan(receive, send)
             return
+        if self.hosts is not None and _host(scope) not in self.hosts:
+            await self._refuse(kind, receive, send)
+            return
         self._inflight += 1
         self._idle.clear()
         try:
@@ -456,6 +515,17 @@ class ProxyApp:
             self._inflight -= 1
             if self._inflight == 0:
                 self._idle.set()
+
+    @staticmethod
+    async def _refuse(kind: str, receive: Callable, send: Callable) -> None:
+        if kind == "websocket":
+            await receive()
+            await send({"type": "websocket.close", "code": 1008})
+            return
+        status, headers, body = _json_error(403, "unexpected Host header")
+        raw = [(k.encode(), v.encode()) for k, v in headers] + [(b"content-length", str(len(body)).encode())]
+        await send({"type": "http.response.start", "status": status, "headers": raw})
+        await send({"type": "http.response.body", "body": body})
 
     async def quiesce(self, timeout: float) -> bool:
         """Refuse new requests, close open WebSockets (1012: clients reconnect later) and
@@ -519,7 +589,8 @@ class ProxyApp:
         else:
             status, headers, body = await self._forward(scope, b"".join(chunks))
         raw = [(k.encode("latin-1"), v.encode("latin-1")) for k, v in headers]
-        raw.append((b"content-length", str(len(body)).encode()))
+        if not any(k.lower() == b"content-length" for k, _ in raw):
+            raw.append((b"content-length", str(len(body)).encode()))
         await send({"type": "http.response.start", "status": status, "headers": raw})
         await send({"type": "http.response.body", "body": body})
 
@@ -569,7 +640,8 @@ class ProxyServer:
     def start(self, timeout: float = 30.0) -> None:
         import uvicorn
 
-        self.app = ProxyApp(self.upstream)
+        local = ("127.0.0.1", "localhost", "[::1]") if self.host in ("127.0.0.1", "localhost") else (self.host,)
+        self.app = ProxyApp(self.upstream, frozenset(f"{h}:{self.port}" for h in local))
         config = uvicorn.Config(
             self.app,
             log_level="warning",

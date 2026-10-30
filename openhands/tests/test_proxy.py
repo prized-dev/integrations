@@ -348,3 +348,62 @@ def test_quiesce_closes_sockets_refuses_requests_and_reopens(tmp_path, agent_ser
         assert httpx.get(proxy.url + "/health").status_code == 200
     finally:
         proxy.stop()
+
+
+def test_brackets_and_braces_in_paths_are_not_curl_patterns(exec_proxy):
+    url, key, _, _ = exec_proxy
+    r = httpx.get(url + "/api/echo/src/app/[id]/{a,b}.tsx?q=[1]", headers={"X-Session-API-Key": key})
+    assert r.status_code == 201
+    # httpx sends [ ] as they are (curl without -g fails on them: exit 3) and encodes { }.
+    assert r.json()["path"] == "/api/echo/src/app/[id]/%7Ba,b%7D.tsx"
+    assert r.json()["query"] == "q=[1]"
+
+
+def test_head_keeps_the_servers_length(exec_proxy):
+    url, _, _, _ = exec_proxy
+    r = httpx.head(url + "/health")
+    assert r.status_code == 200 and r.content == b""
+    assert r.headers["content-length"] == str(len(json.dumps("OK")))
+
+
+def test_large_websocket_message_goes_up_as_a_file(exec_proxy):
+    url, key, fake, _ = exec_proxy
+    big = "x" * (INLINE_BODY * 2)
+    with ws_connect(url.replace("http", "ws") + "/sockets/events/big", max_size=None) as ws:
+        ws.send(_auth(key))
+        ws.recv(timeout=20)
+        ws.recv(timeout=20)
+        ws.send(big)
+        assert ws.recv(timeout=30) == "echo:" + big
+    assert fake.files.writes, "the big message was staged as a file"
+
+
+def test_relay_rotates_past_its_output_cap(tmp_path, agent_server):
+    port, key = agent_server
+    fake = FakeAsyncSandbox(home=str(tmp_path))
+
+    async def connect():
+        return fake
+
+    proxy = ProxyServer(ExecUpstream(connect, port, sys.executable, str(RELAY), tmp=str(tmp_path), relay_max_bytes=300))
+    proxy.start()
+    try:
+        with ws_connect(proxy.url.replace("http", "ws") + "/sockets/events/r") as ws:
+            ws.send(_auth(key))
+            with pytest.raises(ConnectionClosed) as info:
+                for i in range(50):
+                    ws.send(f"message {i} " + "y" * 40)
+                    ws.recv(timeout=20)
+        assert info.value.rcvd.code == 1012, "client is told to reconnect"
+    finally:
+        proxy.stop()
+
+
+def test_foreign_host_header_is_refused(exec_proxy):
+    url, _, fake, _ = exec_proxy
+    execs = len(fake.execs)
+    r = httpx.get(url + "/health", headers={"Host": "evil.example:80"})
+    assert r.status_code == 403
+    assert len(fake.execs) == execs
+    host_port = url.split("//")[1]
+    assert httpx.get(url + "/health", headers={"Host": host_port.replace("127.0.0.1", "localhost")}).status_code == 200

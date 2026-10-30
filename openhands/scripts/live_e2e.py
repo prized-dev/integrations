@@ -10,15 +10,19 @@ What it checks:
 1. Cold start: a new sandbox, the Agent Server installed and running, the proxy up.
 2. The agent fixes two bugs in a small module so its unit tests pass, without
    editing the tests (checked independently afterwards).
-3. The SDK's git API (served by the Agent Server, through the proxy) sees the change.
+3. The SDK's git API (served by the Agent Server, through the proxy) sees the change, and a
+   200 KB upload and a 3 MB download through the Agent Server's file API arrive intact.
 4. pause() and resume() keep the server running.
 5. A fork of the sandbox starts warm (the server is already installed) and has the fix.
 """
 
+import hashlib
 import json
 import os
 import sys
+import tempfile
 import time
+from pathlib import Path
 
 BUGGY = '''"""Tiny inventory module."""
 
@@ -141,6 +145,18 @@ def run(agent_factory=default_agent, labels=None) -> dict:
         res["solved"] = passing and unchanged
         res["git_changes"] = sorted(str(c.path) for c in ws.git_changes("/home/prized/work/inv"))
 
+        # Large transfers through the Agent Server (the proxy stages big bodies as files).
+        from openhands.sdk.workspace import RemoteWorkspace
+
+        up = os.urandom(200 * 1024)
+        assert RemoteWorkspace.file_upload(ws, up, "/home/prized/work/up.bin").success
+        same = ws.execute_command("sha256sum up.bin").stdout.split()[0] == hashlib.sha256(up).hexdigest()
+        down = os.urandom(3 * 1024 * 1024)
+        assert ws.file_upload(down, "down.bin").success
+        with tempfile.TemporaryDirectory() as tmp:
+            got = RemoteWorkspace.file_download(ws, "/home/prized/work/down.bin", f"{tmp}/down.bin")
+            res["big_transfers_ok"] = bool(same and got.success and Path(f"{tmp}/down.bin").read_bytes() == down)
+
         t2 = time.monotonic()
         ws.pause()
         ws.resume()
@@ -165,4 +181,5 @@ def run(agent_factory=default_agent, labels=None) -> dict:
 if __name__ == "__main__":
     result = run()
     print("RESULT " + json.dumps(result), flush=True)
-    sys.exit(0 if result.get("solved") and result.get("fork_has_fix") else 1)
+    ok = result.get("solved") and result.get("fork_has_fix") and result.get("big_transfers_ok")
+    sys.exit(0 if ok else 1)

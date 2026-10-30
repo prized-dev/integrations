@@ -52,6 +52,9 @@ class PrizedWorkspace(RemoteWorkspace):
 
     working_dir: str = Field(default="/home/prized/work", description="Working directory in the sandbox.")
     host: str = Field(default="", description="Set automatically: the local proxy's URL.")
+    api_key: str | None = Field(
+        default=None, exclude=True, repr=False, description="Set automatically: the Agent Server's session key."
+    )
 
     prized_api_key: SecretStr | None = Field(
         default=None, exclude=True, repr=False, description="Prized API key. Default: PRIZED_API_KEY."
@@ -93,9 +96,10 @@ class PrizedWorkspace(RemoteWorkspace):
     )
 
     connection: Connection = Field(
-        default="auto",
-        description="How the proxy reaches the sandbox: 'exec' (Prized's command API, every plan), "
-        "'ingress' (the sandbox's port URL, where turned on), or 'auto' (ingress if it answers, else exec).",
+        default="exec",
+        description="How the proxy reaches the sandbox: 'exec' (Prized's command API, every plan; the "
+        "default), 'ingress' (the sandbox's port URL, where turned on; not yet run live), or 'auto' "
+        "(ingress if it answers, else exec).",
     )
     host_port: int | None = Field(default=None, description="Local proxy port (default: a free one).")
     on_exit: OnExit | None = Field(
@@ -192,9 +196,14 @@ class PrizedWorkspace(RemoteWorkspace):
             )
             self._owned = True
 
-    def _server_env(self, session_key: str) -> dict[str, str]:
+    def _command_env(self) -> dict[str, str]:
+        """Variables for commands: forward_env from this process, then env."""
         env = {name: os.environ[name] for name in self.forward_env if name in os.environ}
         env.update(self.env)
+        return env
+
+    def _server_env(self, session_key: str) -> dict[str, str]:
+        env = self._command_env()
         env["OH_SESSION_API_KEYS_0"] = session_key
         env.setdefault("OPENHANDS_SUPPRESS_BANNER", "1")
         return env
@@ -279,7 +288,8 @@ class PrizedWorkspace(RemoteWorkspace):
 
                 return await AsyncSandbox.connect(sandbox_id, **kw)
 
-            upstream = ExecUpstream(connect, self.server_port, python, f"{self._home}/{_server.STATE}/ws_relay.py")
+            state = f"{self._home}/{_server.STATE}"
+            upstream = ExecUpstream(connect, self.server_port, python, f"{state}/ws_relay.py", tmp=f"{state}/tmp")
         self._transport = upstream.name
         self._proxy = ProxyServer(upstream, port=self.host_port)
         self._proxy.start()
@@ -310,6 +320,8 @@ class PrizedWorkspace(RemoteWorkspace):
         if not self.keep_alive_interval:
             return
         interval = float(self.keep_alive_interval)
+        if self.auto_pause_min:  # beat well inside the idle window, or the sandbox pauses mid-run
+            interval = min(interval, self.auto_pause_min * 60 / 3)
 
         def beat() -> None:
             while not self._stop_beat.wait(interval):
@@ -350,7 +362,10 @@ class PrizedWorkspace(RemoteWorkspace):
         from prized import CommandTimeoutError
 
         try:
-            r = self._sandbox.exec(command, cwd=self._abs(cwd or self.working_dir), timeout=timeout, env=self.env)
+            self._ensure_running()
+            r = self._sandbox.exec(
+                command, cwd=self._abs(cwd or self.working_dir), timeout=timeout, env=self._command_env()
+            )
         except CommandTimeoutError as exc:
             return CommandResult(
                 command=command,
@@ -373,6 +388,7 @@ class PrizedWorkspace(RemoteWorkspace):
         src = "<bytes>" if isinstance(source_path, bytes) else str(source_path)
         try:
             data = source_path if isinstance(source_path, bytes) else Path(source_path).read_bytes()
+            self._ensure_running()
             self._sandbox.files.write(dest, data)
             return FileOperationResult(success=True, source_path=src, destination_path=dest, file_size=len(data))
         except Exception as exc:
@@ -382,6 +398,7 @@ class PrizedWorkspace(RemoteWorkspace):
         """Copy a file out of the sandbox."""
         src = self._abs(source_path)
         try:
+            self._ensure_running()
             size = self._sandbox.files.download(src, str(destination_path))
             return FileOperationResult(
                 success=True, source_path=src, destination_path=str(destination_path), file_size=size
@@ -390,6 +407,12 @@ class PrizedWorkspace(RemoteWorkspace):
             return FileOperationResult(
                 success=False, source_path=src, destination_path=str(destination_path), error=str(exc)
             )
+
+    def _ensure_running(self) -> None:
+        """A command or file call would resume a paused sandbox behind our back (and the
+        proxy would keep answering 503): resume it properly first."""
+        if self._paused:
+            self.resume()
 
     def pause(self) -> None:
         """Pause the sandbox: compute stops, memory and processes (the Agent Server too) are kept.
@@ -449,6 +472,12 @@ class PrizedWorkspace(RemoteWorkspace):
         self._closed = True
         self._stop_beat.set()
         if self._proxy is not None:
+            try:
+                # Let open WebSockets' relays stop and clean up before the sandbox is paused
+                # (or deleted): one cut off mid-cleanup would be frozen into a paused sandbox.
+                self._proxy.quiesce(15.0)
+            except Exception as exc:
+                logger.debug("quiesce before stop failed: %s", exc)
             try:
                 self._proxy.stop()
             except Exception as exc:
