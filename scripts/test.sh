@@ -92,7 +92,7 @@ py() {
   [ "$sdk" = no ] || need_sdk python
   # shellcheck disable=SC2086 # pins are a word list
   pip install -q -e ".[$extras]" ${FLOOR:+$floor}
-  pip list 2>/dev/null | grep -i -E "^(prized|inspect.ai|google.adk|strands.agents|agent.framework|pydantic.ai|harbor)[-_ ]" || true
+  pip list 2>/dev/null | grep -i -E "^(prized|inspect.ai|google.adk|strands.agents|agent.framework|pydantic.ai|harbor|mini.swe.agent|swebench)[-_ ]" || true
   if [ -z "$FLOOR" ]; then sh -c "$lint"; else echo "(lint runs on the latest-dependencies row)"; fi
   offline pytest -rs -p no:cacheprovider
 }
@@ -113,6 +113,11 @@ case $DIR in
     py "test" yes "pydantic-ai-slim==2.59.0" "pip install -q ruff && ruff check . && ruff format --check ." ;;
   harbor)
     py "test" no "harbor==0.24.0" "pip install -q ruff && ruff check . && ruff format --check ." ;;
+  mini-swe-agent)
+    # Offline: a fake sandbox runs the environment's command scripts with the local bash, and the
+    # evaluator is graded by swebench itself. FLOOR=1 pins the oldest versions the package allows.
+    py "test" yes "mini-swe-agent==2.0.0 prized==0.1.1 swebench==5.0.0" \
+      "pip install -q ruff && ruff check . && ruff format --check ." ;;
   devin-outposts)
     # Offline: a stand-in for Devin's Outposts service on 127.0.0.1, fake sandboxes that run the
     # in-sandbox scripts with bash, and a fake devin-remote. Live tests skip without PRIZED_LIVE=1.

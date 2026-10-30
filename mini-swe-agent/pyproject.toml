@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mini-swe-agent-prized"
+version = "0.1.0"
+description = "Prized Sandboxes for mini-SWE-agent: run SWE-bench agents and SWE-bench's evaluation in Firecracker microVMs, no Docker needed."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["mini-swe-agent", "swe-bench", "prized", "sandbox", "evals"]
+dependencies = ["mini-swe-agent>=2.0", "prized>=0.1.1", "pydantic>=2"]
+
+[project.optional-dependencies]
+swebench = ["swebench>=5.0"]
+test = ["pytest>=8", "swebench>=5.0"]
+
+[project.urls]
+Homepage = "https://prized.dev/sandboxes?via=mini-swe-agent"
+Documentation = "https://prized.dev/docs/sandboxes?via=mini-swe-agent"
+Source = "https://github.com/prized-dev/integrations/tree/main/mini-swe-agent"
+Issues = "https://github.com/prized-dev/integrations/issues"
+
+[project.scripts]
+mini-prized-swebench = "minisweagent_prized.swebench:main"
+mini-prized-evaluate = "minisweagent_prized.evaluate:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/minisweagent_prized"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
