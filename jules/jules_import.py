@@ -58,6 +58,7 @@ HOME = Path(os.environ.get("HOME", str(Path.home())))
 STATE = Path(os.environ.get("JULES_IMPORT_HOME", str(HOME / ".jules-import")))
 GIT_URL = os.environ.get("JULES_IMPORT_GIT_URL", "")  # tests: file:///.../{owner}/{repo}.git
 NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+GH_NAME = re.compile(r"[\w.-]+/[\w.-]+")  # owner/repo as GitHub allows them; nothing a shell would read
 DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 # ---------------------------------------------------------------------------------------------
@@ -122,7 +123,7 @@ def owner_repo(value) -> tuple[str, str] | None:
     if isinstance(value, dict):
         d = lower_keys(value)
         for o, r in (("owner", "repo"), ("repoowner", "reponame"), ("owner", "name"), ("org", "repo")):
-            if isinstance(d.get(o), str) and isinstance(d.get(r), str) and d[o] and d[r]:
+            if isinstance(d.get(o), str) and isinstance(d.get(r), str) and GH_NAME.fullmatch(d[o] + "/" + d[r]):
                 return d[o], d[r]
         for k in ("githubrepo", "githubsource", "repository", "repo", "source", "swebotsource"):
             if isinstance(d.get(k), dict):

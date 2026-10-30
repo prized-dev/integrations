@@ -134,6 +134,7 @@ class Shapes(unittest.TestCase):
         ):
             self.assertEqual(ji.owner_repo(ref), ("o", "r"), ref)
         self.assertIsNone(ji.owner_repo("12345"))
+        self.assertIsNone(ji.owner_repo({"repoOwner": "o", "repoName": "r; rm -rf ~"}))
 
     def test_public_api_sources_and_folder_names(self):
         notes = []
