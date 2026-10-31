@@ -87,7 +87,7 @@ describe('a Pi session with --prized', () => {
       fauxAssistantMessage([tool('read', { path: 'calc.py' })]),
       fauxAssistantMessage([tool('edit', { path: 'calc.py', edits: [{ oldText: 'a - b', newText: 'a + b' }] })]),
       fauxAssistantMessage([tool('write', { path: 'test_calc.py', content: 'from calc import add\nassert add(2, 3) == 5\nprint("ok")\n' })]),
-      fauxAssistantMessage([tool('bash', { command: 'python3 test_calc.py 2>&1 || cat test_calc.py' })]),
+      fauxAssistantMessage([tool('bash', { command: "grep -q 'return a + b' calc.py && grep -q 'assert add' test_calc.py && echo ok" })]),
       fauxAssistantMessage([fauxText('Fixed: add now adds.')]),
     ]);
     const s = await startPi();
@@ -102,7 +102,7 @@ describe('a Pi session with --prized', () => {
       ['bash', false],
     ]);
     expect(results[0]?.content[0]?.text).toContain('a - b');
-    expect(results[3]?.content[0]?.text).toMatch(/ok|assert|python3/);
+    expect(results[3]?.content[0]?.text).toContain('ok'); // the edit and the new file were there when the command ran, in the sandbox
 
     expect(world.creates).toHaveLength(1);
     const sb = [...world.sandboxes.values()][0] as FakeSandbox;

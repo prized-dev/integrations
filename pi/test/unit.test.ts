@@ -65,6 +65,25 @@ async function callTool(name: string, params: Record<string, unknown>, signal?: 
   return result.content.map((c: { text?: string }) => c.text ?? '').join('');
 }
 
+
+/** What Pi's process would print to stderr as it exits, collected instead. */
+function captureExit() {
+  const written: string[] = [];
+  const spy = vi.spyOn(process.stderr, 'write').mockImplementation((s) => (written.push(String(s)), true));
+  const handlers: Array<() => void> = [];
+  const once = vi.spyOn(process, 'once').mockImplementation(((ev: string, fn: () => void) => (ev === 'exit' && handlers.push(fn), process)) as never);
+  return {
+    text: () => {
+      handlers.splice(0).forEach((f) => f());
+      return written.join('');
+    },
+    restore: () => {
+      spy.mockRestore();
+      once.mockRestore();
+    },
+  };
+}
+
 const sandboxes = () => [...world.sandboxes.values()];
 const current = () => sandboxes().at(-1) as FakeSandbox;
 
@@ -590,7 +609,7 @@ describe('/prized', () => {
     await prompt();
     await callTool('write', { path: 'new.txt', content: 'hi\n' });
     await fp.commands.get('prized').handler('pull --branch', ctx);
-    expect(git(host, 'rev-parse', '--abbrev-ref', 'HEAD').trim()).toBe('pi/session-');
+    expect(git(host, 'rev-parse', '--abbrev-ref', 'HEAD').trim()).toBe('pi/aaa-1111'); // the end of the session id: a fork's id differs there
     expect(git(host, 'show', '--stat', '--format=', 'HEAD')).toMatch(/new\.txt/);
   });
 
@@ -712,7 +731,7 @@ describe('starting, when it goes wrong or takes time', () => {
     await boot({ prized: true }, { maxUploadBytes: 1024 });
     await fp.fire('before_agent_start', { systemPromptOptions: {} }, ctx);
     await vi.waitFor(() => expect(ctx.notices.some((n) => n.level === 'error')).toBe(true));
-    expect(ctx.notices.at(-1)?.text).toMatch(/uploads stop at 100 MiB/);
+    expect(ctx.notices.at(-1)?.text).toMatch(/uploads stop there/);
     expect(world.creates).toHaveLength(0);
     expect(sandboxes()).toHaveLength(0);
   });
@@ -870,5 +889,184 @@ describe('commands that could go wrong', () => {
     await new Promise((r) => setTimeout(r, 1800));
     expect(sb.state).toBe('running');
     expect(await long).toContain('long done');
+  });
+});
+
+describe('set-up problems', () => {
+  it('does not ask for the key in RPC mode, where the answer could not be read, and says what to do', async () => {
+    delete process.env.PRIZED_API_KEY;
+    fp = fakePi({ prized: true });
+    createExtension(fakeSdk())(fp.api);
+    ctx = fakeCtx(fp, { cwd: host, mode: 'rpc' });
+    await fp.fire('session_start', { reason: 'startup' }, ctx);
+    expect(ctx.asked).toEqual([]);
+    expect(ctx.notices.at(-1)?.text).toMatch(/no API key.*PRIZED_API_KEY/);
+    await expect(callTool('bash', { command: 'echo no' })).rejects.toThrow(/nothing ran on your machine.*no API key.*PRIZED_API_KEY/s);
+  });
+
+  it('asks in the terminal', async () => {
+    delete process.env.PRIZED_API_KEY;
+    await boot();
+    expect(ctx.asked).toEqual(['Prized API key']);
+  });
+
+  it('tells the tool call which flag is wrong, not just that Prized is not set up', async () => {
+    await boot({ prized: true, 'prized-vcpu': '99' });
+    await expect(callTool('bash', { command: 'echo no' })).rejects.toThrow(/--prized-vcpu must be a whole number, 1 to 32/);
+  });
+
+  it('keeps a `!` command off your machine when the sandbox is not there', async () => {
+    delete process.env.PRIZED_API_KEY;
+    fp = fakePi({ prized: true });
+    createExtension(fakeSdk())(fp.api);
+    ctx = fakeCtx(fp, { cwd: host, hasUI: false });
+    await fp.fire('session_start', { reason: 'startup' }, ctx);
+    const [res] = (await fp.fire('user_bash', { command: 'touch pwned', excludeFromContext: false }, ctx)) as Array<{ result: { exitCode: number; output: string } }>;
+    expect(res?.result.exitCode).toBe(1);
+    expect(res?.result.output).toMatch(/nothing ran on your machine/);
+  });
+
+  it('maps Windows paths to the sandbox\'s', () => {
+    expect(toSandboxPath('C:\\home\\prized\\work\\proj\\a.txt', 'C:\\Users\\me', 'win32')).toBe('/home/prized/work/proj/a.txt');
+    expect(toSandboxPath('C:\\Users\\me\\.config\\x', 'C:\\Users\\me', 'win32')).toBe('/home/prized/.config/x');
+    expect(toSandboxPath('/home/prized/x', 'C:\\Users\\me', 'win32')).toBe('/home/prized/x');
+  });
+});
+
+describe('the end of the sandbox\'s run time', () => {
+  it('warns once, with time left, that unpulled changes go with it', async () => {
+    await boot();
+    await prompt();
+    current().expiresAt = new Date(Date.now() + 4 * 60_000);
+    await fp.fire('agent_settled', {}, ctx);
+    await vi.waitFor(() => expect(ctx.notices.some((n) => n.level === 'warning' && /deleted in [34] minutes.*\/prized pull/.test(n.text))).toBe(true));
+    await prompt2();
+    await fp.fire('agent_settled', {}, ctx);
+    await new Promise((r) => setTimeout(r, 200));
+    expect(ctx.notices.filter((n) => /deleted in/.test(n.text))).toHaveLength(1);
+  });
+
+  it('says nothing while there is plenty of time', async () => {
+    await boot();
+    await prompt();
+    current().expiresAt = new Date(Date.now() + 3 * 3600_000);
+    await fp.fire('agent_settled', {}, ctx);
+    await new Promise((r) => setTimeout(r, 200));
+    expect(ctx.notices.some((n) => /deleted in/.test(n.text))).toBe(false);
+  });
+});
+
+describe('looking at a paused sandbox, and leaving', () => {
+  it('shows a paused sandbox without waking it', async () => {
+    await boot();
+    await prompt();
+    await fp.fire('agent_settled', {}, ctx);
+    await fp.commands.get('prized').handler('pause', ctx);
+    const sb = current();
+    expect(sb.state).toBe('paused');
+    await fp.commands.get('prized').handler('', ctx);
+    expect(ctx.notices.at(-1)?.text).toMatch(/\(paused, 2 vCPU, 4 GB\)[\s\S]*Paused: \/prized pull, or the next tool call, wakes it/);
+    expect(sb.state).toBe('paused');
+  });
+
+  it('pulls the rest and names a nested git repository the agent made, which it cannot bring', async () => {
+    await boot();
+    await prompt();
+    await callTool('bash', { command: 'mkdir cloned && cd cloned && git init -q && echo x > x.txt && cd .. && echo fine > fine.txt' });
+    await fp.commands.get('prized').handler('pull', ctx);
+    expect(ctx.confirms.at(-1)).toMatch(/fine\.txt[\s\S]*Not included: cloned \(nested git repositories/);
+    expect(existsSync(path.join(host, 'fine.txt'))).toBe(true);
+    expect(existsSync(path.join(host, 'cloned'))).toBe(false);
+  });
+
+  it('keeps a sandbox whose only unpulled work is a nested git repository', async () => {
+    const exit = captureExit();
+    try {
+      await boot();
+      await prompt();
+      const sb = current();
+      await callTool('bash', { command: 'mkdir cloned && cd cloned && git init -q && echo x > x.txt' });
+      await fp.fire('session_shutdown', { reason: 'quit' }, ctx);
+      expect(sb.deleted).toBe(false);
+      expect(sb.state).toBe('paused');
+      expect(exit.text()).toMatch(/paused with changes you have not pulled[\s\S]*Not included: cloned/);
+    } finally {
+      exit.restore();
+    }
+  });
+
+  it('says what --prized-pull brought home and that the sandbox is gone', async () => {
+    const exit = captureExit();
+    try {
+      await boot({ prized: true, 'prized-pull': true });
+      await prompt();
+      const sb = current();
+      await callTool('write', { path: 'new.txt', content: 'x\n' });
+      await fp.fire('session_shutdown', { reason: 'quit' }, ctx);
+      expect(sb.deleted).toBe(true);
+      expect(exit.text()).toMatch(new RegExp(`Prized pulled the sandbox's changes into ${host.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} and deleted sandbox ${sb.id}`));
+    } finally {
+      exit.restore();
+    }
+  });
+
+  it('says so when it could not delete the sandbox', async () => {
+    const exit = captureExit();
+    try {
+      await boot();
+      await prompt();
+      const sb = current();
+      sb.delete = async () => {
+        throw new PrizedError('network_error', 'no answer');
+      };
+      await fp.fire('session_shutdown', { reason: 'quit' }, ctx);
+      expect(exit.text()).toMatch(new RegExp(`could not delete sandbox ${sb.id}: no answer.*prized sandbox rm ${sb.id}`));
+    } finally {
+      exit.restore();
+    }
+  });
+
+  it('warns that a folder that is not a checkout has nowhere to pull to', async () => {
+    host = mkdtempSync(path.join(tmpdir(), 'plain-'));
+    made.push(host);
+    await boot();
+    await prompt();
+    expect(ctx.notices.some((n) => n.level === 'warning' && /not a git checkout.*nowhere to bring files to/.test(n.text))).toBe(true);
+  });
+});
+
+describe('what the extension remembers about the sandbox can be out of date', () => {
+  it('still pauses on the way out when something else woke the sandbox meanwhile', async () => {
+    await boot({ prized: true, 'prized-pause': '1' });
+    await prompt();
+    const sb = current();
+    await fp.fire('agent_settled', {}, ctx);
+    await vi.waitFor(() => expect(sb.state).toBe('paused'), { timeout: 5000 }); // paused by the extension
+    sb.state = 'running'; // woken by a command from somewhere else
+    await fp.fire('session_shutdown', { reason: 'fork' }, ctx);
+    expect(sb.state).toBe('paused');
+  });
+
+  it('does not resume a sandbox that is already running', async () => {
+    await boot({ prized: true, 'prized-pause': '1' });
+    await prompt();
+    const sb = current();
+    await fp.fire('agent_settled', {}, ctx);
+    await vi.waitFor(() => expect(sb.state).toBe('paused'), { timeout: 5000 });
+    sb.state = 'running'; // woken from somewhere else
+    const before = world.events.filter((e) => e.startsWith('resume')).length;
+    expect(await callTool('bash', { command: 'echo fine' })).toContain('fine');
+    expect(world.events.filter((e) => e.startsWith('resume')).length).toBe(before);
+  });
+
+  it('does not pause a sandbox Prized already paused', async () => {
+    await boot({ prized: true, 'prized-pause': '0' });
+    await prompt();
+    const sb = current();
+    sb.state = 'paused'; // Prized\'s own idle pause
+    await fp.fire('agent_settled', {}, ctx);
+    await fp.commands.get('prized').handler('pause', ctx);
+    expect(world.events.filter((e) => e.startsWith('pause'))).toHaveLength(0);
+    expect(ctx.notices.at(-1)?.text).toMatch(/Paused sbx_/);
   });
 });

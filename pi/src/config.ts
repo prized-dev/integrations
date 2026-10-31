@@ -64,8 +64,8 @@ export function readConfig(getFlag: (name: string) => FlagValue): Config {
     return typeof v === 'string' && v !== '' ? v : undefined;
   };
   const vcpu = num('prized-vcpu', getFlag('prized-vcpu'), { min: 1, max: 32, integer: true });
-  const memoryGb = num('prized-memory', getFlag('prized-memory'), { min: 0.5, max: 128, integer: false });
-  const diskGb = num('prized-disk', getFlag('prized-disk'), { min: 1, max: 128, integer: true });
+  const memoryGb = num('prized-memory', getFlag('prized-memory'), { min: 1, max: 128, integer: false });
+  const diskGb = num('prized-disk', getFlag('prized-disk'), { min: 10, max: 128, integer: true });
   const resources = vcpu === undefined && memoryGb === undefined && diskGb === undefined ? undefined : { vcpu, memoryGb, diskGb };
   return {
     template: text('prized-template'),

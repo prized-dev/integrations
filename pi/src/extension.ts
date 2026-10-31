@@ -19,7 +19,7 @@ import { PrizedError, Sandbox } from '@prized/sdk';
 
 import { AUTO_DELETE_MIN, AUTO_DELETE_UNSAVED_MIN, type Config, FLAGS, readConfig } from './config.ts';
 import { type Target, registerGuards, registerSandboxTools, useSandboxTools } from './tools.ts';
-import { type Packed, capStat, changes, gitRoot, pack, pull, risks, send } from './workspace.ts';
+import { type Packed, capStat, changes, gitRoot, leftBehind, pack, pull, risks, send } from './workspace.ts';
 
 const ENTRY = 'prized-sandbox';
 const KEY_HELP = 'Make a key at https://prized.dev/dashboard/workspace/api-keys?via=pi and export it as PRIZED_API_KEY.';
@@ -58,7 +58,11 @@ interface Pending {
   prev?: Entry;
 }
 
-/** Pause and resume, one at a time, so a resume always lands after the pause that came before it. */
+/**
+ * Pause and resume, one at a time, so a resume always lands after the pause that came before it. What it
+ * remembers can be out of date (a command from somewhere else wakes a paused sandbox, Prized's own idle
+ * pause stops a running one), so both ask Prized before they act.
+ */
 class Power {
   paused: boolean;
   private chain: Promise<unknown> = Promise.resolve();
@@ -73,7 +77,8 @@ class Power {
   wake(): Promise<void> {
     const next = this.chain.then(async () => {
       if (!this.paused) return;
-      await this.sandbox.resume();
+      await this.sandbox.refresh().catch(() => undefined);
+      if (this.sandbox.state !== 'running') await this.sandbox.resume();
       this.paused = false;
     });
     this.chain = next.catch(() => undefined);
@@ -83,8 +88,9 @@ class Power {
   /** Pause it, unless `busy()` says something is using it by the time this turn comes. */
   pause(busy: () => boolean): Promise<void> {
     const next = this.chain.then(async () => {
-      if (this.paused || busy()) return;
-      await this.sandbox.pause();
+      if (busy()) return;
+      await this.sandbox.refresh().catch(() => undefined);
+      if (this.sandbox.state !== 'paused' && this.sandbox.state !== 'pausing') await this.sandbox.pause();
       this.paused = true;
     });
     this.chain = next.catch(() => undefined);
@@ -95,6 +101,8 @@ class Power {
 interface Active extends Entry {
   sandbox: Sandbox;
   power: Power;
+  /** Told the user its run time is nearly up. */
+  warnedExpiry?: boolean;
 }
 
 export function createExtension(sdk: Sdk = { Sandbox }, limits: { maxUploadBytes?: number } = {}): (pi: ExtensionAPI) => void {
@@ -107,6 +115,8 @@ export function createExtension(sdk: Sdk = { Sandbox }, limits: { maxUploadBytes
     let apiKey: string | undefined;
     let lastCtx: ExtensionContext | undefined;
     let toolsRegistered = false;
+    /** Why Prized is not set up, for the tool calls that find it so. */
+    let setupError: string | undefined;
     /** Tool calls and commands in flight. */
     let busy = 0;
     /** An agent run is going: Pi is thinking or waiting for a tool. */
@@ -200,7 +210,7 @@ export function createExtension(sdk: Sdk = { Sandbox }, limits: { maxUploadBytes
     /** The session's sandbox. The first call starts it; calls meanwhile wait for the same start. */
     function sandbox(ctx: ExtensionContext): Promise<Active> {
       if (active) return Promise.resolve(active);
-      if (!pending) return Promise.reject(new Error('Prized is not set up. Restart Pi with --prized and PRIZED_API_KEY.'));
+      if (!pending) return Promise.reject(new Error(setupError ?? 'Prized is not set up. Restart Pi with --prized and PRIZED_API_KEY.'));
       // A run that already failed to start it does not try again on every tool call; the next prompt does.
       if (startFailure && startFailure.run === run && agentRunning) return Promise.reject(startFailure.error);
       starting ??= start(ctx, pending)
@@ -260,6 +270,7 @@ export function createExtension(sdk: Sdk = { Sandbox }, limits: { maxUploadBytes
         if (!sb) {
           // Pack first: a project that is too big fails before there is a sandbox to pay for.
           let packed: Packed | undefined;
+          if (!p.layout.hostRoot) say(ctx, 'this is not a git checkout, so the agent starts with an empty workspace and /prized pull has nowhere to bring files to.', 'warning');
           if (p.layout.hostRoot) {
             status({ sandboxId: 'sandbox', cwd: p.layout.cwd }, 'packing...');
             packed = await pack(p.layout.hostRoot, limits.maxUploadBytes);
@@ -334,7 +345,7 @@ export function createExtension(sdk: Sdk = { Sandbox }, limits: { maxUploadBytes
         if (!a) return;
         const t = targetOf(a);
         if (sub === 'pull' || sub === 'pull --branch') {
-          return pullChanges(ctx, a, t, sub === 'pull' ? undefined : `pi/${ctx.sessionManager.getSessionId().slice(0, 8)}`);
+          return pullChanges(ctx, a, t, sub === 'pull' ? undefined : `pi/${ctx.sessionManager.getSessionId().slice(-8)}`);
         }
         if (sub === 'pause') {
           await a.power.pause(inUse);
@@ -366,10 +377,14 @@ export function createExtension(sdk: Sdk = { Sandbox }, limits: { maxUploadBytes
           return;
         }
         try {
-          const { stat } = await t.use((sb) => changes(sb, a.dir));
+          // Looking at the changes is a command, and a command wakes a paused sandbox.
+          const c = a.power.paused ? undefined : await t.use((sb) => changes(sb, a.dir));
           await a.sandbox.refresh().catch(() => undefined);
           const r = a.sandbox.resources;
-          say(ctx, `Prized sandbox ${a.sandboxId} (${a.sandbox.state}, ${r.vcpu} vCPU, ${r.memoryGb} GB)\ncwd: ${a.cwd}\n${stat ? capStat(stat) : 'No changes to pull.'}`);
+          const body = !c
+            ? 'Paused: /prized pull, or the next tool call, wakes it.'
+            : [c.stat ? capStat(c.stat) : 'No changes to pull.', leftBehind(c)].filter(Boolean).join('\n');
+          say(ctx, `Prized sandbox ${a.sandboxId} (${a.sandbox.state}, ${r.vcpu} vCPU, ${r.memoryGb} GB)\ncwd: ${a.cwd}\n${body}`);
         } catch (err) {
           say(ctx, message(err), 'error');
         }
@@ -385,13 +400,14 @@ export function createExtension(sdk: Sdk = { Sandbox }, limits: { maxUploadBytes
       try {
         const c = await t.use((sb) => changes(sb, a.dir));
         if (!c.stat) {
-          say(ctx, 'No changes to pull.');
+          say(ctx, ['No changes to pull.', leftBehind(c)].filter(Boolean).join(' '));
           return;
         }
         const where = branch ? `a commit on branch ${branch} in ${a.hostRoot}` : a.hostRoot;
-        const care = risks(c.patch);
+        const care = risks(c.files);
         const look = care.length ? `\n\nLook twice at:\n${care.slice(0, 8).map((r) => `- ${r}`).join('\n')}` : '';
-        if (!(await ctx.ui.confirm('Pull changes', `Apply to ${where}?\n\n${capStat(c.stat)}${look}`))) return;
+        const left = leftBehind(c);
+        if (!(await ctx.ui.confirm('Pull changes', `Apply to ${where}?\n\n${capStat(c.stat)}${look}${left ? `\n\n${left}` : ''}`))) return;
         await t.use((sb) => pull(sb, a.dir, a.hostRoot as string, c, branch));
         say(ctx, branch ? `Committed on ${branch}. Push it with git push.` : 'Pulled. Review with git diff.');
       } catch (err) {
@@ -412,11 +428,14 @@ export function createExtension(sdk: Sdk = { Sandbox }, limits: { maxUploadBytes
       try {
         config = readConfig((name) => pi.getFlag(name));
       } catch (err) {
+        setupError = `${message(err)}. Restart Pi with it fixed.`;
         say(ctx, `${message(err)}. Tools stay off until you fix it.`, 'error');
         return;
       }
-      apiKey ??= process.env.PRIZED_API_KEY?.trim() || (ctx.hasUI ? (await ctx.ui.input('Prized API key', 'dcp_...'))?.trim() : undefined);
+      // Only the terminal can answer a question this early: RPC mode reads its input once startup is done.
+      apiKey ??= process.env.PRIZED_API_KEY?.trim() || (ctx.mode === 'tui' ? (await ctx.ui.input('Prized API key', 'dcp_...'))?.trim() : undefined);
       if (!apiKey) {
+        setupError = `no API key. ${KEY_HELP}`;
         say(ctx, `no API key. Tools stay off until you set one. ${KEY_HELP}`, 'error');
         return;
       }
@@ -455,7 +474,23 @@ export function createExtension(sdk: Sdk = { Sandbox }, limits: { maxUploadBytes
       lastCtx = ctx;
       agentRunning = false;
       armPause();
+      warnIfEnding(ctx);
     });
+
+    /** A sandbox is deleted when its run time ends, with whatever was not pulled. Say so while there is time. */
+    function warnIfEnding(ctx: ExtensionContext): void {
+      const a = active;
+      if (!a || a.warnedExpiry) return;
+      void a.sandbox
+        .refresh()
+        .then(() => {
+          const left = a.sandbox.expiresAt ? a.sandbox.expiresAt.getTime() - Date.now() : undefined;
+          if (left === undefined || left > 10 * 60_000 || a.warnedExpiry) return;
+          a.warnedExpiry = true;
+          say(ctx, `this sandbox is deleted in ${Math.max(0, Math.round(left / 60_000))} minutes, when its run time ends. /prized pull before then keeps its changes.`, 'warning');
+        })
+        .catch(() => undefined);
+    }
 
     pi.on('session_shutdown', async (event, ctx) => {
       cancelTimer();
@@ -492,14 +527,16 @@ export function createExtension(sdk: Sdk = { Sandbox }, limits: { maxUploadBytes
       };
       let c: Awaited<ReturnType<typeof changes>> | undefined;
       let held: string[] = [];
+      let pulled = false;
       try {
         await a.power.wake();
         c = await changes(a.sandbox, a.dir);
         if (c.stat && config.pullOnExit && a.hostRoot) {
-          held = risks(c.patch);
+          held = risks(c.files);
           // Nobody is there to look at what the agent wrote, so what needs a second look waits for one.
           if (held.length === 0) {
             await pull(a.sandbox, a.dir, a.hostRoot, c);
+            pulled = true;
             c = undefined;
           }
         }
@@ -508,17 +545,24 @@ export function createExtension(sdk: Sdk = { Sandbox }, limits: { maxUploadBytes
         await a.power.pause(() => false).catch(() => undefined);
         return finish(ctx, `Prized sandbox ${a.sandboxId} is paused, not deleted: ${message(err)}. Delete it with: prized sandbox rm ${a.sandboxId}`);
       }
-      if (c?.stat) {
+      if (c && (c.stat || c.nested.length > 0)) {
         await a.power.pause(() => false).catch(() => undefined);
         const why = held.length ? `\nNot pulled automatically, because it includes:\n${held.slice(0, 8).map((r) => `- ${r}`).join('\n')}` : '';
+        const left = leftBehind(c);
         return finish(
           ctx,
-          `Prized sandbox ${a.sandboxId} is paused with changes you have not pulled:\n${capStat(c.stat)}${why}\n` +
+          `Prized sandbox ${a.sandboxId} is paused with changes you have not pulled:\n${c.stat ? capStat(c.stat) : ''}${why}${left ? `\n${left}` : ''}\n` +
             `${how(a.sandboxId)}, or delete it with: prized sandbox rm ${a.sandboxId}. ${expiry}`,
         );
       }
-      await a.sandbox.delete().catch(() => undefined);
       unsaved().delete(ctx.sessionManager.getSessionId());
+      const lead = pulled ? `Prized pulled the sandbox's changes into ${a.hostRoot}` : undefined;
+      try {
+        await a.sandbox.delete();
+        if (lead) finish(ctx, `${lead} and deleted sandbox ${a.sandboxId}.`);
+      } catch (err) {
+        finish(ctx, `${lead ? `${lead}. ` : ''}Prized could not delete sandbox ${a.sandboxId}: ${message(err)}. Delete it with: prized sandbox rm ${a.sandboxId}`);
+      }
     });
 
     /** Say it once more after Pi has restored the terminal; the screen may already be gone. */

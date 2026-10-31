@@ -29,23 +29,42 @@ export function shq(s: string): string {
   return `'${s.replace(/'/g, `'\\''`)}'`;
 }
 
-/** Run a command on this machine; resolves with stdout, rejects with stderr. */
+/** Thrown by run() when a command printed more than its `maxOut`. */
+export class OutputTooBig extends Error {}
+
+/**
+ * Run a command on this machine; resolves with stdout, rejects with stderr. `ok` says whether a
+ * non-zero exit still counts as success; `maxOut` kills the command once it has printed that many bytes.
+ */
 export function run(
   cmd: string,
   args: string[],
-  opts: { cwd: string; input?: Buffer | string; okCodes?: number[] },
+  opts: { cwd: string; input?: Buffer | string; ok?: (code: number, stderr: string) => boolean; maxOut?: number },
 ): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     // COPYFILE_DISABLE stops macOS tar from adding `._*` metadata files.
     const child = spawn(cmd, args, { cwd: opts.cwd, env: { ...process.env, COPYFILE_DISABLE: '1' } });
     const out: Buffer[] = [];
     const err: Buffer[] = [];
-    child.stdout.on('data', (d: Buffer) => out.push(d));
+    let size = 0;
+    let over = false;
+    child.stdout.on('data', (d: Buffer) => {
+      size += d.length;
+      if (opts.maxOut !== undefined && size > opts.maxOut) {
+        over = true;
+        out.length = 0; // do not keep what is already too much
+        child.kill('SIGKILL');
+      } else if (!over) {
+        out.push(d);
+      }
+    });
     child.stderr.on('data', (d: Buffer) => err.push(d));
     child.on('error', reject);
     child.on('close', (code) => {
-      if (code !== null && (code === 0 || opts.okCodes?.includes(code))) resolve(Buffer.concat(out));
-      else reject(new Error(Buffer.concat(err).toString().trim() || `${cmd} exited ${code}`));
+      const stderr = Buffer.concat(err).toString();
+      if (over) reject(new OutputTooBig(`${cmd} printed more than ${opts.maxOut} bytes`));
+      else if (code !== null && (code === 0 || opts.ok?.(code, stderr))) resolve(Buffer.concat(out));
+      else reject(new Error(stderr.trim() || `${cmd} exited ${code}`));
     });
     child.stdin.on('error', () => undefined); // the process may exit before it reads its input
     child.stdin.end(opts.input);
@@ -111,14 +130,16 @@ export async function pack(root: string, maxBytes: number = MAX_UPLOAD_BYTES): P
   }
   if (names.length === 0) return { tarball: Buffer.alloc(0), files: 0, skipped };
   const input = Buffer.concat(names.flatMap((n) => [n, Buffer.from([0])]));
-  // tar exits 1 when a file changed while it was read; the archive is still good.
-  const tarball = await run('tar', ['-czf', '-', '--null', '--no-recursion', '-T', '-'], { cwd: root, input, okCodes: [1] });
-  if (tarball.length > maxBytes) {
-    const mib = Math.round(tarball.length / 1024 / 1024);
-    throw new Error(
-      `the project is ${mib} MiB packed and uploads stop at 100 MiB. Add the big files to .gitignore, or start Pi in a smaller folder.`,
-    );
-  }
+  // GNU tar exits 1 when a file changed while it was read; the archive is still good. Anything else that fails is an error.
+  const ok = (code: number, stderr: string) => code === 1 && /changed as we read it/.test(stderr);
+  const tooBig = new Error(
+    `the project is over ${Math.round(maxBytes / 1024 / 1024)} MiB packed and uploads stop there. Add the big files to .gitignore, or start Pi in a smaller folder.`,
+  );
+  const tarball = await run('tar', ['-czf', '-', '--null', '--no-recursion', '-T', '-'], { cwd: root, input, ok, maxOut: maxBytes }).catch(
+    (err: unknown) => {
+      throw err instanceof OutputTooBig ? tooBig : err;
+    },
+  );
   return { tarball, files: names.length, skipped };
 }
 
@@ -153,12 +174,33 @@ async function baseline(sandbox: Sandbox, dir: string, message: string): Promise
   );
 }
 
+/** One changed path, as `git diff --raw` reports it. Modes are git's: 100644, 100755, 120000 (symlink), 160000 (nested repo), 000000 (absent). */
+export interface ChangedFile {
+  path: string;
+  oldMode: string;
+  newMode: string;
+}
+
 export interface Changes {
   /** Tree of the sandbox working directory now. */
   tree: string;
   /** `git diff --stat` against the baseline; empty when nothing changed. */
   stat: string;
   patch: Buffer;
+  files: ChangedFile[];
+  /** Nested git repositories in the sandbox (folders with their own .git), which are left out: git cannot apply them to your checkout. */
+  nested: string[];
+}
+
+/** Read `git diff --raw -z --no-renames` output: ":old new oldsha newsha status\0path\0" for each file. */
+export function parseRaw(raw: Buffer): ChangedFile[] {
+  const parts = splitNul(raw).map((b) => b.toString('utf8'));
+  const files: ChangedFile[] = [];
+  for (let i = 0; i + 1 < parts.length; i += 2) {
+    const meta = /^:(\d+) (\d+) /.exec(parts[i] ?? '');
+    if (meta) files.push({ oldMode: meta[1] as string, newMode: meta[2] as string, path: parts[i + 1] as string });
+  }
+  return files;
 }
 
 /** Changes in the sandbox since the baseline. Uses a scratch index, so the agent's own index is untouched. */
@@ -170,22 +212,42 @@ export async function changes(sandbox: Sandbox, dir: string): Promise<Changes> {
       'idx=$(mktemp -u)',
       'export GIT_INDEX_FILE=$idx',
       `trap 'rm -f "$idx"' EXIT`,
+      `mkdir -p ${shq(STAGE)}`,
+      // A folder with its own .git is a repository of its own: git would record it as a pointer to a commit,
+      // or refuse it when it has none, and git apply cannot create either. Leave them out and say so (one the
+      // project ignores is left out by the ignore rules already).
+      `find . \\( -path ./.git -o -path '*/node_modules' \\) -prune -o -name .git -printf '%h\\0' > ${shq(`${STAGE}/found.nul`)}`,
+      `: > ${shq(`${STAGE}/nested.nul`)}`,
+      'ex=()',
+      `while IFS= read -r -d '' d; do d=\${d#./}; git check-ignore -q --no-index -- "$d" && continue; ex+=(":(exclude,literal)$d"); printf '%s\\0' "$d" >> ${shq(`${STAGE}/nested.nul`)}; done < ${shq(`${STAGE}/found.nul`)}`,
       // Start from the baseline: a file it holds stays tracked even if the agent ignores it later.
       `git read-tree ${BASE_REF}`,
-      'git add -A',
+      'git add -A -- . "${ex[@]}"',
       'tree=$(git write-tree)',
       'echo "$tree"',
-      `git diff --stat=120 ${BASE_REF} "$tree"`,
-      `mkdir -p ${shq(STAGE)}`,
+      `git -c core.quotePath=false diff --stat=120 ${BASE_REF} "$tree"`,
       `git diff --binary ${BASE_REF} "$tree" > ${shq(`${STAGE}/changes.patch`)}`,
+      `git diff --raw -z --no-renames --no-abbrev ${BASE_REF} "$tree" > ${shq(`${STAGE}/changes.raw`)}`,
     ].join('\n'),
     dir,
   );
   const [tree = '', ...stat] = out.split('\n');
   const text = stat.join('\n').trim();
+  const nested = splitNul(Buffer.from(await sandbox.files.readBytes(`${STAGE}/nested.nul`))).map((b) => b.toString('utf8').replace(/^\.\//, ''));
+  if (!text) return { tree: tree.trim(), stat: '', patch: Buffer.alloc(0), files: [], nested };
   // Bytes, not text: a patch can carry bytes that are not UTF-8.
-  const patch = text ? Buffer.from(await sandbox.files.readBytes(`${STAGE}/changes.patch`)) : Buffer.alloc(0);
-  return { tree: tree.trim(), stat: text, patch };
+  const [patch, raw] = await Promise.all([
+    sandbox.files.readBytes(`${STAGE}/changes.patch`),
+    sandbox.files.readBytes(`${STAGE}/changes.raw`),
+  ]);
+  return { tree: tree.trim(), stat: text, patch: Buffer.from(patch), files: parseRaw(Buffer.from(raw)), nested };
+}
+
+/** What a pull leaves behind, for the dialog and the exit note. */
+export function leftBehind(c: Pick<Changes, 'nested'>): string {
+  return c.nested.length
+    ? `Not included: ${c.nested.slice(0, 5).join(', ')}${c.nested.length > 5 ? ', ...' : ''} (nested git repositories; delete their .git folder in the sandbox to include their files)`
+    : '';
 }
 
 /**
@@ -199,7 +261,8 @@ export async function pull(sandbox: Sandbox, dir: string, root: string, c: Chang
   const git = (...args: string[]) => run('git', args, { cwd: root });
   const apply = (...args: string[]) => run('git', ['apply', '--whitespace=nowarn', ...args, '-'], { cwd: root, input: c.patch });
   if (branch) {
-    if ((await git('status', '--porcelain')).length > 0) throw new Error('commit or stash your local changes first');
+    // Untracked files are fine; edits to tracked ones would be swept into the branch's base.
+    if ((await git('status', '--porcelain', '--untracked-files=no')).length > 0) throw new Error('commit or stash your local changes first');
     // Where to go back to if the changes do not apply: the branch, or the commit on a detached HEAD.
     const head = (await git('rev-parse', '--abbrev-ref', 'HEAD')).toString().trim();
     const back = head === 'HEAD' ? ['--detach', (await git('rev-parse', 'HEAD')).toString().trim()] : [head];
@@ -227,23 +290,31 @@ export async function pull(sandbox: Sandbox, dir: string, root: string, c: Chang
   await sh(sandbox, `git update-ref ${BASE_REF} $(git ${IDENTITY} commit-tree ${c.tree} -p ${BASE_REF} -m 'Pulled to your machine')`, dir);
 }
 
-/** Files that run code on your machine when you next build, commit or open the project. */
-const RUNS_CODE = /^(\.husky\/|\.githooks\/|\.pi\/|\.envrc$|\.vscode\/|\.devcontainer\/|\.gitmodules$|\.github\/workflows\/)/;
+/** Folders whose files tools run on their own: git hooks, direnv, editors, agents, CI, dev containers. */
+const AUTO_RUN_DIRS = ['.husky', '.githooks', '.pi', '.claude', '.cursor', '.vscode', '.devcontainer', '.github/workflows'];
+/** Files the same way, wherever they are in the project. */
+const AUTO_RUN_FILES = new Set([
+  '.envrc', '.mcp.json', '.gitmodules', '.pre-commit-config.yaml', '.devcontainer.json', 'lefthook.yml', 'lefthook.yaml',
+  '.lefthook.yml', 'mise.toml', '.mise.toml', '.npmrc', '.yarnrc', '.yarnrc.yml', '.pnpmfile.cjs',
+]);
+
+const runsByItself = (file: string): boolean => {
+  const parts = file.split('/');
+  if (AUTO_RUN_FILES.has(parts.at(-1) ?? '')) return true;
+  return AUTO_RUN_DIRS.some((dir) => `/${file}`.includes(`/${dir}/`));
+};
 
 /**
- * What in a patch deserves a second look before it lands in your checkout: a symlink, an executable
- * file, or a file your tools run by themselves. The patch is what the agent wrote, so it is also what a
- * prompt injection in the code it read could have written.
+ * What in the changes deserves a second look before it lands in your checkout: a symlink, an executable
+ * file, or a file your tools run by themselves, at any depth. The changes are what the agent wrote after
+ * reading your code, so look at them as you would a pull request from someone else.
  */
-export function risks(patch: Buffer): string[] {
+export function risks(files: ChangedFile[]): string[] {
   const found: string[] = [];
-  for (const block of patch.toString('latin1').split(/^diff --git /m).slice(1)) {
-    const head = block.split('\n', 1)[0] ?? '';
-    const file = (/ "?b\/(.*?)"?$/.exec(head)?.[1] ?? head).trim();
-    const mode = /^(?:new file mode|new mode) (\d+)$/m.exec(block)?.[1];
-    if (mode === '120000') found.push(`a symlink: ${file}`);
-    else if (mode === '100755') found.push(`an executable: ${file}`);
-    if (RUNS_CODE.test(file)) found.push(`a file your tools run on their own: ${file}`);
+  for (const f of files) {
+    if (f.newMode === '120000') found.push(`a symlink: ${f.path}`);
+    else if (f.newMode === '100755') found.push(`an executable: ${f.path}`);
+    if (f.newMode !== '000000' && runsByItself(f.path)) found.push(`a file your tools run on their own: ${f.path}`);
   }
   return found;
 }

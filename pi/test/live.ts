@@ -3,7 +3,7 @@
  * (a small OpenAI-compatible server below), so the test needs no model key: what it checks is Pi, the
  * extension and Prized, not a model's judgment.
  *
- *   PRIZED_API_KEY=dcp_... npm run test:live
+ *   PRIZED_API_KEY=dcp_... npm run test:live      (LIVE_DEBUG=1 also prints every event Pi emits)
  *
  * It creates up to two 1 vCPU sandboxes in your workspace, labelled created-by=pi-prized, and deletes
  * them at the end (failures included). Needs git and Node on this machine; python3 runs in the sandbox.
@@ -63,9 +63,11 @@ const SCRIPTS: Record<string, Step[]> = {
     ['text', 'Wrote a note.'],
   ],
   stop: [
-    ['bash', { command: "kill $(pgrep -f 'python3 counter.py' | head -1); rm -f counter.log counter.py; ls" }],
+    ['bash', { command: "echo pid=$(pgrep -f 'python3 counter.py' | head -1); kill $(pgrep -f 'python3 counter.py' | head -1); rm -f counter.log counter.py; ls" }],
     ['text', 'Stopped the counter.'],
   ],
+  slow: [['bash', { command: 'sleep 4; touch /home/prized/work/proj/too-late', timeout: 2 }], ['text', 'It timed out.']],
+  hang: [['bash', { command: 'sleep 4; touch /home/prized/work/proj/aborted-late' }], ['text', 'unreachable']],
 };
 const textOf = (c: unknown): string =>
   typeof c === 'string' ? c : Array.isArray(c) ? c.map((p: { text?: string }) => p.text ?? '').join('') : '';
@@ -124,6 +126,7 @@ function startPi(args: string[], env: NodeJS.ProcessEnv, cwd: string) {
       if (!line.trim()) continue;
       const ev: Ev = { ...JSON.parse(line), _t: Date.now() };
       events.push(ev);
+      if (process.env.LIVE_DEBUG) log('event', ev.type, ev.type === 'extension_ui_request' ? ev.method : '', ev.toolName ?? '', ev.aborted ?? '');
       if (ev.type === 'response' && pending.has(ev.id)) pending.get(ev.id)?.(ev);
       if (ev.type === 'extension_ui_request' && ev.method === 'confirm') {
         log('confirm:', ev.title, '|', String(ev.message).split('\n')[0]);
@@ -136,6 +139,8 @@ function startPi(args: string[], env: NodeJS.ProcessEnv, cwd: string) {
   const exited = new Promise<number | null>((r) => pi.on('exit', (code) => r(code)));
   const waitFor = (pred: (e: Ev) => boolean, ms = 120_000, label = 'event') =>
     new Promise<Ev>((resolve, reject) => {
+      const seen = events.find(pred); // it may have come already
+      if (seen) return resolve(seen);
       const w = { pred, resolve };
       waiters.push(w);
       setTimeout(() => { if (waiters.includes(w)) { waiters.splice(waiters.indexOf(w), 1); reject(new Error(`timed out waiting for ${label}`)); } }, ms);
@@ -154,7 +159,7 @@ function startPi(args: string[], env: NodeJS.ProcessEnv, cwd: string) {
     for (const r of results) log(`  ${r.name}:`, r.text.slice(0, 120).replace(/\n/g, ' | '));
     return { results, settledAt: settled._t, firstToolAt: results[0]?.at ?? 0 };
   }
-  return { pi, events, send, notices, turn, quit: () => { pi.stdin?.end(); return exited; } };
+  return { pi, events, send, waitFor, notices, turn, quit: () => { pi.stdin?.end(); return exited; } };
 }
 
 // ---- the run
@@ -240,6 +245,21 @@ try {
   check('/prized pull brought the fix home', readFileSync(path.join(proj, 'calc.py'), 'utf8').includes('a + b'));
   check('.env was never touched', readFileSync(path.join(proj, '.env'), 'utf8') === 'TOPSECRET=1\n');
 
+  // A timeout and an abort reach the command in the sandbox (the SDK stops it and the process group), as Pi expects.
+  const slow = await s.turn('[slow] a command with a timeout');
+  check("Pi's tool timeout is reported as Pi reports it", /timed out after 2 seconds/i.test(slow.results[0]?.text ?? ''), slow.results[0]?.text.slice(0, 80));
+  const from = s.events.length;
+  const hangTurn = s.send({ type: 'prompt', message: '[hang] a command I will abort' });
+  await s.waitFor((e) => s.events.indexOf(e) >= from && e.type === 'tool_execution_start', 60_000, 'the hanging command to start');
+  const aborted = Date.now();
+  await s.send({ type: 'abort' });
+  await hangTurn;
+  await s.waitFor((e) => s.events.indexOf(e) >= from && e.type === 'agent_settled', 60_000, 'the aborted run to settle');
+  check('an abort settles the turn at once', Date.now() - aborted < 15_000, `${Date.now() - aborted}ms`);
+  await sleep(6000);
+  const late = await sb.exec('ls ~/work/proj | grep -c -E "too-late|aborted-late" || true');
+  check('and both commands were stopped in the sandbox, not left to finish', late.stdout.trim() === '0', `markers: ${late.stdout.trim()}`);
+
   check('Pi cloned the session', Boolean((await s.send({ type: 'clone' })).success));
   const w = await s.turn('[write] write a note in the fork');
   const F = idFrom(s.notices(), /Prized sandbox (sbx_\w+) forked from/) ?? '';
@@ -256,7 +276,8 @@ try {
   check('quitting with an unpulled note keeps the fork, paused', (await stateOf(F)).state === 'paused');
 
   s = current = startPi([...FLAGS, '--continue'], env, proj);
-  await s.turn('[stop] stop the counter');
+  const stop = await s.turn('[stop] stop the counter');
+  check('the counter is still the same process after quitting and coming back with pi -c', stop.results[0]?.text.includes(`pid=${pid}`) === true, stop.results[0]?.text.split('\n')[0]);
   const resumed = s.notices().find((n) => /Prized sandbox sbx_/.test(n));
   check('pi -c reconnected to the same sandbox, not a new one', Boolean(resumed?.includes(F) && /reconnected/.test(resumed)), resumed);
   await s.turn('/prized pull');
@@ -265,6 +286,28 @@ try {
   await s.quit();
   await sleep(2500);
   check('leaving with nothing left to pull deleted the sandbox', !(await alive(F)));
+
+  // Print mode, with nobody there: the task on the command line, the changes brought home on exit, the sandbox deleted.
+  git('checkout', '--', '.');
+  git('clean', '-fdq');
+  const started = new Date();
+  const pr = spawn(path.join(PKG, 'node_modules', '.bin', 'pi'), ['--offline', '-e', path.join(PKG, 'index.ts'), '--provider', 'scripted', '--model', 'scripted-1', '-p', '[fix] test_calc.py fails; fix calc.py', '--prized', '--prized-vcpu', '1', '--prized-memory', '1', '--prized-pull'], { cwd: proj, env, stdio: ['ignore', 'pipe', 'pipe'] });
+  let printed = '';
+  let printedErr = '';
+  pr.stdout?.on('data', (d) => (printed += d));
+  pr.stderr?.on('data', (d) => (printedErr += d));
+  const code = await new Promise<number | null>((r) => pr.on('exit', r));
+  log('print mode exited', code, printed.trim().slice(0, 80));
+  check('print mode: pi -p "task" --prized --prized-pull ran the task and exited cleanly', code === 0 && /Fixed add/.test(printed), `exit ${code}`);
+  check('print mode: the fix is in your checkout, and the exit note says so', readFileSync(path.join(proj, 'calc.py'), 'utf8').includes('a + b') && /Prized pulled the sandbox's changes into .* and deleted sandbox sbx_/.test(printedErr), printedErr.trim().slice(0, 120));
+  const freshOnes = async () => (await Sandbox.list({ apiKey, labels: { 'created-by': 'pi-prized' } })).filter((x) => x.createdAt && x.createdAt >= started);
+  let fresh = await freshOnes();
+  for (let i = 0; i < 20 && fresh.length > 0; i += 1) {
+    await sleep(1000); // a sandbox that was just deleted is listed as deleting for a moment
+    fresh = await freshOnes();
+  }
+  check('print mode: its sandbox is gone', fresh.length === 0, fresh.map((x) => `${x.id} ${x.state}`).join(' '));
+  for (const x of fresh) ids.push(x.id);
 } catch (err) {
   failures += 1;
   console.log('FAIL  test error:', err instanceof Error ? err.stack : err);

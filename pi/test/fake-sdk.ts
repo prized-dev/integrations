@@ -66,6 +66,8 @@ export class FakeSandbox {
   resources: { vcpu: number; memoryMb: number; memoryGb: number; diskGb: number };
   /** Make resume or any command fail like a deleted sandbox. */
   deleted = false;
+  /** When its run time ends; null while paused or unlimited. */
+  expiresAt: Date | null = null;
   /** Replace the next exec's answer. */
   execOverride?: (command: string) => ExecResult | undefined;
 

@@ -26,6 +26,8 @@ export interface FakeCtx extends ExtensionContext {
   statuses: Array<string | undefined>;
   confirmAnswer: boolean;
   confirms: string[];
+  /** Titles of the questions asked for text. */
+  asked: string[];
 }
 
 export function fakePi(flags: Record<string, boolean | string | undefined> = {}): FakePi {
@@ -72,7 +74,7 @@ export function fakePi(flags: Record<string, boolean | string | undefined> = {})
 
 export function fakeCtx(
   fp: FakePi,
-  opts: { cwd: string; sessionId?: string; saved?: boolean; hasUI?: boolean } = { cwd: process.cwd() },
+  opts: { cwd: string; sessionId?: string; saved?: boolean; hasUI?: boolean; mode?: string } = { cwd: process.cwd() },
 ): FakeCtx {
   const notices: Notice[] = [];
   const statuses: Array<string | undefined> = [];
@@ -81,9 +83,10 @@ export function fakeCtx(
     statuses,
     confirmAnswer: true,
     confirms: [] as string[],
+    asked: [] as string[],
     cwd: opts.cwd,
     hasUI: opts.hasUI ?? true,
-    mode: 'tui',
+    mode: opts.mode ?? (opts.hasUI === false ? 'print' : 'tui'),
     signal: undefined,
     isIdle: () => true,
     ui: {
@@ -98,7 +101,10 @@ export function fakeCtx(
         ctx.confirms.push(`${title}: ${body}`);
         return ctx.confirmAnswer;
       },
-      input: async () => 'dcp_000000000000000000000000000000000000000000',
+      input: async (title: string) => {
+        ctx.asked.push(title);
+        return 'dcp_000000000000000000000000000000000000000000';
+      },
     },
     sessionManager: {
       getSessionId: () => opts.sessionId ?? 'session-aaaaaaaa-1111',

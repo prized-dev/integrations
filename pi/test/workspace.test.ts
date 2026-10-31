@@ -8,7 +8,7 @@ import path from 'node:path';
 import type { Sandbox } from '@prized/sdk';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { capStat, changes, gitRoot, init, pack, pull, risks, shq, upload } from '../src/workspace.ts';
+import { capStat, changes, gitRoot, init, leftBehind, pack, parseRaw, pull, risks, run, shq, upload } from '../src/workspace.ts';
 import { FakeSandbox, inSandbox, world } from './fake-sdk.ts';
 
 const git = (cwd: string, ...args: string[]) => execFileSync('git', args, { cwd, encoding: 'utf8' });
@@ -87,7 +87,7 @@ describe('upload', () => {
 
   it('refuses a project over the 100 MiB the sandbox accepts, and says what to do', async () => {
     writeFileSync(path.join(host, 'big.bin'), randomBytes(2 * 1024 * 1024)); // does not compress
-    await expect(upload(sandbox, host, DIR, 1024 * 1024)).rejects.toThrow(/uploads stop at 100 MiB.*\.gitignore/);
+    await expect(upload(sandbox, host, DIR, 1024 * 1024)).rejects.toThrow(/uploads stop there.*\.gitignore/);
     expect(existsSync(inSandbox(sb, DIR))).toBe(false);
   });
 });
@@ -197,9 +197,9 @@ describe('changes and pull', () => {
     const dir = inSandbox(sb, DIR);
     writeFileSync(path.join(dir, 'made.txt'), 'new file\n');
     const c = await changes(sandbox, DIR);
-    writeFileSync(path.join(host, 'dirty.txt'), 'uncommitted\n');
+    writeFileSync(path.join(host, 'a.txt'), 'one\ntwo\nthree\nedited\n');
     await expect(pull(sandbox, DIR, host, c, 'pi/abc')).rejects.toThrow(/commit or stash/);
-    rmSync(path.join(host, 'dirty.txt'));
+    git(host, 'checkout', '--', 'a.txt');
     await pull(sandbox, DIR, host, c, 'pi/abc');
     expect(git(host, 'rev-parse', '--abbrev-ref', 'HEAD').trim()).toBe('pi/abc');
     expect(git(host, 'log', '-1', '--format=%s')).toMatch(/Changes from a Pi session/);
@@ -278,9 +278,9 @@ describe('pull --branch from a detached HEAD', () => {
 });
 
 describe('risks and capStat', () => {
-  const patchFor = (sbDir: string) => changes(sandbox, DIR).then((c) => c.patch);
+  const filesOf = (dir: string = DIR) => changes(sandbox, dir).then((c) => c.files);
 
-  it('flags symlinks, executables and files that run by themselves, and nothing else', async () => {
+  it('flags symlinks, executables and files that run by themselves, at any depth, and nothing else', async () => {
     await upload(sandbox, host, DIR);
     const dir = inSandbox(sb, DIR);
     execFileSync('ln', ['-s', '/etc/passwd', path.join(dir, 'link')]);
@@ -288,24 +288,54 @@ describe('risks and capStat', () => {
     mkdirSync(path.join(dir, '.husky'));
     writeFileSync(path.join(dir, '.husky', 'pre-commit'), 'x\n');
     writeFileSync(path.join(dir, '.envrc'), 'export A=1\n');
+    mkdirSync(path.join(dir, 'packages', 'app', '.pi', 'extensions', 'foo b'), { recursive: true }); // a space in the path
+    writeFileSync(path.join(dir, 'packages', 'app', '.pi', 'extensions', 'foo b', 'index.ts'), 'x\n');
+    mkdirSync(path.join(dir, '.claude'));
+    writeFileSync(path.join(dir, '.claude', 'settings.json'), '{}\n');
+    writeFileSync(path.join(dir, '.mcp.json'), '{}\n');
     writeFileSync(path.join(dir, 'plain.txt'), 'fine\n');
     writeFileSync(path.join(dir, 'a.txt'), 'one\nchanged\nthree\n');
-    const found = risks(await patchFor(dir));
+    const found = risks(await filesOf());
     expect(found).toEqual(
       expect.arrayContaining([
         'a symlink: link',
         'an executable: run.sh',
         'a file your tools run on their own: .husky/pre-commit',
         'a file your tools run on their own: .envrc',
+        'a file your tools run on their own: packages/app/.pi/extensions/foo b/index.ts',
+        'a file your tools run on their own: .claude/settings.json',
+        'a file your tools run on their own: .mcp.json',
       ]),
     );
     expect(found.join('\n')).not.toMatch(/plain\.txt|a\.txt/);
   });
 
-  it('finds nothing in an ordinary change', async () => {
+  it('flags retargeting an existing symlink and editing an existing executable', async () => {
+    writeFileSync(path.join(host, 'tool.sh'), '#!/bin/sh\necho 1\n', { mode: 0o755 });
+    execFileSync('ln', ['-s', 'a.txt', path.join(host, 'ptr')]);
+    git(host, 'add', '-A');
+    git(host, 'commit', '-q', '-m', 'add an executable and a symlink');
+    await upload(sandbox, host, DIR);
+    const dir = inSandbox(sb, DIR);
+    writeFileSync(path.join(dir, 'tool.sh'), '#!/bin/sh\necho 2\n', { mode: 0o755 });
+    rmSync(path.join(dir, 'ptr'));
+    execFileSync('ln', ['-s', '/etc/shadow', path.join(dir, 'ptr')]);
+    expect(risks(await filesOf())).toEqual(expect.arrayContaining(['an executable: tool.sh', 'a symlink: ptr']));
+  });
+
+  it('does not flag a deleted hook, and finds nothing in an ordinary change', async () => {
     await upload(sandbox, host, DIR);
     writeFileSync(path.join(inSandbox(sb, DIR), 'a.txt'), 'one\nchanged\nthree\n');
-    expect(risks(await patchFor(DIR))).toEqual([]);
+    expect(risks(await filesOf())).toEqual([]);
+  });
+
+  it('reads git\'s raw list, names with newlines and non-ASCII included', () => {
+    const entry = (mode: string, p: string) => `:100644 ${mode} 0000 1111 M\0${p}\0`;
+    const files = parseRaw(Buffer.from(entry('120000', 'a\nb') + entry('100644', 'caf\u00e9.txt')));
+    expect(files).toEqual([
+      { oldMode: '100644', newMode: '120000', path: 'a\nb' },
+      { oldMode: '100644', newMode: '100644', path: 'caf\u00e9.txt' },
+    ]);
   });
 
   it('cuts a long stat to a few dozen files and a count, keeping the summary line', () => {
@@ -316,6 +346,75 @@ describe('risks and capStat', () => {
     expect(cut).toMatch(/ \.\.\. and 70 more files/);
     expect(cut.endsWith('100 files changed, 100 insertions(+)')).toBe(true);
     expect(capStat(' a | 1 +\n 1 file changed', 30)).toBe(' a | 1 +\n 1 file changed');
+  });
+});
+
+describe('what the sandbox cannot hand back', () => {
+  beforeEach(async () => {
+    await upload(sandbox, host, DIR);
+  });
+
+  it('leaves a nested git repository the agent made out of the changes, names it, and still pulls the rest', async () => {
+    const dir = inSandbox(sb, DIR);
+    mkdirSync(path.join(dir, 'cloned'));
+    git(path.join(dir, 'cloned'), 'init', '-q'); // no commit in it: git add would refuse it outright
+    writeFileSync(path.join(dir, 'cloned', 'x.txt'), 'x\n');
+    writeFileSync(path.join(dir, 'fine.txt'), 'fine\n');
+    const c = await changes(sandbox, DIR);
+    expect(c.nested).toEqual(['cloned']);
+    expect(c.files.map((f) => f.path)).toEqual(['fine.txt']);
+    expect(leftBehind(c)).toMatch(/Not included: cloned \(nested git repositories; delete their \.git folder/);
+    await pull(sandbox, DIR, host, c);
+    expect(readFileSync(path.join(host, 'fine.txt'), 'utf8')).toBe('fine\n');
+    expect(existsSync(path.join(host, 'cloned'))).toBe(false);
+    // Once its .git is gone, its files are ordinary files and come back.
+    rmSync(path.join(dir, 'cloned', '.git'), { recursive: true });
+    const again = await changes(sandbox, DIR);
+    expect(again.nested).toEqual([]);
+    await pull(sandbox, DIR, host, again);
+    expect(readFileSync(path.join(host, 'cloned', 'x.txt'), 'utf8')).toBe('x\n');
+  });
+
+  it('also leaves out a nested repository that has commits, and one inside a folder with a space', async () => {
+    const dir = inSandbox(sb, DIR);
+    mkdirSync(path.join(dir, 'dep one'));
+    git(path.join(dir, 'dep one'), 'init', '-q');
+    git(path.join(dir, 'dep one'), 'config', 'user.name', 'T');
+    git(path.join(dir, 'dep one'), 'config', 'user.email', 't@t');
+    writeFileSync(path.join(dir, 'dep one', 'f'), '1\n');
+    git(path.join(dir, 'dep one'), 'add', '-A');
+    git(path.join(dir, 'dep one'), 'commit', '-q', '-m', 'c');
+    mkdirSync(path.join(dir, 'node_modules', 'pkg'), { recursive: true });
+    git(path.join(dir, 'node_modules', 'pkg'), 'init', '-q'); // ignored by the project anyway
+    const c = await changes(sandbox, DIR);
+    expect(c.nested).toEqual(['dep one']);
+    expect(c.stat).toBe('');
+  });
+
+  it('shows names as they are, not git\'s quoted escapes', async () => {
+    writeFileSync(path.join(inSandbox(sb, DIR), 'caf\u00e9.txt'), 'x\n');
+    expect((await changes(sandbox, DIR)).stat).toContain('caf\u00e9.txt');
+  });
+
+  it('pulls to a branch although you have an untracked file, and not with an edited tracked one', async () => {
+    writeFileSync(path.join(inSandbox(sb, DIR), 'made.txt'), 'new\n');
+    const c = await changes(sandbox, DIR);
+    writeFileSync(path.join(host, 'scratch.log'), 'untracked\n');
+    await pull(sandbox, DIR, host, c, 'pi/abc12345');
+    expect(git(host, 'show', '--stat', '--format=', 'HEAD')).toMatch(/made\.txt/);
+    expect(existsSync(path.join(host, 'scratch.log'))).toBe(true);
+  });
+});
+
+describe('run', () => {
+  it('stops a command that prints more than it may, and keeps what it printed out of memory', async () => {
+    await expect(run('sh', ['-c', 'yes | head -c 5000000'], { cwd: host, maxOut: 1000 })).rejects.toThrow(/more than 1000 bytes/);
+  });
+
+  it('accepts a non-zero exit only when told it is fine', async () => {
+    await expect(run('sh', ['-c', 'echo partial; exit 1'], { cwd: host })).rejects.toThrow();
+    expect((await run('sh', ['-c', 'echo partial; echo "x changed as we read it" >&2; exit 1'], { cwd: host, ok: (c, e) => c === 1 && /changed as we read it/.test(e) })).toString()).toBe('partial\n');
+    await expect(run('sh', ['-c', 'echo bad >&2; exit 1'], { cwd: host, ok: (c, e) => c === 1 && /changed as we read it/.test(e) })).rejects.toThrow(/bad/);
   });
 });
 
