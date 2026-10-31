@@ -6,7 +6,10 @@ there with a clean environment, as they would in a real sandbox: nothing from th
 environment gets in (except STUB_* settings for the stub worker). Every process a sandbox runs carries
 FAKE_SANDBOX=<its directory> in its environment, so a pause can freeze them all (SIGSTOP) and a resume
 or a command carry them on (SIGCONT), the way a real pause keeps memory and processes. Every call is
-logged to calls.log. FAKE_QUOTA caps the sandboxes not deleted, as a workspace's disk quota does.
+logged to calls.log. FAKE_QUOTA caps the sandboxes not deleted, as a workspace's disk quota does
+(FAKE_QUOTA_REASON=sandbox_limit: only the running ones, as the running-sandbox cap does).
+FAKE_DELETE_SECS keeps a deleted sandbox "deleting", still listed and counted, that long.
+FAKE_LS_FAIL=1 makes every `ls` fail, as in an outage.
 """
 
 import json
@@ -35,12 +38,36 @@ def meta_path(sid):
     return ROOT / sid / "meta.json"
 
 
+JSON = "--json" in sys.argv
+
+
+def refuse(message, code=5, hint=None):
+    """The CLI's refusal: with --json, its envelope on stdout; else "prized: ..." on stderr."""
+    if JSON:
+        print(json.dumps({"ok": False, "error": {"code": "CHECK_FAILED", "message": message}}))
+    else:
+        print(f"prized: {message}", file=sys.stderr)
+        if hint:
+            print(f"  ↳ {hint}", file=sys.stderr)
+    sys.exit(code)
+
+
+def settle(m):
+    if m["state"] == "deleting" and time.time() >= m.get("gone_at", 0):
+        m["state"] = "deleted"
+        save(m)
+    return m
+
+
 def load(sid):
     p = meta_path(sid)
     if not p.exists():
-        print(f"prized: no sandbox {sid} in this workspace", file=sys.stderr)
-        sys.exit(5)
-    return json.loads(p.read_text())
+        refuse(f"no sandbox {sid} in this workspace")
+    return settle(json.loads(p.read_text()))
+
+
+def all_meta():
+    return [settle(json.loads(p.read_text())) for p in sorted(ROOT.glob("sbx_*/meta.json"))]
 
 
 def save(m):
@@ -101,7 +128,7 @@ def signal_all(pids, sig):
 
 
 def doc(m):
-    keys = ("id", "state", "labels", "createdAt", "lastActiveAt")
+    keys = ("id", "state", "labels", "createdAt", "lastActiveAt", "errorReason")
     return {k: m.get(k) for k in keys} | {"autoDeleteMin": m.get("autoDeleteMin")}
 
 
@@ -129,20 +156,24 @@ def main():
     f, rest = flags(args)
 
     if verb == "ls":
+        if os.environ.get("FAKE_LS_FAIL") == "1":
+            refuse("could not reach the API (test)", 1)
         want = dict(kv.split("=", 1) for kv in f.get("label", []))
         boxes = []
-        for p in sorted(ROOT.glob("sbx_*/meta.json")):
-            m = json.loads(p.read_text())
+        for m in all_meta():
             if m["state"] != "deleted" and all(m["labels"].get(k) == v for k, v in want.items()):
                 boxes.append(doc(m))
         print(json.dumps({"sandboxes": list(reversed(boxes)), "ok": True}))  # newest first
     elif verb == "create":
-        quota = os.environ.get("FAKE_QUOTA")
-        live = [p for p in ROOT.glob("sbx_*/meta.json") if json.loads(p.read_text())["state"] != "deleted"]
-        if quota and len(live) >= int(quota):
-            print("prized: that would pass this workspace's disk limit of 500 GB", file=sys.stderr)
-            print("  ↳ delete a sandbox first (a paused sandbox keeps its disk)", file=sys.stderr)
-            sys.exit(6)
+        quota, why = os.environ.get("FAKE_QUOTA"), os.environ.get("FAKE_QUOTA_REASON", "retained_disk")
+        counted = [m for m in all_meta() if m["state"] != "deleted" and (why != "sandbox_limit" or m["state"] != "paused")]
+        if quota and len(counted) >= int(quota):
+            if why == "sandbox_limit":  # the real CLI's words for each, internal/cli/sandbox.go
+                refuse("this workspace is at its sandbox limit of 50", 6,
+                       "delete a sandbox first (prized sandbox rm ID), or pause one if the disk limit has room "
+                       "(prized sandbox pause --wait ID); one being deleted counts until it is gone")
+            refuse("that would pass this workspace's disk limit of 500 GB", 6,
+                   "delete a sandbox first (a paused sandbox keeps its disk)")
         n = len(list(ROOT.glob("sbx_*"))) + 1
         sid = f"sbx_{n:016x}"
         (home(sid) / "work").mkdir(parents=True)
@@ -169,8 +200,7 @@ def main():
     elif verb == "get":
         m = load(rest[0])
         if m["state"] == "deleted":
-            print(f"prized: no sandbox {m['id']} in this workspace", file=sys.stderr)
-            sys.exit(5)
+            refuse(f"no sandbox {m['id']} in this workspace")
         print(json.dumps({"sandbox": doc(m), "ok": True}))
     elif verb == "rm":
         for sid in rest:
@@ -178,9 +208,12 @@ def main():
             pids = sandbox_pids(sid)  # deleting stops everything in it for good
             signal_all(pids, signal.SIGKILL)
             signal_all(pids, signal.SIGCONT)
-            m["state"] = "deleted"
+            secs = float(os.environ.get("FAKE_DELETE_SECS", "0"))
+            m["state"], m["gone_at"] = ("deleting", time.time() + secs) if secs > 0 else ("deleted", 0)
             m.pop("frozen", None)
             save(m)
+            with open(ROOT / "deletes.log", "a") as d:
+                d.write(sid + "\n")
     elif verb == "cp":
         src, dst = rest
         if src == "-":
@@ -201,9 +234,8 @@ def main():
     elif verb == "exec":
         sid, cmd = rest[0], " ".join(rest[2:])  # rest[1] is "--"
         m = load(sid)
-        if m["state"] == "deleted":
-            print(f"prized: no sandbox {sid} in this workspace", file=sys.stderr)
-            sys.exit(5)
+        if m["state"] in ("deleted", "deleting"):
+            refuse(f"no sandbox {sid} in this workspace")
         fail = os.environ.get("FAKE_EXEC_FAIL")  # a file holding how many execs fail next, as in an outage
         if fail and os.path.exists(fail):
             n = int(open(fail).read().strip() or 0)

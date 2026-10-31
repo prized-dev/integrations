@@ -37,20 +37,29 @@ rows=$(jq -r --argjson cutoff "$cutoff" '[.sandboxes[]
     | . + {used: ((.lastActiveAt // .createdAt) | sub("\\.[0-9]+"; "") | sub("\\+00:00$"; "Z") | fromdateiso8601)}
     | select(.used < $cutoff)] | sort_by(.used) | .[] | "\(.id) \(.labels["cursor-worker"]) \(.state)"' <<< "$list")
 
+HELD=''
+trap '[ -z "$HELD" ] || rmdir "$LOGS/$HELD.lock" 2>/dev/null || true' EXIT
+mkdir -p "$LOGS"
 n=0
 while read -r sbx worker state; do
   [ -n "$sbx" ] || continue
   [[ $sbx =~ ^sbx_[A-Za-z0-9]+$ && $worker =~ ^[A-Za-z0-9._-]+$ ]] || continue
   if [ "$DRY" = 1 ]; then echo "would delete $sbx (worker $worker, $state)"; n=$((n + 1)); continue; fi
-  # A wake spawn.sh is handling on this machine holds the worker's lock: leave that one.
-  mkdir -p "$LOGS"
-  mkdir "$LOGS/$worker.lock" 2>/dev/null || { echo "skipped $sbx: worker $worker is being woken"; continue; }
+  # A wake spawn.sh is handling on this machine holds the worker's lock: leave that one. A lock
+  # older than 15 minutes was left by a process that died.
+  lock=$LOGS/$worker.lock
+  if [ -n "$(find "$lock" -maxdepth 0 -mmin +15 2>/dev/null)" ] && mv "$lock" "$lock.stale.$$" 2>/dev/null; then
+    rmdir "$lock.stale.$$" 2>/dev/null || true
+  fi
+  mkdir "$lock" 2>/dev/null || { echo "skipped $sbx: worker $worker is being woken"; continue; }
+  HELD=$worker
   now=$(prized sandbox get "$sbx" --json 2>/dev/null | jq -r '.sandbox.state // empty') || now=
   if [ "$now" = paused ] || [ "$now" = error ]; then
     if prized sandbox rm "$sbx" > /dev/null; then echo "deleted $sbx (worker $worker, $state)"; n=$((n + 1)); fi
   else
     echo "skipped $sbx: now ${now:-gone}"
   fi
-  rmdir "$LOGS/$worker.lock" 2>/dev/null || true
+  rmdir "$lock" 2>/dev/null || true
+  HELD=''
 done <<< "$rows"
 if [ "$DRY" = 1 ]; then echo "$n to delete"; else echo "$n deleted"; fi

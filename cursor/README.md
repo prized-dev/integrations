@@ -54,7 +54,8 @@ curl https://api.cursor.com/v0/private-workers/pools -u "$CURSOR_API_KEY:" -H 'C
 - A paused worker is deleted by Prized after `CURSOR_HIBERNATE_TTL` (3 days unless set), even while this machine is down. `./reap.sh --older-than 1d --pool prized` deletes them sooner.
 - Each resume starts the sandbox's run time again (`MAX_RUNTIME`). Time added with `prized sandbox extend` lasts only until the next pause.
 - Paused sandboxes count toward the workspace's disk quota. When a new agent's sandbox doesn't fit, `spawn.sh` deletes the pool's longest-paused worker to make room.
-- A wake with nothing to resume starts a fresh sandbox under the same worker id. A worker that fails is deleted, not paused.
+- A wake with nothing to resume starts a fresh sandbox under the same worker id. A new sandbox whose worker fails in its first 2 minutes is deleted; any other is paused like a released one.
+- Run one controller per pool: a wake carries no claim, so two controllers would both answer it.
 - `CURSOR_HIBERNATE=0` deletes each sandbox when its worker exits, as earlier versions did.
 
 ## Settings
