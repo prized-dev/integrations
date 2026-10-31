@@ -2,9 +2,9 @@
  * Sandbox-backed versions of Pi's default tools: bash, read, write and edit.
  *
  * Pi's tool factories take pluggable operations, so each tool keeps Pi's own logic (truncation, edit
- * matching, rendering) and only the I/O goes to the sandbox. grep, find and ls are off by default in
- * Pi and always look at your machine, so with `--prized` they are turned off and blocked; the agent
- * searches with bash instead.
+ * matching, rendering) and only the I/O goes to the sandbox. grep, find, ls and powershell are off by
+ * default in Pi and always act on your machine, so with `--prized` they are turned off and blocked;
+ * the agent searches with bash instead.
  */
 
 import os from 'node:os';
@@ -28,7 +28,8 @@ import { CommandTimeoutError, type Sandbox } from '@prized/sdk';
 import { shq } from './workspace.ts';
 
 export const SANDBOX_HOME = '/home/prized';
-const HOST_ONLY_TOOLS = ['grep', 'find', 'ls'];
+/** Pi tools that act on your machine whatever operations they are given. */
+const HOST_ONLY_TOOLS = ['grep', 'find', 'ls', 'powershell'];
 
 export interface Target {
   /** Working directory in the sandbox. */
@@ -37,28 +38,44 @@ export interface Target {
   use<T>(fn: (sandbox: Sandbox) => Promise<T>): Promise<T>;
 }
 
-/** Pi expands `~` to your home directory. Point such paths at the sandbox's home. */
-export function toSandboxPath(p: string, hostHome: string = os.homedir()): string {
-  return p === hostHome || p.startsWith(`${hostHome}/`) ? `${SANDBOX_HOME}${p.slice(hostHome.length)}` : p;
+/**
+ * Pi expands `~` to your home directory, and on Windows resolves a path like /home/prized/x to
+ * C:\home\prized\x. Point such paths at the sandbox: its home for yours, forward slashes, no drive.
+ */
+export function toSandboxPath(p: string, hostHome: string = os.homedir(), platform: string = process.platform): string {
+  const norm = (x: string) => (platform === 'win32' ? x.replace(/^[A-Za-z]:/, '').replaceAll('\\', '/') : x);
+  const given = norm(p);
+  const home = norm(hostHome);
+  return given === home || given.startsWith(`${home}/`) ? `${SANDBOX_HOME}${given.slice(home.length)}` : given;
+}
+
+/** Reject when `signal` aborts, leaving `p` to finish in the background. */
+function raceAbort<T>(p: Promise<T>, signal: AbortSignal | undefined): Promise<T> {
+  if (!signal) return p;
+  if (signal.aborted) return Promise.reject(new Error('aborted'));
+  return new Promise<T>((resolve, reject) => {
+    const onAbort = () => reject(new Error('aborted'));
+    signal.addEventListener('abort', onAbort, { once: true });
+    p.then(resolve, reject).finally(() => signal.removeEventListener('abort', onAbort));
+  });
 }
 
 /**
- * Register Pi's four tools so that, with `--prized`, they run in the sandbox. `target` gives the
- * session's sandbox, starting it on the first call. Without the flag the tools are Pi's own.
+ * Register Pi's four tools so that they run in the sandbox. Called only for `--prized`, so without
+ * the flag Pi's own tools (and the settings that shape them) are left as they are. `target` gives the
+ * session's sandbox, starting it on the first call.
  */
-export function registerTools(pi: ExtensionAPI, target: (ctx: ExtensionContext) => Promise<Target>): void {
-  const enabled = () => pi.getFlag('prized') === true;
-  const sandboxOf = async (ctx: ExtensionContext): Promise<Target> =>
-    target(ctx).catch((err: Error) => {
-      throw new Error(`The Prized sandbox is not available, so nothing ran on your machine. ${err.message}`);
-    });
-
+export function registerSandboxTools(pi: ExtensionAPI, target: (ctx: ExtensionContext) => Promise<Target>): void {
   const localCwd = process.cwd();
   const route = <T extends ToolDefinition<any, any, any>>(local: T, remote: (t: Target) => T): T => ({
     ...local,
     async execute(id, params, signal, onUpdate, ctx) {
-      if (!enabled()) return local.execute(id, params, signal, onUpdate, ctx);
-      const t = await sandboxOf(ctx);
+      const t = await raceAbort(
+        target(ctx).catch((err: Error) => {
+          throw new Error(`The Prized sandbox is not available, so nothing ran on your machine. ${err.message}`);
+        }),
+        signal,
+      );
       // Pi resolves paths against ctx.cwd, which is your machine's directory. Swap in the sandbox's.
       const sandboxCtx: typeof ctx = Object.create(ctx, { cwd: { value: t.cwd } });
       return remote(t).execute(id, params, signal, onUpdate, sandboxCtx);
@@ -68,33 +85,38 @@ export function registerTools(pi: ExtensionAPI, target: (ctx: ExtensionContext) 
   pi.registerTool(route(createBashToolDefinition(localCwd), (t) => createBashToolDefinition(t.cwd, { operations: bashOps(t) })));
   pi.registerTool(route(createReadToolDefinition(localCwd), (t) => createReadToolDefinition(t.cwd, { operations: readOps(t) })));
   pi.registerTool(route(createWriteToolDefinition(localCwd), (t) => createWriteToolDefinition(t.cwd, { operations: writeOps(t) })));
-  const edit = route(createEditToolDefinition(localCwd), (t) =>
-    createEditToolDefinition(t.cwd, { operations: editOps(t) }),
-  );
+  const edit = route(createEditToolDefinition(localCwd), (t) => createEditToolDefinition(t.cwd, { operations: editOps(t) }));
   const renderEditCall = edit.renderCall;
   pi.registerTool({
     ...edit,
     // Pi previews an edit by reading the file from your disk, where the sandbox's files do not exist.
-    // Skip the preview with --prized; the real diff still shows when the edit finishes.
+    // Skip the preview; the real diff still shows when the edit finishes.
     renderCall: renderEditCall
-      ? (args, theme, context) => renderEditCall(args, theme, enabled() ? Object.create(context, { argsComplete: { value: false } }) : context)
+      ? (args, theme, context) => renderEditCall(args, theme, Object.create(context, { argsComplete: { value: false } }))
       : undefined,
   });
+}
 
-  // Blocked even if you turn them back on: they would look at your machine, not the sandbox.
+/**
+ * The two hooks that keep your machine out of it. They are registered when the extension loads and do
+ * nothing unless `enabled()`, so a sandbox that is not up never lets a command fall through to your shell.
+ */
+export function registerGuards(pi: ExtensionAPI, enabled: () => boolean, target: (ctx: ExtensionContext) => Promise<Target>): void {
+  // Blocked even if you turn them back on: they would act on your machine, not the sandbox.
   pi.on('tool_call', (event) => {
     if (!enabled() || !HOST_ONLY_TOOLS.includes(event.toolName)) return undefined;
-    return { block: true, reason: `${event.toolName} would search the user's machine, not the sandbox. Use bash.` };
+    return { block: true, reason: `${event.toolName} would act on the user's machine, not the sandbox. Use bash.` };
   });
 
   // `!` commands. Pi passes your machine's cwd here, so pin the sandbox's.
   pi.on('user_bash', async (_event, ctx) => {
     if (!enabled()) return undefined;
     try {
-      const t = await sandboxOf(ctx);
+      const t = await target(ctx);
       return { operations: bashOps(t, t.cwd) };
     } catch (err) {
-      return { result: { output: (err as Error).message, exitCode: 1, cancelled: false, truncated: false } };
+      const text = `The Prized sandbox is not available, so nothing ran on your machine. ${(err as Error).message}`;
+      return { result: { output: text, exitCode: 1, cancelled: false, truncated: false } };
     }
   });
 }

@@ -41,11 +41,11 @@ function makeHost(): string {
 /** Load the extension into a fake Pi with these flags and start a session, as Pi does. */
 async function boot(
   flags: Record<string, boolean | string | undefined> = { prized: true },
-  opts: { sessionId?: string; saved?: boolean; entries?: FakePi['entries'] } = {},
+  opts: { sessionId?: string; saved?: boolean; entries?: FakePi['entries']; maxUploadBytes?: number } = {},
 ): Promise<void> {
   fp = fakePi(flags);
   fp.entries.push(...(opts.entries ?? []));
-  createExtension(fakeSdk())(fp.api);
+  createExtension(fakeSdk(), { maxUploadBytes: opts.maxUploadBytes })(fp.api);
   ctx = fakeCtx(fp, { cwd: host, sessionId: opts.sessionId, saved: opts.saved });
   await fp.fire('session_start', { reason: 'startup' }, ctx);
 }
@@ -78,6 +78,7 @@ afterEach(async () => {
   // What Pi does when the runtime goes away: timers are cancelled (nothing is paused or deleted on a reload).
   await fp?.fire('session_shutdown', { reason: 'reload' }, ctx);
   for (const dir of made.splice(0)) rmSync(dir, { recursive: true, force: true });
+  (globalThis as unknown as Record<symbol, Map<string, unknown> | undefined>)[Symbol.for('@prized/pi.unsaved')]?.clear();
   delete process.env.PRIZED_API_KEY;
   vi.useRealTimers();
   world.reset();
@@ -131,11 +132,13 @@ describe('flags', () => {
 });
 
 describe('without --prized', () => {
-  it('does nothing: Pi runs its own tools on your machine', async () => {
+  it('does nothing: no tool is replaced, no hook acts, nothing is started', async () => {
     await boot({});
-    expect(fp.activeTools).toContain('grep'); // not touched
-    const out = await callTool('bash', { command: 'echo local' });
-    expect(out).toContain('local');
+    expect(fp.tools.size).toBe(0); // Pi's own bash, read, write and edit keep their settings
+    expect(fp.activeTools).toContain('grep');
+    expect(await fp.fire('tool_call', { toolName: 'grep', input: {} }, ctx)).toEqual([undefined]);
+    expect(await fp.fire('user_bash', { command: 'pwd' }, ctx)).toEqual([undefined]);
+    expect(await fp.fire('before_agent_start', { systemPromptOptions: { cwd: host } }, ctx)).toEqual([undefined]);
     expect(world.creates).toHaveLength(0);
     expect(world.connects).toHaveLength(0);
   });
@@ -143,11 +146,16 @@ describe('without --prized', () => {
 
 describe('start', () => {
   it('turns off the tools that would search your machine, and starts nothing until the first prompt', async () => {
-    await boot();
+    fp = fakePi({ prized: true });
+    fp.activeTools = ['read', 'bash', 'edit', 'write', 'grep', 'find', 'ls', 'powershell'];
+    createExtension(fakeSdk())(fp.api);
+    ctx = fakeCtx(fp, { cwd: host });
+    await fp.fire('session_start', { reason: 'startup' }, ctx);
     expect(fp.activeTools).toEqual(['read', 'bash', 'edit', 'write']);
     expect(world.creates).toHaveLength(0);
-    const block = (await fp.fire('tool_call', { toolName: 'grep', input: {} }, ctx))[0];
-    expect(block).toMatchObject({ block: true });
+    for (const toolName of ['grep', 'find', 'ls', 'powershell']) {
+      expect((await fp.fire('tool_call', { toolName, input: {} }, ctx))[0], toolName).toMatchObject({ block: true });
+    }
     expect(await fp.fire('tool_call', { toolName: 'bash', input: {} }, ctx)).toEqual([undefined]);
   });
 
@@ -176,9 +184,10 @@ describe('start', () => {
 
   it('starts one sandbox however many calls arrive at once', async () => {
     await boot();
-    await prompt();
+    // No prompt first: three calls find no sandbox and must share one start.
     await Promise.all([callTool('bash', { command: 'echo 1' }), callTool('bash', { command: 'echo 2' }), callTool('read', { path: 'a.txt' })]);
     expect(world.creates).toHaveLength(1);
+    expect(world.execs.filter((e) => e.command.startsWith('git init')).length).toBe(1);
   });
 
   it('keeps the agent in the subdirectory you started Pi in', async () => {
@@ -204,8 +213,9 @@ describe('start', () => {
 
   it('tells the model it is in a sandbox, not on your machine', async () => {
     await boot();
-    const event = { systemPromptOptions: { cwd: host, promptGuidelines: ['keep it short'] as string[] } };
+    const event = { systemPromptOptions: { cwd: host, promptGuidelines: ['keep it short'] as string[], skills: [{ name: 'deploy' }] as unknown[] } };
     await fp.fire('before_agent_start', event, ctx);
+    expect(event.systemPromptOptions.skills).toEqual([]); // the model could not open files on your machine
     expect(event.systemPromptOptions.cwd).toBe('/home/prized/work/proj (in a Prized sandbox, not on the user\'s machine)');
     expect(event.systemPromptOptions.promptGuidelines[0]).toBe('keep it short');
     expect(event.systemPromptOptions.promptGuidelines[1]).toMatch(/Prized sandbox.*\/prized pull/);
@@ -242,11 +252,31 @@ describe('start', () => {
     await fp.fire('before_agent_start', { systemPromptOptions: {} }, ctx);
     await vi.waitFor(() => expect(ctx.notices.some((n) => n.level === 'error')).toBe(true));
     expect(ctx.notices.at(-1)?.text).toMatch(/could not start the sandbox: The balance is empty/);
-    world.createError = new PrizedError('insufficient_balance', 'The balance is empty.', { status: 409 });
     await expect(callTool('bash', { command: 'echo no' })).rejects.toThrow(/nothing ran on your machine.*balance is empty/);
     expect(sandboxes()).toHaveLength(0);
-    expect(await callTool('bash', { command: 'echo retried' })).toContain('retried'); // the next call tries again
+    await fp.fire('agent_settled', {}, ctx);
+    expect(await callTool('bash', { command: 'echo retried' })).toContain('retried'); // outside a run, the next call tries again
     expect(sandboxes()).toHaveLength(1);
+  });
+
+  it('gives up waiting for the sandbox to start when Escape is pressed', async () => {
+    const ac = new AbortController();
+    const slow = FakeSandbox.create;
+    FakeSandbox.create = async (o) => {
+      await new Promise((r) => setTimeout(r, 1500));
+      return slow.call(FakeSandbox, o);
+    };
+    try {
+      await boot();
+      const started = Date.now();
+      const call = callTool('bash', { command: 'echo never' }, ac.signal);
+      setTimeout(() => ac.abort(), 200);
+      await expect(call).rejects.toThrow(/aborted/i);
+      expect(Date.now() - started).toBeLessThan(1200);
+      expect(world.execs.some((e) => e.command === 'echo never')).toBe(false);
+    } finally {
+      FakeSandbox.create = slow;
+    }
   });
 
   it('deletes a sandbox it created when the upload fails', async () => {
@@ -290,7 +320,11 @@ describe('tools', () => {
   it('does not forward your environment', async () => {
     process.env.HOST_SECRET_FOR_TEST = 'leak';
     try {
-      expect(await callTool('bash', { command: 'echo "[${HOST_SECRET_FOR_TEST:-unset}]"' })).toContain('[unset]');
+      await callTool('bash', { command: 'echo hi' });
+      const last = world.execs.at(-1);
+      expect(last?.command).toBe('echo hi');
+      expect(last?.options).not.toHaveProperty('env'); // Pi hands its env to the operations; they must not send it
+      expect(JSON.stringify(world.execs)).not.toContain('leak');
     } finally {
       delete process.env.HOST_SECRET_FOR_TEST;
     }
@@ -309,10 +343,12 @@ describe('tools', () => {
 
   it('turns an abort into Pi\'s aborted error and stops the command', async () => {
     const ac = new AbortController();
-    const running = callTool('bash', { command: 'sleep 20' }, ac.signal);
-    await vi.waitFor(() => expect(world.execs.some((e) => e.command === 'sleep 20')).toBe(true));
+    const running = callTool('bash', { command: 'sleep 3; touch /home/prized/survived' }, ac.signal);
+    await vi.waitFor(() => expect(world.execs.some((e) => e.command.startsWith('sleep 3'))).toBe(true));
     ac.abort();
     await expect(running).rejects.toThrow(/aborted/i);
+    await new Promise((r) => setTimeout(r, 3500));
+    expect(existsSync(inSandbox(current(), '/home/prized/survived'))).toBe(false); // it was stopped, not left to finish
   });
 
   it('returns when the shell does even if it started something in the background', async () => {
@@ -342,6 +378,14 @@ describe('tools', () => {
     await expect(callTool('read', { path: 'nope.txt' })).rejects.toThrow(/ENOENT|no such file/i);
     await expect(callTool('edit', { path: 'nope.txt', edits: [{ oldText: 'a', newText: 'b' }] })).rejects.toThrow();
     expect(await callTool('bash', { command: 'echo still here' })).toContain('still here');
+    expect(world.creates).toHaveLength(1);
+  });
+
+  it('does not take a not_found for a file as the sandbox being gone', async () => {
+    const sb = current();
+    sb.files.exists = async () => true; // the file looks present and is gone by the time it is read: a race
+    await expect(callTool('read', { path: 'vanished.txt' })).rejects.toThrow(/not found/i);
+    expect(await callTool('bash', { command: 'echo alive' })).toContain('alive');
     expect(world.creates).toHaveLength(1);
   });
 
@@ -410,6 +454,7 @@ describe('pause between turns', () => {
   it('pauses on /prized pause and says so', async () => {
     await boot();
     await prompt();
+    await fp.fire('agent_settled', {}, ctx);
     await fp.commands.get('prized').handler('pause', ctx);
     expect(current().state).toBe('paused');
     expect(ctx.notices.at(-1)?.text).toMatch(/Paused sbx_/);
@@ -538,7 +583,7 @@ describe('/prized', () => {
     expect(readFileSync(path.join(host, 'new.txt'), 'utf8')).toBe('hi\n');
     expect(ctx.notices.at(-1)?.text).toMatch(/Pulled/);
     await fp.commands.get('prized').handler('pull', ctx);
-    expect(ctx.notices.at(-1)?.text).toBe('No changes to pull.');
+    expect(ctx.notices.at(-1)?.text).toMatch(/^Prized: No changes to pull\.$/);
   });
 
   it('commits on a branch with pull --branch', async () => {
@@ -654,10 +699,176 @@ describe('leaving Pi', () => {
     expect(sandboxes()).toHaveLength(0);
   });
 
-  it('does not set a delete timer for a session that is not saved', async () => {
+  it('writes no entry for a session that is not saved', async () => {
     await boot({ prized: true }, { saved: false });
     await prompt();
-    expect(world.creates[0]?.autoDeleteMin).toBeUndefined();
     expect(fp.entries).toHaveLength(0);
+  });
+});
+
+describe('starting, when it goes wrong or takes time', () => {
+  it('packs before it creates: a project that is too big costs no sandbox', async () => {
+    writeFileSync(path.join(host, 'big.bin'), (await import('node:crypto')).randomBytes(8 * 1024));
+    await boot({ prized: true }, { maxUploadBytes: 1024 });
+    await fp.fire('before_agent_start', { systemPromptOptions: {} }, ctx);
+    await vi.waitFor(() => expect(ctx.notices.some((n) => n.level === 'error')).toBe(true));
+    expect(ctx.notices.at(-1)?.text).toMatch(/uploads stop at 100 MiB/);
+    expect(world.creates).toHaveLength(0);
+    expect(sandboxes()).toHaveLength(0);
+  });
+
+  it('does not try again on every tool call of a run that could not start, but does on the next prompt', async () => {
+    world.createError = new PrizedError('sandbox_capacity', 'No capacity.', { status: 503 });
+    await boot();
+    await fp.fire('before_agent_start', { systemPromptOptions: {} }, ctx);
+    await vi.waitFor(() => expect(ctx.notices.some((n) => n.level === 'error')).toBe(true));
+    const errors = () => ctx.notices.filter((n) => n.level === 'error').length;
+    expect(errors()).toBe(1);
+    await expect(callTool('bash', { command: 'echo 1' })).rejects.toThrow(/No capacity/);
+    await expect(callTool('bash', { command: 'echo 2' })).rejects.toThrow(/No capacity/);
+    expect(errors()).toBe(1); // those two did not start anything
+    expect(world.creates).toHaveLength(0);
+    await fp.fire('agent_settled', {}, ctx);
+    await prompt(); // the next prompt tries again, and now there is room
+    expect(world.creates).toHaveLength(1);
+  });
+
+  it('pauses after a run that settled before the sandbox finished starting', async () => {
+    const create = FakeSandbox.create;
+    FakeSandbox.create = async (o) => {
+      await new Promise((r) => setTimeout(r, 600));
+      return create.call(FakeSandbox, o);
+    };
+    try {
+      await boot({ prized: true, 'prized-pause': '1' });
+      await fp.fire('before_agent_start', { systemPromptOptions: {} }, ctx); // a prompt that needs no tools...
+      await fp.fire('agent_settled', {}, ctx); // ...is over before the sandbox is up
+      await vi.waitFor(() => expect(world.creates).toHaveLength(1), { timeout: 5000 });
+      await vi.waitFor(() => expect(current().state).toBe('paused'), { timeout: 5000 });
+    } finally {
+      FakeSandbox.create = create;
+    }
+  });
+
+  it('leaves nested repositories and submodules out and says so', async () => {
+    const nested = path.join(host, 'vendor', 'lib');
+    execFileSync('mkdir', ['-p', nested]);
+    git(nested, 'init', '-q');
+    writeFileSync(path.join(nested, '.env'), 'NESTED_SECRET=1\n');
+    writeFileSync(path.join(nested, 'code.js'), '1\n');
+    await boot();
+    await prompt();
+    expect(existsSync(inSandbox(current(), '/home/prized/work/proj/vendor'))).toBe(false);
+    expect(ctx.notices.some((n) => n.level === 'warning' && /left out 1 nested repository.*vendor\/lib/.test(n.text))).toBe(true);
+  });
+});
+
+describe('what the agent cannot do to your machine', () => {
+  it('keeps pull reviewable: a symlink, an executable and a hook are called out, and a long list is cut', async () => {
+    await boot();
+    await prompt();
+    await callTool('bash', { command: 'ln -s /etc/passwd link && printf "#!/bin/sh\\n" > run.sh && chmod +x run.sh && mkdir .husky && echo hi > .husky/pre-commit' });
+    for (let i = 0; i < 45; i += 1) await callTool('write', { path: `many/f${i}.txt`, content: 'x\n' });
+    await fp.commands.get('prized').handler('pull', ctx);
+    const asked = ctx.confirms.at(-1) ?? '';
+    expect(asked).toMatch(/Look twice at:/);
+    expect(asked).toMatch(/a symlink: link/);
+    expect(asked).toMatch(/an executable: run\.sh/);
+    expect(asked).toMatch(/a file your tools run on their own: \.husky\/pre-commit/);
+    expect(asked).toMatch(/and \d+ more files/);
+    expect(asked.split('\n').length).toBeLessThan(45);
+  });
+
+  it('does not pull on its own what needs a second look, and keeps the sandbox', async () => {
+    await boot({ prized: true, 'prized-pull': true });
+    await prompt();
+    const sb = current();
+    await callTool('bash', { command: 'ln -s /etc/passwd link && echo fine > fine.txt' });
+    await fp.fire('session_shutdown', { reason: 'quit' }, ctx);
+    expect(existsSync(path.join(host, 'fine.txt'))).toBe(false);
+    expect(existsSync(path.join(host, 'link'))).toBe(false);
+    expect(sb.deleted).toBe(false);
+    expect(sb.state).toBe('paused');
+  });
+
+  it('answers a unsaved session\'s kept sandbox honestly: pi -c cannot find it', async () => {
+    const written: string[] = [];
+    const spy = vi.spyOn(process.stderr, 'write').mockImplementation((s) => (written.push(String(s)), true));
+    const exitHandlers: Array<() => void> = [];
+    const once = vi.spyOn(process, 'once').mockImplementation(((ev: string, fn: () => void) => (ev === 'exit' && exitHandlers.push(fn), process)) as never);
+    try {
+      await boot({ prized: true }, { saved: false });
+      await prompt();
+      expect(world.creates[0]?.autoDeleteMin).toBe(24 * 60); // a day, not a week: nobody can come back to it
+      await callTool('write', { path: 'new.txt', content: 'x\n' });
+      await fp.fire('session_shutdown', { reason: 'quit' }, ctx);
+      exitHandlers.forEach((f) => f());
+      const out = written.join('');
+      expect(out).toMatch(/not saved, so pi -c cannot reconnect: use --prized-pull next time, or read the files with the prized CLI/);
+      expect(out).not.toMatch(/Run pi -c and \/prized pull/);
+      expect(out).toMatch(/Prized deletes it a day after it paused/);
+    } finally {
+      spy.mockRestore();
+      once.mockRestore();
+    }
+  });
+
+  it('keeps an unsaved session\'s sandbox through a reload, in the same process', async () => {
+    await boot({ prized: true }, { saved: false });
+    await prompt();
+    const sb = current();
+    await fp.fire('session_shutdown', { reason: 'reload' }, ctx);
+    expect(sb.deleted).toBe(false);
+    expect(sb.state).toBe('running');
+    await boot({ prized: true }, { saved: false }); // the new runtime
+    await fp.fire('before_agent_start', { systemPromptOptions: {} }, ctx);
+    await vi.waitFor(() => expect(ctx.notices.some((n) => /reconnected/.test(n.text))).toBe(true));
+    expect(world.creates).toHaveLength(1);
+    await fp.fire('session_shutdown', { reason: 'quit' }, ctx);
+    expect(sb.deleted).toBe(true); // clean: nothing to pull
+  });
+});
+
+describe('commands that could go wrong', () => {
+  beforeEach(async () => {
+    await boot();
+    await prompt();
+  });
+
+  it('keeps its state when the delete fails', async () => {
+    const sb = current();
+    const del = sb.delete.bind(sb);
+    sb.delete = async () => {
+      throw new PrizedError('network_error', 'no answer');
+    };
+    await fp.commands.get('prized').handler('delete', ctx);
+    expect(ctx.notices.at(-1)).toMatchObject({ level: 'error' });
+    expect(ctx.notices.at(-1)?.text).toMatch(/Could not delete/);
+    expect(await callTool('bash', { command: 'echo still mine' })).toContain('still mine');
+    expect(world.creates).toHaveLength(1);
+    sb.delete = del;
+  });
+
+  it('does not pause a sandbox that is in use', async () => {
+    const long = callTool('bash', { command: 'sleep 1.5; echo done' });
+    await vi.waitFor(() => expect(world.execs.some((e) => e.command.startsWith('sleep 1.5'))).toBe(true));
+    await fp.commands.get('prized').handler('pause', ctx);
+    expect(current().state).toBe('running');
+    expect(ctx.notices.at(-1)?.text).toMatch(/in use right now/);
+    expect(await long).toContain('done');
+  });
+
+  it('does not pause under a long call just because a short one beside it finished', async () => {
+    await fp.fire('session_shutdown', { reason: 'reload' }, ctx);
+    await boot({ prized: true, 'prized-pause': '1' });
+    await prompt();
+    await fp.fire('agent_settled', {}, ctx);
+    const sb = current();
+    const long = callTool('bash', { command: 'sleep 3; echo long done' });
+    await vi.waitFor(() => expect(world.execs.some((e) => e.command.startsWith('sleep 3'))).toBe(true));
+    await callTool('bash', { command: 'echo short' }); // ends while the long one runs, and arms the pause timer
+    await new Promise((r) => setTimeout(r, 1800));
+    expect(sb.state).toBe('running');
+    expect(await long).toContain('long done');
   });
 });

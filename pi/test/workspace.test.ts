@@ -8,7 +8,7 @@ import path from 'node:path';
 import type { Sandbox } from '@prized/sdk';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { changes, gitRoot, init, pull, shq, upload } from '../src/workspace.ts';
+import { capStat, changes, gitRoot, init, pack, pull, risks, shq, upload } from '../src/workspace.ts';
 import { FakeSandbox, inSandbox, world } from './fake-sdk.ts';
 
 const git = (cwd: string, ...args: string[]) => execFileSync('git', args, { cwd, encoding: 'utf8' });
@@ -46,7 +46,7 @@ describe('upload', () => {
   it('sends tracked and untracked files, keeps ignored ones home, and commits a baseline', async () => {
     writeFileSync(path.join(host, 'new.txt'), 'untracked\n');
     writeFileSync(path.join(host, 'a.txt'), 'one\ntwo\nthree\nlocal edit\n');
-    const n = await upload(sandbox, host, DIR);
+    const { files: n } = await upload(sandbox, host, DIR);
     expect(n).toBe(4); // .gitignore, a.txt, new.txt, src/main.py
     expect(readFileSync(inSandbox(sb, `${DIR}/a.txt`), 'utf8')).toContain('local edit');
     expect(readFileSync(inSandbox(sb, `${DIR}/new.txt`), 'utf8')).toBe('untracked\n');
@@ -80,7 +80,7 @@ describe('upload', () => {
   it('starts an empty workspace when git lists nothing', async () => {
     const empty = mkdtempSync(path.join(tmpdir(), 'empty-'));
     git(empty, 'init', '-q');
-    expect(await upload(sandbox, empty, DIR)).toBe(0);
+    expect((await upload(sandbox, empty, DIR)).files).toBe(0);
     expect(git(inSandbox(sb, DIR), 'log', '--format=%s').trim()).toBe('Empty workspace');
     rmSync(empty, { recursive: true, force: true });
   });
@@ -89,6 +89,31 @@ describe('upload', () => {
     writeFileSync(path.join(host, 'big.bin'), randomBytes(2 * 1024 * 1024)); // does not compress
     await expect(upload(sandbox, host, DIR, 1024 * 1024)).rejects.toThrow(/uploads stop at 100 MiB.*\.gitignore/);
     expect(existsSync(inSandbox(sb, DIR))).toBe(false);
+  });
+});
+
+describe('what stays home', () => {
+  it('leaves a submodule or nested repository at home, with its ignored files, and names it', async () => {
+    const nested = path.join(host, 'vendor', 'lib');
+    mkdirSync(nested, { recursive: true });
+    git(nested, 'init', '-q');
+    writeFileSync(path.join(nested, '.env'), 'NESTED_SECRET=1\n');
+    writeFileSync(path.join(nested, 'code.js'), '1\n');
+    const packed = await pack(host);
+    expect(packed.skipped).toEqual(['vendor/lib/']);
+    await upload(sandbox, host, DIR);
+    expect(existsSync(inSandbox(sb, `${DIR}/vendor`))).toBe(false);
+    expect(readFileSync(inSandbox(sb, `${DIR}/a.txt`), 'utf8')).toContain('one');
+  });
+
+  it('carries file names that are not UTF-8', async () => {
+    const odd = Buffer.concat([Buffer.from('caf'), Buffer.from([0xe9]), Buffer.from('.txt')]); // latin1 e-acute
+    writeFileSync(Buffer.concat([Buffer.from(`${host}/`), odd]), 'odd\n');
+    const packed = await pack(host);
+    expect(packed.files).toBeGreaterThanOrEqual(4);
+    await upload(sandbox, host, DIR);
+    const listing = execFileSync('ls', ['-1', inSandbox(sb, DIR)], { encoding: 'buffer' });
+    expect(listing.includes(odd)).toBe(true);
   });
 });
 
@@ -192,6 +217,105 @@ describe('changes and pull', () => {
     await expect(pull(sandbox, DIR, host, c, 'pi/zzz')).rejects.toThrow(/do not apply to pi\/zzz/);
     expect(git(host, 'rev-parse', '--abbrev-ref', 'HEAD').trim()).toBe('work');
     expect(git(host, 'branch', '--list', 'pi/zzz').trim()).toBe('');
+  });
+});
+
+describe('ignore rules cannot hide the agent\'s work or delete yours', () => {
+  it('sees edits to a file git tracks although it is ignored', async () => {
+    writeFileSync(path.join(host, 'dist.js'), 'v1\n');
+    git(host, 'add', '-f', 'dist.js'); // tracked on purpose although .gitignore says otherwise below
+    writeFileSync(path.join(host, '.gitignore'), '.env\nnode_modules/\ndist.js\n');
+    git(host, 'add', '.gitignore');
+    git(host, 'commit', '-q', '-m', 'track dist.js anyway');
+    await upload(sandbox, host, DIR);
+    writeFileSync(path.join(inSandbox(sb, DIR), 'dist.js'), 'v2\n');
+    const c = await changes(sandbox, DIR);
+    expect(c.stat).toMatch(/dist\.js/);
+    await pull(sandbox, DIR, host, c);
+    expect(readFileSync(path.join(host, 'dist.js'), 'utf8')).toBe('v2\n');
+  });
+
+  it('does not delete your files when the agent ignores a directory that was uploaded', async () => {
+    mkdirSync(path.join(host, 'data'));
+    writeFileSync(path.join(host, 'data', 'fixtures.json'), '{}\n');
+    await upload(sandbox, host, DIR);
+    const dir = inSandbox(sb, DIR);
+    writeFileSync(path.join(dir, '.gitignore'), '.env\nnode_modules/\ndata/\n');
+    const c = await changes(sandbox, DIR);
+    expect(c.stat).toMatch(/\.gitignore/);
+    expect(c.stat).not.toMatch(/fixtures/);
+    await pull(sandbox, DIR, host, c);
+    expect(existsSync(path.join(host, 'data', 'fixtures.json'))).toBe(true);
+  });
+
+  it('still leaves out new files the project ignores, such as node_modules', async () => {
+    await upload(sandbox, host, DIR);
+    const dir = inSandbox(sb, DIR);
+    mkdirSync(path.join(dir, 'node_modules', 'x'), { recursive: true });
+    writeFileSync(path.join(dir, 'node_modules', 'x', 'i.js'), '1\n');
+    writeFileSync(path.join(dir, '.env'), 'NEW_SECRET=1\n');
+    writeFileSync(path.join(dir, 'real.txt'), 'kept\n');
+    const c = await changes(sandbox, DIR);
+    expect(c.stat).toMatch(/real\.txt/);
+    expect(c.stat).not.toMatch(/node_modules|\.env/);
+  });
+});
+
+describe('pull --branch from a detached HEAD', () => {
+  it('puts you back on the commit you were on when the changes do not apply', async () => {
+    await upload(sandbox, host, DIR);
+    writeFileSync(path.join(inSandbox(sb, DIR), 'a.txt'), 'one\nTWO\nthree\n');
+    const c = await changes(sandbox, DIR);
+    writeFileSync(path.join(host, 'a.txt'), 'one\nlocal\nthree\n');
+    git(host, 'commit', '-q', '-am', 'local');
+    const sha = git(host, 'rev-parse', 'HEAD').trim();
+    git(host, 'checkout', '-q', '--detach');
+    await expect(pull(sandbox, DIR, host, c, 'pi/dd')).rejects.toThrow(/do not apply/);
+    expect(git(host, 'rev-parse', 'HEAD').trim()).toBe(sha);
+    expect(git(host, 'rev-parse', '--abbrev-ref', 'HEAD').trim()).toBe('HEAD'); // still detached, not on a pi/ branch
+    expect(git(host, 'branch', '--list', 'pi/dd').trim()).toBe('');
+  });
+});
+
+describe('risks and capStat', () => {
+  const patchFor = (sbDir: string) => changes(sandbox, DIR).then((c) => c.patch);
+
+  it('flags symlinks, executables and files that run by themselves, and nothing else', async () => {
+    await upload(sandbox, host, DIR);
+    const dir = inSandbox(sb, DIR);
+    execFileSync('ln', ['-s', '/etc/passwd', path.join(dir, 'link')]);
+    writeFileSync(path.join(dir, 'run.sh'), '#!/bin/sh\n', { mode: 0o755 });
+    mkdirSync(path.join(dir, '.husky'));
+    writeFileSync(path.join(dir, '.husky', 'pre-commit'), 'x\n');
+    writeFileSync(path.join(dir, '.envrc'), 'export A=1\n');
+    writeFileSync(path.join(dir, 'plain.txt'), 'fine\n');
+    writeFileSync(path.join(dir, 'a.txt'), 'one\nchanged\nthree\n');
+    const found = risks(await patchFor(dir));
+    expect(found).toEqual(
+      expect.arrayContaining([
+        'a symlink: link',
+        'an executable: run.sh',
+        'a file your tools run on their own: .husky/pre-commit',
+        'a file your tools run on their own: .envrc',
+      ]),
+    );
+    expect(found.join('\n')).not.toMatch(/plain\.txt|a\.txt/);
+  });
+
+  it('finds nothing in an ordinary change', async () => {
+    await upload(sandbox, host, DIR);
+    writeFileSync(path.join(inSandbox(sb, DIR), 'a.txt'), 'one\nchanged\nthree\n');
+    expect(risks(await patchFor(DIR))).toEqual([]);
+  });
+
+  it('cuts a long stat to a few dozen files and a count, keeping the summary line', () => {
+    const lines = Array.from({ length: 100 }, (_, i) => ` f${i}.txt | 1 +`);
+    const stat = [...lines, ' 100 files changed, 100 insertions(+)'].join('\n');
+    const cut = capStat(stat, 30);
+    expect(cut.split('\n')).toHaveLength(32);
+    expect(cut).toMatch(/ \.\.\. and 70 more files/);
+    expect(cut.endsWith('100 files changed, 100 insertions(+)')).toBe(true);
+    expect(capStat(' a | 1 +\n 1 file changed', 30)).toBe(' a | 1 +\n 1 file changed');
   });
 });
 

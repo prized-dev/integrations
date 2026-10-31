@@ -57,7 +57,10 @@ afterEach(async () => {
 });
 
 /** Start a Pi session with the extension loaded and `--prized` set, as `pi --prized` would. */
-async function startPi(flags: Record<string, boolean | string> = { prized: true }, sessionManager?: SessionManager): Promise<AgentSession> {
+async function startPi(
+  flags: Record<string, boolean | string> = { prized: true },
+  extra: { tools?: string[] } = {},
+): Promise<AgentSession> {
   const services = await createAgentSessionServices({
     cwd: host,
     agentDir,
@@ -67,8 +70,9 @@ async function startPi(flags: Record<string, boolean | string> = { prized: true 
   });
   const created = await createAgentSessionFromServices({
     services,
-    sessionManager: sessionManager ?? SessionManager.inMemory(host),
+    sessionManager: SessionManager.inMemory(host),
     model: faux.getModel(),
+    ...extra,
   });
   session = created.session;
   await session.bindExtensions({});
@@ -129,14 +133,14 @@ describe('a Pi session with --prized', () => {
     expect(readFileSync(path.join(host, 'calc.py'), 'utf8')).toContain('a + b');
   });
 
-  it('turns off grep, find and ls, which would read your machine', async () => {
-    faux.setResponses([
-      fauxAssistantMessage([tool('grep', { pattern: 'add' })]),
-      fauxAssistantMessage([fauxText('ok')]),
-    ]);
-    const s = await startPi();
-    expect(s.getActiveToolNames()).not.toContain('grep');
+  it('turns off grep, find, ls and powershell, which would act on your machine, even when asked for', async () => {
+    const asked = { tools: ['read', 'bash', 'edit', 'write', 'grep', 'find', 'ls'] };
+    const plain = await startPi({}, asked);
+    expect(plain.getActiveToolNames()).toEqual(expect.arrayContaining(['grep', 'find', 'ls'])); // Pi on its own keeps them
+    await plain.dispose();
+    const s = await startPi({ prized: true }, asked);
     expect(s.getActiveToolNames()).toEqual(expect.arrayContaining(['read', 'bash', 'edit', 'write']));
+    for (const name of ['grep', 'find', 'ls', 'powershell']) expect(s.getActiveToolNames()).not.toContain(name);
   });
 
   it('runs Pi\'s own tools on your machine without the flag', async () => {

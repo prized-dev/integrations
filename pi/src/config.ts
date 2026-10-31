@@ -4,8 +4,10 @@
 export const DEFAULT_PAUSE_SECS = 20;
 /** Minutes without any request before Prized pauses a sandbox on its own (the net under a crashed Pi). */
 export const DEFAULT_IDLE_MIN = 10;
-/** A paused sandbox that nobody comes back to is deleted by Prized this long after it paused. */
+/** A paused sandbox that nobody comes back to is deleted by Prized this long after it paused: a week for a saved session... */
 export const AUTO_DELETE_MIN = 7 * 24 * 60;
+/** ...a day for one that cannot be resumed (--no-session, print mode). */
+export const AUTO_DELETE_UNSAVED_MIN = 24 * 60;
 
 export interface Config {
   template?: string;
