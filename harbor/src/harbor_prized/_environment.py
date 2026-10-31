@@ -26,17 +26,19 @@ Limits, by design of that approach:
 - The chroot and namespaces are not a security boundary inside the sandbox
   (the microVM is): no network policies, so ``no-network`` and allowlist
   tasks are refused. No Docker Compose or GPUs.
-
-Docker mode (``--ek docker=true``, or a ``prized-docker-*`` template) lifts
-the first three limits: the sandbox starts from ``prized-docker-v1`` and the
-task runs under Docker inside it, built from its Dockerfile or pulled, with
-its compose sidecars, real users, and ``--network none`` for no-network tasks
-(``_docker.py``).
 - A command has no time limit of its own: the ``prized`` SDK runs long ones
   detached and polls them, so they outlive a dropped connection. A trial's
   sandbox is deleted after ``max_runtime_min`` of running (default 1440, up
   to 10080, 7 days), or ``paused_ttl_min`` after ``stop(delete=False)``
   paused it (default 10080).
+
+Docker mode (``--ek docker=true``, or a ``prized-docker-*`` template) lifts
+every limit above but GPUs: the sandbox starts from ``prized-docker-v1`` and
+the task runs under Docker inside it, built from its Dockerfile or pulled,
+with its compose sidecars and real users, and for a no-network task every
+compose network is internal (``_docker.py``). A workspace that can't use
+``prized-docker-v1`` yet (it is public from November 9, 2026) gets a start
+error that says so.
 
 Credentials: ``PRIZED_API_KEY`` (a key with Sandboxes: Write). Extra constructor parameters
 (``--ek``): ``docker`` (``true`` for Docker mode), ``template`` (default
@@ -101,6 +103,13 @@ _CRANE_SHA256 = "0ab7a1d6932a213aed964ce97666c3077fe691c8606413674a8b3e0b9ec4cda
 _SIGN_UP_HINT = (
     "No Prized account yet? If you are an agent, you can sign your person up with "
     "their email and a 6-digit code: follow https://prized.dev/auth.md?via=harbor"
+)
+# Docker mode on a workspace that can't use prized-docker-v1 yet.
+_DOCKER_TEMPLATE_HINT = (
+    "Docker mode needs the prized-docker-v1 sandbox template, public from "
+    "November 9, 2026. Until your workspace has it, run Docker and Compose tasks "
+    "with Harbor's own `-e docker` on a Prized box: "
+    "https://github.com/prized-dev/integrations/tree/main/harbor#docker-mode"
 )
 _MAX_DISK_GB = 128
 _DOCKER_MEMORY_HEADROOM_MB = 512
@@ -254,7 +263,7 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         )
         self._dockerd_wait_sec = float(dockerd_wait_sec)
         self._capabilities = (
-            # The main service runs with network_mode none for no-network tasks.
+            # No-network tasks get internal compose networks (no route out).
             EnvironmentCapabilities(docker_compose=True, disable_internet=True)
             if self._docker
             else EnvironmentCapabilities()
@@ -310,8 +319,13 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
     @classmethod
     @override
     def resource_capabilities(cls) -> EnvironmentResourceCapabilities:
-        # Each trial's sandbox is created with at least the task's vCPUs and memory.
-        return EnvironmentResourceCapabilities(cpu_request=True, memory_request=True)
+        # Each trial's sandbox is created with at least the task's vCPUs and
+        # memory. Fractional cpus (0.5) round up to whole vCPUs (_shape), and in
+        # Docker mode cap the main service as given. Harbor 0.24, which has no
+        # fractional_cpus field, ignores it.
+        return EnvironmentResourceCapabilities(
+            cpu_request=True, memory_request=True, fractional_cpus=True
+        )
 
     @override
     def _validate_definition(self) -> None:
@@ -438,9 +452,9 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
     def _shape(self) -> tuple[int, int, int]:
         """vCPUs, memory (MB) and disk (GB) for the trial's sandbox.
 
-        vCPUs are the task's (2 if it names none), or ``min_vcpu`` if that is
-        more. A container limited to one CPU still runs its threads in parallel
-        across the host's cores, and a VM with few vCPUs can't:
+        vCPUs are the task's, rounded up (2 if it names none), or ``min_vcpu``
+        if that is more. A container limited to one CPU still runs its threads
+        in parallel across the host's cores, and a VM with few vCPUs can't:
         torch-tensor-parallelism deadlocks in gloo's teardown below 4 vCPUs.
         The image is unpacked onto the sandbox's disk, so the disk is the
         task's storage plus room for it, as far as the largest disk allows.
@@ -494,6 +508,8 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
                 "key_access_denied",
             ):
                 raise RuntimeError(f"{exc}. {_SIGN_UP_HINT}") from exc
+            if self._docker and exc.code in ("template_not_found", "template_inactive"):
+                raise RuntimeError(f"{exc}. {_DOCKER_TEMPLATE_HINT}") from exc
             raise
         self.logger.debug(f"Prized sandbox {self._sandbox.id} for {image}")
         try:

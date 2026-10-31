@@ -9,6 +9,7 @@ import tarfile
 from pathlib import Path
 
 import pytest
+from harbor.environments.capabilities import EnvironmentResourceCapabilities
 from harbor.models.task.config import EnvironmentConfig, NetworkMode, NetworkPolicy
 from harbor.models.trial.paths import TrialPaths
 from prized import CommandTimeoutError, ExecResult, PrizedError
@@ -168,6 +169,23 @@ def test_sandbox_shape(tmp_path, config, kwargs, shape):
         else:
             setattr(environment, f"_{key}", value)
     assert environment._shape() == shape
+
+
+@pytest.mark.skipif(
+    "fractional_cpus" not in EnvironmentResourceCapabilities.model_fields,
+    reason="Harbor before 0.25 takes whole cpus only",
+)
+def test_fractional_cpus_round_up_to_whole_vcpus(tmp_path):
+    # Harbor 0.25 refuses cpus = 0.5 in the constructor unless the provider
+    # says it takes fractional cpus.
+    assert PrizedEnvironment.resource_capabilities().fractional_cpus
+    environment = _environment(
+        tmp_path, docker_image="python:3.12", cpus=0.5, memory_mb=1024
+    )
+    assert environment._shape() == (1, 1024, 30)
+    environment._override_cpus = 2.5
+    environment._maybe_override_task_env_config()
+    assert environment._shape() == (3, 1024, 30)
 
 
 # -- start and stop ---------------------------------------------------------
