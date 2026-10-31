@@ -1,0 +1,63 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "stirrup-prized"
+dynamic = ["version"]
+description = "Prized Sandboxes for Stirrup (Artificial Analysis's agent harness): a drop-in for its E2B code execution backend, on Firecracker microVMs that pause and fork."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+# Stirrup's own floor.
+requires-python = ">=3.12"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["stirrup", "artificial-analysis", "agents", "evals", "benchmarks", "sandbox", "prized", "microvm"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Typing :: Typed",
+]
+dependencies = [
+  "stirrup>=0.2.1,<0.3",
+  "prized>=0.1.1,<0.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.25", "pytest-timeout>=2.3", "ruff>=0.11", "mypy>=1.15"]
+
+[project.urls]
+Source = "https://github.com/prized-dev/integrations/tree/main/stirrup"
+Issues = "https://github.com/prized-dev/integrations/issues"
+
+[tool.hatch.version]
+path = "src/stirrup_prized/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/stirrup_prized"]
+
+[tool.ruff]
+line-length = 120
+include = ["src/**/*.py", "tests/**/*.py", "examples/**/*.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["stirrup_prized"]
+known-third-party = ["stirrup"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+timeout = 120
+markers = ["live: talks to the real Prized API (needs PRIZED_API_KEY and PRIZED_LIVE=1)"]
