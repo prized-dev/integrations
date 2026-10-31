@@ -1,7 +1,7 @@
 /** The project going up and the agent's changes coming back: real git and tar, a temp directory for the sandbox. */
 import { execFileSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
@@ -310,17 +310,24 @@ describe('risks and capStat', () => {
     expect(found.join('\n')).not.toMatch(/plain\.txt|a\.txt/);
   });
 
-  it('flags retargeting an existing symlink and editing an existing executable', async () => {
+  it('flags retargeting a symlink and a file made executable, but not an executable edited in place', async () => {
     writeFileSync(path.join(host, 'tool.sh'), '#!/bin/sh\necho 1\n', { mode: 0o755 });
+    writeFileSync(path.join(host, 'plain.sh'), 'echo 1\n');
     execFileSync('ln', ['-s', 'a.txt', path.join(host, 'ptr')]);
     git(host, 'add', '-A');
-    git(host, 'commit', '-q', '-m', 'add an executable and a symlink');
+    git(host, 'commit', '-q', '-m', 'add an executable, a plain script and a symlink');
     await upload(sandbox, host, DIR);
     const dir = inSandbox(sb, DIR);
-    writeFileSync(path.join(dir, 'tool.sh'), '#!/bin/sh\necho 2\n', { mode: 0o755 });
+    writeFileSync(path.join(dir, 'tool.sh'), '#!/bin/sh\necho 2\n', { mode: 0o755 }); // already 100755 and stays so
+    writeFileSync(path.join(dir, 'plain.sh'), 'echo 2\n');
+    chmodSync(path.join(dir, 'plain.sh'), 0o755); // 100644 -> 100755
     rmSync(path.join(dir, 'ptr'));
     execFileSync('ln', ['-s', '/etc/shadow', path.join(dir, 'ptr')]);
-    expect(risks(await filesOf())).toEqual(expect.arrayContaining(['an executable: tool.sh', 'a symlink: ptr']));
+    const files = await filesOf();
+    expect(files.find((f) => f.path === 'tool.sh')).toMatchObject({ oldMode: '100755', newMode: '100755' });
+    const found = risks(files);
+    expect(found).toEqual(expect.arrayContaining(['made executable: plain.sh', 'a symlink: ptr']));
+    expect(found.join('\n')).not.toContain('tool.sh');
   });
 
   it('does not flag a deleted hook, and finds nothing in an ordinary change', async () => {

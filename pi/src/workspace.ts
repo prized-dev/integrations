@@ -305,15 +305,17 @@ const runsByItself = (file: string): boolean => {
 };
 
 /**
- * What in the changes deserves a second look before it lands in your checkout: a symlink, an executable
- * file, or a file your tools run by themselves, at any depth. The changes are what the agent wrote after
+ * What in the changes deserves a second look before it lands in your checkout: a symlink, a new or newly
+ * executable file, or a file your tools run by themselves, at any depth. The changes are what the agent wrote after
  * reading your code, so look at them as you would a pull request from someone else.
  */
 export function risks(files: ChangedFile[]): string[] {
   const found: string[] = [];
   for (const f of files) {
     if (f.newMode === '120000') found.push(`a symlink: ${f.path}`);
-    else if (f.newMode === '100755') found.push(`an executable: ${f.path}`);
+    // A file that was already executable and stays so (a script edited in place, or a source file that is mode 755
+    // upstream) is not news; a new executable, or a file made executable, is.
+    else if (f.newMode === '100755' && f.oldMode !== '100755') found.push(`${f.oldMode === '000000' ? 'an executable' : 'made executable'}: ${f.path}`);
     if (f.newMode !== '000000' && runsByItself(f.path)) found.push(`a file your tools run on their own: ${f.path}`);
   }
   return found;
