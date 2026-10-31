@@ -8,6 +8,8 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "23 9 * * 1" # Mondays: a new framework release that breaks an integration shows up in a quiet week
 
 permissions:
   contents: read

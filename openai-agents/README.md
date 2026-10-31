@@ -134,4 +134,8 @@ PRIZED_API_KEY=dcp_... uv run python scripts/live_agent.py         # a coding ag
 
 The offline tests include the SDK's own sandbox lifecycle scenario and the `Runner` checks from its [provider guide](https://github.com/openai/openai-agents-python/blob/main/docs/sandbox/custom-providers.md): runner-owned and application-owned sessions, resume from saved `RunState`, and cleanup after a tool error, a timeout, a cancellation and a failed start. [FAILURES.md](https://github.com/prized-dev/integrations/blob/main/openai-agents/FAILURES.md) maps every failure case to its test.
 
+## Support
+
+Prized maintains this package. Report a problem in [prized-dev/integrations issues](https://github.com/prized-dev/integrations/issues) with `openai-agents` in the title, or email team@prized.dev. CI runs the offline tests on every change and every Monday, against the oldest and the newest `openai-agents` this package allows. [COMPATIBILITY.md](https://github.com/prized-dev/integrations/blob/main/openai-agents/COMPATIBILITY.md) has the latest run against the real Agents SDK and Prized API.
+
 Apache-2.0.
