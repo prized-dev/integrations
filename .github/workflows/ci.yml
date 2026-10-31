@@ -76,4 +76,4 @@ jobs:
           persist-credentials: false
       - run: >-
           shellcheck scripts/test.sh claude-managed-agents/on-work.sh claude-managed-agents/test/test.sh
-          cursor/spawn.sh cursor/test/test.sh cursor/test/stub-agent cursor/test/sandbox-bin/curl
+          cursor/spawn.sh cursor/reap.sh cursor/test/test.sh cursor/test/stub-agent cursor/test/sandbox-bin/curl

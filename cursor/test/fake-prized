@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""A stand-in for the `prized` CLI, for test.sh: just the `prized sandbox` commands spawn.sh uses.
+"""A stand-in for the `prized` CLI, for test.sh: just the `prized sandbox` commands spawn.sh and reap.sh use.
 
 Each "sandbox" is a directory under $FAKE_PRIZED_ROOT whose home/ plays /home/prized. Commands run
 there with a clean environment, as they would in a real sandbox: nothing from this machine's
-environment gets in (except STUB_* settings for the stub worker). Every call is logged to calls.log.
+environment gets in (except STUB_* settings for the stub worker). Every process a sandbox runs carries
+FAKE_SANDBOX=<its directory> in its environment, so a pause can freeze them all (SIGSTOP) and a resume
+or a command carry them on (SIGCONT), the way a real pause keeps memory and processes. Every call is
+logged to calls.log. FAKE_QUOTA caps the sandboxes not deleted, as a workspace's disk quota does.
 """
 
 import json
@@ -12,6 +15,7 @@ import signal
 import subprocess
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(os.environ["FAKE_PRIZED_ROOT"])
@@ -23,6 +27,10 @@ def log(argv):
         f.write(json.dumps({"t": time.time(), "argv": argv}) + "\n")
 
 
+def now():
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")  # the API's form, with a fraction
+
+
 def meta_path(sid):
     return ROOT / sid / "meta.json"
 
@@ -30,8 +38,8 @@ def meta_path(sid):
 def load(sid):
     p = meta_path(sid)
     if not p.exists():
-        print(f"prized: sandbox {sid} not found", file=sys.stderr)
-        sys.exit(1)
+        print(f"prized: no sandbox {sid} in this workspace", file=sys.stderr)
+        sys.exit(5)
     return json.loads(p.read_text())
 
 
@@ -71,29 +79,40 @@ def seconds(d):
     return float(d[:-1]) * units[d[-1]] if d[-1] in units else float(d)
 
 
-def worker_groups(sid):
-    """Process groups of the workers alive in a sandbox, from their pid files."""
-    groups = []
-    for p in home(sid).glob(".cursor-worker/pid"):
+def sandbox_pids(sid):
+    """Every process the sandbox runs, found by the FAKE_SANDBOX marker in its environment."""
+    mark = f"FAKE_SANDBOX={ROOT / sid}".encode()
+    pids = []
+    for p in Path("/proc").glob("[0-9]*"):
         try:
-            g = int(p.read_text().strip())
-            os.killpg(g, 0)
-            groups.append(g)
-        except (ValueError, OSError):
+            if mark in p.joinpath("environ").read_bytes().split(b"\0"):
+                pids.append(int(p.name))
+        except OSError:
             pass
-    return groups
+    return pids
+
+
+def signal_all(pids, sig):
+    for pid in pids:
+        try:
+            os.kill(pid, sig)
+        except OSError:
+            pass
+
+
+def doc(m):
+    keys = ("id", "state", "labels", "createdAt", "lastActiveAt")
+    return {k: m.get(k) for k in keys} | {"autoDeleteMin": m.get("autoDeleteMin")}
 
 
 def wake(m):
+    """A command or file request to a paused sandbox resumes it first, as the real edge does."""
     if m["state"] in ("paused", "pausing"):
-        for g in m.pop("frozen", []):  # a paused sandbox's processes carry on where they stopped
-            try:
-                os.killpg(g, signal.SIGCONT)
-            except OSError:
-                pass
+        signal_all(m.pop("frozen", []), signal.SIGCONT)
         m["state"] = "running"
         m["resumes"] = m.get("resumes", 0) + 1
-        save(m)
+    m["lastActiveAt"] = now()
+    save(m)
 
 
 def remote_path(sid, p):
@@ -110,18 +129,27 @@ def main():
     f, rest = flags(args)
 
     if verb == "ls":
+        want = dict(kv.split("=", 1) for kv in f.get("label", []))
         boxes = []
         for p in sorted(ROOT.glob("sbx_*/meta.json")):
             m = json.loads(p.read_text())
-            if m["state"] != "deleted":
-                boxes.append({"id": m["id"], "state": m["state"], "labels": m["labels"]})
-        print(json.dumps({"sandboxes": list(reversed(boxes))}))
+            if m["state"] != "deleted" and all(m["labels"].get(k) == v for k, v in want.items()):
+                boxes.append(doc(m))
+        print(json.dumps({"sandboxes": list(reversed(boxes)), "ok": True}))  # newest first
     elif verb == "create":
+        quota = os.environ.get("FAKE_QUOTA")
+        live = [p for p in ROOT.glob("sbx_*/meta.json") if json.loads(p.read_text())["state"] != "deleted"]
+        if quota and len(live) >= int(quota):
+            print("prized: that would pass this workspace's disk limit of 500 GB", file=sys.stderr)
+            print("  ↳ delete a sandbox first (a paused sandbox keeps its disk)", file=sys.stderr)
+            sys.exit(6)
         n = len(list(ROOT.glob("sbx_*"))) + 1
         sid = f"sbx_{n:016x}"
         (home(sid) / "work").mkdir(parents=True)
         labels = dict(kv.split("=", 1) for kv in f.get("label", []))
-        save({"id": sid, "state": "running", "labels": labels, "flags": f})
+        ad = f.get("auto-delete")
+        save({"id": sid, "state": "running", "labels": labels, "flags": f, "createdAt": now(), "lastActiveAt": now(),
+              "autoDeleteMin": int(seconds(ad) // 60) if ad and ad != "off" else None})
         print(sid)
     elif verb == "resume":
         m = load(rest[0])
@@ -129,16 +157,12 @@ def main():
             print(f"prized: sandbox {m['id']} can't be resumed (test)", file=sys.stderr)
             sys.exit(5)
         wake(m)
-        m["state"] = "running"
-        save(m)
     elif verb == "pause":
         time.sleep(float(os.environ.get("FAKE_PAUSE_DELAY", "0")))  # a real pause can take seconds
         m = load(rest[0])
-        groups = worker_groups(m["id"])  # a pause freezes everything in the sandbox, workers too
-        for g in groups:
-            os.killpg(g, signal.SIGSTOP)
-        m["frozen"] = m.get("frozen", []) + groups
-        m["froze_live_workers"] = m.get("froze_live_workers", 0) + len(groups)
+        pids = sandbox_pids(m["id"])  # a pause freezes everything in the sandbox: workers, servers
+        signal_all(pids, signal.SIGSTOP)
+        m["frozen"] = sorted(set(m.get("frozen", []) + pids))
         m["state"] = "paused"
         m["pauses"] = m.get("pauses", 0) + 1
         save(m)
@@ -147,11 +171,15 @@ def main():
         if m["state"] == "deleted":
             print(f"prized: no sandbox {m['id']} in this workspace", file=sys.stderr)
             sys.exit(5)
-        print(json.dumps({"sandbox": {"id": m["id"], "state": m["state"], "labels": m["labels"]}}))
+        print(json.dumps({"sandbox": doc(m), "ok": True}))
     elif verb == "rm":
         for sid in rest:
             m = load(sid)
+            pids = sandbox_pids(sid)  # deleting stops everything in it for good
+            signal_all(pids, signal.SIGKILL)
+            signal_all(pids, signal.SIGCONT)
             m["state"] = "deleted"
+            m.pop("frozen", None)
             save(m)
     elif verb == "cp":
         src, dst = rest
@@ -184,7 +212,8 @@ def main():
                 print("prized: sandbox edge unavailable (test)", file=sys.stderr)
                 sys.exit(1)
         wake(m)
-        env = {"HOME": str(home(sid)), "PATH": f"{HERE}/sandbox-bin:/usr/local/bin:/usr/bin:/bin", "LANG": "C.UTF-8"}
+        env = {"HOME": str(home(sid)), "PATH": f"{HERE}/sandbox-bin:/usr/local/bin:/usr/bin:/bin", "LANG": "C.UTF-8",
+               "FAKE_SANDBOX": str(ROOT / sid)}
         env.update({k: v for k, v in os.environ.items() if k.startswith("STUB_")})
         env.update(kv.split("=", 1) for kv in f.get("env", []))
         timeout = seconds(f.get("timeout", "5m"))

@@ -1,11 +1,29 @@
 #!/usr/bin/env bash
 # Stands in for Cursor's `agent` CLI inside a fake sandbox: records how the worker was started, then
 # "serves" for STUB_RUN seconds and exits with STUB_EXIT, as a worker does after its idle window.
+# With STUB_DEVSERVER=1 it also leaves what an agent's session leaves behind: a file in the workspace
+# and a server that outlives the worker, counting in memory (~/work/devserver.state: "pid count").
 if [ "${1:-}" = --version ]; then echo 2026.10.22-stub; exit 0; fi
 printf '%s\n' "$@" > ~/.cursor-worker/argv
 { echo "CURSOR_AGENT_WORKER_ID=${CURSOR_AGENT_WORKER_ID:-}"; echo "CURSOR_WORKER_NAME=${CURSOR_WORKER_NAME:-}"
   echo "CURSOR_API_KEY=${CURSOR_API_KEY:+set}"; echo "PWD=$PWD"; } > ~/.cursor-worker/seen-env
 stat -c %a ~/.cursor-worker/token > ~/.cursor-worker/token-mode
+sha256sum < ~/.cursor-worker/token | cut -d' ' -f1 >> ~/.cursor-worker/token-seen  # one line per start
+if [ "${STUB_DEVSERVER:-}" = 1 ]; then
+  echo "written by start $(wc -l < ~/.cursor-worker/token-seen)" >> ~/work/notes.txt
+  pid=$(cut -d' ' -f1 ~/work/devserver.state 2>/dev/null)
+  if [ -z "$pid" ] || ! kill -0 "$pid" 2>/dev/null; then
+    setsid -f python3 -c '
+import os, time
+state, n = os.path.expanduser("~/work/devserver.state"), 0
+while True:
+    n += 1
+    with open(state + ".tmp", "w") as f:
+        f.write(f"{os.getpid()} {n}\n")
+    os.replace(state + ".tmp", state)
+    time.sleep(0.05)' < /dev/null > /dev/null 2>&1
+  fi
+fi
 echo "Worker is now running"
 sleep "${STUB_RUN:-1}"
 exit "${STUB_EXIT:-0}"
