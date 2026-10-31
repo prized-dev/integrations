@@ -105,15 +105,25 @@ check "the wake's token is never on a command line or in a log" '! grep -rq "$TO
 wait_log "paused $SBX" 2
 check "paused again when the worker releases again" '[ "$(state)" = paused ] && [ "$(meta .pauses)" = 2 ] && [ "$(proc_state "$DEVPID")" = T ]'
 
-echo "# a wake while the worker still serves (a repeat): no second worker"
-run repeat STUB_RUN=3
+echo "# a wake while the old worker is still there (exiting, or cut off): it is replaced, never doubled"
+run repeat STUB_RUN=4
 wait_log "worker started"
-wake repeat STUB_RUN=3
-wait_log "token replaced"
-check "one worker start, the token replaced for its reconnect" '[ "$(wc -l < "$H/.cursor-worker/token-seen")" = 1 ] && [ "$(cat "$H/.cursor-worker/token")" = "$TOKEN2" ]'
+wait_for '[ -s "$H/.cursor-worker/pid" ]' || true
+OLDPID=$(cat "$H/.cursor-worker/pid")
+wake repeat STUB_RUN=2
+wait_log "worker started" 2
+check "the old worker stopped, one new one started with the wake's token" 'grep -q "stopped the worker still there" "$C/cursor-workers/$ID.log" && ! kill -0 "$OLDPID" 2>/dev/null && [ "$(wc -l < "$H/.cursor-worker/token-seen")" = 2 ] && [ "$(tail -1 "$H/.cursor-worker/token-seen")" = "$(sha "$TOKEN2")" ]'
 wait_log "paused $SBX"
-sleep 1
-check "paused once, by one watcher" '[ "$(state)" = paused ] && [ "$(meta .pauses)" = 1 ] && [ "$(meta ".resumes // 0")" = 0 ]'
+sleep 1.5
+check "paused once, by the new start's watcher; the old one stood down" '[ "$(state)" = paused ] && [ "$(meta .pauses)" = 1 ] && [ "$(meta ".resumes // 0")" = 0 ] && grep -q "a newer start of the worker watches" "$C/cursor-workers/$ID.log"'
+
+echo "# a watcher that finds its sandbox paused (polls stopped 5 minutes) leaves it for a wake"
+run autopaused STUB_RUN=20 PRIZED_CURSOR_POLL=0.5
+wait_log "worker started"
+FAKE_PRIZED_ROOT=$C/root prized sandbox pause "$SBX"
+wait_log "a wake resumes it"
+check "not resumed by the watcher's poll" '[ "$(state)" = paused ] && [ "$(meta ".resumes // 0")" = 0 ]'
+kill_sandboxes
 
 echo "# a wake with nothing kept starts a fresh sandbox under the claimed id"
 wake nothing STUB_RUN=0
@@ -134,7 +144,30 @@ wake stuck STUB_RUN=0
 wait_log "worker started" 2
 check "one that won't resume is left paused, and a fresh one started" '[ "$(state)" = paused ] && [ "$(sbx_count)" = 2 ] && grep -q "could not resume" "$C/cursor-workers/$ID.log"'
 
-echo "# a wake waits for the lock a watcher holds, and breaks one left 10 minutes ago"
+echo "# a wake that can't tell what it has leaves it alone: never a second worker beside a live one"
+run blind STUB_RUN=0
+wait_log "paused $SBX"
+wake blind STUB_RUN=0 FAKE_LS_FAIL=1
+wait_log "leaving it"
+check "the list failing: no fresh sandbox, the paused one untouched" '[ "$(sbx_count)" = 1 ] && [ "$(state)" = paused ] && grep -q "can.t list" "$C/cursor-workers/$ID.log"'
+run degraded STUB_RUN=0
+wait_log "paused $SBX"
+jq '.state = "error" | .errorReason = "runtime_degraded: not answering"' "$C/root/$SBX/meta.json" > "$T/m" && mv "$T/m" "$C/root/$SBX/meta.json"
+wake degraded STUB_RUN=0
+wait_log "leaving it"
+check "one that may come back (runtime_degraded): kept, no fresh sandbox" '[ "$(sbx_count)" = 1 ] && [ "$(state)" = error ]'
+
+echo "# a woken worker that fails keeps the workspace; so does one that failed after serving"
+run wokefail STUB_RUN=0
+wait_log "paused $SBX"
+wake wokefail STUB_RUN=0 STUB_EXIT=1
+wait_log "paused $SBX" 2
+check "paused, not deleted" '[ "$(state)" = paused ] && grep -q "worker exited (1)" "$C/cursor-workers/$ID.log"'
+run latefail STUB_RUN=2 STUB_EXIT=1 PRIZED_CURSOR_FAIL_GRACE=1
+wait_log "paused $SBX"
+check "a new sandbox whose worker failed past the grace period: paused" '[ "$(state)" = paused ]'
+
+echo "# a wake waits for the lock a watcher holds, and breaks one left 15 minutes ago"
 run locked STUB_RUN=0
 wait_log "paused $SBX"
 mkdir "$C/cursor-workers/$ID.lock"
@@ -146,7 +179,7 @@ wait_log "worker started" 2
 check "resumed once it is free" '[ "$(meta .resumes)" -ge 1 ]'
 run stale STUB_RUN=0
 wait_log "paused $SBX"
-mkdir "$C/cursor-workers/$ID.lock" && touch -d '-11 minutes' "$C/cursor-workers/$ID.lock"
+mkdir "$C/cursor-workers/$ID.lock" && touch -d '-16 minutes' "$C/cursor-workers/$ID.lock"
 wake stale STUB_RUN=0
 wait_log "worker started" 2
 check "a stale lock is broken" '[ "$(meta .resumes)" -ge 1 ]'
@@ -166,6 +199,21 @@ run room2 STUB_RUN=0 CURSOR_AGENT_WORKER_ID=w-blocked FAKE_QUOTA=1
 sleep 1.5
 check "a running worker is never deleted for room: the new create fails" '[ "$(state)" = running ] && [ "$(sbx_count)" = 1 ] && grep -q "disk limit" "$C/cursor-workers/w-blocked.log"'
 pkill -f "$SPAWN" || true
+kill_sandboxes
+run room3 STUB_RUN=0 CURSOR_AGENT_WORKER_ID=w-paused
+wait_log "paused"
+run room3 STUB_RUN=0 CURSOR_AGENT_WORKER_ID=w-capped FAKE_QUOTA=1 FAKE_QUOTA_REASON=sandbox_limit
+sleep 1.5
+check "the running-sandbox limit (which paused ones don't count toward): nothing deleted" '[ "$(state)" = paused ] && [ ! -e "$C/root/deletes.log" ] && grep -q "sandbox limit" "$C/cursor-workers/w-capped.log"'
+run room4 STUB_RUN=0 CURSOR_AGENT_WORKER_ID=w-late
+wait_log "paused"
+run room4 STUB_RUN=0 CURSOR_AGENT_WORKER_ID=w-early
+wait_log "paused" 2
+jq '.lastActiveAt = "2026-10-31T10:00:00.900Z"' "$C/root/sbx_0000000000000001/meta.json" > "$T/m" && mv "$T/m" "$C/root/sbx_0000000000000001/meta.json"
+jq '.lastActiveAt = "2026-10-31T10:00:00.100Z"' "$C/root/sbx_0000000000000002/meta.json" > "$T/m" && mv "$T/m" "$C/root/sbx_0000000000000002/meta.json"
+run room4 STUB_RUN=3 CURSOR_AGENT_WORKER_ID=w-next FAKE_QUOTA=2 FAKE_DELETE_SECS=2
+wait_log "worker started" 3
+check "one worker deleted, the longest paused (to the fraction of a second), the create waiting till it was gone" '[ "$(wc -l < "$C/root/deletes.log")" = 1 ] && grep -qx sbx_0000000000000002 "$C/root/deletes.log" && [ "$(state sbx_0000000000000001)" = paused ] && [ "$(meta ".labels[\"cursor-worker\"]" sbx_0000000000000003)" = w-next ]'
 
 echo "# CURSOR_HIBERNATE=0: deleted on release, as before"
 run delete STUB_RUN=0 CURSOR_HIBERNATE=0
@@ -175,7 +223,7 @@ wake delete-wake STUB_RUN=0 CURSOR_HIBERNATE=0
 wait_log "worker started"
 check "a wake starts a fresh sandbox" '[ "$(sbx_count)" = 1 ]'
 
-echo "# a worker that fails is deleted"
+echo "# a new sandbox whose worker fails at once is deleted"
 run failing STUB_RUN=0 STUB_EXIT=3
 wait_log "deleted"
 check "deleted, exit code logged" '[ "$(state)" = deleted ] && grep -q "worker exited (3)" "$C/cursor-workers/$ID.log"'
@@ -241,6 +289,8 @@ run bad-hibernate CURSOR_HIBERNATE=yes; sleep 1; find_sbx
 check "CURSOR_HIBERNATE other than 0 or 1: refused" '[ "$CODE" != 0 ] && [ -z "$SBX" ]'
 run bad-ttl CURSOR_HIBERNATE_TTL=forever; sleep 1; find_sbx
 check "a TTL that isn't a duration: refused" '[ "$CODE" != 0 ] && [ -z "$SBX" ]'
+run long-ttl CURSOR_HIBERNATE_TTL=29d; sleep 1; find_sbx
+check "a TTL past Prized's 28 days: refused before anything is made" '[ "$CODE" != 0 ] && [ -z "$SBX" ] && grep -q "28d" "$C/out"'
 run odd-name STUB_RUN=0 'CURSOR_WORKER_NAME=$(touch pwned) name'
 wait_log "paused"
 check "a worker name is reduced to safe characters" 'grep -qx "CURSOR_WORKER_NAME=touchpwnedname" "$H/.cursor-worker/seen-env" && [ ! -e "$H/work/pwned" ] && [ ! -e "$H/pwned" ]'
@@ -269,9 +319,9 @@ mkdir "$C/logs/w6.lock"  # a wake for w6 is under way on this machine
 CODE=0; reap --older-than 3d --pool prized
 check "deletes paused and errored workers of the pool idle past the cutoff" '[ "$CODE" = 0 ] && [ "$(state "$P_OLD")" = deleted ] && [ "$(state "$E_OLD")" = deleted ] && grep -q "2 deleted" "$C/out"'
 check "keeps newer ones, running ones, other pools, a worker being woken, and sandboxes it didn't make" '[ "$(state "$P_NEW")" = paused ] && [ "$(state "$R_OLD")" = running ] && [ "$(state "$O_OLD")" = paused ] && [ "$(state "$L_OLD")" = paused ] && [ "$(state "$X_OLD")" = paused ] && grep -q "skipped $L_OLD" "$C/out"'
-rmdir "$C/logs/w6.lock"
+touch -d '-16 minutes' "$C/logs/w6.lock"  # now one left by a process that died
 CODE=0; reap --older-than 2d
-check "without --pool, every pool's (still never other sandboxes)" '[ "$(state "$O_OLD")" = deleted ] && [ "$(state "$L_OLD")" = deleted ] && [ "$(state "$X_OLD")" = paused ] && [ "$(state "$P_NEW")" = paused ]'
+check "without --pool, every pool's, a stale lock broken (still never other sandboxes)" '[ "$(state "$O_OLD")" = deleted ] && [ "$(state "$L_OLD")" = deleted ] && [ "$(state "$X_OLD")" = paused ] && [ "$(state "$P_NEW")" = paused ]'
 CODE=0; reap --older-than forever
 check "a cutoff that isn't a duration: refused" '[ "$CODE" = 2 ]'
 CODE=0; reap --pool prized
