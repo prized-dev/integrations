@@ -16,7 +16,22 @@ Options (`--ek key=value`): `docker` (`true` for [Docker mode](#docker-mode)), `
 
 ## Docker mode
 
-`--ek docker=true` runs each trial's task under Docker inside its sandbox, the way Harbor's own Docker provider runs it: the sandbox starts from the `prized-docker-v1` template (root `dockerd` at boot, its socket open to the sandbox user), Harbor's compose files and the task's `environment/` go to `~/harbor`, and `docker compose` builds the task's Dockerfile or pulls its `docker_image`, starts any sidecars from the task's `docker-compose.yaml`, and every command runs in the `main` service with `docker compose exec`. So Dockerfile-only tasks, compose tasks, real users (an `sshd` login, Postfix) and setuid programs work. For `allow_internet = false` every network of the project is made internal: services still reach each other by name, and none of them reaches the internet (a task whose compose file uses `network_mode: host` or an external network is refused). As on Harbor's Docker provider, the task's `cpus` and `memory_mb` cap the main service; the sandbox gets 512 MB of memory on top for the daemons. Files go in and out of the main service as root tar streams, so they keep their modes and uploads are owned by root.
+Docker mode needs the `prized-docker-v1` sandbox template, which is public from November 9, 2026. Until your workspace has it, a Docker-mode start fails with a message that says so, and you can run Docker and Compose tasks with Harbor's own `-e docker` on a [Prized box](https://prized.dev/docs?via=harbor) (a cloud VM with Docker), the way we ran Terminal-Bench 4.0 ([results](#terminal-bench-40)):
+
+```bash
+prized box new tb --size max --storage standard --ttl 6h --wait   # Large: 16 vCPU, 64 GB
+prized ssh tb
+# on the box:
+curl -LsSf https://astral.sh/uv/install.sh | sh && . ~/.local/bin/env
+uv tool install harbor
+harbor run -d terminal-bench/terminal-bench@4.0.0 -a oracle -e docker -n 4
+# back on your machine, once the run is done:
+prized box delete tb -y
+```
+
+Keep `-n` low on one box: every trial pulls its images onto the same disk. One job at `-n 4` started all its 35 tasks; two jobs at once (up to 14 trials) pushed a start past Harbor's start timeout.
+
+From November 9, `--ek docker=true` runs each trial's task under Docker inside its sandbox, the way Harbor's own Docker provider runs it: the sandbox starts from the `prized-docker-v1` template (root `dockerd` at boot, its socket open to the sandbox user), Harbor's compose files and the task's `environment/` go to `~/harbor`, and `docker compose` builds the task's Dockerfile or pulls its `docker_image`, starts any sidecars from the task's `docker-compose.yaml`, and every command runs in the `main` service with `docker compose exec`. So Dockerfile-only tasks, compose tasks, real users (an `sshd` login, Postfix) and setuid programs work. For `allow_internet = false` every network of the project is made internal: services still reach each other by name, and none of them reaches the internet (a task whose compose file uses `network_mode: host` or an external network is refused). As on Harbor's Docker provider, the task's `cpus` and `memory_mb` cap the main service; the sandbox gets 512 MB of memory on top for the daemons. Files go in and out of the main service as root tar streams, so they keep their modes and uploads are owned by root.
 
 ```bash
 harbor run -d terminal-bench/terminal-bench-2-1 -a oracle -e harbor_prized:PrizedEnvironment --ek docker=true -n 4
@@ -36,6 +51,17 @@ Terminal-Bench 2.1, all 89 tasks, oracle agent, no retries, `-n 6`, October 30, 
 | torch-tensor-parallelism | gloo's teardown deadlocks on fewer than 4 vCPUs (the task asks for 1); it passes with `--ek min_vcpu=4` |
 
 0.1.0 passed 70 of 89: ten tasks failed on `chown`, `dpkg` or `sudo`, and three on commands longer than about 15 minutes.
+
+### Terminal-Bench 4.0
+
+Terminal-Bench 4.0 (Hub `terminal-bench/terminal-bench@4.0.0`), oracle agent, October 31, 2026, run with Harbor 0.25.0's own `-e docker` on one Large Prized box (16 vCPU, 64 GB), the box route above: **62 of the 63 non-GPU tasks pass**, in about an hour of box time (about $0.75 at list price). The three GPU tasks need an H100 and were skipped.
+
+| Task | Why |
+|---|---|
+| cad-model | Fails: the reference solution's unpinned pip dependencies moved (`ModuleNotFoundError: OCP.collections`) |
+| shadow-relay, live-database-cutover, lake-temp-glm | Passed when rerun alone, after failing while two jobs ran up to 14 trials at once: a start timeout during image pulls, a 25 ms latency budget, and Harbor's egress-control probe failing under load (Harbor then refuses the no-network verifier for the rest of the job) |
+
+Every task on the Hub ships prebuilt, digest-pinned images for its environment and its verifier. 11 of the 66 use Docker Compose, so they need Docker mode or the box route; the other 52 non-GPU tasks are single images, and 2 of those give the verifier no network, which only Docker mode can enforce.
 
 ## Limits
 

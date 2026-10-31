@@ -339,6 +339,38 @@ async def test_a_daemon_that_never_answers_fails_the_start_and_deletes(
     assert sandbox.deleted
 
 
+@pytest.mark.parametrize("code", ["template_not_found", "template_inactive"])
+async def test_a_workspace_without_the_docker_template_is_told_what_to_do(
+    tmp_path, monkeypatch, code
+):
+    environment = _environment(tmp_path, docker_image="ubuntu:24.04")
+    attempts = []
+
+    async def create(template, **kwargs):
+        attempts.append(template)
+        raise PrizedError(code, status=404)
+
+    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
+    with pytest.raises(RuntimeError, match="`-e docker` on a Prized box"):
+        await environment.start(force_build=False)
+    assert attempts == ["prized-docker-v1"]  # not retried
+
+
+async def test_without_docker_mode_a_missing_template_is_the_sdk_error(
+    tmp_path, monkeypatch
+):
+    environment = _environment(
+        tmp_path, docker_image="ubuntu:24.04", ek={"template": "no-such-template"}
+    )
+
+    async def create(template, **kwargs):
+        raise PrizedError("template_not_found", status=404)
+
+    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
+    with pytest.raises(PrizedError, match="template_not_found"):
+        await environment.start(force_build=False)
+
+
 async def test_a_hung_docker_info_is_asked_again(tmp_path, monkeypatch):
     environment = _environment(tmp_path, docker_image="ubuntu:24.04")
     sandbox = _Sandbox()

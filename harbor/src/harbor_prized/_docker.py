@@ -7,7 +7,7 @@ the way Harbor's Docker provider runs it, with ``docker compose`` inside the
 sandbox: the task's Dockerfile is built there (or its ``docker_image`` pulled),
 a task's ``docker-compose.yaml`` brings up its sidecars, every command runs in
 the ``main`` service with ``docker compose exec``, and files move through
-``docker compose cp``. Real users, setuid programs, ``--network none`` for
+``docker compose cp``. Real users, setuid programs, internal networks for
 no-network tasks and per-container resource limits all come from Docker.
 
 Topology::
