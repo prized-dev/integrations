@@ -248,3 +248,12 @@ async def test_delete_finishes_when_cancelled(world, monkeypatch):
     with pytest.raises(asyncio.CancelledError):
         await task
     assert remote.state == "deleted"
+
+
+async def test_sandbox_kwargs_template_is_used_like_e2b(world):
+    async with PrizedCodeExecToolProvider(sandbox_kwargs={"template": "prized-agent-v1"}):
+        assert world.only().create_kwargs["template"] == "prized-agent-v1"
+    async with PrizedCodeExecToolProvider(template="prized-base-v1", sandbox_kwargs={"template": "prized-agent-v1"}):
+        assert world.remotes[list(world.remotes)[-1]].create_kwargs["template"] == "prized-base-v1"
+    with pytest.raises(UnsupportedOptionError):
+        PrizedCodeExecToolProvider(sandbox_kwargs={"template": "prized-docker-v1"})

@@ -84,6 +84,12 @@ async def test_a_command_past_its_timeout(provider):
         (PrizedError("timeout"), "timeout"),
         (PrizedError("bad_env", status=400), "invalid_argument"),
         (PrizedError("spawn_failed", status=400), "invalid_argument"),
+        # A detached start that failed (a full disk), a run whose files a command removed,
+        # anything unknown: the sandbox still stands, so the model hears about it.
+        (PrizedError("command_failed", "Could not start the background command"), "sandbox_error"),
+        (PrizedError("not_found", "No background command x in this sandbox."), "sandbox_error"),
+        (PrizedError("http_error", status=418), "sandbox_error"),
+        (PrizedError("permission_denied", status=403), "sandbox_error"),
     ],
 )
 async def test_errors_the_model_can_work_around(provider, world, error, kind):
@@ -101,7 +107,8 @@ async def test_errors_the_model_can_work_around(provider, world, error, kind):
         PrizedError("sandbox_deleted"),
         PrizedError("unauthorized", status=401),
         PrizedError("insufficient_balance", status=402),
-        PrizedError("http_error", status=418),
+        PrizedError("sandbox_quota_exceeded", status=429),
+        PrizedError("workspace_held", status=403),
     ],
 )
 async def test_errors_that_end_the_run_are_raised(provider, world, error):
@@ -175,3 +182,26 @@ async def test_the_code_exec_tool(world):
         assert last_exec(world)["timeout"] == 300  # Stirrup's SHELL_TIMEOUT
     finally:
         await provider.__aexit__(None, None, None)
+
+
+async def test_the_wrapper_keeps_exit_codes_and_line_numbers(provider, world):
+    result = await provider.run_command("echo $LINENO\necho $LINENO")
+    assert result.stdout == "1\n2\n"
+    result = await provider.run_command("echo ok\nif then")
+    assert "line 2" in result.stderr
+    # The working directory can't come back (its parent is read-only): still the command's own code.
+    home = world.only().local("/home/prized")
+    try:
+        result = await provider.run_command("set -e; cd /home/prized; rm -rf work; chmod 555 /home/prized; exit 7")
+        assert result.exit_code == 7
+    finally:
+        os.chmod(home, 0o755)
+        os.makedirs(home + "/work", exist_ok=True)
+
+
+async def test_quotes_count_toward_the_staging_limit(provider, world):
+    cmd = "echo " + "''" * 12_000 + "x"  # 24 KB as typed, 120 KB once quoted for the SDK's detached start
+    assert len(cmd) < 32 * 1024 < 96 * 1024 < len(shlex.quote(cmd))
+    result = await provider.run_command(cmd)
+    assert result.stdout == "x\n"
+    assert "bash -- /home/prized/.stirrup-prized/cmd-" in last_exec(world)["cmd"]

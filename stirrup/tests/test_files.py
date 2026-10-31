@@ -116,6 +116,21 @@ async def test_a_write_outside_the_home_that_fails(provider, remote):
     assert staged_files(remote) == []
 
 
+async def test_a_write_outside_the_home_onto_a_directory_fails(provider, remote):
+    os.makedirs(remote.local("/srv/out"))
+    with pytest.raises(OSError, match="Could not write"):
+        await provider.write_file_bytes("/srv/out", b"x")
+    assert os.listdir(remote.local("/srv/out")) == [], "nothing was copied into the directory"
+    assert staged_files(remote) == []
+
+
+async def test_a_staged_write_is_removed_when_the_copy_call_fails(provider, remote, world):
+    world.fail("exec", PrizedError("sandbox_unreachable", status=502))
+    with pytest.raises(PrizedError):
+        await provider.write_file_bytes("/srv/new.txt", b"x")
+    assert staged_files(remote) == []
+
+
 async def test_other_file_errors_are_raised(provider, world):
     world.fail("read", PrizedError("file_too_large", status=413))
     with pytest.raises(PrizedError, match="file_too_large"):
@@ -252,6 +267,18 @@ async def test_view_image(provider, remote):
         await provider.view_image("broken.png")
     with pytest.raises(FileNotFoundError):
         await provider.view_image("missing.png")
+
+
+async def test_view_image_when_the_image_check_raises_oserror(provider, remote, monkeypatch):
+    # Stirrup's ImageContentBlock opens the image with PIL inside a validator: a truncated
+    # PNG raises OSError there, which pydantic passes through unwrapped.
+    def truncated(**_):
+        raise OSError("image file is truncated")
+
+    put(remote, "/home/prized/work/cut.png", png_bytes()[:20])
+    monkeypatch.setattr("stirrup_prized._provider.ImageContentBlock", truncated)
+    with pytest.raises(ValueError, match="corrupt"):
+        await provider.view_image("cut.png")
 
 
 async def test_view_image_turns_sandbox_errors_into_value_errors(provider, world):

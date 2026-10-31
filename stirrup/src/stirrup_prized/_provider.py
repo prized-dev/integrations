@@ -33,7 +33,6 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 from prized import AsyncSandbox, CommandTimeoutError, ExecResult, PrizedError
-from pydantic import ValidationError
 from stirrup.constants import SANDBOX_REQUEST_TIMEOUT, SANDBOX_TIMEOUT
 from stirrup.core.models import ImageContentBlock, Tool, ToolUseCountMetadata
 from stirrup.tools.code_backends.base import (
@@ -62,9 +61,9 @@ _STATE_DIR = f"{HOME}/.stirrup-prized"
 _XFER_DIR = f"{_STATE_DIR}/xfer"
 # This backend's own short commands (stat, realpath, find, cp).
 _HELPER_TIMEOUT = 60
-# A command longer than this goes up as a script file first: one argument to bash -c
-# can't pass Linux's 128 KiB per-string limit, and quoting can grow it.
-_STAGE_COMMAND_BYTES = 64 * 1024
+# A command longer than this, quoted (as the SDK's detached start script embeds it), goes up
+# as a script file first: one argument to bash -c can't pass Linux's 128 KiB per-string limit.
+_STAGE_COMMAND_BYTES = 96 * 1024
 # How much of a timed-out command's output goes into the error the model sees.
 _TIMEOUT_TAIL_CHARS = 8_000
 # Exit codes of the helper scripts below.
@@ -73,10 +72,11 @@ _EXIT_NOT_FILE = 45
 
 # Every command first enters the working directory, made again if a command removed it,
 # and puts it back as it ends: sandboxes from some template builds stop answering once
-# /home/prized/work is gone.
+# /home/prized/work is gone. One line ahead of the command, so its line numbers stay its
+# own; the trap ends in `|| :` so it never changes the exit code, even under `set -e`.
 _ENTER = (
-    f"trap '[ -d {WORKDIR} ] || mkdir -p -- {WORKDIR} 2>/dev/null' EXIT\n"
-    f"{{ cd -- {WORKDIR} || {{ mkdir -p -- {WORKDIR} && cd -- {WORKDIR}; }}; }} 2>/dev/null\n"
+    f"trap '[ -d {WORKDIR} ] || mkdir -p -- {WORKDIR} 2>/dev/null || :' EXIT; "
+    f"{{ cd -- {WORKDIR} || {{ mkdir -p -- {WORKDIR} && cd -- {WORKDIR}; }}; }} 2>/dev/null; "
 )
 
 _NETWORK_OFF_MESSAGE = (
@@ -98,7 +98,9 @@ _DOCKER_TEMPLATE_MESSAGE = (
 
 # E2B's AsyncSandbox.create keywords and what they become here.
 _E2B_RENAMES = {"envs": "env_vars", "metadata": "labels"}
-# E2B keywords with no Prized meaning that change nothing about the run: dropped.
+# E2B keywords with no Prized meaning that change nothing about the run: dropped. (E2B's
+# constructor `timeout` always wins over sandbox_kwargs["timeout"]; "template" is read
+# before this, as E2B reads it when the constructor's is None.)
 _E2B_IGNORED = frozenset({"secure", "timeout", "template", "request_timeout"})
 # prized.AsyncSandbox.create keywords accepted as they are.
 _CREATE_KEYS = frozenset({"env_vars", "labels", "auto_pause_min", "auto_delete_min", "memory_mb", "idempotency_key"})
@@ -115,10 +117,31 @@ _DEFAULT_AUTO_DELETE_MIN = 60
 _INVALID_ARGUMENT_CODES = frozenset(
     {"bad_request", "missing_command", "cwd_not_absolute", "bad_env", "body_too_large", "spawn_failed"}
 )
-# Failures that leave the sandbox standing and may pass: shown to the model rather than
-# raised, because Stirrup's Agent ends the whole run on an exception from a tool.
+# Failures that may pass: the sandbox didn't answer.
 _TRANSIENT_CODES = frozenset(
     {"network_error", "sandbox_unreachable", "resolve_failed", "rate_limited", "bad_response", "sandbox_not_ready"}
+)
+# Failures no later command can get past: raised, which ends the agent's run. Everything
+# else comes back to the model as a CommandResult, because Stirrup's Agent ends the whole
+# run on any exception from a tool.
+_FATAL_CODES = frozenset(
+    {
+        "sandbox_deleted",
+        "sandbox_not_running",
+        "sandbox_quota_exceeded",
+        "unauthorized",
+        "token_expired",
+        "key_access_denied",
+        "missing_api_key",
+        "invalid_api_key",
+        "edge_unknown",
+        "unexpected_redirect",
+        "insufficient_balance",
+        "paid_balance_required",
+        "workspace_held",
+        "workspace_closing",
+        "sandboxes_disabled",
+    }
 )
 _ADVICE = {
     "timeout": (
@@ -132,6 +155,10 @@ _ADVICE = {
     "invalid_argument": (
         "Avoid NUL and other control bytes and nested 'bash -lc'; write long content with a quoted "
         "heredoc or a base64 string."
+    ),
+    "sandbox_error": (
+        "The sandbox couldn't start or follow the command; a full disk or a removed ~/.prized can "
+        "cause this. Check with `df -h` and try again."
     ),
     "command_timeout": (
         "Run long jobs in the background (nohup CMD > job.log 2>&1 &) and read the log in later "
@@ -196,13 +223,15 @@ def _timeout_result(err: CommandTimeoutError, timeout: int | float) -> CommandRe
 
 def _error_kind(err: PrizedError) -> str | None:
     """The CommandResult error_kind for a failed command call, or None to raise it."""
+    if err.code in _FATAL_CODES or (err.code == "not_found" and err.status == 404):
+        return None  # the sandbox is gone, or the key or the workspace can't run it
     if err.code == "timeout":
         return "timeout"
     if err.code in _INVALID_ARGUMENT_CODES:
         return "invalid_argument"
     if err.code in _TRANSIENT_CODES or (err.code == "http_error" and (err.status or 0) >= 500):
         return "sandbox_unreachable"
-    return None
+    return "sandbox_error"
 
 
 def _split_sandbox_kwargs(sandbox_kwargs: Mapping[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -302,6 +331,8 @@ class PrizedCodeExecToolProvider(CodeExecToolProvider):
                 so a long build doesn't hold one connection open.
         """
         super().__init__(allowed_commands=allowed_commands, shell_timeout=shell_timeout)
+        if template is None and sandbox_kwargs:
+            template = sandbox_kwargs.get("template")  # E2B uses it when the argument is None
         if image is not None:
             raise UnsupportedOptionError(_IMAGE_MESSAGE)
         if template == DOCKER_TEMPLATE:
@@ -460,7 +491,7 @@ class PrizedCodeExecToolProvider(CodeExecToolProvider):
         staged: str | None = None
         finished = False
         try:
-            if len(cmd.encode("utf-8", "surrogatepass")) > _STAGE_COMMAND_BYTES:
+            if len(shlex.quote(_ENTER + cmd).encode("utf-8", "surrogatepass")) > _STAGE_COMMAND_BYTES:
                 staged = f"{_STATE_DIR}/cmd-{uuid.uuid4().hex}.sh"
                 await sb.files.write(staged, cmd.encode("utf-8", "surrogatepass"))
                 q = shlex.quote(staged)
@@ -534,11 +565,11 @@ class PrizedCodeExecToolProvider(CodeExecToolProvider):
     async def _read_via_copy(self, sb: AsyncSandbox, target: str, path: str) -> bytes:
         staged = f"{_XFER_DIR}/{uuid.uuid4().hex}"
         src, dst = shlex.quote(target), shlex.quote(staged)
-        result = await self._sh(
-            f"if [ ! -e {src} ]; then exit {_EXIT_MISSING}; fi; if [ ! -f {src} ]; then exit {_EXIT_NOT_FILE}; fi; "
-            f"mkdir -p -- {shlex.quote(_XFER_DIR)} && cp -L -- {src} {dst}"
-        )
         try:
+            result = await self._sh(
+                f"if [ ! -e {src} ]; then exit {_EXIT_MISSING}; fi; if [ ! -f {src} ]; then exit {_EXIT_NOT_FILE}; fi; "
+                f"mkdir -p -- {shlex.quote(_XFER_DIR)} && cp -L -- {src} {dst}"
+            )
             if result.exit_code == _EXIT_MISSING:
                 raise FileNotFoundError(f"File not found: {path}")
             if result.exit_code == _EXIT_NOT_FILE:
@@ -563,11 +594,14 @@ class PrizedCodeExecToolProvider(CodeExecToolProvider):
                 if err.code not in ("symlink_not_allowed", "path_outside_root", "invalid_path"):
                     raise
         staged = f"{_XFER_DIR}/{uuid.uuid4().hex}"
-        await sb.files.write(staged, content)
         src, dst = shlex.quote(staged), shlex.quote(target)
-        result = await self._sh(
-            f'mkdir -p -- "$(dirname -- {dst})" && cp -- {src} {dst}; rc=$?; rm -f -- {src}; exit $rc'
-        )
+        try:
+            await sb.files.write(staged, content)
+            # -T: onto a directory, fail rather than copy into it under the staged name.
+            result = await self._sh(f'mkdir -p -- "$(dirname -- {dst})" && cp -T -- {src} {dst}')
+        finally:
+            with contextlib.suppress(Exception):
+                await sb.files.remove(staged)
         if result.exit_code != 0:
             raise OSError(f"Could not write {path}: {_detail(result)}")
 
@@ -710,5 +744,5 @@ class PrizedCodeExecToolProvider(CodeExecToolProvider):
             raise ValueError(f"Could not read `{path}` from the sandbox: {err}") from err
         try:
             return ImageContentBlock(data=file_bytes)
-        except ValidationError as err:
+        except Exception as err:  # pydantic's ValidationError, or OSError from Stirrup's PIL check
             raise ValueError("You submitted a corrupt/unsupported image file.") from err

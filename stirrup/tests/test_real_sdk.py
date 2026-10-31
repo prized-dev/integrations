@@ -100,7 +100,7 @@ async def test_a_short_command_is_one_blocking_call(started):
     assert (result.exit_code, result.stdout, result.error_kind) == (0, "hi\n", None)
     sent = api.execs()[-1]
     assert sent["timeout"] == 30 and sent["cwd"] == "/"
-    assert sent["command"].endswith("\necho hi")
+    assert sent["command"].endswith("2>/dev/null; echo hi")
 
 
 async def test_a_timeout_from_the_endpoint(started):
