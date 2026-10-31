@@ -310,7 +310,7 @@ describe('risks and capStat', () => {
     expect(found.join('\n')).not.toMatch(/plain\.txt|a\.txt/);
   });
 
-  it('flags retargeting a symlink and a file made executable, but not an executable edited in place', async () => {
+  it('flags retargeting a symlink, a file made executable and an executable edited in place, each with its own wording', async () => {
     writeFileSync(path.join(host, 'tool.sh'), '#!/bin/sh\necho 1\n', { mode: 0o755 });
     writeFileSync(path.join(host, 'plain.sh'), 'echo 1\n');
     execFileSync('ln', ['-s', 'a.txt', path.join(host, 'ptr')]);
@@ -318,7 +318,7 @@ describe('risks and capStat', () => {
     git(host, 'commit', '-q', '-m', 'add an executable, a plain script and a symlink');
     await upload(sandbox, host, DIR);
     const dir = inSandbox(sb, DIR);
-    writeFileSync(path.join(dir, 'tool.sh'), '#!/bin/sh\necho 2\n', { mode: 0o755 }); // already 100755 and stays so
+    writeFileSync(path.join(dir, 'tool.sh'), '#!/bin/sh\necho 2\n', { mode: 0o755 }); // already 100755 and stays so: an edit
     writeFileSync(path.join(dir, 'plain.sh'), 'echo 2\n');
     chmodSync(path.join(dir, 'plain.sh'), 0o755); // 100644 -> 100755
     rmSync(path.join(dir, 'ptr'));
@@ -326,8 +326,10 @@ describe('risks and capStat', () => {
     const files = await filesOf();
     expect(files.find((f) => f.path === 'tool.sh')).toMatchObject({ oldMode: '100755', newMode: '100755' });
     const found = risks(files);
-    expect(found).toEqual(expect.arrayContaining(['made executable: plain.sh', 'a symlink: ptr']));
-    expect(found.join('\n')).not.toContain('tool.sh');
+    expect(found).toEqual(
+      expect.arrayContaining(['made executable: plain.sh', 'a symlink: ptr', 'a change to an executable file: tool.sh (read the diff)']),
+    );
+    expect(found.filter((r) => r.includes('tool.sh'))).toEqual(['a change to an executable file: tool.sh (read the diff)']); // not also "an executable" or "made executable"
   });
 
   it('does not flag a deleted hook, and finds nothing in an ordinary change', async () => {
