@@ -137,7 +137,8 @@ export function createExtension(sdk: Sdk = { Sandbox }): (pi: ExtensionAPI) => v
         const ui = lastCtx?.ui;
         if (!ui) return;
         const text = a ? `prized: ${a.sandboxId.slice(0, 12)}${state ? ` ${state}` : ''} ${a.cwd}` : undefined;
-        ui.setStatus('prized', text === undefined ? undefined : ui.theme.fg('accent', text));
+        // RPC mode has no theme.
+        ui.setStatus('prized', text === undefined ? undefined : (ui.theme?.fg('accent', text) ?? text));
       } catch {
         // The context can be stale after a session switch; the status line is not worth an error.
       }
