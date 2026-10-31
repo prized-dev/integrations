@@ -50,6 +50,8 @@ jobs:
           - { dir: langchain-js, node: "24" }
           - { dir: mastra, node: "22", floor: true }
           - { dir: mastra, node: "24" }
+          - { dir: pi, node: "22", floor: true }
+          - { dir: pi, node: "24" }
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:

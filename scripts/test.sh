@@ -199,6 +199,19 @@ case $DIR in
     npm run typecheck
     npm run build
     offline npm test ;;
+  pi)
+    # Pi loads the TypeScript source, so there is no build. The tests drive Pi's real agent loop with a
+    # scripted model and a fake sandbox, and run the git, tar and shell commands the extension sends for
+    # real in temp directories. FLOOR=1 pins the oldest Pi it supports.
+    need_sdk node
+    cp -r "$ROOT/$DIR/." "$WORK/pkg"
+    cd "$WORK/pkg"
+    [ -z "${SDK_TGZ:-}" ] || npm pkg set "dependencies.@prized/sdk=file:$SDK_TGZ"
+    [ -z "$FLOOR" ] || npm pkg set "devDependencies.@earendil-works/pi-coding-agent=1.0.0" "devDependencies.@earendil-works/pi-ai=1.0.0"
+    npm install --no-audit --no-fund --no-package-lock --loglevel=error
+    npm ls --depth=0 @earendil-works/pi-coding-agent @prized/sdk || true
+    npm run typecheck
+    offline npm test ;;
   *)
     echo "scripts/test.sh doesn't know $DIR yet: add a case for it" >&2; exit 2 ;;
 esac

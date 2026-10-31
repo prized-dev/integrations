@@ -5,7 +5,7 @@
  * - Start: Pi opens at once. The sandbox starts with your first prompt, and your git working tree is
  *   uploaded (ignored files stay home).
  * - Work: bash, read, write and edit run in the sandbox. A turn's end pauses it, memory and running
- *   processes included, and the next tool call resumes it in about a second.
+ *   processes included, and the next tool call resumes it.
  * - Pull: `/prized pull` applies the sandbox's changes to your checkout.
  * - Resume and fork: `pi -c` finds the same sandbox again; `/fork` copies it, processes and all.
  * - Exit: a sandbox with nothing left to pull is deleted; one with changes is paused and kept.
