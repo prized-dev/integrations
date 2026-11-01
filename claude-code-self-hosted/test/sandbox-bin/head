@@ -1,0 +1,4 @@
+#!/bin/bash
+# Stub head in a fake sandbox: takes 3 s while ~/.slow-head exists (a pid read slower than the watch's 2 s timeout).
+[ -e ~/.slow-head ] && sleep 3
+exec /usr/bin/head "$@"

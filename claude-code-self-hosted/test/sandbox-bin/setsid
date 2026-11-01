@@ -1,0 +1,4 @@
+#!/bin/bash
+# Stub setsid in a fake sandbox: fails once if ~/.setsid-fail exists (consumed), else the real one.
+if [ -e ~/.setsid-fail ]; then mv ~/.setsid-fail ~/.setsid-failed; exit 1; fi
+exec /usr/bin/setsid "$@"

@@ -1,0 +1,12 @@
+#!/bin/bash
+# Stub curl inside a fake sandbox: `curl -fsSL https://claude.ai/install.sh` prints an installer that puts a stub
+# claude reporting the asked version into ~/.local/bin.
+case "$*" in
+  *claude.ai/install.sh*) cat <<'S'
+v=${1:-latest}; mkdir -p ~/.local/bin; echo "$v" > ~/.installed-version
+printf '#!/bin/bash\nSTUB_VIA=local exec %s "$@"\n' "$(command -v claude)" > ~/.local/bin/claude; chmod +x ~/.local/bin/claude
+echo "$v" > ~/.stub-version
+S
+  ;;
+  *) echo "stub curl: unexpected $*" >&2; exit 7 ;;
+esac

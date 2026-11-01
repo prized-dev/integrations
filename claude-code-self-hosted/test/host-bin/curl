@@ -1,0 +1,4 @@
+#!/bin/bash
+# Records each curl invocation's argv (fake key only in tests) so the test can check the key never reaches argv.
+printf '%s\n' "$*" >> "$ARGV_LOG"
+exec /usr/bin/curl "$@"

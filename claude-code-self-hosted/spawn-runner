@@ -1,0 +1,323 @@
+#!/usr/bin/env bash
+# Each Claude Code cloud session in a Prized sandbox of its own, or on the box of the person who started it.
+# https://prized.dev/docs/claude-code-self-hosted-runner?via=claude-code-self-hosted
+#   spawn-runner serve   starts the watch below, then Anthropic's orchestrator, which runs this file once per session
+#   spawn-runner         (from the orchestrator) creates the session's sandbox and starts its runner there; with
+#                        PRIZED_RUN_ON=own-box, wakes the box of the person who started the session and starts it there
+#   spawn-runner watch   deletes each sandbox once its runner has exited
+set -euo pipefail
+PERMANENT=; permanent() { printf '%s\n' "$*" >&2; PERMANENT=1; exit 2; }
+trap 'rc=$?; [ "$rc" -eq 0 ] || [ -n "${PERMANENT:-}" ] || exit 1' EXIT
+
+DIR=${PRIZED_CLAUDE_DIR:-$HOME/.config/claude-runner}
+API=${PRIZED_API_URL:-https://api.prized.dev/api/v1}
+RUN_ON=${PRIZED_RUN_ON:-sandbox}  # sandbox, or own-box
+TEMPLATE=${PRIZED_TEMPLATE:-prized-agent-v1} VCPU=${PRIZED_VCPU:-} MEMORY_GB=${PRIZED_MEMORY_GB:-}  # unset: the template's
+IDLE_MIN=${CLAUDE_IDLE_MIN:-30} MAX_MIN=${CLAUDE_MAX_MIN:-480}
+SLOTS=${CLAUDE_BOX_SLOTS:-2} SPAWN_SEC=${CLAUDE_SPAWN_SECONDS:-600}  # own-box: sessions at once on a box; time to wake it
+command -v curl > /dev/null && command -v jq > /dev/null || permanent "spawn-runner needs curl and jq on this machine"
+mins() { [[ $1 =~ ^0*([1-9][0-9]{0,4})$ ]] && [ "${BASH_REMATCH[1]}" -le 10080 ]; }  # 1 to 10080 minutes
+[[ $VCPU =~ ^[0-9]{0,3}$ && $MEMORY_GB =~ ^[0-9]{0,4}$ ]] && mins "$IDLE_MIN" && mins "$MAX_MIN" ||
+  permanent "PRIZED_VCPU and PRIZED_MEMORY_GB take whole numbers; CLAUDE_IDLE_MIN and CLAUDE_MAX_MIN 1 to 10080 minutes"
+[[ $RUN_ON =~ ^(sandbox|own-box)$ && $SLOTS =~ ^[1-8]$ && $SPAWN_SEC =~ ^[1-9][0-9]{2,3}$ ]] && [ "$SPAWN_SEC" -ge 120 ] &&
+  [ "$SPAWN_SEC" -le 3600 ] || permanent "PRIZED_RUN_ON is sandbox or own-box; CLAUDE_BOX_SLOTS 1 to 8; CLAUDE_SPAWN_SECONDS 120 to 3600"
+IDLE_MIN=$((10#$IDLE_MIN)) MAX_MIN=$((10#$MAX_MIN))
+VERSION=
+if [ -n "${CLAUDE_CODE_VERSION:-}" ]; then VERSION=$CLAUDE_CODE_VERSION
+  [[ $VERSION =~ ^([0-9]+\.[0-9]+\.[0-9]+|latest|stable)$ ]] || permanent "CLAUDE_CODE_VERSION: a version such as 2.1.312, or latest"
+elif [ "$RUN_ON" = sandbox ]; then VERSION=$(timeout 5 claude --version 2>/dev/null | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+' || true); fi  # the box's
+[ -s "$DIR/prized-api-key" ] || permanent "no Prized API key in $DIR/prized-api-key"
+AUTH="Authorization: Bearer $(tr -d '[:space:]' < "$DIR/prized-api-key")"
+DEADLINE='' RETRY=2 RESUME=true  # spawn sets DEADLINE so every call ends before the orchestrator's 60 s hook timeout
+api() {  # curl with the key off the command line
+  local t=15 left=45 r=$RETRY h=()
+  if [ -n "$DEADLINE" ]; then left=$((DEADLINE - SECONDS)); [ "$left" -gt 2 ] || { echo "out of time" >&2; return 28; }; [ "$left" -gt 15 ] || { t=$left r=0; }; fi
+  [ "$RESUME" = true ] || h=(-H "Prized-Auto-Resume: false")
+  curl -sS --max-time "$t" --retry "$r" --retry-max-time $((left - t)) "${h[@]}" -H @<(echo "$AUTH") "$@"
+}
+run_in() {  # run_in TOOLBOX COMMAND: run a command in the sandbox, print its stdout
+  local out; out=$(api -f -X POST "$1/process/execute" -H 'Content-Type: application/json' --data-raw "$(jq -nc --arg c "$2" '{command: $c, timeout: 10}')") ||
+    { echo "a command in the sandbox did not answer" >&2; return 1; }
+  [ "$(jq -r .exitCode <<<"$out")" = 0 ] || { echo "in the sandbox: $(jq -r .stderr <<<"$out" | tail -c 300)" >&2; return 1; }
+  jq -r .stdout <<<"$out"
+}
+why() { jq -r 'if (.error | type) == "object" then [.error.code, .error.message] else [.error, .reason, .field, .message] end
+  | map(select(. != null) | tostring) | join(": ")' <<<"$1" 2>/dev/null || true; }
+put() { api -f -o /dev/null -X POST "$1/files/upload?path=/home/prized/.claude-runner/$2" --data-binary "@$3" || { echo "uploading $2 failed" >&2; return 1; }; }
+
+spawn() {
+  local order=${CLAUDE_RUNNER_ORDER_ID:-} session=${CLAUDE_RUNNER_SESSION_ID:-} wo=${CLAUDE_RUNNER_WORK_ORDER_FILE:-}
+  local key out code toolbox flags runtime ends now margin home
+  DEADLINE=$((SECONDS + 40))
+  [[ $order =~ ^[A-Za-z0-9._-]{1,253}$ ]] || permanent "unexpected CLAUDE_RUNNER_ORDER_ID"
+  key=cc-$order; [ ${#key} -le 128 ] || key=cc-$(printf '%s' "$order" | sha256sum | cut -c1-64)
+  [ -s "$wo" ] && [ -r "$wo" ] || { echo "no work order in CLAUDE_RUNNER_WORK_ORDER_FILE" >&2; exit 1; }
+  home=
+  if [ -d "$DIR/sandbox-home" ]; then home=$(realpath "$DIR/sandbox-home")
+    case $(realpath "$DIR")/ in "$home"/*) permanent "sandbox-home must not hold $DIR, with its keys" ;; esac
+  fi
+  tmp=$(mktemp -d) made=
+  # On a failure or a kill, delete the sandbox this delivery made: the orchestrator offers the session again.
+  trap 'rc=$?; rm -rf "$tmp" || true; [ "$rc" -eq 0 ] || [ -z "$made" ] || curl -sS -o /dev/null --max-time 5 -X DELETE \
+    -H @<(echo "$AUTH") "$API/sandboxes/$made" || true; [ "$rc" -eq 0 ] || [ -n "${PERMANENT:-}" ] || exit 1' EXIT
+  trap 'exit 1' TERM INT HUP
+  # Its run time: the session's limit plus an hour, within what the workspace allows (60 minutes on the free tier).
+  code=$(api -o "$tmp/templates.json" -w '%{http_code}' "$API/sandbox-templates")
+  case $code in 200) ;; 401|403) permanent "Prized refused the API key ($code): $(why "$(cat "$tmp/templates.json")")" ;;
+    *) echo "Prized answered $code" >&2; exit 1 ;; esac
+  runtime=$(jq -r --arg t "$TEMPLATE" '.templates[] | select(.id == $t) | .defaultMaxRuntimeMin // empty' "$tmp/templates.json")
+  [[ $runtime =~ ^[0-9]+$ ]] || permanent "Prized has no template $TEMPLATE"
+  [ "$runtime" -le $((MAX_MIN + 60)) ] || runtime=$((MAX_MIN + 60))
+  # One sandbox per order: a redelivered order sends the same Idempotency-Key and body, and gets the first sandbox back.
+  code=$(api -X POST "$API/sandboxes?wait=running" -H 'Content-Type: application/json' -H "Idempotency-Key: $key" \
+    -o "$tmp/create.json" -w '%{http_code}' --data-raw "$(jq -nc --arg t "$TEMPLATE" --arg v "$VCPU" --arg m "$MEMORY_GB" \
+      --arg o "$order" --arg s "$session" --argjson r "$runtime" '{template: $t, autoDeleteMin: 60, maxRuntimeMin: $r,
+         labels: ({"managed-by": "claude-orchestrator", "claude-order": $o} + if $s == "" then {} else {"claude-session": $s} end)}
+       + if $v + $m == "" then {} else {resources: ((if $v == "" then {} else {vcpu: ($v | tonumber)} end)
+         + if $m == "" then {} else {memoryMb: ($m | tonumber * 1024)} end)} end')")
+  out=$(cat "$tmp/create.json")
+  if [ "$code" = 409 ] && [ "$(jq -r .error <<<"$out" 2>/dev/null)" = idempotency_conflict ]; then  # settings changed since
+    local found; found=$(api -f -G "$API/sandboxes" --data-urlencode "label=claude-order=$order" | jq -c '{sandbox: .sandboxes[0]}')
+    if [ "$(jq -r .sandbox.id <<<"$found")" != null ]; then code=200 out=$found; fi
+  fi
+  case $code in
+    200) ;;  # a redelivery: carry on only if its sandbox is still there and its runner not started
+    201) made=$(jq -er .sandbox.id <<<"$out") ;;
+    400|401|403|404|422) permanent "Prized refused the sandbox ($code): $(why "$out")" ;;  # a retry gets the same answer
+    409) [[ $(why "$out") != template_inactive* ]] || permanent "Prized: $(why "$out")"
+      echo "Prized answered 409: $(why "$out")" >&2; exit 1 ;;
+    *) echo "Prized answered $code: $(why "$out")" >&2; exit 1 ;;
+  esac
+  sbx=$(jq -er .sandbox.id <<<"$out") toolbox=$(jq -er .sandbox.toolboxBase <<<"$out")
+  [[ $sbx =~ ^sbx_[A-Za-z0-9]+$ && $toolbox =~ ^https?://[A-Za-z0-9.:-]+/[A-Za-z0-9/_.-]+$ ]] || { echo "unexpected sandbox from Prized" >&2; exit 1; }
+  if [ "$code" = 200 ]; then
+    [[ $(api -f "$API/sandboxes/$sbx" 2>/dev/null | jq -r .sandbox.state) =~ ^(starting|running)$ ]] ||
+      { echo "this order's sandbox is gone; the session gets a new order" >&2; exit 1; }
+    [ "$(run_in "$toolbox" '[ -d ~/.claude-runner/started ] && echo started || true')" != started ] ||
+      { echo "runner for ${session:-a standby slot} already started in $sbx" >&2; exit 0; }
+  fi
+  flags="--capacity 1 --use-anthropic-git-proxy --configure-git --base-dir ~/work/claude --health-port 0 --client-label $sbx"
+  flags+=" --release-idle-session-min $IDLE_MIN --kill-session-after-min $MAX_MIN --exit-if-unused-min 30"
+  flags+=" --push-outcome-on-release --log-file ~/.claude-runner/runner.log"  # a resumed session starts from its pushed branch
+  # Release the session before the sandbox's run time ends, rather than lose it when the sandbox is deleted.
+  ends=$(jq -r '.sandbox.expiresAt // empty' <<<"$out") now=$(date +%s)
+  if [ -n "$ends" ] && ends=$(date -d "$ends" +%s 2>/dev/null); then
+    margin=$(((ends - now) / 4)); [ "$margin" -le 600 ] || margin=600
+    [ "$margin" -lt 60 ] || flags+=" --retire-at $((ends - margin))"
+  fi
+  # The orchestrator deletes the work order's file once this hook exits, so it goes into the sandbox now.
+  put "$toolbox" work-order "$wo"
+  cat > "$tmp/run.sh" <<EOF
+cd ~ && echo \$\$ > ~/.claude-runner/pid.new && mv ~/.claude-runner/pid.new ~/.claude-runner/pid
+if [ -n "$VERSION" ] && [ "\$(claude --version | cut -d' ' -f1)" != "$VERSION" ]; then
+  curl -fsSL https://claude.ai/install.sh | bash -s $VERSION > ~/.claude-runner/install.log 2>&1
+fi
+claude=claude; if [ -x ~/.local/bin/claude ]; then claude=~/.local/bin/claude; fi
+\$claude self-hosted-runner --environment-secret-file ~/.claude-runner/work-order $flags
+echo \$? > ~/.claude-runner/done
+EOF
+  put "$toolbox" run.sh "$tmp/run.sh"
+  if [ -n "$home" ]; then
+    tar -C "$home" -czf "$tmp/home.tgz" . || { echo "could not pack $DIR/sandbox-home" >&2; exit 1; }
+    put "$toolbox" home.tgz "$tmp/home.tgz"
+  fi
+  run_in "$toolbox" 'cd ~/.claude-runner || exit 1; mkdir started 2>/dev/null || exit 0  # a redelivered order starts nothing twice
+    if chmod 600 work-order && { [ ! -f home.tgz ] || tar -xzf home.tgz -C ~; } && setsid -f bash run.sh < /dev/null > run.log 2>&1
+    then exit 0; else rmdir started; exit 1; fi' > /dev/null
+  echo "runner for ${session:-a standby slot} starting in $sbx" >&2
+}
+
+watch() {  # every 30 s: delete each sandbox whose runner has exited, or that has outlived its session
+  trap - EXIT; RETRY=0 RESUME=false  # a sandbox that does not answer is asked again next round; a paused one stays paused
+  local list id state reason toolbox created status age
+  while :; do
+    list=$(api -f -G "$API/sandboxes" --data-urlencode "label=managed-by=claude-orchestrator" 2>/dev/null) ||
+      { echo "could not list the sandboxes; trying again in ${WATCH_EVERY:-30} s"; list=; }
+    jq -r '.sandboxes[]? | [.id, .state, (.errorReason // "-"), (.toolboxBase // "-"), (.createdAt // "-")] | join("|")' <<<"$list" 2>/dev/null |
+      while IFS='|' read -r id state reason toolbox created; do
+        [[ $id =~ ^sbx_[A-Za-z0-9]+$ ]] || continue
+        created=$(date -d "$created" +%s 2>/dev/null) || continue
+        age=$(($(date +%s) - created)) status=
+        case $state in
+          running) status=$(run_in "$toolbox" 'cd ~/.claude-runner 2>/dev/null || { echo starting; exit; }
+            p=$(timeout 2 head -c 20 pid 2>/dev/null)
+            if [ -e done ]; then echo exited; elif ! [[ $p =~ ^[1-9][0-9]*$ ]]; then echo starting
+            elif [ -d /proc/$p ]; then echo running; else echo exited; fi' 2>/dev/null) || status=unknown ;;
+          error) [[ $reason == *runtime_degraded* ]] || status=exited ;;  # degraded may still be running: give it time
+        esac
+        # Never started in 10 minutes, or outlived the session's limit by an hour: its runner is not coming back.
+        if { [ "$status" = starting ] && [ "$age" -gt 600 ]; } || [ "$age" -gt $(((MAX_MIN + 60) * 60)) ]; then status=exited; fi
+        [ "$status" = exited ] || continue
+        mkdir -p "$DIR/logs"
+        run_in "$toolbox" 'cd ~/.claude-runner && for f in run.log install.log runner.log done; do if [ -f $f ]; then echo "== $f"; timeout 2 tail -n 200 $f; fi; done' > "$DIR/logs/$id.log" 2>/dev/null || true
+        if api -f -o /dev/null -X DELETE "$API/sandboxes/$id" 2>/dev/null; then echo "deleted $id, its runner has exited (log: $DIR/logs/$id.log)"; fi
+      done || true
+    sleep "${WATCH_EVERY:-30}"
+  done
+}
+
+own_box() {  # PRIZED_RUN_ON=own-box: the session runs on the Prized box of the person who started it
+  local order=${CLAUDE_RUNNER_ORDER_ID:-} session=${CLAUDE_RUNNER_SESSION_ID:-} wo=${CLAUDE_RUNNER_WORK_ORDER_FILE:-}
+  local email=${CLAUDE_RUNNER_ACCOUNT_EMAIL:-} key code boxes pick box n id host state od
+  DEADLINE=$((SECONDS + 45))
+  [[ $order =~ ^[A-Za-z0-9._-]{1,253}$ ]] || permanent "unexpected CLAUDE_RUNNER_ORDER_ID"
+  key=cc-$order; [ ${#key} -le 128 ] || key=cc-$(printf '%s' "$order" | sha256sum | cut -c1-64)
+  [ -s "$wo" ] && [ -r "$wo" ] || { echo "no work order in CLAUDE_RUNNER_WORK_ORDER_FILE" >&2; exit 1; }
+  [ -n "$session" ] || permanent "own-box mode starts runners for sessions only: leave the orchestrator's --min-idle unset"
+  [ -n "$email" ] || permanent "this session has no account email (a Slack channel or service session), so no box of its own"
+  email=${email,,}  # never printed: Anthropic asks hooks not to log it
+  tmp=$(mktemp -d)
+  trap 'rc=$?; rm -rf "$tmp" || true; [ "$rc" -eq 0 ] || [ -n "${PERMANENT:-}" ] || exit 1' EXIT
+  trap 'exit 1' TERM INT HUP
+  # Whose box: the one own-boxes names for the session's email, else the one live box its Prized member owns.
+  code=$(api -o "$tmp/team.json" -w '%{http_code}' "$API/team/status")
+  case $code in 200) ;; 401|403) permanent "Prized refused the API key ($code): $(why "$(cat "$tmp/team.json")"); own-box mode needs Boxes: Write and Workspace: Read" ;;
+    *) echo "Prized answered $code" >&2; exit 1 ;; esac
+  boxes=$(jq -c '[.boxes[]? | select(.desiredState != "terminated" and .observedState != "terminated")]' "$tmp/team.json") ||
+    { echo "Prized's team status is not JSON" >&2; exit 1; }
+  pick=
+  if [ -f "$DIR/own-boxes" ]; then pick=$(awk -v e="$email" '$1 !~ /^#/ && NF >= 2 && tolower($1) == e { print $2; exit }' "$DIR/own-boxes"); fi
+  if [ -n "$pick" ]; then
+    box=$(jq -c --arg b "$pick" '[.[] | select(.id == $b or .hostname == $b)][0] // empty' <<<"$boxes")
+    [ -n "$box" ] || permanent "own-boxes names $pick for this person, and the Prized workspace has no live box by that name"
+  else
+    box=$(jq -c --arg e "$email" '[.[] | select((.ownerEmail // "" | ascii_downcase) == $e)]' <<<"$boxes"); n=$(jq length <<<"$box")
+    if [ "$n" = 0 ]; then
+      if jq -e --arg e "$email" 'any(.members[]?; (.email // "" | ascii_downcase) == $e)' "$tmp/team.json" > /dev/null; then
+        permanent "the person who started this session has no box in the Prized workspace: start one, then send the session a message"; fi
+      permanent "no member of the Prized workspace signs in with this session's Claude email: invite them, or name a box for it in $DIR/own-boxes"
+    fi
+    [ "$n" = 1 ] || permanent "the person who started this session has $n boxes ($(jq -r 'map(.hostname) | join(", ")' <<<"$box")): name one for their email in $DIR/own-boxes"
+    box=$(jq -c '.[0]' <<<"$box")
+  fi
+  id=$(jq -r .id <<<"$box") host=$(jq -r .hostname <<<"$box") state=$(jq -r .observedState <<<"$box")
+  [[ $id =~ ^[A-Za-z0-9-]{1,64}$ && $host =~ ^[A-Za-z0-9._-]{1,64}$ ]] || { echo "unexpected box from Prized" >&2; exit 1; }
+  [ "$state" != provision_failed ] || permanent "$host failed to start: delete it and start another, then send the session a message"
+  if [ "$state" != running ]; then  # wake it: a refusal (credit, a policy, a delete in progress) is the session's error
+    code=$(api -X POST -o "$tmp/wake.json" -w '%{http_code}' "$API/boxes/$id/wake")
+    case $code in 200|202) ;;
+      429|5??) echo "Prized answered $code to waking $host" >&2; exit 1 ;;
+      *) [[ $(why "$(cat "$tmp/wake.json")") != gpu_unavailable* ]] || { echo "Prized: $(why "$(cat "$tmp/wake.json")")" >&2; exit 1; }
+        permanent "Prized would not wake $host ($code): $(why "$(cat "$tmp/wake.json")")" ;;
+    esac
+    n=$((SECONDS + ${PRIZED_WAKE_WAIT:-20}))
+    while [ "$state" != running ] && [ "$SECONDS" -lt "$n" ] && [ $((DEADLINE - SECONDS)) -gt 25 ]; do  # up in seconds: start now
+      sleep "${PRIZED_WAKE_POLL:-3}"; state=$(api "$API/boxes/$id" | jq -r '.box.observedState // empty' 2>/dev/null) || state=
+    done
+  fi
+  if [ "$state" = running ]; then start_on_box "$id" "$host" "$key" "$wo" "$session"; return; fi
+  # Still waking: a waiter starts the runner once the box is up, before the work order expires.
+  mkdir -p -m 700 "$DIR/orders" "$DIR/logs"; od=$DIR/orders/$key
+  mkdir -m 700 "$od" 2>/dev/null || { echo "already waking $host for this order" >&2; exit 0; }
+  (umask 077 && cp "$wo" "$od/work-order") || { rm -rf "$od"; echo "could not keep the work order" >&2; exit 1; }
+  setsid bash "$0" own-box-wait "$id" "$host" "$key" "$(($(date +%s) + SPAWN_SEC - 60))" "$session" \
+    < /dev/null >> "$DIR/logs/own-box.log" 2>&1 &
+  echo "waking $host for $session; its runner starts there once the box is up (log: $DIR/logs/own-box.log)" >&2
+}
+
+own_box_wait() {  # own-box-wait ID HOST KEY UNTIL SESSION: the waiter own_box leaves behind for a waking box
+  local id=${1:-} host=${2:-} key=${3:-} until=${4:-} session=${5:-} state left
+  [[ $id =~ ^[A-Za-z0-9-]{1,64}$ && $host =~ ^[A-Za-z0-9._-]{1,64}$ && $key =~ ^cc-[A-Za-z0-9._-]{1,125}$ && $until =~ ^[0-9]+$ &&
+    $session =~ ^[A-Za-z0-9_-]{1,128}$ ]] || permanent "own-box-wait: unexpected arguments"
+  OD=$DIR/orders/$key tmp=$(mktemp -d) RETRY=0
+  trap 'rm -rf "$OD" "$tmp"' EXIT  # the work order's copy goes, whatever happens
+  while :; do
+    left=$((until - $(date +%s)))
+    [ "$left" -gt 20 ] || { echo "$(date -u +%FT%TZ) $host was not up in time for $session; Anthropic offers it again"; exit 1; }
+    state=$(api "$API/boxes/$id" 2>/dev/null | jq -r '[.box.observedState, .box.desiredState] | map(. // "-") | join(" ")' 2>/dev/null) || state=
+    case $state in
+      "running "*) break ;;
+      *" terminated") echo "$(date -u +%FT%TZ) $host is being deleted; $session waits for a new message"; exit 2 ;;
+      *" suspended") api -o /dev/null -X POST "$API/boxes/$id/wake" 2>/dev/null || true ;;  # paused again meanwhile
+    esac
+    sleep "${PRIZED_WAKE_POLL:-5}"
+  done
+  DEADLINE=$((SECONDS + left - 10))
+  echo "$(date -u +%FT%TZ) $host is up"
+  start_on_box "$id" "$host" "$key" "$OD/work-order" "$session"
+}
+
+box_exec() {  # box_exec EDGE-BOX COMMAND [detached]: run a command on the box; its answer lands in $tmp/exec.json
+  local body
+  if [ -n "${3:-}" ]; then body=$(jq -nc --arg c "$2" '{command: $c, detached: true, keepAwake: true}')
+  else body=$(jq -nc --arg c "$2" '{command: $c, timeoutSeconds: 20}'); fi
+  code=$(api -X POST -o "$tmp/exec.json" -w '%{http_code}' "$1/exec" -H 'Content-Type: application/json' --data-raw "$body")
+  case $code in 200) ;;
+    409|429|5??) [[ $(why "$(cat "$tmp/exec.json")") != agent_upgrade_required* ]] || permanent "$host: $(why "$(cat "$tmp/exec.json")")"
+      echo "$host answered $code: $(why "$(cat "$tmp/exec.json")")" >&2; exit 1 ;;
+    *) permanent "$host refused the command ($code): $(why "$(cat "$tmp/exec.json")")" ;;
+  esac
+}
+
+start_on_box() {  # start_on_box ID HOST KEY WORK-ORDER SESSION: start the session's runner on the box, which is up
+  local id=$1 host=$2 key=$3 wo=$4 session=$5 e out ver free
+  e=$(api "$API/me" | jq -er .edge.url 2>/dev/null) || { echo "could not read the edge's address from Prized" >&2; exit 1; }
+  [[ $e =~ ^https?://[A-Za-z0-9.:-]+(/[A-Za-z0-9/_.-]*)?$ ]] || { echo "unexpected edge address from Prized" >&2; exit 1; }
+  e=${e%/}/v1/box/$id
+  # On the box: the order's directory, the runner script, the box's Claude Code version and its free session slots.
+  local prep=$BOX_PREP; prep=${prep//@KEY@/$key}; prep=${prep//@SLOTS@/$SLOTS}
+  box_exec "$e" "$prep"
+  out=$(jq -r '.stdout // ""' "$tmp/exec.json")
+  [ "$(jq -r .exitCode "$tmp/exec.json")" = 0 ] || { echo "on $host: $(jq -r '.stderr // ""' "$tmp/exec.json" | tail -c 300)" >&2; exit 1; }
+  if grep -qx started <<<"$out"; then echo "runner for $session already started on $host" >&2; return 0; fi
+  ver=$(sed -n 's/^claude //p' <<<"$out")
+  [[ $ver =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || permanent "$host has no Claude Code in ~/.local/bin or on its PATH: install it there, then send the session a message"
+  free=$(sed -n 's/^free //p' <<<"$out")
+  [[ $free =~ ^[0-9]+$ ]] || permanent "$host has no flock, which keeps each session in its own slot"
+  [ "$free" -gt 0 ] || { echo "$host already runs $SLOTS sessions; this one is offered again" >&2; exit 1; }
+  # The work order goes to the box by itself, mode 600, never on a command line; the orchestrator deletes its file next.
+  code=$(api -X PUT -o "$tmp/up.json" -w '%{http_code}' "$e/upload?path=.claude-runner/orders/$key/work-order&mode=0600" \
+    -H 'Content-Type: application/octet-stream' --data-binary "@$wo")
+  [ "$code" = 200 ] || { echo "copying the work order to $host failed ($code): $(why "$(cat "$tmp/up.json")")" >&2; exit 1; }
+  # The runner: detached, holding the box awake until it exits; it takes the box's git sign-in, not Anthropic's git.
+  box_exec "$e" "bash \"\$HOME/.claude-runner/run-session\" $key $SLOTS $host --release-idle-session-min $IDLE_MIN \
+--kill-session-after-min $MAX_MIN --exit-if-unused-min 30 --push-outcome-on-release" detached
+  if [ "$(printf '%s\n' 2.1.309 "$ver" | sort -V | head -n 1)" = 2.1.309 ]; then echo "runner for $session starting on $host" >&2
+  else echo "runner for $session starting on $host, once its Claude Code $ver is updated" >&2; fi
+}
+
+BOX_PREP=$(cat <<'PREP'
+r=$HOME/.claude-runner d=$HOME/.claude-runner/orders/@KEY@
+umask 077 && mkdir -p "$d" || exit 1
+if [ -d "$d/started" ]; then echo started; exit 0; fi
+find "$r/orders" -mindepth 1 -maxdepth 1 -type d -mtime +8 -exec rm -rf {} + 2>/dev/null
+c=$HOME/.local/bin/claude; [ -x "$c" ] || c=$(command -v claude) || c=
+v=; [ -z "$c" ] || v=$(timeout 10 "$c" --version 2>/dev/null | head -n 1 | cut -d' ' -f1)
+echo "claude ${v:-none}"
+if command -v flock > /dev/null; then f=0 n=1
+  while [ $n -le @SLOTS@ ]; do if flock -n "$r/slot$n.lock" true; then f=$((f + 1)); fi; n=$((n + 1)); done; echo "free $f"; fi
+cat > "$r/run-session" <<'RUN'
+#!/bin/bash
+# One Claude Code session's runner on this box, from spawn-runner's own-box mode (prized.dev/docs/claude-code-self-hosted-runner).
+# run-session ORDER SLOTS LABEL RUNNER-FLAGS...: in the first free slot, each with its own clone under ~/claude-sessions
+r=$HOME/.claude-runner d=$HOME/.claude-runner/orders/$1
+cd "$d" 2>/dev/null && mkdir started 2>/dev/null || exit 0  # a redelivered order starts nothing twice
+c=$HOME/.local/bin/claude; [ -x "$c" ] || c=$(command -v claude)
+v=$("$c" --version 2>/dev/null | cut -d' ' -f1)  # the runner needs 2.1.309 or later
+[ "$(printf '%s\n' 2.1.309 "$v" | sort -V | head -n 1)" = 2.1.309 ] || "$c" update < /dev/null >> "$d/run.log" 2>&1
+rc=75 n=0
+while [ "$rc" = 75 ] && [ "$n" -lt "$2" ]; do
+  n=$((n + 1)); mkdir -p "$HOME/claude-sessions/$n"
+  flock -n -E 75 -o "$r/slot$n.lock" "$c" self-hosted-runner --environment-secret-file "$d/work-order" --capacity 1 \
+    --base-dir "$HOME/claude-sessions/$n" --client-label "$3" --health-port 0 --log-file "$d/runner.log" "${@:4}" >> "$d/run.log" 2>&1
+  rc=$?
+done
+rm -f "$d/work-order"; echo "$rc" > "$d/done"
+RUN
+PREP
+)
+
+serve() {  # systemd's ExecStart: hold the box awake while the orchestrator runs, start the watch, then the orchestrator
+  trap - EXIT
+  mkdir -p ~/.prized/keep-awake && echo $$ > ~/.prized/keep-awake/claude-orchestrator
+  local more=()
+  if [ "$RUN_ON" = own-box ]; then more=(--expected-spawn-seconds "$SPAWN_SEC")  # a box can take minutes to wake
+  else while :; do "$0" watch || echo "the watch stopped ($?); starting it again"; sleep 30; done & fi
+  exec claude self-hosted-runner orchestrator --environment-secret-file "$DIR/environment-secret" --hooks-dir "$(dirname "$0")" \
+    --health-port 0 --shutdown-drain-sec 70 "${more[@]}"
+}
+
+case ${1:-} in
+  serve) serve ;; watch) watch ;; own-box-wait) shift; own_box_wait "$@" ;;
+  *) if [ "$RUN_ON" = own-box ]; then own_box; else spawn; fi ;;
+esac

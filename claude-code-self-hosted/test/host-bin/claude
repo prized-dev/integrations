@@ -1,0 +1,4 @@
+#!/bin/bash
+[ "${1:-}" = --version ] && { echo "${HOST_CLAUDE_VERSION:-2.1.286} (Claude Code)"; exit 0; }
+if [ "${1:-} ${2:-}" = "self-hosted-runner orchestrator" ]; then printf '%s\n' "$*" > "$ORCH_ARGS"; exec sleep 30; fi
+exit 3

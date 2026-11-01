@@ -155,6 +155,9 @@ case $DIR in
     echo "$ANT_SHA256  $WORK/ant.tgz" | sha256sum -c --quiet -
     tar -xzf "$WORK/ant.tgz" -C "$WORK" ant
     offline ANT="$WORK/ant" bash test/test.sh ;;
+  claude-code-self-hosted)
+    # spawn-runner against a fake Prized API (control plane, toolbox, box edge) and a stub Claude Code: no keys, no network.
+    offline bash test/test.sh ;;
   cursor)
     # spawn.sh against a stand-in `prized` and a stub Cursor `agent` (test/): no keys, no network.
     offline bash test/test.sh ;;
