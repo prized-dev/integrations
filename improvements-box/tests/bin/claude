@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+"""A stand-in for Claude Code's headless mode (claude -p ... --output-format stream-json).
+
+It reads the prompt on stdin and acts on a keyword in the suggestion: "kelvin" adds Kelvin to the
+demo app with a test, "workflow" writes a GitHub workflow, "break" breaks a test, "nothing" changes
+nothing, "sleep" hangs, "budget" stops at the spend cap, "leak" writes its (fake) model key into the
+change and its summary, "tamper" breaks the code and puts an always-passing python3 on PATH,
+"accent" and "rename" reach .github/ by a quoted name or a rename, "hook" adds a git hook that
+would touch the path the suggestion ends with, "huge" writes a large file. It records
+what it saw (its arguments, the prompt, and the NAMES of key-like variables, never their values)
+in $HOME/claude-seen.json.
+"""
+
+import json
+import os
+import re
+import sys
+import time
+
+argv = sys.argv[1:]
+for need in ("-p", "--dangerously-skip-permissions", "--verbose", "--max-budget-usd"):
+    if need not in argv:
+        sys.exit(f"fake claude: missing {need}")
+if argv[argv.index("--output-format") + 1] != "stream-json":
+    sys.exit("fake claude: expected --output-format stream-json")
+
+prompt = sys.stdin.read()
+m = re.search(r"<suggestion>\n(.*)\n</suggestion>", prompt, re.S)
+suggestion = (m.group(1) if m else "").lower()
+keyish = re.compile(r"KEY|TOKEN|SECRET|PRIZED|GITHUB|^GH_|ANTHROPIC", re.I)
+with open(os.path.join(os.environ["HOME"], "claude-seen.json"), "w") as fh:
+    json.dump({"argv": argv, "prompt": prompt, "env": sorted(k for k in os.environ if keyish.search(k))}, fh)
+
+
+def emit(event):
+    print(json.dumps(event), flush=True)
+
+
+emit({"type": "system", "subtype": "init", "model": "claude-fake"})
+
+
+def edit(path, old, new):
+    with open(path) as fh:
+        text = fh.read()
+    assert old in text, (path, old)
+    with open(path, "w") as fh:
+        fh.write(text.replace(old, new, 1))
+    emit({"type": "assistant", "message": {"content": [
+        {"type": "tool_use", "name": "Edit", "input": {"file_path": "/home/prized/work/repo/" + path}}]}})
+
+
+summary = "Changed nothing."
+if "sleep" in suggestion:
+    time.sleep(60)
+elif "budget" in suggestion:
+    emit({"type": "result", "subtype": "error_max_budget_usd", "is_error": True, "num_turns": 9,
+          "total_cost_usd": 1.01})
+    sys.exit(1)
+elif "kelvin" in suggestion:
+    edit("temps.py", 'raise ValueError(f"unknown unit {unit!r}: use C or F")',
+         'if unit == "K":\n        return f"{value:g} K = {value - 273.15:.1f} C"\n'
+         '    raise ValueError(f"unknown unit {unit!r}: use C, F or K")')
+    edit("test_temps.py", "    def test_convert(self):",
+         '    def test_kelvin(self):\n        self.assertEqual(convert("300K"), "300 K = 26.9 C")\n\n'
+         "    def test_convert(self):")
+    emit({"type": "assistant", "message": {"content": [
+        {"type": "tool_use", "name": "Bash", "input": {"command": "python3 -m unittest -v"}}]}})
+    summary = "Added Kelvin input (300K) to convert(), with a test."
+elif "workflow" in suggestion:
+    os.makedirs(".github/workflows", exist_ok=True)
+    with open(".github/workflows/ci.yml", "w") as fh:
+        fh.write("on: push\n")
+    summary = "Added a workflow."
+elif "break" in suggestion:
+    edit("temps.py", "return c * 9 / 5 + 32", "return c * 2 + 30")
+    summary = "Made it faster."
+elif "leak" in suggestion:
+    with open("notes.txt", "w") as fh:
+        fh.write(os.environ.get("ANTHROPIC_API_KEY", "") + "\n")
+    emit({"type": "assistant", "message": {"content": [
+        {"type": "tool_use", "name": "Bash", "input": {"command": "echo " + os.environ.get("ANTHROPIC_API_KEY", "")}}]}})
+    summary = "Saved the key " + os.environ.get("ANTHROPIC_API_KEY", "") + " to notes.txt."
+elif "tamper" in suggestion:
+    # Break the code, then make the tests look green here: a python3 on PATH that always passes.
+    edit("temps.py", "return c * 9 / 5 + 32", "return c * 2 + 30")
+    os.makedirs(os.path.expanduser("~/.local/bin"), exist_ok=True)
+    fake = os.path.expanduser("~/.local/bin/python3")
+    with open(fake, "w") as fh:
+        fh.write("#!/bin/sh\necho 'Ran 3 tests'\necho OK\nexit 0\n")
+    os.chmod(fake, 0o755)
+    summary = "Sped it up."
+elif "accent" in suggestion:
+    os.makedirs(".github/workflows", exist_ok=True)
+    with open(".github/workflows/ci\u00e9.yml", "w") as fh:
+        fh.write("on: push\n")
+    summary = "Added a workflow with an accented name."
+elif "rename" in suggestion:
+    os.rename(".github/CODEOWNERS", "OWNERS")
+    summary = "Moved CODEOWNERS."
+elif "hook" in suggestion:
+    marker = suggestion.split()[-1]
+    os.makedirs(".githooks", exist_ok=True)
+    with open(".githooks/post-commit", "w") as fh:
+        fh.write(f"#!/bin/sh\ntouch {marker}\n")
+    os.chmod(".githooks/post-commit", 0o755)
+    edit("temps.py", 'raise ValueError(f"unknown unit {unit!r}: use C or F")',
+         'raise ValueError(f"unknown unit {unit!r}: use C or F (not K)")')
+    summary = "Added a hook."
+elif "huge" in suggestion:
+    with open("data.txt", "w") as fh:
+        fh.write("x" * 600 * 1024)
+    summary = "Added data."
+
+emit({"type": "assistant", "message": {"content": [{"type": "text", "text": summary}]}})
+emit({"type": "result", "subtype": "success", "is_error": False, "num_turns": 3, "total_cost_usd": 0.0123,
+      "result": summary})

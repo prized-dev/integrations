@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "prized-improvements-box"
+version = "0.1.0"
+description = "An improvements box for your app: each suggestion is built by a coding agent in a Prized sandbox of its own, tested, and handed to a person as a draft pull request."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["prized", "sandbox", "microvm", "claude-code", "coding-agent", "suggestions"]
+dependencies = ["prized>=0.1.0,<1"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+improvements-box = "improvements_box:main"
+
+[project.urls]
+Homepage = "https://prized.dev/sandboxes?via=improvements-box"
+Source = "https://github.com/prized-dev/integrations/tree/main/improvements-box"
+Issues = "https://github.com/prized-dev/integrations/issues"
+
+[tool.hatch.build.targets.wheel]
+only-include = ["improvements_box.py"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["live: needs PRIZED_LIVE=1, PRIZED_API_KEY and a model key; creates real sandboxes"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]

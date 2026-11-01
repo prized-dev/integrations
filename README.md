@@ -13,6 +13,7 @@ Each folder is its own package with its own README, tests and release. You need 
 | [`devin-outposts`](devin-outposts) | Devin Outposts: orchestrator (one sandbox per session, paused with memory while it sleeps) | `prized-devin-outposts` | Works now: install from this repo (not on PyPI yet); Devin's one-click connect waits on Cognition | [README](devin-outposts/README.md) |
 | [`claude-managed-agents`](claude-managed-agents) | Claude Managed Agents: self-hosted environment | `on-work.sh` | Works now | [README](claude-managed-agents/README.md) |
 | [`cursor`](cursor) | Cursor Cloud Agents: Team Pool spawn hook (one sandbox per agent) | `spawn.sh` | Team Pools need Cursor Enterprise; not yet run in a real pool, tested end to end with a My Machines worker | [README](cursor/README.md) |
+| [`improvements-box`](improvements-box) | Example: an improvements box whose suggestions Claude Code builds, one sandbox each, as tested draft PRs | `improvements_box.py` | Example: run it from this repo | [README](improvements-box/README.md) |
 | [`inspect`](inspect) | Inspect AI: sandbox environment | `inspect-prized` | Coming 2026-11-05 | [README](inspect/README.md) |
 | [`adk`](adk) | Google ADK: environment and code executor | `prized-adk` | Coming 2026-11-05 | [README](adk/README.md) |
 | [`strands`](strands) | Strands Agents: sandbox | `strands-prized` | Coming 2026-11-05 | [README](strands/README.md) |
