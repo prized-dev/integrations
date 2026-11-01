@@ -1,0 +1,4 @@
+#!/bin/bash
+# Records each jq invocation's argv (fake emails only in tests) so the test can check no email reaches argv.
+printf '%s\n' "jq $*" >> "${ARGV_LOG:-/dev/null}"
+exec /usr/bin/jq "$@"

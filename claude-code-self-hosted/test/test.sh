@@ -25,7 +25,7 @@ stop_server() {
 }
 # hook ORDER [SESSION]: run the hook as the orchestrator does; the work-order file is deleted after it exits
 hook() {
-  local wo; wo=$(mktemp "$T/wo.XXXX"); printf 'eyJhbGciOiJFUzI1NiJ9.eyJqdGkiOiIk%s.c2ln' "$1" > "$wo"; chmod 600 "$wo"
+  local wo; wo=$(mktemp "$T/wo.XXXX"); if [ -n "${WO:-}" ]; then printf '%s' "$WO" > "$wo"; else printf 'eyJhbGciOiJFUzI1NiJ9.eyJqdGkiOiIk%s.c2ln' "$1" > "$wo"; fi; chmod 600 "$wo"
   local t0; t0=$(date +%s%N)
   mkdir -p "$ROOT/boxtmp"
   env -i HOME="$ROOT/boxhome" PATH="$HERE/host-bin:/usr/bin:/bin" ARGV_LOG="$ROOT/argv.log" PRIZED_CLAUDE_DIR="$CONF" TMPDIR="$ROOT/boxtmp" \
@@ -177,7 +177,8 @@ before=$(grep -c '"POST", "p": "/api/v1/sandboxes"' "$ROOT/requests.jsonl")
 env -i HOME="$ROOT/boxhome" PATH="$HERE/host-bin:/usr/bin:/bin" PRIZED_CLAUDE_DIR="$CONF" PRIZED_API_URL="http://127.0.0.1:$PORT/api/v1" \
   CLAUDE_RUNNER_WORK_ORDER_FILE="$ROOT/no-such-file" CLAUDE_RUNNER_ORDER_ID=order_g CLAUDE_RUNNER_SESSION_ID=s bash "$HOOK" 2> "$ROOT/hook.err"; rc=$?
 check "no work order: exit 1 before any sandbox (rc $rc)" eval '[ "$rc" = 1 ] && [ "$(grep -c '\''"POST", "p": "/api/v1/sandboxes"'\'' "$ROOT/requests.jsonl")" = "$before" ]'
-env -i HOME="$ROOT/boxhome" PATH="$HERE/host-bin" PRIZED_CLAUDE_DIR="$CONF" CLAUDE_RUNNER_ORDER_ID=order_d /bin/bash "$HOOK" 2> "$ROOT/hook.err"; rc=$?
+mkdir -p "$ROOT/nojq" && ln -sf "$HERE/host-bin/curl" "$ROOT/nojq/curl"   # curl, and no jq
+env -i HOME="$ROOT/boxhome" PATH="$ROOT/nojq" PRIZED_CLAUDE_DIR="$CONF" CLAUDE_RUNNER_ORDER_ID=order_d /bin/bash "$HOOK" 2> "$ROOT/hook.err"; rc=$?
 check "no jq on the box: exit 2 saying so (rc $rc)" eval '[ "$rc" = 2 ] && grep -q "needs curl and jq" "$ROOT/hook.err"'
 hook order_gone; G=$(for s in $(sbx_ids); do [ "$(jq -r '.labels["claude-order"]' "$ROOT/$s/sandbox.json")" = order_gone ] && echo "$s"; done)
 curl -s -o /dev/null -X DELETE -H "Authorization: Bearer $KEY" "http://127.0.0.1:$PORT/api/v1/sandboxes/$G"; hook order_gone
@@ -328,6 +329,7 @@ check "the start is detached and holds the box awake" grep -q '"detached": true,
 check "a running box is not woken" [ ! -e "$ROOT/box/b-mango/wakes" ]
 check "the key never reaches curl's argv" bash -c "! grep -qF -- '$KEY' '$ROOT/argv.log'"
 check "the hook names the box and session, never the email" eval 'grep -q "starting on mango" "$ROOT/hook.err" && noemail "$ROOT/hook.err" "$ROOT/hook.out"'
+check "the email never reaches jq's or awk's argv" eval 'grep -q "^jq " "$ROOT/argv.log" && noemail "$ROOT/argv.log"'
 
 echo "# own-box: redelivery, more sessions, slots"
 obhook order_o1
@@ -359,6 +361,8 @@ echo suspended > "$ROOT/box/b-mango/state"; echo 4 > "$ROOT/box/b-mango/wake_aft
 OB_ENV="PRIZED_WAKE_WAIT=1" obhook order_w2 session_w2
 check "a box still waking: the hook hands off and exits 0 at once (rc $rc, ${ms} ms)" eval '[ "$rc" = 0 ] && [ "$ms" -lt 8000 ] && grep -q "waking mango for session_w2" "$ROOT/hook.err"'
 check "keeping its own copy of the work order, mode 600" [ "$(stat -c %a "$CONF/orders/cc-order_w2/work-order" 2>/dev/null)" = 600 ]
+WP=$(pgrep -f "$HOOK own-box-wait b-mango mango cc-order_w2 " | head -n 1)
+check "the waiter (pid ${WP:-none}) runs without the email in its environment" eval '[ -n "$WP" ] && ! tr "\\0" "\\n" < /proc/$WP/environ | grep -q CLAUDE_RUNNER_ACCOUNT_EMAIL'
 OB_ENV="PRIZED_WAKE_WAIT=1" obhook order_w2 session_w2
 check "a redelivery while it waits starts no second waiter (rc $rc)" eval '[ "$rc" = 0 ] && grep -q "already waking mango" "$ROOT/hook.err"'
 wait_for "grep -q 'order_w2' '$M/.stub-seen-work-order' 2>/dev/null" || sleep 5; wait_for "grep -q 'order_w2' '$M/.stub-seen-work-order' 2>/dev/null"
@@ -379,6 +383,63 @@ env -i HOME="$ROOT/boxhome" PATH="$HERE/host-bin:/usr/bin:/bin" PRIZED_CLAUDE_DI
   bash "$HOOK" own-box-wait 'b-mango;x' mango cc-o 1 s > /dev/null 2>&1; rc=$?
 check "the waiter refuses odd arguments (rc $rc)" [ "$rc" = 2 ]
 stop_server
+
+echo "# own-box: a waiter killed with the orchestrator (review 11-01)"
+ob_start; echo suspended > "$ROOT/box/b-mango/state"; echo 1000 > "$ROOT/box/b-mango/wake_after"
+OB_ENV="PRIZED_WAKE_WAIT=1" obhook order_k1 session_k1
+K1=$(pgrep -f "$HOOK own-box-wait b-mango mango cc-order_k1 " | head -n 1)
+check "a waiter is waiting (pid ${K1:-none})" [ -n "$K1" ]
+kill -KILL -- "-$K1" 2>/dev/null; sleep 0.3  # its whole process group, as systemd kills the unit
+OB_ENV="PRIZED_WAKE_WAIT=1" obhook order_k1 session_k1
+K2=$(pgrep -f "$HOOK own-box-wait b-mango mango cc-order_k1 " | head -n 1)
+check "after a SIGKILL its order is not stuck: a redelivery starts a new waiter (rc $rc, pid ${K2:-none})" eval '[ "$rc" = 0 ] && grep -q "waking mango" "$ROOT/hook.err" && [ -n "$K2" ] && [ "$K2" != "$K1" ]'
+OB_ENV="PRIZED_WAKE_WAIT=1" obhook order_k1 session_k1
+check "while the new one lives, a redelivery starts nothing (rc $rc)" eval '[ "$rc" = 0 ] && grep -q "already waking mango" "$ROOT/hook.err"'
+kill -KILL -- "-$K2" 2>/dev/null
+mkdir -p "$CONF/orders/cc-old" && printf x > "$CONF/orders/cc-old/work-order" && touch -d '30 minutes ago' "$CONF/orders/cc-old"
+OB_ENV="PRIZED_WAKE_WAIT=1" obhook order_k2 session_k2
+check "a hook clears a copy no waiter holds, once past any lease" [ ! -e "$CONF/orders/cc-old" ]
+check "and keeps a recent one, in case its waiter is starting" [ -e "$CONF/orders/cc-order_k1" ]
+K3=$(pgrep -f "$HOOK own-box-wait b-mango mango cc-order_k2 " | head -n 1); kill -KILL -- "-$K3" 2>/dev/null; sleep 0.3
+: > "$ROOT/orch-args"
+env -i HOME="$ROOT/boxhome" PATH="$HERE/host-bin:/usr/bin:/bin" PRIZED_CLAUDE_DIR="$CONF" ORCH_ARGS="$ROOT/orch-args" PRIZED_RUN_ON=own-box \
+  PRIZED_API_URL="http://127.0.0.1:$PORT/api/v1" bash "$HOOK" serve > "$ROOT/serve.out" 2>&1 & SV=$!
+wait_for "[ -s '$ROOT/orch-args' ]"
+check "serve clears every copy a dead waiter left" eval '[ -z "$(ls -A "$CONF/orders" 2>/dev/null)" ]'
+killtree "$SV"; wait "$SV" 2>/dev/null
+stop_server
+
+echo "# own-box: the waiter's deadline is the work order's (review 11-01)"
+ob_start; echo suspended > "$ROOT/box/b-mango/state"; echo 1000 > "$ROOT/box/b-mango/wake_after"
+b64() { base64 -w0 | tr '+/' '-_' | tr -d =; }
+srv=$(( $(date +%s) - 3600 ))   # Anthropic's clock an hour behind this one
+WO="$(printf '{"alg":"ES256"}' | b64).$(printf '{"jti":"order_e1","exp":%s}' $((srv + 70)) | b64).c2ln" \
+  OB_ENV="PRIZED_WAKE_WAIT=1 CLAUDE_RUNNER_ORDER_SERVER_TIME=$(date -u -d "@$srv" +%Y-%m-%dT%H:%M:%SZ)" obhook order_e1 session_e1
+t0=$(date +%s); for _ in $(seq 40); do grep -q 'not up in time for session_e1' "$CONF/logs/own-box.log" 2>/dev/null && break; sleep 1; done
+el=$(( $(date +%s) - t0 ))
+check "a box that doesn't wake: the waiter gives up by the work order's exp, on Anthropic's clock (${el} s after the hook)" eval 'grep -q "not up in time for session_e1" "$CONF/logs/own-box.log" && [ "$el" -ge 3 ] && [ "$el" -le 25 ]'
+stop_server
+
+echo "# own-box: a slow Claude Code on a box just woken (review 11-01)"
+ob_start; : > "$ROOT/box/b-mango/home/.slow-version"; obhook order_v1
+check "a version that doesn't come in time exits 1, retryable, not 'no Claude Code' (rc $rc)" eval '[ "$rc" = 1 ] && grep -q "did not tell its version in time" "$ROOT/hook.err"'
+rm -f "$ROOT/box/b-mango/home/.slow-version"; obhook order_v1
+check "and the retry starts it (rc $rc)" eval '[ "$rc" = 0 ] && grep -q "starting on mango" "$ROOT/hook.err"'
+echo 0 > "$ROOT/box/b-mango/home/.stub-stop"; stop_server
+
+echo "# own-box: emails compare in ASCII only (review 11-01)"
+ob_start
+team '{"scope":"workspace","members":[{"userId":"u_kit","name":"Kit","email":"kit@example.com","role":"member"},{"userId":"u_ann","name":"Ann","email":"ann@example.com","role":"owner"}],"boxes":[{"id":"b-plum","hostname":"plum","ownerUserId":"u_kit","ownerEmail":"kit@example.com"},{"id":"b-fig","hostname":"fig","ownerUserId":"u_ann","ownerEmail":"ann@example.com"}]}'
+box b-plum plum running; u=0
+for e in "$(printf 'K\xc4\xb0T@example.com')" "$(printf '\xe2\x84\xaaIT@example.com')"; do
+  OB_ENV="LANG=C.UTF-8 LC_ALL=C.UTF-8" obhook "order_u$((++u))" session_u "$e"
+  check "a Claude email with a non-ASCII letter (Turkish İ, Kelvin sign) is not taken for kit@ (rc $rc)" eval '[ "$rc" = 2 ] && grep -q "no member of the Prized workspace" "$ROOT/hook.err"'
+done
+check "and kit's box got no runner" [ ! -e "$ROOT/box/b-plum/home/.stub-runner-args" ]
+box b-fig fig running
+printf '\xe2\x84\xaaIT@example.com fig\n' > "$CONF/own-boxes"; OB_ENV="LANG=C.UTF-8 LC_ALL=C.UTF-8" obhook order_u9 session_u "kit@example.com"
+check "nor does an own-boxes line with one send kit@'s session to another box (rc $rc)" eval '[ "$rc" = 0 ] && grep -q "starting on plum" "$ROOT/hook.err" && [ ! -e "$ROOT/box/b-fig/home/.stub-runner-args" ]'
+rm -f "$CONF/own-boxes"; echo 0 > "$ROOT/box/b-plum/home/.stub-stop"; stop_server
 
 echo "# own-box: refusals"
 ob_start

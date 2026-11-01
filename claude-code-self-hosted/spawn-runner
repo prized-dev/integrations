@@ -7,7 +7,7 @@
 #                        PRIZED_RUN_ON=own-box, wakes the box of the person who started the session and starts it there
 #   spawn-runner watch   deletes each sandbox once its runner has exited
 set -euo pipefail
-PERMANENT= rc=0; permanent() { printf '%s\n' "$*" >&2; PERMANENT=1; exit 2; }
+PERMANENT='' rc=0; permanent() { printf '%s\n' "$*" >&2; PERMANENT=1; exit 2; }
 trap 'rc=$?; [ "$rc" -eq 0 ] || [ -n "${PERMANENT:-}" ] || exit 1' EXIT
 
 DIR=${PRIZED_CLAUDE_DIR:-$HOME/.config/claude-runner}
@@ -166,7 +166,9 @@ own_box() {  # PRIZED_RUN_ON=own-box: the session runs on the Prized box of the 
   [ -s "$wo" ] && [ -r "$wo" ] || { echo "no work order in CLAUDE_RUNNER_WORK_ORDER_FILE" >&2; exit 1; }
   [ -n "$session" ] || permanent "own-box mode starts runners for sessions only: leave the orchestrator's --min-idle unset"
   [ -n "$email" ] || permanent "this session has no account email (a Slack channel or service session), so no box of its own"
-  email=${email,,}  # never printed: Anthropic asks hooks not to log it
+  # ASCII-only lowercase, as Prized's side is: bash's ${,,} would turn a Turkish İ or the Kelvin sign into i or k, and match
+  # another person's email. The email travels in the environment (E), never in an argument, and is never printed.
+  email=$(E=$email jq -rn '$ENV.E | ascii_downcase')
   tmp=$(mktemp -d)
   trap 'rc=$?; rm -rf "$tmp" || true; [ "$rc" -eq 0 ] || [ -n "${PERMANENT:-}" ] || exit 1' EXIT
   trap 'exit 1' TERM INT HUP
@@ -177,14 +179,14 @@ own_box() {  # PRIZED_RUN_ON=own-box: the session runs on the Prized box of the 
   boxes=$(jq -c '[.boxes[]? | select(.desiredState != "terminated" and .observedState != "terminated")]' "$tmp/team.json") ||
     { echo "Prized's team status is not JSON" >&2; exit 1; }
   pick=
-  if [ -f "$DIR/own-boxes" ]; then pick=$(awk -v e="$email" '$1 !~ /^#/ && NF >= 2 && tolower($1) == e { print $2; exit }' "$DIR/own-boxes"); fi
+  if [ -f "$DIR/own-boxes" ]; then pick=$(E=$email LC_ALL=C awk '$1 !~ /^#/ && NF >= 2 && tolower($1) == ENVIRON["E"] { print $2; exit }' "$DIR/own-boxes"); fi
   if [ -n "$pick" ]; then
     box=$(jq -c --arg b "$pick" '[.[] | select(.id == $b or .hostname == $b)][0] // empty' <<<"$boxes")
     [ -n "$box" ] || permanent "own-boxes names $pick for this person, and the Prized workspace has no live box by that name"
   else
-    box=$(jq -c --arg e "$email" '[.[] | select((.ownerEmail // "" | ascii_downcase) == $e)]' <<<"$boxes"); n=$(jq length <<<"$box")
+    box=$(E=$email jq -c '[.[] | select((.ownerEmail // "" | ascii_downcase) == $ENV.E)]' <<<"$boxes"); n=$(jq length <<<"$box")
     if [ "$n" = 0 ]; then
-      if jq -e --arg e "$email" 'any(.members[]?; (.email // "" | ascii_downcase) == $e)' "$tmp/team.json" > /dev/null; then
+      if E=$email jq -e 'any(.members[]?; (.email // "" | ascii_downcase) == $ENV.E)' "$tmp/team.json" > /dev/null; then
         permanent "the person who started this session has no box in the Prized workspace: start one, then send the session a message"; fi
       permanent "no member of the Prized workspace signs in with this session's Claude email: invite them, or name a box for it in $DIR/own-boxes"
     fi
@@ -207,13 +209,36 @@ own_box() {  # PRIZED_RUN_ON=own-box: the session runs on the Prized box of the 
     done
   fi
   if [ "$state" = running ]; then start_on_box "$id" "$host" "$key" "$wo" "$session"; return; fi
-  # Still waking: a waiter starts the runner once the box is up, before the work order expires.
+  # Still waking: a waiter starts the runner once the box is up, before the work order expires. It holds the order's
+  # lock while it lives: a redelivery finds it held and starts nothing; a waiter killed with the orchestrator leaves it free.
   mkdir -p "$DIR/orders" "$DIR/logs" && chmod 700 "$DIR/orders"; od=$DIR/orders/$key
-  mkdir -m 700 "$od" 2>/dev/null || { echo "already waking $host for this order" >&2; exit 0; }
+  prune_orders $((SPAWN_SEC / 60 + 2))  # copies a killed waiter left, past any lease
+  mkdir -m 700 "$od" 2>/dev/null || true
+  exec 8>> "$od/lock"; flock -n 8 || { echo "already waking $host for this order" >&2; exit 0; }
   (umask 077 && cp "$wo" "$od/work-order") || { rm -rf "$od"; echo "could not keep the work order" >&2; exit 1; }
-  setsid bash "$0" own-box-wait "$id" "$host" "$key" "$(($(date +%s) + SPAWN_SEC - 60))" "$session" \
-    < /dev/null >> "$DIR/logs/own-box.log" 2>&1 &
+  n=$(order_expires "$wo"); [ -n "$n" ] || n=$(($(date +%s) + SPAWN_SEC))  # the lease, if the work order doesn't say
+  env -u CLAUDE_RUNNER_ACCOUNT_EMAIL setsid bash "$0" own-box-wait "$id" "$host" "$key" "$((n - 40))" "$session" \
+    < /dev/null >> "$DIR/logs/own-box.log" 2>&1 &  # it inherits fd 8, the lock
   echo "waking $host for $session; its runner starts there once the box is up (log: $DIR/logs/own-box.log)" >&2
+}
+
+order_expires() {  # order_expires FILE: the work order's exp claim on this machine's clock, or nothing
+  local p exp srv
+  p=$(cut -d. -f2 < "$1" | tr '_-' '/+'); while [ $((${#p} % 4)) -ne 0 ]; do p+="="; done
+  exp=$(printf '%s' "$p" | base64 -d 2>/dev/null | jq -r '.exp // empty' 2>/dev/null) || exp=
+  [[ $exp =~ ^[0-9]{9,11}$ ]] || return 0
+  if [ -n "${CLAUDE_RUNNER_ORDER_SERVER_TIME:-}" ] && srv=$(date -d "$CLAUDE_RUNNER_ORDER_SERVER_TIME" +%s 2>/dev/null); then
+    exp=$((exp + $(date +%s) - srv)); fi  # Anthropic's clock, not this one, sets the expiry
+  echo "$exp"
+}
+
+prune_orders() {  # prune_orders [MINUTES]: remove work-order copies no live waiter holds (older than MINUTES, if given)
+  local d
+  for d in "$DIR"/orders/cc-*/; do
+    [ -d "$d" ] || continue
+    if [ -n "${1:-}" ] && [ -z "$(find "$d" -maxdepth 0 -mmin +"$1" 2>/dev/null)" ]; then continue; fi
+    if flock -n "$d/lock" true 2>/dev/null; then rm -rf "$d"; fi
+  done
 }
 
 own_box_wait() {  # own-box-wait ID HOST KEY UNTIL SESSION: the waiter own_box leaves behind for a waking box
@@ -262,7 +287,8 @@ start_on_box() {  # start_on_box ID HOST KEY WORK-ORDER SESSION: start the sessi
   [ "$(jq -r .exitCode "$tmp/exec.json")" = 0 ] || { echo "on $host: $(jq -r '.stderr // ""' "$tmp/exec.json" | tail -c 300)" >&2; exit 1; }
   if grep -qx started <<<"$out"; then echo "runner for $session already started on $host" >&2; return 0; fi
   ver=$(sed -n 's/^claude //p' <<<"$out")
-  [[ $ver =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || permanent "$host has no Claude Code in ~/.local/bin or on its PATH: install it there, then send the session a message"
+  [ "$ver" != none ] || permanent "$host has no Claude Code in ~/.local/bin or on its PATH: install it there, then send the session a message"
+  [[ $ver =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Claude Code on $host did not tell its version in time; the session is offered again" >&2; exit 1; }
   free=$(sed -n 's/^free //p' <<<"$out")
   [[ $free =~ ^[0-9]+$ ]] || permanent "$host has no flock, which keeps each session in its own slot"
   [ "$free" -gt 0 ] || { echo "$host already runs $SLOTS sessions; this one is offered again" >&2; exit 1; }
@@ -283,8 +309,8 @@ umask 077 && mkdir -p "$d" || exit 1
 if [ -d "$d/started" ]; then echo started; exit 0; fi
 find "$r/orders" -mindepth 1 -maxdepth 1 -type d -mtime +8 -exec rm -rf {} + 2>/dev/null
 c=$HOME/.local/bin/claude; [ -x "$c" ] || c=$(command -v claude) || c=
-v=; [ -z "$c" ] || v=$(timeout 10 "$c" --version 2>/dev/null | head -n 1 | cut -d' ' -f1)
-echo "claude ${v:-none}"
+if [ -z "$c" ]; then echo "claude none"
+else v=$(timeout 10 "$c" --version 2>/dev/null | head -n 1 | cut -d' ' -f1); echo "claude ${v:-slow}"; fi
 if command -v flock > /dev/null; then f=0 n=1
   while [ $n -le @SLOTS@ ]; do if flock -n "$r/slot$n.lock" true; then f=$((f + 1)); fi; n=$((n + 1)); done; echo "free $f"; fi
 cat > "$r/run-session.$$" <<'RUN'  # a new file, then a rename: a runner reading the old one keeps it
@@ -314,6 +340,7 @@ serve() {  # systemd's ExecStart: hold the box awake while the orchestrator runs
   mkdir -p ~/.prized/keep-awake && echo $$ > ~/.prized/keep-awake/claude-orchestrator
   local more=()
   if [ "$RUN_ON" = own-box ]; then more=(--expected-spawn-seconds "$SPAWN_SEC")  # a box can take minutes to wake
+    prune_orders  # waiters died with the last orchestrator: Anthropic offers their sessions again
   else while :; do "$0" watch || echo "the watch stopped ($?); starting it again"; sleep 30; done & fi
   exec claude self-hosted-runner orchestrator --environment-secret-file "$DIR/environment-secret" --hooks-dir "$(dirname "$0")" \
     --health-port 0 --shutdown-drain-sec 70 "${more[@]}"

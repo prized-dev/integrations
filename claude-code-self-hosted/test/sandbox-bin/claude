@@ -2,7 +2,7 @@
 # Stub Claude Code inside a fake sandbox or box. --version prints ~/.stub-version (else 2.1.286); update makes it 2.1.316.
 # `self-hosted-runner ...` records its argv and work-order contents, then runs until ~/.stub-stop exists.
 v=$(cat ~/.stub-version 2>/dev/null || echo 2.1.286)
-if [ "${1:-}" = --version ]; then echo "$v (Claude Code)"; exit 0; fi
+if [ "${1:-}" = --version ]; then [ ! -e ~/.slow-version ] || sleep 12; echo "$v (Claude Code)"; exit 0; fi
 if [ "${1:-}" = update ]; then echo 2.1.316 > ~/.stub-version; echo "Successfully updated from $v to version 2.1.316"; exit 0; fi
 if [ "${1:-}" = self-hosted-runner ]; then
   printf "%s\n" "via=${STUB_VIA:-path} $*" >> ~/.stub-runner-args
