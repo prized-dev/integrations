@@ -127,21 +127,37 @@ class Fake:
         i = self.issues.get(n)
         if not i:
             return None
-        nodes = []
-        for e in i["timeline"]:
-            node = {"__typename": e["__typename"], "createdAt": e["createdAt"], "actor": self.actor(e["actor"])}
-            if e["__typename"] == "LabeledEvent":
-                node.update(id=e["id"], label={"name": e["label"]})
-            nodes.append(node)
+        renames = [
+            {"createdAt": e["createdAt"], "actor": self.actor(e["actor"])}
+            for e in i["timeline"]
+            if e["__typename"] == "RenamedTitleEvent"
+        ]
+        labels = [
+            {"id": e["id"], "createdAt": e["createdAt"], "actor": self.actor(e["actor"]), "label": {"name": e["label"]}}
+            for e in i["timeline"]
+            if e["__typename"] == "LabeledEvent"
+        ]
+        edits = [{"editor": self.actor(e)} for e in i["edits"]]
         return {
             "title": i["title"],
             "bodyText": i["body"],
             "lastEditedAt": i["lastEditedAt"],
             "state": i["state"].upper(),
             "author": self.actor(i["author"]),
-            "userContentEdits": {"nodes": [{"editor": self.actor(e)} for e in i["edits"]]},
-            "timelineItems": {"nodes": nodes},
+            # Like GitHub: first/last N of each list, with the full count beside it.
+            "userContentEdits": {"totalCount": len(edits), "nodes": edits[:100]},
+            "renames": {"totalCount": len(renames), "nodes": renames[:100]},
+            "labels": {"nodes": labels[-50:]},
         }
+
+    @staticmethod
+    def page(items: list, query: dict, default_sort: str) -> list:
+        """GitHub's list behaviour: sort (created or updated), direction, and one page of per_page items."""
+        key = {"created": "created_at", "updated": "updated_at"}.get(query.get("sort", [""])[0], default_sort)
+        items = sorted(items, key=lambda x: (x.get(key, ""), x.get("id", x.get("number", 0))))
+        if query.get("direction", ["asc"])[0] == "desc":
+            items.reverse()
+        return items[: int(query.get("per_page", ["30"])[0])]
 
     def branch_exists(self, branch: str) -> bool:
         r = subprocess.run(
@@ -177,7 +193,7 @@ class Fake:
                     if label in i["labels"] and i["state"] == "open"
                 ]
                 out += [{"number": n, "updated_at": p["updated_at"], "pull_request": {}} for n, p in self.pulls.items()]
-                return 200, out, {}
+                return 200, self.page(out, query, "updated_at"), {}
             if path == f"{base}/issues/comments" and method == "GET":
                 since = query.get("since", [""])[0]
                 out = [
@@ -192,7 +208,7 @@ class Fake:
                     for c in self.comments
                     if c["updated_at"] >= since
                 ]
-                return 200, out, {}
+                return 200, self.page(out, query, "created_at"), {}
             if path.startswith(f"{base}/issues/") and path.endswith("/comments") and method == "POST":
                 n = int(path.split("/")[-2])
                 c = {

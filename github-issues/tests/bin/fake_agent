@@ -48,7 +48,7 @@ for path, text in (action.get("write") or {}).items():
 for path, target in (action.get("symlink") or {}).items():
     os.symlink(target, path)
 if action.get("write_token"):
-    token = (Path(os.environ["HOME"]) / ".prized-issues" / "token").read_text()
+    token = (Path(os.environ["HOME"]) / ".prized-issues" / "tokens" / "acme__app").read_text()
     Path(action["write_token"]).write_text("leaked: " + token)
 if action.get("commit"):
     subprocess.run(["git", "add", "-A"], check=True)

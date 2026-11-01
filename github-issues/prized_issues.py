@@ -40,7 +40,7 @@ from pathlib import Path
 VERSION = "1"
 HOME = Path(os.environ.get("HOME") or str(Path.home()))
 STATE_DIR = Path(os.environ.get("PRIZED_ISSUES_HOME") or str(HOME / ".prized-issues"))
-TOKEN_FILE = STATE_DIR / "token"
+TOKENS = STATE_DIR / "tokens"  # one fine-grained token per repo, 0600
 STATE_FILE = STATE_DIR / "state.json"
 API = (os.environ.get("PRIZED_ISSUES_API") or "https://api.github.com").rstrip("/")
 GIT_URL = os.environ.get("PRIZED_ISSUES_GIT_URL") or "https://github.com/{owner}/{repo}.git"
@@ -60,8 +60,8 @@ REPO_RE = re.compile(r"[A-Za-z0-9-]{1,39}/[A-Za-z0-9._-]{1,100}")
 LABEL_RE = re.compile(r"[\w.-][\w .-]{0,49}")
 LOGIN_RE = re.compile(r"[A-Za-z0-9-]{1,39}")
 BRANCH_RE = re.compile(r"[A-Za-z0-9._/-]{1,200}")
-# Characters github.com doesn't show: zero-width, bidi controls, Unicode tags.
-INVISIBLE = re.compile("[\u200b-\u200f\u202a-\u202e\u2060-\u2064\u2066-\u2069\ufeff\U000e0000-\U000e007f]")
+# Characters github.com doesn't show: zero-width, bidi controls, variation selectors, Unicode tags.
+INVISIBLE = re.compile("[\u200b-\u200f\u202a-\u202e\u2060-\u2064\u2066-\u2069\ufe00-\ufe0f\ufeff\U000e0000-\U000e01ef]")
 COMMAND = re.compile(r"/prized(?=\s|$)(.*)", re.S)
 SECRETS = [
     ("a GitHub token", re.compile(r"\b(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,})")),
@@ -84,18 +84,19 @@ CACHES = (
 )
 AGENT_ENV_DROP = ("GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN")
 WHO = {"claude": "Claude Code", "codex": "Codex"}
+# Who wrote, edited and retitled the issue (totalCount says whether the lists are complete), and the latest labels.
 ISSUE_QUERY = """query($owner: String!, $name: String!, $n: Int!) {
   repository(owner: $owner, name: $name) {
     issue(number: $n) {
       title bodyText lastEditedAt state
       author { login ... on User { databaseId } }
-      userContentEdits(last: 50) { nodes { editor { login ... on User { databaseId } } } }
-      timelineItems(itemTypes: [LABELED_EVENT, RENAMED_TITLE_EVENT], last: 100) {
-        nodes {
-          __typename
-          ... on LabeledEvent { id createdAt actor { login ... on User { databaseId } } label { name } }
-          ... on RenamedTitleEvent { createdAt actor { login ... on User { databaseId } } }
-        }
+      userContentEdits(first: 100) { totalCount nodes { editor { login ... on User { databaseId } } } }
+      renames: timelineItems(itemTypes: [RENAMED_TITLE_EVENT], first: 100) {
+        totalCount
+        nodes { ... on RenamedTitleEvent { createdAt actor { login ... on User { databaseId } } } }
+      }
+      labels: timelineItems(itemTypes: [LABELED_EVENT], last: 50) {
+        nodes { ... on LabeledEvent { id createdAt actor { login ... on User { databaseId } } label { name } } }
       }
     }
   }
@@ -122,6 +123,8 @@ def tilde(path) -> str:
 
 
 def write_private(path: Path, text: str) -> None:
+    STATE_DIR.mkdir(parents=True, exist_ok=True, mode=0o700)
+    os.chmod(STATE_DIR, 0o700)  # tokens, logs and clones: this user's only
     path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     tmp = path.with_name(path.name + ".tmp")
     fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
@@ -140,18 +143,25 @@ class GitHubError(Exception):
         self.status, self.transient = status, transient
 
 
-def read_token() -> str:
+def token_file(full: str) -> Path:
+    return TOKENS / full.replace("/", "__").lower()
+
+
+def read_token(full: str) -> str:
     try:
-        return TOKEN_FILE.read_text(encoding="utf-8").strip()
+        return token_file(full).read_text(encoding="utf-8").strip()
     except OSError:
         return ""
 
 
 def gh(method: str, path: str, body=None, token: str | None = None, headers: dict | None = None):
-    """One GitHub REST or GraphQL call with the poller's token; raises GitHubError."""
+    """One GitHub REST or GraphQL call; /repos/OWNER/REPO/... uses that repo's token. Raises GitHubError."""
+    if token is None:
+        m = re.match(r"/repos/([^/]+)/([^/?]+)", path)
+        token = read_token(f"{m.group(1)}/{m.group(2)}") if m else ""
     data = json.dumps(body).encode() if body is not None else None
     req = urllib.request.Request(API + path, data=data, method=method)  # noqa: S310 (API is https, or a test server)
-    req.add_header("Authorization", f"Bearer {token if token is not None else read_token()}")
+    req.add_header("Authorization", f"Bearer {token}")
     req.add_header("Accept", "application/vnd.github+json")
     req.add_header("X-GitHub-Api-Version", "2022-11-28")
     req.add_header("User-Agent", f"prized-issues/{VERSION}")
@@ -173,7 +183,8 @@ def gh(method: str, path: str, body=None, token: str | None = None, headers: dic
     except (urllib.error.URLError, OSError, ValueError) as e:
         raise GitHubError(0, str(e)[:300], True) from None
     out = json.loads(raw) if raw.strip() else None
-    if path == "/graphql" and isinstance(out, dict) and out.get("errors") and not out.get("data"):
+    if path == "/graphql" and isinstance(out, dict) and out.get("errors"):
+        # Never trust a partial answer: missing edits or renames would read as members' text.
         raise GitHubError(200, str(out["errors"])[:300], False)
     return out
 
@@ -188,7 +199,12 @@ def comment(full: str, number: int, text: str) -> None:
 
 def fetch_issue(full: str, number: int) -> dict:
     owner, name = full.split("/")
-    data = gh("POST", "/graphql", {"query": ISSUE_QUERY, "variables": {"owner": owner, "name": name, "n": number}})
+    data = gh(
+        "POST",
+        "/graphql",
+        {"query": ISSUE_QUERY, "variables": {"owner": owner, "name": name, "n": number}},
+        token=read_token(full),
+    )
     issue = (((data or {}).get("data") or {}).get("repository") or {}).get("issue")
     if not isinstance(issue, dict):
         raise GitHubError(404, "no such issue", False)
@@ -248,19 +264,29 @@ def git_env() -> dict:
     env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_CONFIG_")}
     env.update(
         GIT_TERMINAL_PROMPT="0",
-        GIT_CONFIG_COUNT="3",
+        GIT_CONFIG_COUNT="4",
         GIT_CONFIG_KEY_0="credential.helper",
         GIT_CONFIG_VALUE_0="",
         GIT_CONFIG_KEY_1="credential.helper",
         GIT_CONFIG_VALUE_1=helper,
-        GIT_CONFIG_KEY_2="core.hooksPath",
-        GIT_CONFIG_VALUE_2="/dev/null",
+        GIT_CONFIG_KEY_2="credential.useHttpPath",  # the helper picks the repo's own token by path
+        GIT_CONFIG_VALUE_2="true",
+        GIT_CONFIG_KEY_3="core.hooksPath",
+        GIT_CONFIG_VALUE_3="/dev/null",
     )
     return env
 
 
 def git(cwd: Path, *args: str, check=True, timeout=600) -> str:
-    r = subprocess.run(["git", "-C", str(cwd), *args], capture_output=True, text=True, env=git_env(), timeout=timeout)
+    r = subprocess.run(
+        ["git", "-C", str(cwd), *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",  # a repo's files needn't be UTF-8
+        env=git_env(),
+        timeout=timeout,
+    )
     if check and r.returncode != 0:
         raise RuntimeError(f"git {args[0]} failed: {(r.stderr.strip().splitlines() or [''])[-1][:200]}")
     return r.stdout
@@ -337,9 +363,17 @@ def commit_turn(wt: Path, start: str, setup_left: dict[str, str], fallback: str,
     return git(wt, "rev-parse", "HEAD").strip()
 
 
-def check_commits(wt: Path, start: str, head: str) -> list[str]:
+def secret_in(text: str, token: str) -> str:
+    """What secret-shaped thing text holds, or ""."""
+    if token and (token in text or base64.b64encode(token.encode()).decode()[:24] in text):
+        return "this poller's GitHub token"
+    return next((what for what, rx in SECRETS if rx.search(text)), "")
+
+
+def check_commits(full: str, wt: Path, start: str, head: str) -> list[str]:
     """Why start..head must not be pushed: workflow edits, symlinks, submodules, size, secrets."""
     problems = []
+    token = read_token(full)
     raw = git(wt, "diff", "--no-renames", "--no-abbrev", "--raw", "-z", start, head)
     fields = raw.split("\0")
     added = 0
@@ -351,6 +385,9 @@ def check_commits(wt: Path, start: str, head: str) -> list[str]:
         if len(parts) < 5:
             continue
         new_mode, new_sha, status = parts[1], parts[3], parts[4]
+        hit = secret_in(path, token)
+        if hit:
+            problems.append(f"names a file after {hit}")
         if path.startswith(".github/workflows/") or path == ".github/workflows":
             problems.append(f"changes a workflow (`{path}`)")
         if path == ".gitmodules" or path.endswith("/.gitmodules") or new_mode == "160000":
@@ -364,17 +401,14 @@ def check_commits(wt: Path, start: str, head: str) -> list[str]:
                 problems.append(f"`{path}` is {size // 1024 // 1024} MB")
     if added > MAX_DIFF:
         problems.append(f"the change adds {added // 1024 // 1024} MB")
-    token = read_token()
-    diff = git(wt, "diff", "--no-renames", "-U0", "--no-color", start, head)
-    for line in diff.splitlines():
-        if not line.startswith("+") or line.startswith("+++"):
-            continue
-        if token and (token in line or base64.b64encode(token.encode()).decode()[:24] in line):
-            problems.append("contains this poller's GitHub token")
-            break
-        hit = next((what for what, rx in SECRETS if rx.search(line)), "")
+    # --text: binary files and files marked -diff are read too; no external diff or textconv filters.
+    diff = git(wt, "diff", "--no-renames", "--text", "--no-ext-diff", "--no-textconv", "-U0", "--no-color", start, head)
+    added_lines = [ln for ln in diff.splitlines() if ln.startswith("+") and not ln.startswith("+++")]
+    messages = git(wt, "log", "--format=%B", f"{start}..{head}")
+    for text in [*added_lines, messages]:
+        hit = secret_in(text, token)
         if hit:
-            problems.append(f"looks like it contains {hit}")
+            problems.append(f"contains {hit}" if "poller" in hit else f"looks like it contains {hit}")
             break
     return sorted(set(problems))
 
@@ -416,13 +450,15 @@ def identity() -> tuple[str, str]:
 
 
 def agent_cmd(agent: str, trusted: bool, session: str) -> list[str]:
-    """The headless command line: full auto for members' text, edits only with no network otherwise."""
+    """The headless command line: full auto for members' text; edits only, inside the worktree, otherwise.
+
+    Only Claude Code has an edits-only mode that keeps the agent's file tools inside the worktree (--restricted).
+    Codex's workspace-write sandbox still runs commands and reads the whole disk, so Codex runs members' text only.
+    """
     if agent == "codex":
-        cmd = ["codex", "exec", "--json", "--skip-git-repo-check"]
-        if trusted:
-            cmd.append("--dangerously-bypass-approvals-and-sandbox")
-        else:
-            cmd += ["-s", "workspace-write", "-c", "sandbox_workspace_write.network_access=false"]
+        if not trusted:
+            raise ValueError("Codex runs members' text only")
+        cmd = ["codex", "exec", "--json", "--skip-git-repo-check", "--dangerously-bypass-approvals-and-sandbox"]
         if session:
             cmd += ["resume", session]
         return [*cmd, "-"]
@@ -592,30 +628,32 @@ def followup_prompt(author: str, request: str, trusted: bool) -> str:
 
 # --- one run, start to end ---
 
+HELD_NOTE = (
+    "It's held on the box. Read the diff there (`git -C {wt} diff {a} {b}`), then a member can comment "
+    "`/prized push` to push it, or `/prized drop` to throw it away."
+)
 
-def finish(full: str, number: int, key: str, start: str, rc: int, final: str) -> None:
-    """Commit the turn; push and open or update the pull request (members' text), or hold it (anyone else's)."""
+
+def finish(full: str, number: int, key: str, start: str, rc: int, final: str, trusted: bool, why: str = "") -> None:
+    """Commit the turn; push and open or update the pull request (a trusted turn), or hold it (any other)."""
     rec = load_state()["runs"][key]
     wt = Path(rec["worktree"])
     thread = rec.get("pr") or number
     who = WHO.get(rec["agent"], rec["agent"])
     log_note = f" Log on the box: `{tilde(rec['log'])}`."
     fallback = f"{rec.get('title') or f'Issue #{number}'} (#{number})"
-    try:
-        head = commit_turn(wt, start, rec.get("setup_left") or {}, fallback, identity())
-    except (RuntimeError, OSError, subprocess.SubprocessError) as e:
-        save_run(key, status="failed", detail=str(e)[:200])
-        comment(full, thread, f"The run on the box failed ({e}).{log_note}")
-        return
+    head = commit_turn(wt, start, rec.get("setup_left") or {}, fallback, identity())
     if not head:
-        why = "ran out of time" if rc == -9 else (f"exited {rc}" if rc else "finished")
-        save_run(key, status="pr" if rec.get("pr") else ("none" if rc == 0 else "failed"), detail=why)
-        tail = f"\n\n> {quiet_mentions(clean_text(final, 1500))}" if final and rec.get("trusted") else ""
-        comment(full, thread, f"{who} {why} without changing anything, so there's nothing to push.{log_note}{tail}")
+        ended = "ran out of time" if rc == -9 else (f"exited {rc}" if rc else "finished")
+        status = rec.get("status_before") or ("none" if rc == 0 else "failed")
+        save_run(key, status=status, detail=ended)
+        shown = final if trusted and not secret_in(final, read_token(full)) else ""
+        tail = f"\n\n> {quiet_mentions(clean_text(shown, 1500))}" if shown else ""
+        comment(full, thread, f"{who} {ended} without changing anything, so there's nothing to push.{log_note}{tail}")
         return
     # Everything not on GitHub yet is checked, not just this turn: an earlier refused change never rides along.
     since = rec.get("pushed") or rec["base_sha"]
-    problems = check_commits(wt, since, head)
+    problems = check_commits(full, wt, since, head)
     if problems:
         save_run(key, status="refused", detail="; ".join(problems)[:300], held_sha="")
         comment(
@@ -625,17 +663,16 @@ def finish(full: str, number: int, key: str, start: str, rc: int, final: str) ->
             f"`{rec['branch']}`). Add the label to the issue again to start fresh.{log_note}",
         )
         return
-    if not rec.get("trusted"):
+    if not trusted:
         stat = git(wt, "diff", "--stat=100", since, head).strip().splitlines()
         stat = "\n".join(stat[:40] + (["..."] if len(stat) > 40 else []))
-        save_run(key, status="held", held_sha=head)
+        save_run(key, status="held", held_sha=head, held_from=since)
         comment(
             full,
             thread,
-            f"{who} made a change, edits only: this issue's text came from outside the member list, so it couldn't run "
-            f"commands or reach the network, and nothing ran the tests. It's held on the box:\n\n```\n{stat}\n```\n\n"
-            f"Read the diff on the box (`git -C {tilde(wt)} diff {since[:12]} {head[:12]}`), then a member can "
-            "comment `/prized push` to push it.",
+            f"{who} made a change, edits only ({why}), so it couldn't run commands or reach the network, and "
+            f"nothing ran the tests:\n\n```\n{stat}\n```\n\n"
+            + HELD_NOTE.format(wt=tilde(wt), a=since[:12], b=head[:12]),
         )
         return
     push_and_report(full, number, key, head, final)
@@ -648,6 +685,7 @@ def push_and_report(full: str, number: int, key: str, head: str, final: str) -> 
         ["git", "-C", str(wt), "push", "--quiet", "origin", f"{head}:refs/heads/{branch}"],
         capture_output=True,
         text=True,
+        errors="replace",
         env=git_env(),
         timeout=600,
     )
@@ -660,7 +698,8 @@ def push_and_report(full: str, number: int, key: str, head: str, final: str) -> 
             f"Couldn't push `{branch}` ({why}). The work stays on the box in `{tilde(wt)}`.",
         )
         return
-    summary = f"\n\n{quiet_mentions(clean_text(final, 4000)).strip()}" if final and rec.get("trusted") else ""
+    shown = final if rec.get("trusted") and not secret_in(final, read_token(full)) else ""
+    summary = f"\n\n{quiet_mentions(clean_text(shown, 4000)).strip()}" if shown else ""
     if rec.get("pr"):
         save_run(key, status="pr", held_sha="", pushed=head)
         comment(full, rec["pr"], f"Pushed `{head[:12]}` to this branch.{summary}")
@@ -680,6 +719,14 @@ def push_and_report(full: str, number: int, key: str, head: str, final: str) -> 
         return
     save_run(key, status="pr", pr=pr.get("number"), pr_url=pr.get("html_url"), held_sha="")
     comment(full, number, f"Pull request: {pr.get('html_url')}")
+
+
+def failed(full: str, key: str, thread: int, e: BaseException) -> None:
+    """Whatever went wrong mid-run is recorded and said on GitHub; the poll goes on."""
+    save_run(key, status="failed", detail=f"{type(e).__name__}: {e}"[:200])
+    comment(
+        full, thread, f"The run on the box failed ({type(e).__name__}: {str(e)[:200]}). Add the label again to retry."
+    )
 
 
 def start_run(full: str, cfg: dict, number: int, issue: dict, event: dict, trusted: bool, why: str) -> None:
@@ -725,11 +772,9 @@ def start_run(full: str, cfg: dict, number: int, issue: dict, event: dict, trust
         prompt = issue_prompt(full, number, issue, label, actor, trusted, branch, base)
         rc, session, final = run_agent(agent, trusted, "", prompt, wt, log)
         save_run(key, session=session, turns=1)
-    except (RuntimeError, OSError, subprocess.SubprocessError) as e:
-        save_run(key, status="failed", detail=str(e)[:200])
-        comment(full, number, f"The run on the box failed ({e}). Remove the label and add it again to retry.")
-        return
-    finish(full, number, key, start, rc, final)
+        finish(full, number, key, start, rc, final, trusted, why)
+    except Exception as e:
+        failed(full, key, number, e)
 
 
 def followup(full: str, key: str, thread: int, author: str, request: str) -> None:
@@ -740,44 +785,59 @@ def followup(full: str, key: str, thread: int, author: str, request: str) -> Non
     if status == "running":
         return
     if status == "held":
-        comment(full, thread, "A change is still held. Comment `/prized push` to push it first, then ask for more.")
+        comment(full, thread, "A change is still held: `/prized push` pushes it and `/prized drop` throws it away.")
         return
-    if status == "refused" or not rec.get("session") or not (wt / ".git").exists():
+    if status in ("refused", "diverged", "dropped") or not rec.get("session") or not (wt / ".git").exists():
         comment(
             full,
             thread,
-            "That run can't continue on the box (its session or worktree is gone, or its last change was refused). "
-            "Add the label to the issue again to start fresh.",
+            "That run can't continue on the box (its last change was refused or dropped, the branch was "
+            "rewritten, or its session or worktree is gone). Remove the label from the issue and add it back to "
+            "start fresh.",
         )
         return
+    trusted, why = bool(rec.get("trusted")), rec.get("untrusted_because") or ""
     try:
         if rec.get("pushed"):
-            # Build on whatever a person pushed to the branch meanwhile; never on a rewritten one.
             branch = rec["branch"]
             git(wt, "fetch", "--quiet", "origin", f"+refs/heads/{branch}:refs/remotes/origin/{branch}")
             remote = git(wt, "rev-parse", f"refs/remotes/origin/{branch}").strip()
             if remote != git(wt, "rev-parse", "HEAD").strip():
                 if not git_ok(wt, "merge-base", "--is-ancestor", "HEAD", remote):
+                    save_run(key, status="diverged")
                     comment(
                         full,
                         thread,
-                        f"`{branch}` was rewritten on GitHub, so the box can't build on it. Add the label to the "
-                        "issue again to start fresh.",
+                        f"`{branch}` was rewritten on GitHub, so the box can't build on it. Remove the label from "
+                        "the issue and add it back to start fresh.",
                     )
                     return
                 git(wt, "merge", "--quiet", "--ff-only", remote)
                 save_run(key, pushed=remote)
+                # Anyone with write access can push to this branch, and nothing here says who did: a turn on
+                # top of someone else's commits runs edits only and is held, like text from outside the list.
+                trusted, why = False, "someone pushed to the branch since the box did"
         start = git(wt, "rev-parse", "HEAD").strip()
-    except (RuntimeError, OSError, subprocess.SubprocessError) as e:
-        comment(full, thread, f"The box couldn't update the branch ({e}).")
+    except Exception as e:
+        comment(full, thread, f"The box couldn't update the branch ({type(e).__name__}: {str(e)[:200]}).")
         return
-    rec = save_run(key, status="running")
-    trusted = bool(rec.get("trusted"))
+    if not trusted and rec["agent"] != "claude":
+        comment(
+            full,
+            thread,
+            f"This turn would run edits only ({why}), which needs Claude Code, and this repo runs "
+            f"{WHO.get(rec['agent'], rec['agent'])}. Remove the label from the issue and add it back to start fresh.",
+        )
+        return
+    rec = save_run(key, status="running", status_before=status)
     comment(full, thread, f"{WHO.get(rec['agent'], rec['agent'])} is continuing the same session on the box.")
-    prompt = followup_prompt(author, request, trusted)
-    rc, session, final = run_agent(rec["agent"], trusted, rec["session"], prompt, wt, Path(rec["log"]))
-    save_run(key, session=session, turns=int(rec.get("turns", 1)) + 1)
-    finish(full, number, key, start, rc, final)
+    try:
+        prompt = followup_prompt(author, request, trusted)
+        rc, session, final = run_agent(rec["agent"], trusted, rec["session"], prompt, wt, Path(rec["log"]))
+        save_run(key, session=session, turns=int(rec.get("turns", 1)) + 1)
+        finish(full, number, key, start, rc, final, trusted, why)
+    except Exception as e:
+        failed(full, key, thread, e)
 
 
 def push_held(full: str, key: str, thread: int) -> None:
@@ -791,53 +851,75 @@ def push_held(full: str, key: str, thread: int) -> None:
         if git(wt, "rev-parse", "HEAD").strip() != head:
             comment(full, thread, "The held change moved on the box since it was held, so it wasn't pushed.")
             return
-        problems = check_commits(wt, rec.get("pushed") or rec["base_sha"], head)
-    except (RuntimeError, OSError, subprocess.SubprocessError) as e:
-        comment(full, thread, f"The box couldn't read the held change ({e}).")
+        problems = check_commits(full, wt, rec.get("pushed") or rec["base_sha"], head)
+        if problems:
+            save_run(key, status="refused", detail="; ".join(problems)[:300], held_sha="")
+            comment(full, thread, f"Not pushed: the change {'; '.join(problems)}.")
+            return
+        push_and_report(full, int(key.rpartition("#")[2]), key, head, "")
+    except Exception as e:
+        failed(full, key, thread, e)
+
+
+def drop_held(full: str, key: str, thread: int) -> None:
+    """Throw a held change away; the label starts a fresh run after this."""
+    rec = load_state()["runs"][key]
+    wt = Path(rec.get("worktree") or "/nonexistent")
+    if rec.get("status") != "held":
+        comment(full, thread, "Nothing is held for this issue.")
         return
-    if problems:
-        save_run(key, status="refused", detail="; ".join(problems)[:300], held_sha="")
-        comment(full, thread, f"Not pushed: the change {'; '.join(problems)}.")
-        return
-    push_and_report(full, int(key.rpartition("#")[2]), key, head, "")
+    back = rec.get("held_from") or rec.get("pushed") or rec.get("base_sha")
+    with contextlib.suppress(Exception):
+        git(wt, "reset", "--quiet", "--hard", back)
+        git(wt, "clean", "-fdq")
+    save_run(key, status="dropped", held_sha="")
+    comment(full, thread, "Dropped the held change. Remove the label from the issue and add it back to start fresh.")
 
 
 # --- polling ---
 
+RUN_STATES = ("running", "pr", "pushed", "held", "none", "failed", "refused", "diverged", "dropped")
+
 
 def trust_of(issue: dict, members: set[int]) -> tuple[bool, str]:
-    """Members' own text is trusted; text anyone else wrote, edited or retitled is not."""
+    """Members' own text is trusted; text anyone else wrote, edited or retitled is not, nor text we can't fully check."""
     outsiders = []
     if uid(issue.get("author")) not in members:
         outsiders.append(f"opened by @{login(issue.get('author'))}")
-    for n in (issue.get("userContentEdits") or {}).get("nodes") or []:
+    edits, renames = issue.get("userContentEdits") or {}, issue.get("renames") or {}
+    for n in edits.get("nodes") or []:
         if isinstance(n, dict) and uid(n.get("editor")) not in members:
             outsiders.append(f"edited by @{login(n.get('editor'))}")
-    for n in (issue.get("timelineItems") or {}).get("nodes") or []:
-        if isinstance(n, dict) and n.get("__typename") == "RenamedTitleEvent" and uid(n.get("actor")) not in members:
+    for n in renames.get("nodes") or []:
+        if isinstance(n, dict) and uid(n.get("actor")) not in members:
             outsiders.append(f"retitled by @{login(n.get('actor'))}")
+    if int(edits.get("totalCount") or 0) > len(edits.get("nodes") or []) or int(renames.get("totalCount") or 0) > len(
+        renames.get("nodes") or []
+    ):
+        outsiders.append("edited too often to check who wrote it")
     outsiders = list(dict.fromkeys(outsiders))
     return (not outsiders), ", ".join(outsiders[:3])
 
 
 def label_event(issue: dict, label: str):
     """The latest time the label went on, and the latest rename or edit (an ISO time or "")."""
-    nodes = [n for n in ((issue.get("timelineItems") or {}).get("nodes") or []) if isinstance(n, dict)]
     labeled = [
         n
-        for n in nodes
-        if n.get("__typename") == "LabeledEvent"
-        and str((n.get("label") or {}).get("name", "")).lower() == label.lower()
+        for n in ((issue.get("labels") or {}).get("nodes") or [])
+        if isinstance(n, dict) and str((n.get("label") or {}).get("name", "")).lower() == label.lower()
     ]
     event = sorted(labeled, key=lambda n: str(n.get("createdAt", "")))[-1] if labeled else None
-    changes = [str(n.get("createdAt", "")) for n in nodes if n.get("__typename") == "RenamedTitleEvent"]
+    changes = [
+        str(n.get("createdAt", "")) for n in ((issue.get("renames") or {}).get("nodes") or []) if isinstance(n, dict)
+    ]
     changes.append(str(issue.get("lastEditedAt") or ""))
     return event, max(changes)
 
 
 def find_run(st: dict, full: str, number: int) -> str:
-    """The run for an issue, or for the pull request a run opened."""
-    if f"{full}#{number}" in st["runs"]:
+    """The run for an issue, or for the pull request a run opened ("" when there was never a run)."""
+    rec = st["runs"].get(f"{full}#{number}") or {}
+    if rec.get("status") in RUN_STATES and rec.get("branch"):
         return f"{full}#{number}"
     for key, rec in st["runs"].items():
         if key.startswith(full + "#") and rec.get("pr") == number:
@@ -846,63 +928,83 @@ def find_run(st: dict, full: str, number: int) -> str:
 
 
 def poll_comments(full: str, cfg: dict, members: set[int], may_run: bool) -> bool:
-    """Members' /prized comments, oldest first. Returns True once an agent turn ran (one per poll)."""
-    since = cfg.get("comments_since") or cfg["since"]
-    q = urllib.parse.urlencode({"since": since, "sort": "created", "direction": "asc", "per_page": 100})
-    comments = gh("GET", f"/repos/{full}/issues/comments?{q}") or []
-    seen = set(cfg.get("seen") or [])
+    """Members' /prized comments, in the order they were last updated. Returns True once an agent turn ran.
+
+    GitHub's `since` is on the last update, so the comments are read sorted that way, page by page, and the
+    cursor moves past every comment read, edited or not: a pile of edited old comments can't hold up new ones.
+    """
     ran = False
-    for c in comments:
-        if not isinstance(c, dict) or c.get("id") in seen or str(c.get("created_at", "")) < cfg["since"]:
-            continue
-        m = COMMAND.match(str(c.get("body") or "").strip())
-        author_id, author = uid(c.get("user")), login(c.get("user"))
-        number = int(str(c.get("issue_url", "0")).rstrip("/").rpartition("/")[2] or 0)
-        request = m.group(1).strip() if m else ""
-        needs_agent = bool(m) and author_id in members and request.lower() not in ("", "push", "help")
-        if needs_agent and (ran or not may_run):
-            break  # the next poll takes it from here
-        seen.add(c.get("id"))
-        with state() as st:
-            r = st["repos"][full]
-            r["seen"] = sorted(seen)[-500:]
-            r["comments_since"] = max(str(c.get("created_at", "")), r.get("comments_since") or "")
-            key = find_run(st, full, number)
-        if not m or not number:
-            continue
-        if author_id not in members:
-            say(f"{full}#{number}: ignored /prized from @{author}, who isn't a member")
-            continue
-        if c.get("updated_at") and c.get("updated_at") != c.get("created_at"):
-            comment(full, number, "That `/prized` comment was edited, so it didn't run: post it as a new comment.")
-            continue
-        if request.lower() in ("", "help"):
-            comment(
-                full,
-                number,
-                f"Add the `{cfg['label']}` label to an issue to start. Then `/prized <request>` continues the same "
-                f"session, and `/prized push` pushes a held change. Docs: {DOCS}",
-            )
-        elif not key:
-            comment(full, number, f"No run for this yet: add the `{cfg['label']}` label to the issue to start one.")
-        elif request.lower() == "push":
-            push_held(full, key, number)
-        else:
-            say(f"{full}#{number}: /prized from @{author}: continuing {key}")
-            followup(full, key, number, author, request)
-            ran = True
+    for _ in range(10):  # up to 1,000 comments a poll; the rest next time
+        cursor = cfg.get("comments_since") or cfg["since"]
+        back = (dt.datetime.strptime(cursor, "%Y-%m-%dT%H:%M:%SZ") - dt.timedelta(seconds=2)).strftime(
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
+        q = urllib.parse.urlencode({"since": back, "sort": "updated", "direction": "asc", "per_page": 100})
+        comments = [c for c in gh("GET", f"/repos/{full}/issues/comments?{q}") or [] if isinstance(c, dict)]
+        seen = set(cfg.get("seen") or [])
+        fresh = [c for c in comments if c.get("id") not in seen]
+        for c in fresh:
+            m = COMMAND.match(str(c.get("body") or "").strip())
+            author_id, author = uid(c.get("user")), login(c.get("user"))
+            number = int(str(c.get("issue_url", "0")).rstrip("/").rpartition("/")[2] or 0)
+            request = m.group(1).strip() if m else ""
+            verb = request.lower()
+            new = str(c.get("created_at", "")) >= cfg["since"]
+            needs_agent = bool(m) and new and author_id in members and verb not in ("", "push", "drop", "help")
+            if needs_agent and (ran or not may_run):
+                return ran  # the next poll takes it from here
+            seen.add(c.get("id"))
+            with state() as st:
+                r = st["repos"].get(full)
+                if r is None:  # `off OWNER/REPO` meanwhile
+                    return ran
+                r["seen"] = sorted(seen)[-1000:]
+                r["comments_since"] = max(
+                    str(c.get("updated_at") or c.get("created_at") or ""), r.get("comments_since") or ""
+                )
+                cfg = r
+                key = find_run(st, full, number)
+            if not m or not number or not new:
+                continue
+            if author_id not in members:
+                say(f"{full}#{number}: ignored /prized from @{author}, who isn't a member")
+                continue
+            if c.get("updated_at") and c.get("updated_at") != c.get("created_at"):
+                comment(full, number, "That `/prized` comment was edited, so it didn't run: post it as a new comment.")
+                continue
+            if verb in ("", "help"):
+                comment(
+                    full,
+                    number,
+                    f"Add the `{cfg['label']}` label to an issue to start. Then `/prized <request>` continues the "
+                    "same session, `/prized push` pushes a held change and `/prized drop` throws it away. "
+                    f"Docs: {DOCS}",
+                )
+            elif not key:
+                comment(full, number, f"No run for this yet: add the `{cfg['label']}` label to the issue to start one.")
+            elif verb == "push":
+                push_held(full, key, number)
+            elif verb == "drop":
+                drop_held(full, key, number)
+            else:
+                say(f"{full}#{number}: /prized from @{author}: continuing {key}")
+                followup(full, key, number, author, request)
+                ran = True
+        if len(comments) < 100 or not fresh:
+            return ran
     return ran
 
 
 def poll_labels(full: str, cfg: dict, members: set[int], dry: bool) -> bool:
-    """The oldest newly labeled issue, run to the end. Returns True when an agent turn ran."""
+    """The newly labeled issue that changed longest ago, run to the end. Returns True when an agent turn ran."""
+    # Labeling an issue updates it, so the 100 most recently updated labeled issues always include new labels.
     q = urllib.parse.urlencode(
-        {"labels": cfg["label"], "state": "open", "per_page": 100, "sort": "created", "direction": "asc"}
+        {"labels": cfg["label"], "state": "open", "per_page": 100, "sort": "updated", "direction": "desc"}
     )
-    listed = gh("GET", f"/repos/{full}/issues?{q}") or []
+    listed = [i for i in gh("GET", f"/repos/{full}/issues?{q}") or [] if isinstance(i, dict)]
     tag = "[dry run] " if dry else ""
-    for item in listed:
-        if not isinstance(item, dict) or "pull_request" in item or not isinstance(item.get("number"), int):
+    for item in sorted(listed, key=lambda i: str(i.get("updated_at", ""))):
+        if "pull_request" in item or not isinstance(item.get("number"), int):
             continue
         number = item["number"]
         key = f"{full}#{number}"
@@ -911,6 +1013,7 @@ def poll_labels(full: str, cfg: dict, members: set[int], dry: bool) -> bool:
             continue
         issue = fetch_issue(full, number)
         event, changed = label_event(issue, cfg["label"])
+        trusted, why = trust_of(issue, members)
         decision, notice = "", ""
         if not event:
             decision = "no label event"
@@ -927,11 +1030,21 @@ def poll_labels(full: str, cfg: dict, members: set[int], dry: bool) -> bool:
                 )
         elif changed > str(event.get("createdAt", "")):
             decision = "skipped: the issue changed after the label went on"
-            notice = f"This issue changed after the `{cfg['label']}` label went on, so it didn't run. Remove the label and add it again to run it as it reads now."
+            notice = (
+                f"This issue changed after the `{cfg['label']}` label went on, so it didn't run. Remove the label "
+                "and add it again to run it as it reads now."
+            )
+        elif not trusted and cfg["agent"] != "claude":
+            decision = f"skipped: text from outside the member list ({why}) and the agent is {cfg['agent']}"
+            notice = (
+                f"This issue's text came from outside the member list ({why}). Such text runs only in Claude Code's "
+                f"edits-only mode, and this repo runs {WHO.get(cfg['agent'], cfg['agent'])}, so it didn't run. A "
+                "member can open an issue with the request in their own words."
+            )
         elif rec.get("status") == "held":
             decision = "already has a run"
-            notice = "A change for this issue is held on the box: a member's `/prized push` pushes it."
-        elif rec.get("pr") and pr_is_open(full, rec["pr"]):
+            notice = "A change for this issue is held on the box: a member's `/prized push` pushes it, `/prized drop` throws it away."
+        elif rec.get("status") == "pr" and rec.get("pr") and pr_is_open(full, rec["pr"]):
             decision = "already has a run"
             notice = (
                 f"This issue already has #{rec['pr']}: comment `/prized <request>` there to continue the same session."
@@ -951,9 +1064,9 @@ def poll_labels(full: str, cfg: dict, members: set[int], dry: bool) -> bool:
                 if notice:
                     comment(full, number, notice)
             continue
-        trusted, why = trust_of(issue, members)
         say(
-            f"{tag}{key}: labeled by @{login(event.get('actor'))}; {'would run' if dry else 'running'} {cfg['agent']} ({'auto' if trusted else 'edits only: ' + why})"
+            f"{tag}{key}: labeled by @{login(event.get('actor'))}; {'would run' if dry else 'running'} "
+            f"{cfg['agent']} ({'auto' if trusted else 'edits only: ' + why})"
         )
         if dry:
             continue
@@ -985,10 +1098,10 @@ def prune(st_repos: dict) -> None:
     for key, rec in list(load_state()["runs"].items()):
         full = key.rpartition("#")[0]
         wt = rec.get("worktree")
-        if full not in st_repos or not wt or not Path(wt).exists() or rec.get("status") in ("running", "held"):
+        if full not in st_repos or not wt or not Path(wt).exists() or rec.get("status") == "running":
             continue
         gone = False
-        if rec.get("pr"):
+        if rec.get("pr") and rec.get("status") != "held":
             try:
                 gone = (gh("GET", f"/repos/{full}/pulls/{rec['pr']}") or {}).get("state") == "closed"
             except GitHubError:
@@ -998,9 +1111,13 @@ def prune(st_repos: dict) -> None:
         if gone:
             git(clone_dir(full), "worktree", "remove", "--force", wt, check=False)
             shutil.rmtree(wt, ignore_errors=True)
-            with contextlib.suppress(RuntimeError):
-                git(clone_dir(full), "branch", "-D", rec.get("branch", ""), check=False)
-            save_run(key, worktree="", pr_open=False)
+            git(clone_dir(full), "branch", "-D", rec.get("branch", ""), check=False)
+            save_run(
+                key,
+                worktree="",
+                pr_open=False,
+                **({"status": "dropped", "held_sha": ""} if rec.get("status") == "held" else {}),
+            )
             say(f"{key}: removed the worktree")
 
 
@@ -1009,9 +1126,6 @@ def main_poll(args) -> int:
     if not st["repos"]:
         say("Not watching any repo: prized_issues.py watch OWNER/REPO")
         return 0
-    if not read_token():
-        say(f"No token in {tilde(TOKEN_FILE)}: run prized_issues.py watch OWNER/REPO again")
-        return 2
     STATE_DIR.mkdir(parents=True, exist_ok=True, mode=0o700)
     lock = open(STATE_DIR / ".poll.lock", "w")  # held until exit: one poll at a time
     try:
@@ -1033,19 +1147,27 @@ def main_poll(args) -> int:
                 "The run on the box was interrupted. Add the label again (or comment `/prized <request>`) to retry.",
             )
     ran = False
-    for full, cfg in load_state()["repos"].items():
+    for full in list(load_state()["repos"]):
+        cfg = load_state()["repos"].get(full)
+        if cfg is None:
+            continue
+        if not read_token(full):
+            say(f"{full}: no token in {tilde(token_file(full))}: run `prized_issues.py watch {full}` again")
+            continue
         members = {m for m in cfg.get("member_ids") or [] if isinstance(m, int)}
         try:
             if not args.dry_run:
                 ran = poll_comments(full, cfg, members, not ran) or ran
-            if not ran:
+            if not ran and full in load_state()["repos"]:
                 ran = poll_labels(full, load_state()["repos"][full], members, args.dry_run)
         except GitHubError as e:
             say(f"{full}: {e}{' (trying again next time)' if e.transient else ''}")
+        except Exception as e:
+            say(f"{full}: {type(e).__name__}: {e}")
     if not args.dry_run and not ran:
         try:
             prune(load_state()["repos"])
-        except (GitHubError, RuntimeError, OSError) as e:
+        except Exception as e:
             say(f"prune: {e}")
     return 0
 
@@ -1073,12 +1195,13 @@ def install_timer() -> bool:
     return True
 
 
-def get_token(args, owner: str) -> str:
+def get_token(args, full: str) -> str:
+    """The repo's token: --token-file, a line on stdin, or typed; empty keeps the one saved for the repo."""
+    owner, old = full.split("/", maxsplit=1)[0], read_token(full)
     if args.token_file:
         return Path(args.token_file).expanduser().read_text(encoding="utf-8").strip()
     if not sys.stdin.isatty():
-        return sys.stdin.readline().strip()
-    old = read_token()
+        return sys.stdin.readline().strip() or old
     print(
         "A fine-grained GitHub token for this repo, with Contents, Issues and Pull requests: read and write.\n"
         f"Make one here (pick 'Only select repositories' and this repo): {PAT_PAGE.format(owner=owner)}"
@@ -1093,11 +1216,14 @@ def main_watch(args) -> int:
         print(f"{full!r} isn't OWNER/REPO", file=sys.stderr)
         return 2
     owner = full.split("/")[0]
-    label = args.label
+    # Running watch again changes only what its flags name.
+    known = next((k for k in load_state()["repos"] if k.lower() == full.lower()), "")
+    old = load_state()["repos"].get(known, {})
+    label = args.label or old.get("label") or "prized"
     if not LABEL_RE.fullmatch(label):
         print(f"--label {label!r}: letters, digits, spaces, dots, dashes and underscores", file=sys.stderr)
         return 2
-    token = get_token(args, owner)
+    token = get_token(args, known or full)
     if not token:
         print("No token given.", file=sys.stderr)
         return 2
@@ -1117,12 +1243,19 @@ def main_watch(args) -> int:
         )
         return 2
     full = repo.get("full_name") or full  # GitHub's spelling
-    base = args.base or repo.get("default_branch") or "main"
+    base = args.base or old.get("base") or repo.get("default_branch") or "main"
     if not BRANCH_RE.fullmatch(base):
         print(f"base branch {base!r} has characters this poller won't pass to git", file=sys.stderr)
         return 2
-    agent = args.agent or ("claude" if shutil.which("claude") or not shutil.which("codex") else "codex")
+    agent = (
+        args.agent or old.get("agent") or ("claude" if shutil.which("claude") or not shutil.which("codex") else "codex")
+    )
     member_ids, member_names = [me["id"]], [me["login"]]
+    if args.members is None:  # keep the list
+        for i, n in zip(old.get("member_ids") or [], old.get("members") or []):
+            if i not in member_ids:
+                member_ids.append(i)
+                member_names.append(n)
     for name in [m for m in (args.members or "").replace(" ", ",").split(",") if m]:
         name = name.lstrip("@")
         if not LOGIN_RE.fullmatch(name):
@@ -1136,7 +1269,7 @@ def main_watch(args) -> int:
         if user["id"] not in member_ids:
             member_ids.append(user["id"])
             member_names.append(user["login"])
-    write_private(TOKEN_FILE, token + "\n")
+    write_private(token_file(full), token + "\n")
     try:
         gh(
             "POST",
@@ -1156,7 +1289,7 @@ def main_watch(args) -> int:
         print(f"Couldn't clone {full} with the token: {e}", file=sys.stderr)
         return 2
     with state() as st:
-        old = st["repos"].get(full, {})
+        old = st["repos"].pop(known, None) or st["repos"].get(full, {})
         st["me"] = {"login": me["login"], "id": me["id"]}
         st["repos"][full] = {
             **old,
@@ -1174,8 +1307,12 @@ def main_watch(args) -> int:
         f"on it in a fresh worktree of {base}, and opens a pull request that closes it. Comment "
         "`/prized <request>` on that pull request to continue the same session.\n"
         f"Members (whose labels and comments count): {', '.join('@' + n for n in member_names)}. "
-        "Text anyone else wrote runs edits-only and waits for a member's `/prized push`.\n"
-        "`python3 ~/.prized-issues/prized_issues.py` shows what ran; logs are in ~/.prized-issues/logs."
+        + (
+            "Text anyone else wrote runs edits-only and waits for a member's `/prized push`.\n"
+            if agent == "claude"
+            else "Text anyone else wrote doesn't run: edits-only mode needs Claude Code.\n"
+        )
+        + "`python3 ~/.prized-issues/prized_issues.py` shows what ran; logs are in ~/.prized-issues/logs."
     )
     notes = []
     if not timer:
@@ -1232,12 +1369,13 @@ def main_off(args) -> int:
 
 
 def main_git_credential(args) -> int:
-    """git credential helper: the poller's token for github.com, only for `get`."""
+    """git credential helper: a repo's own token, for github.com only, for `get` only."""
     if args.op != "get":
         return 0
     req = dict(line.split("=", 1) for line in sys.stdin.read().splitlines() if "=" in line)
     host = urllib.parse.urlparse(GIT_URL.format(owner="o", repo="r")).hostname or "github.com"
-    token = read_token()
+    path = req.get("path", "").removesuffix(".git").strip("/")
+    token = read_token(path) if REPO_RE.fullmatch(path) else ""
     if req.get("protocol") == "https" and req.get("host") == host and token:
         print(f"username=x-access-token\npassword={token}")
     return 0
@@ -1248,10 +1386,13 @@ def main(argv=None) -> int:
     sub = p.add_subparsers(dest="cmd", metavar="{watch,poll,off}", help="with none: what it watches and what ran")
     w = sub.add_parser("watch", help="watch a repo: label an issue and the box's agent works it")
     w.add_argument("repo", help="OWNER/REPO")
-    w.add_argument("--label", default="prized", help="the label that hands an issue over (default: prized)")
+    w.add_argument("--label", help="the label that hands an issue over (default: prized)")
     w.add_argument("--agent", choices=["claude", "codex"], help="the agent (default: claude if installed)")
     w.add_argument("--base", help="the branch pull requests target (default: the repo's default branch)")
-    w.add_argument("--members", help="more GitHub logins whose labels and /prized comments count, comma separated")
+    w.add_argument(
+        "--members",
+        help="GitHub logins whose labels and /prized comments count besides yours, comma separated (replaces the list)",
+    )
     w.add_argument("--token-file", help="read the token from this file instead of asking")
     w.add_argument("--broad-token", action="store_true", help="accept a classic or OAuth token that reaches every repo")
     pl = sub.add_parser("poll", help="look once for labeled issues and /prized comments (the timer runs this)")

@@ -111,7 +111,7 @@ class WatchTest(Box):
     def test_watch_saves_a_private_token_creates_the_label_and_lists_members(self):
         out = self.watch("--members", "teammate").stdout
         self.assertIn("Watching acme/app", out)
-        tok = self.state_dir / "token"
+        tok = self.state_dir / "tokens" / "acme__app"
         self.assertEqual(tok.read_text().strip(), "github_pat_fine")
         self.assertEqual(stat.S_IMODE(tok.stat().st_mode), 0o600)
         self.assertEqual(stat.S_IMODE(self.state_dir.stat().st_mode), 0o700)
@@ -129,7 +129,7 @@ class WatchTest(Box):
         self.assertEqual(r.returncode, 2)
         self.assertIn("fine-grained", r.stderr)
         self.assertIn("personal-access-tokens/new", r.stderr)
-        self.assertFalse((self.state_dir / "token").exists())
+        self.assertFalse((self.state_dir / "tokens" / "acme__app").exists())
         self.run_cli("watch", FULL, "--broad-token", stdin="gho_classic\n")
 
     def test_a_bad_token_or_repo_name_stops_early(self):
@@ -144,14 +144,13 @@ class WatchTest(Box):
         env = {**self.env, "PRIZED_ISSUES_GIT_URL": ""}
         env.pop("PRIZED_ISSUES_GIT_URL")
         helper = [sys.executable, str(self.state_dir / "prized_issues.py"), "git-credential", "get"]
-        out = subprocess.run(
-            helper, input="protocol=https\nhost=github.com\n", env=env, capture_output=True, text=True
-        ).stdout
-        self.assertIn("password=github_pat_fine", out)
-        out = subprocess.run(
-            helper, input="protocol=https\nhost=evil.example\n", env=env, capture_output=True, text=True
-        ).stdout
-        self.assertEqual(out, "")
+
+        def ask(request):
+            return subprocess.run(helper, input=request, env=env, capture_output=True, text=True).stdout
+
+        self.assertIn("password=github_pat_fine", ask("protocol=https\nhost=github.com\npath=acme/app.git\n"))
+        self.assertEqual(ask("protocol=https\nhost=evil.example\npath=acme/app.git\n"), "")
+        self.assertEqual(ask("protocol=https\nhost=github.com\npath=acme/other.git\n"), "", "each repo, its own token")
 
 
 class LabelTest(Box):
@@ -355,16 +354,31 @@ class SafetyTest(Box):
         body = self.fake.pulls[rec["pr"]]["body"]
         self.assertNotIn("Done.", body, "agent text from an untrusted run isn't posted")
 
-    def test_codex_on_outside_text_runs_sandboxed_with_no_network(self):
+    def test_codex_never_runs_outside_text(self):
+        # Codex's sandbox runs commands and reads the whole disk: there's no edits-only Codex.
         self.watch("--agent", "codex")
         n = self.fake.open_issue("Bug", "b", author="outsider")
         self.fake.label(n)
-        self.plan({"write": {"fix.txt": "edit\n"}})
         self.poll()
-        argv = self.calls()[0]["argv"]
-        self.assertEqual(argv[argv.index("-s") + 1], "workspace-write")
-        self.assertIn("sandbox_workspace_write.network_access=false", argv)
-        self.assertNotIn("--dangerously-bypass-approvals-and-sandbox", argv)
+        self.assertEqual(self.calls(), [])
+        self.assertIn("runs only in Claude Code's edits-only mode", self.fake.bot_comments(n)[-1])
+        with self.assertRaises(ValueError):
+            pi.agent_cmd("codex", False, "")
+
+    def test_names_binary_files_and_minus_diff_files_are_scanned_too(self):
+        self.watch()
+        self.plan(
+            {"write": {".gitattributes": "leak.txt -diff\n"}, "write_token": "leak.txt", "commit": "x"},
+            {"write": {"notes/github_pat_11ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnop.md": "ok\n"}, "commit": "y"},
+            {"write": {"ok.txt": "fine\n"}, "commit": "AKIAABCDEFGHIJKLMNOP in the message"},
+        )
+        for _ in range(3):
+            n = self.fake.open_issue("a", "b")
+            self.fake.label(n)
+            self.poll()
+            rec = self.run_of(n)
+            self.assertEqual(rec["status"], "refused", rec.get("detail"))
+            self.assertEqual(self.remote(rec["branch"]), "")
 
     def test_edits_by_an_outsider_make_text_untrusted(self):
         self.watch()
@@ -452,8 +466,21 @@ class FollowupTest(Box):
         sh("git", "-C", str(other), "push", "-q", "origin", "prized/issue-1")
         self.fake.comment(rec["pr"], "/prized next", author="owner")
         self.poll()
+        # Nothing says who pushed, and anyone with write access can: that turn runs edits only and is held.
+        call = self.calls()[1]
+        self.assertIn("--restricted", call["argv"])
+        self.assertIn("--resume", call["argv"])
+        self.assertEqual(self.run_of(n)["status"], "held")
+        self.assertIn("someone pushed to the branch", self.fake.bot_comments(rec["pr"])[-1])
+        self.assertTrue(self.run_of(n)["trusted"], "the session itself stays a member's")
+        self.fake.comment(rec["pr"], "/prized push", author="owner")
+        self.poll()
         self.assertEqual(self.remote_file("prized/issue-1", "human.txt"), "by hand\n")
         self.assertIn("fixed by call 2", self.remote_file("prized/issue-1", "fix.txt"))
+        # With the branch back to what the box pushed, the next turn has full permissions again.
+        self.fake.comment(rec["pr"], "/prized and one more", author="owner")
+        self.poll()
+        self.assertIn("--dangerously-skip-permissions", self.calls()[2]["argv"])
         # A rewritten branch isn't built on.
         sh("git", "-C", str(other), "reset", "-q", "--hard", "HEAD~1")
         (other / "x.txt").write_text("x\n")
@@ -462,8 +489,14 @@ class FollowupTest(Box):
         sh("git", "-C", str(other), "push", "-q", "-f", "origin", "prized/issue-1")
         self.fake.comment(rec["pr"], "/prized again", author="owner")
         self.poll()
-        self.assertEqual(len(self.calls()), 2)
+        self.assertEqual(len(self.calls()), 3)
         self.assertIn("rewritten", self.fake.bot_comments(rec["pr"])[-1])
+        # The way out it names works even with the pull request still open.
+        self.fake.unlabel(n)
+        self.fake.label(n)
+        self.poll()
+        self.assertEqual(len(self.calls()), 4)
+        self.assertEqual(self.run_of(n)["branch"], "prized/issue-1-2")
 
     def test_an_untrusted_session_stays_edits_only(self):
         self.watch()
@@ -522,6 +555,105 @@ class SetupTest(Box):
         self.assertNotIn("package-lock.json", files, "setup output stays out of follow-ups too")
         self.assertEqual((self.home / "setup-runs").read_text(), "ran\n")
         self.assertFalse((self.home / "evil").exists())
+
+
+class ReviewFixesTest(Box):
+    """Cases from the independent review (tasks/agent-ci-guide-1101/review)."""
+
+    def test_a_held_change_can_be_dropped_and_the_label_starts_fresh(self):
+        self.watch()
+        self.plan({"write": {"fix.txt": "bad\n"}})
+        n = self.fake.open_issue("Bug", "b", author="outsider")
+        self.fake.label(n)
+        self.poll()
+        self.assertEqual(self.run_of(n)["status"], "held")
+        self.fake.comment(n, "/prized drop", author="outsider")
+        self.poll()
+        self.assertEqual(self.run_of(n)["status"], "held", "an outsider can't drop it")
+        self.fake.comment(n, "/prized drop", author="owner")
+        self.poll()
+        self.assertEqual(self.run_of(n)["status"], "dropped")
+        self.assertIn("Dropped", self.fake.bot_comments(n)[-1])
+        self.fake.unlabel(n)
+        self.fake.label(n)
+        self.poll()
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_a_command_on_an_issue_that_was_only_skipped_says_no_run_yet(self):
+        self.watch()
+        n = self.fake.open_issue("t", "b")
+        self.fake.label(n, actor="triager")
+        self.poll()
+        self.fake.comment(n, "/prized go", author="owner")
+        self.poll()
+        self.assertIn("No run for this yet", self.fake.bot_comments(n)[-1])
+
+    def test_many_edited_old_comments_dont_hold_up_new_commands(self):
+        self.watch()
+        with pi_state(self.env) as st:
+            st["repos"][FULL]["since"] = stamp(-300)
+        n = self.fake.open_issue("a", "b")
+        spam = [self.fake.comment(n, f"spam {i}", author="outsider") for i in range(150)]
+        for i, c in enumerate(spam):
+            c["created_at"] = c["updated_at"] = stamp(-280 + i)
+        self.poll()
+        for c in spam:  # edited again, after they were read
+            c["updated_at"] = stamp(1)
+        self.fake.comment(n, "/prized", author="owner")
+        self.poll()
+        self.poll()
+        self.assertTrue([b for b in self.fake.bot_comments(n) if "Docs:" in b], "the member's command is read")
+
+    def test_new_labels_are_seen_past_100_older_labeled_issues(self):
+        for i in range(105):
+            m = self.fake.open_issue(f"old {i}", "b")
+            self.fake.label(m, at=stamp(-3600))
+            self.fake.issues[m]["updated_at"] = stamp(-3600)
+        self.watch()
+        n = self.fake.open_issue("new", "b")
+        self.fake.label(n)
+        self.poll()
+        self.assertEqual(len(self.calls()), 1)
+        self.assertEqual(self.run_of(n)["status"], "pr")
+
+    def test_too_many_edits_to_check_count_as_outside_text(self):
+        self.watch()
+        n = self.fake.open_issue("a", "b")
+        self.fake.issues[n]["edits"] = ["owner"] * 101
+        self.fake.issues[n]["lastEditedAt"] = stamp(-60)
+        self.fake.label(n)
+        self.plan({"write": {"fix.txt": "1\n"}})
+        self.poll()
+        self.assertIn("--restricted", self.calls()[0]["argv"])
+        self.assertIn("too often to check", self.fake.bot_comments(n)[0])
+
+    def test_watch_again_changes_only_what_it_names(self):
+        self.watch("--members", "teammate", "--label", "agent")
+        self.run_cli("watch", FULL, "--agent", "codex", stdin="\n")  # Enter keeps the saved token
+        cfg = self.state()["repos"][FULL]
+        self.assertEqual((cfg["label"], cfg["agent"], cfg["member_ids"]), ("agent", "codex", [1, 2]))
+
+    def test_each_repo_keeps_its_own_token(self):
+        self.watch()
+        self.fake.tokens["github_pat_other"] = ("owner", None)
+        tokens = self.state_dir / "tokens"
+        (tokens / "acme__other").write_text("github_pat_other\n")
+        self.assertEqual((tokens / "acme__app").read_text().strip(), "github_pat_fine")
+        self.run_cli("watch", FULL, stdin="github_pat_fine\n")
+        self.assertEqual((tokens / "acme__other").read_text().strip(), "github_pat_other")
+
+
+class Latin1Test(Box):
+    def seed_files(self, seed: Path):
+        (seed / "legacy.txt").write_bytes(b"caf\xe9 au lait\n")
+
+    def test_files_that_arent_utf8_dont_break_the_run(self):
+        self.watch()
+        self.plan({"write": {"legacy.txt": "cafe au lait\n"}, "commit": "fix"})
+        n = self.fake.open_issue("a", "b")
+        self.fake.label(n)
+        self.poll()
+        self.assertEqual(self.run_of(n)["status"], "pr")
 
 
 class UnitTest(unittest.TestCase):

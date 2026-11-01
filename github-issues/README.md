@@ -33,36 +33,40 @@ Step-by-step guide: [prized.dev/docs/github-issues](https://prized.dev/docs/gith
 | On GitHub | What happens |
 | --- | --- |
 | Add the `prized` label | A run: comment "working on this", the agent in `~/.prized-issues/work/OWNER__REPO-N` on branch `prized/issue-N`, then a pull request with `Closes #N` |
-| `/prized <request>` on the pull request (or the issue) | The same session continues (`claude --resume`, `codex exec resume`) on the same worktree, after a fast-forward to anything a person pushed to the branch; the new commit is pushed to it |
+| `/prized <request>` on the pull request (or the issue) | The same session continues (`claude --resume`, `codex exec resume`) on the same worktree; the new commit is pushed to the branch. If someone else pushed to the branch, the box builds on it, edits only, and holds the result |
 | `/prized push` | Pushes a held change (below) and opens the pull request |
+| `/prized drop` | Throws a held change away; the label then starts fresh |
 | `/prized` | A short help comment |
 | Remove and re-add the label | A fresh run, once the issue's pull request is closed; while it is open, a pointer to it |
 
 | On the box | What it does |
 | --- | --- |
 | `python3 ~/.prized-issues/prized_issues.py` | What it watches and the last 20 runs |
-| `python3 ~/.prized-issues/prized_issues.py watch OWNER/REPO --members alice,bob` | Add a repo, or change who counts (`--agent codex`, `--label`, `--base`) |
+| `python3 ~/.prized-issues/prized_issues.py watch OWNER/REPO --members alice,bob` | Add a repo (each with its own token), or change who counts; `--agent codex`, `--label` and `--base` too. Running it again changes only what you name |
 | `python3 ~/.prized-issues/prized_issues.py poll --dry-run` | Which labeled issues would run, and why the others don't |
 | `python3 ~/.prized-issues/prized_issues.py off` | Stop the timer (`off OWNER/REPO` stops one repo) |
 
-Logs are in `~/.prized-issues/logs/`, one per issue. A repo with `.prized/setup.sh` on its base branch gets that script run in each new worktree (installs, a build) before the agent starts.
+Logs are in `~/.prized-issues/logs/`, one per run. A repo with `.prized/setup.sh` on its base branch gets that script run in each new worktree (installs, a build) before the agent starts.
 
 ## Who can start a run
 
 - **Members only.** The token's owner, plus anyone named with `--members`, matched by GitHub user id. A label or a `/prized` comment from anyone else is ignored, write access or not, so a collaborator can't spend your plan or run commands on your box.
 - **Members' own text runs in full auto** (`claude --dangerously-skip-permissions`, `codex --dangerously-bypass-approvals-and-sandbox`), so the agent can install, build and run tests. Label only issues you'd paste into the agent yourself.
-- **Text anyone else wrote, edited or retitled runs edits only:** Claude Code with `--restricted` (no commands, no web fetches, file tools confined to the worktree, no settings or MCP servers from the repo), Codex in its `workspace-write` sandbox with the network off. The issue text goes in as data, not instructions. The change is committed on the box and held: the poller comments its diffstat, and nothing is pushed until a member comments `/prized push`. A session that started this way stays edits-only for its follow-ups.
+- **Text anyone else wrote, edited or retitled runs edits only,** in Claude Code's `--restricted` mode: no commands, no web fetches, no skills or subagents, file tools confined to the worktree, no settings or MCP servers from the repo. The issue text goes in as data, not instructions. The change is committed on the box and held: the poller comments the list of changed files, and nothing is pushed until a member comments `/prized push` (or `/prized drop`). A session that started this way stays edits-only for its follow-ups. Codex has no such mode (its sandbox runs commands and reads the whole disk), so with `--agent codex` outside text doesn't run at all.
+- **A follow-up on a branch someone else pushed to runs edits only too,** and is held the same way: anyone with write access can push to `prized/issue-N`, and nothing says who did. Once a member has pushed the held change, the next turn has full permissions again.
+- **An edit history too long to check counts as outside text,** and so does an issue GitHub can't fully answer for.
 - **An issue changed after the label went on doesn't run.** Remove the label and add it again to run it as it reads now. Edited `/prized` comments don't count either.
 
 ## What it checks before every push
 
-Every commit not yet on GitHub is checked, and the push is refused (with a comment saying why) if it changes `.github/workflows`, adds a symlink or a submodule, adds a file over 5 MB, or contains this poller's token or something shaped like a GitHub, Anthropic, OpenAI, AWS or Prized key or a private key. Commits are made with git hooks off. Pushes never force.
+Every commit not yet on GitHub is checked, and the push is refused (with a comment saying why) if it changes `.github/workflows`, adds a symlink or a submodule, adds a file over 5 MB, or holds this poller's token or something shaped like a GitHub, Anthropic, OpenAI, AWS or Prized key or a private key, in a file's content (binary files and files marked `-diff` included), its name or a commit message. Commits are made with git hooks off. Pushes never force.
 
 ## Limits
 
-- **The token is on the box.** It sits in `~/.prized-issues/token` (mode 0600) and is never in the agent's environment, but a full-auto run on members' text runs as you and could read it. That is why it should reach only this repo. A GitHub App would keep it off the box; this poller doesn't.
+- **The token is on the box.** Each repo's sits in `~/.prized-issues/tokens/` (mode 0600) and is never in the agent's environment, and an edits-only run can't read it, but a full-auto run on members' text runs as you and could. That is why it should reach only this repo. A GitHub App would keep it off the box; this poller doesn't.
+- **Full auto runs the repo's own code:** its tests, `.prized/setup.sh`, and Claude Code or Codex settings in the repo. Anyone who can push to the base branch can therefore run code on the box when a member labels an issue. Protect the base branch.
 - **A held change is untested.** Edits-only runs can't run the tests. Read the diff on the box (the comment gives the `git diff` command) before `/prized push`.
-- **One run at a time per box,** oldest first. A follow-up waits for the run in progress.
+- **One run at a time per box.** A follow-up or a new label waits for the run in progress.
 - **Up to about a minute before a run starts** (the poll), then the agent's own time. Each turn stops after 2 hours.
 - **Comments only.** `/prized` in a pull request review or an inline review comment isn't read.
 - **Pull requests carry a footer** linking to the guide ("Opened by prized-issues"); delete it from the pull request if you'd rather not have it.
