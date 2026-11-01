@@ -746,7 +746,8 @@ def test_unpack_fails_on_a_truncated_image(tmp_path):
 
 def _gai(root, before: str | None = None, link: bool = False) -> str | None:
     """Runs gai_conf_command on an image root whose /etc/gai.conf holds
-    ``before`` (none if None, a link to it if ``link``); returns the result."""
+    ``before`` (none if None, a link to a file holding it if ``link``);
+    returns the file's text afterwards."""
     conf = root / "etc" / "gai.conf"
     conf.parent.mkdir(parents=True, exist_ok=True)
     if before is not None:
@@ -761,37 +762,65 @@ def _gai(root, before: str | None = None, link: bool = False) -> str | None:
         text=True,
     )
     assert (result.returncode, result.stdout) == (0, "ok\n"), result.stderr
-    return conf.read_text() if conf.exists() else None
+    return conf.read_text() if conf.is_file() else None
+
+
+DEBIAN_GAI = "# Configuration for getaddrinfo(3).\n#precedence ::ffff:0:0/96  100\n"
 
 
 @linux_only
 def test_images_get_ipv4_first_name_resolution(tmp_path):
-    line = "precedence ::ffff:0:0/96 100"
-    assert _module._GAI_PRECEDENCE == line
-    assert _gai(tmp_path / "a").splitlines()[-1] == line  # no gai.conf yet
-    debian = "# Configuration for getaddrinfo(3).\n#precedence ::ffff:0:0/96  100\n"
-    assert _gai(tmp_path / "b", debian).startswith(debian)  # kept, line added
-    assert _gai(tmp_path / "b", None).count(line) == 1  # a restart adds no second
+    table = list(_module._GAI_PRECEDENCE)
+    assert table[-1] == "precedence ::ffff:0:0/96 100"  # glibc's default is 10
+    assert table[:-1] == [  # the rest of glibc's default table, kept
+        "precedence ::1/128 50",
+        "precedence ::/0 40",
+        "precedence 2002::/16 30",
+        "precedence ::/96 20",
+    ]
+    assert _gai(tmp_path / "a").splitlines()[-5:] == table  # no gai.conf yet
+    after = _gai(tmp_path / "b", DEBIAN_GAI)
+    assert after.startswith(DEBIAN_GAI) and after.splitlines()[-5:] == table
+    assert _gai(tmp_path / "b") == after  # a second start adds nothing
     own = "precedence ::1/128 50\n"
     assert _gai(tmp_path / "c", own) == own  # the image's own order wins
-    assert _gai(tmp_path / "d", own, link=True) == own  # links are left alone
-    assert (tmp_path / "d" / "elsewhere").read_text() == own
+
+
+@linux_only
+def test_gai_conf_links_directories_and_read_only_files_are_left_alone(tmp_path):
+    _gai(tmp_path / "link", DEBIAN_GAI, link=True)
+    assert (tmp_path / "link" / "etc" / "gai.conf").is_symlink()
+    assert (tmp_path / "link" / "elsewhere").read_text() == DEBIAN_GAI
+    (tmp_path / "dir" / "etc" / "gai.conf").mkdir(parents=True)
+    assert _gai(tmp_path / "dir") is None
+    assert list((tmp_path / "dir" / "etc" / "gai.conf").iterdir()) == []
+    if os.geteuid() != 0:  # root writes through 0444
+        locked = tmp_path / "ro" / "etc" / "gai.conf"
+        locked.parent.mkdir(parents=True)
+        locked.write_text(DEBIAN_GAI)
+        locked.chmod(0o444)
+        assert _gai(tmp_path / "ro") == DEBIAN_GAI  # and the start goes on
 
 
 def _first_address(hosts: str, gai_conf: str) -> str | None:
     """glibc's first address for localhost with these /etc/hosts and
-    /etc/gai.conf, bind-mounted in a user and mount namespace."""
+    /etc/gai.conf, bind-mounted in a user and mount namespace. No
+    AI_ADDRCONFIG, as Node and most clients call it."""
     work = Path(tempfile.mkdtemp())
     (work / "hosts").write_text(hosts)
     (work / "gai.conf").write_text(gai_conf)
+    lookup = (
+        "import socket; "
+        "print(socket.getaddrinfo('localhost', 80, 0, socket.SOCK_STREAM)[0][4][0])"
+    )
     script = (
         f"mount --bind {work}/hosts /etc/hosts && "
         f"mount --bind {work}/gai.conf /etc/gai.conf && "
-        "getent ahosts localhost"
+        f'exec "$0" -c "{lookup}"'
     )
     try:
         result = subprocess.run(
-            ["unshare", "-Urm", "sh", "-c", script],
+            ["unshare", "-Urm", "sh", "-c", script, sys.executable],
             capture_output=True,
             check=False,
             text=True,
@@ -799,27 +828,22 @@ def _first_address(hosts: str, gai_conf: str) -> str | None:
         )
     finally:
         shutil.rmtree(work)
-    if result.returncode != 0 or not result.stdout.split():
-        return None
-    return result.stdout.split()[0]
+    return result.stdout.strip() or None if result.returncode == 0 else None
 
 
 @pytest.mark.skipif(
     not sys.platform.startswith("linux")
     or shutil.which("unshare") is None
-    or shutil.which("getent") is None
     or not Path("/etc/gai.conf").exists(),
-    reason="needs glibc, getent, an /etc/gai.conf to mount over and unshare",
+    reason="needs glibc, an /etc/gai.conf to mount over and unshare",
 )
-def test_the_gai_line_puts_127_0_0_1_before_ipv6_loopback():
+def test_the_gai_lines_put_127_0_0_1_before_ipv6_loopback():
     hosts = _module._HOSTS.replace("$(hostname)", "sandbox")
     before = _first_address(hosts, "")
-    if before is None:
-        pytest.skip("no user namespaces here")
-    after = _first_address(hosts, _module._GAI_PRECEDENCE + "\n")
+    if before != "::1":  # no user namespaces, or loopback without IPv6
+        pytest.skip(f"glibc's default order here starts with {before}, not ::1")
+    after = _first_address(hosts, "\n".join(_module._GAI_PRECEDENCE) + "\n")
     assert after == "127.0.0.1"
-    # Where loopback has ::1 (a Prized sandbox does), glibc's default puts it first.
-    assert before in ("::1", "127.0.0.1")
 
 
 # -- cancellation and failures ------------------------------------------------

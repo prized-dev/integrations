@@ -132,8 +132,16 @@ _HOSTS = (
 # glibc puts 127.0.0.1 before ::1 for localhost. A trial here shares the
 # sandbox's network, whose loopback has ::1, and glibc would put ::1 first: a
 # server listening on IPv4 only then refuses clients of "localhost" (NodeBB's
-# tests, ECONNREFUSED ::1). This line in /etc/gai.conf restores Docker's order.
-_GAI_PRECEDENCE = "precedence ::ffff:0:0/96 100"
+# tests, ECONNREFUSED ::1). These lines in /etc/gai.conf restore Docker's order:
+# glibc's default precedence table (any precedence line replaces all of it),
+# with IPv4 (::ffff:0:0/96) raised from 10 to 100. musl ignores the file.
+_GAI_PRECEDENCE = (
+    "precedence ::1/128 50",
+    "precedence ::/0 40",
+    "precedence 2002::/16 30",
+    "precedence ::/96 20",
+    "precedence ::ffff:0:0/96 100",
+)
 # tar errors that unpacking an image as an unprivileged user may report and
 # that leave the image usable: device nodes, and setuid/setgid modes the
 # sandbox refuses. Anything else fails the start.
@@ -200,13 +208,18 @@ def unpack_command(image: str, root: str, crane: str = "./crane") -> str:
 def gai_conf_command(root: str) -> str:
     """Shell that makes glibc in the image prefer IPv4, as in Docker: appends
     ``_GAI_PRECEDENCE`` to its /etc/gai.conf, unless the image sets its own
-    precedence or the file is a link or a directory."""
+    precedence or the file is a link or a directory. A file it can't write
+    stays as it is; the start goes on."""
     conf = shlex.quote(f"{root}/etc/gai.conf")
+    lines = " ".join(
+        shlex.quote(line)
+        for line in ("# IPv4 first, as in a Docker container without IPv6",)
+        + _GAI_PRECEDENCE
+    )
     return (
         f"[ -L {conf} ] || [ -d {conf} ] || "
         f"grep -qsE '^[[:space:]]*precedence[[:space:]]' {conf} || "
-        f"printf '%s\\n' '# IPv4 first, as in a Docker container without IPv6' "
-        f"'{_GAI_PRECEDENCE}' >> {conf}; "
+        f"{{ printf '%s\\n' {lines} >> {conf}; }} 2>/dev/null || true; "
     )
 
 
