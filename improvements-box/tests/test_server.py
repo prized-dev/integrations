@@ -68,7 +68,17 @@ def test_the_page_takes_a_suggestion_and_shows_it_through_to_the_patch(served) -
 def test_the_page_never_writes_suggestion_text_as_html(served) -> None:
     _, port = served
     _, page = call(port, "GET", "/")
-    assert "innerHTML" not in page and "textContent" in page
+    assert "textContent" in page
+    for sink in ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "eval("):
+        assert sink not in page
+
+
+def test_the_page_and_its_icon_are_served(served) -> None:
+    _, port = served
+    status, page = call(port, "GET", "/")
+    assert status == 200 and "<title>Improvements box</title>" in page
+    status, icon = call(port, "GET", "/favicon.svg")
+    assert status == 200 and isinstance(icon, str) and icon.startswith("<svg")
 
 
 @pytest.mark.parametrize(

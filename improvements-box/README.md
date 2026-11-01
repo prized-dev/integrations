@@ -30,7 +30,7 @@ It's one Python file, `improvements_box.py`, using the standard library and the 
    python improvements_box.py --repo /tmp/temps --test "python3 -m unittest -v"
    ```
 
-   Open http://127.0.0.1:8080 and suggest "Support Kelvin too, like 300K". The page shows each step as it happens. When the tests pass, the patch is in `improvements/` and both sandboxes are gone.
+   Open http://127.0.0.1:8080 and suggest "Support Kelvin too, like 300K". The page shows each step as it happens, then the change as a diff with line numbers. When the tests pass, the patch is in `improvements/` and both sandboxes are gone.
 
 5. On your own repository, with draft pull requests (this needs `git push` access and `gh` signed in on this machine):
 
