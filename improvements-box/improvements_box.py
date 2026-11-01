@@ -182,6 +182,7 @@ class Step:
     state: str = "pending"  # pending, running, ok, failed, skipped
     seconds: float | None = None
     note: str = ""
+    started: float | None = None  # time.monotonic() when it started running
 
 
 @dataclass
@@ -215,6 +216,7 @@ class Suggestion:
     def view(self) -> dict[str, Any]:
         """What the page shows (and GET /api/suggestions returns)."""
         end = self.finished or time.time()
+        now = time.monotonic()
         return {
             "id": self.id,
             "text": self.text,
@@ -231,7 +233,15 @@ class Suggestion:
                 "activity": self.activity[-12:],
             },
             "steps": [
-                {"key": s.key, "title": s.title, "state": s.state, "seconds": s.seconds, "note": s.note}
+                {
+                    "key": s.key,
+                    "title": s.title,
+                    "state": s.state,
+                    "seconds": s.seconds,
+                    "note": s.note,
+                    # How long the running step has run so far, for the page's live timer.
+                    "elapsed": round(now - s.started, 1) if s.state == "running" and s.started else None,
+                }
                 for s in self.steps
             ],
             "files": self.files,
@@ -458,7 +468,7 @@ class Box:
             raise Stop("error", "The box shut down.")
         st = s.step(key)
         st.state = "running"
-        start = time.monotonic()
+        start = st.started = time.monotonic()
         try:
             yield st
         except Stop as stop:
@@ -808,7 +818,7 @@ class Box:
             st.state, st.note = "skipped", "no sandbox was made"
             return
         st.state = "running"
-        start = time.monotonic()
+        start = st.started = time.monotonic()
         notes, failed = [f"{sid} deleted" for sid in s.deleted], False
         for each in made:
             try:
@@ -1050,7 +1060,7 @@ button, textarea { font: inherit; color: inherit; }
 code, pre, .mono { font-family: var(--mono); font-feature-settings: normal; font-variant-ligatures: none; }
 .app { max-width: 1320px; margin: 0 auto; padding: 24px 32px 72px; }
 header.top { display: flex; align-items: center; justify-content: space-between; gap: 16px;
-             margin-bottom: 20px; }
+             margin-bottom: 16px; }
 .brand { display: flex; align-items: center; gap: 13px; }
 .mark { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; flex: none;
         background: linear-gradient(140deg, var(--accent), var(--accent2)); color: #fff;
@@ -1067,7 +1077,7 @@ h1 { font-size: 19px; line-height: 1.2; margin: 0; letter-spacing: -.015em; font
 .grid { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 1100px) {
   .grid { grid-template-columns: 420px minmax(0, 1fr); gap: 28px; align-items: start; }
-  .left { position: sticky; top: 20px; }
+  .left { position: sticky; top: 20px; } /* render() lowers top when the column outgrows the window */
 }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
          box-shadow: var(--shadow); }
@@ -1075,7 +1085,7 @@ h1 { font-size: 19px; line-height: 1.2; margin: 0; letter-spacing: -.015em; font
 .composer:focus-within { border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
                          box-shadow: var(--shadow),
                            0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent); }
-textarea { display: block; width: 100%; min-height: 78px; max-height: 260px; padding: 12px 12px 4px;
+textarea { display: block; width: 100%; min-height: 68px; max-height: 260px; padding: 12px 12px 4px;
            border: 0;
            outline: 0; resize: none; background: transparent; font-size: 16px; line-height: 1.5; }
 textarea::placeholder { color: var(--faint); }
@@ -1098,7 +1108,7 @@ kbd { font: 500 11.5px/1 var(--sans); padding: 3px 5px; border: 1px solid var(--
 .facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0 4px; font-size: 12.5px; }
 .facts dt { color: var(--faint); }
 .facts dd { margin: 0; color: var(--ink2); overflow-wrap: anywhere; }
-.label { display: flex; align-items: center; justify-content: space-between; margin: 22px 4px 10px;
+.label { display: flex; align-items: center; justify-content: space-between; margin: 18px 4px 10px;
          font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
            color: var(--mute); }
 .label span { font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--faint); }
@@ -1115,8 +1125,8 @@ kbd { font: 500 11.5px/1 var(--sans); padding: 3px 5px; border: 1px solid var(--
         padding: 3px 10px 3px 8px; border-radius: 99px; background: var(--sunk); color: var(--mute);
         border: 1px solid var(--line); transition: background .3s, color .3s, border-color .3s; }
 .pill i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.pill.run { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
-.pill.run i { animation: beat 1.4s ease-in-out infinite; }
+.pill.busy { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.pill.busy i { animation: beat 1.4s ease-in-out infinite; }
 .pill.good { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
 .pill.bad { background: var(--bad-soft); color: var(--bad); border-color: transparent; }
 .pill.meh { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
@@ -1131,7 +1141,7 @@ kbd { font: 500 11.5px/1 var(--sans); padding: 3px 5px; border: 1px solid var(--
 .bar.fail i { background: var(--bad); }
 ol.steps { list-style: none; margin: 10px 0 0; padding: 0; }
 .step { position: relative; display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 0 12px;
-        padding: 0 0 10px; }
+        padding: 0 0 8px; }
 .step::before { content: ""; position: absolute; left: 9.25px; top: 22px; bottom: 2px; width: 1.5px;
                 border-radius: 2px; background: var(--line); transition: background .4s; }
 .step:last-child::before { display: none; }
@@ -1156,8 +1166,8 @@ ol.steps { list-style: none; margin: 10px 0 0; padding: 0; }
 .step.running .stitle { color: var(--ink); font-weight: 600; }
 .step.ok .stitle { color: var(--ink2); }
 .step.failed .stitle { color: var(--bad); font-weight: 600; }
-.snote { font: 12px/1.45 var(--mono); font-variant-ligatures: none; color: var(--mute); white-space: nowrap;
-         overflow: hidden; text-overflow: ellipsis; animation: fade .4s ease-out both; }
+.snote { font: 12px/1.45 var(--mono); font-variant-ligatures: none; color: var(--mute);
+         overflow-wrap: anywhere; animation: fade .4s ease-out both; }
 .snote:empty { display: none; }
 .stime { font-size: 12.5px; line-height: 22px; color: var(--faint); font-variant-numeric: tabular-nums; }
 .step.running .stime { color: var(--accent); }
@@ -1211,6 +1221,7 @@ h3 small { font-size: 12px; font-weight: 500; letter-spacing: 0; text-transform:
 .tag { font: 600 11px/1 var(--sans); padding: 3px 6px; border-radius: 5px; background: var(--accent-soft);
        color: var(--accent); margin-left: 8px; }
 .code { overflow-x: auto; font: 12.5px/20px var(--mono); font-variant-ligatures: none; }
+.rows { width: max-content; min-width: 100%; }
 .ln { display: grid; grid-template-columns: 40px 40px 22px max-content; min-width: 100%; }
 .ln > span { white-space: pre; }
 .ln .o, .ln .n { padding-right: 10px; text-align: right; color: var(--faint); user-select: none;
@@ -1221,7 +1232,7 @@ h3 small { font-size: 12px; font-weight: 500; letter-spacing: 0; text-transform:
 .ln.add .g { color: var(--ok); }
 .ln.del { background: var(--del); } .ln.del .o, .ln.del .n, .ln.del .g { background: var(--del-g); }
 .ln.del .g { color: var(--bad); }
-.hunk { padding: 5px 14px 5px 14px; color: var(--mute); background: var(--sunk); font-size: 12px;
+.hunk { padding: 5px 14px; color: var(--mute); background: var(--sunk); font-size: 12px;
         border-top: 1px solid var(--line2); border-bottom: 1px solid var(--line2); white-space: pre; }
 .hunk:first-child { border-top: 0; }
 .t-kw { color: var(--kw); } .t-str { color: var(--str); } .t-com { color: var(--com); font-style: italic; }
@@ -1266,13 +1277,10 @@ details .log { margin-top: 8px; }
   transition: none !important; } }
 @media (min-width: 1100px) { .left .empty { display: none; } }
 @media (max-width: 1099px) {
-  #detail .empty { display: none; }
-  .grid { gap: 0; }
-  .left { display: contents; }
-  #detail { order: 1; margin-top: 12px; }
-  .setup, #cfg { order: 2; }
-  .detail .dhead, .detail .dmeta { display: none; }
-  .detail > div > :first-child { margin-top: 0; }
+  #detail { display: none; } /* the selected run's detail sits right under its card instead */
+  #runs .detail .dhead, #runs .detail .dmeta { display: none; }
+  #runs .detail > div > :first-child { margin-top: 0; }
+}
 }
 @media (max-width: 640px) { .app { padding: 18px 14px 48px; } header.top { flex-wrap: wrap;
                             } .detail { padding: 18px; } }
@@ -1342,7 +1350,7 @@ const CHECK = "M3.6 8.4l2.9 2.9 5.9-6.6", CROSS = "M4.8 4.8l6.4 6.4m0-6.4l-6.4 6
 const CIRCLE_OK = "M8 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zM5.3 8.2l1.9 1.9 3.6-4";
 const CIRCLE_BAD = "M8 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zM8 4.8v3.8m0 2.6v.1";
 const LABEL = {
-  queued: ["Queued", ""], running: ["Building", "run"],
+  queued: ["Queued", ""], running: ["Building", "busy"],
   pr: ["Draft PR ready", "good"], patch: ["Patch ready", "good"], "no-change": ["No change", "meh"],
   refused: ["Refused", "bad"], "tests-failed": ["Tests failed", "bad"],
   "agent-failed": ["Agent stopped", "bad"],
@@ -1413,6 +1421,7 @@ function parseDiff(patch) {
     if (h) { o = +h[1]; n = +h[2]; f.rows.push({ hunk: line }); continue; }
     if (/^new file/.test(line)) f.tag = "new";
     else if (/^deleted file/.test(line)) f.tag = "deleted";
+    else if (/^Binary files /.test(line)) f.tag = "binary";
     if (!f.rows.length) continue; // index, ---, +++ and mode lines
     if (line[0] === "+") { f.rows.push({ k: "add", n: n++, t: line.slice(1) }); f.add++; }
     else if (line[0] === "-") { f.rows.push({ k: "del", o: o++, t: line.slice(1) }); f.del++; }
@@ -1429,15 +1438,16 @@ function renderDiff(patch) {
     const st = el("span", "st");
     st.append(el("span", "plus", "+" + f.add), el("span", "minus", "−" + f.del));
     fh.append(name, st);
-    const code = el("div", "code");
+    const code = el("div", "code"), rows = el("div", "rows");
+    code.append(rows);
     for (const r of f.rows) {
-      if (r.hunk) { code.append(el("div", "hunk", r.hunk)); continue; }
+      if (r.hunk) { rows.append(el("div", "hunk", r.hunk)); continue; }
       const row = el("div", "ln " + r.k), c = el("span", "c");
       c.append(r.note ? el("span", "t-com", r.t) : paint(r.t, f.name));
       const num = (v) => (v == null ? "" : String(v));
       row.append(el("span", "o", num(r.o)), el("span", "n", num(r.n)),
         el("span", "g", r.k === "add" ? "+" : r.k === "del" ? "−" : ""), c);
-      code.append(row);
+      rows.append(row);
     }
     file.append(fh, code);
     box.append(file);
@@ -1489,6 +1499,8 @@ function updateRun(r, s) {
   const going = s.steps.some((x) => x.state === "running") ? 0.5 : 0;
   r.fill.style.width = (live(s) ? (done + going) / s.steps.length : 1) * 100 + "%";
   cls(r.bar, "bar" + (live(s) ? "" : kind === "bad" ? " fail" : " done"));
+  if (s.outcome === "queued") set(r.timer, "waiting");
+  else if (!live(s)) set(r.timer, secs(s.seconds));
   const bits = [];
   if (s.agent.cost_usd != null) bits.push("agent $" + s.agent.cost_usd.toFixed(2));
   if (s.agent.turns != null) bits.push(s.agent.turns + " turns");
@@ -1507,8 +1519,9 @@ function updateRun(r, s) {
     if (li.state !== st.state) {
       li.node.replaceChildren(st.state === "ok" ? icon(CHECK) : st.state === "failed" ? icon(CROSS) : "");
       li.state = st.state;
-      if (st.state === "running") since.set(s.id + st.key, performance.now());
     }
+    if (st.state === "running") since.set(s.id + st.key, polledAt - (st.elapsed || 0) * 1000);
+    else since.delete(s.id + st.key);
     cls(li.root, "step " + st.state);
     set(li.title, st.title);
     set(li.note, st.note || "");
@@ -1566,7 +1579,7 @@ function updateDetail(d, s) {
       const h = el("h3", "", "Agent");
       h.append(el("small", "", "what it runs, as it runs"));
       d.log = el("div", "log");
-      d.logLines = [];
+      d.logLines = null;
       const wait = el("div", "waiting");
       const note = "The change shows up here once the tests pass in a clean copy.";
       wait.append(el("i"), el("i"), el("i"), el("i"), el("p", "", note));
@@ -1577,8 +1590,8 @@ function updateDetail(d, s) {
   if (d.log) fillLog(d, s.agent.activity, true);
 }
 function fillLog(d, lines, caret) {
-  if (JSON.stringify(lines) === JSON.stringify(d.logLines)) return;
-  const old = new Set(d.logLines);
+  if (d.logLines && JSON.stringify(lines) === JSON.stringify(d.logLines)) return;
+  const old = new Set(d.logLines || []);
   d.logLines = lines.slice();
   const rows = lines.map((line) => {
     const say = line.startsWith("says: "), cmd = line.startsWith("$ ");
@@ -1598,7 +1611,7 @@ function finished(s) {
   const text = el("div");
   const said = s.outcome === "patch"
     ? "Tests passed on the patch alone. Review the change, then apply it:" : s.detail;
-  text.append(el("p", "", said || (LABEL[s.outcome] || [s.outcome])[0]));
+  prose(said || (LABEL[s.outcome] || [s.outcome])[0], text);
   if (s.outcome === "patch") {
     const cmd = el("div", "cmd"), line = "git apply " + s.result, copy = el("button", "ghost", "Copy");
     copy.type = "button";
@@ -1643,6 +1656,12 @@ function finished(s) {
   return out;
 }
 let detail = null;
+const narrow = matchMedia("(max-width: 1099px)");
+function emptyNote(title, line) {
+  const e = el("div", "panel empty");
+  e.append(el("b", "", title), line);
+  return e;
+}
 function render() {
   const list = data.suggestions;
   const c = data.config;
@@ -1661,52 +1680,79 @@ function render() {
   const ids = new Set(list.map((s) => s.id));
   for (const [id, r] of runs) if (!ids.has(id)) { r.root.remove(); runs.delete(id); }
   const box = $("#runs");
+  // Newest first; runs only ever arrive at the top or leave, so new cards go in before the next known one.
   list.forEach((s, i) => {
     let r = runs.get(s.id);
-    if (!r) { r = makeRun(s.id); runs.set(s.id, r); }
+    if (!r) {
+      r = makeRun(s.id);
+      const next = list.slice(i + 1).map((x) => runs.get(x.id)).find(Boolean);
+      runs.set(s.id, r);
+      box.insertBefore(r.root, next ? next.root : null);
+    }
     updateRun(r, s);
-    if (box.children[i] !== r.root) box.insertBefore(r.root, box.children[i] || null);
   });
-  if (!list.length && !box.childElementCount) {
-    const e = el("div", "panel empty");
-    e.append(el("b", "", "No suggestions yet"), "Each one gets its own sandbox, an agent and a test run.");
-    box.append(e);
-  } else if (list.length) box.querySelectorAll(".empty").forEach((e) => e.remove());
+  box.querySelectorAll(":scope > .empty").forEach((e) => list.length && e.remove());
+  if (!list.length && !box.querySelector(".empty")) {
+    box.append(emptyNote("No suggestions yet", "Each one gets its own sandbox, an agent and a test run."));
+  }
   const s = list.find((x) => x.id === selected);
   if (!s) {
+    if (detail) { detail.root.remove(); detail = null; }
     if (!$("#detail").childElementCount) {
-      const e = el("div", "panel empty");
-      e.append(el("b", "", "Nothing to review yet"),
-        "The agent’s work shows up here as it happens, then the change, ready to review.");
-      $("#detail").append(e);
+      $("#detail").append(emptyNote("Nothing to review yet",
+        "The agent’s work shows up here as it happens, then the change, ready to review."));
     }
-    detail = null;
-    return;
+  } else {
+    if (!detail || detail.id !== s.id) {
+      if (detail) detail.root.remove();
+      detail = makeDetail(s);
+    }
+    // Wide: the right-hand column. Narrow: right under the selected card.
+    if (narrow.matches) {
+      const card = runs.get(s.id).root;
+      if (card.nextElementSibling !== detail.root) card.after(detail.root);
+    } else if (detail.root.parentNode !== $("#detail")) $("#detail").replaceChildren(detail.root);
+    updateDetail(detail, s);
   }
-  if (!detail || detail.id !== s.id) { detail = makeDetail(s); $("#detail").replaceChildren(detail.root); }
-  updateDetail(detail, s);
+  // A sticky column taller than the window scrolls with the page until its end shows, then stays.
+  const left = $(".left");
+  left.style.top = Math.min(20, innerHeight - left.offsetHeight - 20) + "px";
 }
-function select(id) { selected = id; if (data) render(); }
+function select(id) {
+  if (!data) return;
+  selected = id;
+  render();
+  const r = detail && detail.root.getBoundingClientRect();
+  if (r && (r.top < 0 || r.top > innerHeight - 80)) {
+    detail.root.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
 function tick() {
-  if (data) {
-    const now = performance.now();
-    for (const t of document.querySelectorAll("[data-live]")) {
-      if (t.dataset.live && since.has(t.dataset.live)) set(t, secs((now - since.get(t.dataset.live)) / 1000));
+  if (!data) return;
+  const now = performance.now();
+  for (const s of data.suggestions) {
+    if (!live(s)) continue;
+    const r = runs.get(s.id);
+    const total = s.seconds != null ? s.seconds + (now - polledAt) / 1000 : null;
+    if (r) {
+      set(r.timer, s.outcome === "queued" ? "waiting" : secs(total));
+      for (const t of r.list.querySelectorAll("[data-live]")) {
+        const from = since.get(t.dataset.live);
+        if (from != null) set(t, secs((now - from) / 1000));
+      }
     }
-    for (const s of data.suggestions) {
-      const r = runs.get(s.id);
-      const total = live(s) && s.seconds != null ? s.seconds + (now - polledAt) / 1000 : s.seconds;
-      if (r) set(r.timer, s.outcome === "queued" ? "waiting" : secs(total));
-      document.querySelectorAll('[data-total="' + s.id + '"]').forEach((b) => set(b, secs(total)));
+    if (detail && detail.id === s.id) {
+      const b = detail.meta.querySelector("[data-total]");
+      if (b) set(b, secs(total));
     }
   }
-  requestAnimationFrame(tick);
 }
 async function load() {
   clearTimeout(timer);
   let busy = false;
   try {
     const d = await (await fetch("/api/suggestions", { cache: "no-store" })).json();
+    if (!d || !Array.isArray(d.suggestions) || !d.config) throw new Error("unexpected reply");
     data = d;
     polledAt = performance.now();
     render();
@@ -1719,9 +1765,10 @@ async function load() {
 
 const text = $("#text"), send = $("#send");
 const mac = /Mac|iPhone|iPad/.test(navigator.platform);
+let sending = false;
 $("#hint").append(el("kbd", "", mac ? "⌘" : "Ctrl"), " ", el("kbd", "", "Enter"), " to send");
 text.addEventListener("input", () => {
-  send.disabled = !text.value.trim();
+  send.disabled = sending || !text.value.trim();
   text.style.height = "auto";
   text.style.height = Math.min(text.scrollHeight, 260) + "px";
 });
@@ -1730,8 +1777,8 @@ text.addEventListener("keydown", (e) => {
 });
 $("#form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (!text.value.trim()) return;
-  send.disabled = true;
+  if (sending || !text.value.trim()) return;
+  sending = send.disabled = true;
   $("#err").textContent = "";
   try {
     const r = await fetch("/api/suggestions", {
@@ -1739,18 +1786,22 @@ $("#form").addEventListener("submit", async (e) => {
       body: JSON.stringify({ text: text.value }),
     });
     const d = await r.json();
-    if (!r.ok) { $("#err").textContent = d.error; send.disabled = false; return; }
+    if (!r.ok) { $("#err").textContent = d.error || "The box refused it."; return; }
     text.value = "";
     text.style.height = "";
     selected = d.id;
     load();
   } catch (err) {
     $("#err").textContent = "Couldn't reach the box. Is it still running?";
+  } finally {
+    sending = false;
     send.disabled = !text.value.trim();
   }
 });
+narrow.addEventListener("change", () => data && render());
+addEventListener("resize", () => data && render());
 load();
-requestAnimationFrame(tick);
+setInterval(tick, 100);
 </script>
 </body>
 </html>

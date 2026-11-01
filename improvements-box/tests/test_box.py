@@ -387,3 +387,11 @@ def test_once_from_the_command_line(world: World, demo: Path, tmp_path: Path, mo
     assert code == 0 and out["outcome"] == "patch"
     assert os.path.exists(tmp_path / "improvements" / f"{out['id']}.patch")
     assert world.created[0]["labels"]["task"] == "x"
+
+
+def test_a_running_step_says_how_long_it_has_run() -> None:
+    steps = [ib.Step("agent", "Agent"), ib.Step("check", "Check")]
+    s = ib.Suggestion(id="s-1", text="x", submitted=time.time(), steps=steps)
+    s.steps[0].state, s.steps[0].started = "running", time.monotonic() - 5
+    agent, check = s.view()["steps"]
+    assert agent["elapsed"] >= 5 and check["elapsed"] is None
