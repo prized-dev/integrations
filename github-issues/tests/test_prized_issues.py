@@ -165,6 +165,9 @@ class LabelTest(Box):
         self.assertIn("--dangerously-skip-permissions", call["argv"])
         self.assertNotIn("--resume", call["argv"])
         self.assertEqual(call["env_tokens"], [], "no GitHub token or poller config reaches the agent")
+        self.assertEqual(
+            call["git_author"], "1+owner@users.noreply.github.com", "no git identity on the box: the owner's"
+        )
         self.assertIn("Slugify drops accents", call["prompt"])
         self.assertIn("slugify('Ørsted')", call["prompt"])
         self.assertTrue(call["cwd"].endswith("work/acme__app-1"))
@@ -184,6 +187,18 @@ class LabelTest(Box):
         # The next poll sees its own comments and leaves the issue alone.
         self.assertIn("already handled", self.poll())
         self.assertEqual(len(self.calls()), 1)
+
+    def test_caches_a_test_run_leaves_stay_out_of_the_commit(self):
+        self.watch()
+        self.plan(
+            {"write": {"fix.txt": "1\n", "__pycache__/m.cpython-312.pyc": "x", ".pytest_cache/v": "x"}, "commit": "fix"}
+        )
+        n = self.fake.open_issue("a", "b")
+        self.fake.label(n)
+        self.poll()
+        files = sh("git", "-C", str(self.bare), "ls-tree", "-r", "--name-only", "prized/issue-1").split()
+        self.assertIn("fix.txt", files)
+        self.assertFalse([f for f in files if "cache" in f], files)
 
     def test_codex_runs_the_same_way(self):
         self.watch("--agent", "codex")

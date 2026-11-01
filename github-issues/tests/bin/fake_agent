@@ -33,6 +33,7 @@ with calls.open("a") as f:
                 "prompt": prompt,
                 "env_tokens": sorted(k for k in os.environ if k in ("GH_TOKEN", "GITHUB_TOKEN") or k.startswith(("GIT_CONFIG", "PRIZED_ISSUES"))),
                 "session": session,
+                "git_author": os.environ.get("GIT_AUTHOR_EMAIL", ""),
             }
         )
         + "\n"
