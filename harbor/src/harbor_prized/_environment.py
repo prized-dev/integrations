@@ -21,8 +21,9 @@ Limits, by design of that approach:
   doesn't see other users' processes (root sees everyone's). Root's ``chown``
   to other users, its switches to other users and setuid/setgid mode bits
   succeed without effect, as fakeroot does, so programs that check a real user
-  switch (an sshd login, Postfix) fail. ``user:group`` with a group other than
-  0 is not supported for root.
+  switch (an sshd login, Postfix) fail. A chmod that sets a setuid/setgid bit
+  changes no bit at all, unless the sandbox allows those bits. ``user:group``
+  with a group other than 0 is not supported for root.
 - The chroot and namespaces are not a security boundary inside the sandbox
   (the microVM is): no network policies, so ``no-network`` and allowlist
   tasks are refused. No Docker Compose or GPUs.
@@ -127,6 +128,12 @@ _HOSTS = (
     "::1\tlocalhost ip6-localhost ip6-loopback\n"
     "127.0.1.1\t$(hostname)\n"
 )
+# Docker gives a container its own network, without IPv6 unless asked for, so
+# glibc puts 127.0.0.1 before ::1 for localhost. A trial here shares the
+# sandbox's network, whose loopback has ::1, and glibc would put ::1 first: a
+# server listening on IPv4 only then refuses clients of "localhost" (NodeBB's
+# tests, ECONNREFUSED ::1). This line in /etc/gai.conf restores Docker's order.
+_GAI_PRECEDENCE = "precedence ::ffff:0:0/96 100"
 # tar errors that unpacking an image as an unprivileged user may report and
 # that leave the image usable: device nodes, and setuid/setgid modes the
 # sandbox refuses. Anything else fails the start.
@@ -187,6 +194,19 @@ def unpack_command(image: str, root: str, crane: str = "./crane") -> str:
         "tail -5 tar.err >&2; exit 1; fi; "
         f'if [ "${{s#* }}" != 0 ] && grep -v -E {q(_BENIGN_TAR_ERRORS)} tar.err | grep -q .; '
         "then tail -5 tar.err >&2; df -h ~ >&2; exit 1; fi; "
+    )
+
+
+def gai_conf_command(root: str) -> str:
+    """Shell that makes glibc in the image prefer IPv4, as in Docker: appends
+    ``_GAI_PRECEDENCE`` to its /etc/gai.conf, unless the image sets its own
+    precedence or the file is a link or a directory."""
+    conf = shlex.quote(f"{root}/etc/gai.conf")
+    return (
+        f"[ -L {conf} ] || [ -d {conf} ] || "
+        f"grep -qsE '^[[:space:]]*precedence[[:space:]]' {conf} || "
+        f"printf '%s\\n' '# IPv4 first, as in a Docker container without IPv6' "
+        f"'{_GAI_PRECEDENCE}' >> {conf}; "
     )
 
 
@@ -545,7 +565,8 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
             + f"rm -f {_ROOT}/etc/resolv.conf {_ROOT}/etc/hosts {_ROOT}/etc/hostname; "
             f"cp /etc/resolv.conf {_ROOT}/etc/resolv.conf; "
             f'printf "{_HOSTS}" > {_ROOT}/etc/hosts; hostname > {_ROOT}/etc/hostname; '
-            f"if [ -d {_ROOT}/etc/apt/apt.conf.d ]; then echo 'APT::Sandbox::User \"root\";' "
+            + gai_conf_command(_ROOT)
+            + f"if [ -d {_ROOT}/etc/apt/apt.conf.d ]; then echo 'APT::Sandbox::User \"root\";' "
             f"> {_ROOT}/etc/apt/apt.conf.d/99runtime-sandbox-user; fi; "
             # dpkg installs files with mode 0 and then sets the mode, which the
             # seccomp filter skips for setuid/setgid files: open those up after.

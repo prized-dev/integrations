@@ -18,13 +18,20 @@ X86_64, AARCH64, I386 = 0xC000003E, 0xC00000B7, 0x40000003
 SUCCEED, ALLOW = 0x00050000, 0x7FFF0000
 
 
-def _run(nr: int, arch: int, mode_arg: int = 0, mode: int = 0, args=None) -> int:
+def _run(
+    nr: int,
+    arch: int,
+    mode_arg: int = 0,
+    mode: int = 0,
+    args=None,
+    real_modes: bool = False,
+) -> int:
     if args is None:
         args = [0] * 6
         args[mode_arg] = mode
     args = list(args) + [0] * (6 - len(args))
     data = struct.pack("<iIQ6Q", nr, arch, 0, *args)
-    program, acc, pc = build_filter(), 0, 0
+    program, acc, pc = build_filter(real_modes), 0, 0
     while True:
         code, jt, jf, k = program[pc]
         if code == 0x20:  # BPF_LD | BPF_W | BPF_ABS
@@ -39,8 +46,10 @@ def _run(nr: int, arch: int, mode_arg: int = 0, mode: int = 0, args=None) -> int
             raise AssertionError(f"unexpected opcode {code:#x}")
 
 
-def test_jumps_fit_in_a_byte():
-    assert all(0 <= jt < 256 and 0 <= jf < 256 for _, jt, jf, _ in build_filter())
+@pytest.mark.parametrize("real_modes", [False, True])
+def test_jumps_fit_in_a_byte(real_modes):
+    program = build_filter(real_modes)
+    assert all(0 <= jt < 256 and 0 <= jf < 256 for _, jt, jf, _ in program)
 
 
 @pytest.mark.parametrize("nr", [92, 93, 94, 260])  # chown, fchown, lchown, fchownat
@@ -61,6 +70,40 @@ def test_chown_succeeds_without_effect_on_x86_64(nr):
 )
 def test_only_setuid_and_setgid_modes_are_skipped(nr, arg, mode, want):
     assert _run(nr, X86_64, arg, mode) == want
+
+
+@pytest.mark.parametrize(
+    ("nr", "arch", "arg"),
+    [(90, X86_64, 1), (91, X86_64, 1), (268, X86_64, 2), (452, X86_64, 2)]
+    + [(52, AARCH64, 1), (53, AARCH64, 2), (452, AARCH64, 2)],
+)
+def test_where_the_sandbox_allows_setuid_bits_chmod_runs_for_real(nr, arch, arg):
+    # ansible's collection build test chmods a script to mode | S_ISUID | S_IEXEC
+    # and expects it executable: a skipped chmod left it 0644.
+    assert _run(nr, arch, arg, 0o4744, real_modes=True) == ALLOW
+    assert _run(nr, arch, arg, 0o4744) == SUCCEED
+
+
+def test_real_modes_change_nothing_else():
+    assert _run(92, X86_64, real_modes=True) == SUCCEED  # chown
+    assert _run(105, X86_64, args=[NOBODY], real_modes=True) == SUCCEED  # setuid
+    assert _run(105, X86_64, args=[0], real_modes=True) == ALLOW
+    assert _run(59, X86_64, real_modes=True) == ALLOW
+
+
+def test_special_modes_allowed_asks_the_kernel_and_cleans_up(tmp_path, monkeypatch):
+    assert runtime.special_modes_allowed(str(tmp_path)) in (True, False)
+    assert list(tmp_path.iterdir()) == []
+
+    def refused(fd, mode):  # what the sandbox's RestrictSUIDSGID answers
+        raise PermissionError(1, "Operation not permitted")
+
+    monkeypatch.setattr(runtime.os, "fchmod", refused)
+    assert runtime.special_modes_allowed(str(tmp_path)) is False
+    assert list(tmp_path.iterdir()) == []
+    monkeypatch.setattr(runtime.os, "fchmod", lambda fd, mode: None)
+    assert runtime.special_modes_allowed(str(tmp_path)) is True
+    assert runtime.special_modes_allowed(str(tmp_path / "missing")) is False
 
 
 NOBODY, UNCHANGED = 65534, 0xFFFFFFFF
@@ -266,3 +309,44 @@ def test_a_command_that_cannot_enter_is_removed_and_reported(
     assert exited.value.code == 125
     assert "prized runtime:" in capsys.readouterr().err
     assert list((tmp_path / runtime.XFER.lstrip("/")).iterdir()) == []
+
+
+class _Exec(Exception):
+    pass
+
+
+@pytest.mark.parametrize("allowed", [False, True])
+def test_root_commands_get_the_filter_the_sandbox_allows(
+    tmp_path, monkeypatch, capsys, allowed
+):
+    monkeypatch.setattr(runtime, "ROOT", str(tmp_path))
+    monkeypatch.setattr(runtime, "_enter", lambda user, fcntl: None)
+    monkeypatch.setattr(runtime, "special_modes_allowed", lambda: allowed)
+    filters = []
+    monkeypatch.setattr(runtime, "install_filter", filters.append)
+
+    def execve(path, args, env):
+        raise _Exec(env)
+
+    monkeypatch.setattr(runtime.os, "execve", execve)
+    with pytest.raises(SystemExit):  # main reports the stand-in exec's exception
+        runtime.main(["-", "ZWNobyBoaQ=="])
+    assert "_Exec(" in capsys.readouterr().err  # it got as far as the exec
+    assert filters == [allowed]
+
+
+def test_user_commands_get_no_filter_and_no_probe(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(runtime, "ROOT", str(tmp_path))
+    monkeypatch.setattr(runtime, "_enter", lambda user, fcntl: None)
+
+    def probe():
+        raise AssertionError("probed for a user command")
+
+    monkeypatch.setattr(runtime, "special_modes_allowed", probe)
+    monkeypatch.setattr(runtime, "install_filter", probe)
+    monkeypatch.setattr(
+        runtime.os, "execve", lambda path, args, env: (_ for _ in ()).throw(_Exec())
+    )
+    with pytest.raises(SystemExit):
+        runtime.main(["--user", "1000:1000", "-", "ZWNobyBoaQ=="])
+    assert "_Exec(" in capsys.readouterr().err  # not the probe's AssertionError

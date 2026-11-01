@@ -25,9 +25,11 @@ commands run under a seccomp filter that makes ``chown`` to any user,
 setuid/setgid mode bits succeed without effect, as fakeroot does; without it
 dpkg, useradd, tar and sudo fail. Calls that stay on root (uid 0 or -1) run for
 real. A faked call also reports success where the real one would have failed
-for another reason (a missing file, say). dpkg creates a file with mode 0 and
-then sets its mode, so a setuid file it installs would keep mode 0: the
-environment adds a dpkg post-invoke hook that gives such files mode 0755.
+for another reason (a missing file, say). A faked chmod changes no bit at all,
+execute bits included: where the sandbox itself allows setuid/setgid bits, the
+filter leaves chmod alone (``special_modes_allowed``). dpkg creates a file with
+mode 0 and then sets its mode, so a setuid file it installs would keep mode 0:
+the environment adds a dpkg post-invoke hook that gives such files mode 0755.
 """
 
 from __future__ import annotations
@@ -40,6 +42,7 @@ import signal
 import struct
 import subprocess
 import sys
+import tempfile
 import time
 from typing import Any
 
@@ -92,8 +95,12 @@ _SYSCALLS = {
 }
 
 
-def build_filter() -> list[tuple[int, int, int, int]]:
-    """The filter as (code, jt, jf, k) instructions with relative jumps."""
+def build_filter(real_modes: bool = False) -> list[tuple[int, int, int, int]]:
+    """The filter as (code, jt, jf, k) instructions with relative jumps.
+
+    With ``real_modes`` (the sandbox lets its user set setuid/setgid bits, see
+    ``special_modes_allowed``) every chmod runs for real, mode bits and all.
+    """
     # Jump targets are labels until the end; ("label", name) marks a position.
     program: list[tuple[Any, ...]] = [(_LD_W_ABS, 0, 0, 4)]
     for arch in _SYSCALLS:
@@ -102,7 +109,8 @@ def build_filter() -> list[tuple[int, int, int, int]]:
     for arch, (always, chmods, set_ids) in _SYSCALLS.items():
         program += [("label", f"arch{arch}"), (_LD_W_ABS, 0, 0, 0)]
         program += [(_JEQ_K, "succeed", 0, nr) for nr in always]
-        program += [(_JEQ_K, f"mode{arg}", 0, nr) for nr, arg in chmods.items()]
+        if not real_modes:
+            program += [(_JEQ_K, f"mode{arg}", 0, nr) for nr, arg in chmods.items()]
         program += [(_JEQ_K, f"ids{n}_0", 0, nr) for nr, n in set_ids.items()]
         program.append((_RET_K, 0, 0, _ALLOW))
     # A set*id call runs for real if each id it names is 0 or -1, else it succeeds.
@@ -116,7 +124,7 @@ def build_filter() -> list[tuple[int, int, int, int]]:
                 (_JEQ_K, done, "succeed", _ROOT_IDS[1]),
             ]
         program += [("label", f"ids{n}_{n}"), (_RET_K, 0, 0, _ALLOW)]
-    for arg in (1, 2):
+    for arg in () if real_modes else (1, 2):
         program += [
             ("label", f"mode{arg}"),
             (_LD_W_ABS, 0, 0, 16 + 8 * arg),
@@ -139,8 +147,36 @@ def build_filter() -> list[tuple[int, int, int, int]]:
     return [(op, jump(jt, i), jump(jf, i), k) for i, (op, jt, jf, k) in enumerate(code)]
 
 
-def install_filter() -> None:
-    program = build_filter()
+def special_modes_allowed(directory: str = HOME) -> bool:
+    """Whether this sandbox lets its user set setuid/setgid bits.
+
+    A sandbox's command service refuses such a chmod with EPERM
+    (``RestrictSUIDSGID``), and a seccomp filter can't rewrite the mode to drop
+    those bits and apply the rest, so the filter skips the whole call: a file
+    chmodded to ``0o4755`` keeps its old mode, execute bits included. Where the
+    sandbox allows the bits, the filter leaves chmod alone instead, so modes come
+    out as in Docker. (The bits grant nothing: no new privileges, and every id
+    here is the sandbox user.)
+    """
+    try:
+        fd, path = tempfile.mkstemp(dir=directory, prefix=".runtime-mode-")
+    except OSError:
+        return False
+    try:
+        os.fchmod(fd, 0o4700)
+        return True
+    except OSError:
+        return False
+    finally:
+        os.close(fd)
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+
+
+def install_filter(real_modes: bool = False) -> None:
+    program = build_filter(real_modes)
     raw = b"".join(struct.pack("HBBI", *ins) for ins in program)
     buffer = ctypes.create_string_buffer(raw)
 
@@ -293,11 +329,12 @@ def main(argv: list[str]) -> None:
     script, entered = None, False
     try:
         script = _staged_script(argv[0], argv[1] if argv[0] == "-" else None)
+        real_modes = user is None and special_modes_allowed()  # before the chroot
         _enter(user, fcntl)
         entered = True
         env = {"PATH": _PATH, "TERM": "xterm"}
         if user is None:
-            install_filter()
+            install_filter(real_modes)
             env["TAR_OPTIONS"] = "--no-same-owner"  # only uid 0 exists
         # Python ignores SIGPIPE and SIGXFSZ, and an exec keeps ignored signals.
         signal.signal(signal.SIGPIPE, signal.SIG_DFL)

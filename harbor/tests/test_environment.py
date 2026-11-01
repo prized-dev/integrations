@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import sys
 import tarfile
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -224,6 +225,7 @@ async def test_start_creates_a_labelled_sandbox_and_unpacks_the_image(
     assert "set -e; cd ~; umask 022; " in setup
     assert '"${PIPESTATUS[0]} ${PIPESTATUS[1]}"' in setup  # crane checked on its own
     assert "--preserve-permissions" in setup
+    assert _module.gai_conf_command("/home/prized/rootfs") in setup
     assert (environment._image_env, environment._image_workdir) == ({"A": "1"}, "/w")
     assert environment._image_user == "app"
     assert sandbox.files.written[0][0] == "/home/prized/runtime.py"
@@ -740,6 +742,84 @@ def test_unpack_fails_on_a_truncated_image(tmp_path):
     result = _run_unpack(tmp_path, archive[:5_000])
     assert result.returncode == 1
     assert "ok" not in result.stdout
+
+
+def _gai(root, before: str | None = None, link: bool = False) -> str | None:
+    """Runs gai_conf_command on an image root whose /etc/gai.conf holds
+    ``before`` (none if None, a link to it if ``link``); returns the result."""
+    conf = root / "etc" / "gai.conf"
+    conf.parent.mkdir(parents=True, exist_ok=True)
+    if before is not None:
+        target = root / "elsewhere" if link else conf
+        target.write_text(before)
+        if link:
+            conf.symlink_to(target)
+    result = subprocess.run(
+        ["bash", "-c", "set -e; " + _module.gai_conf_command(str(root)) + "echo ok"],
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+    assert (result.returncode, result.stdout) == (0, "ok\n"), result.stderr
+    return conf.read_text() if conf.exists() else None
+
+
+@linux_only
+def test_images_get_ipv4_first_name_resolution(tmp_path):
+    line = "precedence ::ffff:0:0/96 100"
+    assert _module._GAI_PRECEDENCE == line
+    assert _gai(tmp_path / "a").splitlines()[-1] == line  # no gai.conf yet
+    debian = "# Configuration for getaddrinfo(3).\n#precedence ::ffff:0:0/96  100\n"
+    assert _gai(tmp_path / "b", debian).startswith(debian)  # kept, line added
+    assert _gai(tmp_path / "b", None).count(line) == 1  # a restart adds no second
+    own = "precedence ::1/128 50\n"
+    assert _gai(tmp_path / "c", own) == own  # the image's own order wins
+    assert _gai(tmp_path / "d", own, link=True) == own  # links are left alone
+    assert (tmp_path / "d" / "elsewhere").read_text() == own
+
+
+def _first_address(hosts: str, gai_conf: str) -> str | None:
+    """glibc's first address for localhost with these /etc/hosts and
+    /etc/gai.conf, bind-mounted in a user and mount namespace."""
+    work = Path(tempfile.mkdtemp())
+    (work / "hosts").write_text(hosts)
+    (work / "gai.conf").write_text(gai_conf)
+    script = (
+        f"mount --bind {work}/hosts /etc/hosts && "
+        f"mount --bind {work}/gai.conf /etc/gai.conf && "
+        "getent ahosts localhost"
+    )
+    try:
+        result = subprocess.run(
+            ["unshare", "-Urm", "sh", "-c", script],
+            capture_output=True,
+            check=False,
+            text=True,
+            timeout=30,
+        )
+    finally:
+        shutil.rmtree(work)
+    if result.returncode != 0 or not result.stdout.split():
+        return None
+    return result.stdout.split()[0]
+
+
+@pytest.mark.skipif(
+    not sys.platform.startswith("linux")
+    or shutil.which("unshare") is None
+    or shutil.which("getent") is None
+    or not Path("/etc/gai.conf").exists(),
+    reason="needs glibc, getent, an /etc/gai.conf to mount over and unshare",
+)
+def test_the_gai_line_puts_127_0_0_1_before_ipv6_loopback():
+    hosts = _module._HOSTS.replace("$(hostname)", "sandbox")
+    before = _first_address(hosts, "")
+    if before is None:
+        pytest.skip("no user namespaces here")
+    after = _first_address(hosts, _module._GAI_PRECEDENCE + "\n")
+    assert after == "127.0.0.1"
+    # Where loopback has ::1 (a Prized sandbox does), glibc's default puts it first.
+    assert before in ("::1", "127.0.0.1")
 
 
 # -- cancellation and failures ------------------------------------------------
