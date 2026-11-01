@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+"""Stand-in for `claude` and `codex`: records how it was started, then does the next planned action.
+
+FAKE_AGENT_DIR holds plan.json (a list, one action per call) and calls.jsonl (what each call saw).
+An action: {"write": {path: text}, "symlink": {path: target}, "write_token": path, "commit": message,
+"say": final message, "exit": code}. Without a plan entry it writes fix.txt and commits.
+"""
+
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+d = Path(os.environ["FAKE_AGENT_DIR"])
+name = Path(sys.argv[0]).name
+args = sys.argv[1:]
+prompt = sys.stdin.read()
+calls = d / "calls.jsonl"
+n = len(calls.read_text().splitlines()) if calls.exists() else 0
+if name == "claude":
+    resume = args[args.index("--resume") + 1] if "--resume" in args else ""
+else:
+    resume = args[args.index("resume") + 1] if "resume" in args else ""
+session = resume or f"sess-{n + 1}"
+with calls.open("a") as f:
+    f.write(
+        json.dumps(
+            {
+                "agent": name,
+                "argv": args,
+                "cwd": os.getcwd(),
+                "prompt": prompt,
+                "env_tokens": sorted(k for k in os.environ if k in ("GH_TOKEN", "GITHUB_TOKEN") or k.startswith(("GIT_CONFIG", "PRIZED_ISSUES"))),
+                "session": session,
+            }
+        )
+        + "\n"
+    )
+plan = json.loads((d / "plan.json").read_text()) if (d / "plan.json").exists() else []
+action = plan[n] if n < len(plan) else {"write": {"fix.txt": f"fixed by call {n + 1}\n"}, "commit": "Fix the thing"}
+print(json.dumps({"type": "system", "subtype": "init", "session_id": session} if name == "claude" else {"type": "thread.started", "thread_id": session}), flush=True)
+for path, text in (action.get("write") or {}).items():
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(text)
+for path, target in (action.get("symlink") or {}).items():
+    os.symlink(target, path)
+if action.get("write_token"):
+    token = (Path(os.environ["HOME"]) / ".prized-issues" / "token").read_text()
+    Path(action["write_token"]).write_text("leaked: " + token)
+if action.get("commit"):
+    subprocess.run(["git", "add", "-A"], check=True)
+    subprocess.run(["git", "-c", "user.name=agent", "-c", "user.email=agent@example.com", "commit", "-qm", action["commit"]], check=True)
+say = action.get("say", "Done.")
+if name == "claude":
+    print(json.dumps({"type": "result", "subtype": "success", "result": say, "session_id": session}))
+else:
+    print(json.dumps({"type": "item.completed", "item": {"type": "agent_message", "text": say}}))
+sys.exit(action.get("exit", 0))
