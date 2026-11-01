@@ -1,0 +1,8 @@
+#!/bin/sh
+# A stand-in for herdr: logs its arguments, one call per line, and answers like the real CLI does.
+printf '%s\n' "$*" >> "${FAKE_HERDR_LOG:?}"
+case "$1 $2" in
+  "plugin pane") echo '{"ok":true}' ;;
+  "machine add") [ -n "$FAKE_MACHINE_ADD_EXIT" ] && exit "$FAKE_MACHINE_ADD_EXIT" ;;
+esac
+exit 0
