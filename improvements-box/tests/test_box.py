@@ -73,6 +73,8 @@ def test_a_suggestion_becomes_a_tested_patch(make, world: World, demo: Path, tmp
     assert "test_kelvin" in s.tests_tail and "OK" in s.tests_tail
     tester = world.sandboxes[s.tester_id]
     assert not Path(tester.home, "claude-seen.json").exists()  # the agent never ran in the copy
+    # The agent's sandbox was gone before the copy woke up for the tests.
+    assert world.calls.index(("delete", s.sandbox_id)) < world.calls.index(("resume", tester.id))
     assert any(sid == tester.id and cmd == TEST for sid, cmd, _ in world.execs)
 
     # A record of the run beside the patch.
@@ -161,6 +163,7 @@ def test_the_model_key_never_leaves_in_the_change_or_on_the_page(make, world: Wo
     [
         ("https://x-access-token:ghp_secret@github.com/you/app.git", "https://github.com/you/app.git"),
         ("https://user:pw@git.example.com:8443/app", "https://git.example.com:8443/app"),
+        ("https://:ghp_secret@github.com/o/r", "https://github.com/o/r"),
         ("https://github.com/you/app", "https://github.com/you/app"),
         ("git@github.com:you/app.git", "git@github.com:you/app.git"),
         ("/home/me/src/app", "app"),
@@ -259,7 +262,7 @@ def test_a_hook_in_the_patch_never_runs_on_this_machine(
     s = run(make(repo=str(origin), mode="pr"), f"add a hook {marker}")
     assert s.outcome == "pr", s.detail
     assert ".githooks/post-commit" in s.files
-    assert not marker.exists()
+    assert not marker.exists(), marker.read_text()
 
 
 def test_close_while_a_sandbox_is_being_made_still_deletes_it(make, world: World) -> None:
@@ -276,10 +279,20 @@ def test_the_pr_body_quotes_untrusted_text_in_code_blocks() -> None:
     cfg = Config(repo=".", test="make test", keep="pause")
     s = ib.Suggestion(id="s-1", text="@octocat see ```![x](https://evil.example)", submitted=0, steps=[])
     s.agent_summary = "Done, cc @team"
+    s.files = ["a`@org/team`.py"]
     body = ib.pr_body(cfg, s)
+    assert "```text\na`@org/team`.py\n```" in body
     assert "````text\n@octocat see ```![x](https://evil.example)\n````" in body
     assert "```text\nDone, cc @team\n```" in body
     assert "paused for review" in body
+
+
+def test_a_run_finishes_even_when_its_record_cannot_be_written(make, world: World, tmp_path: Path) -> None:
+    blocker = tmp_path / "not-a-dir"
+    blocker.write_text("")
+    s = run(make(out=str(blocker)), "Kelvin please")
+    assert s.finished is not None and s.outcome == "error"
+    assert world.live() == []
 
 
 def test_a_failed_create_is_reported_and_leaves_nothing(make, world: World) -> None:

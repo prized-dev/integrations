@@ -100,9 +100,10 @@ elif "rename" in suggestion:
 elif "hook" in suggestion:
     marker = suggestion.split()[-1]
     os.makedirs(".githooks", exist_ok=True)
-    with open(".githooks/post-commit", "w") as fh:
-        fh.write(f"#!/bin/sh\ntouch {marker}\n")
-    os.chmod(".githooks/post-commit", 0o755)
+    for hook in ("post-commit", "post-index-change", "pre-push", "post-checkout", "reference-transaction"):
+        with open(f".githooks/{hook}", "w") as fh:
+            fh.write(f"#!/bin/sh\necho {hook} >> {marker}\n")
+        os.chmod(f".githooks/{hook}", 0o755)
     edit("temps.py", 'raise ValueError(f"unknown unit {unit!r}: use C or F")',
          'raise ValueError(f"unknown unit {unit!r}: use C or F (not K)")')
     summary = "Added a hook."

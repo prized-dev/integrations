@@ -197,6 +197,7 @@ class Suggestion:
     sandbox_id: str = ""  # the agent's
     sandbox_state: str = ""
     tester_id: str = ""  # the clean copy the tests run in
+    deleted: list[str] = field(default_factory=list)  # sandboxes deleted before the cleanup step
     started: float | None = None
     finished: float | None = None
     agent_cost_usd: float | None = None
@@ -506,6 +507,7 @@ class Box:
                 with self.step(s, "check") as st:
                     patch = self.check(sb, s, st, work)
                 with self.step(s, "tests") as st:
+                    self.retire(s, sb)
                     self.tests(tester, s, st, patch)
                 with self.step(s, "deliver") as st:
                     self.deliver(s, st, patch, work, branch)
@@ -525,11 +527,14 @@ class Box:
                 s.step("cleanup").state, s.step("cleanup").note = "failed", f"{type(err).__name__}: {err}"
             shutil.rmtree(work, ignore_errors=True)
             if cfg.mode == "local":  # a record of every run, beside the patches
-                out = Path(cfg.out)
-                out.mkdir(parents=True, exist_ok=True)
-                record = {k: v for k, v in s.view().items() if k != "patch"}
-                record["outcome"] = s.outcome
-                (out / f"{s.id}.json").write_text(json.dumps(record, indent=2) + "\n")
+                try:
+                    out = Path(cfg.out)
+                    out.mkdir(parents=True, exist_ok=True)
+                    record = {k: v for k, v in s.view().items() if k != "patch"}
+                    record["outcome"] = s.outcome
+                    (out / f"{s.id}.json").write_text(json.dumps(record, indent=2) + "\n")
+                except OSError as err:
+                    self.log(f"[{s.id}] could not write its record: {err}")
             s.finished = time.time()
             took = s.finished - (s.started or s.finished)
             self.log(f"[{s.id}] {s.outcome} in {took:.0f}s: {s.result or s.detail}")
@@ -604,6 +609,8 @@ class Box:
             self.track(s, tester)
             how = "forked"
         except PrizedError as err:
+            if self.closing:
+                raise Stop("error", "The box shut down.") from None
             self.log(f"[{s.id}] fork failed ({err.code}); making a fresh copy instead")
             tester = self.create(s, "tests")
             self.copy_in(tester, work)
@@ -679,7 +686,8 @@ class Box:
         )
         patch = sb.files.read_bytes(PATCH_FILE)
         if not patch.strip():
-            raise Stop("no-change", "The agent changed nothing. " + one_line(s.agent_summary, 300), "ok")
+            st.note = "no change"
+            raise Stop("no-change", "The agent changed nothing; its summary says why.", "ok")
         if len(patch) > cfg.max_patch_kb * 1024:
             raise Stop(
                 "refused", f"Refused: the patch is {len(patch) // 1024} KB, over {cfg.max_patch_kb} KB."
@@ -708,6 +716,24 @@ class Box:
     def protected(self, name: str) -> bool:
         low = name.lower()
         return any(low == p.lower().rstrip("/") or low.startswith(p.lower()) for p in self.cfg.protect)
+
+    def retire(self, s: Suggestion, sb: Any) -> None:
+        """The agent is done: stop its sandbox before the tests, so nothing it left running (with
+        the model key) runs on. Kept paused for review with --keep pause; deleted otherwise."""
+        try:
+            if self.cfg.keep == "pause":
+                sb.pause()
+                s.sandbox_state = "paused"
+                return
+            sb.delete(wait=True)
+        except PrizedError as err:  # the tests don't need it gone; cleanup tries again and says so
+            self.log(f"[{s.id}] could not stop {sb.id} before the tests ({err.code})")
+            return
+        s.sandbox_state = "deleted"
+        s.deleted.append(sb.id)
+        with self.lock:
+            if sb in self.live.get(s.id, []):
+                self.live[s.id].remove(sb)
 
     def tests(self, tester: Any, s: Suggestion, st: Step, patch: bytes) -> None:
         cfg = self.cfg
@@ -762,6 +788,7 @@ class Box:
             [cfg.gh, "pr", "create", "--draft", "--head", branch, "--base", base_branch]
             + ["--title", title, "--body-file", str(work / "body.md")],
             cwd=src,
+            env=safe_git_env(),
             capture_output=True,
             text=True,
             timeout=120,
@@ -777,17 +804,18 @@ class Box:
         st = s.step("cleanup")
         with self.lock:
             made = list(self.live.get(s.id, []))
-        if not made:
+        if not made and not s.deleted:
             st.state, st.note = "skipped", "no sandbox was made"
             return
         st.state = "running"
         start = time.monotonic()
-        notes, failed = [], False
+        notes, failed = [f"{sid} deleted" for sid in s.deleted], False
         for each in made:
             try:
                 if each is sb and self.cfg.keep == "pause" and not self.closing:
-                    each.pause()
-                    s.sandbox_state = "paused"
+                    if s.sandbox_state != "paused":
+                        each.pause()
+                        s.sandbox_state = "paused"
                     notes.append(
                         f"{each.id} paused, deleted after {self.cfg.keep_hours} h. Look inside: "
                         f"prized sandbox exec {each.id} --cwd {REPO_DIR} -- git diff --cached {BASE_TAG}"
@@ -815,7 +843,7 @@ def fenced(text: str) -> str:
 
 
 def pr_body(cfg: Config, s: Suggestion) -> str:
-    files = "\n".join(f"- `{f}`" for f in s.files)
+    files = fenced("\n".join(s.files))
     after = "paused for review" if cfg.keep == "pause" else "deleted after the run"
     return (
         f"Someone suggested this in the improvements box ({s.id}):\n\n{fenced(s.text)}\n\n"
@@ -829,13 +857,25 @@ def pr_body(cfg: Config, s: Suggestion) -> str:
 
 
 # Every git command on this machine runs with hooks and fsmonitor off: a patch from a sandbox can
-# add files to the clone, and none of them may ever run here.
+# add files to the clone, and none of them may ever run here. The environment carries the same
+# settings to the git commands gh runs in the clone.
 GIT_SAFE = ("-c", "core.hooksPath=/dev/null", "-c", "core.fsmonitor=false")
 DIFF = ("diff", "--cached", "--no-renames", "HEAD")
 
 
+def safe_git_env() -> dict[str, str]:
+    env = dict(os.environ)
+    n = int(env.get("GIT_CONFIG_COUNT") or 0)
+    for i, (key, value) in enumerate((("core.hooksPath", "/dev/null"), ("core.fsmonitor", "false")), start=n):
+        env[f"GIT_CONFIG_KEY_{i}"], env[f"GIT_CONFIG_VALUE_{i}"] = key, value
+    env["GIT_CONFIG_COUNT"] = str(n + 2)
+    return env
+
+
 def git(*args: str) -> str:
-    done = subprocess.run(["git", *GIT_SAFE, *args], capture_output=True, text=True, timeout=300)
+    done = subprocess.run(
+        ["git", *GIT_SAFE, *args], capture_output=True, text=True, timeout=300, env=safe_git_env()
+    )
     if done.returncode != 0:
         verb = args[2] if args[0] == "-C" else args[0]
         raise RuntimeError(f"git {verb} failed: {tail(done.stderr, 3)}")
@@ -847,7 +887,7 @@ def shown_repo(repo: str) -> str:
     folder's name (the page needn't show this machine's paths)."""
     if "://" in repo:
         parts = urlsplit(repo)
-        if not parts.username:
+        if "@" not in parts.netloc:
             return repo
         host = (parts.hostname or "") + (f":{parts.port}" if parts.port else "")
         return parts._replace(netloc=host).geturl()
@@ -999,7 +1039,7 @@ button:disabled { opacity: .5; }
 .detail { margin: 8px 0; font-size: 14px; }
 ol { list-style: none; margin: 0; padding: 0; }
 li { display: grid; grid-template-columns: 20px 1fr auto; gap: 0 8px; font-size: 14px; padding: 3px 0; }
-li .n { color: var(--mute); font-size: 12px; grid-column: 2 / 4; word-break: break-all; }
+li .n { color: var(--mute); font-size: 12px; grid-column: 2 / 4; overflow-wrap: anywhere; }
 li .t { color: var(--mute); font-size: 12px; font-variant-numeric: tabular-nums; }
 .ok { color: var(--ok); } .failed { color: var(--bad); } .running { color: var(--run); }
 .pending, .skipped { color: #98a2b3; }
@@ -1215,6 +1255,18 @@ def main(argv: list[str] | None = None, *, sandbox_api: Any = Sandbox) -> int:
     except ValueError as err:
         print(f"improvements-box: {err}", file=sys.stderr)
         return 2
+
+    def stop(signum: int, frame: Any) -> None:
+        raise KeyboardInterrupt  # SIGTERM shuts down like Ctrl-C: the runs' sandboxes are deleted
+
+    before = signal.signal(signal.SIGTERM, stop)
+    try:
+        return serve(box, cfg, a)
+    finally:
+        signal.signal(signal.SIGTERM, before)
+
+
+def serve(box: Box, cfg: Config, a: argparse.Namespace) -> int:
     if a.once:
         try:
             s = box.submit(a.once)
@@ -1232,17 +1284,11 @@ def main(argv: list[str] | None = None, *, sandbox_api: Any = Sandbox) -> int:
         f"improvements box: http://{shown}:{port}/  ({shown_repo(cfg.repo)}, {cfg.mode} mode)",
         file=sys.stderr,
     )
-
-    def stop(signum: int, frame: Any) -> None:
-        raise KeyboardInterrupt  # SIGTERM shuts down like Ctrl-C: the runs' sandboxes are deleted
-
-    before = signal.signal(signal.SIGTERM, stop)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         pass
     finally:
-        signal.signal(signal.SIGTERM, before)
         server.server_close()
         box.close()
     return 0

@@ -48,13 +48,13 @@ An app can send suggestions from its own box: `POST /api/suggestions` with `{"te
 4. **Fork.** The sandbox is forked into a clean copy (`role=tests`) and the copy is paused, so it costs no compute while the agent works. If a fork isn't possible, a fresh sandbox is set up the same way.
 5. **Agent.** Claude Code runs headless (`claude -p --dangerously-skip-permissions`) with the suggestion wrapped in a prompt that says it comes from an anonymous user. It stops at `--agent-minutes` or `--max-budget-usd`, whichever comes first. The page streams what it does.
 6. **Check.** The change comes out as one patch, and this machine judges the patch itself. No change ends the run. A patch is refused if it doesn't apply to the base, touches a protected path (`.github/` by default, renames and odd names included), holds the model key, or is over 512 KB.
-7. **Tests.** The clean copy resumes, the patch is applied there, and your `--test` command runs, without the model key. Nothing the agent left in its own sandbox (a changed `PATH`, a process in the background, a rewired git) can reach them. If they fail, nothing is handed over.
+7. **Tests.** The agent's sandbox is deleted (or paused, with `--keep pause`), so nothing it left running carries on. The clean copy resumes, the patch is applied there, and your `--test` command runs, without the model key. Nothing the agent left in its own sandbox (a changed `PATH`, a process in the background, a rewired git) can reach them. If they fail, nothing is handed over.
 8. **Hand-off.** Local mode writes `improvements/s-….patch` and a JSON record of the run. PR mode commits the patch on this machine, pushes `improvements/s-…` and opens a draft pull request that quotes the suggestion.
-9. **Clean up.** Both sandboxes are deleted. With `--keep pause` the agent's sandbox is paused instead, so you can look inside (`prized sandbox exec <id> --cwd repo -- git diff --cached improvements-base`), and deleted after `--keep-hours`.
+9. **Clean up.** The clean copy is deleted too. With `--keep pause` the agent's sandbox stays paused, so you can look inside (`prized sandbox exec <id> --cwd repo -- git diff --cached improvements-base`), and deleted after `--keep-hours`.
 
 ## What it costs
 
-Measured on the demo app on 2026-11-01, with "Support Kelvin too, like 300K", `--model sonnet` and the default 2 vCPU and 4 GB. It took 20 seconds from submit to patch, 12 of them the agent's. Claude Code reported $0.04 of model use. The two sandboxes ran about 21 seconds between them, under $0.001 at [sandbox rates](https://prized.dev/docs/billing?via=improvements-box#sandboxes). Bigger repositories and harder suggestions take longer, within the caps.
+Measured on the demo app on 2026-11-01, with "Support Kelvin too, like 300K", `--model sonnet` and the default 2 vCPU and 4 GB. It took 20 seconds from submit to patch, 12 of them the agent's. Claude Code reported $0.05 of model use ($0.04 to $0.05 over five runs). The two sandboxes ran about 21 seconds between them, under $0.001 at [sandbox rates](https://prized.dev/docs/billing?via=improvements-box#sandboxes). Bigger repositories and harder suggestions take longer, within the caps.
 
 ## Suggestions are untrusted input
 
@@ -66,10 +66,10 @@ Whoever can type into the box is giving instructions to an agent that runs code.
 | Time caps | `--agent-minutes` stops the agent and `--test-minutes` the tests. Each sandbox's own run time cap deletes it if this process goes away, and a paused leftover is deleted within the hour. |
 | A spend cap | Claude Code's `--max-budget-usd`, per suggestion. Set a spend limit on the key itself too. |
 | Only the model key goes in | The model key is passed to the agent's command and to nothing else, not even the tests. The repository goes in as a snapshot, and the push and the pull request happen on this machine, so your Prized key and git credentials never enter a sandbox. `--model-env` refuses `PRIZED_*`, `GH_*`, `GITHUB_*` and `GIT_*`. |
-| The key stays out of what comes back | A change that contains the model key is refused, and the key is masked in the agent's log, its summary and the test output. |
+| The key stays out of what comes back | A change that contains the model key as written is refused, and the key is masked in the agent's log, its summary and the test output. |
 | Protected paths | A change under `.github/`, or any `--protect` prefix, is refused before the tests run, so a suggestion can't add a workflow. The check reads the patch on this machine, so a rename or a quoted file name doesn't slip past it. |
 | Tests in a clean copy | The agent saying its tests pass doesn't count. Your command runs in a fork from before the agent started, on the patch alone. |
-| Nothing from the patch runs here | Every git command on this machine runs with hooks and fsmonitor turned off, and the push skips hooks, so a hook the agent adds to the repository can't run on your machine. |
+| Nothing from the patch runs here | Every git command on this machine, the ones `gh` runs included, has hooks and fsmonitor turned off, so a hook the agent adds to the repository can't run on your machine. |
 | Draft pull requests only | Nothing is merged or deployed. The pull request says the change came from an untrusted suggestion, and a person decides. |
 | A careful form | It listens on 127.0.0.1, answers only to localhost names and the ones you give with `--allow-host` (no DNS rebinding), refuses posts from other sites, takes up to 2,000 characters, and holds at most `--queue` runs. |
 
