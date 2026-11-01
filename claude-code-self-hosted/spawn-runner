@@ -250,7 +250,7 @@ own_box_wait() {  # own-box-wait ID HOST KEY UNTIL SESSION: the waiter own_box l
   while :; do
     left=$((until - $(date +%s)))
     [ "$left" -gt 20 ] || { echo "$(date -u +%FT%TZ) $host was not up in time for $session; Anthropic offers it again"; exit 1; }
-    state=$(api "$API/boxes/$id" 2>/dev/null | jq -r '[.box.observedState, .box.desiredState] | map(. // "-") | join(" ")' 2>/dev/null) || state=
+    state=$(api "$API/boxes/$id" 2>/dev/null | jq -r '"\(.box.observedState // "-") \(.box.desiredState // "-")"' 2>/dev/null) || state=
     case $state in
       "running "*) break ;;
       *" terminated") echo "$(date -u +%FT%TZ) $host is being deleted; $session waits for a new message"; exit 2 ;;
