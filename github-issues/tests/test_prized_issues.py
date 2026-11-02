@@ -129,6 +129,7 @@ class WatchTest(Box):
         self.assertEqual(r.returncode, 2)
         self.assertIn("fine-grained", r.stderr)
         self.assertIn("personal-access-tokens/new", r.stderr)
+        self.assertNotIn("gho_classic", r.stderr + r.stdout)
         self.assertFalse((self.state_dir / "tokens" / "acme__app").exists())
         self.run_cli("watch", FULL, "--broad-token", stdin="gho_classic\n")
 

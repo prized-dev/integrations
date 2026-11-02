@@ -1236,8 +1236,9 @@ def main_watch(args) -> int:
         return 2
     scopes = headers.get("x-oauth-scopes")
     if scopes is not None and not args.broad_token:
+        # Nothing read back with the token is printed (CodeQL py/clear-text-logging-sensitive-data).
         print(
-            f"That's a classic or OAuth token (scopes: {scopes or 'none'}), which reaches every repo you can. Make a "
+            "That's a classic or OAuth token, which reaches every repo you can. Make a "
             f"fine-grained one for just {full}: {PAT_PAGE.format(owner=owner)}\n(--broad-token uses it anyway.)",
             file=sys.stderr,
         )
