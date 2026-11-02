@@ -19,8 +19,11 @@ const PHASE_LABEL: Record<PublicHost["phase"], string> = {
   failed: "Failed",
 };
 
-function message(error: unknown): string {
-  return error instanceof Error && error.message ? error.message : "The request failed. Check the plugin's logs.";
+// Paseo wraps a handler's error as "Request failed: <message> requestType=... code=...": keep the message.
+export function message(error: unknown): string {
+  const raw = error instanceof Error && error.message ? error.message : "";
+  const text = raw.replace(/^Request failed:\s*/, "").replace(/\s+requestType=\S+(\s+code=\S+)?\s*$/, "").trim();
+  return text || "The request failed. Check the plugin's logs.";
 }
 
 export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps & { openSettings: (id: string) => void }) {
@@ -137,7 +140,12 @@ export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps &
             {PHASE_LABEL[host.phase]}
             {host.busy ? "..." : ""}
           </Text>
-          {host.sandboxId ? <Text style={s.muted}>Sandbox {host.sandboxId}{host.expiresAt ? `, deleted at ${new Date(host.expiresAt).toLocaleString()} unless stopped` : ""}</Text> : null}
+          {host.sandboxId ? (
+            <Text style={s.muted}>
+              Sandbox {host.sandboxId}
+              {host.phase === "ready" && host.expiresAt ? `, deleted at ${new Date(host.expiresAt).toLocaleString()} unless stopped before then` : ""}
+            </Text>
+          ) : null}
           {host.error ? <Text style={s.danger}>{host.error}</Text> : null}
           <View style={s.row}>
             {host.paired && (host.phase === "ready" || host.phase === "paused") ? (

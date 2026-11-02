@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 
 import { saveSettingsRpc, statusRpc, type PublicSettings } from "../shared/rpc.ts";
+import { message } from "./hosts.tsx";
 
 const SHAPES = [
   { label: "2 vCPU, 4 GB (fits the free tier)", value: "2x4" },
@@ -34,7 +35,7 @@ export function SettingsScreen({ theme }: PluginSurfaceProps) {
     try {
       setSettings((await getStatus({})).settings);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not read the settings.");
+      toast.error(message(error));
     }
   }
 
@@ -52,7 +53,7 @@ export function SettingsScreen({ theme }: PluginSurfaceProps) {
       setOpenaiKey("");
       await load();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not save.");
+      toast.error(message(error));
     } finally {
       setSaving(false);
     }

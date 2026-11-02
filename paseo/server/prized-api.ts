@@ -62,6 +62,16 @@ export class PrizedApi {
   }
 
   private async request<T>(method: string, url: string, body?: unknown, headers: Record<string, string> = {}, timeoutMs = 120_000): Promise<{ status: number; data: T }> {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await this.send<T>(method, url, body, headers, controller.signal);
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  private async send<T>(method: string, url: string, body: unknown, headers: Record<string, string>, signal: AbortSignal): Promise<{ status: number; data: T }> {
     const response = await this.fetchImpl(url, {
       method,
       headers: {
@@ -73,7 +83,7 @@ export class PrizedApi {
       },
       body: body === undefined ? undefined : JSON.stringify(body),
       redirect: "error",
-      signal: AbortSignal.timeout(timeoutMs),
+      signal,
     });
     const text = await response.text();
     let data: unknown = null;

@@ -199,6 +199,14 @@ case $DIR in
     npm run typecheck
     npm run build
     offline npm test ;;
+  paseo)
+    # A Paseo plugin: Paseo compiles it itself, so there is no build. Typecheck against the pinned
+    # Paseo SDK, then node --test (Node 22.18+ runs the .ts sources) against an in-memory Prized API.
+    cp -r "$ROOT/$DIR/." "$WORK/pkg"
+    cd "$WORK/pkg"
+    npm install --no-audit --no-fund --no-package-lock --loglevel=error
+    npm run typecheck
+    offline node --test ;;
   *)
     echo "scripts/test.sh doesn't know $DIR yet: add a case for it" >&2; exit 2 ;;
 esac
