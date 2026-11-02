@@ -65,9 +65,10 @@ export interface PrizedSandboxOptions {
   /** Minutes of running before Prized deletes a sandbox. Default: your plan's (24 hours on paid plans). */
   readonly maxRuntimeMin?: number;
   /**
-   * A sandbox (`sbx_…`) to start from instead of a fresh template: set one up with what you need
+   * A sandbox (`sbx_…`) to start from instead of a fresh one: set it up with what you need
    * (packages, a cloned repo), pause it, and every session starts as a fork of it, with its
-   * shape, environment and files. Keep it: deleting it breaks new sessions until the next build.
+   * files, shape, environment variables and auto-pause (`template`, `resources` and
+   * `autoPauseMin` don't apply; `env` goes with every command). Keep it while builds use it.
    */
   readonly forkFrom?: string;
   /** Absolute directory where commands start and relative paths resolve. Default `/home/prized/work`. */
@@ -136,8 +137,13 @@ export function createPrizedImplementation(
     throw new Error(`${LOG_PREFIX} forkFrom must be a sandbox id (sbx_…), but received "${options.forkFrom}".`);
   }
   const env = { ...options.env };
-  // eve sets AI_AGENT=eve on every command unless the environment's own `env` sets it.
-  const agentEnv = Object.fromEntries(Object.entries(eve.SANDBOX_AGENT_ENV).filter(([name]) => !(name in env)));
+  // eve sets AI_AGENT=eve on every command unless the environment's own `env` sets it. A sandbox
+  // this provider creates holds `env` itself; a fork of `forkFrom` has the base's environment, so
+  // there `env` goes with every command instead.
+  const agentEnv =
+    options.forkFrom === undefined
+      ? Object.fromEntries(Object.entries(eve.SANDBOX_AGENT_ENV).filter(([name]) => !(name in env)))
+      : { ...eve.SANDBOX_AGENT_ENV, ...env };
   const autoPauseMin = options.autoPauseMin ?? DEFAULT_AUTO_PAUSE_MIN;
 
   const apiKey = (): string => {
@@ -228,6 +234,23 @@ export function createPrizedImplementation(
     return { sandboxId: state.sandboxId, version: 1 };
   };
 
+  /** `forkFrom` must exist; say which options its forks don't take from this environment. */
+  const checkBase = async (id: string, log: (message: string) => void): Promise<void> => {
+    let base: SandboxLike;
+    try {
+      base = await Sandbox.connect(id, { apiKey: apiKey() });
+    } catch (error) {
+      if (isGone(error)) throw new Error(`${LOG_PREFIX} forkFrom names ${id}, which doesn't exist.`, { cause: error });
+      throw error;
+    }
+    if (GONE.has(base.state)) throw new Error(`${LOG_PREFIX} forkFrom names ${id}, which is ${base.state}.`);
+    if (base.info.autoPauseMin === null) {
+      log(`${id} has auto-pause off, so session sandboxes forked from it never pause themselves: create the base with --auto-pause 10m`);
+    }
+    const ignored = (['template', 'resources', 'autoPauseMin'] as const).filter(name => options[name] !== undefined);
+    if (ignored.length > 0) log(`${ignored.join(', ')} don't apply with forkFrom: forks take the base sandbox's`);
+  };
+
   /** Delete build sandboxes of this key that their build left paused (a crash) over an hour ago. */
   const sweepAbandonedBuilds = async (key: string, log: (message: string) => void): Promise<void> => {
     const now = Date.now();
@@ -268,6 +291,7 @@ export function createPrizedImplementation(
 
   return {
     async prepare(ctx) {
+      if (options.forkFrom !== undefined) await checkBase(options.forkFrom, ctx.log);
       if (ctx.isEmpty) return options.forkFrom === undefined ? {} : { templateId: options.forkFrom };
       const key = ctx
         .templateKey({

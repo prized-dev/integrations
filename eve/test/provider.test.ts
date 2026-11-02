@@ -56,8 +56,26 @@ describe('prepare', () => {
   });
 
   it('hands over forkFrom as the template when there is nothing to prepare', async () => {
-    assert.deepEqual(await provider({ forkFrom: 'sbx_abc123' }).prepare(prepareContext()), { templateId: 'sbx_abc123' });
-    assert.equal(api.sandboxes.size, 0);
+    const base = await api.create({ apiKey: KEY, autoPauseMin: 10 });
+    const ctx = prepareContext();
+    assert.deepEqual(await provider({ forkFrom: base.id }).prepare(ctx), { templateId: base.id });
+    assert.equal(api.sandboxes.size, 1);
+    assert.deepEqual(ctx.logs, []);
+  });
+
+  it('fails the build when forkFrom does not exist', async () => {
+    await assert.rejects(provider({ forkFrom: 'sbx_0000' }).prepare(prepareContext()), /forkFrom names sbx_0000, which doesn't exist/);
+    const gone = await api.create({ apiKey: KEY });
+    await gone.delete();
+    await assert.rejects(provider({ forkFrom: gone.id }).prepare(prepareContext()), /doesn't exist/);
+  });
+
+  it('warns when forkFrom never pauses itself, and names the options forks ignore', async () => {
+    const base = await api.create({ apiKey: KEY });
+    const ctx = prepareContext();
+    await provider({ forkFrom: base.id, resources: { vcpu: 2 }, autoPauseMin: 5 }).prepare(ctx);
+    assert.match(ctx.logs.join('\n'), /auto-pause off.*--auto-pause/);
+    assert.match(ctx.logs.join('\n'), /resources, autoPauseMin don't apply with forkFrom/);
   });
 
   it('builds a paused template with the workspace, the skills and the authored prepare, and deletes the build', async () => {
@@ -194,11 +212,13 @@ describe('start', () => {
     const base = await api.create({ apiKey: KEY });
     await base.write('/home/prized/work/tool.sh', 'echo tool');
     await base.pause();
-    const impl = provider({ forkFrom: base.id });
+    const impl = provider({ forkFrom: base.id, env: { STAGE: 'prod' } });
     const artifact = await impl.prepare(prepareContext());
     const { connection, state } = await impl.start(sessionContext('s1'), undefined, artifact);
     assert.equal(api.get(state.sandboxId).forkedFrom, base.id);
     assert.equal((await run(connection, 'bash tool.sh')).stdout, 'tool\n');
+    // A fork has the base's environment, so env goes with each command.
+    assert.equal((await run(connection, 'echo "$STAGE $AI_AGENT"')).stdout, 'prod eve\n');
   });
 
   it('returns the same sandbox to every start of a session', async () => {

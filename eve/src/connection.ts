@@ -300,7 +300,7 @@ export function createConnection(
     /** Pause: memory and disk are kept and only storage is billed. A no-op when already paused or gone. */
     async stop() {
       // Output polls would wake a paused sandbox, so they end first.
-      for (const process of active) process.stopPolling();
+      for (const tracked of active) tracked.stopPolling();
       try {
         await sandbox.refresh();
         if (sandbox.state === 'running' || sandbox.state === 'starting') await sandbox.pause();

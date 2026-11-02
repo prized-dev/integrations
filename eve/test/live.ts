@@ -6,8 +6,7 @@
  *
  *   PRIZED_API_KEY=dcp_... npm run test:live
  *
- * It bills your workspace for about two minutes of three 1 vCPU, 1 GB sandboxes (well under $0.05),
- * and needs a workspace that has paid in (templates are forks; see the README).
+ * It makes up to four 1 vCPU, 1 GB sandboxes (at most two running at once) for under a minute: well under $0.01.
  */
 import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';

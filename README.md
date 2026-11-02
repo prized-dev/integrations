@@ -23,6 +23,7 @@ Each folder is its own package with its own README, tests and release. You need 
 | [`pydantic-ai`](pydantic-ai) | Pydantic AI: workspace | `pydantic-ai-prized` | Not on PyPI yet: install from this repo | [README](pydantic-ai/README.md) |
 | [`langchain-js`](langchain-js) | LangChain Deep Agents (JS): sandbox | `@prized/langchain` | Not on npm yet | [README](langchain-js/README.md) |
 | [`mastra`](mastra) | Mastra: workspace sandbox and filesystem | `@prized/mastra` | Not on npm yet | [README](mastra/README.md) |
+| [`eve`](eve) | Vercel eve: sandbox provider (each session a fork of a prepared template, paused between turns) | `@prized/eve-sandbox` | Not on npm yet; run against live sandboxes with eve's side played by test fakes, not yet inside an eve app | [README](eve/README.md) |
 
 A Python package that isn't on PyPI yet installs from this repo: its README gives the line. The Prized SDKs they use are published (`prized` on PyPI, `@prized/sdk` on npm).
 
