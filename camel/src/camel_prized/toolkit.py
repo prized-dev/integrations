@@ -45,8 +45,8 @@ class PrizedCodeExecutionToolkit(CodeExecutionToolkit):
         interpreter: PrizedInterpreter | None = None,
         **interpreter_options: Any,
     ) -> None:
-        if interpreter is not None and interpreter_options:
-            raise ValueError("Pass either interpreter= or options for a new one, not both.")
+        if interpreter is not None and (interpreter_options or timeout is not None):
+            raise ValueError("Pass either interpreter= or options (timeout too) for a new one, not both.")
         if interpreter is None:
             if timeout is not None:
                 interpreter_options.setdefault("timeout", timeout)

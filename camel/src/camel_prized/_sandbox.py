@@ -36,14 +36,18 @@ DEFAULT_TIMEOUT = 120.0
 DEFAULT_AUTO_PAUSE_MIN = 10
 DEFAULT_AUTO_DELETE_MIN = 60
 LABELS = {"created-by": "camel"}
-# The templates' Python is "externally managed": without this, `pip install` fails. With it, pip
-# installs for the user into ~/.local, whose bin directory every command gets on its PATH.
-PIP_ENV = {"PIP_BREAK_SYSTEM_PACKAGES": "1"}
-PATH_PREFIX = 'PATH="$HOME/.local/bin:$PATH" '
-# Code goes inline as one argument while the command stays under this; bigger code is uploaded as a
-# file first (Linux caps a single argument at 128 KiB).
+WORKDIR = "/home/prized/work"
+# Every command starts with this, in new and attached sandboxes alike. The templates' Python is
+# "externally managed": without PIP_BREAK_SYSTEM_PACKAGES, `pip install` fails. With it, pip installs
+# for the user into ~/.local, and ~/.local/bin on the PATH makes the commands it installs work.
+COMMAND_PREFIX = 'export PATH="$HOME/.local/bin:$PATH" PIP_BREAK_SYSTEM_PACKAGES=1; '
+# Code and commands go inline (one argument) while the command stays under this; longer ones are
+# uploaded as a file first (Linux caps a single argument at 128 KiB).
 MAX_INLINE_COMMAND = 64 * 1024
-SCRATCH_DIR = "/home/prized/.camel"
+# A command with a timeout over the SDK's blocking limit runs detached, and the SDK quotes it again
+# into a start script, which can grow it several times over: such commands go inline only when short.
+MAX_BLOCKING_TIMEOUT = 240.0
+MAX_INLINE_DETACHED = 8 * 1024
 API_KEYS_URL = "https://prized.dev/dashboard/workspace/api-keys?via=camel"
 # Errors that may mean the sandbox is gone (its run time ended, or it was deleted after pausing).
 _MAYBE_GONE_CODES = frozenset({"not_found", "sandbox_not_running", "sandbox_deleted"})
@@ -88,7 +92,7 @@ class SandboxHolder:
             "vcpu": vcpu,
             "memory_gb": memory_gb,
             "disk_gb": disk_gb,
-            "env_vars": {**PIP_ENV, **dict(env_vars or {})},
+            "env_vars": dict(env_vars) if env_vars else None,
             "labels": {**LABELS, **dict(labels or {})},
             "auto_pause_min": auto_pause_min,
             "auto_delete_min": auto_delete_min,
@@ -150,15 +154,22 @@ class SandboxHolder:
     def _replace_if_gone(self, sandbox: prized.Sandbox, err: PrizedError) -> bool:
         if not self.owned or err.code not in _MAYBE_GONE_CODES:
             return False
+        state: str | None = None
         try:
-            gone = sandbox.refresh().state in _GONE_STATES
+            state = sandbox.refresh().state
+            gone = state in _GONE_STATES
         except PrizedError as again:
             gone = again.code == "not_found"
         if not gone:
             return False
         with self._lock:
             if self._sandbox is sandbox:
-                logger.warning("Prized sandbox %s is gone; the next run gets a new one.", sandbox.id)
+                logger.warning("Prized sandbox %s is %s; the next run gets a new one.", sandbox.id, state or "gone")
+                if state == "error":
+                    try:  # a failed sandbox still counts toward the workspace's quota
+                        sandbox.delete()
+                    except PrizedError as err_delete:
+                        logger.warning("Could not delete failed sandbox %s: %s", sandbox.id, err_delete)
                 sandbox.close()
                 self._sandbox = None
         return True
@@ -167,41 +178,47 @@ class SandboxHolder:
         self, inline: Sequence[str], by_file: Sequence[str], suffix: str, code: str, timeout: float
     ) -> tuple[ExecResult, bool, bool]:
         """Run ``code`` with ``inline + [code]`` (``python3 -c CODE``), or, when that command would be
-        too long for one argument, upload it and run ``by_file + [path]``. Returns the result, whether
-        it timed out, and whether the sandbox was replaced."""
-        command = PATH_PREFIX + shlex.join([*inline, code])
-        if len(command.encode()) <= MAX_INLINE_COMMAND:
-            return self.run_shell(command, timeout)
+        too long for one argument, upload it into the working directory and run ``by_file + [path]``.
+        Returns the result, whether it timed out, and whether the sandbox was replaced."""
+        return self._run(COMMAND_PREFIX + shlex.join([*inline, code]), by_file, suffix, code, timeout)
+
+    def run_shell(self, command: str, timeout: float) -> tuple[ExecResult, bool, bool]:
+        """Run one shell command (uploaded as a script first when it is long). Returns the result,
+        whether it timed out, and whether the sandbox was replaced."""
+        return self._run(COMMAND_PREFIX + command, ("bash",), ".sh", command, timeout)
+
+    def _run(
+        self, command: str, by_file: Sequence[str], suffix: str, payload: str, timeout: float
+    ) -> tuple[ExecResult, bool, bool]:
+        limit = MAX_INLINE_COMMAND if timeout <= MAX_BLOCKING_TIMEOUT else MAX_INLINE_DETACHED
+        if len(command.encode()) <= limit:
+            (result, timed_out), replaced = self.attempt(lambda sandbox: _exec(sandbox, command, timeout))
+            return result, timed_out, replaced
 
         def by_upload(sandbox: prized.Sandbox) -> tuple[ExecResult, bool]:
-            path = f"{SCRATCH_DIR}/run-{uuid.uuid4().hex}{suffix}"
-            sandbox.files.write(path, code)
+            # In the working directory, so imports and relative paths resolve as they do inline.
+            path = f"{WORKDIR}/.camel-run-{uuid.uuid4().hex}{suffix}"
+            sandbox.files.write(path, payload)
             quoted = shlex.quote(path)
-            script = f"{PATH_PREFIX}{shlex.join(by_file)} {quoted}; rc=$?; rm -f {quoted}; exit $rc"
+            script = f"{COMMAND_PREFIX}{shlex.join(by_file)} {quoted}; rc=$?; rm -f {quoted}; exit $rc"
             return _exec(sandbox, script, timeout)
 
         (result, timed_out), replaced = self.attempt(by_upload)
         return result, timed_out, replaced
 
-    def run_shell(self, command: str, timeout: float) -> tuple[ExecResult, bool, bool]:
-        """Run one shell command. Returns the result, whether it timed out, and whether the sandbox
-        was replaced."""
-        (result, timed_out), replaced = self.attempt(lambda sandbox: _exec(sandbox, command, timeout))
-        return result, timed_out, replaced
-
     def close(self) -> None:
-        """Delete the sandbox if this object created it (else just let go of it). Safe to call twice."""
+        """Delete the sandbox if this object created it (else just let go of it). Safe to call twice.
+        If the delete fails, the error is raised and the sandbox is kept, so calling again retries."""
         with self._lock:
             self._closed = True
-            sandbox, self._sandbox = self._sandbox, None
-        if sandbox is None:
-            return
-        try:
+            sandbox = self._sandbox
+            if sandbox is None:
+                return
             if self.owned:
                 sandbox.delete()
                 logger.info("Deleted Prized sandbox %s", sandbox.id)
-        finally:
-            sandbox.close()
+            self._sandbox = None
+        sandbox.close()
 
     def reopen(self) -> None:
         """Allow use again after :meth:`close` (the next run creates a fresh sandbox)."""

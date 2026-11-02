@@ -55,6 +55,8 @@ def test_bring_your_own_interpreter(cloud):
     assert cloud.created[0].deletes == 1
     with pytest.raises(ValueError, match="not both"):
         PrizedCodeExecutionToolkit(interpreter=interp, vcpu=2)
+    with pytest.raises(ValueError, match="not both"):
+        PrizedCodeExecutionToolkit(interpreter=interp, timeout=5)
 
 
 def test_nothing_is_created_until_code_runs(cloud):

@@ -62,6 +62,7 @@ class FakeSandbox:
         self.timeouts: list[Any] = []
         self.writes: list[str] = []
         self.deletes = 0
+        self.fail_delete = 0  # how many delete() calls fail before one succeeds
         self.closed = False
         # exec_hook(command) may return an ExecResult or raise; None runs the command for real.
         self.exec_hook: Callable[[str], ExecResult | None] | None = None
@@ -91,7 +92,7 @@ class FakeSandbox:
             "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
             "HOME": local_home,
             "LANG": "C.UTF-8",
-            **self.kwargs.get("env_vars", {}),
+            **(self.kwargs.get("env_vars") or {}),
         }
         proc = subprocess.run(
             ["bash", "-c", cmd.replace(HOME, local_home)],
@@ -111,6 +112,9 @@ class FakeSandbox:
 
     def delete(self, **_: Any) -> None:
         self.check()
+        if self.fail_delete:
+            self.fail_delete -= 1
+            raise PrizedError("network_error")
         self.deletes += 1
         self.state = "deleted"
 

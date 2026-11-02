@@ -22,6 +22,7 @@ classifiers = [
 dependencies = [
   "camel-ai>=0.2.86,<0.3",
   "prized>=0.1.2,<0.2",
+  "pydantic>=2.10",
   # camel-ai 0.2.90 (the latest release) allows any mcp, and its toolkits fail to import with mcp 2
   # (no mcp.server.FastMCP); its next release pins mcp<2 itself.
   "mcp>=1.3,<2",

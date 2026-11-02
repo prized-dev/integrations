@@ -24,7 +24,7 @@ from camel.interpreters import BaseInterpreter, InterpreterError
 from prized import ExecResult, PrizedError
 
 from camel_prized import PrizedInterpreter
-from camel_prized._sandbox import GONE_NOTE, MAX_INLINE_COMMAND
+from camel_prized._sandbox import COMMAND_PREFIX, GONE_NOTE, MAX_INLINE_COMMAND, MAX_INLINE_DETACHED
 
 from .fakes import timeout_error
 
@@ -40,7 +40,7 @@ def test_sandbox_is_made_on_first_run_with_safe_defaults(cloud):
     (call,) = cloud.create_calls
     assert call["template"] == "prized-base-v1"
     assert call["labels"] == {"created-by": "camel", "team": "x"}
-    assert call["env_vars"] == {"PIP_BREAK_SYSTEM_PACKAGES": "1", "FOO": "1"}
+    assert call["env_vars"] == {"FOO": "1"}
     assert (call["auto_pause_min"], call["auto_delete_min"], call["vcpu"]) == (10, 60, 2)
     assert call["api_key"] == "dcp_offline_unit_test_key"
     assert interp.sandbox_id == cloud.created[0].id
@@ -52,7 +52,7 @@ def test_python_runs_inline_in_one_command(cloud):
     interp = PrizedInterpreter()
     assert interp.run("import sys\nprint('it' + \"'s\", sys.argv[0])", "python3") == "it's -c\n"
     (cmd,) = cloud.created[0].commands
-    assert cmd.startswith('PATH="$HOME/.local/bin:$PATH" python3 -c ')
+    assert cmd.startswith(COMMAND_PREFIX + "python3 -c ")
     assert cloud.created[0].writes == []
     assert cloud.created[0].timeouts == [120.0]
 
@@ -96,7 +96,7 @@ def test_large_code_goes_up_as_a_file_and_is_removed(cloud):
     assert PrizedInterpreter().run(code) == "big ok\n"
     sandbox = cloud.created[0]
     (path,) = sandbox.writes
-    assert path.startswith("/home/prized/.camel/run-") and path.endswith(".py")
+    assert path.startswith("/home/prized/work/.camel-run-") and path.endswith(".py")
     assert len(sandbox.commands[0]) < 1000  # the code itself did not go on the command line
     assert not sandbox.local(path).exists()
 
@@ -126,7 +126,44 @@ def test_truncated_output_says_so(cloud):
 def test_execute_command(cloud):
     interp = PrizedInterpreter()
     assert interp.execute_command("echo $PIP_BREAK_SYSTEM_PACKAGES; echo err >&2") == "1\n(stderr: err\n)"
-    assert cloud.created[0].commands == ["echo $PIP_BREAK_SYSTEM_PACKAGES; echo err >&2"]
+    assert cloud.created[0].commands == [COMMAND_PREFIX + "echo $PIP_BREAK_SYSTEM_PACKAGES; echo err >&2"]
+
+
+def test_commands_find_what_pip_installed_for_the_user(cloud):
+    interp = PrizedInterpreter()
+    interp.execute_command(
+        "mkdir -p ~/.local/bin && printf '#!/bin/sh\\necho tool-ok\\n' > ~/.local/bin/mytool"
+        " && chmod +x ~/.local/bin/mytool"
+    )
+    assert interp.execute_command("mytool") == "tool-ok\n"
+    assert interp.run("mytool", "bash") == "tool-ok\n"
+
+
+def test_large_code_imports_from_the_working_directory_like_inline_code(cloud):
+    interp = PrizedInterpreter()
+    interp.execute_command("echo 'X = 7' > helper.py")
+    assert interp.run("import helper; print(helper.X)") == "7\n"
+    assert interp.run("#" + "z" * MAX_INLINE_COMMAND + "\nimport helper; print(helper.X)") == "7\n"
+    assert cloud.created[0].writes  # the second one went up as a file
+
+
+def test_long_running_timeouts_upload_sooner(cloud):
+    # Over 240 s the SDK runs the command detached and quotes it again: only short ones go inline.
+    interp = PrizedInterpreter(timeout=600)
+    code = "#" + "q" * MAX_INLINE_DETACHED + "\nprint('detached ok')"
+    assert interp.run(code) == "detached ok\n"
+    assert len(cloud.created[0].writes) == 1 and cloud.created[0].timeouts == [600]
+    assert PrizedInterpreter(timeout=120).run(code) == "detached ok\n"
+    assert len(cloud.created[1].writes) == 0  # inline under the blocking limit
+
+
+def test_long_commands_go_up_as_a_script(cloud):
+    interp = PrizedInterpreter()
+    command = "true " + "x" * MAX_INLINE_COMMAND + "; echo long ok; exit 5"
+    assert interp.execute_command(command) == "long ok\n(Execution failed with return code 5)"
+    sandbox = cloud.created[0]
+    (path,) = sandbox.writes
+    assert path.endswith(".sh") and not sandbox.local(path).exists()
 
 
 def test_files_persist_between_runs(cloud):
@@ -142,6 +179,36 @@ def test_gone_sandbox_is_replaced_once(cloud):
     assert interp.run("print('again')") == GONE_NOTE + "again\n"
     assert len(cloud.created) == 2 and first.closed
     assert interp.sandbox_id == cloud.created[1].id
+
+
+def test_failed_sandbox_is_deleted_and_replaced(cloud):
+    interp = PrizedInterpreter().start()
+    first = cloud.created[0]
+
+    def hook(cmd):
+        raise PrizedError("sandbox_not_running", status=409)
+
+    first.exec_hook = hook
+    first.state = "error"
+    assert interp.run("print('fresh')") == GONE_NOTE + "fresh\n"
+    assert first.deletes == 1 and first.closed and len(cloud.created) == 2
+
+
+def test_a_failed_delete_can_be_retried(cloud):
+    interp = PrizedInterpreter().start()
+    sandbox = cloud.created[0]
+    sandbox.fail_delete = 1
+    with pytest.raises(PrizedError):
+        interp.close()
+    assert sandbox.deletes == 0 and not sandbox.closed
+    interp.close()
+    assert sandbox.deletes == 1 and sandbox.closed
+
+
+def test_attached_sandbox_gets_the_pip_setting_too(cloud):
+    existing = cloud.add_existing()
+    interp = PrizedInterpreter(sandbox_id=existing.id)
+    assert interp.execute_command("echo $PIP_BREAK_SYSTEM_PACKAGES") == "1\n"
 
 
 def test_not_running_but_still_there_is_an_error_not_a_new_sandbox(cloud):

@@ -29,7 +29,7 @@ import prized
 from camel.runtimes import BaseRuntime
 from camel.toolkits import FunctionTool
 from prized import PrizedError
-from pydantic import BaseModel
+from pydantic_core import to_jsonable_python
 
 from ._sandbox import (
     DEFAULT_AUTO_DELETE_MIN,
@@ -66,7 +66,9 @@ class PrizedRuntime(BaseRuntime):
 
     Like CAMEL's ``DaytonaRuntime``, each tool's function source is sent to the sandbox and called
     there with the model's arguments, and its JSON-able return value comes back. The function must be
-    self-contained: a plain function (not a method) that imports what it needs inside its body.
+    self-contained: a plain function (not a method) that imports what it needs inside its body, with
+    literal default values. Its type annotations are dropped in the sandbox (the schema the model sees
+    keeps them).
 
     The sandbox is created by :meth:`build`, or on the first tool call, and is reused by every call.
     :meth:`cleanup` (or ``stop()``, or leaving a ``with`` block) deletes it; one left behind pauses
@@ -187,8 +189,10 @@ class PrizedRuntime(BaseRuntime):
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             call_kwargs = {**fixed, **kwargs}
             try:
-                args_json = json.dumps([_plain(a) for a in args])
-                kwargs_json = json.dumps({k: _plain(v) for k, v in call_kwargs.items()})
+                # Pydantic models (also nested, as CAMEL builds them from the model's arguments),
+                # dates and the like become plain JSON.
+                args_json = json.dumps(to_jsonable_python(list(args)))
+                kwargs_json = json.dumps(to_jsonable_python(call_kwargs))
             except (TypeError, ValueError) as err:
                 return {"error": f"Argument serialization failed: {err}"}
             marker = f"@@camel-prized-result-{uuid.uuid4().hex}@@"
@@ -210,6 +214,8 @@ class PrizedRuntime(BaseRuntime):
             if timed_out:
                 return {"error": f"Timed out after {self.timeout:g} seconds", "stdout": _tail(result.stdout)}
             _head, found, tail = result.stdout.rpartition("\n" + marker)
+            if not found and result.truncated:
+                return {"error": "The tool printed over 4 MiB, which cut off its result: have it print less."}
             if not found:
                 return {
                     "error": f"Execution failed with return code {result.exit_code}",
@@ -232,7 +238,8 @@ class PrizedRuntime(BaseRuntime):
             logger.error("Failed to delete Prized sandbox %s: %s", self._holder.sandbox_id, err)
 
     def reset(self) -> PrizedRuntime:
-        r"""Deletes the sandbox and creates a fresh one."""
+        r"""Deletes the sandbox (if this runtime created it) and builds again: a fresh sandbox, or the
+        same attached one."""
         self.cleanup()
         return self.build()
 
@@ -269,10 +276,6 @@ def _tail(text: str, limit: int = 4000) -> str:
     return text if len(text) <= limit else "..." + text[-limit:]
 
 
-def _plain(value: Any) -> Any:
-    return value.model_dump() if isinstance(value, BaseModel) else value
-
-
 def _function_source(func: Callable[..., Any], name: str) -> tuple[str, str]:
     """The function's ``def`` name and its source with decorators dropped, ready to exec in the sandbox."""
     if inspect.ismethod(func) or not inspect.isfunction(func):
@@ -289,4 +292,11 @@ def _function_source(func: Callable[..., Any], name: str) -> tuple[str, str]:
         raise ValueError(f"PrizedRuntime can't run `{name}`: it must be a plain `def` (not a lambda or async).")
     node = defs[0]
     node.decorator_list = []
+    # Annotations are evaluated when the def runs, and the names they use (List, Optional, a
+    # pydantic model) are not defined in the sandbox: drop them.
+    node.returns = None
+    every = node.args
+    for arg in [*every.posonlyargs, *every.args, *every.kwonlyargs, every.vararg, every.kwarg]:
+        if arg is not None:
+            arg.annotation = None
     return node.name, ast.unparse(ast.Module(body=[node], type_ignores=[]))

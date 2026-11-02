@@ -12,16 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""PrizedRuntime against the fake sandbox: the runner script really runs, with python3."""
+"""PrizedRuntime against the fake sandbox: the runner script really runs, with python3.
 
-from __future__ import annotations
+No ``from __future__ import annotations`` here: CAMEL builds each tool's schema from its real
+annotations, as it would in a user's module."""
 
+import datetime
 import functools
+from typing import Dict, List, Optional  # noqa: UP035 (the point: typing names in annotations)
 
 import pytest
 from camel.runtimes import BaseRuntime
 from camel.toolkits import FunctionTool
-from prized import PrizedError
+from prized import ExecResult, PrizedError
 from pydantic import BaseModel
 
 from camel_prized import PrizedRuntime
@@ -154,6 +157,34 @@ def norm1(p: dict) -> int:
     return abs(p["x"]) + abs(p["y"])
 
 
+def total(xs: List[int], label: Optional[str] = None) -> Dict[str, int]:  # noqa: UP006, UP045
+    r"""Sums numbers, with typing annotations the sandbox doesn't know.
+
+    Args:
+        xs (List[int]): The numbers.
+        label (Optional[str]): The key.
+
+    Returns:
+        Dict[str, int]: {label: sum}.
+    """
+    return {label or "sum": sum(xs)}
+
+
+def norm(p: Point, others: list[Point] | None = None, when: datetime.date | None = None) -> int:
+    r"""Manhattan norms of points given as pydantic models.
+
+    Args:
+        p (Point): A point.
+        others (Optional[List[Point]]): More points.
+        when (Optional[datetime.date]): A date, ignored.
+
+    Returns:
+        int: The sum of |x| + |y|.
+    """
+    points = [p, *(others or [])]
+    return sum(abs(q["x"]) + abs(q["y"]) for q in points) + (0 if when is None else len(when))
+
+
 def test_is_a_camel_runtime():
     assert issubclass(PrizedRuntime, BaseRuntime)
 
@@ -233,6 +264,34 @@ def test_pydantic_arguments_are_dumped(cloud):
     tool = FunctionTool(norm1)
     PrizedRuntime().add(tool)
     assert tool(p=Point(x=-2, y=3)) == 5
+
+
+def test_typing_annotations_are_dropped_in_the_sandbox(cloud):
+    tool = FunctionTool(total)
+    PrizedRuntime().add(tool)
+    assert tool([1, 2, 3], label="n") == {"n": 6}
+    assert "xs" in tool.get_openai_tool_schema()["function"]["parameters"]["properties"]
+
+
+def test_nested_models_and_dates_go_as_json(cloud):
+    tool = FunctionTool(norm)
+    PrizedRuntime().add(tool)
+    when = datetime.date(2026, 11, 2)
+    assert tool(p=Point(x=1, y=-1), others=[Point(x=2, y=2)], when=when) == 6 + len("2026-11-02")
+
+
+def test_unserializable_arguments_are_an_error(cloud):
+    tool = FunctionTool(echo)
+    PrizedRuntime().add(tool)
+    assert tool(object())["error"].startswith("Argument serialization failed")
+
+
+def test_a_cut_off_result_says_why(cloud):
+    runtime = PrizedRuntime().build()
+    tool = FunctionTool(add)
+    runtime.add(tool)
+    cloud.created[0].exec_hook = lambda cmd: ExecResult("x" * 10, "", 0, truncated=True)
+    assert "over 4 MiB" in tool(1, 2)["error"]
 
 
 def test_several_tools_one_sandbox(cloud):

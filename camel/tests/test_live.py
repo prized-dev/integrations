@@ -92,7 +92,7 @@ def test_interpreter_live():
         )
         big = "# " + "x" * 100_000 + "\nprint('big ok')"
         assert interp.run(big) == "big ok\n"
-        assert interp.execute_command("ls -A /home/prized/.camel") == "Code executed successfully (no output)."
+        assert ".camel-run-" not in interp.execute_command("ls -A /home/prized/work")
         sandbox_id = interp.sandbox_id
         assert sandbox_id
     with PrizedInterpreter(timeout=5, **SHAPE) as interp:

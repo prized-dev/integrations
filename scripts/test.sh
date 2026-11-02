@@ -107,8 +107,8 @@ case $DIR in
   strands)
     py dev yes "strands-agents==1.59.0" "ruff check . && ruff format --check . && mypy src" ;;
   camel)
-    # FLOOR=1 pins camel-ai 0.2.86, the first release whose BaseRuntime has cleanup().
-    py dev yes "camel-ai==0.2.86" "ruff check . && ruff format --check . && mypy src" ;;
+    # FLOOR=1 pins camel-ai 0.2.86, the first release whose BaseRuntime has cleanup(), and prized 0.1.2.
+    py dev yes "camel-ai==0.2.86 prized==0.1.2" "ruff check . && ruff format --check . && mypy src" ;;
   agent-framework)
     py dev yes "agent-framework-core==1.19.0 agent-framework-tools==1.0.0b260918" \
       "ruff check . && ruff format --check . && mypy src" ;;
