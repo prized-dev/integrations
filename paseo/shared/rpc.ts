@@ -16,6 +16,8 @@ const host = z.object({
   error: z.string().optional(),
   paired: z.boolean(),
   addedAsHost: z.boolean(),
+  // Set when the saved key belongs to another workspace than the one that made this host.
+  otherWorkspace: z.boolean().optional(),
   createdAt: z.string(),
   expiresAt: z.string().optional(),
 });
@@ -27,7 +29,7 @@ const settings = z.object({
   openaiKeySaved: z.boolean(),
   vcpu: z.number().int(),
   memoryGb: z.number().int(),
-  maxRuntimeHours: z.number().int(),
+  maxRuntimeHours: z.number().int().nullable(),
 });
 
 export const statusRpc = defineRpc({
@@ -75,7 +77,8 @@ export const saveSettingsRpc = defineRpc({
     openaiApiKey: z.string().optional(),
     vcpu: z.number().int().min(1).max(32).optional(),
     memoryGb: z.number().int().min(1).max(128).optional(),
-    maxRuntimeHours: z.number().int().min(1).max(168).optional(),
+    // null: back to Prized's default.
+    maxRuntimeHours: z.number().int().min(1).max(168).nullable().optional(),
   }),
   output: z.object({ workspace: z.string().optional() }),
 });

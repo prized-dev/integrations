@@ -26,6 +26,23 @@ export function message(error: unknown): string {
   return text || "The request failed. Check the plugin's logs.";
 }
 
+type Styles = {
+  button: object;
+  primary: object;
+  text: object;
+  primaryText: object;
+};
+
+// Defined once, outside the screen, so a 3-second refresh never remounts a button under a press.
+function ActionButton({ label, onPress, primary, disabled, styles, pending }: { label: string; onPress: () => void; primary?: boolean; disabled?: boolean; styles: Styles; pending: boolean }) {
+  const off = Boolean(disabled || pending);
+  return (
+    <Pressable accessibilityRole="button" disabled={off} onPress={onPress} style={[primary ? styles.primary : styles.button, { opacity: off ? 0.5 : 1 }]}>
+      <Text style={primary ? styles.primaryText : styles.text}>{label}</Text>
+    </Pressable>
+  );
+}
+
 export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps & { openSettings: (id: string) => void }) {
   const getStatus = useRpc(statusRpc);
   const create = useRpc(createRpc);
@@ -50,11 +67,19 @@ export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps &
     [getStatus, toast],
   );
 
+  // Local state every 3 seconds; Prized's view of each sandbox every 30 (paused elsewhere, run time over).
   useEffect(() => {
     void refresh(true);
-    const timer = setInterval(() => void refresh(false), 3000);
+    let tick = 0;
+    const timer = setInterval(() => void refresh(++tick % 10 === 0), 3000);
     return () => clearInterval(timer);
   }, [refresh]);
+
+  // A delete confirmation closes when its host moves on (deleted, busy, or into another phase).
+  useEffect(() => {
+    const host = status?.hosts.find((h) => h.id === confirming);
+    if (confirming && (!host || host.busy || !["ready", "paused", "failed"].includes(host.phase))) setConfirming(null);
+  }, [status, confirming]);
 
   async function run(work: () => Promise<unknown>, done?: string) {
     setPending(true);
@@ -93,13 +118,7 @@ export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps &
     [theme, layout.compact],
   );
 
-  function Button({ label: text, onPress, primary, disabled }: { label: string; onPress: () => void; primary?: boolean; disabled?: boolean }) {
-    return (
-      <Pressable accessibilityRole="button" disabled={disabled || pending} onPress={onPress} style={[primary ? s.primary : s.button, { opacity: disabled || pending ? 0.5 : 1 }]}>
-        <Text style={primary ? s.primaryText : s.text}>{text}</Text>
-      </Pressable>
-    );
-  }
+  const Button = (props: { label: string; onPress: () => void; primary?: boolean; disabled?: boolean }) => <ActionButton {...props} styles={s} pending={pending} />;
 
   const settings = status?.settings;
   const hosts = status?.hosts ?? [];
@@ -108,7 +127,7 @@ export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps &
     <ScrollView contentContainerStyle={s.screen}>
       <Text style={s.title}>Prized sandboxes</Text>
       <Text style={s.muted}>
-        Each host is a Prized sandbox running its own Paseo daemon with Claude Code and Codex. Stop pauses it: memory, the daemon and agents mid-task are kept,
+        Each host is a Prized sandbox running its own Paseo daemon with Claude Code and Codex. Stop pauses it: its memory and processes (the daemon, terminals, agents) are kept,
         and only storage is billed. Resume carries on where it stopped.
       </Text>
 
@@ -122,7 +141,8 @@ export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps &
       ) : (
         <View style={s.card}>
           <Text style={s.muted}>
-            New hosts: {settings?.vcpu ?? 2} vCPU, {settings?.memoryGb ?? 4} GB, up to {settings?.maxRuntimeHours ?? 24} h of running per resume, in Oregon.
+            New hosts: {settings?.vcpu ?? 2} vCPU, {settings?.memoryGb ?? 4} GB,{" "}
+            {settings?.maxRuntimeHours ? `up to ${settings.maxRuntimeHours} h of running per resume` : "Prized's default running time"}, in Oregon.
             {settings?.workspace ? ` Workspace: ${settings.workspace}.` : ""}
           </Text>
           <View style={s.row}>
@@ -147,6 +167,7 @@ export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps &
             </Text>
           ) : null}
           {host.error ? <Text style={s.danger}>{host.error}</Text> : null}
+          {host.otherWorkspace ? null : (
           <View style={s.row}>
             {host.paired && (host.phase === "ready" || host.phase === "paused") ? (
               <>
@@ -168,6 +189,7 @@ export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps &
               />
             ) : null}
           </View>
+          )}
           {confirming === host.id ? (
             <View style={s.row}>
               <Text style={s.text}>Type {host.sandboxId ?? host.label} to delete the sandbox, its files and its agents for good.</Text>

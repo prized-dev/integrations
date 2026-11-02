@@ -19,6 +19,9 @@ export interface HostRecord {
   sandboxState?: string;
   expiresAt?: string;
   registrationId?: string;
+  // Who made it: "ws:<workspace id>" when the key could read its workspace, else "key:<key hash>".
+  // Another workspace's key sees none of its sandboxes, so it must not read them as gone.
+  owner?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -26,7 +29,8 @@ export interface HostRecord {
 export interface Shape {
   vcpu: number;
   memoryGb: number;
-  maxRuntimeHours: number;
+  // null: Prized's default (24 hours, or 60 minutes of running in all on the free tier).
+  maxRuntimeHours: number | null;
 }
 
 export interface HostsFile {
@@ -38,12 +42,13 @@ export interface HostsFile {
 export interface SecretsFile {
   prizedApiKey?: string;
   workspace?: string;
+  workspaceId?: string;
   anthropicApiKey?: string;
   openaiApiKey?: string;
   pairing: Record<string, string>;
 }
 
-export const DEFAULT_SHAPE: Shape = { vcpu: 2, memoryGb: 4, maxRuntimeHours: 24 };
+export const DEFAULT_SHAPE: Shape = { vcpu: 2, memoryGb: 4, maxRuntimeHours: null };
 
 export function defaultStateDir(env: NodeJS.ProcessEnv = process.env): string {
   return env.PASEO_PRIZED_SANDBOX_STATE_DIR ?? join(env.PASEO_HOME ?? join(homedir(), ".paseo"), "prized-sandbox");

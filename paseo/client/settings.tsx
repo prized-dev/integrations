@@ -1,7 +1,7 @@
 import type { PluginSurfaceProps } from "@getpaseo/plugin/client";
 import { useRpc } from "@getpaseo/plugin/client";
-import { ExternalLink, SettingsAction, SettingsCard, SettingsInput, SettingsSection, SettingsSelect, useToast } from "@getpaseo/plugin/client/ui";
-import { useEffect, useState } from "react";
+import { ExternalLink, SettingsAction, SettingsCard, SettingsInput, SettingsSection, SettingsSelect, useToast, type SettingsInputHandle } from "@getpaseo/plugin/client/ui";
+import { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 
 import { saveSettingsRpc, statusRpc, type PublicSettings } from "../shared/rpc.ts";
@@ -15,6 +15,7 @@ const SHAPES = [
 ] as const;
 
 const RUNTIMES = [
+  { label: "Prized's default (24 hours; on free credit, 60 minutes in all)", value: "default" },
   { label: "1 hour", value: "1" },
   { label: "24 hours", value: "24" },
   { label: "3 days", value: "72" },
@@ -30,6 +31,10 @@ export function SettingsScreen({ theme }: PluginSurfaceProps) {
   const [anthropicKey, setAnthropicKey] = useState("");
   const [openaiKey, setOpenaiKey] = useState("");
   const [saving, setSaving] = useState(false);
+  // The inputs keep their own text: a saved key is cleared from them through these.
+  const prizedInput = useRef<SettingsInputHandle>(null);
+  const anthropicInput = useRef<SettingsInputHandle>(null);
+  const openaiInput = useRef<SettingsInputHandle>(null);
 
   async function load() {
     try {
@@ -48,9 +53,19 @@ export function SettingsScreen({ theme }: PluginSurfaceProps) {
     try {
       const result = await save(input);
       toast.show(result.workspace ? `${done} Workspace: ${result.workspace}.` : done, { variant: "success" });
-      setPrizedKey("");
-      setAnthropicKey("");
-      setOpenaiKey("");
+      // Clear only what this save sent: a size change keeps keys typed but not yet saved.
+      if (input.prizedApiKey !== undefined) {
+        setPrizedKey("");
+        prizedInput.current?.replaceText("");
+      }
+      if (input.anthropicApiKey !== undefined) {
+        setAnthropicKey("");
+        anthropicInput.current?.replaceText("");
+      }
+      if (input.openaiApiKey !== undefined) {
+        setOpenaiKey("");
+        openaiInput.current?.replaceText("");
+      }
       await load();
     } catch (error) {
       toast.error(message(error));
@@ -71,7 +86,7 @@ export function SettingsScreen({ theme }: PluginSurfaceProps) {
     <View style={{ gap: 16 }}>
       <SettingsSection title="Prized">
         <SettingsCard>
-          <SettingsInput label="Prized API key" hint={keyHint} placeholder="dcp_..." secureTextEntry onChangeText={setPrizedKey} disabled={saving} />
+          <SettingsInput ref={prizedInput} label="Prized API key" hint={keyHint} placeholder="dcp_..." secureTextEntry onChangeText={setPrizedKey} disabled={saving} />
           <SettingsAction label="Save the key" actionLabel="Save" disabled={saving || !prizedKey.trim()} onPress={() => submit({ prizedApiKey: prizedKey }, "Key saved.")} />
           {settings?.apiKeySource === "saved" ? <SettingsAction label="Remove the saved key" actionLabel="Remove" disabled={saving} onPress={() => submit({ prizedApiKey: "" }, "Key removed.")} /> : null}
         </SettingsCard>
@@ -87,6 +102,7 @@ export function SettingsScreen({ theme }: PluginSurfaceProps) {
         </Text>
         <SettingsCard>
           <SettingsInput
+            ref={anthropicInput}
             label="ANTHROPIC_API_KEY"
             hint={settings?.anthropicKeySaved ? "Saved. Enter a new one to replace it." : "For Claude Code."}
             secureTextEntry
@@ -94,6 +110,7 @@ export function SettingsScreen({ theme }: PluginSurfaceProps) {
             disabled={saving}
           />
           <SettingsInput
+            ref={openaiInput}
             label="OPENAI_API_KEY"
             hint={settings?.openaiKeySaved ? "Saved. Enter a new one to replace it." : "For Codex."}
             secureTextEntry
@@ -126,11 +143,11 @@ export function SettingsScreen({ theme }: PluginSurfaceProps) {
           />
           <SettingsSelect
             label="Running time per resume"
-            hint="A sandbox is deleted when its running time ends. Stopped (paused) time does not count, and each resume starts it again."
-            value={String(settings?.maxRuntimeHours ?? 24)}
+            hint="A sandbox is deleted when its running time ends. Stopped (paused) time does not count. On a paid plan each resume starts the count again; on free credit a resume carries on the time left."
+            value={settings?.maxRuntimeHours ? String(settings.maxRuntimeHours) : "default"}
             options={RUNTIMES}
             disabled={saving || !settings}
-            onValueChange={(value) => void submit({ maxRuntimeHours: Number(value) }, "Running time saved.")}
+            onValueChange={(value) => void submit({ maxRuntimeHours: value === "default" ? null : Number(value) }, "Running time saved.")}
           />
         </SettingsCard>
       </SettingsSection>

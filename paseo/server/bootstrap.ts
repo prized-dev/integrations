@@ -13,9 +13,12 @@ const PREAMBLE = [
   `export PASEO_HOME=${PASEO_HOME}`,
 ].join("\n");
 
+// flock: a Retry while an earlier install still runs waits for it instead of racing it.
 export function installScript(version = PASEO_CLI_VERSION): string {
   return [
     PREAMBLE,
+    'exec 9>"$HOME/.paseo-plugin.lock"',
+    "flock -w 600 9",
     `if [ "$(paseo --version 2>/dev/null | grep -o '[0-9][0-9.]*' | head -1)" != "${version}" ]; then`,
     `  npm install -g --no-audit --no-fund --loglevel=error @getpaseo/cli@${version}`,
     "fi",
@@ -31,9 +34,12 @@ export function startDaemonScript(): string {
   const running = `paseo daemon status --home "$PASEO_HOME" --json 2>/dev/null | grep '"localDaemon": *"running"' >/dev/null`;
   return [
     PREAMBLE,
+    'exec 9>"$HOME/.paseo-plugin.lock"',
+    "flock -w 300 9",
     `cd ${WORKSPACE}`,
     `if ! ${running}; then`,
-    '  paseo daemon start --home "$PASEO_HOME" >> "$PASEO_HOME/daemon-start.log" 2>&1 || true',
+    // 9>&-: the daemon must not inherit the lock, or it would hold it for as long as it runs.
+    '  paseo daemon start --home "$PASEO_HOME" 9>&- >> "$PASEO_HOME/daemon-start.log" 2>&1 || true',
     "fi",
     "for i in $(seq 1 90); do",
     `  if ${running}; then echo running; exit 0; fi`,

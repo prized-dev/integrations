@@ -1,15 +1,16 @@
 // Prized sandbox hosts for Paseo. Create makes a sandbox, installs the pinned Paseo CLI in it, starts
-// its daemon and keeps a relay pairing link. Stop pauses the sandbox: memory, the daemon and any agent
-// mid-turn are kept, and only storage is billed. Resume picks up where it stopped; the daemon
+// its daemon and keeps a relay pairing link. Stop pauses the sandbox: its memory and processes (the
+// daemon, terminals, agent CLIs) are kept, and only storage is billed. Resume carries on; the daemon
 // reconnects to the relay by itself, so the host needs no new pairing. Delete removes the sandbox.
 
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 
 import { installScript, pairScript, parsePairingUrl, startDaemonScript, tail } from "./bootstrap.ts";
-import { PrizedApi, PrizedApiError, type Sandbox } from "./prized-api.ts";
+import { canWriteSandboxes, PrizedApi, PrizedApiError, type Me, type Sandbox } from "./prized-api.ts";
 import { DEFAULT_SHAPE, Store, type HostRecord, type Phase, type Shape } from "./store.ts";
 
 export const TEMPLATE = "prized-agent-v1";
+const LABEL = "paseo-host";
 const BUSY: Phase[] = ["creating", "installing", "starting", "pausing", "resuming", "deleting"];
 
 export interface HostsApi {
@@ -36,9 +37,12 @@ export interface PublicHostView {
   error?: string;
   paired: boolean;
   addedAsHost: boolean;
+  otherWorkspace?: boolean;
   createdAt: string;
   expiresAt?: string;
 }
+
+const OTHER_KEY = "This host was made with a key from another Prized workspace. Save that workspace's key to manage it.";
 
 export class HostService {
   readonly store: Store;
@@ -47,6 +51,7 @@ export class HostService {
   private log: (line: string) => void;
   private running = new Map<string, Promise<void>>();
   private ready: Promise<void>;
+  private owners = new Map<string, string>();
 
   constructor(options: ServiceOptions) {
     this.store = new Store(options.stateDir);
@@ -67,7 +72,7 @@ export class HostService {
       .then(() => undefined);
   }
 
-  // ------------------------------------------------------------------ settings
+  // ------------------------------------------------------------------ keys and ownership
 
   private async apiKey(): Promise<string> {
     const secrets = await this.store.readSecrets();
@@ -80,32 +85,49 @@ export class HostService {
     return this.makeApi(await this.apiKey());
   }
 
+  // Who the current key acts for: its workspace when /me says, else the key itself. A host records its
+  // owner at create; a 404 means "gone" only when asked by the same owner.
+  private async owner(): Promise<string> {
+    const key = await this.apiKey();
+    const cached = this.owners.get(key);
+    if (cached) return cached;
+    let owner = `key:${createHash("sha256").update(key).digest("hex").slice(0, 16)}`;
+    try {
+      const id = (await this.makeApi(key).me()).workspace?.id;
+      if (id) owner = `ws:${id}`;
+    } catch {
+      // Prized unreachable: the key fingerprint stands in, and is not cached.
+      return owner;
+    }
+    this.owners.set(key, owner);
+    return owner;
+  }
+
   async saveSettings(input: {
     prizedApiKey?: string;
     anthropicApiKey?: string;
     openaiApiKey?: string;
     vcpu?: number;
     memoryGb?: number;
-    maxRuntimeHours?: number;
+    maxRuntimeHours?: number | null;
   }): Promise<{ workspace?: string }> {
     await this.ready;
-    let workspace: string | undefined;
+    let me: Me | undefined;
     if (input.prizedApiKey) {
       const key = input.prizedApiKey.trim();
       if (!/^dcp_[0-9a-f]{48}$/.test(key)) throw new UserError("That is not a Prized API key (dcp_ and 48 hex characters).");
-      let me: Awaited<ReturnType<PrizedApi["me"]>>;
       try {
         me = await this.makeApi(key).me();
       } catch (error) {
         throw new UserError(error instanceof PrizedApiError && error.status === 401 ? "Prized did not accept that key." : "Could not reach Prized to check the key.");
       }
-      if (me.access?.sandboxes !== "write") throw new UserError("That key cannot create sandboxes: give it Sandboxes: Write, or use a Full access key.");
-      workspace = me.workspace?.name ?? me.workspace?.id;
+      if (!canWriteSandboxes(me)) throw new UserError("That key cannot create sandboxes: use a Full access key, or a Custom one with Sandboxes: Write.");
     }
     await this.store.updateSecrets((s) => {
       if (input.prizedApiKey !== undefined) {
         s.prizedApiKey = input.prizedApiKey.trim() || undefined;
-        s.workspace = s.prizedApiKey ? workspace : undefined;
+        s.workspace = s.prizedApiKey ? (me?.workspace?.name ?? me?.workspace?.id) : undefined;
+        s.workspaceId = s.prizedApiKey ? me?.workspace?.id : undefined;
       }
       if (input.anthropicApiKey !== undefined) s.anthropicApiKey = input.anthropicApiKey.trim() || undefined;
       if (input.openaiApiKey !== undefined) s.openaiApiKey = input.openaiApiKey.trim() || undefined;
@@ -117,14 +139,14 @@ export class HostService {
       if (input.maxRuntimeHours !== undefined) shape.maxRuntimeHours = input.maxRuntimeHours;
       file.shape = shape;
     });
-    return { workspace };
+    return { workspace: me?.workspace?.name ?? me?.workspace?.id };
   }
 
   // ------------------------------------------------------------------ status
 
   async status(refresh: boolean) {
     await this.ready;
-    if (refresh) await this.refresh();
+    const others = refresh ? await this.refresh() : new Set<string>();
     const [file, secrets] = await Promise.all([this.store.readHosts(), this.store.readSecrets()]);
     const shape = { ...DEFAULT_SHAPE, ...file.shape };
     return {
@@ -144,9 +166,10 @@ export class HostService {
           phase: h.phase,
           sandboxState: h.sandboxState,
           busy: this.running.has(h.id),
-          error: h.error,
+          error: others.has(h.id) ? OTHER_KEY : h.error,
           paired: Boolean(secrets.pairing[h.id]),
           addedAsHost: Boolean(h.registrationId),
+          otherWorkspace: others.has(h.id) || undefined,
           createdAt: h.createdAt,
           expiresAt: h.expiresAt,
         })),
@@ -154,31 +177,43 @@ export class HostService {
   }
 
   // Read each idle host's sandbox (a read is not activity: it never wakes or keeps a sandbox up).
-  private async refresh(): Promise<void> {
+  // Returns the hosts the current key cannot see because another workspace made them.
+  private async refresh(): Promise<Set<string>> {
+    const others = new Set<string>();
     const file = await this.store.readHosts();
-    const idle = Object.values(file.hosts).filter((h) => h.sandboxId && !this.running.has(h.id) && h.phase !== "gone");
-    if (!idle.length) return;
+    const idle = Object.values(file.hosts).filter((h) => h.sandboxId && !this.running.has(h.id));
+    if (!idle.length) return others;
     let api: PrizedApi;
+    let owner: string;
     try {
       api = await this.api();
+      owner = await this.owner();
     } catch {
-      return;
+      return others;
     }
     for (const host of idle) {
       try {
         const sandbox = await api.getSandbox(host.sandboxId!);
         if (!sandbox) {
-          await this.store.patchHost(host.id, { phase: "gone", sandboxState: "deleted", expiresAt: undefined, error: "The sandbox is gone: deleted, or its run time ended." });
+          if (host.owner && host.owner !== owner) {
+            others.add(host.id);
+            continue;
+          }
+          if (host.phase !== "gone") {
+            await this.store.patchHost(host.id, { phase: "gone", sandboxState: "deleted", expiresAt: undefined, error: "The sandbox is gone: deleted, or its running time ended." });
+          }
           continue;
         }
-        const patch: Partial<HostRecord> = { sandboxState: sandbox.state, expiresAt: sandbox.expiresAt ?? undefined };
-        if (host.phase === "ready" && sandbox.state === "paused") patch.phase = "paused";
-        if (host.phase === "paused" && sandbox.state === "running") patch.phase = "ready";
+        const patch: Partial<HostRecord> = { sandboxState: sandbox.state, expiresAt: sandbox.expiresAt ?? undefined, owner };
+        if (["ready", "gone"].includes(host.phase) && sandbox.state === "paused") patch.phase = "paused";
+        if (["paused", "gone"].includes(host.phase) && sandbox.state === "running") patch.phase = "ready";
+        if (host.phase === "gone") patch.error = undefined;
         await this.store.patchHost(host.id, patch);
       } catch {
         // Status is best effort: the next refresh tries again.
       }
     }
+    return others;
   }
 
   // ------------------------------------------------------------------ operations
@@ -188,6 +223,14 @@ export class HostService {
     const host = (await this.store.readHosts()).hosts[id];
     if (!host) throw new UserError("No such host.");
     return host;
+  }
+
+  // The current key must be able to see this host's sandbox, or be the owner that made it.
+  private async assertOwned(host: HostRecord, api: PrizedApi): Promise<Sandbox | null> {
+    const sandbox = host.sandboxId ? await api.getSandbox(host.sandboxId) : null;
+    if (sandbox) return sandbox;
+    if (host.owner && host.owner !== (await this.owner())) throw new UserError(OTHER_KEY);
+    return null;
   }
 
   // Run one operation on a host in the background; the client polls status. One at a time per host.
@@ -210,10 +253,10 @@ export class HostService {
 
   async create(label?: string): Promise<{ hostId: string }> {
     await this.ready;
-    await this.apiKey();
+    const owner = await this.owner();
     const id = randomBytes(6).toString("hex");
     const now = new Date().toISOString();
-    const record: HostRecord = { id, label: (label ?? "").trim() || `prized-${id.slice(0, 4)}`, phase: "creating", createdAt: now, updatedAt: now };
+    const record: HostRecord = { id, label: (label ?? "").trim() || `prized-${id.slice(0, 4)}`, phase: "creating", owner, createdAt: now, updatedAt: now };
     await this.store.updateHosts((file) => {
       file.hosts[id] = record;
     });
@@ -221,23 +264,42 @@ export class HostService {
     return { hostId: id };
   }
 
+  // The sandbox a host's create made, if any: found by its label, so a create whose answer was lost
+  // (or a retry after the settings changed, which its idempotency key would refuse) adopts it.
+  private async adopt(api: PrizedApi, id: string): Promise<Sandbox | undefined> {
+    return (await api.listByLabel(LABEL, id))[0];
+  }
+
   // Create (once), install, start, pair. Each step is safe to run again, so Retry runs this whole.
   private async provision(id: string): Promise<void> {
     const api = await this.api();
     let host = await this.host(id);
-    let sandbox: Sandbox | null;
+    let sandbox: Sandbox | null | undefined;
     if (!host.sandboxId) {
       await this.store.patchHost(id, { phase: "creating", error: undefined });
-      const [file, secrets] = await Promise.all([this.store.readHosts(), this.store.readSecrets()]);
-      const shape = { ...DEFAULT_SHAPE, ...file.shape };
-      const envVars: Record<string, string> = {};
-      if (secrets.anthropicApiKey) envVars.ANTHROPIC_API_KEY = secrets.anthropicApiKey;
-      if (secrets.openaiApiKey) envVars.OPENAI_API_KEY = secrets.openaiApiKey;
-      // The same idempotency key on a retry finds the sandbox a lost answer created, instead of a second one.
-      sandbox = await api.createSandbox(
-        { template: TEMPLATE, vcpu: shape.vcpu, memoryGb: shape.memoryGb, envVars, labels: { via: "paseo", "paseo-host": id }, maxRuntimeMin: shape.maxRuntimeHours * 60 },
-        `paseo-host-${id}`,
-      );
+      sandbox = await this.adopt(api, id);
+      if (!sandbox) {
+        const [file, secrets] = await Promise.all([this.store.readHosts(), this.store.readSecrets()]);
+        const shape = { ...DEFAULT_SHAPE, ...file.shape };
+        const envVars: Record<string, string> = {};
+        if (secrets.anthropicApiKey) envVars.ANTHROPIC_API_KEY = secrets.anthropicApiKey;
+        if (secrets.openaiApiKey) envVars.OPENAI_API_KEY = secrets.openaiApiKey;
+        const input = {
+          template: TEMPLATE,
+          vcpu: shape.vcpu,
+          memoryGb: shape.memoryGb,
+          envVars,
+          labels: { via: "paseo", [LABEL]: id },
+          maxRuntimeMin: shape.maxRuntimeHours ? shape.maxRuntimeHours * 60 : undefined,
+        };
+        try {
+          sandbox = await api.createSandbox(input, `paseo-host-${id}`);
+        } catch (error) {
+          if (!(error instanceof PrizedApiError && error.code === "idempotency_conflict")) throw error;
+          sandbox = await this.adopt(api, id);
+          if (!sandbox) throw error;
+        }
+      }
       host = (await this.store.patchHost(id, { sandboxId: sandbox.id, sandboxState: sandbox.state }))!;
     }
     sandbox = await api.getSandbox(host.sandboxId!);
@@ -271,24 +333,35 @@ export class HostService {
     if (started.exitCode !== 0) throw new UserError(`The Paseo daemon did not start (exit ${started.exitCode}): ${tail(started.stderr || started.stdout)}`);
   }
 
+  private async pauseHost(id: string, sandboxId: string): Promise<void> {
+    const api = await this.api();
+    await this.store.patchHost(id, { phase: "pausing", error: undefined });
+    await api.pause(sandboxId);
+    const sandbox = await api.waitFor(sandboxId, ["paused"]);
+    await this.store.patchHost(id, { phase: "paused", sandboxState: sandbox?.state, expiresAt: undefined });
+  }
+
   async act(input: { hostId: string; action: "stop" | "resume" | "retry" | "delete" | "forget"; confirm?: string }, hosts?: HostsApi): Promise<{ accepted: boolean }> {
     const host = await this.host(input.hostId);
     const id = host.id;
+    // Before anything starts, so a refusal leaves the host as it was: a key must be there, and it must
+    // belong to the workspace that made the host.
+    await this.apiKey();
+    if (this.running.has(id)) throw new UserError("Something is already running on this host.");
+    if (input.action !== "forget") await this.assertOwned(host, await this.api());
     switch (input.action) {
       case "stop":
         if (!host.sandboxId || !["ready", "failed"].includes(host.phase)) throw new UserError("Only a ready host can be stopped.");
         this.start(id, async () => {
-          const api = await this.api();
-          await this.store.patchHost(id, { phase: "pausing", error: undefined });
-          await api.pause(host.sandboxId!);
-          const sandbox = await api.waitFor(host.sandboxId!, ["paused"]);
-          await this.store.patchHost(id, { phase: "paused", sandboxState: sandbox?.state, expiresAt: undefined });
+          await this.assertOwned(host, await this.api());
+          await this.pauseHost(id, host.sandboxId!);
         });
         break;
       case "resume":
         if (!host.sandboxId || host.phase !== "paused") throw new UserError("Only a stopped host can be resumed.");
         this.start(id, async () => {
           const api = await this.api();
+          if (!(await this.assertOwned(host, api))) throw new UserError("The sandbox is gone.");
           await this.store.patchHost(id, { phase: "resuming", error: undefined });
           let sandbox: Sandbox | null = await api.resume(host.sandboxId!);
           if (sandbox.state !== "running") sandbox = await api.waitFor(host.sandboxId!, ["running"]);
@@ -299,33 +372,43 @@ export class HostService {
         break;
       case "retry":
         if (host.phase !== "failed") throw new UserError("Only a failed host can be retried.");
-        if (host.failedAt === "pausing") return this.act({ hostId: id, action: "stop" }, hosts);
-        if (host.failedAt === "deleting") {
-          this.start(id, () => this.removeSandbox(id, host, hosts));
-          break;
-        }
-        this.start(id, () => this.provision(id));
+        if (host.failedAt === "pausing" && host.sandboxId) this.start(id, () => this.pauseHost(id, host.sandboxId!));
+        else if (host.failedAt === "deleting") this.start(id, () => this.removeSandbox(id, hosts));
+        else this.start(id, () => this.provision(id));
         break;
       case "delete": {
         const expected = host.sandboxId ?? host.label;
         if ((input.confirm ?? "").trim() !== expected) throw new UserError(`Type ${expected} to delete this host.`);
-        this.start(id, () => this.removeSandbox(id, host, hosts));
+        this.start(id, () => this.removeSandbox(id, hosts));
         break;
       }
-      case "forget":
+      case "forget": {
         if (host.phase !== "gone") throw new UserError("Only a host whose sandbox is gone can be removed from the list. Delete the others.");
+        const api = await this.api();
+        if (await this.assertOwned(host, api)) throw new UserError("The sandbox is there after all: refresh, then stop or delete it.");
         await this.forget(id, hosts);
         break;
+      }
     }
     return { accepted: true };
   }
 
-  private async removeSandbox(id: string, host: HostRecord, hosts?: HostsApi): Promise<void> {
+  // Deletes the host's sandbox: by id, or (a create cut short before its id was saved) by its label,
+  // then reads until it is gone.
+  private async removeSandbox(id: string, hosts?: HostsApi): Promise<void> {
+    const host = await this.host(id);
+    const api = await this.api();
+    await this.assertOwned(host, api);
     await this.store.patchHost(id, { phase: "deleting", error: undefined });
     if (host.sandboxId) {
-      const api = await this.api();
       await api.remove(host.sandboxId);
       await api.waitFor(host.sandboxId, null);
+    }
+    await api.removeByLabel(LABEL, id);
+    const deadline = Date.now() + 180_000;
+    while ((await api.listByLabel(LABEL, id)).some((s) => s.state !== "deleted")) {
+      if (Date.now() > deadline) throw new UserError("The sandbox is still being deleted. Retry checks again.");
+      await new Promise((r) => setTimeout(r, 2_000));
     }
     await this.forget(id, hosts);
   }
@@ -335,8 +418,8 @@ export class HostService {
     if (host?.registrationId && hosts) {
       try {
         await hosts.remove(host.registrationId);
-      } catch {
-        // Already removed in Paseo: nothing to do.
+      } catch (error) {
+        this.log(`prized-sandbox: removing Paseo host ${host.registrationId} failed (${(error as Error)?.message ?? error}); remove it under Hosts`);
       }
     }
     await this.store.updateSecrets((s) => {
@@ -357,6 +440,8 @@ export class HostService {
   // Save the host in this daemon's own host list, so it shows in Paseo without pasting the link.
   async addHost(hostId: string, hosts: HostsApi): Promise<{ registrationId: string; status: string }> {
     const host = await this.host(hostId);
+    if (this.running.has(host.id)) throw new UserError("Wait for this host's current operation to finish.");
+    if (!["ready", "paused"].includes(host.phase)) throw new UserError("Only a ready or stopped host can be added.");
     const url = (await this.store.readSecrets()).pairing[host.id];
     if (!url) throw new UserError("This host has no pairing link yet.");
     const added = await hosts.add({
@@ -365,7 +450,12 @@ export class HostService {
       metadata: { prizedSandbox: host.sandboxId ?? "" },
       sourceKey: `prized-sandbox-${host.id}`,
     });
-    await this.store.patchHost(host.id, { registrationId: added.registrationId });
+    // Deleted meanwhile: take the registration back out rather than leave it pointing at nothing.
+    const still = await this.store.patchHost(host.id, { registrationId: added.registrationId });
+    if (!still) {
+      await hosts.remove(added.registrationId).catch(() => undefined);
+      throw new UserError("The host was deleted meanwhile.");
+    }
     return { registrationId: added.registrationId, status: added.status };
   }
 

@@ -25,7 +25,21 @@ export interface CreateSandboxInput {
   memoryGb: number;
   envVars: Record<string, string>;
   labels: Record<string, string>;
-  maxRuntimeMin: number;
+  // Left out, Prized's default applies: 24 hours, or 60 minutes of running on the free tier.
+  maxRuntimeMin?: number;
+}
+
+// GET /me: `access` is there only for a key with limited access (absent means full access), and
+// `key.boxIds` only for a key limited to some boxes, which reaches no sandboxes.
+export interface Me {
+  workspace?: { id?: string; name?: string };
+  access?: { sandboxes?: string };
+  key?: { boxIds?: string[] | null } | null;
+}
+
+export function canWriteSandboxes(me: Me): boolean {
+  if (me.key?.boxIds && me.key.boxIds.length) return false;
+  return me.access ? me.access.sandboxes === "write" : true;
 }
 
 export class PrizedApiError extends Error {
@@ -101,8 +115,22 @@ export class PrizedApi {
     return { status: response.status, data: data as T };
   }
 
-  async me(): Promise<{ workspace?: { id?: string; name?: string }; access?: { sandboxes?: string } }> {
-    return (await this.request<{ workspace?: { id?: string; name?: string }; access?: { sandboxes?: string } }>("GET", `${this.base}/me`)).data;
+  async me(): Promise<Me> {
+    return (await this.request<Me>("GET", `${this.base}/me`)).data;
+  }
+
+  // Sandboxes carrying `key=value`, newest first.
+  async listByLabel(key: string, value: string): Promise<Sandbox[]> {
+    const query = new URLSearchParams({ label: `${key}=${value}` });
+    return (await this.request<{ sandboxes: Sandbox[] }>("GET", `${this.base}/sandboxes?${query}`)).data.sandboxes ?? [];
+  }
+
+  async removeByLabel(key: string, value: string): Promise<void> {
+    const query = new URLSearchParams({ label: `${key}=${value}` });
+    for (let i = 0; i < 10; i++) {
+      const { data } = await this.request<{ more?: boolean }>("DELETE", `${this.base}/sandboxes?${query}`);
+      if (!data?.more) return;
+    }
   }
 
   // Idempotency-Key: a create whose answer was lost is found again by the same key, never doubled.
@@ -112,7 +140,7 @@ export class PrizedApi {
       resources: { vcpu: input.vcpu, memoryMb: input.memoryGb * 1024 },
       envVars: input.envVars,
       labels: input.labels,
-      maxRuntimeMin: input.maxRuntimeMin,
+      ...(input.maxRuntimeMin ? { maxRuntimeMin: input.maxRuntimeMin } : {}),
     };
     const { data } = await this.request<{ sandbox: Sandbox }>("POST", `${this.base}/sandboxes?wait=running`, body, { "Idempotency-Key": idempotencyKey });
     return data.sandbox;
@@ -150,7 +178,7 @@ export class PrizedApi {
     for (;;) {
       const sandbox = await this.getSandbox(id);
       if (states === null ? sandbox === null : sandbox !== null && states.includes(sandbox.state)) return sandbox;
-      if (sandbox?.state === "error") throw new PrizedApiError(409, "sandbox_error", sandbox.errorReason ?? "the sandbox went to error");
+      if (states !== null && sandbox?.state === "error") throw new PrizedApiError(409, "sandbox_error", sandbox.errorReason ?? "the sandbox went to error");
       if (states !== null && sandbox === null) throw new PrizedApiError(404, "not_found", "the sandbox is gone");
       if (Date.now() > deadline) throw new PrizedApiError(504, "timeout", `the sandbox did not reach ${states?.join(" or ") ?? "deleted"} in time`);
       await this.sleep(2_000);
@@ -165,12 +193,19 @@ export class PrizedApi {
     const started = await this.request<{ process: { processId: string } }>("POST", `${base}/process/start`, { command, timeout: timeoutSec, env });
     const id = started.data.process.processId;
     const deadline = Date.now() + (timeoutSec + 60) * 1000;
+    let misses = 0;
     for (;;) {
-      const { data } = await this.request<{ process: { running: boolean; exitCode: number | null; timedOut?: boolean; lost?: boolean; stdout?: string; stderr?: string } }>(
-        "GET",
-        `${base}/process/${encodeURIComponent(id)}`,
-      );
-      const p = data.process;
+      let p: { running: boolean; exitCode: number | null; timedOut?: boolean; lost?: boolean; stdout?: string; stderr?: string };
+      try {
+        p = (await this.request<{ process: typeof p }>("GET", `${base}/process/${encodeURIComponent(id)}`)).data.process;
+        misses = 0;
+      } catch (error) {
+        // A blip (429, 5xx, a dropped connection) is not the command failing: read again.
+        const transient = !(error instanceof PrizedApiError) || error.status === 429 || error.status >= 500;
+        if (!transient || ++misses > 5 || Date.now() > deadline) throw error;
+        await this.sleep(3_000);
+        continue;
+      }
       if (!p.running) {
         return { exitCode: p.exitCode ?? (p.lost ? -2 : -1), stdout: p.stdout ?? "", stderr: p.stderr ?? "", timedOut: p.timedOut };
       }

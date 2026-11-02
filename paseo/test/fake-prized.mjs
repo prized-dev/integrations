@@ -9,7 +9,9 @@ export function pairingUrl(serverId = "srv_test123") {
   return `https://app.paseo.sh/#offer=${Buffer.from(JSON.stringify(offer)).toString("base64url")}`;
 }
 
-export function fakePrized({ fail = {}, workspace = "acme" } = {}) {
+// keyKind: "full" (GET /me has no `access`), "custom" (access.sandboxes: "write"), "custom-read" or
+// "box-limited". freeTier: refuse a maxRuntimeMin over 60, as the free tier does.
+export function fakePrized({ fail = {}, workspace = "acme", workspaceId = "ws1", keyKind = "full", freeTier = false, otherKeys = {} } = {}) {
   const sandboxes = new Map();
   const idempotency = new Map();
   const processes = new Map();
@@ -24,25 +26,54 @@ export function fakePrized({ fail = {}, workspace = "acme" } = {}) {
     const headers = init.headers ?? {};
     const body = init.body ? JSON.parse(init.body) : undefined;
     requests.push({ method, path: u.pathname + u.search, headers, body });
-    if (headers.Authorization !== `Bearer ${FAKE_KEY}`) return json(401, { error: "unauthorized", message: "bad key" });
+    const auth = String(headers.Authorization ?? "").replace(/^Bearer /, "");
+    // otherKeys: { [key]: workspaceId } for keys of other workspaces, which see none of ws1's sandboxes.
+    const ws = auth === FAKE_KEY ? workspaceId : otherKeys[auth];
+    if (!ws) return json(401, { error: "unauthorized", message: "bad key" });
+    const mine = (sandbox) => sandbox && sandbox.workspace === ws && sandbox.state !== "deleted";
 
     if (u.host === "api.prized.dev") {
       const path = u.pathname.replace("/api/v1", "");
-      if (path === "/me") return json(200, { workspace: { id: "ws1", name: workspace }, access: { sandboxes: "write" } });
+      if (path === "/me") {
+        const me = { workspace: { id: ws, name: ws === workspaceId ? workspace : "other" }, key: { id: "k1", kind: "api", expiresAt: null, boxIds: keyKind === "box-limited" ? ["box1"] : null } };
+        if (keyKind === "custom") me.access = { sandboxes: "write" };
+        if (keyKind === "custom-read") me.access = { sandboxes: "read" };
+        return json(200, me);
+      }
+      if (path === "/sandboxes" && method === "GET") {
+        const [k, v] = (u.searchParams.get("label") ?? "=").split(/=(.*)/s);
+        return json(200, { sandboxes: [...sandboxes.values()].filter((s) => mine(s) && s.labels?.[k] === v) });
+      }
+      if (path === "/sandboxes" && method === "DELETE") {
+        const [k, v] = (u.searchParams.get("label") ?? "=").split(/=(.*)/s);
+        const ids = [...sandboxes.values()].filter((s) => mine(s) && s.labels?.[k] === v).map((s) => s.id);
+        ids.forEach((id) => (sandboxes.get(id).state = "deleted"));
+        return json(202, { count: ids.length, ids, more: false });
+      }
       if (path === "/sandboxes" && method === "POST") {
         if (fail.create) return json(409, { error: "insufficient_balance", message: "The balance is empty." });
+        if (freeTier && body.maxRuntimeMin > 60) return json(429, { error: "sandbox_quota_exceeded", reason: "max_runtime", tier: "free", limit: 60, message: "The free tier runs a sandbox for 60 minutes at most." });
         const key = headers["Idempotency-Key"];
-        if (key && idempotency.has(key)) return json(200, { sandbox: sandboxes.get(idempotency.get(key)) });
+        // Like the API: the same key with another body is a conflict, never a second sandbox.
+        if (key && idempotency.has(key)) {
+          const first = idempotency.get(key);
+          if (first.body !== JSON.stringify(body)) return json(409, { error: "idempotency_conflict", message: "The same Idempotency-Key was used with another request." });
+          return json(200, { sandbox: sandboxes.get(first.id) });
+        }
         const id = `sbx_${(++n).toString(16).padStart(16, "0")}`;
-        const sandbox = { id, state: "running", toolboxBase: `https://term.prized.dev/v1/sandbox/${id}`, expiresAt: "2026-11-03T00:00:00Z", labels: body.labels, request: body };
+        const sandbox = { id, workspace: ws, state: "running", toolboxBase: `https://term.prized.dev/v1/sandbox/${id}`, expiresAt: "2026-11-03T00:00:00Z", labels: body.labels, request: body };
         sandboxes.set(id, sandbox);
-        if (key) idempotency.set(key, id);
+        if (key) idempotency.set(key, { id, body: JSON.stringify(body) });
+        if (fail.loseCreateAnswer) {
+          fail.loseCreateAnswer = false;
+          return json(502, { error: "bad_gateway", message: "The answer was lost on the way." });
+        }
         return json(201, { sandbox });
       }
       const m = path.match(/^\/sandboxes\/([^/]+)(?:\/(pause|resume))?$/);
       if (m) {
         const sandbox = sandboxes.get(m[1]);
-        if (!sandbox || sandbox.state === "deleted") return json(404, { error: "not_found", message: "no sandbox" });
+        if (!mine(sandbox)) return json(404, { error: "not_found", message: "no sandbox" });
         if (method === "GET") return json(200, { sandbox });
         if (method === "DELETE") {
           sandbox.state = "deleted";
@@ -66,7 +97,7 @@ export function fakePrized({ fail = {}, workspace = "acme" } = {}) {
     if (u.host === "term.prized.dev") {
       const m = u.pathname.match(/^\/v1\/sandbox\/([^/]+)\/process(?:\/(.+))?$/);
       const sandbox = m && sandboxes.get(m[1]);
-      if (!sandbox) return json(404, { error: "not_found" });
+      if (!mine(sandbox)) return json(404, { error: "not_found" });
       if (sandbox.state === "paused") sandbox.state = "running";
       if (method === "POST" && m[2] === "start") {
         const command = body.command;

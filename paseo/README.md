@@ -1,6 +1,6 @@
 # Prized Sandbox for Paseo
 
-A [Paseo](https://paseo.sh) plugin that runs Paseo hosts on [Prized sandboxes](https://prized.dev/docs/sandboxes?via=paseo). Each host is a sandbox with its own Paseo daemon, Claude Code and Codex. **Stop** pauses it with its memory: the daemon and any agent mid-turn are kept, and only storage is billed. **Resume** carries on where it stopped, with no new pairing.
+A [Paseo](https://paseo.sh) plugin that runs Paseo hosts on [Prized sandboxes](https://prized.dev/docs/sandboxes?via=paseo). Each host is a sandbox with its own Paseo daemon, Claude Code and Codex. **Stop** pauses it with its memory: the daemon, its terminals and the agents' processes are kept, and only storage is billed. **Resume** carries on from the same point, with no new pairing.
 
 For a Paseo daemon on a Prized box instead (a dev machine of your own, over SSH), see [Run Paseo's agents on a Prized box](https://prized.dev/docs/paseo?via=paseo).
 
@@ -30,10 +30,11 @@ or paste `github:prized-dev/integrations:paseo` into **Settings → Plugins → 
 ## What happens
 
 - **Create** makes a sandbox from `prized-agent-v1` (Ubuntu 24.04, Node.js 22, Claude Code, Codex; 2 vCPU and 4 GB unless you choose another size), labelled `via=paseo`. It installs `@getpaseo/cli` 0.14.0 from npm into the sandbox's home, starts `paseo daemon`, and keeps the link `paseo daemon pair --relay` prints. The sandbox is reachable only outbound, through Paseo's relay.
-- **Stop** pauses the sandbox. A paused sandbox keeps its memory, processes and disk, bills storage only (the first 20 GB of paused storage in a workspace are included), and its running-time clock stops.
+- **Stop** pauses the sandbox. A paused sandbox keeps its memory, processes and disk, bills storage only (the first 20 GB of paused storage in a workspace are included), and its running-time clock stops. A model request in flight at that moment may fail when it resumes; the agent retries or you send the turn again.
 - **Resume** resumes it, checks the daemon is still there (it is, after a pause) and starts it if not. The daemon reconnects to the relay by itself within a few seconds.
-- **Running time.** A running sandbox is deleted when its running time ends: 24 hours by default (1 hour to 7 days in the settings), counted again from each resume.
-- **Retry.** Work cut short (an install that failed, the plugin restarted mid-create) shows the reason and a **Retry** that picks up on the same sandbox. A create whose answer was lost is found again by its idempotency key rather than made twice.
+- **Running time.** A running sandbox is deleted when its running time ends. Unless you choose 1 hour to 7 days in the settings, Prized's default applies: 24 hours, counted again from each resume, or on free credit 60 minutes of running in all.
+- **Retry.** Work cut short (an install that failed, the plugin restarted mid-create) shows the reason and a **Retry** that picks up on the same sandbox. A sandbox whose create answer was lost is found by its label (`paseo-host=<id>`), never made twice, and Delete finds it the same way.
+- **Another workspace's key.** Hosts remember the workspace that made them. With a key from another workspace saved, they show that and refuse Stop, Resume and Delete instead of reading as gone.
 
 ## Data and credentials
 

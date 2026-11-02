@@ -2,7 +2,7 @@
   "name": "paseo-prized-sandbox",
   "version": "0.1.0",
   "private": true,
-  "description": "Paseo hosts on Prized sandboxes: Stop pauses with memory and running agents kept, Resume picks up mid-task.",
+  "description": "Paseo hosts on Prized sandboxes. Stop pauses the sandbox with its memory and processes; Resume carries on from there.",
   "keywords": ["paseo", "paseo-plugin", "prized", "sandbox", "coding-agent"],
   "license": "Apache-2.0",
   "homepage": "https://prized.dev/docs/paseo?via=paseo",

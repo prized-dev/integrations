@@ -16,10 +16,10 @@ import { AGENT_KEY, FAKE_KEY, fakePrized, pairingUrl } from "./fake-prized.mjs";
 const dirs = [];
 process.on("exit", () => dirs.forEach((d) => fs.rmSync(d, { recursive: true, force: true })));
 
-function setup({ fail, env = {} } = {}) {
+function setup({ fail, env = {}, ...fake } = {}) {
   const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), "paseo-prized-test-"));
   dirs.push(stateDir);
-  const prized = fakePrized({ fail });
+  const prized = fakePrized({ fail, ...fake });
   const logs = [];
   const service = new HostService({
     stateDir,
@@ -62,7 +62,7 @@ test("settings: the key is checked, kept private, and never read back", async ()
   const saved = await t.service.saveSettings({ prizedApiKey: FAKE_KEY, anthropicApiKey: AGENT_KEY, vcpu: 4, memoryGb: 8 });
   assert.equal(saved.workspace, "acme");
   const status = await t.service.status(false);
-  assert.deepEqual(status.settings, { apiKeySource: "saved", workspace: "acme", anthropicKeySaved: true, openaiKeySaved: false, vcpu: 4, memoryGb: 8, maxRuntimeHours: 24 });
+  assert.deepEqual(status.settings, { apiKeySource: "saved", workspace: "acme", anthropicKeySaved: true, openaiKeySaved: false, vcpu: 4, memoryGb: 8, maxRuntimeHours: null });
   const secrets = path.join(t.stateDir, "secrets.json");
   assert.equal(fs.statSync(secrets).mode & 0o777, 0o600);
   assert.equal(fs.statSync(t.stateDir).mode & 0o777, 0o700);
@@ -88,7 +88,7 @@ test("create: one sandbox, Paseo installed, the daemon started and paired, the l
   assert.deepEqual(sandbox.request.resources, { vcpu: 2, memoryMb: 4096 });
   assert.deepEqual(sandbox.request.labels, { via: "paseo", "paseo-host": t.hostId });
   assert.equal(sandbox.request.template, "prized-agent-v1");
-  assert.equal(sandbox.request.maxRuntimeMin, 24 * 60);
+  assert.equal(sandbox.request.maxRuntimeMin, undefined, "Prized's own default unless one is chosen");
   assert.deepEqual(sandbox.request.envVars, { ANTHROPIC_API_KEY: AGENT_KEY });
   const create = t.prized.requests.find((r) => r.method === "POST" && r.path.startsWith("/api/v1/sandboxes"));
   assert.equal(create.headers["Idempotency-Key"], `paseo-host-${t.hostId}`);
@@ -231,4 +231,105 @@ test("the sandbox scripts are valid bash", () => {
     const r = spawnSync("bash", ["-n"], { input: script, encoding: "utf8" });
     assert.equal(r.status, 0, r.stderr);
   }
+});
+
+// ------------------------------------------------------------------ fixes from the review
+
+test("a Full access key (GET /me has no access field) is accepted; read-only and box-limited keys are not", async () => {
+  await setup({ keyKind: "full" }).service.saveSettings({ prizedApiKey: FAKE_KEY });
+  await setup({ keyKind: "custom" }).service.saveSettings({ prizedApiKey: FAKE_KEY });
+  await assert.rejects(setup({ keyKind: "custom-read" }).service.saveSettings({ prizedApiKey: FAKE_KEY }), /cannot create sandboxes/);
+  await assert.rejects(setup({ keyKind: "box-limited" }).service.saveSettings({ prizedApiKey: FAKE_KEY }), /cannot create sandboxes/);
+});
+
+test("on the free tier the default settings work: no run time is asked for unless one is chosen", async () => {
+  const t = setup({ freeTier: true });
+  await t.service.saveSettings({ prizedApiKey: FAKE_KEY });
+  await t.service.create();
+  await t.service.settled();
+  assert.equal((await t.service.status(false)).hosts[0].phase, "ready");
+  await t.service.saveSettings({ maxRuntimeHours: 24 });
+  await t.service.create();
+  await t.service.settled();
+  const refused = (await t.service.status(false)).hosts[1];
+  assert.equal(refused.phase, "failed");
+  assert.match(refused.error, /60 minutes/);
+  await t.service.saveSettings({ maxRuntimeHours: null });
+  assert.equal((await t.service.status(false)).settings.maxRuntimeHours, null);
+});
+
+test("a create whose answer was lost is adopted on Retry, even after the size changed", async () => {
+  const t = setup({ fail: { loseCreateAnswer: true } });
+  await t.service.saveSettings({ prizedApiKey: FAKE_KEY });
+  const { hostId } = await t.service.create();
+  await t.service.settled();
+  assert.equal((await t.service.status(false)).hosts[0].phase, "failed");
+  assert.equal((await t.service.status(false)).hosts[0].sandboxId, undefined);
+  await t.service.saveSettings({ vcpu: 4, memoryGb: 8 }); // the same idempotency key would now conflict
+  await t.service.act({ hostId, action: "retry" });
+  await t.service.settled();
+  const host = (await t.service.status(false)).hosts[0];
+  assert.equal(host.phase, "ready", host.error);
+  assert.equal(t.prized.sandboxes.size, 1, "the sandbox the lost answer made, not a second one");
+});
+
+test("Delete finds a sandbox whose id was never saved, by its label, and deletes it", async () => {
+  const t = setup({ fail: { loseCreateAnswer: true } });
+  await t.service.saveSettings({ prizedApiKey: FAKE_KEY });
+  const { hostId } = await t.service.create("lost");
+  await t.service.settled();
+  const [sandbox] = t.prized.sandboxes.values();
+  assert.equal(sandbox.state, "running");
+  await t.service.act({ hostId, action: "delete", confirm: "lost" });
+  await t.service.settled();
+  assert.equal(sandbox.state, "deleted");
+  assert.deepEqual((await t.service.status(false)).hosts, []);
+});
+
+test("a key from another workspace neither wipes nor touches the hosts; the right key brings them back", async () => {
+  const other = `dcp_${"c".repeat(48)}`;
+  const t = setup({ otherKeys: { [other]: "ws2" } });
+  await t.service.saveSettings({ prizedApiKey: FAKE_KEY });
+  const { hostId } = await t.service.create();
+  await t.service.settled();
+  const [sandbox] = t.prized.sandboxes.values();
+  await t.service.saveSettings({ prizedApiKey: other });
+  let host = (await t.service.status(true)).hosts[0];
+  assert.equal(host.phase, "ready", "not marked gone");
+  assert.equal(host.otherWorkspace, true);
+  assert.match(host.error, /another Prized workspace/);
+  await assert.rejects(t.service.act({ hostId, action: "delete", confirm: sandbox.id }), /another Prized workspace/);
+  await assert.rejects(t.service.act({ hostId, action: "stop" }), /another Prized workspace/);
+  await t.service.settled();
+  assert.equal(sandbox.state, "running", "never deleted (or forgotten) through another workspace's key");
+  assert.equal((await t.service.status(false)).hosts[0].phase, "ready");
+  await t.service.saveSettings({ prizedApiKey: FAKE_KEY });
+  host = (await t.service.status(true)).hosts[0];
+  assert.equal(host.otherWorkspace, undefined);
+  assert.equal(host.error, undefined);
+});
+
+test("with no key, an action is refused up front and the host keeps its phase", async () => {
+  const t = await readyHost();
+  await t.service.saveSettings({ prizedApiKey: "" });
+  await assert.rejects(t.service.act({ hostId: t.hostId, action: "stop" }), /Add a Prized API key/);
+  assert.equal((await t.service.status(false)).hosts[0].phase, "ready");
+});
+
+test("Add to hosts waits for the host's operation, and Delete of a sandbox in error still completes", async () => {
+  const t = await readyHost();
+  await t.service.act({ hostId: t.hostId, action: "stop" });
+  await assert.rejects(t.service.addHost(t.hostId, fakeHosts()), /current operation/);
+  await t.service.settled();
+  const [sandbox] = t.prized.sandboxes.values();
+  sandbox.state = "error";
+  await t.service.act({ hostId: t.hostId, action: "delete", confirm: sandbox.id });
+  await t.service.settled();
+  assert.deepEqual((await t.service.status(false)).hosts, []);
+});
+
+test("the install and daemon scripts hold a lock, which the daemon itself never inherits", () => {
+  assert.match(installScript(), /flock -w 600 9/);
+  assert.match(startDaemonScript(), /flock -w 300 9/);
+  assert.match(startDaemonScript(), /paseo daemon start --home "\$PASEO_HOME" 9>&-/);
 });
