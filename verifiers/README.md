@@ -39,7 +39,7 @@ Every field goes next to `type` and `import_path`.
 | --- | --- | --- |
 | `setup` | `[]` | Shell commands that build the environment, run once in order in the parent, without root |
 | `setup_env` | `[]` | Names of variables from your environment passed to `setup` (the names are saved with the config, not the values). A process `setup` leaves running keeps them, in every copy, where the agent can read them. Never the Prized API key |
-| `setup_timeout` | `1800` | Seconds each setup command may take; `0` for no limit |
+| `setup_timeout` | `1800` | Seconds each setup command may take; `0` for no limit (a setup that never ends then holds the rollouts waiting for it, up to verifiers' own `timeouts.setup`) |
 | `template` | `prized-base-v1` | `prized-base-v1` (Ubuntu 24.04, Python 3, Node.js 22, git, build tools) or `prized-agent-v1` (adds Claude Code and Codex) |
 | `cpu`, `memory`, `disk` | `1`, `2`, `10` | vCPUs, GB, GB. A task's `resources` apply when these are left at their defaults; each shape gets its own parent |
 | `workdir` | task's, else `/home/prized/work` | Where commands run. Must be under `/home/prized` or `/tmp` |
@@ -47,7 +47,7 @@ Every field goes next to `type` and `import_path`.
 | `fork` | `true` | `false` gives every rollout a new sandbox that runs `setup` itself, with nothing shared |
 | `pause_parent` | `true` | Pause the parent after `setup` |
 | `max_parents` | `4` | Parents per shape and process when machines fill up (below) |
-| `capacity_wait` | `600` | Seconds a rollout waits for room (a full machine, a quota) before it fails; `0` fails it at the first refusal. Waiting for `setup` does not count |
+| `capacity_wait` | `600` | Seconds a rollout keeps trying once it has been refused room (a full machine, a quota); `0` fails it at the first refusal. The time a parent's `setup` takes does not count |
 | `max_runtime_min` | Prized's (24 h; 60 min, the most, on the free tier) | Run time of each sandbox; copies get their parent's |
 | `blocking_run_timeout` | none | Send each `run` as one blocking call killed after this many seconds (up to 240): 0.02 s instead of 0.11 s per short command, wrong for long ones |
 | `labels` | `{}` | Labels on every sandbox it makes |
@@ -63,7 +63,7 @@ prints the id of a paused sandbox with the environment built. Set `parent = "<id
 
 ### Many rollouts at once
 
-Copies start on their parent's machine, which holds about 31 copies of a 1 vCPU sandbox (15 of 2 vCPU, 7 of 4). Past that a fork answers `409 fork_capacity`: the runtime forks the number that fits, rests that parent briefly, and once every parent is full builds another one, up to `max_parents`. Workspace quotas and rate limits, on a fork or on a parent's create, are waited out for up to `capacity_wait`. A parent that can no longer fork (its machine retiring, its memory gone) is replaced. Each process (each verifiers env-server worker) builds its own parents.
+Copies start on their parent's machine, which holds about 31 copies of a 1 vCPU sandbox (15 of 2 vCPU, 7 of 4). Past that a fork answers `409 fork_capacity`: the runtime forks the number that fits, rests that parent briefly, and once every parent is full builds another one, up to `max_parents`. Workspace quotas and rate limits, on a fork or on a parent's create, are waited out for up to `capacity_wait`. A parent that can no longer fork (its machine retiring, its memory gone) is replaced, up to 3 in a row; past that the rollouts fail rather than run `setup` again and again. Each process (each verifiers env-server worker) builds its own parents.
 
 ## Limits
 
@@ -71,7 +71,7 @@ Copies start on their parent's machine, which holds about 31 copies of a 1 vCPU 
 - **No root, no Docker.** Commands run as the user `prized` without sudo. Install into your home: a venv, `pip --user`, `uv`, `npm` with a user prefix, or apt packages unpacked into the home ([how](https://prized.dev/docs/sandboxes-own-template?via=verifiers#2-add-system-packages-without-root)).
 - **Environments are built by `setup` and forks, not images.** There are no custom images yet, so tasks that set `image`, need a container-only harness or isolated grading, set `agent_user`, run Compose services, put a tool server in its own runtime, or set a network policy are refused by verifiers before anything is created. Prime and Docker runtimes run those.
 - **The model call goes through a tunnel.** A harness that runs the agent inside the sandbox reaches verifiers' interception server on your machine through `interception.tunnel`: Prime's by default (needs `prime login`), or your own endpoint (`type = "custom"`, `url`, `port`).
-- **`exec` streams bytes, `run` returns text.** `exec` output crosses as base64, a line per read, so binary output (ACP's length-prefixed frames, say) arrives byte for byte; `run` returns text, as verifiers' `ProgramResult` does, and fails rather than return output the SDK cut short (about 64 MiB a stream; 100 MiB with `blocking_run_timeout`). `read` is byte-exact. Each `exec` stdin write is a request per 48 KiB.
+- **`exec` streams bytes, `run` returns text.** `exec` output crosses as base64, a line per read, so binary output (ACP's length-prefixed frames, say) arrives byte for byte; `run` returns text, as verifiers' `ProgramResult` does, and fails rather than return output the SDK cut short (about 64 MiB a stream; 100 MiB with `blocking_run_timeout`). `read` is byte-exact. Each `exec` stdin write is a request per 48 KiB, and an `exec` whose command leaves a child running with its stdout reports the exit up to 2 s late.
 - **Copies share the parent's memory**, random state included: reseed or restart a process after a fork before it makes keys or IDs.
 - **No GPUs.** A task's `resources.gpu` is ignored with a warning.
 - **Free tier:** 10 sandboxes at once (a paused parent is not one of them), each up to 2 vCPU, 4 GB and 60 minutes of running, and 20 vCPU and 40 GB across the workspace ([limits](https://prized.dev/docs/sandboxes?via=verifiers#free-tier)).

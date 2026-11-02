@@ -427,9 +427,12 @@ async def test_a_parent_that_disappears_is_rebuilt(cloud: Cloud) -> None:
 async def test_your_parent_disappearing_fails_every_waiting_rollout(cloud: Cloud) -> None:
     mine = cloud.new_box("prized-base-v1", {}, {}, "k")
     await rollouts(config(parent=mine.id), 1)
+    (handle,) = [p.sandbox for p in next(iter(pool._pools.values())).parents]
     cloud.delete(mine)
     with pytest.raises(SandboxError, match="can no longer fork"):
         await rollouts(config(parent=mine.id), 3)
+    await asyncio.sleep(0)
+    assert handle.closed, "the handle to a parent that is gone is released"
 
 
 # --- cancellation and cleanup ---------------------------------------------------------------------
@@ -668,10 +671,14 @@ async def test_a_parent_that_cannot_fork_is_replaced(cloud: Cloud) -> None:
     cloud.fork_refusals = [PrizedError("parent_not_forkable", status=409, reason="parent_too_big")]
     with pytest.raises(SandboxError, match="parent_not_forkable"):
         await rollouts(cfg, 1)
-    # A parent after parent that cannot fork: a few are tried, then the rollouts fail.
+    # A parent after parent that cannot fork: a few are tried, then the rollouts fail, and setup
+    # is not run again for every new wave of rollouts.
     cloud.fork_refusals = [PrizedError("parent_not_forkable", status=409, reason="memory_discarded")] * 10
     with pytest.raises(SandboxError, match="in a row could not fork"):
         await rollouts(cfg, 1)
+    assert cloud.count("create") == 2 + pool.MAX_REPLACEMENTS
+    with pytest.raises(SandboxError, match="in a row could not fork"):
+        await rollouts(cfg, 2)
     assert cloud.count("create") == 2 + pool.MAX_REPLACEMENTS
 
 
@@ -714,3 +721,85 @@ def test_a_forked_child_gets_a_run_of_its_own(cloud: Cloud) -> None:
     os.waitpid(pid, 0)
     assert os.read(r, 1) == b"1"
     assert pool.RUN_ID == before and "sbx_parents" in pool._tracked
+
+
+async def test_waiting_in_line_behind_a_fork_is_not_waiting_for_room(cloud: Cloud) -> None:
+    # capacity_wait counts from a refusal, not from a wait for another rollout's fork to finish.
+    cfg = config(setup=SETUP, capacity_wait=0, max_parents=1)
+    await rollouts(cfg, 1)
+    cloud.fork_delay = 0.4
+    first = asyncio.ensure_future(rollouts(cfg, 1))
+    await asyncio.sleep(0.1)  # its fork is in flight
+    assert len(await rollouts(cfg, 1)) == 1
+    assert len(await first) == 1
+
+
+async def test_a_build_that_fails_after_a_long_setup_is_retried(cloud: Cloud) -> None:
+    # The setup before a transient failure is not time spent waiting for room either.
+    cloud.pause_refusals = [PrizedError("sandbox_unreachable", status=503)]
+    ids = await rollouts(config(setup=["sleep 1.2", *SETUP], capacity_wait=0.8), 1)
+    assert len(ids) == 1 and cloud.count("create") == 2
+
+
+async def test_a_child_left_running_keeps_its_stdout(cloud: Cloud, tmp_path: Any) -> None:
+    # A command that exits while a child it started still writes: the child must not be killed by
+    # SIGPIPE once the wrapper stops waiting (2 s) for the encoders.
+    marker = tmp_path / "done"
+    script = f"(sleep 2.3; echo two; sleep 0.2; echo three; touch {marker}) & echo one"
+    async with provisioned() as view:
+        process = await view.exec(["sh", "-c", script], {})
+        assert (await asyncio.wait_for(process.stdout.__anext__(), 10)).strip() == b"one"
+        assert await asyncio.wait_for(process.wait(), 10) == 0
+
+        async def touched() -> bool:
+            return marker.exists()
+
+        await wait_for(touched, 10)
+
+
+async def test_exec_env_names_like_the_wrappers_own_reach_the_command(cloud: Cloud) -> None:
+    env = {"f": "F", "o": "O", "e": "E", "h": "H", "k": "K", "c": "C", "rc": "R"}
+    async with provisioned() as view:
+        process = await view.exec(["sh", "-c", 'printf %s "$f$o$e$h$k$c$rc"'], env)
+        assert b"".join([chunk async for chunk in process.stdout]) == b"FOEHKCR"
+        assert await process.wait() == 0
+
+
+async def test_a_line_cut_off_by_a_kill_is_never_passed_on_as_text() -> None:
+    from verifiers_prized.backend import _Lines
+
+    queue: asyncio.Queue[bytes | None] = asyncio.Queue()
+    lines = _Lines(queue)
+    lines(":aGk=\n:aGVsbG8gd2")  # "hi", then "hello w..." cut off mid-group
+    lines.close()
+    got = [queue.get_nowait() for _ in range(queue.qsize())]
+    assert got == [b"hi", b"hello ", None]
+
+
+async def test_a_refused_rollout_waits_out_another_parents_build(cloud: Cloud) -> None:
+    # B is refused room (parent 1 is full) and a second parent is built: the build's setup does not
+    # count against B's capacity_wait, during it or after it (a refusal right after the build).
+    cfg = config(setup=["sleep 1.2", *SETUP], capacity_wait=0.8, max_parents=2)
+    await rollouts(cfg, 1)  # parent 1
+    cloud.capacity = 1
+    first = asyncio.ensure_future(rollouts(cfg, 1, hold=2.5))
+    await asyncio.sleep(0.3)  # A holds parent 1's only copy
+    second = asyncio.ensure_future(rollouts(cfg, 1))  # B: refused, so parent 2 is built
+    # B is refused by parent 1 again at +0.5 s (it then rests 1 s); the next fork is B's on
+    # parent 2 once it is built (+1.2 s), and that one is refused too.
+    await asyncio.sleep(0.7)
+    cloud.fork_refusals = [PrizedError("sandbox_capacity", status=503)]
+    assert len(await second) == 1
+    assert len(await first) == 1
+    assert cloud.count("create") == 2 and cloud.fork_refusals == []
+
+
+async def test_a_first_parent_never_admitted_fails_within_capacity_wait(cloud: Cloud) -> None:
+    cloud.create_refusals = [
+        PrizedError("sandbox_quota_exceeded", status=429, reason="sandbox_limit") for _ in range(100)
+    ]
+    began = asyncio.get_running_loop().time()
+    with pytest.raises(SandboxError, match="capacity_wait"):
+        await rollouts(config(setup=SETUP, capacity_wait=1), 1)
+    assert asyncio.get_running_loop().time() - began < 5
+    assert cloud.count("create") <= 4

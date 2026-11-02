@@ -55,6 +55,7 @@ class Cloud:
     fork_refusals: list[PrizedError] = field(default_factory=list)
     """Raised by the next forks, one each, before the capacity check."""
     create_refusals: list[PrizedError] = field(default_factory=list)
+    pause_refusals: list[PrizedError] = field(default_factory=list)
     capacity: int | None = None
     """Copies of one parent that may be alive at once (fork_capacity past it)."""
     fork_delay: float = 0.01
@@ -296,6 +297,8 @@ class AsyncSandbox:
     async def pause(self, *, wait: bool = True, timeout: float = 120.0) -> None:
         box = _box(self.id)
         cloud().calls.append(("pause", box.id))
+        if cloud().pause_refusals:
+            raise cloud().pause_refusals.pop(0)
         box.state = "paused"
 
     async def fork(

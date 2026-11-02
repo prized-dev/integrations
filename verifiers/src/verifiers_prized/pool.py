@@ -27,7 +27,7 @@ import os
 import threading
 import time
 import uuid
-from collections.abc import Awaitable, Mapping
+from collections.abc import Awaitable, Iterable, Mapping
 from dataclasses import dataclass, field
 from typing import Any, TypeVar
 
@@ -76,7 +76,8 @@ _CANNOT_FORK = frozenset({"fork_unsupported_host", "parent_not_forkable"})
 """This parent cannot fork (its machine, or its memory gone): a parent built here is replaced. Not
 `parent_too_big`, which a new parent of the same shape would meet again."""
 MAX_REPLACEMENTS = 3
-"""Parents replaced in a row, with no fork in between, before the waiting rollouts fail instead."""
+"""Parents replaced in a row, with no fork in between; past it the pool stops building and every
+rollout fails (each replacement runs `setup` again)."""
 
 
 def passes(err: PrizedError) -> bool:
@@ -372,6 +373,10 @@ class Parent:
 class _Waiter:
     future: asyncio.Future[tuple[Any, Parent]]
     since: float
+    """When it came: rollouts that come together are forked together (LINGER)."""
+    refused_at: float | None = None
+    """When it was first refused room (a fork or a parent's create refused): its capacity_wait
+    counts from here, with the time a parent build took left out."""
 
 
 class ParentPool:
@@ -463,14 +468,24 @@ class ParentPool:
         """Forget waiters that went away (cancelled) or were answered."""
         self._waiters = collections.deque(w for w in self._waiters if not w.future.done())
 
+    def _refuse(self, waiters: Iterable[_Waiter], now: float) -> None:
+        """These waiters were refused room: their capacity_wait starts, if it has not."""
+        for waiter in waiters:
+            if waiter.refused_at is None:
+                waiter.refused_at = now
+
+    def _deadline(self, waiter: _Waiter) -> float | None:
+        return None if waiter.refused_at is None else waiter.refused_at + self.recipe.capacity_wait
+
     def _expire(self, now: float) -> None:
-        """Fail the waiters that waited longer than capacity_wait for room. Called only when no
-        parent can fork now and none is being built: waiting for `setup` is not waiting for room."""
+        """Fail the waiters refused room for longer than capacity_wait. Called only when no parent
+        can fork now and none is being built: waiting for `setup` is not waiting for room."""
         keep: collections.deque[_Waiter] = collections.deque()
         for waiter in self._waiters:
             if waiter.future.done():
                 continue
-            if now - waiter.since > self.recipe.capacity_wait:
+            deadline = self._deadline(waiter)
+            if deadline is not None and now > deadline:
                 waiter.future.set_exception(
                     SandboxError(
                         f"verifiers-prized: no room for a copy within capacity_wait "
@@ -525,14 +540,14 @@ class ParentPool:
                 self._building += 1
                 self._spawn(self._build())
                 continue
-            # Nothing to do until a parent rests, a refusal passes, or a build ends. The waiters'
-            # capacity_wait runs only while no build does.
-            wake_at = []
+            # Nothing to do until a parent rests, a refusal passes, a fork or a build ends. A
+            # refused waiter's capacity_wait runs out here, but not while a parent is being built.
+            wake_at: list[float] = []
             if not self._building:
                 self._expire(now)
                 if not self._waiters:
                     return
-                wake_at += [w.since + self.recipe.capacity_wait for w in self._waiters]
+                wake_at += [d for d in map(self._deadline, self._waiters) if d is not None]
             wake_at += [p.rest_until for p in self.parents if p.rest_until > now]
             wake_at += [t for t in (self._blocked_until, self._build_retry_at) if t > now]
             timeout = max(0.0, min(wake_at) - now) if wake_at else None
@@ -540,6 +555,7 @@ class ParentPool:
                 await asyncio.wait_for(self._wake.wait(), timeout)
 
     async def _build(self) -> None:
+        began = time.monotonic()
         try:
             if self.recipe.parent is not None:
                 sandbox = await sdk.AsyncSandbox.connect(self.recipe.parent, **self.creds.kwargs)
@@ -558,17 +574,26 @@ class ParentPool:
                 )
                 self.parents.append(Parent(sandbox, owned=True))
             self._build_strikes = 0
-            # The rollouts waited for setup, not for room: their capacity_wait starts now.
-            now = time.monotonic()
-            for waiter in self._waiters:
-                waiter.since = max(waiter.since, now)
         except Exception as err:  # noqa: BLE001 - handed to the waiting rollouts
-            self._build_failed(err)
+            self._build_failed(err, began)
+        else:
+            self._built(began)
         finally:
             self._building -= 1
             self._poke()
 
-    def _build_failed(self, err: Exception) -> None:
+    def _built(self, began: float) -> None:
+        """A build that started at `began` ended: the time it took does not count against the
+        capacity_wait of the rollouts refused room before or during it."""
+        now = time.monotonic()
+        for waiter in self._waiters:
+            if waiter.refused_at is not None:
+                waiter.refused_at += now - max(began, waiter.refused_at)
+
+    def _build_failed(self, err: Exception, began: float) -> None:
+        # The setup it ran does not count; the failure is a refusal of room for every waiter.
+        self._built(began)
+        self._refuse(self._waiters, time.monotonic())
         # The next build waits, so a refusing workspace does not get a create per wake-up.
         self._build_strikes += 1
         pause = backoff(self._build_strikes)
@@ -665,7 +690,7 @@ class ParentPool:
     def _refused(self, parent: Parent, err: PrizedError, live: list[_Waiter], gone: bool) -> None:
         now = time.monotonic()
         body: Mapping[str, Any] = err.body or {}
-        requeue = True
+        requeue = refusal = True  # back in line, and refused room (their capacity_wait runs)
         cannot_fork = err.code in _CANNOT_FORK and err.reason != "parent_too_big"
         if err.code == "fork_capacity":
             fits = body.get("fits")
@@ -676,6 +701,7 @@ class ParentPool:
                 parent.rest_until = now + backoff(parent.strikes)
         elif gone and not parent.owned:
             self.parents = [p for p in self.parents if p is not parent]
+            self._spawn(parent.sandbox.close())  # yours: its handle is released, nothing more
             stuck = SetupError(f"verifiers-prized: parent {parent.sandbox.id} can no longer fork: {err}")
             self._sticky_error = stuck
             self._fail(live, stuck)
@@ -684,15 +710,17 @@ class ParentPool:
             requeue = False
         elif (gone or cannot_fork) and parent.owned:
             # Gone, or unable to fork: delete it (discard untracks it) and build another, unless
-            # the last few could not fork either.
+            # the last few could not fork either: then setup is not run again in this process.
             self.parents = [p for p in self.parents if p is not parent]
             self._spawn(discard(parent.sandbox))
             self._replaced += 1
+            refusal = False
             if self._replaced > MAX_REPLACEMENTS:
-                failed = SandboxError(
-                    f"verifiers-prized: {self._replaced} parents in a row could not fork; the last: {err}"
+                failed = SetupError(
+                    f"verifiers-prized: {self._replaced} parents in a row could not fork, so no more are "
+                    f"built in this process; the last: {err}"
                 )
-                self._replaced = 0  # the next rollout tries again
+                self._sticky_error = failed
                 self._fail(live, failed)
                 self._fail(list(self._waiters), failed)
                 self._waiters.clear()
@@ -718,7 +746,10 @@ class ParentPool:
             self._fail(live, SandboxError(f"verifiers-prized: Prized refused the fork: {err}"))
             requeue = False
         if requeue:
-            self._waiters.extendleft(reversed([w for w in live if not w.future.done()]))
+            back = [w for w in live if not w.future.done()]
+            if refusal:
+                self._refuse(back, now)
+            self._waiters.extendleft(reversed(back))
 
 
 _pools: dict[tuple[int, Recipe], ParentPool] = {}

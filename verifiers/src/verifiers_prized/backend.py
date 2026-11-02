@@ -45,18 +45,19 @@ STDIN_CHUNK = 48 * 1024
 # Its stdout and stderr go through two more FIFOs to encoders that print each read as one line,
 # ":" and its base64, as soon as it arrives: the SDK hands output on as UTF-8 text, which would turn
 # bytes that are not UTF-8 (the length prefix of a framed protocol such as verifiers' ACP) into
-# U+FFFD. The encoders ignore SIGTERM, so what a terminated command prints on its way out arrives;
-# the wrapper waits up to 2 s for them once the command has exited (a child it left running may
-# hold its stdout open).
+# U+FFFD. The encoders ignore SIGTERM, so what a terminated command prints on its way out arrives.
+# Once the command exits the wrapper waits up to 2 s for them (a USR1 from a timer ends the wait),
+# never killing them: a child the command left running keeps its stdout and is never sent SIGPIPE.
+# The wrapper's own names start with __vfp_, so a caller's variables reach the command unchanged.
 _EXEC_WRAPPER = (
-    'f=$1; shift; mkfifo -m 600 "$f" "$f.1" "$f.2" || exit 125; '
-    "enc() { trap '' TERM; while c=$(dd bs=49152 count=1 2> /dev/null | base64 -w 0) && "
-    '[ -n "$c" ]; do printf \':%s\\n\' "$c"; done; }; '
-    'enc < "$f.1" & o=$!; enc < "$f.2" >&2 & e=$!; '
-    'sleep 2147483647 > "$f" & h=$!; trap : TERM; '
-    '"$@" < "$f" > "$f.1" 2> "$f.2"; rc=$?; kill "$h" 2> /dev/null; '
-    '{ sleep 2; kill -9 "$o" "$e"; } > /dev/null 2>&1 & k=$!; wait "$o" "$e"; kill "$k" 2> /dev/null; '
-    'rm -f "$f" "$f.1" "$f.2"; exit "$rc"'
+    'trap : USR1 USR2; __vfp_f=$1; shift; mkfifo -m 600 "$__vfp_f" "$__vfp_f.1" "$__vfp_f.2" || exit 125; '
+    "__vfp_enc() { trap '' TERM USR1 USR2; while __vfp_c=$(dd bs=49152 count=1 2> /dev/null | base64 -w 0) "
+    '&& [ -n "$__vfp_c" ]; do printf \':%s\\n\' "$__vfp_c"; done; }; '
+    '__vfp_enc < "$__vfp_f.1" & __vfp_o=$!; __vfp_enc < "$__vfp_f.2" >&2 & __vfp_e=$!; '
+    'sleep 2147483647 > "$__vfp_f" & __vfp_h=$!; trap : TERM; '
+    '"$@" < "$__vfp_f" > "$__vfp_f.1" 2> "$__vfp_f.2"; __vfp_r=$?; kill "$__vfp_h" 2> /dev/null; '
+    '{ sleep 2; kill -USR1 $$; } > /dev/null 2>&1 & __vfp_k=$!; wait "$__vfp_o" "$__vfp_e"; '
+    'kill "$__vfp_k" 2> /dev/null; rm -f "$__vfp_f" "$__vfp_f.1" "$__vfp_f.2"; exit "$__vfp_r"'
 )
 # One stdin write: wait briefly for the FIFO (the command may still be starting), then write
 # the decoded bytes; `timeout` ends an open that waits for a reader that is gone.
@@ -85,9 +86,16 @@ class _Lines:
             self._queue.put_nowait(self._decoded(line, "\n"))
 
     def close(self) -> None:
-        if self._rest:
-            self._queue.put_nowait(self._decoded(self._rest, ""))
-            self._rest = ""
+        rest, self._rest = self._rest, ""
+        if rest.startswith(":"):
+            # An encoder stopped mid-line (a SIGKILL): what its whole base64 groups hold, never
+            # the encoding itself as output.
+            whole = rest[1 : 1 + (len(rest) - 1) // 4 * 4]
+            with contextlib.suppress(binascii.Error, ValueError):
+                if data := base64.b64decode(whole, validate=True):
+                    self._queue.put_nowait(data)
+        elif rest:
+            self._queue.put_nowait(rest.encode())
         self._queue.put_nowait(None)
 
     @staticmethod

@@ -59,8 +59,8 @@ class PrizedConfig(CustomRuntimeConfig):
     When every parent's machine is full, another parent is built (running `setup` again), up to
     this many per shape and process."""
     capacity_wait: float = Field(default=600, ge=0)
-    """Seconds a rollout waits for room (a full machine, a workspace quota) before it fails; 0
-    fails it at the first refusal. Time spent waiting for a parent's `setup` does not count."""
+    """Seconds a rollout keeps trying once it has been refused room (a full machine, a workspace
+    quota); 0 fails it at the first refusal. The time a parent's `setup` takes does not count."""
     max_runtime_min: int | None = Field(default=None, ge=1)
     """Minutes each sandbox may run (Prized's default is 24 hours, and 60 minutes, the most, on the
     free tier; paused time does not count).
