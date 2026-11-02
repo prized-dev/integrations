@@ -1,0 +1,3 @@
+#!/bin/sh
+# The fake prized CLI (see prized.mjs).
+exec node "$(dirname "$0")/prized.mjs" "$@"

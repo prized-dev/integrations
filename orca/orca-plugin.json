@@ -1,0 +1,32 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stablyai/orca/main/docs/schemas/plugins/orca-plugin.v2.schema.json",
+  "manifestVersion": 2,
+  "execution": "declarative",
+  "id": "prized-sandbox",
+  "publisher": "prized-dev",
+  "name": "Prized Sandbox",
+  "version": "0.1.0",
+  "description": "Run each Orca workspace in its own Prized sandbox, reached over SSH. Sleeping a workspace pauses the sandbox with its memory, so agents and processes pick up where they were.",
+  "license": "Apache-2.0",
+  "homepage": "https://prized.dev/docs/orca?via=orca",
+  "repository": "https://github.com/prized-dev/orca-prized-plugin",
+  "author": {
+    "name": "Prized",
+    "url": "https://prized.dev?via=orca"
+  },
+  "icon": "assets/icon.png",
+  "cover": {
+    "path": "assets/cover.png",
+    "alt": "Prized Sandbox for Orca: every workspace in its own sandbox, paused with its memory while it sleeps"
+  },
+  "engines": {
+    "orca": ">=1.4.245"
+  },
+  "contributes": {
+    "vmRecipes": [
+      {
+        "path": "vm-recipe.json"
+      }
+    ]
+  }
+}

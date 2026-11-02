@@ -199,6 +199,17 @@ case $DIR in
     npm run typecheck
     npm run build
     offline npm test ;;
+  orca)
+    # An Orca plugin with no dependencies: node --test against a stand-in for the Prized API on
+    # 127.0.0.1, a fake prized CLI and the real OpenSSH (ssh, ssh-keygen, and sshd in inetd mode set up
+    # like a sandbox guest). Without sshd the lifecycle tests skip, so CI installs it first.
+    if [ ! -x /usr/sbin/sshd ] && [ -n "${CI:-}" ]; then
+      sudo -n apt-get update -qq && sudo -n apt-get install -y -qq --no-install-recommends openssh-server >/dev/null
+    fi
+    cp -r "$ROOT/$DIR/." "$WORK/pkg"
+    cd "$WORK/pkg"
+    node --version
+    offline node --test test/unit.test.mjs test/lifecycle.test.mjs ;;
   *)
     echo "scripts/test.sh doesn't know $DIR yet: add a case for it" >&2; exit 2 ;;
 esac

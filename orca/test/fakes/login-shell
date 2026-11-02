@@ -1,0 +1,6 @@
+#!/bin/sh
+# A login shell for tests: `login-shell -ilc SCRIPT` prints a banner (as chatty profiles do), exports
+# PRIZED_API_KEY when FAKE_LOGIN_KEY is set, and runs SCRIPT.
+echo "Welcome! (a profile that prints things)"
+if [ -n "${FAKE_LOGIN_KEY:-}" ]; then PRIZED_API_KEY=$FAKE_LOGIN_KEY; export PRIZED_API_KEY; else unset PRIZED_API_KEY; fi
+exec /bin/sh -c "$2"

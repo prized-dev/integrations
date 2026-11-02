@@ -20,6 +20,7 @@ Each folder is its own package with its own README, tests and release. You need 
 | [`pydantic-ai`](pydantic-ai) | Pydantic AI: workspace | `pydantic-ai-prized` | Coming 2026-11-05 | [README](pydantic-ai/README.md) |
 | [`langchain-js`](langchain-js) | LangChain Deep Agents (JS): sandbox | `@prized/langchain` | Coming 2026-11-05 | [README](langchain-js/README.md) |
 | [`mastra`](mastra) | Mastra: workspace sandbox and filesystem | `@prized/mastra` | Coming 2026-11-05 | [README](mastra/README.md) |
+| [`orca`](orca) | Orca: VM recipe plugin (one sandbox per workspace, paused with its memory while the workspace sleeps) | `prized-dev/orca-prized-plugin` | Experimental: tested against a stand-in for Orca and a real sandbox, not yet run in Orca | [README](orca/README.md) |
 
 "Coming 2026-11-05" means the package itself isn't on PyPI or npm yet. The Prized SDKs it uses already are (`prized` on PyPI, `@prized/sdk` on npm).
 

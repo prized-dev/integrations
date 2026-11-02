@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "prized-sandbox",
+  "name": "Prized Sandbox",
+  "description": "One Prized sandbox per workspace, reached over SSH. Sleep pauses it with its memory; wake resumes it.",
+  "checkoutMode": "provisioned-root",
+  "create": "\"$HOME/.prized-orca/bin/prized-orca\" create",
+  "suspend": "\"$HOME/.prized-orca/bin/prized-orca\" suspend",
+  "resume": "\"$HOME/.prized-orca/bin/prized-orca\" resume",
+  "destroy": "\"$HOME/.prized-orca/bin/prized-orca\" destroy"
+}

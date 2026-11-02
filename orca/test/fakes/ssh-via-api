@@ -1,0 +1,3 @@
+#!/bin/sh
+# test/live.mjs only: see ssh-via-api.mjs.
+exec node "$(dirname "$0")/ssh-via-api.mjs" "$@"

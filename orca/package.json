@@ -1,0 +1,39 @@
+{
+  "name": "orca-prized-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An Orca plugin that runs each workspace in its own Prized sandbox over SSH, paused with its memory while the workspace sleeps.",
+  "type": "module",
+  "bin": {
+    "prized-orca": "bin/prized-orca.mjs"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "assets",
+    "bin",
+    "src",
+    "orca-plugin.json",
+    "vm-recipe.json"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "keywords": [
+    "orca",
+    "orca-plugin",
+    "prized",
+    "sandbox",
+    "claude-code",
+    "codex"
+  ],
+  "homepage": "https://prized.dev/docs/orca?via=orca",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prized-dev/orca-prized-plugin.git"
+  },
+  "license": "Apache-2.0"
+}
