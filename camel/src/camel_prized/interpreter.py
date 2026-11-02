@@ -34,11 +34,12 @@ from ._sandbox import (
     logger,
 )
 
-# language -> (inline argv before the code, argv before an uploaded file, file suffix)
-_LANGUAGES: dict[str, tuple[tuple[str, ...], tuple[str, ...], str]] = {
-    "python": (("python3", "-c"), ("python3",), ".py"),
-    "javascript": (("node", "-e"), ("node",), ".js"),
-    "bash": (("bash", "-c"), ("bash",), ".sh"),
+# language -> (inline argv before the code, the command for an uploaded file, file suffix). Python
+# and Node read an uploaded file from stdin, so imports resolve from the working directory as inline.
+_LANGUAGES: dict[str, tuple[tuple[str, ...], str, str]] = {
+    "python": (("python3", "-c"), "python3 - < {path}", ".py"),
+    "javascript": (("node", "-e"), "node - < {path}", ".js"),
+    "bash": (("bash", "-c"), "bash {path}", ".sh"),
 }
 
 

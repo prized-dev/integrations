@@ -368,6 +368,18 @@ def test_cleanup_reset_and_with(cloud):
     runtime.cleanup()
 
 
+def test_reset_raises_when_the_old_sandbox_cannot_be_deleted(cloud):
+    runtime = PrizedRuntime().build()
+    first = cloud.created[0]
+    first.fail_delete = 1
+    with pytest.raises(PrizedError):
+        runtime.reset()
+    assert len(cloud.created) == 1
+    runtime.reset()  # retried: deleted now, and a fresh one made
+    assert first.deletes == 1 and runtime.sandbox_id == cloud.created[1].id
+    runtime.cleanup()
+
+
 def test_info(cloud):
     runtime = PrizedRuntime()
     with pytest.raises(RuntimeError):

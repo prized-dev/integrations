@@ -36,11 +36,11 @@ DEFAULT_TIMEOUT = 120.0
 DEFAULT_AUTO_PAUSE_MIN = 10
 DEFAULT_AUTO_DELETE_MIN = 60
 LABELS = {"created-by": "camel"}
-WORKDIR = "/home/prized/work"
+SCRATCH_DIR = "/home/prized/.camel"
 # Every command starts with this, in new and attached sandboxes alike. The templates' Python is
 # "externally managed": without PIP_BREAK_SYSTEM_PACKAGES, `pip install` fails. With it, pip installs
 # for the user into ~/.local, and ~/.local/bin on the PATH makes the commands it installs work.
-COMMAND_PREFIX = 'export PATH="$HOME/.local/bin:$PATH" PIP_BREAK_SYSTEM_PACKAGES=1; '
+COMMAND_PREFIX = 'export PATH="$HOME/.local/bin:$PATH" PIP_BREAK_SYSTEM_PACKAGES="${PIP_BREAK_SYSTEM_PACKAGES-1}"; '
 # Code and commands go inline (one argument) while the command stays under this; longer ones are
 # uploaded as a file first (Linux caps a single argument at 128 KiB).
 MAX_INLINE_COMMAND = 64 * 1024
@@ -163,32 +163,35 @@ class SandboxHolder:
         if not gone:
             return False
         with self._lock:
-            if self._sandbox is sandbox:
-                logger.warning("Prized sandbox %s is %s; the next run gets a new one.", sandbox.id, state or "gone")
-                if state == "error":
-                    try:  # a failed sandbox still counts toward the workspace's quota
-                        sandbox.delete()
-                    except PrizedError as err_delete:
-                        logger.warning("Could not delete failed sandbox %s: %s", sandbox.id, err_delete)
-                sandbox.close()
+            mine = self._sandbox is sandbox
+            if mine:
                 self._sandbox = None
+        if mine:
+            logger.warning("Prized sandbox %s is %s; the next run gets a new one.", sandbox.id, state or "gone")
+            if state == "error":
+                try:  # a failed sandbox still counts toward the workspace's quota
+                    sandbox.delete()
+                except PrizedError as err_delete:
+                    logger.warning("Could not delete failed sandbox %s: %s", sandbox.id, err_delete)
+            sandbox.close()
         return True
 
     def run_program(
-        self, inline: Sequence[str], by_file: Sequence[str], suffix: str, code: str, timeout: float
+        self, inline: Sequence[str], by_file: str, suffix: str, code: str, timeout: float
     ) -> tuple[ExecResult, bool, bool]:
         """Run ``code`` with ``inline + [code]`` (``python3 -c CODE``), or, when that command would be
-        too long for one argument, upload it into the working directory and run ``by_file + [path]``.
+        too long for one argument, upload it and run ``by_file`` with ``{path}`` filled in (``python3 -
+        < {path}``: from stdin, so imports resolve from the working directory as they do inline).
         Returns the result, whether it timed out, and whether the sandbox was replaced."""
         return self._run(COMMAND_PREFIX + shlex.join([*inline, code]), by_file, suffix, code, timeout)
 
     def run_shell(self, command: str, timeout: float) -> tuple[ExecResult, bool, bool]:
         """Run one shell command (uploaded as a script first when it is long). Returns the result,
         whether it timed out, and whether the sandbox was replaced."""
-        return self._run(COMMAND_PREFIX + command, ("bash",), ".sh", command, timeout)
+        return self._run(COMMAND_PREFIX + command, "bash {path}", ".sh", command, timeout)
 
     def _run(
-        self, command: str, by_file: Sequence[str], suffix: str, payload: str, timeout: float
+        self, command: str, by_file: str, suffix: str, payload: str, timeout: float
     ) -> tuple[ExecResult, bool, bool]:
         limit = MAX_INLINE_COMMAND if timeout <= MAX_BLOCKING_TIMEOUT else MAX_INLINE_DETACHED
         if len(command.encode()) <= limit:
@@ -196,11 +199,12 @@ class SandboxHolder:
             return result, timed_out, replaced
 
         def by_upload(sandbox: prized.Sandbox) -> tuple[ExecResult, bool]:
-            # In the working directory, so imports and relative paths resolve as they do inline.
-            path = f"{WORKDIR}/.camel-run-{uuid.uuid4().hex}{suffix}"
+            # Out of the working directory's way; removed after the run (a run stopped by its
+            # timeout leaves it there).
+            path = f"{SCRATCH_DIR}/run-{uuid.uuid4().hex}{suffix}"
             sandbox.files.write(path, payload)
             quoted = shlex.quote(path)
-            script = f"{COMMAND_PREFIX}{shlex.join(by_file)} {quoted}; rc=$?; rm -f {quoted}; exit $rc"
+            script = f"{COMMAND_PREFIX}{by_file.format(path=quoted)}; rc=$?; rm -f {quoted}; exit $rc"
             return _exec(sandbox, script, timeout)
 
         (result, timed_out), replaced = self.attempt(by_upload)

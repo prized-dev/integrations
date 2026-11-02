@@ -96,7 +96,7 @@ def test_large_code_goes_up_as_a_file_and_is_removed(cloud):
     assert PrizedInterpreter().run(code) == "big ok\n"
     sandbox = cloud.created[0]
     (path,) = sandbox.writes
-    assert path.startswith("/home/prized/work/.camel-run-") and path.endswith(".py")
+    assert path.startswith("/home/prized/.camel/run-") and path.endswith(".py")
     assert len(sandbox.commands[0]) < 1000  # the code itself did not go on the command line
     assert not sandbox.local(path).exists()
 
@@ -203,6 +203,20 @@ def test_a_failed_delete_can_be_retried(cloud):
     assert sandbox.deletes == 0 and not sandbox.closed
     interp.close()
     assert sandbox.deletes == 1 and sandbox.closed
+
+
+def test_a_pip_setting_of_your_own_wins(cloud):
+    interp = PrizedInterpreter(env_vars={"PIP_BREAK_SYSTEM_PACKAGES": "0"})
+    assert interp.execute_command("echo $PIP_BREAK_SYSTEM_PACKAGES") == "0\n"
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node is not installed here")
+def test_large_javascript_requires_from_the_working_directory(cloud):
+    interp = PrizedInterpreter()
+    interp.execute_command("echo 'module.exports = 9' > helper.js")
+    code = "//" + "j" * MAX_INLINE_COMMAND + "\nconsole.log(require('./helper.js'))"
+    assert interp.run(code, "javascript") == "9\n"
+    assert cloud.created[0].writes and not list(cloud.created[0].local("/home/prized/.camel").iterdir())
 
 
 def test_attached_sandbox_gets_the_pip_setting_too(cloud):

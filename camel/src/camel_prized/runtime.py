@@ -206,7 +206,7 @@ class PrizedRuntime(BaseRuntime):
             )
             try:
                 result, timed_out, _ = self._holder.run_program(
-                    ("python3", "-c"), ("python3",), ".py", runner, self.timeout
+                    ("python3", "-c"), "python3 - < {path}", ".py", runner, self.timeout
                 )
             except PrizedError as err:
                 logger.error("Prized sandbox error running %s: %s", name, err)
@@ -239,8 +239,12 @@ class PrizedRuntime(BaseRuntime):
 
     def reset(self) -> PrizedRuntime:
         r"""Deletes the sandbox (if this runtime created it) and builds again: a fresh sandbox, or the
-        same attached one."""
-        self.cleanup()
+        same attached one.
+
+        Raises:
+            PrizedError: If the old sandbox could not be deleted (call again to retry).
+        """
+        self._holder.close()
         return self.build()
 
     def info(self) -> str:
