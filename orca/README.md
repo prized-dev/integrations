@@ -31,7 +31,7 @@ You need Orca 1.4.245 or later on macOS or Linux, Node.js 22 or later, Git, Open
 
 5. Create a workspace and pick **Prized Sandbox** under **Run on > Per-Workspace Environment**.
 
-`~/.prized-orca/bin/prized-orca doctor` checks all of this without creating anything. It also names any sandbox the plugin made that no workspace uses (a create killed outright), so you can delete it.
+`~/.prized-orca/bin/prized-orca doctor` checks all of this without creating anything. It also names any sandbox the plugin made on this machine that no workspace uses (a create killed outright), so you can delete it.
 
 ## What happens
 

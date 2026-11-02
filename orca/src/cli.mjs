@@ -56,8 +56,10 @@ export function prizedVersion(bin, env = process.env) {
   return m ? m.slice(1, 4).map(Number) : null;
 }
 
+// A build from source (0.0.x) passes: it is newer than any release it was built after.
 export function versionOk(v, min = MIN_CLI) {
   if (!v) return false;
+  if (v[0] === 0 && v[1] === 0) return true;
   for (let i = 0; i < 3; i++) if (v[i] !== min[i]) return v[i] > min[i];
   return true;
 }

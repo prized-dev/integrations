@@ -10,6 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { after, before, describe, test } from "node:test";
 import { API_KEY, startFakeApi } from "./fake-api.mjs";
+import { machineLabel } from "../src/commands.mjs";
 import { PKG, allText, haveSshKit, makeRepo, makeSshdKit, runAdapter, tempDir, testEnv } from "./helpers.mjs";
 import { checkoutModeFailure, orcaSsh, orcaSshExit, parseRecipe, parseResult, payload, resumeIntegrityError, runPhase } from "./orca-harness.mjs";
 
@@ -125,7 +126,8 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
     assert.deepEqual(sbx.resources, { vcpu: 2, memoryMb: 4096 });
     assert.equal(sbx.autoPauseMin, 30);
     assert.equal(sbx.maxRuntimeMin, 10080);
-    assert.deepEqual(sbx.labels, { via: "orca", "orca-instance": context.instanceId, "orca-workspace": "fix login bug" });
+    assert.deepEqual(sbx.labels, { via: "orca", "orca-host": machineLabel(), "orca-instance": context.instanceId, "orca-workspace": "fix login bug" });
+    assert.match(machineLabel(), /^[0-9a-f]{12}$/);
     assert.equal(connection.projectRoot, `${sbx.home}/work/repo`);
 
     const g = (...a) => spawnSync("git", ["-C", connection.projectRoot, ...a], { encoding: "utf8" }).stdout.trim();
@@ -281,6 +283,23 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
     assert.deepEqual(state(), {});
   });
 
+  test("a definite refusal makes nothing, so nothing is deleted and the exit is quick", async () => {
+    api.opts.refuseCreate = { status: 409, body: { error: "insufficient_balance", message: "Top up to start a sandbox." } };
+    try {
+      const deletes = api.requests.filter((q) => q.method === "DELETE").length;
+      const t = Date.now();
+      const r = await phase("create", { context: { ...context, instanceId: "orca-refused-1" } });
+      assert.notEqual(r.exitCode, 0);
+      assert.match(r.stderr, /Top up to start a sandbox/);
+      assert.doesNotMatch(r.stderr, /deleting any sandbox|prized sandbox rm/);
+      assert.equal(api.requests.filter((q) => q.method === "DELETE").length, deletes);
+      assert.ok(Date.now() - t < 2_000, `took ${Date.now() - t} ms`);
+      assert.deepEqual(fs.readdirSync(env.TMPDIR), []);
+    } finally {
+      api.opts.refuseCreate = null;
+    }
+  });
+
   test("a create whose answer is lost is asked again, and makes one sandbox", async () => {
     api.opts.dropCreates = 1;
     const ctx = { ...context, instanceId: "orca-lost-1" };
@@ -334,11 +353,17 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
   test("doctor names a sandbox the plugin made that backs no workspace", async () => {
     const ok = await runAdapter(["doctor"], { env });
     assert.equal(ok.status, 0, ok.stderr);
-    api.sandboxes.set("sbx_00000000000000ff", { id: "sbx_00000000000000ff", state: "paused", labels: { via: "orca" }, home: api.root });
+    const old = new Date(Date.now() - 3_600_000).toISOString();
+    const add = (id, labels, createdAt = old) => api.sandboxes.set(id, { id, state: "paused", labels, home: api.root, createdAt });
+    add("sbx_00000000000000fd", { via: "orca", "orca-host": "0123456789ab", "orca-workspace": "a teammate's" });
+    add("sbx_00000000000000fe", { via: "orca", "orca-host": machineLabel() }, new Date().toISOString());
+    const others = await runAdapter(["doctor"], { env });
+    assert.equal(others.status, 0, "another machine's sandbox, and one still being made here, are not strays");
+    add("sbx_00000000000000ff", { via: "orca", "orca-host": machineLabel(), "orca-workspace": "old one" });
     const r = await runAdapter(["doctor"], { env });
     assert.equal(r.status, 1);
-    assert.match(r.stderr, /FAIL no stray sandboxes: sbx_00000000000000ff \(paused\)/);
-    api.sandboxes.get("sbx_00000000000000ff").state = "deleted";
+    assert.match(r.stderr, /FAIL no stray sandboxes from this machine: sbx_00000000000000ff \(paused, workspace "old one"\)/);
+    for (const s of ["fd", "fe", "ff"]) api.sandboxes.get(`sbx_00000000000000${s}`).state = "deleted";
   });
 
   test("the key went only to the API, in a header: never to a process, a file or a log", async () => {

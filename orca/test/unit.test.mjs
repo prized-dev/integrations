@@ -272,6 +272,7 @@ describe("Orca's side", () => {
     assert.equal(versionOk([1, 0, 0]), true);
     assert.equal(versionOk([0, 21, 8]), false);
     assert.equal(versionOk(null), false);
+    assert.equal(versionOk([0, 0, 1]), true, "a build from source");
   });
 
   test("a pause is repeated until the sandbox stays paused, and a gone sandbox is fine", async () => {
@@ -283,6 +284,8 @@ describe("Orca's side", () => {
     assert.equal(await pauseFirmly({ get: async () => null }, "sbx_1"), "gone");
     const stubborn = { get: async () => ({ state: "running" }), pause: async () => {}, sleep: async () => {} };
     await assert.rejects(pauseFirmly(stubborn, "sbx_1"), /keeps waking up/);
+    const deleting = { get: async () => ({ state: "running" }), pause: async () => { throw new PrizedApiError(410, "sandbox_deleted", "deleting"); }, sleep: async () => {} };
+    assert.equal(await pauseFirmly(deleting, "sbx_1"), "gone");
   });
 
   test("credentials never ride along in a remote URL", () => {

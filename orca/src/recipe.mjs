@@ -111,9 +111,12 @@ export function makeBundle(src) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prized-orca-"));
   const file = path.join(dir, "repo.bundle");
   const ref = `refs/prized-orca/tmp-${process.pid}-${Date.now()}`;
-  gitOk(["update-ref", ref, src.head], { cwd: src.repoPath });
   try {
+    gitOk(["update-ref", ref, src.head], { cwd: src.repoPath });
     gitOk(["bundle", "create", "--quiet", file, ref], { cwd: src.repoPath });
+  } catch (error) {
+    fs.rmSync(dir, { recursive: true, force: true });
+    throw error;
   } finally {
     git(["update-ref", "-d", ref], { cwd: src.repoPath });
   }

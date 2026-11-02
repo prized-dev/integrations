@@ -16,7 +16,7 @@ export async function startFakeApi(root, options = {}) {
   const requests = [];
   // Faults a test can turn on: refuse long run times, fail a command, hold a create's answer,
   // drop the connection after a create, or let a resume land right after a pause.
-  const opts = { maxRuntimeLimit: null, failExec: null, holdCreateMs: 0, dropCreates: 0, flipAfterPause: false, ...options };
+  const opts = { maxRuntimeLimit: null, failExec: null, holdCreateMs: 0, dropCreates: 0, flipAfterPause: false, refuseCreate: null, ...options };
   let seq = 0;
 
   const json = (res, status, body) => {
@@ -32,6 +32,7 @@ export async function startFakeApi(root, options = {}) {
     autoPauseMin: s.autoPauseMin ?? null,
     maxRuntimeMin: s.maxRuntimeMin ?? null,
     toolboxBase: `${server.base}/edge/${s.id}`,
+    createdAt: s.createdAt ?? null,
   });
   const readBody = (req) =>
     new Promise((resolve) => {
@@ -65,6 +66,7 @@ export async function startFakeApi(root, options = {}) {
           return json(res, 422, { error: "unknown_field", field: k });
         }
       }
+      if (opts.refuseCreate) return json(res, opts.refuseCreate.status, opts.refuseCreate.body);
       if (opts.maxRuntimeLimit && input.maxRuntimeMin > opts.maxRuntimeLimit) {
         return json(res, 429, {
           error: "sandbox_quota_exceeded",
@@ -77,7 +79,7 @@ export async function startFakeApi(root, options = {}) {
       const id = `sbx_${(++seq).toString(16).padStart(16, "0")}`;
       const home = path.join(root, "sandboxes", id, "home");
       fs.mkdirSync(path.join(home, "work"), { recursive: true });
-      const s = { id, state: "running", home, ...input, pauses: 0, resumes: 0, flip: false };
+      const s = { id, state: "running", home, ...input, pauses: 0, resumes: 0, flip: false, createdAt: new Date().toISOString() };
       sandboxes.set(id, s);
       if (idem) idempotency.set(idem, { id, body: body.toString() });
       if (opts.dropCreates > 0) {

@@ -2,8 +2,9 @@
 // cert-hook and proxy (the include file); people run setup, doctor, list and uninstall.
 
 import { spawn, spawnSync } from "node:child_process";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
@@ -42,7 +43,6 @@ import {
   paths,
   readJson,
   say,
-  sleep,
   sq,
   trace,
   userSshConfig,
@@ -115,6 +115,11 @@ function sandboxBody(config, labels, maxRuntimeMin) {
   };
 }
 
+// No answer, or one that says nothing about the outcome: the request may have been carried out.
+function isTransient(error) {
+  return error instanceof PrizedApiError && (error.status === 0 || error.status >= 500 || error.code === "idempotency_in_progress");
+}
+
 // A run time past what the workspace allows (the free tier's 60 minutes, or a plan's maximum) is
 // refused rather than capped: ask again with the maximum the refusal names, or the default.
 export function runtimeRefusal(error) {
@@ -135,6 +140,12 @@ async function createSandbox(client, config, labels, instance) {
     say(`a ${want}-minute run time was refused (${error.code}); using ${refusal.limit ? `${refusal.limit} minutes` : "the workspace default"}`);
     return client.create(sandboxBody(config, labels, refusal.limit), `${instance}-runtime-${refusal.limit ?? "default"}`);
   }
+}
+
+// Which machine made a sandbox, so doctor only calls this machine's leftovers strays: a hash of the
+// host name and user, never the names themselves.
+export function machineLabel() {
+  return createHash("sha256").update(`${os.hostname()}\0${process.getuid?.() ?? os.userInfo().username}`).digest("hex").slice(0, 12);
 }
 
 function labelValue(value, max) {
@@ -159,44 +170,53 @@ export async function create(env = process.env) {
   const instance = env.ORCA_VM_INSTANCE_ID || `orca-${randomUUID()}`;
   const labels = {
     via: "orca",
+    "orca-host": machineLabel(),
     "orca-instance": labelValue(instance, 256),
     ...(env.ORCA_WORKSPACE_NAME ? { "orca-workspace": labelValue(env.ORCA_WORKSPACE_NAME, 256) } : {}),
   };
 
   // Everything a failed or cancelled create has to undo. Orca cancels with SIGTERM to the whole
-  // process group and SIGKILL 5 seconds later, so the handlers go in before anything is made, and
-  // the error path and a signal share one cleanup.
-  const made = { bundleDir: null, posted: false, creating: null, id: null };
+  // process group and SIGKILL 5 seconds later, so the handlers go in before anything is made, the
+  // error path and a signal share one cleanup, and once it starts the main flow stops at its next
+  // step (live()).
+  // made.answer: "pending" while the create request is out, "ok", "refused" (a definite no: nothing
+  // was made) or "unknown" (no answer: it may have been made).
+  const made = { bundleDir: null, answer: null, creating: null, id: null };
   let cleaning = null;
+  const live = () => {
+    if (cleaning) throw new UserError("cancelled");
+  };
   const cleanup = (why) =>
     (cleaning ??= (async () => {
-      if (made.posted) {
-        // A create still in flight may yet answer with the id; wait for it briefly.
-        if (!made.id && made.creating) await Promise.race([made.creating.catch(() => null), sleep(2_500)]);
-        try {
-          if (made.id) {
-            say(`create failed (${why}); deleting ${made.id}…`);
-            await client.remove(made.id);
-            say(`deleted ${made.id}`);
-          } else {
-            // The answer never came, so the sandbox may or may not exist: delete by this workspace's labels.
-            say(`create failed (${why}); deleting any sandbox labelled orca-instance=${labels["orca-instance"]}…`);
-            const n = await client.removeByLabels({ via: "orca", "orca-instance": labels["orca-instance"] });
-            say(n ? `deleted ${n}` : "none was made");
-          }
-        } catch (error) {
-          say(
-            `could not delete it: ${error.message}. Delete it with: prized sandbox rm --label orca-instance=${labels["orca-instance"]} ` +
-              "(or at https://prized.dev/dashboard/sandboxes?via=orca)",
-          );
-        }
+      if (!made.id && made.answer === "pending") {
+        // The answer may still come with the id; wait for it briefly.
+        let timer;
+        await Promise.race([made.creating.catch(() => null), new Promise((resolve) => (timer = setTimeout(resolve, 2_500)))]);
+        clearTimeout(timer);
+      }
+      try {
         if (made.id) {
-          try {
-            dropEntry(made.id, env);
-            writeInclude(adapter, env);
-          } catch {
-            // the state is a record; the sandbox is what matters
-          }
+          say(`create failed (${why}); deleting ${made.id}…`);
+          await client.remove(made.id);
+          say(`deleted ${made.id}`);
+        } else if (made.answer === "pending" || made.answer === "unknown") {
+          // No answer, so the sandbox may or may not exist: delete by this create's own labels.
+          say(`create failed (${why}); deleting any sandbox labelled orca-instance=${labels["orca-instance"]}…`);
+          const n = await client.removeByLabels({ via: "orca", "orca-instance": labels["orca-instance"] });
+          say(n ? `deleted ${n}` : "none was made");
+        }
+      } catch (error) {
+        say(
+          `could not delete it: ${error.message}. Delete it with: prized sandbox rm --label orca-instance=${labels["orca-instance"]} ` +
+            "(or at https://prized.dev/dashboard/sandboxes?via=orca)",
+        );
+      }
+      if (made.id) {
+        try {
+          dropEntry(made.id, env);
+          writeInclude(adapter, env);
+        } catch {
+          // the state is a record; the sandbox is what matters
         }
       }
       if (made.bundleDir) fs.rmSync(made.bundleDir, { recursive: true, force: true });
@@ -216,18 +236,31 @@ export async function create(env = process.env) {
     if (bundle.bytes > MAX_BUNDLE_BYTES) {
       throw new UserError(`the repository's history is ${(bundle.bytes / 1e6).toFixed(0)} MB; a sandbox takes an upload of up to 100 MB`);
     }
+    live();
 
     say(`creating a sandbox (${config.template}, ${config.vcpu} vCPU, ${config.memoryGb} GB)…`);
-    made.posted = true;
-    made.creating = createSandbox(client, config, labels, instance);
+    made.answer = "pending";
+    made.creating = createSandbox(client, config, labels, instance).then(
+      (sandbox) => {
+        made.answer = "ok";
+        if (isSandboxId(sandbox?.id)) made.id = sandbox.id;
+        return sandbox;
+      },
+      (error) => {
+        made.answer = isTransient(error) ? "unknown" : "refused";
+        throw error;
+      },
+    );
     let sandbox = await made.creating;
     if (!isSandboxId(sandbox?.id)) throw new UserError("Prized answered a create without a sandbox id");
-    made.id = sandbox.id;
     const id = sandbox.id;
     trace({ cmd: "create", sandbox: id, instance }, env);
+    live();
 
     if (sandbox.state !== "running") sandbox = await client.waitFor(id, ["running"]);
+    live();
     const home = (await client.exec(sandbox, 'printf %s "$HOME"', 60)).stdout.trim();
+    live();
     if (!home.startsWith("/") || /[\s'"\\]/.test(home)) throw new UserError(`the sandbox's home directory is ${JSON.stringify(home)}`);
     const root = `${home}/work/${src.repoName}`;
     const bundlePath = `${home}/.prized-orca/repo.bundle`;
@@ -235,6 +268,7 @@ export async function create(env = process.env) {
     if (mk.exitCode !== 0) throw new UserError(`mkdir in the sandbox failed: ${mk.stderr.trim()}`);
     say("uploading the repository…");
     await client.upload(sandbox, bundlePath, fs.readFileSync(bundle.file));
+    live();
     const run = await client.exec(
       sandbox,
       checkoutScript({ root, bundlePath, bundleRef: bundle.ref, head: src.head, branch: src.branch, repoUrl: src.repoUrl, identity }),
@@ -243,6 +277,7 @@ export async function create(env = process.env) {
     if (run.exitCode !== 0) throw new UserError(`the checkout in the sandbox failed (exit ${run.exitCode}): ${run.stderr.trim()}`);
     const got = run.stdout.trim().split("\n").pop();
     if (got !== src.head) throw new UserError(`the checkout landed on ${got}, not ${src.head}`);
+    live();
 
     putEntry(
       id,
@@ -257,7 +292,9 @@ export async function create(env = process.env) {
       env,
     );
     say("opening a shell with your prized login…");
+    live();
     openShell(prized, id, { env });
+    live();
     const cliConfig = findCliConfig(id, cliSandboxDirs(id, env));
     if (!cliConfig) throw new UserError(`the prized CLI opened a shell but wrote no ssh_config for ${id}: is it current? (prized update)`);
     const cli = readCliConfig(cliConfig);
@@ -266,6 +303,7 @@ export async function create(env = process.env) {
 
     const result = recipeResult({ id, user: cli.user, projectRoot: root, proxyCommand: proxyCommandFor(adapter, id) });
     await checkDial(result, root, env);
+    live();
     writeResult(result);
     say(`${id} is ready: ${root}`);
   } catch (error) {
@@ -293,6 +331,7 @@ export async function suspend(env = process.env) {
   const p = parsePayload(await readStdin());
   // The key first: a suspend that can't reach Prized must change nothing here.
   const { client } = api(env);
+  const wasAsleep = Boolean(getEntry(p.id, env)?.asleep);
   // Asleep before the pause: from then on ssh's hooks and proxy leave the sandbox alone.
   putEntry(p.id, { asleep: true }, env);
   try {
@@ -300,7 +339,7 @@ export async function suspend(env = process.env) {
     say(outcome === "gone" ? `${p.id} is already gone (its run time ended, or it was deleted)` : `paused ${p.id}: its memory, processes and files are kept`);
   } catch (error) {
     // Orca offers no wake for a workspace whose suspend failed, so leave it usable as it was.
-    putEntry(p.id, { asleep: false }, env);
+    putEntry(p.id, { asleep: wasAsleep }, env);
     throw error;
   }
 }
@@ -320,7 +359,12 @@ export async function pauseFirmly(client, id, timeoutMs = 180_000) {
       continue;
     }
     if (posts++ >= 3) throw new UserError(`${id} keeps waking up after a pause`);
-    await client.pause(id);
+    try {
+      await client.pause(id);
+    } catch (error) {
+      if (error?.status === 404 || error?.status === 410) return "gone";
+      throw error;
+    }
   }
   throw new UserError(`${id} did not pause in ${Math.round(timeoutMs / 1000)}s`);
 }
@@ -578,14 +622,23 @@ export async function doctor(env = process.env) {
     const { client, source } = api(env);
     const me = await client.me();
     add("PRIZED_API_KEY (makes sandboxes)", canWriteSandboxes(me), `from your ${source}; workspace ${me?.workspace?.name ?? "?"}`);
-    // Sandboxes the plugin made that no workspace here knows about (a create killed outright).
-    const known = readState(env).sandboxes;
-    const strays = (await client.listByLabel("via", "orca")).filter((s) => !known[s.id]);
-    add(
-      "no stray sandboxes",
-      strays.length === 0,
-      strays.length ? `${strays.map((s) => `${s.id} (${s.state})`).join(", ")} carry via=orca but back no workspace here; delete them with prized sandbox rm ID` : "none",
-    );
+    // Sandboxes this machine made more than 10 minutes ago that no workspace here knows about (a
+    // create killed outright). Other machines' and teammates' sandboxes carry another orca-host.
+    try {
+      const known = readState(env).sandboxes;
+      const strays = (await client.listByLabel("orca-host", machineLabel())).filter(
+        (s) => !known[s.id] && s.labels?.via === "orca" && Date.now() - Date.parse(s.createdAt ?? 0) > 10 * 60_000,
+      );
+      add(
+        "no stray sandboxes from this machine",
+        strays.length === 0,
+        strays.length
+          ? `${strays.map((s) => `${s.id} (${s.state}${s.labels?.["orca-workspace"] ? `, workspace "${s.labels["orca-workspace"]}"` : ""})`).join(", ")} back no Orca workspace on this machine; if you don't need them, prized sandbox rm ID`
+          : "none",
+      );
+    } catch (error) {
+      add("no stray sandboxes from this machine", false, `could not list them: ${error.message}`);
+    }
   } catch (error) {
     add("PRIZED_API_KEY (makes sandboxes)", false, error.message);
   }
