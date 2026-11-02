@@ -207,6 +207,21 @@ export function contextCwd(context) {
   return cwd;
 }
 
+// True for a directory inside any install of this plugin: the current one, a linked checkout, or an
+// older install an agent pane opened before `herdr plugin update` still runs from.
+export function isPluginDir(dir, env = process.env) {
+  if (!dir) return false;
+  if (env.HERDR_PLUGIN_ROOT && isInside(dir, env.HERDR_PLUGIN_ROOT)) return true;
+  for (let d = path.resolve(dir); ; d = path.dirname(d)) {
+    try {
+      if (/^id\s*=\s*"prized\.sandbox"\s*$/m.test(fs.readFileSync(path.join(d, "herdr-plugin.toml"), "utf8"))) return true;
+    } catch {
+      // no manifest here: keep walking up
+    }
+    if (path.dirname(d) === d) return false;
+  }
+}
+
 export function isInside(child, parent) {
   if (!child || !parent) return false;
   const rel = path.relative(path.resolve(parent), path.resolve(child));
@@ -215,7 +230,7 @@ export function isInside(child, parent) {
 
 // The Git worktree that holds the invoking pane's directory.
 export function worktreeRoot(cwd, env = process.env) {
-  if (env.HERDR_PLUGIN_ROOT && isInside(cwd, env.HERDR_PLUGIN_ROOT)) {
+  if (isPluginDir(cwd, env)) {
     throw new PluginError("this pane is the plugin's own (an agent pane runs from the plugin's folder)", "run the action from a pane in your repository");
   }
   const result = spawnSync("git", ["-C", cwd, "rev-parse", "--show-toplevel"], { encoding: "utf8" });
@@ -234,7 +249,7 @@ export function worktreeRoot(cwd, env = process.env) {
 export function findMapping(state, context, root, env = process.env) {
   const all = Object.values(state.mappings);
   const pane = context.focused_pane_id;
-  const ours = isInside(context.focused_pane_cwd, env.HERDR_PLUGIN_ROOT);
+  const ours = isPluginDir(context.focused_pane_cwd, env);
   const byPane = pane && all.find((m) => m.paneId === pane && (ours || m.root === root));
   if (byPane) return byPane;
   const byRoot = all.filter((m) => m.root === root).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
@@ -426,7 +441,9 @@ export function diffScript(dir, out = null) {
     "set -e",
     `cd ${dir}`,
     'I=$(mktemp); trap \'rm -f "$I"\' EXIT',
-    'cp "$(git rev-parse --git-path index)" "$I" 2>/dev/null || true',
+    // -p keeps the index's own time: with a fresh one, git would trust cached file times and miss
+    // a same-size edit made in the same second as the index (racy git).
+    'cp -p "$(git rev-parse --git-path index)" "$I" 2>/dev/null || true',
     'GIT_INDEX_FILE="$I" git add -A',
     'T=$(GIT_INDEX_FILE="$I" git write-tree)',
     'echo "$T"',

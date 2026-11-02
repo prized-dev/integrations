@@ -451,3 +451,43 @@ test("a recorded pane id from another worktree is not trusted, and agent panes a
   assert.equal(start.status, 1);
   assert.match(start.out, /plugin's own/);
 });
+
+// ------------------------------------------------------------------ fixes from the second review
+
+test("same-size edits made right after an apply are never missed or applied backwards (racy git)", () => {
+  const w = world();
+  const { mapping } = startSandbox(w);
+  const work = path.join(sandboxHome(w, mapping.sandboxId), "work", "my-repo");
+  const env = { PRIZED_HERDR_MAPPING: mapping.id, PRIZED_HERDR_OP: "apply-changes" };
+  for (const n of [2, 3, 4]) {
+    // The agent commits, which writes its index, then edits again within the same second.
+    fs.writeFileSync(path.join(work, "src", "app.js"), `export const a = ${n};\n`);
+    git(work, "commit", "-qam", `a=${n}`);
+    fs.writeFileSync(path.join(work, "src", "app.js"), `export const a = ${n + 5};\n`);
+    const r = run(w, "ops-pane.mjs", { env, input: "y\n\n" });
+    assert.match(r.out, /Applied to this worktree/);
+    assert.equal(fs.readFileSync(path.join(w.repo, "src", "app.js"), "utf8"), `export const a = ${n + 5};\n`);
+    assert.match(run(w, "ops-pane.mjs", { env, input: "\n" }).out, /No changes\./);
+  }
+});
+
+test("a box session whose box was never picked can still be deleted", () => {
+  const w = world();
+  action(w, "start-box", ctx(w));
+  const [m] = Object.values(state(w).mappings);
+  const r = run(w, "ops-pane.mjs", { env: { PRIZED_HERDR_MAPPING: m.id, PRIZED_HERDR_OP: "delete" }, input: "y\n\n" });
+  assert.equal(r.status, 0, r.out);
+  assert.equal(state(w).mappings[m.id], undefined);
+  assert.ok(!prizedCalls(w).some((c) => c.args.includes("--kill")));
+});
+
+test("an agent pane still running from an older install of the plugin counts as ours", () => {
+  const w = world();
+  const { mapping } = startSandbox(w);
+  const old = path.join(w.dir, "plugins", "github", "old-checkout");
+  fs.mkdirSync(path.join(old, "src"), { recursive: true });
+  fs.copyFileSync(path.join(PLUGIN, "herdr-plugin.toml"), path.join(old, "herdr-plugin.toml"));
+  const r = action(w, "pause", { focused_pane_id: "w1:p2", focused_pane_cwd: path.join(old, "src") }, { HERDR_PLUGIN_ROOT: path.join(w.dir, "plugins", "github", "new-checkout") });
+  assert.equal(r.status, 0, r.out);
+  assert.equal(db(w).sandboxes[mapping.sandboxId].state, "paused");
+});

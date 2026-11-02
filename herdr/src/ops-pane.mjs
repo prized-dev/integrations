@@ -110,14 +110,17 @@ async function applyChanges(mapping) {
 
 async function deleteTarget(mapping) {
   if (mapping.kind === "box") {
-    say(`This stops the agent's tmux session ${mapping.session} on box ${mapping.box}.`);
+    say(mapping.box ? `This stops the agent's tmux session ${mapping.session} on box ${mapping.box}.` : "No box was picked for this session; this removes it from the list.");
     say(`The box and the files in ~/herdr/${mapping.dirName} stay.`);
     const answer = (await readLine("Stop it? [y/N] ")).trim().toLowerCase();
     if (answer !== "y" && answer !== "yes") return say("Nothing changed.");
-    // -y: the CLI asks before killing a session, and this popup's answer was the yes.
-    const run = prized(["ssh", mapping.box, "--kill", mapping.session, "-y"]);
-    const said = String(run.stderr);
-    if (run.status !== 0 && !/can't find session|no server running|session not found/i.test(said)) throw prizedFailure(["ssh", "--kill"], run);
+    // -y: the CLI asks before killing a session, and this popup's answer was the yes. A mapping
+    // whose box was never picked has no session to kill.
+    if (mapping.box) {
+      const run = prized(["ssh", mapping.box, "--kill", mapping.session, "-y"]);
+      const said = String(run.stderr);
+      if (run.status !== 0 && !/can't find session|no server running|session not found/i.test(said)) throw prizedFailure(["ssh", "--kill"], run);
+    }
   } else {
     // A create cut short leaves no id in the mapping: its label still finds the sandbox.
     const ids = mapping.sandboxId ? [mapping.sandboxId] : labelledSandboxes(mapping);
