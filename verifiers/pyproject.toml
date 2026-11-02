@@ -1,0 +1,63 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "verifiers-prized"
+dynamic = ["version"]
+description = "Prized Sandboxes as a runtime for Prime Intellect's verifiers: set the environment up once, then fork it, memory and running processes included, into one microVM per rollout."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["verifiers", "prime-intellect", "rl", "environments", "sandbox", "prized", "microvm", "fork"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Typing :: Typed",
+]
+# verifiers' runtime plugins (type = "custom") first shipped in its 0.4.1 pre-releases.
+dependencies = ["verifiers>=0.4.1.dev132,<0.5", "prized>=0.1.2,<0.2"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.25", "ruff>=0.11", "mypy>=1.14"]
+
+[project.urls]
+Homepage = "https://prized.dev/docs/sandboxes?via=verifiers"
+Source = "https://github.com/prized-dev/integrations/tree/main/verifiers"
+Issues = "https://github.com/prized-dev/integrations/issues"
+
+[tool.hatch.version]
+path = "src/verifiers_prized/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/verifiers_prized"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = ["tests/fake_verifiers"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+
+# Typecheck against the installed verifiers. It ships no py.typed marker, so mypy is told to read
+# its sources anyway, and to keep its own errors out of ours.
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src"]
+
+[[tool.mypy.overrides]]
+module = ["verifiers", "verifiers.*", "pydantic_config", "pydantic_config.*"]
+follow_untyped_imports = true
+ignore_errors = true
