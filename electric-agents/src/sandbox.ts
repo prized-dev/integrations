@@ -6,8 +6,7 @@ import { lazySandbox, remoteSandbox } from '@electric-ax/agents-runtime/sandbox'
 import type { Sandbox, SandboxProfile } from '@electric-ax/agents-runtime/sandbox';
 
 import {
-  assertPrizedNetworkPolicy,
-  assertPrizedWorkingDirectory,
+  assertPrizedSandboxOptions,
   createPrizedClient,
   DEFAULT_WORKING_DIRECTORY,
   reclaimPrizedSandboxByKey,
@@ -25,8 +24,7 @@ export const PRIZED_SANDBOX_NAME = 'remote:prized';
 export async function prizedSandbox(opts: PrizedSandboxOptions = {}): Promise<Sandbox> {
   const workingDirectory = opts.workingDirectory ?? DEFAULT_WORKING_DIRECTORY;
   // Checked before anything is created, so a bad option never leaves a sandbox behind.
-  assertPrizedWorkingDirectory(workingDirectory);
-  assertPrizedNetworkPolicy(opts.initialNetworkPolicy);
+  assertPrizedSandboxOptions(opts);
   const client = await createPrizedClient({ ...opts, workingDirectory });
   // `provider` only names a remote sandbox that brings its own client: the e2b SDK is never
   // loaded. The name is set right below.
@@ -64,9 +62,8 @@ const DEFAULT_DESCRIPTION =
 export function prizedSandboxProfile(opts: PrizedSandboxProfileOptions = {}): SandboxProfile {
   const { name = 'prized', label = 'Prized', description = DEFAULT_DESCRIPTION, lazy = true, ...sandboxOptions } = opts;
   const workingDirectory = sandboxOptions.workingDirectory ?? DEFAULT_WORKING_DIRECTORY;
-  // Fail at registration, not at the first wake.
-  assertPrizedWorkingDirectory(workingDirectory);
-  assertPrizedNetworkPolicy(sandboxOptions.initialNetworkPolicy);
+  // Fail at registration, not at the first tool call.
+  assertPrizedSandboxOptions(sandboxOptions);
   return {
     name,
     label,

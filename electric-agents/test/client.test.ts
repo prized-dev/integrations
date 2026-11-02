@@ -5,10 +5,13 @@ import { SandboxError } from '@electric-ax/agents-runtime/sandbox';
 import { Sandbox as RealSdkSandbox } from '@prized/sdk';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
+import { PrizedError } from '@prized/sdk';
+
 import {
   adaptPrized,
   connectOrCreatePrizedSandbox,
   createPrizedClient,
+  heartbeatIntervalFor,
   reclaimPrizedSandboxByKey,
   SANDBOX_KEY_LABEL,
   sandboxKeyTag,
@@ -72,8 +75,8 @@ describe('creating and reattaching', () => {
   });
 
   it('keeps a persistent sandbox paused for 7 days by default, or as long as asked', async () => {
-    await client({ persistent: true });
-    await client({ persistent: true, pausedRetentionMin: 0, keepAliveMs: 30_000 });
+    await client({ persistent: true, sandboxKey: 'a' });
+    await client({ persistent: true, sandboxKey: 'b', pausedRetentionMin: 0, keepAliveMs: 30_000 });
     expect(fake.creates.map(c => [c.autoPauseMin, c.autoDeleteMin])).toEqual([
       [2, 10_080],
       [1, 0],
@@ -175,6 +178,105 @@ describe('creating and reattaching', () => {
   });
 });
 
+describe('review fixes: identity, setup and teardown', () => {
+  it('a namespace keeps two deployments with the same entity keys apart', async () => {
+    const dev = await client({ sandboxKey: '/worker/fixer', namespace: 'http://localhost:4437', persistent: true });
+    const prod = await client({ sandboxKey: '/worker/fixer', namespace: 'https://agents.example', persistent: true });
+    expect(prod.sandboxId).not.toBe(dev.sandboxId);
+    expect(sandboxKeyTag('/worker/fixer', 'a')).not.toBe(sandboxKeyTag('/worker/fixer'));
+    expect(sandboxKeyTag('/worker/fixer', '')).toBe(sandboxKeyTag('/worker/fixer'));
+    await reclaimPrizedSandboxByKey('/worker/fixer', { sdk: fake.Sdk, namespace: 'http://localhost:4437' });
+    expect(sandboxOf(dev).state).toBe('deleted');
+    expect(sandboxOf(prod).state).toBe('running');
+  });
+
+  it('a persistent sandbox without a key is refused before anything is created', async () => {
+    const err = await createPrizedClient({ sdk: fake.Sdk, persistent: true }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(SandboxError);
+    expect(fake.creates).toHaveLength(0);
+  });
+
+  it('re-makes the working directory on attach if an earlier wake removed it', async () => {
+    const first = await client({ sandboxKey: 'k', persistent: true });
+    await first.exec({ command: 'rm -rf /home/prized/work' });
+    await first.suspend();
+    const second = await client({ sandboxKey: 'k', persistent: true });
+    expect(second.sandboxId).toBe(first.sandboxId);
+    expect((await second.exec({ command: 'pwd' })).exitCode).toBe(0);
+  });
+
+  it('deletes a sandbox it just created when the setup after it fails, but never one it attached to', async () => {
+    fake.onCreate = s => {
+      s.failExec = { match: 'mkdir -p', error: new PrizedError('network_error', 'edge gone') };
+    };
+    await expect(createPrizedClient({ sdk: fake.Sdk, sandboxKey: 'k', persistent: true })).rejects.toThrow('edge gone');
+    expect(fake.sandboxes[0]!.state).toBe('deleted');
+
+    fake.onCreate = undefined;
+    const owner = await client({ sandboxKey: 'j', persistent: true });
+    sandboxOf(owner).failExec = { match: 'mkdir -p', error: new PrizedError('network_error', 'edge gone') };
+    await expect(createPrizedClient({ sdk: fake.Sdk, sandboxKey: 'j', owner: false })).rejects.toThrow('edge gone');
+    expect(sandboxOf(owner).state).toBe('running');
+  });
+
+  it('a sandbox deleted between the list and the resume counts as not found', async () => {
+    const labels = { [SANDBOX_KEY_LABEL]: sandboxKeyTag('gone-soon') };
+    const stale = await fake.seed({ labels });
+    stale.pause();
+    stale.failResume = new PrizedError('sandbox_deleted', 'deleted', { status: 410 });
+    const attach = await createPrizedClient({ sdk: fake.Sdk, sandboxKey: 'gone-soon', owner: false }).catch((e: unknown) => e);
+    expect((attach as SandboxError).kind).toBe('unavailable');
+
+    const again = await fake.seed({ labels });
+    again.pause();
+    again.failResume = new PrizedError('sandbox_deleted', 'deleted', { status: 410 });
+    const c = await client({ sandboxKey: 'gone-soon' });
+    expect(c.sandboxId).not.toBe(again.id);
+    expect(fake.creates).toHaveLength(1);
+  });
+
+  it('resumes a sandbox found pausing; a refused resume is logged and left to the next command', async () => {
+    const labels = { [SANDBOX_KEY_LABEL]: sandboxKeyTag('p') };
+    const pausing = await fake.seed({ labels });
+    pausing.state = 'pausing';
+    const c = await client({ sandboxKey: 'p' });
+    expect(c.sandboxId).toBe(pausing.id);
+    expect(pausing.resumes).toBe(1);
+
+    const refused = await fake.seed({ labels: { [SANDBOX_KEY_LABEL]: sandboxKeyTag('q') } });
+    refused.pause();
+    refused.failResume = new PrizedError('insufficient_balance', 'no balance', { status: 409 });
+    const logs: string[] = [];
+    const d = await client({ sandboxKey: 'q', log: m => logs.push(m) });
+    expect(d.sandboxId).toBe(refused.id);
+    expect(logs.join('\n')).toMatch(/resuming .* failed: no balance/);
+  });
+
+  it('kill on a keyed sandbox also removes any other sandbox left under its key', async () => {
+    const c = await client({ sandboxKey: 'wipe' });
+    const straggler = await fake.seed({ labels: { [SANDBOX_KEY_LABEL]: sandboxKeyTag('wipe') } }, -5_000);
+    await c.kill();
+    expect(sandboxOf(c).state).toBe('deleted');
+    expect(straggler.state).toBe('deleted');
+    expect(fake.deletesByLabels).toEqual([{ [SANDBOX_KEY_LABEL]: sandboxKeyTag('wipe') }]);
+  });
+
+  it('validates lifecycle numbers up front and keeps timers in range', async () => {
+    for (const bad of [{ keepAliveMs: 0 }, { keepAliveMs: -1 }, { keepAliveMs: Number.POSITIVE_INFINITY }, { keepAliveMs: Number.NaN }, { heartbeatIntervalMs: 0 }, { pausedRetentionMin: -1 }]) {
+      const err = await createPrizedClient({ sdk: fake.Sdk, ...bad }).catch((e: unknown) => e);
+      expect(err, JSON.stringify(bad)).toBeInstanceOf(SandboxError);
+    }
+    expect(fake.creates).toHaveLength(0);
+    // Default: half the window as sent in whole minutes, at least 15 s, never past a Node timer's limit.
+    expect(heartbeatIntervalFor(120_000)).toBe(60_000);
+    expect(heartbeatIntervalFor(30_000)).toBe(30_000);
+    expect(heartbeatIntervalFor(10 ** 12)).toBe(40_320 * 30_000);
+    expect(heartbeatIntervalFor(120_000, 10 ** 12)).toBe(2 ** 31 - 1);
+    await client({ persistent: true, sandboxKey: 'r', pausedRetentionMin: 1.5, keepAliveMs: 10 ** 12 });
+    expect(fake.creates[0]).toMatchObject({ autoDeleteMin: 2, autoPauseMin: 40_320 });
+  });
+});
+
 describe('exec', () => {
   it('runs in the working directory with env, and reports the exit code', async () => {
     const c = await client();
@@ -183,14 +285,30 @@ describe('exec', () => {
     expect(r.stderr.toString()).toBe('oops\n');
     expect(r.exitCode).toBe(3);
     expect(r.timedOut).toBe(false);
-    expect(sandboxOf(c).execs.at(-1)!.options).toMatchObject({ cwd: '/home/prized/work', fullOutput: true });
+    expect(sandboxOf(c).execs.at(-1)!.options).toMatchObject({ cwd: '/home/prized/work', fullOutput: false });
   });
 
-  it('honours cwd and keeps whole output unless told not to', async () => {
-    const c = await client({ fullOutput: false });
-    const r = await c.exec({ command: 'pwd', cwd: '/home/prized' });
-    expect(r.stdout.toString().trim()).toBe(join(sandboxOf(c).root, '/home/prized'));
-    expect(sandboxOf(c).execs.at(-1)!.options.fullOutput).toBe(false);
+  it('honours cwd; keeps whole output for Electric fetch() only, unless told', async () => {
+    const auto = await client();
+    const r = await auto.exec({ command: 'pwd', cwd: '/home/prized' });
+    expect(r.stdout.toString().trim()).toBe(join(sandboxOf(auto).root, '/home/prized'));
+    expect(sandboxOf(auto).execs.at(-1)!.options.fullOutput).toBe(false);
+    await auto.exec({ command: 'true', env: { FETCH_URL: 'http://127.0.0.1:9/' } });
+    expect(sandboxOf(auto).execs.at(-1)!.options.fullOutput).toBe(true);
+    const always = await client({ fullOutput: true });
+    await always.exec({ command: 'true' });
+    expect(sandboxOf(always).execs.at(-1)!.options.fullOutput).toBe(true);
+    const never = await client({ fullOutput: false });
+    await never.exec({ command: 'true', env: { FETCH_URL: 'x' } });
+    expect(sandboxOf(never).execs.at(-1)!.options.fullOutput).toBe(false);
+  });
+
+  it('says in stderr when the edge cut a stream', async () => {
+    const c = await client();
+    sandboxOf(c).plainCap = 5;
+    const r = await c.exec({ command: 'printf 1234567890' });
+    expect(r.stdout.toString()).toBe('12345');
+    expect(r.stderr.toString()).toMatch(/\[prized: output cut at 4 MiB a stream\]/);
   });
 
   it('feeds stdin (text and bytes) and leaves no staged file behind', async () => {
@@ -323,6 +441,36 @@ describe('files', () => {
     expect(await errorCode(c.stat(`${W}/missing`))).toBe('ENOENT');
   });
 
+  it('a read with a command whose output was cut throws EFBIG instead of returning a short buffer', async () => {
+    s.fullCap = 10;
+    expect(await errorCode(c.readFile('/etc/passwd'))).toBe('EFBIG');
+    await c.mkdir(`${W}/many`);
+    for (const n of ['aaaa', 'bbbb', 'cccc']) await c.writeFile(`${W}/many/${n}`, '');
+    expect(await errorCode(c.readdir(`${W}/many`))).toBe('EFBIG');
+  });
+
+  it('a filesystem command that times out is ETIMEDOUT', async () => {
+    s.timeOutWhen = 'stat -L';
+    expect(await errorCode(c.stat(W))).toBe('ETIMEDOUT');
+  });
+
+  it('writing onto a directory is EISDIR', async () => {
+    const real = s.files.write;
+    s.files.write = async () => {
+      throw new PrizedError('unsupported_file_type', 'is a directory');
+    };
+    expect(await errorCode(c.writeFile(W, 'x'))).toBe('EISDIR');
+    s.files.write = real;
+  });
+
+  it('mkdir of /home and /home/prized needs no round trip', async () => {
+    const before = s.execs.length;
+    await c.mkdir('/home/prized', { recursive: true });
+    expect(await errorCode(c.mkdir('/home'))).toBe('EEXIST');
+    expect(await errorCode(c.mkdir('/home/prized/'))).toBe('EEXIST');
+    expect(s.execs.length).toBe(before);
+  });
+
   it('quotes paths: spaces, quotes and $() reach the sandbox as they are', async () => {
     const odd = `${W}/it's a "file" $(touch pwned)`;
     await c.writeFile(odd, 'ok');
@@ -335,7 +483,7 @@ describe('files', () => {
 
 describe('lifecycle', () => {
   it('heartbeats while held; suspend stops it and keeps the sandbox', async () => {
-    const c = await client({ persistent: true, heartbeatIntervalMs: 20 });
+    const c = await client({ persistent: true, sandboxKey: 'hb', heartbeatIntervalMs: 20 });
     const s = sandboxOf(c);
     await new Promise(r => setTimeout(r, 120));
     expect(s.keepAlives).toBeGreaterThan(1);

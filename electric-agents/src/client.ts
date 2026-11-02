@@ -6,13 +6,14 @@
  * This one is shaped like Electric's own e2b adapter (`connectOrCreate…` plus `adapt…`, with
  * the SDK class injected so the reattach logic is testable offline):
  *
- * - Identity: a sandbox is labelled with a hash of the `sandboxKey`, so a later wake on any
- *   host finds it with `Sandbox.list({ labels })` and reattaches; the oldest live one wins.
+ * - Identity: a sandbox is labelled with a hash of the `sandboxKey` (and an optional
+ *   `namespace`), so a later wake on any host finds it with `Sandbox.list({ labels })` and
+ *   reattaches; the oldest live one wins.
  * - Lifecycle: created with `autoPauseMin` (the keep-alive window) and `autoDeleteMin`
  *   (1 minute for an ephemeral sandbox, `pausedRetentionMin` for a persistent one). While a
  *   wake holds it, a heartbeat (`keepAlive()`) keeps it running; `suspend()` stops the
  *   heartbeat, so it pauses with its memory once idle, and the next command resumes it.
- *   `kill()` deletes it.
+ *   `kill()` deletes it, and any other sandbox left under its key.
  * - Files: reads and writes go through the files API inside /home/prized (whole bytes, up to
  *   100 MiB); a read elsewhere in the VM, and every listing, stat, mkdir and remove, run as
  *   one shell command each.
@@ -39,10 +40,18 @@ export const DEFAULT_KEEP_ALIVE_MS: number = 2 * 60 * 1000;
 export const DEFAULT_PAUSED_RETENTION_MIN: number = 7 * 24 * 60;
 /** The longest `autoPauseMin` and `autoDeleteMin` the API takes (28 days). */
 const MAX_LIFECYCLE_MIN = 40_320;
+/** The longest delay a Node timer takes; anything longer fires at once. */
+const MAX_TIMER_MS = 2 ** 31 - 1;
+/** What one exec answer carries of each stream without `fullOutput` (the edge's cap). */
+const PLAIN_OUTPUT_BYTES = 4 * 1024 * 1024;
 /** Where a command's stdin is staged before the command redirects it in. */
 const STDIN_DIR = '/home/prized/.cache/electric-agents/stdin';
-/** The bound on each listing, stat, mkdir, remove and exists command. */
+/** The bound on each listing, stat, mkdir and exists command, and on a read with a command. */
 const FS_COMMAND_TIMEOUT_MS = 60_000;
+/** The bound on a remove, which may be a big tree (node_modules). */
+const REMOVE_TIMEOUT_MS = 10 * 60_000;
+/** Directories every Prized sandbox has and its user cannot remove: mkdir of them needs no round trip. */
+const ALWAYS_THERE = new Set(['/', '/home', PRIZED_HOME]);
 /** States a sandbox can be reattached in. Deleting, deleted and error ones are gone. */
 const LIVE_STATES: SandboxState[] = ['starting', 'running', 'pausing', 'paused', 'resizing'];
 
@@ -94,11 +103,18 @@ export interface PrizedSandboxOptions {
   workingDirectory?: string;
   /** Electric's resolved identity: a later wake with the same key, on any host, reattaches. */
   sandboxKey?: string;
-  /** `true`: dispose keeps the sandbox (it pauses with its memory once idle). `false` (default): dispose deletes it. */
+  /**
+   * Folded into the key's hash, so deployments that share a Prized workspace (a laptop and
+   * production, say) never reattach to, or reclaim, each other's sandboxes. Electric's keys are
+   * entity paths like `/worker/fixer`, the same in every deployment: set this to something
+   * unique to the deployment, such as its agents server URL.
+   */
+  namespace?: string;
+  /** `true`: dispose keeps the sandbox (it pauses with its memory once idle); needs a `sandboxKey`. `false` (default): dispose deletes it. */
   persistent?: boolean;
   /** `false`: only attach to a live sandbox for `sandboxKey`, never create one. Default `true`. */
   owner?: boolean;
-  /** Idle time after the last heartbeat before the sandbox pauses, in ms (rounded up to whole minutes). Default 2 minutes. */
+  /** Idle time after the last heartbeat before the sandbox pauses, in ms (rounded up to whole minutes, at most 28 days). Default 2 minutes. */
   keepAliveMs?: number;
   /** The heartbeat's period in ms. Default half of `keepAliveMs`, at least 15 s. */
   heartbeatIntervalMs?: number;
@@ -109,7 +125,12 @@ export interface PrizedSandboxOptions {
    * is accepted; `deny-all` and `allowlist` throw rather than be ignored.
    */
   initialNetworkPolicy?: NetworkPolicy;
-  /** Keep each command's whole output (up to 100 MiB a stream) rather than the first 4 MiB. Default `true`. */
+  /**
+   * `true`: keep each command's whole output, up to 100 MiB a stream. `false`: the first 4 MiB of
+   * each, as one exec answer carries. Default: whole output only for Electric's in-sandbox
+   * `fetch()` (whose base64 body can pass 4 MiB), so a `cat` of a huge log never pulls 100 MiB
+   * into the runner for a tool that keeps 50 KB of it.
+   */
   fullOutput?: boolean;
   /** Where diagnostics go (a keep-alive that failed, a duplicate sandbox removed). */
   log?: (message: string) => void;
@@ -131,9 +152,34 @@ export function clientOptionsOf(opts: Pick<PrizedSandboxOptions, 'apiKey' | 'bas
   return out;
 }
 
-/** The label value for a `sandboxKey`: a 32-hex-digit SHA-256 prefix, as Electric's e2b adapter tags its VMs. */
-export function sandboxKeyTag(sandboxKey: string): string {
-  return createHash('sha256').update(sandboxKey).digest('hex').slice(0, 32);
+/**
+ * The label value for a `sandboxKey`: a 32-hex-digit SHA-256 prefix, as Electric's e2b adapter
+ * tags its VMs, with the `namespace` (when there is one) hashed in ahead of the key.
+ */
+export function sandboxKeyTag(sandboxKey: string, namespace?: string): string {
+  const input = namespace === undefined || namespace === '' ? sandboxKey : `${namespace}\0${sandboxKey}`;
+  return createHash('sha256').update(input).digest('hex').slice(0, 32);
+}
+
+/**
+ * Throws on options that could only fail later (at the first tool call of a lazy profile), or
+ * do harm: a working directory outside /home/prized, a network policy Prized can't enforce,
+ * lifecycle numbers that aren't finite and positive.
+ */
+export function assertPrizedSandboxOptions(
+  opts: Pick<PrizedSandboxOptions, 'workingDirectory' | 'initialNetworkPolicy' | 'keepAliveMs' | 'heartbeatIntervalMs' | 'pausedRetentionMin'>,
+): void {
+  assertPrizedWorkingDirectory(opts.workingDirectory ?? DEFAULT_WORKING_DIRECTORY);
+  assertPrizedNetworkPolicy(opts.initialNetworkPolicy);
+  const positive = (name: string, value: number | undefined, zeroOk = false): void => {
+    if (value === undefined) return;
+    if (!Number.isFinite(value) || value < 0 || (value === 0 && !zeroOk)) {
+      throw new SandboxError('runtime', `prizedSandbox: ${name} must be a finite number above 0${zeroOk ? ' (or 0)' : ''} (got ${value}).`);
+    }
+  };
+  positive('keepAliveMs', opts.keepAliveMs);
+  positive('heartbeatIntervalMs', opts.heartbeatIntervalMs);
+  positive('pausedRetentionMin', opts.pausedRetentionMin, true);
 }
 
 /** Throws unless `dir` is an absolute, normalized path inside /home/prized. */
@@ -156,13 +202,18 @@ export function assertPrizedNetworkPolicy(policy: NetworkPolicy | undefined): vo
   );
 }
 
-/** autoPauseMin for a keep-alive window: whole minutes, at least 1. */
+/** autoPauseMin for a keep-alive window: whole minutes, 1 to 40,320. */
 export function autoPauseMinFor(keepAliveMs: number): number {
   return Math.min(MAX_LIFECYCLE_MIN, Math.max(1, Math.ceil(keepAliveMs / 60_000)));
 }
 
-function heartbeatIntervalFor(keepAliveMs: number): number {
-  return Math.max(15_000, Math.floor(keepAliveMs / 2));
+/**
+ * The heartbeat's period: half the keep-alive window (as sent, in whole minutes), at least
+ * 15 s, and never past what a Node timer takes. An explicit period is only kept in range.
+ */
+export function heartbeatIntervalFor(keepAliveMs: number, explicit?: number): number {
+  const ms = explicit ?? Math.max(15_000, Math.floor((autoPauseMinFor(keepAliveMs) * 60_000) / 2));
+  return Math.min(MAX_TIMER_MS, Math.max(1, Math.floor(ms)));
 }
 
 /**
@@ -173,12 +224,16 @@ function heartbeatIntervalFor(keepAliveMs: number): number {
  */
 export async function createPrizedClient(opts: PrizedSandboxOptions = {}): Promise<PrizedRemoteSandboxClient> {
   const workingDirectory = opts.workingDirectory ?? DEFAULT_WORKING_DIRECTORY;
-  assertPrizedWorkingDirectory(workingDirectory);
-  assertPrizedNetworkPolicy(opts.initialNetworkPolicy);
+  assertPrizedSandboxOptions(opts);
+  if (opts.persistent === true && opts.sandboxKey === undefined) {
+    // Kept paused for days with nothing that could ever find it again.
+    throw new SandboxError('runtime', 'prizedSandbox: a persistent sandbox needs a sandboxKey to be reattached by.');
+  }
   const keepAliveMs = opts.keepAliveMs ?? DEFAULT_KEEP_ALIVE_MS;
-  if (!(keepAliveMs > 0)) throw new SandboxError('runtime', `prizedSandbox: keepAliveMs must be positive (got ${keepAliveMs}).`);
-  const sbx = await connectOrCreatePrizedSandbox(opts.sdk ?? (PrizedSdkSandbox satisfies PrizedSandboxClass), {
-    client: clientOptionsOf(opts),
+  const Sdk = opts.sdk ?? (PrizedSdkSandbox satisfies PrizedSandboxClass);
+  const client = clientOptionsOf(opts);
+  const { sandbox: sbx, created } = await findOrCreate(Sdk, {
+    client,
     template: opts.template,
     resources: opts.resources,
     envVars: opts.envVars,
@@ -187,21 +242,29 @@ export async function createPrizedClient(opts: PrizedSandboxOptions = {}): Promi
     persistent: opts.persistent === true,
     owner: opts.owner !== false,
     sandboxKey: opts.sandboxKey,
+    namespace: opts.namespace,
     keepAliveMs,
     pausedRetentionMin: opts.pausedRetentionMin,
     log: opts.log,
   });
-  if (workingDirectory !== DEFAULT_WORKING_DIRECTORY) {
-    // Templates come with /home/prized/work; any other directory is made here, as e2b's adapter does.
+  try {
+    // On every attach, as e2b's adapter does: an agent may have removed the directory in an
+    // earlier wake (`rm -rf ~/work`), and every command runs in it.
     const r = await sbx.exec(`mkdir -p -- ${shellQuote(workingDirectory)}`, { cwd: '/', timeoutMs: FS_COMMAND_TIMEOUT_MS });
-    if (r.exitCode !== 0) opts.log?.(`prized: mkdir ${workingDirectory} failed: ${r.stderr.trim()}`);
+    if (r.exitCode !== 0) throw new SandboxError('runtime', `prizedSandbox: cannot make ${workingDirectory}: ${r.stderr.trim()}`);
+  } catch (err) {
+    // Nothing holds a sandbox this call made until it returns: delete it rather than leave it.
+    if (created) await sbx.delete().catch((e: unknown) => opts.log?.(`prized: deleting ${sbx.id} after a failed setup failed: ${message(e)}`));
+    throw err;
   }
+  const keyLabel = opts.sandboxKey === undefined ? undefined : { [SANDBOX_KEY_LABEL]: sandboxKeyTag(opts.sandboxKey, opts.namespace) };
   return adaptPrized(sbx, {
     workingDirectory,
     keepAliveMs,
     heartbeatIntervalMs: opts.heartbeatIntervalMs,
     fullOutput: opts.fullOutput,
     log: opts.log,
+    sweep: keyLabel && (() => Sdk.deleteByLabels(keyLabel, client)),
   });
 }
 
@@ -216,6 +279,7 @@ export interface ConnectOrCreateOptions {
   persistent: boolean;
   owner?: boolean;
   sandboxKey?: string;
+  namespace?: string;
   keepAliveMs: number;
   pausedRetentionMin?: number;
   log?: (message: string) => void;
@@ -228,15 +292,23 @@ export interface ConnectOrCreateOptions {
  * than make an empty one. Without a key it always creates.
  *
  * If two hosts create for the same key at once, each lists again after its create and both
- * keep the oldest; the other is deleted at once rather than left to idle out.
+ * keep the oldest; the other is deleted at once rather than left to idle out. A sandbox found
+ * paused that is deleted before it can resume (its autoDeleteMin ran out) counts as not found.
  */
 export async function connectOrCreatePrizedSandbox(
   Sdk: PrizedSandboxClass,
   opts: ConnectOrCreateOptions,
 ): Promise<PrizedSandboxHandle> {
+  return (await findOrCreate(Sdk, opts)).sandbox;
+}
+
+async function findOrCreate(
+  Sdk: PrizedSandboxClass,
+  opts: ConnectOrCreateOptions,
+): Promise<{ sandbox: PrizedSandboxHandle; created: boolean }> {
   const client = opts.client ?? {};
   const owner = opts.owner !== false;
-  const keyLabel = opts.sandboxKey === undefined ? undefined : { [SANDBOX_KEY_LABEL]: sandboxKeyTag(opts.sandboxKey) };
+  const keyLabel = opts.sandboxKey === undefined ? undefined : { [SANDBOX_KEY_LABEL]: sandboxKeyTag(opts.sandboxKey, opts.namespace) };
   const createOptions: CreateOptions = {
     ...client,
     labels: { ...opts.labels, ...CREATED_BY_LABEL, ...keyLabel },
@@ -244,7 +316,7 @@ export async function connectOrCreatePrizedSandbox(
     // Ephemeral: a sandbox whose host died is deleted a minute after it pauses (e2b kills it on
     // timeout). Persistent: kept paused, memory and all, for the next wake to resume.
     autoDeleteMin: opts.persistent
-      ? Math.min(MAX_LIFECYCLE_MIN, Math.max(0, opts.pausedRetentionMin ?? DEFAULT_PAUSED_RETENTION_MIN))
+      ? Math.min(MAX_LIFECYCLE_MIN, Math.max(0, Math.ceil(opts.pausedRetentionMin ?? DEFAULT_PAUSED_RETENTION_MIN)))
       : 1,
   };
   if (opts.template !== undefined) createOptions.template = opts.template;
@@ -252,10 +324,11 @@ export async function connectOrCreatePrizedSandbox(
   if (opts.envVars !== undefined) createOptions.envVars = opts.envVars;
   if (opts.maxRuntimeMin !== undefined) createOptions.maxRuntimeMin = opts.maxRuntimeMin;
 
-  if (keyLabel === undefined) return Sdk.create(createOptions);
+  if (keyLabel === undefined) return { sandbox: await Sdk.create(createOptions), created: true };
 
   const existing = await oldestLive(Sdk, keyLabel, client);
-  if (existing) return wake(existing, opts.log);
+  const woken = existing && (await wake(existing, opts.log));
+  if (woken) return { sandbox: woken, created: false };
   if (!owner) {
     throw new SandboxError(
       'unavailable',
@@ -264,10 +337,13 @@ export async function connectOrCreatePrizedSandbox(
   }
   const created = await Sdk.create(createOptions);
   const winner = await oldestLive(Sdk, keyLabel, client).catch(() => undefined);
-  if (!winner || winner.id === created.id) return created;
+  if (!winner || winner.id === created.id) return { sandbox: created, created: true };
+  // Attach to the older one first: if it is gone after all, keep ours.
+  const joined = await wake(winner, opts.log);
+  if (!joined) return { sandbox: created, created: true };
   opts.log?.(`prized: another host created ${winner.id} for this key first; deleting ${created.id} and attaching to it`);
   await created.delete().catch((err: unknown) => opts.log?.(`prized: deleting duplicate ${created.id} failed: ${message(err)}`));
-  return wake(winner, opts.log);
+  return { sandbox: joined, created: false };
 }
 
 async function oldestLive(
@@ -288,13 +364,21 @@ function byAge(a: PrizedSandboxHandle, b: PrizedSandboxHandle): number {
   return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
 }
 
-/** Resume a paused sandbox now (a command would wake it too, but waits only 10 s for that). */
-async function wake(sbx: PrizedSandboxHandle, log?: (message: string) => void): Promise<PrizedSandboxHandle> {
+/**
+ * Resume a paused sandbox now (a command would wake it too, but waits only 10 s for that).
+ * Undefined when it was deleted in the meantime.
+ */
+async function wake(sbx: PrizedSandboxHandle, log?: (message: string) => void): Promise<PrizedSandboxHandle | undefined> {
   if (sbx.state === 'paused' || sbx.state === 'pausing') {
     try {
       await sbx.resume();
     } catch (err) {
-      // Another host may have resumed it in between; the next command wakes it if not.
+      if (hasCode(err, 'sandbox_deleted', 'not_found')) {
+        log?.(`prized: ${sbx.id} was deleted before it could resume`);
+        return undefined;
+      }
+      // Another host may have resumed it in between; the next command wakes it if not, and
+      // says why if it can't (a refused resume: balance, quota).
       log?.(`prized: resuming ${sbx.id} failed: ${message(err)}`);
     }
   }
@@ -304,10 +388,10 @@ async function wake(sbx: PrizedSandboxHandle, log?: (message: string) => void): 
 /** Delete every sandbox for a key (an owner's terminal entity), without attaching to it. */
 export async function reclaimPrizedSandboxByKey(
   sandboxKey: string,
-  opts: Pick<PrizedSandboxOptions, 'apiKey' | 'baseUrl' | 'clientOptions' | 'sdk'> = {},
+  opts: Pick<PrizedSandboxOptions, 'apiKey' | 'baseUrl' | 'clientOptions' | 'sdk' | 'namespace'> = {},
 ): Promise<string[]> {
   const Sdk = opts.sdk ?? (PrizedSdkSandbox satisfies PrizedSandboxClass);
-  return Sdk.deleteByLabels({ [SANDBOX_KEY_LABEL]: sandboxKeyTag(sandboxKey) }, clientOptionsOf(opts));
+  return Sdk.deleteByLabels({ [SANDBOX_KEY_LABEL]: sandboxKeyTag(sandboxKey, opts.namespace) }, clientOptionsOf(opts));
 }
 
 /** What `adaptPrized` takes. */
@@ -317,13 +401,14 @@ export interface AdaptOptions {
   heartbeatIntervalMs?: number;
   fullOutput?: boolean;
   log?: (message: string) => void;
+  /** Called by `kill()` after the delete: removes any other sandbox under the same key (a lost race's, say). */
+  sweep?: () => Promise<unknown>;
 }
 
 /** Wrap a Prized sandbox as Electric's provider-neutral `RemoteSandboxClient`. */
 export function adaptPrized(sbx: PrizedSandboxHandle, opts: AdaptOptions = {}): PrizedRemoteSandboxClient {
   const defaultCwd = opts.workingDirectory ?? DEFAULT_WORKING_DIRECTORY;
   const keepAliveMs = opts.keepAliveMs ?? DEFAULT_KEEP_ALIVE_MS;
-  const fullOutput = opts.fullOutput !== false;
   const log = opts.log;
   // Commands and file transfers count as activity, but a wake can sit idle while its model
   // thinks; the heartbeat keeps the sandbox running (and its background processes going) for
@@ -331,16 +416,30 @@ export function adaptPrized(sbx: PrizedSandboxHandle, opts: AdaptOptions = {}): 
   // nothing here pauses it, so no cross-host refcount is needed.
   let heartbeat: ReturnType<typeof setInterval> | undefined = setInterval(() => {
     sbx.keepAlive().catch((err: unknown) => log?.(`prized: keep-alive for ${sbx.id} failed: ${message(err)}`));
-  }, opts.heartbeatIntervalMs ?? heartbeatIntervalFor(keepAliveMs));
+  }, heartbeatIntervalFor(keepAliveMs, opts.heartbeatIntervalMs));
   heartbeat.unref?.();
   const stopHeartbeat = (): void => {
     if (heartbeat) clearInterval(heartbeat);
     heartbeat = undefined;
   };
 
-  /** One filesystem command: C locale, from `/`, bounded. */
-  const fsCommand = (script: string, full = false): Promise<ExecResult> =>
-    sbx.exec(script, { cwd: '/', env: { LC_ALL: 'C' }, timeoutMs: FS_COMMAND_TIMEOUT_MS, fullOutput: full });
+  /** One filesystem command: C locale, from `/`, bounded; a timeout is ETIMEDOUT, a cut output EFBIG. */
+  const fsCommand = async (
+    script: string,
+    op: string,
+    path: string,
+    { full = false, timeoutMs = FS_COMMAND_TIMEOUT_MS }: { full?: boolean; timeoutMs?: number } = {},
+  ): Promise<ExecResult> => {
+    let r: ExecResult;
+    try {
+      r = await sbx.exec(script, { cwd: '/', env: { LC_ALL: 'C' }, timeoutMs, fullOutput: full });
+    } catch (err) {
+      if (commandTimeoutResult(err)) throw errno('ETIMEDOUT', `timed out after ${timeoutMs} ms`, op, path, err);
+      throw err;
+    }
+    if (r.truncated) throw errno('EFBIG', 'too large to read with a command (over 100 MiB of output)', op, path);
+    return r;
+  };
 
   return {
     get sandboxId() {
@@ -358,9 +457,13 @@ export function adaptPrized(sbx: PrizedSandboxHandle, opts: AdaptOptions = {}): 
         const q = shellQuote(staged);
         command = `{ exec 0<${q}; } 2>/dev/null || { echo 'prized: stdin was not staged' >&2; exit 125; }\nrm -f -- ${q}\n${o.command}`;
       }
+      // Electric's fetch() is the one caller known to need more than 4 MiB (a base64 body).
+      const fullOutput = opts.fullOutput ?? o.env?.FETCH_URL !== undefined;
       try {
         const r = await sbx.exec(command, { cwd: o.cwd ?? defaultCwd, env: o.env, timeoutMs: o.timeoutMs, fullOutput });
-        return { stdout: Buffer.from(r.stdout), stderr: Buffer.from(r.stderr), exitCode: r.exitCode < 0 ? null : r.exitCode, timedOut: false };
+        // The contract has no truncation flag of its own: say so where a reader will see it.
+        const cut = r.truncated ? `\n[prized: output cut at ${fullOutput ? '100' : PLAIN_OUTPUT_BYTES / 1024 / 1024} MiB a stream]\n` : '';
+        return { stdout: Buffer.from(r.stdout), stderr: Buffer.from(r.stderr + cut), exitCode: r.exitCode < 0 ? null : r.exitCode, timedOut: false };
       } catch (err) {
         const timedOut = commandTimeoutResult(err);
         if (timedOut) {
@@ -381,7 +484,7 @@ export function adaptPrized(sbx: PrizedSandboxHandle, opts: AdaptOptions = {}): 
           if (!hasCode(err, 'symlink_not_allowed', 'path_outside_root')) throw fsErrorFromApi(err, 'readFile', path);
         }
       }
-      const r = await fsCommand(`base64 -w 0 -- ${shellQuote(path)}`, true);
+      const r = await fsCommand(`base64 -w 0 -- ${shellQuote(path)}`, 'readFile', path, { full: true });
       if (r.exitCode !== 0) throw shellError(r.stderr, 'readFile', path);
       return Buffer.from(r.stdout.trim(), 'base64');
     },
@@ -395,7 +498,12 @@ export function adaptPrized(sbx: PrizedSandboxHandle, opts: AdaptOptions = {}): 
     },
 
     async mkdir(path, o) {
-      const r = await fsCommand(`mkdir ${o?.recursive ? '-p ' : ''}-- ${shellQuote(path)}`);
+      // Electric's recursive mkdir walks every parent from /home down; those two never need asking.
+      if (ALWAYS_THERE.has(posix.normalize(path).replace(/(.)\/$/, '$1'))) {
+        if (o?.recursive) return;
+        throw errno('EEXIST', 'File exists', 'mkdir', path);
+      }
+      const r = await fsCommand(`mkdir ${o?.recursive ? '-p ' : ''}-- ${shellQuote(path)}`, 'mkdir', path);
       if (r.exitCode !== 0) throw shellError(r.stderr, 'mkdir', path);
     },
 
@@ -407,7 +515,9 @@ export function adaptPrized(sbx: PrizedSandboxHandle, opts: AdaptOptions = {}): 
         `if [ ! -e ${p} ]; then echo 'readdir: No such file or directory' >&2; exit 2; fi\n` +
           `if [ ! -d ${p} ]; then echo 'readdir: Not a directory' >&2; exit 20; fi\n` +
           `find -H ${p} -mindepth 1 -maxdepth 1 -printf '%y\\t%f\\0'`,
-        true,
+        'readdir',
+        path,
+        { full: true },
       );
       if (r.exitCode !== 0) throw shellError(r.stderr, 'readdir', path);
       return r.stdout
@@ -423,19 +533,19 @@ export function adaptPrized(sbx: PrizedSandboxHandle, opts: AdaptOptions = {}): 
     },
 
     async exists(path) {
-      const r = await fsCommand(`test -e ${shellQuote(path)}`);
+      const r = await fsCommand(`test -e ${shellQuote(path)}`, 'exists', path);
       return r.exitCode === 0;
     },
 
     async remove(path, o) {
       // Plain `rm`, never `-f`: removing a missing path throws, as Electric's conformance suite expects.
-      const r = await fsCommand(`rm ${o?.recursive ? '-r ' : ''}-- ${shellQuote(path)}`);
+      const r = await fsCommand(`rm ${o?.recursive ? '-r ' : ''}-- ${shellQuote(path)}`, 'remove', path, { timeoutMs: REMOVE_TIMEOUT_MS });
       if (r.exitCode !== 0) throw shellError(r.stderr, 'remove', path);
     },
 
     async stat(path): Promise<FileStat> {
       // -L follows links, as fs.stat does; %f is the raw mode in hex, so no locale wording is parsed.
-      const r = await fsCommand(`stat -L -c '%f|%s|%Y' -- ${shellQuote(path)}`);
+      const r = await fsCommand(`stat -L -c '%f|%s|%Y' -- ${shellQuote(path)}`, 'stat', path);
       const fields = r.stdout.trim().split('|');
       if (r.exitCode !== 0 || fields.length !== 3) throw shellError(r.stderr, 'stat', path);
       const mode = Number.parseInt(fields[0] ?? '', 16);
@@ -453,6 +563,9 @@ export function adaptPrized(sbx: PrizedSandboxHandle, opts: AdaptOptions = {}): 
         // Already gone (deleted elsewhere, or its run time ended): nothing left to kill.
         if (!hasCode(err, 'not_found', 'sandbox_deleted')) throw err;
       }
+      // Wiping a keyed workspace wipes every sandbox under its key: a race's loser whose delete
+      // failed, one in error. Best effort; this one is already gone.
+      await opts.sweep?.().catch((err: unknown) => log?.(`prized: removing other sandboxes for this key failed: ${message(err)}`));
     },
 
     async suspend() {
@@ -507,6 +620,8 @@ function fsErrorFromApi(err: unknown, op: string, path: string): unknown {
     permission_denied: 'EACCES',
     path_outside_root: 'EACCES',
     symlink_not_allowed: 'EACCES',
+    unsupported_file_type: 'EISDIR',
+    file_too_large: 'EFBIG',
   };
   const code = (err as { code?: unknown } | null)?.code;
   const mapped = typeof code === 'string' ? codes[code] : undefined;

@@ -204,6 +204,24 @@ describe('prizedSandboxProfile', () => {
     expect(fake.deletesByLabels).toEqual([{ [SANDBOX_KEY_LABEL]: sandboxKeyTag('https://agents.example/worker/7') }]);
   });
 
+  it('hashes the namespace into the key label, for create and for reclaim', async () => {
+    const p = prizedSandboxProfile({ sdk: fake.Sdk, namespace: 'https://agents.example', heartbeatIntervalMs: 60_000 });
+    const s = await p.factory(params());
+    await s.exec({ command: 'true' });
+    await s.dispose();
+    const tag = sandboxKeyTag('https://agents.example/worker/7', 'https://agents.example');
+    expect(fake.creates[0]!.labels![SANDBOX_KEY_LABEL]).toBe(tag);
+    const last = await p.factory(params());
+    await last.dispose({ reclaim: true });
+    expect(fake.deletesByLabels).toEqual([{ [SANDBOX_KEY_LABEL]: tag }]);
+    expect(fake.live()).toHaveLength(0);
+  });
+
+  it('refuses lifecycle numbers that could only fail at the first tool call', () => {
+    expect(() => prizedSandboxProfile({ keepAliveMs: 0 })).toThrow(SandboxError);
+    expect(() => prizedSandboxProfile({ pausedRetentionMin: Number.NaN })).toThrow(SandboxError);
+  });
+
   it('lazy: false creates at the start of the wake', async () => {
     const p = prizedSandboxProfile({ sdk: fake.Sdk, lazy: false, heartbeatIntervalMs: 60_000 });
     const s = await p.factory(params({ persistent: false }));

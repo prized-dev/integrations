@@ -41,6 +41,15 @@ export class FakeSandbox implements PrizedSandboxHandle {
   fileCalls: [string, string][] = [];
   /** Make keepAlive reject (a network blip, say). */
   failKeepAlive: Error | undefined;
+  /** Make the next resume reject with this (the sandbox deleted meanwhile, say). */
+  failResume: Error | undefined;
+  /** Throw this from the next exec whose command contains `match`, before it runs. */
+  failExec: { match: string; error: Error } | undefined;
+  /** Commands containing this time out at once (as CommandTimeoutError), without running. */
+  timeOutWhen: string | undefined;
+  /** The per-stream cap of a plain exec (4 MiB in the real one) and of a fullOutput one (100 MiB); tests lower them. */
+  plainCap: number = 4 * 1024 * 1024;
+  fullCap: number = 100 * 1024 * 1024;
 
   constructor(root: string, createOptions: CreateOptions, createdAt: Date) {
     this.id = `sbx_${Math.random().toString(16).slice(2, 18).padEnd(16, '0')}`;
@@ -107,6 +116,15 @@ export class FakeSandbox implements PrizedSandboxHandle {
   async exec(command: string, options: ExecCall['options'] = {}): Promise<ExecResult> {
     this.touch();
     this.execs.push({ command, options });
+    if (this.failExec && command.includes(this.failExec.match)) {
+      const { error } = this.failExec;
+      this.failExec = undefined;
+      throw error;
+    }
+    if (this.timeOutWhen !== undefined && command.includes(this.timeOutWhen)) {
+      const timedOut = { stdout: '', stderr: '', exitCode: -1, durationMs: 1, timedOut: true, truncated: false };
+      throw new CommandTimeoutError(timedOut, options.timeoutMs ?? 60_000, this.id);
+    }
     const script = command.replaceAll(HOME, join(this.root, HOME));
     const cwd = this.local(options.cwd ?? `${HOME}/work`);
     const timeoutMs = options.timeoutMs ?? 60_000;
@@ -157,6 +175,10 @@ export class FakeSandbox implements PrizedSandboxHandle {
     });
     const { killed, ...plain } = result;
     if (killed) throw new CommandTimeoutError(plain, timeoutMs, this.id);
+    const cap = options.fullOutput ? this.fullCap : this.plainCap;
+    if (plain.stdout.length > cap || plain.stderr.length > cap) {
+      return { ...plain, stdout: plain.stdout.slice(0, cap), stderr: plain.stderr.slice(0, cap), truncated: true, truncatedReason: 'output_limit' };
+    }
     return plain;
   }
 
@@ -167,8 +189,15 @@ export class FakeSandbox implements PrizedSandboxHandle {
   }
 
   async resume(): Promise<void> {
-    this.alive();
     this.resumes++;
+    if (this.failResume) {
+      const err = this.failResume;
+      this.failResume = undefined;
+      // A sandbox_deleted answer means it really is gone (its autoDeleteMin ran out, say).
+      if ((err as { code?: string }).code === 'sandbox_deleted') this.state = 'deleted';
+      throw err;
+    }
+    this.alive();
     this.state = 'running';
   }
 
@@ -177,9 +206,10 @@ export class FakeSandbox implements PrizedSandboxHandle {
     this.state = 'paused';
   }
 
+  /** As the real SDK: deleting a sandbox that is already gone resolves (its 404 counts as done). */
   async delete(): Promise<void> {
     this.deletes++;
-    if (this.state === 'deleted') throw new PrizedError('not_found', 'Not found.', { status: 404, sandboxId: this.id });
+    if (this.state === 'deleted') return;
     this.state = 'deleted';
     await rm(this.root, { recursive: true, force: true });
   }

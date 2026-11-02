@@ -1,6 +1,7 @@
 export {
   adaptPrized,
   assertPrizedNetworkPolicy,
+  assertPrizedSandboxOptions,
   assertPrizedWorkingDirectory,
   autoPauseMinFor,
   connectOrCreatePrizedSandbox,
@@ -9,6 +10,7 @@ export {
   DEFAULT_KEEP_ALIVE_MS,
   DEFAULT_PAUSED_RETENTION_MIN,
   DEFAULT_WORKING_DIRECTORY,
+  heartbeatIntervalFor,
   PRIZED_HOME,
   reclaimPrizedSandboxByKey,
   SANDBOX_KEY_LABEL,
