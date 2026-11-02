@@ -1,0 +1,3 @@
+#!/bin/sh
+# stand-in: records nothing, succeeds
+exit 0

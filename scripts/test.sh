@@ -158,6 +158,13 @@ case $DIR in
   cursor)
     # spawn.sh against a stand-in `prized` and a stub Cursor `agent` (test/): no keys, no network.
     offline bash test/test.sh ;;
+  github-issues)
+    # One standard-library script: ruff, then the offline tests against a stand-in GitHub API on loopback,
+    # a local bare repo, and stand-ins for claude, codex and systemctl (tests/bin).
+    "$PYTHON" -m venv "$WORK/venv"
+    "$WORK/venv/bin/pip" install -q "ruff==0.17.1"
+    "$WORK/venv/bin/ruff" check . && "$WORK/venv/bin/ruff" format --check .
+    offline "$PYTHON" -W ignore::ResourceWarning -m unittest discover -s tests -v ;;
   dify)
     # A Dify plugin ships as a .difypkg, not a wheel: requirements.txt is what Dify installs, and
     # pyproject.toml holds only the lint and test settings.
