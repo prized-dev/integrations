@@ -12,7 +12,7 @@ license-files = ["LICENSE"]
 requires-python = ">=3.10"
 authors = [{ name = "Prized", email = "team@prized.dev" }]
 keywords = ["devin", "outposts", "cognition", "prized", "sandbox", "microvm"]
-dependencies = ["prized>=0.1.0,<1", "httpx>=0.24,<1"]
+dependencies = ["prized>=0.1.2,<1", "httpx>=0.24,<1"]
 
 [project.optional-dependencies]
 test = ["pytest>=8"]

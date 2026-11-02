@@ -116,7 +116,7 @@ case $DIR in
   devin-outposts)
     # Offline: a stand-in for Devin's Outposts service on 127.0.0.1, fake sandboxes that run the
     # in-sandbox scripts with bash, and a fake devin-remote. Live tests skip without PRIZED_LIVE=1.
-    py "test" yes "prized==0.1.0 httpx==0.24.1" "pip install -q ruff && ruff check . && ruff format --check ." ;;
+    py "test" yes "prized==0.1.2 httpx==0.24.1" "pip install -q ruff && ruff check . && ruff format --check ." ;;
   openai-agents)
     # The package's test dependency group (pyproject.toml [dependency-groups]); FLOOR=1 pins the
     # oldest openai-agents and httpx it allows and runs the offline tests only. The latest row

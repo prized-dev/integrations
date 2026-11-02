@@ -55,7 +55,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@prized/sdk": "^0.1.0"
+    "@prized/sdk": "^0.1.2"
   },
   "peerDependencies": {
     "@mastra/core": ">=1.79.0 <2.0.0"
