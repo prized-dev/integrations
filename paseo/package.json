@@ -1,0 +1,32 @@
+{
+  "name": "paseo-prized-sandbox",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Paseo hosts on Prized sandboxes: Stop pauses with memory and running agents kept, Resume picks up mid-task.",
+  "keywords": ["paseo", "paseo-plugin", "prized", "sandbox", "coding-agent"],
+  "license": "Apache-2.0",
+  "homepage": "https://prized.dev/docs/paseo?via=paseo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prized-dev/integrations.git",
+    "directory": "paseo"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@getpaseo/client": "0.14.0",
+    "@getpaseo/plugin": "0.14.0",
+    "@types/node": "22.15.12",
+    "@types/react": "19.2.14",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "typescript": "5.9.3",
+    "zod": "4.4.3"
+  }
+}

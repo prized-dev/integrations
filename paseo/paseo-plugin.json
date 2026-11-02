@@ -1,0 +1,6 @@
+{
+  "id": "prized-sandbox",
+  "name": "Prized Sandbox",
+  "description": "Paseo hosts on Prized sandboxes: Stop pauses with memory and running agents kept, Resume picks up mid-task.",
+  "requirements": { "paseo": ">=0.14.0" }
+}
