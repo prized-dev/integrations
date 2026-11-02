@@ -52,6 +52,7 @@ export class HostService {
   private running = new Map<string, Promise<void>>();
   private ready: Promise<void>;
   private owners = new Map<string, string>();
+  private others = new Set<string>();
 
   constructor(options: ServiceOptions) {
     this.store = new Store(options.stateDir);
@@ -85,22 +86,26 @@ export class HostService {
     return this.makeApi(await this.apiKey());
   }
 
-  // Who the current key acts for: its workspace when /me says, else the key itself. A host records its
-  // owner at create; a 404 means "gone" only when asked by the same owner.
-  private async owner(): Promise<string> {
+  // Who the current key acts for: its workspace when /me says, else (a key that cannot read its
+  // workspace) the key itself. undefined when /me could not be read: then nothing is compared and
+  // nothing recorded. A host records its owner at create; a 404 means "gone" only for the same owner.
+  private async owner(): Promise<string | undefined> {
     const key = await this.apiKey();
     const cached = this.owners.get(key);
     if (cached) return cached;
-    let owner = `key:${createHash("sha256").update(key).digest("hex").slice(0, 16)}`;
+    let owner: string;
     try {
       const id = (await this.makeApi(key).me()).workspace?.id;
-      if (id) owner = `ws:${id}`;
+      owner = id ? `ws:${id}` : `key:${createHash("sha256").update(key).digest("hex").slice(0, 16)}`;
     } catch {
-      // Prized unreachable: the key fingerprint stands in, and is not cached.
-      return owner;
+      return undefined;
     }
     this.owners.set(key, owner);
     return owner;
+  }
+
+  private differs(host: HostRecord, owner: string | undefined): boolean {
+    return Boolean(host.owner && owner && host.owner !== owner);
   }
 
   async saveSettings(input: {
@@ -146,7 +151,9 @@ export class HostService {
 
   async status(refresh: boolean) {
     await this.ready;
-    const others = refresh ? await this.refresh() : new Set<string>();
+    if (refresh) await this.refresh();
+    // The last remote refresh's verdict holds until the next one, so local polls don't flicker.
+    const others = this.others;
     const [file, secrets] = await Promise.all([this.store.readHosts(), this.store.readSecrets()]);
     const shape = { ...DEFAULT_SHAPE, ...file.shape };
     return {
@@ -178,33 +185,36 @@ export class HostService {
 
   // Read each idle host's sandbox (a read is not activity: it never wakes or keeps a sandbox up).
   // Returns the hosts the current key cannot see because another workspace made them.
-  private async refresh(): Promise<Set<string>> {
+  private async refresh(): Promise<void> {
     const others = new Set<string>();
     const file = await this.store.readHosts();
     const idle = Object.values(file.hosts).filter((h) => h.sandboxId && !this.running.has(h.id));
-    if (!idle.length) return others;
     let api: PrizedApi;
-    let owner: string;
+    let owner: string | undefined;
     try {
       api = await this.api();
       owner = await this.owner();
     } catch {
-      return others;
+      this.others = others;
+      return;
     }
     for (const host of idle) {
       try {
         const sandbox = await api.getSandbox(host.sandboxId!);
         if (!sandbox) {
-          if (host.owner && host.owner !== owner) {
+          if (this.differs(host, owner)) {
             others.add(host.id);
             continue;
           }
+          // Without a known owner on either side a 404 cannot be told apart from another workspace.
+          if (!owner && host.owner) continue;
           if (host.phase !== "gone") {
             await this.store.patchHost(host.id, { phase: "gone", sandboxState: "deleted", expiresAt: undefined, error: "The sandbox is gone: deleted, or its running time ended." });
           }
           continue;
         }
-        const patch: Partial<HostRecord> = { sandboxState: sandbox.state, expiresAt: sandbox.expiresAt ?? undefined, owner };
+        const patch: Partial<HostRecord> = { sandboxState: sandbox.state, expiresAt: sandbox.expiresAt ?? undefined };
+        if (owner) patch.owner = owner; // seen by this owner: it is this owner's
         if (["ready", "gone"].includes(host.phase) && sandbox.state === "paused") patch.phase = "paused";
         if (["paused", "gone"].includes(host.phase) && sandbox.state === "running") patch.phase = "ready";
         if (host.phase === "gone") patch.error = undefined;
@@ -213,7 +223,7 @@ export class HostService {
         // Status is best effort: the next refresh tries again.
       }
     }
-    return others;
+    this.others = others;
   }
 
   // ------------------------------------------------------------------ operations
@@ -229,7 +239,7 @@ export class HostService {
   private async assertOwned(host: HostRecord, api: PrizedApi): Promise<Sandbox | null> {
     const sandbox = host.sandboxId ? await api.getSandbox(host.sandboxId) : null;
     if (sandbox) return sandbox;
-    if (host.owner && host.owner !== (await this.owner())) throw new UserError(OTHER_KEY);
+    if (this.differs(host, await this.owner())) throw new UserError(OTHER_KEY);
     return null;
   }
 

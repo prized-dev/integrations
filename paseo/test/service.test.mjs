@@ -240,6 +240,7 @@ test("a Full access key (GET /me has no access field) is accepted; read-only and
   await setup({ keyKind: "custom" }).service.saveSettings({ prizedApiKey: FAKE_KEY });
   await assert.rejects(setup({ keyKind: "custom-read" }).service.saveSettings({ prizedApiKey: FAKE_KEY }), /cannot create sandboxes/);
   await assert.rejects(setup({ keyKind: "box-limited" }).service.saveSettings({ prizedApiKey: FAKE_KEY }), /cannot create sandboxes/);
+  await assert.rejects(setup({ keyKind: "contractor" }).service.saveSettings({ prizedApiKey: FAKE_KEY }), /cannot create sandboxes/);
 });
 
 test("on the free tier the default settings work: no run time is asked for unless one is chosen", async () => {
@@ -332,4 +333,32 @@ test("the install and daemon scripts hold a lock, which the daemon itself never 
   assert.match(installScript(), /flock -w 600 9/);
   assert.match(startDaemonScript(), /flock -w 300 9/);
   assert.match(startDaemonScript(), /paseo daemon start --home "\$PASEO_HOME" 9>&-/);
+});
+
+test("a refresh while /me is down stamps no owner, so a host that then ends still reads as gone", async () => {
+  const other = `dcp_${"d".repeat(48)}`;
+  const t = setup({ otherKeys: { [other]: "ws1" } }); // a second key of the same workspace
+  await t.service.saveSettings({ prizedApiKey: FAKE_KEY });
+  const { hostId } = await t.service.create();
+  await t.service.settled();
+  await t.service.saveSettings({ prizedApiKey: other });
+  t.prized.fail.me = true;
+  await t.service.status(true); // /me unreadable: nothing compared, nothing recorded
+  const [sandbox] = t.prized.sandboxes.values();
+  sandbox.state = "deleted";
+  t.prized.fail.me = false;
+  const host = (await t.service.status(true)).hosts.find((h) => h.id === hostId);
+  assert.equal(host.phase, "gone");
+  assert.equal(host.otherWorkspace, undefined);
+});
+
+test("the other-workspace verdict holds between remote refreshes", async () => {
+  const other = `dcp_${"c".repeat(48)}`;
+  const t = setup({ otherKeys: { [other]: "ws2" } });
+  await t.service.saveSettings({ prizedApiKey: FAKE_KEY });
+  await t.service.create();
+  await t.service.settled();
+  await t.service.saveSettings({ prizedApiKey: other });
+  assert.equal((await t.service.status(true)).hosts[0].otherWorkspace, true);
+  assert.equal((await t.service.status(false)).hosts[0].otherWorkspace, true, "a local poll keeps it");
 });

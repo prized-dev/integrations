@@ -31,13 +31,16 @@ export interface CreateSandboxInput {
 
 // GET /me: `access` is there only for a key with limited access (absent means full access), and
 // `key.boxIds` only for a key limited to some boxes, which reaches no sandboxes.
+// A contractor (`user.role`) sees no sandboxes at all.
 export interface Me {
   workspace?: { id?: string; name?: string };
   access?: { sandboxes?: string };
   key?: { boxIds?: string[] | null } | null;
+  user?: { role?: string } | null;
 }
 
 export function canWriteSandboxes(me: Me): boolean {
+  if (me.user?.role === "contractor") return false;
   if (me.key?.boxIds && me.key.boxIds.length) return false;
   return me.access ? me.access.sandboxes === "write" : true;
 }

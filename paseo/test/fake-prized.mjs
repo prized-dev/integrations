@@ -36,6 +36,8 @@ export function fakePrized({ fail = {}, workspace = "acme", workspaceId = "ws1",
       const path = u.pathname.replace("/api/v1", "");
       if (path === "/me") {
         const me = { workspace: { id: ws, name: ws === workspaceId ? workspace : "other" }, key: { id: "k1", kind: "api", expiresAt: null, boxIds: keyKind === "box-limited" ? ["box1"] : null } };
+        if (fail.me) return json(503, { error: "unavailable", message: "try again" });
+        if (keyKind === "contractor") me.user = { id: "u2", role: "contractor" };
         if (keyKind === "custom") me.access = { sandboxes: "write" };
         if (keyKind === "custom-read") me.access = { sandboxes: "read" };
         return json(200, me);

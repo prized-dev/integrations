@@ -118,7 +118,6 @@ export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps &
     [theme, layout.compact],
   );
 
-  const Button = (props: { label: string; onPress: () => void; primary?: boolean; disabled?: boolean }) => <ActionButton {...props} styles={s} pending={pending} />;
 
   const settings = status?.settings;
   const hosts = status?.hosts ?? [];
@@ -135,7 +134,7 @@ export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps &
         <View style={s.card}>
           <Text style={s.text}>Add a Prized API key to create hosts.</Text>
           <View style={s.row}>
-            <Button label="Open settings" primary onPress={() => openSettings("prized")} />
+            <ActionButton styles={s} pending={pending} label="Open settings" primary onPress={() => openSettings("prized")} />
           </View>
         </View>
       ) : (
@@ -147,8 +146,8 @@ export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps &
           </Text>
           <View style={s.row}>
             <TextInput style={s.input} placeholder="Name (optional)" placeholderTextColor={theme.colors.foregroundMuted} value={label} onChangeText={setLabel} />
-            <Button label="Create host" primary onPress={() => run(() => create({ label: label || undefined }).then(() => setLabel("")), "Creating. Installing Paseo takes about a minute.")} />
-            <Button label="Settings" onPress={() => openSettings("prized")} />
+            <ActionButton styles={s} pending={pending} label="Create host" primary onPress={() => run(() => create({ label: label || undefined }).then(() => setLabel("")), "Creating. Installing Paseo takes about a minute.")} />
+            <ActionButton styles={s} pending={pending} label="Settings" onPress={() => openSettings("prized")} />
           </View>
         </View>
       )}
@@ -171,16 +170,18 @@ export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps &
           <View style={s.row}>
             {host.paired && (host.phase === "ready" || host.phase === "paused") ? (
               <>
-                <Button label="Copy pairing link" onPress={() => copyPairing(host)} />
-                {!host.addedAsHost ? <Button label="Add to this daemon's hosts" onPress={() => run(() => addHost({ hostId: host.id }), "Added to this daemon's hosts.")} /> : null}
+                <ActionButton styles={s} pending={pending} label="Copy pairing link" onPress={() => copyPairing(host)} />
+                {!host.addedAsHost ? <ActionButton styles={s} pending={pending} label="Add to this daemon's hosts" onPress={() => run(() => addHost({ hostId: host.id }), "Added to this daemon's hosts.")} /> : null}
               </>
             ) : null}
-            {host.phase === "ready" ? <Button label="Stop" onPress={() => run(() => act({ hostId: host.id, action: "stop" }), "Stopping. Memory and agents are kept.")} /> : null}
-            {host.phase === "paused" ? <Button label="Resume" primary onPress={() => run(() => act({ hostId: host.id, action: "resume" }), "Resuming.")} /> : null}
-            {host.phase === "failed" && !host.busy ? <Button label="Retry" onPress={() => run(() => act({ hostId: host.id, action: "retry" }))} /> : null}
-            {host.phase === "gone" ? <Button label="Remove from list" onPress={() => run(() => act({ hostId: host.id, action: "forget" }))} /> : null}
+            {host.phase === "ready" ? <ActionButton styles={s} pending={pending} label="Stop" onPress={() => run(() => act({ hostId: host.id, action: "stop" }), "Stopping. Memory and agents are kept.")} /> : null}
+            {host.phase === "paused" ? <ActionButton styles={s} pending={pending} label="Resume" primary onPress={() => run(() => act({ hostId: host.id, action: "resume" }), "Resuming.")} /> : null}
+            {host.phase === "failed" && !host.busy ? <ActionButton styles={s} pending={pending} label="Retry" onPress={() => run(() => act({ hostId: host.id, action: "retry" }))} /> : null}
+            {host.phase === "gone" ? <ActionButton styles={s} pending={pending} label="Remove from list" onPress={() => run(() => act({ hostId: host.id, action: "forget" }))} /> : null}
             {["ready", "paused", "failed"].includes(host.phase) && !host.busy ? (
-              <Button
+              <ActionButton
+                styles={s}
+                pending={pending}
                 label="Delete"
                 onPress={() => {
                   setConfirming(host.id);
@@ -194,12 +195,14 @@ export function HostsScreen({ theme, layout, openSettings }: PluginScreenProps &
             <View style={s.row}>
               <Text style={s.text}>Type {host.sandboxId ?? host.label} to delete the sandbox, its files and its agents for good.</Text>
               <TextInput style={s.input} value={confirmText} onChangeText={setConfirmText} autoCapitalize="none" autoCorrect={false} />
-              <Button
+              <ActionButton
+                styles={s}
+                pending={pending}
                 label="Delete for good"
                 disabled={confirmText.trim() !== (host.sandboxId ?? host.label)}
                 onPress={() => run(() => act({ hostId: host.id, action: "delete", confirm: confirmText }).then(() => setConfirming(null)), "Deleting.")}
               />
-              <Button label="Cancel" onPress={() => setConfirming(null)} />
+              <ActionButton styles={s} pending={pending} label="Cancel" onPress={() => setConfirming(null)} />
             </View>
           ) : null}
         </View>
