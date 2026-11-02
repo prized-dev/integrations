@@ -1,0 +1,81 @@
+id = "prized.sandbox"
+name = "Prized"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Run Claude Code or Codex on a Prized sandbox or box from the worktree you are in. Closing the pane pauses the sandbox: its memory and processes survive."
+platforms = ["linux", "macos"]
+
+[[actions]]
+id = "start-sandbox"
+title = "Start agent in a Prized sandbox"
+description = "Copy this Git worktree into a new Prized sandbox and open the agent in a persistent tmux session beside this pane."
+contexts = ["workspace", "pane"]
+command = ["node", "src/action.mjs"]
+
+[[actions]]
+id = "start-box"
+title = "Start agent on a Prized box"
+description = "Copy this Git worktree to one of your Prized boxes and open the agent in a persistent tmux session beside this pane."
+contexts = ["workspace", "pane"]
+command = ["node", "src/action.mjs"]
+
+[[actions]]
+id = "reconnect"
+title = "Reconnect to Prized agent"
+description = "Reopen the agent session for this pane or worktree. A paused sandbox resumes where it stopped."
+contexts = ["workspace", "pane"]
+command = ["node", "src/action.mjs"]
+
+[[actions]]
+id = "apply-changes"
+title = "Apply Prized changes locally"
+description = "Show what the agent changed since the copy, then apply it to this worktree after git apply --check passes."
+contexts = ["workspace", "pane"]
+command = ["node", "src/action.mjs"]
+
+[[actions]]
+id = "pause"
+title = "Pause Prized sandbox"
+description = "Pause the sandbox for this pane or worktree. Memory, processes and files are kept; only storage is billed."
+contexts = ["workspace", "pane"]
+command = ["node", "src/action.mjs"]
+
+[[actions]]
+id = "delete"
+title = "Delete Prized sandbox"
+description = "After you type DELETE, delete the sandbox for this pane or worktree for good (on a box, stop the agent session and keep the files)."
+contexts = ["workspace", "pane"]
+command = ["node", "src/action.mjs"]
+
+[[actions]]
+id = "add-machine"
+title = "Add a Prized box as a machine"
+description = "Pick one of your Prized boxes and add it to herdr's sidebar as an SSH machine, with Claude Code and Codex on its path."
+contexts = ["global", "workspace", "pane"]
+command = ["node", "src/action.mjs"]
+
+[[events]]
+on = "pane.closed"
+command = ["node", "src/on-pane-closed.mjs"]
+
+[[panes]]
+id = "agent"
+title = "Prized agent"
+placement = "split"
+command = ["node", "src/agent-pane.mjs"]
+
+[[panes]]
+id = "ops"
+title = "Prized"
+placement = "popup"
+width = "88%"
+height = "80%"
+command = ["node", "src/ops-pane.mjs"]
+
+[[panes]]
+id = "machine"
+title = "Add a Prized box"
+placement = "popup"
+width = "80%"
+height = "75%"
+command = ["node", "src/machine-pane.mjs"]

@@ -1,0 +1,28 @@
+{
+  "name": "herdr-prized",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A herdr plugin that runs Claude Code or Codex on a Prized sandbox or box, from the worktree you are in.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "herdr",
+    "herdr-plugin",
+    "prized",
+    "sandbox",
+    "claude-code",
+    "codex"
+  ],
+  "homepage": "https://prized.dev/docs/herdr?via=herdr",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prized-dev/integrations.git",
+    "directory": "herdr"
+  },
+  "license": "Apache-2.0"
+}
