@@ -19,6 +19,7 @@ Each folder is its own package with its own README, tests and release. You need 
 | [`inspect`](inspect) | Inspect AI: sandbox environment | `inspect-prized` | Not on PyPI yet: install from this repo | [README](inspect/README.md) |
 | [`adk`](adk) | Google ADK: environment and code executor | `prized-adk` | Not on PyPI yet: install from this repo | [README](adk/README.md) |
 | [`strands`](strands) | Strands Agents: sandbox | `strands-prized` | Not on PyPI yet: install from this repo | [README](strands/README.md) |
+| [`camel`](camel) | CAMEL: code interpreter, runtime and code-execution toolkit | `camel-prized` | Not on PyPI yet: install from this repo | [README](camel/README.md) |
 | [`agent-framework`](agent-framework) | Microsoft Agent Framework: shell tool and file store | `agent-framework-prized` | Not on PyPI yet: install from this repo | [README](agent-framework/README.md) |
 | [`pydantic-ai`](pydantic-ai) | Pydantic AI: workspace | `pydantic-ai-prized` | Not on PyPI yet: install from this repo | [README](pydantic-ai/README.md) |
 | [`langchain-js`](langchain-js) | LangChain Deep Agents (JS): sandbox | `@prized/langchain` | Not on npm yet | [README](langchain-js/README.md) |

@@ -31,6 +31,8 @@ jobs:
           - { dir: adk, python: "3.13" }
           - { dir: strands, python: "3.10", floor: true }
           - { dir: strands, python: "3.13" }
+          - { dir: camel, python: "3.10", floor: true }
+          - { dir: camel, python: "3.13" }
           - { dir: agent-framework, python: "3.10", floor: true }
           - { dir: agent-framework, python: "3.13" }
           - { dir: pydantic-ai, python: "3.11", floor: true }

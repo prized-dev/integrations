@@ -92,7 +92,7 @@ py() {
   [ "$sdk" = no ] || need_sdk python
   # shellcheck disable=SC2086 # pins are a word list
   pip install -q -e ".[$extras]" ${FLOOR:+$floor}
-  pip list 2>/dev/null | grep -i -E "^(prized|inspect.ai|google.adk|strands.agents|agent.framework|pydantic.ai|harbor)[-_ ]" || true
+  pip list 2>/dev/null | grep -i -E "^(prized|inspect.ai|google.adk|strands.agents|agent.framework|pydantic.ai|harbor|camel.ai|mcp)[-_ ]" || true
   if [ -z "$FLOOR" ]; then sh -c "$lint"; else echo "(lint runs on the latest-dependencies row)"; fi
   offline pytest -rs -p no:cacheprovider
 }
@@ -106,6 +106,9 @@ case $DIR in
       "pip install -q pyink==25.12.0 isort==8.0.1 && pyink --check src tests examples && isort --check-only src tests examples" ;;
   strands)
     py dev yes "strands-agents==1.59.0" "ruff check . && ruff format --check . && mypy src" ;;
+  camel)
+    # FLOOR=1 pins camel-ai 0.2.86, the first release whose BaseRuntime has cleanup().
+    py dev yes "camel-ai==0.2.86" "ruff check . && ruff format --check . && mypy src" ;;
   agent-framework)
     py dev yes "agent-framework-core==1.19.0 agent-framework-tools==1.0.0b260918" \
       "ruff check . && ruff format --check . && mypy src" ;;
