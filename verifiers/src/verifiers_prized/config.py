@@ -38,9 +38,11 @@ class PrizedConfig(CustomRuntimeConfig):
     clones, downloads). A process started here in the background (`nohup ... &`) keeps running
     in every copy."""
     setup_env: list[str] = Field(default_factory=list)
-    """Names of variables in this process's environment passed to the `setup` commands only
-    (the names are saved with the config, the values are not)."""
-    setup_timeout: float = 1800
+    """Names of variables in this process's environment passed to the `setup` commands (the names
+    are saved with the config, the values are not). A process `setup` leaves running keeps them in
+    its environment, in every copy, where the rollout's commands (the agent's too) can read them.
+    Never the Prized API key."""
+    setup_timeout: float = Field(default=1800, ge=0)
     """Seconds each `setup` command may run; 0 for no limit."""
     parent: str | None = None
     """Fork from this sandbox instead of building one: a sandbox you set up yourself (or with
@@ -57,9 +59,11 @@ class PrizedConfig(CustomRuntimeConfig):
     When every parent's machine is full, another parent is built (running `setup` again), up to
     this many per shape and process."""
     capacity_wait: float = Field(default=600, ge=0)
-    """Seconds a rollout waits for room (a full machine, a workspace quota) before it fails."""
+    """Seconds a rollout waits for room (a full machine, a workspace quota) before it fails; 0
+    fails it at the first refusal. Time spent waiting for a parent's `setup` does not count."""
     max_runtime_min: int | None = Field(default=None, ge=1)
-    """Minutes each sandbox may run (Prized's default is 24 hours; paused time does not count).
+    """Minutes each sandbox may run (Prized's default is 24 hours, and 60 minutes, the most, on the
+    free tier; paused time does not count).
     Copies get their parent's."""
     blocking_run_timeout: float | None = Field(default=None, gt=0, le=240)
     """If set, `run` sends each command as one blocking call that is killed after this many
@@ -116,6 +120,12 @@ class PrizedConfig(CustomRuntimeConfig):
     def _consistent(self) -> Self:
         if self.parent is not None and not self.fork:
             raise ValueError("parent is a sandbox to fork from, so it needs fork = true")
+        key = next((n for n in self.setup_env if n in (self.api_key_env, "PRIZED_API_KEY")), None)
+        if key is not None:
+            raise ValueError(
+                f"setup_env may not pass the Prized API key (${key}) into the sandbox: the parent, "
+                "every copy and the agent in it could read it"
+            )
         return self
 
     @property

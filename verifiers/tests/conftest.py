@@ -43,7 +43,9 @@ def cloud(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[fake_priz
     monkeypatch.setattr(pool, "LINGER", 0.05)
     pool._pools.clear()
     pool._tracked.clear()
+    pool._used.clear()
     yield fake
-    # Nothing tracked may reach the atexit hook, which would call the real API.
+    # Nothing tracked or used may reach the atexit hook, which would call the real API.
     pool._pools.clear()
     pool._tracked.clear()
+    pool._used.clear()

@@ -17,8 +17,9 @@ from prized import PrizedError
 from pydantic import ValidationError
 from verifiers.v1.errors import SandboxError
 
+from . import pool
 from .config import PrizedConfig
-from .pool import RUN_ID, Credentials, Recipe, build_sandbox, credentials
+from .pool import Credentials, Recipe, build_sandbox, credentials
 
 
 def _labels(pairs: list[str]) -> dict[str, str]:
@@ -82,7 +83,7 @@ async def _build(config: PrizedConfig, creds: Credentials, *, pause: bool) -> st
         role="parent",
         pause=pause,
         tracked=False,  # it outlives this process: never deleted at exit
-        run=f"build-{RUN_ID}",
+        run=f"build-{pool.RUN_ID}",
     )
     await sandbox.close()
     return str(sandbox.id)

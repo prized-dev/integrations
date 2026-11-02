@@ -13,12 +13,13 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import binascii
 import contextlib
 import posixpath
 import shlex
 import uuid
 import weakref
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncIterator
 from typing import Any, ClassVar
 
 from prized import CommandTimeoutError, PrizedError
@@ -41,10 +42,21 @@ STDIN_CHUNK = 48 * 1024
 
 # `exec`: the command reads stdin from a FIFO that a holder process keeps open for writing, so
 # the command sees no end of input between writes. Each `write` opens the FIFO, writes, closes.
+# Its stdout and stderr go through two more FIFOs to encoders that print each read as one line,
+# ":" and its base64, as soon as it arrives: the SDK hands output on as UTF-8 text, which would turn
+# bytes that are not UTF-8 (the length prefix of a framed protocol such as verifiers' ACP) into
+# U+FFFD. The encoders ignore SIGTERM, so what a terminated command prints on its way out arrives;
+# the wrapper waits up to 2 s for them once the command has exited (a child it left running may
+# hold its stdout open).
 _EXEC_WRAPPER = (
-    'f=$1; shift; mkfifo -m 600 "$f" || exit 125; '
-    'sleep 2147483647 > "$f" & h=$!; '
-    '"$@" < "$f"; rc=$?; kill "$h" 2> /dev/null; rm -f "$f"; exit "$rc"'
+    'f=$1; shift; mkfifo -m 600 "$f" "$f.1" "$f.2" || exit 125; '
+    "enc() { trap '' TERM; while c=$(dd bs=49152 count=1 2> /dev/null | base64 -w 0) && "
+    '[ -n "$c" ]; do printf \':%s\\n\' "$c"; done; }; '
+    'enc < "$f.1" & o=$!; enc < "$f.2" >&2 & e=$!; '
+    'sleep 2147483647 > "$f" & h=$!; trap : TERM; '
+    '"$@" < "$f" > "$f.1" 2> "$f.2"; rc=$?; kill "$h" 2> /dev/null; '
+    '{ sleep 2; kill -9 "$o" "$e"; } > /dev/null 2>&1 & k=$!; wait "$o" "$e"; kill "$k" 2> /dev/null; '
+    'rm -f "$f" "$f.1" "$f.2"; exit "$rc"'
 )
 # One stdin write: wait briefly for the FIFO (the command may still be starting), then write
 # the decoded bytes; `timeout` ends an open that waits for a reader that is gone.
@@ -59,10 +71,37 @@ def _error(what: str, err: BaseException) -> SandboxError:
     return SandboxError(f"prized {what}: {err}")
 
 
+class _Lines:
+    """One `exec` stream as the SDK hands it on (text, in pieces): each whole line is decoded
+    (an encoder's chunk, or a line the wrapper's own shell printed) and queued as bytes."""
+
+    def __init__(self, queue: asyncio.Queue[bytes | None]) -> None:
+        self._queue = queue
+        self._rest = ""
+
+    def __call__(self, text: str) -> None:
+        *lines, self._rest = (self._rest + text).split("\n")
+        for line in lines:
+            self._queue.put_nowait(self._decoded(line, "\n"))
+
+    def close(self) -> None:
+        if self._rest:
+            self._queue.put_nowait(self._decoded(self._rest, ""))
+            self._rest = ""
+        self._queue.put_nowait(None)
+
+    @staticmethod
+    def _decoded(line: str, end: str) -> bytes:
+        if line.startswith(":"):
+            with contextlib.suppress(binascii.Error, ValueError):
+                return base64.b64decode(line[1:], validate=True)
+        return (line + end).encode()
+
+
 class PrizedProcess(RuntimeProcess):
-    """A command started with `exec`: stdout and stderr stream as the command prints, stdin
-    writes go through a FIFO. Output is decoded as UTF-8 by the SDK and re-encoded here, so
-    bytes that are not valid UTF-8 arrive as U+FFFD."""
+    """A command started with `exec`: stdout and stderr stream as the command prints, byte for
+    byte (each read crosses as a base64 line, see `_EXEC_WRAPPER`); stdin writes go through a
+    FIFO."""
 
     def __init__(self, sandbox: Any, handle: Any, stdin_path: str) -> None:
         self._sandbox = sandbox
@@ -83,15 +122,10 @@ class PrizedProcess(RuntimeProcess):
         while (chunk := await queue.get()) is not None:
             yield chunk
 
-    @staticmethod
-    def _feeder(queue: asyncio.Queue[bytes | None]) -> Callable[[str], None]:
-        return lambda text: queue.put_nowait(text.encode())
-
     async def _follow(self) -> None:
+        stdout, stderr = _Lines(self._out), _Lines(self._err)
         try:
-            result = await self._handle.wait(
-                on_stdout=self._feeder(self._out), on_stderr=self._feeder(self._err)
-            )
+            result = await self._handle.wait(on_stdout=stdout, on_stderr=stderr)
             self._returncode = result.exit_code
         except asyncio.CancelledError as err:  # abandoned: the sandbox is being deleted
             self._failure = err
@@ -99,8 +133,8 @@ class PrizedProcess(RuntimeProcess):
         except Exception as err:  # noqa: BLE001 - reported by wait()
             self._failure = err
         finally:
-            self._out.put_nowait(None)
-            self._err.put_nowait(None)
+            stdout.close()
+            stderr.close()
             self._done.set()
         with contextlib.suppress(Exception):
             await self._handle.cleanup()
@@ -170,10 +204,12 @@ class PrizedBackend(RuntimeBackend):
 
     def __init__(self, config: PrizedConfig, name: str | None = None) -> None:
         super().__init__(name)
-        self.config = config
-        self.info = CustomRuntimeInfo(**config.model_dump())
         workdir = config.resolved_workdir
         self.workdir = workdir if workdir.startswith("/") else posixpath.join(DEFAULT_WORKDIR, workdir)
+        # As the Prime and Docker runtimes do: the config and info name the workdir in use, which
+        # verifiers reads back (a judge looking at the solver's files, say).
+        self.config = config.model_copy(update={"workdir": self.workdir})
+        self.info = CustomRuntimeInfo(**self.config.model_dump())
         self.sandbox: Any = None
         self._creds: _pool.Credentials | None = None
         self._pool: _pool.ParentPool | None = None
@@ -252,6 +288,12 @@ class PrizedBackend(RuntimeBackend):
             ) from err
         except PrizedError as err:
             raise _error("exec failed", err) from err
+        if result.truncated:
+            # Never a partial answer passed off as whole (a file read through `run`, say).
+            raise SandboxError(
+                f"prized exec: the command printed more than the SDK keeps ({result.truncated_reason}); "
+                "send large output to a file and read it"
+            )
         return ProgramResult(result.exit_code, result.stdout, result.stderr)
 
     async def exec(self, runtime: Runtime, argv: list[str], env: dict[str, str]) -> RuntimeProcess:
@@ -259,7 +301,9 @@ class PrizedBackend(RuntimeBackend):
         stdin_path = f"/tmp/vfp-stdin-{uuid.uuid4().hex}"
         try:
             handle = await sandbox.exec(
-                ["sh", "-c", _EXEC_WRAPPER, "vfp-exec", stdin_path, *argv],
+                # `exec`: the SDK's own shell gives way to the wrapper, so a signal meets the wrapper
+                # and its exit code is the command's.
+                ["exec", "sh", "-c", _EXEC_WRAPPER, "vfp-exec", stdin_path, *argv],
                 cwd=self.workdir,
                 env=runtime.process_env(env) or None,
                 background=True,

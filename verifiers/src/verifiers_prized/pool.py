@@ -4,12 +4,14 @@ one copy per rollout.
 Rollouts that start together are forked from the parent in one request. Copies start on their
 parent's machine; when it is full (409 fork_capacity) the request is retried with the number that
 fits, the parent is given a short rest, and once every parent is full another one is built, up to
-`max_parents`. Workspace refusals (quota, capacity, rate limits) are waited out for up to
-`capacity_wait` seconds per rollout.
+`max_parents`. Workspace refusals (quota, capacity, rate limits), of a fork or of a parent's create,
+are waited out for up to `capacity_wait` seconds per rollout; time spent waiting for a parent's
+`setup` does not count.
 
 Every sandbox made here is tracked until it is deleted, and an atexit hook deletes what is left
-(one request by the run's label), so a Ctrl-C does not leave a paid sandbox behind. SIGKILL runs no
-hook: the sandboxes carry the label `vfp-run=<RUN_ID>` to find them by.
+(one request by the run's label for each API key used, then one by one), so a Ctrl-C does not leave
+a paid sandbox behind. SIGKILL runs no hook: the sandboxes carry the label `vfp-run=<RUN_ID>` to
+find them by.
 """
 
 from __future__ import annotations
@@ -66,6 +68,24 @@ _TRANSIENT = frozenset(
     }
 )
 _PARENT_GONE = frozenset({"not_found", "sandbox_deleted", "parent_not_running"})
+"""Refusals that may mean the parent is gone; `_parent_gone` asks the API before acting on one (a
+copy that failed, undoing the fork, raises `sandbox_deleted` too, and `parent_not_running` is a
+parent between states)."""
+_GONE_STATES = frozenset({"deleting", "deleted", "error"})
+_CANNOT_FORK = frozenset({"fork_unsupported_host", "parent_not_forkable"})
+"""This parent cannot fork (its machine, or its memory gone): a parent built here is replaced. Not
+`parent_too_big`, which a new parent of the same shape would meet again."""
+MAX_REPLACEMENTS = 3
+"""Parents replaced in a row, with no fork in between, before the waiting rollouts fail instead."""
+
+
+def passes(err: PrizedError) -> bool:
+    """A refusal that passes with time (wait, then send it again), for a fork or a create alike. The
+    free tier's run limit does not."""
+    return (err.code in _TRANSIENT or err.status in (429, 500, 502, 503, 504)) and not (
+        err.code == "sandbox_quota_exceeded" and err.reason == "max_runtime"
+    )
+
 
 # The SDK, as a module attribute so the tests can put a fake in its place.
 sdk: Any = prized
@@ -119,17 +139,32 @@ def credentials(config: PrizedConfig) -> Credentials:
 
 
 _tracked: dict[str, Credentials] = {}
+_used: dict[str, Credentials] = {}
+"""Every API key this process created or forked with (by key_id): swept by the run's label at exit,
+even with nothing tracked, for a copy whose fork was answered after a second Ctrl-C ended the loop."""
 _tracked_lock = threading.Lock()
 _atexit_armed = False
 
 
-def track(sandbox_id: str, creds: Credentials) -> None:
+def _arm(creds: Credentials) -> None:
+    """Remember `creds` for the exit sweep and register it once. Call with `_tracked_lock` held."""
     global _atexit_armed
+    _used.setdefault(creds.key_id, creds)
+    if not _atexit_armed:
+        _atexit_armed = True
+        atexit.register(delete_leftovers)
+
+
+def making(creds: Credentials) -> None:
+    """A create or fork with `creds` is about to be sent: sweep its workspace at exit."""
+    with _tracked_lock:
+        _arm(creds)
+
+
+def track(sandbox_id: str, creds: Credentials) -> None:
     with _tracked_lock:
         _tracked[sandbox_id] = creds
-        if not _atexit_armed:
-            _atexit_armed = True
-            atexit.register(delete_leftovers)
+        _arm(creds)
 
 
 def untrack(sandbox_id: str) -> None:
@@ -155,10 +190,10 @@ def delete_now(sandbox_id: str, creds: Credentials) -> None:
 
 def delete_leftovers() -> None:
     """At interpreter exit: delete every sandbox this process made and still holds. One request
-    per workspace by the run's label, then one by one for any that request missed."""
+    per API key by the run's label, then one by one for any that request missed."""
     with _tracked_lock:
-        left = dict(_tracked)
-    for creds in {c.key_id: c for c in left.values()}.values():
+        keys = {**_used, **{c.key_id: c for c in _tracked.values()}}
+    for creds in keys.values():
         with contextlib.suppress(Exception):
             for sandbox_id in sdk.Sandbox.delete_by_labels({"vfp-run": RUN_ID}, **creds.kwargs):
                 untrack(sandbox_id)
@@ -238,8 +273,8 @@ class Recipe:
             key_id=creds.key_id,
         )
 
-    def labels_for(self, role: str, run: str = RUN_ID) -> dict[str, str]:
-        return {**dict(self.labels), "verifiers-prized": role, "vfp-run": run}
+    def labels_for(self, role: str, run: str | None = None) -> dict[str, str]:
+        return {**dict(self.labels), "verifiers-prized": role, "vfp-run": run or RUN_ID}
 
 
 def _tail(text: str, limit: int = 2000) -> str:
@@ -254,7 +289,7 @@ async def build_sandbox(
     role: str,
     pause: bool,
     tracked: bool = True,
-    run: str = RUN_ID,
+    run: str | None = None,
 ) -> Any:
     """Create a sandbox and run `setup` in it, then pause it if asked. On any failure, or a
     cancellation, the sandbox is deleted before the error goes on."""
@@ -262,7 +297,10 @@ async def build_sandbox(
     if missing:
         raise SetupError(f"setup_env names variables that are not set here: {', '.join(missing)}")
     env = {name: os.environ[name] for name in recipe.setup_env}
+    run = run or RUN_ID
     began = time.monotonic()
+    if tracked:
+        making(creds)
     sandbox = await sdk.AsyncSandbox.create(
         recipe.template,
         vcpu=recipe.vcpu,
@@ -352,6 +390,10 @@ class ParentPool:
         self._waiters: collections.deque[_Waiter] = collections.deque()
         self._blocked_until = 0.0
         self._strikes = 0
+        self._build_retry_at = 0.0
+        """No parent is built before this: the last build failed."""
+        self._build_strikes = 0
+        self._replaced = 0
         self._wake = asyncio.Event()
         self._dispatcher: asyncio.Task[None] | None = None
         self._tasks: set[asyncio.Task[Any]] = set()
@@ -417,8 +459,13 @@ class ParentPool:
             if not waiter.future.done():
                 waiter.future.set_exception(error)
 
+    def _drop_done(self) -> None:
+        """Forget waiters that went away (cancelled) or were answered."""
+        self._waiters = collections.deque(w for w in self._waiters if not w.future.done())
+
     def _expire(self, now: float) -> None:
-        """Drop waiters that went away, and fail those that waited longer than capacity_wait."""
+        """Fail the waiters that waited longer than capacity_wait for room. Called only when no
+        parent can fork now and none is being built: waiting for `setup` is not waiting for room."""
         keep: collections.deque[_Waiter] = collections.deque()
         for waiter in self._waiters:
             if waiter.future.done():
@@ -436,7 +483,7 @@ class ParentPool:
         self._waiters = keep
 
     def _may_build(self, now: float) -> bool:
-        if self._building or len(self.parents) >= self._max_parents:
+        if self._building or len(self.parents) >= self._max_parents or now < self._build_retry_at:
             return False
         if not self.parents:
             return True
@@ -448,7 +495,7 @@ class ParentPool:
         while not self._closed:
             self._wake.clear()
             now = time.monotonic()
-            self._expire(now)
+            self._drop_done()
             if not self._waiters:
                 return
             if self._build_error is not None and not self.parents and not self._building:
@@ -465,7 +512,7 @@ class ParentPool:
                 first = min(w.since for w in self._waiters)
                 if now - first < LINGER:
                     await asyncio.sleep(LINGER - (now - first))
-                    self._expire(time.monotonic())
+                    self._drop_done()
                 for parent in ready:
                     if not self._waiters:
                         break
@@ -478,10 +525,16 @@ class ParentPool:
                 self._building += 1
                 self._spawn(self._build())
                 continue
-            wake_at = [w.since + self.recipe.capacity_wait for w in self._waiters]
+            # Nothing to do until a parent rests, a refusal passes, or a build ends. The waiters'
+            # capacity_wait runs only while no build does.
+            wake_at = []
+            if not self._building:
+                self._expire(now)
+                if not self._waiters:
+                    return
+                wake_at += [w.since + self.recipe.capacity_wait for w in self._waiters]
             wake_at += [p.rest_until for p in self.parents if p.rest_until > now]
-            if self._blocked_until > now:
-                wake_at.append(self._blocked_until)
+            wake_at += [t for t in (self._blocked_until, self._build_retry_at) if t > now]
             timeout = max(0.0, min(wake_at) - now) if wake_at else None
             with contextlib.suppress(TimeoutError):
                 await asyncio.wait_for(self._wake.wait(), timeout)
@@ -504,6 +557,11 @@ class ParentPool:
                     self.recipe, self.creds, role="parent", pause=self.recipe.pause_parent
                 )
                 self.parents.append(Parent(sandbox, owned=True))
+            self._build_strikes = 0
+            # The rollouts waited for setup, not for room: their capacity_wait starts now.
+            now = time.monotonic()
+            for waiter in self._waiters:
+                waiter.since = max(waiter.since, now)
         except Exception as err:  # noqa: BLE001 - handed to the waiting rollouts
             self._build_failed(err)
         finally:
@@ -511,6 +569,13 @@ class ParentPool:
             self._poke()
 
     def _build_failed(self, err: Exception) -> None:
+        # The next build waits, so a refusing workspace does not get a create per wake-up.
+        self._build_strikes += 1
+        pause = backoff(self._build_strikes)
+        if isinstance(err, PrizedError):
+            pause = max(err.retry_after or 0.0, pause)
+        self._build_retry_at = time.monotonic() + pause
+        transient = isinstance(err, PrizedError) and passes(err)
         if isinstance(err, PrizedError) and err.status == 404 and self.recipe.parent is not None:
             err = SetupError(f"verifiers-prized: parent {self.recipe.parent} not found: {err}")
         elif not isinstance(err, SandboxError):
@@ -523,6 +588,10 @@ class ParentPool:
             return
         if isinstance(err, SetupError):
             self._sticky_error = err  # it would fail again: later rollouts fail at once
+        if transient:
+            # A quota, no capacity, a rate limit: the waiting rollouts wait it out (capacity_wait).
+            logger.warning("verifiers-prized: %s; trying again in %.1fs", err, pause)
+            return
         self._build_error = err
 
     async def _fork_into(self, parent: Parent, batch: list[_Waiter]) -> None:
@@ -532,6 +601,7 @@ class ParentPool:
             if not live:
                 return
             self.forks += 1
+            making(self.creds)
             try:
                 children = list(
                     await parent.sandbox.fork(
@@ -541,7 +611,7 @@ class ParentPool:
                     )
                 )
             except PrizedError as err:
-                self._refused(parent, err, live)
+                self._refused(parent, err, live, await self._parent_gone(parent, err))
                 return
             except Exception as err:  # noqa: BLE001 - handed to the rollouts it was for
                 self._fail(live, SandboxError(f"verifiers-prized: fork failed: {err}"))
@@ -549,7 +619,7 @@ class ParentPool:
             for child in children:
                 track(child.id, self.creds)
             parent.rest_until, parent.strikes, parent.fits = 0.0, 0, None
-            self._strikes = 0
+            self._strikes = self._replaced = 0
             # A rollout that went away while its copy was being made hands it to the next one.
             takers = live + list(self._waiters)
             handed = 0
@@ -564,18 +634,39 @@ class ParentPool:
             self._waiters = collections.deque(w for w in self._waiters if not w.future.done())
             if spare:
                 await shielded(asyncio.gather(*(discard(c) for c in spare), return_exceptions=True))
-        except BaseException:
-            # Cancelled (the pool is closing): copies not handed out yet are deleted.
+        except BaseException as err:
+            # Cancelled (the pool is closing): copies not handed out yet are deleted, and the
+            # rollouts this fork was for, out of the queue `close` fails, are failed here.
             await shielded(asyncio.gather(*(discard(c) for c in children), return_exceptions=True))
+            why = (
+                "runtime pool closed" if isinstance(err, asyncio.CancelledError) else f"fork failed: {err!r}"
+            )
+            self._fail(batch, SandboxError(f"verifiers-prized: {why}"))
             raise
         finally:
             parent.forking = False
             self._poke()
 
-    def _refused(self, parent: Parent, err: PrizedError, live: list[_Waiter]) -> None:
+    async def _parent_gone(self, parent: Parent, err: PrizedError) -> bool:
+        """Whether a refused fork means the parent itself is gone (deleted, failed), asked of the
+        API: not a copy that failed (its own id on the error) or a parent between states."""
+        if err.sandbox_id not in (None, parent.sandbox.id):
+            return False
+        if err.code not in _PARENT_GONE and err.status != 404:
+            return False
+        try:
+            await parent.sandbox.refresh()
+        except PrizedError as check:
+            return check.status == 404
+        except Exception:  # noqa: BLE001 - unknown: treated as a refusal that passes
+            return False
+        return parent.sandbox.state in _GONE_STATES
+
+    def _refused(self, parent: Parent, err: PrizedError, live: list[_Waiter], gone: bool) -> None:
         now = time.monotonic()
         body: Mapping[str, Any] = err.body or {}
         requeue = True
+        cannot_fork = err.code in _CANNOT_FORK and err.reason != "parent_too_big"
         if err.code == "fork_capacity":
             fits = body.get("fits")
             if isinstance(fits, int) and 0 < fits < len(live):
@@ -583,14 +674,27 @@ class ParentPool:
             else:
                 parent.strikes += 1
                 parent.rest_until = now + backoff(parent.strikes)
-        elif err.code in _PARENT_GONE or err.status == 404:
+        elif gone and not parent.owned:
             self.parents = [p for p in self.parents if p is not parent]
-            untrack(parent.sandbox.id)
-            if not parent.owned:
-                gone = SetupError(f"verifiers-prized: parent {parent.sandbox.id} can no longer fork: {err}")
-                self._sticky_error = gone
-                self._fail(live, gone)
-                self._fail(list(self._waiters), gone)
+            stuck = SetupError(f"verifiers-prized: parent {parent.sandbox.id} can no longer fork: {err}")
+            self._sticky_error = stuck
+            self._fail(live, stuck)
+            self._fail(list(self._waiters), stuck)
+            self._waiters.clear()
+            requeue = False
+        elif (gone or cannot_fork) and parent.owned:
+            # Gone, or unable to fork: delete it (discard untracks it) and build another, unless
+            # the last few could not fork either.
+            self.parents = [p for p in self.parents if p is not parent]
+            self._spawn(discard(parent.sandbox))
+            self._replaced += 1
+            if self._replaced > MAX_REPLACEMENTS:
+                failed = SandboxError(
+                    f"verifiers-prized: {self._replaced} parents in a row could not fork; the last: {err}"
+                )
+                self._replaced = 0  # the next rollout tries again
+                self._fail(live, failed)
+                self._fail(list(self._waiters), failed)
                 self._waiters.clear()
                 requeue = False
             else:
@@ -599,10 +703,11 @@ class ParentPool:
                     parent.sandbox.id,
                     err,
                 )
-                self._spawn(discard(parent.sandbox))
-        elif (err.code in _TRANSIENT or err.status in (429, 500, 502, 503, 504)) and not (
-            err.code == "sandbox_quota_exceeded" and err.reason == "max_runtime"
-        ):
+        elif not gone and (err.code in _PARENT_GONE or err.status == 404):
+            # A copy failed (the fork was undone), or the parent is between states: rest it.
+            parent.strikes += 1
+            parent.rest_until = now + backoff(parent.strikes)
+        elif passes(err):
             admitted = body.get("admitted")
             if isinstance(admitted, int) and 0 < admitted < len(live):
                 parent.fits = admitted
@@ -642,3 +747,20 @@ async def close_pools() -> None:
         for key, _ in mine:
             del _pools[key]
     await asyncio.gather(*(pool.close() for _, pool in mine))
+
+
+def _after_fork_in_child() -> None:
+    """A forked child is a run of its own: a new RUN_ID, and none of the parent process's sandboxes
+    tracked (its exit must not delete them, by label or one by one) or pools (their event loop is
+    the parent's). The locks are new too: one held by another thread at the fork stays held."""
+    global RUN_ID, _tracked_lock, _pools_lock
+    RUN_ID = uuid.uuid4().hex[:12]
+    _tracked_lock = threading.Lock()
+    _pools_lock = threading.Lock()
+    _tracked.clear()
+    _used.clear()
+    _pools.clear()
+
+
+if hasattr(os, "register_at_fork"):
+    os.register_at_fork(after_in_child=_after_fork_in_child)

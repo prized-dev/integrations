@@ -58,6 +58,8 @@ class Cloud:
     capacity: int | None = None
     """Copies of one parent that may be alive at once (fork_capacity past it)."""
     fork_delay: float = 0.01
+    truncate_output: bool = False
+    """Blocking and detached commands answer as if their output passed the SDK's cap."""
     procs: dict[str, list[asyncio.subprocess.Process]] = field(default_factory=dict)
     """Processes started in each sandbox; deleting it kills them, as deleting a VM would."""
     wakes: list[str] = field(default_factory=list)
@@ -273,14 +275,23 @@ class AsyncSandbox:
         try:
             if timeout:
                 async with asyncio.timeout(timeout):
-                    return await handle.wait()
-            return await handle.wait()
+                    result = await handle.wait()
+            else:
+                result = await handle.wait()
         except TimeoutError:
             await handle.kill("SIGKILL")
             raise CommandTimeoutError(ExecResult("", "", -1, timed_out=True), timeout, box.id) from None
         except BaseException:
             await handle.kill("SIGKILL")
             raise
+        if cloud().truncate_output:
+            return ExecResult(result.stdout, result.stderr, result.exit_code, truncated=True)
+        return result
+
+    async def refresh(self) -> AsyncSandbox:
+        cloud().calls.append(("refresh", self.id))
+        _box(self.id)  # 404 once deleted
+        return self
 
     async def pause(self, *, wait: bool = True, timeout: float = 120.0) -> None:
         box = _box(self.id)
