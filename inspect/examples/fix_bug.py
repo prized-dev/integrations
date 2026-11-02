@@ -1,6 +1,6 @@
 """An Inspect task whose agent fixes a seeded bug inside a Prized sandbox.
 
-    pip install inspect-prized openai
+    pip install "inspect-prized @ git+https://github.com/prized-dev/integrations#subdirectory=inspect" openai
     export PRIZED_API_KEY=dcp_...
     inspect eval examples/fix_bug.py --model openrouter/anthropic/claude-haiku-5.5
 
