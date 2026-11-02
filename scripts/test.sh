@@ -214,6 +214,19 @@ case $DIR in
     npm run typecheck
     npm run build
     offline npm test ;;
+  electric-agents)
+    # Same flow as mastra; FLOOR=1 pins the oldest @electric-ax/agents-runtime the package supports. The
+    # fetch test serves on loopback, which stays up offline.
+    need_sdk node
+    cp -r "$ROOT/$DIR/." "$WORK/pkg"
+    cd "$WORK/pkg"
+    [ -z "${SDK_TGZ:-}" ] || npm pkg set "dependencies.@prized/sdk=file:$SDK_TGZ"
+    [ -z "$FLOOR" ] || npm pkg set "devDependencies.@electric-ax/agents-runtime=0.6.0"
+    npm install --no-audit --no-fund --no-package-lock --loglevel=error
+    npm ls --depth=0 @electric-ax/agents-runtime @prized/sdk || true
+    npm run typecheck
+    npm run build
+    offline npm test ;;
   herdr)
     # A herdr plugin with no dependencies: node --test against stand-ins for prized, herdr and ssh
     # (test/fakes). The fake sandbox runs the plugin's remote scripts with the real bash, tar and git.

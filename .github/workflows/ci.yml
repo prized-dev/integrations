@@ -54,6 +54,8 @@ jobs:
           - { dir: paseo, node: "24" }
           - { dir: mastra, node: "22", floor: true }
           - { dir: mastra, node: "24" }
+          - { dir: electric-agents, node: "22", floor: true }
+          - { dir: electric-agents, node: "24" }
           - { dir: herdr, node: "22" }
           - { dir: herdr, node: "24" }
     steps:
