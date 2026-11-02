@@ -363,7 +363,8 @@ async def rollouts(cfg: PrizedConfig, n: int, hold: float = 0.0) -> list[str]:
             ids.append(view.info.id)
             await asyncio.sleep(hold)
 
-    await asyncio.gather(*(one() for _ in range(n)))
+    async with asyncio.timeout(30):
+        await asyncio.gather(*(one() for _ in range(n)))
     return ids
 
 
@@ -505,3 +506,22 @@ async def test_close_pools_deletes_the_parents(cloud: Cloud) -> None:
     assert len(cloud.live("parent")) == 1
     await pool.close_pools()
     assert cloud.live() == [] and pool._tracked == {}
+
+
+async def test_a_copy_that_arrives_as_its_rollout_is_cancelled_is_deleted(
+    cloud: Cloud, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # The copy is handed over and the rollout cancelled before it resumes: the copy has no owner.
+    import fake_prized
+
+    the_pool = pool.ParentPool(pool.Recipe.of(config(), pool.Credentials("k")), pool.Credentials("k"))
+    monkeypatch.setattr(the_pool, "_poke", lambda: None)  # no dispatcher: this test hands it out
+    task = asyncio.ensure_future(the_pool.acquire())
+    await asyncio.sleep(0)
+    (waiter,) = the_pool._waiters
+    child = fake_prized.AsyncSandbox(cloud.new_box("prized-base-v1", {}, {}, "k"))
+    waiter.future.set_result((child, pool.Parent(child, owned=True)))
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    assert cloud.boxes[child.id].state == "deleted"
