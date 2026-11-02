@@ -35,7 +35,7 @@ export interface CreateSandboxInput {
 export interface Me {
   workspace?: { id?: string; name?: string };
   access?: { sandboxes?: string };
-  key?: { boxIds?: string[] | null } | null;
+  key?: { id?: string; boxIds?: string[] | null } | null;
   user?: { role?: string } | null;
 }
 

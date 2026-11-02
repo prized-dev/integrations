@@ -10,8 +10,9 @@ export function pairingUrl(serverId = "srv_test123") {
 }
 
 // keyKind: "full" (GET /me has no `access`), "custom" (access.sandboxes: "write"), "custom-read" or
-// "box-limited". freeTier: refuse a maxRuntimeMin over 60, as the free tier does.
-export function fakePrized({ fail = {}, workspace = "acme", workspaceId = "ws1", keyKind = "full", freeTier = false, otherKeys = {} } = {}) {
+// "box-limited". freeTier: refuse a maxRuntimeMin over 60, as the free tier does. meWorkspace: false
+// leaves `workspace` out of GET /me; keyIds: { [key]: the key's id in /me } (default "k1").
+export function fakePrized({ fail = {}, workspace = "acme", workspaceId = "ws1", keyKind = "full", freeTier = false, otherKeys = {}, meWorkspace = true, keyIds = {} } = {}) {
   const sandboxes = new Map();
   const idempotency = new Map();
   const processes = new Map();
@@ -35,7 +36,8 @@ export function fakePrized({ fail = {}, workspace = "acme", workspaceId = "ws1",
     if (u.host === "api.prized.dev") {
       const path = u.pathname.replace("/api/v1", "");
       if (path === "/me") {
-        const me = { workspace: { id: ws, name: ws === workspaceId ? workspace : "other" }, key: { id: "k1", kind: "api", expiresAt: null, boxIds: keyKind === "box-limited" ? ["box1"] : null } };
+        const me = { workspace: { id: ws, name: ws === workspaceId ? workspace : "other" }, key: { id: keyIds[auth] ?? "k1", kind: "api", expiresAt: null, boxIds: keyKind === "box-limited" ? ["box1"] : null } };
+        if (!meWorkspace) delete me.workspace;
         if (fail.me) return json(503, { error: "unavailable", message: "try again" });
         if (keyKind === "contractor") me.user = { id: "u2", role: "contractor" };
         if (keyKind === "custom") me.access = { sandboxes: "write" };

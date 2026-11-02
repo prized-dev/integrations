@@ -19,7 +19,7 @@ export interface HostRecord {
   sandboxState?: string;
   expiresAt?: string;
   registrationId?: string;
-  // Who made it: "ws:<workspace id>" when the key could read its workspace, else "key:<key hash>".
+  // Who made it: "ws:<workspace id>", or "key:<key id>" when /me names no workspace (both from /me).
   // Another workspace's key sees none of its sandboxes, so it must not read them as gone.
   owner?: string;
   createdAt: string;

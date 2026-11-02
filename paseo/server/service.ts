@@ -3,7 +3,7 @@
 // daemon, terminals, agent CLIs) are kept, and only storage is billed. Resume carries on; the daemon
 // reconnects to the relay by itself, so the host needs no new pairing. Delete removes the sandbox.
 
-import { createHash, randomBytes } from "node:crypto";
+import { randomBytes } from "node:crypto";
 
 import { installScript, pairScript, parsePairingUrl, startDaemonScript, tail } from "./bootstrap.ts";
 import { canWriteSandboxes, PrizedApi, PrizedApiError, type Me, type Sandbox } from "./prized-api.ts";
@@ -86,21 +86,22 @@ export class HostService {
     return this.makeApi(await this.apiKey());
   }
 
-  // Who the current key acts for: its workspace when /me says, else (a key that cannot read its
-  // workspace) the key itself. undefined when /me could not be read: then nothing is compared and
-  // nothing recorded. A host records its owner at create; a 404 means "gone" only for the same owner.
+  // Who the current key acts for, by the ids /me gives: its workspace, else the key's own id. Never
+  // anything made from the key itself, which stays in secrets.json alone. undefined when /me could
+  // not be read or names neither: then nothing is compared and nothing recorded. A host records its
+  // owner at create; a 404 means "gone" only for the same owner.
   private async owner(): Promise<string | undefined> {
     const key = await this.apiKey();
     const cached = this.owners.get(key);
     if (cached) return cached;
-    let owner: string;
+    let me: Me;
     try {
-      const id = (await this.makeApi(key).me()).workspace?.id;
-      owner = id ? `ws:${id}` : `key:${createHash("sha256").update(key).digest("hex").slice(0, 16)}`;
+      me = await this.makeApi(key).me();
     } catch {
       return undefined;
     }
-    this.owners.set(key, owner);
+    const owner = me.workspace?.id ? `ws:${me.workspace.id}` : me.key?.id ? `key:${me.key.id}` : undefined;
+    if (owner) this.owners.set(key, owner);
     return owner;
   }
 

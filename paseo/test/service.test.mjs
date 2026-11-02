@@ -362,3 +362,18 @@ test("the other-workspace verdict holds between remote refreshes", async () => {
   assert.equal((await t.service.status(true)).hosts[0].otherWorkspace, true);
   assert.equal((await t.service.status(false)).hosts[0].otherWorkspace, true, "a local poll keeps it");
 });
+
+test("a /me with no workspace tells keys apart by Prized's key id; nothing on disk is made from the key", async () => {
+  const other = `dcp_${"e".repeat(48)}`;
+  const t = setup({ meWorkspace: false, keyIds: { [FAKE_KEY]: "key_a", [other]: "key_b" }, otherKeys: { [other]: "ws2" } });
+  await t.service.saveSettings({ prizedApiKey: FAKE_KEY });
+  const { hostId } = await t.service.create();
+  await t.service.settled();
+  const hosts = JSON.parse(fs.readFileSync(path.join(t.stateDir, "hosts.json"), "utf8"));
+  assert.equal(hosts.hosts[hostId].owner, "key:key_a", "Prized's id for the key, not one made from the key");
+  assert.ok(!everything(t.stateDir).includes(FAKE_KEY), "the key stays in secrets.json");
+  await t.service.saveSettings({ prizedApiKey: other });
+  const host = (await t.service.status(true)).hosts[0];
+  assert.equal(host.otherWorkspace, true, "another key's sandbox 404 is not read as gone");
+  assert.equal(host.phase, "ready");
+});
