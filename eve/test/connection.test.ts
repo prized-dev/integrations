@@ -61,7 +61,7 @@ describe('spawn', () => {
     assert.equal((await run(connection, 'echo $AI_AGENT', { env: { AI_AGENT: 'mine' } })).stdout, 'mine\n');
     await open({ AI_AGENT: 'custom' });
     assert.equal((await run(connection, 'echo $AI_AGENT')).stdout, 'custom\n');
-    assert.deepEqual(api.execs.at(-1)!.options.env, {}, 'nothing added per call once env sets it');
+    assert.deepEqual(api.execs.at(-1)!.options.env, { AI_AGENT: 'custom' });
   });
 
   it('streams stdout and stderr and reports a non-zero exit', async () => {
@@ -77,12 +77,25 @@ describe('spawn', () => {
     assert.equal(sandbox.runs.at(-1)!.killedWith, 'SIGKILL');
   });
 
-  it('aborting the signal kills the process', async () => {
+  it('aborting the signal kills the process; wait() and the streams reject with the reason', async () => {
     const controller = new AbortController();
     const process = await connection.spawn({ command: 'sleep 30', env: {}, workingDirectory: WORK, signal: controller.signal });
     controller.abort();
-    const { exitCode } = await process.wait();
-    assert.notEqual(exitCode, 0);
+    await assert.rejects(Promise.resolve(process.wait()), { name: 'AbortError' });
+    await assert.rejects(new Response(process.stdout).text(), { name: 'AbortError' });
+    assert.equal(sandbox.runs.at(-1)!.killedWith, 'SIGKILL');
+  });
+
+  it('kills a command whose signal was aborted while it was starting', async () => {
+    const controller = new AbortController();
+    api.execError = (_s, command) => {
+      if (Array.isArray(command)) controller.abort();
+      return undefined;
+    };
+    const process = await connection.spawn({ command: 'sleep 30', env: {}, workingDirectory: WORK, signal: controller.signal });
+    api.execError = undefined;
+    await assert.rejects(Promise.resolve(process.wait()), { name: 'AbortError' });
+    assert.equal(sandbox.runs.at(-1)!.killedWith, 'SIGKILL');
   });
 
   it('rejects stdin, and an already aborted signal, without starting anything', async () => {
@@ -116,6 +129,14 @@ describe('readFile', () => {
     plant(`${WORK}/file`, 'x');
     assert.equal(await connection.readFile({ path: `${WORK}/file/below` }), null);
     assert.equal(await connection.readFile({ path: '/tmp/eve-missing/x' }), null);
+  });
+
+  it('returns null for a broken link, in the home and outside it', async () => {
+    symlinkSync(sandbox.host('/opt/nothing-here'), sandbox.host(`${WORK}/dangling`));
+    assert.equal(await connection.readFile({ path: `${WORK}/dangling` }), null);
+    mkdirSync(sandbox.host('/opt/links'), { recursive: true });
+    symlinkSync(sandbox.host('/opt/nothing-here'), sandbox.host('/opt/links/dangling'));
+    assert.equal(await connection.readFile({ path: '/opt/links/dangling' }), null);
   });
 
   it('rejects a directory, in the home and outside it', async () => {

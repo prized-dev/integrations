@@ -51,6 +51,7 @@ export const PrizedSandbox: SandboxProvider<
 export {
   BUILD_LABEL,
   DEFAULT_AUTO_PAUSE_MIN,
+  ROLE_LABEL,
   SESSION_LABEL,
   TEMPLATE_LABEL,
   sessionLabel,

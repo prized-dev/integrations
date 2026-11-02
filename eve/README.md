@@ -60,7 +60,7 @@ prized sandbox pause $TPL --wait
 export const environment = PrizedSandbox.environment({ forkFrom: 'sbx_…' }); // the id in $TPL
 ```
 
-Sessions take the base sandbox's files, shape, environment variables and auto-pause, so set those on `prized sandbox create` (`eve build` warns when auto-pause is off). `template`, `resources` and `autoPauseMin` don't apply to forks; `env` is sent with each command. With workspace files, skills or a `prepare`, `eve build` forks the base once more and adds them there.
+Sessions take the base sandbox's files, shape, environment variables and auto-pause, so set those on `prized sandbox create` (`eve build` warns when auto-pause is off). `template`, `resources` and `autoPauseMin` don't apply to forks. With workspace files, skills or a `prepare`, `eve build` forks the base once more and adds them there.
 
 - Keep the base sandbox: builds fork it, and an agent with nothing to prepare forks it for every session (if it's gone, new sessions fail with eve's "template is not available" error).
 - `eve build` doesn't see changes inside the base. After changing it, point `forkFrom` at a new base or edit `agent/sandbox.ts`.
@@ -73,7 +73,7 @@ Sessions take the base sandbox's files, shape, environment variables and auto-pa
 - `apiKey`: default `PRIZED_API_KEY`.
 - `template`: `prized-base-v1` (default: Ubuntu 24.04, git, Python 3, Node.js 22) or `prized-agent-v1` (adds Claude Code and Codex).
 - `resources`: `{ vcpu, memoryGb, diskGb }`. Default 4 vCPU, 8 GB, 10 GB.
-- `env`: variables for every command. `AI_AGENT=eve` is set unless you set it.
+- `env`: variables sent with every command, so a changed value needs no new build. `AI_AGENT=eve` is set unless you set it.
 - `labels`: your own labels, to find the sandboxes with `prized sandbox ls --label`.
 - `autoPauseMin`: idle minutes before it pauses itself. Default 10; `0` never.
 - `maxRuntimeMin`: minutes of running before Prized deletes it. Default your plan's (24 hours paid, 60 minutes on the free tier).

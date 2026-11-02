@@ -273,6 +273,8 @@ export class FakeSandbox implements SandboxLike {
     options.signal?.throwIfAborted();
     this.wakeFor('exec');
     this.api.execs.push({ sandboxId: this.id, command, options });
+    const injected = this.api.execError?.(this, command, options);
+    if (injected) throw injected;
     const env: Record<string, string> = { PATH: process.env.PATH ?? '/usr/bin:/bin', HOME: this.host(HOME), ...this.envVars };
     for (const [name, value] of Object.entries(options.env ?? {})) {
       env[name] = name.startsWith('EVE_') && value.startsWith('/') ? this.host(value) : value;
@@ -356,6 +358,8 @@ export class FakePrized implements SandboxApi {
   readonly events: string[] = [];
   /** When set, every fork throws it. */
   forkError: Error | undefined;
+  /** When set, an exec it returns an error for throws that error (as a lost or refused request would). */
+  execError: ((sandbox: FakeSandbox, command: string | readonly string[], options: ExecOptions) => Error | undefined) | undefined;
   private clock = Date.now();
 
   log(event: string): void {

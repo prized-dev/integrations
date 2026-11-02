@@ -6,8 +6,11 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 
+import { PrizedError } from '@prized/sdk';
+
 import {
   BUILD_LABEL,
+  ROLE_LABEL,
   SESSION_LABEL,
   TEMPLATE_LABEL,
   createPrizedImplementation,
@@ -156,14 +159,60 @@ describe('prepare', () => {
     await provider().prepare(probe);
     const key = api.live()[0]!.labels[TEMPLATE_LABEL]!;
     for (const s of api.live()) await s.delete();
-    const abandoned = await api.create({ apiKey: KEY, labels: { [BUILD_LABEL]: key } });
+    const abandoned = await api.create({ apiKey: KEY, labels: { [BUILD_LABEL]: key, [ROLE_LABEL]: 'build' } });
     await abandoned.pause();
     abandoned.lastActiveAt = new Date(Date.now() - 2 * 60 * 60 * 1000);
-    const fresh = await api.create({ apiKey: KEY, labels: { [BUILD_LABEL]: key } });
+    const otherKey = await api.create({ apiKey: KEY, labels: { [BUILD_LABEL]: 'another-key', [ROLE_LABEL]: 'build' } });
+    await otherKey.pause();
+    otherKey.lastActiveAt = new Date(Date.now() - 2 * 60 * 60 * 1000);
+    const fresh = await api.create({ apiKey: KEY, labels: { [BUILD_LABEL]: key, [ROLE_LABEL]: 'build' } });
     await fresh.pause();
     await provider().prepare(prepareContext(input));
     assert.equal(api.get(abandoned.id).state, 'deleted');
+    assert.equal(api.get(otherKey.id).state, 'deleted', 'abandoned builds of other keys go too');
     assert.equal(api.get(fresh.id).state, 'paused', 'a recent build may still be running');
+  });
+});
+
+describe('prepare: races and failures', () => {
+  it('reuses only a paused template, never one still being published', async () => {
+    const input = { workspace: { 'a.txt': 'a' } };
+    const first = await provider().prepare(prepareContext(input));
+    const template = api.get(first.templateId!);
+    template.state = 'running';
+    const second = await provider().prepare(prepareContext(input));
+    assert.notEqual(second.templateId, first.templateId);
+    assert.equal(api.get(first.templateId!).state, 'running', 'the other build\'s template is left alone');
+  });
+
+  it('concurrent builds of one key each keep the template they publish', async () => {
+    const input = { workspace: { 'a.txt': 'a' } };
+    const results = await Promise.all([1, 2, 3].map(() => provider().prepare(prepareContext(input))));
+    for (const { templateId } of results) assert.equal(api.get(templateId!).state, 'paused');
+    const later = await provider().prepare(prepareContext(input));
+    assert.ok(results.some(r => r.templateId === later.templateId), 'a later build reuses one of them');
+  });
+
+  it('deletes the build when making the workspace fails, even when the request itself fails', async () => {
+    api.execError = (_s, command) =>
+      typeof command === 'string' && command.startsWith('mkdir') ? Object.assign(new Error('502 sandbox_unreachable'), { code: 'sandbox_unreachable' }) : undefined;
+    await assert.rejects(provider().prepare(prepareContext({ workspace: { 'a.txt': 'a' } })), /sandbox_unreachable/);
+    assert.deepEqual(api.live(), []);
+  });
+
+  it('keeps env values out of the template; a session gets the values of the process that runs it', async () => {
+    const built = createPrizedImplementation({ apiKey: KEY, env: { TOKEN: 'from-build' } }, api, EVE);
+    const artifact = await built.prepare(
+      prepareContext({
+        workspace: { 'a.txt': 'a' },
+        prepare: async sandbox => void assert.equal((await sandbox.run('echo $TOKEN')).stdout, 'from-build\n'),
+      }),
+    );
+    assert.deepEqual(api.get(artifact.templateId!).envVars, { AI_AGENT: 'eve' });
+    const runtime = createPrizedImplementation({ apiKey: KEY, env: { TOKEN: 'from-runtime' } }, api, EVE);
+    assert.deepEqual(await runtime.prepare(prepareContext({ workspace: { 'a.txt': 'a' } })), artifact, 'a new value needs no new template');
+    const { connection } = await runtime.start(sessionContext('s1'), undefined, artifact);
+    assert.equal((await run(connection, 'echo $TOKEN')).stdout, 'from-runtime\n');
   });
 });
 
@@ -249,6 +298,25 @@ describe('start', () => {
     const again = await impl.start(sessionContext('s1'), undefined, {});
     assert.equal(again.state.sandboxId, first.state.sandboxId);
     assert.equal(api.get(first.state.sandboxId).state, 'paused');
+  });
+
+  it('makes the workspace root in a sandbox another start is still setting up', async () => {
+    const impl = provider({ workspaceRoot: '/home/prized/project' });
+    // Another process created the session's sandbox and hasn't made its workspace yet.
+    await api.create({ apiKey: KEY, labels: { [SESSION_LABEL]: sessionLabel('s1') } });
+    const { connection } = await impl.start(sessionContext('s1'), undefined, {});
+    assert.equal((await run(connection, 'pwd')).stdout, '/home/prized/project\n');
+  });
+
+  it('deletes a session sandbox whose workspace could not be made, and says so (not a missing template)', async () => {
+    const artifact = await provider().prepare(prepareContext({ workspace: { 'a.txt': 'a' } }));
+    api.execError = (_s, command) =>
+      typeof command === 'string' && command.startsWith('mkdir') ? new PrizedError('sandbox_deleted', 'gone', { status: 410 }) : undefined;
+    await assert.rejects(provider().start(sessionContext('s1'), undefined, artifact), (error: Error) => {
+      assert.notEqual(error.name, 'SandboxTemplateNotProvisionedError');
+      return true;
+    });
+    assert.deepEqual(api.live({ [SESSION_LABEL]: sessionLabel('s1') }), []);
   });
 
   it('reports a deleted template as not provisioned', async () => {

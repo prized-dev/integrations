@@ -112,7 +112,14 @@ export function createConnection(
   /** Copy a file the files API can't reach to a staging file it can, download that, and delete it. */
   const stagedRead = async (path: string, signal?: AbortSignal): Promise<Uint8Array | null> => {
     const staging = stagingPath('down');
-    const result = await run(STAGE_READ, { EVE_SRC: path, EVE_DST: staging }, signal);
+    let result: ExecResult;
+    try {
+      result = await run(STAGE_READ, { EVE_SRC: path, EVE_DST: staging }, signal);
+    } catch (error) {
+      // An abort or a timeout may leave the copy behind.
+      await removeQuietly(staging);
+      throw error;
+    }
     switch (result.exitCode) {
       case 0:
         break;
@@ -188,6 +195,8 @@ export function createConnection(
     };
     const onAbort = (): void => void kill().catch(() => undefined);
     signal?.addEventListener('abort', onAbort, { once: true });
+    // Aborted while the command was starting: kill it now.
+    if (signal?.aborted) onAbort();
 
     const settled = handle
       .wait({ onStdout: text => push(out, text), onStderr: text => push(err, text), signal: polling.signal })
@@ -204,12 +213,17 @@ export function createConnection(
           throw error;
         },
       )
+      .then(exitCode => {
+        void handle.cleanup().catch(() => undefined);
+        // An aborted command was killed: wait() rejects with the abort's reason, as eve's own providers do.
+        if (signal?.aborted) throw signal.reason;
+        return { exitCode };
+      })
       .then(
-        exitCode => {
+        result => {
           end(out);
           end(err);
-          void handle.cleanup().catch(() => undefined);
-          return { exitCode };
+          return result;
         },
         error => {
           end(out, error);

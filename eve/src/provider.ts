@@ -35,15 +35,16 @@ export const PROVIDER_NAME = 'prized';
 export const SESSION_LABEL = 'eve-session';
 /** The label a published template carries: its template key. */
 export const TEMPLATE_LABEL = 'eve-template';
-/** The label a template carries while `prepare()` is still setting it up. */
+/** The label a template carries while `prepare()` is still setting it up: its template key. */
 export const BUILD_LABEL = 'eve-build';
+/** `eve-role=build` marks every template build, so a later build of any key can sweep abandoned ones. */
+export const ROLE_LABEL = 'eve-role';
 /** Idle minutes before a sandbox pauses itself, unless `autoPauseMin` says otherwise. */
 export const DEFAULT_AUTO_PAUSE_MIN = 10;
 /** A build sandbox left paused this long was abandoned by its build (a crash, a cancelled deploy). */
 const STALE_BUILD_MS = 60 * 60 * 1000;
 const ADOPTABLE: ReadonlySet<SandboxState> = new Set(['running', 'paused', 'pausing', 'starting', 'resizing']);
 const GONE: ReadonlySet<SandboxState> = new Set(['deleting', 'deleted', 'error']);
-const TEMPLATE_STATES: ReadonlySet<SandboxState> = new Set(['paused', 'running']);
 
 /** Options for `PrizedSandbox.environment()`. Each applies when a sandbox is created. */
 export interface PrizedSandboxOptions {
@@ -56,7 +57,7 @@ export interface PrizedSandboxOptions {
   readonly template?: string;
   /** vCPU, memory and disk (`{ vcpu: 2, memoryGb: 4 }`). Default: the template's (4 vCPU, 8 GB). */
   readonly resources?: ResourcesInput;
-  /** Environment variables for every command, on top of `AI_AGENT=eve`. */
+  /** Environment variables sent with every command, on top of `AI_AGENT=eve`; they aren't kept in templates. */
   readonly env?: Readonly<Record<string, string>>;
   /** Labels for the sandboxes this environment creates, to find them in `prized sandbox ls`. */
   readonly labels?: Readonly<Record<string, string>>;
@@ -68,7 +69,7 @@ export interface PrizedSandboxOptions {
    * A sandbox (`sbx_…`) to start from instead of a fresh one: set it up with what you need
    * (packages, a cloned repo), pause it, and every session starts as a fork of it, with its
    * files, shape, environment variables and auto-pause (`template`, `resources` and
-   * `autoPauseMin` don't apply; `env` goes with every command). Keep it while builds use it.
+   * `autoPauseMin` don't apply). Keep it while builds use it.
    */
   readonly forkFrom?: string;
   /** Absolute directory where commands start and relative paths resolve. Default `/home/prized/work`. */
@@ -137,13 +138,10 @@ export function createPrizedImplementation(
     throw new Error(`${LOG_PREFIX} forkFrom must be a sandbox id (sbx_…), but received "${options.forkFrom}".`);
   }
   const env = { ...options.env };
-  // eve sets AI_AGENT=eve on every command unless the environment's own `env` sets it. A sandbox
-  // this provider creates holds `env` itself; a fork of `forkFrom` has the base's environment, so
-  // there `env` goes with every command instead.
-  const agentEnv =
-    options.forkFrom === undefined
-      ? Object.fromEntries(Object.entries(eve.SANDBOX_AGENT_ENV).filter(([name]) => !(name in env)))
-      : { ...eve.SANDBOX_AGENT_ENV, ...env };
+  // eve sets AI_AGENT=eve on every command unless the environment's own `env` sets it. `env` goes
+  // with every command, so a session forked from a template built earlier gets this process's
+  // values (a rotated secret, say), not the ones the build saw.
+  const agentEnv = { ...eve.SANDBOX_AGENT_ENV, ...env };
   const autoPauseMin = options.autoPauseMin ?? DEFAULT_AUTO_PAUSE_MIN;
 
   const apiKey = (): string => {
@@ -160,42 +158,55 @@ export function createPrizedImplementation(
 
   const connect = (sandbox: SandboxLike) => createConnection(sandbox, { workspaceRoot, agentEnv });
 
-  /** A fresh sandbox from the Prized template, with the workspace root made. */
-  const create = async (labels: Record<string, string>): Promise<SandboxLike> => {
+  /**
+   * A fresh sandbox from a Prized template. A session's sandbox holds `env` in its environment
+   * too; a template's doesn't, since its forks would keep the build's values.
+   */
+  const create = async (labels: Record<string, string>, withEnv: boolean): Promise<SandboxLike> => {
     const createOptions: CreateOptions = {
       apiKey: apiKey(),
-      envVars: { ...eve.SANDBOX_AGENT_ENV, ...env },
+      envVars: withEnv ? agentEnv : { ...eve.SANDBOX_AGENT_ENV },
       labels,
       autoPauseMin,
       ...(options.template !== undefined && { template: options.template }),
       ...(options.resources !== undefined && { resources: options.resources }),
       ...(options.maxRuntimeMin !== undefined && { maxRuntimeMin: options.maxRuntimeMin }),
     };
-    const sandbox = await Sandbox.create(createOptions);
-    await makeWorkspace(sandbox);
-    return sandbox;
+    return await Sandbox.create(createOptions);
   };
 
-  /** One fork of `parentId` with `labels` (in place of the parent's). */
-  const fork = async (parentId: string, labels: Record<string, string>): Promise<SandboxLike> => {
+  /** One fork of `parentId`, labelled `labels` in place of the parent's. */
+  const forkOf = async (parentId: string, labels: Record<string, string>): Promise<SandboxLike> => {
     const parent = await Sandbox.connect(parentId, { apiKey: apiKey() });
-    if (GONE.has(parent.state)) throw Object.assign(new Error(`${parentId} is ${parent.state}`), { code: 'not_found' });
+    if (GONE.has(parent.state)) {
+      throw Object.assign(new Error(`${LOG_PREFIX} ${parentId} is ${parent.state}.`), { code: 'not_found' });
+    }
     const [copy] = await parent.fork({
       count: 1,
       labels,
       ...(options.maxRuntimeMin !== undefined && { maxRuntimeMin: options.maxRuntimeMin }),
     });
     if (!copy) throw new Error(`${LOG_PREFIX} Forking ${parentId} returned no sandbox.`);
-    await makeWorkspace(copy);
     return copy;
   };
 
-  const makeWorkspace = async (sandbox: SandboxLike): Promise<void> => {
+  /** `mkdir -p` the workspace root (idempotent). */
+  const mkdirWorkspace = async (sandbox: SandboxLike): Promise<void> => {
     const result = await sandbox.exec(MKDIR, { env: { EVE_DST: workspaceRoot }, timeoutMs: 60_000 });
     if (result.exitCode !== 0) {
-      await sandbox.delete().catch(() => undefined);
       throw new Error(`${LOG_PREFIX} Could not create ${workspaceRoot}: ${result.stderr.trim() || `exit ${result.exitCode}`}`);
     }
+  };
+
+  /** Make the workspace root in a sandbox this call made, deleting the sandbox if that fails. */
+  const withWorkspace = async (sandbox: SandboxLike): Promise<SandboxLike> => {
+    try {
+      await mkdirWorkspace(sandbox);
+    } catch (error) {
+      await deleteQuietly(sandbox);
+      throw error;
+    }
+    return sandbox;
   };
 
   const listLabelled = async (label: string, value: string): Promise<SandboxLike[]> =>
@@ -207,17 +218,17 @@ export function createPrizedImplementation(
     });
   };
 
+  /** The oldest live sandbox of a session: every caller that lists the same ones picks the same one. */
+  const sessionSandbox = async (label: string): Promise<SandboxLike | undefined> =>
+    oldestFirst((await listLabelled(SESSION_LABEL, label)).filter(s => ADOPTABLE.has(s.state)))[0];
+
   /**
-   * After creating `mine` for a label, keep the oldest live sandbox under it and delete the rest
-   * this call made. Concurrent starts (a prewarm and the first turn, two processes) all list the
-   * same sandboxes and so all pick the same one.
+   * A sandbox another `start()` made may still lack its workspace root (it is made right after
+   * the create). A paused one had it before it paused, and isn't woken.
    */
-  const settleOn = async (label: string, value: string, mine: SandboxLike, states: ReadonlySet<SandboxState>) => {
-    const live = oldestFirst((await listLabelled(label, value)).filter(s => states.has(s.state)));
-    const winner = live[0];
-    if (winner === undefined || winner.id === mine.id) return mine;
-    await deleteQuietly(mine);
-    return winner;
+  const adopt = async (sandbox: SandboxLike): Promise<SandboxLike> => {
+    if (sandbox.state !== 'paused' && sandbox.state !== 'pausing') await mkdirWorkspace(sandbox);
+    return sandbox;
   };
 
   const requireArtifact = (artifact: SandboxJson): PrizedTemplateArtifact => {
@@ -251,10 +262,10 @@ export function createPrizedImplementation(
     if (ignored.length > 0) log(`${ignored.join(', ')} don't apply with forkFrom: forks take the base sandbox's`);
   };
 
-  /** Delete build sandboxes of this key that their build left paused (a crash) over an hour ago. */
-  const sweepAbandonedBuilds = async (key: string, log: (message: string) => void): Promise<void> => {
+  /** Delete template builds (of any key) that a crashed or cancelled build left paused over an hour ago. */
+  const sweepAbandonedBuilds = async (log: (message: string) => void): Promise<void> => {
     const now = Date.now();
-    for (const build of await listLabelled(BUILD_LABEL, key)) {
+    for (const build of await listLabelled(ROLE_LABEL, 'build')) {
       const last = build.info.lastActiveAt ?? build.createdAt;
       if (build.state === 'paused' && last !== null && now - last.getTime() > STALE_BUILD_MS) {
         log(`deleting abandoned template build ${build.id}`);
@@ -269,14 +280,17 @@ export function createPrizedImplementation(
    * label later builds reuse.
    */
   const buildTemplate = async (ctx: SandboxPrepareContext, key: string): Promise<SandboxLike> => {
-    const buildLabels = { ...options.labels, [BUILD_LABEL]: key };
-    const build =
-      options.forkFrom !== undefined ? await fork(options.forkFrom, buildLabels) : await create(buildLabels);
+    const buildLabels = { ...options.labels, [BUILD_LABEL]: key, [ROLE_LABEL]: 'build' };
+    let build: SandboxLike | undefined;
     try {
+      build = options.forkFrom !== undefined ? await forkOf(options.forkFrom, buildLabels) : await create(buildLabels, false);
+      await mkdirWorkspace(build);
       ctx.log(`preparing Prized sandbox template in ${build.id}`);
-      await ctx.populate(connect(build));
-      await build.pause();
-      const template = await fork(build.id, { ...options.labels, [TEMPLATE_LABEL]: key });
+      const connection = connect(build);
+      await ctx.populate(connection);
+      // stop() ends the output polls of anything prepare left running (a poll would wake it), then pauses.
+      await connection.stop();
+      const template = await forkOf(build.id, { ...options.labels, [TEMPLATE_LABEL]: key });
       try {
         await template.pause();
       } catch (error) {
@@ -285,7 +299,7 @@ export function createPrizedImplementation(
       }
       return template;
     } finally {
-      await deleteQuietly(build, ctx.log);
+      if (build !== undefined) await deleteQuietly(build, ctx.log);
     }
   };
 
@@ -300,7 +314,8 @@ export function createPrizedImplementation(
           template: options.template,
           // `resources` is a key eve reserves for itself.
           shape: options.resources,
-          env,
+          // Names only: values go with each command, so a changed value needs no new template.
+          envNames: Object.keys(env).sort(),
           autoPauseMin,
           maxRuntimeMin: options.maxRuntimeMin,
           forkFrom: options.forkFrom,
@@ -309,17 +324,17 @@ export function createPrizedImplementation(
         })
         .slice(0, 32);
       try {
-        const published = oldestFirst((await listLabelled(TEMPLATE_LABEL, key)).filter(s => TEMPLATE_STATES.has(s.state)));
+        // Only a paused template is finished. Concurrent builds of one key can each publish one;
+        // none deletes another's, since a deployment may already ship it. Later builds reuse the oldest.
+        const published = oldestFirst((await listLabelled(TEMPLATE_LABEL, key)).filter(s => s.state === 'paused'));
         if (published[0] !== undefined) {
           ctx.log(`reusing Prized sandbox template ${published[0].id}`);
           return { templateId: published[0].id };
         }
-        await sweepAbandonedBuilds(key, ctx.log);
+        await sweepAbandonedBuilds(ctx.log);
         const template = await buildTemplate(ctx, key);
-        // Another build of the same inputs may have published first: every build keeps the oldest.
-        const kept = await settleOn(TEMPLATE_LABEL, key, template, TEMPLATE_STATES);
-        ctx.log(`prepared Prized sandbox template ${kept.id}`);
-        return { templateId: kept.id };
+        ctx.log(`prepared Prized sandbox template ${template.id}`);
+        return { templateId: template.id };
       } catch (error) {
         throw new Error(`${LOG_PREFIX} Failed to prepare the Prized sandbox template: ${errorMessage(error)}`, { cause: error });
       }
@@ -328,15 +343,17 @@ export function createPrizedImplementation(
     async start(ctx: SandboxSessionContext, open, artifactValue) {
       const artifact = requireArtifact(artifactValue);
       const label = sessionLabel(ctx.session.id);
-      const existing = oldestFirst((await listLabelled(SESSION_LABEL, label)).filter(s => ADOPTABLE.has(s.state)))[0];
+      const existing = await sessionSandbox(label);
       if (existing !== undefined) {
-        return { connection: connect(existing), state: { sandboxId: existing.id, version: 1 } };
+        const sandbox = await adopt(existing);
+        return { connection: connect(sandbox), state: { sandboxId: sandbox.id, version: 1 } };
       }
       const labels = { ...options.labels, ...open?.labels, [SESSION_LABEL]: label };
       let mine: SandboxLike;
       if (artifact.templateId !== undefined) {
+        let copy: SandboxLike;
         try {
-          mine = await fork(artifact.templateId, labels);
+          copy = await forkOf(artifact.templateId, labels);
         } catch (error) {
           if (!isGone(error) && (error as { code?: unknown }).code !== 'not_found') throw error;
           throw new eve.SandboxTemplateNotProvisionedError({
@@ -345,10 +362,16 @@ export function createPrizedImplementation(
             templateKey: artifact.templateId,
           });
         }
+        mine = await withWorkspace(copy);
       } else {
-        mine = await create(labels);
+        mine = await withWorkspace(await create(labels, true));
       }
-      const sandbox = await settleOn(SESSION_LABEL, label, mine, ADOPTABLE);
+      // Concurrent starts of one session (a prewarm and the first turn, two processes) each made
+      // one: all keep the oldest, and each deletes its own if it isn't that one.
+      const winner = (await sessionSandbox(label)) ?? mine;
+      if (winner.id === mine.id) return { connection: connect(mine), state: { sandboxId: mine.id, version: 1 } };
+      await deleteQuietly(mine);
+      const sandbox = await adopt(winner);
       return { connection: connect(sandbox), state: { sandboxId: sandbox.id, version: 1 } };
     },
 

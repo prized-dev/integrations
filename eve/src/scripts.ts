@@ -20,10 +20,11 @@ export const MKDIR = 'mkdir -p -- "$EVE_DST"';
 
 /**
  * Copy the file `EVE_SRC` to `EVE_DST` (a staging file the files API can read), following links
- * as any process would. Exits `missing` when nothing is there, `isDirectory` for a directory.
+ * as any process would. Exits `missing` when nothing is there (a broken link included, as Node's
+ * ENOENT), `isDirectory` for a directory.
  */
 export const STAGE_READ = [
-  `if ! ${present('EVE_SRC')}; then exit ${EXIT.missing}; fi`,
+  `[ -e "$EVE_SRC" ] || exit ${EXIT.missing}`,
   `[ -d "$EVE_SRC" ] && exit ${EXIT.isDirectory}`,
   `[ -f "$EVE_SRC" ] || exit ${EXIT.notRegular}`,
   'mkdir -p -- "$(dirname -- "$EVE_DST")" || exit 1',
@@ -55,5 +56,5 @@ export const REMOVE = [
   'rm -f -- "$EVE_DST" || exit 1',
 ].join('\n');
 
-/** Whether `EVE_SRC` exists (a file, a directory or a link, even a broken one): exit 0 if so. */
-export const EXISTS = `${present('EVE_SRC')}`;
+/** Whether `EVE_SRC` exists, following links (a broken link doesn't): exit 0 if so. */
+export const EXISTS = '[ -e "$EVE_SRC" ]';
