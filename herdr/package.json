@@ -5,7 +5,7 @@
   "description": "A herdr plugin that runs Claude Code or Codex on a Prized sandbox or box, from the worktree you are in.",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "test": "node --test"

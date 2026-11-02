@@ -318,14 +318,60 @@ export function unpackScript(dir, archive) {
     .join("\n");
 }
 
-export function startSessionScript(dir, session, agentCommand) {
+// On a sandbox, commands run with a private /tmp and `prized sandbox ssh` attaches from the login side,
+// so both must find tmux's socket in the home: TMUX_TMPDIR points there, set for the ssh side in the
+// first lines of ~/.bashrc (bash reads it for commands run over ssh). A template without tmux gets one
+// unpacked into the home with apt, as the docs' "System packages without root" does, behind a
+// wrapper in ~/.local/bin that the same lines put on the PATH.
+const BASHRC_PRELUDE = [
+  "# herdr-prized: one tmux socket directory for commands and ssh, and ~/.local/bin on the PATH",
+  'export TMUX_TMPDIR="$HOME/.tmux"; case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) PATH="$HOME/.local/bin:$PATH" ;; esac',
+];
+
+const TMUX_WRAPPER = [
+  "#!/bin/sh",
+  "# tmux unpacked into ~/sysroot by the herdr-prized plugin (this template has no tmux of its own)",
+  'L="$HOME/sysroot/usr/lib/$(uname -m)-linux-gnu"',
+  'LD_LIBRARY_PATH="$L${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" exec "$HOME/sysroot/usr/bin/tmux" "$@"',
+];
+
+export function sandboxTmuxSetup() {
   return [
+    'export TMUX_TMPDIR="$HOME/.tmux"',
+    'mkdir -p "$TMUX_TMPDIR" "$HOME/.local/bin"',
+    'PATH="$HOME/.local/bin:$PATH"',
+    "if ! grep -q herdr-prized \"$HOME/.bashrc\" 2>/dev/null; then",
+    `  { printf '%s\\n' ${BASHRC_PRELUDE.map(sq).join(" ")}; cat "$HOME/.bashrc" 2>/dev/null || true; } > "$HOME/.bashrc.herdr-prized"`,
+    '  mv "$HOME/.bashrc.herdr-prized" "$HOME/.bashrc"',
+    "fi",
+    "if ! command -v tmux >/dev/null 2>&1; then",
+    "  echo 'installing tmux into the home (this template has none)' >&2",
+    '  A="$HOME/.cache/herdr-prized-apt"',
+    '  mkdir -p "$A/lists/partial" "$A/archives/partial" "$HOME/sysroot"',
+    `  printf 'Dir::State::Lists "%s/lists";\\nDir::Cache "%s";\\nDir::Cache::archives "%s/archives";\\nDebug::NoLocking "true";\\n' "$A" "$A" "$A" > "$A/apt.conf"`,
+    '  APT_CONFIG="$A/apt.conf" apt-get update -qq',
+    '  APT_CONFIG="$A/apt.conf" apt-get install --download-only -y -qq --no-install-recommends tmux',
+    '  for f in "$A"/archives/*.deb; do case "$f" in */libc6_*|*/libc-bin_*) continue ;; esac; dpkg -x "$f" "$HOME/sysroot"; done',
+    `  printf '%s\\n' ${TMUX_WRAPPER.map(sq).join(" ")} > "$HOME/.local/bin/tmux"`,
+    '  chmod 755 "$HOME/.local/bin/tmux"',
+    '  rm -rf "$A"',
+    "  tmux -V >&2",
+    "fi",
+  ].join("\n");
+}
+
+export function startSessionScript(dir, session, agentCommand, kind = "sandbox") {
+  return [
+    "set -e",
+    kind === "sandbox" ? sandboxTmuxSetup() : "",
     `D=${dir}`,
     `if ! tmux has-session -t ${sq(`=${session}`)} 2>/dev/null; then`,
     `  tmux new-session -d -s ${sq(session)} -c "$D" bash -lc ${sq(sessionScript(agentCommand))}`,
     "fi",
     `tmux set-option -t ${sq(session)} status off >/dev/null`,
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 // Stage everything the agent changed, then diff it against the base: committed or not, new files

@@ -88,6 +88,9 @@ test("the agent pane creates the sandbox, copies the worktree, starts the agent 
   const tmux = fs.readFileSync(path.join(sandboxHome(w, id), ".tmux-calls"), "utf8");
   assert.match(tmux, new RegExp(`new-session -d -s ${mapping.session} -c .*/work/my-repo bash -lc .*; claude; exec bash -l`));
   assert.match(tmux, new RegExp(`set-option -t ${mapping.session} status off`));
+  // `prized sandbox ssh` attaches from the login side: ~/.bashrc points it at the same tmux socket.
+  const bashrc = fs.readFileSync(path.join(sandboxHome(w, id), ".bashrc"), "utf8");
+  assert.match(bashrc.split("\n")[1], /^export TMUX_TMPDIR="\$HOME\/\.tmux";/);
   assert.match(pane.out, /Disconnected from sandbox sbx_.*still running/);
   assert.match(pane.out, /pauses the sandbox; memory and processes are kept/);
   assert.equal(mapping.status, "detached");
@@ -165,6 +168,8 @@ test("reconnect resumes the paused sandbox and lands in the same session", () =>
   assert.equal(state(w).mappings[mapping.id].paneId, "w1:p8");
   const tmux = fs.readFileSync(path.join(sandboxHome(w, mapping.sandboxId), ".tmux-calls"), "utf8");
   assert.equal(tmux.match(/new-session/g).length, 1, "the existing session is reused");
+  const bashrc = fs.readFileSync(path.join(sandboxHome(w, mapping.sandboxId), ".bashrc"), "utf8");
+  assert.equal(bashrc.match(/# herdr-prized/g).length, 1, "the ~/.bashrc lines are written once");
 });
 
 test("r reconnects from the menu, and p pauses before closing", () => {

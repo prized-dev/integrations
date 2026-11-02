@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
-import { cleanupArchive, listWorktree, packWorktree, sessionScript, skipReason, sq } from "../src/lib.mjs";
+import { cleanupArchive, listWorktree, packWorktree, sessionScript, skipReason, sq, startSessionScript } from "../src/lib.mjs";
 import { world } from "./helpers.mjs";
 
 test("lists tracked and untracked files, minus ignored, deleted and credential files", () => {
@@ -60,4 +60,17 @@ test("the session runs the agent, then stays in a shell", () => {
   assert.match(sessionScript("claude"), /claude; exec bash -l$/);
   assert.match(sessionScript(""), /; exec bash -l$/);
   assert.match(sessionScript("claude"), /\.herdr-prized\.env/);
+});
+
+test("a sandbox session finds or installs tmux and shares its socket with ssh; a box session does neither", () => {
+  const sandbox = startSessionScript('"/home/prized/work/r"', "herdr-1", "claude", "sandbox");
+  assert.match(sandbox, /export TMUX_TMPDIR="\$HOME\/\.tmux"/);
+  assert.match(sandbox, /if ! command -v tmux .*\n[\s\S]*apt-get install --download-only -y -qq --no-install-recommends tmux/);
+  assert.match(sandbox, /dpkg -x/);
+  const box = startSessionScript('"$HOME/herdr/r-1"', "herdr-1", "claude", "box");
+  assert.doesNotMatch(box, /TMUX_TMPDIR|apt-get|bashrc/);
+  for (const script of [sandbox, box]) {
+    const r = spawnSync("bash", ["-n"], { input: script, encoding: "utf8" });
+    assert.equal(r.status, 0, r.stderr);
+  }
 });

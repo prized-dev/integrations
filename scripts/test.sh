@@ -199,6 +199,13 @@ case $DIR in
     npm run typecheck
     npm run build
     offline npm test ;;
+  herdr)
+    # A herdr plugin with no dependencies: node --test against stand-ins for prized, herdr and ssh
+    # (test/fakes). The fake sandbox runs the plugin's remote scripts with the real bash, tar and git.
+    cp -r "$ROOT/$DIR/." "$WORK/pkg"
+    cd "$WORK/pkg"
+    node --version
+    offline node --test ;;
   *)
     echo "scripts/test.sh doesn't know $DIR yet: add a case for it" >&2; exit 2 ;;
 esac

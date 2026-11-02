@@ -123,7 +123,7 @@ function fillBox(mapping) {
 }
 
 function ensureSession(mapping) {
-  const script = startSessionScript(remoteDir(mapping), mapping.session, mapping.agentCommand);
+  const script = startSessionScript(remoteDir(mapping), mapping.session, mapping.agentCommand, mapping.kind);
   if (mapping.kind === "box") prizedOk(["exec", mapping.box, "--", script]);
   else prizedOk(["sandbox", "exec", mapping.sandboxId, "--", script]);
 }

@@ -7,6 +7,7 @@ Each folder is its own package with its own README, tests and release. You need 
 | Folder | Framework | Package | Status | Docs |
 | --- | --- | --- | --- | --- |
 | [`openai-agents`](openai-agents) | OpenAI Agents SDK: sandbox client | `openai-agents-prized` | Works now: on PyPI | [README](openai-agents/README.md) |
+| [`herdr`](herdr) | herdr: plugin (the agent in a sandbox or box, paused when its pane closes; a box as a machine) | `herdr plugin install prized-dev/integrations/herdr` | Works now: tested against stand-ins and on a live sandbox; not in herdr's marketplace yet | [README](herdr/README.md) |
 | [`hermes`](hermes) | Hermes Agent: terminal backend plugin | `hermes plugins install prized-dev/integrations/hermes` | Works now | [README](hermes/README.md) |
 | [`harbor`](harbor) | Harbor (Terminal-Bench): environment | `harbor-prized` | Works now: install from this repo (not on PyPI yet) | [README](harbor/README.md) |
 | [`dify`](dify) | Dify: tool plugin (workflows and agents) | `prized_sandboxes` (`.difypkg`) | Build the `.difypkg` from this repo; tested under Dify's plugin runtime, not yet in a Dify install (self-hosted Dify takes the unsigned package only with signature checks off); Marketplace submission pending | [README](dify/README.md) |

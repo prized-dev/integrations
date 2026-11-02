@@ -50,6 +50,8 @@ jobs:
           - { dir: langchain-js, node: "24" }
           - { dir: mastra, node: "22", floor: true }
           - { dir: mastra, node: "24" }
+          - { dir: herdr, node: "22" }
+          - { dir: herdr, node: "24" }
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
@@ -77,3 +79,4 @@ jobs:
       - run: >-
           shellcheck scripts/test.sh claude-managed-agents/on-work.sh claude-managed-agents/test/test.sh
           cursor/spawn.sh cursor/test/test.sh cursor/test/stub-agent cursor/test/sandbox-bin/curl
+          herdr/test/fakes/herdr herdr/test/fakes/ssh
