@@ -2,8 +2,10 @@
 """Stand-in for `claude` and `codex`: records how it was started, then does the next planned action.
 
 FAKE_AGENT_DIR holds plan.json (a list, one action per call) and calls.jsonl (what each call saw).
-An action: {"write": {path: text}, "symlink": {path: target}, "write_token": path, "commit": message,
-"say": final message, "exit": code}. Without a plan entry it writes fix.txt and commits.
+An action: {"write": {path: text}, "symlink": {path: target}, "write_token": path, "run": [shell commands, each
+a tool call in the event stream, run in a child bash as the real agents do], "print": a line straight to the terminal
+($VARS expanded), "commit": message, "say": final message, "say_leaks": true (the final message quotes $DEMO_API_TOKEN
+and .env), "exit": code}. Without a plan entry it writes fix.txt and commits.
 """
 
 import json
@@ -47,6 +49,24 @@ for path, text in (action.get("write") or {}).items():
     p.write_text(text)
 for path, target in (action.get("symlink") or {}).items():
     os.symlink(target, path)
+for i, cmd in enumerate(action.get("run") or []):
+    tid = f"toolu_{n}_{i}"
+    if name == "claude":
+        use = {"type": "tool_use", "id": tid, "name": "Bash", "input": {"command": cmd}}
+        print(json.dumps({"type": "assistant", "message": {"id": f"m{n}_{i}", "content": [use]}}), flush=True)
+    else:
+        item = {"id": tid, "type": "command_execution", "command": cmd, "status": "in_progress"}
+        print(json.dumps({"type": "item.started", "item": item}), flush=True)
+    r = subprocess.run(["bash", "-c", cmd], capture_output=True, text=True)
+    if name == "claude":
+        res = {"type": "tool_result", "tool_use_id": tid, "content": r.stdout + r.stderr, "is_error": r.returncode != 0}
+        print(json.dumps({"type": "user", "message": {"content": [res]}}), flush=True)
+    else:
+        item = {"id": tid, "type": "command_execution", "command": cmd, "aggregated_output": r.stdout + r.stderr}
+        item.update(exit_code=r.returncode, status="completed" if r.returncode == 0 else "failed")
+        print(json.dumps({"type": "item.completed", "item": item}), flush=True)
+if action.get("print"):
+    print(os.path.expandvars(action["print"]), flush=True)
 if action.get("write_token"):
     token = (Path(os.environ["HOME"]) / ".prized-issues" / "tokens" / "acme__app").read_text()
     Path(action["write_token"]).write_text("leaked: " + token)
@@ -54,6 +74,8 @@ if action.get("commit"):
     subprocess.run(["git", "add", "-A"], check=True)
     subprocess.run(["git", "-c", "user.name=agent", "-c", "user.email=agent@example.com", "commit", "-qm", action["commit"]], check=True)
 say = action.get("say", "Done.")
+if action.get("say_leaks"):
+    say += f" Token was {os.environ.get('DEMO_API_TOKEN')}; .env says {Path('.env').read_text().strip() if Path('.env').exists() else ''}"
 if name == "claude":
     print(json.dumps({"type": "result", "subtype": "success", "result": say, "session_id": session}))
 else:

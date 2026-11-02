@@ -13,6 +13,9 @@ On the box:
   python3 prized_issues.py                     # what it watches and what ran
   python3 prized_issues.py off                 # stop
 
+With `watch OWNER/REPO --replay`, each run is recorded on the box (prized_replay.py, beside this script) and every
+pull request links a replay of it, for members of the Prized workspace.
+
 Standard library only; needs git and claude (or codex) on the box.
 """
 
@@ -23,7 +26,9 @@ import base64
 import contextlib
 import datetime as dt
 import fcntl
+import functools
 import getpass
+import importlib.util
 import json
 import os
 import re
@@ -82,6 +87,10 @@ CACHES = (
     "node_modules/",
     ".DS_Store",
 )
+REPLAY_FILE = "prized_replay.py"  # replays: opt-in, in their own file beside this one
+REPLAY_SOURCE = "https://raw.githubusercontent.com/prized-dev/integrations/main/github-issues/prized_replay.py"
+REPLAY_PORT = int(os.environ.get("PRIZED_ISSUES_REPLAY_PORT") or 7707)
+REPLAY_DOMAIN = os.environ.get("PRIZED_ISSUES_REPLAY_DOMAIN") or "p.prized.dev"  # Prized's members-only port links
 AGENT_ENV_DROP = ("GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN")
 WHO = {"claude": "Claude Code", "codex": "Codex"}
 # Who wrote, edited and retitled the issue (totalCount says whether the lists are complete), and the latest labels.
@@ -506,14 +515,29 @@ def read_events(log: Path, start: int) -> tuple[str, str]:
     return session, final
 
 
-def run_agent(agent: str, trusted: bool, session: str, prompt: str, wt: Path, log: Path) -> tuple[int, str, str]:
-    """One agent turn in the worktree: (exit code, session id, final message). -9 means it ran out of time."""
+def run_agent(
+    agent: str, trusted: bool, session: str, prompt: str, wt: Path, log: Path, tape=None
+) -> tuple[int, str, str]:
+    """One agent turn in the worktree: (exit code, session id, final message). -9 means it ran out of time.
+
+    With a recording (`tape`, replays on), the turn runs under the recorder: same input, same log, same timeout."""
     log.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     with open(log, "ab") as f:
         f.write(
             f"\n== {now()} {agent} ({'auto' if trusted else 'edits only'}){' resume' if session else ''}\n".encode()
         )
         start = f.tell()
+        if tape is not None:
+            f.flush()
+            try:
+                rc = tape.run(agent_cmd(agent, trusted, session), wt, agent_env(), prompt.encode(), f, TURN_TIMEOUT)
+            except OSError as e:
+                f.write(f"== couldn't start {agent}: {e}\n".encode())
+                return 127, session, ""
+            f.write(f"\n== {agent} exited {rc}\n".encode())
+            f.flush()
+            new_session, final = read_events(log, start)
+            return rc, new_session or session, final
         try:
             p = subprocess.Popen(
                 agent_cmd(agent, trusted, session),
@@ -626,6 +650,114 @@ def followup_prompt(author: str, request: str, trusted: bool) -> str:
     return f"@{author} commented on GitHub: {text}\n\n{tail}" + (f" {REPORT}" if trusted else "")
 
 
+# --- replays (watch OWNER/REPO --replay) ---
+
+
+@functools.cache
+def replay_module():
+    """prized_replay.py from beside this script, or None: replays are opt-in and live in their own file."""
+    path = Path(__file__).resolve().parent / REPLAY_FILE
+    spec = importlib.util.spec_from_file_location("prized_replay", path) if path.is_file() else None
+    if spec is None or spec.loader is None:
+        return None
+    mod = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(mod)
+    except Exception as e:
+        say(f"{REPLAY_FILE} didn't load ({type(e).__name__}: {e}); runs go on without replays")
+        return None
+    return mod
+
+
+def replay_link(text: str) -> str:
+    """The origin of a Prized members-only port link (https://BOX-7707-xxxxxx.p.prized.dev), or ""."""
+    u = urllib.parse.urlsplit(text.strip())
+    host = (u.hostname or "").lower()
+    if u.scheme != "https" or not host.endswith("." + REPLAY_DOMAIN) or u.username or u.password:
+        return ""
+    return f"https://{host}" + (f":{u.port}" if u.port else "")
+
+
+def recorder(full: str, wt: Path):
+    """A recording for this turn when the repo has replays on; None otherwise, or when it can't start."""
+    if not (load_state()["repos"].get(full) or {}).get("replay"):
+        return None
+    mod = replay_module()
+    if mod is None:
+        say(f"{full}: replays are on but {REPLAY_FILE} isn't beside {tilde(Path(__file__).resolve())}")
+        return None
+    tokens = [t.read_text(encoding="utf-8").strip() for t in TOKENS.glob("*") if t.is_file()] if TOKENS.is_dir() else []
+    try:
+        return mod.Recording(workdir=wt, extra_secrets=tokens)
+    except Exception as e:
+        say(f"{full}: no replay for this turn ({type(e).__name__}: {e})")
+        return None
+
+
+def replay_report(full: str, number: int, key: str, tape, start: str, head: str, trusted: bool):
+    """The turn's replay, written under ~/.prized-issues/replays: its pull request lines, or None."""
+    if tape is None:
+        return None
+    rec = load_state()["runs"][key]
+    mod = replay_module()
+    try:
+        rep = mod.Report(
+            tape,
+            state_dir=STATE_DIR,
+            link=load_state().get("replay_link") or "",
+            name=mod.new_name(repo_key(full), number),
+            wt=Path(rec["worktree"]),
+            start=start,
+            head=head or start,
+            context={
+                "repo": full,
+                "issue": number,
+                "branch": rec.get("branch"),
+                "pr": rec.get("pr"),
+                "pr_url": rec.get("pr_url"),
+            },
+            title=f"#{number} {rec.get('title') or ''}".strip(),
+            mode="auto" if trusted else "edits only",
+        )
+        rep.write()
+        if rep.url and not mod.server_up(REPLAY_PORT):
+            rep.lines.append(
+                "_The replay server on the box isn't running: `systemctl --user restart prized-issues-replays`._"
+            )
+        save_run(key, replay=rep.url or str(rep.page_path), replay_block=quiet_mentions(rep.block(DOCS)))
+        return rep
+    except Exception as e:
+        say(f"{key}: no replay ({type(e).__name__}: {e})")
+        return None
+    finally:
+        tape.forget()
+
+
+def replay_block(rep) -> str:
+    return quiet_mentions(rep.block(DOCS)) if rep is not None else ""
+
+
+def install_replay_server(on: bool) -> bool:
+    """The systemd user service that serves replay pages on 127.0.0.1:REPLAY_PORT (on), or stops it (off)."""
+    if not shutil.which("systemctl"):
+        return False
+    unit = HOME / ".config" / "systemd" / "user" / "prized-issues-replays.service"
+    if not on:
+        if unit.exists():
+            subprocess.run(["systemctl", "--user", "disable", "--now", unit.name], capture_output=True)
+        return True
+    unit.parent.mkdir(parents=True, exist_ok=True)
+    unit.write_text(
+        "[Unit]\nDescription=Replays of prized-issues runs on 127.0.0.1 (for a members-only Prized port share)\n\n"
+        f"[Service]\nExecStart=/bin/bash -lc 'exec python3 %h/.prized-issues/{REPLAY_FILE} serve --port {REPLAY_PORT}'\n"
+        "Restart=always\nRestartSec=2\n\n[Install]\nWantedBy=default.target\n"
+    )
+    for cmd in (["daemon-reload"], ["enable", unit.name], ["restart", unit.name]):
+        if subprocess.run(["systemctl", "--user", *cmd], capture_output=True).returncode != 0:
+            return False
+    return True
+
+
 # --- one run, start to end ---
 
 HELD_NOTE = (
@@ -634,22 +766,34 @@ HELD_NOTE = (
 )
 
 
-def finish(full: str, number: int, key: str, start: str, rc: int, final: str, trusted: bool, why: str = "") -> None:
-    """Commit the turn; push and open or update the pull request (a trusted turn), or hold it (any other)."""
+def finish(
+    full: str, number: int, key: str, start: str, rc: int, final: str, trusted: bool, why: str = "", tape=None
+) -> None:
+    """Commit the turn; push and open or update the pull request (a trusted turn), or hold it (any other).
+
+    With a recording (`tape`), the agent's final message is masked with what the recorder knows, and every comment
+    and the pull request carry the turn's replay."""
     rec = load_state()["runs"][key]
     wt = Path(rec["worktree"])
     thread = rec.get("pr") or number
     who = WHO.get(rec["agent"], rec["agent"])
     log_note = f" Log on the box: `{tilde(rec['log'])}`."
     fallback = f"{rec.get('title') or f'Issue #{number}'} (#{number})"
+    if tape is not None:
+        with contextlib.suppress(Exception):
+            final = tape.redact(final)
     head = commit_turn(wt, start, rec.get("setup_left") or {}, fallback, identity())
+    rep = replay_report(full, number, key, tape, start, head, trusted)
+    block = f"\n\n{replay_block(rep)}" if rep is not None else ""
     if not head:
         ended = "ran out of time" if rc == -9 else (f"exited {rc}" if rc else "finished")
         status = rec.get("status_before") or ("none" if rc == 0 else "failed")
         save_run(key, status=status, detail=ended)
         shown = final if trusted and not secret_in(final, read_token(full)) else ""
         tail = f"\n\n> {quiet_mentions(clean_text(shown, 1500))}" if shown else ""
-        comment(full, thread, f"{who} {ended} without changing anything, so there's nothing to push.{log_note}{tail}")
+        comment(
+            full, thread, f"{who} {ended} without changing anything, so there's nothing to push.{log_note}{tail}{block}"
+        )
         return
     # Everything not on GitHub yet is checked, not just this turn: an earlier refused change never rides along.
     since = rec.get("pushed") or rec["base_sha"]
@@ -660,7 +804,7 @@ def finish(full: str, number: int, key: str, start: str, rc: int, final: str, tr
             full,
             thread,
             f"Not pushed: the change {'; '.join(problems)}. The work stays on the box in `{tilde(wt)}` (branch "
-            f"`{rec['branch']}`). Add the label to the issue again to start fresh.{log_note}",
+            f"`{rec['branch']}`). Add the label to the issue again to start fresh.{log_note}{block}",
         )
         return
     if not trusted:
@@ -672,14 +816,18 @@ def finish(full: str, number: int, key: str, start: str, rc: int, final: str, tr
             thread,
             f"{who} made a change, edits only ({why}), so it couldn't run commands or reach the network, and "
             f"nothing ran the tests:\n\n```\n{stat}\n```\n\n"
-            + HELD_NOTE.format(wt=tilde(wt), a=since[:12], b=head[:12]),
+            + HELD_NOTE.format(wt=tilde(wt), a=since[:12], b=head[:12])
+            + block,
         )
         return
-    push_and_report(full, number, key, head, final)
+    push_and_report(full, number, key, head, final, rep)
 
 
-def push_and_report(full: str, number: int, key: str, head: str, final: str) -> None:
+def push_and_report(full: str, number: int, key: str, head: str, final: str, rep=None, block: str = "") -> None:
+    """Push the turn and open the pull request (or comment on it). `rep`: this turn's replay; `block`: a replay
+    already said on GitHub (a held change's), for the pull request it opens."""
     rec = load_state()["runs"][key]
+    block = replay_block(rep) if rep is not None else block
     wt, branch, who = Path(rec["worktree"]), rec["branch"], WHO.get(rec["agent"], rec["agent"])
     r = subprocess.run(
         ["git", "-C", str(wt), "push", "--quiet", "origin", f"{head}:refs/heads/{branch}"],
@@ -702,12 +850,14 @@ def push_and_report(full: str, number: int, key: str, head: str, final: str) -> 
     summary = f"\n\n{quiet_mentions(clean_text(shown, 4000)).strip()}" if shown else ""
     if rec.get("pr"):
         save_run(key, status="pr", held_sha="", pushed=head)
-        comment(full, rec["pr"], f"Pushed `{head[:12]}` to this branch.{summary}")
+        comment(full, rec["pr"], f"Pushed `{head[:12]}` to this branch.{summary}" + (f"\n\n{block}" if block else ""))
         return
     save_run(key, pushed=head)
     title = git(wt, "log", "-1", "--format=%s", head).strip()[:200] or f"Issue #{number}"
     body = (
-        f"Closes #{number}.{summary}\n\n---\n{who} worked on this on a Prized box for @{rec.get('actor')}. "
+        f"Closes #{number}.{summary}"
+        + (f"\n\n{block.rstrip()}" if block else "")
+        + f"\n\n---\n{who} worked on this on a Prized box for @{rec.get('actor')}. "
         "A member's `/prized <request>` comment here continues the same session.\n\n"
         f"<sub>Opened by [prized-issues]({FOOTER_LINK})</sub>"
     )
@@ -718,6 +868,9 @@ def push_and_report(full: str, number: int, key: str, head: str, final: str) -> 
         comment(full, number, f"Pushed `{branch}`, but couldn't open the pull request ({e}): open it from the branch.")
         return
     save_run(key, status="pr", pr=pr.get("number"), pr_url=pr.get("html_url"), held_sha="")
+    if rep is not None:  # the replay links back to its pull request
+        with contextlib.suppress(Exception):
+            rep.write(pr_url=str(pr.get("html_url") or ""), pr=pr.get("number"))
     comment(full, number, f"Pull request: {pr.get('html_url')}")
 
 
@@ -770,9 +923,10 @@ def start_run(full: str, cfg: dict, number: int, issue: dict, event: dict, trust
         run_setup(full, wt, base, log)
         save_run(key, setup_left=changed_files(wt))
         prompt = issue_prompt(full, number, issue, label, actor, trusted, branch, base)
-        rc, session, final = run_agent(agent, trusted, "", prompt, wt, log)
+        tape = recorder(full, wt)
+        rc, session, final = run_agent(agent, trusted, "", prompt, wt, log, tape)
         save_run(key, session=session, turns=1)
-        finish(full, number, key, start, rc, final, trusted, why)
+        finish(full, number, key, start, rc, final, trusted, why, tape)
     except Exception as e:
         failed(full, key, number, e)
 
@@ -833,9 +987,10 @@ def followup(full: str, key: str, thread: int, author: str, request: str) -> Non
     comment(full, thread, f"{WHO.get(rec['agent'], rec['agent'])} is continuing the same session on the box.")
     try:
         prompt = followup_prompt(author, request, trusted)
-        rc, session, final = run_agent(rec["agent"], trusted, rec["session"], prompt, wt, Path(rec["log"]))
+        tape = recorder(full, wt)
+        rc, session, final = run_agent(rec["agent"], trusted, rec["session"], prompt, wt, Path(rec["log"]), tape)
         save_run(key, session=session, turns=int(rec.get("turns", 1)) + 1)
-        finish(full, number, key, start, rc, final, trusted, why)
+        finish(full, number, key, start, rc, final, trusted, why, tape)
     except Exception as e:
         failed(full, key, thread, e)
 
@@ -856,7 +1011,7 @@ def push_held(full: str, key: str, thread: int) -> None:
             save_run(key, status="refused", detail="; ".join(problems)[:300], held_sha="")
             comment(full, thread, f"Not pushed: the change {'; '.join(problems)}.")
             return
-        push_and_report(full, int(key.rpartition("#")[2]), key, head, "")
+        push_and_report(full, int(key.rpartition("#")[2]), key, head, "", block=rec.get("replay_block") or "")
     except Exception as e:
         failed(full, key, thread, e)
 
@@ -1094,6 +1249,8 @@ def prune(st_repos: dict) -> None:
     except OSError:
         pass
     marker.touch()
+    if (STATE_DIR / "replays").is_dir() and replay_module() is not None:
+        replay_module().prune(STATE_DIR)  # replays older than 30 days
     cutoff = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=14)).strftime("%Y-%m-%dT%H:%M:%SZ")
     for key, rec in list(load_state()["runs"].items()):
         full = key.rpartition("#")[0]
@@ -1223,6 +1380,29 @@ def main_watch(args) -> int:
     if not LABEL_RE.fullmatch(label):
         print(f"--label {label!r}: letters, digits, spaces, dots, dashes and underscores", file=sys.stderr)
         return 2
+    replay, link = bool(old.get("replay")), load_state().get("replay_link") or ""
+    if args.replay is not None:
+        choice = args.replay.strip()
+        if choice.lower() == "off":
+            replay = False
+        else:
+            if replay_module() is None:
+                print(
+                    f"--replay needs {REPLAY_FILE} beside prized_issues.py: curl -fsSLO {REPLAY_SOURCE}",
+                    file=sys.stderr,
+                )
+                return 2
+            if choice.lower() != "on":
+                link = replay_link(choice)
+                if not link:
+                    print(
+                        f"--replay {choice!r}: give `on`, `off`, or the link `prized ports share {REPLAY_PORT}` printed on "
+                        f"your laptop (https://BOX-{REPLAY_PORT}-xxxxxx.{REPLAY_DOMAIN}/), a link only members of your "
+                        "Prized workspace open",
+                        file=sys.stderr,
+                    )
+                    return 2
+            replay = True
     token = get_token(args, known or full)
     if not token:
         print("No token given.", file=sys.stderr)
@@ -1284,6 +1464,8 @@ def main_watch(args) -> int:
     me_path = Path(__file__).resolve()
     if me_path != (STATE_DIR / "prized_issues.py").resolve():
         shutil.copy(me_path, STATE_DIR / "prized_issues.py")  # the timer and git's credential helper run this copy
+        if (me_path.parent / REPLAY_FILE).is_file():
+            shutil.copy(me_path.parent / REPLAY_FILE, STATE_DIR / REPLAY_FILE)
     try:
         ensure_clone(full)
     except (RuntimeError, OSError, subprocess.SubprocessError) as e:
@@ -1300,8 +1482,13 @@ def main_watch(args) -> int:
             "member_ids": member_ids,
             "members": member_names,
             "since": old.get("since") or now(),
+            "replay": replay,
         }
+        if link:
+            st["replay_link"] = link
+        replays_anywhere = any(r.get("replay") for r in st["repos"].values())
     timer = install_timer()
+    server = install_replay_server(replays_anywhere) if replays_anywhere or args.replay is not None else True
     who = WHO.get(agent, agent)
     print(
         f"\nWatching {full}. Add the `{label}` label to an issue: within a minute or so the box comments, runs {who} "
@@ -1316,6 +1503,31 @@ def main_watch(args) -> int:
         + "`python3 ~/.prized-issues/prized_issues.py` shows what ran; logs are in ~/.prized-issues/logs."
     )
     notes = []
+    if replay:
+        caps = replay_module().probe()
+        print(
+            f"\nReplays: each run is recorded on this box (~/.prized-issues/replays) and served on port {REPLAY_PORT} "
+            "of its loopback, for a link only members of your Prized workspace open. "
+            + (
+                f"Pull requests link them at {link}/r/..."
+                if link
+                else "Pull requests name the replay's file on the box until there's a link."
+            )
+        )
+        if not link:
+            notes.append(
+                f"For replay links on pull requests: on your laptop, `prized ports share {REPLAY_PORT}` (with "
+                f"`--box BOX` if this isn't your default box), then here `python3 ~/.prized-issues/prized_issues.py "
+                f"watch {full} --replay LINK`."
+            )
+        if not caps["ptrace"]:
+            notes.append(f"Replays here show the agent's steps but not the exit codes of its commands: {caps['why']}.")
+        elif not caps["sysinfo"]:
+            notes.append(f"Replays here: {caps['why']}.")
+        if not server:
+            notes.append(
+                f"No systemd user services here: run `python3 ~/.prized-issues/{REPLAY_FILE} serve &` to serve replays."
+            )
     if not timer:
         notes.append(
             "No systemd user timer here: run `python3 ~/.prized-issues/prized_issues.py poll` from cron every minute."
@@ -1349,6 +1561,11 @@ def main_status() -> int:
     for full, cfg in st["repos"].items():
         print(
             f"{full}: label `{cfg['label']}`, {cfg['agent']}, base {cfg['base']}, members {', '.join('@' + m for m in cfg.get('members', []))}"
+            + (
+                f", replays {st.get('replay_link') or f'on (no link yet: prized ports share {REPLAY_PORT})'}"
+                if cfg.get("replay")
+                else ""
+            )
         )
     runs = sorted(((k, r) for k, r in st["runs"].items() if r.get("status")), key=lambda kv: kv[1].get("at", ""))
     for key, r in runs[-20:]:
@@ -1363,6 +1580,7 @@ def main_off(args) -> int:
         print(f"Stopped watching {args.repo}.")
         return 0
     subprocess.run(["systemctl", "--user", "disable", "--now", "prized-issues.timer"], capture_output=True)
+    install_replay_server(on=False)
     print(
         "Stopped. `python3 ~/.prized-issues/prized_issues.py watch OWNER/REPO` starts it again; rm -r ~/.prized-issues removes everything, the token included."
     )
@@ -1396,6 +1614,14 @@ def main(argv=None) -> int:
     )
     w.add_argument("--token-file", help="read the token from this file instead of asking")
     w.add_argument("--broad-token", action="store_true", help="accept a classic or OAuth token that reaches every repo")
+    w.add_argument(
+        "--replay",
+        nargs="?",
+        const="on",
+        metavar="LINK|off",
+        help=f"record each run and link a replay from the pull request; LINK: what `prized ports share {REPLAY_PORT}` "
+        "printed on your laptop (needs prized_replay.py beside this script)",
+    )
     pl = sub.add_parser("poll", help="look once for labeled issues and /prized comments (the timer runs this)")
     pl.add_argument("--dry-run", action="store_true", help="say which labeled issues would run; change nothing")
     o = sub.add_parser("off", help="stop: the timer, or one repo")
