@@ -18,7 +18,9 @@ vi.mock('@prized/sdk', async importOriginal => {
   return { ...sdk, Sandbox: fake.FakeSandbox };
 });
 
-const { prized, WORKTREE_PATH, TRANSFER_DIR, DEFAULT_TEMPLATE, CREATED_BY_LABEL, insideHome, shellQuote } = await import('../src/index.js');
+const { prized, WORKTREE_PATH, TRANSFER_DIR, DEFAULT_TEMPLATE, CREATED_BY_LABEL, insideHome, shellQuote, transferLimits } = await import('../src/index.js');
+const { PrizedError } = await import('@prized/sdk');
+const DEFAULT_CHUNK = transferLimits.chunkBytes;
 const { run } = await import('@ai-hero/sandcastle');
 type AgentProvider = import('@ai-hero/sandcastle').AgentProvider;
 type IsolatedSandboxHandle = import('@ai-hero/sandcastle').IsolatedSandboxHandle;
@@ -54,6 +56,7 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
+  transferLimits.chunkBytes = DEFAULT_CHUNK;
   await FakeSandbox.cleanup();
 });
 
@@ -141,6 +144,27 @@ describe('exec', () => {
     const result = await handle.exec('pwd', { cwd: '/home/prized' });
     expect(result.stdout.trim()).toBe(sandbox.local('/home/prized'));
     expect(sandbox.execs.at(-1)?.options.cwd).toBe('/home/prized');
+  });
+
+  it('starts a relative cwd in the worktree, as copyIn and copyFileOut do', async () => {
+    const { handle, sandbox } = await open();
+    await handle.exec('mkdir -p packages/a');
+    const result = await handle.exec('pwd', { cwd: 'packages/a' });
+    expect(result.stdout.trim()).toBe(sandbox.local(`${WORKTREE_PATH}/packages/a`));
+    expect(sandbox.execs.at(-1)?.options.cwd).toBe(`${WORKTREE_PATH}/packages/a`);
+  });
+
+  it('keeps the whole output of a buffered command, so a time limit never cuts it at 4 MiB', async () => {
+    const { handle, sandbox } = await open({ commandTimeoutMs: 5000 });
+    await handle.exec('true');
+    expect(sandbox.execs.at(-1)?.options).toMatchObject({ timeoutMs: 5000, fullOutput: true });
+  });
+
+  it('removes the stdin file when the command never started', async () => {
+    const { handle, sandbox } = await open();
+    sandbox.failExec = { match: 'never-runs', error: new PrizedError('network_error', 'connection dropped') };
+    await expect(handle.exec('echo never-runs', { stdin: 'input' })).rejects.toMatchObject({ code: 'network_error' });
+    expect(await transferLeft(sandbox)).toEqual([]);
   });
 
   it('runs with no time limit unless commandTimeoutMs sets one', async () => {
@@ -288,6 +312,64 @@ describe('copyFileOut', () => {
   });
 });
 
+describe('files bigger than one transfer', () => {
+  beforeEach(() => {
+    // Real limits are 100 MiB a transfer and 64 MiB parts; the same shape, scaled down.
+    FakeSandbox.maxFileBytes = 1500;
+    transferLimits.chunkBytes = 1000;
+  });
+
+  const big = (n: number): Buffer => Buffer.from(Array.from({ length: n }, (_, i) => (i * 7919) % 251));
+
+  it('copies a big file in as parts, inside and outside the home', async () => {
+    const { handle, sandbox } = await open();
+    const host = await tempDir('psc-big-');
+    await writeFile(join(host, 'repo.bundle'), big(4321));
+    await chmod(join(host, 'repo.bundle'), 0o640);
+    await handle.copyIn(join(host, 'repo.bundle'), `${WORKTREE_PATH}/repo.bundle`);
+    const inside = sandbox.local(`${WORKTREE_PATH}/repo.bundle`);
+    expect(Buffer.compare(await readFile(inside), big(4321))).toBe(0);
+    expect((await stat(inside)).mode & 0o777).toBe(0o640);
+    const sandboxTmp = (await handle.exec('mktemp -d')).stdout.trim();
+    await handle.copyIn(join(host, 'repo.bundle'), `${sandboxTmp}/repo.bundle`);
+    expect(Buffer.compare(await readFile(`${sandboxTmp}/repo.bundle`), big(4321))).toBe(0);
+    expect(sandbox.fileCalls.filter(([op]) => op === 'write').length).toBeGreaterThanOrEqual(10);
+    expect(await transferLeft(sandbox)).toEqual([]);
+  });
+
+  it('copies a directory whose tarball is bigger than one transfer', async () => {
+    const { handle, sandbox } = await open();
+    const src = await tempDir('psc-bigdir-');
+    await writeFile(join(src, 'noise.bin'), Buffer.from(Array.from({ length: 6000 }, () => Math.floor(Math.random() * 256))));
+    await handle.copyIn(src, `${WORKTREE_PATH}/bigdir`);
+    expect(Buffer.compare(await readFile(sandbox.local(`${WORKTREE_PATH}/bigdir/noise.bin`)), await readFile(join(src, 'noise.bin')))).toBe(0);
+    expect(await transferLeft(sandbox)).toEqual([]);
+  });
+
+  it('copies a big file out as parts, inside and outside the home', async () => {
+    const { handle, sandbox } = await open();
+    const host = await tempDir('psc-bigout-');
+    const seed = join(host, 'seed');
+    await writeFile(seed, big(3333));
+    await handle.copyIn(seed, `${WORKTREE_PATH}/out.bin`);
+    await handle.copyFileOut(`${WORKTREE_PATH}/out.bin`, join(host, 'a/out.bin'));
+    expect(Buffer.compare(await readFile(join(host, 'a/out.bin')), big(3333))).toBe(0);
+    const patch = (await handle.exec(`d=$(mktemp -d); cp ${WORKTREE_PATH}/out.bin "$d/0001.patch"; echo "$d/0001.patch"`)).stdout.trim();
+    await handle.copyFileOut(patch, join(host, 'b/0001.patch'));
+    expect(Buffer.compare(await readFile(join(host, 'b/0001.patch')), big(3333))).toBe(0);
+    expect(await transferLeft(sandbox)).toEqual([]);
+  });
+
+  it('removes the staged tarball when unpacking it fails to run', async () => {
+    const { handle, sandbox } = await open();
+    const src = await tempDir('psc-dir-');
+    await writeFile(join(src, 'f.txt'), 'f');
+    sandbox.failExec = { match: 'tar -xzf', error: new PrizedError('network_error', 'connection dropped') };
+    await expect(handle.copyIn(src, `${WORKTREE_PATH}/d`)).rejects.toMatchObject({ code: 'network_error' });
+    expect(await transferLeft(sandbox)).toEqual([]);
+  });
+});
+
 describe('close', () => {
   it('deletes the sandbox once, however often it is called', async () => {
     const { handle, sandbox } = await open();
@@ -295,6 +377,16 @@ describe('close', () => {
     await handle.close();
     expect(sandbox.deleted).toBe(true);
     expect(sandbox.deletes).toBe(1);
+  });
+
+  it('tries again after a delete that failed', async () => {
+    const { handle, sandbox } = await open();
+    sandbox.failDelete = new PrizedError('network_error', 'connection dropped');
+    await expect(handle.close()).rejects.toMatchObject({ code: 'network_error' });
+    expect(sandbox.deleted).toBe(false);
+    await handle.close();
+    expect(sandbox.deleted).toBe(true);
+    expect(sandbox.deletes).toBe(2);
   });
 
   it('counts a sandbox that is already gone as closed', async () => {

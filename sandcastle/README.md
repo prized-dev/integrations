@@ -54,14 +54,16 @@ The agent's own key goes in `.sandcastle/.env`, as with every Sandcastle sandbox
 | `maxRuntimeMin` | your plan's | Minutes of running before Prized deletes the sandbox: 60 on the free tier, 24 hours by default on paid plans. |
 | `commandTimeoutMs` | `0` | Kill a command after this many milliseconds; `0` for no limit (Sandcastle's idle timeout still watches the agent). |
 | `env` | none | Variables for every command, merged with Sandcastle's and the agent's. |
-| `maxOutputTailChars` | `65536` | Characters of each stream a streamed command keeps for its result. Every line still reaches the display. |
+| `maxOutputTailChars` | `65536` | Characters of each stream a streamed command returns in its result. Every line still reaches the display. |
 | `apiKey` | `PRIZED_API_KEY` | Your Prized API key. |
+| `baseUrl` | `https://api.prized.dev` | The Prized API origin. |
 
 ## Behaviour and limits
 
 - The repo lives at `/home/prized/workspace`. Commands run as the user `prized`, without root: `exec` and hooks with `sudo: true` throw. Install tools under `/home/prized` in an `onSandboxReady` hook (a Python virtualenv, a release binary, npm with a prefix in the home), or [set up one sandbox and fork it](https://prized.dev/docs/sandboxes-own-template?via=sandcastle).
 - Output streams to Sandcastle line by line while the agent runs. A command's stdin (Sandcastle sends the prompt that way) goes up as a file and is redirected in, then removed.
-- `copyIn` sends a directory as one tarball (it needs `tar` on your machine, which macOS, Linux and Windows 10+ have), so modes, links and empty directories come through. Files outside `/home/prized` (Sandcastle's bundle and patches in `/tmp`) pass through `~/.sandcastle-transfer` in the sandbox, emptied as they go.
+- `copyIn` sends a directory as one tarball (it needs `tar` on your machine, which macOS, Linux and Windows 10+ have), so modes, links and empty directories come through. Files outside `/home/prized` (Sandcastle's bundle and patches in `/tmp`) pass through `~/.sandcastle-transfer` in the sandbox, emptied as they go. A file over 64 MiB (a big repo's bundle) moves in 64 MiB parts, since one transfer carries at most 100 MiB.
+- The SDK keeps a streamed command's whole output in memory while it runs; `maxOutputTailChars` only bounds what `exec` returns.
 - `close()` deletes the sandbox. Not supported: `interactive()`, Docker inside the sandbox.
 - Sandboxes run in one region (US West).
 
@@ -69,7 +71,7 @@ The agent's own key goes in `.sandcastle/.env`, as with every Sandcastle sandbox
 
 ```sh
 scripts/test.sh sandcastle                              # from the repo root: typecheck, build, offline tests
-PRIZED_LIVE=1 npm run test:live                         # in this folder, with PRIZED_API_KEY: one 2 vCPU sandbox, about 15 seconds
+PRIZED_LIVE=1 npm run test:live                         # in this folder, with PRIZED_API_KEY: one 2 vCPU sandbox, under a minute
 ```
 
 The offline tests run the provider against a stand-in for `@prized/sdk` backed by a local directory, including a full Sandcastle `run()` (sync-in, a scripted agent's streamed exec, sync-out). The live test runs the handle contract against the real API and checks the sandbox is gone after `close()`.

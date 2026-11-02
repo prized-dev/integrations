@@ -1,7 +1,7 @@
 /**
  * Against the real API: `PRIZED_LIVE=1 npm run test:live` with PRIZED_API_KEY set. Creates one small
  * sandbox (2 vCPU, 4 GB) labelled run=<this run>, runs the handle contract against it, and deletes it,
- * failures included. Billed to the key's workspace: about a minute of one sandbox.
+ * failures included. Billed to the key's workspace: under a minute of one sandbox.
  */
 import { chmod, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -11,7 +11,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { IsolatedSandboxHandle } from '@ai-hero/sandcastle';
 import { PrizedError, Sandbox } from '@prized/sdk';
 
-import { prized, WORKTREE_PATH } from '../src/index.js';
+import { prized, transferLimits, WORKTREE_PATH } from '../src/index.js';
 
 const LIVE = Boolean(process.env.PRIZED_API_KEY) && process.env.PRIZED_LIVE === '1';
 const RUN = `sandcastle-test-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
@@ -96,6 +96,28 @@ describe.skipIf(!LIVE)('prized() against the real API', () => {
     expect(await readFile(join(host, 'out/0001.patch'), 'utf8')).toBe('patch');
     expect(await readFile(join(host, 'out/note.txt'), 'utf8')).toBe('note');
     expect((await handle.exec('ls -A /home/prized/.sandcastle-transfer | wc -l')).stdout.trim()).toBe('0');
+  });
+
+  it('moves a file bigger than one transfer in parts, both ways', async () => {
+    // The real threshold is 64 MiB; 1 MiB parts exercise the same split, cat and per-part download.
+    const saved = transferLimits.chunkBytes;
+    transferLimits.chunkBytes = 1024 * 1024;
+    try {
+      const bytes = Buffer.from(Array.from({ length: 3_500_000 }, (_, i) => (i * 7919) % 251));
+      await writeFile(join(host, 'big.bin'), bytes);
+      const sandboxTmp = (await handle.exec('mktemp -d')).stdout.trim();
+      await handle.copyIn(join(host, 'big.bin'), `${sandboxTmp}/big.bin`);
+      await handle.copyIn(join(host, 'big.bin'), `${WORKTREE_PATH}/big.bin`);
+      const sums = (await handle.exec(`sha256sum ${sandboxTmp}/big.bin big.bin | cut -c1-64 | uniq | wc -l`)).stdout.trim();
+      expect(sums).toBe('1');
+      await handle.copyFileOut(`${sandboxTmp}/big.bin`, join(host, 'back/tmp.bin'));
+      await handle.copyFileOut(`${WORKTREE_PATH}/big.bin`, join(host, 'back/home.bin'));
+      expect(Buffer.compare(await readFile(join(host, 'back/tmp.bin')), bytes)).toBe(0);
+      expect(Buffer.compare(await readFile(join(host, 'back/home.bin')), bytes)).toBe(0);
+      expect((await handle.exec('ls -A /home/prized/.sandcastle-transfer | wc -l')).stdout.trim()).toBe('0');
+    } finally {
+      transferLimits.chunkBytes = saved;
+    }
   });
 
   it("is why the transfer directory exists: the files API refuses paths outside the home", async () => {

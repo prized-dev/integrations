@@ -37,6 +37,8 @@ export class FakeSandbox {
   static all: FakeSandbox[] = [];
   /** Make the next create's sandbox refuse commands, to test cleanup after a failed setup. */
   static failNextSetup = false;
+  /** The files API's limit on one transfer (100 MiB in the real one); tests lower it. */
+  static maxFileBytes: number = 100 * 1024 * 1024;
 
   readonly id: string;
   readonly root: string;
@@ -45,6 +47,10 @@ export class FakeSandbox {
   deletes = 0;
   deleted = false;
   refuseCommands = false;
+  /** Throw this from the next exec whose command contains `match`, before it runs (a dropped connection, say). */
+  failExec: { match: string; error: Error } | undefined;
+  /** Throw this from the next delete. */
+  failDelete: Error | undefined;
   /** Every files API call: [operation, path]. */
   fileCalls: [string, string][] = [];
 
@@ -53,6 +59,7 @@ export class FakeSandbox {
     FakeSandbox.live.clear();
     FakeSandbox.all = [];
     FakeSandbox.failNextSetup = false;
+    FakeSandbox.maxFileBytes = 100 * 1024 * 1024;
   }
 
   private constructor(root: string, env: Record<string, string>) {
@@ -90,6 +97,11 @@ export class FakeSandbox {
     this.alive();
     const text = typeof command === 'string' ? command : command.map(word => `'${word.replaceAll("'", `'\\''`)}'`).join(' ');
     this.execs.push({ command: text, options });
+    if (this.failExec && text.includes(this.failExec.match)) {
+      const { error } = this.failExec;
+      this.failExec = undefined;
+      throw error;
+    }
     if (this.refuseCommands) return { stdout: '', stderr: 'refused', exitCode: 1, durationMs: 1, timedOut: false, truncated: false } as ExecResult;
     const script = text.replaceAll(HOME, join(this.root, HOME));
     const cwd = this.local(posix.resolve(`${HOME}/work`, options.cwd ?? `${HOME}/work`));
@@ -137,6 +149,10 @@ export class FakeSandbox {
     return this.local(absolute);
   }
 
+  private checkSize(bytes: number): void {
+    if (bytes > FakeSandbox.maxFileBytes) throw sdkError('file_too_large', 'Files move 100 MiB at a time at most.', { sandboxId: this.id });
+  }
+
   private async place(target: string, write: () => Promise<void>, mode?: number): Promise<void> {
     const existed = await stat(target).then(() => true, () => false);
     await mkdir(dirname(target), { recursive: true });
@@ -148,19 +164,28 @@ export class FakeSandbox {
   readonly files = {
     write: async (path: string, data: string | Uint8Array, options: { mode?: number } = {}): Promise<{ path: string }> => {
       const target = this.filePath('write', path);
+      this.checkSize(typeof data === 'string' ? Buffer.byteLength(data) : data.byteLength);
       await this.place(target, () => writeFile(target, data), options.mode);
       return { path };
     },
     upload: async (localPath: string, remotePath: string, options: { mode?: number } = {}): Promise<{ path: string }> => {
       const target = this.filePath('upload', remotePath);
+      this.checkSize((await stat(localPath)).size);
       await this.place(target, () => copyFile(localPath, target), options.mode);
       return { path: remotePath };
     },
-    download: async (remotePath: string, localPath: string): Promise<number> => {
-      const source = this.filePath('download', remotePath);
+    readBytes: async (remotePath: string): Promise<Uint8Array> => {
+      const source = this.filePath('readBytes', remotePath);
       const data = await readFile(source).catch(() => {
         throw sdkError('not_found', `No such file: ${remotePath}`, { status: 404, sandboxId: this.id });
       });
+      this.checkSize(data.length);
+      return new Uint8Array(data);
+    },
+    download: async (remotePath: string, localPath: string): Promise<number> => {
+      this.fileCalls.push(['download', remotePath]);
+      const data = await this.files.readBytes(remotePath);
+      this.fileCalls.pop(); // the readBytes inside
       await writeFile(localPath, data);
       return data.length;
     },
@@ -171,7 +196,12 @@ export class FakeSandbox {
 
   async delete(): Promise<void> {
     this.deletes++;
-    if (this.deleted) throw sdkError('not_found', 'Not found (or not visible to this API key).', { status: 404, sandboxId: this.id });
+    if (this.failDelete) {
+      const error = this.failDelete;
+      this.failDelete = undefined;
+      throw error;
+    }
+    // Like the real SDK, deleting a sandbox that is already gone succeeds.
     this.deleted = true;
     FakeSandbox.live.delete(this.id);
   }

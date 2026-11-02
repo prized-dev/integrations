@@ -11,7 +11,7 @@
 
 import { execFile } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
-import { mkdir, mkdtemp, rm, stat } from 'node:fs/promises';
+import { appendFile, mkdir, mkdtemp, open, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, posix } from 'node:path';
 
@@ -127,16 +127,92 @@ interface HandleSettings {
   readonly maxOutputTailChars: number;
 }
 
+/**
+ * @internal The largest piece one files API transfer carries here. The API takes at most 100 MiB a
+ * transfer, so bigger files (a large repo's git bundle, say) move in parts of this size. Tests lower it.
+ */
+export const transferLimits: { chunkBytes: number } = { chunkBytes: 64 * 1024 * 1024 };
+
 /** The Sandcastle handle over a running Prized sandbox whose worktree and transfer directories exist. */
 export function makeHandle(sandbox: Sandbox, settings: HandleSettings): IsolatedSandboxHandle {
-  /** Run a provider-internal command; throw with its stderr when it fails. */
-  const run = async (script: string, what: string): Promise<void> => {
+  /** Run a provider-internal command and return its stdout; throw with its stderr when it fails. */
+  const run = async (script: string, what: string): Promise<string> => {
     const result = await sandbox.exec(script, { cwd: SANDBOX_HOME, timeoutMs: INTERNAL_TIMEOUT_MS });
     if (result.exitCode !== 0) {
       throw new Error(`${LOG_PREFIX} ${what} failed (exit ${result.exitCode}): ${(result.stderr || result.stdout).trim()}`);
     }
+    return result.stdout;
   };
-  let closed = false;
+  /** Remove transfer files, best effort: the error that brought us here says more. */
+  const discard = async (pattern: string): Promise<void> => {
+    await run(`rm -f -- ${pattern}`, 'cleanup').catch(() => {});
+  };
+
+  /** Put a host file at `target`: one upload when it fits a transfer, else parts joined with `cat`. */
+  const putFile = async (hostPath: string, target: string, size: number, mode: number | undefined): Promise<void> => {
+    const chunk = transferLimits.chunkBytes;
+    const id = `in-${randomUUID()}`;
+    const staged = `${TRANSFER_DIR}/${id}`;
+    try {
+      if (size <= chunk) {
+        if (insideHome(target)) {
+          await sandbox.files.upload(hostPath, target, mode === undefined ? {} : { mode });
+          return;
+        }
+        await sandbox.files.upload(hostPath, staged, mode === undefined ? {} : { mode });
+      } else {
+        const parts: string[] = [];
+        const file = await open(hostPath, 'r');
+        try {
+          for (let offset = 0; offset < size; offset += chunk) {
+            const bytes = Buffer.alloc(Math.min(chunk, size - offset));
+            const { bytesRead } = await file.read(bytes, 0, bytes.length, offset);
+            const part = `${staged}.${String(parts.length).padStart(5, '0')}`;
+            await sandbox.files.write(part, bytes.subarray(0, bytesRead));
+            parts.push(part);
+          }
+        } finally {
+          await file.close();
+        }
+        const quoted = parts.map(shellQuote).join(' ');
+        await run(
+          `cat -- ${quoted} > ${shellQuote(staged)} && rm -f -- ${quoted}` +
+            (mode === undefined ? '' : ` && chmod ${mode.toString(8)} -- ${shellQuote(staged)}`),
+          `copyIn of ${hostPath} in ${parts.length} parts`,
+        );
+      }
+      await run(`mkdir -p -- ${shellQuote(posix.dirname(target))} && mv -f -- ${shellQuote(staged)} ${shellQuote(target)}`, `copyIn to ${target}`);
+    } catch (error) {
+      await discard(`${shellQuote(staged)}*`);
+      throw error;
+    }
+  };
+
+  /** Copy a sandbox file to the host through parts of one transfer each (`split`, then a download per part). */
+  const getInParts = async (source: string, hostPath: string): Promise<void> => {
+    const name = `out-${randomUUID()}.`;
+    const prefix = `${TRANSFER_DIR}/${name}`;
+    try {
+      const parts = (await run(
+        `split -b ${transferLimits.chunkBytes} -d -a 5 -- ${shellQuote(source)} ${shellQuote(prefix)} && cd ${shellQuote(TRANSFER_DIR)} && ls -1 -- ${shellQuote(name)}*`,
+        `copyFileOut of ${source} in parts`,
+      ))
+        .split('\n')
+        .filter(Boolean);
+      await writeFile(hostPath, new Uint8Array(0));
+      for (const part of parts) await appendFile(hostPath, await sandbox.files.readBytes(`${TRANSFER_DIR}/${part}`));
+    } finally {
+      await discard(`${shellQuote(prefix)}*`);
+    }
+  };
+
+  /** The size of a sandbox file, or null when it can't be read. */
+  const sizeOf = async (path: string): Promise<number | null> => {
+    const out = await run(`stat -L -c %s -- ${shellQuote(path)}`, `stat of ${path}`).catch(() => null);
+    return out === null ? null : Number(out.trim());
+  };
+
+  let closing: Promise<void> | undefined;
 
   return {
     worktreePath: WORKTREE_PATH,
@@ -145,126 +221,136 @@ export function makeHandle(sandbox: Sandbox, settings: HandleSettings): Isolated
       if (opts?.sudo === true) {
         throw new Error(
           `${LOG_PREFIX} Prized sandboxes run as the user \`prized\` without root, so \`sudo: true\` can't run. ` +
-            'Install tools under /home/prized in a hook without sudo (npm, pip in a venv, a release binary), ' +
+            'Install tools under /home/prized in a hook without sudo (a Python virtualenv, a release binary, npm with a prefix in the home), ' +
             `or start from a sandbox you set up once (https://prized.dev/docs/sandboxes-own-template?${VIA}).`,
         );
       }
-      const cwd = opts?.cwd ?? WORKTREE_PATH;
+      // Relative paths start in the worktree here, as copyIn's and copyFileOut's do (the SDK's own default is /home/prized/work).
+      const cwd = absolute(opts?.cwd ?? WORKTREE_PATH);
       let script = command;
+      let stdinPath: string | undefined;
       if (opts?.stdin !== undefined) {
         // Commands get no stdin channel (they read /dev/null), so the input goes up as a file and is
         // redirected in. The redirect opens it before the group runs, so the group removes it at once.
-        const stdinPath = `${TRANSFER_DIR}/stdin-${randomUUID()}`;
+        stdinPath = `${TRANSFER_DIR}/stdin-${randomUUID()}`;
         await sandbox.files.write(stdinPath, opts.stdin);
         script = `{ rm -f ${shellQuote(stdinPath)}; ${command}\n} < ${shellQuote(stdinPath)}`;
       }
-      const timeoutMs = settings.commandTimeoutMs;
-      const onLine = opts?.onLine;
-      if (onLine === undefined) {
-        const result = await sandbox.exec(script, { cwd, timeoutMs });
-        return { stdout: result.stdout, stderr: result.stderr, exitCode: result.exitCode };
-      }
-      const stdoutTail = new Tail(settings.maxOutputTailChars, '\n');
-      const stderrTail = new Tail(settings.maxOutputTailChars, '');
-      let partial = '';
-      const result = await sandbox.exec(script, {
-        cwd,
-        timeoutMs,
-        onStdout: chunk => {
-          const lines = (partial + chunk).split('\n');
-          partial = lines.pop() ?? '';
-          for (const line of lines) {
-            stdoutTail.push(line);
-            onLine(line);
+      try {
+        const timeoutMs = settings.commandTimeoutMs;
+        const onLine = opts?.onLine;
+        if (onLine === undefined) {
+          // fullOutput: a command with a time limit would otherwise keep only the first 4 MiB of each stream.
+          const result = await sandbox.exec(script, { cwd, timeoutMs, fullOutput: true });
+          if (result.truncated) {
+            throw new Error(`${LOG_PREFIX} The output of \`${command.slice(0, 200)}\` was cut at 100 MiB a stream (${result.truncatedReason ?? 'truncated'})`);
           }
-        },
-        onStderr: chunk => stderrTail.push(chunk),
-      });
-      if (partial !== '') {
-        stdoutTail.push(partial);
-        onLine(partial);
+          return { stdout: result.stdout, stderr: result.stderr, exitCode: result.exitCode };
+        }
+        const stdoutTail = new Tail(settings.maxOutputTailChars, '\n');
+        const stderrTail = new Tail(settings.maxOutputTailChars, '');
+        let partial = '';
+        const result = await sandbox.exec(script, {
+          cwd,
+          timeoutMs,
+          onStdout: chunk => {
+            const lines = (partial + chunk).split('\n');
+            partial = lines.pop() ?? '';
+            for (const line of lines) {
+              stdoutTail.push(line);
+              onLine(line);
+            }
+          },
+          onStderr: chunk => stderrTail.push(chunk),
+        });
+        if (partial !== '') {
+          stdoutTail.push(partial);
+          onLine(partial);
+        }
+        return { stdout: stdoutTail.toString(), stderr: stderrTail.toString(), exitCode: result.exitCode };
+      } catch (error) {
+        // A command that started removed its stdin file itself; one that didn't start left it.
+        if (stdinPath !== undefined) await discard(shellQuote(stdinPath));
+        throw error;
       }
-      return { stdout: stdoutTail.toString(), stderr: stderrTail.toString(), exitCode: result.exitCode };
     },
 
     copyIn: async (hostPath, sandboxPath): Promise<void> => {
       const target = absolute(sandboxPath);
       const info = await stat(hostPath);
       if (info.isDirectory()) {
-        await copyDirIn(sandbox, run, hostPath, target);
+        await copyDirIn(hostPath, target);
         return;
       }
-      const mode = info.mode & 0o777;
-      if (insideHome(target)) {
-        await sandbox.files.upload(hostPath, target, { mode });
-        return;
-      }
-      const staged = `${TRANSFER_DIR}/in-${randomUUID()}`;
-      await sandbox.files.upload(hostPath, staged, { mode });
-      try {
-        await run(`mkdir -p -- ${shellQuote(posix.dirname(target))} && mv -f -- ${shellQuote(staged)} ${shellQuote(target)}`, `copyIn to ${target}`);
-      } catch (error) {
-        await sandbox.files.remove(staged).catch(() => {});
-        throw error;
-      }
+      // Windows reports every file as 0666: keep the sandbox's default there instead.
+      await putFile(hostPath, target, info.size, process.platform === 'win32' ? undefined : info.mode & 0o777);
     },
 
     copyFileOut: async (sandboxPath, hostPath): Promise<void> => {
       const source = absolute(sandboxPath);
       await mkdir(dirname(hostPath), { recursive: true });
       if (insideHome(source)) {
-        await sandbox.files.download(source, hostPath);
+        try {
+          await sandbox.files.download(source, hostPath);
+          return;
+        } catch (error) {
+          // Only a file too big for one transfer goes again, in parts; anything else is the answer.
+          const size = isMissing(error) ? null : await sizeOf(source);
+          if (size === null || size <= transferLimits.chunkBytes) throw error;
+        }
+        await getInParts(source, hostPath);
         return;
       }
       const staged = `${TRANSFER_DIR}/out-${randomUUID()}`;
       try {
-        await run(`cp -- ${shellQuote(source)} ${shellQuote(staged)}`, `copyFileOut of ${source}`);
-        await sandbox.files.download(staged, hostPath);
+        const size = Number((await run(`cp -- ${shellQuote(source)} ${shellQuote(staged)} && stat -c %s -- ${shellQuote(staged)}`, `copyFileOut of ${source}`)).trim());
+        if (size <= transferLimits.chunkBytes) await sandbox.files.download(staged, hostPath);
+        else await getInParts(staged, hostPath);
       } finally {
-        await sandbox.files.remove(staged).catch(() => {});
+        await discard(shellQuote(staged));
       }
     },
 
-    close: async (): Promise<void> => {
-      if (closed) return;
-      closed = true;
-      try {
-        await sandbox.delete();
-      } catch (error) {
-        if (!isGone(error)) throw error;
-      }
-    },
+    close: (): Promise<void> =>
+      (closing ??= (async () => {
+        try {
+          await sandbox.delete();
+        } catch (error) {
+          if (isGone(error)) return;
+          closing = undefined; // so close() can try again
+          throw error;
+        }
+      })()),
   };
-}
 
-/** Copy a host directory in as one gzipped tarball, unpacked at `target` (modes, links and empty directories kept). */
-async function copyDirIn(
-  sandbox: Sandbox,
-  run: (script: string, what: string) => Promise<void>,
-  hostPath: string,
-  target: string,
-): Promise<void> {
-  const local = await mkdtemp(join(tmpdir(), 'prized-sandcastle-copyin-'));
-  const staged = `${TRANSFER_DIR}/in-${randomUUID()}.tar.gz`;
-  try {
-    const tarball = join(local, 'dir.tar.gz');
-    await new Promise<void>((resolve, reject) => {
-      execFile('tar', ['-czf', tarball, '-C', hostPath, '.'], error =>
-        error ? reject(new Error(`${LOG_PREFIX} tar of ${hostPath} failed: ${error.message}`)) : resolve(),
-      );
-    });
-    await sandbox.files.upload(tarball, staged);
-    await run(
-      `mkdir -p -- ${shellQuote(target)} && tar -xzf ${shellQuote(staged)} -C ${shellQuote(target)}; ` +
-        `rc=$?; rm -f -- ${shellQuote(staged)}; exit $rc`,
-      `copyIn of a directory to ${target}`,
-    );
-  } finally {
-    await rm(local, { recursive: true, force: true });
+  /** Copy a host directory in as one gzipped tarball, unpacked at `target` (modes, links and empty directories kept). */
+  async function copyDirIn(hostPath: string, target: string): Promise<void> {
+    const local = await mkdtemp(join(tmpdir(), 'prized-sandcastle-copyin-'));
+    const staged = `${TRANSFER_DIR}/in-${randomUUID()}.tar.gz`;
+    try {
+      await new Promise<void>((resolve, reject) => {
+        // A relative archive name (GNU tar on Windows reads `C:` as a remote host); no macOS `._*` files.
+        execFile('tar', ['-czf', 'dir.tar.gz', '-C', hostPath, '.'], { cwd: local, env: { ...process.env, COPYFILE_DISABLE: '1' } }, error =>
+          error ? reject(new Error(`${LOG_PREFIX} tar of ${hostPath} failed: ${error.message}`)) : resolve(),
+        );
+      });
+      const tarball = join(local, 'dir.tar.gz');
+      await putFile(tarball, staged, (await stat(tarball)).size, undefined);
+      await run(
+        `mkdir -p -- ${shellQuote(target)} && tar -xzf ${shellQuote(staged)} -C ${shellQuote(target)}; ` +
+          `rc=$?; rm -f -- ${shellQuote(staged)}; exit $rc`,
+        `copyIn of a directory to ${target}`,
+      ).catch(async (error: unknown) => {
+        await discard(shellQuote(staged));
+        throw error;
+      });
+    } finally {
+      await rm(local, { recursive: true, force: true });
+    }
   }
 }
 
-/** A path as the sandbox sees it: relative ones start in the worktree, as a command's cwd does. */
+/** A path as the sandbox sees it: relative ones start in the worktree. */
 function absolute(path: string): string {
   return posix.resolve(WORKTREE_PATH, path);
 }
@@ -281,6 +367,10 @@ export function shellQuote(value: string): string {
 
 function isGone(error: unknown): boolean {
   return error instanceof PrizedError && (error.code === 'not_found' || error.code === 'sandbox_deleted');
+}
+
+function isMissing(error: unknown): boolean {
+  return error instanceof PrizedError && error.code === 'not_found';
 }
 
 /** The last `max` characters of what was pushed, joined with `separator`. */
