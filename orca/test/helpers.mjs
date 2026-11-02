@@ -47,10 +47,10 @@ export function makeSshdKit(dir) {
   fs.writeFileSync(
     path.join(dir, "sshd_config"),
     [
-      `HostKey ${path.join(dir, "hostkey")}`,
-      `HostCertificate ${path.join(dir, "hostkey-cert.pub")}`,
-      `TrustedUserCAKeys ${path.join(dir, "user_ca.pub")}`,
-      `AuthorizedPrincipalsFile ${path.join(dir, "principals")}`,
+      `HostKey "${path.join(dir, "hostkey")}"`,
+      `HostCertificate "${path.join(dir, "hostkey-cert.pub")}"`,
+      `TrustedUserCAKeys "${path.join(dir, "user_ca.pub")}"`,
+      `AuthorizedPrincipalsFile "${path.join(dir, "principals").replace(/%/g, "%%")}"`,
       "AuthorizedKeysFile none",
       "PasswordAuthentication no",
       "KbdInteractiveAuthentication no",
@@ -90,7 +90,9 @@ export function makeRepo(dir) {
 export function testEnv(root, extra = {}) {
   const home = path.join(root, "home");
   fs.mkdirSync(path.join(home, ".ssh"), { recursive: true, mode: 0o700 });
+  fs.mkdirSync(path.join(root, "tmp"), { recursive: true });
   return {
+    TMPDIR: path.join(root, "tmp"),
     PATH: process.env.PATH,
     HOME: home,
     LANG: "C.UTF-8",

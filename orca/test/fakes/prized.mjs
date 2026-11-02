@@ -38,7 +38,7 @@ async function api(method, p) {
 }
 
 async function main() {
-  if (args[0] === "--version") return console.log("prized 0.0.0-fake"), 0;
+  if (args[0] === "--version") return console.log(`prized   ${env.FAKE_CLI_VERSION || "0.21.9"} (fake)`), 0;
   if (args[0] !== "sandbox") return 2;
   const [, sub, id] = args;
   if (sub === "ls") return console.log(JSON.stringify({ sandboxes: [] })), 0;
@@ -55,6 +55,7 @@ async function main() {
     return 0;
   }
   if (sub === "ssh") {
+    if (env.FAKE_SSH_DELAY_MS) await new Promise((resolve) => setTimeout(resolve, Number(env.FAKE_SSH_DELAY_MS)));
     let r = await api("GET", `/sandboxes/${id}`);
     if (r.status === 404) return process.stderr.write(`no sandbox ${id}\n`), 5;
     if (r.body.sandbox.state === "paused") await api("POST", `/sandboxes/${id}/resume?wait=running`);
@@ -73,6 +74,8 @@ async function main() {
     fs.renameSync(`${idKey}-cert.pub`, path.join(dir, "cert.pub"));
     fs.writeFileSync(path.join(dir, "known_hosts"), `@cert-authority box:${uuid} ${fs.readFileSync(path.join(kit, "host_ca.pub"), "utf8").trim()}\n`, { mode: 0o600 });
     const bridge = `"${process.execPath}" "${path.join(here, "bridge.mjs")}" ${id}`;
+    // internal/sshid stanzaPath: a path holding a space, tab or ' is double-quoted.
+    const word = (p) => (/[ \t']/.test(p) ? `"${p}"` : p);
     const config = [
       "# Managed by `prized sandbox ssh`: rewritten on every connect.",
       `Host ${id}`,
@@ -80,10 +83,10 @@ async function main() {
       `    User ${os.userInfo().username}`,
       `    HostKeyAlias box:${uuid}`,
       `    ProxyCommand ${bridge.replace(/%/g, "%%")}`,
-      `    IdentityFile ${idKey}`,
-      `    CertificateFile ${path.join(dir, "cert.pub")}`,
+      `    IdentityFile ${word(idKey)}`,
+      `    CertificateFile ${word(path.join(dir, "cert.pub"))}`,
       "    IdentitiesOnly yes",
-      `    UserKnownHostsFile ${path.join(dir, "known_hosts")}`,
+      `    UserKnownHostsFile ${word(path.join(dir, "known_hosts"))}`,
       "    StrictHostKeyChecking yes",
       "    UpdateHostKeys no",
       "    ForwardAgent no",

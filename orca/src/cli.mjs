@@ -47,6 +47,21 @@ export function requirePrized(config, env = process.env) {
   return bin;
 }
 
+// `prized sandbox ssh` arrived in 0.21.9.
+export const MIN_CLI = [0, 21, 9];
+
+export function prizedVersion(bin, env = process.env) {
+  const r = spawnSync(bin, ["--version"], { env: childEnv(env), encoding: "utf8", timeout: 30_000 });
+  const m = /prized\s+v?(\d+)\.(\d+)\.(\d+)/.exec(`${r.stdout ?? ""}${r.stderr ?? ""}`);
+  return m ? m.slice(1, 4).map(Number) : null;
+}
+
+export function versionOk(v, min = MIN_CLI) {
+  if (!v) return false;
+  for (let i = 0; i < 3; i++) if (v[i] !== min[i]) return v[i] > min[i];
+  return true;
+}
+
 export function runPrized(bin, args, { timeoutMs = 120_000, env = process.env } = {}) {
   const result = spawnSync(bin, args, {
     env: childEnv(env),

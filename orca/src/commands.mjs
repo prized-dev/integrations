@@ -8,7 +8,7 @@ import path from "node:path";
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
 import { PrizedApi, PrizedApiError, apiBase, canWriteSandboxes } from "./api.mjs";
-import { childEnv, cliSandboxState, findPrized, openShell, requirePrized, runPrized, sshRun } from "./cli.mjs";
+import { MIN_CLI, childEnv, cliSandboxState, findPrized, openShell, prizedVersion, requirePrized, runPrized, sshRun, versionOk } from "./cli.mjs";
 import { resolveKey, keyFromLoginShell } from "./key.mjs";
 import {
   checkoutScript,
@@ -42,6 +42,7 @@ import {
   paths,
   readJson,
   say,
+  sleep,
   sq,
   trace,
   userSshConfig,
@@ -152,17 +153,8 @@ export async function create(env = process.env) {
   const prized = requirePrized(config, env);
   const adapter = adapterPath(env);
   const { client } = api(env);
-
   const src = sourceFromOrca(env);
   if (!src.fromOrca) say(`no pinned commit from Orca (a doctor run?): using ${src.head.slice(0, 12)} on ${src.branch}`);
-  ensureCommit(src);
-  const identity = gitIdentity(src.repoPath);
-  const bundle = makeBundle(src);
-  say(`bundled ${src.head.slice(0, 12)} (${(bundle.bytes / 1e6).toFixed(1)} MB)`);
-  if (bundle.bytes > MAX_BUNDLE_BYTES) {
-    fs.rmSync(bundle.dir, { recursive: true, force: true });
-    throw new UserError(`the repository's history is ${(bundle.bytes / 1e6).toFixed(0)} MB; a sandbox takes an upload of up to 100 MB`);
-  }
 
   const instance = env.ORCA_VM_INSTANCE_ID || `orca-${randomUUID()}`;
   const labels = {
@@ -170,30 +162,45 @@ export async function create(env = process.env) {
     "orca-instance": labelValue(instance, 256),
     ...(env.ORCA_WORKSPACE_NAME ? { "orca-workspace": labelValue(env.ORCA_WORKSPACE_NAME, 256) } : {}),
   };
-  say(`creating a sandbox (${config.template}, ${config.vcpu} vCPU, ${config.memoryGb} GB)…`);
-  let sandbox = await createSandbox(client, config, labels, instance);
-  const id = sandbox?.id;
-  if (!isSandboxId(id)) throw new UserError(`Prized answered a create without a sandbox id`);
-  trace({ cmd: "create", sandbox: id, instance });
 
-  let cleaned = false;
-  const cleanup = async (why) => {
-    if (cleaned) return;
-    cleaned = true;
-    say(`create failed (${why}); deleting ${id}…`);
-    try {
-      await client.remove(id);
-      say(`deleted ${id}`);
-    } catch (error) {
-      say(`could not delete ${id}: ${error.message}. Delete it at https://prized.dev/dashboard/sandboxes?via=orca`);
-    }
-    try {
-      dropEntry(id, env);
-      writeInclude(adapter, env);
-    } catch {
-      // the state is a record; the sandbox is what matters
-    }
-  };
+  // Everything a failed or cancelled create has to undo. Orca cancels with SIGTERM to the whole
+  // process group and SIGKILL 5 seconds later, so the handlers go in before anything is made, and
+  // the error path and a signal share one cleanup.
+  const made = { bundleDir: null, posted: false, creating: null, id: null };
+  let cleaning = null;
+  const cleanup = (why) =>
+    (cleaning ??= (async () => {
+      if (made.posted) {
+        // A create still in flight may yet answer with the id; wait for it briefly.
+        if (!made.id && made.creating) await Promise.race([made.creating.catch(() => null), sleep(2_500)]);
+        try {
+          if (made.id) {
+            say(`create failed (${why}); deleting ${made.id}…`);
+            await client.remove(made.id);
+            say(`deleted ${made.id}`);
+          } else {
+            // The answer never came, so the sandbox may or may not exist: delete by this workspace's labels.
+            say(`create failed (${why}); deleting any sandbox labelled orca-instance=${labels["orca-instance"]}…`);
+            const n = await client.removeByLabels({ via: "orca", "orca-instance": labels["orca-instance"] });
+            say(n ? `deleted ${n}` : "none was made");
+          }
+        } catch (error) {
+          say(
+            `could not delete it: ${error.message}. Delete it with: prized sandbox rm --label orca-instance=${labels["orca-instance"]} ` +
+              "(or at https://prized.dev/dashboard/sandboxes?via=orca)",
+          );
+        }
+        if (made.id) {
+          try {
+            dropEntry(made.id, env);
+            writeInclude(adapter, env);
+          } catch {
+            // the state is a record; the sandbox is what matters
+          }
+        }
+      }
+      if (made.bundleDir) fs.rmSync(made.bundleDir, { recursive: true, force: true });
+    })());
   const onSignal = (signal) => {
     cleanup(signal).finally(() => process.exit(130));
   };
@@ -201,6 +208,24 @@ export async function create(env = process.env) {
   process.once("SIGTERM", onSignal);
 
   try {
+    ensureCommit(src);
+    const identity = gitIdentity(src.repoPath);
+    const bundle = makeBundle(src);
+    made.bundleDir = bundle.dir;
+    say(`bundled ${src.head.slice(0, 12)} (${(bundle.bytes / 1e6).toFixed(1)} MB)`);
+    if (bundle.bytes > MAX_BUNDLE_BYTES) {
+      throw new UserError(`the repository's history is ${(bundle.bytes / 1e6).toFixed(0)} MB; a sandbox takes an upload of up to 100 MB`);
+    }
+
+    say(`creating a sandbox (${config.template}, ${config.vcpu} vCPU, ${config.memoryGb} GB)…`);
+    made.posted = true;
+    made.creating = createSandbox(client, config, labels, instance);
+    let sandbox = await made.creating;
+    if (!isSandboxId(sandbox?.id)) throw new UserError("Prized answered a create without a sandbox id");
+    made.id = sandbox.id;
+    const id = sandbox.id;
+    trace({ cmd: "create", sandbox: id, instance }, env);
+
     if (sandbox.state !== "running") sandbox = await client.waitFor(id, ["running"]);
     const home = (await client.exec(sandbox, 'printf %s "$HOME"', 60)).stdout.trim();
     if (!home.startsWith("/") || /[\s'"\\]/.test(home)) throw new UserError(`the sandbox's home directory is ${JSON.stringify(home)}`);
@@ -247,7 +272,7 @@ export async function create(env = process.env) {
     await cleanup(error.message);
     throw error;
   } finally {
-    fs.rmSync(bundle.dir, { recursive: true, force: true });
+    if (made.bundleDir) fs.rmSync(made.bundleDir, { recursive: true, force: true });
     process.removeListener("SIGINT", onSignal);
     process.removeListener("SIGTERM", onSignal);
   }
@@ -266,21 +291,38 @@ async function checkDial(result, root, env) {
 
 export async function suspend(env = process.env) {
   const p = parsePayload(await readStdin());
-  // Asleep first: from now on ssh's hooks leave the sandbox alone instead of waking it.
-  putEntry(p.id, { asleep: true }, env);
+  // The key first: a suspend that can't reach Prized must change nothing here.
   const { client } = api(env);
-  const sandbox = await client.get(p.id);
-  if (!sandbox || ["deleting", "deleted"].includes(sandbox.state)) {
-    say(`${p.id} is already gone (its run time ended, or it was deleted)`);
-    return;
+  // Asleep before the pause: from then on ssh's hooks and proxy leave the sandbox alone.
+  putEntry(p.id, { asleep: true }, env);
+  try {
+    const outcome = await pauseFirmly(client, p.id);
+    say(outcome === "gone" ? `${p.id} is already gone (its run time ended, or it was deleted)` : `paused ${p.id}: its memory, processes and files are kept`);
+  } catch (error) {
+    // Orca offers no wake for a workspace whose suspend failed, so leave it usable as it was.
+    putEntry(p.id, { asleep: false }, env);
+    throw error;
   }
-  if (sandbox.state === "paused") {
-    say(`${p.id} is already paused`);
-    return;
+}
+
+// Pause, then look again: a reconnect that was already waking the sandbox when Orca put it to
+// sleep may have resumed it, so pause until it stays paused.
+export async function pauseFirmly(client, id, timeoutMs = 180_000) {
+  const deadline = Date.now() + timeoutMs;
+  let posts = 0;
+  while (Date.now() < deadline) {
+    const sandbox = await client.get(id);
+    if (!sandbox || ["deleting", "deleted"].includes(sandbox.state)) return "gone";
+    if (sandbox.state === "paused") return "paused";
+    if (sandbox.state === "error") throw new UserError(`${id} failed: ${sandbox.errorReason ?? "no reason given"}`);
+    if (sandbox.state === "pausing") {
+      await client.sleep(2_000);
+      continue;
+    }
+    if (posts++ >= 3) throw new UserError(`${id} keeps waking up after a pause`);
+    await client.pause(id);
   }
-  if (sandbox.state === "pausing") await client.waitFor(p.id, ["paused"]);
-  else await client.pause(p.id);
-  say(`paused ${p.id}: its memory, processes and files are kept`);
+  throw new UserError(`${id} did not pause in ${Math.round(timeoutMs / 1000)}s`);
 }
 
 export async function resume(env = process.env) {
@@ -345,7 +387,9 @@ export function certHook(id, env = process.env) {
     };
     if (fresh()) return;
     withLock(path.join(paths(env).home, `renew-${id}.lock`), () => {
-      if (fresh()) return;
+      // Again under the lock: Orca may have put the workspace to sleep meanwhile, and opening a
+      // shell would wake the sandbox.
+      if (fresh() || getEntry(id, env)?.asleep) return;
       const prized = findPrized(loadConfig(env), env);
       if (!prized) return;
       openShell(prized, id, { env, timeoutMs: 90_000 });
@@ -363,6 +407,8 @@ export async function proxy(id, env = process.env) {
   if (!isSandboxId(id)) throw new UserError(`not a sandbox id: ${id}`);
   const entry = getEntry(id, env);
   if (entry?.asleep) {
+    // Orca's connection reuse sends a ProxyCommand's stderr nowhere, so say it in the log too.
+    trace({ cmd: "proxy", sandbox: id, refused: "asleep" }, env);
     process.stderr.write(`prized-orca: ${id} is asleep in Orca. Wake the workspace in Orca to resume it.\n`);
     return 1;
   }
@@ -375,7 +421,7 @@ export async function proxy(id, env = process.env) {
   const prized = findPrized(loadConfig(env), env);
   if (prized) {
     const state = cliSandboxState(prized, id, { env });
-    if (state === "paused" || state === "pausing") {
+    if ((state === "paused" || state === "pausing") && !getEntry(id, env)?.asleep) {
       const r = runPrized(prized, ["sandbox", "resume", id], { env, timeoutMs: 120_000 });
       if (r.status !== 0) {
         process.stderr.write(`prized-orca: could not resume ${id}: ${r.stderr.trim().split("\n").pop() ?? ""}\n`);
@@ -459,10 +505,14 @@ export async function setup(argv, env = process.env) {
 
   const prized = findPrized({}, env);
   if (!prized) throw new UserError("the prized CLI is not installed", "install it from https://prized.dev/docs/quickstart?via=orca, run `prized login`, then run setup again");
+  const version = prizedVersion(prized, env);
+  if (!versionOk(version)) {
+    throw new UserError(`the prized CLI is ${version ? version.join(".") : "of an unknown version"}; the plugin needs ${MIN_CLI.join(".")} or later`, "run `prized update`, then setup again");
+  }
   const signedIn = runPrized(prized, ["sandbox", "ls", "--json"], { env, timeoutMs: 60_000 });
   if (signedIn.status === 8) throw new UserError("the prized CLI is not signed in", "run `prized login` (sandbox shells open with your login), then run setup again");
   if (signedIn.status !== 0) throw new UserError(`\`prized sandbox ls\` failed (exit ${signedIn.status}): ${signedIn.stderr.trim()}`);
-  say(`prized CLI: ${prized} (signed in)`);
+  say(`prized CLI: ${prized} ${version.join(".")} (signed in)`);
 
   const { client, source } = api(env);
   const me = await client.me();
@@ -472,7 +522,7 @@ export async function setup(argv, env = process.env) {
     say("note: your login shell doesn't export PRIZED_API_KEY, so Orca started from the Dock won't see it. Add the export to ~/.zprofile (or ~/.bash_profile).");
   }
 
-  const ssh = spawnSync(env.PRIZED_ORCA_SSH_BIN || "ssh", ["-V"], { encoding: "utf8" });
+  const ssh = spawnSync(env.PRIZED_ORCA_SSH_BIN || "ssh", ["-V"], { encoding: "utf8", env: childEnv(env) });
   if (ssh.error) throw new UserError("OpenSSH's ssh is not installed");
 
   const config = { ...loadConfig(env), prizedBin: prized };
@@ -519,6 +569,8 @@ export async function doctor(env = process.env) {
   const prized = findPrized(config, env);
   add("prized CLI", Boolean(prized), prized ?? "not found");
   if (prized) {
+    const version = prizedVersion(prized, env);
+    add(`prized CLI ${MIN_CLI.join(".")} or later`, versionOk(version), version ? version.join(".") : "unknown version");
     const r = runPrized(prized, ["sandbox", "ls", "--json"], { env, timeoutMs: 60_000 });
     add("prized login (opens shells)", r.status === 0, r.status === 0 ? "signed in" : r.status === 8 ? "not signed in: run prized login" : `exit ${r.status}`);
   }
@@ -526,6 +578,14 @@ export async function doctor(env = process.env) {
     const { client, source } = api(env);
     const me = await client.me();
     add("PRIZED_API_KEY (makes sandboxes)", canWriteSandboxes(me), `from your ${source}; workspace ${me?.workspace?.name ?? "?"}`);
+    // Sandboxes the plugin made that no workspace here knows about (a create killed outright).
+    const known = readState(env).sandboxes;
+    const strays = (await client.listByLabel("via", "orca")).filter((s) => !known[s.id]);
+    add(
+      "no stray sandboxes",
+      strays.length === 0,
+      strays.length ? `${strays.map((s) => `${s.id} (${s.state})`).join(", ")} carry via=orca but back no workspace here; delete them with prized sandbox rm ID` : "none",
+    );
   } catch (error) {
     add("PRIZED_API_KEY (makes sandboxes)", false, error.message);
   }

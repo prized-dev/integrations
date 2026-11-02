@@ -31,18 +31,18 @@ You need Orca 1.4.245 or later on macOS or Linux, Node.js 22 or later, Git, Open
 
 5. Create a workspace and pick **Prized Sandbox** under **Run on > Per-Workspace Environment**.
 
-`~/.prized-orca/bin/prized-orca doctor` checks all of this without creating anything.
+`~/.prized-orca/bin/prized-orca doctor` checks all of this without creating anything. It also names any sandbox the plugin made that no workspace uses (a create killed outright), so you can delete it.
 
 ## What happens
 
 | Orca | The plugin |
 | --- | --- |
-| Create | Creates a sandbox (`prized-agent-v1`: Ubuntu 24.04 with Git, Node.js, Claude Code and Codex), uploads the exact commit Orca picked as a Git bundle (no Git credential goes in), checks it out on the workspace branch in `/home/prized/work/<repo>` with your Git name and email, opens a shell once with your login, and checks the SSH connection Orca will use. If any step fails, it deletes the sandbox. |
+| Create | Creates a sandbox (`prized-agent-v1`: Ubuntu 24.04 with Git, Node.js, Claude Code and Codex), uploads the exact commit Orca picked as a Git bundle (no Git credential goes in), checks it out on the workspace branch in `/home/prized/work/<repo>` with your Git name and email, opens a shell once with your login, and checks the SSH connection Orca will use. If a step fails, or you cancel in Orca, it deletes the sandbox. |
 | Sleep | Pauses the sandbox. Its memory, processes and files are kept, and only storage is billed. Orca's reconnects are refused while it sleeps, so nothing wakes it by accident. |
 | Wake | Resumes the sandbox and the same processes carry on. |
 | Delete | Deletes the sandbox. |
 
-Closing Orca stops nothing. With no connection open, the sandbox pauses itself after 30 idle minutes and keeps its memory, and the next connection from Orca resumes it.
+While Orca is connected, the sandbox counts as in use and keeps running (and billing); sleep the workspace to pause it. Closing Orca stops nothing: with no connection open, the sandbox pauses itself after 30 idle minutes and keeps its memory, and the next connection from Orca resumes it.
 
 ## How the SSH connection works
 
@@ -52,7 +52,7 @@ Orca dials `prized@<sandbox id>` with your system `ssh`. Setup adds this line at
 Include "/Users/you/.prized-orca/ssh_config"
 ```
 
-That file holds one block per sandbox in use. It renews the sandbox's short-lived certificate before ssh reads it, refuses connections while the workspace sleeps, and includes the files `prized sandbox ssh` writes for that sandbox in `~/.config/prized/sandboxes/`.
+That file holds one block per sandbox in use. It renews the sandbox's short-lived certificate before ssh reads it, refuses connections while the workspace sleeps, and includes the files `prized sandbox ssh` writes for that sandbox in `~/.config/prized/sandboxes/`. If `~/.ssh/config` is a link (a dotfiles repo), setup edits the file it points to.
 
 `PRIZED_API_KEY` stays in memory. It goes to `api.prized.dev` and the sandbox's own command address in an `Authorization` header, and never into a file, a log, a command line, the `prized` CLI or the sandbox. `~/.prized-orca/lifecycle.log` records ids, timings and errors only.
 

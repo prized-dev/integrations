@@ -14,7 +14,9 @@ export async function startFakeApi(root, options = {}) {
   const sandboxes = new Map();
   const idempotency = new Map();
   const requests = [];
-  const opts = { maxRuntimeLimit: null, failExec: null, ...options };
+  // Faults a test can turn on: refuse long run times, fail a command, hold a create's answer,
+  // drop the connection after a create, or let a resume land right after a pause.
+  const opts = { maxRuntimeLimit: null, failExec: null, holdCreateMs: 0, dropCreates: 0, flipAfterPause: false, ...options };
   let seq = 0;
 
   const json = (res, status, body) => {
@@ -75,15 +77,37 @@ export async function startFakeApi(root, options = {}) {
       const id = `sbx_${(++seq).toString(16).padStart(16, "0")}`;
       const home = path.join(root, "sandboxes", id, "home");
       fs.mkdirSync(path.join(home, "work"), { recursive: true });
-      const s = { id, state: "running", home, ...input, pauses: 0, resumes: 0 };
+      const s = { id, state: "running", home, ...input, pauses: 0, resumes: 0, flip: false };
       sandboxes.set(id, s);
       if (idem) idempotency.set(idem, { id, body: body.toString() });
+      if (opts.dropCreates > 0) {
+        opts.dropCreates--;
+        req.socket.destroy();
+        return;
+      }
+      if (opts.holdCreateMs) await new Promise((resolve) => setTimeout(resolve, opts.holdCreateMs));
       return json(res, 201, { sandbox: view(s) });
+    }
+    if (url.pathname === "/api/v1/sandboxes" && (req.method === "GET" || req.method === "DELETE")) {
+      const want = url.searchParams.getAll("label").map((l) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1)]);
+      if (req.method === "DELETE" && !want.length) return json(res, 400, { error: "label_required" });
+      const hits = [...sandboxes.values()].filter((s) => s.state !== "deleted" && want.every(([k, v]) => s.labels?.[k] === v));
+      if (req.method === "GET") return json(res, 200, { sandboxes: hits.map(view) });
+      for (const s of hits) s.state = "deleted";
+      return json(res, 202, { count: hits.length, ids: hits.map((s) => s.id), more: false });
     }
     if (parts[0] === "api" && parts[2] === "sandboxes" && parts[3]) {
       const s = sandboxes.get(parts[3]);
       if (!s || s.state === "deleted") return json(res, 404, { error: "not_found" });
-      if (req.method === "GET" && parts.length === 4) return json(res, 200, { sandbox: view(s) });
+      if (req.method === "GET" && parts.length === 4) {
+        if (s.flip) {
+          // a reconnect's resume, landing just after the pause
+          s.flip = false;
+          s.state = "running";
+          s.resumes++;
+        }
+        return json(res, 200, { sandbox: view(s) });
+      }
       if (req.method === "DELETE" && parts.length === 4) {
         s.state = "deleted";
         return json(res, 202, { sandbox: { ...view(s), state: "deleting" } });
@@ -91,6 +115,10 @@ export async function startFakeApi(root, options = {}) {
       if (req.method === "POST" && parts[4] === "pause") {
         s.state = "paused";
         s.pauses++;
+        if (opts.flipAfterPause) {
+          opts.flipAfterPause = false;
+          s.flip = true;
+        }
         return json(res, 200, { sandbox: view(s) });
       }
       if (req.method === "POST" && parts[4] === "resume") {
@@ -136,6 +164,7 @@ export async function startFakeApi(root, options = {}) {
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
   server.base = `http://127.0.0.1:${server.address().port}`;
   return {
+    root,
     base: server.base,
     apiUrl: `${server.base}/api/v1`,
     sandboxes,

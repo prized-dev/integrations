@@ -80,7 +80,7 @@ export function checkPlainPath(p, what) {
   if (!path.isAbsolute(p) || /["'\\\r\n%$`*?[\]]/.test(p)) {
     throw new UserError(
       `${what} (${p}) holds a character ssh_config can't carry (a quote, backslash, %, $, glob or line break)`,
-      "set PRIZED_ORCA_HOME to a plain path, or move the file",
+      "the plugin lives in ~/.prized-orca, so it can't run from a home directory whose path has one of these",
     );
   }
   return p;

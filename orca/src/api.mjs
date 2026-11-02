@@ -100,13 +100,43 @@ export class PrizedApi {
     return (await this.request("GET", `${this.base}/me`)).data;
   }
 
-  // Idempotency-Key: a create whose answer was lost is found again, never made twice.
+  // No server-side wait, so the answer comes at once and a cancel has little to miss. An answer
+  // that is lost (no connection, a 5xx, a timeout) is asked for again with the same
+  // Idempotency-Key, which answers with the first sandbox instead of making a second.
   async create(body, idempotencyKey) {
-    const { data } = await this.request("POST", `${this.base}/sandboxes?wait=running`, {
-      body,
-      headers: { "Idempotency-Key": idempotencyKey },
-    });
-    return data.sandbox;
+    for (let attempt = 1; ; attempt++) {
+      try {
+        const { data } = await this.request("POST", `${this.base}/sandboxes`, {
+          body,
+          headers: { "Idempotency-Key": idempotencyKey },
+          timeoutMs: 60_000,
+        });
+        return data.sandbox;
+      } catch (error) {
+        const transient = error instanceof PrizedApiError && (error.status === 0 || error.status >= 500 || error.code === "idempotency_in_progress");
+        if (!transient || attempt >= 4) throw error;
+        await this.sleep(1_000 * attempt);
+      }
+    }
+  }
+
+  // Delete every sandbox carrying all of these labels; the number it started deleting.
+  async removeByLabels(labels) {
+    const query = new URLSearchParams();
+    for (const [k, v] of Object.entries(labels)) query.append("label", `${k}=${v}`);
+    let count = 0;
+    for (let i = 0; i < 10; i++) {
+      const { data } = await this.request("DELETE", `${this.base}/sandboxes?${query}`);
+      count += Number(data?.count ?? 0);
+      if (!data?.more) break;
+    }
+    return count;
+  }
+
+  // Sandboxes carrying this label.
+  async listByLabel(key, value) {
+    const query = new URLSearchParams({ label: `${key}=${value}` });
+    return (await this.request("GET", `${this.base}/sandboxes?${query}`)).data?.sandboxes ?? [];
   }
 
   // null once it is gone.
@@ -135,10 +165,9 @@ export class PrizedApi {
     }
   }
 
+  // One pause request; the caller reads the sandbox again to see where it ended up.
   async pause(id) {
-    const { data } = await this.request("POST", `${this.base}/sandboxes/${encodeURIComponent(id)}/pause?wait=paused`);
-    const sandbox = data?.sandbox;
-    return sandbox?.state === "paused" ? sandbox : this.waitFor(id, ["paused"]);
+    return (await this.request("POST", `${this.base}/sandboxes/${encodeURIComponent(id)}/pause?wait=paused`)).data?.sandbox ?? null;
   }
 
   async resume(id) {

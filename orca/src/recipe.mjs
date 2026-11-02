@@ -87,6 +87,9 @@ export function sourceFromOrca(env = process.env) {
   const ref = env.ORCA_REPO_REF || "HEAD";
   const suffix = String(env.ORCA_VM_INSTANCE_ID || Date.now()).replace(/^orca-/, "").replace(/[^A-Za-z0-9]/g, "").slice(0, 12);
   const branch = env.ORCA_REPO_BRANCH || `orca-${suffix}`;
+  for (const [what, v] of [["repository URL", repoUrl], ["ref", ref], ["branch", branch]]) {
+    if (v.startsWith("-") || /[\0\r\n]/.test(v)) throw new UserError(`not a usable ${what}: ${JSON.stringify(v)}`);
+  }
   if (git(["check-ref-format", "--branch", branch], { cwd: repoPath }).status !== 0) throw new UserError(`not a branch name: ${branch}`);
   const repoName = path.basename(path.resolve(repoPath)).replace(/[^A-Za-z0-9._-]+/g, "-").replace(/^[-.]+/, "").slice(0, 64) || "repo";
   return { repoPath, fromOrca, head, repoUrl, ref, branch, repoName };
@@ -97,13 +100,14 @@ export function ensureCommit(src) {
   const have = () => git(["cat-file", "-e", `${src.head}^{commit}`], { cwd: src.repoPath }).status === 0;
   if (have()) return;
   if (!src.repoUrl) throw new UserError(`commit ${src.head.slice(0, 12)} is not in ${src.repoPath} and the repository has no remote`);
-  gitOk(["fetch", "--quiet", src.repoUrl, src.ref], { cwd: src.repoPath });
+  gitOk(["fetch", "--quiet", "--end-of-options", src.repoUrl, src.ref], { cwd: src.repoPath });
   if (!have()) throw new UserError(`commit ${src.head.slice(0, 12)} is not in ${src.repoUrl} ${src.ref}`);
 }
 
 // A git bundle of exactly that commit and its history, made under a temporary ref that is removed
 // at once. The bundle goes to the sandbox, so no git credential does.
 export function makeBundle(src) {
+  dropStaleRefs(src.repoPath);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prized-orca-"));
   const file = path.join(dir, "repo.bundle");
   const ref = `refs/prized-orca/tmp-${process.pid}-${Date.now()}`;
@@ -114,6 +118,20 @@ export function makeBundle(src) {
     git(["update-ref", "-d", ref], { cwd: src.repoPath });
   }
   return { dir, file, ref, bytes: fs.statSync(file).size };
+}
+
+// A create killed mid-bundle leaves its temporary ref behind; drop those whose process is gone.
+function dropStaleRefs(repoPath) {
+  const refs = git(["for-each-ref", "--format=%(refname)", "refs/prized-orca/"], { cwd: repoPath }).stdout.split("\n");
+  for (const ref of refs) {
+    const pid = Number(/^refs\/prized-orca\/tmp-(\d+)-\d+$/.exec(ref)?.[1]);
+    if (!pid) continue;
+    try {
+      process.kill(pid, 0);
+    } catch (error) {
+      if (error.code === "ESRCH") git(["update-ref", "-d", ref], { cwd: repoPath });
+    }
+  }
 }
 
 export function gitIdentity(repoPath) {

@@ -75,28 +75,41 @@ export function hasUserInclude(env = process.env) {
   return text.split(/\r?\n/).some((line) => line.trim() === want);
 }
 
+// The file to edit: ~/.ssh/config itself, or what it links to (a dotfiles checkout), so the link
+// stays a link.
+function configTarget(file) {
+  try {
+    if (fs.lstatSync(file).isSymbolicLink()) return fs.realpathSync(file);
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+  return file;
+}
+
 // Put the Include line first: OpenSSH applies the first value it reads for an option, and an
 // Include after a Host block would only apply inside that block.
 export function addUserInclude(env = process.env) {
   if (hasUserInclude(env)) return "already there";
-  const file = userSshConfig(env);
+  const link = userSshConfig(env);
+  const file = configTarget(link);
   fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 });
   let old = "";
   let mode = 0o600;
   try {
     old = fs.readFileSync(file, "utf8");
     mode = fs.statSync(file).mode & 0o777;
-    const backup = `${file}.prized-orca.bak`;
+    const backup = `${link}.prized-orca.bak`;
     if (!fs.existsSync(backup)) fs.writeFileSync(backup, old, { mode });
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
   }
   writeFileAtomic(file, `${INCLUDE_MARK}\n${includeLine(env)}\n\n${old}`, mode);
-  return `added to ${file}`;
+  return `added to ${link}`;
 }
 
 export function removeUserInclude(env = process.env) {
-  const file = userSshConfig(env);
+  const link = userSshConfig(env);
+  const file = configTarget(link);
   let text;
   try {
     text = fs.readFileSync(file, "utf8");
@@ -117,7 +130,7 @@ export function removeUserInclude(env = process.env) {
   }
   if (kept.length === lines.length) return "not there";
   writeFileAtomic(file, kept.join("\n"), fs.statSync(file).mode & 0o777);
-  return `removed from ${file}`;
+  return `removed from ${link}`;
 }
 
 // ---------------------------------------------------------------- the prized CLI's files
@@ -131,7 +144,20 @@ export function findCliConfig(id, dirs) {
   return null;
 }
 
-// The options of the CLI's per-sandbox ssh_config the plugin needs. ssh_config doubles a literal %.
+// One ssh_config argument as OpenSSH reads it: a "quoted" or 'quoted' word, or a bare one. The CLI
+// quotes a path that holds a space or a single quote.
+export function sshWord(value) {
+  const v = String(value).trim();
+  const q = v[0];
+  if (q === '"' || q === "'") {
+    const end = v.indexOf(q, 1);
+    return end === -1 ? v.slice(1) : v.slice(1, end);
+  }
+  return v.split(/\s+/)[0];
+}
+
+// The options of the CLI's per-sandbox ssh_config the plugin needs. ssh_config doubles a literal %;
+// a ProxyCommand is the rest of its line, for the shell to read.
 export function parseCliConfig(text) {
   const out = {};
   for (const raw of String(text).split(/\r?\n/)) {
@@ -141,10 +167,10 @@ export function parseCliConfig(text) {
     if (!m) continue;
     const key = m[1].toLowerCase();
     const value = m[2].trim();
-    if (key === "user") out.user ??= value;
+    if (key === "user") out.user ??= sshWord(value);
     else if (key === "proxycommand") out.proxyCommand ??= value.replace(/%%/g, "%");
-    else if (key === "certificatefile") out.certificateFile ??= value.replace(/%%/g, "%");
-    else if (key === "hostkeyalias") out.hostKeyAlias ??= value;
+    else if (key === "certificatefile") out.certificateFile ??= sshWord(value).replace(/%%/g, "%");
+    else if (key === "hostkeyalias") out.hostKeyAlias ??= sshWord(value);
   }
   return out;
 }

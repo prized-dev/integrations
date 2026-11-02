@@ -7,9 +7,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { PrizedApi, PrizedApiError, apiBase, canWriteSandboxes } from "../src/api.mjs";
-import { runtimeRefusal } from "../src/commands.mjs";
+import { versionOk } from "../src/cli.mjs";
+import { pauseFirmly, runtimeRefusal } from "../src/commands.mjs";
 import { keyFromLoginShell, resolveKey } from "../src/key.mjs";
-import { checkoutScript, parsePayload, recipeResult, stripCredentials } from "../src/recipe.mjs";
+import { checkoutScript, parsePayload, recipeResult, sourceFromOrca, stripCredentials } from "../src/recipe.mjs";
 import {
   INCLUDE_MARK,
   addUserInclude,
@@ -19,6 +20,7 @@ import {
   proxyCommandFor,
   removeUserInclude,
   renderInclude,
+  sshWord,
 } from "../src/sshconf.mjs";
 import { redact } from "../src/util.mjs";
 import { API_KEY } from "./fake-api.mjs";
@@ -140,6 +142,35 @@ describe("ssh files", () => {
     }
   });
 
+  test("a symlinked ~/.ssh/config stays a link, and its target gets the line", () => {
+    const dir = tempDir();
+    try {
+      const target = path.join(dir, "dotfiles", "ssh_config");
+      fs.mkdirSync(path.dirname(target));
+      fs.writeFileSync(target, "Host a\n", { mode: 0o600 });
+      const link = path.join(dir, "ssh", "config");
+      fs.mkdirSync(path.dirname(link));
+      fs.symlinkSync(target, link);
+      const env = { PRIZED_ORCA_HOME: path.join(dir, "po"), PRIZED_ORCA_SSH_CONFIG: link };
+      addUserInclude(env);
+      assert.ok(fs.lstatSync(link).isSymbolicLink());
+      assert.match(fs.readFileSync(target, "utf8"), /^# Added by the Prized Orca plugin.*\nInclude ".*\/po\/ssh_config"\n\nHost a\n$/);
+      assert.equal(hasUserInclude(env), true);
+      removeUserInclude(env);
+      assert.ok(fs.lstatSync(link).isSymbolicLink());
+      assert.equal(fs.readFileSync(target, "utf8"), "Host a\n");
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("an ssh_config word loses the quotes the CLI puts round a path with a space", () => {
+    assert.equal(sshWord('"/Users/Ada Lovelace/.config/prized/sandboxes/sbx_1/cert.pub"'), "/Users/Ada Lovelace/.config/prized/sandboxes/sbx_1/cert.pub");
+    assert.equal(sshWord("'/a b/c'"), "/a b/c");
+    assert.equal(sshWord("/plain/path # note"), "/plain/path");
+    assert.equal(parseCliConfig('Host x\n    CertificateFile "/A B/cert.pub"\n').certificateFile, "/A B/cert.pub");
+  });
+
   test("the CLI's ssh_config is read for user, bridge and certificate", () => {
     const cfg = parseCliConfig(
       [
@@ -218,6 +249,40 @@ describe("Orca's side", () => {
     assert.throws(() => parsePayload(""), /no lifecycle payload/);
     assert.throws(() => parsePayload("{"), /not JSON/);
     assert.throws(() => parsePayload(JSON.stringify({ recipeResult: { userData: { resourceId: "sbx_1;reboot" } } })), /names no Prized sandbox/);
+  });
+
+  test("a value that would read as a git option is refused", () => {
+    const dir = tempDir();
+    try {
+      const repo = makeRepo(path.join(dir, "repo"));
+      const base = { ORCA_REPO_PATH: repo.dir, ORCA_REPO_REF_HEAD: repo.head, ORCA_REPO_URL: "https://example.com/a.git", ORCA_REPO_REF: "main", ORCA_REPO_BRANCH: "feat/x" };
+      assert.equal(sourceFromOrca(base).branch, "feat/x");
+      assert.throws(() => sourceFromOrca({ ...base, ORCA_REPO_REF: "--upload-pack=touch${IFS}X;false" }), /not a usable ref/);
+      assert.throws(() => sourceFromOrca({ ...base, ORCA_REPO_URL: "-oProxyCommand=x" }), /not a usable repository URL/);
+      assert.throws(() => sourceFromOrca({ ...base, ORCA_REPO_BRANCH: "--orphan" }), /not a usable branch/);
+      assert.throws(() => sourceFromOrca({ ...base, ORCA_REPO_REF_HEAD: "HEAD~1" }), /not a commit id/);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("the CLI version check: 0.21.9 or later", () => {
+    assert.equal(versionOk([0, 21, 9]), true);
+    assert.equal(versionOk([0, 22, 0]), true);
+    assert.equal(versionOk([1, 0, 0]), true);
+    assert.equal(versionOk([0, 21, 8]), false);
+    assert.equal(versionOk(null), false);
+  });
+
+  test("a pause is repeated until the sandbox stays paused, and a gone sandbox is fine", async () => {
+    const states = ["running", "running", "paused"];
+    let posts = 0;
+    const client = { get: async () => ({ state: states.shift() ?? "paused" }), pause: async () => posts++, sleep: async () => {} };
+    assert.equal(await pauseFirmly(client, "sbx_1"), "paused");
+    assert.equal(posts, 2);
+    assert.equal(await pauseFirmly({ get: async () => null }, "sbx_1"), "gone");
+    const stubborn = { get: async () => ({ state: "running" }), pause: async () => {}, sleep: async () => {} };
+    await assert.rejects(pauseFirmly(stubborn, "sbx_1"), /keeps waking up/);
   });
 
   test("credentials never ride along in a remote URL", () => {

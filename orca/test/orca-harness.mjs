@@ -240,8 +240,9 @@ export function recipeEnv(baseEnv, mode, context, schemaVersion) {
 }
 
 // runRecipeCommand: the command through a shell, in the repo, as its own process group; stdin is
-// the payload (or closed at once).
-export function runPhase({ command, mode, context, recipe, stdin, baseEnv }) {
+// the payload (or closed at once). cancelAfterMs is Orca's Cancel: SIGTERM to the group, then
+// SIGKILL 5 seconds later.
+export function runPhase({ command, mode, context, recipe, stdin, baseEnv, cancelAfterMs }) {
   const schemaVersion = recipe.checkoutMode === "provisioned-root" ? 2 : 1;
   return new Promise((resolve, reject) => {
     const child = spawn(command, {
@@ -254,8 +255,23 @@ export function runPhase({ command, mode, context, recipe, stdin, baseEnv }) {
     let stderr = "";
     child.stdout.on("data", (c) => (stdout += c));
     child.stderr.on("data", (c) => (stderr += c));
+    const timers = [];
+    if (cancelAfterMs !== undefined) {
+      const kill = (signal) => {
+        try {
+          process.kill(-child.pid, signal);
+        } catch {
+          // the group is gone already
+        }
+      };
+      timers.push(setTimeout(() => kill("SIGTERM"), cancelAfterMs));
+      timers.push(setTimeout(() => kill("SIGKILL"), cancelAfterMs + 5_000));
+    }
     child.on("error", reject);
-    child.on("close", (exitCode, signal) => resolve({ exitCode, signal, stdout, stderr }));
+    child.on("close", (exitCode, signal) => {
+      timers.forEach(clearTimeout);
+      resolve({ exitCode, signal, stdout, stderr });
+    });
     child.stdin.end(stdin ?? undefined);
   });
 }
@@ -274,12 +290,15 @@ export function payload(mode, recipe, context, recipeResult) {
   })}\n`;
 }
 
-// buildSshArgs for a recipe's target (source "manual": configHost is not used; Orca's control
-// master is turned off here so a test leaves no sockets behind).
-export function orcaSshArgs(target, { configFile } = {}) {
+// buildSshArgs for a recipe's target (source "manual": configHost is not used), with Orca's
+// connection reuse: ControlMaster=auto under a control path of its own, kept 300 s after the last
+// session.
+export function orcaSshArgs(target, { configFile, controlPath } = {}) {
   const args = [];
   if (configFile) args.push("-F", configFile);
-  args.push("-o", "BatchMode=no", "-T", "-S", "none");
+  args.push("-o", "BatchMode=no", "-T");
+  if (controlPath) args.push("-o", "ControlMaster=auto", "-o", `ControlPath=${controlPath}`, "-o", "ControlPersist=300", "-o", "ServerAliveInterval=15", "-o", "ServerAliveCountMax=3");
+  else args.push("-S", "none");
   if (target.port !== 22) args.push("-p", String(target.port));
   if (target.identityFile) args.push("-i", target.identityFile);
   if (target.identityAgent) args.push("-o", `IdentityAgent=${target.identityAgent}`);
@@ -290,11 +309,9 @@ export function orcaSshArgs(target, { configFile } = {}) {
   return args;
 }
 
-// Run a command on the target the way Orca's system-ssh transport does (a target with a
-// proxyCommand always goes through system OpenSSH).
-export function orcaSsh(target, command, { configFile, env, timeoutMs = 60_000 } = {}) {
+function run(args, { env, timeoutMs = 60_000 } = {}) {
   return new Promise((resolve) => {
-    const child = spawn("ssh", [...orcaSshArgs(target, { configFile }), command], { env, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn("ssh", args, { env, stdio: ["ignore", "pipe", "pipe"] });
     let stdout = "";
     let stderr = "";
     child.stdout.on("data", (c) => (stdout += c));
@@ -305,4 +322,18 @@ export function orcaSsh(target, command, { configFile, env, timeoutMs = 60_000 }
       resolve({ status, stdout, stderr });
     });
   });
+}
+
+// Run a command on the target the way Orca's system-ssh transport does (a target with a
+// proxyCommand always goes through system OpenSSH): resolve the host with `ssh -G` first, as Orca
+// does before it connects, then run the command over the shared connection.
+export async function orcaSsh(target, command, { configFile, controlPath, env, timeoutMs = 60_000 } = {}) {
+  const resolved = await run([...(configFile ? ["-F", configFile] : []), "-G", "--", target.host], { env, timeoutMs });
+  if (resolved.status !== 0) return { ...resolved, stage: "ssh -G" };
+  return run([...orcaSshArgs(target, { configFile, controlPath }), command], { env, timeoutMs });
+}
+
+// Orca's disconnect: close the shared connection.
+export function orcaSshExit(target, { configFile, controlPath, env } = {}) {
+  return run([...orcaSshArgs(target, { configFile, controlPath }).filter((a) => a !== "--" && a !== `${target.username}@${target.host}`), "-O", "exit", `${target.username}@${target.host}`], { env, timeoutMs: 15_000 });
 }
