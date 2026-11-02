@@ -214,6 +214,21 @@ case $DIR in
     npm run typecheck
     npm run build
     offline npm test ;;
+  eve)
+    # An eve sandbox provider: typecheck against eve's published types (FLOOR=1: the oldest eve the
+    # package supports), build, then node --test (Node 24 runs the .ts sources) against an in-memory
+    # Prized API. eve itself is never loaded: the tests play eve's side of the provider contract.
+    need_sdk node
+    cp -r "$ROOT/$DIR/." "$WORK/pkg"
+    cd "$WORK/pkg"
+    rm -rf node_modules dist
+    [ -z "${SDK_TGZ:-}" ] || npm pkg set "dependencies.@prized/sdk=file:$SDK_TGZ"
+    [ -z "$FLOOR" ] || npm pkg set "devDependencies.eve=0.86.0"
+    npm install --no-audit --no-fund --no-package-lock --ignore-scripts --loglevel=error
+    npm ls --depth=0 eve @prized/sdk || true
+    npm run typecheck
+    npm run build
+    offline npm test ;;
   herdr)
     # A herdr plugin with no dependencies: node --test against stand-ins for prized, herdr and ssh
     # (test/fakes). The fake sandbox runs the plugin's remote scripts with the real bash, tar and git.
