@@ -1,0 +1,64 @@
+{
+  "name": "@prized/eve-sandbox",
+  "version": "0.1.0",
+  "description": "Prized Sandboxes for Vercel's eve agent framework: each session runs in a Firecracker microVM that pauses between turns and starts as a fork of a prepared template.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "eve",
+    "vercel",
+    "sandbox",
+    "prized",
+    "microvm",
+    "agents"
+  ],
+  "author": "Prized <team@prized.dev>",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/prized-dev/integrations/tree/main/eve#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prized-dev/integrations.git",
+    "directory": "eve"
+  },
+  "bugs": {
+    "url": "https://github.com/prized-dev/integrations/issues"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "node --test test/*.test.ts",
+    "test:live": "node test/live.ts",
+    "prepublishOnly": "npm run typecheck && npm run build"
+  },
+  "dependencies": {
+    "@prized/sdk": "^0.1.2"
+  },
+  "peerDependencies": {
+    "eve": ">=0.86.0 <2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.0",
+    "eve": "1.0.0-rc.1",
+    "typescript": "5.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
