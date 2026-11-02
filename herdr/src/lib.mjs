@@ -351,11 +351,13 @@ export function sandboxTmuxSetup() {
     `  printf 'Dir::State::Lists "%s/lists";\\nDir::Cache "%s";\\nDir::Cache::archives "%s/archives";\\nDebug::NoLocking "true";\\n' "$A" "$A" "$A" > "$A/apt.conf"`,
     '  APT_CONFIG="$A/apt.conf" apt-get update -qq',
     '  APT_CONFIG="$A/apt.conf" apt-get install --download-only -y -qq --no-install-recommends tmux',
-    '  for f in "$A"/archives/*.deb; do case "$f" in */libc6_*|*/libc-bin_*) continue ;; esac; dpkg -x "$f" "$HOME/sysroot"; done',
+    // Sandboxes refuse setuid and setgid bits (systemd's RestrictSUIDSGID), so dpkg -x stops short
+    // of libutempter's setgid helper; the libraries tmux needs are unpacked by then.
+    '  for f in "$A"/archives/*.deb; do case "$f" in */libc6_*|*/libc-bin_*) continue ;; esac; dpkg -x "$f" "$HOME/sysroot" 2>/dev/null || true; done',
     `  printf '%s\\n' ${TMUX_WRAPPER.map(sq).join(" ")} > "$HOME/.local/bin/tmux"`,
     '  chmod 755 "$HOME/.local/bin/tmux"',
     '  rm -rf "$A"',
-    "  tmux -V >&2",
+    "  tmux -V >&2 || { echo 'tmux could not be installed in this sandbox' >&2; exit 1; }",
     "fi",
   ].join("\n");
 }
