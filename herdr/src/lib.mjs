@@ -81,9 +81,11 @@ export function isEnvName(name) {
 }
 
 // The command the session runs ("" for a plain shell) and the herdr agent hint for the pane.
+// A custom `command` keeps the keys and herdr hint of `agent` (claude unless set), so
+// "claude --dangerously-skip-permissions" still gets Claude Code's key and status.
 export function agentOf(config) {
-  if (config.command) return { command: String(config.command), herdr: "", keys: [] };
-  return AGENTS[config.agent];
+  const base = AGENTS[config.agent] ?? AGENTS.shell;
+  return config.command ? { ...base, command: String(config.command) } : base;
 }
 
 // Names of the variables to copy into a sandbox: forwardEnv as given, or else the agent's own key
@@ -126,13 +128,20 @@ export function updateState(fn, env = process.env) {
   for (;;) {
     try {
       fs.mkdirSync(lock);
+      fs.writeFileSync(path.join(lock, "pid"), String(process.pid));
       break;
     } catch (error) {
       if (error.code !== "EEXIST") throw error;
-      try {
-        if (Date.now() - fs.statSync(lock).mtimeMs > 30_000) fs.rmdirSync(lock);
-      } catch {
-        // another process removed it first
+      if (lockIsStale(lock)) {
+        // Rename first: of two processes clearing the same stale lock, only one wins the rename.
+        const aside = `${lock}.stale-${process.pid}`;
+        try {
+          fs.renameSync(lock, aside);
+          fs.rmSync(aside, { recursive: true, force: true });
+        } catch {
+          // another process cleared it first
+        }
+        continue;
       }
       if (Date.now() > deadline) throw new PluginError(`state is locked: remove ${lock} if no herdr-prized command is running`);
       sleepMs(50);
@@ -147,7 +156,20 @@ export function updateState(fn, env = process.env) {
     fs.renameSync(tmp, file);
     return result;
   } finally {
-    fs.rmdirSync(lock);
+    fs.rmSync(lock, { recursive: true, force: true });
+  }
+}
+
+// A lock is stale when it is old and the process that took it is gone.
+function lockIsStale(lock) {
+  try {
+    if (Date.now() - fs.statSync(lock).mtimeMs < 30_000) return false;
+    const pid = Number(fs.readFileSync(path.join(lock, "pid"), "utf8"));
+    if (!pid) return true;
+    process.kill(pid, 0);
+    return false;
+  } catch (error) {
+    return error.code !== "EPERM";
   }
 }
 
@@ -177,12 +199,25 @@ export function pluginContext(env = process.env) {
   }
 }
 
-export function contextCwd(context, fallback = process.cwd()) {
-  return context.worktree?.checkout_path || context.focused_pane_cwd || context.workspace_cwd || fallback;
+// The directory the action was invoked from. Never the process's own directory: that is the plugin
+// root, itself a Git checkout once installed.
+export function contextCwd(context) {
+  const cwd = context.worktree?.checkout_path || context.focused_pane_cwd || context.workspace_cwd;
+  if (!cwd) throw new PluginError("herdr gave no directory for this action", "run it from a pane in your repository");
+  return cwd;
+}
+
+export function isInside(child, parent) {
+  if (!child || !parent) return false;
+  const rel = path.relative(path.resolve(parent), path.resolve(child));
+  return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel));
 }
 
 // The Git worktree that holds the invoking pane's directory.
-export function worktreeRoot(cwd) {
+export function worktreeRoot(cwd, env = process.env) {
+  if (env.HERDR_PLUGIN_ROOT && isInside(cwd, env.HERDR_PLUGIN_ROOT)) {
+    throw new PluginError("this pane is the plugin's own (an agent pane runs from the plugin's folder)", "run the action from a pane in your repository");
+  }
   const result = spawnSync("git", ["-C", cwd, "rev-parse", "--show-toplevel"], { encoding: "utf8" });
   if (result.status !== 0) {
     throw new PluginError(`${cwd} is not inside a Git worktree`, "open the pane in a Git repository, then run the action again");
@@ -192,10 +227,15 @@ export function worktreeRoot(cwd) {
 
 // The mapping an action means: the one attached to the focused pane, else the newest for this
 // worktree.
-export function findMapping(state, context, root) {
+//
+// A recorded pane id goes stale when herdr quits without a pane.closed, and herdr reuses ids, so it
+// counts only for a pane that is one of ours (it runs from the plugin's folder) or that sits in the
+// mapping's worktree.
+export function findMapping(state, context, root, env = process.env) {
   const all = Object.values(state.mappings);
   const pane = context.focused_pane_id;
-  const byPane = pane && all.find((m) => m.paneId === pane);
+  const ours = isInside(context.focused_pane_cwd, env.HERDR_PLUGIN_ROOT);
+  const byPane = pane && all.find((m) => m.paneId === pane && (ours || m.root === root));
   if (byPane) return byPane;
   const byRoot = all.filter((m) => m.root === root).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
   return byRoot[0] ?? null;
@@ -311,7 +351,8 @@ export function unpackScript(dir, archive) {
     fromStdin ? "" : `rm -f ${sq(archive)}`,
     'cd "$D"',
     "[ -d .git ] || git -c init.defaultBranch=main init -q",
-    "git add -A",
+    // --force: a tracked file that a .gitignore matches was copied, so it belongs in the base too.
+    "git add -A --force",
     `git ${GIT_ID} commit -q --allow-empty --no-verify -m 'herdr: the worktree as copied'`,
     "git update-ref refs/herdr/base HEAD",
   ]
@@ -377,15 +418,17 @@ export function startSessionScript(dir, session, agentCommand, kind = "sandbox")
     .join("\n");
 }
 
-// Stage everything the agent changed, then diff it against the base: committed or not, new files
-// included. Prints the tree it diffed on the first line, then the patch (or writes the patch to
+// Stage everything the agent changed in a scratch index (the agent's own index is left alone), then
+// diff it against the base: committed or not, new files included. Prints the tree it diffed on the first line, then the patch (or writes the patch to
 // `out`, a remote path).
 export function diffScript(dir, out = null) {
   return [
     "set -e",
     `cd ${dir}`,
-    "git add -A",
-    "T=$(git write-tree)",
+    'I=$(mktemp); trap \'rm -f "$I"\' EXIT',
+    'cp "$(git rev-parse --git-path index)" "$I" 2>/dev/null || true',
+    'GIT_INDEX_FILE="$I" git add -A',
+    'T=$(GIT_INDEX_FILE="$I" git write-tree)',
     'echo "$T"',
     `git diff --binary --no-color --no-ext-diff refs/herdr/base "$T"${out ? ` > ${sq(out)}` : ""}`,
   ].join("\n");

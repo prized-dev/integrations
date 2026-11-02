@@ -42,10 +42,20 @@ function step(label, fn) {
   return value;
 }
 
+// Archives still on disk when the pane is closed mid-copy (herdr sends SIGHUP) are removed on the way out.
+const pendingArchives = new Set();
+for (const signal of ["SIGHUP", "SIGTERM", "SIGINT"]) {
+  process.once(signal, () => {
+    for (const archive of pendingArchives) cleanupArchive(archive);
+    process.exit(128 + ({ SIGHUP: 1, SIGINT: 2, SIGTERM: 15 })[signal]);
+  });
+}
+
 function packStep(mapping) {
   const listing = listWorktree(mapping.root);
   process.stdout.write(`  packing ${listing.files.length} files (${formatBytes(listing.bytes)})... `);
   const packed = packWorktree(mapping.root, listing.files);
+  pendingArchives.add(packed.archive);
   say(formatBytes(packed.size));
   const secrets = listing.skipped.filter((s) => s.reason !== "submodule");
   if (secrets.length) {
@@ -86,6 +96,7 @@ function fillSandbox(mapping, config) {
     });
   } finally {
     cleanupArchive(packed.archive);
+    pendingArchives.delete(packed.archive);
   }
   const names = forwardNames(config);
   if (names.length) {
@@ -95,7 +106,7 @@ function fillSandbox(mapping, config) {
       prizedOk(["sandbox", "cp", "-", `${id}:${ENV_FILE}`], { input: envFile(names) });
     });
   }
-  return patchMapping(mapping.id, { status: "copied" });
+  return patchMapping(mapping.id, { status: "copied", copied: true });
 }
 
 function chooseBox(mapping) {
@@ -118,8 +129,9 @@ function fillBox(mapping) {
     });
   } finally {
     cleanupArchive(packed.archive);
+    pendingArchives.delete(packed.archive);
   }
-  return patchMapping(mapping.id, { status: "copied" });
+  return patchMapping(mapping.id, { status: "copied", copied: true });
 }
 
 function ensureSession(mapping) {
@@ -155,10 +167,11 @@ async function main() {
       }
       if (state === "paused" || state === "pausing") say(`Resuming ${mapping.sandboxId}: memory and processes pick up where they stopped.`);
     }
-    if (["new", "copying"].includes(mapping.status)) mapping = fillSandbox(mapping, config);
+    // `copied`, not the status: a pause or a closed pane changes the status of a copy cut short.
+    if (!mapping.copied) mapping = fillSandbox(mapping, config);
   } else {
     if (!mapping.box) mapping = await chooseBox(mapping);
-    if (mapping.status === "new") mapping = fillBox(mapping);
+    if (!mapping.copied) mapping = fillBox(mapping);
   }
 
   for (;;) {

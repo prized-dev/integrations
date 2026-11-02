@@ -1,7 +1,7 @@
 id = "prized.sandbox"
 name = "Prized"
 version = "0.1.0"
-min_herdr_version = "0.8.0"
+min_herdr_version = "0.9.0"
 description = "Run Claude Code or Codex on a Prized sandbox or box from the worktree you are in. Closing the pane pauses the sandbox: its memory and processes survive."
 platforms = ["linux", "macos"]
 

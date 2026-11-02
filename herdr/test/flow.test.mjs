@@ -10,6 +10,7 @@ import test from "node:test";
 import {
   FAKE_AGENT_KEY,
   FAKE_PRIZED_KEY,
+  PLUGIN,
   action,
   boxHome,
   db,
@@ -252,7 +253,8 @@ test("delete needs the word DELETE, then removes the sandbox and the mapping", (
 test("pause action pauses the pane's sandbox; a sandbox deleted elsewhere is reported on reconnect", () => {
   const w = world();
   const { mapping } = startSandbox(w);
-  const r = action(w, "pause", { focused_pane_id: "w1:p2" });
+  // Invoked from the agent pane, which herdr runs from the plugin's folder.
+  const r = action(w, "pause", { focused_pane_id: "w1:p2", focused_pane_cwd: PLUGIN }, { HERDR_PLUGIN_ROOT: PLUGIN });
   assert.equal(r.status, 0, r.out);
   assert.equal(db(w).sandboxes[mapping.sandboxId].state, "paused");
   const d = db(w);
@@ -334,4 +336,118 @@ test("an action outside a Git worktree says so and notifies", () => {
   assert.equal(r.status, 1);
   assert.match(r.out, /not inside a Git worktree/);
   assert.ok(herdrCalls(w).some((l) => l.startsWith("notification show Prized")));
+});
+
+// ------------------------------------------------------------------ fixes from the first review
+
+test("a copy cut short is finished on reconnect, even after the sandbox was paused", () => {
+  const w = world();
+  action(w, "start-sandbox", ctx(w));
+  const [m] = Object.values(state(w).mappings);
+  const first = run(w, "agent-pane.mjs", { env: { PRIZED_HERDR_MAPPING: m.id, HERDR_PANE_ID: "w1:p2", FAKE_FAIL_SCRIPT: "tar xzf" }, input: "\n" });
+  assert.equal(first.status, 1);
+  run(w, "on-pane-closed.mjs", { env: { HERDR_PLUGIN_EVENT_JSON: JSON.stringify({ data: { pane_id: "w1:p2" } }) } });
+  assert.equal(state(w).mappings[m.id].status, "paused");
+  assert.notEqual(state(w).mappings[m.id].copied, true);
+  const again = run(w, "agent-pane.mjs", { env: { PRIZED_HERDR_MAPPING: m.id, HERDR_PANE_ID: "w1:p3" }, input: "\n" });
+  assert.equal(again.status, 0, again.out);
+  const id = state(w).mappings[m.id].sandboxId;
+  assert.ok(fs.existsSync(path.join(sandboxHome(w, id), "work", "my-repo", "README.md")));
+  assert.equal(state(w).mappings[m.id].copied, true);
+});
+
+test("a file tracked despite .gitignore is in the base, so the agent's edit to it comes back", () => {
+  const w = world();
+  fs.writeFileSync(path.join(w.repo, "dist", "keep.js"), "keep 1\n");
+  git(w.repo, "add", "-f", "dist/keep.js");
+  git(w.repo, "commit", "-qm", "keep");
+  const { mapping } = startSandbox(w);
+  const work = path.join(sandboxHome(w, mapping.sandboxId), "work", "my-repo");
+  assert.ok(!fs.existsSync(path.join(work, "dist", "bundle.js")), "an ignored, untracked file is still left out");
+  fs.writeFileSync(path.join(work, "dist", "keep.js"), "keep 2\n");
+  const r = run(w, "ops-pane.mjs", { env: { PRIZED_HERDR_MAPPING: mapping.id, PRIZED_HERDR_OP: "apply-changes" }, input: "y\n\n" });
+  assert.match(r.out, /Applied/);
+  assert.equal(fs.readFileSync(path.join(w.repo, "dist", "keep.js"), "utf8"), "keep 2\n");
+});
+
+test("apply-changes leaves the agent's own index alone", () => {
+  const w = world();
+  const { mapping } = startSandbox(w);
+  const work = path.join(sandboxHome(w, mapping.sandboxId), "work", "my-repo");
+  fs.writeFileSync(path.join(work, "scratch.txt"), "agent's scratch\n");
+  run(w, "ops-pane.mjs", { env: { PRIZED_HERDR_MAPPING: mapping.id, PRIZED_HERDR_OP: "apply-changes" }, input: "n\n\n" });
+  assert.equal(git(work, "diff", "--cached", "--name-only"), "");
+  assert.match(git(work, "status", "--porcelain"), /^\?\? scratch\.txt/m);
+});
+
+test("if the remote base cannot be moved after a local apply, the next apply finishes it and offers nothing twice", () => {
+  const w = world();
+  const { mapping } = startSandbox(w);
+  const work = path.join(sandboxHome(w, mapping.sandboxId), "work", "my-repo");
+  fs.writeFileSync(path.join(work, "src", "app.js"), "export const a = 3;\n");
+  const env = { PRIZED_HERDR_MAPPING: mapping.id, PRIZED_HERDR_OP: "apply-changes" };
+  const failed = run(w, "ops-pane.mjs", { env: { ...env, FAKE_FAIL_SCRIPT: "commit-tree" }, input: "y\n\n" });
+  assert.match(failed.out, /Applied to this worktree/);
+  assert.match(failed.out, /the changes are in this worktree, but sandbox .* could not be told so/);
+  assert.equal(fs.readFileSync(path.join(w.repo, "src", "app.js"), "utf8"), "export const a = 3;\n");
+  assert.ok(state(w).mappings[mapping.id].pendingTree);
+  const next = run(w, "ops-pane.mjs", { env, input: "y\n\n" });
+  assert.match(next.out, /Finishing the last apply/);
+  assert.match(next.out, /No changes\./);
+  assert.equal(state(w).mappings[mapping.id].pendingTree, null);
+});
+
+test("delete on a box kills the session with -y, and keeps the mapping when that fails", () => {
+  const w = world({ config: { box: "mango" } });
+  action(w, "start-box", ctx(w));
+  const [m] = Object.values(state(w).mappings);
+  run(w, "agent-pane.mjs", { env: { PRIZED_HERDR_MAPPING: m.id, HERDR_PANE_ID: "w1:p3" }, input: "\n" });
+  const env = { PRIZED_HERDR_MAPPING: m.id, PRIZED_HERDR_OP: "delete" };
+  const broken = run(w, "ops-pane.mjs", { env: { ...env, FAKE_PRIZED_EXIT: "3" }, input: "y\n\n" });
+  assert.equal(broken.status, 1);
+  assert.ok(state(w).mappings[m.id], "a failed kill keeps the mapping");
+  const ok = run(w, "ops-pane.mjs", { env, input: "y\n\n" });
+  assert.match(ok.out, /Stopped\./);
+  assert.ok(prizedCalls(w).some((c) => c.args.join(" ") === `ssh mango --kill ${m.session} -y`));
+  assert.equal(state(w).mappings[m.id], undefined);
+});
+
+test("delete finds a sandbox whose create was cut short by its label", () => {
+  const w = world();
+  action(w, "start-sandbox", ctx(w));
+  const [m] = Object.values(state(w).mappings);
+  run(w, "agent-pane.mjs", { env: { PRIZED_HERDR_MAPPING: m.id, FAKE_CREATE_THEN_DIE: "1" }, input: "\n" });
+  const [sbx] = Object.values(db(w).sandboxes);
+  const r = run(w, "ops-pane.mjs", { env: { PRIZED_HERDR_MAPPING: m.id, PRIZED_HERDR_OP: "delete" }, input: "DELETE\n\n" });
+  assert.match(r.out, new RegExp(`deletes sandbox ${sbx.id}`));
+  assert.equal(db(w).sandboxes[sbx.id].state, "deleted");
+});
+
+test("a custom command keeps the agent's key and herdr's agent hint", () => {
+  const w = world({ config: { command: "claude --dangerously-skip-permissions" } });
+  const { mapping } = startSandbox(w);
+  assert.ok(herdrCalls(w)[0].includes("--env HERDR_AGENT=claude"));
+  assert.ok(fs.existsSync(path.join(sandboxHome(w, mapping.sandboxId), ".herdr-prized.env")));
+  const tmux = fs.readFileSync(path.join(sandboxHome(w, mapping.sandboxId), ".tmux-calls"), "utf8");
+  assert.match(tmux, /; claude --dangerously-skip-permissions; exec bash -l/);
+});
+
+test("a recorded pane id from another worktree is not trusted, and agent panes are", () => {
+  const w = world();
+  const { mapping } = startSandbox(w); // paneId w1:p2, worktree w.repo
+  const other = path.join(w.dir, "other");
+  git(w.dir, "init", "-q", other);
+  // herdr reused w1:p2 for a pane in another repository: the action must not reach this sandbox.
+  const r = action(w, "pause", { focused_pane_id: "w1:p2", focused_pane_cwd: other });
+  assert.equal(r.status, 1);
+  assert.match(r.out, /no Prized sandbox or box session for this pane or worktree/);
+  assert.equal(db(w).sandboxes[mapping.sandboxId].state, "running");
+  // The agent pane itself runs from the plugin's folder: there the pane id decides.
+  const fromPane = action(w, "pause", { focused_pane_id: "w1:p2", focused_pane_cwd: PLUGIN }, { HERDR_PLUGIN_ROOT: PLUGIN });
+  assert.equal(fromPane.status, 0, fromPane.out);
+  assert.equal(db(w).sandboxes[mapping.sandboxId].state, "paused");
+  // And start-sandbox from an agent pane refuses to copy the plugin's own folder.
+  const start = action(w, "start-sandbox", { focused_pane_id: "w1:p2", focused_pane_cwd: PLUGIN }, { HERDR_PLUGIN_ROOT: PLUGIN });
+  assert.equal(start.status, 1);
+  assert.match(start.out, /plugin's own/);
 });

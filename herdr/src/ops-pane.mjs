@@ -51,9 +51,23 @@ function git(root, args) {
   return spawnSync("git", ["-C", root, ...args], { encoding: "utf8" });
 }
 
+// Move the remote base to the tree a patch came from, once that patch is in the local worktree. If
+// that step fails, the tree is kept as pendingTree and the next apply finishes it first, so the same
+// change is never offered twice.
+function advanceBase(mapping, tree) {
+  patchMapping(mapping.id, { pendingTree: tree });
+  remote(mapping, advanceBaseScript(remoteDir(mapping), tree));
+  return patchMapping(mapping.id, { pendingTree: null, lastAppliedAt: new Date().toISOString() });
+}
+
 async function applyChanges(mapping) {
   if (mapping.kind === "sandbox" && !mapping.sandboxId) throw new PluginError("this sandbox is still being created");
+  if (!mapping.copied) throw new PluginError("the worktree was never fully copied in", "reconnect to finish the copy first");
   const where = mapping.kind === "box" ? `box ${mapping.box}` : `sandbox ${mapping.sandboxId}`;
+  if (mapping.pendingTree) {
+    say("Finishing the last apply (its changes are already in this worktree)...");
+    mapping = advanceBase(mapping, mapping.pendingTree);
+  }
   say(`Changes in ${where} since the copy (or the last apply)`);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "herdr-prized-patch-"));
   try {
@@ -79,9 +93,16 @@ async function applyChanges(mapping) {
     }
     const applied = git(mapping.root, ["apply", "--binary", local]);
     if (applied.status !== 0) throw new PluginError(`git apply failed:\n${applied.stderr.trimEnd()}`);
-    remote(mapping, advanceBaseScript(remoteDir(mapping), tree));
-    patchMapping(mapping.id, { lastAppliedAt: new Date().toISOString() });
-    say("Applied. The next apply shows only what changes after this.");
+    say("Applied to this worktree.");
+    try {
+      advanceBase(mapping, tree);
+    } catch (error) {
+      throw new PluginError(
+        `the changes are in this worktree, but ${where} could not be told so: ${explain(error)}`,
+        "the next apply finishes that first; it will not offer these changes again",
+      );
+    }
+    say("The next apply shows only what changes after this.");
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
@@ -93,22 +114,38 @@ async function deleteTarget(mapping) {
     say(`The box and the files in ~/herdr/${mapping.dirName} stay.`);
     const answer = (await readLine("Stop it? [y/N] ")).trim().toLowerCase();
     if (answer !== "y" && answer !== "yes") return say("Nothing changed.");
-    const run = prized(["ssh", mapping.box, "--kill", mapping.session]);
-    if (run.status !== 0) say(`(the session was already gone: ${String(run.stderr).trim().split("\n").pop()})`);
+    // -y: the CLI asks before killing a session, and this popup's answer was the yes.
+    const run = prized(["ssh", mapping.box, "--kill", mapping.session, "-y"]);
+    const said = String(run.stderr);
+    if (run.status !== 0 && !/can't find session|no server running|session not found/i.test(said)) throw prizedFailure(["ssh", "--kill"], run);
   } else {
-    if (mapping.sandboxId) {
-      say(`This deletes sandbox ${mapping.sandboxId} for good: its files, memory and processes.`);
+    // A create cut short leaves no id in the mapping: its label still finds the sandbox.
+    const ids = mapping.sandboxId ? [mapping.sandboxId] : labelledSandboxes(mapping);
+    if (ids.length) {
+      say(`This deletes sandbox ${ids.join(", ")} for good: its files, memory and processes.`);
       say("Apply the agent's changes first if you want them.");
       const typed = (await readLine("Type DELETE to delete it: ")).trim();
       if (typed !== "DELETE") return say("Nothing changed.");
-      const run = prized(["sandbox", "rm", mapping.sandboxId]);
-      if (run.status !== 0 && run.status !== 5) throw prizedFailure(["sandbox", "rm"], run);
+      for (const id of ids) {
+        const run = prized(["sandbox", "rm", id]);
+        if (run.status !== 0 && run.status !== 5) throw prizedFailure(["sandbox", "rm"], run);
+      }
     }
   }
   updateState((state) => {
     delete state.mappings[mapping.id];
   });
   say(mapping.kind === "box" ? "Stopped." : "Deleted.");
+}
+
+function labelledSandboxes(mapping) {
+  const listed = prized(["sandbox", "ls", "--label", `herdr-mapping=${mapping.id}`, "--json"]);
+  if (listed.status !== 0) throw prizedFailure(["sandbox", "ls"], listed);
+  try {
+    return (JSON.parse(String(listed.stdout)).sandboxes ?? []).map((s) => s.id);
+  } catch {
+    throw new PluginError("prized sandbox ls --json printed something that is not JSON");
+  }
 }
 
 async function main() {

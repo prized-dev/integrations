@@ -51,6 +51,7 @@ function sandbox(id) {
 }
 
 function run(home, script, input) {
+  if (process.env.FAKE_FAIL_SCRIPT && script.includes(process.env.FAKE_FAIL_SCRIPT)) fail(1, "forced failure of this script");
   fs.mkdirSync(path.join(home, "work"), { recursive: true });
   const bin = path.join(root, "bin");
   fs.mkdirSync(bin, { recursive: true });
@@ -153,6 +154,10 @@ if (group === "sandbox") {
   } else fail(2, `fake: box ${cmd}?`);
 } else if (group === "exec") {
   run(boxHome(cmd), rest.slice(rest.indexOf("--") + 1).join(" "), stdin);
+} else if (group === "ssh" && rest.includes("--kill")) {
+  // Like the real CLI: it asks first, and a closed stdin is a no.
+  if (!rest.includes("-y")) fail(1, "declined");
+  process.stdout.write(`killed session "${rest[rest.indexOf("--kill") + 1]}"\n`);
 } else if (group === "ssh") {
   process.stdout.write(`[attached to box ${cmd}]\n`);
   process.exit(Number(process.env.FAKE_SSH_EXIT || 0));
