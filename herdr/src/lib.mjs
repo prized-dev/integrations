@@ -209,11 +209,12 @@ export function herdr(args, options = {}) {
   return spawnSync(herdrBin(options.env), args, { encoding: "utf8", stdio: options.stdio ?? "pipe", env: options.env ?? process.env });
 }
 
-export function openPane(entrypoint, context, { placement, env = {}, cwd, focus = true } = {}) {
+// No --cwd: a pane's command runs from its working directory, and the manifest names our scripts
+// relative to the plugin root, which is where herdr starts panes by default.
+export function openPane(entrypoint, context, { placement, env = {}, focus = true } = {}) {
   const args = ["plugin", "pane", "open", "--plugin", PLUGIN_ID, "--entrypoint", entrypoint];
   if (placement) args.push("--placement", placement);
   if (placement === "split" && context.focused_pane_id) args.push("--target-pane", context.focused_pane_id, "--direction", "right");
-  if (cwd) args.push("--cwd", cwd);
   for (const [key, value] of Object.entries(env)) {
     if (!isEnvName(key) || /[\n\0]/.test(String(value))) throw new PluginError(`bad pane variable ${key}`);
     args.push("--env", `${key}=${value}`);

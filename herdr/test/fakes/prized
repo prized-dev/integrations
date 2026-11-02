@@ -127,6 +127,7 @@ if (group === "sandbox") {
     s.attaches = (s.attaches ?? 0) + 1;
     save();
     process.stdout.write(`[attached to ${rest[0]} session ${rest[rest.indexOf("-s") + 1]}]\n`);
+    if (process.env.FAKE_SSH_SLEEP) spawnSync("sleep", [process.env.FAKE_SSH_SLEEP]);
     process.exit(Number(process.env.FAKE_SSH_EXIT || 0));
   } else if (cmd === "pause") {
     sandbox(rest[0]).state = "paused";

@@ -48,6 +48,8 @@ test("start-sandbox opens the agent pane beside the invoking pane", () => {
   assert.match(open, /^plugin pane open --plugin prized\.sandbox --entrypoint agent --placement split --target-pane w1:p1 --direction right/);
   assert.ok(open.includes(`--env PRIZED_HERDR_MAPPING=${mapping.id}`));
   assert.ok(open.includes("--env HERDR_AGENT=claude"));
+  // A --cwd would make herdr start `node src/agent-pane.mjs` outside the plugin root (seen with herdr 0.9.3).
+  assert.ok(!open.includes("--cwd"));
   assert.equal(prizedCalls(w).length, 0, "the action itself creates nothing");
 });
 

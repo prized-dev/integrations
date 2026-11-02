@@ -68,7 +68,7 @@ function start(kind) {
     updateState((state) => {
       state.mappings[id] = mapping;
     });
-    openPane("agent", context, { placement: "split", cwd: root, env: paneEnv(mapping) });
+    openPane("agent", context, { placement: "split", env: paneEnv(mapping) });
     result(`start-${kind}`, "opened", { mapping: id });
   };
 }
@@ -81,7 +81,7 @@ function paneEnv(mapping) {
 
 function reconnect(context) {
   const mapping = mappingFor(context);
-  openPane("agent", context, { placement: "split", cwd: mapping.root, env: paneEnv(mapping) });
+  openPane("agent", context, { placement: "split", env: paneEnv(mapping) });
   result("reconnect", "opened", { mapping: mapping.id, sandbox: mapping.sandboxId, box: mapping.box });
 }
 
