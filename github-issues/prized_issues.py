@@ -686,8 +686,8 @@ def recorder(full: str, wt: Path):
     if mod is None:
         say(f"{full}: replays are on but {REPLAY_FILE} isn't beside {tilde(Path(__file__).resolve())}")
         return None
-    tokens = [t.read_text(encoding="utf-8").strip() for t in TOKENS.glob("*") if t.is_file()] if TOKENS.is_dir() else []
     try:
+        tokens = [t.read_text(encoding="utf-8", errors="replace").strip() for t in TOKENS.glob("*") if t.is_file()]
         return mod.Recording(workdir=wt, extra_secrets=tokens)
     except Exception as e:
         say(f"{full}: no replay for this turn ({type(e).__name__}: {e})")
@@ -697,6 +697,8 @@ def recorder(full: str, wt: Path):
 def replay_report(full: str, number: int, key: str, tape, start: str, head: str, trusted: bool):
     """The turn's replay, written under ~/.prized-issues/replays: its pull request lines, or None."""
     if tape is None:
+        if load_state()["runs"][key].get("replay_block"):  # a held change pushed later never carries an older replay
+            save_run(key, replay="", replay_block="")
         return None
     rec = load_state()["runs"][key]
     mod = replay_module()
@@ -719,7 +721,9 @@ def replay_report(full: str, number: int, key: str, tape, start: str, head: str,
             title=f"#{number} {rec.get('title') or ''}".strip(),
             mode="auto" if trusted else "edits only",
         )
-        rep.write()
+        if not rep.write():
+            save_run(key, replay="", replay_block=quiet_mentions(rep.block(DOCS)))
+            return rep
         if rep.url and not mod.server_up(REPLAY_PORT):
             rep.lines.append(
                 "_The replay server on the box isn't running: `systemctl --user restart prized-issues-replays`._"
@@ -850,14 +854,15 @@ def push_and_report(full: str, number: int, key: str, head: str, final: str, rep
     summary = f"\n\n{quiet_mentions(clean_text(shown, 4000)).strip()}" if shown else ""
     if rec.get("pr"):
         save_run(key, status="pr", held_sha="", pushed=head)
-        comment(full, rec["pr"], f"Pushed `{head[:12]}` to this branch.{summary}" + (f"\n\n{block}" if block else ""))
+        lead = f"Pushed `{head[:12]}` to this branch."
+        comment(full, rec["pr"], lead + (f"\n\n{block.rstrip()}" if block else "") + summary)
         return
     save_run(key, pushed=head)
     title = git(wt, "log", "-1", "--format=%s", head).strip()[:200] or f"Issue #{number}"
     body = (
-        f"Closes #{number}.{summary}"
+        f"Closes #{number}."
         + (f"\n\n{block.rstrip()}" if block else "")
-        + f"\n\n---\n{who} worked on this on a Prized box for @{rec.get('actor')}. "
+        + f"{summary}\n\n---\n{who} worked on this on a Prized box for @{rec.get('actor')}. "
         "A member's `/prized <request>` comment here continues the same session.\n\n"
         f"<sub>Opened by [prized-issues]({FOOTER_LINK})</sub>"
     )

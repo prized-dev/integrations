@@ -138,7 +138,7 @@ class ReplayRunTest(ReplayBox):
         self.assertIn(f"**[▶ Replay this run]({LINK}/r/{page.name})**", body)
         self.assertIn("**Files changed:** 1 (+1 \u22121) · `calc.py`", body)
         self.assertIn("**Commands run:** 1 by the agent", body)
-        self.assertIn("**Tests:** passed · `python3 -m unittest -q` exited 0 (exit code seen on the box", body)
+        self.assertIn("**Tests:** passed · `python -m unittest` exited 0 (exit code seen on the box", body)
         self.assertEqual(rec["replay"], f"{LINK}/r/{page.name}")
         data = page_data(page)
         self.assertEqual(data["context"]["pr"], rec["pr"], "the page links back to its pull request")
@@ -156,7 +156,7 @@ class ReplayRunTest(ReplayBox):
         self.plan({"run": ["python3 -m unittest -q 2>&1 | tail -1"], "write": {"x.txt": "1\n"}, "commit": "Try"})
         self.poll()
         body = self.fake.pulls[self.run_of(n)["pr"]]["body"]
-        self.assertIn("**Tests:** FAILED · `python3 -m unittest -q` exited 1 (exit code seen on the box", body)
+        self.assertIn("**Tests:** FAILED · `python -m unittest` exited 1 (exit code seen on the box", body)
 
     def test_three_kinds_of_planted_secrets_never_leave_the_box(self):
         """An env var, a .env file and a token echoed to the terminal, put everywhere the recorder looks: in commands,
@@ -187,6 +187,19 @@ class ReplayRunTest(ReplayBox):
             for piece in (value, value[-12:]):
                 self.assertNotIn(piece, public, f"{name} ({piece[:6]}...) left the box")
         self.assertIn("PORT=3000", public, "harmless settings stay readable")
+
+    def test_the_test_commands_arguments_never_reach_the_pull_request(self):
+        """The pull request is public and a command line can hold a key no rule knows: it names the runner only."""
+        key = "Kx7Qm2Vr9Lp4Ns8Bt3Wd"
+        (self.home / "keys").mkdir()
+        (self.home / "keys" / "staging").write_text(key + "\n")  # not a credential file name, not an env var
+        n = self.label()
+        self.plan(self.fix_and_test('python3 -m unittest -q --locals -k "$(cat ~/keys/staging)" 2>/dev/null'))
+        self.poll()
+        body = self.fake.pulls[self.run_of(n)["pr"]]["body"]
+        self.assertIn("`python -m unittest`", body)
+        self.assertNotIn(key, body)
+        self.assertNotIn(key[-12:], body)
 
     def test_without_ptrace_the_pull_request_says_so(self):
         self.env["PRIZED_ISSUES_REPLAY_PTRACE"] = "0"
@@ -304,6 +317,32 @@ class RecorderTest(unittest.TestCase):
         sleeper = next(p for p in rec.procs if "sleep" in p["argv"][:2])
         stat = Path(f"/proc/{sleeper['pid']}/stat")
         self.assertTrue(not stat.exists() or stat.read_text().rsplit(")", 1)[1].split()[0] in "ZX", "it was killed")
+
+    def test_shell_loops_and_forked_workers_soon_run_at_full_speed(self):
+        script = (
+            "seq 1 20000 | while read l; do :; done; "
+            "python3 -c 'import os\nif os.fork() == 0:\n  [os.stat(\".\") for _ in range(50000)]\n  os._exit(0)\nos.wait()'"
+        )
+        t = time.time()
+        rec, rc, _ = self.record(script)
+        self.assertEqual(rc, 0)
+        self.assertGreaterEqual(rec.stats.get("full_speed", 0), 2, "the shell and the forked worker were let run")
+        self.assertLess(rec.stats["stops"], 20000)
+        self.assertLess(time.time() - t, 30)
+
+    def test_a_line_too_long_to_keep_is_dropped_whole_never_cut(self):
+        self.addCleanup(setattr, rp, "LINE_MAX", rp.LINE_MAX)
+        rp.LINE_MAX = 4000
+        tok = "tokZZ" + uuid.uuid4().hex + "Q9"
+        rec, rc, raw = self.record(
+            'python3 -c \'import sys; print("x" * 3990 + sys.argv[1] + "y" * 3000); print("after")\' "$T"', T=tok
+        )
+        self.assertIn(tok.encode(), raw, "the run log has every byte")
+        kept = b"\n".join(line for _, line in rec.stream)
+        self.assertNotIn(tok[:10].encode(), kept)
+        self.assertNotIn(tok[-10:].encode(), kept)
+        self.assertIn(b"after", kept)
+        self.assertTrue(any("isn't in the replay" in n for n in rec.notes))
 
     def test_a_missing_agent_doesnt_start(self):
         rec = rp.Recording(workdir=self.work)
@@ -433,6 +472,44 @@ class UnitTest(unittest.TestCase):
             self.assertNotIn(bad, out)
         self.assertEqual(red.leaks(out), [])
         self.assertEqual(red.leaks("x s3cretVALUE12345"), ["a secret value"])
+
+    def test_headers_flags_urls_and_password_words(self):
+        red = rp.Redactor(
+            ["postgres://app:pwABCdef123456@db:5432/app", json.dumps({"client_secret": "gcsXYZ1234567890abc"})]
+        )
+        masked = {
+            "Authorization: Bearer Kx7Qm2Vr9Lp4Ns8Bt3Wd": "Kx7Qm2",
+            "X-API-Key: Kx7Qm2Vr9Lp4Ns8Bt3Wd": "Kx7Qm2",
+            "curl -u x --api-key Kx7Qm2Vr9Lp4Ns8Bt3Wd": "Kx7Qm2",
+            "tool --token=Kx7Qm2Vr9Lp4Ns8Bt3Wd": "Kx7Qm2",
+            "redis://:Rd5hunterQ9xw2@cache:6379/0": "Rd5hunter",
+            "the password alone: pwABCdef123456": "pwABCdef",
+            "gcsXYZ1234567890abc": "gcsXYZ",
+            "password: correcthorsebatterystaple": "correcthorse",
+            "PASSPHRASE=hunterHUNTER42x": "hunterHUNTER",
+        }
+        for text, secret in masked.items():
+            self.assertNotIn(secret, red.text(text), text)
+        kept = [
+            "Bearer authentication is used",
+            "password: ${DB_PASSWORD}",
+            "password = getpass()",
+            "mkdir -p build",
+            "tokenizer --token-file /tmp/x",
+            'tokenizer = AutoTokenizer.from_pretrained("bert-base")',
+        ]
+        for text in kept:
+            self.assertEqual(red.text(text), text)
+
+    def test_the_test_runner_is_named_from_a_fixed_list(self):
+        for cmd, label in (
+            ("/tmp/.venv/bin/python -m pytest tests/ -q --api-key SECRET123", "python -m pytest"),
+            ("npm run test -- --token=abc", "npm test"),
+            ("cd x && py.test -k foo", "pytest"),
+            ("go test ./...", "go test"),
+            ("bash -c ls", "tests"),
+        ):
+            self.assertEqual(rp.test_label(cmd), label)
 
     def test_summary_lines(self):
         sm = {

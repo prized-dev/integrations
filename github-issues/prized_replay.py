@@ -46,6 +46,7 @@ NAME_RE = re.compile(r"[A-Za-z0-9._-]{8,200}")
 KEEP_DAYS = 30
 GRACE = 1.5  # seconds a turn's leftover processes get to end on their own once the agent has exited
 STREAM_MAX = 64 * 1024 * 1024  # stream bytes kept for the replay (the run log keeps everything)
+LINE_MAX = 16 * 1024 * 1024  # one stream line longer than this is left out of the replay whole
 ARGV_MAX = 1 << 20
 RESULT_MAX = 6000
 TEXT_MAX = 4000
@@ -64,7 +65,7 @@ NOT_SECRET_NAME = re.compile(
     re.I,
 )
 # A secret-ish word that ends the name or is followed by _...: GITHUB_TOKEN, token_secret, "password" (not tokenizer).
-_KW = r"(?:SECRET|TOKEN|PASSWORD|PASSWD|PASS|PWD|API_?KEY|PRIVATE_KEY|ACCESS_KEY|CLIENT_SECRET|AUTH)"
+_KW = r"(?:SECRET|TOKEN|PASSWORD|PASSWD|PASSPHRASE|PASS|PWD|API_?KEY|PRIVATE_KEY|ACCESS_KEY|CLIENT_SECRET|AUTH)"
 ASSIGN = re.compile(
     r"(?i)(?P<pre>(?<![A-Za-z0-9])[A-Za-z0-9_]*" + _KW + r"(?:_[A-Za-z0-9_]*)?[\"']?\s*[=:]\s*[\"']?)"
     r"(?P<val>[^\s\"'*\[\],;{}()]{8,})"
@@ -89,9 +90,29 @@ PATTERNS = [
         ),
     ),
     ("key-material", re.compile(r"(?m)^[ \t\u2502|>+\-]*[A-Za-z0-9+/]{56,}={0,2}[ \t]*$")),
-    ("url-password", re.compile(r"(?<=://)[^:/\s@]+:[^@\s/]{3,}(?=@)")),
+    ("url-password", re.compile(r"(?<=://)[^:/\s@]*:[^@\s/]{3,}(?=@)")),
+    # A value after a secret-ish header, scheme or flag: Authorization: Basic ..., Bearer ..., X-Api-Key: ...,
+    # --api-key=... or --token ... (masked when it looks generated, like an assignment's value).
+    (
+        "auth-header",
+        re.compile(
+            r"(?i)(?P<pre>\b(?:proxy-)?authorization\s*[:=]\s*(?:basic|token|bot)?\s*)(?P<val>[A-Za-z0-9._~+/=\-]{8,})"
+        ),
+    ),
+    ("bearer", re.compile(r"(?i)(?P<pre>\bbearer\s+)(?P<val>[A-Za-z0-9._~+/=\-]{12,})")),
+    ("key-header", re.compile(r"(?i)(?P<pre>\bx-[a-z-]*(?:key|token|secret|auth)[a-z-]*\s*:\s*)(?P<val>[^\s\"']{8,})")),
+    (
+        "secret-flag",
+        re.compile(
+            r"(?i)(?P<pre>(?<![\w-])--?(?:api[-_]?key|(?:access[-_]|auth[-_])?token|password|passwd|passphrase|"
+            r"(?:client[-_])?secret|(?:access|secret)[-_]?key)(?:=|\s+))(?P<val>[^\s\"'-][^\s\"']{7,})"
+        ),
+    ),
     ("assignment", ASSIGN),
 ]
+NAMED = [
+    (n, rx) for n, rx in PATTERNS if "?P<pre>" in rx.pattern
+]  # rules whose value is masked only if it looks generated
 ANSI = re.compile(r"\x1b\[[0-9;?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[@-Z\\-_]")
 CRED_NAME = re.compile(r"token|secret|credential|passw|apikey|api_key|private|signing|auth|\.key$|\.pem$", re.I)
 CRED_FILES = (
@@ -127,6 +148,18 @@ def looks_secret(v: str) -> bool:
     if "://" in v and not re.search(r"://[^/\s:@]+:[^@\s]+@", v):
         return False
     return bool(re.search(r"\d", v)) or bool(re.search(r"[A-Z]", v) and re.search(r"[a-z]", v))
+
+
+def secret_after(pre: str, v: str) -> bool:
+    """A value written after a secret-ish name is one: if it looks generated, or, after a password's name, if it is any
+    word of 8+ characters that isn't a reference to somewhere else ($VAR, {{ x }}, <x>, a path or a URL)."""
+    if looks_secret(v):
+        return True
+    if not re.search(r"(?i)pass", pre) or len(v) < 8:
+        return False
+    return not (
+        v.startswith(("$", "{", "<", "%", "/", "./", "~")) or "://" in v or v.lower() in ("required", "optional")
+    )
 
 
 def shaped(v: str) -> bool:
@@ -174,6 +207,20 @@ def variants(v: str) -> set[str]:
         core = enc[(4 * k + 2) // 3 : len(enc) - 2]
         if len(core) >= 12:
             out.add(core)
+    return {x for x in out if len(x) >= 8}
+
+
+def derived(v: str) -> set[str]:
+    """Parts of a secret value that also show on their own: a URL's password, the strings inside a JSON value."""
+    out: set[str] = set()
+    if "://" in v:
+        with contextlib.suppress(ValueError):
+            pw = urllib.parse.urlsplit(v.strip()).password
+            if pw:
+                out |= {pw, urllib.parse.unquote(pw)}
+    if v.lstrip().startswith(("{", "[")):
+        with contextlib.suppress(ValueError):
+            out |= {x for x in json_strings(json.loads(v)) if len(x) >= 12 and looks_secret(x)}
     return {x for x in out if len(x) >= 8}
 
 
@@ -253,14 +300,16 @@ class Redactor:
     def _build(self):
         vs: set[str] = set()
         for v in self.base:
-            vs |= variants(v)
+            for part in {v} | derived(v):
+                vs |= variants(part)
         self.values = sorted(vs, key=len, reverse=True)
 
     def harvest(self, text: str) -> int:
         """Values written next to a secret-ish name anywhere (export X_TOKEN=..., "password": "..."): mask them
         everywhere, so a later bare echo of the same value is caught too."""
         text = ANSI.sub("", text or "")
-        added = {m.group("val") for m in ASSIGN.finditer(text) if looks_secret(m.group("val"))} - self.base
+        found = {(m.group("pre"), m.group("val")) for _, rx in NAMED for m in rx.finditer(text)}
+        added = {v for pre, v in found if secret_after(pre, v)} - self.base
         if added:
             self.base |= added
             self._build()
@@ -283,7 +332,7 @@ class Redactor:
             def sub(m, name=name):
                 pre = m.groupdict().get("pre") or ""
                 secret = m.group(0)[len(pre) :]
-                if name == "assignment" and not looks_secret(secret):
+                if pre and not secret_after(pre, secret):
                     return m.group(0)
                 self._hit(name)
                 return pre + f"[redacted:{name}]"
@@ -318,7 +367,10 @@ WALL = 0x40000000
 # execve and execveat by audit arch: x86_64, aarch64, i386
 EXECVE_NR = {0xC000003E: (59, 322), 0xC00000B7: (221, 281), 0x40000003: (11, 358)}
 AT_FDCWD = -100
-# Programs that exec others without forking first: they stop at syscalls too, so a setuid program they start is seen.
+# A process stops at system calls (so an exec of a setuid program is seen before it happens) from its fork until it
+# execs, and while it runs one of EXECERS, programs that often exec others without forking first. Each gets this many
+# stops, then runs at full speed: a shell loop or a forked worker that never execs costs the turn a moment, no more.
+SYS_BUDGET = 2000
 EXECERS = {
     "bash",
     "sh",
@@ -342,6 +394,9 @@ EXECERS = {
     "taskset",
     "flock",
 }
+# /snap/bin apps: snap re-execs itself (as snapd's copy), then, some 2,500 system calls in, execs snap-confine, which
+# has file capabilities.
+BIG_BUDGET = {"snap": 20000, "snapd": 20000}
 
 
 class SyscallInfo(ctypes.Structure):
@@ -482,7 +537,7 @@ class Recording:
         self.rc = None
         self.root = 0
         self._red: Redactor | None = None
-        self._exited: set[int] = set()
+        self._running: dict[int, dict] = {}  # pid -> its record, until it exits or runs another program
         self._live: set[int] = set()
         self._lock = threading.Lock()
 
@@ -624,7 +679,7 @@ class Recording:
 
     def _pump(self, fd: int, log, stop: threading.Event) -> None:
         """The agent's output: every byte to the run log as before, and each line, timestamped, to the recording."""
-        buf, stop_at = b"", None
+        buf, stop_at, skipping = b"", None, False
         while True:
             if stop.is_set() and stop_at is None:
                 stop_at = time.monotonic() + 2  # a process that still holds the pipe can't hold up the run
@@ -649,13 +704,24 @@ class Recording:
                 log.flush()
             t = time.time()
             *lines, buf = (buf + chunk).split(b"\n")
+            if skipping and lines:
+                lines, skipping = lines[1:], False  # the end of a line too long to keep
             for line in lines:
-                self._keep(t, line)
-            if len(buf) > 1 << 20:
-                self._keep(t, buf)
-                buf = b""
-        if buf:
+                if len(line) > LINE_MAX:
+                    self._dropped(len(line))
+                else:
+                    self._keep(t, line)
+            if len(buf) > LINE_MAX:
+                # Never split a line: a secret cut in two is a secret no rule recognizes. Drop it whole instead.
+                self._dropped(len(buf))
+                buf, skipping = b"", True
+        if buf and not skipping:
             self._keep(time.time(), buf)
+
+    def _dropped(self, n: int) -> None:
+        note = f"a line of the agent's stream over {LINE_MAX >> 20} MB isn't in the replay (the run log has it)"
+        if note not in self.notes:
+            self.notes.append(note)
 
     def _keep(self, t: float, line: bytes) -> None:
         if self.stream_bytes + len(line) > STREAM_MAX:
@@ -706,14 +772,14 @@ class Recording:
 
     def _trace(self, root: int) -> int:
         lib = libc()
-        mode: dict[int, bool] = {}  # tid -> stops at system calls (until it execs, and in shells)
+        mode: dict[int, int] = {}  # tid -> system-call stops left (0: runs at full speed)
         seen: set[int] = set()
         thread: dict[int, int] = {}  # tid -> tgid, for threads that aren't their group's leader
         root_status = None
         root_done = swept = 0.0
 
         def resume(tid: int, sig: int = 0) -> None:
-            lib.ptrace(PTRACE_SYSCALL if mode.get(tid) else PTRACE_CONT, tid, None, ctypes.c_void_p(sig or None))
+            lib.ptrace(PTRACE_SYSCALL if mode.get(tid, 0) > 0 else PTRACE_CONT, tid, None, ctypes.c_void_p(sig or None))
 
         def gone(tid: int) -> None:
             mode.pop(tid, None)
@@ -725,7 +791,8 @@ class Recording:
         opts = O_FORK | O_VFORK | O_CLONE | O_EXEC | O_EXIT | (O_SYSGOOD if self.sysinfo else 0)
         lib.ptrace(PTRACE_SETOPTIONS, root, None, ctypes.c_void_p(opts))
         seen.add(root)
-        mode[root] = self.sysinfo
+        budget = SYS_BUDGET if self.sysinfo else 0
+        mode[root] = budget
         with self._lock:
             self._live.add(root)
         resume(root)
@@ -782,9 +849,9 @@ class Recording:
                     tg = tgid_of(w)
                     if tg != w:
                         thread[w] = tg
-                        mode.setdefault(w, mode.get(tg, False))
+                        mode.setdefault(w, mode.get(tg, 0))
                     else:
-                        mode.setdefault(w, self.sysinfo)
+                        mode.setdefault(w, budget)
                         with self._lock:
                             self._live.add(w)
                 except Exception as e:
@@ -794,6 +861,14 @@ class Recording:
                 # A signal for the process: deliver it. A group-stop (no signal info): let it run on.
                 info = ctypes.create_string_buffer(128)
                 resume(w, sig if lib.ptrace(PTRACE_GETSIGINFO, w, None, info) >= 0 else 0)
+        # Reap what the loop stopped waiting for (a process seen at its exit event but not yet gone).
+        end = time.monotonic() + 0.3
+        while time.monotonic() < end:
+            try:
+                if os.waitpid(-1, WALL | os.WNOHANG)[0] == 0:
+                    time.sleep(0.01)
+            except ChildProcessError:
+                break
         return root_status if root_status is not None else 0
 
     def _error(self, e: BaseException) -> None:
@@ -808,9 +883,9 @@ class Recording:
             new = msg.value
             if ev == EV_CLONE and tgid_of(new) == thread.get(w, w):
                 thread[new] = thread.get(w, w)
-                mode.setdefault(new, mode.get(w, False))
+                mode.setdefault(new, mode.get(w, 0))
             else:
-                mode.setdefault(new, self.sysinfo)  # stops at system calls until it execs
+                mode.setdefault(new, SYS_BUDGET if self.sysinfo else 0)  # stops at system calls until it execs
                 with self._lock:
                     self._live.add(new)
         elif ev == EV_EXEC:
@@ -820,7 +895,8 @@ class Recording:
             thread.pop(w, None)
             with self._lock:
                 self._live.add(w)
-            mode[w] = self.sysinfo and exe_name(w) in EXECERS
+            name = exe_name(w)
+            mode[w] = (BIG_BUDGET.get(name) or (SYS_BUDGET if name in EXECERS else 0)) if self.sysinfo else 0
             self._on_exec(w)
         elif ev == EV_EXIT and thread.get(w, w) == w:
             self._on_exit(w, msg.value)
@@ -829,9 +905,12 @@ class Recording:
         """At a system call of a process that hasn't exec'd yet (or a shell): True when it was let go because it is
         about to exec a setuid program."""
         lib = libc()
+        mode[w] = max(mode.get(w, 0) - 1, 0)
+        if not mode[w]:
+            self.stats["full_speed"] = self.stats.get("full_speed", 0) + 1
         info = SyscallInfo()
         if lib.ptrace(PTRACE_GET_SYSCALL_INFO, w, ctypes.c_void_p(ctypes.sizeof(info)), ctypes.byref(info)) <= 0:
-            mode[w] = False
+            mode[w] = 0
             return False
         nrs = EXECVE_NR.get(info.arch)
         if info.op != 1 or not nrs or info.nr not in nrs:
@@ -865,6 +944,9 @@ class Recording:
         libc().ptrace(PTRACE_DETACH, w, None, None)
         self.stats["untraced"] += 1
         t = time.time()
+        prev = self._running.pop(w, None)
+        if prev is not None:  # a shell that execs the setuid program itself: its own program ends here
+            prev["t_end"], prev["code"] = t, None
         self.procs.append(
             {"t": t, "pid": w, "ppid": ppid_of(w), "argv": argv or [full], "cwd": None, "untraced": True, "t_end": None}
         )
@@ -893,20 +975,20 @@ class Recording:
                 self.values.add(v)
                 self.sources.add("env:" + k)
         self.stats["execs"] += 1
-        prev = next((p for p in reversed(self.procs) if p["pid"] == pid and p.get("t_end") is None), None)
+        prev = self._running.get(pid)
         t = time.time()
         if prev:  # the same process ran another program
             prev["t_end"], prev["code"] = t, None
-        self.procs.append({"t": t, "pid": pid, "ppid": ppid_of(pid), "argv": argv, "cwd": cwd, "t_end": None})
+        rec = {"t": t, "pid": pid, "ppid": ppid_of(pid), "argv": argv, "cwd": cwd, "t_end": None}
+        self._running[pid] = rec
+        self.procs.append(rec)
 
     def _on_exit(self, pid: int, status: int) -> None:
-        if pid in self._exited:
-            return
-        self._exited.add(pid)
+        """Called at the exit event and again when the exit is reaped: the first one records it."""
         with self._lock:
             self._live.discard(pid)
-        p = next((p for p in reversed(self.procs) if p["pid"] == pid and not p.get("untraced")), None)
-        if p and p.get("t_end") is None:
+        p = self._running.pop(pid, None)
+        if p is not None and p.get("t_end") is None:
             p["t_end"] = time.time()
             p["code"] = -(status & 0x7F) if status & 0x7F else (status >> 8) & 0xFF
 
@@ -1187,15 +1269,17 @@ def summarize(b: dict) -> dict:
         by_pid.setdefault(p["pid"], p)
     root = b["meta"].get("root_pid")
     groups = tool_groups(b)
+    exit_of = {p["pid"]: p.get("code") for p in procs}  # a process's last program: its exit code is the process's
     failed = 0
     for e in runs:
-        codes = [by_pid[g]["code"] for g, tid in groups.items() if tid == e["id"] and g in by_pid]
+        codes = [exit_of.get(g) for g, tid in groups.items() if tid == e["id"]]
         if traced and codes:
             failed += any(c not in (0, None) for c in codes)
         else:
             failed += bool(e.get("is_error") or e.get("exit_code"))
     out = {"tool_calls": len(tools), "commands": len(runs), "failed": failed, "traced": traced}
-    out["processes"] = len([p for p in procs if p["pid"] != root])
+    # The processes the agent's commands started (what the page counts), not the agent's own helpers.
+    out["processes"] = len([p for p in build(b)["procs"] if p["who"] == "tool" and not p["wrap"]])
     test = None
     if traced:
         hits = [
@@ -1216,16 +1300,26 @@ def summarize(b: dict) -> dict:
         top = [p for p in hits if not nested(p) and p["pid"] != root]
         if top:
             p = top[-1]
-            test = {"cmd": fmt_argv(p["argv"], 60), "code": p.get("code"), "seen": True}
+            test = {"cmd": test_label(" ".join(p["argv"])), "code": p.get("code"), "seen": True}
     if test is None:
         for e in runs:
             if TEST_CMD.search(e["summary"] or ""):
                 code = e.get("exit_code")
-                test = {"cmd": e["summary"].strip().splitlines()[0][:60] if e["summary"].strip() else "?", "code": code}
+                test = {"cmd": test_label(e["summary"]), "code": code}
                 test["seen"] = False
                 test["failed"] = bool(e.get("is_error")) or bool(code)
     out["tests"] = test
     return out
+
+
+def test_label(cmd: str) -> str:
+    """The test runner's name (`pytest`, `npm test`, `go test`), from TEST_CMD's fixed words only: the pull request is
+    public, and a command line can hold a secret no rule knows (`--api-key "$(cat key)"`). The replay has the rest."""
+    m = TEST_CMD.search(cmd or "")
+    if not m:
+        return "tests"
+    word = " ".join(m.group(0).replace("/", " ").split()).replace(" run ", " ").replace("py.test", "pytest")
+    return f"python {word}" if word.startswith("-m ") else word
 
 
 def md_code(s: str, n: int = 60) -> str:
@@ -1241,7 +1335,7 @@ def summary_lines(sm: dict, files: list[list]) -> list[str]:
         f", {sm['failed']} exited non-zero" if sm["failed"] else ""
     )
     if sm["traced"]:
-        l2 += f" ({sm['processes']} processes in all)"
+        l2 += f" ({sm['processes']} process{'' if sm['processes'] == 1 else 'es'} in all)"
     t = sm.get("tests")
     if not t:
         l3 = "**Tests:** none run by the agent"
@@ -1582,7 +1676,7 @@ class Report:
         """Markdown for the pull request (or a comment): the link and the three lines."""
         m, s = divmod(int(self.duration), 60)
         if self.leaks:
-            head = "**Replay:** withheld, because the recorder found something in it that it couldn't mask."
+            return "**Replay:** withheld, because the recorder found something in it that it couldn't mask.\n"
         elif self.url:
             head = (
                 f"**[\u25b6 Replay this run]({self.url})** \u00b7 {m}:{s:02d} of the agent's steps, every command it ran and the "

@@ -48,6 +48,40 @@ Step-by-step guide: [prized.dev/docs/github-issues](https://prized.dev/docs/gith
 
 Logs are in `~/.prized-issues/logs/`, one per run. A repo with `.prized/setup.sh` on its base branch gets that script run in each new worktree (installs, a build) before the agent starts.
 
+## Replay
+
+Optional: every pull request links a replay of the run, the agent's steps, every command it ran with its exit code, and the files it changed, on one timeline. Secrets are masked on the box, and the link opens only for members of your Prized workspace.
+
+1. On the box, beside `prized_issues.py`:
+
+   ```sh
+   curl -fsSLO https://raw.githubusercontent.com/prized-dev/integrations/main/github-issues/prized_replay.py
+   python3 prized_issues.py watch OWNER/REPO --replay
+   ```
+
+2. On your laptop, share the replay server's port with your workspace (or click **+** in the box page's **Ports** row):
+
+   ```sh
+   prized --box BOX ports share 7707
+   ```
+
+3. Back on the box, give it the link that printed:
+
+   ```sh
+   python3 ~/.prized-issues/prized_issues.py watch OWNER/REPO --replay https://BOX-7707-xxxxxx.p.prized.dev/
+   ```
+
+Each pull request then starts with **▶ Replay this run** and three lines: files changed, commands run, and the exit code of the agent's last test run as the box saw it, so `pytest | tail` can't hide a failure. Follow-ups, held changes and runs that changed nothing get their own. `--replay off` turns it off.
+
+- **How it records.** `prized_replay.py` runs the agent under ptrace, which reports each process it starts, its command line and its exit code, and nothing in between, so the agent runs at full speed. The agent's own event stream gives its steps; git gives the diff. Setuid programs such as `sudo` start untraced, so they keep working.
+- **What's masked.** Before anything is written: the values of secret-looking variables in every process the agent started, the worktree's `.env` files, the usual credential files in your home directory (`~/.claude`, `~/.codex`, `~/.config/gh`, `~/.netrc` and the like), this poller's GitHub tokens, and anything shaped like a key or token, in plain text, base64, JSON or URL form. A page that would still hold one isn't written, and the pull request says so.
+- **Where it lives.** One page per turn in `~/.prized-issues/replays/`, kept 30 days, served on the box's `127.0.0.1:7707` by the `prized-issues-replays` systemd user service, with no network access from the page.
+- **What reaches GitHub** is fixed words and numbers only: the link, file names, counts, and the test runner's name (`pytest`, `npm test`), never a command line.
+- **Processes the agent leaves running end with its turn,** so nothing from the run can change the replay after it's checked. A dev server the agent started isn't there for the follow-up.
+- **What it costs.** Under a second of CPU for a typical turn. A turn that starts thousands of processes takes up to twice as long for that stretch, about 1 ms per process.
+- **What doesn't work while recording:** tools that trace processes themselves (`strace`, `gdb`, LeakSanitizer in ASan builds), a setuid program a program starts by exec'ing it directly instead of forking (Python's `os.execv("/usr/bin/sudo", ...)`), and `kill -STOP` (the process keeps running). Turn replays off for a repo that needs these.
+- **A box that doesn't allow ptrace** still gets replays of the agent's steps; the pull request says the exit codes are as the agent reported them.
+
 ## Who can start a run
 
 - **Members only.** The token's owner, plus anyone named with `--members`, matched by GitHub user id. A label or a `/prized` comment from anyone else is ignored, write access or not, so a collaborator can't spend your plan or run commands on your box.
@@ -77,4 +111,4 @@ Every commit not yet on GitHub is checked, and the push is refused (with a comme
 scripts/test.sh github-issues
 ```
 
-Offline: a stand-in for the GitHub REST and GraphQL calls on loopback, a local bare repo for the git side, and stand-ins for `claude`, `codex` and `systemctl` (`tests/bin`). They cover label to pull request, follow-ups resuming the same session, members and non-members, held changes and `/prized push`, edits after the label, refused pushes, setup output kept out of commits, and a branch someone else pushed to or rewrote.
+Offline: a stand-in for the GitHub REST and GraphQL calls on loopback, a local bare repo for the git side, and stand-ins for `claude`, `codex` and `systemctl` (`tests/bin`). They cover label to pull request, follow-ups resuming the same session, members and non-members, held changes and `/prized push`, edits after the label, refused pushes, setup output kept out of commits, and a branch someone else pushed to or rewrote. `tests/test_replay.py` covers replays: the pull request lines, an env var, a `.env` file and a token echoed to the terminal that never leave the box, a hostile turn, `sudo` under the recorder, leftovers, timeouts, a box without ptrace, and the replay server.
