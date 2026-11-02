@@ -199,6 +199,19 @@ case $DIR in
     npm run typecheck
     npm run build
     offline npm test ;;
+  sandcastle)
+    # Same flow as mastra; FLOOR=1 pins the oldest @ai-hero/sandcastle the package supports. The
+    # offline tests run Sandcastle's own run() over a local stand-in for the SDK, so they need git.
+    need_sdk node
+    cp -r "$ROOT/$DIR/." "$WORK/pkg"
+    cd "$WORK/pkg"
+    [ -z "${SDK_TGZ:-}" ] || npm pkg set "dependencies.@prized/sdk=file:$SDK_TGZ"
+    [ -z "$FLOOR" ] || npm pkg set "devDependencies.@ai-hero/sandcastle=0.12.0"
+    npm install --no-audit --no-fund --no-package-lock --loglevel=error
+    npm ls --depth=0 @ai-hero/sandcastle @prized/sdk || true
+    npm run typecheck
+    npm run build
+    offline npm test ;;
   *)
     echo "scripts/test.sh doesn't know $DIR yet: add a case for it" >&2; exit 2 ;;
 esac

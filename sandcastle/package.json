@@ -1,0 +1,68 @@
+{
+  "name": "@prized/sandcastle",
+  "version": "0.1.0",
+  "description": "Prized Sandboxes for Sandcastle: run each agent in its own Firecracker microVM, with Claude Code and Codex installed.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "sandcastle",
+    "sandbox",
+    "prized",
+    "microvm",
+    "agents",
+    "claude-code"
+  ],
+  "author": "Prized <team@prized.dev>",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/prized-dev/integrations/tree/main/sandcastle#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prized-dev/integrations.git",
+    "directory": "sandcastle"
+  },
+  "bugs": {
+    "url": "https://github.com/prized-dev/integrations/issues"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run test/unit.test.ts",
+    "test:live": "vitest run test/live.test.ts",
+    "example": "tsx examples/run.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@prized/sdk": "^0.1.1"
+  },
+  "peerDependencies": {
+    "@ai-hero/sandcastle": ">=0.12.0 <1.0.0"
+  },
+  "devDependencies": {
+    "@ai-hero/sandcastle": "^0.12.0",
+    "@types/node": "^24.10.0",
+    "tsdown": "^0.23.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
