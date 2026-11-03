@@ -16,16 +16,16 @@ Options (`--ek key=value`): `template` (default `prized-base-v1`), `max_runtime_
 
 ## Results
 
-Terminal-Bench 2.1, all 89 tasks, oracle agent, no retries, `-n 6`, October 30, 2026, with this code as the built-in `-e prized` of a Harbor branch (main c65b9f6d): **79 of 89 pass (88.8%)** in 46 minutes, 3.67 sandbox-hours (about $0.47 at list price). Six of the failures are task rot that Sail also hit on Modal ([harbor#3475](https://github.com/harbor-framework/harbor/pull/3475#issuecomment-6022288555)); without them, 79 of 83 pass (95.2%).
+Terminal-Bench 2.1, all 89 tasks, oracle agent, no retries, `-n 6`, November 3, 2026, with Harbor 0.25.0 from PyPI and this package (0.4.0): **80 of 89 pass (89.9%)** in 35 minutes, 2.79 sandbox-hours (about $0.38 at list price). Five of the failures are task rot that Sail also hit on Modal ([harbor#3475](https://github.com/harbor-framework/harbor/pull/3475#issuecomment-6022288555)); without them, 80 of 84 pass (95.2%).
 
 | Fails | Why |
 |---|---|
-| build-cython-ext, crack-7z-hash, mcmc-sampling-stan, protein-assembly, qemu-alpine-ssh, qemu-startup | The task itself: dependencies moved, Debian 404s, or the reference solution runs past its timeout. They fail on Modal too |
+| build-cython-ext, mcmc-sampling-stan, protein-assembly, qemu-alpine-ssh, qemu-startup | The task itself: dependencies moved, Debian 404s, or the reference solution runs past its timeout. They fail on Modal too |
 | configure-git-webserver, git-multibranch | `git push` over ssh: sshd's login needs a real switch to the git user |
 | mailman | Postfix checks that `postdrop` is group-owned and setgid |
 | torch-tensor-parallelism | gloo's teardown deadlocks on fewer than 4 vCPUs (the task asks for 1); it passes with `--ek min_vcpu=4` |
 
-0.1.0 passed 70 of 89: ten tasks failed on `chown`, `dpkg` or `sudo`, and three on commands longer than about 15 minutes.
+crack-7z-hash, the sixth task on Sail's list, passed: its reference solution's brute force took 24 minutes. On October 30 it ran past its timeout, and the same code, built into a Harbor branch, passed 79 of 89. 0.1.0 passed 70 of 89: ten tasks failed on `chown`, `dpkg` or `sudo`, and three on commands longer than about 15 minutes.
 
 ## Dockerfile and Compose tasks: use a Prized box
 
@@ -59,7 +59,7 @@ Every task on the Hub ships prebuilt, digest-pinned images for its environment a
 
 - Prebuilt `docker_image` tasks only, pulled without credentials. Dockerfile builds and Docker Compose tasks are refused before a sandbox starts; a verifier built from `tests/Dockerfile` is refused when the verifier starts, after the agent has run (use the box route above). The image's `ENTRYPOINT` and `CMD` don't run.
 - One id underneath: a non-root user runs as its own uid and gid, but owns every file root owns, has no supplementary groups, can't `sudo`, and doesn't see other users' processes (root sees everyone's). Programs that check a real user switch (an `sshd` login, Postfix) fail.
-- Images are pulled anonymously. Docker Hub allows 100 anonymous pulls an hour per IP address, and the sandboxes on one Prized host share an address, so in a large run some starts can fail with `TOOMANYREQUESTS`; run those trials again later.
+- Images are pulled anonymously. Docker Hub limits anonymous pulls (100 an hour per IP address, as measured from a sandbox), so in a large run some starts can fail with `TOOMANYREQUESTS`; run those trials again later.
 - No network policies (`no-network`, `allow_internet = false`, allowlists) or GPUs: Harbor refuses those tasks before a sandbox starts, and a verifier with no network of its own when it starts. Storage is at most 128 GB.
 - Concurrency: each Terminal-Bench trial takes 1 vCPU, 2 GB of memory and 30 GB of disk, so the workspace's sandbox and disk quotas set how many run at once. Lower `image_headroom_gb` to fit more, or ask team@prized.dev to raise the quota for large runs. On the free tier pass `--ek max_runtime_min=60` (its limit) and `-n 1`: its 100 GB of disk fits three trial sandboxes, and a trial whose verifier runs in its own environment holds two while it verifies.
 
