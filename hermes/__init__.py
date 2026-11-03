@@ -2,8 +2,8 @@
 
 Registers ``terminal.backend: prized``: Hermes runs its terminal, file and
 ``execute_code`` commands in a Prized sandbox, a Firecracker microVM that
-pauses WITH its memory when Hermes releases it, so a process Hermes leaves
-running (``persist_on_release``) carries on at the next command.
+pauses WITH its memory when Hermes releases it, so processes still running in
+it carry on at the next command.
 
 Install into ``~/.hermes/plugins/prized/``, then:
 

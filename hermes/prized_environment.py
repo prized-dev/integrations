@@ -8,9 +8,9 @@ ships, and no vendor SDK.
 
 Persistence (``terminal.container_persistent: true``, the default) is pause and
 resume, not snapshots. When Hermes releases the environment (the idle reaper,
-session end, exit) the sandbox is PAUSED: its memory and disk are kept, so
-background processes (a dev server, a watcher, a REPL) freeze and carry on when
-the next command arrives. The sandbox id is stored per task under HERMES_HOME,
+or exit) the sandbox is PAUSED: its memory and disk are kept, so processes
+still running in it (a dev server, a watcher) freeze and carry on when the next
+command arrives. The sandbox id is stored per task under HERMES_HOME,
 so a later Hermes process resumes the same live machine.
 
 Limits that shape this module:
