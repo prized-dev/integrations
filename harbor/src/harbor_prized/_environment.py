@@ -30,9 +30,9 @@ Limits, by design of that approach:
   detached and polls them, so they outlive a dropped connection. A trial's
   sandbox is deleted after ``max_runtime_min`` of running (default 1440, up
   to 10080, 7 days), or ``paused_ttl_min`` after ``stop(delete=False)``
-  paused it (default 10080). While the trial runs, a heartbeat keeps it
-  from pausing; one a crashed run left behind pauses itself after 30 idle
-  minutes, so it stops billing compute.
+  paused it (default 1440, a day). While the trial runs, a heartbeat keeps
+  it from pausing; one a crashed run left behind pauses itself after 30
+  idle minutes, so it stops billing compute, and is deleted a day later.
 
 Credentials: ``PRIZED_API_KEY`` (a key with Sandboxes: Write). Extra constructor parameters
 (``--ek``): ``template`` (default ``prized-base-v1``), ``max_runtime_min``,
@@ -94,6 +94,11 @@ _MAX_DISK_GB = 128
 # behind stops billing compute); while a trial runs, a heartbeat counts as use.
 _IDLE_PAUSE_MIN = 30
 _HEARTBEAT_SEC = 300
+# Added when a quota refuses the sandbox: paused or leftover trial sandboxes count.
+_QUOTA_HINT = (
+    "Paused or leftover Harbor sandboxes count toward your quotas: once no run "
+    "is going, `prized sandbox rm --label harbor=1` removes them."
+)
 _CHUNK = 64 * 1024 * 1024  # the files API takes up to 100 MiB per request
 
 # Run by dpkg after each run (dpkg.cfg post-invoke): files a faked setuid chmod
@@ -212,7 +217,7 @@ class PrizedEnvironment(BaseEnvironment):
         *args,
         template: str = "prized-base-v1",
         max_runtime_min: int = 1440,
-        paused_ttl_min: int = 10080,
+        paused_ttl_min: int = 1440,
         min_vcpu: int = 1,
         image_headroom_gb: int = 20,
         labels: dict[str, str] | str | None = None,
@@ -410,6 +415,8 @@ class PrizedEnvironment(BaseEnvironment):
             await self._start(image)
 
     async def _start(self, image: str) -> None:
+        if self._sandbox is not None:  # a second start replaces the first
+            await self.stop(delete=True)
         vcpu, memory_mb, disk_gb = self._shape()
         try:
             self._sandbox = await AsyncSandbox.create(
@@ -436,6 +443,8 @@ class PrizedEnvironment(BaseEnvironment):
                 if "auth.md" not in message:
                     message = f"{message}. {_SIGN_UP_HINT}"
                 raise RuntimeError(message) from exc
+            if exc.code == "sandbox_quota_exceeded":
+                raise RuntimeError(f"{str(exc).rstrip('.')}. {_QUOTA_HINT}") from exc
             raise
         self._heartbeat = asyncio.create_task(self._keep_alive(self._sandbox))
         self.logger.debug(f"Prized sandbox {self._sandbox.id} for {image}")
@@ -495,6 +504,14 @@ class PrizedEnvironment(BaseEnvironment):
             await asyncio.sleep(_HEARTBEAT_SEC)
             try:
                 await sandbox.keep_alive()
+            except PrizedError as exc:
+                if exc.status in (404, 410) or exc.code in (
+                    "not_found",
+                    "sandbox_deleted",
+                    "handle_closed",
+                ):
+                    return  # deleted under us: nothing left to keep alive
+                self.logger.warning(f"Prized sandbox {sandbox.id} keep-alive: {exc}")
             except Exception as exc:  # noqa: BLE001 (the next beat tries again)
                 self.logger.warning(f"Prized sandbox {sandbox.id} keep-alive: {exc}")
 

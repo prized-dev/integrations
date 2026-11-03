@@ -225,7 +225,7 @@ async def test_start_creates_a_labelled_sandbox_and_unpacks_the_image(
 
     assert created["template"] == "prized-base-v1"
     assert created["labels"]["harbor-session"] == "prized-test"
-    assert (created["max_runtime_min"], created["auto_delete_min"]) == (1440, 10080)
+    assert (created["max_runtime_min"], created["auto_delete_min"]) == (1440, 1440)
     setup = sandbox.execs[0]["cmd"]
     assert "set -e; cd ~; umask 022; " in setup
     assert '"${PIPESTATUS[0]} ${PIPESTATUS[1]}"' in setup  # crane checked on its own
@@ -233,6 +233,7 @@ async def test_start_creates_a_labelled_sandbox_and_unpacks_the_image(
     assert (environment._image_env, environment._image_workdir) == ({"A": "1"}, "/w")
     assert environment._image_user == "app"
     assert sandbox.files.written[0][0] == "/home/prized/runtime.py"
+    await environment.stop(delete=True)
 
 
 @pytest.mark.asyncio
@@ -278,14 +279,42 @@ async def test_a_heartbeat_keeps_the_sandbox_from_pausing_until_stop(
 
     await environment.start(force_build=False)
     assert created["auto_pause_min"] == 30
-    while sandbox.beats < 3:
-        await asyncio.sleep(0.01)
+
+    async def beats(n):
+        while sandbox.beats < n:
+            await asyncio.sleep(0.01)
+
+    await asyncio.wait_for(beats(3), 5)
     heartbeat = environment._heartbeat
     await environment.stop(delete=True)
-    assert heartbeat.cancelled() or heartbeat.done()
+    await asyncio.sleep(0)
+    assert heartbeat.cancelled()
     beats = sandbox.beats
     await asyncio.sleep(0.05)
     assert sandbox.beats == beats and sandbox.deleted
+
+
+@pytest.mark.asyncio
+async def test_the_heartbeat_ends_when_the_sandbox_is_gone(tmp_path, monkeypatch):
+    environment = _environment(tmp_path, docker_image="python:3.12")
+    sandbox = _Sandbox()
+    sandbox.beat_raises = PrizedError("not_found", status=404)
+    monkeypatch.setattr(_module, "_HEARTBEAT_SEC", 0.01)
+
+    await asyncio.wait_for(environment._keep_alive(sandbox), 5)  # returns
+    assert sandbox.beats == 1
+
+
+@pytest.mark.asyncio
+async def test_a_quota_refusal_names_leftover_sandboxes(tmp_path, monkeypatch):
+    environment = _environment(tmp_path, docker_image="python:3.12")
+
+    async def create(template, **kwargs):
+        raise PrizedError("sandbox_quota_exceeded", reason="retained_disk", status=429)
+
+    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
+    with pytest.raises(RuntimeError, match="--label harbor=1"):
+        await environment.start(force_build=False)
 
 
 async def _no_image(self, image):
@@ -335,6 +364,7 @@ async def test_a_start_cut_off_by_the_network_is_retried_once(tmp_path, monkeypa
     assert len(sandboxes) == 2
     assert (sandboxes[0].deleted, sandboxes[1].deleted) == (True, False)
     assert environment._sandbox is sandboxes[1]
+    started = sandboxes[1]
 
     sandboxes.clear()
     monkeypatch.setattr(
@@ -343,6 +373,8 @@ async def test_a_start_cut_off_by_the_network_is_retried_once(tmp_path, monkeypa
     with pytest.raises(PrizedError):
         await environment.start(force_build=False)
     assert [s.deleted for s in sandboxes] == [True, True]  # twice at most
+    assert started.deleted  # a second start replaces the first sandbox
+    assert environment._heartbeat is None
 
 
 def _always(error, made):
