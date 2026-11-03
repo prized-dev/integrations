@@ -41,6 +41,29 @@ from .config import DEFAULT_WORKDIR, PrizedConfig
 # the parent's id and the run's label among them, at the level they log at.
 logger = logging.getLogger("verifiers.v1.runtimes.backends.prized")
 
+
+class _LastResort(logging.Handler):
+    """Warnings to stderr when nothing else would show them: verifiers.v1 carries a NullHandler,
+    which keeps logging's own last resort from printing them for a script or notebook that never
+    set up logging."""
+
+    def __init__(self) -> None:
+        super().__init__(logging.WARNING)
+
+    def emit(self, record: logging.LogRecord) -> None:
+        node: logging.Logger | None = logger
+        while node is not None:
+            if any(h is not self and not isinstance(h, logging.NullHandler) for h in node.handlers):
+                return  # a real handler up the chain shows it
+            if not node.propagate:
+                break
+            node = node.parent
+        if logging.lastResort is not None:
+            logging.lastResort.handle(record)
+
+
+logger.addHandler(_LastResort())
+
 T = TypeVar("T")
 
 RUN_ID = uuid.uuid4().hex[:12]
@@ -431,6 +454,8 @@ class ParentPool:
         """No parent is built before this: the last build failed."""
         self._build_strikes = 0
         self._replaced = 0
+        self._last_refusal: str | None = None
+        """The last refusal of room (a fork's or a parent's build), named when capacity_wait runs out."""
         self._wake = asyncio.Event()
         self._dispatcher: asyncio.Task[None] | None = None
         self._tasks: set[asyncio.Task[Any]] = set()
@@ -527,11 +552,12 @@ class ParentPool:
                 continue
             deadline = self._deadline(waiter)
             if deadline is not None and now > deadline:
+                last = f" (the last refusal: {self._last_refusal})" if self._last_refusal else ""
                 waiter.future.set_exception(
                     SandboxError(
                         f"verifiers-prized: no room for a copy within capacity_wait "
                         f"({self.recipe.capacity_wait:g}s): every parent's machine is full or the "
-                        "workspace is at a quota"
+                        f"workspace is at a quota{last}"
                     )
                 )
                 continue
@@ -643,6 +669,7 @@ class ParentPool:
     def _build_failed(self, err: Exception, created: float | None) -> None:
         # The setup it ran does not count; the failure is a refusal of room for every waiter.
         self._built(created)
+        self._last_refusal = str(err)
         self._refuse(self._waiters, time.monotonic())
         # The next build waits, so a refusing workspace does not get a create per wake-up.
         self._build_strikes += 1
@@ -810,6 +837,7 @@ class ParentPool:
         if requeue:
             back = [w for w in live if not w.future.done()]
             if refusal:
+                self._last_refusal = str(err)
                 self._refuse(back, now)
             self._waiters.extendleft(reversed(back))
 

@@ -41,6 +41,9 @@ def cloud(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[fake_priz
     )
     monkeypatch.setenv("PRIZED_API_KEY", FAKE_KEY)
     monkeypatch.setattr(pool, "LINGER", 0.05)
+    # The build CLI adds a handler to the package's logger: none outlives its test.
+    monkeypatch.setattr(pool.logger, "handlers", list(pool.logger.handlers))
+    monkeypatch.setattr(pool.logger, "level", pool.logger.level)
     pool._pools.clear()
     pool._tracked.clear()
     pool._used.clear()

@@ -157,6 +157,10 @@ class FakeCommandHandle:
         out, err, code = await asyncio.gather(
             pump(self._process.stdout, on_stdout), pump(self._process.stderr, on_stderr), self._process.wait()
         )
+        box = cloud().boxes.get(self.sandbox_id)
+        if box is None or box.state == "deleted":
+            # As the SDK's polls do once the sandbox is gone (deleted, or its run time over).
+            raise PrizedError("sandbox_deleted", status=410, sandbox_id=self.sandbox_id)
         return ExecResult(stdout=out, stderr=err, exit_code=code if code >= 0 else 128 - code)
 
     async def kill(self, signal: str = "SIGTERM") -> bool:

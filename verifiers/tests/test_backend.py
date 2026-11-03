@@ -992,3 +992,58 @@ def test_a_key_is_named_by_an_opaque_id_never_by_itself() -> None:
     assert first.key_id == again.key_id != other.key_id
     recipe = pool.Recipe.of(config(), first)
     assert "dcp_0000aaaa" not in repr(recipe) and "dcp_0000aaaa" not in repr(first)
+
+
+# --- the second 11-03 review ---------------------------------------------------------------------
+
+
+async def test_a_process_lost_mid_rollout_is_a_sandbox_error(cloud: Cloud) -> None:
+    # Its sandbox goes away under it (its run time over, its machine lost): verifiers gets a
+    # SandboxError with the cause, which its retry rules for sandbox errors match.
+    async with provisioned() as view:
+        process = await view.exec(["sleep", "30"], {})
+        cloud.delete(cloud.boxes[view.backend.info.id])
+        with pytest.raises(SandboxError, match="lost the process: .*sandbox_deleted"):
+            await process.wait()
+        assert await process.poll() == -1
+
+
+async def test_your_parent_stuck_between_states_names_that_when_it_fails(
+    cloud: Cloud, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(pool, "BACKOFF_MIN", 0.05)
+    monkeypatch.setattr(pool, "BACKOFF_MAX", 0.1)
+    mine = cloud.new_box("prized-base-v1", {}, {"owner": "me"}, "k")
+    mine.state = "resizing"
+    with pytest.raises(SandboxError, match="capacity_wait .*is resizing"):
+        async with asyncio.timeout(10), provisioned(parent=mine.id, capacity_wait=0.5):
+            pass
+    assert cloud.count("connect") >= 2
+
+
+def test_warnings_reach_stderr_when_nothing_else_shows_them(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import logging
+
+    library = logging.getLogger("verifiers.v1")
+    root = logging.getLogger()
+    # A script that never set up logging: verifiers.v1's NullHandler and nothing else.
+    monkeypatch.setattr(library, "handlers", [logging.NullHandler()])
+    monkeypatch.setattr(library, "propagate", True)
+    monkeypatch.setattr(root, "handlers", [])
+    monkeypatch.setattr(
+        pool.logger, "handlers", [h for h in pool.logger.handlers if type(h).__name__ == "_LastResort"]
+    )
+    pool.logger.warning("verifiers-prized: could not delete sandbox sbx_x")
+    assert "could not delete sandbox sbx_x" in capsys.readouterr().err
+    # Once something real shows them (verifiers' CLIs, the user's own setup), not twice.
+    seen: list[str] = []
+
+    class Seen(logging.Handler):
+        def emit(self, record: logging.LogRecord) -> None:
+            seen.append(record.getMessage())
+
+    monkeypatch.setattr(library, "handlers", [Seen()])
+    pool.logger.warning("verifiers-prized: once")
+    assert seen == ["verifiers-prized: once"] and "once" not in capsys.readouterr().err
