@@ -52,21 +52,21 @@ inspect eval arithmetic.py --model openai/gpt-5
 | `labels` | none | Extra labels; every sandbox also carries `created-by=inspect-prized`. |
 | `max_runtime_min` | `60` | Prized deletes the sandbox after this many running minutes, even if cleanup never ran. 60 is the free tier's maximum; on a paid plan, raise it for samples that run longer. |
 | `keep` | `False` | Pause sandboxes after each sample instead of deleting them, to inspect them later. A sample forked from a `setup` template is deleted 7 days after it pauses. |
-| `setup` | none | Shell commands that install what the task needs, in place of a Dockerfile. They run once, before the first sample, in a sandbox that is then paused, and every sample starts as a fork of it with the install done. |
+| `setup` | none | Shell commands that install what the task needs, in place of a Dockerfile. The first sample runs them in its own sandbox. For the second, they run once more in a sandbox that is then paused, and every later sample starts as a fork of it with the install done. |
 | `setup_timeout` | `1800` | Seconds each `setup` command may run. |
-| `python_alias` | `True` | `python` runs `python3`, as in Python images (HumanEval, MBPP and other evals call `python`). It works through `PATH`, so if `env` sets `PATH`, put `~/.local/bin` first in it. |
+| `python_alias` | `True` | `python` runs `python3`, as in Python images (HumanEval, MBPP and other evals call `python`). It works through `PATH`, so if `env` sets `PATH`, put `/home/prized/.local/bin` first in it. |
 
 ```python
 PrizedSandboxConfig(setup=["python3 -m venv ~/venv && ~/venv/bin/pip install numpy pandas"])
 ```
 
 - A sample that starts as a fork gets the template's remaining run time: `max_runtime_min` less what `setup` took.
-- If a fork doesn't fit on the template's machine, that sample gets a fresh sandbox and runs `setup` itself. So do samples of an eval with more than 4 distinct `setup` configs (a checkout per sample, say), past the fourth.
+- A sample runs `setup` in a fresh sandbox of its own when its fork doesn't fit on the template's machine, when its config is the only one of its kind so far, and when the eval already has templates for 4 other `setup` configs. A setup that only one sample uses (a checkout per sample, say) never builds a template.
 - The template stays paused until the eval ends, and is deleted then, even with `--no-sandbox-cleanup`. If the eval is killed before it can clean up, the template is deleted 7 days after it paused.
 
 To branch a sample's state (try several continuations from one point of a trajectory), fork its sandbox: `copies = await sandbox().as_type(PrizedSandboxEnvironment).fork(3)`. Each copy is a live copy (files, memory, processes) and goes with the sample: deleted, or paused with `keep=True`.
 
-Inspect runs up to 10 sandboxes at once by default (the free tier's limit). Raise it with `--max-sandboxes`. A paused template and `fork()` copies count toward the workspace's limit too: a sample that finds no free slot waits for one, up to 10 minutes.
+Inspect runs up to 10 sandboxes at once by default (the free tier's limit). Raise it with `--max-sandboxes`. A paused template and `fork()` copies count toward the workspace's limit too. When a sample's fork finds no free slot, the template is deleted to make room, and the rest of the eval runs `setup` in each sample's own sandbox. A `fork()` past the limit raises.
 
 ## Contract and limits
 

@@ -5,12 +5,11 @@ from __future__ import annotations
 import json
 import posixpath
 import secrets
-import time
-from collections.abc import Awaitable, Callable, Iterator
+from collections.abc import Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar
 from logging import getLogger
-from typing import Literal, TypeVar, Union, overload
+from typing import Literal, Union, overload
 
 import anyio
 from inspect_ai.util import (
@@ -37,7 +36,6 @@ except ImportError:  # pragma: no cover
 
 
 logger = getLogger(__name__)
-_T = TypeVar("_T")
 
 HOME = "/home/prized"
 WORKDIR = f"{HOME}/work"
@@ -47,16 +45,13 @@ LABEL = {"created-by": "inspect-prized"}
 _PATH = f"{HOME}/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 _ALIAS = f"mkdir -p {HOME}/.local/bin && ln -sf /usr/bin/python3 {HOME}/.local/bin/python"
 RUN_LABEL = "inspect-run"  # one id per eval, so task cleanup can find everything the eval made
-# At most this many set-up templates per eval (one per distinct setup config). Past it, a sample runs its
-# setup in its own sandbox: per-sample setups (a repo checkout per sample) gain nothing from a template,
-# and each paused template holds one of the workspace's sandbox slots until the eval ends.
+# A setup config gets a template on its second sample (the first runs setup in its own sandbox, so a
+# setup only one sample uses never builds one), and an eval gets at most MAX_TEMPLATES of them: each
+# paused template holds one of the workspace's sandbox slots until the eval ends.
 MAX_TEMPLATES = 4
 # A paused template is deleted this long after it pauses even if task cleanup never runs (the eval was
 # killed). Copies inherit it, so a forked sample kept with keep=True is deleted 7 days after it pauses.
 _TEMPLATE_DELETE_MIN = 7 * 24 * 60
-# A sample that finds the workspace at its sandbox quota waits this long for a slot (other samples, a
-# template, fork() copies all count) before it fails.
-QUOTA_WAIT_S = 600.0
 _QUOTA = "sandbox_quota_exceeded"
 _GONE = ("not_found", "sandbox_deleted")
 # prized 0.1.1+ (OutputReadError): the command ran, but its output could not be read back.
@@ -173,8 +168,8 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
     @override
     @classmethod
     def default_concurrency(cls) -> int | None:
-        # The free tier runs 10 sandboxes at once; set --max-sandboxes for more. Templates (setup) and
-        # fork() copies count too: a sample that finds no free slot waits for one (QUOTA_WAIT_S).
+        # The free tier runs 10 sandboxes at once; set --max-sandboxes for more. A setup template and
+        # fork() copies count too: when a sample's fork finds no slot, the template gives its slot up.
         return 10
 
     @override
@@ -182,10 +177,8 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
     async def task_init(cls, task_name: str, config: SandboxEnvironmentConfigType | None) -> None:
         # Inspect calls this (task_name "startup") before a config's first sample, and
         # task_cleanup ("shutdown") after the last; both see the batch's lifecycle state.
-        state = _state(create=True)
-        cfg = _config(config)
-        if cfg.setup and state is not None:
-            await _template(state, cfg)
+        # Templates are made on a config's second sample (_template), not here.
+        _state(create=True)
 
     @override
     @classmethod
@@ -199,17 +192,28 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
         template = await _template(state, cfg) if cfg.setup and state is not None else None
         if template is not None:
             try:
-                sandbox = (await _wait_for_quota(lambda: template.fork(1, labels=options["labels"])))[0]
+                sandbox = (await template.fork(1, labels=options["labels"]))[0]
             except PrizedError as err:
                 if err.code == _QUOTA:
-                    raise
+                    # No room for the template and this sample both: the template gives its slot up,
+                    # and the rest of the eval runs this setup in each sample's own sandbox.
+                    await _drop_template(state, cfg)
                 # Copies start on the template's machine; when it has no room (fork_capacity), or
                 # the fork fails otherwise, start a fresh sandbox and run the setup in it.
                 logger.info("Prized: fork of template %s failed (%s); creating a sandbox", template.id, err)
         if sandbox is None:
-            # Outside an eval's lifecycle (no task_init), past MAX_TEMPLATES, or when the fork
-            # failed: run the setup in the sample's own sandbox.
-            sandbox = await _wait_for_quota(lambda: AsyncSandbox.create(**options))
+            # A config's first sample, outside an eval's lifecycle (no task_init), past
+            # MAX_TEMPLATES, or when the fork failed: run the setup in the sample's own sandbox.
+            try:
+                sandbox = await AsyncSandbox.create(**options)
+            except PrizedError as err:
+                if err.code == _QUOTA:
+                    logger.warning(
+                        "Prized: the workspace is at its sandbox quota (%s); paused sandboxes count too. "
+                        "Run with a lower --max-sandboxes, or delete sandboxes you no longer need.",
+                        err.reason,
+                    )
+                raise
             try:
                 await _prepare(sandbox, cfg)
             except BaseException:
@@ -253,12 +257,17 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
     @classmethod
     async def task_cleanup(cls, task_name: str, config: SandboxEnvironmentConfigType | None, cleanup: bool) -> None:
         state = _state()
-        if state is not None:
-            # Templates hold no sample's state, so they go even with --no-sandbox-cleanup.
+        if state is not None and state.templates:
+            # Templates hold no sample's state, so they go even with --no-sandbox-cleanup; the label
+            # sweep catches one whose delete failed.
             for entry in list(state.templates.values()):
                 if entry.sandbox is not None:
                     await _discard(entry.sandbox)
             state.templates.clear()
+            try:
+                await AsyncSandbox.delete_by_labels({RUN_LABEL: state.run_id, "inspect-role": "template"})
+            except PrizedError as err:
+                logger.warning("Prized: cleanup of this eval's setup templates failed (%s)", err)
         try:
             if not cleanup or _config(config).keep:
                 return
@@ -278,8 +287,8 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
                 for ids in cls._live.values():
                     ids.difference_update(deleted)
         finally:
-            if sandbox_lifecycle_state() is None:
-                _fallback.set(None)  # outside Inspect's scope: the next lifecycle starts fresh
+            if state is not None:
+                state.done = True  # the next task_init starts a new eval's state
 
     @override
     @classmethod
@@ -465,6 +474,7 @@ class _Template:
     def __init__(self) -> None:
         self.lock = anyio.Lock()
         self.sandbox: AsyncSandbox | None = None
+        self.failed = False  # its build failed, or it gave its slot up: samples run setup themselves
 
 
 class _State:
@@ -473,7 +483,9 @@ class _State:
     def __init__(self) -> None:
         self.run_id = secrets.token_hex(8)
         self.templates: dict[str, _Template] = {}
+        self.seen: set[str] = set()  # setup configs that have had a sample
         self.swept = False
+        self.done = False  # task_cleanup ran (outside Inspect's scope, the state outlives the eval)
 
 
 # Outside a lifecycle scope (an older Inspect, or task_init called directly), task_init keeps the
@@ -486,7 +498,7 @@ def _state(create: bool = False) -> _State | None:
     if scope is not None:
         return scope.get(_State)
     state = _fallback.get()
-    if state is None and create:
+    if create and (state is None or state.done):
         state = _State()
         _fallback.set(state)
     return state
@@ -525,52 +537,55 @@ async def _prepare(sandbox: AsyncSandbox, cfg: PrizedSandboxConfig) -> None:
             )
 
 
-async def _wait_for_quota(make: Callable[[], Awaitable[_T]]) -> _T:
-    """Run make() (a create or a fork); while the workspace is at its sandbox quota, wait for a slot.
+def _template_key(cfg: PrizedSandboxConfig) -> str:
+    # Labels and keep don't change what a template holds (fork() sets each sample's labels).
+    return json.dumps(cfg.model_dump(exclude={"labels", "keep"}), sort_keys=True)
 
-    Other samples free slots as they finish, so a sample that arrives when Inspect's concurrency is
-    above what the workspace allows (a template or fork() copies take slots too) waits rather than
-    fails. A quota that waiting can't change (max_runtime) raises at once.
-    """
-    deadline = time.monotonic() + QUOTA_WAIT_S
-    delay = 1.0
-    warned = False
-    while True:
-        try:
-            return await make()
-        except PrizedError as err:
-            if err.code != _QUOTA or err.reason == "max_runtime" or time.monotonic() + delay > deadline:
-                raise
-            if not warned:
-                logger.warning("Prized: the workspace is at its sandbox quota (%s); waiting for a slot", err.reason)
-                warned = True
-            await anyio.sleep(delay)
-            delay = min(delay * 2, 15.0)
+
+async def _drop_template(state: _State, cfg: PrizedSandboxConfig) -> None:
+    entry = state.templates.get(_template_key(cfg))
+    if entry is None or entry.sandbox is None:
+        return
+    sandbox, entry.sandbox, entry.failed = entry.sandbox, None, True
+    logger.warning("Prized: no sandbox slot for setup template %s and a sample; deleting the template", sandbox.id)
+    await _discard(sandbox)
 
 
 async def _template(state: _State, cfg: PrizedSandboxConfig) -> AsyncSandbox | None:
-    """The eval's paused sandbox with cfg.setup done, which samples fork; made on first use.
+    """The eval's paused sandbox with cfg.setup done, which samples fork.
 
-    None past MAX_TEMPLATES distinct setups: those samples run setup in their own sandbox.
+    None for a config's first sample, past MAX_TEMPLATES configs, or once the config's template
+    failed or gave its slot up: those samples run setup in their own sandbox.
     """
-    # Labels and keep don't change what a template holds (fork() sets each sample's labels).
-    key = json.dumps(cfg.model_dump(exclude={"labels", "keep"}), sort_keys=True)
+    key = _template_key(cfg)
+    if key not in state.seen:
+        state.seen.add(key)
+        return None
     entry = state.templates.get(key)
     if entry is None:
         if len(state.templates) >= MAX_TEMPLATES:
             return None
         entry = state.templates.setdefault(key, _Template())
     async with entry.lock:
-        if entry.sandbox is None:
+        if entry.sandbox is None and not entry.failed:
             options = _options(cfg, "template")
             options["labels"].update({"inspect-role": "template", RUN_LABEL: state.run_id})
             options["auto_delete_min"] = _TEMPLATE_DELETE_MIN
-            sandbox = await _wait_for_quota(lambda: AsyncSandbox.create(**options))
+            sandbox = None
             try:
+                sandbox = await AsyncSandbox.create(**options)
                 await _prepare(sandbox, cfg)
                 await sandbox.pause()
+            except Exception as err:
+                # No room, or the setup failed: the samples run it themselves (and report a setup error).
+                entry.failed = True
+                logger.info("Prized: setup template for this config not made (%s); samples run setup", err)
+                if sandbox is not None:
+                    await _discard(sandbox)
+                return None
             except BaseException:
-                await _discard(sandbox)
+                if sandbox is not None:
+                    await _discard(sandbox)
                 raise
             entry.sandbox = sandbox
         return entry.sandbox
