@@ -21,7 +21,6 @@ import atexit
 import collections
 import contextlib
 import copy
-import hashlib
 import logging
 import math
 import os
@@ -143,7 +142,12 @@ class Credentials:
 
     @property
     def key_id(self) -> str:
-        return hashlib.sha256(self.api_key.encode()).hexdigest()[:16]
+        """An opaque name for the key, the same for the same key in this process: it stands in for
+        the key where one is compared or printed (a pool's recipe, the exit sweep)."""
+        return _key_ids.setdefault(self.api_key, uuid.uuid4().hex[:16])
+
+
+_key_ids: dict[str, str] = {}
 
 
 def credentials(config: PrizedConfig) -> Credentials:

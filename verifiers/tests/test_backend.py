@@ -985,3 +985,10 @@ async def test_close_finishes_deleting_a_replaced_parent(cloud: Cloud) -> None:
         fake_prized.AsyncSandbox.delete = real_delete  # type: ignore[method-assign]
     assert first.state == "deleted"
     assert cloud.live() == []
+
+
+def test_a_key_is_named_by_an_opaque_id_never_by_itself() -> None:
+    first, again, other = (pool.Credentials(k) for k in ("dcp_0000aaaa", "dcp_0000aaaa", "dcp_0000bbbb"))
+    assert first.key_id == again.key_id != other.key_id
+    recipe = pool.Recipe.of(config(), first)
+    assert "dcp_0000aaaa" not in repr(recipe) and "dcp_0000aaaa" not in repr(first)
