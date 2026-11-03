@@ -20,6 +20,7 @@ import asyncio
 import atexit
 import collections
 import contextlib
+import copy
 import hashlib
 import logging
 import math
@@ -27,7 +28,7 @@ import os
 import threading
 import time
 import uuid
-from collections.abc import Awaitable, Iterable, Mapping
+from collections.abc import Awaitable, Callable, Iterable, Mapping
 from dataclasses import dataclass, field
 from typing import Any, TypeVar
 
@@ -78,8 +79,11 @@ _CANNOT_FORK = frozenset({"fork_unsupported_host", "parent_not_forkable"})
 """This parent cannot fork (its machine, or its memory gone): a parent built here is replaced. Not
 `parent_too_big`, which a new parent of the same shape would meet again."""
 MAX_REPLACEMENTS = 3
-"""Parents replaced in a row, with no fork in between; past it the pool stops building and every
-rollout fails (each replacement runs `setup` again)."""
+"""Parents built here that could not fork before their first copy, in a row with no fork in between;
+past it the pool stops building and every rollout fails (each replacement runs `setup` again). A
+parent that has forked before (its machine retiring later, say) is replaced without counting."""
+_BUSY_STATES = frozenset({"starting", "pausing", "resizing"})
+"""A sandbox between states: `parent = "<id>"` in one of them is connected to again after a pause."""
 
 
 def passes(err: PrizedError) -> bool:
@@ -112,6 +116,17 @@ async def shielded(work: Awaitable[T]) -> T:
     if cancelled is not None:
         raise cancelled
     return task.result()
+
+
+def fresh(err: BaseException) -> BaseException:
+    """A copy of `err` to raise or hand on: raising one instance again and again (to every later
+    rollout, say) makes its traceback grow without end."""
+    try:
+        new = copy.copy(err)
+    except Exception:  # noqa: BLE001 - an error that cannot be copied is passed on as text
+        new = SandboxError(str(err))
+    new.__cause__ = err.__cause__
+    return new
 
 
 # --- credentials and the tracked sandboxes -------------------------------------------------------
@@ -230,6 +245,10 @@ class SetupError(SandboxError):
     """A `setup` command failed. It would fail again, so the pool does not retry it."""
 
 
+class ParentBusy(SandboxError):
+    """`parent = "<id>"` is between states: waited out like a refusal of room."""
+
+
 @dataclass(frozen=True)
 class Recipe:
     """What a parent is made of; rollouts whose configs share a recipe fork the same parents."""
@@ -293,9 +312,11 @@ async def build_sandbox(
     pause: bool,
     tracked: bool = True,
     run: str | None = None,
+    on_created: Callable[[], None] | None = None,
 ) -> Any:
-    """Create a sandbox and run `setup` in it, then pause it if asked. On any failure, or a
-    cancellation, the sandbox is deleted before the error goes on."""
+    """Create a sandbox and run `setup` in it, then pause it if asked (`on_created` is called once the
+    create has answered). On any failure, or a cancellation, the sandbox is deleted before the error
+    goes on."""
     missing = [name for name in recipe.setup_env if name not in os.environ]
     if missing:
         raise SetupError(f"setup_env names variables that are not set here: {', '.join(missing)}")
@@ -316,6 +337,8 @@ async def build_sandbox(
     )
     if tracked:
         track(sandbox.id, creds)
+    if on_created is not None:
+        on_created()
     try:
         logger.info(
             "verifiers-prized: %s %s up in %.1fs (label vfp-run=%s); running %d setup command(s)",
@@ -369,6 +392,9 @@ class Parent:
     strikes: int = 0
     fits: int | None = None
     """How many copies the last fork_capacity said fit, when fewer than were asked for."""
+    forked: bool = False
+    """It has made a copy: when it can no longer fork, its replacement does not count toward
+    MAX_REPLACEMENTS."""
 
 
 @dataclass(eq=False)
@@ -404,6 +430,8 @@ class ParentPool:
         self._wake = asyncio.Event()
         self._dispatcher: asyncio.Task[None] | None = None
         self._tasks: set[asyncio.Task[Any]] = set()
+        self._deletes: set[asyncio.Task[Any]] = set()
+        """The tasks in `_tasks` that delete a sandbox: `close` waits for them, never cancels them."""
         self._closed = False
         self._max_parents = recipe.max_parents
 
@@ -414,7 +442,7 @@ class ParentPool:
         if self._closed:
             raise SandboxError("verifiers-prized: this runtime's pool is closed")
         if self._sticky_error is not None:
-            raise self._sticky_error
+            raise fresh(self._sticky_error)
         waiter = _Waiter(self.loop.create_future(), time.monotonic())
         self._waiters.append(waiter)
         self._poke()
@@ -423,7 +451,9 @@ class ParentPool:
         except asyncio.CancelledError:
             future = waiter.future
             if future.done() and not future.cancelled() and future.exception() is None:
-                await shielded(discard(future.result()[0]))
+                child, parent = future.result()
+                await shielded(discard(child))
+                self.released(parent)
             raise
 
     def released(self, parent: Parent) -> None:
@@ -437,8 +467,10 @@ class ParentPool:
     async def close(self) -> None:
         """Fail the waiting rollouts and delete the parents this pool built."""
         self._closed = True
+        # Builds and forks are cancelled; deletes already under way (a replaced parent's) finish.
         for task in [*self._tasks, *([self._dispatcher] if self._dispatcher else [])]:
-            task.cancel()
+            if task not in self._deletes:
+                task.cancel()
         await asyncio.gather(*self._tasks, return_exceptions=True)
         self._fail(list(self._waiters), SandboxError("verifiers-prized: runtime pool closed"))
         self._waiters.clear()
@@ -456,15 +488,18 @@ class ParentPool:
         if not self._closed and (self._dispatcher is None or self._dispatcher.done()):
             self._dispatcher = self.loop.create_task(self._dispatch())
 
-    def _spawn(self, work: Awaitable[Any]) -> None:
+    def _spawn(self, work: Awaitable[Any], *, deletes: bool = False) -> None:
         task = asyncio.ensure_future(work)
         self._tasks.add(task)
         task.add_done_callback(self._tasks.discard)
+        if deletes:
+            self._deletes.add(task)
+            task.add_done_callback(self._deletes.discard)
 
     def _fail(self, waiters: list[_Waiter], error: BaseException) -> None:
         for waiter in waiters:
             if not waiter.future.done():
-                waiter.future.set_exception(error)
+                waiter.future.set_exception(fresh(error))
 
     def _drop_done(self) -> None:
         """Forget waiters that went away (cancelled) or were answered."""
@@ -557,7 +592,7 @@ class ParentPool:
                 await asyncio.wait_for(self._wake.wait(), timeout)
 
     async def _build(self) -> None:
-        began = time.monotonic()
+        created: list[float] = []
         try:
             if self.recipe.parent is not None:
                 sandbox = await sdk.AsyncSandbox.connect(self.recipe.parent, **self.creds.kwargs)
@@ -565,36 +600,45 @@ class ParentPool:
                     state = sandbox.state
                     with contextlib.suppress(Exception):
                         await sandbox.close()
-                    raise SetupError(
+                    message = (
                         f"verifiers-prized: parent {self.recipe.parent} is {state}; "
                         "only a running or paused sandbox can be forked"
                     )
+                    # Between states (resuming, pausing, resizing): connect again after a pause.
+                    raise ParentBusy(message) if state in _BUSY_STATES else SetupError(message)
                 self.parents.append(Parent(sandbox, owned=False))
             else:
                 sandbox = await build_sandbox(
-                    self.recipe, self.creds, role="parent", pause=self.recipe.pause_parent
+                    self.recipe,
+                    self.creds,
+                    role="parent",
+                    pause=self.recipe.pause_parent,
+                    on_created=lambda: created.append(time.monotonic()),
                 )
                 self.parents.append(Parent(sandbox, owned=True))
             self._build_strikes = 0
         except Exception as err:  # noqa: BLE001 - handed to the waiting rollouts
-            self._build_failed(err, began)
+            self._build_failed(err, created[0] if created else None)
         else:
-            self._built(began)
+            self._built(created[0] if created else None)
         finally:
             self._building -= 1
             self._poke()
 
-    def _built(self, began: float) -> None:
-        """A build that started at `began` ended: the time it took does not count against the
-        capacity_wait of the rollouts refused room before or during it."""
+    def _built(self, created: float | None) -> None:
+        """A build ended. The time from its create's answer (`created`) to now, its `setup` and
+        pause, does not count against the capacity_wait of the rollouts refused room before or
+        during it; the create itself does (an SDK retrying a full workspace is waiting for room)."""
+        if created is None:
+            return
         now = time.monotonic()
         for waiter in self._waiters:
             if waiter.refused_at is not None:
-                waiter.refused_at += now - max(began, waiter.refused_at)
+                waiter.refused_at += now - max(created, waiter.refused_at)
 
-    def _build_failed(self, err: Exception, began: float) -> None:
+    def _build_failed(self, err: Exception, created: float | None) -> None:
         # The setup it ran does not count; the failure is a refusal of room for every waiter.
-        self._built(began)
+        self._built(created)
         self._refuse(self._waiters, time.monotonic())
         # The next build waits, so a refusing workspace does not get a create per wake-up.
         self._build_strikes += 1
@@ -602,7 +646,7 @@ class ParentPool:
         if isinstance(err, PrizedError):
             pause = max(err.retry_after or 0.0, pause)
         self._build_retry_at = time.monotonic() + pause
-        transient = isinstance(err, PrizedError) and passes(err)
+        transient = isinstance(err, ParentBusy) or (isinstance(err, PrizedError) and passes(err))
         if isinstance(err, PrizedError) and err.status == 404 and self.recipe.parent is not None:
             err = SetupError(f"verifiers-prized: parent {self.recipe.parent} not found: {err}")
         elif not isinstance(err, SandboxError):
@@ -655,6 +699,7 @@ class ParentPool:
                 " ".join(child.id for child in children),
             )
             parent.rest_until, parent.strikes, parent.fits = 0.0, 0, None
+            parent.forked = True
             self._strikes = self._replaced = 0
             # A rollout that went away while its copy was being made hands it to the next one.
             takers = live + list(self._waiters)
@@ -670,6 +715,7 @@ class ParentPool:
             self._waiters = collections.deque(w for w in self._waiters if not w.future.done())
             if spare:
                 await shielded(asyncio.gather(*(discard(c) for c in spare), return_exceptions=True))
+                self.released(parent)
         except BaseException as err:
             # Cancelled (the pool is closing): copies not handed out yet are deleted, and the
             # rollouts this fork was for, out of the queue `close` fails, are failed here.
@@ -723,13 +769,14 @@ class ParentPool:
             # Gone, or unable to fork: delete it (discard untracks it) and build another, unless
             # the last few could not fork either: then setup is not run again in this process.
             self.parents = [p for p in self.parents if p is not parent]
-            self._spawn(discard(parent.sandbox))
-            self._replaced += 1
+            self._spawn(discard(parent.sandbox), deletes=True)
+            if not parent.forked:
+                self._replaced += 1
             refusal = False
             if self._replaced > MAX_REPLACEMENTS:
                 failed = SetupError(
-                    f"verifiers-prized: {self._replaced} parents in a row could not fork, so no more are "
-                    f"built in this process; the last: {err}"
+                    f"verifiers-prized: {self._replaced} new parents in a row could not fork, so no more "
+                    f"are built in this process; the last: {err}"
                 )
                 self._sticky_error = failed
                 self._fail(live, failed)

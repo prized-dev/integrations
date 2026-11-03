@@ -33,7 +33,7 @@ For `vf-validate`, the same fields go under `[runtime]`. Every field is in [Sett
 2. Each rollout forks that parent and gets its own running copy. Rollouts that start together are forked in one request.
 3. A copy is deleted when its rollout ends. The parent is deleted when the process exits.
 
-Whatever `setup` leaves behind is in every copy: files, installed packages, and processes started with `nohup ... &` (a server, a loaded model, a warmed cache). Task and harness hooks still run in each copy, per rollout.
+Whatever `setup` leaves behind is in every copy: files, installed packages, and processes started in the background (a server, a loaded model, a warmed cache). Send such a process's output to a file, `nohup server > server.log 2>&1 &`: a setup command's own output pipes close once it ends. Task and harness hooks still run in each copy, per rollout.
 
 ## Measured
 
@@ -66,7 +66,7 @@ Every field goes next to `type` and `import_path`.
 
 | Field | Default | What it does |
 | --- | --- | --- |
-| `setup` | `[]` | Shell commands that build the environment, run once in order in the parent, as the user `prized` without root |
+| `setup` | `[]` | Shell commands that build the environment, run once in order in the parent, as the user `prized` without root. One that fails fails the process's rollouts without being run again, so put retries for flaky downloads in the command itself |
 | `setup_env` | `[]` | Names of variables from your environment passed to `setup` (the names are saved with the config, not the values). A process `setup` leaves running keeps them, in every copy, where the agent can read them. Never the Prized API key |
 | `setup_timeout` | `1800` | Seconds each setup command may take; `0` for no limit (a setup that never ends then holds the rollouts waiting for it, up to verifiers' own `timeouts.setup`) |
 | `template` | `prized-base-v1` | `prized-base-v1` (Ubuntu 24.04, Python 3, Node.js 22, git, build tools) or `prized-agent-v1` (adds Claude Code and Codex) |
@@ -76,7 +76,7 @@ Every field goes next to `type` and `import_path`.
 | `fork` | `true` | `false` gives every rollout a new sandbox that runs `setup` itself, with nothing shared |
 | `pause_parent` | `true` | Pause the parent after `setup` |
 | `max_parents` | `4` | Parents per shape and process when machines fill up ([below](#many-rollouts-at-once)) |
-| `capacity_wait` | `600` | Seconds a rollout keeps trying once it has been refused room (a full machine, a quota); `0` fails it at the first refusal. The time a parent's `setup` takes does not count |
+| `capacity_wait` | `600` | Seconds a rollout keeps trying once it has been refused room (a full machine, a quota); `0` fails it at the first refusal. The time a parent's `setup` takes does not count. With `fork = false` a refused create fails its rollout at once |
 | `max_runtime_min` | Prized's (24 h; 60 min on the free tier) | Run time of each sandbox; copies get their parent's |
 | `blocking_run_timeout` | none | Send each `run` as one blocking call killed after this many seconds (up to 240): faster for many short commands, wrong for long ones |
 | `labels` | `{}` | Labels on every sandbox it makes |
@@ -92,7 +92,7 @@ prints the id of a paused sandbox with the environment built. Set `parent = "<id
 
 ### Many rollouts at once
 
-Copies start on their parent's machine, which holds at most 31 copies of a 1 vCPU sandbox, 15 of 2 vCPU and 7 of 4 vCPU ([fork](https://prized.dev/docs/sandboxes?via=verifiers#fork)). Past that a fork answers `409 fork_capacity`: the runtime forks the number that fits, rests that parent briefly, and once every parent is full builds another one, up to `max_parents`. Workspace quotas and rate limits, on a fork or on a parent's create, are waited out for up to `capacity_wait`. A parent that can no longer fork (its machine retiring, its memory gone) is replaced, up to 3 in a row; past that the rollouts fail rather than run `setup` again and again. Each process (each verifiers env-server worker) builds its own parents.
+Copies start on their parent's machine, which holds at most 31 copies of a 1 vCPU sandbox, 15 of 2 vCPU and 7 of 4 vCPU ([fork](https://prized.dev/docs/sandboxes?via=verifiers#fork)). Past that a fork answers `409 fork_capacity`: the runtime forks the number that fits, rests that parent briefly, and once every parent is full builds another one, up to `max_parents`. Workspace quotas and rate limits, on a fork or on a parent's create, are waited out for up to `capacity_wait`. A parent that can no longer fork (its machine retiring, its memory gone) is replaced. If 3 new parents in a row cannot fork before their first copy, the rollouts fail rather than run `setup` again and again. A rollout still waiting its turn behind others has not been refused, so `capacity_wait` does not bound that wait. Each process (each verifiers env-server worker) builds its own parents.
 
 ## What works and what doesn't
 
@@ -111,12 +111,12 @@ Prime's and Docker's runtimes run those. Also:
 - **No root, no Docker.** Commands run as `prized` without sudo. Install into your home: a venv, `uv`, `npm` with a user prefix, or apt packages unpacked into the home ([how](https://prized.dev/docs/sandboxes-own-template?via=verifiers#2-add-system-packages-without-root)). Plain `pip install` and `pip --user` stop at `externally-managed-environment`.
 - **No GPUs.** A task's `resources.gpu` is ignored, with a warning from verifiers.
 - **Copies share the parent's memory**, random state included: reseed or restart a process after a fork before it makes keys or IDs.
-- **`exec` streams bytes, `run` returns text.** `exec` output crosses as base64, a line per read, so binary output (ACP's length-prefixed frames, say) arrives byte for byte. `run` returns text, as verifiers' `ProgramResult` does, and fails rather than return output the SDK cut short (about 64 MiB a stream; 100 MiB with `blocking_run_timeout`). `read` is byte-exact. Each `exec` stdin write is a request per 48 KiB, and an `exec` whose command leaves a child running with its stdout reports the exit up to 2 s late.
+- **`exec` streams bytes, `run` returns text.** `exec` output crosses as base64, a line per read, so binary output (ACP's length-prefixed frames, say) arrives byte for byte. `run` returns text, as verifiers' `ProgramResult` does, and fails rather than return output the SDK cut short (about 64 MiB a stream; 100 MiB with `blocking_run_timeout`). `read` is byte-exact. Each `exec` stdin write is a request per 48 KiB, and an `exec` whose command leaves a child running with its stdout reports the exit up to 2 s late. A process lost with its sandbox exits `-1`, as the Prized SDK reports a run that is gone.
 - **Free tier:** 10 sandboxes at once (a paused parent counts toward the workspace's disk instead), each up to 2 vCPU, 4 GB and 60 minutes of running, and 20 vCPU and 40 GB running across the workspace ([free tier](https://prized.dev/docs/sandboxes?via=verifiers#free-tier)).
 
 ## Cleanup
 
-Every sandbox carries the label `vfp-run=<id>`, logged when the parent is built (verifiers' CLIs show it at their usual level). Each copy is deleted when its rollout ends, and at exit (including Ctrl-C) the rest are deleted by that label, which a forked child process does not share. After a `kill -9`, delete them yourself: `prized sandbox ls` lists them.
+Every sandbox carries the label `vfp-run=<id>`, logged when the parent is built (verifiers' CLIs show it at their usual level). Each copy is deleted when its rollout ends, and at exit (including Ctrl-C) the rest are deleted by that label, which a forked child process does not share. A signal that skips Python's exit hooks (`kill -9`, or a plain SIGTERM to a script of your own, as a scheduler's preemption sends) leaves them running until `max_runtime_min`: delete them yourself (`prized sandbox ls` lists them), or set `max_runtime_min` low.
 
 ## The verifiers contract
 

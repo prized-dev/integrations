@@ -48,21 +48,31 @@ STDIN_CHUNK = 48 * 1024
 # U+FFFD. The encoders ignore SIGTERM, so what a terminated command prints on its way out arrives.
 # Once the command exits the wrapper waits up to 2 s for them (a USR1 from a timer ends the wait),
 # never killing them: a child the command left running keeps its stdout and is never sent SIGPIPE.
-# The wrapper's own names start with __vfp_, so a caller's variables reach the command unchanged.
+# The wrapper's own stderr goes to /dev/null (fd 3 keeps the real one for the stderr encoder), and
+# the command's `2>` is set inside its own subshell (dash sets a command's redirections in the
+# parent while it waits), so nothing the wrapper prints, such as dash's "Terminated" for a command
+# killed by a signal, reaches the command's stderr or lands inside an encoder's line. The stdin
+# FIFO goes as soon as the command exits, so a later write fails at once. The wrapper's own names
+# start with __vfp_, so a caller's variables reach the command unchanged.
 _EXEC_WRAPPER = (
-    'trap : USR1 USR2; __vfp_f=$1; shift; mkfifo -m 600 "$__vfp_f" "$__vfp_f.1" "$__vfp_f.2" || exit 125; '
+    "trap : USR1 USR2; exec 3>&2 2> /dev/null; __vfp_f=$1; shift; "
+    'mkfifo -m 600 "$__vfp_f" "$__vfp_f.1" "$__vfp_f.2" '
+    '|| { echo "vfp-exec: mkfifo failed" >&3; exit 125; }; '
     "__vfp_enc() { trap '' TERM USR1 USR2; while __vfp_c=$(dd bs=49152 count=1 2> /dev/null | base64 -w 0) "
     '&& [ -n "$__vfp_c" ]; do printf \':%s\\n\' "$__vfp_c"; done; }; '
-    '__vfp_enc < "$__vfp_f.1" & __vfp_o=$!; __vfp_enc < "$__vfp_f.2" >&2 & __vfp_e=$!; '
-    'sleep 2147483647 > "$__vfp_f" & __vfp_h=$!; trap : TERM; '
-    '"$@" < "$__vfp_f" > "$__vfp_f.1" 2> "$__vfp_f.2"; __vfp_r=$?; kill "$__vfp_h" 2> /dev/null; '
-    '{ sleep 2; kill -USR1 $$; } > /dev/null 2>&1 & __vfp_k=$!; wait "$__vfp_o" "$__vfp_e"; '
-    'kill "$__vfp_k" 2> /dev/null; rm -f "$__vfp_f" "$__vfp_f.1" "$__vfp_f.2"; exit "$__vfp_r"'
+    '__vfp_enc < "$__vfp_f.1" 3>&- & __vfp_o=$!; __vfp_enc < "$__vfp_f.2" >&3 3>&- & __vfp_e=$!; '
+    'sleep 2147483647 > "$__vfp_f" 3>&- & __vfp_h=$!; trap : TERM; '
+    '( exec "$@" 2> "$__vfp_f.2" ) < "$__vfp_f" > "$__vfp_f.1" 3>&-; __vfp_r=$?; '
+    'rm -f "$__vfp_f"; kill "$__vfp_h"; '
+    '{ sleep 2; kill -USR1 $$; } > /dev/null 3>&- & __vfp_k=$!; wait "$__vfp_o" "$__vfp_e"; '
+    'kill "$__vfp_k"; rm -f "$__vfp_f.1" "$__vfp_f.2"; exit "$__vfp_r"'
 )
 # One stdin write: wait briefly for the FIFO (the command may still be starting), then write
-# the decoded bytes; `timeout` ends an open that waits for a reader that is gone.
+# the decoded bytes. The stdin FIFO gone while the stdout one is there: the command has exited
+# (exit 4). `timeout` ends an open that waits for a reader that is gone.
 _STDIN_WRITE = (
-    'i=0; while [ ! -p "$1" ]; do [ "$i" -ge 100 ] && exit 3; i=$((i+1)); sleep 0.05; done; '
+    'i=0; while [ ! -p "$1" ]; do [ -p "$1.1" ] && exit 4; [ "$i" -ge 100 ] && exit 3; '
+    "i=$((i+1)); sleep 0.05; done; "
     'printf %s "$2" | timeout 30 sh -c \'base64 -d > "$1"\' sh "$1"'
 )
 _MOVE_INTO_PLACE = 'mkdir -p -- "$(dirname -- "$1")" && mv -f -- "$2" "$1"'
@@ -121,6 +131,8 @@ class PrizedProcess(RuntimeProcess):
         self._done = asyncio.Event()
         self._returncode: int | None = None
         self._failure: BaseException | None = None
+        self._killed = False
+        self._lost_logged = False
         self.stdout: AsyncIterator[bytes] = self._stream(self._out)
         self.stderr: AsyncIterator[bytes] = self._stream(self._err)
         self._pump = asyncio.ensure_future(self._follow())
@@ -150,7 +162,7 @@ class PrizedProcess(RuntimeProcess):
     async def write(self, data: bytes) -> None:
         async with self._stdin_lock:
             for start in range(0, len(data), STDIN_CHUNK):
-                if self._done.is_set():
+                if self._done.is_set() or self._killed:
                     raise SandboxError("prized exec: the process has exited; its stdin is closed")
                 chunk = base64.b64encode(data[start : start + STDIN_CHUNK]).decode()
                 try:
@@ -159,6 +171,8 @@ class PrizedProcess(RuntimeProcess):
                     )
                 except PrizedError as err:
                     raise _error("stdin write", err) from err
+                if result.exit_code == 4:
+                    raise SandboxError("prized exec: the process has exited; its stdin is closed")
                 if result.exit_code != 0:
                     raise SandboxError(
                         f"prized stdin write: exit {result.exit_code} (the process may have exited) "
@@ -166,13 +180,21 @@ class PrizedProcess(RuntimeProcess):
                     )
 
     async def wait(self) -> int:
+        """The exit code; -1, as the SDK reports a run that is gone, when the process was lost (its
+        sandbox deleted, or the API out of reach for longer than the SDK waits)."""
         await self._done.wait()
-        if self._returncode is None:
-            raise SandboxError(f"prized exec: lost the process: {self._failure!r}")
-        return self._returncode
+        return self._exit_code()
 
     async def poll(self) -> int | None:
-        return self._returncode if self._done.is_set() else None
+        return self._exit_code() if self._done.is_set() else None
+
+    def _exit_code(self) -> int:
+        if self._returncode is not None:
+            return self._returncode
+        if not self._lost_logged and not isinstance(self._failure, asyncio.CancelledError):
+            self._lost_logged = True
+            _pool.logger.warning("verifiers-prized: lost an exec'd process (exit -1): %r", self._failure)
+        return -1
 
     async def _signal(self, name: str) -> None:
         if self._done.is_set():
@@ -188,6 +210,7 @@ class PrizedProcess(RuntimeProcess):
 
     async def kill(self) -> None:
         await self._signal("SIGKILL")
+        self._killed = True  # its stdin FIFO has no reader now: a write would wait 30 s for one
 
     def abandon(self) -> None:
         """Stop following the process (its sandbox is being deleted)."""

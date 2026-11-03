@@ -11,6 +11,7 @@ import uuid
 from collections.abc import AsyncIterator
 from typing import Any
 
+import fake_prized
 import pytest
 from fake_prized import Cloud
 from prized import PrizedError
@@ -479,8 +480,9 @@ async def test_stop_is_idempotent_and_abandons_processes(cloud: Cloud) -> None:
     sleeper = await view.exec(["sleep", "600"], {})
     await backend.stop()
     await backend.stop()
-    with pytest.raises(SandboxError):
-        await sleeper.wait()
+    # Gone with its sandbox: -1, as the SDK reports a run that is gone (never a hang or a raise,
+    # which ACP's stop path, catching only TimeoutError, would let replace the rollout's error).
+    assert await sleeper.wait() == -1 and await sleeper.poll() == -1
     assert cloud.count("delete") == 1
 
 
@@ -671,15 +673,16 @@ async def test_a_parent_that_cannot_fork_is_replaced(cloud: Cloud) -> None:
     cloud.fork_refusals = [PrizedError("parent_not_forkable", status=409, reason="parent_too_big")]
     with pytest.raises(SandboxError, match="parent_not_forkable"):
         await rollouts(cfg, 1)
-    # A parent after parent that cannot fork: a few are tried, then the rollouts fail, and setup
-    # is not run again for every new wave of rollouts.
+    # A parent after parent that cannot fork: the one that forked before is replaced without
+    # counting, then a few new ones are tried, then the rollouts fail, and setup is not run again
+    # for every new wave of rollouts.
     cloud.fork_refusals = [PrizedError("parent_not_forkable", status=409, reason="memory_discarded")] * 10
     with pytest.raises(SandboxError, match="in a row could not fork"):
         await rollouts(cfg, 1)
-    assert cloud.count("create") == 2 + pool.MAX_REPLACEMENTS
+    assert cloud.count("create") == 3 + pool.MAX_REPLACEMENTS
     with pytest.raises(SandboxError, match="in a row could not fork"):
         await rollouts(cfg, 2)
-    assert cloud.count("create") == 2 + pool.MAX_REPLACEMENTS
+    assert cloud.count("create") == 3 + pool.MAX_REPLACEMENTS
 
 
 async def test_config_and_info_name_the_workdir_in_use(cloud: Cloud) -> None:
@@ -861,3 +864,124 @@ def test_build_logs_its_progress_not_every_request(
     assert "verifiers-prized: parent" in err and "ready in" in err
     logging.getLogger("httpx").info("HTTP Request: POST https://api.prized.dev/ ...")
     assert "HTTP Request" not in capsys.readouterr().err
+
+
+# --- the 11-03 review ----------------------------------------------------------------------------
+
+
+async def test_parents_that_forked_before_are_replaced_without_counting(cloud: Cloud) -> None:
+    # Four parents that have all forked lose their machine together (a retiring host): each is
+    # replaced, and the rollouts get copies of the new ones instead of the pool shutting down.
+    cfg = config(setup=SETUP)
+    cloud.capacity = 1
+    assert len(await rollouts(cfg, 4, hold=0.3)) == 4
+    assert len(cloud.live("parent")) == 4
+    cloud.fork_refusals = [PrizedError("fork_unsupported_host", status=409, reason="host_retiring")] * 4
+    assert len(await rollouts(cfg, 4, hold=0.3)) == 4
+    assert len(await rollouts(cfg, 4)) == 4
+    assert cloud.fork_refusals == [] and len(cloud.live("parent")) == 4
+
+
+async def test_a_sticky_error_is_raised_fresh_each_time(cloud: Cloud) -> None:
+    cfg = config(setup=["exit 3"])
+    errors = []
+    for _ in range(3):
+        with pytest.raises(SandboxError, match="setup command 1 exited 3") as caught:
+            await rollouts(cfg, 2)
+        errors.append(caught.value)
+    assert len({id(e) for e in errors}) == 3
+    depth = [len(__import__("traceback").extract_tb(e.__traceback__)) for e in errors]
+    assert depth[2] <= depth[1], depth
+
+
+async def test_a_create_that_keeps_failing_counts_against_capacity_wait(
+    cloud: Cloud, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Each refused create takes 0.5 s (the SDK retrying a full workspace): that is waiting for room.
+    monkeypatch.setattr(pool, "BACKOFF_MIN", 0.05)
+    monkeypatch.setattr(pool, "BACKOFF_MAX", 0.1)
+    cloud.create_delay = 0.5
+    cloud.create_refusals = [PrizedError("sandbox_capacity", status=503) for _ in range(100)]
+    began = asyncio.get_running_loop().time()
+    with pytest.raises(SandboxError, match="capacity_wait"):
+        await rollouts(config(setup=SETUP, capacity_wait=1.2), 1)
+    assert asyncio.get_running_loop().time() - began < 3.5
+    assert cloud.count("create") <= 4
+
+
+async def test_your_parent_between_states_is_waited_out(cloud: Cloud) -> None:
+    mine = cloud.new_box("prized-base-v1", {}, {"owner": "me"}, "k")
+    (mine.root / "home/prized/work/env.txt").write_text("mine\n")
+    mine.state = "pausing"
+
+    async def settle() -> None:
+        await asyncio.sleep(0.4)
+        mine.state = "paused"
+
+    settling = asyncio.ensure_future(settle())
+    async with provisioned(parent=mine.id) as view:
+        assert (await view.read("env.txt")) == b"mine\n"
+    await settling
+    assert cloud.count("connect") >= 2 and mine.state == "paused"
+    await pool.close_pools()
+
+
+async def test_terminate_adds_nothing_to_stderr(cloud: Cloud) -> None:
+    async with provisioned() as view:
+        # Not a shell (a shell running `sleep` prints its own "Terminated", on the command's stderr).
+        code = "import time; print('started', flush=True); time.sleep(30)"
+        process = await view.exec([*PYTHON, "-c", code], {})
+        stdout = process.stdout.__aiter__()
+        assert (await stdout.__anext__()).strip() == b"started"
+        await process.terminate()
+        stderr = b"".join([chunk async for chunk in process.stderr])
+        assert await process.wait() != 0
+        assert stderr == b"", stderr
+
+
+async def test_a_stdin_write_after_the_command_ended_fails_at_once(cloud: Cloud) -> None:
+    async with provisioned() as view:
+        # The command exits while a child it started keeps its stdout (the 2 s grace).
+        process = await view.exec(["sh", "-c", "(sleep 1.5; echo late) & exit 0"], {})
+        await asyncio.sleep(0.5)
+        began = asyncio.get_running_loop().time()
+        with pytest.raises(SandboxError, match="exited"):
+            await process.write(b"x\n")
+        assert asyncio.get_running_loop().time() - began < 3
+        assert await process.wait() == 0
+        killed = await view.exec(["sleep", "30"], {})
+        await killed.kill()
+        began = asyncio.get_running_loop().time()
+        with pytest.raises(SandboxError, match="exited"):
+            await killed.write(b"x\n")
+        assert asyncio.get_running_loop().time() - began < 1
+
+
+async def test_close_finishes_deleting_a_replaced_parent(cloud: Cloud) -> None:
+    cfg = config(setup=SETUP)
+    assert len(await rollouts(cfg, 1)) == 1
+    (first,) = cloud.live("parent")
+    cloud.fork_refusals = [PrizedError("fork_unsupported_host", status=409, reason="host_retiring")]
+    real_delete = fake_prized.AsyncSandbox.delete
+    slow: list[str] = []
+
+    async def slow_delete(self: Any, **kwargs: Any) -> None:
+        if self.id == first.id:
+            slow.append(self.id)
+            await asyncio.sleep(0.3)
+        await real_delete(self, **kwargs)
+
+    fake_prized.AsyncSandbox.delete = slow_delete  # type: ignore[method-assign]
+    try:
+        backend = make_backend(cfg)
+        start = asyncio.ensure_future(backend.start())
+        while not slow:
+            await asyncio.sleep(0.01)
+        await pool.close_pools()  # while the replaced parent's delete is under way
+        with contextlib.suppress(SandboxError):
+            await start
+        await backend.stop()
+    finally:
+        fake_prized.AsyncSandbox.delete = real_delete  # type: ignore[method-assign]
+    assert first.state == "deleted"
+    assert cloud.live() == []

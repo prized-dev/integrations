@@ -36,7 +36,8 @@ class PrizedConfig(CustomRuntimeConfig):
     """Shell commands that build the environment, run once in order in the parent sandbox before
     it is paused (no root: `pip` into a venv, `uv`, `npm` with a user prefix, git clones,
     downloads; plain `pip install` and `pip --user` stop at `externally-managed-environment`). A
-    process started here in the background (`nohup ... &`) keeps running in every copy."""
+    process started here in the background keeps running in every copy: send its output to a file
+    (`nohup server > server.log 2>&1 &`), since the command's own output pipes close once it ends."""
     setup_env: list[str] = Field(default_factory=list)
     """Names of variables in this process's environment passed to the `setup` commands (the names
     are saved with the config, the values are not). A process `setup` leaves running keeps them in
@@ -60,7 +61,9 @@ class PrizedConfig(CustomRuntimeConfig):
     this many per shape and process."""
     capacity_wait: float = Field(default=600, ge=0)
     """Seconds a rollout keeps trying once it has been refused room (a full machine, a workspace
-    quota); 0 fails it at the first refusal. The time a parent's `setup` takes does not count."""
+    quota); 0 fails it at the first refusal. The time a parent's `setup` takes does not count, and a
+    rollout still waiting its turn behind others has not been refused. With `fork = false` a refused
+    create fails its rollout at once."""
     max_runtime_min: int | None = Field(default=None, ge=1)
     """Minutes each sandbox may run (Prized's default is 24 hours, and 60 minutes, the most, on the
     free tier; paused time does not count).

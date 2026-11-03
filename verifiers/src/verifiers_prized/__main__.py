@@ -47,6 +47,9 @@ def main(argv: list[str] | None = None) -> int:
     build.add_argument("--max-runtime-min", type=int, default=None)
     build.add_argument("--no-pause", action="store_true", help="leave it running")
     build.add_argument("--api-key-env", default="PRIZED_API_KEY")
+    build.add_argument(
+        "--base-url", default=None, help="the Prized API's origin (default https://api.prized.dev)"
+    )
     args = parser.parse_args(argv)
 
     # Progress lines from this package only: the root logger would add one per HTTP request.
@@ -67,6 +70,7 @@ def main(argv: list[str] | None = None) -> int:
             labels=_labels(args.label),
             max_runtime_min=args.max_runtime_min,
             api_key_env=args.api_key_env,
+            base_url=args.base_url,
         )
     except ValidationError as err:
         print(err, file=sys.stderr)

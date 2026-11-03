@@ -59,6 +59,8 @@ class Cloud:
     capacity: int | None = None
     """Copies of one parent that may be alive at once (fork_capacity past it)."""
     fork_delay: float = 0.01
+    create_delay: float = 0.0
+    """Seconds a create takes before it answers (a refusal included, as after the SDK's retries)."""
     truncate_output: bool = False
     """Blocking and detached commands answer as if their output passed the SDK's cap."""
     procs: dict[str, list[asyncio.subprocess.Process]] = field(default_factory=dict)
@@ -228,7 +230,7 @@ class AsyncSandbox:
     ) -> AsyncSandbox:
         c = cloud()
         c.calls.append(("create", template))
-        await asyncio.sleep(0)
+        await asyncio.sleep(c.create_delay)
         if c.create_refusals:
             raise c.create_refusals.pop(0)
         shape = {"vcpu": vcpu, "memory_mb": memory_mb, "disk_gb": disk_gb, "max_runtime_min": max_runtime_min}
