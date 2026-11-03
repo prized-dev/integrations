@@ -3,7 +3,7 @@
 Runs Hermes terminal, file and ``execute_code`` commands in a Prized sandbox: a
 Firecracker microVM (Ubuntu 24.04, user ``prized`` without sudo, home
 ``/home/prized``) driven through the Prized HTTP API
-(https://prized.dev/docs/sandboxes-api). It uses httpx, which Hermes already
+(https://prized.dev/docs/sandboxes-api?via=hermes). It uses httpx, which Hermes already
 ships, and no vendor SDK.
 
 Persistence (``terminal.container_persistent: true``, the default) is pause and
@@ -98,7 +98,7 @@ _MAX_TRANSFER_BYTES = 100 * 1024 * 1024
 #: Exec answers where the command certainly did not run.
 _NOT_RUN = frozenset({429, 503})
 
-# Bounds from the create route (https://prized.dev/docs/sandboxes-api#create).
+# Bounds from the create route (https://prized.dev/docs/sandboxes-api?via=hermes#create).
 _VCPU_RANGE = (1, 32)
 _MEMORY_MB_RANGE = (1024, 131072)
 _TIMER_MIN_RANGE = (0, 40320)
@@ -445,7 +445,7 @@ class _SharedSyncManager(FileSyncManager):
 
 
 class PrizedEnvironment(BaseEnvironment):
-    """Prized sandbox backend: spawn-per-call over ``/process/execute``, paused between turns."""
+    """Prized sandbox backend: spawn-per-call over ``/process/execute``, paused when Hermes releases it."""
 
     _stdin_mode = "payload"
 
