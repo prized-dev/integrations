@@ -30,7 +30,9 @@ Limits, by design of that approach:
   detached and polls them, so they outlive a dropped connection. A trial's
   sandbox is deleted after ``max_runtime_min`` of running (default 1440, up
   to 10080, 7 days), or ``paused_ttl_min`` after ``stop(delete=False)``
-  paused it (default 10080).
+  paused it (default 10080). While the trial runs, a heartbeat keeps it
+  from pausing; one a crashed run left behind pauses itself after 30 idle
+  minutes, so it stops billing compute.
 
 Credentials: ``PRIZED_API_KEY`` (a key with Sandboxes: Write). Extra constructor parameters
 (``--ek``): ``template`` (default ``prized-base-v1``), ``max_runtime_min``,
@@ -88,6 +90,10 @@ _SIGN_UP_HINT = (
     "their email and a 6-digit code: follow https://prized.dev/auth.md?via=harbor"
 )
 _MAX_DISK_GB = 128
+# A sandbox nothing touches for this long pauses itself (one a crashed run left
+# behind stops billing compute); while a trial runs, a heartbeat counts as use.
+_IDLE_PAUSE_MIN = 30
+_HEARTBEAT_SEC = 300
 _CHUNK = 64 * 1024 * 1024  # the files API takes up to 100 MiB per request
 
 # Run by dpkg after each run (dpkg.cfg post-invoke): files a faked setuid chmod
@@ -225,6 +231,8 @@ class PrizedEnvironment(BaseEnvironment):
             **(labels or {}),
         }
         self._sandbox: AsyncSandbox | None = None
+        self._heartbeat: asyncio.Task[None] | None = None
+        self._warned_one_id = False
         self._image_env: dict[str, str] = {}
         self._image_workdir: str = "/"
         self._image_user: str | None = None
@@ -386,6 +394,11 @@ class PrizedEnvironment(BaseEnvironment):
         image = self.task_env_config.docker_image
         if image is None:
             raise ValueError("Prized needs [environment].docker_image.")
+        if force_build and (self.environment_dir / "Dockerfile").exists():
+            self.logger.warning(
+                "Prized runs the prebuilt docker_image; force_build is ignored "
+                "and environment/Dockerfile is not built."
+            )
         try:
             await self._start(image)
         except PrizedError as exc:
@@ -406,6 +419,7 @@ class PrizedEnvironment(BaseEnvironment):
                 disk_gb=disk_gb,
                 labels=self._labels,
                 max_runtime_min=self._max_runtime_min,
+                auto_pause_min=_IDLE_PAUSE_MIN,
                 auto_delete_min=self._paused_ttl_min,
                 timeout=600,
             )
@@ -423,6 +437,7 @@ class PrizedEnvironment(BaseEnvironment):
                     message = f"{message}. {_SIGN_UP_HINT}"
                 raise RuntimeError(message) from exc
             raise
+        self._heartbeat = asyncio.create_task(self._keep_alive(self._sandbox))
         self.logger.debug(f"Prized sandbox {self._sandbox.id} for {image}")
         try:
             await self._prepare_image(image)
@@ -440,7 +455,7 @@ class PrizedEnvironment(BaseEnvironment):
         q = shlex.quote
         setup = (
             "set -e; cd ~; umask 022; "
-            f"[ -x ./crane ] || {{ curl -fsSL -o crane.tgz {_CRANE_URL} && "
+            f"[ -x ./crane ] || {{ curl -fsSL --retry 3 -o crane.tgz {_CRANE_URL} && "
             f"echo '{_CRANE_SHA256}  crane.tgz' | sha256sum -c --quiet && "
             "tar -xzf crane.tgz crane && rm crane.tgz; }; "
             f"mkdir -p {_ROOT}; "
@@ -473,8 +488,21 @@ class PrizedEnvironment(BaseEnvironment):
         self._image_user = config.get("User") or None
         await self._put(_RUNTIME, _RUNTIME_SCRIPT.encode())
 
+    async def _keep_alive(self, sandbox: AsyncSandbox) -> None:
+        """Counts as use every few minutes, so a trial between commands never
+        reaches ``_IDLE_PAUSE_MIN`` (commands and file requests count too)."""
+        while True:
+            await asyncio.sleep(_HEARTBEAT_SEC)
+            try:
+                await sandbox.keep_alive()
+            except Exception as exc:  # noqa: BLE001 (the next beat tries again)
+                self.logger.warning(f"Prized sandbox {sandbox.id} keep-alive: {exc}")
+
     @override
     async def stop(self, delete: bool) -> None:
+        heartbeat, self._heartbeat = self._heartbeat, None
+        if heartbeat is not None:
+            heartbeat.cancel()
         sandbox = self._sandbox
         if sandbox is None:
             return
@@ -571,6 +599,13 @@ class PrizedEnvironment(BaseEnvironment):
             user = self._image_user
         identity = None if user is None else await self._user_identity(user)
         uid, gid, home, name = identity or (0, 0, "/root", "root")
+        if uid != 0 and not self._warned_one_id:
+            self._warned_one_id = True
+            self.logger.warning(
+                f"Prized runs {name} as uid {uid}, but every user is one id "
+                "underneath: it can read and write root's files, and su or sudo "
+                "-u inside a command stay root. User separation is not enforced."
+            )
         merged = {
             "HOME": home,
             "USER": name,
