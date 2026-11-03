@@ -31,7 +31,7 @@ In our tests on the live API, a background HTTP server and a counter loop surviv
 
 ### Background processes
 
-A process the agent starts with `background: true` runs in the sandbox until it exits or is killed there, and a pause freezes it with the sandbox, same PID. On this backend, as on Hermes' other remote backends, two Hermes limits apply (seen with hermes-agent main in November 2026):
+A process the agent starts with `background: true` runs in the sandbox until it exits or is killed there, and a pause freezes it with the sandbox, same PID. On this backend two Hermes core limits apply (seen live with hermes-agent main at c314285; the same core code in `process_registry.py` serves Hermes' other remote backends):
 
 - Stopping it from Hermes (the `process` tool's kill, the session-end sweep, a gateway shutdown) sends `kill` to its wrapper shell only, so the process itself keeps running. Stop it with `kill` or `pkill` in the sandbox.
 - Once Hermes releases the sandbox, it stops tracking the process: its `process` tools report it as exited, though it is still running.
