@@ -51,28 +51,30 @@ inspect eval arithmetic.py --model openai/gpt-5
 | `env` | none | Variables for every command. |
 | `labels` | none | Extra labels; every sandbox also carries `created-by=inspect-prized`. |
 | `max_runtime_min` | `60` | Prized deletes the sandbox after this many running minutes, even if cleanup never ran. 60 is the free tier's maximum; on a paid plan, raise it for samples that run longer. |
-| `keep` | `False` | Pause sandboxes after each sample instead of deleting them, to inspect them later. |
+| `keep` | `False` | Pause sandboxes after each sample instead of deleting them, to inspect them later. A sample forked from a `setup` template is deleted 7 days after it pauses. |
 | `setup` | none | Shell commands that install what the task needs, in place of a Dockerfile. They run once, before the first sample, in a sandbox that is then paused, and every sample starts as a fork of it with the install done. |
 | `setup_timeout` | `1800` | Seconds each `setup` command may run. |
-| `python_alias` | `True` | `python` runs `python3`, as in Python images (HumanEval, MBPP and other evals call `python`). |
+| `python_alias` | `True` | `python` runs `python3`, as in Python images (HumanEval, MBPP and other evals call `python`). It works through `PATH`, so if `env` sets `PATH`, put `~/.local/bin` first in it. |
 
 ```python
 PrizedSandboxConfig(setup=["python3 -m venv ~/venv && ~/venv/bin/pip install numpy pandas"])
 ```
 
-If a fork doesn't fit on the template's machine, that sample gets a fresh sandbox and runs `setup` itself. On the free tier a fork keeps its template's remaining run time (60 minutes of running in all, less what `setup` took); a paid plan gives each fork its own `max_runtime_min`.
+- A sample that starts as a fork gets the template's remaining run time: `max_runtime_min` less what `setup` took.
+- If a fork doesn't fit on the template's machine, that sample gets a fresh sandbox and runs `setup` itself. So do samples of an eval with more than 4 distinct `setup` configs (a checkout per sample, say), past the fourth.
+- The template stays paused until the eval ends, and is deleted then, even with `--no-sandbox-cleanup`. If the eval is killed before it can clean up, the template is deleted 7 days after it paused.
 
-To branch a sample's state (try several continuations from one point of a trajectory), fork its sandbox: `copies = await sandbox().as_type(PrizedSandboxEnvironment).fork(3)`. Each copy is a live copy (files, memory, processes) and is deleted with the sample.
+To branch a sample's state (try several continuations from one point of a trajectory), fork its sandbox: `copies = await sandbox().as_type(PrizedSandboxEnvironment).fork(3)`. Each copy is a live copy (files, memory, processes) and goes with the sample: deleted, or paused with `keep=True`.
 
-Inspect runs up to 10 sandboxes at once by default (the free tier's limit). Raise it with `--max-sandboxes`.
+Inspect runs up to 10 sandboxes at once by default (the free tier's limit). Raise it with `--max-sandboxes`. A paused template and `fork()` copies count toward the workspace's limit too: a sample that finds no free slot waits for one, up to 10 minutes.
 
 ## Contract and limits
 
-- Inspect's portable sandbox checks (`inspect_ai.util._sandbox.self_check`) pass against live sandboxes: 43 of 44, with the root-user check expected to fail.
+- Inspect's portable sandbox checks (`inspect_ai.util._sandbox.self_check`) pass against live sandboxes: 43 of 46 with inspect-ai 0.3.287. The other 3 add a user as root first, so they are expected to fail.
 - Commands run as the user `prized` in `/home/prized/work`. There is no root or sudo, so `exec(user="root")` raises `SandboxUserUnsupportedError`.
 - stdin (text, binary, 50 MiB), about 1 MiB of argv, cwd, env, timeouts (the command and its children are killed, then `TimeoutError`), signal exit codes (128+n), output up to Inspect's limit (10 MiB a stream by default, then `OutputLimitExceededError`), and Inspect's file errors (`FileNotFoundError`, `PermissionError`, `IsADirectoryError`, `OutputLimitExceededError`) all behave as with the Docker sandbox. Files can be written anywhere the user `prized` can write, `/tmp` and `/var/tmp` included.
 - No Dockerfiles, compose files or custom images: use it for tasks that run on a stock Ubuntu machine. No inbound ports.
-- Every sandbox of an eval carries that eval's `inspect-run` label, and task cleanup deletes whatever is left with it, so a sample whose cleanup failed doesn't keep running.
+- Every sandbox of an eval carries that eval's `inspect-run` label (except samples kept with `keep=True`), and task cleanup deletes whatever is left with it, so a sample whose cleanup failed doesn't keep running. If the eval process is killed (SIGKILL, out of memory) nothing can clean up: each sample's sandbox is deleted when its `max_runtime_min` runs out, or delete them now with `inspect sandbox cleanup prized`.
 - `inspect sandbox cleanup prized` deletes every sandbox labelled `created-by=inspect-prized`; `inspect sandbox cleanup prized <id>` deletes one, if this package made it.
 - `connection()` gives `prized sandbox ssh <id>` for a shell into a running sample's sandbox (with the `prized` CLI).
 

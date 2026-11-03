@@ -5,11 +5,12 @@ from __future__ import annotations
 import json
 import posixpath
 import secrets
-from collections.abc import Iterator
+import time
+from collections.abc import Awaitable, Callable, Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar
 from logging import getLogger
-from typing import Literal, Union, overload
+from typing import Literal, TypeVar, Union, overload
 
 import anyio
 from inspect_ai.util import (
@@ -36,6 +37,7 @@ except ImportError:  # pragma: no cover
 
 
 logger = getLogger(__name__)
+_T = TypeVar("_T")
 
 HOME = "/home/prized"
 WORKDIR = f"{HOME}/work"
@@ -45,6 +47,17 @@ LABEL = {"created-by": "inspect-prized"}
 _PATH = f"{HOME}/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 _ALIAS = f"mkdir -p {HOME}/.local/bin && ln -sf /usr/bin/python3 {HOME}/.local/bin/python"
 RUN_LABEL = "inspect-run"  # one id per eval, so task cleanup can find everything the eval made
+# At most this many set-up templates per eval (one per distinct setup config). Past it, a sample runs its
+# setup in its own sandbox: per-sample setups (a repo checkout per sample) gain nothing from a template,
+# and each paused template holds one of the workspace's sandbox slots until the eval ends.
+MAX_TEMPLATES = 4
+# A paused template is deleted this long after it pauses even if task cleanup never runs (the eval was
+# killed). Copies inherit it, so a forked sample kept with keep=True is deleted 7 days after it pauses.
+_TEMPLATE_DELETE_MIN = 7 * 24 * 60
+# A sample that finds the workspace at its sandbox quota waits this long for a slot (other samples, a
+# template, fork() copies all count) before it fails.
+QUOTA_WAIT_S = 600.0
+_QUOTA = "sandbox_quota_exceeded"
 _GONE = ("not_found", "sandbox_deleted")
 # prized 0.1.1+ (OutputReadError): the command ran, but its output could not be read back.
 _OUTPUT_READ_FAILED = "output_read_failed"
@@ -160,7 +173,9 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
     @override
     @classmethod
     def default_concurrency(cls) -> int | None:
-        return 10  # the free tier runs 10 sandboxes at once; set --max-sandboxes for more
+        # The free tier runs 10 sandboxes at once; set --max-sandboxes for more. Templates (setup) and
+        # fork() copies count too: a sample that finds no free slot waits for one (QUOTA_WAIT_S).
+        return 10
 
     @override
     @classmethod
@@ -181,18 +196,20 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
         options = _options(cfg, task_name)
         sandbox = None
         state = _state()
-        if cfg.setup and state is not None:
-            template = await _template(state, cfg)
+        template = await _template(state, cfg) if cfg.setup and state is not None else None
+        if template is not None:
             try:
-                sandbox = (await template.fork(1, labels=options["labels"]))[0]
+                sandbox = (await _wait_for_quota(lambda: template.fork(1, labels=options["labels"])))[0]
             except PrizedError as err:
+                if err.code == _QUOTA:
+                    raise
                 # Copies start on the template's machine; when it has no room (fork_capacity), or
                 # the fork fails otherwise, start a fresh sandbox and run the setup in it.
                 logger.info("Prized: fork of template %s failed (%s); creating a sandbox", template.id, err)
         if sandbox is None:
-            # Outside an eval's lifecycle (no task_init), or when the fork failed: run the
-            # setup in the sample's own sandbox rather than leave an untracked template.
-            sandbox = await AsyncSandbox.create(**options)
+            # Outside an eval's lifecycle (no task_init), past MAX_TEMPLATES, or when the fork
+            # failed: run the setup in the sample's own sandbox.
+            sandbox = await _wait_for_quota(lambda: AsyncSandbox.create(**options))
             try:
                 await _prepare(sandbox, cfg)
             except BaseException:
@@ -228,7 +245,7 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
                 if err.code in _GONE:
                     cls._live.get(task_name, set()).discard(sb.id)
                 else:
-                    logger.warning("Prized sandbox %s cleanup failed (%s); task cleanup retries it", sb.id, err)
+                    logger.warning("Prized sandbox %s cleanup failed (%s)", sb.id, err)
             finally:
                 await sb.close()
 
@@ -242,21 +259,27 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
                 if entry.sandbox is not None:
                     await _discard(entry.sandbox)
             state.templates.clear()
-        if not cleanup or _config(config).keep:
-            return
-        for sandbox_id in list(cls._live.get(task_name, ())):
-            await _delete(sandbox_id)
-            cls._live.get(task_name, set()).discard(sandbox_id)
-        # In an eval, task_name is "shutdown" here, not the name the samples ran under, so the
-        # loop above finds nothing: delete by the eval's label whatever sample cleanup missed.
-        if state is not None:
-            try:
-                deleted = await AsyncSandbox.delete_by_labels({RUN_LABEL: state.run_id})
-            except PrizedError as err:
-                logger.warning("Prized sandboxes labelled %s=%s: cleanup failed (%s)", RUN_LABEL, state.run_id, err)
+        try:
+            if not cleanup or _config(config).keep:
                 return
-            for ids in cls._live.values():
-                ids.difference_update(deleted)
+            for sandbox_id in list(cls._live.get(task_name, ())):
+                await _delete(sandbox_id)
+                cls._live.get(task_name, set()).discard(sandbox_id)
+            # In an eval, task_name is "shutdown" here, not the name the samples ran under, so the
+            # loop above finds nothing: delete by the eval's label whatever sample cleanup missed.
+            # Inspect calls this once per sandbox config; one sweep covers them all.
+            if state is not None and not state.swept:
+                try:
+                    deleted = await AsyncSandbox.delete_by_labels({RUN_LABEL: state.run_id})
+                except PrizedError as err:
+                    logger.warning("Prized sandboxes labelled %s=%s: cleanup failed (%s)", RUN_LABEL, state.run_id, err)
+                    return
+                state.swept = True
+                for ids in cls._live.values():
+                    ids.difference_update(deleted)
+        finally:
+            if sandbox_lifecycle_state() is None:
+                _fallback.set(None)  # outside Inspect's scope: the next lifecycle starts fresh
 
     @override
     @classmethod
@@ -450,6 +473,7 @@ class _State:
     def __init__(self) -> None:
         self.run_id = secrets.token_hex(8)
         self.templates: dict[str, _Template] = {}
+        self.swept = False
 
 
 # Outside a lifecycle scope (an older Inspect, or task_init called directly), task_init keeps the
@@ -490,26 +514,58 @@ def _options(cfg: PrizedSandboxConfig, task_name: str) -> dict:
 
 async def _prepare(sandbox: AsyncSandbox, cfg: PrizedSandboxConfig) -> None:
     """Link python (python_alias), then run the setup commands, in order."""
-    steps = [(_ALIAS, 60)] if cfg.python_alias else []
-    steps += [(command, cfg.setup_timeout) for command in cfg.setup]
-    for command, timeout in steps:
+    steps = [("python_alias", _ALIAS, 60)] if cfg.python_alias else []
+    steps += [("setup command", command, cfg.setup_timeout) for command in cfg.setup]
+    for what, command, timeout in steps:
         res = await sandbox.exec(["/bin/bash", "-c", command], timeout=timeout, full_output=True)
         if res.exit_code != 0:
             raise RuntimeError(
-                f"Prized sandbox {sandbox.id}: setup command failed (exit {res.exit_code}): {command}\n"
+                f"Prized sandbox {sandbox.id}: {what} failed (exit {res.exit_code}): {command}\n"
                 f"{(res.stderr or res.stdout)[-2000:]}"
             )
 
 
-async def _template(state: _State, cfg: PrizedSandboxConfig) -> AsyncSandbox:
-    """The eval's paused sandbox with cfg.setup done, which samples fork; made on first use."""
-    key = json.dumps(cfg.model_dump(), sort_keys=True)
-    entry = state.templates.get(key) or state.templates.setdefault(key, _Template())
+async def _wait_for_quota(make: Callable[[], Awaitable[_T]]) -> _T:
+    """Run make() (a create or a fork); while the workspace is at its sandbox quota, wait for a slot.
+
+    Other samples free slots as they finish, so a sample that arrives when Inspect's concurrency is
+    above what the workspace allows (a template or fork() copies take slots too) waits rather than
+    fails. A quota that waiting can't change (max_runtime) raises at once.
+    """
+    deadline = time.monotonic() + QUOTA_WAIT_S
+    delay = 1.0
+    warned = False
+    while True:
+        try:
+            return await make()
+        except PrizedError as err:
+            if err.code != _QUOTA or err.reason == "max_runtime" or time.monotonic() + delay > deadline:
+                raise
+            if not warned:
+                logger.warning("Prized: the workspace is at its sandbox quota (%s); waiting for a slot", err.reason)
+                warned = True
+            await anyio.sleep(delay)
+            delay = min(delay * 2, 15.0)
+
+
+async def _template(state: _State, cfg: PrizedSandboxConfig) -> AsyncSandbox | None:
+    """The eval's paused sandbox with cfg.setup done, which samples fork; made on first use.
+
+    None past MAX_TEMPLATES distinct setups: those samples run setup in their own sandbox.
+    """
+    # Labels and keep don't change what a template holds (fork() sets each sample's labels).
+    key = json.dumps(cfg.model_dump(exclude={"labels", "keep"}), sort_keys=True)
+    entry = state.templates.get(key)
+    if entry is None:
+        if len(state.templates) >= MAX_TEMPLATES:
+            return None
+        entry = state.templates.setdefault(key, _Template())
     async with entry.lock:
         if entry.sandbox is None:
             options = _options(cfg, "template")
-            options["labels"]["inspect-role"] = "template"
-            sandbox = await AsyncSandbox.create(**options)
+            options["labels"].update({"inspect-role": "template", RUN_LABEL: state.run_id})
+            options["auto_delete_min"] = _TEMPLATE_DELETE_MIN
+            sandbox = await _wait_for_quota(lambda: AsyncSandbox.create(**options))
             try:
                 await _prepare(sandbox, cfg)
                 await sandbox.pause()
