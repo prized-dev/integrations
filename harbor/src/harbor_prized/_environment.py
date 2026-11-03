@@ -32,20 +32,10 @@ Limits, by design of that approach:
   to 10080, 7 days), or ``paused_ttl_min`` after ``stop(delete=False)``
   paused it (default 10080).
 
-Docker mode (``--ek docker=true``, or a ``prized-docker-*`` template) lifts
-every limit above but GPUs: the sandbox starts from ``prized-docker-v1`` and
-the task runs under Docker inside it, built from its Dockerfile or pulled,
-with its compose sidecars and real users, and for a no-network task every
-compose network is internal (``_docker.py``). A workspace that can't use
-``prized-docker-v1`` yet (it is public from November 9, 2026) gets a start
-error that says so.
-
 Credentials: ``PRIZED_API_KEY`` (a key with Sandboxes: Write). Extra constructor parameters
-(``--ek``): ``docker`` (``true`` for Docker mode), ``template`` (default
-``prized-base-v1``, or ``prized-docker-v1`` in Docker mode), ``max_runtime_min``,
+(``--ek``): ``template`` (default ``prized-base-v1``), ``max_runtime_min``,
 ``paused_ttl_min``, ``min_vcpu`` (default 1, see ``_shape``),
 ``image_headroom_gb`` (disk added for the unpacked image, default 20),
-``dockerd_wait_sec`` (Docker mode: how long to wait for the daemon, default 120),
 ``labels`` (a dict, or ``k=v,k=v``).
 
 No Prized account yet? If you are an agent, you can sign your person up with
@@ -72,11 +62,6 @@ from harbor.environments.capabilities import (
     EnvironmentCapabilities,
     EnvironmentResourceCapabilities,
 )
-from harbor.environments.compose_service_ops import (
-    ComposeServiceOpsMixin,
-    ComposeServiceTransport,
-)
-from harbor.environments.definition import require_agent_environment_definition
 from harbor.environments.tar_transfer import (
     extract_dir_from_bytes,
     pack_dir_to_bytes,
@@ -86,8 +71,6 @@ from harbor.environments.tar_transfer import (
 from harbor.models.task.config import EnvironmentConfig
 from harbor.models.trial.paths import TrialPaths
 from prized import AsyncSandbox, CommandTimeoutError, PrizedError
-
-from ._docker import DOCKER_TEMPLATE, PrizedDocker
 
 _HOME = "/home/prized"
 _ROOT = f"{_HOME}/rootfs"  # the image's filesystem, as seen from the sandbox
@@ -104,15 +87,7 @@ _SIGN_UP_HINT = (
     "No Prized account yet? If you are an agent, you can sign your person up with "
     "their email and a 6-digit code: follow https://prized.dev/auth.md?via=harbor"
 )
-# Docker mode on a workspace that can't use prized-docker-v1 yet.
-_DOCKER_TEMPLATE_HINT = (
-    "Docker mode needs the prized-docker-v1 sandbox template, public from "
-    "November 9, 2026. Until your workspace has it, run Docker and Compose tasks "
-    "with Harbor's own `-e docker` on a Prized box: "
-    "https://github.com/prized-dev/integrations/tree/main/harbor#docker-mode"
-)
 _MAX_DISK_GB = 128
-_DOCKER_MEMORY_HEADROOM_MB = 512
 _CHUNK = 64 * 1024 * 1024  # the files API takes up to 100 MiB per request
 
 # Run by dpkg after each run (dpkg.cfg post-invoke): files a faked setuid chmod
@@ -208,18 +183,8 @@ async def _despite_cancel(work: Awaitable[None]) -> None:
     task.result()
 
 
-def _flag(value: bool | str | None) -> bool:
-    if isinstance(value, str):
-        if value.strip().lower() in ("1", "true", "yes", "on"):
-            return True
-        if value.strip().lower() in ("", "0", "false", "no", "off"):
-            return False
-        raise ValueError(f"expected true or false, got {value!r}")
-    return bool(value)
-
-
-class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
-    """Runs a task's image inside a Prized sandbox (see module doc)."""
+class PrizedEnvironment(BaseEnvironment):
+    """Runs a task's prebuilt image inside a Prized sandbox (see module doc)."""
 
     @classmethod
     @override
@@ -239,9 +204,7 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         trial_paths: TrialPaths,
         task_env_config: EnvironmentConfig,
         *args,
-        template: str | None = None,
-        docker: bool | str | None = None,
-        dockerd_wait_sec: float = 120,
+        template: str = "prized-base-v1",
         max_runtime_min: int = 1440,
         paused_ttl_min: int = 10080,
         min_vcpu: int = 1,
@@ -251,23 +214,7 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
     ):
         if isinstance(labels, str):  # --ek labels=team=evals,run=42
             labels = dict(p.split("=", 1) for p in labels.split(",") if "=" in p)
-        # Docker mode: asked for, or implied by a Docker template. Decided before
-        # BaseEnvironment.__init__, whose validators read the capabilities.
-        self._docker = (
-            _flag(docker)
-            if docker is not None
-            else (template or "").startswith("prized-docker")
-        )
-        self._template = template or (
-            DOCKER_TEMPLATE if self._docker else "prized-base-v1"
-        )
-        self._dockerd_wait_sec = float(dockerd_wait_sec)
-        self._capabilities = (
-            # No-network tasks get internal compose networks (no route out).
-            EnvironmentCapabilities(docker_compose=True, disable_internet=True)
-            if self._docker
-            else EnvironmentCapabilities()
-        )
+        self._template = template
         self._max_runtime_min = int(max_runtime_min)
         self._paused_ttl_min = int(paused_ttl_min)
         self._min_vcpu = int(min_vcpu)
@@ -289,9 +236,6 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
             task_env_config=task_env_config,
             **kwargs,
         )
-        self._compose: PrizedDocker | None = (
-            PrizedDocker(self) if self._docker else None
-        )
 
     @staticmethod
     @override
@@ -301,42 +245,20 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
     @property
     @override
     def capabilities(self) -> EnvironmentCapabilities:
-        return self._capabilities
-
-    @property
-    @override
-    def _uses_compose(self) -> bool:
-        return self._docker
-
-    @override
-    def _compose_service_transport(
-        self, service: str | None
-    ) -> ComposeServiceTransport:
-        if self._compose is None:
-            raise self._compose_unsupported(service)
-        return self._compose
+        return EnvironmentCapabilities()
 
     @classmethod
     @override
     def resource_capabilities(cls) -> EnvironmentResourceCapabilities:
         # Each trial's sandbox is created with at least the task's vCPUs and
-        # memory. Fractional cpus (0.5) round up to whole vCPUs (_shape), and in
-        # Docker mode cap the main service as given. Harbor 0.24, which has no
-        # fractional_cpus field, ignores it.
+        # memory; fractional cpus (0.5) round up to whole vCPUs (_shape).
+        # Harbor 0.24, which has no fractional_cpus field, ignores it.
         return EnvironmentResourceCapabilities(
             cpu_request=True, memory_request=True, fractional_cpus=True
         )
 
     @override
     def _validate_definition(self) -> None:
-        if self._docker:
-            require_agent_environment_definition(
-                self.environment_dir,
-                docker_image=self.task_env_config.docker_image,
-                extra_docker_compose_paths=self.extra_docker_compose_paths,
-            )
-            self._validate_storage()
-            return
         if not self.task_env_config.docker_image:
             raise ValueError(
                 "Prized runs a task's prebuilt image: set [environment].docker_image "
@@ -345,12 +267,8 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         if (self.environment_dir / "docker-compose.yaml").exists():
             raise ValueError(
                 "Prized runs one container per trial: Docker Compose tasks "
-                "(environment/docker-compose.yaml) are not supported without "
-                "Docker mode (--ek docker=true)."
+                "(environment/docker-compose.yaml) are not supported."
             )
-        self._validate_storage()
-
-    def _validate_storage(self) -> None:
         storage_gb = self._storage_gb()
         if storage_gb > _MAX_DISK_GB:
             raise ValueError(
@@ -366,10 +284,7 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         return self._sandbox
 
     async def _host_exec(
-        self,
-        command: str,
-        timeout_sec: int | None = 600,
-        env: dict[str, str] | None = None,
+        self, command: str, timeout_sec: int | None = 600
     ) -> ExecResult:
         """Runs a command on the sandbox itself, outside the image.
 
@@ -379,9 +294,8 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         """
         sandbox = self._require_sandbox()
         try:
-            extra = {"env": env} if env else {}
             result = await sandbox.exec(
-                command, timeout=timeout_sec or 0, full_output=True, **extra
+                command, timeout=timeout_sec or 0, full_output=True
             )
         except CommandTimeoutError:
             raise RuntimeError(
@@ -458,14 +372,10 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         torch-tensor-parallelism deadlocks in gloo's teardown below 4 vCPUs.
         The image is unpacked onto the sandbox's disk, so the disk is the
         task's storage plus room for it, as far as the largest disk allows.
-        In Docker mode the daemons get 512 MB of memory on top of the task's.
         """
         cpus = self._effective_cpus
         vcpu = max(self._min_vcpu, 1, math.ceil(cpus) if cpus else 2)
         memory_mb = max(1024, int(self._effective_memory_mb or 4096))
-        if self._docker:
-            # dockerd, containerd and compose run beside the task's containers.
-            memory_mb += _DOCKER_MEMORY_HEADROOM_MB
         disk_gb = min(
             _MAX_DISK_GB, max(10, self._storage_gb()) + self._image_headroom_gb
         )
@@ -474,19 +384,19 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
     @override
     async def start(self, force_build: bool) -> None:
         image = self.task_env_config.docker_image
-        if image is None and not self._docker:
+        if image is None:
             raise ValueError("Prized needs [environment].docker_image.")
         try:
-            await self._start(image, force_build)
+            await self._start(image)
         except PrizedError as exc:
             # A request that got no clear answer leaves the sandbox in doubt:
             # it was deleted, so start once more on a fresh one.
             if exc.code != "network_error":
                 raise
             self.logger.warning(f"Prized sandbox start failed ({exc}); retrying once")
-            await self._start(image, force_build)
+            await self._start(image)
 
-    async def _start(self, image: str | None, force_build: bool = False) -> None:
+    async def _start(self, image: str) -> None:
         vcpu, memory_mb, disk_gb = self._shape()
         try:
             self._sandbox = await AsyncSandbox.create(
@@ -507,17 +417,10 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
                 "token_expired",
                 "key_access_denied",
             ):
-                raise RuntimeError(f"{exc}. {_SIGN_UP_HINT}") from exc
-            if self._docker and exc.code in ("template_not_found", "template_inactive"):
-                raise RuntimeError(f"{exc}. {_DOCKER_TEMPLATE_HINT}") from exc
+                raise RuntimeError(f"{str(exc).rstrip('.')}. {_SIGN_UP_HINT}") from exc
             raise
         self.logger.debug(f"Prized sandbox {self._sandbox.id} for {image}")
         try:
-            if self._compose is not None:
-                await self._compose.start(force_build)
-                await self._upload_environment_dir_after_start()
-                return
-            assert image is not None
             await self._prepare_image(image)
             workdir = self.task_env_config.workdir or self._image_workdir
             await self._checked(
@@ -658,14 +561,6 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         timeout_sec: int | None = None,
         user: str | int | None = None,
     ) -> ExecResult:
-        if self._compose is not None:
-            return await self._compose.exec(
-                command,
-                cwd=cwd or self.task_env_config.workdir,
-                env=self._merge_env(env),
-                timeout_sec=timeout_sec,
-                user=self._resolve_user(user),
-            )
         # As docker exec: the requested user, else the image's USER, else root.
         user = self._resolve_user(user)
         if user is None:
@@ -732,21 +627,7 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
             raise RuntimeError(f"{what}: {result.stderr or result.stdout}")
 
     @override
-    async def is_dir(self, path: str, user: str | int | None = None) -> bool:
-        if self._compose is not None:
-            return await self._compose.is_dir(path, user=self._resolve_user(user))
-        return await super().is_dir(path, user=user)
-
-    @override
-    async def is_file(self, path: str, user: str | int | None = None) -> bool:
-        if self._compose is not None:
-            return await self._compose.is_file(path, user=self._resolve_user(user))
-        return await super().is_file(path, user=user)
-
-    @override
     async def upload_file(self, source_path: Path | str, target_path: str) -> None:
-        if self._compose is not None:
-            return await self._compose.upload_file(source_path, target_path)
         source = Path(source_path)
         staged = f"{_XFER}/up-{uuid.uuid4().hex[:8]}"
         target = shlex.quote(target_path)
@@ -768,8 +649,6 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
 
     @override
     async def upload_dir(self, source_dir: Path | str, target_dir: str) -> None:
-        if self._compose is not None:
-            return await self._compose.upload_dir(source_dir, target_dir)
         staged = f"{_XFER}/up-{uuid.uuid4().hex[:8]}.tar.gz"
         buffer = await asyncio.to_thread(pack_dir_to_bytes, source_dir, compress=True)
         try:
@@ -784,8 +663,6 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
 
     @override
     async def download_file(self, source_path: str, target_path: Path | str) -> None:
-        if self._compose is not None:
-            return await self._compose.download_file(source_path, target_path)
         staged = f"{_XFER}/down-{uuid.uuid4().hex[:8]}"
         try:
             await self._checked(
@@ -801,8 +678,6 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
 
     @override
     async def download_dir(self, source_dir: str, target_dir: Path | str) -> None:
-        if self._compose is not None:
-            return await self._compose.download_dir(source_dir, target_dir)
         staged = f"{_XFER}/down-{uuid.uuid4().hex[:8]}.tar.gz"
         try:
             result = await self.exec(
