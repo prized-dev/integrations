@@ -229,6 +229,21 @@ async def test_start_creates_a_labelled_sandbox_and_unpacks_the_image(
     assert sandbox.files.written[0][0] == "/home/prized/runtime.py"
 
 
+@pytest.mark.asyncio
+async def test_a_refused_key_points_agents_at_sign_up(tmp_path, monkeypatch):
+    environment = _environment(tmp_path, docker_image="python:3.12")
+
+    async def create(template, **kwargs):
+        raise PrizedError("invalid_api_key", "The API key was not accepted.", status=401)
+
+    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
+
+    with pytest.raises(RuntimeError, match="auth.md") as info:
+        await environment.start(force_build=False)
+    assert "not accepted. No Prized account yet?" in str(info.value)
+    assert ".." not in str(info.value)
+
+
 async def _no_user(self, user):
     return None
 
