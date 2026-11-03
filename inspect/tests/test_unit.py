@@ -678,3 +678,81 @@ async def test_a_failed_template_build_leaves_setup_to_the_samples(monkeypatch):
         assert len([s for s in FakeSandbox.made if s.labels.get("inspect-role") == "template"]) == 1
         assert len(FakeSandbox.made) == 3  # the builder didn't run the failing setup a second time
         assert all(s.deleted for s in FakeSandbox.made)
+
+
+async def _two_templates(monkeypatch):
+    _sweeper(monkeypatch)
+    for name in ("x", "y"):
+        cfg = PrizedSandboxConfig(setup=[f"touch ~/{name}"])
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        for _ in range(2):
+            await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+    return [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
+
+
+async def test_two_refused_creates_each_free_a_template(monkeypatch):
+    import anyio
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    with sandbox_lifecycle_scope():
+        templates = await _two_templates(monkeypatch)
+        assert len(templates) == 2
+        limit = len([sb for sb in FakeSandbox.made if not sb.deleted])  # the workspace is full
+        real_create = env_mod.AsyncSandbox.create
+
+        async def create(**options):
+            await anyio.sleep(0)
+            if len([sb for sb in FakeSandbox.made if not sb.deleted]) >= limit:
+                raise PrizedError("sandbox_quota_exceeded", "disk", status=429, reason="retained_disk")
+            return await real_create(**options)
+
+        async def slow_delete(self, wait=False):
+            await anyio.sleep(0.02)
+            self.deleted, self.delete_waited = True, wait
+
+        monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(create))
+        monkeypatch.setattr(FakeSandbox, "delete", slow_delete)
+        made = []
+
+        async def sample():
+            envs = await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(), {})
+            made.append(envs["default"])
+
+        async with anyio.create_task_group() as tg:
+            tg.start_soon(sample)
+            tg.start_soon(sample)
+        assert len(made) == 2 and all(t.deleted for t in templates)
+
+
+async def test_a_template_waits_for_its_copies_and_a_cancelled_drop_is_redone(monkeypatch):
+    import anyio
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    with sandbox_lifecycle_scope():
+        template = (await _two_templates(monkeypatch))[0]
+        entry = next(e for e in env_mod._state().templates.values() if e.sandbox is template)
+        entry.forking = 1  # a copy is still starting
+        with anyio.move_on_after(0.1):
+            await env_mod._drop_template(entry)
+        assert not template.deleted and entry.sandbox is template and entry.gone is None
+        entry.forking = 0
+        await env_mod._drop_template(entry)
+        assert template.deleted and template.delete_waited and entry.sandbox is None
+
+
+async def test_a_create_frees_as_many_templates_as_it_needs(monkeypatch):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    with sandbox_lifecycle_scope():
+        templates = await _two_templates(monkeypatch)
+        limit = len([sb for sb in FakeSandbox.made if not sb.deleted]) - 1  # one more than full
+        real_create = env_mod.AsyncSandbox.create
+
+        async def create(**options):
+            if len([sb for sb in FakeSandbox.made if not sb.deleted]) >= limit:
+                raise PrizedError("sandbox_quota_exceeded", "disk", status=429, reason="retained_disk")
+            return await real_create(**options)
+
+        monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(create))
+        envs = await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(), {})
+        assert envs["default"] and all(t.deleted for t in templates)

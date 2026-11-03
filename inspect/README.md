@@ -74,7 +74,7 @@ To branch a sample's state (try several continuations from one point of a trajec
 
 Inspect runs up to 10 sandboxes at once by default (the free tier's limit). Raise it with `--max-sandboxes`.
 
-A paused template counts toward the workspace's disk quota, and toward vCPU and memory when it keeps them for resume. It doesn't count toward the number of sandboxes. When a sample doesn't fit for that reason, the template is deleted to make room, and that config's samples run `setup` in their own sandboxes.
+A paused template counts toward the workspace's disk quota, and toward vCPU and memory when it keeps them for resume. It doesn't count toward the number of sandboxes. When a sample doesn't fit for that reason, templates are deleted one at a time until it does, and the samples of a config whose template was deleted run `setup` in their own sandboxes.
 
 On the free tier (100 GB of disk), 10 samples of the default 10 GB disk fill it. Run with `--max-sandboxes 9` to keep one template. `fork()` copies count like any sandbox, and a `fork()` past a quota raises.
 

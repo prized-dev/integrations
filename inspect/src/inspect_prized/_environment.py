@@ -47,7 +47,7 @@ _ALIAS = f"mkdir -p {HOME}/.local/bin && ln -sf /usr/bin/python3 {HOME}/.local/b
 RUN_LABEL = "inspect-run"  # one id per eval, so task cleanup can find everything the eval made
 # A setup config gets a template on its second sample (the first runs setup in its own sandbox, so a
 # setup only one sample uses never builds one), and an eval gets at most MAX_TEMPLATES of them: each
-# paused template holds one of the workspace's sandbox slots until the eval ends.
+# paused template holds its disk (and any compute it keeps) until the eval ends.
 MAX_TEMPLATES = 4
 # A paused template is deleted this long after it pauses even if task cleanup never runs (the eval was
 # killed). Copies inherit it, so a forked sample kept with keep=True is deleted 7 days after it pauses.
@@ -58,6 +58,8 @@ _QUOTA = "sandbox_quota_exceeded"
 _TEMPLATE_QUOTAS = ("retained_disk", "running_vcpu", "running_memory", "paused_limit")
 # Fork refusals that mean the template can't be forked again (deleted, or no longer forkable).
 _TEMPLATE_GONE = ("not_found", "sandbox_deleted", "parent_not_running", "parent_not_forkable", "handle_closed")
+_FORK_SETTLE_S = 200.0  # longer than the SDK's fork budget (180 s): copies still starting finish first
+_GONE_WAIT_S = _FORK_SETTLE_S + 180.0  # another sample's drop: its fork wait plus the delete itself
 _GONE = ("not_found", "sandbox_deleted")
 # prized 0.1.1+ (OutputReadError): the command ran, but its output could not be read back.
 _OUTPUT_READ_FAILED = "output_read_failed"
@@ -211,8 +213,8 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
                     # No room for the template and this sample both: the template gives up its disk
                     # (and compute), and this config's samples run setup in their own sandboxes.
                     await _drop_template(entry)
-                elif refused.code in _TEMPLATE_GONE:
-                    entry.failed = True
+                elif refused.code in _TEMPLATE_GONE and refused.sandbox_id in (None, template.id):
+                    entry.failed = True  # the template itself is gone (not just a copy)
                 # Copies start on the template's machine; when it has no room (fork_capacity), or
                 # the fork fails otherwise, start a fresh sandbox and run the setup in it.
                 logger.info("Prized: fork of template %s failed (%s); creating a sandbox", template.id, refused)
@@ -558,14 +560,14 @@ async def _drop_template(entry: _Template) -> None:
     """
     entry.failed = True  # no new forks
     if entry.gone is not None:
-        with anyio.move_on_after(180):
+        with anyio.move_on_after(_GONE_WAIT_S):
             await entry.gone.wait()
         return
     if entry.sandbox is None:
         return
-    entry.gone = anyio.Event()
+    gone = entry.gone = anyio.Event()
     try:
-        with anyio.move_on_after(120):
+        with anyio.move_on_after(_FORK_SETTLE_S):
             while entry.forking:
                 await anyio.sleep(0.2)
         sandbox, entry.sandbox = entry.sandbox, None
@@ -574,27 +576,33 @@ async def _drop_template(entry: _Template) -> None:
         logger.warning("Prized: no room for setup template %s and a sample at the quota; deleting it", sandbox.id)
         await _discard(sandbox, wait=True)
     finally:
-        entry.gone.set()
+        if entry.sandbox is not None:  # cancelled before the delete: the next caller deletes it
+            entry.gone = None
+        gone.set()
 
 
 async def _create(state: _State | None, options: dict) -> AsyncSandbox:
-    """Create a sample's sandbox. At a quota a paused template counts toward, delete one and retry."""
-    try:
-        return await AsyncSandbox.create(**options)
-    except PrizedError as err:
-        if err.code != _QUOTA:
-            raise
-        templates = state.templates.values() if state is not None else ()
-        live = [e for e in templates if e.sandbox is not None or (e.gone is not None and not e.gone.is_set())]
-        if err.reason not in _TEMPLATE_QUOTAS or not live:
-            logger.warning(
-                "Prized: the workspace is at its sandbox quota (%s). Run with a lower --max-sandboxes, "
-                "or delete sandboxes you no longer need.",
-                err.reason,
-            )
-            raise
-    await _drop_template(live[0])
-    return await AsyncSandbox.create(**options)
+    """Create a sample's sandbox. At a quota paused templates count toward, delete them one at a time
+    (waiting for one another sample is deleting only when no other is left) until it fits."""
+    drops = 0
+    while True:
+        try:
+            return await AsyncSandbox.create(**options)
+        except PrizedError as err:
+            entries = list(state.templates.values()) if state is not None else []
+            fresh = [e for e in entries if e.sandbox is not None and e.gone is None]
+            pending = [e for e in entries if e.gone is not None and not e.gone.is_set()]
+            target = (fresh or pending or [None])[0]
+            if err.code != _QUOTA or err.reason not in _TEMPLATE_QUOTAS or target is None or drops > len(entries):
+                if err.code == _QUOTA:
+                    logger.warning(
+                        "Prized: the workspace is at its sandbox quota (%s). Run with a lower --max-sandboxes, "
+                        "or delete sandboxes you no longer need.",
+                        err.reason,
+                    )
+                raise
+        drops += 1
+        await _drop_template(target)
 
 
 async def _template(state: _State, cfg: PrizedSandboxConfig) -> _Template | None:
@@ -627,7 +635,7 @@ async def _template(state: _State, cfg: PrizedSandboxConfig) -> _Template | None
                 # fails this sample too, rather than running the same setup again in its own sandbox.
                 entry.failed = True
                 if sandbox is not None:
-                    await _discard(sandbox)
+                    await _discard(sandbox, wait=True)  # the sample's own create comes next
                 if isinstance(err, (RuntimeError, CommandTimeoutError)):
                     raise
                 logger.info("Prized: setup template for this config not made (%s); samples run setup", err)
