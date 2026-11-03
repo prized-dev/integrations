@@ -63,6 +63,7 @@ class _Sandbox:
         self.files = _Files()
         self.execs: list[dict] = []
         self.deleted = self.closed = self.paused = False
+        self.beats, self.beat_raises = 0, None
         self._exit_code, self._raises = exit_code, raises
         self.answer = None
 
@@ -81,6 +82,11 @@ class _Sandbox:
 
     async def pause(self):
         self.paused = True
+
+    async def keep_alive(self):
+        self.beats += 1
+        if self.beat_raises is not None:
+            raise self.beat_raises
 
     async def close(self):
         self.closed = True
@@ -251,6 +257,39 @@ async def test_a_refused_key_points_agents_at_sign_up_once(
         await environment.start(force_build=False)
     assert str(info.value).count("auth.md") == 1
     assert ".." not in str(info.value)
+
+
+@pytest.mark.asyncio
+async def test_a_heartbeat_keeps_the_sandbox_from_pausing_until_stop(
+    tmp_path, monkeypatch
+):
+    environment = _environment(tmp_path, docker_image="python:3.12")
+    sandbox = _Sandbox()
+    sandbox.beat_raises = PrizedError("network_error")  # a failed beat is retried
+    created = {}
+
+    async def create(template, **kwargs):
+        created.update(kwargs)
+        return sandbox
+
+    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
+    monkeypatch.setattr(_module.PrizedEnvironment, "_prepare_image", _no_image)
+    monkeypatch.setattr(_module, "_HEARTBEAT_SEC", 0.01)
+
+    await environment.start(force_build=False)
+    assert created["auto_pause_min"] == 30
+    while sandbox.beats < 3:
+        await asyncio.sleep(0.01)
+    heartbeat = environment._heartbeat
+    await environment.stop(delete=True)
+    assert heartbeat.cancelled() or heartbeat.done()
+    beats = sandbox.beats
+    await asyncio.sleep(0.05)
+    assert sandbox.beats == beats and sandbox.deleted
+
+
+async def _no_image(self, image):
+    return None
 
 
 async def _no_user(self, user):
@@ -446,16 +485,21 @@ async def test_long_scripts_are_uploaded_and_removed_if_they_never_ran(tmp_path)
 
 
 @pytest.mark.asyncio
-async def test_exec_as_a_user_runs_with_its_ids_and_home(tmp_path):
+async def test_exec_as_a_user_runs_with_its_ids_and_home(tmp_path, caplog):
     environment = _environment(tmp_path, docker_image="python:3.12")
     environment._image_env = {"PATH": "/usr/bin:/bin"}
     environment._sandbox = sandbox = _Sandbox()
 
+    await environment.exec("id")
+    assert "User separation is not enforced" not in caplog.text
     await environment.exec("id", user="agent")
     with environment.with_default_user(1003):
         await environment.exec("id")
     await environment.exec("id", user="agent:staff")
     await environment.exec("id", user="4242")
+    # Said once per trial, at the first command for a non-root user.
+    assert caplog.text.count("User separation is not enforced") == 1
+    sandbox.execs = sandbox.execs[1:]
 
     commands = _runtime_calls(sandbox)
     assert commands[0].startswith(RUNTIME + "--user 1001:1002 - ")

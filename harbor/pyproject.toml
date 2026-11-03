@@ -12,7 +12,7 @@ license-files = ["LICENSE"]
 requires-python = ">=3.12"
 authors = [{ name = "Prized", email = "team@prized.dev" }]
 keywords = ["harbor", "terminal-bench", "prized", "sandbox", "evals"]
-dependencies = ["harbor>=0.24", "prized>=0.1.1,<0.2"]
+dependencies = ["harbor>=0.24", "prized>=0.1.2,<0.2"]
 
 [project.optional-dependencies]
 test = ["pytest>=8", "pytest-asyncio>=0.23"]
