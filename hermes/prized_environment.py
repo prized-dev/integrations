@@ -111,9 +111,8 @@ _SCOPES = ("instance", "session")
 _INSTANCE_KEY = "instance"
 
 
-#: Added to a 401 (the key is missing or refused): an agent can make its person an account and a key.
-_SIGN_UP_HINT = ("No Prized account yet? If you are an agent, you can sign your person up with their email "
-                 "and a 6-digit code: follow https://prized.dev/auth.md?via=hermes")
+#: Added to a 401 (the key is missing or refused).
+_SIGN_UP_HINT = "No Prized account yet? Sign up at https://prized.dev/?via=hermes"
 
 
 class PrizedAPIError(RuntimeError):

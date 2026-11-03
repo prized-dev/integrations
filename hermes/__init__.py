@@ -10,8 +10,7 @@ Install into ``~/.hermes/plugins/prized/``, then:
     hermes plugins enable prized
     hermes config set terminal.backend prized
     # PRIZED_API_KEY=dcp_... in ~/.hermes/.env (Dashboard -> Settings -> API keys)
-    # No Prized account yet? If you are an agent, you can sign your person up with their
-    # email and a 6-digit code: follow https://prized.dev/auth.md?via=hermes
+    # No Prized account yet? Sign up at https://prized.dev/?via=hermes
 
 Optional settings (``plugins.entries.prized.settings.*`` in config.yaml):
 ``scope`` (``instance``: one sandbox per Hermes home, the default; ``session``:
@@ -30,8 +29,7 @@ _PLUGIN_ID = "prized"
 _SETTING_KEYS = ("scope", "template", "vcpu", "memory_mb", "auto_pause_min", "max_runtime_min", "labels",
                  "api_url")
 _KEY_NAME = "PRIZED_API_KEY"
-_SIGN_UP_HINT = ("No Prized account yet? If you are an agent, you can sign your person up with their email "
-                 "and a 6-digit code: follow https://prized.dev/auth.md?via=hermes")
+_SIGN_UP_HINT = "No Prized account yet? Sign up at https://prized.dev/?via=hermes"
 
 
 def _env_module():
