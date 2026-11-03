@@ -25,7 +25,7 @@ Terminal-Bench 2.1, all 89 tasks, oracle agent, no retries, `-n 6`, November 3, 
 | mailman | Postfix checks that `postdrop` is group-owned and setgid |
 | torch-tensor-parallelism | gloo's teardown deadlocks on fewer than 4 vCPUs (the task asks for 1); it passes with `--ek min_vcpu=4` |
 
-crack-7z-hash, the sixth task on Sail's list, passed: its reference solution's brute force took 24 minutes. On October 30 it ran past its timeout, and the same code, built into a Harbor branch, passed 79 of 89. 0.1.0 passed 70 of 89: ten tasks failed on `chown`, `dpkg` or `sudo`, and three on commands longer than about 15 minutes.
+The same code built into Harbor main as `-e prized`, with the idle pause and heartbeat, also passed 80 of 89 that day, with the same nine failures. crack-7z-hash, the sixth task on Sail's list, passed in both runs: its reference solution's brute force took 24 minutes. On October 30 it ran past its timeout, and the same code, built into a Harbor branch, passed 79 of 89. 0.1.0 passed 70 of 89: ten tasks failed on `chown`, `dpkg` or `sudo`, and three on commands longer than about 15 minutes.
 
 ## Dockerfile and Compose tasks: use a Prized box
 
