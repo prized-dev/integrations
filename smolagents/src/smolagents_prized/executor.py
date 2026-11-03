@@ -116,16 +116,10 @@ class PrizedExecutor(RemotePythonExecutor):
         self._base_url = base_url
         self._owned = sandbox_id is None
         self._step_timeout = step_timeout
+        self._startup_timeout = startup_timeout
         self._closed = False
         self._counter = 0
-
-        token = secrets.token_hex(4)
-        self._dir = f"{HOME}/.smolk-{token}"
-        self._kernel_py = f"{self._dir}/_kernel.py"
-        self._client_py = f"{self._dir}/_client.py"
-        self._sock = f"{self._dir}/k.sock"
-        self._ready = f"{self._dir}/ready"
-        self._log = f"{self._dir}/kernel.log"
+        self._set_kernel_paths()
 
         if sandbox_id is not None:
             self.sandbox = prized.Sandbox.connect(sandbox_id, api_key=self._api_key, base_url=self._base_url)
@@ -143,10 +137,26 @@ class PrizedExecutor(RemotePythonExecutor):
                 auto_delete_min=auto_delete_min,
                 max_runtime_min=max_runtime_min,
             )
-        self.logger.log(f"Prized sandbox {self.sandbox.id} is up, starting the kernel...", level=LogLevel.INFO)
-        self._start_kernel(startup_timeout)
-        self._ensure_serialization_deps()
-        self.installed_packages += self.install_packages(self.additional_imports)
+        # From here the sandbox exists; if any startup step fails, delete it (or release an attached
+        # one) rather than leak it until its idle timeout.
+        try:
+            self.logger.log(f"Prized sandbox {self.sandbox.id} is up, starting the kernel...", level=LogLevel.INFO)
+            self._start_kernel(self._startup_timeout)
+            self._ensure_serialization_deps()
+            self.installed_packages += self.install_packages(self.additional_imports)
+        except BaseException:
+            self.cleanup()
+            raise
+
+    def _set_kernel_paths(self) -> None:
+        """Pick a fresh directory for the kernel's scripts, socket and log (new on each (re)start)."""
+        token = secrets.token_hex(4)
+        self._dir = f"{HOME}/.smolk-{token}"
+        self._kernel_py = f"{self._dir}/_kernel.py"
+        self._client_py = f"{self._dir}/_client.py"
+        self._sock = f"{self._dir}/k.sock"
+        self._ready = f"{self._dir}/ready"
+        self._log = f"{self._dir}/kernel.log"
 
     def _ensure_serialization_deps(self) -> None:
         """Make sure numpy and PIL (pillow) are importable in the sandbox, installing only what's
@@ -194,6 +204,17 @@ class PrizedExecutor(RemotePythonExecutor):
         except PrizedError:
             return ""
 
+    def _restart_kernel(self) -> None:
+        """Kill the old (stuck) kernel and start a fresh one under a new directory. Best effort: if
+        it can't be restarted, the next step surfaces a clear 'no result' error instead."""
+        old_kernel_py = self._kernel_py
+        with contextlib.suppress(Exception):
+            self.sandbox.exec(f"pkill -f {shlex.quote(old_kernel_py)}", timeout=15)
+        self._counter = 0
+        with contextlib.suppress(Exception):
+            self._set_kernel_paths()
+            self._start_kernel(self._startup_timeout)
+
     def run_code_raise_errors(self, code: str) -> CodeOutput:
         if self._closed:
             raise RuntimeError("This PrizedExecutor has been cleaned up; make a new one.")
@@ -207,8 +228,12 @@ class PrizedExecutor(RemotePythonExecutor):
         try:
             result = self.sandbox.exec(command, timeout=self._step_timeout)
         except CommandTimeoutError as err:
+            # The client was stopped, but the kernel is still running the slow cell, so it can't serve
+            # the next step. Restart it (fresh namespace) so the executor isn't wedged, and say so.
+            self._restart_kernel()
             raise AgentError(
-                f"{err.stdout or ''}\nExecution timed out after {self._step_timeout:g} seconds and was stopped.",
+                f"{err.stdout or ''}\nExecution timed out after {self._step_timeout:g} seconds and was "
+                "stopped. The kernel was restarted, so variables and tools from earlier steps are gone.",
                 self.logger,
             ) from err
         finally:

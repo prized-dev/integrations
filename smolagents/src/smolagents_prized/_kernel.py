@@ -80,10 +80,7 @@ def _refresh_import_paths() -> None:
 
 
 def _rewrite_shell_lines(code: str) -> str:
-    """Turn lines that start with ``!`` into ``_smol_shell("...")`` calls, leaving Python untouched.
-
-    A Python statement never starts with ``!``, so this only ever fires on shell-escape lines.
-    """
+    """Turn lines that start with ``!`` into ``_smol_shell("...")`` calls, leaving Python untouched."""
     out = []
     for line in code.split("\n"):
         stripped = line.lstrip()
@@ -93,6 +90,19 @@ def _rewrite_shell_lines(code: str) -> str:
         else:
             out.append(line)
     return "\n".join(out)
+
+
+def _parse_cell(code: str) -> ast.Module:
+    """Parse a cell, handling notebook-style ``!shell`` lines.
+
+    Valid Python is parsed as-is, so a ``!`` inside a string or an expression is never touched. Only
+    when the cell isn't valid Python (e.g. it has a ``!pip install ...`` line, which is a syntax
+    error) do we rewrite leading-``!`` lines to shell calls and parse again.
+    """
+    try:
+        return ast.parse(code, mode="exec")
+    except SyntaxError:
+        return ast.parse(_rewrite_shell_lines(code), mode="exec")
 
 
 class Kernel:
@@ -107,14 +117,13 @@ class Kernel:
         self.namespace: dict[str, Any] = {"__name__": "__main__", "_smol_shell": _shell}
 
     def run(self, code: str) -> dict[str, Any]:
-        code = _rewrite_shell_lines(code)
         buffer = io.StringIO()
         result: Any = None
         is_final_answer = False
         error: dict[str, str] | None = None
         with contextlib.redirect_stdout(buffer), contextlib.redirect_stderr(buffer):
             try:
-                tree = ast.parse(code, mode="exec")
+                tree = _parse_cell(code)
                 last_expr: ast.Expression | None = None
                 last_stmt = tree.body[-1] if tree.body else None
                 if isinstance(last_stmt, ast.Expr):

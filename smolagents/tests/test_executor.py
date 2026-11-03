@@ -165,6 +165,58 @@ def test_garbled_kernel_reply_is_reported(executor):
     assert "did not return a result" in str(info.value)
 
 
+def test_startup_failure_deletes_the_sandbox(cloud, monkeypatch):
+    # If the kernel never becomes ready, __init__ must delete the sandbox it created, not leak it.
+    import prized
+
+    real_create = cloud.create
+
+    def create_that_never_readies(template="prized-base-v1", **kwargs):
+        sandbox = real_create(template, **kwargs)
+        sandbox.exec_hook = lambda cmd: ExecResult("", "", 0) if "setsid" in cmd else None  # don't launch
+        monkeypatch.setattr(sandbox.files, "exists", lambda path: False)  # never ready
+        return sandbox
+
+    monkeypatch.setattr(prized.Sandbox, "create", create_that_never_readies)
+
+    with pytest.raises(RuntimeError, match="did not start"):
+        PrizedExecutor(startup_timeout=0.3)
+
+    assert cloud.created[0].deletes == 1
+    assert cloud.created[0].state == "deleted"
+
+
+def test_recovers_after_a_step_timeout(executor):
+    from prized import CommandTimeoutError
+
+    seen = {"client": 0}
+    real_exec = executor.sandbox.exec
+
+    def flaky_exec(cmd, **kwargs):
+        if "_client.py" in cmd:
+            seen["client"] += 1
+            if seen["client"] == 1:
+                raise CommandTimeoutError(ExecResult("", "", -1, timed_out=True), kwargs.get("timeout"))
+        return real_exec(cmd, **kwargs)
+
+    executor.sandbox.exec = flaky_exec
+
+    first_dir = executor._dir
+    with pytest.raises(AgentError, match="timed out"):
+        executor.run_code_raise_errors("1 + 1")
+    assert executor._dir != first_dir  # the kernel was restarted under a fresh directory
+
+    out = executor.run_code_raise_errors("21 * 2")  # executor is not wedged
+    assert out.output == "42"
+
+
+def test_bang_inside_a_string_is_not_treated_as_shell(executor):
+    # A "!"-leading line inside a string is valid Python, so it must run as Python, not a shell call.
+    code = 'text = """\n!notashell\n"""\nlen(text)'
+    out = executor.run_code_raise_errors(code)
+    assert out.output == str(len("\n!notashell\n"))  # "12"
+
+
 def test_full_code_agent_run(cloud):
     from smolagents import ChatMessage, CodeAgent, MessageRole
 
