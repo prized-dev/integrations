@@ -230,17 +230,26 @@ async def test_start_creates_a_labelled_sandbox_and_unpacks_the_image(
 
 
 @pytest.mark.asyncio
-async def test_a_refused_key_points_agents_at_sign_up(tmp_path, monkeypatch):
+@pytest.mark.parametrize(
+    "error",
+    [
+        PrizedError("invalid_api_key"),  # the SDK's message names auth.md already
+        PrizedError("unauthorized", "Unauthorized.", status=401),
+    ],
+)
+async def test_a_refused_key_points_agents_at_sign_up_once(
+    tmp_path, monkeypatch, error
+):
     environment = _environment(tmp_path, docker_image="python:3.12")
 
     async def create(template, **kwargs):
-        raise PrizedError("invalid_api_key", "The API key was not accepted.", status=401)
+        raise error
 
     monkeypatch.setattr(_module.AsyncSandbox, "create", create)
 
     with pytest.raises(RuntimeError, match="auth.md") as info:
         await environment.start(force_build=False)
-    assert "not accepted. No Prized account yet?" in str(info.value)
+    assert str(info.value).count("auth.md") == 1
     assert ".." not in str(info.value)
 
 

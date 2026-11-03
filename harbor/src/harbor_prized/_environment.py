@@ -417,7 +417,11 @@ class PrizedEnvironment(BaseEnvironment):
                 "token_expired",
                 "key_access_denied",
             ):
-                raise RuntimeError(f"{str(exc).rstrip('.')}. {_SIGN_UP_HINT}") from exc
+                # The SDK's message often carries a sign-up pointer already.
+                message = str(exc).rstrip(".")
+                if "auth.md" not in message:
+                    message = f"{message}. {_SIGN_UP_HINT}"
+                raise RuntimeError(message) from exc
             raise
         self.logger.debug(f"Prized sandbox {self._sandbox.id} for {image}")
         try:
