@@ -34,9 +34,9 @@ class PrizedConfig(CustomRuntimeConfig):
     /home/prized/work. Only /home/prized and /tmp are writable (no root)."""
     setup: list[str] = Field(default_factory=list)
     """Shell commands that build the environment, run once in order in the parent sandbox before
-    it is paused (no root: `pip` into a venv or `--user`, `uv`, `npm` with a user prefix, git
-    clones, downloads). A process started here in the background (`nohup ... &`) keeps running
-    in every copy."""
+    it is paused (no root: `pip` into a venv, `uv`, `npm` with a user prefix, git clones,
+    downloads; plain `pip install` and `pip --user` stop at `externally-managed-environment`). A
+    process started here in the background (`nohup ... &`) keeps running in every copy."""
     setup_env: list[str] = Field(default_factory=list)
     """Names of variables in this process's environment passed to the `setup` commands (the names
     are saved with the config, the values are not). A process `setup` leaves running keeps them in

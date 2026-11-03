@@ -209,3 +209,19 @@ def test_sdk_errors_the_pool_reads() -> None:
         "x",
     )
     assert issubclass(prized.CommandTimeoutError, prized.PrizedError)
+
+
+def test_logs_go_through_verifiers_own_logger() -> None:
+    # vf-run and vf-validate route only verifiers' library logger (utils/logging.py) to the
+    # console and the run's log file: the parent's id and the run's label are logged under it.
+    from verifiers_prized import pool
+
+    tree = ast.parse((real_verifiers() / "utils" / "logging.py").read_text())
+    library = next(
+        node.value.value
+        for node in tree.body
+        if isinstance(node, ast.Assign)
+        and any(isinstance(t, ast.Name) and t.id == "LIBRARY_LOGGER" for t in node.targets)
+        and isinstance(node.value, ast.Constant)
+    )
+    assert pool.logger.name.startswith(f"{library}."), (pool.logger.name, library)

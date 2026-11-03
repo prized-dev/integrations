@@ -37,7 +37,9 @@ from verifiers.v1.errors import SandboxError
 
 from .config import DEFAULT_WORKDIR, PrizedConfig
 
-logger = logging.getLogger("verifiers_prized")
+# Under verifiers' own library logger, so its CLIs (vf-run, vf-validate) show and file these lines,
+# the parent's id and the run's label among them, at the level they log at.
+logger = logging.getLogger("verifiers.v1.runtimes.backends.prized")
 
 T = TypeVar("T")
 
@@ -627,6 +629,7 @@ class ParentPool:
                 return
             self.forks += 1
             making(self.creds)
+            began = time.monotonic()
             try:
                 children = list(
                     await parent.sandbox.fork(
@@ -643,6 +646,14 @@ class ParentPool:
                 return
             for child in children:
                 track(child.id, self.creds)
+            logger.debug(
+                "verifiers-prized: forked %d cop%s of %s in %.2fs: %s",
+                len(children),
+                "y" if len(children) == 1 else "ies",
+                parent.sandbox.id,
+                time.monotonic() - began,
+                " ".join(child.id for child in children),
+            )
             parent.rest_until, parent.strikes, parent.fits = 0.0, 0, None
             self._strikes = self._replaced = 0
             # A rollout that went away while its copy was being made hands it to the next one.

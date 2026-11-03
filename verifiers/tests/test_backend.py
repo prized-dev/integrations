@@ -803,3 +803,61 @@ async def test_a_first_parent_never_admitted_fails_within_capacity_wait(cloud: C
         await rollouts(config(setup=SETUP, capacity_wait=1), 1)
     assert asyncio.get_running_loop().time() - began < 5
     assert cloud.count("create") <= 4
+
+
+def test_build_prints_a_paused_parent_that_runs_fork(
+    cloud: Cloud, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from verifiers_prized.__main__ import main
+
+    code = main(
+        ["build", "--setup", "echo built > env.txt", "--label", "team=evals", "--setup-timeout", "60"]
+    )
+    assert code == 0
+    sandbox_id = capsys.readouterr().out.strip()
+    box = cloud.boxes[sandbox_id]
+    assert box.state == "paused"
+    assert box.labels["team"] == "evals" and box.labels["verifiers-prized"] == "parent"
+    assert box.labels["vfp-run"].startswith("build-"), "never swept by a run's label"
+    assert sandbox_id not in pool._tracked and pool._used == {}, "it outlives the process"
+
+    async def fork_it() -> bytes:
+        async with provisioned(parent=sandbox_id) as view:
+            data: bytes = await view.read("env.txt")
+        await pool.close_pools()
+        return data
+
+    assert asyncio.run(fork_it()) == b"built\n"
+    assert cloud.boxes[sandbox_id].state == "paused" and cloud.count("create") == 1
+
+
+def test_build_refuses_a_bad_label_and_a_missing_key(
+    cloud: Cloud, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from verifiers_prized.__main__ import main
+
+    with pytest.raises(SystemExit, match="key=value"):
+        main(["build", "--label", "novalue"])
+    monkeypatch.delenv("PRIZED_API_KEY")
+    assert main(["build"]) == 1
+    assert "PRIZED_API_KEY" in capsys.readouterr().err
+    assert cloud.count("create") == 0
+
+
+def test_build_logs_its_progress_not_every_request(
+    cloud: Cloud, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import logging
+
+    from verifiers_prized.__main__ import main
+
+    monkeypatch.setattr(pool.logger, "handlers", [])
+    monkeypatch.setattr(pool.logger, "level", logging.NOTSET)
+    root = logging.getLogger()  # as in a fresh interpreter: no handlers, WARNING
+    monkeypatch.setattr(root, "handlers", [])
+    monkeypatch.setattr(root, "level", logging.WARNING)
+    assert main(["build"]) == 0
+    err = capsys.readouterr().err
+    assert "verifiers-prized: parent" in err and "ready in" in err
+    logging.getLogger("httpx").info("HTTP Request: POST https://api.prized.dev/ ...")
+    assert "HTTP Request" not in capsys.readouterr().err

@@ -49,7 +49,11 @@ def main(argv: list[str] | None = None) -> int:
     build.add_argument("--api-key-env", default="PRIZED_API_KEY")
     args = parser.parse_args(argv)
 
-    logging.basicConfig(level=logging.INFO, format="%(message)s", stream=sys.stderr)
+    # Progress lines from this package only: the root logger would add one per HTTP request.
+    handler = logging.StreamHandler(sys.stderr)
+    handler.setFormatter(logging.Formatter("%(message)s"))
+    pool.logger.addHandler(handler)
+    pool.logger.setLevel(logging.INFO)
     try:
         config = PrizedConfig(
             import_path="verifiers_prized.PrizedBackend",
