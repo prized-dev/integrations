@@ -12,7 +12,27 @@ No Prized account yet? Your coding agent can sign you up with your email and a 6
 
 Each trial gets its own sandbox, sized from the task's `cpus`, `memory_mb` and `storage_mb`, plus 20 GB of disk for the image, and deleted when the trial ends (`--no-delete` pauses it instead, at storage cost only, and it is deleted after a day paused). If Harbor itself dies mid-run, a sandbox it leaves behind pauses after 30 idle minutes, so it stops billing compute, and is deleted a day later. Paused sandboxes count toward the workspace's disk quota until then. The task's prebuilt `docker_image` is unpacked with `crane`, keeping its file modes, and every command runs chrooted into it with the image's `ENV`, `WORKDIR` and `USER`, the task's env, Docker's umask (022) and a Docker-style `/etc/hosts`. Root commands run as uid 0 of an unprivileged user namespace, under a seccomp filter that makes `chown`, setuid/setgid bits and switches to other users succeed without effect, as fakeroot does, so `apt-get`, `useradd` and `sudo` work. A command for another user (`user=agent`, the task's `[agent] user`, or the image's `USER`) runs as that user's uid and gid in a namespace nested in root's. All commands of a trial share these namespaces, so processes they leave running (tmux, servers) stay visible to later commands. Long commands run detached through the [`prized` SDK](https://pypi.org/project/prized/), so an hour-long agent run outlives a dropped connection, and files over 64 MiB move in parts.
 
-Options (`--ek key=value`): `template` (default `prized-base-v1`), `max_runtime_min` (1440; up to 10080, 7 days), `paused_ttl_min` (1440, a day), `min_vcpu` (1), `image_headroom_gb` (20), `labels` (`k=v,k=v`). Each sandbox is labelled `harbor=1` and `harbor-session=<trial>`, so once no run is going, `prized sandbox rm --label harbor=1` removes any a crashed run left behind. A task's `cpus` may be fractional (`0.5`, Harbor 0.25 and later): the sandbox gets whole vCPUs, rounded up.
+Options (`--ek key=value`): `template` (default `prized-base-v1`), `max_runtime_min` (1440; up to 10080, 7 days), `paused_ttl_min` (1440, a day), `min_vcpu` (1), `image_headroom_gb` (20), `labels` (`k=v,k=v`), `registry_auth` (`env`, `docker` or a path; [below](#pull-with-your-own-registry-credentials)). Each sandbox is labelled `harbor=1` and `harbor-session=<trial>`, so once no run is going, `prized sandbox rm --label harbor=1` removes any a crashed run left behind. A task's `cpus` may be fractional (`0.5`, Harbor 0.25 and later): the sandbox gets whole vCPUs, rounded up.
+
+## Pull with your own registry credentials
+
+Docker Hub allows 100 anonymous pulls an hour per IP address, and sandboxes share their host's address, so a full Terminal-Bench run can use it up, and starts then fail with `TOOMANYREQUESTS`. Pull with your own Docker Hub token instead:
+
+```bash
+export DOCKERHUB_USERNAME=you
+export DOCKERHUB_TOKEN=dckr_pat_...   # Docker Hub: Account settings, Personal access tokens, "Public Repo Read-only"
+harbor run -d terminal-bench/terminal-bench-2-1 -a oracle -e harbor_prized:PrizedEnvironment -n 4 --ek registry_auth=env
+```
+
+`registry_auth` names where the credentials are, never the credentials, because Harbor writes `--ek` values into the job's `config.json`:
+
+| Value | Credentials |
+|---|---|
+| `env` | `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`, for images on Docker Hub |
+| `docker` | Your `docker login`: `$DOCKER_CONFIG/config.json`, else `~/.docker/config.json`. Logins kept in a credential store (Docker Desktop's `credsStore`, `credHelpers`) are read with its `docker-credential-*` helper on your machine |
+| a path | A Docker `config.json`, or a directory holding one, for any registry (also private images) |
+
+Only the entry for the image's own registry goes to the sandbox, through the files API rather than a command line, and it is deleted as soon as the image is pulled, before the agent's first command. A registry with no entry is pulled anonymously, with one warning a run. Wrong credentials fail the pull (Docker Hub does not fall back to anonymous), and the error names where they came from.
 
 ## Results
 
@@ -57,9 +77,9 @@ Every task on the Hub ships prebuilt, digest-pinned images for its environment a
 
 ## Limits
 
-- Prebuilt `docker_image` tasks only, pulled without credentials. Dockerfile builds and Docker Compose tasks are refused before a sandbox starts; a verifier built from `tests/Dockerfile` is refused when the verifier starts, after the agent has run (use the box route above). The image's `ENTRYPOINT` and `CMD` don't run.
+- Prebuilt `docker_image` tasks only, pulled anonymously unless you set [`registry_auth`](#pull-with-your-own-registry-credentials). Dockerfile builds and Docker Compose tasks are refused before a sandbox starts; a verifier built from `tests/Dockerfile` is refused when the verifier starts, after the agent has run (use the box route above). The image's `ENTRYPOINT` and `CMD` don't run.
 - One id underneath: a non-root user runs as its own uid and gid, but owns every file root owns, has no supplementary groups, can't `sudo`, and doesn't see other users' processes (root sees everyone's). Programs that check a real user switch (an `sshd` login, Postfix) fail.
-- Images are pulled anonymously. Docker Hub limits anonymous pulls (100 an hour per IP address, as measured from a sandbox), so in a large run some starts can fail with `TOOMANYREQUESTS`; run those trials again later.
+- Anonymous pulls share a limit: Docker Hub allows 100 an hour per IP address (measured from a sandbox), and sandboxes share their host's address, so in a large run some starts can fail with `TOOMANYREQUESTS`. Pass your own token ([above](#pull-with-your-own-registry-credentials)), or run those trials again later.
 - No network policies (`no-network`, `allow_internet = false`, allowlists) or GPUs: Harbor refuses those tasks before a sandbox starts, and a verifier with no network of its own when it starts. Storage is at most 128 GB.
 - Concurrency: each Terminal-Bench trial takes 1 vCPU, 2 GB of memory and 30 GB of disk, so the workspace's sandbox and disk quotas set how many run at once. Lower `image_headroom_gb` to fit more, or ask team@prized.dev to raise the quota for large runs. On the free tier pass `--ek max_runtime_min=60` (its limit) and `-n 1`: its 100 GB of disk fits three trial sandboxes, and a trial whose verifier runs in its own environment holds two while it verifies.
 

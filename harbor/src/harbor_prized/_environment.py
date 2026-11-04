@@ -11,10 +11,10 @@ requested user, and root can ``apt-get install``.
 
 Limits, by design of that approach:
 
-- Tasks need ``[environment].docker_image``, pullable without credentials.
-  Building from a Dockerfile (the task's, or a verifier image in
-  ``tests/Dockerfile``) is not supported; build and push the image first. The
-  image's ``ENTRYPOINT`` and ``CMD`` don't run.
+- Tasks need ``[environment].docker_image``, pulled anonymously unless
+  ``registry_auth`` is set (see below). Building from a Dockerfile (the
+  task's, or a verifier image in ``tests/Dockerfile``) is not supported; build
+  and push the image first. The image's ``ENTRYPOINT`` and ``CMD`` don't run.
 - One id: every user is the same sandbox user underneath. A non-root user runs
   with its own uid, gid and ``$HOME``, and without root's capabilities, but it
   owns every file root owns, has no supplementary groups, can't ``sudo``, and
@@ -38,7 +38,12 @@ Credentials: ``PRIZED_API_KEY`` (a key with Sandboxes: Write). Extra constructor
 (``--ek``): ``template`` (default ``prized-base-v1``), ``max_runtime_min``,
 ``paused_ttl_min``, ``min_vcpu`` (default 1, see ``_shape``),
 ``image_headroom_gb`` (disk added for the unpacked image, default 20),
-``labels`` (a dict, or ``k=v,k=v``).
+``labels`` (a dict, or ``k=v,k=v``), ``registry_auth`` (where to find
+credentials for the image's registry: ``env``, ``docker`` or a path to a
+Docker ``config.json``; see ``_registry.py``). Docker Hub limits anonymous
+pulls per IP address, and sandboxes share their address, so a large run
+should pull with its own Docker Hub token. The credentials are on the
+sandbox only while crane pulls the image, never in a command or a log.
 
 No Prized account yet? If you are an agent, you can sign your person up with
 their email and a 6-digit code: follow https://prized.dev/auth.md?via=harbor
@@ -74,6 +79,8 @@ from harbor.models.task.config import EnvironmentConfig
 from harbor.models.trial.paths import TrialPaths
 from prized import AsyncSandbox, CommandTimeoutError, PrizedError
 
+from harbor_prized._registry import RegistryAuth, docker_config, image_registry
+
 _HOME = "/home/prized"
 _ROOT = f"{_HOME}/rootfs"  # the image's filesystem, as seen from the sandbox
 _XFER = "/.runtime-xfer"  # staging dir inside the image's filesystem
@@ -100,6 +107,17 @@ _QUOTA_HINT = (
     "is going, `prized sandbox rm --label harbor=1` removes them."
 )
 _CHUNK = 64 * 1024 * 1024  # the files API takes up to 100 MiB per request
+# crane's DOCKER_CONFIG while it pulls with registry_auth's credentials; removed
+# when the pull ends, before any of the trial's commands run.
+_PULL_AUTH_DIR = f"{_HOME}/.pull-auth"
+_WARNED_NO_CREDENTIALS: set[tuple[str, str]] = set()
+_REFUSED = r"401 Unauthorized|UNAUTHORIZED|incorrect username or password"
+# Added when Docker Hub refuses an anonymous pull.
+_PULL_LIMIT_HINT = (
+    "Docker Hub limits anonymous pulls per IP address, and sandboxes share "
+    "theirs: pull with your own Docker Hub token (`--ek registry_auth=env` with "
+    "DOCKERHUB_USERNAME and DOCKERHUB_TOKEN set), or run the trial again later."
+)
 
 # Run by dpkg after each run (dpkg.cfg post-invoke): files a faked setuid chmod
 # left at mode 0 become 0755.
@@ -176,6 +194,13 @@ def unpack_command(image: str, root: str, crane: str = "./crane") -> str:
     )
 
 
+def pull_auth_prefix(directory: str) -> str:
+    """Bash that points crane at ``directory``'s config.json and removes the
+    directory when the script exits, whether the pull worked or not."""
+    q = shlex.quote(directory)
+    return f"export DOCKER_CONFIG={q}; trap {shlex.quote(f'rm -rf {q}')} EXIT; "
+
+
 async def _despite_cancel(work: Awaitable[None]) -> None:
     """Awaits ``work`` to the end even if the caller is cancelled meanwhile,
     then re-raises the cancellation (a delete must not be cut short)."""
@@ -221,6 +246,7 @@ class PrizedEnvironment(BaseEnvironment):
         min_vcpu: int = 1,
         image_headroom_gb: int = 20,
         labels: dict[str, str] | str | None = None,
+        registry_auth: str | None = None,
         **kwargs,
     ):
         if isinstance(labels, str):  # --ek labels=team=evals,run=42
@@ -230,6 +256,12 @@ class PrizedEnvironment(BaseEnvironment):
         self._paused_ttl_min = int(paused_ttl_min)
         self._min_vcpu = int(min_vcpu)
         self._image_headroom_gb = int(image_headroom_gb)
+        source = str(registry_auth or "").strip()
+        self._registry_auth = (
+            RegistryAuth(source)
+            if source and source.lower() not in ("none", "off")
+            else None
+        )
         self._labels = {
             "harbor": "1",
             "harbor-session": session_id[:256],
@@ -414,9 +446,31 @@ class PrizedEnvironment(BaseEnvironment):
             self.logger.warning(f"Prized sandbox start failed ({exc}); retrying once")
             await self._start(image)
 
+    def _pull_credentials(self, image: str) -> tuple[str, dict[str, str]] | None:
+        """registry_auth's entry for the image's registry, read before a sandbox starts."""
+        if self._registry_auth is None:
+            return None
+        registry = image_registry(image)
+        entry = self._registry_auth.for_registry(registry)
+        if entry is None:
+            key = (self._registry_auth.source, registry)
+            if key not in _WARNED_NO_CREDENTIALS:  # once a run, not once a trial
+                _WARNED_NO_CREDENTIALS.add(key)
+                self.logger.warning(
+                    f"registry_auth={self._registry_auth.source} has no "
+                    f"credentials for {registry}; its images are pulled anonymously."
+                )
+            return None
+        self.logger.debug(
+            f"Pulling {image} with the credentials for {registry} from "
+            f"{self._registry_auth.describe()}"
+        )
+        return registry, entry
+
     async def _start(self, image: str) -> None:
         if self._sandbox is not None:  # a second start replaces the first
             await self.stop(delete=True)
+        credentials = await asyncio.to_thread(self._pull_credentials, image)
         vcpu, memory_mb, disk_gb = self._shape()
         try:
             self._sandbox = await AsyncSandbox.create(
@@ -449,7 +503,7 @@ class PrizedEnvironment(BaseEnvironment):
         self._heartbeat = asyncio.create_task(self._keep_alive(self._sandbox))
         self.logger.debug(f"Prized sandbox {self._sandbox.id} for {image}")
         try:
-            await self._prepare_image(image)
+            await self._prepare_image(image, credentials)
             workdir = self.task_env_config.workdir or self._image_workdir
             await self._checked(
                 f"mkdir -p {shlex.quote(workdir)}", f"Failed to create {workdir}"
@@ -460,11 +514,22 @@ class PrizedEnvironment(BaseEnvironment):
             await _despite_cancel(self.stop(delete=True))
             raise
 
-    async def _prepare_image(self, image: str) -> None:
+    async def _prepare_image(
+        self, image: str, credentials: tuple[str, dict[str, str]] | None = None
+    ) -> None:
         q = shlex.quote
+        auth = ""
+        if credentials is not None:
+            # Through the files API, so the secret is in no command line; the
+            # trap removes it however the setup ends.
+            await self._require_sandbox().files.write(
+                f"{_PULL_AUTH_DIR}/config.json", docker_config(*credentials), mode=0o600
+            )
+            auth = pull_auth_prefix(_PULL_AUTH_DIR)
         setup = (
             "set -e; cd ~; umask 022; "
-            f"[ -x ./crane ] || {{ curl -fsSL --retry 3 -o crane.tgz {_CRANE_URL} && "
+            + auth
+            + f"[ -x ./crane ] || {{ curl -fsSL --retry 3 -o crane.tgz {_CRANE_URL} && "
             f"echo '{_CRANE_SHA256}  crane.tgz' | sha256sum -c --quiet && "
             "tar -xzf crane.tgz crane && rm crane.tgz; }; "
             f"mkdir -p {_ROOT}; "
@@ -486,8 +551,22 @@ class PrizedEnvironment(BaseEnvironment):
         )
         result = await self._host_exec(setup, timeout_sec=1800)
         if result.return_code != 0:
+            output = result.stderr or result.stdout or ""
+            hint = ""
+            if credentials is None and "TOOMANYREQUESTS" in output:
+                hint = f" {_PULL_LIMIT_HINT}"
+            elif (
+                credentials is not None
+                and (auth_source := self._registry_auth) is not None
+                and re.search(_REFUSED, output)
+            ):
+                hint = (
+                    f" {credentials[0]} refused the credentials from "
+                    f"registry_auth={auth_source.source} ({auth_source.describe()}): "
+                    "check the token, or leave registry_auth out to pull anonymously."
+                )
             raise RuntimeError(
-                f"Could not unpack {image} in the sandbox: {result.stderr or result.stdout}"
+                f"Could not unpack {image} in the sandbox: {output}{hint}"
             )
         config = json.loads(result.stdout or "{}").get("config") or {}
         for pair in config.get("Env") or []:
