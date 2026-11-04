@@ -142,7 +142,8 @@ class PrizedSandboxConfig(BaseModel, frozen=True):
     """Shell commands that install what the task needs (in place of a Dockerfile). A config's first
     sample runs them in its own sandbox; for its second they run once more in a sandbox that is then
     paused, and that sample and every later one start as a fork of it, with the install done (files,
-    memory and running processes)."""
+    memory and running processes). Samples that start while that setup still runs (the first samples
+    of an eval, which start together) run it in their own sandboxes rather than wait for it."""
 
     setup_timeout: int = 1800
     """Seconds each ``setup`` command may run."""
@@ -499,6 +500,7 @@ class _Template:
         self.failed = False  # its build failed, or it was deleted (for room, or unforkable): samples run setup
         self.forking = 0  # forks of it in flight (a parent is not deleted while its copies start)
         self.gone: anyio.Event | None = None  # set once a template being deleted is gone
+        self.building = False  # a sample is creating it and running its setup
 
 
 class _State:
@@ -653,8 +655,9 @@ async def _counts(entry: _Template) -> bool:
 async def _template(state: _State, cfg: PrizedSandboxConfig) -> _Template | None:
     """The config's template entry, its paused sandbox (with cfg.setup done) built on first need.
 
-    None, or an entry without a sandbox, for a config's first sample, past MAX_TEMPLATES configs, or
-    once the config's template failed or was deleted: those samples run setup themselves.
+    None, or an entry without a sandbox, for a config's first sample, past MAX_TEMPLATES configs,
+    while another sample is creating the template and running its setup, or once the config's
+    template failed or was deleted: those samples run setup themselves.
     """
     key = _template_key(cfg)
     if key not in state.seen:
@@ -665,6 +668,22 @@ async def _template(state: _State, cfg: PrizedSandboxConfig) -> _Template | None
         if len(state.templates) >= MAX_TEMPLATES:
             return None
         entry = state.templates.setdefault(key, _Template())
+    if entry.building:
+        # Waiting for that setup would also mean waiting for the pause and the template's first fork,
+        # which writes its memory to disk before any copy starts (12 to 22 s for the default 8 GB).
+        # This sample's own sandbox is ready as soon as its setup is, as the config's first was.
+        return None
+    builder = entry.sandbox is None and not entry.failed
+    if builder:
+        entry.building = True  # before any await: samples that start meanwhile see it
+    try:
+        return await _build_template(state, cfg, entry)
+    finally:
+        if builder:
+            entry.building = False
+
+
+async def _build_template(state: _State, cfg: PrizedSandboxConfig, entry: _Template) -> _Template | None:
     async with entry.lock:
         if entry.sandbox is None and not entry.failed:
             options = _options(cfg, "template")

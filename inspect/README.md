@@ -52,7 +52,7 @@ inspect eval arithmetic.py --model openai/gpt-5
 | `labels` | none | Extra labels; every sandbox also carries `created-by=inspect-prized`. |
 | `max_runtime_min` | `60` | Prized deletes the sandbox after this many running minutes, even if cleanup never ran. 60 is the free tier's maximum; on a paid plan, raise it for samples that run longer. |
 | `keep` | `False` | Pause sandboxes after each sample instead of deleting them, to inspect them later. A sample forked from a `setup` template is deleted 7 days after it pauses. |
-| `setup` | none | Shell commands that install what the task needs, in place of a Dockerfile. The first sample runs them in its own sandbox. For the second, they run once more in a sandbox that is then paused (the template), and that sample and every later one start as a fork of it with the install done. |
+| `setup` | none | Shell commands that install what the task needs, in place of a Dockerfile. The first sample runs them in its own sandbox. For the second, they run once more in a sandbox that is then paused (the template), and that sample and every later one start as a fork of it with the install done. Samples that start while the template's setup still runs run `setup` in their own sandboxes instead of waiting. |
 | `setup_timeout` | `1800` | Seconds each `setup` command may run. |
 | `python_alias` | `True` | `python` runs `python3`, as in Python images (HumanEval, MBPP and other evals call `python`). It works through `PATH`, so if `env` sets `PATH`, put `/home/prized/.local/bin` first in it. |
 
@@ -65,6 +65,7 @@ PrizedSandboxConfig(setup=["python3 -m venv ~/venv && ~/venv/bin/pip install num
   - On the free tier, forks never extend free time, so a copy gets what the template has left: `max_runtime_min` less what `setup` took. A paused template's clock is stopped, so that amount doesn't shrink while the eval runs.
 - A sample runs `setup` in a fresh sandbox of its own in these cases:
   - its config has had no sample yet (with epochs or retries, the repeat is the second sample);
+  - another sample is creating its config's template or running the template's setup. The first samples of an eval start together, so all but one of them run `setup` themselves: with 10 at once, `setup` runs 10 times rather than twice. Waiting would cost each of them the template's setup, its pause, and its first fork, which writes the template's memory to disk before any copy starts (12 to 22 s for the default 8 GB in our tests; later forks took 1.4 s);
   - 4 other `setup` configs already have, or tried, a template;
   - its fork doesn't fit on the template's machine;
   - its config's template failed, was deleted to make room, or can't be forked any more.
