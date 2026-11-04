@@ -24,10 +24,10 @@ harbor run -d terminal-bench/terminal-bench-2-1 -a oracle -e harbor_prized:Prize
 ```
 
 - The first trial of a task builds a parent: the usual start, then paused. Each trial, that one included, runs in its own fork of it, from the same state, and the fork is deleted when the trial ends. No trial runs in the parent, and the pull credentials are gone from it before it pauses.
-- A fork takes about 1.4 s, against about 11 s for a fresh start on Terminal-Bench 2.1 (median 10 s). Docker Hub sees one pull per task instead of one per trial.
-- Paused parents count toward the workspace's disk quota, running trials too. `fork_disk_budget_gb` (120) caps the disk the parents hold. A parent is built only if a later trial of its task is planned (from Harbor's `lock.json`), and deleted once the last one has its fork. When the budget is full, the parent needed farthest ahead in the plan makes room.
+- A fork takes about 1.4 s (the first fork of a parent with 8 GB of memory takes 10 to 25 s more today). A fresh Terminal-Bench 2.1 start took 11 s on average (median 10 s). Docker Hub sees one pull per task instead of one per trial.
+- Paused parents count toward the workspace's disk quota, running trials too. `fork_disk_budget_gb` (120) caps the disk the parents hold. A parent is built only if a later trial of its task is planned (from Harbor's `lock.json`, less the trials a resumed job already finished), and deleted once the last one has its fork. Shapes over about 26 GB of memory can't fork and always start fresh. When the budget is full, the parent needed farthest ahead in the plan makes room.
 - Harbor runs every task once before any task twice, so without `TaskMajor` a task's parent waits through the whole job, and only the first few tasks fit the budget. `--plugin harbor_prized:TaskMajor` runs all attempts of a task together. It also deletes leftover parents at the end of the job.
-- A refused fork (a full machine, quota, a host being replaced) starts that trial fresh. A pull that fails fails the trial, as without fork mode.
+- A refused fork (a full machine, a host being replaced) starts that trial fresh. A pull that fails fails the trial, as without fork mode. If the disk quota refuses a start, the parents are deleted and the rest of the run starts fresh, so fork mode never takes room a trial needs. On the free tier (100 GB of disk), keep `fork_disk_budget_gb` under what your running trials leave free.
 - Parents are labelled `harbor-fork-parent=1` and `harbor-fork-run=<id>`, and they carry your `labels`. They are deleted at exit, even after Ctrl-C. One a killed process leaves behind is deleted after `paused_ttl_min` paused, or with `prized sandbox rm --label harbor-fork-parent=1`.
 
 ## Pull with your own registry credentials

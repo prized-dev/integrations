@@ -52,6 +52,9 @@ DEFAULT_BUDGET_GB = 120  # four 30 GB Terminal-Bench parents
 MAX_FAILURES = 2
 WAIT_FULL_SEC = 5.0  # before forking again on a full machine
 WAIT_SETTLE_SEC = 2.0  # before forking again a parent between states
+WAIT_GONE_SEC = 30.0  # for parents to go, after a quota refused a start
+# Quotas a paused parent counts toward (a refusal without a reason counts too).
+_DISK_QUOTAS = {"retained_disk", "sandbox_limit", "paused_limit", None}
 _FAR = math.inf  # the next use of a parent the plan doesn't know
 
 
@@ -75,6 +78,8 @@ class Parent:
     leases: int = 0
     last_used: float = field(default_factory=time.monotonic)
     deleted: bool = False
+    # Set once its sandbox is deleted, or once it is clear there never was one.
+    gone: asyncio.Event = field(default_factory=asyncio.Event)
 
     @property
     def usable(self) -> bool:
@@ -101,6 +106,9 @@ class Plan:
 
     @classmethod
     def load(cls, job_dir: Path) -> Plan | None:
+        """The job's plan, less the trials a run before this one finished
+        (``harbor job resume`` reruns only the others). It is read when the
+        first trial starts, before any trial of this run can finish."""
         try:
             trials = json.loads((job_dir / "lock.json").read_text())["trials"]
             tasks = [trial["task"]["digest"] for trial in trials]
@@ -108,6 +116,10 @@ class Plan:
             return None
         if not tasks or not all(isinstance(task, str) for task in tasks):
             return None
+        for result in job_dir.glob("*/result.json"):
+            done = task_of(result.parent)
+            if done in tasks:
+                tasks.remove(done)  # its first planned trial: Harbor matches in order
         return cls(tasks)
 
     def knows(self, task: str | None) -> bool:
@@ -140,7 +152,10 @@ class ParentCache:
         self.loop = asyncio.get_running_loop()
         self.closed = False
         self._parents: dict[str, Parent] = {}
+        self._made: list[Parent] = []  # every parent, to wait for after a quota refusal
         self._arrived: Counter[str] = Counter()
+        self._trials: set[tuple[str, str]] = set()
+        self.quota_refused = False
         self._failures: Counter[str] = Counter()
         self._plans: dict[Path, Plan | None] = {}
         self._tasks: dict[str, tuple[Plan | None, str | None]] = {}
@@ -174,14 +189,15 @@ class ParentCache:
         task: str | None,
         plan: Plan | None,
         disk_gb: int,
-        *,
-        count: bool = True,
+        trial: str,
     ) -> tuple[Lease | None, list[Parent]]:
         """A lease on the key's parent (to build, when ``builder``), or None
         to start fresh; with the parents evicted to make room, which the
-        caller deletes. ``count`` False: a second start of the same trial."""
+        caller deletes. A trial counts once toward its task's plan, however
+        often it starts (a start retried, Harbor's own retries)."""
         self._tasks.setdefault(key, (plan, task))
-        if count:
+        if (key, trial) not in self._trials:
+            self._trials.add((key, trial))
             self._arrived[key] += 1
         if self.closed or self._failures[key] >= MAX_FAILURES:
             return None, []
@@ -199,6 +215,7 @@ class ParentCache:
         parent = Parent(key, disk_gb, self.loop.create_future())
         parent.leases = 1
         self._parents[key] = parent
+        self._made.append(parent)
         return Lease(parent, builder=True), evicted
 
     def _make_room(self, need_gb: int, later: float) -> list[Parent] | None:
@@ -243,41 +260,49 @@ class ParentCache:
         parent.ready.set_result(True)
         return True
 
-    def build_failed(self, parent: Parent, *, quota: bool = False) -> Parent | None:
-        """The parent won't be built. After a quota refusal, one idle parent
-        is returned for the caller to delete, so a fresh start can fit, and
-        the budget shrinks to what the parents left hold."""
+    def build_failed(self, parent: Parent) -> None:
+        """The parent won't be built (the build deleted what it made)."""
         if not parent.ready.done():
             parent.ready.set_result(False)
+        parent.gone.set()
         self._forget(parent)
-        if not quota:
-            return None
-        victim = self.evict_one()
-        self.budget_gb = min(
-            self.budget_gb, sum(p.disk_gb for p in self._parents.values())
-        )
-        return victim
 
-    def evict_one(self, exclude: Parent | None = None) -> Parent | None:
-        idle = [
-            p
-            for p in self._parents.values()
-            if p is not exclude and p.leases == 0 and p.usable
+    def quota_hit(self) -> list[Parent]:
+        """A quota that parents count toward refused a start: they make way.
+        No parent is built for the rest of the run; the idle ones are
+        returned to delete now, and the others go with their last lease."""
+        self.quota_refused = True
+        self.budget_gb = 0
+        idle = [p for p in self._parents.values() if p.leases == 0 and p.usable]
+        self._parents.clear()
+        return idle
+
+    async def wait_gone(self, timeout: float) -> None:
+        """Waits, up to ``timeout``, until every parent made is deleted."""
+        waits = [
+            asyncio.ensure_future(p.gone.wait())
+            for p in self._made
+            if not p.gone.is_set()
         ]
-        if not idle:
-            return None
-        victim = max(idle, key=self._rank)
-        self._forget(victim)
-        return victim
+        if not waits:
+            return
+        try:
+            await asyncio.wait(waits, timeout=timeout)
+        finally:
+            for waiting in waits:
+                waiting.cancel()
 
     def drop(self, parent: Parent, *, failed: bool, never: bool = False) -> None:
         """The parent can't be forked: no new lease gets it, and its last
-        lease deletes it. A task that fails ``MAX_FAILURES`` times, or is
+        lease deletes it. A task whose parents fail ``MAX_FAILURES`` times
+        (once a parent, however many trials it refused), or that is
         ``never`` forkable, starts fresh from then on."""
-        self._forget(parent)
         if never:
             self._failures[parent.key] = MAX_FAILURES
-        elif failed:
+        if self._parents.get(parent.key) is not parent:
+            return  # dropped already
+        self._forget(parent)
+        if failed and not never:
             self._failures[parent.key] += 1
 
     def release(self, lease: Lease) -> Parent | None:
@@ -290,8 +315,7 @@ class ParentCache:
         parent.last_used = time.monotonic()
         if not parent.ready.done():
             if lease.builder:  # a build that never finished: waiters start fresh
-                parent.ready.set_result(False)
-                self._forget(parent)
+                self.build_failed(parent)
             return None
         if parent.leases > 0:
             return None
@@ -320,7 +344,8 @@ async def wait_ready(parent: Parent) -> bool:
 
 async def delete_parent(parent: Parent | None, *, wait: bool = False) -> None:
     """Deletes a parent once (best effort: the exit sweep and its pause
-    timeout catch one that won't go)."""
+    timeout catch one that won't go). ``wait``: until it no longer counts
+    toward the quotas."""
     if parent is None or parent.sandbox is None or parent.deleted:
         return
     parent.deleted = True
@@ -333,6 +358,7 @@ async def delete_parent(parent: Parent | None, *, wait: bool = False) -> None:
             f"this process exits, or with `prized sandbox rm {sandbox.id}`."
         )
     finally:
+        parent.gone.set()
         await sandbox.close()
 
 
@@ -345,7 +371,7 @@ def fork_refusal(exc: PrizedError) -> tuple[str, float]:
 
     - ``retry``: try once more (a full machine, a parent between states, a
       copy that failed to start);
-    - ``evict``: a quota; delete an idle parent and try once more;
+    - ``quota``: a quota refused the copy (see ``disk_quota``);
     - ``drop``: this parent can't fork (its machine is retiring, or it lost
       its memory); ``never``: no parent of this shape can (too big);
     - ``gone``: the parent no longer exists;
@@ -359,7 +385,7 @@ def fork_refusal(exc: PrizedError) -> tuple[str, float]:
     if code == "sandbox_error":
         return "retry", 0.0
     if code == "sandbox_quota_exceeded":
-        return "evict", 0.0
+        return "quota", 0.0
     if code == "parent_not_forkable":
         return ("never" if exc.reason == "parent_too_big" else "drop"), 0.0
     if code == "fork_unsupported_host":
@@ -367,6 +393,38 @@ def fork_refusal(exc: PrizedError) -> tuple[str, float]:
     if exc.status == 404 or code in ("not_found", "sandbox_deleted"):
         return "gone", 0.0
     return "fresh", 0.0
+
+
+def forkable(vcpu: int, memory_mb: int) -> bool:
+    """Whether a sandbox of this shape can fork at all: past about 26 GB of
+    memory a standard sandbox can't (``parent_too_big``), nor a large one
+    (over 16 vCPU or about 58 GB) past about 105 GB."""
+    gb = memory_mb / 1024
+    large = vcpu > 16 or gb > 58
+    return gb <= (105 if large else 26)
+
+
+def disk_quota(exc: BaseException | None) -> bool:
+    """A quota refusal that paused parents count toward."""
+    return (
+        isinstance(exc, PrizedError)
+        and exc.code == "sandbox_quota_exceeded"
+        and exc.reason in _DISK_QUOTAS
+    )
+
+
+async def make_way() -> bool:
+    """A fresh start was refused by a quota parents count toward: deletes
+    this loop's parents (waiting for those still in use, up to
+    WAIT_GONE_SEC) and builds no more. False if there were none."""
+    current = _CACHE
+    if current is None or current.loop is not asyncio.get_running_loop():
+        return False
+    if not any(not p.gone.is_set() for p in current._made):
+        return False
+    await delete_parents(current.quota_hit(), wait=True)
+    await current.wait_gone(WAIT_GONE_SEC)
+    return True
 
 
 # -- the process's cache, and its cleanup -----------------------------------
