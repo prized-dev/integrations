@@ -4,9 +4,9 @@
     python -m piloop_prized cleanup --owner <id>    # every sandbox of that piloop server, parents too
     python -m piloop_prized cleanup --home ~/.piloop
 
-``parent`` is for a setup that takes longer than the pool's ``register_seconds``: name the id it prints in the
-table's ``parent``, and drop its ``setup`` and ``piloop`` there. Delete it when the pool no longer needs it
-(``prized sandbox rm <id>``), or it deletes itself ``parent_hours`` after its pause.
+``parent`` sets the parent up before the daemon starts, so that the first workers start at once, however long the
+setup takes: name the id it prints in the table's ``parent``, and drop the table's shape and setup keys there (the
+parent fixes them). It is kept until you delete it (``prized sandbox rm <id>``), unless the table sets ``parent_hours``.
 """
 
 import argparse
@@ -32,6 +32,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.verb == 'parent':
         keys = {k: v for k, v in tomllib.loads(args.table.read_text()).items() if k != 'provider'}
+        keys.setdefault('parent_hours', 0)  # a parent that a table names is kept until it is deleted
         config = Prized.model_validate(keys)
         if config.parent is not None or not config.fork:
             parser.error('the table sets up a parent: it names no parent, and keeps fork = true')

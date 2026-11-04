@@ -4,6 +4,7 @@ of every provisioner. Shaped after piloop's own tests of ``modal`` and ``daytona
 import re
 import subprocess
 import threading
+import time
 from collections.abc import Iterator
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -56,13 +57,19 @@ def sdk(monkeypatch: pytest.MonkeyPatch) -> Iterator[FakePrized]:
 
 
 def opened(owner: str, **keys: object) -> PrizedProvisioning:
-    config = PROVISIONERS.validated({'provider': 'prized', 'cpu': 2, 'memory_mb': 8192, **keys})
+    shape = {} if 'parent' in keys else {'cpu': 2, 'memory_mb': 8192}  # a named parent fixes its forks' shape
+    config = PROVISIONERS.validated({'provider': 'prized', **shape, **keys})
     assert isinstance(config, Prized)
     return config.open(ProvisionerHost(owner, Tracer(None)))
 
 
 def workers(sdk: FakePrized) -> list[Box]:
     return [b for b in sdk.boxes.values() if 'piloop-name' in b.labels]
+
+
+def state(box: Box) -> str:
+    """Its state, ``gone`` once it is deleting or deleted: Prized lists a deleting one for a while."""
+    return 'gone' if box.gone else box.state
 
 
 def parents(sdk: FakePrized) -> list[Box]:
@@ -140,7 +147,7 @@ def test_a_parent_left_mid_setup_by_a_daemon_that_is_gone_is_deleted(sdk: FakePr
     stale.created_at = datetime.now(UTC) - timedelta(hours=2)
     young = sdk.make('prized-agent-v1', dict(labels), {})  # another pool's of the same recipe, mid-setup
     opened('owner-a').start(LAUNCH)
-    assert stale.state == 'deleted' and young.state == 'running'
+    assert state(stale) == 'gone' and young.state == 'running'
     assert len([p for p in parents(sdk) if p.state == 'paused']) == 1
 
 
@@ -150,24 +157,24 @@ def test_a_failed_setup_is_a_refused_start_and_the_next_start_tries_again(sdk: F
     with pytest.raises(SetupFailed, match='exited 127: line 9: lake: command not found'):
         provisioning.start(LAUNCH)
     assert isinstance(SetupFailed('x'), StartRefused)
-    assert [p.state for p in parents(sdk)] == ['deleted'] and workers(sdk) == []
+    assert [state(p) for p in parents(sdk)] == ['gone'] and workers(sdk) == []
     sdk.setup_result = (0, '')
     provisioning.start(LAUNCH)
-    assert [p.state for p in parents(sdk)] == ['deleted', 'paused'] and len(workers(sdk)) == 1
+    assert [state(p) for p in parents(sdk)] == ['gone', 'paused'] and len(workers(sdk)) == 1
 
 
 def test_a_setup_past_setup_seconds_is_refused(sdk: FakePrized) -> None:
     sdk.setup_times_out = True
     with pytest.raises(SetupFailed, match='ran past setup_seconds = 30'):
         opened('owner-a', setup_seconds=30).start(LAUNCH)
-    assert [p.state for p in parents(sdk)] == ['deleted']
+    assert [state(p) for p in parents(sdk)] == ['gone']
 
 
 def test_a_start_that_waits_for_the_setup_fails_and_the_next_waits_for_the_same_one(sdk: FakePrized) -> None:
     sdk.setup_gate = threading.Event()
     provisioning = opened('owner-a', start_seconds=0.3)
     for _ in range(2):
-        with pytest.raises(ParentNotReady, match='still being set up'):
+        with pytest.raises(ParentNotReady, match='is being set up'):
             provisioning.start(LAUNCH)
     assert len(parents(sdk)) == 1, 'one setup, however many starts wait for it'
     sdk.setup_gate.set()
@@ -195,7 +202,7 @@ def test_a_parent_that_prized_deleted_is_set_up_again(sdk: FakePrized) -> None:
     [gone] = parents(sdk)
     gone.state = 'deleted'  # its parent_hours ran out
     provisioning.start(LAUNCH.model_copy(update={'name': 'agents-2'}))
-    assert [p.state for p in parents(sdk)] == ['deleted', 'paused']
+    assert [state(p) for p in parents(sdk)] == ['gone', 'paused']
 
 
 def test_a_parent_that_you_name_is_forked_and_never_set_up_or_deleted(
@@ -262,12 +269,16 @@ def test_a_sandbox_whose_worker_did_not_start_is_deleted_so_that_the_next_start_
         provisioning.start(LAUNCH)
 
     def tries() -> list[str]:
-        return [w.state for w in workers(sdk) if w.labels['piloop-name'] == LAUNCH.name]
+        return [state(w) for w in workers(sdk) if w.labels['piloop-name'] == LAUNCH.name]
 
-    assert tries() == ['deleted'] and provisioning.list() == []
+    assert tries() == ['gone'] and [i.state for i in provisioning.list() if i.name == LAUNCH.name] in (
+        [],
+        [InstanceState.ENDED],
+    )
     sdk.write_fails = None
     provisioning.start(LAUNCH)
-    assert tries() == ['deleted', 'running']
+    assert tries() == ['gone', 'running']
+    assert [i.state for i in provisioning.list() if i.name == LAUNCH.name] == [InstanceState.RUNNING]
 
 
 def test_a_repeated_start_never_makes_a_second_sandbox(sdk: FakePrized) -> None:
@@ -294,7 +305,7 @@ def test_stop_deletes_by_the_workers_labels_and_a_name_that_is_gone_is_a_success
     mine.stop(LAUNCH.name)
     mine.stop('never-started')
     assert ('delete_by_labels', {'piloop-owner': 'owner-a', 'piloop-name': LAUNCH.name}) in sdk.calls
-    assert [w.state for w in sdk.by_labels(OWNER) if 'piloop-name' in w.labels] == ['deleted']
+    assert [state(w) for w in sdk.by_labels(OWNER) if 'piloop-name' in w.labels] == ['gone']
     assert [i.state for i in other.list()] == [InstanceState.RUNNING], "an owner never stops another's"
     assert [p.state for p in parents(sdk)] == ['paused', 'paused'], 'a stop leaves the warm parent'
 
@@ -377,7 +388,11 @@ def test_a_table_written_for_modal_validates_once_its_image_is_gone() -> None:
         ({'region': 'us-east'}, 'us-west-2'),
         ({'memory_mb': 9000, 'memory_limit_mb': 8192}, 'memory_limit_mb is below memory_mb'),
         ({'parent': 'sbx_1', 'fork': False}, 'a parent is forked'),
-        ({'parent': 'sbx_1', 'setup': ['echo']}, 'holds its setup already'),
+        ({'parent': 'sbx_1', 'setup': ['echo']}, 'setup: the parent fixes these already'),
+        ({'parent': 'sbx_1', 'cpu': 16, 'memory_mb': 65536}, 'cpu, memory_mb: the parent fixes these already'),
+        ({'parent': 'sbx_1', 'template': 'prized-base-v1'}, 'template: the parent fixes'),
+        ({'parent': 'sbx_1', 'timeout_hours': 2}, 'timeout_hours: the parent fixes'),
+        ({'cpu': 0.5}, 'whole vCPUs, not 0.5'),
         ({'env': {'NOT-A-NAME': '1'}}, 'is no variable name'),
         ({'timeout_hours': 169}, 'timeout_hours'),
         ({'cpu': 33}, 'cpu'),
@@ -429,7 +444,7 @@ def test_cleanup_deletes_every_sandbox_of_the_server_parents_too(
     opened('owner-b').start(LAUNCH)
     (tmp_path / 'owner').write_text('owner-a\n')
     assert main(['cleanup', '--home', str(tmp_path)]) == 0
-    assert {b.state for b in sdk.by_labels(OWNER)} == {'deleted'} and len(sdk.by_labels(OWNER)) == 2
+    assert {state(b) for b in sdk.by_labels(OWNER)} == {'gone'} and len(sdk.by_labels(OWNER)) == 2
     assert {b.state for b in sdk.by_labels({'piloop-owner': 'owner-b'})} == {'running', 'paused'}
     assert len(capsys.readouterr().out.split()) == 2
 
@@ -512,3 +527,213 @@ def test_a_fresh_sandbox_whose_setup_fails_deletes_its_credential_and_starts_no_
     done = subprocess.run(['bash', '-c', command], env={'HOME': str(tmp_path), 'PATH': '/usr/bin:/bin'})
     assert done.returncode == 1 and not Path(module.CREDENTIAL).exists()
     assert 'piloop worker' not in log.read_text()
+
+
+def test_a_parent_set_up_ahead_is_kept_until_it_is_deleted(sdk: FakePrized, tmp_path: Path) -> None:
+    table = tmp_path / 'compute.toml'
+    table.write_text('cpu = 2\n')
+    assert main(['parent', str(table)]) == 0
+    table.write_text('cpu = 2\nparent_hours = 2\n')
+    assert main(['parent', str(table)]) == 0
+    assert [p.options['auto_delete_min'] for p in parents(sdk)] == [0, 120]
+
+
+# The paths of a fork that Prized refuses.
+
+
+@pytest.mark.parametrize('reason', ['parent_too_big', None])
+def test_an_unforkable_parent_is_refused_deleted_and_set_up_again_a_bounded_number_of_times(
+    sdk: FakePrized, reason: str | None
+) -> None:
+    sdk.fork_always = prized.PrizedError('parent_not_forkable', status=409, reason=reason)
+    provisioning = opened('owner-a', max_parents=1)
+    for i in range(10):
+        with pytest.raises(StartRefused, match='cannot fork the warm parent|set up in the last hour'):
+            provisioning.start(LAUNCH.model_copy(update={'name': f'agents-{i}'}))
+    assert len(parents(sdk)) == 3, 'max_parents + 2 setups an hour, then none'
+    assert {state(p) for p in parents(sdk)} == {'gone'}, 'every parent that cannot be forked is deleted'
+
+
+@pytest.mark.parametrize('reason', ['resized_while_paused', 'memory_discarded'])
+def test_a_parent_without_its_memory_is_resumed_paused_and_forked(sdk: FakePrized, reason: str) -> None:
+    provisioning = opened('owner-a')
+    provisioning.start(LAUNCH.model_copy(update={'name': 'warm-up'}))
+    [parent] = parents(sdk)
+    sdk.fork_errors[parent.id] = prized.PrizedError('parent_not_forkable', status=409, reason=reason)
+    provisioning.start(LAUNCH)
+    assert ('resume', parent.id) in sdk.calls and parent.state == 'paused'
+    assert parents(sdk) == [parent] and workers(sdk)[-1].parent == parent.id
+
+
+def test_a_parent_whose_host_forks_no_more_is_a_full_machine(sdk: FakePrized) -> None:
+    provisioning = opened('owner-a')
+    provisioning.start(LAUNCH.model_copy(update={'name': 'warm-up'}))
+    [first] = parents(sdk)
+    sdk.fork_errors[first.id] = prized.PrizedError('fork_unsupported_host', status=409, reason='host_retiring')
+    provisioning.start(LAUNCH)
+    [_, second] = parents(sdk)
+    assert first.state == 'paused' and workers(sdk)[-1].parent == second.id
+
+
+def test_a_parent_that_cannot_run_is_deleted_and_another_set_up(sdk: FakePrized) -> None:
+    provisioning = opened('owner-a')
+    provisioning.start(LAUNCH.model_copy(update={'name': 'warm-up'}))
+    [broken] = parents(sdk)
+    broken.state = 'error'
+    provisioning.start(LAUNCH)
+    [_, fresh] = parents(sdk)
+    assert state(broken) == 'gone' and workers(sdk)[-1].parent == fresh.id
+
+
+@pytest.mark.parametrize('settling', ['pausing', 'starting'])
+def test_a_parent_that_settles_fails_the_start_for_the_next_pass(sdk: FakePrized, settling: str) -> None:
+    provisioning = opened('owner-a')
+    provisioning.start(LAUNCH.model_copy(update={'name': 'warm-up'}))
+    [parent] = parents(sdk)
+    parent.state = settling
+    with pytest.raises(ParentNotReady, match=f'is {settling}'):
+        provisioning.start(LAUNCH)
+    parent.state = 'paused'
+    provisioning.start(LAUNCH)
+    assert parents(sdk) == [parent] and workers(sdk)[-1].parent == parent.id
+
+
+@pytest.mark.parametrize(
+    ('code', 'status'),
+    [
+        ('workspace_held', 403),
+        ('workspace_closing', 409),
+        ('template_inactive', 422),
+        ('invalid_labels', 422),
+        ('unknown_field', 422),
+        ('bad_request', 400),
+        ('idempotency_conflict', 409),
+        ('actor_required', 403),
+        ('some_new_refusal', 403),
+    ],
+)
+def test_codes_that_a_retry_does_not_cure_are_refused(sdk: FakePrized, code: str, status: int) -> None:
+    sdk.create_fails = prized.PrizedError(code, status=status)
+    for fork in (True, False):
+        with pytest.raises(StartRefused, match=code):
+            opened(f'owner-{fork}', fork=fork).start(LAUNCH)
+
+
+@pytest.mark.parametrize(('code', 'status'), [('sandbox_capacity', 503), ('rate_limited', 429), ('timeout', None)])
+def test_no_capacity_or_a_slow_answer_is_tried_again_and_never_escalated(
+    sdk: FakePrized, code: str, status: int | None
+) -> None:
+    sdk.create_fails = prized.PrizedError(code, status=status)
+    with pytest.raises(prized.PrizedError, match=code) as raised:
+        opened('owner-a', fork=False).start(LAUNCH)
+    assert not isinstance(raised.value, StartRefused)
+
+
+# One name, one instance, one credential.
+
+
+def test_list_shows_one_instance_of_each_name_the_one_that_runs(sdk: FakePrized) -> None:
+    provisioning = opened('owner-a')
+    provisioning.start(LAUNCH)
+    [old] = workers(sdk)
+    old.state = 'deleting'  # a retry's leftover, which Prized lists for a while
+    provisioning.start(LAUNCH)
+    assert [(i.name, i.state) for i in provisioning.list()] == [(LAUNCH.name, InstanceState.RUNNING)]
+
+
+def test_a_start_deletes_a_leftover_of_its_name_that_ended(sdk: FakePrized) -> None:
+    provisioning = opened('owner-a')
+    provisioning.start(LAUNCH)
+    [old] = workers(sdk)
+    old.state = 'error'
+    provisioning.start(LAUNCH)
+    assert state(old) == 'gone' and [state(w) for w in workers(sdk)] == ['gone', 'running']
+
+
+def test_a_start_left_running_writes_the_newest_credential(sdk: FakePrized) -> None:
+    provisioning = opened('owner-a', start_seconds=0.3)
+    provisioning.start(LAUNCH.model_copy(update={'name': 'warm-up'}))
+    sdk.fork_gate = threading.Event()
+    with pytest.raises(TimeoutError):
+        provisioning.start(LAUNCH)  # holds its fork
+    fresh = LAUNCH.model_copy(update={'env': {'PILOOP_HTTPS_TOKEN': SecretStr('plt_second')}})
+    with pytest.raises(TimeoutError):
+        provisioning.start(fresh)  # the server enrolled the worker again: a new credential in place of the old
+    sdk.fork_gate.set()
+    for thread in threading.enumerate():
+        if thread.name.startswith('within: '):
+            thread.join(timeout=5)
+    [box] = [b for b in workers(sdk) if b.labels['piloop-name'] == LAUNCH.name and not b.gone]
+    assert 'plt_second' in str(box.files[module.CREDENTIAL][0])
+
+
+def test_a_live_sandbox_with_a_revoked_credential_is_replaced(sdk: FakePrized) -> None:
+    provisioning = opened('owner-a')
+    provisioning.start(LAUNCH)
+    fresh = LAUNCH.model_copy(update={'env': {'PILOOP_HTTPS_TOKEN': SecretStr('plt_second')}})
+    provisioning.start(fresh)
+    first, second = workers(sdk)
+    assert state(first) == 'gone' and 'plt_second' in str(second.files[module.CREDENTIAL][0])
+    provisioning.start(fresh)
+    assert len(workers(sdk)) == 2, 'the same launch again is the start that came before'
+
+
+def test_the_names_go_with_their_verbs(sdk: FakePrized) -> None:
+    provisioning = opened('owner-a')
+    for i in range(20):
+        provisioning.start(LAUNCH.model_copy(update={'name': f'agents-{i}'}))
+        provisioning.stop(f'agents-{i}')
+    assert provisioning._names == {} and provisioning._given == {}
+
+
+# A setup that takes long, and the parents that it leaves.
+
+
+def test_a_long_setup_fails_a_start_fast_and_holds_no_pass(sdk: FakePrized) -> None:
+    sdk.setup_gate = threading.Event()
+    provisioning = opened('owner-a', start_seconds=60, parent_wait_seconds=0.2)
+    began = time.monotonic()
+    with pytest.raises(ParentNotReady):
+        provisioning.start(LAUNCH)
+    assert time.monotonic() - began < 2
+    sdk.setup_gate.set()
+
+
+def test_a_stale_parent_left_since_the_first_sweep_is_deleted_before_another_setup(sdk: FakePrized) -> None:
+    provisioning = opened('owner-a')
+    provisioning.start(LAUNCH.model_copy(update={'name': 'warm-up'}))
+    [first] = parents(sdk)
+    stale = sdk.make('prized-agent-v1', dict(provisioning._warm.labels), {})  # type: ignore[union-attr]
+    stale.created_at = datetime.now(UTC) - timedelta(hours=3)
+    sdk.fits[first.id] = 0
+    provisioning.start(LAUNCH)
+    assert state(stale) == 'gone' and len([p for p in parents(sdk) if p.state == 'paused']) == 2
+
+
+def test_a_pool_with_another_setup_seconds_never_deletes_this_pools_parent_mid_setup(sdk: FakePrized) -> None:
+    sdk.setup_gate = threading.Event()
+    slow = opened('owner-a', setup_seconds=7200, parent_wait_seconds=0.1)
+    with pytest.raises(ParentNotReady):
+        slow.start(LAUNCH)
+    [theirs] = parents(sdk)
+    theirs.created_at = datetime.now(UTC) - timedelta(hours=1)  # an hour into a 2-hour setup
+    quick = opened('owner-a', setup_seconds=600, parent_wait_seconds=0.1)
+    with pytest.raises(ParentNotReady):
+        quick.start(LAUNCH.model_copy(update={'pool': 'other', 'name': 'other-1'}))
+    assert theirs.state == 'running', 'another recipe: its parent is not this one to sweep'
+    sdk.setup_gate.set()
+
+
+# The fake answers as Prized does.
+
+
+def test_the_fake_refuses_calls_to_a_deleted_sandbox_and_lists_a_deleting_one_once(sdk: FakePrized) -> None:
+    box = sdk.create('prized-agent-v1', labels={'k': 'v'})
+    box.delete()
+    assert [h.state for h in sdk.list(labels={'k': 'v'})] == ['deleting']
+    for call in (lambda: box.exec('true'), box.pause, lambda: box.files.write('/x', 'y')):
+        with pytest.raises(prized.PrizedError, match='sandbox_deleted'):
+            call()
+    assert sdk.list(labels={'k': 'v'}) == []
+    with pytest.raises(prized.PrizedError, match='not_found'):
+        sdk.connect(box.id)

@@ -75,13 +75,14 @@ def owners() -> Iterator[list[str]]:
 def test_prized_passes_the_provisioner_conformance_check_on_live_sandboxes(owners: list[str]) -> None:
     name = f'live-{uuid.uuid4().hex[:8]}'
     owners += [f'conformance-{name}', f'conformance-other-{name}']
-    check_provisioning(lambda owner: opened(owner), launch(name), timeout=300)
+    # piloop's check wants each start to succeed: this one waits for the parent's setup, as a pool's starts never do.
+    check_provisioning(lambda owner: opened(owner, parent_wait_seconds=500), launch(name), timeout=300)
 
 
 def test_four_workers_fork_one_warm_parent_and_start_their_workers(owners: list[str]) -> None:
     owner = f'live-{uuid.uuid4().hex[:12]}'
     owners.append(owner)
-    provisioning = opened(owner, setup=['echo warm > "$HOME/warm.txt"'])
+    provisioning = opened(owner, setup=['echo warm > "$HOME/warm.txt"'], parent_wait_seconds=500)
     seconds: dict[str, float] = {}
     for i in range(4):
         began = time.monotonic()

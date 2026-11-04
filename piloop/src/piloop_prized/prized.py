@@ -14,6 +14,9 @@ starts with the parent's files and memory, so no worker runs the setup again. A 
 copies start there: when that machine is full, the provider sets up another parent, up to ``max_parents``. With
 ``fork = false``, each worker is a fresh sandbox that runs the setup itself before its worker starts.
 
+The setup runs on a thread of its own. A start that finds it running waits ``parent_wait_seconds`` at most, then fails,
+and the pool's next pass tries again, so a long setup never holds piloop's scaling pass.
+
 Sandboxes start from a Prized template, ``prized-base-v1`` or ``prized-agent-v1`` (Claude Code and Codex), as the
 user ``prized`` without sudo: what an image would add goes in ``setup``, under ``/home/prized``. There are no custom
 images, no GPUs and no egress allowlist yet, and the sandboxes run in us-west-2 (Oregon): a key that asks for any of
@@ -37,8 +40,9 @@ import re
 import shlex
 import threading
 import time
-from collections.abc import Callable, Mapping, Sequence
-from contextlib import suppress
+from collections import deque
+from collections.abc import Callable, Iterator, Mapping, Sequence
+from contextlib import contextmanager, suppress
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from importlib.metadata import PackageNotFoundError, distribution
@@ -78,6 +82,9 @@ INSTALL = (
 )
 FULL_SECONDS = 60.0
 """How long a parent whose machine was full is skipped before a fork is tried on it again."""
+BUILDS_HOUR = 3600.0
+"""The window of the cap on setups: at most ``max_parents + 2`` of one recipe in it, so a parent that every fork refuses
+is never set up again and again."""
 TAIL = 3000
 """The characters of a failed setup's output that its error keeps."""
 ENV_NAME = re.compile(r'[A-Za-z_][A-Za-z0-9_]{0,63}')
@@ -85,6 +92,9 @@ ENV_NAME = re.compile(r'[A-Za-z_][A-Za-z0-9_]{0,63}')
 RUNNING = {'running'}
 BOOTING = {'starting', 'resizing'}
 """The states of a sandbox that will run: anything else (pausing, paused, deleting, deleted, error) has no worker."""
+LEAVING = {'deleting', 'deleted'}
+SETTLING = {'starting', 'pausing', 'resizing', 'resuming'}
+"""The states of a parent on its way to paused or running: a fork waits for it to settle."""
 
 REFUSED = {
     'missing_api_key',
@@ -92,20 +102,37 @@ REFUSED = {
     'unauthorized',
     'token_expired',
     'key_access_denied',
+    'actor_required',
     'paid_balance_required',
     'insufficient_balance',
     'sandbox_quota_exceeded',
     'template_not_found',
-    'invalid_resources',
-    'sandbox_capacity',
+    'template_inactive',
+    'template_runtime_incompatible',
+    'bad_request',
+    'unknown_field',
+    'conflicting_fields',
+    'label_required',
+    'durability_incompatible',
+    'persistent_sandbox_unsupported',
+    'idempotency_conflict',
+    'workspace_held',
+    'workspace_closing',
     'sandboxes_disabled',
     'sandbox_create_disabled',
     'sandbox_fork_disabled',
     'parent_not_forkable',
 }
-"""The codes of a refusal that a retry does not cure (``StartRefused``): the key, the balance, a quota, the shape, no
-capacity (the SDK waited out ``Retry-After`` already), maintenance. Anything else is tried again by the next pass."""
+"""The codes of a refusal that a retry does not cure (``StartRefused``): the key, the balance, a quota, the template,
+the request, the workspace, maintenance. So is any code ``invalid_…``, and any 400, 401, 402, 403 or 422. Anything else
+is tried again by the next pass: ``sandbox_capacity`` among them (the SDK waited out ``Retry-After`` already), which the
+pool must not escalate as a broken provisioner."""
+REFUSED_STATUS = {400, 401, 402, 403, 422}
 GONE = {'not_found', 'sandbox_deleted'}
+FULL = {'fork_capacity', 'fork_unsupported_host'}
+"""A fork refused for its parent's machine: another parent, or this one later, may take it."""
+NO_MEMORY = {'resized_while_paused', 'memory_discarded'}
+"""Reasons of ``parent_not_forkable`` that a resume and a pause cure: the parent kept its files, not its memory."""
 
 NO_IMAGE = (
     'Prized sandboxes start from a template (prized-base-v1, or prized-agent-v1 with Claude Code and Codex), not an'
@@ -131,6 +158,21 @@ FOREIGN = {
 }
 """Keys of the other providers' tables that a Prized sandbox cannot honour, and what to do instead."""
 REGION, CLOUD = 'us-west-2', 'aws'
+OF_THE_PARENT = (
+    'template',
+    'cpu',
+    'memory_mb',
+    'memory_limit_mb',
+    'timeout_hours',
+    'setup',
+    'piloop',
+    'max_parents',
+    'parent_hours',
+    'setup_seconds',
+    'parent_wait_seconds',
+)
+"""Keys that a named ``parent`` fixes already, or that only a parent that the provider sets up uses: a fork gets its
+parent's template, shape and run time."""
 
 
 def within[T](seconds: float, call: Callable[[], T], what: str) -> T:
@@ -165,7 +207,7 @@ class Prized(ProvisionerConfig):
     """The template of each sandbox: ``prized-base-v1`` (Ubuntu, Python 3.12, Node 22, git) or ``prized-agent-v1``
     (that, with Claude Code and Codex)."""
     cpu: int | None = Field(default=None, gt=0, le=32)
-    """The vCPUs of each sandbox. Unset: the template's."""
+    """The vCPUs of each sandbox, whole. Unset: the template's."""
     memory_mb: int | None = Field(default=None, gt=0)
     """The MiB of memory of each sandbox: the microVM's whole memory, so a hard limit. Unset: the template's, or
     ``memory_limit_mb``."""
@@ -182,7 +224,8 @@ class Prized(ProvisionerConfig):
     setup itself before its worker starts."""
     parent: str | None = None
     """A paused sandbox that holds the setup already (``sbx_…``, from ``python -m piloop_prized parent``), to fork in
-    place of one that the provider sets up: for a setup that takes longer than the pool's ``register_seconds``."""
+    place of one that the provider sets up: ready before the daemon starts, and never deleted by the provider. Its forks
+    get its template, shape and run time."""
     max_parents: int = Field(default=4, ge=1)
     """The most warm parents that the provider sets up: one more each time that every parent's machine is full."""
     timeout_hours: float = Field(default=24, gt=0, le=168)
@@ -191,10 +234,13 @@ class Prized(ProvisionerConfig):
     """How long a warm parent stays paused before Prized deletes it: the next start then sets up another. 0: until
     ``python -m piloop_prized cleanup``."""
     setup_seconds: float = Field(default=3600, gt=0)
-    """The longest that the setup may run in a warm parent: one that runs longer fails the starts that wait for it."""
+    """The longest that the setup may run in a warm parent: one that runs longer fails, and the next start sets up
+    another."""
+    parent_wait_seconds: float = Field(default=10, ge=0)
+    """How long a start waits for a warm parent that is being set up before it fails, so that piloop's next pass tries
+    again: short, so a long setup never holds the pass."""
     start_seconds: float = Field(default=600, gt=0)
-    """The longest that a start may take: one that takes longer fails, and the pool tries again. A start that waits for
-    a warm parent's setup fails in this time too, and the next one waits for the same setup."""
+    """The longest that a start may take: one that takes longer fails, and the pool tries again."""
     call_seconds: float = Field(default=60, gt=0)
     """The longest that a list or a stop may take: one that hangs fails, and the next pass tries again."""
     env: dict[str, str] = {}
@@ -219,6 +265,13 @@ class Prized(ProvisionerConfig):
             raise ValueError(f'region: Prized sandboxes run in {REGION} (Oregon) only, not {region!r}')
         if (cloud := data.get('cloud')) not in (None, CLOUD):
             raise ValueError(f'cloud: Prized sandboxes run on AWS in {REGION}: a pin to {cloud!r} cannot hold')
+        if isinstance(cpu := data.get('cpu'), float) and not cpu.is_integer():
+            raise ValueError(f'cpu: a Prized sandbox has whole vCPUs, not {cpu:g}')
+        if data.get('parent') is not None and (fixed := [k for k in OF_THE_PARENT if k in data]):
+            raise ValueError(
+                f'{", ".join(fixed)}: the parent fixes these already (a fork gets its template, shape and run time),'
+                ' or they are for a parent that the provider sets up: set them when you set the parent up'
+            )
         return data
 
     @model_validator(mode='after')
@@ -227,8 +280,6 @@ class Prized(ProvisionerConfig):
             raise ValueError('memory_limit_mb is below memory_mb')
         if self.parent is not None and not self.fork:
             raise ValueError('a parent is forked: fork = false starts each worker as a fresh sandbox')
-        if self.parent is not None and (self.setup or self.piloop is not None):
-            raise ValueError('a parent holds its setup already: setup and piloop are for one that the provider sets up')
         for name in [*self.env, *self.secret_env]:
             if not ENV_NAME.fullmatch(name):
                 raise ValueError(f'{name!r} is no variable name: [A-Za-z_][A-Za-z0-9_]*, up to 64 characters')
@@ -288,20 +339,27 @@ def setup_script(config: Prized, piloop: str) -> str:
 
 
 def recipe(config: Prized, piloop: str) -> str:
-    """The digest of what a warm parent holds: a parent of another recipe is not forked for this one."""
+    """The digest of what a warm parent holds, and of how long its setup may take: a parent of another recipe is never
+    forked, or deleted as stale, for this one."""
     held = {
         'template': config.template,
         'cpu': config.cpu,
         'memory_mb': config.memory(),
         'timeout_hours': config.timeout_hours,
+        'setup_seconds': config.setup_seconds,
         'script': setup_script(config, piloop),
     }
     return hashlib.sha256(json.dumps(held, sort_keys=True).encode()).hexdigest()[:16]
 
 
+def refused(e: prized.PrizedError) -> bool:
+    """Whether a retry does not cure ``e``."""
+    return e.code in REFUSED or e.code.startswith('invalid_') or e.status in REFUSED_STATUS
+
+
 def refusal(e: prized.PrizedError, what: str) -> Exception:
     """``StartRefused`` for a refusal that a retry does not cure, else ``e`` itself, which the next pass retries."""
-    if e.code in REFUSED:
+    if refused(e):
         return StartRefused(f'Prized refused {what}: {e}')
     return e
 
@@ -325,7 +383,7 @@ class SetupFailed(StartRefused):
 
 
 class ParentNotReady(RuntimeError):
-    """A warm parent is still being set up: the start fails, and the next one waits for the same setup."""
+    """A warm parent is still being set up, or settling: the start fails, and the next one tries again."""
 
 
 @dataclass
@@ -388,70 +446,113 @@ class Warm:
 
     def __init__(self, config: Prized, owner: str, piloop: str, tracer: Tracer) -> None:
         self._config, self._owner, self._piloop, self._tracer = config, owner, piloop, tracer
+        self._named = config.parent is not None
+        """A parent that the table names: the provider never sets one up, nor deletes it."""
         self.labels = {OWNER: owner, ROLE: PARENT, RECIPE: recipe(config, piloop)}
         self._lock = threading.Lock()
-        self._ready: list[str] = [] if config.parent is None else [config.parent]
-        self._found = config.parent is not None
+        self._ready: list[str] = [config.parent] if config.parent is not None else []
+        self._swept = self._named
         """Whether the workspace was searched for this recipe's parents, which a daemon before a restart set up."""
         self._full: dict[str, float] = {}
         self._build: Build | None = None
+        self._builds: deque[float] = deque()
+        """When each setup of the last ``BUILDS_HOUR`` began."""
 
     def fork(self, labels: Mapping[str, str], deadline: float) -> prized.Sandbox:
         """A running fork of a warm parent with room on its machine, labelled ``labels`` alone.
 
         Raises:
-            ParentNotReady: The parent that the fork waits for is still being set up at ``deadline``.
+            ParentNotReady: The parent is still being set up after ``parent_wait_seconds``, or settling.
             StartRefused: Prized refused the fork, every parent's machine is full and no more may be set up, or the
                 setup failed.
         """
-        full: set[str] = set()
+        tried: set[str] = set()
+        """The parents whose machine this start found full: it does not try them again."""
+        mended: set[str] = set()
+        """The parents that this start resumed and paused again, or found settled: it tries each once more."""
+        built = False
         while True:
-            parent = self._pick(deadline, full)
+            parent, built = self._pick(deadline, tried, built)
             try:
                 handle = prized.Sandbox.connect(parent)
-                try:
-                    [child] = handle.fork(1, labels=dict(labels), timeout=max(deadline - time.monotonic(), 1.0))
-                finally:
-                    handle.close()
-                return child
             except prized.PrizedError as e:
-                if e.code == 'fork_capacity':
-                    self._tracer.event('prized.parent_full', parent=parent)
-                    full.add(parent)
-                    with self._lock:
-                        self._full[parent] = time.monotonic()
-                    continue
-                if e.code in GONE or (e.code == 'parent_not_forkable' and self._config.parent is None):
-                    self._tracer.event('prized.parent_gone', parent=parent, code=e.code)
-                    self._drop(parent, e)
-                    continue
-                raise refusal(e, f'a fork of the warm parent {parent}') from e
+                if e.code not in GONE:
+                    raise refusal(e, f'the warm parent {parent}') from e
+                self._drop(parent, None, e)
+                continue
+            try:
+                return handle.fork(1, labels=dict(labels), timeout=max(deadline - time.monotonic(), 1.0))[0]
+            except prized.PrizedError as e:
+                self._refused(handle, e, tried, mended)
+            finally:
+                handle.close()
 
-    def _drop(self, parent: str, e: prized.PrizedError) -> None:
-        if self._config.parent is not None:
+    def _refused(self, handle: prized.Sandbox, e: prized.PrizedError, tried: set[str], mended: set[str]) -> None:
+        """Make way for the next try of a fork that Prized refused, or raise why there is none."""
+        parent, reason = handle.id, e.reason or ''
+        self._tracer.event('prized.fork_refused', parent=parent, code=e.code, reason=reason)
+        if e.code in FULL:
+            tried.add(parent)
+            with self._lock:
+                self._full[parent] = time.monotonic()
+            return
+        if e.code in GONE:
+            self._drop(parent, None, e)
+            return
+        if e.code == 'parent_not_forkable' and reason in NO_MEMORY and parent not in mended:
+            mended.add(parent)  # it kept its files, not its memory: running it and pausing it again gives it both
+            try:
+                handle.resume()
+                handle.pause()
+            except prized.PrizedError as again:
+                raise refusal(again, f'a resume and a pause of the warm parent {parent}') from again
+            return
+        if e.code == 'parent_not_forkable':
+            if self._named:
+                raise StartRefused(f'Prized cannot fork the parent {parent}: {e}') from e
+            self._drop(parent, handle, e)
+            raise StartRefused(f'Prized cannot fork the warm parent {parent}, which is deleted: {e}') from e
+        if e.code == 'parent_not_running':
+            handle.refresh()
+            if handle.state in SETTLING or (handle.state in ('paused', 'running') and parent in mended):
+                raise ParentNotReady(f'the warm parent {parent} is {handle.state}: the next start tries again') from e
+            if handle.state in ('paused', 'running'):
+                mended.add(parent)  # it settled since the fork was refused
+                return
+            self._drop(parent, handle, e)  # error, deleting or deleted: it never runs again
+            return
+        raise refusal(e, f'a fork of the warm parent {parent}') from e
+
+    def _drop(self, parent: str, handle: prized.Sandbox | None, e: prized.PrizedError) -> None:
+        """Fork ``parent`` no more, and delete it if it is still there and the provider set it up."""
+        if self._named:
             raise StartRefused(
                 f'the parent {parent} cannot be forked ({e.code}): set up another with `python -m piloop_prized'
                 ' parent`, and name it in `parent`'
             ) from e
+        self._tracer.event('prized.parent_dropped', parent=parent, code=e.code)
         with self._lock:
             if parent in self._ready:
                 self._ready.remove(parent)
+        if handle is not None and handle.state not in LEAVING:
+            with suppress(Exception):
+                handle.delete()
 
-    def _pick(self, deadline: float, full: set[str]) -> str:
+    def _pick(self, deadline: float, tried: set[str], built: bool) -> tuple[str, bool]:
         """A parent to fork: a ready one whose machine had room, else the one being set up, once it is.
 
-        ``full``: the parents whose machine this start found full already, which it does not try again.
+        ``built``: this start set up a parent already. It sets up one at most, so a parent that its fork refuses is
+        never set up again within one start.
         """
         while True:
             with self._lock:
-                if not self._found:
-                    self._ready, self._found = self._search(), True
+                if not self._swept:
+                    self._sweep()
                 now = time.monotonic()
-                for parent in self._ready:
-                    if parent not in full and now - self._full.get(parent, -math.inf) >= FULL_SECONDS:
-                        return parent
+                if (parent := self._room(now, tried)) is not None:
+                    return parent, built
                 if self._build is None:
-                    if self._config.parent is not None:
+                    if self._named:
                         raise StartRefused(
                             f'the machine of the parent {self._config.parent} is full: the pool tries again later.'
                             ' Fewer workers, or a second parent from `python -m piloop_prized parent`, fit more.'
@@ -461,12 +562,20 @@ class Warm:
                             f'the machine of every warm parent ({len(self._ready)}) is full: the pool tries again'
                             ' later. Fewer workers, a smaller shape, or more max_parents fit more.'
                         )
-                    self._build = self._begin()
+                    if built:
+                        raise ParentNotReady(
+                            'the warm parent that this start set up is gone: the next start tries again'
+                        )
+                    self._sweep()  # parents that a setup left behind since, before another one
+                    if (parent := self._room(now, tried)) is not None:
+                        return parent, built  # one that another pool of this recipe set up meanwhile
+                    self._admit(now)
+                    self._build, built = self._begin(), True
                 build = self._build
-            if not build.done.wait(max(deadline - time.monotonic(), 0.0)):
+            if not build.done.wait(max(min(deadline - time.monotonic(), self._config.parent_wait_seconds), 0.0)):
                 raise ParentNotReady(
-                    f'a warm parent is still being set up, {time.monotonic() - build.started:.0f} s in (at most'
-                    f' setup_seconds = {self._config.setup_seconds:g}): the next start waits for the same one'
+                    f'a warm parent is being set up, {time.monotonic() - build.started:.0f} s in (at most'
+                    f' setup_seconds = {self._config.setup_seconds:g}): the next start tries again'
                 )
             with self._lock:
                 if self._build is build:
@@ -474,26 +583,46 @@ class Warm:
             if build.error is not None:
                 raise build.error
 
-    def _search(self) -> list[str]:
-        """This recipe's paused parents, oldest first.
+    def _room(self, now: float, tried: set[str]) -> str | None:
+        """The oldest ready parent that no start found full lately, this one ever. Holds the lock."""
+        for parent in self._ready:
+            if parent not in tried and now - self._full.get(parent, -math.inf) >= FULL_SECONDS:
+                return parent
+        return None
 
-        One that is not paused and older than a setup can take was being set up by a daemon that is gone: it is
-        deleted. A younger one may be another pool's of the same recipe, still being set up: it is left.
+    def _admit(self, now: float) -> None:
+        """Count one more setup, or refuse it past ``max_parents + 2`` in ``BUILDS_HOUR``. Holds the lock."""
+        while self._builds and now - self._builds[0] > BUILDS_HOUR:
+            self._builds.popleft()
+        if len(self._builds) >= (most := self._config.max_parents + 2):
+            raise StartRefused(
+                f'{most} warm parents were set up in the last hour, and none is left to fork: the pool waits before'
+                ' it sets up another. The errors before this one say why.'
+            )
+        self._builds.append(now)
+
+    def _sweep(self) -> None:
+        """Take this recipe's paused parents, oldest first, and delete those that a setup left behind. Holds the lock.
+
+        A parent that is not paused and older than a setup can take was left by a daemon that is gone, or by a setup
+        whose delete failed: it is deleted. A younger one may be another pool's of this recipe, still being set up.
         """
-        ready = []
-        stale = timedelta(seconds=self._config.start_seconds + self._config.setup_seconds)
+        config = self._config
+        stale = timedelta(seconds=config.setup_seconds + max(config.start_seconds, 600) + 600)
         now = datetime.now(UTC)
+        ready = []
         for sandbox in reversed(prized.Sandbox.list(labels=self.labels)):
             created = sandbox.created_at
             if created is not None and created.tzinfo is None:
                 created = created.replace(tzinfo=UTC)
             if sandbox.state == 'paused':
                 ready.append(sandbox.id)
-            elif sandbox.state not in ('deleting', 'deleted') and created is not None and now - created > stale:
+            elif sandbox.state not in LEAVING and created is not None and now - created > stale:
+                self._tracer.event('prized.parent_stale', parent=sandbox.id, state=sandbox.state)
                 _quietly_delete(sandbox)
                 continue
             sandbox.close()
-        return ready
+        self._ready, self._swept = ready, True
 
     def _begin(self) -> Build:
         build = Build()
@@ -514,6 +643,17 @@ class Warm:
         return build
 
 
+@dataclass
+class Name:
+    """What the provider holds for one worker's name while a verb is on it."""
+
+    lock: threading.Lock = field(default_factory=threading.Lock)
+    users: int = 0
+    latest: Launch | None = None
+    """The newest launch of the name: a start that a deadline left running writes its credential, the one that the
+    server enrolled last, in place of the one that it began with."""
+
+
 class PrizedProvisioning:
     """``Provisioning``: the sandboxes labelled with this server's owner."""
 
@@ -522,36 +662,50 @@ class PrizedProvisioning:
         self._piloop = config.piloop or installed_piloop()
         self._warm = Warm(config, owner, self._piloop, tracer) if config.fork else None
         self._lock = threading.Lock()
-        self._names: dict[str, threading.Lock] = {}
-        """A lock for each name that a verb is on: a start or a stop that a deadline left running still holds it, so the
-        next verb on that name waits for it, and a repeated start never makes a second sandbox."""
+        self._names: dict[str, Name] = {}
+        """The names that a verb is on: a start or a stop that a deadline left running still holds its lock, so the
+        next verb on that name waits for it, and a repeated start never makes a second sandbox. Gone with its verbs."""
+        self._given: dict[str, Launch] = {}
+        """The launch whose credential the live sandbox of each name got, by name, until its stop."""
 
-    def _of(self, name: str) -> threading.Lock:
+    @contextmanager
+    def _on(self, name: str, launch: Launch | None = None) -> Iterator[Name]:
         with self._lock:
-            return self._names.setdefault(name, threading.Lock())
+            held = self._names.setdefault(name, Name())
+            held.users += 1
+            if launch is not None:
+                held.latest = launch
+        try:
+            with held.lock:
+                yield held
+        finally:
+            with self._lock:
+                held.users -= 1
+                if held.users == 0:
+                    del self._names[name]
 
     def list(self) -> Sequence[Instance]:
         return within(self._config.call_seconds, self._list, f'{type(self).__name__}.list')
 
     def _list(self) -> Sequence[Instance]:
-        found = []
+        """One instance for each name: the newest that boots or runs, else the newest, as Prized lists newest first."""
+        found: dict[str, Instance] = {}
         for sandbox in prized.Sandbox.list(labels={OWNER: self._owner}):
             labels = sandbox.labels
             if NAME in labels and POOL in labels:  # a warm parent has neither
-                found.append(
-                    Instance(
-                        name=labels[NAME], pool=labels[POOL], state=_state(sandbox.state), handle={'id': sandbox.id}
-                    )
-                )
+                name, state = labels[NAME], _state(sandbox.state)
+                held = found.get(name)
+                if held is None or (held.state is InstanceState.ENDED and state is not InstanceState.ENDED):
+                    found[name] = Instance(name=name, pool=labels[POOL], state=state, handle={'id': sandbox.id})
             sandbox.close()
-        return found
+        return list(found.values())
 
     def start(self, launch: Launch) -> None:
         return within(self._config.start_seconds, lambda: self._start(launch), f'{type(self).__name__}.start')
 
     def _start(self, launch: Launch) -> None:
         """Fork or create the sandbox, write the credential, and start the worker. One of its name that boots or runs
-        is the start that came before.
+        with the newest credential is the start that came before.
 
         A sandbox whose worker did not start is deleted, and the error raised: the next start makes another one.
 
@@ -561,24 +715,32 @@ class PrizedProvisioning:
         """
         seconds = self._config.start_seconds
         deadline = time.monotonic() + max(seconds - 5, seconds * 0.9)  # before ``within`` gives up, to say why
-        with self._of(launch.name):
-            mine = prized.Sandbox.list(labels={OWNER: self._owner, NAME: launch.name})
-            live = any(_state(s.state) is not InstanceState.ENDED for s in mine)
+        name = launch.name
+        with self._on(name, launch) as held:
+            mine = prized.Sandbox.list(labels={OWNER: self._owner, NAME: name})
+            live = [s for s in mine if _state(s.state) is not InstanceState.ENDED]
+            given = self._given.get(name)
+            stale = bool(live) and given is not None and given != held.latest
             for sandbox in mine:
-                sandbox.close()
-            if live:
+                if stale or (sandbox not in live and sandbox.state not in LEAVING):
+                    _quietly_delete(sandbox)  # a credential that the server revoked since, or a leftover that ended
+                else:
+                    sandbox.close()
+            if live and not stale:
                 return
-            exports = self._exports(launch)
-            labels = {OWNER: self._owner, NAME: launch.name, POOL: launch.pool}
+            labels = {OWNER: self._owner, NAME: name, POOL: launch.pool}
+            self._exports(launch)  # a missing secret_env is refused before any sandbox is made
             sandbox = self._warm.fork(labels, deadline) if self._warm is not None else self._fresh(labels)
             try:
-                sandbox.files.write(CREDENTIAL, exports, mode=0o600)
+                newest = held.latest or launch
+                sandbox.files.write(CREDENTIAL, self._exports(newest), mode=0o600)
                 if self._warm is None:
                     sandbox.files.write(SETUP, setup_script(self._config, self._piloop), mode=0o700)
-                sandbox.exec(self._command(launch), background=True)
+                sandbox.exec(self._command(newest), background=True)
             except BaseException:
                 _quietly_delete(sandbox)
                 raise
+            self._given[name] = newest
             sandbox.close()
 
     def _fresh(self, labels: Mapping[str, str]) -> prized.Sandbox:
@@ -619,16 +781,17 @@ class PrizedProvisioning:
             f'. {CREDENTIAL} && rm -f {CREDENTIAL} && export PATH="$HOME/.local/bin:$PATH"'
             f' && exec {shlex.join(launch.argv)} >> {WORKER_LOG} 2>&1'
         )
-        if self._warm is not None:
-            return worker
-        return f'bash {SETUP} > {SETUP_LOG} 2>&1 || {{ rm -f {CREDENTIAL}; exit 1; }}; {worker}'
+        if self._warm is None:
+            return f'bash {SETUP} > {SETUP_LOG} 2>&1 || {{ rm -f {CREDENTIAL}; exit 1; }}; {worker}'
+        return worker
 
     def stop(self, name: str) -> None:
         return within(self._config.call_seconds, lambda: self._stop(name), f'{type(self).__name__}.stop')
 
     def _stop(self, name: str) -> None:
-        with self._of(name):
+        with self._on(name):
             prized.Sandbox.delete_by_labels({OWNER: self._owner, NAME: name})
+            self._given.pop(name, None)
 
 
 def cleanup(owner: str) -> list[str]:

@@ -35,16 +35,17 @@ A table written for `modal` keeps `cpu`, `memory_mb`, `memory_limit_mb`, `timeou
 
 ## What happens
 
-- **First start:** the provider creates a sandbox from the template, installs uv and piloop (the release that runs the daemon, or the git commit it was installed from), runs your `setup` lines, and pauses it: the **warm parent**.
+- **First start:** the provider creates a sandbox from the template, installs uv and piloop (the release that runs the daemon, or the git commit it was installed from), runs your `setup` lines, and pauses it: the **warm parent**. The setup runs on a thread of its own: a start waits for it `parent_wait_seconds` (10) at most, then fails, and piloop's next pass tries again, so a long setup never holds the pass. The workers start once the parent is paused.
 - **Each worker:** a fork of the parent, labelled `piloop-owner`, `piloop-name` and `piloop-pool`. The provider writes the worker's credential to a file in it (mode 0600) and starts `piloop worker` with a command that reads the file and deletes it. The credential is never in a command line, a label or the sandbox's environment. The worker logs to `~/.piloop-prized/worker.log`.
 - **Stop:** the provider deletes by the worker's labels. A sandbox whose worker did not start is deleted at once.
 - **More workers than one machine holds:** a parent's copies start on its machine. When it is full, the provider sets up another parent, up to `max_parents`.
+- **A parent that cannot be forked** is deleted and the start refused. One that lost its memory on a move is resumed and paused again. A parent that will never run again is deleted, and another set up. At most `max_parents + 2` parents are set up in an hour.
 - **A restarted daemon** finds its paused parent by its labels and forks it again.
 - **Cleanup:** `python -m piloop_prized cleanup --home $PILOOP_HOME` deletes every sandbox of that server, parents too. A paused parent also deletes itself `parent_hours` after its pause.
 
 With `fork = false`, each worker is a fresh sandbox that runs the setup itself before its worker starts.
 
-A setup that runs longer than the pool's `register_seconds` (600 by default): set up the parent ahead, and name it.
+To have the parent ready before the daemon starts, so that the first workers start at once however long the setup takes, set it up ahead and name it. It is kept until you delete it (`prized sandbox rm sbx_…`), unless its table sets `parent_hours`. A named parent fixes its forks' template, shape and run time, so the pool's table takes none of those keys.
 
 ```bash
 python -m piloop_prized parent compute.toml   # the compute table's keys; prints sbx_…
@@ -66,11 +67,12 @@ parent = "sbx_…"
 | `setup` | `[]` | Shell lines run once in the parent after piloop is installed: one bash script, `set -euo pipefail`, from `/home/prized/work` |
 | `piloop` | the daemon's own | What `uv tool install` installs as piloop, such as `piloop==0.5.0` or a `git+https://…@<sha>` |
 | `fork` | `true` | `false`: each worker is a fresh sandbox that runs the setup itself |
-| `parent` | | A paused sandbox that holds the setup already, from `python -m piloop_prized parent` |
+| `parent` | | A paused sandbox that holds the setup already, from `python -m piloop_prized parent`: the provider never sets one up or deletes it |
 | `max_parents` | `4` | The most warm parents the provider sets up |
 | `timeout_hours` | `24` | The longest a sandbox runs, up to 168; each fork gets the whole of it |
 | `parent_hours` | `24` | How long a paused parent waits before Prized deletes it; `0` keeps it until cleanup |
 | `setup_seconds` | `3600` | The longest the setup may run |
+| `parent_wait_seconds` | `10` | How long a start waits for a parent that is being set up before it fails and the next pass tries again |
 | `start_seconds`, `call_seconds` | `600`, `60` | The bounds of a start, and of a list or a stop |
 | `env` | `{}` | More environment of each worker: never a secret |
 | `secret_env` | `[]` | Variables of the daemon's environment that each worker gets in its credential file, such as a CAS's keys |
