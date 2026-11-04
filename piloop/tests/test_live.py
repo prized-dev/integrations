@@ -28,8 +28,15 @@ pytestmark = [
     ),
 ]
 
-CAPPED = {'cpu': 2, 'memory_mb': 8192, 'timeout_hours': 0.5, 'max_parents': 1, 'parent_hours': 1}
-"""The shape of an agent's sandbox in piloop's evals, with each sandbox's life capped at 30 minutes."""
+CAPPED = {
+    'cpu': int(os.environ.get('PRIZED_LIVE_CPU', '2')),
+    'memory_mb': int(os.environ.get('PRIZED_LIVE_MEMORY_MB', '8192')),
+    'timeout_hours': 0.5,
+    'max_parents': 1,
+    'parent_hours': 1,
+}
+"""The shape of an agent's sandbox in piloop's evals (``PRIZED_LIVE_MEMORY_MB=4096`` on a free-tier workspace), with
+each sandbox's running capped at 30 minutes."""
 TOKEN = 'plt_live_not_a_real_token'
 
 
