@@ -1037,12 +1037,21 @@ async def test_registry_auth_is_read_before_any_sandbox_starts(tmp_path, monkeyp
     assert created == []
 
 
-@pytest.mark.parametrize("value", [None, "", "none", "off"])
+@pytest.mark.parametrize("value", [None, False, "", "none", "off", "false"])
 def test_registry_auth_can_be_off(tmp_path, value):
     environment = _environment(
         tmp_path, docker_image="python:3.12", registry_auth=value
     )
     assert environment._registry_auth is None
+
+
+@pytest.mark.parametrize(
+    "value", [True, {"username": "evals", "password": FAKE_TOKEN}, ["evals"]]
+)
+def test_registry_auth_refuses_credentials_or_flags(tmp_path, value):
+    with pytest.raises(TypeError, match="never the credentials") as info:
+        _environment(tmp_path, docker_image="python:3.12", registry_auth=value)
+    assert FAKE_TOKEN not in str(info.value)
 
 
 def test_registry_auth_without_its_credentials_is_refused(tmp_path, monkeypatch):

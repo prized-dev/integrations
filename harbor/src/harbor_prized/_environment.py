@@ -194,6 +194,22 @@ def unpack_command(image: str, root: str, crane: str = "./crane") -> str:
     )
 
 
+def _registry_auth(value: object) -> RegistryAuth | None:
+    """``registry_auth`` as given (Harbor turns ``--ek x=false`` into False)."""
+    if value is None or value is False:
+        return None
+    if not isinstance(value, str):  # never echoed: it may hold credentials
+        raise TypeError(
+            "registry_auth takes env, docker or a path to a Docker config.json, "
+            "never the credentials themselves (Harbor writes --ek values into "
+            "the job's config.json)."
+        )
+    source = value.strip()
+    if source.lower() in ("", "none", "off", "false"):
+        return None
+    return RegistryAuth(source)
+
+
 def pull_auth_prefix(directory: str) -> str:
     """Bash that points crane at ``directory``'s config.json and removes the
     directory when the script exits, whether the pull worked or not."""
@@ -256,12 +272,7 @@ class PrizedEnvironment(BaseEnvironment):
         self._paused_ttl_min = int(paused_ttl_min)
         self._min_vcpu = int(min_vcpu)
         self._image_headroom_gb = int(image_headroom_gb)
-        source = str(registry_auth or "").strip()
-        self._registry_auth = (
-            RegistryAuth(source)
-            if source and source.lower() not in ("none", "off")
-            else None
-        )
+        self._registry_auth = _registry_auth(registry_auth)
         self._labels = {
             "harbor": "1",
             "harbor-session": session_id[:256],
