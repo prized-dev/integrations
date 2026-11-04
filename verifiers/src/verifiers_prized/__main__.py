@@ -8,7 +8,8 @@ config. It is yours: delete it with `prized sandbox rm <id>` when you are done w
 Once paused, it is forked once and the copy deleted (`--no-warm` skips that): a freshly paused
 sandbox's first fork writes its memory to disk before any copy starts (12 to 25 s for 8 GB, about
 a second for the default 2 GB), so this keeps that write out of a run that starts within the 15
-minutes after which Prized writes it anyway.
+minutes after which Prized writes it anyway. A Ctrl-C during that warm-up keeps the parent, set up
+and paused, and prints its id (exit status 130).
 """
 
 from __future__ import annotations
@@ -24,7 +25,7 @@ from verifiers.v1.errors import SandboxError
 
 from . import pool
 from .config import PrizedConfig
-from .pool import Credentials, Recipe, build_sandbox, credentials
+from .pool import Credentials, Recipe, build_sandbox, credentials, warm_fork
 
 
 def _labels(pairs: list[str]) -> dict[str, str]:
@@ -88,25 +89,47 @@ def main(argv: list[str] | None = None) -> int:
     try:
         creds = credentials(config)
         pause = not args.no_pause
-        print(asyncio.run(_build(config, creds, pause=pause, warm=pause and not args.no_warm)))
+        sandbox_id, interrupted = asyncio.run(
+            _build(config, creds, pause=pause, warm=pause and not args.no_warm)
+        )
     except (SandboxError, PrizedError) as err:
         print(f"build failed: {err}", file=sys.stderr)
         return 1
-    return 0
+    print(sandbox_id)
+    return 130 if interrupted else 0
 
 
-async def _build(config: PrizedConfig, creds: Credentials, *, pause: bool, warm: bool) -> str:
+async def _build(config: PrizedConfig, creds: Credentials, *, pause: bool, warm: bool) -> tuple[str, bool]:
+    """The parent's id, and whether a Ctrl-C cut its warm-up short (the parent is kept then: its
+    setup is done, and only its first fork is slower)."""
+    recipe = Recipe.of(config, creds)
     sandbox = await build_sandbox(
-        Recipe.of(config, creds),
+        recipe,
         creds,
         role="parent",
         pause=pause,
-        warm=warm,
         tracked=False,  # it outlives this process: never deleted at exit
         run=f"build-{pool.RUN_ID}",
     )
-    await sandbox.close()
-    return str(sandbox.id)
+    try:
+        if warm:
+            pool.logger.info(
+                "verifiers-prized: parent %s is set up and paused; forking it once so a run's first fork "
+                "is fast (a Ctrl-C now keeps it)",
+                sandbox.id,
+            )
+            try:
+                await warm_fork(sandbox, recipe, creds)
+            except asyncio.CancelledError:  # Ctrl-C: asyncio.run cancels this task
+                pool.logger.warning(
+                    "verifiers-prized: warm-up interrupted; parent %s is kept, set up and paused "
+                    "(its first fork will be slower)",
+                    sandbox.id,
+                )
+                return str(sandbox.id), True
+        return str(sandbox.id), False
+    finally:
+        await sandbox.close()
 
 
 if __name__ == "__main__":

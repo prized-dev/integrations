@@ -90,7 +90,7 @@ python -m verifiers_prized build --setup 'python3 -m venv ~/.venv' --setup '~/.v
 
 prints the id of a paused sandbox with the environment built. Set `parent = "<id>"` and every run forks it with no setup. It is yours to delete: `prized sandbox rm <id>`.
 
-The build then forks the paused parent once and deletes the copy, waiting until it is gone (`--no-warm` skips this). A freshly paused sandbox's first fork writes its memory to disk before any copy starts: 12 to 25 s for 8 GB in our tests, about a second for the build's default 1 vCPU and 2 GB, against 1.4 s for later forks. Done here, that write stays out of the run's first batch. After 15 minutes paused Prized writes the memory on its own, so the warm-up only speeds up a run that starts sooner than that. A parent the runtime builds for itself skips the warm-up, because its first rollouts are already waiting for it.
+The build then forks the paused parent once and deletes the copy, waiting until it is gone (`--no-warm` skips this). A freshly paused sandbox's first fork writes its memory to disk before any copy starts: 12 to 25 s for 8 GB in our tests, about a second for the build's default 1 vCPU and 2 GB, against 1.4 s for later forks. Done here, that write stays out of the run's first batch. After 15 minutes paused Prized writes the memory on its own, so the warm-up only speeds up a run that starts sooner than that. A Ctrl-C during the warm-up keeps the parent (its setup is done) and prints its id, with exit status 130. A parent the runtime builds for itself skips the warm-up, because its first rollouts are already waiting for it.
 
 ### Many rollouts at once
 

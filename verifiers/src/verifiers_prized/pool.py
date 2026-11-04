@@ -358,11 +358,21 @@ async def warm_fork(parent: Any, recipe: Recipe, creds: Credentials) -> bool:
     for child in copies:
         track(child.id, creds)
     await shielded(asyncio.gather(*(discard(child, wait=True) for child in copies), return_exceptions=True))
-    logger.info(
-        "verifiers-prized: parent %s ready to fork: warm-up copy made and deleted in %.1fs",
-        parent.id,
-        time.monotonic() - began,
-    )
+    left = [child.id for child in copies if is_tracked(child.id)]  # discard untracks what it deleted
+    if left:
+        logger.warning(
+            "verifiers-prized: parent %s: warm-up copy %s made in %.1fs, but its delete did not finish; "
+            "it is deleted at exit, by this run's label",
+            parent.id,
+            " ".join(left),
+            time.monotonic() - began,
+        )
+    else:
+        logger.info(
+            "verifiers-prized: parent %s ready to fork: warm-up copy made and deleted in %.1fs",
+            parent.id,
+            time.monotonic() - began,
+        )
     return True
 
 
@@ -372,14 +382,13 @@ async def build_sandbox(
     *,
     role: str,
     pause: bool,
-    warm: bool = False,
     tracked: bool = True,
     run: str | None = None,
     on_created: Callable[[], None] | None = None,
 ) -> Any:
     """Create a sandbox and run `setup` in it, then pause it if asked (`on_created` is called once the
-    create has answered), and with `warm` fork it once and delete the copy (`warm_fork`). On any
-    failure, or a cancellation, the sandbox is deleted before the error goes on."""
+    create has answered). On any failure, or a cancellation, the sandbox is deleted before the error
+    goes on."""
     missing = [name for name in recipe.setup_env if name not in os.environ]
     if missing:
         raise SetupError(f"setup_env names variables that are not set here: {', '.join(missing)}")
@@ -430,8 +439,6 @@ async def build_sandbox(
                 )
         if pause:
             await sandbox.pause()
-            if warm:
-                await warm_fork(sandbox, recipe, creds)
         logger.info(
             "verifiers-prized: %s %s ready in %.1fs%s",
             role,
