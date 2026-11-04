@@ -875,11 +875,24 @@ def _ops(cloud: Cloud, *names: str) -> list[tuple[str, ...]]:
     return [c for c in cloud.calls if c[0] in names]
 
 
+def _record_delete_waits(monkeypatch: pytest.MonkeyPatch) -> dict[str, bool]:
+    waits: dict[str, bool] = {}
+    real_delete = fake_prized.AsyncSandbox.delete
+
+    async def delete(self: fake_prized.AsyncSandbox, *, wait: bool = False, timeout: float = 120.0) -> None:
+        waits[self.id] = wait
+        await real_delete(self, wait=wait, timeout=timeout)
+
+    monkeypatch.setattr(fake_prized.AsyncSandbox, "delete", delete)
+    return waits
+
+
 def test_build_forks_the_paused_parent_once_and_deletes_the_copy(
-    cloud: Cloud, capsys: pytest.CaptureFixture[str]
+    cloud: Cloud, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
     from verifiers_prized.__main__ import main
 
+    waits = _record_delete_waits(monkeypatch)
     assert main(["build", "--setup", "echo built > env.txt", "--label", "team=evals"]) == 0
     out = capsys.readouterr()
     sandbox_id = out.out.strip()
@@ -892,6 +905,7 @@ def test_build_forks_the_paused_parent_once_and_deletes_the_copy(
         ("delete", warm.id),
     ]
     assert warm.parent == sandbox_id and warm.state == "deleted"
+    assert waits == {warm.id: True}, "until it is gone: a deleting copy still counts toward the quota"
     assert warm.labels["team"] == "evals" and warm.labels["vfp-run"] == pool.RUN_ID
     assert parent.state == "paused" and (parent.root / "home/prized/work/env.txt").read_text() == "built\n"
     assert "ready to fork" in out.err and sandbox_id in out.err
@@ -912,15 +926,88 @@ def test_build_without_a_warm_up(cloud: Cloud, capsys: pytest.CaptureFixture[str
     assert cloud.boxes[sandbox_id].state == ("paused" if flag == "--no-warm" else "running")
 
 
-def test_a_refused_warm_up_keeps_the_built_parent(cloud: Cloud, capsys: pytest.CaptureFixture[str]) -> None:
+@pytest.mark.parametrize(
+    "error",
+    [
+        PrizedError("sandbox_quota_exceeded", status=429, reason="sandbox_limit"),
+        RuntimeError("not the SDK's"),  # best effort: no error of the warm-up loses the built parent
+    ],
+)
+def test_a_failed_warm_up_keeps_the_built_parent(
+    cloud: Cloud, capsys: pytest.CaptureFixture[str], error: Exception
+) -> None:
     from verifiers_prized.__main__ import main
 
-    cloud.fork_refusals = [PrizedError("sandbox_quota_exceeded", status=429, reason="sandbox_limit")]
+    cloud.fork_refusals = [error]  # type: ignore[list-item]
     assert main(["build", "--setup", "echo built > env.txt"]) == 0
     out = capsys.readouterr()
     sandbox_id = out.out.strip()
     assert cloud.boxes[sandbox_id].state == "paused" and len(cloud.live()) == 1
-    assert "warm-up fork was refused" in out.err and "sandbox_quota_exceeded" in out.err
+    assert "warm-up fork failed" in out.err and str(error) in out.err
+
+
+async def test_a_warm_up_fork_that_lands_after_its_build_is_cancelled_is_swept_never_the_parent(
+    cloud: Cloud, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # The fork made its copy, but the build was cancelled before the answer came (a Ctrl-C): the
+    # build deletes its parent, and the exit sweep finds the copy by this run's label.
+    real_fork = fake_prized.AsyncSandbox.fork
+
+    async def fork(self: fake_prized.AsyncSandbox, count: int = 1, **kw: Any) -> list[Any]:
+        copies = await real_fork(self, count, **kw)
+        await asyncio.sleep(5)  # the answer is late
+        return copies
+
+    monkeypatch.setattr(fake_prized.AsyncSandbox, "fork", fork)
+    creds = pool.credentials(config())
+    recipe = pool.Recipe.of(config(setup=["echo built > env.txt"]), creds)
+    build = asyncio.ensure_future(
+        pool.build_sandbox(recipe, creds, role="parent", pause=True, warm=True, tracked=False, run="build-x")
+    )
+
+    async def landed() -> bool:
+        return bool(cloud.live("warmup"))
+
+    await wait_for(landed)
+    build.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await build
+    [copy] = cloud.live()
+    assert copy.labels["verifiers-prized"] == "warmup" and not cloud.live("parent")
+    assert not pool.is_tracked(copy.id)
+    pool.delete_leftovers()
+    assert cloud.live() == [] and ("delete_by_labels", f"vfp-run={pool.RUN_ID}") in cloud.calls
+
+
+async def test_a_build_cancelled_while_its_warm_up_copy_is_deleted_still_deletes_it(
+    cloud: Cloud, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    real_delete = fake_prized.AsyncSandbox.delete
+    started: list[str] = []
+
+    async def slow_delete(
+        self: fake_prized.AsyncSandbox, *, wait: bool = False, timeout: float = 120.0
+    ) -> None:
+        started.append(self.id)
+        await asyncio.sleep(0.3)
+        await real_delete(self, wait=wait, timeout=timeout)
+
+    monkeypatch.setattr(fake_prized.AsyncSandbox, "delete", slow_delete)
+    creds = pool.credentials(config())
+    recipe = pool.Recipe.of(config(setup=["echo built > env.txt"]), creds)
+    build = asyncio.ensure_future(
+        pool.build_sandbox(recipe, creds, role="parent", pause=True, warm=True, tracked=False)
+    )
+
+    async def deleting() -> bool:
+        return bool(started)
+
+    await wait_for(deleting)
+    build.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await build
+    # The copy's delete runs to the end (it is shielded), then the cancelled build deletes its parent.
+    assert started[0] != started[-1] and cloud.live() == [] and pool._tracked == {}
 
 
 async def test_a_build_cancelled_during_its_warm_up_leaves_nothing(cloud: Cloud) -> None:

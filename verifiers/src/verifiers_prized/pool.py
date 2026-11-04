@@ -248,10 +248,11 @@ def delete_leftovers() -> None:
         delete_now(sandbox_id, creds)
 
 
-async def discard(sandbox: Any) -> None:
-    """Delete a sandbox this process made and release its handle: best effort, logged."""
+async def discard(sandbox: Any, *, wait: bool = False) -> None:
+    """Delete a sandbox this process made and release its handle: best effort, logged. With `wait`,
+    until it is gone (a deleting sandbox still counts toward the workspace's quota)."""
     try:
-        await sandbox.delete()
+        await sandbox.delete(wait=wait)
         untrack(sandbox.id)
     except PrizedError as err:
         if err.status == 404:
@@ -335,25 +336,28 @@ async def warm_fork(parent: Any, recipe: Recipe, creds: Credentials) -> bool:
     """Fork one throwaway copy of a sandbox that was just paused, and delete it.
 
     Prized keeps a freshly paused sandbox's memory in RAM, and its first fork writes all of that
-    memory to disk before any copy starts: 12 to 22 s measured for 8 GB, less for less memory.
-    Later forks skip it (1.4 s measured). Done once while a parent is built ahead of a run, it
-    keeps that write out of the run's first fork. The parent stays paused and unchanged, so every copy
-    forked later starts from the same state. Best effort: a refused fork is logged and the parent
-    is kept as it is (its first fork then does the write). Whether it ran is returned."""
+    memory to disk before any copy starts: 12 to 25 s measured for 8 GB, about a second for 2 GB.
+    Later forks skip it (1.4 s measured), and so does a fork once the sandbox has been paused for
+    15 minutes, when Prized writes it on its own. Done once while a parent is built ahead of a run,
+    it keeps that write out of the run's first fork. The parent stays paused and unchanged, so every
+    copy forked later starts from the same state. The copy carries this process's run label, never
+    the parent's, and the delete is waited for, as a deleting sandbox still counts toward the
+    workspace's quota. Best effort: a fork that fails is logged and the parent kept as it is (its
+    first fork then does the write). Whether it ran is returned."""
     began = time.monotonic()
-    making(creds)
+    making(creds)  # a copy whose answer is lost is still deleted at exit, by the run's label
     try:
         copies = list(await parent.fork(1, labels=recipe.labels_for("warmup"), timeout=START_TIMEOUT))
-    except PrizedError as err:
+    except Exception as err:  # noqa: BLE001 - best effort: never lose the parent built for it
         logger.warning(
-            "verifiers-prized: parent %s: the warm-up fork was refused (%s); its first fork will be slower",
+            "verifiers-prized: parent %s: the warm-up fork failed (%s); its first fork will be slower",
             parent.id,
             err,
         )
         return False
     for child in copies:
         track(child.id, creds)
-    await shielded(asyncio.gather(*(discard(child) for child in copies), return_exceptions=True))
+    await shielded(asyncio.gather(*(discard(child, wait=True) for child in copies), return_exceptions=True))
     logger.info(
         "verifiers-prized: parent %s ready to fork: warm-up copy made and deleted in %.1fs",
         parent.id,

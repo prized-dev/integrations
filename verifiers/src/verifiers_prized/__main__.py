@@ -6,8 +6,9 @@ prints the sandbox id (paused, with the environment built) for `parent = "<id>"`
 config. It is yours: delete it with `prized sandbox rm <id>` when you are done with it.
 
 Once paused, it is forked once and the copy deleted (`--no-warm` skips that): a freshly paused
-sandbox's first fork writes its memory to disk before any copy starts, so this keeps that write
-out of the run's first rollouts.
+sandbox's first fork writes its memory to disk before any copy starts (12 to 25 s for 8 GB, about
+a second for the default 2 GB), so this keeps that write out of a run that starts within the 15
+minutes after which Prized writes it anyway.
 """
 
 from __future__ import annotations
