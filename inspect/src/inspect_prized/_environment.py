@@ -56,8 +56,12 @@ _QUOTA = "sandbox_quota_exceeded"
 # Quotas a paused template counts toward (its disk, and compute it keeps for resume). It doesn't count
 # toward the number of sandboxes, so a sandbox_limit refusal is no reason to delete it.
 _TEMPLATE_QUOTAS = ("retained_disk", "running_vcpu", "running_memory", "paused_limit")
-# Fork refusals that mean the template can't be forked again (deleted, in `error`, or no longer forkable):
-# it is deleted then, since in `error` it still counts toward the number of sandboxes.
+# A paused template doesn't count toward the number of sandboxes, but one that isn't paused (in `error`,
+# say) does: at this quota, templates are read again and those are deleted.
+_COUNT_QUOTA = "sandbox_limit"
+# Fork refusals that mean the template can't be forked again (deleted, in `error` or another state than
+# paused, or no longer forkable): it is deleted then, since in `error` it still counts toward the number
+# of sandboxes.
 _TEMPLATE_GONE = ("not_found", "sandbox_deleted", "parent_not_running", "parent_not_forkable", "handle_closed")
 _FORK_SETTLE_S = 200.0  # longer than the SDK's fork budget (180 s): copies still starting finish first
 _GONE_WAIT_S = _FORK_SETTLE_S + 180.0  # another sample's drop: its fork wait plus the delete itself
@@ -213,7 +217,7 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
                 if refused.code == _QUOTA and refused.reason in _TEMPLATE_QUOTAS:
                     # No room for the template and this sample both: the template gives up its disk
                     # (and compute), and this config's samples run setup in their own sandboxes.
-                    await _drop_template(entry, "no room for it and a sample at the quota")
+                    await _drop_template(entry)
                 elif refused.code in _TEMPLATE_GONE and refused.sandbox_id in (None, template.id):
                     # The template itself (not just a copy) can't be forked again: delete it now, not at
                     # task cleanup. In `error` it counts toward the number of sandboxes, which _create
@@ -276,8 +280,10 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
             # Templates hold no sample's state, so they go even with --no-sandbox-cleanup; the label
             # sweep catches one whose delete failed.
             for entry in list(state.templates.values()):
-                if entry.sandbox is not None:
-                    await _discard(entry.sandbox)
+                # A sample still starting finds no template (or a closed handle, which it leaves alone).
+                sandbox, entry.sandbox, entry.failed = entry.sandbox, None, True
+                if sandbox is not None:
+                    await _discard(sandbox)
             state.templates.clear()
             try:
                 await AsyncSandbox.delete_by_labels({RUN_LABEL: state.run_id, "inspect-role": "template"})
@@ -590,8 +596,13 @@ async def _drop_template(entry: _Template, why: str = "no room for it and a samp
 
 
 async def _create(state: _State | None, options: dict) -> AsyncSandbox:
-    """Create a sample's sandbox. At a quota paused templates count toward, delete them one at a time
-    (waiting for one another sample is deleting only when no other is left) until it fits."""
+    """Create a sample's sandbox. At a quota templates count toward, delete them one at a time (given-up
+    ones first, and waiting for one another sample is deleting only when no other is left) until it fits.
+
+    Paused, they count toward disk and kept compute. Toward the number of sandboxes only once they aren't
+    paused (in `error`, say): at that quota each is read again, so one is found even when no fork of it
+    comes to find out.
+    """
     drops = 0
     while True:
         try:
@@ -599,9 +610,15 @@ async def _create(state: _State | None, options: dict) -> AsyncSandbox:
         except PrizedError as err:
             entries = list(state.templates.values()) if state is not None else []
             fresh = [e for e in entries if e.sandbox is not None and e.gone is None]
+            fresh.sort(key=lambda e: not e.failed)  # templates no sample forks any more go first
             pending = [e for e in entries if e.gone is not None and not e.gone.is_set()]
+            at_count = err.code == _QUOTA and err.reason == _COUNT_QUOTA
+            if at_count:
+                fresh = [e for e in fresh if await _counts(e)]
             target = (fresh or pending or [None])[0]
-            if err.code != _QUOTA or err.reason not in _TEMPLATE_QUOTAS or target is None or drops > len(entries):
+            room = err.code == _QUOTA and (err.reason in _TEMPLATE_QUOTAS or at_count)
+            reason = err.reason  # `err` is unbound once the except clause ends
+            if not room or target is None or drops > len(entries):
                 if err.code == _QUOTA:
                     logger.warning(
                         "Prized: the workspace is at its sandbox quota (%s). Run with a lower --max-sandboxes, "
@@ -610,7 +627,19 @@ async def _create(state: _State | None, options: dict) -> AsyncSandbox:
                     )
                 raise
         drops += 1
-        await _drop_template(target)
+        await _drop_template(target, f"no room for it and a sample at the quota ({reason})")
+
+
+async def _counts(entry: _Template) -> bool:
+    """Whether a template counts toward the number of sandboxes: it isn't paused (in `error`, say)."""
+    sandbox = entry.sandbox
+    if sandbox is None:
+        return False
+    try:
+        await sandbox.refresh()
+    except PrizedError:
+        return False  # deleted, or unreadable: a fork of it finds out
+    return sandbox.state != "paused"
 
 
 async def _template(state: _State, cfg: PrizedSandboxConfig) -> _Template | None:

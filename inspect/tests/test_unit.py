@@ -78,7 +78,8 @@ class FakeSandbox:
         self.options = options
         self.labels = options.get("labels", {})
         self.files = FakeFiles(self)
-        self.deleted = self.paused = self.closed = False
+        self.deleted = self.paused = self.closed = self.errored = False
+        self.refreshes = 0
         self.calls: list = []
         os.makedirs(os.path.join(root, "work"), exist_ok=True)
         FakeSandbox.made.append(self)
@@ -141,6 +142,14 @@ class FakeSandbox:
 
     async def pause(self, wait=True):
         self.paused = True
+
+    @property
+    def state(self):
+        return "deleted" if self.deleted else "error" if self.errored else "paused" if self.paused else "running"
+
+    async def refresh(self):
+        self.refreshes += 1
+        return self
 
     async def close(self):
         self.closed = True
@@ -797,7 +806,7 @@ def _counted():
     return [sb for sb in FakeSandbox.made if not sb.deleted and not sb.paused]
 
 
-@pytest.mark.parametrize("code", ["parent_not_running", "parent_not_forkable", "not_found"])
+@pytest.mark.parametrize("code", ["parent_not_running", "parent_not_forkable", "not_found", "sandbox_deleted"])
 async def test_a_template_that_cant_be_forked_is_deleted_at_once(monkeypatch, code):
     from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
 
@@ -813,7 +822,7 @@ async def test_a_template_that_cant_be_forked_is_deleted_at_once(monkeypatch, co
             # The template went to `error`, so it counts toward the number of sandboxes, and the
             # workspace is at that limit (the free tier's 10 at the default concurrency): the sample
             # fits only once the template is gone.
-            template.paused = False
+            template.paused, template.errored = False, True
             full = len(_counted())
 
             async def create(**options):
@@ -871,3 +880,66 @@ async def test_a_template_that_cant_be_forked_waits_for_copies_still_starting(mo
         assert seen == [False]  # the template was still there when its last copy finished starting
         assert template.deleted and template.delete_waited
         assert sorted(hasattr(sb, "forked_from") for sb in made) == [False, True]
+
+
+def _full_at_the_sandbox_count(monkeypatch):
+    """Creates are refused at sandbox_limit while as many sandboxes count as do now."""
+    full = len(_counted())
+    real_create = env_mod.AsyncSandbox.create
+
+    async def create(**options):
+        if len(_counted()) >= full:
+            raise PrizedError("sandbox_quota_exceeded", "n", status=429, reason="sandbox_limit")
+        return await real_create(**options)
+
+    monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(create))
+
+
+async def test_at_the_sandbox_limit_a_template_in_error_is_found_and_deleted(monkeypatch):
+    # No fork comes to find it out (its config has no samples left): the create reads the templates.
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    with sandbox_lifecycle_scope():
+        x, y = await _two_templates(monkeypatch)
+        real_create = env_mod.AsyncSandbox.create
+        _full_at_the_sandbox_count(monkeypatch)
+        # Paused templates don't count toward the number of sandboxes: none is deleted, the sample fails.
+        with pytest.raises(PrizedError, match="sandbox_limit"):
+            await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(), {})
+        assert not x.deleted and not y.deleted and x.refreshes == y.refreshes == 1
+        x.paused, x.errored = False, True  # x went to `error`: it counts now
+        monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(real_create))
+        _full_at_the_sandbox_count(monkeypatch)
+        envs = await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(), {})
+        assert envs["default"] and x.deleted and x.delete_waited and not y.deleted
+
+
+async def test_at_a_disk_quota_a_given_up_template_goes_first(monkeypatch):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    with sandbox_lifecycle_scope():
+        x, y = await _two_templates(monkeypatch)
+        entry = next(e for e in env_mod._state().templates.values() if e.sandbox is y)
+        entry.failed = True  # no sample forks it any more (its drop was cancelled, say)
+        real_create = env_mod.AsyncSandbox.create
+        refused = []
+
+        async def create(**options):
+            if not refused:
+                refused.append(options)
+                raise PrizedError("sandbox_quota_exceeded", "disk", status=429, reason="retained_disk")
+            return await real_create(**options)
+
+        monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(create))
+        await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(), {})
+        assert y.deleted and not x.deleted
+
+
+async def test_task_cleanup_takes_the_templates_from_samples_still_starting(monkeypatch):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    with sandbox_lifecycle_scope():
+        x, _ = await _two_templates(monkeypatch)
+        entry = next(e for e in env_mod._state().templates.values() if e.sandbox is x)
+        await PrizedSandboxEnvironment.task_cleanup("shutdown", PrizedSandboxConfig(), True)
+        assert x.deleted and x.closed and entry.sandbox is None and entry.failed  # nothing left to fork

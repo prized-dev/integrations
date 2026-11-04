@@ -70,14 +70,14 @@ PrizedSandboxConfig(setup=["python3 -m venv ~/venv && ~/venv/bin/pip install num
   - its config's template failed, was deleted to make room, or can't be forked any more.
 
   So a setup that only one sample uses (a checkout per sample, say) never builds a template. A `setup` command that fails or times out fails the sample, as it would in the sample's own sandbox.
-- The template stays paused until the eval ends, and is deleted then, even with `--no-sandbox-cleanup`. If the eval is killed before it can clean up, the template is deleted 7 days after it paused.
+- Otherwise the template stays paused until the eval ends, and is deleted then, even with `--no-sandbox-cleanup`. If the eval is killed before it can clean up, the template is deleted 7 days after it paused.
 - A template that can't be forked any more (in `error`, say) is deleted as soon as a fork finds that out, once forks of it in flight are done. In `error` it would still count toward the number of sandboxes.
 
 To branch a sample's state (try several continuations from one point of a trajectory), fork its sandbox: `copies = await sandbox().as_type(PrizedSandboxEnvironment).fork(3)`. Each copy is a live copy (files, memory, processes) and goes with the sample: deleted, or paused with `keep=True`.
 
 Inspect runs up to 10 sandboxes at once by default (the free tier's limit). Raise it with `--max-sandboxes`.
 
-A paused template counts toward the workspace's disk quota, and toward vCPU and memory when it keeps them for resume. It doesn't count toward the number of sandboxes. When a sample doesn't fit for that reason, templates are deleted one at a time until it fits or none is left. The samples of a config whose template was deleted run `setup` in their own sandboxes.
+A paused template counts toward the workspace's disk quota, and toward vCPU and memory when it keeps them for resume. It doesn't count toward the number of sandboxes until it stops being paused (in `error`, say). When a sample doesn't fit for one of those reasons, templates are deleted one at a time until it fits or none is left. The samples of a config whose template was deleted run `setup` in their own sandboxes.
 
 On the free tier (100 GB of disk), 10 samples of the default 10 GB disk fill it. Run with `--max-sandboxes 9` to keep one template. `fork()` copies count like any sandbox, and a `fork()` past a quota raises.
 
