@@ -12,7 +12,23 @@ No Prized account yet? Your coding agent can sign you up with your email and a 6
 
 Each trial gets its own sandbox, sized from the task's `cpus`, `memory_mb` and `storage_mb`, plus 20 GB of disk for the image, and deleted when the trial ends (`--no-delete` pauses it instead, at storage cost only, and it is deleted after a day paused). If Harbor itself dies mid-run, a sandbox it leaves behind pauses after 30 idle minutes, so it stops billing compute, and is deleted a day later. Paused sandboxes count toward the workspace's disk quota until then. The task's prebuilt `docker_image` is unpacked with `crane`, keeping its file modes, and every command runs chrooted into it with the image's `ENV`, `WORKDIR` and `USER`, the task's env, Docker's umask (022) and a Docker-style `/etc/hosts`. Root commands run as uid 0 of an unprivileged user namespace, under a seccomp filter that makes `chown`, setuid/setgid bits and switches to other users succeed without effect, as fakeroot does, so `apt-get`, `useradd` and `sudo` work. A command for another user (`user=agent`, the task's `[agent] user`, or the image's `USER`) runs as that user's uid and gid in a namespace nested in root's. All commands of a trial share these namespaces, so processes they leave running (tmux, servers) stay visible to later commands. Long commands run detached through the [`prized` SDK](https://pypi.org/project/prized/), so an hour-long agent run outlives a dropped connection, and files over 64 MiB move in parts.
 
-Options (`--ek key=value`): `template` (default `prized-base-v1`), `max_runtime_min` (1440; up to 10080, 7 days), `paused_ttl_min` (1440, a day), `min_vcpu` (1), `image_headroom_gb` (20), `labels` (`k=v,k=v`), `registry_auth` (`env`, `docker` or a path; [below](#pull-with-your-own-registry-credentials)). Each sandbox is labelled `harbor=1` and `harbor-session=<trial>`, so once no run is going, `prized sandbox rm --label harbor=1` removes any a crashed run left behind. A task's `cpus` may be fractional (`0.5`, Harbor 0.25 and later): the sandbox gets whole vCPUs, rounded up.
+Options (`--ek key=value`): `template` (default `prized-base-v1`), `max_runtime_min` (1440; up to 10080, 7 days), `paused_ttl_min` (1440, a day), `min_vcpu` (1), `image_headroom_gb` (20), `labels` (`k=v,k=v`), `registry_auth` (`env`, `docker` or a path; [below](#pull-with-your-own-registry-credentials)), `fork_mode` (false; [below](#fork-mode-one-warm-start-per-task)), `fork_disk_budget_gb` (120). Each sandbox is labelled `harbor=1` and `harbor-session=<trial>`, so once no run is going, `prized sandbox rm --label harbor=1` removes any a crashed run left behind. A task's `cpus` may be fractional (`0.5`, Harbor 0.25 and later): the sandbox gets whole vCPUs, rounded up.
+
+## Fork mode: one warm start per task
+
+With `-k 3` or more, each task's image is pulled and unpacked once, and every trial of the task forks that start instead of making its own:
+
+```bash
+harbor run -d terminal-bench/terminal-bench-2-1 -a oracle -e harbor_prized:PrizedEnvironment \
+  --ek fork_mode=true --plugin harbor_prized:TaskMajor -k 3 -n 4
+```
+
+- The first trial of a task builds a parent: the usual start, then paused. Each trial, that one included, runs in its own fork of it, from the same state, and the fork is deleted when the trial ends. No trial runs in the parent, and the pull credentials are gone from it before it pauses.
+- A fork takes about 1.4 s, against about 11 s for a fresh start on Terminal-Bench 2.1 (median 10 s). Docker Hub sees one pull per task instead of one per trial.
+- Paused parents count toward the workspace's disk quota, running trials too. `fork_disk_budget_gb` (120) caps the disk the parents hold. A parent is built only if a later trial of its task is planned (from Harbor's `lock.json`), and deleted once the last one has its fork. When the budget is full, the parent needed farthest ahead in the plan makes room.
+- Harbor runs every task once before any task twice, so without `TaskMajor` a task's parent waits through the whole job, and only the first few tasks fit the budget. `--plugin harbor_prized:TaskMajor` runs all attempts of a task together. It also deletes leftover parents at the end of the job.
+- A refused fork (a full machine, quota, a host being replaced) starts that trial fresh. A pull that fails fails the trial, as without fork mode.
+- Parents are labelled `harbor-fork-parent=1` and `harbor-fork-run=<id>`, and they carry your `labels`. They are deleted at exit, even after Ctrl-C. One a killed process leaves behind is deleted after `paused_ttl_min` paused, or with `prized sandbox rm --label harbor-fork-parent=1`.
 
 ## Pull with your own registry credentials
 
