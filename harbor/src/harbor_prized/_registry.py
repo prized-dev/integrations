@@ -23,6 +23,7 @@ import os
 import re
 import shutil
 import subprocess
+import threading
 import time
 from pathlib import Path
 
@@ -35,6 +36,11 @@ _HELPER_TIMEOUT_SEC = 60
 # not once a trial; short enough for tokens that expire, as ECR's do.
 _CACHE_SEC = 300
 _CACHE: dict[tuple[str, str], tuple[float, dict[str, str] | None]] = {}
+# One read at a time per (config, registry): with -n 8, eight trials starting
+# together wait for the first one's helper instead of each asking (and
+# prompting) on its own.
+_LOCKS: dict[tuple[str, str], threading.Lock] = {}
+_LOCKS_LOCK = threading.Lock()
 # Tokens people paste where a source belongs; never echoed back.
 _TOKEN_LIKE = re.compile(r"(dckr_pat_|dckr_oat_|ghp_|github_pat_|gho_|glpat-)")
 
@@ -128,12 +134,15 @@ class RegistryAuth:
                 return None
             return _basic(os.environ[_ENV_USER], os.environ[_ENV_TOKEN])
         key = (str(self._path), registry)
-        cached = _CACHE.get(key)
-        if cached is not None and time.monotonic() - cached[0] < _CACHE_SEC:
-            return cached[1]
-        entry = _read(self._path, registry)
-        _CACHE[key] = (time.monotonic(), entry)
-        return entry
+        with _LOCKS_LOCK:
+            lock = _LOCKS.setdefault(key, threading.Lock())
+        with lock:
+            cached = _CACHE.get(key)
+            if cached is not None and time.monotonic() - cached[0] < _CACHE_SEC:
+                return cached[1]
+            entry = _read(self._path, registry)
+            _CACHE[key] = (time.monotonic(), entry)
+            return entry
 
 
 def _read(path: Path, registry: str) -> dict[str, str] | None:
@@ -145,18 +154,29 @@ def _read(path: Path, registry: str) -> dict[str, str] | None:
             f"({type(exc).__name__})"
         ) from None
     if not isinstance(config, dict):
-        return None
+        raise TypeError(
+            f"registry_auth: {path} is not a Docker config (no JSON object)"
+        )
     # As Docker does: a registry's own helper, else the credential store,
     # else the file's own entry.
-    for key, helper in (config.get("credHelpers") or {}).items():
+    helpers, auths = config.get("credHelpers") or {}, config.get("auths") or {}
+    store = config.get("credsStore")
+    for name, value, kind in (
+        ("credHelpers", helpers, dict),
+        ("auths", auths, dict),
+        ("credsStore", store or "", str),
+    ):
+        if not isinstance(value, kind):
+            what = "an object" if kind is dict else "a string"
+            raise TypeError(f"registry_auth: {path}: {name} must be {what}")
+    for key, helper in helpers.items():
         if _host(key) == registry and helper:
             return _from_helper(str(helper), key)
     entries = {
         key: entry
-        for key, entry in (config.get("auths") or {}).items()
+        for key, entry in auths.items()
         if _host(key) == registry and isinstance(entry, dict)
     }
-    store = config.get("credsStore")
     if store:
         for key in dict.fromkeys([*entries, _store_key(registry)]):
             found = _from_helper(str(store), key)

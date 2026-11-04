@@ -1048,12 +1048,18 @@ def test_registry_auth_can_be_off(tmp_path, value):
 
 
 @pytest.mark.parametrize(
-    "value", [True, {"username": "evals", "password": FAKE_TOKEN}, ["evals"]]
+    "value", [{"username": "evals", "password": FAKE_TOKEN}, ["evals", FAKE_TOKEN]]
 )
-def test_registry_auth_refuses_credentials_or_flags(tmp_path, value):
+def test_registry_auth_refuses_credentials(tmp_path, value):
     with pytest.raises(TypeError, match="never the credentials") as info:
         _environment(tmp_path, docker_image="python:3.12", registry_auth=value)
     assert FAKE_TOKEN not in str(info.value)
+
+
+@pytest.mark.parametrize("value", [True, 1, 0, 2.5])  # --ek registry_auth=true, =1
+def test_registry_auth_refuses_flags_and_numbers(tmp_path, value):
+    with pytest.raises(TypeError, match="not true or a number"):
+        _environment(tmp_path, docker_image="python:3.12", registry_auth=value)
 
 
 def test_registry_auth_without_its_credentials_is_refused(tmp_path, monkeypatch):
@@ -1203,3 +1209,58 @@ async def test_pull_failures_get_the_hint_that_fits(
     if hint is not None:
         assert hint in str(info.value)
     assert absent not in str(info.value)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("rm_fails", [False, True])
+async def test_a_failed_start_removes_the_credentials_before_the_delete(
+    tmp_path, monkeypatch, rm_fails
+):
+    _hub_env(monkeypatch)
+    environment = _environment(
+        tmp_path, docker_image="python:3.12", registry_auth="env"
+    )
+    sandbox = _Sandbox()
+    events = []
+
+    def answer(cmd):
+        if cmd.startswith("rm -rf "):
+            events.append(cmd)
+            if rm_fails:  # the sandbox no longer answers: the delete still runs
+                raise PrizedError("sandbox_unreachable")
+            return ExecResult(stdout="", stderr="", exit_code=0)
+        # A setup the SDK killed at its timeout: its trap never ran.
+        return ExecResult(stdout="", stderr="killed", exit_code=137)
+
+    sandbox.answer = answer
+
+    async def delete():
+        events.append("delete")
+        sandbox.deleted = True
+
+    sandbox.delete = delete
+
+    async def create(template, **kwargs):
+        return sandbox
+
+    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
+    with pytest.raises(RuntimeError, match="Could not unpack"):
+        await environment.start(force_build=False)
+    assert events == ["rm -rf /home/prized/.pull-auth", "delete"]
+
+
+@pytest.mark.asyncio
+async def test_a_failed_start_without_credentials_has_nothing_to_remove(
+    tmp_path, monkeypatch
+):
+    environment = _environment(tmp_path, docker_image="python:3.12")
+    sandbox = _Sandbox(exit_code=1)
+
+    async def create(template, **kwargs):
+        return sandbox
+
+    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
+    with pytest.raises(RuntimeError, match="Could not unpack"):
+        await environment.start(force_build=False)
+    assert all(not e["cmd"].startswith("rm -rf ") for e in sandbox.execs)
+    assert sandbox.deleted

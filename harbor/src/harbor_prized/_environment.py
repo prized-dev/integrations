@@ -198,11 +198,15 @@ def _registry_auth(value: object) -> RegistryAuth | None:
     """``registry_auth`` as given (Harbor turns ``--ek x=false`` into False)."""
     if value is None or value is False:
         return None
+    usage = "registry_auth takes env, docker or the path of a Docker config.json"
+    if isinstance(value, (bool, int, float)):  # --ek registry_auth=true, =1
+        raise TypeError(
+            f"{usage}, not true or a number (Harbor reads --ek values as JSON)."
+        )
     if not isinstance(value, str):  # never echoed: it may hold credentials
         raise TypeError(
-            "registry_auth takes env, docker or a path to a Docker config.json, "
-            "never the credentials themselves (Harbor writes --ek values into "
-            "the job's config.json)."
+            f"{usage}, never the credentials themselves (Harbor writes --ek "
+            "values into the job's config.json)."
         )
     source = value.strip()
     if source.lower() in ("", "none", "off", "false"):
@@ -522,8 +526,21 @@ class PrizedEnvironment(BaseEnvironment):
             await self.ensure_dirs(self._mount_targets(writable_only=True))
             await self._upload_environment_dir_after_start()
         except BaseException:  # a cancelled start must not leave the sandbox behind
+            if credentials is not None:
+                # The setup's trap can't run if the setup was killed (its
+                # timeout), and a delete that fails leaves the sandbox up.
+                await _despite_cancel(self._remove_pull_auth())
             await _despite_cancel(self.stop(delete=True))
             raise
+
+    async def _remove_pull_auth(self) -> None:
+        """Best-effort removal of registry_auth's credentials from the sandbox."""
+        try:
+            await self._host_exec(
+                f"rm -rf {shlex.quote(_PULL_AUTH_DIR)}", timeout_sec=60
+            )
+        except (PrizedError, RuntimeError) as exc:
+            self.logger.debug(f"Could not remove {_PULL_AUTH_DIR}: {exc}")
 
     async def _prepare_image(
         self, image: str, credentials: tuple[str, bytes] | None = None
@@ -531,8 +548,10 @@ class PrizedEnvironment(BaseEnvironment):
         q = shlex.quote
         auth = ""
         if credentials is not None:
-            # Through the files API, so the secret is in no command line; the
-            # trap removes it however the setup ends.
+            # Through the files API, so the secret is in no command line. The
+            # trap removes it when the setup's shell exits, pass or fail; a
+            # setup killed at its timeout can't run the trap, so a failed start
+            # also removes it (_start) before deleting the sandbox.
             await self._require_sandbox().files.write(
                 f"{_PULL_AUTH_DIR}/config.json", credentials[1], mode=0o600
             )
