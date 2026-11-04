@@ -224,8 +224,11 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
             sandbox = await _create(state, options)
             try:
                 await _prepare(sandbox, cfg)
+            except Exception:
+                await _discard(sandbox, wait=True)  # a deleting sandbox still counts toward the next create
+                raise
             except BaseException:
-                await _discard(sandbox)
+                await _discard(sandbox)  # cancelled: don't hold up the shutdown
                 raise
         cls._live.setdefault(task_name, set()).add(sandbox.id)
         return {"default": cls(sandbox, cfg)}

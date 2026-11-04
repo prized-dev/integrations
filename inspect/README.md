@@ -60,7 +60,9 @@ inspect eval arithmetic.py --model openai/gpt-5
 PrizedSandboxConfig(setup=["python3 -m venv ~/venv && ~/venv/bin/pip install numpy pandas"])
 ```
 
-- A sample that starts as a fork gets the template's remaining run time: `max_runtime_min` less what `setup` took.
+- How long a forked sample may run depends on the plan.
+  - On a paid plan, each copy gets a fresh `max_runtime_min` from the fork.
+  - On the free tier, forks never extend free time, so a copy gets what the template has left: `max_runtime_min` less what `setup` took. A paused template's clock is stopped, so that amount doesn't shrink while the eval runs.
 - A sample runs `setup` in a fresh sandbox of its own in these cases:
   - its config has had no sample yet (with epochs or retries, the repeat is the second sample);
   - 4 other `setup` configs already have, or tried, a template;
@@ -74,7 +76,7 @@ To branch a sample's state (try several continuations from one point of a trajec
 
 Inspect runs up to 10 sandboxes at once by default (the free tier's limit). Raise it with `--max-sandboxes`.
 
-A paused template counts toward the workspace's disk quota, and toward vCPU and memory when it keeps them for resume. It doesn't count toward the number of sandboxes. When a sample doesn't fit for that reason, templates are deleted one at a time until it does, and the samples of a config whose template was deleted run `setup` in their own sandboxes.
+A paused template counts toward the workspace's disk quota, and toward vCPU and memory when it keeps them for resume. It doesn't count toward the number of sandboxes. When a sample doesn't fit for that reason, templates are deleted one at a time until it fits or none is left. The samples of a config whose template was deleted run `setup` in their own sandboxes.
 
 On the free tier (100 GB of disk), 10 samples of the default 10 GB disk fill it. Run with `--max-sandboxes 9` to keep one template. `fork()` copies count like any sandbox, and a `fork()` past a quota raises.
 

@@ -461,6 +461,12 @@ async def test_setup_runs_once_and_samples_fork_the_paused_template(monkeypatch)
         FakeSandbox.fork_error = None  # a full machine is no reason to give the template up
         d = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"].as_type(PrizedSandboxEnvironment)
         assert d.sandbox.forked_from == template.id
+        # A copy that ended up deleted says nothing about the template: keep forking it.
+        FakeSandbox.fork_error = PrizedError("sandbox_deleted", "copy gone", status=410, sandbox_id="sbx_copy")
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        FakeSandbox.fork_error = None
+        d2 = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"].as_type(PrizedSandboxEnvironment)
+        assert d2.sandbox.forked_from == template.id
         # A template that is gone (deleted from outside) is not tried again.
         FakeSandbox.fork_error = PrizedError("not_found", "gone", status=404)
         await PrizedSandboxEnvironment.sample_init("t", cfg, {})
@@ -473,11 +479,19 @@ async def test_setup_runs_once_and_samples_fork_the_paused_template(monkeypatch)
         env_mod._fallback.reset(token)
 
 
-async def test_setup_failure_deletes_the_sandbox():
+async def test_setup_failure_deletes_the_sandbox(monkeypatch):
+    import asyncio
+
     cfg = PrizedSandboxConfig(setup=["exit 3"])
     with pytest.raises(RuntimeError, match="setup command failed"):
         await PrizedSandboxEnvironment.sample_init("t", cfg, {})
-    assert all(sb.deleted or sb.closed for sb in FakeSandbox.made)
+    [sb] = FakeSandbox.made
+    assert sb.deleted and sb.closed and sb.delete_waited  # gone before the next sample's create
+    # Cancelled mid-setup: deleted without waiting, so the shutdown isn't held up.
+    monkeypatch.setattr(FakeSandbox, "error", asyncio.CancelledError())
+    with pytest.raises(asyncio.CancelledError):
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+    assert FakeSandbox.made[1].deleted and not FakeSandbox.made[1].delete_waited
 
 
 async def test_fork_copies_go_with_the_sample():
@@ -756,3 +770,23 @@ async def test_a_create_frees_as_many_templates_as_it_needs(monkeypatch):
         monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(create))
         envs = await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(), {})
         assert envs["default"] and all(t.deleted for t in templates)
+
+
+async def test_a_template_build_that_fails_waits_for_its_delete(monkeypatch):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    _sweeper(monkeypatch)
+
+    async def pause_fails(self, wait=True):
+        raise PrizedError("sandbox_not_running", "could not pause", status=409)
+
+    with sandbox_lifecycle_scope():
+        cfg = PrizedSandboxConfig(setup=["touch ~/ready"])
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        monkeypatch.setattr(FakeSandbox, "pause", pause_fails)
+        envs = await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        [template] = [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
+        assert template.deleted and template.delete_waited  # gone before the sample's own create
+        sb = envs["default"].as_type(PrizedSandboxEnvironment).sandbox
+        assert not hasattr(sb, "forked_from") and os.path.exists(os.path.join(sb.root, "ready"))
