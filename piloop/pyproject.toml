@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "piloop-prized"
+version = "0.1.0"
+description = "Prized Sandboxes as a piloop provisioner: each worker is a Firecracker microVM forked from one warm parent."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.14"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["piloop", "autoresearch", "prized", "sandbox", "microvm", "provisioner"]
+dependencies = ["piloop>=0.5.0", "prized>=0.1.2,<0.2"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.13"]
+
+# piloop finds providers by entry point: `provider = "prized"` in a pool's compute table.
+[project.entry-points."piloop.provisioners"]
+prized = "piloop_prized:Prized"
+
+[project.urls]
+Homepage = "https://prized.dev/sandboxes?via=piloop"
+Documentation = "https://prized.dev/docs/sandboxes?via=piloop"
+Source = "https://github.com/prized-dev/integrations/tree/main/piloop"
+Issues = "https://github.com/prized-dev/integrations/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/piloop_prized"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["live: needs PRIZED_API_KEY and PRIZED_LIVE=1; creates real sandboxes"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+files = ["src"]
+
+# piloop ships no py.typed: check against its own annotations all the same. piloop.capabilities, its public API,
+# re-exports by import.
+[[tool.mypy.overrides]]
+module = ["piloop", "piloop.*"]
+follow_untyped_imports = true
+implicit_reexport = true

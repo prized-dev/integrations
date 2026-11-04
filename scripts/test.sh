@@ -92,7 +92,7 @@ py() {
   [ "$sdk" = no ] || need_sdk python
   # shellcheck disable=SC2086 # pins are a word list
   pip install -q -e ".[$extras]" ${FLOOR:+$floor}
-  pip list 2>/dev/null | grep -i -E "^(prized|inspect.ai|google.adk|strands.agents|agent.framework|pydantic.ai|harbor)[-_ ]" || true
+  pip list 2>/dev/null | grep -i -E "^(prized|inspect.ai|google.adk|strands.agents|agent.framework|pydantic.ai|harbor|piloop)[-_ ]" || true
   if [ -z "$FLOOR" ]; then sh -c "$lint"; else echo "(lint runs on the latest-dependencies row)"; fi
   offline pytest -rs -p no:cacheprovider
 }
@@ -113,6 +113,10 @@ case $DIR in
     py "test" yes "pydantic-ai-slim==2.59.0" "pip install -q ruff && ruff check . && ruff format --check ." ;;
   harbor)
     py "test" no "harbor==0.24.0" "pip install -q ruff && ruff check . && ruff format --check ." ;;
+  piloop)
+    # piloop needs Python 3.14. The offline tests run piloop's own provisioner conformance check against
+    # a fake of the prized SDK, and the worker's shell commands in bash against stand-ins for uv and piloop.
+    py dev yes "piloop==0.5.0" "ruff check . && ruff format --check . && mypy" ;;
   devin-outposts)
     # Offline: a stand-in for Devin's Outposts service on 127.0.0.1, fake sandboxes that run the
     # in-sandbox scripts with bash, and a fake devin-remote. Live tests skip without PRIZED_LIVE=1.
