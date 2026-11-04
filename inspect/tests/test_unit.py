@@ -4,6 +4,7 @@ in a temp dir that stands in for /home/prized, so the package's own shell helper
 import os
 import shutil
 import subprocess
+import types
 
 import prized
 import pytest
@@ -77,6 +78,9 @@ class FakeSandbox:
         self.root = root
         self.options = options
         self.labels = options.get("labels", {})
+        # As the create answers: the shape asked for, or the template's default (4 vCPU, 8 GB).
+        memory_mb = round(options.get("memory_gb", 8) * 1024)
+        self.resources = types.SimpleNamespace(vcpu=options.get("vcpu", 4), memory_mb=memory_mb)
         self.files = FakeFiles(self)
         self.deleted = self.paused = self.closed = self.errored = False
         self.refreshes = 0
@@ -665,41 +669,123 @@ async def test_a_create_at_a_disk_quota_deletes_a_template_and_retries(monkeypat
             await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(), {})
 
 
+def _templates():
+    return [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
+
+
+def _forks():
+    return [sb for sb in FakeSandbox.made if getattr(sb, "forked_from", None)]
+
+
+async def _wave(cfg, n):
+    """n samples of cfg that start together (an eval's first samples): their environments."""
+    import anyio
+
+    envs = []
+
+    async def sample():
+        envs.append((await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"])
+
+    async with anyio.create_task_group() as tg:
+        for _ in range(n):
+            tg.start_soon(sample)
+    return envs
+
+
+def _slow_creates(monkeypatch, cap=None):
+    """Creates and setup commands that take a moment, so the samples of a wave run while a template is
+    made and set up. With cap, a create that asks for no shape gets the template's default capped at cap
+    (vCPU, GB), as on the free tier."""
+    import anyio
+
+    real_create = env_mod.AsyncSandbox.create
+    real_exec = FakeSandbox.exec
+
+    async def slow_create(**options):
+        await anyio.sleep(0.01)
+        sb = await real_create(**options)
+        if cap is not None and "vcpu" not in options and "memory_gb" not in options:
+            sb.resources = types.SimpleNamespace(vcpu=cap[0], memory_mb=cap[1] * 1024)
+        return sb
+
+    async def slow_exec(self, cmd, *args, **kw):
+        if cmd[-1] == "touch ~/ready":
+            await anyio.sleep(0.05)
+        return await real_exec(self, cmd, *args, **kw)
+
+    monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(slow_create))
+    monkeypatch.setattr(FakeSandbox, "exec", slow_exec)
+
+
 async def test_concurrent_samples_build_one_template(monkeypatch):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    _sweeper(monkeypatch)
+    _slow_creates(monkeypatch)
+    cfg = PrizedSandboxConfig(setup=["touch ~/ready"])
+    with sandbox_lifecycle_scope():
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        envs = await _wave(cfg, 10)
+        # The first sets up its own; the second builds the template and forks it. Of the 8 that start
+        # while it is set up, 6 wait and fork it (with the second's copy, the 7 a 4 vCPU sandbox's machine
+        # holds); the other 2 set up their own rather than wait for a fork with no room.
+        [template] = _templates()
+        assert len(_forks()) == 7 and len(FakeSandbox.made) == 11
+        assert all(sb.forked_from == template.id for sb in _forks())
+        # Once it is paused, every sample forks it, however many start together.
+        later = await _wave(cfg, 10)
+        assert len(_forks()) == 17 and len(FakeSandbox.made) == 21
+        for env in [*envs, *later]:
+            assert (await env.exec(["test", "-f", "/home/prized/ready"])).success
+
+
+async def test_samples_that_find_the_template_set_up_once_its_create_answers_fork_it(monkeypatch):
     import anyio
     from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
 
     _sweeper(monkeypatch)
     real_create = env_mod.AsyncSandbox.create
 
-    async def slow_create(**options):
-        await anyio.sleep(0.01)  # let the other samples run while this one is being made
+    async def slow_create(**options):  # the setup itself takes no time here
+        await anyio.sleep(0.01)
         return await real_create(**options)
 
     monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(slow_create))
     cfg = PrizedSandboxConfig(setup=["touch ~/ready"])
-    envs = []
-
-    async def sample():
-        envs.append((await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"])
-
     with sandbox_lifecycle_scope():
         await PrizedSandboxEnvironment.task_init("startup", cfg)
-        async with anyio.create_task_group() as tg:
-            for _ in range(6):
-                tg.start_soon(sample)
-        # The first sample and those that start while the template's setup runs set up their own;
-        # the one that built the template forks it, and so does every sample from then on.
-        templates = [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
-        forks = [sb for sb in FakeSandbox.made if getattr(sb, "forked_from", None)]
-        assert len(templates) == 1 and len(forks) == 1 and len(FakeSandbox.made) == 7
-        later = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"]
-        assert later.as_type(PrizedSandboxEnvironment).sandbox.forked_from == templates[0].id
-        for env in [*envs, later]:
+        await _wave(cfg, 10)
+        [template] = _templates()
+        assert len(_forks()) == 9 and len(FakeSandbox.made) == 11
+
+
+@pytest.mark.parametrize(
+    "shape,cap,forks",
+    [
+        ({"memory_gb": 2}, None, 9),  # a small first fork: every sample waits for the template
+        ({"memory_gb": 3.5, "vcpu": 8}, None, 9),
+        ({}, (2, 4), 9),  # the free tier's 2 vCPU: 14 may wait, more than its 10 sandboxes at once
+        ({"vcpu": 8}, None, 3),  # 3 copies fit: the second's and 2 more
+        ({"memory_gb": 4, "vcpu": 16}, None, 1),  # 1 fits: the second's own
+    ],
+)
+async def test_how_many_samples_wait_for_a_template_in_setup(monkeypatch, shape, cap, forks):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    _sweeper(monkeypatch)
+    _slow_creates(monkeypatch, cap)
+    cfg = PrizedSandboxConfig(setup=["touch ~/ready"], **shape)
+    with sandbox_lifecycle_scope():
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        envs = await _wave(cfg, 10)
+        [template] = _templates()
+        assert len(_forks()) == forks and len(FakeSandbox.made) == 1 + 10
+        for env in envs:
             assert (await env.exec(["test", "-f", "/home/prized/ready"])).success
 
 
-async def test_a_sample_never_waits_for_a_template_still_in_setup(monkeypatch):
+@pytest.mark.parametrize("shape", [{}, {"memory_gb": 4}])
+async def test_a_sample_past_the_room_never_waits_for_a_template_still_in_setup(monkeypatch, shape):
     import anyio
     from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
 
@@ -713,25 +799,78 @@ async def test_a_sample_never_waits_for_a_template_still_in_setup(monkeypatch):
         return await real_exec(self, cmd, *args, **kw)
 
     monkeypatch.setattr(FakeSandbox, "exec", exec_)
-    cfg = PrizedSandboxConfig(setup=["touch ~/ready"])
+    cfg = PrizedSandboxConfig(setup=["touch ~/ready"], **shape)
     with sandbox_lifecycle_scope():
         await PrizedSandboxEnvironment.task_init("startup", cfg)
         await PrizedSandboxEnvironment.sample_init("t", cfg, {})  # the first: its own setup
         async with anyio.create_task_group() as tg:
             tg.start_soon(PrizedSandboxEnvironment.sample_init, "t", cfg, {})  # builds the template
+            for _ in range(6):  # with the builder's copy, the 7 its machine holds
+                tg.start_soon(PrizedSandboxEnvironment.sample_init, "t", cfg, {})
             await anyio.sleep(0.05)
-            [template] = [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
-            assert not template.paused
-            with anyio.fail_after(5):  # set up in its own sandbox, while the template's setup waits
+            [template] = _templates()
+            assert len(FakeSandbox.made) == 2 and not template.paused  # those 6 wait, holding no sandbox
+            with anyio.fail_after(5):  # the 7th sets up its own, while the template's setup still runs
                 own = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"]
             own = own.as_type(PrizedSandboxEnvironment).sandbox
             assert not hasattr(own, "forked_from") and own.labels.get("inspect-role") is None
-            assert not template.paused
+            assert not template.paused and _forks() == []
             gate.set()
-        assert template.paused
+        assert template.paused and len(_forks()) == 7
         copy = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"]
         assert copy.as_type(PrizedSandboxEnvironment).sandbox.forked_from == template.id
-        assert len([sb for sb in FakeSandbox.made if getattr(sb, "forked_from", None)]) == 2
+
+
+async def test_a_small_template_keeps_every_sample_waiting_for_it(monkeypatch):
+    import anyio
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    _sweeper(monkeypatch)
+    gate = anyio.Event()
+    real_exec = FakeSandbox.exec
+
+    async def exec_(self, cmd, *args, **kw):
+        if self.labels.get("inspect-role") == "template" and cmd[-1] == "touch ~/ready":
+            await gate.wait()
+        return await real_exec(self, cmd, *args, **kw)
+
+    monkeypatch.setattr(FakeSandbox, "exec", exec_)
+    cfg = PrizedSandboxConfig(setup=["touch ~/ready"], memory_gb=2, vcpu=16)
+    with sandbox_lifecycle_scope():
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        async with anyio.create_task_group() as tg:
+            for _ in range(4):
+                tg.start_soon(PrizedSandboxEnvironment.sample_init, "t", cfg, {})
+            await anyio.sleep(0.05)
+            assert len(FakeSandbox.made) == 2  # the first's own and the template: the rest wait for it
+            gate.set()
+        [template] = _templates()
+        assert len(_forks()) == 4 and all(sb.forked_from == template.id for sb in _forks())
+
+
+async def test_samples_waiting_for_a_template_whose_create_fails_set_up_their_own(monkeypatch):
+    import anyio
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    _sweeper(monkeypatch)
+    real_create = env_mod.AsyncSandbox.create
+
+    async def create(**options):
+        await anyio.sleep(0.05)
+        if options["labels"].get("inspect-role") == "template":
+            raise PrizedError("sandbox_capacity", "none free", status=503)
+        return await real_create(**options)
+
+    monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(create))
+    cfg = PrizedSandboxConfig(setup=["touch ~/ready"])
+    with sandbox_lifecycle_scope():
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        with anyio.fail_after(5):  # those waiting for the template's shape are told it has none
+            envs = await _wave(cfg, 5)
+        assert _templates() == [] and _forks() == [] and len(FakeSandbox.made) == 5
+        for env in envs:
+            assert (await env.exec(["test", "-f", "/home/prized/ready"])).success
 
 
 async def test_a_cancelled_template_build_lets_the_next_sample_build_it(monkeypatch):
