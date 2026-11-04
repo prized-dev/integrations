@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import math
 import posixpath
 import secrets
 from collections.abc import Iterator
@@ -72,10 +71,7 @@ _READ_S = 60.0  # at the sandbox limit, how long a create may spend reading temp
 # 2, 4 and 8 vCPU sandbox (more memory or disk fits fewer). The rest would wait for the setup, the pause
 # and the first fork only to find the machine full, so they run setup in their own sandboxes at once.
 _MACHINE_VCPU = 32
-_DEFAULT_SHAPE = (4, 8.0)  # vCPU and GB of a sandbox that asks for none (2 and 4 on the free tier)
-# Under this much memory every one of them waits: the template's first fork writes its memory to disk
-# before any copy starts, which takes about a second at 2 GB (12 to 25 s at 8 GB in our tests).
-_OWN_SETUP_MIN_GB = 4.0
+_DEFAULT_VCPU = 4  # of a sandbox that asks for none (2 on the free tier), until the create answers
 _GONE = ("not_found", "sandbox_deleted")
 # prized 0.1.1+ (OutputReadError): the command ran, but its output could not be read back.
 _OUTPUT_READ_FAILED = "output_read_failed"
@@ -154,7 +150,7 @@ class PrizedSandboxConfig(BaseModel, frozen=True):
     paused, and that sample and every later one start as a fork of it, with the install done (files,
     memory and running processes). Of the samples that start while that setup runs (the first samples
     of an eval start together), as many as fit on the template's machine wait for it, and the rest run
-    setup in their own sandboxes (under 4 GB of memory, all of them wait)."""
+    setup in their own sandboxes."""
 
     setup_timeout: int = 1800
     """Seconds each ``setup`` command may run."""
@@ -511,9 +507,10 @@ class _Template:
         self.failed = False  # its build failed, or it was deleted (for room, or unforkable): samples run setup
         self.forking = 0  # forks of it in flight (a parent is not deleted while its copies start)
         self.gone: anyio.Event | None = None  # set once a template being deleted is gone
-        self.building = False  # a sample is creating it and running its setup
-        self.created: anyio.Event | None = None  # set once that sample's create has answered (or failed)
-        self.shape: tuple[int, float] | None = None  # its vCPU and GB of memory, from the create's answer
+        # The sample creating it and running its setup (its token), or None. Only that sample clears it.
+        self.builder: object | None = None
+        self.created: anyio.Event | None = None  # set once the builder's create has answered (or it ended)
+        self.vcpu: int | None = None  # its vCPU, from the create's answer
         self.waiting = 0  # samples waiting for its setup, to fork it once it is paused
 
 
@@ -683,48 +680,50 @@ async def _template(state: _State, cfg: PrizedSandboxConfig) -> _Template | None
         if len(state.templates) >= MAX_TEMPLATES:
             return None
         entry = state.templates.setdefault(key, _Template())
-    if entry.building:
-        # How many fit depends on the template's shape, which its create answers with (a few seconds).
-        if entry.created is not None:
-            await entry.created.wait()
-        if entry.building and entry.waiting >= _may_wait(cfg, entry.shape):
+    while entry.builder is not None:
+        created = entry.created
+        if entry.vcpu is None and created is not None and not created.is_set():
+            await created.wait()  # how many fit depends on its vCPU, which its create answers with
+            continue  # its builder may have been cancelled meanwhile, and another taken over
+        if entry.waiting >= _may_wait(cfg, entry.vcpu):
             return None
-        entry.waiting += 1
-        try:
-            return await _build_template(state, cfg, entry)
-        finally:
-            entry.waiting -= 1
+        return await _build_template(state, cfg, entry, waits=True)
     return await _build_template(state, cfg, entry)
 
 
-def _may_wait(cfg: PrizedSandboxConfig, shape: tuple[int, float] | None) -> float:
+def _may_wait(cfg: PrizedSandboxConfig, vcpu: int | None) -> int:
     """How many samples may wait for a template being set up (and fork it), beside the one setting it up."""
-    vcpu, memory_gb = shape or (cfg.vcpu or _DEFAULT_SHAPE[0], cfg.memory_gb or _DEFAULT_SHAPE[1])
-    if memory_gb < _OWN_SETUP_MIN_GB:
-        return math.inf
+    vcpu = vcpu or cfg.vcpu or _DEFAULT_VCPU
     return max(0, (_MACHINE_VCPU - vcpu) // vcpu - 1)
 
 
-def _shape(sandbox: AsyncSandbox) -> tuple[int, float] | None:
-    resources = getattr(sandbox, "resources", None)
-    vcpu, memory_mb = getattr(resources, "vcpu", 0), getattr(resources, "memory_mb", 0)
-    return (vcpu, memory_mb / 1024) if vcpu and memory_mb else None
+def _claim(entry: _Template, token: object) -> None:
+    entry.builder = token
+    if entry.created is None or entry.created.is_set():  # samples may wait on one not yet set: keep it
+        entry.created = anyio.Event()
 
 
-async def _build_template(state: _State, cfg: PrizedSandboxConfig, entry: _Template) -> _Template:
-    # Set before any await, so samples that start meanwhile see it. (After a cancelled build, a sample that
-    # was waiting for it builds the template, and one that starts meanwhile sets this and waits behind it.)
-    builds = not entry.building and entry.sandbox is None and not entry.failed
-    if builds:
-        entry.building, entry.created = True, anyio.Event()
+async def _build_template(state: _State, cfg: PrizedSandboxConfig, entry: _Template, waits: bool = False) -> _Template:
+    me = object()
+    if waits:
+        entry.waiting += 1
+    elif entry.builder is None and entry.sandbox is None and not entry.failed:
+        _claim(entry, me)  # before any await, so samples that start meanwhile see it
     try:
         async with entry.lock:
+            if waits:  # its wait is over: it no longer takes room from the samples that come next
+                waits, entry.waiting = False, entry.waiting - 1
             if entry.sandbox is None and not entry.failed:
+                # Whoever runs the setup owns it: after a cancelled build, a sample that waited for it
+                # takes over (and a sample still queued behind keeps no claim it doesn't act on).
+                _claim(entry, me)
                 await _set_up_template(state, cfg, entry)
             return entry
     finally:
-        if builds:
-            entry.building = False
+        if waits:
+            entry.waiting -= 1
+        if entry.builder is me:
+            entry.builder = None
             if entry.created is not None:
                 entry.created.set()
 
@@ -736,7 +735,7 @@ async def _set_up_template(state: _State, cfg: PrizedSandboxConfig, entry: _Temp
     sandbox = None
     try:
         sandbox = await AsyncSandbox.create(**options)
-        entry.shape = _shape(sandbox)
+        entry.vcpu = getattr(getattr(sandbox, "resources", None), "vcpu", None) or None
         if entry.created is not None:
             entry.created.set()
         await _prepare(sandbox, cfg)
