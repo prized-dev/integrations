@@ -16,7 +16,7 @@ Options (`--ek key=value`): `template` (default `prized-base-v1`), `max_runtime_
 
 ## Pull with your own registry credentials
 
-Docker Hub allows 100 anonymous pulls an hour per IP address, and sandboxes share their host's address, so a full Terminal-Bench run can use it up, and starts then fail with `TOOMANYREQUESTS`. Pull with your own Docker Hub token instead:
+Docker Hub allows 100 anonymous pulls an hour per IP address (its `ratelimit-limit` header, measured from a sandbox), and sandboxes share their host's address, so a full Terminal-Bench run can use it up, and starts then fail with `TOOMANYREQUESTS`. Pull with your own Docker Hub token instead; a free Personal account has a pull limit of its own that a full run can still reach, and paid plans don't:
 
 ```bash
 export DOCKERHUB_USERNAME=you
@@ -32,7 +32,7 @@ harbor run -d terminal-bench/terminal-bench-2-1 -a oracle -e harbor_prized:Prize
 | `docker` | Your `docker login`: `$DOCKER_CONFIG/config.json`, else `~/.docker/config.json`. Logins kept in a credential store (Docker Desktop's `credsStore`, `credHelpers`) are read with its `docker-credential-*` helper on your machine |
 | a path | A Docker `config.json`, or a directory holding one, for any registry (also private images) |
 
-Only the entry for the image's own registry goes to the sandbox, through the files API rather than a command line, and it is deleted as soon as the image is pulled, before the agent's first command. A registry with no entry is pulled anonymously, with one warning a run. Wrong credentials fail the pull (Docker Hub does not fall back to anonymous), and the error names where they came from.
+Only the entry for the image's own registry goes to the sandbox, through the files API rather than a command line, and it is deleted as soon as the image is pulled, before the agent's first command. A registry with no entry is pulled anonymously, with one warning a run. A credential store is asked once per registry every five minutes, not once a trial. Wrong credentials fail the pull (Docker Hub does not fall back to anonymous), and the error names where they came from.
 
 ## Results
 

@@ -20,7 +20,10 @@ from __future__ import annotations
 import base64
 import json
 import os
+import re
+import shutil
 import subprocess
+import time
 from pathlib import Path
 
 HUB = "index.docker.io"  # how crane names Docker Hub
@@ -28,23 +31,51 @@ HUB_KEY = "https://index.docker.io/v1/"  # Docker Hub's key in config.json
 _HUB_HOSTS = {"docker.io", HUB, "registry-1.docker.io", "registry.hub.docker.com"}
 _ENV_USER, _ENV_TOKEN = "DOCKERHUB_USERNAME", "DOCKERHUB_TOKEN"
 _HELPER_TIMEOUT_SEC = 60
+# A credential store is asked once a run per registry (a keychain may prompt),
+# not once a trial; short enough for tokens that expire, as ECR's do.
+_CACHE_SEC = 300
+_CACHE: dict[tuple[str, str], tuple[float, dict[str, str] | None]] = {}
+# Tokens people paste where a source belongs; never echoed back.
+_TOKEN_LIKE = re.compile(r"(dckr_pat_|dckr_oat_|ghp_|github_pat_|gho_|glpat-)")
+
+
+def _registry_part(image: str) -> str | None:
+    """The registry component of an image reference as written, None for Docker Hub's default."""
+    first, slash, _ = image.partition("/")
+    if not slash or not ("." in first or ":" in first or first == "localhost"):
+        return None  # python:3.12, alexgshaw/task:tag
+    return first
 
 
 def image_registry(image: str) -> str:
-    """The registry host of an image reference (``index.docker.io`` for Docker Hub)."""
-    first, slash, _ = image.partition("/")
-    if not slash or not ("." in first or ":" in first or first == "localhost"):
-        return HUB  # python:3.12, alexgshaw/task:tag
-    return _host(first)
+    """The registry of an image reference, lowercased (``index.docker.io`` for Docker Hub)."""
+    first = _registry_part(image)
+    return HUB if first is None else (_host(first) or first.lower())
 
 
-def _host(key: str) -> str:
-    """A config.json key (``https://index.docker.io/v1/``, ``ghcr.io``) as a host."""
-    host = key.split("://", 1)[-1].split("/", 1)[0].lower()
+def crane_key(image: str) -> str:
+    """The config.json key crane looks up for ``image``: Docker Hub's key for
+    ``docker.io`` and ``index.docker.io``, otherwise the registry exactly as
+    written (crane matches keys case and all)."""
+    first = _registry_part(image)
+    if first is None or first in ("docker.io", HUB):
+        return HUB_KEY
+    return first
+
+
+def _host(key: str) -> str | None:
+    """A config.json key (``https://index.docker.io/v1/``, ``ghcr.io``) as a
+    registry; None for a key with any other path, such as the
+    ``.../v1/access-token`` and ``.../v1/refresh-token`` entries ``docker
+    login`` keeps beside Docker Hub's own."""
+    host, _, path = key.split("://", 1)[-1].partition("/")
+    if path.strip("/") not in ("", "v1", "v2"):
+        return None
+    host = host.lower()
     return HUB if host in _HUB_HOSTS else host
 
 
-def config_key(registry: str) -> str:
+def _store_key(registry: str) -> str:
     return HUB_KEY if registry == HUB else registry
 
 
@@ -69,9 +100,21 @@ class RegistryAuth:
         if path.is_dir():
             path = path / "config.json"
         if not path.is_file():
-            hint = " Run `docker login` first." if source == "docker" else ""
+            if source == "docker":
+                raise ValueError(
+                    f"registry_auth=docker: no Docker config at {path}. "
+                    "Run `docker login` first."
+                )
+            # Not echoed: a value that is no file may be a pasted token.
+            hint = (
+                " That looks like a token: set it as DOCKERHUB_TOKEN, with "
+                "DOCKERHUB_USERNAME, and pass registry_auth=env."
+                if _TOKEN_LIKE.search(source)
+                else ""
+            )
             raise ValueError(
-                f"registry_auth={source}: no Docker config at {path}.{hint}"
+                "registry_auth: no Docker config at the path given; it takes env, "
+                f"docker, or the path of a Docker config.json.{hint}"
             )
         self._path = path
 
@@ -84,36 +127,46 @@ class RegistryAuth:
             if registry != HUB:
                 return None
             return _basic(os.environ[_ENV_USER], os.environ[_ENV_TOKEN])
-        try:
-            config = json.loads(self._path.read_text())
-        except (OSError, ValueError) as exc:
-            raise ValueError(
-                f"registry_auth: can't read {self._path} as a Docker config "
-                f"({type(exc).__name__})"
-            ) from None
-        if not isinstance(config, dict):
-            return None
-        # As Docker does: a registry's own helper, else the credential store,
-        # else the file's own entry.
-        for key, helper in (config.get("credHelpers") or {}).items():
-            if _host(key) == registry and helper:
-                return _from_helper(str(helper), key)
-        entries = {
-            key: entry
-            for key, entry in (config.get("auths") or {}).items()
-            if _host(key) == registry and isinstance(entry, dict)
-        }
-        store = config.get("credsStore")
-        if store:
-            for key in dict.fromkeys([*entries, config_key(registry)]):
-                found = _from_helper(str(store), key)
-                if found is not None:
-                    return found
-        for entry in entries.values():
-            found = _from_entry(entry)
+        key = (str(self._path), registry)
+        cached = _CACHE.get(key)
+        if cached is not None and time.monotonic() - cached[0] < _CACHE_SEC:
+            return cached[1]
+        entry = _read(self._path, registry)
+        _CACHE[key] = (time.monotonic(), entry)
+        return entry
+
+
+def _read(path: Path, registry: str) -> dict[str, str] | None:
+    try:
+        config = json.loads(path.read_text())
+    except (OSError, ValueError) as exc:
+        raise ValueError(
+            f"registry_auth: can't read {path} as a Docker config "
+            f"({type(exc).__name__})"
+        ) from None
+    if not isinstance(config, dict):
+        return None
+    # As Docker does: a registry's own helper, else the credential store,
+    # else the file's own entry.
+    for key, helper in (config.get("credHelpers") or {}).items():
+        if _host(key) == registry and helper:
+            return _from_helper(str(helper), key)
+    entries = {
+        key: entry
+        for key, entry in (config.get("auths") or {}).items()
+        if _host(key) == registry and isinstance(entry, dict)
+    }
+    store = config.get("credsStore")
+    if store:
+        for key in dict.fromkeys([*entries, _store_key(registry)]):
+            found = _from_helper(str(store), key)
             if found is not None:
                 return found
-        return None
+    for entry in entries.values():
+        found = _from_entry(entry)
+        if found is not None:
+            return found
+    return None
 
 
 def _basic(username: str, password: str) -> dict[str, str]:
@@ -135,19 +188,26 @@ def _from_entry(entry: dict) -> dict[str, str] | None:
 def _from_helper(helper: str, server: str) -> dict[str, str] | None:
     """Asks ``docker-credential-<helper>`` for ``server``'s credentials, as Docker does."""
     program = f"docker-credential-{helper}"
-    try:
-        result = subprocess.run(
-            [program, "get"],
-            input=server,
-            capture_output=True,
-            text=True,
-            timeout=_HELPER_TIMEOUT_SEC,
-            check=False,
-        )
-    except FileNotFoundError:
+    # which() finds a helper as Docker does, by PATHEXT on Windows (.exe, .cmd).
+    resolved = shutil.which(program)
+    if resolved is None:
         raise RuntimeError(
             f"registry_auth: Docker keeps the credentials for {server} in {program}, "
             "which is not on PATH."
+        )
+    try:
+        result = subprocess.run(
+            [resolved, "get"],
+            input=server,
+            capture_output=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=_HELPER_TIMEOUT_SEC,
+            check=False,
+        )
+    except OSError as exc:
+        raise RuntimeError(
+            f"registry_auth: could not run {program} ({type(exc).__name__})."
         ) from None
     except subprocess.TimeoutExpired:
         raise RuntimeError(
@@ -157,10 +217,13 @@ def _from_helper(helper: str, server: str) -> dict[str, str] | None:
     if result.returncode != 0:
         if "credentials not found" in (result.stdout + result.stderr).lower():
             return None
-        # A helper's errors name the server, never the secret.
+        # Helpers print their errors, not secrets; still, output that carries
+        # a Secret is never shown.
+        message = result.stderr.strip() or result.stdout.strip()
+        if '"Secret"' in message:
+            message = f"exit {result.returncode}"
         raise RuntimeError(
-            f"registry_auth: {program} failed for {server}: "
-            f"{(result.stderr or result.stdout).strip()[:200]}"
+            f"registry_auth: {program} failed for {server}: {message[:200]}"
         )
     try:
         answer = json.loads(result.stdout)
@@ -176,6 +239,6 @@ def _from_helper(helper: str, server: str) -> dict[str, str] | None:
     return _basic(username, secret)
 
 
-def docker_config(registry: str, entry: dict[str, str]) -> bytes:
-    """A config.json with only ``entry``, for ``registry``."""
-    return json.dumps({"auths": {config_key(registry): entry}}).encode()
+def docker_config(image: str, entry: dict[str, str]) -> bytes:
+    """A config.json with only ``entry``, under the key crane looks up for ``image``."""
+    return json.dumps({"auths": {crane_key(image): entry}}).encode()

@@ -5,9 +5,11 @@ import sys
 
 import pytest
 
+from harbor_prized import _registry
 from harbor_prized._registry import (
     HUB,
     RegistryAuth,
+    crane_key,
     docker_config,
     image_registry,
 )
@@ -113,12 +115,54 @@ def test_an_unreadable_config_names_the_file_not_its_contents(tmp_path):
     assert FAKE_TOKEN not in str(info.value)
 
 
-def test_the_sandbox_config_holds_only_the_one_entry():
+@pytest.mark.parametrize(
+    ("image", "key"),
+    [
+        ("python:3.12", "https://index.docker.io/v1/"),
+        ("docker.io/alexgshaw/fix-git:20251031", "https://index.docker.io/v1/"),
+        ("index.docker.io/library/python", "https://index.docker.io/v1/"),
+        # crane looks these up as written, case and all
+        ("registry-1.docker.io/library/python", "registry-1.docker.io"),
+        ("GHCR.io/org/task", "GHCR.io"),
+        ("localhost:5000/task", "localhost:5000"),
+    ],
+)
+def test_the_sandbox_config_uses_the_key_crane_looks_up(image, key):
     entry = _basic("evals", FAKE_TOKEN)
-    assert json.loads(docker_config(HUB, entry)) == {
-        "auths": {"https://index.docker.io/v1/": entry}
-    }
-    assert json.loads(docker_config("ghcr.io", entry)) == {"auths": {"ghcr.io": entry}}
+    assert crane_key(image) == key
+    assert json.loads(docker_config(image, entry)) == {"auths": {key: entry}}
+
+
+def test_dockers_access_and_refresh_token_entries_are_not_credentials(tmp_path):
+    expired = _basic("evals", "eyJ000fake.jwt")
+    directory = _config(
+        tmp_path,
+        {
+            "auths": {
+                "https://index.docker.io/v1/access-token": expired,
+                "https://index.docker.io/v1/refresh-token": expired,
+                "https://index.docker.io/v1/": _basic("evals", FAKE_TOKEN),
+            }
+        },
+    )
+    assert RegistryAuth(str(directory)).for_registry(HUB) == _basic("evals", FAKE_TOKEN)
+    only_tokens = _config(
+        tmp_path,
+        {"auths": {"https://index.docker.io/v1/access-token": expired}},
+        "only-tokens",
+    )
+    assert RegistryAuth(str(only_tokens)).for_registry(HUB) is None
+
+
+def test_a_token_given_as_the_source_is_never_echoed(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    for value in (FAKE_TOKEN, FAKE_GHCR):
+        with pytest.raises(ValueError, match="looks like a token") as info:
+            RegistryAuth(value)
+        assert value not in str(info.value)
+    with pytest.raises(ValueError, match="no Docker config at the path given") as info:
+        RegistryAuth("not-a-file.json")
+    assert "looks like a token" not in str(info.value)
 
 
 # -- credential helpers, as Docker Desktop keeps them -------------------------
@@ -218,6 +262,14 @@ def test_a_missing_or_failing_helper_is_named(tmp_path, monkeypatch):
     broken.chmod(0o755)
     monkeypatch.setenv("PATH", f"{bin_dir}:/usr/bin:/bin")
 
+    leaky = bin_dir / "docker-credential-leaky"
+    leaky.write_text(
+        "#!/bin/sh\necho '"
+        + json.dumps({"Username": "evals", "Secret": FAKE_TOKEN})
+        + "'\nexit 3\n"
+    )
+    leaky.chmod(0o755)
+
     absent = _config(tmp_path, {"credsStore": "absent"}, "absent")
     with pytest.raises(
         RuntimeError, match="docker-credential-absent, which is not on PATH"
@@ -226,3 +278,28 @@ def test_a_missing_or_failing_helper_is_named(tmp_path, monkeypatch):
     failing = _config(tmp_path, {"credsStore": "broken"}, "failing")
     with pytest.raises(RuntimeError, match="keychain is locked"):
         RegistryAuth(str(failing)).for_registry(HUB)
+    leaking = _config(tmp_path, {"credsStore": "leaky"}, "leaking")
+    with pytest.raises(RuntimeError, match="failed for") as info:
+        RegistryAuth(str(leaking)).for_registry(HUB)
+    assert FAKE_TOKEN not in str(info.value)
+
+
+@helpers_run
+def test_a_credential_store_is_asked_once_a_run(tmp_path, monkeypatch):
+    log = tmp_path / "asked"
+    _helper(
+        tmp_path / "bin",
+        "desktop",
+        {"https://index.docker.io/v1/": {"Username": "evals", "Secret": FAKE_TOKEN}},
+        log,
+    )
+    monkeypatch.setenv("PATH", f"{tmp_path / 'bin'}:/usr/bin:/bin")
+    directory = _config(tmp_path, {"credsStore": "desktop"})
+    for _ in range(3):  # one RegistryAuth a trial, as Harbor makes them
+        assert RegistryAuth(str(directory)).for_registry(HUB) == _basic(
+            "evals", FAKE_TOKEN
+        )
+    assert len(log.read_text().splitlines()) == 1
+    monkeypatch.setattr(_registry, "_CACHE_SEC", 0)  # expired: asked again
+    RegistryAuth(str(directory)).for_registry(HUB)
+    assert len(log.read_text().splitlines()) == 2

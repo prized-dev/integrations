@@ -975,11 +975,13 @@ async def test_registry_auth_gives_crane_the_token_for_the_pull_only(
         "auths": {"https://index.docker.io/v1/": {"auth": basic}}
     }
     setup = sandbox.execs[0]["cmd"]
-    prefix = (
+    # The trap comes first, so nothing can fail before it is set, and it is
+    # the setup's only trap.
+    assert setup.startswith(
         "export DOCKER_CONFIG=/home/prized/.pull-auth; "
-        "trap 'rm -rf /home/prized/.pull-auth' EXIT; "
+        "trap 'rm -rf /home/prized/.pull-auth' EXIT; set -e; "
     )
-    assert setup.index(prefix) < setup.index("crane export")
+    assert setup.count("trap ") == 1
     # The secret goes through the files API only: no command line, no log line.
     for secret in (FAKE_TOKEN, basic):
         assert all(secret not in e["cmd"] for e in sandbox.execs)
@@ -1148,3 +1150,56 @@ async def test_refused_credentials_say_where_they_came_from(tmp_path, monkeypatc
         await environment.start(force_build=False)
     assert "index.docker.io refused the credentials" in str(info.value)
     assert FAKE_TOKEN not in str(info.value)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("image", "registry_auth", "stderr", "hint", "absent"),
+    [
+        # Docker Hub's limit, with a token: the account's own limit.
+        (
+            "python:3.12",
+            "env",
+            "TOOMANYREQUESTS: You have reached your pull rate limit.",
+            "pull limit for the account",
+            "registry_auth=env with",
+        ),
+        # Another registry's limit: no Docker Hub advice.
+        (
+            "ghcr.io/org/task:1",
+            None,
+            "TOOMANYREQUESTS: retry later",
+            None,
+            "Docker Hub",
+        ),
+        # Valid credentials, but an image they can't read (or a typo).
+        (
+            "evals/private:1",
+            "env",
+            "UNAUTHORIZED: authentication required",
+            "check that they can read evals/private:1",
+            "check the token",
+        ),
+    ],
+)
+async def test_pull_failures_get_the_hint_that_fits(
+    tmp_path, monkeypatch, image, registry_auth, stderr, hint, absent
+):
+    _hub_env(monkeypatch)
+    environment = _environment(
+        tmp_path, docker_image=image, registry_auth=registry_auth
+    )
+    sandbox = _Sandbox()
+    sandbox.answer = lambda cmd: (
+        ExecResult(stdout="", stderr=stderr, exit_code=1) if "crane" in cmd else None
+    )
+
+    async def create(template, **kwargs):
+        return sandbox
+
+    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
+    with pytest.raises(RuntimeError, match="Could not unpack") as info:
+        await environment.start(force_build=False)
+    if hint is not None:
+        assert hint in str(info.value)
+    assert absent not in str(info.value)
