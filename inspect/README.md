@@ -67,10 +67,11 @@ PrizedSandboxConfig(setup=["python3 -m venv ~/venv && ~/venv/bin/pip install num
   - its config has had no sample yet (with epochs or retries, the repeat is the second sample);
   - 4 other `setup` configs already have, or tried, a template;
   - its fork doesn't fit on the template's machine;
-  - its config's template failed or was deleted to make room.
+  - its config's template failed, was deleted to make room, or can't be forked any more.
 
   So a setup that only one sample uses (a checkout per sample, say) never builds a template. A `setup` command that fails or times out fails the sample, as it would in the sample's own sandbox.
 - The template stays paused until the eval ends, and is deleted then, even with `--no-sandbox-cleanup`. If the eval is killed before it can clean up, the template is deleted 7 days after it paused.
+- A template that can't be forked any more (in `error`, say) is deleted as soon as a fork finds that out, once forks of it in flight are done. In `error` it would still count toward the number of sandboxes.
 
 To branch a sample's state (try several continuations from one point of a trajectory), fork its sandbox: `copies = await sandbox().as_type(PrizedSandboxEnvironment).fork(3)`. Each copy is a live copy (files, memory, processes) and goes with the sample: deleted, or paused with `keep=True`.
 

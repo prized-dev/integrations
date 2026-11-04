@@ -56,7 +56,8 @@ _QUOTA = "sandbox_quota_exceeded"
 # Quotas a paused template counts toward (its disk, and compute it keeps for resume). It doesn't count
 # toward the number of sandboxes, so a sandbox_limit refusal is no reason to delete it.
 _TEMPLATE_QUOTAS = ("retained_disk", "running_vcpu", "running_memory", "paused_limit")
-# Fork refusals that mean the template can't be forked again (deleted, or no longer forkable).
+# Fork refusals that mean the template can't be forked again (deleted, in `error`, or no longer forkable):
+# it is deleted then, since in `error` it still counts toward the number of sandboxes.
 _TEMPLATE_GONE = ("not_found", "sandbox_deleted", "parent_not_running", "parent_not_forkable", "handle_closed")
 _FORK_SETTLE_S = 200.0  # longer than the SDK's fork budget (180 s): copies still starting finish first
 _GONE_WAIT_S = _FORK_SETTLE_S + 180.0  # another sample's drop: its fork wait plus the delete itself
@@ -212,9 +213,12 @@ class PrizedSandboxEnvironment(SandboxEnvironment):
                 if refused.code == _QUOTA and refused.reason in _TEMPLATE_QUOTAS:
                     # No room for the template and this sample both: the template gives up its disk
                     # (and compute), and this config's samples run setup in their own sandboxes.
-                    await _drop_template(entry)
+                    await _drop_template(entry, "no room for it and a sample at the quota")
                 elif refused.code in _TEMPLATE_GONE and refused.sandbox_id in (None, template.id):
-                    entry.failed = True  # the template itself is gone (not just a copy)
+                    # The template itself (not just a copy) can't be forked again: delete it now, not at
+                    # task cleanup. In `error` it counts toward the number of sandboxes, which _create
+                    # never frees, and paused it holds its disk.
+                    await _drop_template(entry, f"it can't be forked ({refused.code})")
                 # Copies start on the template's machine; when it has no room (fork_capacity), or
                 # the fork fails otherwise, start a fresh sandbox and run the setup in it.
                 logger.info("Prized: fork of template %s failed (%s); creating a sandbox", template.id, refused)
@@ -485,9 +489,9 @@ class _Template:
     def __init__(self) -> None:
         self.lock = anyio.Lock()
         self.sandbox: AsyncSandbox | None = None
-        self.failed = False  # its build failed, or it was deleted for room: samples run setup themselves
+        self.failed = False  # its build failed, or it was deleted (for room, or unforkable): samples run setup
         self.forking = 0  # forks of it in flight (a parent is not deleted while its copies start)
-        self.gone: anyio.Event | None = None  # set once a template deleted for room is gone
+        self.gone: anyio.Event | None = None  # set once a template being deleted is gone
 
 
 class _State:
@@ -555,8 +559,9 @@ def _template_key(cfg: PrizedSandboxConfig) -> str:
     return json.dumps(cfg.model_dump(exclude={"labels", "keep"}), sort_keys=True)
 
 
-async def _drop_template(entry: _Template) -> None:
-    """Delete a template to make room at a quota, once forks of it in flight have settled.
+async def _drop_template(entry: _Template, why: str = "no room for it and a sample at the quota") -> None:
+    """Delete a template (to make room at a quota, or once it can't be forked), once forks of it in
+    flight have settled.
 
     Returns once it is gone (a deleting sandbox still counts), also to a caller that finds another
     sample already deleting it.
@@ -576,7 +581,7 @@ async def _drop_template(entry: _Template) -> None:
         sandbox, entry.sandbox = entry.sandbox, None
         if sandbox is None:
             return
-        logger.warning("Prized: no room for setup template %s and a sample at the quota; deleting it", sandbox.id)
+        logger.warning("Prized: deleting setup template %s: %s", sandbox.id, why)
         await _discard(sandbox, wait=True)
     finally:
         if entry.sandbox is not None:  # cancelled before the delete: the next caller deletes it
@@ -612,7 +617,7 @@ async def _template(state: _State, cfg: PrizedSandboxConfig) -> _Template | None
     """The config's template entry, its paused sandbox (with cfg.setup done) built on first need.
 
     None, or an entry without a sandbox, for a config's first sample, past MAX_TEMPLATES configs, or
-    once the config's template failed or was deleted for room: those samples run setup themselves.
+    once the config's template failed or was deleted: those samples run setup themselves.
     """
     key = _template_key(cfg)
     if key not in state.seen:

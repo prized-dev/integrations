@@ -790,3 +790,84 @@ async def test_a_template_build_that_fails_waits_for_its_delete(monkeypatch):
         assert template.deleted and template.delete_waited  # gone before the sample's own create
         sb = envs["default"].as_type(PrizedSandboxEnvironment).sandbox
         assert not hasattr(sb, "forked_from") and os.path.exists(os.path.join(sb.root, "ready"))
+
+
+def _counted():
+    """Sandboxes that count toward the number of sandboxes: not deleted, not paused (`error` counts)."""
+    return [sb for sb in FakeSandbox.made if not sb.deleted and not sb.paused]
+
+
+@pytest.mark.parametrize("code", ["parent_not_running", "parent_not_forkable", "not_found"])
+async def test_a_template_that_cant_be_forked_is_deleted_at_once(monkeypatch, code):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    _sweeper(monkeypatch)
+    with sandbox_lifecycle_scope():
+        cfg = PrizedSandboxConfig(setup=["touch ~/ready"])
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        [template] = [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
+        real_create = env_mod.AsyncSandbox.create
+        if code == "parent_not_running":
+            # The template went to `error`, so it counts toward the number of sandboxes, and the
+            # workspace is at that limit (the free tier's 10 at the default concurrency): the sample
+            # fits only once the template is gone.
+            template.paused = False
+            full = len(_counted())
+
+            async def create(**options):
+                if len(_counted()) >= full:
+                    raise PrizedError("sandbox_quota_exceeded", "n", status=429, reason="sandbox_limit")
+                return await real_create(**options)
+
+            monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(create))
+        FakeSandbox.fork_error = PrizedError(code, "can't fork", status=409, sandbox_id=template.id)
+        envs = await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        sb = envs["default"].as_type(PrizedSandboxEnvironment).sandbox
+        assert template.deleted and template.delete_waited and template.closed  # gone before the create
+        assert not hasattr(sb, "forked_from") and os.path.exists(os.path.join(sb.root, "ready"))
+        monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(real_create))
+        FakeSandbox.fork_error = AssertionError("a template that can't be forked is not tried again")
+        envs = await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        assert not hasattr(envs["default"].as_type(PrizedSandboxEnvironment).sandbox, "forked_from")
+
+
+async def test_a_template_that_cant_be_forked_waits_for_copies_still_starting(monkeypatch):
+    import anyio
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    _sweeper(monkeypatch)
+    with sandbox_lifecycle_scope():
+        cfg = PrizedSandboxConfig(setup=["touch ~/ready"])
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        [template] = [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
+        real_fork = FakeSandbox.fork
+        started = anyio.Event()
+        seen = []
+
+        async def fork(self, count=1, labels=None):
+            if not started.is_set():  # this fork got in before the template broke: its copy is starting
+                started.set()
+                await anyio.sleep(0.05)
+                copies = await real_fork(self, count, labels)
+                seen.append(self.deleted)
+                return copies
+            raise PrizedError("parent_not_running", "error", status=409, sandbox_id=self.id)
+
+        monkeypatch.setattr(FakeSandbox, "fork", fork)
+        made = []
+
+        async def sample():
+            envs = await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+            made.append(envs["default"].as_type(PrizedSandboxEnvironment).sandbox)
+
+        async with anyio.create_task_group() as tg:
+            tg.start_soon(sample)
+            await started.wait()
+            tg.start_soon(sample)
+        assert seen == [False]  # the template was still there when its last copy finished starting
+        assert template.deleted and template.delete_waited
+        assert sorted(hasattr(sb, "forked_from") for sb in made) == [False, True]
