@@ -1,4 +1,5 @@
 import base64
+import concurrent.futures
 import json
 import shutil
 import sys
@@ -84,6 +85,21 @@ def test_docker_without_docker_config_reads_the_home_one(tmp_path, monkeypatch):
     monkeypatch.delenv("DOCKER_CONFIG", raising=False)
     monkeypatch.setenv("HOME", str(home))
     assert RegistryAuth("docker").for_registry(HUB) == {"identitytoken": "id-000fake"}
+
+
+@pytest.mark.parametrize(
+    ("document", "message"),
+    [
+        ({"auths": ["https://index.docker.io/v1/"]}, "auths must be an object"),
+        ({"credHelpers": "desktop"}, "credHelpers must be an object"),
+        ({"credsStore": {"name": "desktop"}}, "credsStore must be a string"),
+        (["auths"], "is not a Docker config"),
+    ],
+)
+def test_a_malformed_config_says_what_is_wrong(tmp_path, document, message):
+    directory = _config(tmp_path, document)
+    with pytest.raises(TypeError, match=message):
+        RegistryAuth(str(directory)).for_registry(HUB)
 
 
 def test_a_path_is_a_config_or_its_directory(tmp_path):
@@ -173,7 +189,7 @@ helpers_run = pytest.mark.skipif(
 )
 
 
-def _helper(bin_dir, name: str, answers: dict[str, str], log) -> None:
+def _helper(bin_dir, name: str, answers: dict, log, delay: float = 0) -> None:
     """A fake docker-credential-<name>: answers by server, logs what it was asked."""
     bin_dir.mkdir(exist_ok=True)
     cases = "".join(
@@ -185,7 +201,8 @@ def _helper(bin_dir, name: str, answers: dict[str, str], log) -> None:
         "#!/bin/sh\n"
         '[ "$1" = get ] || exit 2\n'
         "read -r server\n"
-        f'echo "{name} $server" >> {log}\n'
+        + (f"sleep {delay}\n" if delay else "")
+        + f'echo "{name} $server" >> {log}\n'
         'case "$server" in\n'
         f"{cases}"
         "  *) echo 'credentials not found in native keychain'; exit 1 ;;\n"
@@ -303,3 +320,26 @@ def test_a_credential_store_is_asked_once_a_run(tmp_path, monkeypatch):
     monkeypatch.setattr(_registry, "_CACHE_SEC", 0)  # expired: asked again
     RegistryAuth(str(directory)).for_registry(HUB)
     assert len(log.read_text().splitlines()) == 2
+
+
+@helpers_run
+def test_trials_starting_together_ask_the_helper_once(tmp_path, monkeypatch):
+    log = tmp_path / "asked"
+    _helper(
+        tmp_path / "bin",
+        "desktop",
+        {"https://index.docker.io/v1/": {"Username": "evals", "Secret": FAKE_TOKEN}},
+        log,
+        delay=0.3,  # a keychain prompt: the others start meanwhile
+    )
+    monkeypatch.setenv("PATH", f"{tmp_path / 'bin'}:/usr/bin:/bin")
+    directory = _config(tmp_path, {"credsStore": "desktop"})
+
+    def trial(_):
+        return RegistryAuth(str(directory)).for_registry(HUB)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
+        results = list(pool.map(trial, range(8)))  # -n 8
+
+    assert results == [_basic("evals", FAKE_TOKEN)] * 8
+    assert len(log.read_text().splitlines()) == 1

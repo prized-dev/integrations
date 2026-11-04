@@ -20,7 +20,7 @@ Docker Hub allows 100 anonymous pulls an hour per IP address (its `ratelimit-lim
 
 ```bash
 export DOCKERHUB_USERNAME=you
-export DOCKERHUB_TOKEN=dckr_pat_...   # Docker Hub: Account settings, Personal access tokens, "Public Repo Read-only"
+export DOCKERHUB_TOKEN=dckr_pat_...   # Docker Hub: Account settings, Personal access tokens; "Public Repo Read-only", or "Read-only" for private images
 harbor run -d terminal-bench/terminal-bench-2-1 -a oracle -e harbor_prized:PrizedEnvironment -n 4 --ek registry_auth=env
 ```
 
