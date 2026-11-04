@@ -1,6 +1,7 @@
 import asyncio
 import base64
 import io
+import json
 import os
 import shutil
 import subprocess
@@ -92,7 +93,9 @@ class _Sandbox:
         self.closed = True
 
 
-def _environment(tmp_path, network_policy=None, **config) -> PrizedEnvironment:
+def _environment(
+    tmp_path, network_policy=None, registry_auth=None, **config
+) -> PrizedEnvironment:
     environment_dir = tmp_path / "environment"
     environment_dir.mkdir(exist_ok=True)
     trial_paths = TrialPaths(trial_dir=tmp_path / "trial")
@@ -105,6 +108,7 @@ def _environment(tmp_path, network_policy=None, **config) -> PrizedEnvironment:
         task_env_config=EnvironmentConfig(**config),
         labels="team=evals,run=42",
         network_policy=network_policy,
+        registry_auth=registry_auth,
     )
 
 
@@ -317,7 +321,7 @@ async def test_a_quota_refusal_names_leftover_sandboxes(tmp_path, monkeypatch):
         await environment.start(force_build=False)
 
 
-async def _no_image(self, image):
+async def _no_image(self, image, credentials=None):
     return None
 
 
@@ -922,3 +926,216 @@ def test_preflight_points_agents_at_sign_up(monkeypatch):
     monkeypatch.delenv("PRIZED_API_KEY", raising=False)
     with pytest.raises(SystemExit, match="auth.md"):
         PrizedEnvironment.preflight()
+
+
+# -- registry credentials -----------------------------------------------------
+
+FAKE_TOKEN = "dckr_pat_000000fake"  # an obvious fake, never a real token
+
+
+def _hub_env(monkeypatch):
+    monkeypatch.setenv("DOCKERHUB_USERNAME", "evals")
+    monkeypatch.setenv("DOCKERHUB_TOKEN", FAKE_TOKEN)
+    monkeypatch.setattr(_module, "_WARNED_NO_CREDENTIALS", set())
+
+
+def _starts_on(sandbox, monkeypatch, created=None):
+    sandbox.answer = lambda cmd: (
+        ExecResult(stdout="{}", stderr="", exit_code=0)
+        if "crane config" in cmd
+        else None
+    )
+
+    async def create(template, **kwargs):
+        if created is not None:
+            created.append(kwargs)
+        return sandbox
+
+    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
+
+
+@pytest.mark.asyncio
+async def test_registry_auth_gives_crane_the_token_for_the_pull_only(
+    tmp_path, monkeypatch, caplog
+):
+    _hub_env(monkeypatch)
+    caplog.set_level("DEBUG")
+    environment = _environment(
+        tmp_path, docker_image="alexgshaw/fix-git:20251031", registry_auth="env"
+    )
+    sandbox = _Sandbox()
+    _starts_on(sandbox, monkeypatch)
+
+    await environment.start(force_build=False)
+
+    path, data, mode = sandbox.files.written[0]
+    assert (path, mode) == ("/home/prized/.pull-auth/config.json", 0o600)
+    basic = base64.b64encode(f"evals:{FAKE_TOKEN}".encode()).decode()
+    assert json.loads(data) == {
+        "auths": {"https://index.docker.io/v1/": {"auth": basic}}
+    }
+    setup = sandbox.execs[0]["cmd"]
+    prefix = (
+        "export DOCKER_CONFIG=/home/prized/.pull-auth; "
+        "trap 'rm -rf /home/prized/.pull-auth' EXIT; "
+    )
+    assert setup.index(prefix) < setup.index("crane export")
+    # The secret goes through the files API only: no command line, no log line.
+    for secret in (FAKE_TOKEN, basic):
+        assert all(secret not in e["cmd"] for e in sandbox.execs)
+        assert secret not in caplog.text
+    await environment.stop(delete=True)
+
+
+@pytest.mark.asyncio
+async def test_without_registry_auth_the_pull_is_anonymous(tmp_path, monkeypatch):
+    _hub_env(monkeypatch)  # set, but not asked for
+    environment = _environment(tmp_path, docker_image="python:3.12")
+    sandbox = _Sandbox()
+    _starts_on(sandbox, monkeypatch)
+
+    await environment.start(force_build=False)
+
+    assert "DOCKER_CONFIG" not in sandbox.execs[0]["cmd"]
+    assert all(".pull-auth" not in path for path, _, _ in sandbox.files.written)
+    await environment.stop(delete=True)
+
+
+@pytest.mark.asyncio
+async def test_registry_auth_with_nothing_for_the_registry_warns_once(
+    tmp_path, monkeypatch, caplog
+):
+    _hub_env(monkeypatch)
+    for _ in range(2):  # two trials of one run
+        environment = _environment(
+            tmp_path, docker_image="ghcr.io/org/task:1", registry_auth="env"
+        )
+        sandbox = _Sandbox()
+        _starts_on(sandbox, monkeypatch)
+        await environment.start(force_build=False)
+        assert "DOCKER_CONFIG" not in sandbox.execs[0]["cmd"]
+        await environment.stop(delete=True)
+    assert caplog.text.count("has no credentials for ghcr.io") == 1
+
+
+@pytest.mark.asyncio
+async def test_registry_auth_is_read_before_any_sandbox_starts(tmp_path, monkeypatch):
+    config = tmp_path / "docker" / "config.json"
+    config.parent.mkdir()
+    config.write_text(
+        '{"auths": {"https://index.docker.io/v1/": {}}, "credsStore": "absent"}'
+    )
+    monkeypatch.setenv("PATH", str(tmp_path / "no-helpers"))
+    environment = _environment(
+        tmp_path, docker_image="python:3.12", registry_auth=str(config.parent)
+    )
+    created = []
+    _starts_on(_Sandbox(), monkeypatch, created)
+
+    with pytest.raises(RuntimeError, match="docker-credential-absent"):
+        await environment.start(force_build=False)
+    assert created == []
+
+
+@pytest.mark.parametrize("value", [None, "", "none", "off"])
+def test_registry_auth_can_be_off(tmp_path, value):
+    environment = _environment(
+        tmp_path, docker_image="python:3.12", registry_auth=value
+    )
+    assert environment._registry_auth is None
+
+
+def test_registry_auth_without_its_credentials_is_refused(tmp_path, monkeypatch):
+    monkeypatch.delenv("DOCKERHUB_TOKEN", raising=False)
+    monkeypatch.setenv("DOCKERHUB_USERNAME", "evals")
+    with pytest.raises(ValueError, match="needs DOCKERHUB_TOKEN"):
+        _environment(tmp_path, docker_image="python:3.12", registry_auth="env")
+    with pytest.raises(ValueError, match="no Docker config"):
+        _environment(
+            tmp_path,
+            docker_image="python:3.12",
+            registry_auth=str(tmp_path / "missing.json"),
+        )
+
+
+@pytest.mark.asyncio
+async def test_an_anonymous_rate_limit_names_the_fix(tmp_path, monkeypatch):
+    environment = _environment(tmp_path, docker_image="python:3.12")
+    sandbox = _Sandbox()
+    sandbox.answer = lambda cmd: ExecResult(
+        stdout="",
+        stderr="crane export failed\nTOOMANYREQUESTS: You have reached your "
+        "unauthenticated pull rate limit.",
+        exit_code=1,
+    )
+
+    async def create(template, **kwargs):
+        return sandbox
+
+    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
+    with pytest.raises(RuntimeError, match="registry_auth=env") as info:
+        await environment.start(force_build=False)
+    assert "TOOMANYREQUESTS" in str(info.value)
+    assert sandbox.deleted
+
+
+@linux_only
+@pytest.mark.parametrize("pull_works", [True, False])
+def test_the_credentials_are_removed_when_the_pull_ends(tmp_path, pull_works):
+    auth = tmp_path / "pull-auth"
+    auth.mkdir()
+    (auth / "config.json").write_text('{"auths": {}}')
+    work = tmp_path / "work"
+    root = tmp_path / "root"
+    work.mkdir()
+    root.mkdir()
+    (work / "image.tar").write_bytes(_tar(_member("bin/tool", mode=0o755)))
+    crane = work / "crane"
+    crane.write_text(  # proves crane saw the config, then pulls or fails
+        '#!/bin/sh\ntest -f "$DOCKER_CONFIG/config.json" && echo seen > seen\n'
+        + ("cat image.tar\n" if pull_works else "echo denied >&2; exit 1\n")
+    )
+    crane.chmod(0o755)
+    script = (
+        "set -e; "
+        + _module.pull_auth_prefix(str(auth))
+        + _module.unpack_command("img", str(root))
+        + "echo ok"
+    )
+    result = subprocess.run(
+        ["bash", "-c", script], cwd=work, capture_output=True, check=False, text=True
+    )
+
+    assert (work / "seen").read_text().strip() == "seen"
+    assert result.returncode == (0 if pull_works else 1), result.stderr
+    assert not auth.exists()
+
+
+@pytest.mark.asyncio
+async def test_refused_credentials_say_where_they_came_from(tmp_path, monkeypatch):
+    _hub_env(monkeypatch)
+    environment = _environment(
+        tmp_path, docker_image="python:3.12", registry_auth="env"
+    )
+    sandbox = _Sandbox()
+    sandbox.answer = lambda cmd: (
+        ExecResult(
+            stdout="",
+            stderr="Error: GET https://auth.docker.io/token?scope=x: unexpected status "
+            'code 401 Unauthorized: {"details":"incorrect username or password"}',
+            exit_code=1,
+        )
+        if "crane" in cmd
+        else None
+    )
+
+    async def create(template, **kwargs):
+        return sandbox
+
+    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
+    with pytest.raises(
+        RuntimeError, match="DOCKERHUB_USERNAME/DOCKERHUB_TOKEN"
+    ) as info:
+        await environment.start(force_build=False)
+    assert "index.docker.io refused the credentials" in str(info.value)
+    assert FAKE_TOKEN not in str(info.value)
