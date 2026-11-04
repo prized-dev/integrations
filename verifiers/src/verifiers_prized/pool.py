@@ -331,19 +331,51 @@ def _tail(text: str, limit: int = 2000) -> str:
     return text if len(text) <= limit else "..." + text[-limit:]
 
 
+async def warm_fork(parent: Any, recipe: Recipe, creds: Credentials) -> bool:
+    """Fork one throwaway copy of a sandbox that was just paused, and delete it.
+
+    Prized keeps a freshly paused sandbox's memory in RAM, and its first fork writes all of that
+    memory to disk before any copy starts: 12 to 22 s measured for 8 GB, less for less memory.
+    Later forks skip it (1.4 s measured). Done once while a parent is built ahead of a run, it
+    keeps that write out of the run's first fork. The parent stays paused and unchanged, so every copy
+    forked later starts from the same state. Best effort: a refused fork is logged and the parent
+    is kept as it is (its first fork then does the write). Whether it ran is returned."""
+    began = time.monotonic()
+    making(creds)
+    try:
+        copies = list(await parent.fork(1, labels=recipe.labels_for("warmup"), timeout=START_TIMEOUT))
+    except PrizedError as err:
+        logger.warning(
+            "verifiers-prized: parent %s: the warm-up fork was refused (%s); its first fork will be slower",
+            parent.id,
+            err,
+        )
+        return False
+    for child in copies:
+        track(child.id, creds)
+    await shielded(asyncio.gather(*(discard(child) for child in copies), return_exceptions=True))
+    logger.info(
+        "verifiers-prized: parent %s ready to fork: warm-up copy made and deleted in %.1fs",
+        parent.id,
+        time.monotonic() - began,
+    )
+    return True
+
+
 async def build_sandbox(
     recipe: Recipe,
     creds: Credentials,
     *,
     role: str,
     pause: bool,
+    warm: bool = False,
     tracked: bool = True,
     run: str | None = None,
     on_created: Callable[[], None] | None = None,
 ) -> Any:
     """Create a sandbox and run `setup` in it, then pause it if asked (`on_created` is called once the
-    create has answered). On any failure, or a cancellation, the sandbox is deleted before the error
-    goes on."""
+    create has answered), and with `warm` fork it once and delete the copy (`warm_fork`). On any
+    failure, or a cancellation, the sandbox is deleted before the error goes on."""
     missing = [name for name in recipe.setup_env if name not in os.environ]
     if missing:
         raise SetupError(f"setup_env names variables that are not set here: {', '.join(missing)}")
@@ -394,6 +426,8 @@ async def build_sandbox(
                 )
         if pause:
             await sandbox.pause()
+            if warm:
+                await warm_fork(sandbox, recipe, creds)
         logger.info(
             "verifiers-prized: %s %s ready in %.1fs%s",
             role,

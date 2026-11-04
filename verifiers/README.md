@@ -90,6 +90,8 @@ python -m verifiers_prized build --setup 'python3 -m venv ~/.venv' --setup '~/.v
 
 prints the id of a paused sandbox with the environment built. Set `parent = "<id>"` and every run forks it with no setup. It is yours to delete: `prized sandbox rm <id>`.
 
+The build then forks the paused parent once and deletes the copy (`--no-warm` skips this). A freshly paused sandbox's first fork writes its memory to disk before any copy starts: 12 to 22 s for 8 GB in our tests, against 1.4 s for later forks. Done here, that write stays out of the run's first batch. A parent the runtime builds for itself skips the warm-up, because its first rollouts are already waiting for it.
+
 ### Many rollouts at once
 
 Copies start on their parent's machine, which holds at most 31 copies of a 1 vCPU sandbox, 15 of 2 vCPU and 7 of 4 vCPU ([fork](https://prized.dev/docs/sandboxes?via=verifiers#fork)). Past that a fork answers `409 fork_capacity`: the runtime forks the number that fits, rests that parent briefly, and once every parent is full builds another one, up to `max_parents`. Workspace quotas and rate limits, on a fork or on a parent's create, are waited out for up to `capacity_wait`. A parent that can no longer fork (its machine retiring, its memory gone) is replaced. If 3 new parents in a row cannot fork before their first copy, the rollouts fail rather than run `setup` again and again. A rollout still waiting its turn behind others has not been refused, so `capacity_wait` does not bound that wait. Each process (each verifiers env-server worker) builds its own parents.

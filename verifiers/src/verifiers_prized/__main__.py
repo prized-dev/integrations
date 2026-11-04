@@ -4,6 +4,10 @@
 
 prints the sandbox id (paused, with the environment built) for `parent = "<id>"` in the runtime
 config. It is yours: delete it with `prized sandbox rm <id>` when you are done with it.
+
+Once paused, it is forked once and the copy deleted (`--no-warm` skips that): a freshly paused
+sandbox's first fork writes its memory to disk before any copy starts, so this keeps that write
+out of the run's first rollouts.
 """
 
 from __future__ import annotations
@@ -46,6 +50,11 @@ def main(argv: list[str] | None = None) -> int:
     build.add_argument("--label", action="append", default=[], help="key=value (repeatable)")
     build.add_argument("--max-runtime-min", type=int, default=None)
     build.add_argument("--no-pause", action="store_true", help="leave it running")
+    build.add_argument(
+        "--no-warm",
+        action="store_true",
+        help="skip the throwaway fork that readies the paused parent for a fast first fork",
+    )
     build.add_argument("--api-key-env", default="PRIZED_API_KEY")
     build.add_argument(
         "--base-url", default=None, help="the Prized API's origin (default https://api.prized.dev)"
@@ -77,19 +86,21 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     try:
         creds = credentials(config)
-        print(asyncio.run(_build(config, creds, pause=not args.no_pause)))
+        pause = not args.no_pause
+        print(asyncio.run(_build(config, creds, pause=pause, warm=pause and not args.no_warm)))
     except (SandboxError, PrizedError) as err:
         print(f"build failed: {err}", file=sys.stderr)
         return 1
     return 0
 
 
-async def _build(config: PrizedConfig, creds: Credentials, *, pause: bool) -> str:
+async def _build(config: PrizedConfig, creds: Credentials, *, pause: bool, warm: bool) -> str:
     sandbox = await build_sandbox(
         Recipe.of(config, creds),
         creds,
         role="parent",
         pause=pause,
+        warm=warm,
         tracked=False,  # it outlives this process: never deleted at exit
         run=f"build-{pool.RUN_ID}",
     )

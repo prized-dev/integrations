@@ -822,7 +822,9 @@ def test_build_prints_a_paused_parent_that_runs_fork(
     assert box.state == "paused"
     assert box.labels["team"] == "evals" and box.labels["verifiers-prized"] == "parent"
     assert box.labels["vfp-run"].startswith("build-"), "never swept by a run's label"
-    assert sandbox_id not in pool._tracked and pool._used == {}, "it outlives the process"
+    # It outlives the process: never tracked, and not under this run's label, which the exit sweep
+    # deletes (the warm-up copy carries that label).
+    assert sandbox_id not in pool._tracked and box.labels["vfp-run"] != f"{pool.RUN_ID}"
 
     async def fork_it() -> bytes:
         async with provisioned(parent=sandbox_id) as view:
@@ -864,6 +866,89 @@ def test_build_logs_its_progress_not_every_request(
     assert "verifiers-prized: parent" in err and "ready in" in err
     logging.getLogger("httpx").info("HTTP Request: POST https://api.prized.dev/ ...")
     assert "HTTP Request" not in capsys.readouterr().err
+
+
+# --- the warm-up fork (a paused parent's first fork writes its memory to disk) --------------------
+
+
+def _ops(cloud: Cloud, *names: str) -> list[tuple[str, ...]]:
+    return [c for c in cloud.calls if c[0] in names]
+
+
+def test_build_forks_the_paused_parent_once_and_deletes_the_copy(
+    cloud: Cloud, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from verifiers_prized.__main__ import main
+
+    assert main(["build", "--setup", "echo built > env.txt", "--label", "team=evals"]) == 0
+    out = capsys.readouterr()
+    sandbox_id = out.out.strip()
+    parent = cloud.boxes[sandbox_id]
+    [warm] = [b for b in cloud.boxes.values() if b.labels.get("verifiers-prized") == "warmup"]
+    # After the pause, so the fork writes the pause point the run's forks then copy.
+    assert _ops(cloud, "pause", "fork", "delete") == [
+        ("pause", sandbox_id),
+        ("fork", sandbox_id, "1"),
+        ("delete", warm.id),
+    ]
+    assert warm.parent == sandbox_id and warm.state == "deleted"
+    assert warm.labels["team"] == "evals" and warm.labels["vfp-run"] == pool.RUN_ID
+    assert parent.state == "paused" and (parent.root / "home/prized/work/env.txt").read_text() == "built\n"
+    assert "ready to fork" in out.err and sandbox_id in out.err
+    assert pool._tracked == {}, "the copy is deleted, the parent never tracked"
+    # The exit sweep (this run's label) takes copies, never the parent it printed.
+    pool.delete_leftovers()
+    assert parent.state == "paused" and parent.labels["vfp-run"] != pool.RUN_ID
+
+
+@pytest.mark.parametrize("flag", ["--no-warm", "--no-pause"])
+def test_build_without_a_warm_up(cloud: Cloud, capsys: pytest.CaptureFixture[str], flag: str) -> None:
+    from verifiers_prized.__main__ import main
+
+    assert main(["build", flag]) == 0
+    sandbox_id = capsys.readouterr().out.strip()
+    assert cloud.count("fork") == 0 and pool._used == {}
+    # A running parent is copied as it is at each fork, so a warm-up would not carry over.
+    assert cloud.boxes[sandbox_id].state == ("paused" if flag == "--no-warm" else "running")
+
+
+def test_a_refused_warm_up_keeps_the_built_parent(cloud: Cloud, capsys: pytest.CaptureFixture[str]) -> None:
+    from verifiers_prized.__main__ import main
+
+    cloud.fork_refusals = [PrizedError("sandbox_quota_exceeded", status=429, reason="sandbox_limit")]
+    assert main(["build", "--setup", "echo built > env.txt"]) == 0
+    out = capsys.readouterr()
+    sandbox_id = out.out.strip()
+    assert cloud.boxes[sandbox_id].state == "paused" and len(cloud.live()) == 1
+    assert "warm-up fork was refused" in out.err and "sandbox_quota_exceeded" in out.err
+
+
+async def test_a_build_cancelled_during_its_warm_up_leaves_nothing(cloud: Cloud) -> None:
+    creds = pool.credentials(config())
+    recipe = pool.Recipe.of(config(setup=["echo built > env.txt"]), creds)
+    cloud.fork_delay = 5
+    build = asyncio.ensure_future(
+        pool.build_sandbox(recipe, creds, role="parent", pause=True, warm=True, tracked=False)
+    )
+
+    async def forking() -> bool:
+        return cloud.count("fork") == 1
+
+    await wait_for(forking)
+    build.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await build
+    assert cloud.live() == [] and pool._tracked == {}
+
+
+async def test_the_pool_forks_its_own_parents_without_a_warm_up(cloud: Cloud) -> None:
+    # Rollouts are waiting while the pool builds, so a warm-up there would only add to their wait:
+    # the first fork is theirs.
+    assert len(await rollouts(config(setup=SETUP), 3)) == 3
+    assert not [b for b in cloud.boxes.values() if b.labels.get("verifiers-prized") == "warmup"]
+    [parent] = cloud.live("parent")
+    assert sum(int(c[2]) for c in _ops(cloud, "fork")) == 3
+    assert parent.state == "paused"
 
 
 # --- the 11-03 review ----------------------------------------------------------------------------
