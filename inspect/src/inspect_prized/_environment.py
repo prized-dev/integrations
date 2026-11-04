@@ -65,6 +65,7 @@ _COUNT_QUOTA = "sandbox_limit"
 _TEMPLATE_GONE = ("not_found", "sandbox_deleted", "parent_not_running", "parent_not_forkable", "handle_closed")
 _FORK_SETTLE_S = 200.0  # longer than the SDK's fork budget (180 s): copies still starting finish first
 _GONE_WAIT_S = _FORK_SETTLE_S + 180.0  # another sample's drop: its fork wait plus the delete itself
+_READ_S = 60.0  # at the sandbox limit, how long a create may spend reading templates again
 _GONE = ("not_found", "sandbox_deleted")
 # prized 0.1.1+ (OutputReadError): the command ran, but its output could not be read back.
 _OUTPUT_READ_FAILED = "output_read_failed"
@@ -613,8 +614,14 @@ async def _create(state: _State | None, options: dict) -> AsyncSandbox:
             fresh.sort(key=lambda e: not e.failed)  # templates no sample forks any more go first
             pending = [e for e in entries if e.gone is not None and not e.gone.is_set()]
             at_count = err.code == _QUOTA and err.reason == _COUNT_QUOTA
-            if at_count:
-                fresh = [e for e in fresh if await _counts(e)]
+            if at_count:  # only a template that isn't paused counts here: the first found, if any
+                counted = []
+                with anyio.move_on_after(_READ_S):
+                    for e in fresh:
+                        if await _counts(e):
+                            counted.append(e)
+                            break
+                fresh = counted
             target = (fresh or pending or [None])[0]
             room = err.code == _QUOTA and (err.reason in _TEMPLATE_QUOTAS or at_count)
             reason = err.reason  # `err` is unbound once the except clause ends
@@ -631,15 +638,16 @@ async def _create(state: _State | None, options: dict) -> AsyncSandbox:
 
 
 async def _counts(entry: _Template) -> bool:
-    """Whether a template counts toward the number of sandboxes: it isn't paused (in `error`, say)."""
+    """Whether a template counts toward the number of sandboxes: it isn't paused (in `error`, say), or
+    another sample started deleting it meanwhile (a deleting sandbox counts until it is gone)."""
     sandbox = entry.sandbox
-    if sandbox is None:
-        return False
+    if entry.gone is not None or sandbox is None:
+        return entry.gone is not None
     try:
         await sandbox.refresh()
     except PrizedError:
-        return False  # deleted, or unreadable: a fork of it finds out
-    return sandbox.state != "paused"
+        return entry.gone is not None  # deleted, or unreadable: a fork of it finds out
+    return entry.gone is not None or sandbox.state != "paused"
 
 
 async def _template(state: _State, cfg: PrizedSandboxConfig) -> _Template | None:

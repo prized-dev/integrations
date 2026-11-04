@@ -835,6 +835,7 @@ async def test_a_template_that_cant_be_forked_is_deleted_at_once(monkeypatch, co
         envs = await PrizedSandboxEnvironment.sample_init("t", cfg, {})
         sb = envs["default"].as_type(PrizedSandboxEnvironment).sandbox
         assert template.deleted and template.delete_waited and template.closed  # gone before the create
+        assert template.refreshes == 0  # the fork's refusal deleted it, not a create at the limit
         assert not hasattr(sb, "forked_from") and os.path.exists(os.path.join(sb.root, "ready"))
         monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(real_create))
         FakeSandbox.fork_error = AssertionError("a template that can't be forked is not tried again")
@@ -943,3 +944,25 @@ async def test_task_cleanup_takes_the_templates_from_samples_still_starting(monk
         entry = next(e for e in env_mod._state().templates.values() if e.sandbox is x)
         await PrizedSandboxEnvironment.task_cleanup("shutdown", PrizedSandboxConfig(), True)
         assert x.deleted and x.closed and entry.sandbox is None and entry.failed  # nothing left to fork
+
+
+async def test_reading_a_template_at_the_sandbox_limit(monkeypatch):
+    import anyio
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    with sandbox_lifecycle_scope():
+        x, _ = await _two_templates(monkeypatch)
+        entry = next(e for e in env_mod._state().templates.values() if e.sandbox is x)
+        assert not await env_mod._counts(entry)  # paused
+
+        async def gone(self):
+            raise PrizedError("not_found", "nope", status=404)
+
+        monkeypatch.setattr(FakeSandbox, "refresh", gone)
+        assert not await env_mod._counts(entry)  # deleted or unreadable: left to a fork to find out
+
+        async def drop_starts(self):
+            entry.gone = anyio.Event()  # another sample starts deleting it while this one reads it
+
+        monkeypatch.setattr(FakeSandbox, "refresh", drop_starts)
+        assert await env_mod._counts(entry)  # counts until it is gone: wait for that drop, then retry
