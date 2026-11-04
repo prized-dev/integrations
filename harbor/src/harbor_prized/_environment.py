@@ -40,7 +40,9 @@ Credentials: ``PRIZED_API_KEY`` (a key with Sandboxes: Write). Extra constructor
 ``image_headroom_gb`` (disk added for the unpacked image, default 20),
 ``labels`` (a dict, or ``k=v,k=v``), ``registry_auth`` (where to find
 credentials for the image's registry: ``env``, ``docker`` or a path to a
-Docker ``config.json``; see ``_registry.py``). Docker Hub limits anonymous
+Docker ``config.json``; see ``_registry.py``), ``fork_mode`` (default false:
+each trial forks its task's paused parent instead of pulling the image again;
+see ``_fork.py``) and ``fork_disk_budget_gb``. Docker Hub limits anonymous
 pulls per IP address, and sandboxes share their address, so a large run
 should pull with its own Docker Hub token. The credentials are on the
 sandbox only while crane pulls the image, never in a command or a log.
@@ -53,6 +55,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import hashlib
 import json
 import logging
 import math
@@ -79,6 +82,7 @@ from harbor.models.task.config import EnvironmentConfig
 from harbor.models.trial.paths import TrialPaths
 from prized import AsyncSandbox, CommandTimeoutError, PrizedError
 
+from harbor_prized import _fork
 from harbor_prized._registry import HUB, RegistryAuth, docker_config, image_registry
 
 _HOME = "/home/prized"
@@ -130,6 +134,13 @@ _HOSTS = (
     "127.0.0.1\tlocalhost\n"
     "::1\tlocalhost ip6-localhost ip6-loopback\n"
     "127.0.1.1\t$(hostname)\n"
+)
+# As Docker does: the sandbox's resolver, hosts and hostname in the image. A
+# fork gets a hostname and address of its own, so it writes them again.
+_IDENTITY = (
+    f"rm -f {_ROOT}/etc/resolv.conf {_ROOT}/etc/hosts {_ROOT}/etc/hostname; "
+    f"cp /etc/resolv.conf {_ROOT}/etc/resolv.conf; "
+    f'printf "{_HOSTS}" > {_ROOT}/etc/hosts; hostname > {_ROOT}/etc/hostname; '
 )
 # tar errors that unpacking an image as an unprivileged user may report and
 # that leave the image usable: device nodes, and setuid/setgid modes the
@@ -214,6 +225,21 @@ def _registry_auth(value: object) -> RegistryAuth | None:
     return RegistryAuth(source)
 
 
+def _flag(name: str, value: object) -> bool:
+    """A yes/no option (Harbor reads ``--ek`` values as JSON: true, 1, "yes")."""
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int) and value in (0, 1):
+        return bool(value)
+    if isinstance(value, str):
+        word = value.strip().lower()
+        if word in ("1", "true", "yes", "on"):
+            return True
+        if word in ("", "0", "false", "no", "off"):
+            return False
+    raise TypeError(f"{name} takes true or false, not {value!r}")
+
+
 def pull_auth_prefix(directory: str) -> str:
     """Bash that points crane at ``directory``'s config.json and removes the
     directory when the script exits, whether the pull worked or not."""
@@ -267,6 +293,8 @@ class PrizedEnvironment(BaseEnvironment):
         image_headroom_gb: int = 20,
         labels: dict[str, str] | str | None = None,
         registry_auth: str | None = None,
+        fork_mode: bool | str = False,
+        fork_disk_budget_gb: int = _fork.DEFAULT_BUDGET_GB,
         **kwargs,
     ):
         if isinstance(labels, str):  # --ek labels=team=evals,run=42
@@ -277,6 +305,9 @@ class PrizedEnvironment(BaseEnvironment):
         self._min_vcpu = int(min_vcpu)
         self._image_headroom_gb = int(image_headroom_gb)
         self._registry_auth = _registry_auth(registry_auth)
+        self._fork_mode = _flag("fork_mode", fork_mode)
+        self._fork_disk_budget_gb = int(fork_disk_budget_gb)
+        self._fork_counted = False  # this trial has asked for its task's parent
         self._labels = {
             "harbor": "1",
             "harbor-session": session_id[:256],
@@ -486,14 +517,19 @@ class PrizedEnvironment(BaseEnvironment):
         if self._sandbox is not None:  # a second start replaces the first
             await self.stop(delete=True)
         credentials = await asyncio.to_thread(self._pull_credentials, image)
+        if self._fork_mode and await self._start_forked(image, credentials):
+            return
+        await self._start_fresh(image, credentials, self._labels)
+
+    async def _create(self, labels: dict[str, str]) -> AsyncSandbox:
         vcpu, memory_mb, disk_gb = self._shape()
         try:
-            self._sandbox = await AsyncSandbox.create(
+            return await AsyncSandbox.create(
                 self._template,
                 vcpu=vcpu,
                 memory_mb=memory_mb,
                 disk_gb=disk_gb,
-                labels=self._labels,
+                labels=labels,
                 max_runtime_min=self._max_runtime_min,
                 auto_pause_min=_IDLE_PAUSE_MIN,
                 auto_delete_min=self._paused_ttl_min,
@@ -515,6 +551,15 @@ class PrizedEnvironment(BaseEnvironment):
             if exc.code == "sandbox_quota_exceeded":
                 raise RuntimeError(f"{str(exc).rstrip('.')}. {_QUOTA_HINT}") from exc
             raise
+
+    async def _start_fresh(
+        self,
+        image: str,
+        credentials: tuple[str, bytes] | None,
+        labels: dict[str, str],
+    ) -> None:
+        """Creates a sandbox and unpacks the image into it, as ``self._sandbox``."""
+        self._sandbox = await self._create(labels)
         self._heartbeat = asyncio.create_task(self._keep_alive(self._sandbox))
         self.logger.debug(f"Prized sandbox {self._sandbox.id} for {image}")
         try:
@@ -532,6 +577,195 @@ class PrizedEnvironment(BaseEnvironment):
                 await _despite_cancel(self._remove_pull_auth())
             await _despite_cancel(self.stop(delete=True))
             raise
+
+    # -- fork mode (see _fork.py) -------------------------------------------
+
+    def _fork_key(self, image: str, task: str | None) -> str:
+        """Everything a start depends on: trials with the same key can share a parent."""
+        environment = getattr(self, "environment_id", None)
+        if not isinstance(environment, str):  # Harbor 0.24 has no environment_id
+            environment = str(self.environment_dir.resolve())
+        parts = {
+            "template": self._template,
+            "shape": list(self._shape()),
+            # Copies inherit the timers. environment_id leaves out the image
+            # when environment/ has files.
+            "timers": [self._max_runtime_min, self._paused_ttl_min],
+            "image": image,
+            "environment": environment,
+            "task": task or self.environment_name,
+            "workdir": self.task_env_config.workdir,
+            "mounts": sorted(self._mount_targets(writable_only=True)),
+            "upload": getattr(self, "_enable_environment_dir_upload", True),
+        }
+        blob = json.dumps(parts, sort_keys=True, default=str).encode()
+        return hashlib.sha256(blob).hexdigest()[:16]
+
+    async def _start_forked(
+        self, image: str, credentials: tuple[str, bytes] | None
+    ) -> bool:
+        """Starts the trial in a fork of its task's parent, building the
+        parent first if this trial is the first to need it. False: start fresh."""
+        trial_dir = self.trial_paths.trial_dir
+        task = _fork.task_of(trial_dir)
+        cache = _fork.cache(self._fork_disk_budget_gb)
+        lease, evicted = cache.acquire(
+            self._fork_key(image, task),
+            task,
+            cache.plan(trial_dir.parent),
+            self._shape()[2],
+            count=not self._fork_counted,
+        )
+        self._fork_counted = True
+        try:
+            if evicted:
+                await _despite_cancel(_fork.delete_parents(evicted))
+            if lease is None:
+                return False
+            parent = lease.parent
+            if lease.builder:
+                if not await self._build_parent(cache, parent, image, credentials):
+                    return False
+            elif not await _fork.wait_ready(parent):
+                return False
+            return await self._fork_from(cache, parent)
+        finally:
+            if lease is not None:
+                doomed = cache.release(lease)
+                if doomed is not None:
+                    await _despite_cancel(_fork.delete_parent(doomed))
+
+    async def _build_parent(
+        self,
+        cache: _fork.ParentCache,
+        parent: _fork.Parent,
+        image: str,
+        credentials: tuple[str, bytes] | None,
+    ) -> bool:
+        """Builds the task's parent: a fresh start under the parent's labels,
+        then paused, with no credentials left on it. False: start fresh. A
+        failure fresh mode would meet too (a failed pull) is raised."""
+        labels = {
+            **self._labels,
+            "harbor-session": f"fork-parent-{parent.key}",
+            "harbor-task": self.environment_name[:256],
+            _fork.PARENT_LABEL: "1",
+            _fork.RUN_LABEL: _fork.RUN_ID,
+        }
+        _fork.note_build()
+        try:
+            await self._start_fresh(image, credentials, labels)
+        except RuntimeError as exc:
+            cause = exc.__cause__
+            if not (
+                isinstance(cause, PrizedError)
+                and cause.code == "sandbox_quota_exceeded"
+            ):
+                raise
+            self.logger.warning(
+                f"Prized fork mode: no room for a parent of {self.environment_name} "
+                f"({cause.reason or cause.code}); starting fresh"
+            )
+            victim = cache.build_failed(parent, quota=True)
+            await _despite_cancel(_fork.delete_parent(victim, wait=True))
+            return False
+        sandbox, heartbeat = self._sandbox, self._heartbeat
+        self._sandbox = self._heartbeat = None
+        if heartbeat is not None:
+            heartbeat.cancel()
+        assert sandbox is not None
+        try:
+            if credentials is not None:
+                # The setup's trap removed them; every copy would carry them, so check.
+                gone = shlex.quote(_PULL_AUTH_DIR)
+                result = await sandbox.exec(
+                    f"rm -rf {gone} && ! test -e {gone}", timeout=60, full_output=True
+                )
+                if result.exit_code != 0:
+                    raise RuntimeError(f"{_PULL_AUTH_DIR} is still there")
+            await sandbox.pause()
+        except BaseException as exc:
+            await _despite_cancel(self._stop_sandbox(sandbox, delete=True))
+            if not isinstance(exc, (PrizedError, RuntimeError)):
+                raise
+            self.logger.warning(
+                f"Prized fork mode: could not make {sandbox.id} a parent ({exc}); "
+                "starting fresh"
+            )
+            cache.build_failed(parent)
+            return False
+        facts = _fork.ImageFacts(
+            dict(self._image_env), self._image_workdir, self._image_user
+        )
+        if not cache.mark_ready(parent, sandbox, facts):
+            await _despite_cancel(_fork.delete_parent(parent))
+            return False
+        self.logger.debug(
+            f"Prized sandbox {sandbox.id} is the paused parent of {self.environment_name}"
+        )
+        return True
+
+    async def _fork_from(self, cache: _fork.ParentCache, parent: _fork.Parent) -> bool:
+        """Forks this trial's copy of the parent. False: start fresh."""
+        source, facts = parent.sandbox, parent.facts
+        assert source is not None and facts is not None
+        copy = await self._fork_copy(cache, parent, source)
+        if copy is None:
+            return False
+        self._sandbox = copy
+        self._image_env = dict(facts.env)
+        self._image_workdir, self._image_user = facts.workdir, facts.user
+        self._heartbeat = asyncio.create_task(self._keep_alive(copy))
+        try:
+            await self._host_checked(
+                "set -e; " + _IDENTITY, "Could not write the copy's hostname"
+            )
+        except BaseException as exc:
+            await _despite_cancel(self.stop(delete=True))
+            if not isinstance(exc, (PrizedError, RuntimeError)):
+                raise
+            self.logger.warning(
+                f"Prized fork mode: copy {copy.id} of {source.id} failed ({exc}); "
+                "starting fresh"
+            )
+            return False
+        self.logger.debug(f"Prized sandbox {copy.id} forked from {source.id}")
+        return True
+
+    async def _fork_copy(
+        self, cache: _fork.ParentCache, parent: _fork.Parent, source: AsyncSandbox
+    ) -> AsyncSandbox | None:
+        """One running copy of ``source`` with this trial's labels, or None
+        (see ``_fork.fork_refusal`` for what each refusal does)."""
+        labels = {**self._labels, _fork.COPY_LABEL: source.id}
+        for attempt in (1, 2):
+            try:
+                copies = await source.fork(1, labels=labels)
+            except PrizedError as exc:
+                action, delay = _fork.fork_refusal(exc)
+                if attempt == 1 and action in ("retry", "evict"):
+                    self.logger.debug(f"Fork of {source.id} refused ({exc}); again")
+                    if action == "evict":
+                        victim = cache.evict_one(exclude=parent)
+                        if victim is None:
+                            self.logger.warning(
+                                f"Prized fork mode: no room to fork {source.id} "
+                                f"({exc}); starting fresh"
+                            )
+                            return None
+                        await _despite_cancel(_fork.delete_parent(victim, wait=True))
+                    elif delay:
+                        await asyncio.sleep(delay)
+                    continue
+                if action in ("drop", "never", "gone"):
+                    cache.drop(parent, failed=action != "gone", never=action == "never")
+                self.logger.warning(
+                    f"Prized fork mode: could not fork {source.id} ({exc}); "
+                    "starting fresh"
+                )
+                return None
+            return copies[0]
+        return None
 
     async def _remove_pull_auth(self) -> None:
         """Best-effort removal of registry_auth's credentials from the sandbox."""
@@ -567,11 +801,8 @@ class PrizedEnvironment(BaseEnvironment):
             + f"mkdir -p {_ROOT}{_XFER} {_ROOT}/proc {_ROOT}/dev {_ROOT}/sys {_ROOT}/tmp {_ROOT}/etc; "
             f"chmod 1777 {_ROOT}/tmp; chmod 700 {_ROOT}{_XFER}; "
             + "".join(f"cp /bin/sleep {holder}; " for holder in _HOLDERS)
-            # As Docker does: the sandbox's resolver, hosts and hostname.
-            + f"rm -f {_ROOT}/etc/resolv.conf {_ROOT}/etc/hosts {_ROOT}/etc/hostname; "
-            f"cp /etc/resolv.conf {_ROOT}/etc/resolv.conf; "
-            f'printf "{_HOSTS}" > {_ROOT}/etc/hosts; hostname > {_ROOT}/etc/hostname; '
-            f"if [ -d {_ROOT}/etc/apt/apt.conf.d ]; then echo 'APT::Sandbox::User \"root\";' "
+            + _IDENTITY
+            + f"if [ -d {_ROOT}/etc/apt/apt.conf.d ]; then echo 'APT::Sandbox::User \"root\";' "
             f"> {_ROOT}/etc/apt/apt.conf.d/99runtime-sandbox-user; fi; "
             # dpkg installs files with mode 0 and then sets the mode, which the
             # seccomp filter skips for setuid/setgid files: open those up after.
