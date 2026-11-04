@@ -78,6 +78,7 @@ class _Sandbox:
             raise self.cloud.fork_errors.pop(0)
         if self.state != "paused":
             raise PrizedError("not_found", status=404)
+        self.cloud.admit()
         copy = _Sandbox(
             self.cloud,
             labels if labels is not None else self.labels,
@@ -108,6 +109,16 @@ class _Cloud:
         self.fork_gate: asyncio.Event | None = None
         self.pause_error: Exception | None = None
         self.answers = []  # (predicate, ExecResult or exception)
+        self.quota_gb: int | None = (
+            None  # disk of every sandbox not deleted, 30 GB each
+        )
+
+    def admit(self):
+        alive = [s for s in self.sandboxes if s.state != "deleted"]
+        if self.quota_gb is not None and 30 * (len(alive) + 1) > self.quota_gb:
+            raise PrizedError(
+                "sandbox_quota_exceeded", status=429, reason="retained_disk"
+            )
 
     def answer(self, sandbox, cmd):
         for predicate, result in self.answers:
@@ -120,6 +131,7 @@ class _Cloud:
     async def create(self, template, **kwargs):
         if self.create_errors:
             raise self.create_errors.pop(0)
+        self.admit()
         return _Sandbox(self, kwargs["labels"])
 
     def parents(self):
@@ -163,11 +175,13 @@ class _Job:
             (self.dir / "lock.json").write_text(json.dumps({"trials": trials}))
         self.n = 0
 
-    def environment(self, task: str, **kwargs) -> PrizedEnvironment:
+    def environment(
+        self, task: str, name: str | None = None, **kwargs
+    ) -> PrizedEnvironment:
         self.n += 1
-        trial_dir = self.dir / f"{task}__{self.n}"
+        trial_dir = self.dir / (name or f"{task}__{self.n}")
         paths = TrialPaths(trial_dir=trial_dir)
-        paths.mkdir()
+        paths.mkdir()  # a retried trial gets its old name
         (trial_dir / "lock.json").write_text(
             json.dumps({"task": {"name": task, "digest": f"sha256:{task}"}})
         )
@@ -360,6 +374,7 @@ async def test_a_task_needed_sooner_evicts_the_farthest_parent(tmp_path, cloud):
     # a's parent went to make room for b (needed at 1 and 2, a only at 3);
     # a's last trial then had no later one to build a parent for.
     assert [c.parent for c in cloud.copies()] == [a, b, b]
+    assert a.delete_waits == [True]  # gone before b's parent counts toward the quota
     assert len(cloud.fresh()) == 1 and cloud.alive() == []
 
 
@@ -432,6 +447,50 @@ async def test_a_refused_fork_starts_the_trial_fresh(
     await environment.stop(delete=True)
 
 
+async def test_a_shape_too_big_to_fork_never_builds_a_parent(tmp_path, cloud):
+    job = _Job(tmp_path, ["a", "a"])
+    big = {"cpus": 8, "memory_mb": 32768}  # past about 26 GB: parent_too_big
+    for _ in range(2):
+        await (await _trial(job.environment("a", config=big))).stop(delete=True)
+    assert len(cloud.fresh()) == 2 and not cloud.parents()
+    assert _fork.forkable(1, 26 * 1024) and not _fork.forkable(16, 30 * 1024)
+    assert _fork.forkable(32, 100 * 1024) and not _fork.forkable(32, 110 * 1024)
+
+
+async def test_trials_refused_by_one_parent_count_as_one_failure(tmp_path, cloud):
+    job = _Job(tmp_path, ["a"] * 5)
+    cloud.fork_gate = asyncio.Event()
+    trials = [asyncio.ensure_future(_trial(job.environment("a"))) for _ in range(3)]
+    await _until(lambda: len(cloud.fork_calls) == 3)
+    cloud.fork_errors = [PrizedError("fork_unsupported_host", status=409)] * 3
+    cloud.fork_gate.set()
+    for environment in await asyncio.gather(*trials):
+        await environment.stop(delete=True)
+    # One parent failed, not three: the task's next trial builds another.
+    await (await _trial(job.environment("a"))).stop(delete=True)
+    assert len(cloud.parents()) == 2 and cloud.parents()[1].labels["harbor-task"] == "a"
+    assert len(cloud.copies()) == 1
+
+
+async def test_the_parent_is_idle_while_a_copy_is_set_up(tmp_path, cloud, monkeypatch):
+    job = _Job(tmp_path, ["a", "a", "a"])
+    setting_up = asyncio.Event()
+    original = _Sandbox.exec
+
+    async def exec_(self, cmd, timeout=None, full_output=False):
+        if self.parent is not None and cmd == IDENTITY:
+            setting_up.set()
+            await asyncio.sleep(0.05)
+        return await original(self, cmd, timeout, full_output)
+
+    monkeypatch.setattr(_Sandbox, "exec", exec_)
+    trial = asyncio.ensure_future(_trial(job.environment("a")))
+    await setting_up.wait()
+    (parent,) = _fork._CACHE.parents()
+    assert parent.leases == 0  # it could make way now
+    await trial
+
+
 async def test_a_parent_too_big_to_fork_keeps_its_task_fresh(tmp_path, cloud):
     job = _Job(tmp_path, ["a", "a", "a"])
     cloud.fork_errors = [
@@ -462,6 +521,9 @@ async def test_a_quota_refused_fork_evicts_an_idle_parent_first(tmp_path, cloud)
     b, a = cloud.parents()
     assert b.state == "deleted" and b.delete_waits == [True]  # gone before the retry
     assert environment._sandbox.parent is a and not cloud.fresh()
+    assert a.state == "deleted"  # parents make way: no more for this run
+    await (await _trial(job.environment("a"))).stop(delete=True)
+    assert len(cloud.parents()) == 2 and len(cloud.fresh()) == 1
 
 
 async def test_a_quota_refused_parent_shrinks_the_budget(tmp_path, cloud):
@@ -477,6 +539,75 @@ async def test_a_quota_refused_parent_shrinks_the_budget(tmp_path, cloud):
     for task in ["a", "c", "c"]:
         await (await _trial(job.environment(task))).stop(delete=True)
     assert len(cloud.parents()) == 1 and len(cloud.fresh()) == 4  # budget is now 0
+
+
+async def test_parents_make_way_when_the_disk_quota_is_reached(tmp_path, cloud):
+    # Room for two 30 GB sandboxes, as for two fresh trials at once; in fork
+    # mode the parent is a third. No trial may fail for it.
+    cloud.quota_gb = 60
+    job = _Job(tmp_path, ["a", "a", "a"])
+    first = await _trial(job.environment("a"))  # the parent and its copy: 60 GB
+    second = await _trial(job.environment("a"))  # its copy is refused
+    (parent,) = cloud.parents()
+    assert parent.state == "deleted" and parent.delete_waits == [True]
+    assert second._sandbox in cloud.fresh() and second._sandbox.state == "running"
+    await first.stop(delete=True)
+    third = await _trial(job.environment("a"))  # no more parents this run
+    assert third._sandbox in cloud.fresh() and len(cloud.parents()) == 1
+
+
+async def test_a_fresh_start_refused_by_the_quota_deletes_idle_parents(tmp_path, cloud):
+    cloud.quota_gb = 60
+    job = _Job(tmp_path, ["a", "b", "a"])
+    await _trial(job.environment("a"))  # a's parent (idle now) and copy: 60 GB
+    b = await _trial(job.environment("b"))  # b is planned once: fresh, refused
+    (parent,) = cloud.parents()
+    assert parent.state == "deleted" and parent.delete_waits == [True]
+    assert b._sandbox in cloud.fresh() and b._sandbox.state == "running"
+
+
+async def test_a_refused_fresh_start_waits_for_a_parent_in_use(tmp_path, cloud):
+    # 30 GB of room: either a or b could run fresh, not both. b is refused
+    # while a's parent is mid-fork, and waits for it to go, instead of
+    # failing next to a parent that is about to be deleted.
+    cloud.quota_gb = 60
+    _Sandbox(cloud, {"other": "1"})  # 30 GB some other run holds
+    job = _Job(tmp_path, ["a", "a", "b"])
+    cloud.fork_gate = asyncio.Event()
+    a = asyncio.ensure_future(_trial(job.environment("a")))
+    await _until(lambda: cloud.fork_calls)  # a's parent is up, its fork waiting
+    b = asyncio.ensure_future(_trial(job.environment("b")))  # fresh, refused
+    await asyncio.sleep(0.05)
+    assert not b.done()  # waiting for a's parent to go
+    cloud.fork_gate.set()  # a's copy is refused too; its parent goes
+    results = await asyncio.gather(a, b, return_exceptions=True)
+    started = [r for r in results if isinstance(r, PrizedEnvironment)]
+    refused = [r for r in results if isinstance(r, RuntimeError)]
+    assert len(started) == 1 and len(refused) == 1, results  # as fresh mode
+    assert "quota" in str(refused[0])
+    assert [p.state for p in cloud.parents()] == ["deleted"]
+
+
+async def test_a_resumed_job_plans_only_the_trials_left(tmp_path, cloud):
+    job = _Job(tmp_path, ["a", "a", "b", "b"])
+    done = job.environment("a", fork_mode=False)
+    (done.trial_paths.trial_dir / "result.json").write_text("{}")
+    await (await _trial(job.environment("a"))).stop(delete=True)  # a's last trial
+    await (await _trial(job.environment("b"))).stop(delete=True)
+    await (await _trial(job.environment("b"))).stop(delete=True)
+    (parent,) = cloud.parents()
+    assert parent.labels["harbor-task"] == "b" and parent.state == "deleted"
+    assert len(cloud.fresh()) == 1 and cloud.alive() == []
+
+
+async def test_a_retried_trial_counts_once(tmp_path, cloud):
+    job = _Job(tmp_path, ["a", "a"])
+    await (await _trial(job.environment("a", name="a__x"))).stop(delete=True)
+    await (await _trial(job.environment("a", name="a__x"))).stop(delete=True)  # retry
+    (parent,) = cloud.parents()
+    assert parent.state == "paused"  # a's second planned trial is still to come
+    await (await _trial(job.environment("a", name="a__y"))).stop(delete=True)
+    assert parent.state == "deleted" and cloud.alive() == []
 
 
 async def test_a_failed_pull_fails_the_trial_once_and_waiters_start_fresh(

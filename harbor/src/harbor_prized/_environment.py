@@ -62,6 +62,7 @@ import math
 import os
 import re
 import shlex
+import time
 import uuid
 from collections.abc import Awaitable
 from pathlib import Path
@@ -307,7 +308,6 @@ class PrizedEnvironment(BaseEnvironment):
         self._registry_auth = _registry_auth(registry_auth)
         self._fork_mode = _flag("fork_mode", fork_mode)
         self._fork_disk_budget_gb = int(fork_disk_budget_gb)
-        self._fork_counted = False  # this trial has asked for its task's parent
         self._labels = {
             "harbor": "1",
             "harbor-session": session_id[:256],
@@ -519,7 +519,21 @@ class PrizedEnvironment(BaseEnvironment):
         credentials = await asyncio.to_thread(self._pull_credentials, image)
         if self._fork_mode and await self._start_forked(image, credentials):
             return
-        await self._start_fresh(image, credentials, self._labels)
+        try:
+            await self._start_fresh(image, credentials, self._labels)
+        except RuntimeError as exc:
+            # Fork mode's parents hold disk a fresh start would have had.
+            if not (
+                self._fork_mode
+                and _fork.disk_quota(exc.__cause__)
+                and await _fork.make_way()
+            ):
+                raise
+            self.logger.warning(
+                "Prized fork mode: a quota refused the start, so the fork parents "
+                "were deleted and the rest of the run starts fresh; starting again"
+            )
+            await self._start_fresh(image, credentials, self._labels)
 
     async def _create(self, labels: dict[str, str]) -> AsyncSandbox:
         vcpu, memory_mb, disk_gb = self._shape()
@@ -606,6 +620,9 @@ class PrizedEnvironment(BaseEnvironment):
     ) -> bool:
         """Starts the trial in a fork of its task's parent, building the
         parent first if this trial is the first to need it. False: start fresh."""
+        vcpu, memory_mb, disk_gb = self._shape()
+        if not _fork.forkable(vcpu, memory_mb):
+            return False
         trial_dir = self.trial_paths.trial_dir
         task = _fork.task_of(trial_dir)
         cache = _fork.cache(self._fork_disk_budget_gb)
@@ -613,13 +630,13 @@ class PrizedEnvironment(BaseEnvironment):
             self._fork_key(image, task),
             task,
             cache.plan(trial_dir.parent),
-            self._shape()[2],
-            count=not self._fork_counted,
+            disk_gb,
+            trial_dir.name,
         )
-        self._fork_counted = True
+        copy: AsyncSandbox | None = None
         try:
-            if evicted:
-                await _despite_cancel(_fork.delete_parents(evicted))
+            if evicted:  # gone before the new parent counts toward the quota
+                await _despite_cancel(_fork.delete_parents(evicted, wait=True))
             if lease is None:
                 return False
             parent = lease.parent
@@ -628,12 +645,30 @@ class PrizedEnvironment(BaseEnvironment):
                     return False
             elif not await _fork.wait_ready(parent):
                 return False
-            return await self._fork_from(cache, parent)
+            source, facts = parent.sandbox, parent.facts
+            assert source is not None and facts is not None
+            began = time.monotonic()
+            copy = await self._fork_copy(cache, parent, source)
+            if copy is None:
+                return False
+            self._sandbox = copy  # from here, a failed start deletes it
+            forked = time.monotonic() - began
         finally:
+            # The lease goes back as soon as the copy runs: the parent is
+            # idle (and can make way) while the copy is set up.
             if lease is not None:
                 doomed = cache.release(lease)
                 if doomed is not None:
-                    await _despite_cancel(_fork.delete_parent(doomed))
+                    try:
+                        await _despite_cancel(
+                            _fork.delete_parent(doomed, wait=cache.quota_refused)
+                        )
+                    except BaseException:
+                        if copy is not None:
+                            await _despite_cancel(self.stop(delete=True))
+                        raise
+        assert copy is not None
+        return await self._set_up_copy(copy, source.id, facts, began, forked)
 
     async def _build_parent(
         self,
@@ -653,27 +688,26 @@ class PrizedEnvironment(BaseEnvironment):
             _fork.RUN_LABEL: _fork.RUN_ID,
         }
         _fork.note_build()
+        began = time.monotonic()
         try:
             await self._start_fresh(image, credentials, labels)
         except RuntimeError as exc:
-            cause = exc.__cause__
-            if not (
-                isinstance(cause, PrizedError)
-                and cause.code == "sandbox_quota_exceeded"
-            ):
+            if not _fork.disk_quota(exc.__cause__):
                 raise
             self.logger.warning(
-                f"Prized fork mode: no room for a parent of {self.environment_name} "
-                f"({cause.reason or cause.code}); starting fresh"
+                f"Prized fork mode: a quota refused a parent of {self.environment_name} "
+                f"({exc.__cause__}); the parents make way, and the rest of the run "
+                "starts fresh"
             )
-            victim = cache.build_failed(parent, quota=True)
-            await _despite_cancel(_fork.delete_parent(victim, wait=True))
+            cache.build_failed(parent)
+            await _despite_cancel(_fork.delete_parents(cache.quota_hit(), wait=True))
             return False
         sandbox, heartbeat = self._sandbox, self._heartbeat
         self._sandbox = self._heartbeat = None
         if heartbeat is not None:
             heartbeat.cancel()
         assert sandbox is not None
+        built = time.monotonic()
         try:
             if credentials is not None:
                 # The setup's trap removed them; every copy would carry them, so check.
@@ -701,18 +735,21 @@ class PrizedEnvironment(BaseEnvironment):
             await _despite_cancel(_fork.delete_parent(parent))
             return False
         self.logger.debug(
-            f"Prized sandbox {sandbox.id} is the paused parent of {self.environment_name}"
+            f"Prized sandbox {sandbox.id} is the paused parent of {self.environment_name} "
+            f"(started in {built - began:.1f} s, paused in {time.monotonic() - built:.2f} s)"
         )
         return True
 
-    async def _fork_from(self, cache: _fork.ParentCache, parent: _fork.Parent) -> bool:
-        """Forks this trial's copy of the parent. False: start fresh."""
-        source, facts = parent.sandbox, parent.facts
-        assert source is not None and facts is not None
-        copy = await self._fork_copy(cache, parent, source)
-        if copy is None:
-            return False
-        self._sandbox = copy
+    async def _set_up_copy(
+        self,
+        copy: AsyncSandbox,
+        source_id: str,
+        facts: _fork.ImageFacts,
+        began: float,
+        forked: float,
+    ) -> bool:
+        """Makes the trial's copy its sandbox: the image's facts, a heartbeat,
+        and its own hostname in the image. False (the copy deleted): start fresh."""
         self._image_env = dict(facts.env)
         self._image_workdir, self._image_user = facts.workdir, facts.user
         self._heartbeat = asyncio.create_task(self._keep_alive(copy))
@@ -725,11 +762,14 @@ class PrizedEnvironment(BaseEnvironment):
             if not isinstance(exc, (PrizedError, RuntimeError)):
                 raise
             self.logger.warning(
-                f"Prized fork mode: copy {copy.id} of {source.id} failed ({exc}); "
+                f"Prized fork mode: copy {copy.id} of {source_id} failed ({exc}); "
                 "starting fresh"
             )
             return False
-        self.logger.debug(f"Prized sandbox {copy.id} forked from {source.id}")
+        self.logger.debug(
+            f"Prized sandbox {copy.id} forked from {source_id} in {forked:.2f} s "
+            f"(ready in {time.monotonic() - began:.2f} s)"
+        )
         return True
 
     async def _fork_copy(
@@ -743,18 +783,16 @@ class PrizedEnvironment(BaseEnvironment):
                 copies = await source.fork(1, labels=labels)
             except PrizedError as exc:
                 action, delay = _fork.fork_refusal(exc)
-                if attempt == 1 and action in ("retry", "evict"):
+                if action == "quota" and _fork.disk_quota(exc):
+                    # Parents make way: the idle ones go now, this one with
+                    # its last lease (before this trial's fresh start).
+                    idle = cache.quota_hit()
+                    if attempt == 1 and idle:
+                        await _despite_cancel(_fork.delete_parents(idle, wait=True))
+                        continue
+                elif attempt == 1 and action == "retry":
                     self.logger.debug(f"Fork of {source.id} refused ({exc}); again")
-                    if action == "evict":
-                        victim = cache.evict_one(exclude=parent)
-                        if victim is None:
-                            self.logger.warning(
-                                f"Prized fork mode: no room to fork {source.id} "
-                                f"({exc}); starting fresh"
-                            )
-                            return None
-                        await _despite_cancel(_fork.delete_parent(victim, wait=True))
-                    elif delay:
+                    if delay:
                         await asyncio.sleep(delay)
                     continue
                 if action in ("drop", "never", "gone"):
