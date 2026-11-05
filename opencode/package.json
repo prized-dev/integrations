@@ -1,0 +1,59 @@
+{
+  "name": "opencode-prized",
+  "version": "0.1.0",
+  "description": "Prized Sandboxes for OpenCode: OpenCode stays on your machine and runs its bash, read, write, edit, glob, grep and apply_patch tools in a Firecracker microVM that pauses between turns with its memory.",
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "prized",
+    "sandbox",
+    "microvm",
+    "coding-agent"
+  ],
+  "type": "module",
+  "main": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./server": "./index.ts"
+  },
+  "files": [
+    "index.ts",
+    "src",
+    "README.md",
+    "DESIGN.md",
+    "LICENSE"
+  ],
+  "author": "Prized <team@prized.dev>",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/prized-dev/integrations/tree/main/opencode#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prized-dev/integrations.git",
+    "directory": "opencode"
+  },
+  "bugs": {
+    "url": "https://github.com/prized-dev/integrations/issues"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run test/unit.test.ts test/tools.test.ts test/plugin.test.ts test/v2.test.ts",
+    "prepublishOnly": "npm run typecheck && npm test"
+  },
+  "dependencies": {
+    "@prized/sdk": "^0.1.2",
+    "diff": "^9.0.0",
+    "zod": "4.1.8"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "1.19.5",
+    "@types/node": "^24.10.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

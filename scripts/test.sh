@@ -214,6 +214,18 @@ case $DIR in
     npm run typecheck
     npm run build
     offline npm test ;;
+  opencode)
+    # An OpenCode plugin: OpenCode runs its TypeScript itself, so there is no build. Typecheck against the
+    # real @opencode-ai/plugin types, then vitest against a fake Prized sandbox that runs the plugin's git,
+    # tar and bash commands for real. --legacy-peer-deps: @opencode-ai/plugin's optional TUI peers trip npm.
+    need_sdk node
+    cp -r "$ROOT/$DIR/." "$WORK/pkg"
+    cd "$WORK/pkg"
+    [ -z "${SDK_TGZ:-}" ] || npm pkg set "dependencies.@prized/sdk=file:$SDK_TGZ"
+    npm install --no-audit --no-fund --no-package-lock --legacy-peer-deps --loglevel=error
+    npm ls --depth=0 @opencode-ai/plugin @prized/sdk zod || true
+    npm run typecheck
+    offline npm test ;;
   herdr)
     # A herdr plugin with no dependencies: node --test against stand-ins for prized, herdr and ssh
     # (test/fakes). The fake sandbox runs the plugin's remote scripts with the real bash, tar and git.
