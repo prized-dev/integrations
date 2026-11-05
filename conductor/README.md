@@ -22,7 +22,7 @@ Conductor Cloud goes read-only on November 13, 2026 and shuts down on November 2
 
 3. Open an agent with the `prized ssh -s claude-auth` line it prints, and leave with Ctrl-b, then d.
 
-It asks before it copies anything secret: prized setup's own questions (your environment, `.env` files, gh), then the gitignored files Conductor copies. `-y` answers yes to all of them. Re-running it is safe: it skips what is done and retries what failed.
+It asks before it copies anything secret: prized setup's own questions (your environment, `.env` files, gh), then the gitignored files Conductor copies. `-y` answers yes to all of them. Re-running it is safe: workspaces already set up stay as they are, and a setup that failed runs again.
 
 ## What it does
 
@@ -33,11 +33,11 @@ It asks before it copies anything secret: prized setup's own questions (your env
 | `CONDUCTOR_WORKSPACE_NAME`, `_PATH`, `CONDUCTOR_ROOT_PATH`, `CONDUCTOR_DEFAULT_BRANCH`, `CONDUCTOR_IS_LOCAL` | Set for the setup script, the agent and every shell in the workspace's tmux sessions |
 | `CONDUCTOR_PORT`, 10 ports per workspace | 4100 to 4109 for the first workspace, 4110 for the next, unique across the box's repos. Box ports from 3000 to 9999 open at localhost on your Mac ([Ports](https://prized.dev/docs/ports?via=conductor)) |
 | `[environment_variables]` and its `.local` table | Set in each workspace the same way |
-| Files to copy: `.worktreeinclude`, `file_include_globs`, or `.env*` | The matching gitignored files are copied from your Mac's checkout to the clone, then into each new worktree |
-| `.conductor/settings.local.toml` | Copied from your Mac and read on top of the shared settings |
+| Files to copy: `.worktreeinclude`, `file_include_globs`, or `.env*` | The matching gitignored files are copied from your Mac's checkout to the clone, then into each new worktree; `node_modules` and virtualenvs stay out |
+| `.conductor/settings.local.toml`, and your `~/.conductor/settings.toml` | Copied from your Mac and read the way Conductor reads them: the local file over the repo's settings, yours under them |
 | The Run button (`scripts.run`) | `--run` starts the default action in a tmux session `run-<branch>` on the workspace's port; `run_mode = "nonconcurrent"` starts only one |
 | Archive (`scripts.archive`) | `--archive BRANCH` runs it, stops the workspace's sessions, and removes the worktree; the branch stays |
-| Conductor Cloud's repository setup script and Cloud Computer install script | `--setup FILE` and `--install FILE`, from the copies you saved. With `--setup`, scripts see `CONDUCTOR_IS_LOCAL=0` and the `.cloud` variables, as in a cloud workspace |
+| Conductor Cloud's repository setup script and Cloud Computer install script | `--setup FILE` and `--install FILE`, from the copies you saved. With `--setup`, scripts see `CONDUCTOR_IS_LOCAL=0`, the workspace as `CONDUCTOR_ROOT_PATH`, and the `.cloud` variables, as in a cloud workspace. A setup script you set in Conductor's settings on your Mac goes in with `--local-setup FILE` |
 | Node 24, npm and pnpm on every Cloud machine | When the repo has a `package.json` and the box has no Node, Node (the version in `.nvmrc` or `.node-version`, else 24) through fnm, and pnpm or yarn through corepack. With a `Gemfile`, Ruby (the version in `.ruby-version`) through mise, with the libraries common gems build against. Bun and uv when the repo's lockfile or setup script names them |
 
 Before the worktrees, `prized setup --clone` clones the repo onto the box from its origin and signs in your agent and, if you let it, gh, so the agents can push and open pull requests. It also offers to bring your environment (Node, Python, CLIs) and the project's `.env` files ([Bring your environment](https://prized.dev/docs/environment?via=conductor)).
@@ -52,15 +52,17 @@ Before the worktrees, `prized setup --clone` clones the repo onto the box from i
 | `--agent claude\|codex\|none` | What starts in each workspace (default `claude`, in auto mode; Codex starts in its `workspace-write` sandbox, never asking) |
 | `--run` | Start each workspace's run script too |
 | `--setup FILE`, `--install FILE` | Your saved Conductor Cloud scripts |
+| `--local-setup FILE` | A setup script from Conductor's settings on your Mac |
 | `--files`, `--no-files` | Copy the gitignored files without asking, or never |
 | `--box NAME` | A box other than your current one |
-| `--port-base N` | Where `CONDUCTOR_PORT` starts (default 4100) |
-| `--archive BRANCH` | Archive a workspace |
+| `--port-base N` | Where `CONDUCTOR_PORT` starts, 3000 to 9990 (default 4100) |
+| `--archive BRANCH` | Archive a workspace; with uncommitted changes it stops, unless `--force` |
 | `-y` | Yes to every question |
 | `-- ARGS` | Passed on to `prized setup` |
 
 ## Limits
 
+- **Push first.** The box clones from origin, so a `-w` branch with commits only on your Mac stops the move and says what to push. Uncommitted changes stay on your Mac.
 - **The box is Ubuntu 24.04 (x86_64).** Setup scripts that call Homebrew, Xcode or other Mac-only tools fail there; the log says where. Conductor Cloud's install scripts use `dnf`, which becomes `apt-get` (package names can differ).
 - **Cloud environment variables and secrets don't come along:** Conductor hides their values. Set them in **Variables** on the box page's **Settings** tab, and API keys in [Secrets](https://prized.dev/docs/credentials?via=conductor#secrets-for-agents).
 - **Chats don't carry over.** `prompts.general` is not passed to the agents: put it in `CLAUDE.md` or `AGENTS.md`.

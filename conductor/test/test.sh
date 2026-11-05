@@ -81,10 +81,47 @@ check "same ports" 'session claude-existing | grep -qx "env CONDUCTOR_PORT=4110"
 echo "# a failed setup is reported, and retried on the next run"
 touch "$B/fail-setup"
 run "$T/mac/app" -w broken --no-files
-check "exits 0, says setup failed" '[ "$CODE" = 0 ] && grep -q "broken: setup failed (exit 3)" "$T/out" && grep -q "setup failed(exit 3)" "$T/out"'
+check "exits 1, says setup failed" '[ "$CODE" = 1 ] && grep -q "broken: setup failed (exit 3)" "$T/out" && grep -q "setup failed(exit 3)" "$T/out" && grep -q "1 workspace(s) need you" "$T/out"'
 rm "$B/fail-setup"
 run "$T/mac/app" -w broken --no-files
 check "the next run runs it again" '[ "$(wc -l <"$B/setup-count-broken")" = 2 ] && grep -q "setup ok" "$T/out"'
+
+echo "# a worktree whose folder was deleted is made again, and its setup runs again"
+rm -rf "$B/code/app-feature-login"
+run "$T/mac/app" -w feature/login --no-files
+check "exits 0" '[ "$CODE" = 0 ] || { cat "$T/out"; false; }'
+check "the worktree is back and setup ran in it" '[ -f "$B/code/app-feature-login/setup-ran" ] && [ "$(wc -l <"$B/setup-count-feature-login")" = 2 ]'
+
+echo "# a branch the box can't get from origin stops the move before it starts"
+: >"$B/../calls.log"
+git -C "$T/mac/app" branch only-here
+run "$T/mac/app" -w only-here
+check "a branch only on this machine" '[ "$CODE" = 1 ] && grep -q "git push -u origin only-here" "$T/out"'
+git -C "$T/mac/app" checkout -q existing
+echo more >"$T/mac/app/existing.txt"
+git -C "$T/mac/app" commit -q -am "not pushed"
+git -C "$T/mac/app" checkout -q main
+run "$T/mac/app" -w existing
+check "a branch with commits origin doesn't have" '[ "$CODE" = 1 ] && grep -q "1 commit(s) origin doesn" "$T/out"'
+check "neither called prized" '[ ! -s "$B/../calls.log" ]'
+git -C "$T/mac/app" branch -q -f existing origin/existing
+
+echo "# run from a Conductor workspace (a linked worktree), it moves the main checkout"
+git -C "$T/mac/app" worktree add -q "$T/mac/ws-tokyo" -b tokyo
+run "$T/mac/ws-tokyo" -w feature/login --no-files
+check "exits 0, the same repo" '[ "$CODE" = 0 ] && grep -q "is a worktree of $T/mac/app" "$T/out" && grep -q "prized setup $T/mac/app --clone" "$B/../calls.log" && [ ! -e "$B/code/ws-tokyo" ]'
+
+echo "# many matching files, node_modules and a virtualenv named .env"
+mkdir -p "$T/mac/app/.envs" "$T/mac/app/.env/lib" "$T/mac/app/web/node_modules/pkg"
+for i in $(seq 1 3000); do echo "x" >"$T/mac/app/.envs/f$i"; done
+echo 'home = /usr' >"$T/mac/app/.env/pyvenv.cfg"
+echo x >"$T/mac/app/.env/lib/site.py"
+echo x >"$T/mac/app/web/node_modules/pkg/.env.example"
+printf '.envs/\n.env/\nweb/node_modules/\n' >>"$T/mac/app/.git/info/exclude"
+run "$T/mac/app" -w many --files --agent none
+check "exits 0 with a list longer than a pipe holds" '[ "$CODE" = 0 ] || { tail -5 "$T/out"; false; }'
+check "says how many and shows 15" 'grep -q "copies 3001 gitignored file" "$T/out" && grep -q "and 2986 more" "$T/out"'
+check "the virtualenv and node_modules stay out" '[ -f "$B/code/app-many/.envs/f3000" ] && [ ! -e "$A/.env/pyvenv.cfg" ] && [ ! -e "$A/web/node_modules/pkg/.env.example" ]'
 
 echo "# .conductor/settings.toml wins over conductor.json; settings.local.toml and .worktreeinclude count"
 mkrepo app2
@@ -97,6 +134,11 @@ echo "toml $FOO $ONLY_LOCAL $CONDUCTOR_PORT" > toml-ran
 """
 run_mode = "nonconcurrent"
 
+[scripts.run.cloudonly]
+command = "echo cloud only"
+default = true
+available_in = "cloud"
+
 [scripts.run.web]
 command = "echo web"
 
@@ -107,6 +149,8 @@ default = true
 [environment_variables]
 FOO = "shared"
 PATH = "/nope"
+MULTI = """line one
+line two"""
 
 [environment_variables.local]
 ONLY_LOCAL = "yes"
@@ -119,11 +163,12 @@ git -C "$T/mac/app2" pull -q
 printf '[environment_variables]\nFOO = "mine"\n' >"$T/mac/app2/.conductor/settings.local.toml"
 run "$T/mac/app2" -w a -w b --run --files --agent codex
 check "exits 0" '[ "$CODE" = 0 ] || { cat "$T/out"; false; }'
-check "the settings.toml setup ran, not conductor.json's, with settings.local.toml on top" '[ "$(cat "$B/code/app2-a/toml-ran")" = "toml mine yes 4130" ] && [ ! -e "$B/code/app2-a/setup-ran" ]'
+check "the settings.toml setup ran, not conductor.json's, with settings.local.toml on top" '[ "$(cat "$B/code/app2-a/toml-ran")" = "toml mine yes 4140" ] && [ ! -e "$B/code/app2-a/setup-ran" ]'
 check "a reserved name stays out" '! session codex-a | grep -q "^env PATH=" && grep -q "not set (reserved" "$T/out"'
-check "ports don't overlap another repo's" '[ "$(cat "$B/code/app2-b/toml-ran")" = "toml mine yes 4140" ]'
+check "ports don't overlap another repo's" '[ "$(cat "$B/code/app2-b/toml-ran")" = "toml mine yes 4150" ]'
 check ".worktreeinclude replaces the .env* default" '[ -f "$B/code/app2-a/config/local.json" ] && [ ! -e "$B/code/app2-a/.env.local" ]'
 check "settings.local.toml came from the checkout" '[ -f "$B/code/app2/.conductor/settings.local.toml" ]'
+check "a multi-line variable reaches the session" 'session codex-a | grep -qx "env MULTI=line one"'
 check "nonconcurrent: one run script, the default action" '[ -f "$B/.faketmux/run-a" ] && [ ! -e "$B/.faketmux/run-b" ] && grep -qx "echo api on \$((CONDUCTOR_PORT + 1))" "$B/.local/share/prized-conductor/app2/a-run.sh"'
 check "codex starts in its sandbox, never asking" 'session codex-a | grep -qx "agent=codex dir=code/app2-a args=--sandbox workspace-write --ask-for-approval never"'
 
@@ -149,6 +194,9 @@ check "--force goes ahead" '[ "$CODE" = 0 ] || { cat "$T/out"; false; }'
 check "archive script ran with the workspace's variables" '[ -f "$A/archived-existing" ]'
 check "its session stopped, its worktree removed, its branch kept" '[ ! -e "$B/.faketmux/claude-existing" ] && [ ! -d "$B/code/app-existing" ] && git -C "$A" show-ref --verify --quiet refs/heads/existing'
 check "other workspaces' sessions keep running" '[ -f "$B/.faketmux/claude-feature-login" ] && [ -f "$B/.faketmux/claude-app2-feature-login" ]'
+
+run "$T/mac/app2" --archive b --force
+check "archiving a workspace with a multi-line variable works" '[ "$CODE" = 0 ] && [ ! -d "$B/code/app2-b" ]'
 
 echo "# bad input stops before anything runs"
 : >"$B/../calls.log"

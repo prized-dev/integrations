@@ -26,24 +26,26 @@ REPO is your repo's main checkout (default: this folder), or a GitHub repo
 (owner/repo or its URL) to clone on the box without a checkout here.
 
   -w, --workspace BRANCH  a workspace (git worktree) on BRANCH: checked out if
-                          the repo has it, else a new branch from the default
+                          origin has it, else a new branch from the default
                           branch. Repeat it; default: two new, ws-1 and ws-2
   -n N                    how many new workspaces when no -w is given (default 2)
   --agent claude|codex|none
                           the agent to start in each workspace (default claude)
   --run                   also start each workspace's run script (Conductor's
                           Run button) in a tmux session run-BRANCH
-  --setup FILE            run FILE instead of the repo's setup script, such as
-                          the repository setup script in Conductor Cloud's
-                          settings (it then sees CONDUCTOR_IS_LOCAL=0, as in a
-                          cloud workspace)
-  --install FILE          run FILE once on the box first, from your home folder,
-                          such as your Cloud Computer's install script
+  --setup FILE            run FILE instead of the repo's setup script, as a
+                          cloud workspace runs it (CONDUCTOR_IS_LOCAL=0, and
+                          CONDUCTOR_ROOT_PATH is the workspace): the repository
+                          setup script from Conductor Cloud's settings
+  --local-setup FILE      run FILE instead, as a local workspace runs it: a
+                          setup script you set in Conductor's settings on your Mac
+  --install FILE          run FILE on the box first, from your home folder, such
+                          as your Cloud Computer's install script
   --files, --no-files     copy the gitignored files Conductor copies into each
                           workspace without asking, or never (default: ask)
   --box NAME              the box to use (default: your current box)
-  --port-base N           the first workspace's CONDUCTOR_PORT (default 4100);
-                          each workspace gets 10 ports, as in Conductor
+  --port-base N           the first workspace's CONDUCTOR_PORT, 3000 to 9990
+                          (default 4100); each workspace gets 10 ports
   --archive BRANCH        archive a workspace: run the archive script, stop its
                           sessions, remove its worktree (the branch stays); with
                           uncommitted changes it stops, unless --force
@@ -79,18 +81,35 @@ ask() {
 name_for() {
   printf '%s' "$1" | LC_ALL=C tr '[:upper:]' '[:lower:]' | LC_ALL=C sed -E 's/[^a-z0-9._-]+/-/g; s/-+/-/g; s/^[._-]+//; s/-+$//'
 }
-tmpfile() { mktemp "${TMPDIR:-/tmp}/prized-conductor.XXXXXX"; }
+# Temporary files live in one folder, removed on exit, so a copy of your .env files never stays behind.
+WORK=''
+cleanup() { [ -z "$WORK" ] || rm -rf "$WORK"; }
+tmpfile() { mktemp "$WORK/f.XXXXXX"; }
 put_helper() {
   local t
   t=$(tmpfile)
   helper_py >"$t"
-  box "mkdir -p .local/share/prized-conductor" >/dev/null || { rm -f "$t"; die "couldn't reach the box"; }
-  pz cp "$t" ":$HELPER" >/dev/null || { rm -f "$t"; die "couldn't copy the helper to the box"; }
-  rm -f "$t"
+  box "mkdir -p .local/share/prized-conductor" >/dev/null || die "couldn't reach the box"
+  pz cp "$t" ":$HELPER" >/dev/null || die "couldn't copy the helper to the box"
+}
+# check_branch BRANCH: stop when BRANCH has commits here that origin doesn't, since the box clones
+# from origin; warn when its worktree here has uncommitted changes.
+check_branch() {
+  local b=$1 ahead wt
+  git -C "$TOP" show-ref --verify --quiet "refs/heads/$b" || return 0
+  if ! git -C "$TOP" show-ref --verify --quiet "refs/remotes/origin/$b"; then
+    die "$b is only on this machine, and the box clones from origin. Push it first: git push -u origin $b"
+  fi
+  ahead=$(git -C "$TOP" rev-list --count "refs/remotes/origin/$b..refs/heads/$b" 2>/dev/null || echo 0)
+  [ "$ahead" = 0 ] || die "$b has $ahead commit(s) origin doesn't have. Push them first: git push origin $b"
+  wt=$(git -C "$TOP" worktree list --porcelain | awk -v ref="refs/heads/$b" '$1 == "worktree" { w = substr($0, 10) } $1 == "branch" && $2 == ref { print w; exit }')
+  if [ -n "$wt" ] && [ -n "$(git -C "$wt" status --porcelain 2>/dev/null | head -n 1)" ]; then
+    say "Note: $b has uncommitted changes in $wt. They stay on this machine; commit and push them to bring them."
+  fi
 }
 
 main() {
-  SRC='' AGENT=claude RUN=0 SETUP_FILE='' INSTALL_FILE='' FILES=ask BOX='' PORT_BASE=4100 ARCHIVE='' FORCE='' YES=0 COUNT=2
+  SRC='' AGENT=claude RUN=0 SETUP_FILE='' SETUP_MODE='' INSTALL_FILE='' FILES=ask BOX='' PORT_BASE=4100 ARCHIVE='' FORCE='' YES=0 COUNT=2
   BRANCHES=() PASS=()
   while [ $# -gt 0 ]; do
     case $1 in
@@ -98,7 +117,8 @@ main() {
       -n) [ $# -ge 2 ] || die "-n needs a number"; COUNT=$2; shift 2 ;;
       --agent) [ $# -ge 2 ] || die "--agent needs claude, codex or none"; AGENT=$2; shift 2 ;;
       --run) RUN=1; shift ;;
-      --setup) [ $# -ge 2 ] || die "--setup needs a file"; SETUP_FILE=$2; shift 2 ;;
+      --setup) [ $# -ge 2 ] || die "--setup needs a file"; SETUP_FILE=$2 SETUP_MODE=cloud; shift 2 ;;
+      --local-setup) [ $# -ge 2 ] || die "--local-setup needs a file"; SETUP_FILE=$2 SETUP_MODE=local; shift 2 ;;
       --install) [ $# -ge 2 ] || die "--install needs a file"; INSTALL_FILE=$2; shift 2 ;;
       --files) FILES=yes; shift ;;
       --no-files) FILES=no; shift ;;
@@ -119,7 +139,8 @@ main() {
   case $COUNT in '' | *[!0-9]*) die "-n takes a number, not $COUNT" ;; esac
   if [ "$COUNT" -lt 1 ] || [ "$COUNT" -gt 20 ]; then die "-n takes 1 to 20"; fi
   case $PORT_BASE in '' | *[!0-9]*) die "--port-base takes a port number" ;; esac
-  if [ "$PORT_BASE" -lt 1024 ] || [ "$PORT_BASE" -gt 65000 ]; then die "--port-base takes 1024 to 65000"; fi
+  # Box ports from 3000 to 9999 open at localhost on this machine; a workspace takes 10.
+  if [ "$PORT_BASE" -lt 3000 ] || [ "$PORT_BASE" -gt 9990 ]; then die "--port-base takes 3000 to 9990"; fi
   [ -z "$SETUP_FILE" ] || [ -f "$SETUP_FILE" ] || die "no setup script at $SETUP_FILE"
   [ -z "$INSTALL_FILE" ] || [ -f "$INSTALL_FILE" ] || die "no install script at $INSTALL_FILE"
   if [ ${#BRANCHES[@]} -eq 0 ]; then
@@ -133,13 +154,23 @@ main() {
     esac
   done
   [ -z "$BOX" ] || export PRIZED_BOX=$BOX
+  local BX=${BOX:+ --box $BOX}
 
   command -v prized >/dev/null 2>&1 || die "the Prized CLI isn't installed. Sign up at https://prized.dev/sign-in?via=conductor (the tour installs it and signs this machine in), then run this again"
   command -v git >/dev/null 2>&1 || die "git isn't installed"
+  WORK=$(mktemp -d "${TMPDIR:-/tmp}/prized-conductor.XXXXXX")
+  trap cleanup EXIT
 
-  local TOP='' SLUG='' NAME
+  local SLUG='' NAME main_wt
+  TOP=''
   if [ -z "$SRC" ] || [ -d "$SRC" ]; then
     TOP=$(git -C "${SRC:-.}" rev-parse --show-toplevel 2>/dev/null) || die "${SRC:-this folder} is not a git checkout. Run this in your repo's main checkout, or pass owner/repo"
+    # In a Conductor workspace (a linked worktree), the repo is the main checkout it came from.
+    main_wt=$(git -C "$TOP" worktree list --porcelain | awk '$1 == "worktree" { print substr($0, 10); exit }')
+    if [ -n "$main_wt" ] && [ -d "$main_wt/.git" ] && [ "$main_wt" != "$TOP" ]; then
+      say "This folder is a worktree of $main_wt; moving that repo."
+      TOP=$main_wt
+    fi
     git -C "$TOP" remote get-url origin >/dev/null 2>&1 || die "$TOP has no origin remote. Push it to GitHub first: the box clones it from there"
     NAME=$(name_for "$(basename "$TOP")")
   else
@@ -157,12 +188,15 @@ main() {
     NAME=$(name_for "${SLUG#*/}")
   fi
   [ -n "$NAME" ] || die "can't make a folder name for the box from ${SRC:-$TOP}"
-  local ROOT=code/$NAME started=$SECONDS
+  local ROOT=code/$NAME STATE=.local/share/prized-conductor/$NAME started=$SECONDS
 
   if [ -n "$ARCHIVE" ]; then
     put_helper
     box "python3 -I $HELPER archive $(q "$ROOT") --project $(q "$NAME") $(q "$ARCHIVE")$FORCE"
     return
+  fi
+  if [ -n "$TOP" ]; then
+    for b in "${BRANCHES[@]}"; do check_branch "$b"; done
   fi
 
   # 1. The repo on the box, with your agent and gh signed in there: prized setup.
@@ -185,59 +219,76 @@ main() {
   box "test -d $ROOT/.git" >/dev/null 2>&1 || die "prized setup didn't put $NAME at ~/$ROOT on the box (exit $code). Fix what it said above, then run this again"
   [ "$code" = 0 ] || say "prized setup exited $code, but the repo is on the box, so carrying on"
   put_helper
+  box "mkdir -p $STATE" >/dev/null
 
-  # 2. The files only this checkout has: Conductor's local settings and the Cloud scripts you saved.
+  # 2. The files only this machine has: Conductor's local and user settings, and the scripts you saved.
   if [ -n "$TOP" ] && [ -f "$TOP/.conductor/settings.local.toml" ] && ! git -C "$TOP" ls-files --error-unmatch .conductor/settings.local.toml >/dev/null 2>&1; then
     box "mkdir -p $ROOT/.conductor" >/dev/null
     pz cp "$TOP/.conductor/settings.local.toml" ":$ROOT/.conductor/settings.local.toml" >/dev/null && say "Copied .conductor/settings.local.toml"
   fi
-  [ -z "$SETUP_FILE" ] || pz cp "$SETUP_FILE" ":.local/share/prized-conductor/$NAME.setup.sh" >/dev/null
+  if [ -f "$HOME/.conductor/settings.toml" ]; then
+    pz cp "$HOME/.conductor/settings.toml" ":$STATE/user-settings.toml" >/dev/null && say "Copied your ~/.conductor/settings.toml (read under the repo's settings)"
+  fi
+  [ -z "$SETUP_FILE" ] || pz cp "$SETUP_FILE" ":$STATE/setup.sh" >/dev/null
   if [ -n "$INSTALL_FILE" ]; then
-    pz cp "$INSTALL_FILE" ":.local/share/prized-conductor/install.sh" >/dev/null
-    say "Running $(basename "$INSTALL_FILE") once on the box, from your home folder:"
-    box "bash -l -c 'set -euo pipefail; . .local/share/prized-conductor/install.sh'" >&2 ||
+    pz cp "$INSTALL_FILE" ":$STATE/install.sh" >/dev/null
+    say "Running $(basename "$INSTALL_FILE") on the box, from your home folder:"
+    box "bash -l -c 'set -euo pipefail; . $STATE/install.sh'" >&2 ||
       die "$(basename "$INSTALL_FILE") failed on the box. The box runs Ubuntu 24.04, so dnf lines become apt-get. Fix it, then run this again"
   fi
 
   # 3. What the repo's Conductor config holds, and the gitignored files Conductor copies.
   local PATTERNS
-  PATTERNS=$(box "python3 -I $HELPER plan $(q "$ROOT")${SETUP_FILE:+ --setup}") || die "couldn't read the Conductor config on the box"
+  PATTERNS=$(box "python3 -I $HELPER plan $(q "$ROOT") --project $(q "$NAME")${SETUP_MODE:+ --setup-mode $SETUP_MODE}") || die "couldn't read the Conductor config on the box"
+  # A .worktreeinclude here wins, committed or not, as it does for Conductor on this machine.
+  [ -z "$TOP" ] || [ ! -f "$TOP/.worktreeinclude" ] || PATTERNS=$(cat "$TOP/.worktreeinclude")
   if [ "$FILES" != no ] && [ -n "$TOP" ] && [ -n "$PATTERNS" ]; then
-    local pat list n tgz
-    pat=$(tmpfile) list=$(tmpfile)
+    local pat raw list n f v skip tgz venvs=()
+    pat=$(tmpfile) raw=$(tmpfile) list=$(tmpfile)
     printf '%s\n' "$PATTERNS" >"$pat"
     # Conductor copies a file when it matches a pattern and git ignores it.
     git -C "$TOP" ls-files -z --others --ignored --exclude-from="$pat" 2>/dev/null |
-      git -C "$TOP" check-ignore -z --stdin >"$list" 2>/dev/null || true
+      git -C "$TOP" check-ignore -z --stdin >"$raw" 2>/dev/null || true
+    # Leave out dependency folders a pattern can catch: node_modules, or a virtualenv named .env.
+    while IFS= read -r -d '' f; do
+      case $f in */pyvenv.cfg) venvs+=("${f%pyvenv.cfg}") ;; esac
+    done <"$raw"
+    while IFS= read -r -d '' f; do
+      case /$f in */node_modules/*) continue ;; esac
+      skip=0
+      for v in ${venvs[@]+"${venvs[@]}"}; do
+        case $f in "$v"*) skip=1; break ;; esac
+      done
+      [ "$skip" = 1 ] || printf '%s\0' "$f"
+    done <"$raw" >"$list"
     n=$(tr -cd '\0' <"$list" | wc -c | tr -d ' ')
     if [ "$n" -gt 0 ]; then
       say "Conductor copies $n gitignored file(s) from this checkout into each workspace:"
-      tr '\0' '\n' <"$list" | head -n 15 | sed 's/^/  /' >&2
+      tr '\0' '\n' <"$list" | sed -n '1,15s/^/  /p' >&2
       [ "$n" -le 15 ] || say "  and $((n - 15)) more"
       if [ "$FILES" = yes ] || ask "Copy them to the box too? They can hold secrets."; then
         tgz=$(tmpfile)
         COPYFILE_DISABLE=1 tar -C "$TOP" -czf "$tgz" --null -T "$list"
-        pz cp "$tgz" ":.local/share/prized-conductor/files.tgz" >/dev/null
-        box "tar -xzpf .local/share/prized-conductor/files.tgz -C $ROOT --warning=no-unknown-keyword; s=\$?; rm -f .local/share/prized-conductor/files.tgz; exit \$s" >&2 ||
+        pz cp "$tgz" ":$STATE/files.tgz" >/dev/null
+        pz cp "$list" ":$STATE/files.list" >/dev/null
+        box "tar -xzpf $STATE/files.tgz -C $ROOT --warning=no-unknown-keyword; s=\$?; rm -f $STATE/files.tgz; exit \$s" >&2 ||
           die "couldn't unpack them on the box"
-        rm -f "$tgz"
       else
         say "  Not copied: --files copies them, --no-files stops this question."
       fi
     fi
-    rm -f "$pat" "$list"
   fi
 
   # 4. A worktree per workspace, set up the way Conductor sets one up, each with its own tmux session.
-  local APPLY OUT
+  local APPLY OUT failed=0
   APPLY="python3 -I $HELPER apply $(q "$ROOT") --project $(q "$NAME") --agent $AGENT --port-base $PORT_BASE"
   [ "$RUN" = 0 ] || APPLY="$APPLY --run"
-  [ -z "$SETUP_FILE" ] || APPLY="$APPLY --setup $(q ".local/share/prized-conductor/$NAME.setup.sh")"
+  [ -z "$SETUP_FILE" ] || APPLY="$APPLY --setup $(q "$STATE/setup.sh") --setup-mode $SETUP_MODE"
   for b in "${BRANCHES[@]}"; do APPLY="$APPLY $(q "$b")"; done
-  OUT=$(box "$APPLY") || die "setting up the workspaces failed (above). Fix it and run this again: it picks up where it stopped"
+  OUT=$(box "$APPLY") || failed=1
 
   # 5. An agent in each workspace, through prized agents run.
-  local AGENT_ARGS=() ROWS=() kind ws branch dir port setup session first='' r
+  local AGENT_ARGS=() ROWS=() kind ws branch dir port setup session first='' r out errors=0
   case $AGENT in
     claude) AGENT_ARGS=(--permission-mode auto) ;;
     codex) AGENT_ARGS=(--sandbox workspace-write --ask-for-approval never) ;;
@@ -246,26 +297,35 @@ main() {
     [ "$kind" = ws ] || continue
     if [ "$session" != - ]; then
       [ -n "$first" ] || first=$session
-      pz agents run "$AGENT" --session "$session" --dir "$dir" -- ${AGENT_ARGS[@]+"${AGENT_ARGS[@]}"} >/dev/null 2>&1 ||
-        say "$ws: $AGENT didn't start. Start it with: prized agents run $AGENT --session $session --dir $dir"
+      out=$(pz agents run "$AGENT" --session "$session" --dir "$dir" -- ${AGENT_ARGS[@]+"${AGENT_ARGS[@]}"} 2>&1) || {
+        say "$ws: $AGENT didn't start: $(printf '%s\n' "$out" | tail -n 3)"
+        say "  Start it with: prized agents run$BX $AGENT --session $session --dir $dir"
+      }
     fi
+    case $setup in ok | none) ;; *) errors=$((errors + 1)) ;; esac
     r="  $ws (branch $branch): ~/$dir, CONDUCTOR_PORT $port, setup $setup"
-    [ "$session" = - ] || r="$r, prized ssh -s $session"
+    [ "$session" = - ] || r="$r, prized ssh$BX -s $session"
     ROWS+=("$r")
   done <<EOF
 $OUT
 EOF
+  [ "$failed" = 0 ] || die "setting up the workspaces stopped (above). Fix it and run this again: it picks up where it stopped"
 
   local t=$((SECONDS - started))
   say ""
-  say "Moved in $((t / 60))m$((t % 60))s. $NAME is on your box at ~/$ROOT, with a worktree per workspace:"
+  if [ "$errors" = 0 ]; then
+    say "Moved in $((t / 60))m$((t % 60))s. $NAME is on your box at ~/$ROOT, with a worktree per workspace:"
+  else
+    say "Moved in $((t / 60))m$((t % 60))s, but $errors workspace(s) need you (above). $NAME is on your box at ~/$ROOT:"
+  fi
   for r in ${ROWS[@]+"${ROWS[@]}"}; do say "$r"; done
   say ""
-  [ -z "$first" ] || say "Open an agent:  prized ssh -s $first   (leave it running: Ctrl-b, then d)"
-  say "All sessions:   prized ssh --ls"
+  [ -z "$first" ] || say "Open an agent:  prized ssh$BX -s $first   (leave it running: Ctrl-b, then d)"
+  say "All sessions:   prized ssh$BX --ls"
   say "Ports:          a server on its CONDUCTOR_PORT opens at localhost on this machine"
   say "Archive one:    run this again with --archive BRANCH"
   say "Variables and secrets your Cloud Computer set go on the box page's Settings tab."
+  [ "$errors" = 0 ]
 }
 
 # The Python that runs on the box (python3 -I, standard library only). --print-helper prints it.
@@ -330,10 +390,11 @@ def text(v):
     return str(v)
 
 
-def read_config(root, mode):
+def read_config(root, mode, user=""):
     """The repo's Conductor config, read as Conductor reads it: .conductor/settings.toml when it
     exists (Conductor then ignores conductor.json), else the legacy conductor.json, with
-    .conductor/settings.local.toml over either."""
+    .conductor/settings.local.toml over either and your ~/.conductor/settings.toml (copied from
+    your Mac to USER) under them."""
     cfg, sources = {}, []
     shared = os.path.join(root, ".conductor", "settings.toml")
     legacy = os.path.join(root, "conductor.json")
@@ -360,6 +421,9 @@ def read_config(root, mode):
     if os.path.isfile(local):
         cfg = merge(cfg, load_toml(local))
         sources.append(".conductor/settings.local.toml")
+    if user and os.path.isfile(user):
+        cfg = merge(load_toml(user), cfg)
+        sources.append("~/.conductor/settings.toml")
 
     scripts = cfg.get("scripts") if isinstance(cfg.get("scripts"), dict) else {}
     setup = scripts.get("setup") if isinstance(scripts.get("setup"), str) else ""
@@ -371,6 +435,11 @@ def read_config(root, mode):
     elif isinstance(run, dict):
         for aid, a in run.items():
             if not isinstance(a, dict) or a.get("hide") is True:
+                continue
+            where = a.get("available_in")
+            if isinstance(where, str):
+                where = [where]
+            if isinstance(where, list) and mode not in where:
                 continue
             cmd = a.get("command")
             if not isinstance(cmd, str) or not cmd.strip():
@@ -433,11 +502,11 @@ def first_line(s, width=70):
 def describe(c, setup_override):
     say("Conductor config: " + (", ".join(c["sources"]) or "none in the repo"))
     if setup_override:
-        say("  setup    your --setup script")
+        say("  setup    the script you passed")
     elif c["setup"]:
         say("  setup    " + first_line(c["setup"]))
     else:
-        say("  setup    none (no setup script in the repo)")
+        say("  setup    none in the repo; one set in Conductor's settings needs --local-setup FILE")
     for a in c["actions"]:
         say("  run      %s%s: %s" % (a["id"], " (default)" if a["default"] and len(c["actions"]) > 1 else "", first_line(a["command"], 60)))
     if c["archive"]:
@@ -455,7 +524,9 @@ def describe(c, setup_override):
 def git(cwd, *args, check=True, inp=None):
     r = subprocess.run(["git", "-C", cwd] + list(args), input=inp, capture_output=True, text=True, env={**os.environ, "GIT_TERMINAL_PROMPT": "0"})
     if check and r.returncode != 0:
-        raise RuntimeError((r.stderr or r.stdout).strip().splitlines()[-1] if (r.stderr or r.stdout).strip() else "git %s failed" % args[0])
+        lines = (r.stderr or r.stdout).strip().splitlines()
+        main = [x for x in lines if x.startswith(("fatal:", "error:"))]
+        raise RuntimeError(" ".join(main or lines[-1:]) or "git %s failed" % args[0])
     return r
 
 
@@ -469,9 +540,19 @@ def default_branch(root):
     return git(root, "rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
 
 
-def files_to_copy(root, patterns):
+def skip_bulk(paths):
+    """Leave out dependency folders a pattern can catch (node_modules, or a virtualenv named .env):
+    a setup script makes those, and copying them is slow and stale."""
+    venvs = [p[: -len("pyvenv.cfg")] for p in paths if p.endswith("/pyvenv.cfg")]
+    return [p for p in paths if "node_modules/" not in "/" + p and not any(p.startswith(v) for v in venvs)]
+
+
+def files_to_copy(root, patterns, listed):
     """Untracked files under root that match the patterns and that git ignores: what Conductor's
-    Files to copy copies into a new workspace."""
+    Files to copy copies into a new workspace. LISTED, when your Mac sent its list, is that list."""
+    if os.path.isfile(listed):
+        with open(listed, encoding="utf-8", errors="surrogateescape") as f:
+            return [p for p in f.read().split("\0") if p and os.path.lexists(os.path.join(root, p))]
     if not patterns:
         return []
     with tempfile.NamedTemporaryFile("w", delete=False) as f:
@@ -485,7 +566,7 @@ def files_to_copy(root, patterns):
         return []
     r = git(root, "check-ignore", "-z", "--stdin", check=False, inp="\0".join(cands) + "\0")
     ignored = {p for p in r.stdout.split("\0") if p}
-    return [p for p in cands if p in ignored]
+    return skip_bulk([p for p in cands if p in ignored])
 
 
 def slug_for(branch):
@@ -525,7 +606,8 @@ def load_state(path):
 
 
 def save_state(path, st):
-    with open(path, "w", encoding="utf-8") as f:
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)  # it holds the workspace's variables
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
         json.dump(st, f, indent=1)
 
 
@@ -630,7 +712,7 @@ def ensure_tools(root, setup, sdir):
         mise = '"$HOME/.local/bin/mise"'
         if install(
             "Ruby %s with mise" % ver,
-            "sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq %s; [ -x %s ] || curl -fsSL https://mise.run | MISE_INSTALL_PATH=$HOME/.local/bin/mise sh; %s settings ruby.compile=false; %s use -g ruby@%s" % (RUBY_DEPS, mise, mise, mise, shlex.quote(ver)),
+            "a='sudo -n env DEBIAN_FRONTEND=noninteractive apt-get'; $a install -y -qq %s || { $a update -qq && $a install -y -qq %s; }; [ -x %s ] || curl -fsSL https://mise.run | MISE_INSTALL_PATH=$HOME/.local/bin/mise sh; %s settings ruby.compile=false; %s use -g ruby@%s" % (RUBY_DEPS, RUBY_DEPS, mise, mise, mise, shlex.quote(ver)),
             log,
         ):
             add_profile_hook(MISE_HOOK)
@@ -645,16 +727,83 @@ def ensure_tools(root, setup, sdir):
         say("box: this repo uses Git LFS, which a fresh box lacks: sudo apt-get install -y git-lfs, then git lfs pull in each worktree")
 
 
+def user_settings(project):
+    return os.path.join(STATE, project, "user-settings.toml")
+
+
 def cmd_plan(a):
-    c = read_config(os.path.join(HOME, a.root), "cloud" if a.setup else "local")
-    describe(c, a.setup)
+    mode = "cloud" if a.setup_mode == "cloud" else "local"
+    c = read_config(os.path.join(HOME, a.root), mode, user_settings(a.project))
+    describe(c, bool(a.setup_mode))
     print(c["patterns"])
+
+
+def workspace_env(c, mode, s, wdir, root, base, port):
+    env = dict(c["env"])
+    env.update(
+        {
+            "CONDUCTOR_WORKSPACE_NAME": s,
+            "CONDUCTOR_WORKSPACE_PATH": wdir,
+            "CONDUCTOR_ROOT_PATH": root if mode == "local" else wdir,
+            "CONDUCTOR_DEFAULT_BRANCH": base,
+            "CONDUCTOR_PORT": str(port),
+            "CONDUCTOR_IS_LOCAL": "1" if mode == "local" else "0",
+        }
+    )
+    if mode == "cloud":
+        env["CONDUCTOR_BASE_DIR"] = os.path.dirname(wdir)
+    return env
+
+
+def session_for(kind, s, project, st, stp, taken):
+    """The tmux session for this workspace's agent or run script: kind-branch, as the guide names
+    sessions, unless another repo's workspace or something else on the box has that name; then
+    kind-repo-branch. Recorded in the workspace's state, so a re-run finds the same one."""
+    sessions = st.get("sessions") if isinstance(st.get("sessions"), dict) else {}
+    if isinstance(sessions.get(kind), str):
+        return sessions[kind]
+    n = 1
+    while True:
+        for cand in ("%s-%s" % (kind, s), "%s-%s-%s" % (kind, project, s)):
+            cand = re.sub(r"[.:]", "-", cand) + ("-%d" % n if n > 1 else "")
+            if cand not in taken and not has_session(cand):
+                sessions[kind] = cand
+                st["sessions"] = sessions
+                save_state(stp, st)
+                taken.add(cand)
+                return cand
+        n += 1
+
+
+def add_worktree(root, wdir, b, base, start, st):
+    """The worktree for branch b at wdir: True when this run made it."""
+    if os.path.exists(wdir):
+        common = git(wdir, "rev-parse", "--path-format=absolute", "--git-common-dir", check=False).stdout.strip()
+        if os.path.realpath(common) != os.path.realpath(os.path.join(root, ".git")):
+            raise RuntimeError("%s is already there and is not a worktree of %s" % (tilde(wdir), tilde(root)))
+        if st.get("branch") not in (None, b):
+            raise RuntimeError("%s is the workspace for %s; pick a name that differs in more than punctuation" % (tilde(wdir), st["branch"]))
+        say("%s: worktree %s is already there" % (slug_for(b), tilde(wdir)))
+        return False
+    if git(root, "show-ref", "--verify", "--quiet", "refs/heads/" + b, check=False).returncode == 0:
+        if git(root, "rev-parse", "--abbrev-ref", "HEAD", check=False).stdout.strip() == b:
+            raise RuntimeError("%s is checked out in %s itself (setup checks out the branch your Mac was on); run git -C %s checkout %s, then this again" % (b, tilde(root), tilde(root), base))
+        git(root, "worktree", "add", "--quiet", wdir, b)
+        how = "branch %s" % b
+    elif git(root, "show-ref", "--verify", "--quiet", "refs/remotes/origin/" + b, check=False).returncode == 0:
+        git(root, "worktree", "add", "--quiet", "--track", "-b", b, wdir, "origin/" + b)
+        how = "branch %s from origin" % b
+    else:
+        git(root, "worktree", "add", "--quiet", "--no-track", "-b", b, wdir, start)
+        how = "new branch %s from %s" % (b, start)
+    say("%s: worktree %s on %s" % (slug_for(b), tilde(wdir), how))
+    return True
 
 
 def cmd_apply(a):
     root = os.path.join(HOME, a.root)
-    mode = "cloud" if a.setup else "local"
-    c = read_config(root, mode)
+    mode = "cloud" if a.setup_mode == "cloud" else "local"
+    c = read_config(root, mode, user_settings(a.project))
     setup = c["setup"]
     if a.setup:
         with open(os.path.join(HOME, a.setup), encoding="utf-8", errors="replace") as f:
@@ -671,13 +820,18 @@ def cmd_apply(a):
 
     if git(root, "fetch", "--prune", "--quiet", "origin", check=False).returncode != 0:
         say("  (couldn't fetch from origin; new branches start from what the box has)")
-    base = default_branch(root)
+    git(root, "worktree", "prune", check=False)  # worktrees whose folder is gone still hold their branch
+    try:
+        base = default_branch(root)
+    except RuntimeError as e:
+        die("can't tell %s's default branch: %s" % (tilde(root), e))
     start = "origin/" + base if git(root, "show-ref", "--verify", "--quiet", "refs/remotes/origin/" + base, check=False).returncode == 0 else base
-    copy = files_to_copy(root, c["patterns"])
+    copy = files_to_copy(root, c["patterns"], os.path.join(sdir, "files.list"))
     ensure_tools(root, setup, sdir)
 
     # Every workspace's ports and tmux sessions on this box, across repos, so two never share one.
     used, taken = set(), set()
+    mine = {slug_for(b) + ".json" for b in a.branches}
     for proj in os.listdir(STATE):
         pdir = os.path.join(STATE, proj)
         for name in os.listdir(pdir) if os.path.isdir(pdir) else []:
@@ -685,7 +839,7 @@ def cmd_apply(a):
                 other = load_state(os.path.join(pdir, name))
                 if isinstance(other.get("port"), int):
                     used.add(other["port"])
-                if isinstance(other.get("sessions"), dict) and not (proj == a.project and name in {slug_for(b) + ".json" for b in a.branches}):
+                if isinstance(other.get("sessions"), dict) and not (proj == a.project and name in mine):
                     taken.update(v for v in other["sessions"].values() if isinstance(v, str))
     run_started = 0
     for b in a.branches:
@@ -693,26 +847,10 @@ def cmd_apply(a):
         wdir = os.path.join(os.path.dirname(root), "%s-%s" % (a.project, s))
         stp = os.path.join(sdir, s + ".json")
         st = load_state(stp)
-        status, session = "", "-"
+        status, session, port = "", "-", "-"
         try:
-            if os.path.exists(wdir):
-                common = git(wdir, "rev-parse", "--path-format=absolute", "--git-common-dir", check=False).stdout.strip()
-                if os.path.realpath(common) != os.path.realpath(os.path.join(root, ".git")):
-                    raise RuntimeError("%s is already there and is not a worktree of %s" % (tilde(wdir), tilde(root)))
-                say("%s: worktree %s is already there" % (s, tilde(wdir)))
-            else:
-                if git(root, "show-ref", "--verify", "--quiet", "refs/heads/" + b, check=False).returncode == 0:
-                    if git(root, "rev-parse", "--abbrev-ref", "HEAD", check=False).stdout.strip() == b:
-                        raise RuntimeError("%s is checked out in %s itself (setup checks out the branch your Mac was on); run git -C %s checkout %s, then this again" % (b, tilde(root), tilde(root), base))
-                    git(root, "worktree", "add", "--quiet", wdir, b)
-                    how = "branch %s" % b
-                elif git(root, "show-ref", "--verify", "--quiet", "refs/remotes/origin/" + b, check=False).returncode == 0:
-                    git(root, "worktree", "add", "--quiet", "--track", "-b", b, wdir, "origin/" + b)
-                    how = "branch %s from origin" % b
-                else:
-                    git(root, "worktree", "add", "--quiet", "--no-track", "-b", b, wdir, start)
-                    how = "new branch %s from %s" % (b, start)
-                say("%s: worktree %s on %s" % (s, tilde(wdir), how))
+            if add_worktree(root, wdir, b, base, start, st):
+                st.pop("setup", None)  # a new worktree needs its setup, whatever ran in an old one
             n = 0
             for rel in copy:
                 dst = os.path.join(wdir, rel)
@@ -730,20 +868,8 @@ def cmd_apply(a):
                 while any(abs(port - u) < 10 for u in used):  # each workspace has 10 ports
                     port += 10
             used.add(port)
-            env = dict(c["env"])
-            env.update(
-                {
-                    "CONDUCTOR_WORKSPACE_NAME": s,
-                    "CONDUCTOR_WORKSPACE_PATH": wdir,
-                    "CONDUCTOR_ROOT_PATH": root if mode == "local" else wdir,
-                    "CONDUCTOR_DEFAULT_BRANCH": base,
-                    "CONDUCTOR_PORT": str(port),
-                    "CONDUCTOR_IS_LOCAL": "1" if mode == "local" else "0",
-                }
-            )
-            if mode == "cloud":
-                env["CONDUCTOR_BASE_DIR"] = os.path.dirname(wdir)
-            st.update({"branch": b, "dir": wdir, "port": port})
+            env = workspace_env(c, mode, s, wdir, root, base, port)
+            st.update({"branch": b, "dir": wdir, "port": port, "env": env})
             save_state(stp, st)
             sh_env_file(os.path.join(sdir, s + ".env"), env)
 
@@ -769,32 +895,13 @@ def cmd_apply(a):
                 st["setup"] = status
                 save_state(stp, st)
 
-            sessions = st.get("sessions") if isinstance(st.get("sessions"), dict) else {}
-
-            def session_for(kind):
-                """kind-branch, as the guide names sessions, unless another repo's workspace or
-                something else on the box has that name; then kind-repo-branch."""
-                if isinstance(sessions.get(kind), str):
-                    return sessions[kind]
-                n = 1
-                while True:
-                    for cand in ("%s-%s" % (kind, s), "%s-%s-%s" % (kind, a.project, s)):
-                        cand = re.sub(r"[.:]", "-", cand) + ("-%d" % n if n > 1 else "")
-                        if cand not in taken and not has_session(cand):
-                            sessions[kind] = cand
-                            st["sessions"] = sessions
-                            save_state(stp, st)
-                            taken.add(cand)
-                            return cand
-                    n += 1
-
             if a.agent != "none":
-                session = session_for(a.agent)
+                session = session_for(a.agent, s, a.project, st, stp, taken)
                 if not has_session(session):
                     new_session(session, wdir, env)
             if a.run and c["actions"]:
                 act = next(x for x in c["actions"] if x["default"])
-                rs = session_for("run")
+                rs = session_for("run", s, a.project, st, stp, taken)
                 if c["run_mode"] == "nonconcurrent" and run_started:
                     say("%s: run script not started: run_mode is nonconcurrent, and one runs already" % s)
                 elif has_session(rs):
@@ -809,10 +916,9 @@ def cmd_apply(a):
                     tmux("send-keys", "-t", "=" + rs + ":", "Enter")
                     say("%s: run script started on port %d: prized ssh -s %s" % (s, port, rs))
                     run_started += 1
-        except RuntimeError as e:
+        except (RuntimeError, OSError, subprocess.SubprocessError) as e:
             say("%s: %s" % (s, e))
-            status = status or "error"
-            print("\t".join(["ws", s, b, os.path.relpath(wdir, HOME), "-", status, "-"]), flush=True)
+            print("\t".join(["ws", s, b, os.path.relpath(wdir, HOME), str(port), status or "error", "-"]), flush=True)
             continue
         print("\t".join(["ws", s, b, os.path.relpath(wdir, HOME), str(port), status, session]), flush=True)
 
@@ -827,21 +933,15 @@ def cmd_archive(a):
     dirty = git(wdir, "status", "--porcelain", check=False).stdout.splitlines()
     if dirty and not a.force:
         die("%s has %d uncommitted change(s); commit and push them, or add --force to throw them away" % (tilde(wdir), len(dirty)))
-    c = read_config(root, "local")
-    env = {}
-    envf = os.path.join(sdir, s + ".env")
-    if os.path.isfile(envf):
-        with open(envf) as f:
-            for line in f:
-                k, _, v = line[len("export ") :].rstrip("\n").partition("=")
-                env[k] = (shlex.split(v) or [""])[0]
+    st = load_state(os.path.join(sdir, s + ".json"))
+    env = {k: v for k, v in st.get("env", {}).items() if isinstance(v, str)} if isinstance(st.get("env"), dict) else {}
+    c = read_config(root, "cloud" if env.get("CONDUCTOR_IS_LOCAL") == "0" else "local", user_settings(a.project))
     if c["archive"]:
         say("%s: running the archive script" % s)
         r = subprocess.run(["bash", "-l", "-c", c["archive"]], cwd=wdir, env={**os.environ, **env}, stdin=subprocess.DEVNULL)
         if r.returncode != 0:
             die("the archive script failed (exit %d); the worktree stays" % r.returncode)
-    st = load_state(os.path.join(sdir, s + ".json"))
-    for name in (st.get("sessions") or {}).values() if isinstance(st.get("sessions"), dict) else []:
+    for name in st["sessions"].values() if isinstance(st.get("sessions"), dict) else []:
         if isinstance(name, str) and has_session(name):
             tmux("kill-session", "-t", "=" + name)
             say("%s: stopped session %s" % (s, name))
@@ -861,13 +961,15 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
     pl = sub.add_parser("plan")
     pl.add_argument("root")
-    pl.add_argument("--setup", action="store_true")
+    pl.add_argument("--project", required=True)
+    pl.add_argument("--setup-mode", choices=["cloud", "local"], default="")
     ap = sub.add_parser("apply")
     ap.add_argument("root")
     ap.add_argument("--project", required=True)
     ap.add_argument("--agent", default="claude", choices=["claude", "codex", "none"])
     ap.add_argument("--port-base", type=int, default=4100)
     ap.add_argument("--setup", default="")
+    ap.add_argument("--setup-mode", choices=["cloud", "local"], default="")
     ap.add_argument("--run", action="store_true")
     ap.add_argument("branches", nargs="+")
     ar = sub.add_parser("archive")
