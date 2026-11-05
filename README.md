@@ -17,10 +17,10 @@ Each folder is its own package with its own README, tests and release. You need 
 | [`claude-managed-agents`](claude-managed-agents) | Claude Managed Agents: self-hosted environment | `on-work.sh` | Works now | [README](claude-managed-agents/README.md) |
 | [`cursor`](cursor) | Cursor Cloud Agents: Team Pool spawn hook (one sandbox per agent) | `spawn.sh` | Team Pools need Cursor Enterprise; not yet run in a real pool, tested end to end with a My Machines worker | [README](cursor/README.md) |
 | [`inspect`](inspect) | Inspect AI: sandbox environment | `inspect-prized` | Not on PyPI yet: install from this repo | [README](inspect/README.md) |
-| [`adk`](adk) | Google ADK: environment and code executor | `prized-adk` | Not on PyPI yet: install from this repo | [README](adk/README.md) |
-| [`strands`](strands) | Strands Agents: sandbox | `strands-prized` | Not on PyPI yet: install from this repo | [README](strands/README.md) |
-| [`agent-framework`](agent-framework) | Microsoft Agent Framework: shell tool and file store | `agent-framework-prized` | Not on PyPI yet: install from this repo | [README](agent-framework/README.md) |
-| [`pydantic-ai`](pydantic-ai) | Pydantic AI: workspace | `pydantic-ai-prized` | Not on PyPI yet: install from this repo | [README](pydantic-ai/README.md) |
+| [`adk`](adk) | Google ADK: environment and code executor | `prized-adk` | On PyPI: `pip install prized-adk` | [README](adk/README.md) |
+| [`strands`](strands) | Strands Agents: sandbox | `strands-prized` | On PyPI: `pip install strands-prized` | [README](strands/README.md) |
+| [`agent-framework`](agent-framework) | Microsoft Agent Framework: shell tool and file store | `agent-framework-prized` | On PyPI: `pip install agent-framework-prized` | [README](agent-framework/README.md) |
+| [`pydantic-ai`](pydantic-ai) | Pydantic AI: workspace | `pydantic-ai-prized` | On PyPI: `pip install pydantic-ai-prized` | [README](pydantic-ai/README.md) |
 | [`langchain-js`](langchain-js) | LangChain Deep Agents (JS): sandbox | `@prized/langchain` | Not on npm yet | [README](langchain-js/README.md) |
 | [`mastra`](mastra) | Mastra: workspace sandbox and filesystem | `@prized/mastra` | Not on npm yet | [README](mastra/README.md) |
 
