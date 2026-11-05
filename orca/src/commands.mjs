@@ -32,10 +32,13 @@ import {
   gitIdentity,
   makeBundle,
   parsePayload,
+  SAVE_NS,
   pullScript,
   readStdin,
   recipeResult,
   sandboxRemoteUrl,
+  saveBundleScript,
+  saveListScript,
   sourceFromOrca,
 } from "./recipe.mjs";
 import {
@@ -437,13 +440,185 @@ export async function resume(env = process.env) {
   say(`${p.id} is running again`);
 }
 
+// Remove Project from Orca. The workspace's work comes back to this machine first (saveBeforeRemove);
+// if that fails, the sandbox stays and Orca reports the failure, so nothing is lost.
 export async function destroy(env = process.env) {
   const p = parsePayload(await readStdin());
   const { client } = api(env);
+  // No record here (a state file set aside, an uninstall --force): Orca's payload and environment
+  // still name the checkout and the project.
+  // A partial record (suspend or resume after the state was lost) is filled in field by field.
+  const known = getEntry(p.id, env) ?? {};
+  const entry = { ...known, repoPath: known.repoPath || env.ORCA_REPO_PATH || process.cwd(), projectRoot: known.projectRoot || p.projectRoot || null };
+  if (entry.projectRoot) await saveBeforeRemove(client, p.id, entry, env);
+  else say(`no checkout is known for ${p.id}, so nothing could be saved from it`);
   const deleted = await client.remove(p.id);
   say(deleted ? `deleting ${p.id}` : `${p.id} was already gone`);
   dropEntry(p.id, env);
   if (fs.existsSync(paths(env).bin)) writeInclude(adapterPath(env), env);
+}
+
+export const savedPrefix = (id) => `prized-orca/saved/${id}`;
+
+// Where each saved ref goes in the project's repository: branches under their own names; the stash,
+// and each worktree's uncommitted changes and detached HEAD, under names that clash with no branch
+// of that sandbox (nor with one as a directory: `stash` beside `stash/x`).
+function savedNames(id, refs, worktrees) {
+  const taken = refs.filter((r) => r.startsWith("refs/heads/")).map((r) => r.slice("refs/heads/".length));
+  const clash = (n) => taken.some((t) => t === n || t.startsWith(`${n}/`) || n.startsWith(`${t}/`));
+  const free = (name) => {
+    let n = name;
+    for (let i = 2; clash(n); i++) n = `${name}-${i}`;
+    taken.push(n);
+    return n;
+  };
+  const label = (i) => {
+    if (i === "0") return "";
+    const base = path.basename(worktrees[i] ?? `worktree-${i}`).replace(/[^A-Za-z0-9._-]+/g, "-").replace(/^[-.]+|[-.]+$/g, "").replace(/\.\.+/g, ".").replace(/\.lock$/, "") || `worktree-${i}`;
+    return `-${base}`;
+  };
+  const special = (r) => {
+    if (r === "refs/stash") return "stash";
+    const m = new RegExp(`^${SAVE_NS}/(uncommitted|detached)/(\\d+)$`).exec(r);
+    if (!m) throw new UserError(`the sandbox listed an unexpected ref: ${r}`);
+    return `${m[1] === "detached" ? "detached-head" : "uncommitted"}${label(m[2])}`;
+  };
+  return Object.fromEntries(refs.map((r) => [r, `refs/heads/${savedPrefix(id)}/${r.startsWith("refs/heads/") ? r.slice("refs/heads/".length) : free(special(r))}`]));
+}
+
+// Copy what the workspace has that this machine doesn't into the project's repository here, as
+// branches under prized-orca/saved/<id>/: every branch, the latest stash, a detached HEAD, and the
+// uncommitted changes as one commit on top of HEAD. Only what this repository lacks is bundled and
+// downloaded; nothing new, nothing copied. A sandbox already gone or failed has nothing left to
+// save. Any other failure throws, so the caller keeps the sandbox.
+async function saveBeforeRemove(client, sid, entry, env) {
+  let sandbox = await client.get(sid);
+  if (!sandbox || ["deleting", "deleted"].includes(sandbox.state)) return;
+  if (sandbox.state === "error") {
+    // Its disk may still be there (a failed wake can leave it so): keep it rather than guess.
+    throw new UserError(
+      `${sid} is in error (${sandbox.errorReason ?? "no reason given"}), so its work can't be copied, and it was not deleted`,
+      `to delete it as it is: prized sandbox rm ${sid}, then remove the workspace in Orca again`,
+    );
+  }
+  let resumed = false;
+  let cancelled = false;
+  let pausing = null;
+  const sleepAgain = () =>
+    (pausing ??= resumed && getEntry(sid, env)?.asleep ? pauseFirmly(client, sid).catch((error) => say(`could not pause ${sid} again: ${error.message}`)) : Promise.resolve());
+  // Orca's Stop cleanup: SIGTERM, then SIGKILL 5 seconds later. Nothing is deleted then.
+  const onSignal = (signal) => {
+    cancelled = true;
+    sleepAgain().finally(() => {
+      trace({ cmd: "destroy", sandbox: sid, ok: false, cancelled: signal }, env);
+      process.exit(130);
+    });
+  };
+  process.once("SIGINT", onSignal);
+  process.once("SIGTERM", onSignal);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prized-orca-save-"));
+  try {
+    const repo = entry.repoPath && fs.existsSync(entry.repoPath) ? realpath(entry.repoPath) : null;
+    const top = repo ? git(["rev-parse", "--show-toplevel"], { cwd: repo, env }) : null;
+    if (!repo || top.status !== 0 || realpath(top.stdout.trim()) !== repo) throw new UserError(`the project's repository is not at ${entry.repoPath ?? "a recorded path"} any more`);
+    if (!entry.projectRoot) throw new UserError("no checkout is recorded for it");
+    const here = (args) => git(args, { cwd: repo, env });
+    if (sandbox.state === "pausing") sandbox = await client.waitFor(sid, ["paused", "running"]);
+    if (sandbox.state === "paused") {
+      say(`resuming ${sid} to save its work before deleting it…`);
+      resumed = true;
+      sandbox = await client.resume(sid);
+    } else if (sandbox.state !== "running") {
+      sandbox = await client.waitFor(sid, ["running"]);
+    }
+
+    const listed = await client.exec(sandbox, saveListScript({ root: entry.projectRoot }), 240);
+    if (listed.exitCode !== 0) throw new UserError(`reading the workspace's checkout failed (exit ${listed.exitCode}): ${plain(listed.stderr)}`);
+    const lines = listed.stdout.split("\n");
+    const refs = lines.filter((l) => l.startsWith("ref ")).map((l) => {
+      const [, commit, ...name] = l.split(" ");
+      return { commit, name: name.join(" ") };
+    });
+    const worktrees = Object.fromEntries(lines.filter((l) => l.startsWith("worktree ")).map((l) => /^worktree (\d+) (.*)$/.exec(l)?.slice(1) ?? []));
+    const nested = Number(/^nested (\d+)$/m.exec(listed.stdout)?.[1] ?? 0);
+    const end = /^end (\d+)$/m.exec(listed.stdout)?.[1];
+    // the whole list, or nothing: a cut-off answer would leave refs out
+    if (!refs.length || String(refs.length) !== end || refs.some((r) => !COMMIT_ID.test(r.commit) || !r.name.startsWith("refs/"))) {
+      throw new UserError(`the sandbox answered ${JSON.stringify(plain(listed.stdout).slice(-300))}`);
+    }
+    // What this repository already has (a commit some ref here contains) is not copied again.
+    const known = (c) => here(["cat-file", "-e", `${c}^{commit}`]).status === 0 && here(["for-each-ref", "--count=1", "--contains", c]).stdout.trim() !== "";
+    const want = refs.filter((r) => !known(r.commit));
+    if (nested) say(`note: ${nested} nested repositor${nested === 1 ? "y or submodule" : "ies or submodules"} in ${sid}: only the commit each one is at is saved, not its own work`);
+    if (!want.length) {
+      if (cancelled) throw new UserError("cancelled");
+      say(`${sid} has nothing this machine doesn't: nothing to save`);
+      trace({ cmd: "destroy", sandbox: sid, saved: null }, env);
+      return;
+    }
+    const base = COMMIT_ID.test(entry.baseCommit ?? "") ? [entry.baseCommit] : [];
+    const have = [...new Set(refs.filter((r) => !want.includes(r)).map((r) => r.commit))];
+    const names = savedNames(sid, refs.map((r) => r.name), worktrees);
+    const bundlePath = `${entry.projectRoot}/.git/prized-orca-save.bundle`;
+    const file = path.join(dir, "save.bundle");
+    const local = (c) => here(["cat-file", "-e", `${c}^{commit}`]).status === 0;
+    let landed = false;
+    // Without what this repository has: the start commit and the refs it already holds. If the
+    // start commit turns out to be missing here, again without it.
+    for (const not of base.length ? [[...base, ...have], have] : [have]) {
+      const made = await client.exec(sandbox, saveBundleScript({ root: entry.projectRoot, bundlePath, refs: want.map((r) => r.name), not }), 240);
+      if (made.exitCode !== 0) throw new UserError(`bundling the workspace's work failed (exit ${made.exitCode}): ${plain(made.stderr)}`);
+      if (made.stdout.trim().split("\n").pop() === "empty") {
+        // every commit is in what `not` names; fine if this repository has them all
+        if (!want.every((w) => local(w.commit))) continue;
+        for (const w of want) {
+          const u = here(["update-ref", names[w.name], w.commit]);
+          if (u.status !== 0) throw new UserError(`git could not save ${names[w.name]} in ${repo}: ${u.stderr.trim()}`);
+        }
+        landed = true;
+        break;
+      }
+      try {
+        fs.writeFileSync(file, await client.download(sandbox, bundlePath));
+      } finally {
+        await client.exec(sandbox, `rm -f ${sq(bundlePath)}`, 60).catch(() => {});
+      }
+      if (here(["bundle", "verify", "-q", file]).status !== 0) continue;
+      // git leaves out of a bundle a ref whose commit `not` already covers: that one must be here
+      const listedHeads = new Set(here(["bundle", "list-heads", file]).stdout.split("\n").map((l) => l.split(" ").slice(1).join(" ")));
+      const inBundle = want.filter((w) => listedHeads.has(w.name));
+      const outside = want.filter((w) => !listedHeads.has(w.name));
+      if (!outside.every((w) => local(w.commit))) continue;
+      if (inBundle.length) {
+        const r = here(["fetch", "--no-tags", "--no-recurse-submodules", file, ...inBundle.map((w) => `+${w.name}:${names[w.name]}`)]);
+        if (r.status !== 0) throw new UserError(`git could not save it in ${repo}: ${(r.stderr || r.stdout).trim()}`);
+      }
+      for (const w of outside) {
+        const u = here(["update-ref", names[w.name], w.commit]);
+        if (u.status !== 0) throw new UserError(`git could not save ${names[w.name]} in ${repo}: ${u.stderr.trim()}`);
+      }
+      landed = true;
+      break;
+    }
+    if (!landed) throw new UserError(`the bundle from ${sid} does not fit ${repo}`);
+    for (const w of want) {
+      if (here(["rev-parse", "--verify", "-q", names[w.name]]).stdout.trim() !== w.commit) throw new UserError(`${names[w.name]} did not land in ${repo}`);
+    }
+    const saved = want.map((w) => names[w.name].slice("refs/heads/".length));
+    say(`saved what ${sid} had that this machine didn't, as branches in ${repo}: ${saved.join(", ")}`);
+    trace({ cmd: "destroy", sandbox: sid, saved }, env);
+    if (cancelled) throw new UserError("cancelled");
+  } catch (error) {
+    await sleepAgain();
+    throw new UserError(
+      `could not copy the workspace's work from ${sid} to this machine, so the sandbox was not deleted: ${error.message}`,
+      `copy or push its work yourself, then remove the workspace in Orca again (Retry cleanup); or delete the sandbox as it is: prized sandbox rm ${sid}`,
+    );
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+    process.removeListener("SIGINT", onSignal);
+    process.removeListener("SIGTERM", onSignal);
+  }
 }
 
 // ---------------------------------------------------------------- pull
@@ -476,6 +651,52 @@ function realpath(p) {
   }
 }
 
+// pull's copy: a bundle made in the running sandbox (pullScript), downloaded through the API,
+// checked against the project's repository here, and fetched fast-forward only into the branch
+// `target` (default: the workspace's branch name).
+async function copyFromSandbox(client, sandbox, sid, entry, env, { target = null } = {}) {
+  const base = COMMIT_ID.test(entry.baseCommit ?? "") ? entry.baseCommit : null;
+  const bundlePath = `${entry.projectRoot}/.git/prized-orca-pull.bundle`;
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prized-orca-pull-"));
+  const here = (args) => git(args, { cwd: entry.repoPath, env });
+  try {
+    // From the start commit, which this repository has; the whole branch if it doesn't.
+    for (const since of base ? [base, null] : [null]) {
+      const run = await client.exec(sandbox, pullScript({ root: entry.projectRoot, bundlePath, base: since }), 240);
+      if (run.exitCode !== 0) throw new UserError(`reading the workspace's branch failed (exit ${run.exitCode}): ${plain(run.stderr)}`);
+      const [branch, head, dirty, count] = run.stdout.trim().split("\n").slice(-4);
+      const named = branch && here(["check-ref-format", "--branch", branch]).status === 0;
+      if (!named || !COMMIT_ID.test(head ?? "") || !Number.isInteger(Number(count))) throw new UserError(`the sandbox answered ${JSON.stringify(plain(run.stdout).slice(-300))}`);
+      const got = { branch, head, dirty: Number(dirty), commits: Number(count), since, target: target ?? branch, copied: false };
+      if (got.commits === 0) return got;
+      const file = path.join(dir, "pull.bundle");
+      try {
+        fs.writeFileSync(file, await client.download(sandbox, bundlePath));
+      } finally {
+        await client.exec(sandbox, `rm -f ${sq(bundlePath)}`, 60).catch(() => {});
+      }
+      if (here(["bundle", "verify", "-q", file]).status !== 0) {
+        if (since) continue;
+        throw new UserError(`the bundle from ${sid} does not fit ${entry.repoPath}`);
+      }
+      const r = here(["fetch", "--no-tags", "--no-recurse-submodules", file, `refs/heads/${branch}:refs/heads/${got.target}`]);
+      if (r.status !== 0) {
+        throw new UserError(
+          `git could not put ${branch} from ${sid} into the branch ${got.target} here: ${(r.stderr || r.stdout).trim()}`,
+          `if ${got.target} has commits the workspace's branch doesn't, or is checked out here, pull into a new branch: prized-orca pull ${sid} --as ${sq(`${branch}-sandbox`)}`,
+        );
+      }
+      got.copied = true;
+      return got;
+    }
+    throw new UserError(`the bundle from ${sid} does not fit ${entry.repoPath}`);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+const COMMIT_ID = /^[0-9a-f]{40}([0-9a-f]{24})?$/;
+
 const PULL_USAGE = "usage: prized-orca pull [ID] [--as BRANCH]";
 
 // What the sandbox printed, safe for a terminal: no control characters.
@@ -504,10 +725,7 @@ export async function pull(argv, env = process.env) {
   if (flags.as !== undefined && (typeof flags.as !== "string" || git(["check-ref-format", "--branch", flags.as], { cwd: entry.repoPath, env }).status !== 0)) {
     throw new UserError("--as needs a branch name", PULL_USAGE);
   }
-  const base = /^[0-9a-f]{40}([0-9a-f]{24})?$/.test(entry.baseCommit ?? "") ? entry.baseCommit : null;
   const { client } = api(env);
-  const bundlePath = `${entry.projectRoot}/.git/prized-orca-pull.bundle`;
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prized-orca-pull-"));
 
   // Put back to sleep only what Orca has asleep, and only while it still does: a wake in Orca
   // meanwhile, or an idle pause (which comes back by itself), is left running.
@@ -515,7 +733,6 @@ export async function pull(argv, env = process.env) {
   let sleeping = null;
   const sleepAgain = () =>
     (sleeping ??= (async () => {
-      fs.rmSync(dir, { recursive: true, force: true });
       if (!resumed || !getEntry(sid, env)?.asleep) return;
       say(`pausing ${sid} again…`);
       await pauseFirmly(client, sid).catch((error) => say(`could not pause it again: ${error.message}`));
@@ -539,42 +756,17 @@ export async function pull(argv, env = process.env) {
       sandbox = await client.waitFor(sid, ["running"]);
     }
 
-    // From the start commit, which this repository has; the whole branch if it doesn't.
-    let got;
-    for (const since of base ? [base, null] : [null]) {
-      const run = await client.exec(sandbox, pullScript({ root: entry.projectRoot, bundlePath, base: since }), 240);
-      if (run.exitCode !== 0) throw new UserError(`reading the workspace's branch failed (exit ${run.exitCode}): ${plain(run.stderr)}`);
-      const [branch, head, dirty, count] = run.stdout.trim().split("\n").slice(-4);
-      got = { branch, head, dirty: Number(dirty), count: Number(count), since, file: path.join(dir, "pull.bundle") };
-      const named = branch && git(["check-ref-format", "--branch", branch], { cwd: entry.repoPath, env }).status === 0;
-      if (!named || !/^[0-9a-f]{40}([0-9a-f]{24})?$/.test(head ?? "") || !Number.isInteger(got.count)) throw new UserError(`the sandbox answered ${JSON.stringify(plain(run.stdout).slice(-200))}`);
-      if (got.count === 0) break;
-      try {
-        fs.writeFileSync(got.file, await client.download(sandbox, bundlePath));
-      } finally {
-        await client.exec(sandbox, `rm -f ${sq(bundlePath)}`, 60).catch(() => {});
-      }
-      if (git(["bundle", "verify", "-q", got.file], { cwd: entry.repoPath, env }).status === 0) break;
-      if (!since) throw new UserError(`the bundle from ${sid} does not fit ${entry.repoPath}`);
-    }
-    const { branch, head, dirty, count, since } = got;
-    const target = typeof flags.as === "string" ? flags.as : branch;
-    if (count > 0) {
-      const r = git(["fetch", "--no-tags", "--no-recurse-submodules", got.file, `refs/heads/${branch}:refs/heads/${target}`], { cwd: entry.repoPath, env });
-      if (r.status !== 0) {
-        throw new UserError(
-          `git could not put ${branch} from ${sid} into the branch ${target} here: ${(r.stderr || r.stdout).trim()}`,
-          `if ${target} has commits the workspace's branch doesn't, or is checked out here, pull into a new branch: prized-orca pull ${sid} --as ${sq(`${branch}-sandbox`)}`,
-        );
-      }
-      const counted = `${count} commit${count === 1 ? "" : "s"}${since ? " since the workspace started" : ""}`;
+    const got = await copyFromSandbox(client, sandbox, sid, entry, env, { target: typeof flags.as === "string" ? flags.as : null });
+    const { branch, head, dirty, commits, since, target } = got;
+    if (got.copied) {
+      const counted = `${commits} commit${commits === 1 ? "" : "s"}${since ? " since the workspace started" : ""}`;
       say(`pulled ${branch} from ${sid} into ${entry.repoPath} as the branch ${target} (${head.slice(0, 12)}, ${counted})`);
       say(`push it from here with your own git sign-in: git -C ${sq(entry.repoPath)} push origin ${sq(target)}`);
     } else {
       say(`${branch} in ${sid} has no commits since the workspace started: nothing to pull`);
     }
     if (dirty > 0) say(`note: ${dirty} uncommitted change${dirty === 1 ? "" : "s"} in the workspace stayed there: commit ${dirty === 1 ? "it" : "them"} in the workspace, then pull again`);
-    trace({ cmd: "pull", sandbox: sid, commits: count, ok: true }, env);
+    trace({ cmd: "pull", sandbox: sid, commits, ok: true }, env);
   } finally {
     await sleepAgain();
     process.removeListener("SIGINT", onSignal);

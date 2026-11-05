@@ -40,13 +40,22 @@ You need Orca 1.4.245 or later on macOS or Linux, Node.js 22 or later, Git, Open
 | Create | Creates a sandbox (`prized-agent-v1`: Ubuntu 24.04 with Git, Node.js, Claude Code and Codex), uploads the exact commit Orca picked as a Git bundle (no Git credential goes in), checks it out on the workspace branch in `/home/prized/work/<repo>` with your Git name and email and your repository's HTTPS address as `origin`, opens a shell once with your login, and checks the SSH connection Orca will use. If a step fails, or you cancel in Orca, it deletes the sandbox. |
 | Sleep (right-click the workspace) | Orca first closes the workspace's terminals and agents. Then the plugin pauses the sandbox: its memory, files and the processes still running (a tmux session, or a process started with `setsid`) are kept, and only storage is billed. Orca's reconnects are refused while it sleeps, so nothing wakes it by accident. |
 | Wake (open the workspace) | Resumes the sandbox; the processes kept at sleep carry on, and Orca opens its terminals and agents again. |
-| Remove Project from Orca (right-click the workspace) | Deletes the sandbox, with every commit you haven't pushed or pulled ([Push your work](#push-your-work)). A Prized Sandbox workspace is its project's primary checkout, so Orca offers this instead of Delete Worktree. |
+| Remove Project from Orca (right-click the workspace) | First copies what the workspace has that your computer doesn't into your local repository, as branches under `prized-orca/saved/<sandbox id>/` (a sleeping workspace is woken for this). Then deletes the sandbox. If the copy fails, the sandbox is kept and Orca reports the failure ([Push your work](#push-your-work)). A Prized Sandbox workspace is its project's primary checkout, so Orca offers this instead of Delete Worktree. |
 
 While Orca is connected, the sandbox counts as in use and keeps running (and billing); sleep the workspace to pause it. Closing Orca stops nothing: with no connection open, the sandbox pauses itself after 30 idle minutes and keeps its memory, and the next connection from Orca resumes it.
 
 ## Push your work
 
-Removing the workspace deletes its sandbox and everything in it. Push first, one of two ways.
+Removing the workspace copies what it has that your computer doesn't to your local repository, as branches under `prized-orca/saved/<sandbox id>/`, then deletes the sandbox:
+
+- each of its branches with new commits, under the branch's own name;
+- `uncommitted`: the uncommitted changes, as one commit on top of the checked-out commit;
+- `stash`: the latest stash, and `detached-head`: the checked-out commit when no branch is checked out;
+- the same for any other worktree in the sandbox (Orca makes one for a new workspace on this host), named after its folder: `uncommitted-<folder>`, `detached-head-<folder>`.
+
+Files your `.gitignore` leaves out aren't copied, nor are older stashes and tags, and a nested repository or submodule is saved only as the commit it's at. If the copy fails, or the sandbox is in error, the sandbox stays: `prized-orca pull ID` still reaches it, and `prized sandbox rm ID` deletes it as it is. Push a saved branch like any other: `git push origin prized-orca/saved/<sandbox id>/<branch>:<branch>`.
+
+To push while the workspace runs, use one of two ways.
 
 **From this computer, with your own Git sign-in.** Nothing goes into the sandbox. Commit in the workspace, then run this in the project's folder:
 
@@ -103,7 +112,7 @@ Pass them to setup (`setup --vcpu 4`), or edit `~/.prized-orca/config.json`. New
 
 ## Uninstall
 
-Push what you want to keep ([Push your work](#push-your-work)), then remove each Prized Sandbox workspace in Orca (right-click it > **Remove Project from Orca**, which deletes its sandbox). Then remove the plugin under **Settings > Plugins**, and run:
+Remove each Prized Sandbox workspace in Orca (right-click it > **Remove Project from Orca**, which saves its work to your local repository and deletes its sandbox). Then remove the plugin under **Settings > Plugins**, and run:
 
 ```bash
 ~/.prized-orca/bin/prized-orca uninstall
@@ -119,7 +128,7 @@ npm test
 
 The offline tests run Orca's side from a stand-in written from Orca's published recipe contract (`test/orca-harness.mjs`), against a stand-in for the Prized API on `127.0.0.1` and a fake `prized` CLI. The SSH side is real OpenSSH: `ssh` with the plugin's include, and a local `sshd` set up like a sandbox (a certificate authority for users, a host certificate and the forced command). Without `sshd` the lifecycle tests are skipped.
 
-A live check creates one sandbox in your workspace and runs it through create, sleep, wake, a `pull` of a commit made in it while it sleeps, and delete. It checks that a process started before sleep is the same one after wake. It bills a few cents.
+A live check creates one sandbox in your workspace and runs it through create, sleep, wake, a `pull` of a commit made in it while it sleeps, and a Remove that saves its uncommitted change here before deleting it. It checks that a process started before sleep is the same one after wake. It bills a few cents.
 
 ```bash
 PRIZED_ORCA_LIVE=1 PRIZED_API_KEY=dcp_... node test/live.mjs

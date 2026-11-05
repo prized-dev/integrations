@@ -10,7 +10,17 @@ import { PrizedApi, PrizedApiError, apiBase, canWriteSandboxes } from "../src/ap
 import { PROBE_SANDBOX, prizedFailure, shellSignIn, sshHostname, versionOk } from "../src/cli.mjs";
 import { pauseFirmly, runtimeRefusal } from "../src/commands.mjs";
 import { keyFromLoginShell, resolveKey } from "../src/key.mjs";
-import { checkoutScript, parsePayload, pullScript, recipeResult, sandboxRemoteUrl, sourceFromOrca, stripCredentials } from "../src/recipe.mjs";
+import {
+  checkoutScript,
+  parsePayload,
+  pullScript,
+  recipeResult,
+  sandboxRemoteUrl,
+  saveBundleScript,
+  saveListScript,
+  sourceFromOrca,
+  stripCredentials,
+} from "../src/recipe.mjs";
 import {
   INCLUDE_MARK,
   addUserInclude,
@@ -384,11 +394,78 @@ describe("Orca's side", () => {
       g(box, "tag", "feat/x", repo.first);
       assert.deepEqual(run(repo.first), ["feat/x", head, "1", "1"]);
       assert.equal(spawnSync("git", ["bundle", "list-heads", bundlePath], { encoding: "utf8", env }).stdout.trim(), `${head} refs/heads/feat/x`);
+
       assert.throws(() => pullScript({ root: box, bundlePath, base: "HEAD; rm -rf ~" }), /not a commit id/);
       g(box, "checkout", "-q", "--detach");
       const detached = spawnSync("bash", ["-c", pullScript({ root: box, bundlePath, base: null })], { encoding: "utf8", env });
       assert.equal(detached.status, 3);
       assert.match(detached.stderr, /not on a branch/);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("Remove's list finds every place work can be, without git status, and leaves the checkout alone", () => {
+    const dir = tempDir();
+    try {
+      const repo = makeRepo(path.join(dir, "repo"));
+      const box = path.join(dir, "sandbox");
+      const env = { PATH: process.env.PATH, HOME: dir, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: path.join(dir, "gc") };
+      const g = (cwd, ...a) => spawnSync("git", ["-C", cwd, ...a], { encoding: "utf8", env }).stdout.trim();
+      spawnSync("git", ["clone", "-q", "-b", "main", repo.dir, box], { env });
+      g(box, "checkout", "-q", "-b", "feat/x", repo.first);
+      g(box, "config", "user.email", "ada@example.com");
+      g(box, "config", "user.name", "");
+      g(box, "config", "status.showUntrackedFiles", "no");
+      const list = () => {
+        const r = spawnSync("bash", ["-c", saveListScript({ root: box })], { encoding: "utf8", env });
+        assert.equal(r.status, 0, r.stderr);
+        const refLines = r.stdout.split("\n").filter((l) => l.startsWith("ref "));
+        assert.equal(/^end (\d+)$/m.exec(r.stdout)[1], String(refLines.length));
+        const refs = Object.fromEntries(refLines.map((l) => l.split(" ").slice(1).reverse()));
+        const worktrees = r.stdout.split("\n").filter((l) => l.startsWith("worktree ")).map((l) => l.split(" ").slice(2).join(" "));
+        return { refs, worktrees, nested: /^nested (\d+)$/m.exec(r.stdout)[1] };
+      };
+      const clean = list();
+      assert.deepEqual(clean.worktrees, [box]);
+      assert.equal(clean.refs["refs/heads/feat/x"], repo.first);
+      assert.equal(clean.refs["refs/prized-orca/uncommitted/0"], undefined, "a clean tree adds nothing");
+      // a stash, a commit on another branch, and an untracked file that git status here won't show
+      fs.writeFileSync(path.join(box, "stashed.txt"), "stashed\n");
+      spawnSync("git", ["-C", box, "-c", "user.name=A", "stash", "push", "-q", "-u"], { env });
+      const side = g(box, "-c", "user.name=A", "commit-tree", `${repo.first}^{tree}`, "-p", repo.first, "-m", "side");
+      g(box, "update-ref", "refs/heads/side", side);
+      fs.writeFileSync(path.join(box, "new.txt"), "untracked\n");
+      const status = spawnSync("git", ["-C", box, "status", "--porcelain"], { encoding: "utf8", env }).stdout;
+      const dirty = list();
+      assert.equal(dirty.refs["refs/heads/side"], side);
+      assert.ok(dirty.refs["refs/stash"]);
+      const wip = dirty.refs["refs/prized-orca/uncommitted/0"];
+      assert.ok(wip, "the untracked file is caught though git status hides it");
+      assert.equal(g(box, "show", `${wip}:new.txt`), "untracked");
+      assert.equal(g(box, "rev-parse", `${wip}^`), repo.first);
+      assert.equal(g(box, "log", "-1", "--format=%an", wip), "prized-orca", "an empty user.name falls back");
+      assert.equal(spawnSync("git", ["-C", box, "status", "--porcelain"], { encoding: "utf8", env }).stdout, status, "the checkout is untouched");
+      assert.equal(dirty.nested, "0");
+      // the bundle: only what the user's repository lacks, and "empty" when that is nothing
+      const bundlePath = path.join(box, ".git", "save.bundle");
+      const bundle = (refs, not) => spawnSync("bash", ["-c", saveBundleScript({ root: box, bundlePath, refs, not })], { encoding: "utf8", env });
+      const b = bundle(["refs/heads/side", "refs/prized-orca/uncommitted/0"], [repo.first]);
+      assert.equal(b.status, 0, b.stderr);
+      assert.equal(b.stdout.trim(), "bundled");
+      assert.equal(spawnSync("git", ["-C", repo.dir, "bundle", "verify", "-q", bundlePath], { env }).status, 0);
+      assert.equal(bundle(["refs/heads/feat/x"], [repo.first]).stdout.trim(), "empty");
+      assert.throws(() => saveBundleScript({ root: box, bundlePath, refs: ["refs/heads/a b"], not: [] }), /not a ref/);
+      // a second worktree's uncommitted change, and a detached HEAD, are kept too
+      const wt = path.join(dir, "wt two");
+      g(box, "worktree", "add", "-q", "-b", "wt-branch", wt, repo.first);
+      fs.writeFileSync(path.join(wt, "in-wt.txt"), "wt\n");
+      g(box, "checkout", "-q", "--detach", side);
+      const more = list();
+      assert.deepEqual(more.worktrees, [box, wt]);
+      assert.equal(more.refs["refs/prized-orca/detached/0"], side);
+      assert.equal(g(box, "show", `${more.refs["refs/prized-orca/uncommitted/1"]}:in-wt.txt`), "wt");
+      assert.equal(g(wt, "status", "--porcelain", "-uall"), "?? in-wt.txt", "the other worktree is untouched");
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

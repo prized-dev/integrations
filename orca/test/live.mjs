@@ -11,12 +11,14 @@
 // lands at the pinned commit with an SSH origin turned into HTTPS, a process started before sleep is
 // the same process after wake, the result after wake passes Orca's integrity check, a commit made in
 // the workspace comes back to this machine with `pull` while it sleeps (and pushes from here), and
-// destroy leaves a 404.
+// destroy (Remove, with the workspace asleep) first saves its uncommitted change here as the branch
+// prized-orca/saved/<id>/uncommitted, then leaves a 404.
 //
 // The key goes to the plugin as PRIZED_API_KEY and to the stand-ins as FAKE_LOGIN_BEARER; nothing
 // here prints it.
 
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { FAKES, PKG, makeRepo, makeSshdKit, runAdapter, sh as hostSh, tempDir, testEnv } from "./helpers.mjs";
@@ -165,6 +167,16 @@ try {
   if (id) {
     const d = await runPhase({ command: recipe.destroy, mode: "destroy", context, recipe, baseEnv: env, stdin: payload("destroy", recipe, context, created ?? { userData: { resourceId: id } }) });
     process.stderr.write(d.stderr);
+    report.destroyExit = d.exitCode;
+    if (report.pull) {
+      // the pulled commit is here already; the uncommitted scratch.txt is saved on top of it
+      const genv = { ...process.env, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: env.GIT_CONFIG_GLOBAL };
+      const git = (...a) => spawnSync("git", ["-C", repo.dir, ...a], { encoding: "utf8", env: genv }).stdout.trim();
+      const saved = `refs/heads/prized-orca/saved/${id}/uncommitted`;
+      report.saved = { parent: git("rev-parse", `${saved}^`), scratch: git("show", `${saved}:scratch.txt`), said: d.stderr.trim().split("\n").filter((l) => /saved|nothing to save/.test(l)) };
+      report.saved.ok = report.saved.parent === report.pull.workspaceHead && report.saved.scratch === "wip";
+      if (!report.saved.ok && !report.error) report.error = "destroy did not save the uncommitted change";
+    }
     let gone = null;
     for (let i = 0; i < 40; i++) {
       gone = await get(id);

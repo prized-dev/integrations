@@ -324,14 +324,132 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
     assert.match(unknown.stderr, /backs no Orca workspace on this machine/);
   });
 
-  test("destroy deletes the sandbox and its ssh block, and is safe to repeat", async () => {
+  test("destroy saves the workspace's work here, then deletes the sandbox and its ssh block, and is safe to repeat", async () => {
+    const root = created.connection.projectRoot;
+    const genv = { ...process.env, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: env.GIT_CONFIG_GLOBAL };
+    const wsHead = sh("git", ["-C", root, "rev-parse", "HEAD"], { env: genv });
     const r = await phase("destroy");
     assert.equal(r.exitCode, 0, r.stderr);
+    // the pull test copied the two commits here already; scratch.txt, uncommitted, is all that's new
+    const saved = `refs/heads/prized-orca/saved/${id}/uncommitted`;
+    const here = (...a) => sh("git", ["-C", repo.dir, ...a], { env: genv });
+    assert.match(r.stderr, new RegExp(`saved what ${id} had that this machine didn't, as branches in .*: prized-orca/saved/${id}/uncommitted$`, "m"));
+    assert.equal(here("rev-parse", `${saved}^`), wsHead, "the uncommitted changes ride on the workspace's last commit");
+    assert.equal(here("show", `${saved}:scratch.txt`), "not committed");
+    assert.equal(here("for-each-ref", `refs/heads/prized-orca/saved/${id}/ada`), "", "the branch, already here, is not saved again");
+    assert.match(fs.readFileSync(path.join(home, ".prized-orca", "lifecycle.log"), "utf8"), new RegExp(`"cmd":"destroy","sandbox":"${id}","saved":\\["prized-orca/saved/${id}/uncommitted"\\]`));
     assert.equal(api.sandboxes.get(id).state, "deleted");
     assert.doesNotMatch(fs.readFileSync(path.join(home, ".prized-orca", "ssh_config"), "utf8"), new RegExp(id));
     assert.deepEqual(state(), {});
     const again = await phase("destroy");
     assert.equal(again.exitCode, 0, again.stderr);
+  });
+
+  test("Remove copies nothing when there is nothing new, and keeps the sandbox when the copy fails", async () => {
+    const genv = { ...process.env, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: env.GIT_CONFIG_GLOBAL };
+    const here = (...a) => spawnSync("git", ["-C", repo.dir, ...a], { encoding: "utf8", env: genv });
+    const make = async (instanceId, extra = {}) => {
+      const ctx = { ...context, instanceId, ...extra };
+      const c = await phase("create", { context: ctx });
+      assert.equal(c.exitCode, 0, c.stderr);
+      const result = parseResult(c.stdout).result;
+      return { ctx, result, sid: result.userData.resourceId };
+    };
+
+    // nothing new here (its one commit was pulled already): nothing downloaded, no saved branch
+    const quiet = await make("orca-save-1");
+    const qroot = quiet.result.connection.projectRoot;
+    fs.writeFileSync(path.join(qroot, "pulled.txt"), "pulled\n");
+    sh("git", ["-C", qroot, "add", "pulled.txt"], { env: genv });
+    sh("git", ["-C", qroot, "commit", "-q", "-m", "pulled"], { env: genv });
+    const pulled = await runAdapter(["pull", quiet.sid, "--as", "ada/quiet"], { env });
+    assert.equal(pulled.status, 0, pulled.stderr);
+    const before = api.requests.length;
+    const d1 = await phase("destroy", { context: quiet.ctx, result: quiet.result });
+    assert.equal(d1.exitCode, 0, d1.stderr);
+    assert.match(d1.stderr, /nothing to save/);
+    assert.equal(api.requests.slice(before).filter((q) => q.path.endsWith("/files/download")).length, 0);
+    assert.notEqual(here("rev-parse", "--verify", "-q", `refs/heads/prized-orca/saved/${quiet.sid}`).status, 0);
+    assert.equal(api.sandboxes.get(quiet.sid).state, "deleted");
+
+    // a commit, then Orca puts it to sleep, then Remove: the copy fails, so the sandbox stays
+    const busy = await make("orca-save-2");
+    const root = busy.result.connection.projectRoot;
+    fs.writeFileSync(path.join(root, "late.txt"), "late\n");
+    sh("git", ["-C", root, "add", "late.txt"], { env: genv });
+    sh("git", ["-C", root, "commit", "-q", "-m", "late"], { env: genv });
+    const busyHead = sh("git", ["-C", root, "rev-parse", "HEAD"], { env: genv });
+    const slept = await phase("suspend", { context: busy.ctx, result: busy.result });
+    assert.equal(slept.exitCode, 0, slept.stderr);
+    api.opts.failExec = /git bundle create/;
+    try {
+      const failed = await phase("destroy", { context: busy.ctx, result: busy.result });
+      assert.notEqual(failed.exitCode, 0);
+      assert.match(failed.stderr, new RegExp(`could not copy the workspace's work from ${busy.sid} to this machine, so the sandbox was not deleted`));
+      assert.match(failed.stderr, new RegExp(`prized sandbox rm ${busy.sid}`));
+      assert.equal(api.sandboxes.get(busy.sid).state, "paused", "kept, and asleep again");
+      assert.ok(state()[busy.sid], "still a workspace here, so pull still reaches it");
+    } finally {
+      api.opts.failExec = null;
+    }
+    const d2 = await phase("destroy", { context: busy.ctx, result: busy.result });
+    assert.equal(d2.exitCode, 0, d2.stderr);
+    assert.match(d2.stderr, new RegExp(`: prized-orca/saved/${busy.sid}/ada/fix-login$`, "m"));
+    assert.equal(here("rev-parse", `refs/heads/prized-orca/saved/${busy.sid}/ada/fix-login`).stdout.trim(), busyHead);
+    assert.equal(api.sandboxes.get(busy.sid).state, "deleted");
+    assert.equal(state()[busy.sid], undefined);
+
+    // another branch, a stash, an uncommitted change and a second worktree (as Orca makes for a new
+    // workspace on this host), with only a partial record of the workspace here (the state was
+    // lost, then a sleep wrote what it knows): Orca's payload and environment fill in the rest
+    const lost = await make("orca-save-3");
+    const lroot = lost.result.connection.projectRoot;
+    const inSandbox = (...a) => sh("git", ["-C", lroot, ...a], { env: genv });
+    fs.writeFileSync(path.join(lroot, "stashed.txt"), "stashed\n");
+    inSandbox("stash", "push", "-q", "-u");
+    const side = inSandbox("commit-tree", `${repo.first}^{tree}`, "-p", repo.first, "-m", "side work");
+    inSandbox("update-ref", "refs/heads/side", side);
+    fs.writeFileSync(path.join(lroot, "README.md"), "# app, edited\n");
+    const wt = `${lroot}-second`;
+    inSandbox("worktree", "add", "-q", "-b", "second", wt);
+    fs.writeFileSync(path.join(wt, "second.txt"), "second\n");
+    const file = path.join(home, ".prized-orca", "state.json");
+    const st = JSON.parse(fs.readFileSync(file, "utf8"));
+    st.sandboxes[lost.sid] = { asleep: false };
+    fs.writeFileSync(file, JSON.stringify(st));
+    const d3 = await phase("destroy", { context: lost.ctx, result: lost.result });
+    assert.equal(d3.exitCode, 0, d3.stderr);
+    const p3 = `refs/heads/prized-orca/saved/${lost.sid}`;
+    assert.equal(here("rev-parse", `${p3}/side`).stdout.trim(), side);
+    assert.equal(here("show", `${p3}/stash^3:stashed.txt`).stdout, "stashed\n", "the stash, untracked file included");
+    assert.equal(here("show", `${p3}/uncommitted:README.md`).stdout, "# app, edited\n");
+    assert.equal(here("show", `${p3}/uncommitted-repo-second:second.txt`).stdout, "second\n", "the second worktree's change");
+    assert.equal(api.sandboxes.get(lost.sid).state, "deleted");
+
+    // the start commit is here but on no branch (fetched to FETCH_HEAD only), and the workspace is
+    // still at it with an uncommitted change: git leaves that branch out of the bundle, so it is
+    // saved from the commit this repository has
+    const dangling = sh("git", ["-C", repo.dir, "commit-tree", `${repo.first}^{tree}`, "-p", repo.first, "-m", "fetched, on no branch"], { env: genv });
+    const dang = await make("orca-save-5", { expectedRefHead: dangling });
+    fs.writeFileSync(path.join(dang.result.connection.projectRoot, "late.txt"), "late\n");
+    const d5 = await phase("destroy", { context: dang.ctx, result: dang.result });
+    assert.equal(d5.exitCode, 0, d5.stderr);
+    const p5 = `refs/heads/prized-orca/saved/${dang.sid}`;
+    assert.equal(here("rev-parse", `${p5}/ada/fix-login`).stdout.trim(), dangling);
+    assert.equal(here("show", `${p5}/uncommitted:late.txt`).stdout, "late\n");
+
+    // a sandbox in error may still have its disk: it is kept, and the user is told how to delete it
+    const broken = await make("orca-save-4");
+    api.sandboxes.get(broken.sid).state = "error";
+    const d4 = await phase("destroy", { context: broken.ctx, result: broken.result });
+    assert.notEqual(d4.exitCode, 0);
+    assert.match(d4.stderr, new RegExp(`${broken.sid} is in error .* it was not deleted`));
+    assert.match(d4.stderr, new RegExp(`prized sandbox rm ${broken.sid}`));
+    assert.equal(api.sandboxes.get(broken.sid).state, "error");
+    api.sandboxes.get(broken.sid).state = "deleted"; // the user runs prized sandbox rm
+    const retry = await phase("destroy", { context: broken.ctx, result: broken.result });
+    assert.equal(retry.exitCode, 0, retry.stderr);
+    assert.equal(state()[broken.sid], undefined);
   });
 
   test("a CLI signed in with an API key stops the create before anything is made", async () => {

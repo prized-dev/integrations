@@ -185,6 +185,66 @@ export function pullScript({ root, bundlePath, base }) {
   ].join("\n");
 }
 
+// What Remove saves, in two steps run in the sandbox (bash, as its user).
+//
+// saveListScript: everything at ROOT that could hold work. Every branch, the latest stash, and for
+// each worktree (the checkout, and any worktree made in it, as Orca does for a new workspace on
+// this host) a detached HEAD and its uncommitted changes: one commit on top of its HEAD (untracked
+// files too, as .gitignore allows), made from a temporary index, so the worktree, its index and its
+// branch are untouched, and only when its tree differs from HEAD's (no reliance on git status).
+// Prints "worktree <n> <path>" (0 is ROOT), "ref <commit> <refname>" lines, "nested <n>" (nested
+// repositories and submodules, whose own work is not saved) and "end <number of refs>".
+export const SAVE_NS = "refs/prized-orca";
+export function saveListScript({ root }) {
+  return [
+    "set -e",
+    `cd ${sq(root)}`,
+    `git for-each-ref --format='%(refname)' ${SAVE_NS} | while read -r r; do git update-ref -d "$r"; done`,
+    "if ! git var GIT_AUTHOR_IDENT >/dev/null 2>&1 || ! git var GIT_COMMITTER_IDENT >/dev/null 2>&1; then",
+    "  export GIT_AUTHOR_NAME=prized-orca GIT_AUTHOR_EMAIL=prized-orca@localhost GIT_COMMITTER_NAME=prized-orca GIT_COMMITTER_EMAIL=prized-orca@localhost",
+    "fi",
+    "nested=0",
+    "snap() {",
+    '  local head idx tree wip',
+    '  head=$(git -C "$1" rev-parse -q --verify "HEAD^{commit}") || return 0',
+    `  git -C "$1" symbolic-ref -q HEAD >/dev/null || git update-ref "${SAVE_NS}/detached/$2" "$head"`,
+    '  idx=$(mktemp)',
+    '  GIT_INDEX_FILE=$idx git -C "$1" read-tree HEAD',
+    '  GIT_INDEX_FILE=$idx git -C "$1" add -A',
+    '  tree=$(GIT_INDEX_FILE=$idx git -C "$1" write-tree)',
+    "  nested=$((nested + $(GIT_INDEX_FILE=$idx git -C \"$1\" ls-files -s | awk '$1 == \"160000\"' | wc -l)))",
+    '  rm -f "$idx"',
+    '  if [ "$tree" != "$(git -C "$1" rev-parse "HEAD^{tree}")" ]; then',
+    '    wip=$(git -C "$1" commit-tree "$tree" -p HEAD -m "prized-orca: uncommitted changes when the workspace was removed")',
+    `    git update-ref "${SAVE_NS}/uncommitted/$2" "$wip"`,
+    "  fi",
+    "}",
+    'mapfile -t wts < <(git worktree list --porcelain | sed -n "s/^worktree //p")',
+    'for i in "${!wts[@]}"; do snap "${wts[$i]}" "$i" </dev/null; printf \'worktree %s %s\\n\' "$i" "${wts[$i]}"; done',
+    `git for-each-ref --format='ref %(objectname) %(refname)' refs/heads refs/stash ${SAVE_NS}`,
+    `printf 'nested %s\\nend %s\\n' "$nested" "$(git for-each-ref refs/heads refs/stash ${SAVE_NS} | wc -l | tr -d ' ')"`,
+  ].join("\n");
+}
+
+// saveBundleScript: a bundle at BUNDLE of REFS, without what NOT already covers (commits the user's
+// repository has). Prints "empty" when there is nothing to bundle; refuses more than one download
+// takes (100 MiB).
+export function saveBundleScript({ root, bundlePath, refs, not }) {
+  for (const r of refs) if (!/^refs\/[^\x00-\x20\x7f~^:?*[\\]+$/.test(r) || r.includes("..") || r.includes("@{")) throw new UserError(`not a ref: ${r}`);
+  for (const c of not) if (!COMMIT.test(c)) throw new UserError(`not a commit id: ${c}`);
+  const want = refs.map(sq).join(" ");
+  const exclude = not.length ? `--not ${not.join(" ")}` : "";
+  return [
+    "set -e",
+    `cd ${sq(root)}`,
+    `rm -f ${sq(bundlePath)}`,
+    `if [ "$(git rev-list --count ${want} ${exclude})" = 0 ]; then echo empty; exit 0; fi`,
+    `git bundle create -q ${sq(bundlePath)} ${want} ${exclude}`,
+    `if [ "$(wc -c < ${sq(bundlePath)})" -gt 104857600 ]; then rm -f ${sq(bundlePath)}; echo "what the workspace has that this machine doesn't comes to more than 100 MB, more than one download takes" >&2; exit 4; fi`,
+    "echo bundled",
+  ].join("\n");
+}
+
 // Runs in the sandbox (bash, as its user): a fresh repository at ROOT holding the bundle's commit on
 // the workspace branch, with the real remote as origin and the user's git name and email. Prints the
 // checked-out commit last.
