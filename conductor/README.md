@@ -38,7 +38,7 @@ It asks before it copies anything secret: prized setup's own questions (your env
 | The Run button (`scripts.run`) | `--run` starts the default action in a tmux session `run-<branch>` on the workspace's port; `run_mode = "nonconcurrent"` starts only one |
 | Archive (`scripts.archive`) | `--archive BRANCH` runs it, stops the workspace's sessions, and removes the worktree; the branch stays |
 | Conductor Cloud's repository setup script and Cloud Computer install script | `--setup FILE` and `--install FILE`, from the copies you saved. With `--setup`, scripts see `CONDUCTOR_IS_LOCAL=0` and the `.cloud` variables, as in a cloud workspace |
-| Node 24, npm and pnpm on every Cloud machine | When the repo has a `package.json` and the box has no Node, Node (the version in `.nvmrc` or `.node-version`, else 24) through fnm, and pnpm or yarn through corepack. Bun and uv the same way when the repo's lockfile or setup script names them |
+| Node 24, npm and pnpm on every Cloud machine | When the repo has a `package.json` and the box has no Node, Node (the version in `.nvmrc` or `.node-version`, else 24) through fnm, and pnpm or yarn through corepack. With a `Gemfile`, Ruby (the version in `.ruby-version`) through mise, with the libraries common gems build against. Bun and uv when the repo's lockfile or setup script names them |
 
 Before the worktrees, `prized setup --clone` clones the repo onto the box from its origin and signs in your agent and, if you let it, gh, so the agents can push and open pull requests. It also offers to bring your environment (Node, Python, CLIs) and the project's `.env` files ([Bring your environment](https://prized.dev/docs/environment?via=conductor)).
 

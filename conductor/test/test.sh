@@ -127,6 +127,13 @@ check "settings.local.toml came from the checkout" '[ -f "$B/code/app2/.conducto
 check "nonconcurrent: one run script, the default action" '[ -f "$B/.faketmux/run-a" ] && [ ! -e "$B/.faketmux/run-b" ] && grep -qx "echo api on \$((CONDUCTOR_PORT + 1))" "$B/.local/share/prized-conductor/app2/a-run.sh"'
 check "codex starts in its sandbox, never asking" 'session codex-a | grep -qx "agent=codex dir=code/app2-a args=--sandbox workspace-write --ask-for-approval never"'
 
+echo "# the same branch in two repos gets two sessions"
+run "$T/mac/app2" -w feature/login --no-files
+check "exits 0" '[ "$CODE" = 0 ]'
+check "the second is named for its repo" 'session claude-app2-feature-login | grep -qx "dir=$B/code/app2-feature-login" && session claude-feature-login | grep -qx "dir=$B/code/app-feature-login" && grep -q "prized ssh -s claude-app2-feature-login" "$T/out"'
+run "$T/mac/app2" -w feature/login --no-files
+check "and keeps that name on a re-run" '[ "$CODE" = 0 ] && [ "$(ls "$B/.faketmux" | grep -c feature-login)" = 2 ]'
+
 echo "# --setup: the Conductor Cloud setup script, as a cloud workspace runs it"
 printf 'echo "cloud $CONDUCTOR_IS_LOCAL $CONDUCTOR_ROOT_PATH" > cloud-ran\n' >"$T/cloud-setup.sh"
 run "$T/mac/app" -w c --setup "$T/cloud-setup.sh" --agent none --no-files
@@ -141,6 +148,7 @@ run "$T/mac/app" --archive existing --force
 check "--force goes ahead" '[ "$CODE" = 0 ] || { cat "$T/out"; false; }'
 check "archive script ran with the workspace's variables" '[ -f "$A/archived-existing" ]'
 check "its session stopped, its worktree removed, its branch kept" '[ ! -e "$B/.faketmux/claude-existing" ] && [ ! -d "$B/code/app-existing" ] && git -C "$A" show-ref --verify --quiet refs/heads/existing'
+check "other workspaces' sessions keep running" '[ -f "$B/.faketmux/claude-feature-login" ] && [ -f "$B/.faketmux/claude-app2-feature-login" ]'
 
 echo "# bad input stops before anything runs"
 : >"$B/../calls.log"

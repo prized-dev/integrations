@@ -537,6 +537,9 @@ def state_dir(project):
 
 FNM_HOOK = 'export PATH="$HOME/.local/share/fnm:$PATH"; command -v fnm >/dev/null 2>&1 && eval "$(fnm env --use-on-cd --shell bash)"'
 BUN_HOOK = 'export BUN_INSTALL="$HOME/.bun"; export PATH="$BUN_INSTALL/bin:$PATH"'
+MISE_HOOK = 'export PATH="$HOME/.local/share/mise/shims:$PATH"'
+# What Ruby's common gems build against (openssl, psych, pg, ...).
+RUBY_DEPS = "libssl-dev libyaml-dev zlib1g-dev libffi-dev libreadline-dev libgmp-dev libpq-dev"
 
 
 def have(cmd):
@@ -612,6 +615,25 @@ def ensure_tools(root, setup, sdir):
         tag = " -s bun-v" + shlex.quote(pm_field[4:].split("+")[0]) if pm_field.startswith("bun@") else ""
         if install("Bun", "curl -fsSL https://bun.sh/install | bash" + tag, log):
             add_profile_hook(BUN_HOOK)
+    if (exists("Gemfile") or words & {"bundle", "ruby", "rails", "gem"}) and not have("ruby"):
+        ver = "3"
+        for f in (".ruby-version", ".tool-versions"):
+            try:
+                with open(os.path.join(root, f), encoding="utf-8") as fh:
+                    txt = fh.read()
+            except OSError:
+                continue
+            m = re.search(r"^(?:ruby[ -])?(\d+\.\d+(?:\.\d+)?)\s*$", txt.strip() if f == ".ruby-version" else "\n".join(x[5:] for x in txt.splitlines() if x.startswith("ruby ")), re.M)
+            if m:
+                ver = m.group(1)
+                break
+        mise = '"$HOME/.local/bin/mise"'
+        if install(
+            "Ruby %s with mise" % ver,
+            "sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq %s; [ -x %s ] || curl -fsSL https://mise.run | MISE_INSTALL_PATH=$HOME/.local/bin/mise sh; %s settings ruby.compile=false; %s use -g ruby@%s" % (RUBY_DEPS, mise, mise, mise, shlex.quote(ver)),
+            log,
+        ):
+            add_profile_hook(MISE_HOOK)
     if (exists("uv.lock") or "uv" in words) and not have("uv"):
         install("uv", "curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh", log)
     try:
@@ -654,14 +676,17 @@ def cmd_apply(a):
     copy = files_to_copy(root, c["patterns"])
     ensure_tools(root, setup, sdir)
 
-    used = set()  # every workspace's port on this box, across repos, so two never share one
+    # Every workspace's ports and tmux sessions on this box, across repos, so two never share one.
+    used, taken = set(), set()
     for proj in os.listdir(STATE):
         pdir = os.path.join(STATE, proj)
-        if os.path.isdir(pdir):
-            for name in os.listdir(pdir):
-                p = load_state(os.path.join(pdir, name)).get("port") if name.endswith(".json") else None
-                if isinstance(p, int):
-                    used.add(p)
+        for name in os.listdir(pdir) if os.path.isdir(pdir) else []:
+            if name.endswith(".json"):
+                other = load_state(os.path.join(pdir, name))
+                if isinstance(other.get("port"), int):
+                    used.add(other["port"])
+                if isinstance(other.get("sessions"), dict) and not (proj == a.project and name in {slug_for(b) + ".json" for b in a.branches}):
+                    taken.update(v for v in other["sessions"].values() if isinstance(v, str))
     run_started = 0
     for b in a.branches:
         s = slug_for(b)
@@ -677,6 +702,8 @@ def cmd_apply(a):
                 say("%s: worktree %s is already there" % (s, tilde(wdir)))
             else:
                 if git(root, "show-ref", "--verify", "--quiet", "refs/heads/" + b, check=False).returncode == 0:
+                    if git(root, "rev-parse", "--abbrev-ref", "HEAD", check=False).stdout.strip() == b:
+                        raise RuntimeError("%s is checked out in %s itself (setup checks out the branch your Mac was on); run git -C %s checkout %s, then this again" % (b, tilde(root), tilde(root), base))
                     git(root, "worktree", "add", "--quiet", wdir, b)
                     how = "branch %s" % b
                 elif git(root, "show-ref", "--verify", "--quiet", "refs/remotes/origin/" + b, check=False).returncode == 0:
@@ -742,13 +769,32 @@ def cmd_apply(a):
                 st["setup"] = status
                 save_state(stp, st)
 
+            sessions = st.get("sessions") if isinstance(st.get("sessions"), dict) else {}
+
+            def session_for(kind):
+                """kind-branch, as the guide names sessions, unless another repo's workspace or
+                something else on the box has that name; then kind-repo-branch."""
+                if isinstance(sessions.get(kind), str):
+                    return sessions[kind]
+                n = 1
+                while True:
+                    for cand in ("%s-%s" % (kind, s), "%s-%s-%s" % (kind, a.project, s)):
+                        cand = re.sub(r"[.:]", "-", cand) + ("-%d" % n if n > 1 else "")
+                        if cand not in taken and not has_session(cand):
+                            sessions[kind] = cand
+                            st["sessions"] = sessions
+                            save_state(stp, st)
+                            taken.add(cand)
+                            return cand
+                    n += 1
+
             if a.agent != "none":
-                session = "%s-%s" % (a.agent, s)
+                session = session_for(a.agent)
                 if not has_session(session):
                     new_session(session, wdir, env)
             if a.run and c["actions"]:
                 act = next(x for x in c["actions"] if x["default"])
-                rs = "run-" + s
+                rs = session_for("run")
                 if c["run_mode"] == "nonconcurrent" and run_started:
                     say("%s: run script not started: run_mode is nonconcurrent, and one runs already" % s)
                 elif has_session(rs):
@@ -794,9 +840,9 @@ def cmd_archive(a):
         r = subprocess.run(["bash", "-l", "-c", c["archive"]], cwd=wdir, env={**os.environ, **env}, stdin=subprocess.DEVNULL)
         if r.returncode != 0:
             die("the archive script failed (exit %d); the worktree stays" % r.returncode)
-    for prefix in ("claude", "codex", "cursor", "opencode", "pi", "run"):
-        name = "%s-%s" % (prefix, s)
-        if has_session(name):
+    st = load_state(os.path.join(sdir, s + ".json"))
+    for name in (st.get("sessions") or {}).values() if isinstance(st.get("sessions"), dict) else []:
+        if isinstance(name, str) and has_session(name):
             tmux("kill-session", "-t", "=" + name)
             say("%s: stopped session %s" % (s, name))
     r = git(root, "worktree", "remove", *(["--force"] if a.force else []), wdir, check=False)
