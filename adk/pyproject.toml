@@ -25,8 +25,8 @@ dependencies = ["google-adk>=1.30", "prized>=0.1.2,<0.2"]
 test = ["pytest>=8", "pytest-asyncio>=0.23"]
 
 [project.urls]
-Homepage = "https://prized.dev/docs/sandboxes-adk?via=adk"
-Documentation = "https://prized.dev/docs/sandboxes-adk?via=adk"
+Homepage = "https://prized.dev/sandboxes?via=adk"
+Documentation = "https://github.com/prized-dev/integrations/tree/main/adk#readme"
 Source = "https://github.com/prized-dev/integrations/tree/main/adk"
 Issues = "https://github.com/prized-dev/integrations/issues"
 

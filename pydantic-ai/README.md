@@ -1,7 +1,5 @@
 # pydantic-ai-prized
 
-> **Not on PyPI yet.** Until it is, install `pydantic-ai-prized` from this repo with the line below. The Prized Python SDK it uses (`prized`) is on PyPI.
-
 Run a [Pydantic AI](https://pydantic.dev/docs/ai/) agent's workspace in a [Prized](https://prized.dev/sandboxes?via=pydantic-ai) sandbox, a Firecracker microVM.
 Harness's `Coder`, `Shell`, `FileSystem` and every other workspace-aware capability run in it unchanged.
 
@@ -12,7 +10,7 @@ No Prized account yet? Your coding agent can sign you up with your email and a 6
 Get an API key at https://prized.dev/onboarding/sandboxes?via=pydantic-ai (free credit, no card), then:
 
 ```sh
-pip install "pydantic-ai-prized @ git+https://github.com/prized-dev/integrations#subdirectory=pydantic-ai" "pydantic-ai-harness[coder,anthropic]"
+pip install pydantic-ai-prized "pydantic-ai-harness[coder,anthropic]"
 export PRIZED_API_KEY=dcp_... ANTHROPIC_API_KEY=...
 ```
 
@@ -44,9 +42,11 @@ Options on `PrizedSandbox`: `template` (`prized-base-v1`, or `prized-agent-v1` w
 
 ## Limits
 
-One region (us-west-2). Fixed Ubuntu 24.04 templates, no custom images or inbound ports. One command runs for up to an hour unless you pass a longer `timeout`, and keeps the first 4 MiB of each output stream (past that it raises `WorkspaceOutputLimitError`). A sandbox runs 24 hours by default, up to 7 days (each resume restarts the clock). On the free credit: 10 sandboxes at once, 2 vCPU and 4 GB each, 1 hour. Details: https://prized.dev/docs/sandboxes?via=pydantic-ai.
+One region (us-west-2). Fixed Ubuntu 24.04 templates, no custom images. A port answers only at its https URL, with your API key or a token (https://prized.dev/docs/sandboxes?via=pydantic-ai#preview-a-port). One command runs for up to an hour unless you pass a longer `timeout`, and keeps the first 4 MiB of each output stream (past that it raises `WorkspaceOutputLimitError`). A sandbox runs 24 hours by default, up to 7 days (each resume restarts the clock). On the free credit: 10 sandboxes at once, 2 vCPU and 4 GB each, 1 hour. Details: https://prized.dev/docs/sandboxes?via=pydantic-ai.
 
 ## Tests
+
+In a clone of https://github.com/prized-dev/integrations, from the `pydantic-ai` folder:
 
 ```sh
 pip install -e ".[test]"

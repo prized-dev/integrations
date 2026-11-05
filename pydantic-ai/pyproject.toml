@@ -31,7 +31,7 @@ test = ["pytest>=8", "anyio[trio]>=4", "pydantic-ai-harness[coder]>=0.59"]
 
 [project.urls]
 Homepage = "https://prized.dev/sandboxes?via=pydantic-ai"
-Documentation = "https://prized.dev/docs/sandboxes?via=pydantic-ai"
+Documentation = "https://github.com/prized-dev/integrations/tree/main/pydantic-ai#readme"
 "API reference" = "https://prized.dev/docs/sandboxes-api?via=pydantic-ai"
 Repository = "https://github.com/prized-dev/integrations/tree/main/pydantic-ai"
 Issues = "https://github.com/prized-dev/integrations/issues"

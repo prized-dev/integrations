@@ -1,13 +1,11 @@
 # agent-framework-prized
 
-> **Not on PyPI yet.** Until it is, install `agent-framework-prized` from this repo with the line below. The Prized Python SDK it uses (`prized`) is on PyPI.
-
 Run a [Microsoft Agent Framework](https://github.com/microsoft/agent-framework) agent's shell commands in a [Prized](https://prized.dev/?via=agent-framework) sandbox: a Firecracker microVM with its own kernel that pauses with its memory and running processes, and forks into live copies. `PrizedShellTool` has the same surface as the framework's `DockerShellTool` and implements its `ShellExecutor` protocol.
 
 ## Install
 
 ```sh
-pip install "agent-framework-prized @ git+https://github.com/prized-dev/integrations#subdirectory=agent-framework"
+pip install agent-framework-prized
 export PRIZED_API_KEY=dcp_...
 ```
 
@@ -64,9 +62,11 @@ Options: `sandbox_id`, `template` (`prized-base-v1`, or `prized-agent-v1` with C
 
 ## Limits
 
-On free credit, sandboxes run within the free tier: up to 10 at once, each up to 2 vCPU and 4 GB, with 60 minutes of running each. A top-up or a plan lifts that; a paid sandbox runs 24 hours by default, up to 7 days. No inbound ports, no custom images, no GPUs. Details: https://prized.dev/docs/sandboxes?via=agent-framework
+On free credit, sandboxes run within the free tier: up to 10 at once, each up to 2 vCPU and 4 GB, with 60 minutes of running each. A top-up or a plan lifts that; a paid sandbox runs 24 hours by default, up to 7 days. No custom images, no GPUs. A port answers only at its https URL, with your API key or a token (https://prized.dev/docs/sandboxes?via=agent-framework#preview-a-port). Details: https://prized.dev/docs/sandboxes?via=agent-framework
 
 ## Tests
+
+In a clone of https://github.com/prized-dev/integrations, from the `agent-framework` folder:
 
 ```sh
 pip install -e ".[dev]"
