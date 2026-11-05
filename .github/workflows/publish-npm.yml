@@ -1,0 +1,154 @@
+# Publish one npm package from this repo. Each package's first publish uses a token; every publish
+# after it uses npm trusted publishing (OIDC) with provenance and no long-lived token.
+#
+# A release is a manual dispatch from main: pick the folder and untick dry_run. It publishes the
+# version in the folder's package.json (bump it in a commit first). With dry_run ticked (the default)
+# it tests, builds, packs and test-installs, and publishes nothing.
+# From a terminal: gh workflow run publish-npm.yml -R prized-dev/integrations --ref main -f package=<folder>
+# (a dry run; add -f dry_run=false to publish).
+#
+# One-time setup (auth):
+# - npm can't pre-register a trusted publisher for a package that doesn't exist yet (unlike PyPI's
+#   pending publishers), so a package's FIRST publish needs a token; every publish after it is OIDC.
+# - GitHub: Settings > Environments > New environment "npm", deployment branches: main only. Add a
+#   secret NPM_TOKEN to it: an npm granular access token with read-and-write (publish) access to the
+#   @prized packages and "bypass 2FA" on (classic tokens are gone; a granular token lasts 90 days).
+#   It is used only until each package's trusted publisher exists; delete it after.
+# - npm, once per package after its first publish: npmjs.com > the package > Settings >
+#   Trusted Publisher > GitHub Actions: organization prized-dev, repository integrations, workflow
+#   publish-npm.yml, environment npm. Turn on "allow publish" (a new trusted publisher is stage-only
+#   until you do). Then set Publishing access to "require 2FA and disallow tokens" and delete
+#   NPM_TOKEN: from then on the package publishes over OIDC only, with provenance.
+name: publish-npm
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "Folder to publish"
+        type: choice
+        options: [mastra, langchain-js, pi]
+      dry_run:
+        description: "Test, build, pack and test-install only; publish nothing"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-npm
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      name: ${{ steps.meta.outputs.name }}
+      tarball: ${{ steps.meta.outputs.tarball }}
+    env:
+      DIR: ${{ inputs.package }}
+      PUBLISH: ${{ inputs.dry_run == false }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
+      - name: A publishing dispatch runs from main only
+        run: |
+          if [ "$PUBLISH" = true ] && [ "$GITHUB_REF" != refs/heads/main ]; then
+            echo "::error::a publishing dispatch runs from main only (this is $GITHUB_REF)"; exit 1
+          fi
+      - run: scripts/test.sh "$DIR"
+      - name: Build and pack the package
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/dist-npm"
+          cd "$DIR"
+          npm install --no-audit --no-fund --no-package-lock --loglevel=error
+          npm run build --if-present
+          npm pack --pack-destination "$GITHUB_WORKSPACE/dist-npm" >/dev/null
+      - name: This version isn't on npm yet
+        id: meta
+        run: |
+          set -euo pipefail
+          name=$(node -p "require('./$DIR/package.json').name")
+          version=$(node -p "require('./$DIR/package.json').version")
+          tarball=$(cd dist-npm && ls -- *.tgz)
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "tarball=$tarball" >> "$GITHUB_OUTPUT"
+          exists=$(npm view "$name@$version" version 2>/dev/null || true)
+          if [ -n "$exists" ] && [ "$PUBLISH" = true ]; then
+            echo "::error::$name@$version is already on npm; bump the version first"; exit 1
+          fi
+          echo "$name $version, publish=$PUBLISH"
+      # Uploaded before the install check below, which runs third-party code (the package's peers,
+      # or Pi): what the publish job gets is the tarball as packed, and it runs only if the check passes.
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: npm-dist
+          path: dist-npm/
+          if-no-files-found: error
+      - name: The tarball installs and loads in a clean directory
+        run: |
+          set -euo pipefail
+          name=$(node -p "require('$GITHUB_WORKSPACE/$DIR/package.json').name")
+          tgz="$GITHUB_WORKSPACE/dist-npm/${{ steps.meta.outputs.tarball }}"
+          work=$(mktemp -d)
+          cd "$work"
+          npm init -y >/dev/null 2>&1
+          if [ "$(node -p "Boolean(require('$GITHUB_WORKSPACE/$DIR/package.json').pi)")" != true ]; then
+            npm install --no-audit --no-fund --loglevel=error "$tgz"
+            node --input-type=module -e "const name=process.argv[1]; const m=await import(name); const k=Object.keys(m); if(!k.length){console.error('no exports from '+name);process.exit(1);} console.log(name,'imported; exports:',k.slice(0,6).join(', '));" "$name"
+          else
+            # A Pi package ships TypeScript that Pi loads itself (Node won't strip types under
+            # node_modules, so it can't be imported). Install it with Pi's own `pi install` into a
+            # fresh Pi of the version range the package is developed against, point Pi's settings at
+            # it by name (as `pi install npm:<name>` leaves them), and check that Pi loads it and
+            # lists its flags. `pi --help` exits 0 even when an extension fails to load, so the check
+            # reads the output. A Pi package that registers no flags needs another check here.
+            range=$(node -p "require('$GITHUB_WORKSPACE/$DIR/package.json').devDependencies?.['@earendil-works/pi-coding-agent'] ?? 'latest'")
+            npm install --no-audit --no-fund --loglevel=error "@earendil-works/pi-coding-agent@$range"
+            pi="$work/node_modules/.bin/pi"
+            npm_config_cache=$(npm config get cache)
+            HOME=$(mktemp -d) PI_CODING_AGENT_DIR=$(mktemp -d) PI_TELEMETRY=0
+            export npm_config_cache HOME PI_CODING_AGENT_DIR PI_TELEMETRY
+            version=$("$pi" --version)
+            "$pi" install "npm:$tgz"
+            node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({ packages: ['npm:' + process.argv[2]] }))" "$PI_CODING_AGENT_DIR/settings.json" "$name"
+            node -e "const d=process.argv[1], p=require(d+'/package.json'), x=p.pi.extensions ?? []; for (const e of x) require('fs').accessSync(require('path').join(d, e)); console.log('pi.extensions:', x.join(', '))" "$PI_CODING_AGENT_DIR/npm/node_modules/$name"
+            if ! help=$(PI_OFFLINE=1 "$pi" --help 2>&1) || grep -q 'Failed to load' <<<"$help" || ! grep -q '^Extension CLI Flags:' <<<"$help"; then
+              printf '%s\n' "$help" | tail -25
+              echo "::error::Pi $version did not load $name"; exit 1
+            fi
+            echo "$name loads in Pi $version:"
+            sed -n '/^Extension CLI Flags:/,/^$/p' <<<"$help"
+          fi
+
+  publish:
+    needs: build
+    if: inputs.dry_run == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/${{ needs.build.outputs.name }}
+    permissions:
+      contents: read
+      id-token: write # trusted publishing + provenance: the OIDC token npm and Sigstore verify
+    steps:
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: npm-dist
+          path: dist-npm/
+      - name: Publish to npm
+        run: npm publish "dist-npm/${{ needs.build.outputs.tarball }}" --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

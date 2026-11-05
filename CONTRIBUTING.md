@@ -29,11 +29,11 @@ Each folder's README says how to run its tests against the real API. They create
 
 1. A new folder with its package, `README.md` (install, usage, behaviour, limits, tests), `LICENSE` (Apache-2.0) and offline tests that need no key.
 2. A case for it in `scripts/test.sh`, rows in `.github/workflows/ci.yml`, and a row in the root README.
-3. For a Python package, add it to the `package` choices in `.github/workflows/publish-pypi.yml`.
+3. For a Python package, add it to the `package` choices in `.github/workflows/publish-pypi.yml`; for an npm package, in `.github/workflows/publish-npm.yml`.
 
 ## Releases
 
-Maintainers publish a Python package by dispatching `publish-pypi.yml` from `main` with its folder (dry run first). Bump the version in a commit before that.
+Maintainers publish a Python package by dispatching `publish-pypi.yml`, and an npm package by dispatching `publish-npm.yml`, from `main` with its folder (dry run first). Bump the version in a commit before that.
 
 ## Security
 
