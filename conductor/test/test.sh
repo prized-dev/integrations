@@ -108,8 +108,10 @@ git -C "$T/mac/app" branch -q -f existing origin/existing
 
 echo "# run from a Conductor workspace (a linked worktree), it moves the main checkout"
 git -C "$T/mac/app" worktree add -q "$T/mac/ws-tokyo" -b tokyo
-run "$T/mac/ws-tokyo" -w feature/login --no-files
-check "exits 0, the same repo" '[ "$CODE" = 0 ] && grep -q "is a worktree of $T/mac/app" "$T/out" && grep -q "prized setup $T/mac/app --clone" "$B/../calls.log" && [ ! -e "$B/code/ws-tokyo" ]'
+for i in $(seq 1 80); do git -C "$T/mac/app" worktree add -q "$T/mac/wt/ws-$i" -b "city-$i"; done
+run "$T/mac/ws-tokyo" -w feature/login -w nofiles --no-files
+check "exits 0 among 80 more worktrees, the same repo" '[ "$CODE" = 0 ] && grep -q "is a worktree of $T/mac/app" "$T/out" && grep -q "prized setup $T/mac/app --clone" "$B/../calls.log" && [ ! -e "$B/code/ws-tokyo" ] || { tail -3 "$T/out"; false; }'
+check "--no-files copies nothing into a new worktree, though the clone has the file" '[ -f "$A/.env.local" ] && [ -d "$B/code/app-nofiles" ] && [ ! -e "$B/code/app-nofiles/.env.local" ]'
 
 echo "# many matching files, node_modules and a virtualenv named .env"
 mkdir -p "$T/mac/app/.envs" "$T/mac/app/.env/lib" "$T/mac/app/web/node_modules/pkg"
@@ -163,9 +165,9 @@ git -C "$T/mac/app2" pull -q
 printf '[environment_variables]\nFOO = "mine"\n' >"$T/mac/app2/.conductor/settings.local.toml"
 run "$T/mac/app2" -w a -w b --run --files --agent codex
 check "exits 0" '[ "$CODE" = 0 ] || { cat "$T/out"; false; }'
-check "the settings.toml setup ran, not conductor.json's, with settings.local.toml on top" '[ "$(cat "$B/code/app2-a/toml-ran")" = "toml mine yes 4140" ] && [ ! -e "$B/code/app2-a/setup-ran" ]'
+check "the settings.toml setup ran, not conductor.json's, with settings.local.toml on top" '[ "$(cat "$B/code/app2-a/toml-ran")" = "toml mine yes 4150" ] && [ ! -e "$B/code/app2-a/setup-ran" ]'
 check "a reserved name stays out" '! session codex-a | grep -q "^env PATH=" && grep -q "not set (reserved" "$T/out"'
-check "ports don't overlap another repo's" '[ "$(cat "$B/code/app2-b/toml-ran")" = "toml mine yes 4150" ]'
+check "ports don't overlap another repo's" '[ "$(cat "$B/code/app2-b/toml-ran")" = "toml mine yes 4160" ]'
 check ".worktreeinclude replaces the .env* default" '[ -f "$B/code/app2-a/config/local.json" ] && [ ! -e "$B/code/app2-a/.env.local" ]'
 check "settings.local.toml came from the checkout" '[ -f "$B/code/app2/.conductor/settings.local.toml" ]'
 check "a multi-line variable reaches the session" 'session codex-a | grep -qx "env MULTI=line one"'

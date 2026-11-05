@@ -32,7 +32,8 @@ REPO is your repo's main checkout (default: this folder), or a GitHub repo
   --agent claude|codex|none
                           the agent to start in each workspace (default claude)
   --run                   also start each workspace's run script (Conductor's
-                          Run button) in a tmux session run-BRANCH
+                          Run button) in a tmux session run-BRANCH (run-REPO-BRANCH
+                          when another repo on the box has that name)
   --setup FILE            run FILE instead of the repo's setup script, as a
                           cloud workspace runs it (CONDUCTOR_IS_LOCAL=0, and
                           CONDUCTOR_ROOT_PATH is the workspace): the repository
@@ -102,7 +103,8 @@ check_branch() {
   fi
   ahead=$(git -C "$TOP" rev-list --count "refs/remotes/origin/$b..refs/heads/$b" 2>/dev/null || echo 0)
   [ "$ahead" = 0 ] || die "$b has $ahead commit(s) origin doesn't have. Push them first: git push origin $b"
-  wt=$(git -C "$TOP" worktree list --porcelain | awk -v ref="refs/heads/$b" '$1 == "worktree" { w = substr($0, 10) } $1 == "branch" && $2 == ref { print w; exit }')
+  # awk reads to the end (no exit): stopping early would SIGPIPE git, and pipefail would end the script.
+  wt=$(git -C "$TOP" worktree list --porcelain | awk -v ref="refs/heads/$b" '$1 == "worktree" { w = substr($0, 10) } $1 == "branch" && $2 == ref && f == "" { f = w } END { print f }')
   if [ -n "$wt" ] && [ -n "$(git -C "$wt" status --porcelain 2>/dev/null | head -n 1)" ]; then
     say "Note: $b has uncommitted changes in $wt. They stay on this machine; commit and push them to bring them."
   fi
@@ -166,7 +168,7 @@ main() {
   if [ -z "$SRC" ] || [ -d "$SRC" ]; then
     TOP=$(git -C "${SRC:-.}" rev-parse --show-toplevel 2>/dev/null) || die "${SRC:-this folder} is not a git checkout. Run this in your repo's main checkout, or pass owner/repo"
     # In a Conductor workspace (a linked worktree), the repo is the main checkout it came from.
-    main_wt=$(git -C "$TOP" worktree list --porcelain | awk '$1 == "worktree" { print substr($0, 10); exit }')
+    main_wt=$(git -C "$TOP" worktree list --porcelain | awk '$1 == "worktree" && m == "" { m = substr($0, 10) } END { print m }')
     if [ -n "$main_wt" ] && [ -d "$main_wt/.git" ] && [ "$main_wt" != "$TOP" ]; then
       say "This folder is a worktree of $main_wt; moving that repo."
       TOP=$main_wt
@@ -278,11 +280,14 @@ main() {
       fi
     fi
   fi
+  # Without a list from this run, an older one must not decide what goes into new worktrees.
+  [ -n "${tgz:-}" ] || box "rm -f $STATE/files.list" >/dev/null
 
   # 4. A worktree per workspace, set up the way Conductor sets one up, each with its own tmux session.
   local APPLY OUT failed=0
   APPLY="python3 -I $HELPER apply $(q "$ROOT") --project $(q "$NAME") --agent $AGENT --port-base $PORT_BASE"
   [ "$RUN" = 0 ] || APPLY="$APPLY --run"
+  [ "$FILES" != no ] || APPLY="$APPLY --no-files"
   [ -z "$SETUP_FILE" ] || APPLY="$APPLY --setup $(q "$STATE/setup.sh") --setup-mode $SETUP_MODE"
   for b in "${BRANCHES[@]}"; do APPLY="$APPLY $(q "$b")"; done
   OUT=$(box "$APPLY") || failed=1
@@ -300,6 +305,7 @@ main() {
       out=$(pz agents run "$AGENT" --session "$session" --dir "$dir" -- ${AGENT_ARGS[@]+"${AGENT_ARGS[@]}"} 2>&1) || {
         say "$ws: $AGENT didn't start: $(printf '%s\n' "$out" | tail -n 3)"
         say "  Start it with: prized agents run$BX $AGENT --session $session --dir $dir"
+        errors=$((errors + 1))
       }
     fi
     case $setup in ok | none) ;; *) errors=$((errors + 1)) ;; esac
@@ -322,7 +328,11 @@ EOF
   say ""
   [ -z "$first" ] || say "Open an agent:  prized ssh$BX -s $first   (leave it running: Ctrl-b, then d)"
   say "All sessions:   prized ssh$BX --ls"
-  say "Ports:          a server on its CONDUCTOR_PORT opens at localhost on this machine"
+  if [ -z "$BOX" ]; then
+    say "Ports:          a server on its CONDUCTOR_PORT opens at localhost on this machine"
+  else
+    say "Ports:          a server on its CONDUCTOR_PORT opens at localhost here while prized ssh --box $BOX is open"
+  fi
   say "Archive one:    run this again with --archive BRANCH"
   say "Variables and secrets your Cloud Computer set go on the box page's Settings tab."
   [ "$errors" = 0 ]
@@ -365,7 +375,7 @@ def tilde(path):
     return "~" + path[len(HOME) :] if path == HOME or path.startswith(HOME + "/") else path
 
 
-def load_toml(path):
+def load_toml(path, soft=False):
     try:
         import tomllib
     except ImportError:
@@ -374,6 +384,9 @@ def load_toml(path):
         with open(path, "rb") as f:
             return tomllib.load(f)
     except (OSError, ValueError) as e:
+        if soft:
+            say("  (skipping %s: %s)" % (tilde(path), e))
+            return {}
         die("can't read %s: %s" % (path, e))
 
 
@@ -422,8 +435,11 @@ def read_config(root, mode, user=""):
         cfg = merge(cfg, load_toml(local))
         sources.append(".conductor/settings.local.toml")
     if user and os.path.isfile(user):
-        cfg = merge(load_toml(user), cfg)
-        sources.append("~/.conductor/settings.toml")
+        u = load_toml(user, soft=True)
+        # Conductor: any TOML file outranks any legacy JSON file, whatever its layer.
+        cfg = merge(cfg, u) if sources == ["conductor.json"] else merge(u, cfg)
+        if u:
+            sources.append("~/.conductor/settings.toml")
 
     scripts = cfg.get("scripts") if isinstance(cfg.get("scripts"), dict) else {}
     setup = scripts.get("setup") if isinstance(scripts.get("setup"), str) else ""
@@ -544,7 +560,7 @@ def skip_bulk(paths):
     """Leave out dependency folders a pattern can catch (node_modules, or a virtualenv named .env):
     a setup script makes those, and copying them is slow and stale."""
     venvs = [p[: -len("pyvenv.cfg")] for p in paths if p.endswith("/pyvenv.cfg")]
-    return [p for p in paths if "node_modules/" not in "/" + p and not any(p.startswith(v) for v in venvs)]
+    return [p for p in paths if "/node_modules/" not in "/" + p and not any(p.startswith(v) for v in venvs)]
 
 
 def files_to_copy(root, patterns, listed):
@@ -826,7 +842,7 @@ def cmd_apply(a):
     except RuntimeError as e:
         die("can't tell %s's default branch: %s" % (tilde(root), e))
     start = "origin/" + base if git(root, "show-ref", "--verify", "--quiet", "refs/remotes/origin/" + base, check=False).returncode == 0 else base
-    copy = files_to_copy(root, c["patterns"], os.path.join(sdir, "files.list"))
+    copy = [] if a.no_files else files_to_copy(root, c["patterns"], os.path.join(sdir, "files.list"))
     ensure_tools(root, setup, sdir)
 
     # Every workspace's ports and tmux sessions on this box, across repos, so two never share one.
@@ -851,6 +867,7 @@ def cmd_apply(a):
         try:
             if add_worktree(root, wdir, b, base, start, st):
                 st.pop("setup", None)  # a new worktree needs its setup, whatever ran in an old one
+                save_state(stp, st)
             n = 0
             for rel in copy:
                 dst = os.path.join(wdir, rel)
@@ -914,11 +931,11 @@ def cmd_apply(a):
                     new_session(rs, os.path.join(wdir, act["cwd"]) if act["cwd"] else wdir, env)
                     tmux("send-keys", "-t", "=" + rs + ":", "-l", "bash " + shlex.quote(script))
                     tmux("send-keys", "-t", "=" + rs + ":", "Enter")
-                    say("%s: run script started on port %d: prized ssh -s %s" % (s, port, rs))
+                    say("%s: run script started on port %d, in session %s" % (s, port, rs))
                     run_started += 1
         except (RuntimeError, OSError, subprocess.SubprocessError) as e:
             say("%s: %s" % (s, e))
-            print("\t".join(["ws", s, b, os.path.relpath(wdir, HOME), str(port), status or "error", "-"]), flush=True)
+            print("\t".join(["ws", s, b, os.path.relpath(wdir, HOME), str(port), "error", "-"]), flush=True)
             continue
         print("\t".join(["ws", s, b, os.path.relpath(wdir, HOME), str(port), status, session]), flush=True)
 
@@ -971,6 +988,7 @@ def main():
     ap.add_argument("--setup", default="")
     ap.add_argument("--setup-mode", choices=["cloud", "local"], default="")
     ap.add_argument("--run", action="store_true")
+    ap.add_argument("--no-files", action="store_true")
     ap.add_argument("branches", nargs="+")
     ar = sub.add_parser("archive")
     ar.add_argument("root")

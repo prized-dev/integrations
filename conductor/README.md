@@ -65,6 +65,7 @@ Before the worktrees, `prized setup --clone` clones the repo onto the box from i
 - **Push first.** The box clones from origin, so a `-w` branch with commits only on your Mac stops the move and says what to push. Uncommitted changes stay on your Mac.
 - **The box is Ubuntu 24.04 (x86_64).** Setup scripts that call Homebrew, Xcode or other Mac-only tools fail there; the log says where. Conductor Cloud's install scripts use `dnf`, which becomes `apt-get` (package names can differ).
 - **Cloud environment variables and secrets don't come along:** Conductor hides their values. Set them in **Variables** on the box page's **Settings** tab, and API keys in [Secrets](https://prized.dev/docs/credentials?via=conductor#secrets-for-agents).
+- **Managed settings** (`~/.conductor/settings.managed.toml`) are not read.
 - **Chats don't carry over.** `prompts.general` is not passed to the agents: put it in `CLAUDE.md` or `AGENTS.md`.
 - **Git LFS** is not on a fresh box: it says so when the repo uses it.
 - **GitHub only** for `owner/repo`; a checkout with another origin works through `prized setup --clone`.
