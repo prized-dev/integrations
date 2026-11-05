@@ -24,7 +24,9 @@ Each folder is its own package with its own README, tests and release. You need 
 | [`langchain-js`](langchain-js) | LangChain Deep Agents (JS): sandbox | `@prized/langchain` | Not on npm yet | [README](langchain-js/README.md) |
 | [`mastra`](mastra) | Mastra: workspace sandbox and filesystem | `@prized/mastra` | Not on npm yet | [README](mastra/README.md) |
 
-A Python package that isn't on PyPI yet installs from this repo: its README gives the line. The Prized SDKs they use are published (`prized` on PyPI, `@prized/sdk` on npm).
+A Python package that isn't on PyPI yet installs from this repo: its README gives the line.
+
+[`upstream/`](upstream) holds changes made for other projects' own repos rather than packages of ours: [`upstream/pydantic-ai`](upstream/pydantic-ai) adds `PrizedSandbox` to Pydantic AI Harness itself, next to its Modal, E2B, Daytona and boxd sandboxes. The Prized SDKs they use are published (`prized` on PyPI, `@prized/sdk` on npm).
 
 Also from Prized, outside this repo: the SDKs themselves (`prized` on PyPI, `@prized/sdk` on npm), `langchain-prized` (LangChain Python, on PyPI), and the Claude Code and Codex plugin in [prized-dev/skills](https://github.com/prized-dev/skills).
 

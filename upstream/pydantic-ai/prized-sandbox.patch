@@ -1,0 +1,2569 @@
+diff --git a/THREAT_MODEL.md b/THREAT_MODEL.md
+index 2e1f1eed5..b2776cc77 100644
+--- a/THREAT_MODEL.md
++++ b/THREAT_MODEL.md
+@@ -172,7 +172,7 @@ Canonical guidance: [agent usage limits](docs/agent.md), [timeouts](docs/timeout
+ 
+ `LocalWorkspace` does not establish a security isolation boundary. Bypasses of file-tool containment or allow, deny, and read-only patterns that remain within the workspace process's existing OS authority are correctness bugs rather than security vulnerabilities, including when command execution is disabled. Evaluate security reports against documented security boundaries and the configured backend's guarantees. A sandbox protects only its configured boundary; selecting one does not make every file inside it confidential from the agent.
+ 
+-Canonical guidance: [filesystem security model](docs/harness/filesystem.md#security-model), [shell command controls](docs/harness/shell.md), [Code Mode](docs/harness/code-mode.md), [Bubblewrap](docs/harness/bubblewrap-sandbox.md), [SmolSandbox](docs/harness/smol-sandbox.md#security-model), [BoxLiteSandbox](docs/harness/boxlite-sandbox.md#security-model), [SSH](docs/harness/ssh-workspace.md), [E2B](docs/harness/e2b-sandbox.md), [Modal](docs/harness/modal-sandbox.md), [Sprites](docs/harness/sprites-sandbox.md), [Daytona](docs/harness/daytona-sandbox.md), [boxd](docs/harness/boxd-sandbox.md#security-model), [OpenSandbox](docs/harness/opensandbox-sandbox.md#security-model), [plugins](src/pydantic_clai2/PLUGINS.md), [CLAI 2 updates](src/pydantic_clai2/README.md#updating), [capability creation](docs/harness/capability-creation.md#trust-boundary), [subagents](docs/harness/subagents.md), and [step persistence](docs/harness/step-persistence.md).
++Canonical guidance: [filesystem security model](docs/harness/filesystem.md#security-model), [shell command controls](docs/harness/shell.md), [Code Mode](docs/harness/code-mode.md), [Bubblewrap](docs/harness/bubblewrap-sandbox.md), [SmolSandbox](docs/harness/smol-sandbox.md#security-model), [BoxLiteSandbox](docs/harness/boxlite-sandbox.md#security-model), [SSH](docs/harness/ssh-workspace.md), [E2B](docs/harness/e2b-sandbox.md), [Modal](docs/harness/modal-sandbox.md), [Sprites](docs/harness/sprites-sandbox.md), [Daytona](docs/harness/daytona-sandbox.md), [boxd](docs/harness/boxd-sandbox.md#security-model), [Prized](docs/harness/prized-sandbox.md#security-model), [OpenSandbox](docs/harness/opensandbox-sandbox.md#security-model), [plugins](src/pydantic_clai2/PLUGINS.md), [CLAI 2 updates](src/pydantic_clai2/README.md#updating), [capability creation](docs/harness/capability-creation.md#trust-boundary), [subagents](docs/harness/subagents.md), and [step persistence](docs/harness/step-persistence.md).
+ 
+ On non-Windows platforms, stock CLAI 2 is a broad local-execution profile: its default Coder has unrestricted file access and uses a local workspace unless configured otherwise. Stock CLAI 2 does not provide an agent workspace on Windows. Launching from a directory does not contain its commands or file access. Stock defaults that matter for review:
+ 
+diff --git a/docs/capabilities/overview.md b/docs/capabilities/overview.md
+index 29523f0af..099deac83 100644
+--- a/docs/capabilities/overview.md
++++ b/docs/capabilities/overview.md
+@@ -47,6 +47,7 @@ The workspace the agent acts in: the files it edits and the commands it runs, lo
+ | [Sprites Sandbox](https://pydantic.dev/docs/ai/harness/sprites-sandbox/) | Harness | Commands and files in a persistent [Fly.io Sprite](https://sprites.dev) |
+ | [Daytona Sandbox](https://pydantic.dev/docs/ai/harness/daytona-sandbox/) | Harness | Commands and files in an isolated [Daytona](https://www.daytona.io) cloud sandbox |
+ | [boxd Sandbox](https://pydantic.dev/docs/ai/harness/boxd-sandbox/) | Harness | Commands and files in an isolated [boxd](https://boxd.sh) cloud machine |
++| [Prized Sandbox](https://pydantic.dev/docs/ai/harness/prized-sandbox/) | Harness | Commands and files in a [Prized](https://prized.dev) Firecracker microVM that pauses with its memory and forks live |
+ | [Smol Sandbox](https://pydantic.dev/docs/ai/harness/smol-sandbox/) | Harness | Commands and files in a [smolvm](https://github.com/smol-machines/smolvm) microVM on your own machine; no cloud account |
+ | [BoxLite Sandbox](https://pydantic.dev/docs/ai/harness/boxlite-sandbox/) | Harness | Commands and files in a [BoxLite](https://github.com/boxlite-ai/boxlite) micro-VM on your own machine, with an optional egress allow-list; no cloud account |
+ | [OpenSandbox](https://pydantic.dev/docs/ai/harness/opensandbox-sandbox/) | Harness | Commands and files in a sandbox on your own [OpenSandbox](https://open-sandbox.ai) server, on Docker or Kubernetes |
+diff --git a/docs/harness/coder.md b/docs/harness/coder.md
+index 17d92afd2..f357ad5b1 100644
+--- a/docs/harness/coder.md
++++ b/docs/harness/coder.md
+@@ -45,7 +45,7 @@ result = agent.run_sync('Find out why tests/test_parser.py fails and fix the bug
+ print(result.output)
+ ```
+ 
+-File paths resolve from the workspace's working directory, and commands start there. To work in an isolated cloud machine instead, swap `LocalWorkspace` for a sandbox capability (Modal, E2B, Render, Sprites, Daytona, or boxd); the rest of the code stays the same. Commands run without an allowlist, and the file tools' path limits don't apply to them.
++File paths resolve from the workspace's working directory, and commands start there. To work in an isolated cloud machine instead, swap `LocalWorkspace` for a sandbox capability (Modal, E2B, Render, Sprites, Daytona, boxd, or Prized); the rest of the code stays the same. Commands run without an allowlist, and the file tools' path limits don't apply to them.
+ 
+ With [Modal](modal-sandbox.md), for example:
+ 
+diff --git a/docs/harness/index.md b/docs/harness/index.md
+index 64c045a38..f1f4a9756 100644
+--- a/docs/harness/index.md
++++ b/docs/harness/index.md
+@@ -34,7 +34,7 @@ result = agent.run_sync('Find out why tests/test_parser.py fails and fix the bug
+ print(result.output)
+ ```
+ 
+-`LocalWorkspace('.')` is where the agent works: its file tools and commands run on your machine, in this directory. It is not a sandbox, so commands can reach anything you can. To run the same agent in an isolated cloud machine, swap it for a sandbox capability (Modal, E2B, Render, Sprites, Daytona, or boxd); see [Workspaces](#workspaces).
++`LocalWorkspace('.')` is where the agent works: its file tools and commands run on your machine, in this directory. It is not a sandbox, so commands can reach anything you can. To run the same agent in an isolated cloud machine, swap it for a sandbox capability (Modal, E2B, Render, Sprites, Daytona, boxd, or Prized); see [Workspaces](#workspaces).
+ 
+ With [Modal](modal-sandbox.md), for example:
+ 
+@@ -137,6 +137,7 @@ The workspace the agent acts in: the files it edits and the commands it runs, lo
+ | [Sprites Sandbox](sprites-sandbox.md) | Harness | Commands and files in a persistent [Fly.io Sprite](https://sprites.dev) |
+ | [Daytona Sandbox](daytona-sandbox.md) | Harness | Commands and files in an isolated [Daytona](https://www.daytona.io) cloud sandbox |
+ | [boxd Sandbox](boxd-sandbox.md) | Harness | Commands and files in an isolated [boxd](https://boxd.sh) cloud machine |
++| [Prized Sandbox](prized-sandbox.md) | Harness | Commands and files in a [Prized](https://prized.dev) Firecracker microVM that pauses with its memory and forks live |
+ | [Smol Sandbox](smol-sandbox.md) | Harness | Commands and files in a [smolvm](https://github.com/smol-machines/smolvm) microVM on your own machine; no cloud account |
+ | [BoxLite Sandbox](boxlite-sandbox.md) | Harness | Commands and files in a [BoxLite](https://github.com/boxlite-ai/boxlite) micro-VM on your own machine, with an optional egress allow-list; no cloud account |
+ | [OpenSandbox](opensandbox-sandbox.md) | Harness | Commands and files in a sandbox on your own [OpenSandbox](https://open-sandbox.ai) server, on Docker or Kubernetes |
+diff --git a/docs/harness/prized-sandbox.md b/docs/harness/prized-sandbox.md
+new file mode 100644
+index 000000000..ae51441fc
+--- /dev/null
++++ b/docs/harness/prized-sandbox.md
+@@ -0,0 +1,124 @@
++---
++title: Prized Sandbox
++description: "Run a Pydantic AI agent's commands and file edits in a Prized microVM that pauses with its memory and forks live, instead of on your machine."
++---
++
++# Prized Sandbox
++
++Run your agent's commands and file edits in a [Prized](https://prized.dev) sandbox, a Firecracker microVM with its own kernel that pauses with its memory and running processes and forks into live copies, instead of on your machine.
++
++[Source](https://github.com/pydantic/pydantic-ai/tree/main/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/)
++
++> While Pydantic AI Harness is on 0.x releases, the API may change between minor releases; when it does, deprecation warnings and release-note migration guidance tell you (or your agent) exactly how to upgrade. See the [version policy](index.md#version-policy).
++
++## Install
++
++```bash
++pip/uv-add "pydantic-ai-harness[coder,prized,anthropic]"
++```
++
++The `coder` extra is there because the examples use `Coder`; the sandbox itself doesn't need it. The `anthropic` extra is there because the examples use an Anthropic model; swap it for your model provider's extra. Then set `PRIZED_API_KEY` to a key from [prized.dev/dashboard/workspace/api-keys](https://prized.dev/dashboard/workspace/api-keys) with **Sandboxes: Write** (new workspaces get free credit), and `ANTHROPIC_API_KEY` for the examples.
++
++## Quick start
++
++```python {names="defined"}
++from pydantic_ai import Agent
++from pydantic_ai_harness.coder import Coder
++from pydantic_ai_harness.prized_sandbox import PrizedSandbox
++
++agent = Agent('{{ anthropic:large }}', capabilities=[PrizedSandbox(), Coder()])
++result = agent.run_sync('Clone https://github.com/pydantic/pydantic-ai and summarize how capabilities work.')
++```
++
++`Coder`'s shell and file tools now run in the sandbox, not on your machine. With `Coder`, `RepoContext` creates the sandbox when the run starts, even without a tool call; use `Coder(repo_context=False)` for lazy creation. The sandbox keeps running after the run ends; after `auto_pause_min` idle minutes (10 by default) it pauses itself with its memory and running processes, and stops using compute until the next command resumes it. See [Clean up](#clean-up).
++
++The default template, `prized-base-v1`, is Ubuntu 24.04 with Python 3.12, Node.js, git, and ripgrep (`rg`), which `Coder` uses for searches; `PrizedSandbox(template='prized-agent-v1')` adds Claude Code and Codex. Commands run as the non-root user `prized` in `/home/prized/work`. `PrizedSandbox(vcpu=4, memory_mb=8192)` picks a larger sandbox; the template's default is used when unset (2 vCPU and 4 GB on Prized's free tier).
++
++## Continue in the same sandbox
++
++```python {names="defined"}
++from pydantic_ai import Agent
++from pydantic_ai_harness.coder import Coder
++from pydantic_ai_harness.prized_sandbox import PrizedSandbox
++
++agent = Agent('{{ anthropic:large }}', capabilities=[PrizedSandbox(), Coder()])
++result = agent.run_sync('Clone https://github.com/pydantic/pydantic-ai and summarize how capabilities work.')
++
++followup = agent.run_sync(
++    'Which capability would you add next, and where would it live?',
++    message_history=result.all_messages(),
++)
++```
++
++The follow-up run finds the sandbox in the message history and works in it, so the clone is still there, and so is anything the first run left running, even if the sandbox paused in between. Without the history, a run starts a new sandbox. If the sandbox has been deleted, the run raises `WorkspaceUnavailableError` instead of starting over in an empty one.
++
++## Pause, and fork a sandbox
++
++```python {names="defined"}
++from pydantic_ai import Agent
++from pydantic_ai_harness.coder import Coder
++from pydantic_ai_harness.prized_sandbox import PrizedSandbox
++
++sandbox = PrizedSandbox()
++agent = Agent('{{ anthropic:large }}', capabilities=[sandbox, Coder()])
++
++
++async def try_two_fixes() -> None:
++    result = await agent.run('Clone https://github.com/un33k/python-slugify, install it and run its tests.')
++    ref = result.workspace.ref
++    assert ref is not None
++    copy = await sandbox.fork(ref)  # files, memory and running processes, as they are now
++    try:
++        await agent.run('Fix the failing test by changing the code.', workspace=ref)
++        await agent.run('Fix the failing test by changing the test.', workspace=copy)
++    finally:
++        await sandbox.destroy(copy)
++    await sandbox.pause(ref)  # memory kept; the next run that attaches resumes it
++```
++
++`fork(ref)` copies a sandbox live, in about a second: the copy has its files, memory and running processes, and the two change independently after. `pause(ref)` stops the compute bill while keeping the sandbox's memory, so a dev server or a half-finished build is still there when a later run attaches. For more than one copy at a time (`fork(count)`), preview URLs for a port, or a longer run time, `await PrizedSandbox().backend(ref).get_sandbox()` returns a [`prized.AsyncSandbox`](https://pypi.org/project/prized/) handle; close it with `await handle.close()` when you are done (the sandbox keeps running).
++
++## Clean up
++
++A run never deletes its sandbox. Delete it when you are done with `await PrizedSandbox().destroy(ref)`, which works in any state and returns quietly for a sandbox that is already gone:
++
++```python {names="defined"}
++from pydantic_ai.workspaces import WorkspaceRef
++from pydantic_ai_harness.prized_sandbox import PrizedSandbox
++
++
++async def delete_sandbox(ref: WorkspaceRef) -> None:
++    await PrizedSandbox().destroy(ref)
++```
++
++Prized also deletes a sandbox when its run time ends (`max_runtime_min`: 24 hours of running by default, 60 minutes on the free tier; paused time doesn't count), or after `auto_delete_min` minutes paused. Every sandbox `PrizedSandbox` creates carries the label `created-by=pydantic-ai`, plus any `labels=` you pass, so `prized sandbox ls` and the SDK's `AsyncSandbox.delete_by_labels(...)` find leftovers.
++
++## Security model
++
++The sandbox is a Firecracker microVM with its own kernel; commands run in it as the unprivileged `prized` user and can't reach the machine that runs the agent. Nothing from your environment is copied in: `env=` is the only way variables get there, and anything you put in it, a key included, is readable by the agent's commands. `PRIZED_API_KEY` stays with the agent process and is never sent into the sandbox. Outbound internet is open, so the agent can clone and install. Attaching follows the `WorkspaceRef` in the message history: a ref only reaches sandboxes in the workspace of the key you use.
++
++## Configuration
++
++| Parameter | Default | What it does |
++| --- | --- | --- |
++| `template` | `'prized-base-v1'` | Template a new sandbox starts from (`prized-agent-v1` adds Claude Code and Codex) |
++| `vcpu`, `memory_mb`, `disk_gb` | Template's | Shape of a new sandbox |
++| `auto_pause_min` | `10` | Idle minutes before a new sandbox pauses itself, memory kept; `0` turns it off |
++| `auto_delete_min` | `None` | Minutes paused before a new sandbox deletes itself |
++| `max_runtime_min` | `None` | Minutes of running before a new sandbox is deleted (Prized's default: 24 hours) |
++| `working_dir` | `None` | Absolute directory commands start in; created on a new sandbox |
++| `env` | `None` | Environment variables every command gets |
++| `labels` | `None` | Labels for a new sandbox, added to `created-by=pydantic-ai` |
++| `api_key`, `base_url`, `edge_url` | From the environment / Prized's | Connection settings; `PRIZED_API_KEY` when `api_key` is unset |
++
++A command with a `timeout` of up to 240 seconds runs as one call, which keeps the first 4 MiB of each stream; a longer or unbounded one runs detached and is polled until it ends. Past what is kept, the command raises `WorkspaceOutputLimitError`, so redirect large output to a file. A timeout or a cancelled run stops the command's whole process group; a process it started in the background (`server &`) keeps running, so a dev server is still there for the next command. Reading a file under `/home/prized` is one call to Prized's file API; writes and the other file operations go through the shell as `prized`, so they honor the sandbox's permissions and reach every path that user can.
++
++## Telemetry
++
++`PrizedSandbox` emits no spans of its own. Core's [instrumentation](../capabilities/instrumentation.md) records the sandbox on the agent run span as `pydantic_ai.workspace.provider` and `pydantic_ai.workspace.id`, and each command or file operation a tool makes runs inside that tool call's span. Creating or forking a sandbox logs its id at `INFO` (`Created Prized sandbox <id>`) on the `pydantic_ai_harness.prized_sandbox._backend` logger.
++
++## API reference
++
++::: pydantic_ai_harness.prized_sandbox.PrizedSandbox
++
++::: pydantic_ai_harness.prized_sandbox.PrizedSandboxBackend
+diff --git a/docs/navigation.yml b/docs/navigation.yml
+index 879590c0f..95175933c 100644
+--- a/docs/navigation.yml
++++ b/docs/navigation.yml
+@@ -404,6 +404,9 @@ navigation:
+           - page: "boxd Sandbox"
+             path: "harness/boxd-sandbox.md"
+             slug: "harness/boxd-sandbox"
++          - page: "Prized Sandbox"
++            path: "harness/prized-sandbox.md"
++            slug: "harness/prized-sandbox"
+           - page: "Smol Sandbox"
+             path: "harness/smol-sandbox.md"
+             slug: "harness/smol-sandbox"
+diff --git a/docs/workspace.md b/docs/workspace.md
+index 5071aa89e..0baa2df1d 100644
+--- a/docs/workspace.md
++++ b/docs/workspace.md
+@@ -66,7 +66,7 @@ agent = Agent('{{ anthropic:large }}', capabilities=[E2BSandbox(), Coder()])
+ result = agent.run_sync('Clone https://github.com/pydantic/pydantic-ai and run its tests.')
+ ```
+ 
+-The [harness](https://pydantic.dev/docs/ai/harness/) has sandboxes for Modal, E2B, Render, Sprites, Daytona and boxd, a local smolvm microVM, and self-hosted OpenSandbox servers. A
++The [harness](https://pydantic.dev/docs/ai/harness/) has sandboxes for Modal, E2B, Render, Sprites, Daytona, boxd and Prized, a local smolvm microVM, and self-hosted OpenSandbox servers. A
+ sandbox is created the first time the run uses it (a tool call, or `Coder` loading repo
+ instructions at run start; durable runs create it when they start), and keeps running after the run until you or its
+ provider stop it; see [Cleaning up](#cleaning-up). If the run never used it, calling a method on `result.workspace` after a run with `ref=None` may create a new sandbox that no message records. Check the ref before using the workspace after a run, and arrange to clean up any new sandbox you create.
+diff --git a/pyproject.toml b/pyproject.toml
+index bfb0e0d21..22881fc78 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -244,6 +244,10 @@ prefect = "2026-10-21T03:46:00Z"
+ # TODO(adtyavrdhn): Remove after 2026-11-03 23:56 UTC, then run `uv lock` and
+ # `uv lock --script .github/scripts/pydantic-ai-runner`.
+ boxd = "2026-10-27T23:56:00Z"
++# prized 0.1.2 is the `prized` floor.
++# TODO: Remove after 2026-11-09 02:18 UTC, then run `uv lock` and
++# `uv lock --script .github/scripts/pydantic-ai-runner`.
++prized = "2026-11-02T02:18:00Z"
+ # render 1.6.0 provides the stable Sandbox API used by RenderSandbox.
+ # TODO(adtyavrdhn): Remove after 2026-11-06 01:06 UTC, then run `uv lock` and
+ # `uv lock --script .github/scripts/pydantic-ai-runner`.
+@@ -583,6 +587,7 @@ markers = [
+     "sprites_live: runs against a real Sprites control plane; needs credentials",
+     "daytona_live: runs against a real Daytona control plane; needs credentials",
+     "boxd_live: runs against a real boxd control plane; needs credentials",
++    "prized_live: runs against a real Prized sandbox; needs credentials",
+     "opensandbox_live: runs against a real OpenSandbox server; needs one running",
+     "smol_live: boots real smolvm VMs; needs a host that can run them",
+     "boxlite_live: boots real BoxLite VMs; needs a host that can run them",
+diff --git a/src/pydantic_ai_harness/README.md b/src/pydantic_ai_harness/README.md
+index d1e55b3d1..70111f534 100644
+--- a/src/pydantic_ai_harness/README.md
++++ b/src/pydantic_ai_harness/README.md
+@@ -43,7 +43,7 @@ result = agent.run_sync('Find out why tests/test_parser.py fails and fix the bug
+ print(result.output)
+ ```
+ 
+-`LocalWorkspace('.')` is where the agent works: its file tools and commands run on your machine, in this directory. It is not a sandbox, so commands can reach anything you can. To run the same agent in an isolated cloud machine, swap it for a sandbox capability (Modal, E2B, Render, Sprites, Daytona, or boxd); see [Workspaces](#workspaces).
++`LocalWorkspace('.')` is where the agent works: its file tools and commands run on your machine, in this directory. It is not a sandbox, so commands can reach anything you can. To run the same agent in an isolated cloud machine, swap it for a sandbox capability (Modal, E2B, Render, Sprites, Daytona, boxd, or Prized); see [Workspaces](#workspaces).
+ 
+ With [Modal](pydantic_ai_harness/modal_sandbox/), for example:
+ 
+@@ -152,6 +152,7 @@ The workspace the agent acts in: the files it edits and the commands it runs, lo
+ | [Sprites Sandbox](pydantic_ai_harness/sprites_sandbox/) | Harness | Commands and files in a persistent [Fly.io Sprite](https://sprites.dev) |
+ | [Daytona Sandbox](pydantic_ai_harness/daytona_sandbox/) | Harness | Commands and files in an isolated [Daytona](https://www.daytona.io) cloud sandbox |
+ | [boxd Sandbox](pydantic_ai_harness/boxd_sandbox/) | Harness | Commands and files in an isolated [boxd](https://boxd.sh) cloud machine |
++| [Prized Sandbox](pydantic_ai_harness/prized_sandbox/) | Harness | Commands and files in a [Prized](https://prized.dev) Firecracker microVM that pauses with its memory and forks live |
+ | [Smol Sandbox](pydantic_ai_harness/smol_sandbox/) | Harness | Commands and files in a [smolvm](https://github.com/smol-machines/smolvm) microVM on your own machine; no cloud account |
+ | [BoxLite Sandbox](pydantic_ai_harness/boxlite_sandbox/) | Harness | Commands and files in a [BoxLite](https://github.com/boxlite-ai/boxlite) micro-VM on your own machine, with an optional egress allow-list; no cloud account |
+ | [OpenSandbox](pydantic_ai_harness/opensandbox_sandbox/) | Harness | Commands and files in a sandbox on your own [OpenSandbox](https://open-sandbox.ai) server, on Docker or Kubernetes |
+diff --git a/src/pydantic_ai_harness/pydantic_ai_harness/.agents/skills/pydantic-ai-harness/SKILL.md b/src/pydantic_ai_harness/pydantic_ai_harness/.agents/skills/pydantic-ai-harness/SKILL.md
+index 09f13c2e6..eb7beea0c 100644
+--- a/src/pydantic_ai_harness/pydantic_ai_harness/.agents/skills/pydantic-ai-harness/SKILL.md
++++ b/src/pydantic_ai_harness/pydantic_ai_harness/.agents/skills/pydantic-ai-harness/SKILL.md
+@@ -1,6 +1,6 @@
+ ---
+ name: pydantic-ai-harness
+-description: Extend Pydantic AI agents with capabilities from pydantic-ai-harness -- the Coder coding agent, file and shell tools in local or sandboxed workspaces (Modal, E2B, Render, Sprites, Daytona, boxd, smolvm, BoxLite), Code Mode, sub-agents and planning, memory and skills, context compaction, guardrails and spend limits, web research and browsers, hosted SaaS integrations, step persistence, and background agents on Render Workflows. Use when the user mentions pydantic-ai-harness or pydantic_ai_harness, imports a harness capability such as Coder, CodeMode, FileSystem, Shell, SubAgents, Memory, or ToolGuardrail, or wants a Pydantic AI agent that edits files, runs commands or agent-written Python, delegates, remembers, manages long context, stays within limits, or runs model and tool operations as chained Render task runs.
++description: Extend Pydantic AI agents with capabilities from pydantic-ai-harness -- the Coder coding agent, file and shell tools in local or sandboxed workspaces (Modal, E2B, Render, Sprites, Daytona, boxd, Prized, smolvm, BoxLite), Code Mode, sub-agents and planning, memory and skills, context compaction, guardrails and spend limits, web research and browsers, hosted SaaS integrations, step persistence, and background agents on Render Workflows. Use when the user mentions pydantic-ai-harness or pydantic_ai_harness, imports a harness capability such as Coder, CodeMode, FileSystem, Shell, SubAgents, Memory, or ToolGuardrail, or wants a Pydantic AI agent that edits files, runs commands or agent-written Python, delegates, remembers, manages long context, stays within limits, or runs model and tool operations as chained Render task runs.
+ license: MIT
+ compatibility: Requires Python 3.11+
+ metadata:
+@@ -201,7 +201,7 @@ Load the references for the capabilities the task uses; each is self-contained.
+ 
+ | I want to... | Reference |
+ |---|---|
+-| Build a coding agent, give an agent file or shell tools, run it in a Modal/E2B/Render/Sprites/Daytona/boxd/smolvm/BoxLite sandbox, or load repo instructions | [Coding and Workspaces](./references/CODING-AND-WORKSPACES.md) |
++| Build a coding agent, give an agent file or shell tools, run it in a Modal/E2B/Render/Sprites/Daytona/boxd/Prized/smolvm/BoxLite sandbox, or load repo instructions | [Coding and Workspaces](./references/CODING-AND-WORKSPACES.md) |
+ | Let the model run Python that calls tools, or sandbox model-written code | [Code Mode](./references/CODE-MODE.md) |
+ | Add sub-agents, planning, a model-written workflow over sub-agents, an advisor model, or background tools | [Delegation and Planning](./references/DELEGATION-AND-PLANNING.md) |
+ | Keep a long run within its context window, trim or summarize history, limit large tool outputs, or catch prompt-cache busts | [Context Management](./references/CONTEXT-MANAGEMENT.md) |
+@@ -223,7 +223,7 @@ This installs `pydantic-ai-slim` at the matching version, so no separate Pydanti
+ The `anthropic` and `cli` extras pass through to Pydantic AI; for another provider add its
+ `pydantic-ai-slim` extra, for example `uv add "pydantic-ai-slim[openai]"`. Capabilities
+ with optional dependencies declare their own extra, for example `[coder]`, `[codemode]`, `[modal]`,
+-`[ipython]`, `[e2b]`, `[sprites]`, `[daytona]`, `[boxd]`, `[smol]`, `[boxlite]`, `[dynamic-workflow]`, `[skills]`, `[researcher]`, `[exa]`, `[playwright]`, or `[github]`.
++`[ipython]`, `[e2b]`, `[sprites]`, `[daytona]`, `[boxd]`, `[prized]`, `[smol]`, `[boxlite]`, `[dynamic-workflow]`, `[skills]`, `[researcher]`, `[exa]`, `[playwright]`, or `[github]`.
+ Each reference gives the exact install line.
+ 
+ ## Imports
+@@ -267,7 +267,7 @@ any:
+ 
+ | Reference | Capabilities |
+ |---|---|
+-| [Coding and Workspaces](./references/CODING-AND-WORKSPACES.md) | `Coder` (`.coder`, `[coder]`); `FileSystem` (`.filesystem`); `SmartSearch` (`.smart_search`); `Shell` (`.shell`); `ModalSandbox` (`.modal_sandbox`, `[modal]`); `E2BSandbox` (`.e2b_sandbox`, `[e2b]`); `RenderSandbox` (`.render_sandbox`, `[render]`); `SpritesSandbox` (`.sprites_sandbox`, `[sprites]`); `DaytonaSandbox` (`.daytona_sandbox`, `[daytona]`); `BoxdSandbox` (`.boxd_sandbox`, `[boxd]`); `SmolSandbox` (`.smol_sandbox`, `[smol]`); `BoxLiteSandbox` (`.boxlite_sandbox`, `[boxlite]`); `DockerSandbox` (`.docker_sandbox`); `OpenSandbox` (`.opensandbox_sandbox`, `[opensandbox]`); `SSHWorkspace` (`.ssh_workspace`); `BubblewrapSandbox` (`.bubblewrap_sandbox`); `RepoContext` (`.repo_context`); `Macroscope` (`.macroscope`); `LocalStack` (`.localstack`) |
++| [Coding and Workspaces](./references/CODING-AND-WORKSPACES.md) | `Coder` (`.coder`, `[coder]`); `FileSystem` (`.filesystem`); `SmartSearch` (`.smart_search`); `Shell` (`.shell`); `ModalSandbox` (`.modal_sandbox`, `[modal]`); `E2BSandbox` (`.e2b_sandbox`, `[e2b]`); `RenderSandbox` (`.render_sandbox`, `[render]`); `SpritesSandbox` (`.sprites_sandbox`, `[sprites]`); `DaytonaSandbox` (`.daytona_sandbox`, `[daytona]`); `BoxdSandbox` (`.boxd_sandbox`, `[boxd]`); `PrizedSandbox` (`.prized_sandbox`, `[prized]`); `SmolSandbox` (`.smol_sandbox`, `[smol]`); `BoxLiteSandbox` (`.boxlite_sandbox`, `[boxlite]`); `DockerSandbox` (`.docker_sandbox`); `OpenSandbox` (`.opensandbox_sandbox`, `[opensandbox]`); `SSHWorkspace` (`.ssh_workspace`); `BubblewrapSandbox` (`.bubblewrap_sandbox`); `RepoContext` (`.repo_context`); `Macroscope` (`.macroscope`); `LocalStack` (`.localstack`) |
+ | [Code Mode](./references/CODE-MODE.md) | `CodeMode` (`.code_mode`, `[codemode]`); `IPythonCodeMode` (`.ipython_code_mode`, `[ipython]`) |
+ | [Delegation and Planning](./references/DELEGATION-AND-PLANNING.md) | `Planning` (`.planning`); `SubAgents`, `SubAgent`, `DelegationReports` (`.subagents`); `DynamicWorkflow` (`.dynamic_workflow`, `[dynamic-workflow]`); `Advisor` (`.advisor`); `BackgroundTools` (`.background_tools`) |
+ | [Context Management](./references/CONTEXT-MANAGEMENT.md) | `ClearToolResults`, `SlidingWindowCompaction`, `SummarizingCompaction`, `RelevanceCompaction`, `TieredCompaction`, `FallbackCompaction`, `CompactOnRequest`, `ClampOversizedMessages`, `DeduplicateFileReads`, `WarnNearLimits`, `ReportContextUsage` (`.compaction`); `ToolOutputLimits` (`.tool_output_limits`); `WarnOnCacheBusts` (`.warn_on_cache_busts`); media stores, not a capability (`.media`) |
+diff --git a/src/pydantic_ai_harness/pydantic_ai_harness/.agents/skills/pydantic-ai-harness/references/CODING-AND-WORKSPACES.md b/src/pydantic_ai_harness/pydantic_ai_harness/.agents/skills/pydantic-ai-harness/references/CODING-AND-WORKSPACES.md
+index ecd2a5c07..afa441e77 100644
+--- a/src/pydantic_ai_harness/pydantic_ai_harness/.agents/skills/pydantic-ai-harness/references/CODING-AND-WORKSPACES.md
++++ b/src/pydantic_ai_harness/pydantic_ai_harness/.agents/skills/pydantic-ai-harness/references/CODING-AND-WORKSPACES.md
+@@ -13,7 +13,7 @@ precedence, `ReadOnlyWorkspace`, continuing from message history) are in the
+ | --- | --- |
+ | General coding agent: investigate, edit, test, delegate | `Coder()` + a workspace |
+ | Narrower agent: file tools and/or commands with policy (allowlists, patterns, read-only) | `FileSystem()` and/or `Shell()` + a workspace |
+-| Untrusted model or repo, or no access to this machine | Swap `LocalWorkspace` for `ModalSandbox()` / `E2BSandbox()` / `RenderSandbox()` / `SpritesSandbox()` / `DaytonaSandbox()` / `BoxdSandbox()`; tool capabilities stay the same |
++| Untrusted model or repo, or no access to this machine | Swap `LocalWorkspace` for `ModalSandbox()` / `E2BSandbox()` / `RenderSandbox()` / `SpritesSandbox()` / `DaytonaSandbox()` / `BoxdSandbox()` / `PrizedSandbox()`; tool capabilities stay the same |
+ | Isolation without a cloud account | `SmolSandbox()`: a smolvm microVM on this machine (macOS Apple silicon, Linux x86_64/aarch64 with KVM) |
+ | Local microVM with an egress allow-list, or host mounts/ports/secrets | `BoxLiteSandbox(allow_internet_access=True, allowed_hosts=[...])`: a BoxLite micro-VM; `box_options` passes other `boxlite.BoxOptions` |
+ | Isolation on this machine with Docker or Podman | `DockerSandbox(image='python:3.13-slim')`: a local container |
+@@ -374,7 +374,7 @@ async def end_conversation(conv: Conversation) -> None:  # or on a TTL sweep
+   history, so keep the ref server-side. Attaching to a gone sandbox raises `WorkspaceUnavailableError`
+   (so do rejected credentials); no empty replacement is created unless you pass `workspace='new'`.
+ - Default images lack project dependencies (even `pytest`). To prepare one up front, build
+-  `ModalSandboxBackend(working_dir=...)` (or E2B/Render/Sprites/Daytona/boxd), use `Workspace(backend)` (`write_text`,
++  `ModalSandboxBackend(working_dir=...)` (or E2B/Render/Sprites/Daytona/boxd/Prized), use `Workspace(backend)` (`write_text`,
+   `run([...], timeout=300)`), pass `workspace=backend`, destroy `backend.ref` in `finally`; a Sprites,
+   Daytona or boxd backend you build needs `await backend.aclose()`.
+ - Idempotent per-turn setup goes in a `@hooks.on.before_run` hook: `await ctx.workspace.run('test -d
+diff --git a/src/pydantic_ai_harness/pydantic_ai_harness/__init__.py b/src/pydantic_ai_harness/pydantic_ai_harness/__init__.py
+index 7dfbed972..ee50e818e 100644
+--- a/src/pydantic_ai_harness/pydantic_ai_harness/__init__.py
++++ b/src/pydantic_ai_harness/pydantic_ai_harness/__init__.py
+@@ -66,6 +66,7 @@ if TYPE_CHECKING:
+     from .pixeltable import Pixeltable
+     from .planning import Planning
+     from .posthog import PostHog
++    from .prized_sandbox import PrizedSandbox, PrizedSandboxBackend
+     from .prompt_injection_defender import PromptInjectionDefender
+     from .pydantic_ai_docs import PydanticAIDocs
+     from .pylon import Pylon
+@@ -154,6 +155,8 @@ __all__ = [
+     'Pixeltable',
+     'Planning',
+     'PostHog',
++    'PrizedSandbox',
++    'PrizedSandboxBackend',
+     'PromptInjectionDefender',
+     'PydanticAIDocs',
+     'Pylon',
+@@ -255,6 +258,8 @@ _LAZY_EXPORTS = {
+     'Pixeltable': 'pixeltable',
+     'Planning': 'planning',
+     'PostHog': 'posthog',
++    'PrizedSandbox': 'prized_sandbox',
++    'PrizedSandboxBackend': 'prized_sandbox',
+     'PromptInjectionDefender': 'prompt_injection_defender',
+     'PydanticAIDocs': 'pydantic_ai_docs',
+     'Pylon': 'pylon',
+diff --git a/src/pydantic_ai_harness/pydantic_ai_harness/_workspace.py b/src/pydantic_ai_harness/pydantic_ai_harness/_workspace.py
+index 3f65b7aeb..d65d49101 100644
+--- a/src/pydantic_ai_harness/pydantic_ai_harness/_workspace.py
++++ b/src/pydantic_ai_harness/pydantic_ai_harness/_workspace.py
+@@ -104,6 +104,7 @@ _PROVIDER_CAPABILITIES = {
+     'sprites': 'SpritesSandbox()',
+     'daytona': 'DaytonaSandbox()',
+     'boxd': 'BoxdSandbox()',
++    'prized': 'PrizedSandbox()',
+     'opensandbox': 'OpenSandbox()',
+ }
+ """The capability that provides each first-party provider's workspaces, to name in an error."""
+diff --git a/src/pydantic_ai_harness/pydantic_ai_harness/coder/README.md b/src/pydantic_ai_harness/pydantic_ai_harness/coder/README.md
+index 173fa9140..a73edf0f5 100644
+--- a/src/pydantic_ai_harness/pydantic_ai_harness/coder/README.md
++++ b/src/pydantic_ai_harness/pydantic_ai_harness/coder/README.md
+@@ -44,7 +44,7 @@ result = agent.run_sync('Find out why tests/test_parser.py fails and fix the bug
+ print(result.output)
+ ```
+ 
+-File paths resolve from the workspace's working directory, and commands start there. To work in an isolated cloud machine instead, swap `LocalWorkspace` for a sandbox capability (Modal, E2B, Render, Sprites, Daytona, or boxd); the rest of the code stays the same. Commands run without an allowlist, and the file tools' path limits don't apply to them.
++File paths resolve from the workspace's working directory, and commands start there. To work in an isolated cloud machine instead, swap `LocalWorkspace` for a sandbox capability (Modal, E2B, Render, Sprites, Daytona, boxd, or Prized); the rest of the code stays the same. Commands run without an allowlist, and the file tools' path limits don't apply to them.
+ 
+ With [Modal](https://pydantic.dev/docs/ai/harness/modal-sandbox/), for example:
+ 
+diff --git a/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/README.md b/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/README.md
+new file mode 100644
+index 000000000..2b183fb63
+--- /dev/null
++++ b/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/README.md
+@@ -0,0 +1,127 @@
++# Prized Sandbox
++
++Run your agent's commands and file edits in a [Prized](https://prized.dev) sandbox, a Firecracker microVM with its own kernel that pauses with its memory and running processes and forks into live copies, instead of on your machine.
++
++[Source](https://github.com/pydantic/pydantic-ai/tree/main/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/)
++
++> While Pydantic AI Harness is on 0.x releases, the API may change between minor releases; when it does, deprecation warnings and release-note migration guidance tell you (or your agent) exactly how to upgrade. See the [version policy](https://pydantic.dev/docs/ai/harness/#version-policy).
++
++## Install
++
++uv:
++
++```bash
++uv add "pydantic-ai-harness[coder,prized,anthropic]"
++```
++
++pip:
++
++```bash
++pip install "pydantic-ai-harness[coder,prized,anthropic]"
++```
++
++The `coder` extra is there because the examples use `Coder`; the sandbox itself doesn't need it. The `anthropic` extra is there because the examples use an Anthropic model; swap it for your model provider's extra. Then set `PRIZED_API_KEY` to a key from [prized.dev/dashboard/workspace/api-keys](https://prized.dev/dashboard/workspace/api-keys) with **Sandboxes: Write** (new workspaces get free credit), and `ANTHROPIC_API_KEY` for the examples.
++
++## Quick start
++
++```python {names="defined"}
++from pydantic_ai import Agent
++from pydantic_ai_harness.coder import Coder
++from pydantic_ai_harness.prized_sandbox import PrizedSandbox
++
++agent = Agent('anthropic:claude-opus-5-5', capabilities=[PrizedSandbox(), Coder()])
++result = agent.run_sync('Clone https://github.com/pydantic/pydantic-ai and summarize how capabilities work.')
++```
++
++`Coder`'s shell and file tools now run in the sandbox, not on your machine. With `Coder`, `RepoContext` creates the sandbox when the run starts, even without a tool call; use `Coder(repo_context=False)` for lazy creation. The sandbox keeps running after the run ends; after `auto_pause_min` idle minutes (10 by default) it pauses itself with its memory and running processes, and stops using compute until the next command resumes it. See [Clean up](#clean-up).
++
++The default template, `prized-base-v1`, is Ubuntu 24.04 with Python 3.12, Node.js, git, and ripgrep (`rg`), which `Coder` uses for searches; `PrizedSandbox(template='prized-agent-v1')` adds Claude Code and Codex. Commands run as the non-root user `prized` in `/home/prized/work`. `PrizedSandbox(vcpu=4, memory_mb=8192)` picks a larger sandbox; the template's default is used when unset (2 vCPU and 4 GB on Prized's free tier).
++
++## Continue in the same sandbox
++
++```python {names="defined"}
++from pydantic_ai import Agent
++from pydantic_ai_harness.coder import Coder
++from pydantic_ai_harness.prized_sandbox import PrizedSandbox
++
++agent = Agent('anthropic:claude-opus-5-5', capabilities=[PrizedSandbox(), Coder()])
++result = agent.run_sync('Clone https://github.com/pydantic/pydantic-ai and summarize how capabilities work.')
++
++followup = agent.run_sync(
++    'Which capability would you add next, and where would it live?',
++    message_history=result.all_messages(),
++)
++```
++
++The follow-up run finds the sandbox in the message history and works in it, so the clone is still there, and so is anything the first run left running, even if the sandbox paused in between. Without the history, a run starts a new sandbox. If the sandbox has been deleted, the run raises `WorkspaceUnavailableError` instead of starting over in an empty one.
++
++## Pause, and fork a sandbox
++
++```python {names="defined"}
++from pydantic_ai import Agent
++from pydantic_ai_harness.coder import Coder
++from pydantic_ai_harness.prized_sandbox import PrizedSandbox
++
++sandbox = PrizedSandbox()
++agent = Agent('anthropic:claude-opus-5-5', capabilities=[sandbox, Coder()])
++
++
++async def try_two_fixes() -> None:
++    result = await agent.run('Clone https://github.com/un33k/python-slugify, install it and run its tests.')
++    ref = result.workspace.ref
++    assert ref is not None
++    copy = await sandbox.fork(ref)  # files, memory and running processes, as they are now
++    try:
++        await agent.run('Fix the failing test by changing the code.', workspace=ref)
++        await agent.run('Fix the failing test by changing the test.', workspace=copy)
++    finally:
++        await sandbox.destroy(copy)
++    await sandbox.pause(ref)  # memory kept; the next run that attaches resumes it
++```
++
++`fork(ref)` copies a sandbox live, in about a second: the copy has its files, memory and running processes, and the two change independently after. `pause(ref)` stops the compute bill while keeping the sandbox's memory, so a dev server or a half-finished build is still there when a later run attaches. For more than one copy at a time (`fork(count)`), preview URLs for a port, or a longer run time, `await PrizedSandbox().backend(ref).get_sandbox()` returns a [`prized.AsyncSandbox`](https://pypi.org/project/prized/) handle; close it with `await handle.close()` when you are done (the sandbox keeps running).
++
++## Clean up
++
++A run never deletes its sandbox. Delete it when you are done with `await PrizedSandbox().destroy(ref)`, which works in any state and returns quietly for a sandbox that is already gone:
++
++```python {names="defined"}
++from pydantic_ai.workspaces import WorkspaceRef
++from pydantic_ai_harness.prized_sandbox import PrizedSandbox
++
++
++async def delete_sandbox(ref: WorkspaceRef) -> None:
++    await PrizedSandbox().destroy(ref)
++```
++
++Prized also deletes a sandbox when its run time ends (`max_runtime_min`: 24 hours of running by default, 60 minutes on the free tier; paused time doesn't count), or after `auto_delete_min` minutes paused. Every sandbox `PrizedSandbox` creates carries the label `created-by=pydantic-ai`, plus any `labels=` you pass, so `prized sandbox ls` and the SDK's `AsyncSandbox.delete_by_labels(...)` find leftovers.
++
++## Security model
++
++The sandbox is a Firecracker microVM with its own kernel; commands run in it as the unprivileged `prized` user and can't reach the machine that runs the agent. Nothing from your environment is copied in: `env=` is the only way variables get there, and anything you put in it, a key included, is readable by the agent's commands. `PRIZED_API_KEY` stays with the agent process and is never sent into the sandbox. Outbound internet is open, so the agent can clone and install. Attaching follows the `WorkspaceRef` in the message history: a ref only reaches sandboxes in the workspace of the key you use.
++
++## Configuration
++
++| Parameter | Default | What it does |
++| --- | --- | --- |
++| `template` | `'prized-base-v1'` | Template a new sandbox starts from (`prized-agent-v1` adds Claude Code and Codex) |
++| `vcpu`, `memory_mb`, `disk_gb` | Template's | Shape of a new sandbox |
++| `auto_pause_min` | `10` | Idle minutes before a new sandbox pauses itself, memory kept; `0` turns it off |
++| `auto_delete_min` | `None` | Minutes paused before a new sandbox deletes itself |
++| `max_runtime_min` | `None` | Minutes of running before a new sandbox is deleted (Prized's default: 24 hours) |
++| `working_dir` | `None` | Absolute directory commands start in; created on a new sandbox |
++| `env` | `None` | Environment variables every command gets |
++| `labels` | `None` | Labels for a new sandbox, added to `created-by=pydantic-ai` |
++| `api_key`, `base_url`, `edge_url` | From the environment / Prized's | Connection settings; `PRIZED_API_KEY` when `api_key` is unset |
++
++A command with a `timeout` of up to 240 seconds runs as one call, which keeps the first 4 MiB of each stream; a longer or unbounded one runs detached and is polled until it ends. Past what is kept, the command raises `WorkspaceOutputLimitError`, so redirect large output to a file. A timeout or a cancelled run stops the command's whole process group; a process it started in the background (`server &`) keeps running, so a dev server is still there for the next command. Reading a file under `/home/prized` is one call to Prized's file API; writes and the other file operations go through the shell as `prized`, so they honor the sandbox's permissions and reach every path that user can.
++
++## Telemetry
++
++`PrizedSandbox` emits no spans of its own. Core's [instrumentation](https://pydantic.dev/docs/ai/capabilities/instrumentation/) records the sandbox on the agent run span as `pydantic_ai.workspace.provider` and `pydantic_ai.workspace.id`, and each command or file operation a tool makes runs inside that tool call's span. Creating or forking a sandbox logs its id at `INFO` (`Created Prized sandbox <id>`) on the `pydantic_ai_harness.prized_sandbox._backend` logger.
++
++## API reference
++
++::: pydantic_ai_harness.prized_sandbox.PrizedSandbox
++
++::: pydantic_ai_harness.prized_sandbox.PrizedSandboxBackend
+diff --git a/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/__init__.py b/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/__init__.py
+new file mode 100644
+index 000000000..f257ea01a
+--- /dev/null
++++ b/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/__init__.py
+@@ -0,0 +1,15 @@
++"""Prized sandbox capability: gives agents a Firecracker microVM that pauses with its memory and forks live.
++
++`PrizedSandbox` is the supported entry point; build an agent with it and add tools that use the
++workspace, such as `Coder`. `PrizedSandboxBackend` is the Prized implementation of Pydantic AI's
++workspace backend protocol, public for applications that want to create or attach to a sandbox
++themselves and pass it to a run as `workspace=`.
++"""
++
++from pydantic_ai_harness.prized_sandbox._backend import PrizedSandboxBackend
++from pydantic_ai_harness.prized_sandbox._capability import PrizedSandbox
++
++__all__ = [
++    'PrizedSandbox',
++    'PrizedSandboxBackend',
++]
+diff --git a/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/_backend.py b/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/_backend.py
+new file mode 100644
+index 000000000..de544b70d
+--- /dev/null
++++ b/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/_backend.py
+@@ -0,0 +1,727 @@
++"""A [Prized](https://prized.dev) sandbox behind Pydantic AI's `WorkspaceBackend` protocol.
++
++SDK behavior verified 2026-11-05 against prized 0.1.2 on Prized's production API. Re-check these before
++changing acquisition, command, or error handling:
++
++- `AsyncSandbox.create` returns once the sandbox is `running` (about a quarter of a second from a warm pool).
++  The SDK sends an idempotency key, so its own retries never make a second sandbox, and a create that is
++  interrupted or never answered deletes what it may have made.
++- A command runs under `bash -c` as the non-root user `prized`, in `/home/prized/work` unless `cwd` says
++  otherwise. One call (a `timeout` of up to 240 seconds) is answered when the command ends, even while a
++  background child it started still runs; that `bash -c` leads its own process group, and the call keeps the
++  first 4 MiB of each stream. `full_output=True` would keep more, but wraps the command so that `bash -c` no
++  longer leads a group, so it is not used. A longer or unbounded command runs detached in its own session
++  through a background handle, which `kill()` stops with every process it started.
++- A wrapped command line (a detached one, or with `full_output`) over about 64 KiB fails with `spawn_failed`
++  ("argument list too long"), so a long command line is written to a file in the sandbox and sourced.
++- The file API works under `/home/prized` only. `files.read_bytes` follows symlinks and honors permissions;
++  it refuses a directory or FIFO (`not_regular_file`), an unreadable file (`permission_denied`), and a
++  missing one (`not_found`, which also means a deleted sandbox). `files.write` replaces a file whole, so it
++  writes even a file whose mode forbids it: writes therefore go through the shell, reads through the API.
++- A command that runs past its `timeout` is killed and the call raises `CommandTimeoutError`, whose `result`
++  holds the output printed before.
++- A background process a command starts (`cmd &`, `nohup`) keeps running after the call ends.
++- A paused sandbox resumes on its next command or file call, with its memory and running processes.
++  `fork()` copies a running or paused sandbox live (files, memory and processes) into new sandboxes.
++- A deleted sandbox answers `not_found`; one being deleted answers `sandbox_deleted`. A blocking call in
++  flight when its sandbox is deleted can go unanswered until the HTTP timeout, so commands check meanwhile.
++- A missing `cwd` is refused with `spawn_failed` before anything runs.
++- Missing and refused keys raise `PrizedError` with `code` `missing_api_key`, `invalid_api_key`,
++  `unauthorized`, `token_expired` or `key_access_denied`; the SDK never quotes the key.
++"""
++
++from __future__ import annotations
++
++import asyncio
++import logging
++import math
++import posixpath
++import shlex
++import uuid
++from collections.abc import AsyncGenerator, Awaitable, Mapping, Sequence
++from contextlib import asynccontextmanager
++from typing import TYPE_CHECKING, TypeVar
++
++import anyio
++import anyio.lowlevel
++
++from pydantic_ai.workspaces import (
++    CommandResult,
++    FileEntry,
++    SupportsCommands,
++    SupportsFilesystem,
++    WorkspaceBackend,
++    WorkspaceError,
++    WorkspaceOutputLimitError,
++    WorkspaceRef,
++    WorkspaceTimeoutError,
++    WorkspaceUnavailableError,
++)
++from pydantic_ai.workspaces.workspace import _ShellFilesystem  # pyright: ignore[reportPrivateUsage]
++from pydantic_ai_harness._workspace_provider import (
++    absolute_path,
++    check_env,
++    check_provider,
++    check_timeout,
++    command_argv,
++    require_asyncio,
++    run_to_completion,
++    running_on_asyncio,
++    stop_shielded,
++)
++
++if TYPE_CHECKING:
++    from prized import AsyncSandbox
++
++    from pydantic_ai.workspaces import WorkspaceCommand
++
++__all__ = ('PrizedSandboxBackend',)
++
++_T = TypeVar('_T')
++
++try:
++    import prized
++except ImportError as _import_error:
++    raise ImportError('Install `pydantic-ai-harness[prized]` to use PrizedSandbox.') from _import_error
++
++PROVIDER = 'prized'
++DEFAULT_TEMPLATE = 'prized-base-v1'
++
++_ASYNCIO_ONLY = 'PrizedSandbox needs the asyncio event loop: the Prized SDK runs on asyncio.'
++_AUTH_MESSAGE = (
++    'Prized did not accept the API key ({code}). Set PRIZED_API_KEY to a key with Sandboxes access '
++    '(https://prized.dev/dashboard/workspace/api-keys), or pass `api_key=`.'
++)
++_CREDENTIAL_CODES = frozenset(
++    {'missing_api_key', 'invalid_api_key', 'unauthorized', 'token_expired', 'key_access_denied'}
++)
++# Refusals a retry cannot fix: the sandbox cannot be created, resumed or forked as asked.
++_REFUSAL_CODES = frozenset(
++    {
++        'paid_balance_required',
++        'insufficient_balance',
++        'workspace_held',
++        'workspace_closing',
++        'template_not_found',
++        'template_inactive',
++        'invalid_resources',
++        'unknown_field',
++        'bad_request',
++        'invalid_max_runtime',
++        'sandbox_quota_exceeded',
++        'parent_not_forkable',
++    }
++)
++# Answers that may mean the sandbox is gone; one lookup decides.
++_MAYBE_GONE_CODES = frozenset(
++    {'not_found', 'sandbox_not_running', 'sandbox_unreachable', 'sandbox_error', 'sandbox_deleted', 'network_error'}
++)
++_GONE_STATES = frozenset({'deleting', 'deleted', 'error'})
++
++# Bound sandbox creation, attachment, and deletion so a wedged control plane cannot hang a run.
++_LIFECYCLE_TIMEOUT = 180.0
++_REQUEST_TIMEOUT = 30.0
++_TEARDOWN_TIMEOUT = 30.0
++# A command with a timeout up to this many seconds is one exec call; a longer or unbounded one runs detached.
++_MAX_BLOCKING_SECONDS = 240
++# Past the command's own limit, how long to wait for the edge to answer before stopping it ourselves.
++_ANSWER_SLACK = 15.0
++# How often a command in flight checks that its sandbox still exists.
++_WATCH_INTERVAL = 5.0
++# One exec call keeps the first 4 MiB of each stream; a detached command's handle keeps up to 64 Mi characters.
++_BLOCKING_OUTPUT_LIMIT = 4 * 1024 * 1024
++_DETACHED_OUTPUT_LIMIT = 64 * 1024 * 1024
++_OUTPUT_PREVIEW_CHARS = 64 * 1024
++_RUN_DIR = '/tmp/pydantic-ai-prized'
++# A command line longer than this goes through a script file (see the module docstring).
++_MAX_INLINE_COMMAND_BYTES = 16 * 1024
++_SCRIPT_DIR = '/home/prized/.cache/pydantic-ai-prized'
++# Where the file API reaches.
++_HOME = '/home/prized'
++_LABELS = {'created-by': 'pydantic-ai'}
++
++logger = logging.getLogger(__name__)
++
++
++def _check_ref(ref: WorkspaceRef) -> None:
++    """Raise `ValueError` unless `ref` names a Prized sandbox."""
++    check_provider(ref, PROVIDER)
++    if not ref.id.strip():
++        raise ValueError('Prized workspace ref id cannot be empty')
++
++
++def _credential_error(error: prized.PrizedError) -> WorkspaceUnavailableError:
++    # The SDK never quotes the key back; the code alone is safe to show.
++    return WorkspaceUnavailableError(_AUTH_MESSAGE.format(code=error.code))
++
++
++def _gone(sandbox_id: str, why: str) -> WorkspaceUnavailableError:
++    return WorkspaceUnavailableError(
++        f"The Prized sandbox {sandbox_id!r} {why}. Pass `workspace='new'` to start a fresh sandbox."
++    )
++
++
++def _too_much_output(stdout: str, stderr: str, limit: int) -> WorkspaceOutputLimitError:
++    return WorkspaceOutputLimitError(
++        f'Prized command output exceeded {limit // (1024 * 1024)} MiB per stream; '
++        'redirect it to a file and read part of it instead',
++        limit=limit,
++        stdout=stdout[:_OUTPUT_PREVIEW_CHARS],
++        stderr=stderr[:_OUTPUT_PREVIEW_CHARS],
++    )
++
++
++async def destroy_sandbox(
++    sandbox_id: str, *, api_key: str | None = None, base_url: str | None = None, edge_url: str | None = None
++) -> None:
++    """Delete a Prized sandbox by id, in any state, without resuming it.
++
++    A sandbox that no longer exists returns quietly; a refused key raises `WorkspaceUnavailableError`.
++
++    Raises:
++        UserError: The event loop is not asyncio.
++        TimeoutError: Prized did not answer in time.
++    """
++    require_asyncio(_ASYNCIO_ONLY)
++    if not sandbox_id.strip():
++        raise ValueError('Prized workspace ref id cannot be empty')
++    with anyio.fail_after(_LIFECYCLE_TIMEOUT):
++        try:
++            sandbox = await prized.AsyncSandbox.connect(
++                sandbox_id, api_key=api_key, base_url=base_url, edge_url=edge_url
++            )
++        except prized.PrizedError as error:
++            if error.code == 'not_found':
++                return
++            if error.code in _CREDENTIAL_CODES:
++                raise _credential_error(error) from error
++            raise
++        try:
++            await sandbox.delete()
++        except prized.PrizedError as error:
++            if error.code in _CREDENTIAL_CODES:
++                raise _credential_error(error) from error
++            if error.code not in ('not_found', 'sandbox_deleted'):
++                raise
++        finally:
++            await _close_quietly(sandbox)
++
++
++async def _close_quietly(sandbox: AsyncSandbox) -> None:
++    """Release a handle's HTTP connections, bounded and shielded; a failure is logged, not raised."""
++    with anyio.move_on_after(_TEARDOWN_TIMEOUT, shield=True):
++        try:
++            await sandbox.close()
++        except Exception as error:
++            logger.warning('Could not close the Prized SDK client: %r', error)
++
++
++class PrizedSandboxBackend(WorkspaceBackend, SupportsCommands, SupportsFilesystem):
++    """A [Prized](https://prized.dev) sandbox as a Pydantic AI [`WorkspaceBackend`][pydantic_ai.workspaces.WorkspaceBackend].
++
++    A Prized sandbox is a Firecracker microVM with its own kernel that pauses with its memory and running
++    processes, resumes where it stopped, and forks into live copies.
++
++    Building one does no I/O. The first operation creates a sandbox from `template`, or attaches to the
++    one `ref` names; a paused sandbox resumes on its first command. The backend never pauses or deletes
++    the sandbox: whoever holds the ref does (`PrizedSandbox.pause` and `PrizedSandbox.destroy`), or the
++    sandbox's own timers do (`auto_pause_min`, `auto_delete_min`, `max_runtime_min`).
++    `get_sandbox()` returns its `prized.AsyncSandbox` for everything else the SDK can do.
++
++    Commands run under `bash` as the user `prized` with stdin at EOF; a shell string runs under
++    `/bin/sh -c`. A timeout or cancellation stops the command's whole process group. A file under
++    `/home/prized` is read with Prized's file API in one call; every other file operation goes through the
++    shell, as core derives it for a command-only backend, so it reaches every path the `prized` user can.
++
++    A deleted sandbox, a refused key, and a create Prized refuses (balance, quota, template) raise
++    `WorkspaceUnavailableError`.
++
++    Args:
++        ref: Identity of an existing sandbox to attach to on first use.
++        template: Template a new sandbox starts from: `prized-base-v1` (Ubuntu 24.04 with Python, Node and
++            git) or `prized-agent-v1` (adds Claude Code and Codex).
++        vcpu: vCPUs of a new sandbox; the template's default when `None`.
++        memory_mb: Memory of a new sandbox in MiB; the template's default when `None`.
++        disk_gb: Disk of a new sandbox in GiB; the template's default when `None`.
++        working_dir: Absolute directory commands start in and relative paths resolve against;
++            `/home/prized/work` when `None`. Created on a new sandbox; an attached sandbox must already have it.
++        env: Environment variables every command gets, also on an attached sandbox; a command's `env` is
++            layered on top. Nothing is read from the host.
++        labels: Labels for a new sandbox, to find it later; `created-by=pydantic-ai` is always added.
++        auto_pause_min: Idle minutes before a new sandbox pauses itself, memory kept; the next command
++            resumes it. `0` turns it off, and `None` keeps Prized's default (off).
++        auto_delete_min: Minutes paused before a new sandbox deletes itself; `None` keeps Prized's default (off).
++        max_runtime_min: Minutes of running before a new sandbox is deleted; Prized's default when `None`.
++        api_key: A Prized API key; `PRIZED_API_KEY` from the environment when `None`.
++        base_url: The Prized API; Prized's own when `None`.
++        edge_url: The command endpoint; the one the API names for each sandbox when `None`.
++    """
++
++    def __init__(
++        self,
++        *,
++        ref: WorkspaceRef | None = None,
++        template: str = DEFAULT_TEMPLATE,
++        vcpu: int | None = None,
++        memory_mb: int | None = None,
++        disk_gb: int | None = None,
++        working_dir: str | None = None,
++        env: Mapping[str, str] | None = None,
++        labels: Mapping[str, str] | None = None,
++        auto_pause_min: int | None = None,
++        auto_delete_min: int | None = None,
++        max_runtime_min: int | None = None,
++        api_key: str | None = None,
++        base_url: str | None = None,
++        edge_url: str | None = None,
++    ) -> None:
++        if ref is not None:
++            _check_ref(ref)
++        check_env(env)
++        self._ref = ref
++        self._template = template
++        self._vcpu, self._memory_mb, self._disk_gb = vcpu, memory_mb, disk_gb
++        self._working_dir = absolute_path('working_dir', working_dir)
++        self._env = dict(env or {})
++        self._labels = {**_LABELS, **dict(labels or {})}
++        self._auto_pause_min = auto_pause_min
++        self._auto_delete_min = auto_delete_min
++        self._max_runtime_min = max_runtime_min
++        self._api_key, self._base_url, self._edge_url = api_key, base_url, edge_url
++        self._sandbox: AsyncSandbox | None = None
++        # `working_dir()` must return a canonical absolute path, resolved once with `pwd -P`.
++        self._resolved_working_dir: str | None = None
++        # A sandbox this backend created still needs its `working_dir` made.
++        self._working_dir_pending = False
++        self._lock = anyio.Lock()
++        # Set while nothing will call `aclose()`: the handle then closes when the last operation in flight ends.
++        self._close_after_operation = False
++        self._operations = 0
++
++    @property
++    def ref(self) -> WorkspaceRef | None:
++        """Identity of the sandbox (`provider='prized'`, `id='sbx_…'`), or `None` before one is created."""
++        return self._ref
++
++    async def get_sandbox(self) -> AsyncSandbox:
++        """Return a `prized.AsyncSandbox` for the sandbox, creating or attaching to it on first use.
++
++        Use it for what the workspace API does not cover, such as `fork(count)`, preview URLs for a port, or
++        extending its run time. The handle is yours: close it with `await sandbox.close()` (the sandbox keeps
++        running). Attaching by `ref` to a sandbox that no longer exists raises `WorkspaceUnavailableError`; it
++        never creates a replacement.
++        """
++        async with self._operation():
++            sandbox = await self._acquire()
++            async with self._mapped_errors(sandbox, 'Could not read the Prized sandbox'):
++                with anyio.fail_after(_LIFECYCLE_TIMEOUT):
++                    return await prized.AsyncSandbox.connect(
++                        sandbox.id, api_key=self._api_key, base_url=self._base_url, edge_url=self._edge_url
++                    )
++
++    async def pause(self) -> None:
++        """Pause the sandbox now, memory and running processes kept, creating or attaching on first use.
++
++        No compute is charged while it is paused; the next command or attach resumes it where it stopped.
++        """
++        async with self._operation():
++            sandbox = await self._acquire()
++            async with self._mapped_errors(sandbox, 'Could not pause the Prized sandbox'):
++                await sandbox.pause()
++
++    async def fork(self) -> WorkspaceRef:
++        """Copy the sandbox into a new one, live, and return the copy's ref, creating or attaching on first use.
++
++        The copy has the sandbox's files, memory and running processes as they are now, and the two change
++        independently after; the sandbox itself keeps running. Pass the copy's ref as `workspace=` to run
++        an agent in it, and delete it with `PrizedSandbox().destroy(ref)` when you are done.
++        """
++        async with self._operation():
++            sandbox = await self._acquire()
++
++            async def make_copy() -> str:
++                # `labels=` replaces the copy's labels, so the sandbox's own are passed on with the marker.
++                labels = {**sandbox.labels, **self._labels, 'forked-from': sandbox.id}
++                async with self._mapped_errors(sandbox, 'Could not fork the Prized sandbox'):
++                    with anyio.fail_after(_LIFECYCLE_TIMEOUT):
++                        (copy,) = await sandbox.fork(1, labels=labels)
++                # Logged here, so the copy's id is recorded even if the caller was cancelled meanwhile.
++                logger.info('Forked Prized sandbox %s into %s', sandbox.id, copy.id)
++                await _close_quietly(copy)
++                return copy.id
++
++            copy_id = await run_to_completion(make_copy)
++        return WorkspaceRef(provider=PROVIDER, id=copy_id)
++
++    async def _acquire(self) -> AsyncSandbox:
++        """The sandbox, ready for commands, created or attached on first use."""
++        require_asyncio(_ASYNCIO_ONLY)
++        async with self._lock:
++            sandbox = self._sandbox
++            if sandbox is None:
++                if self._ref is None:
++                    # Creation finishes even if the caller is cancelled, so a billed sandbox is never left unrecorded.
++                    sandbox = await run_to_completion(self._create)
++                else:
++                    sandbox = await self._attach(self._ref.id)
++                self._sandbox = sandbox
++            if self._working_dir_pending:
++                # A caller cancelled during creation stops here; the next operation makes the directory.
++                await anyio.lowlevel.checkpoint_if_cancelled()
++                await self._make_working_dir(sandbox)
++        await anyio.lowlevel.checkpoint_if_cancelled()
++        return sandbox
++
++    async def _create(self) -> AsyncSandbox:
++        try:
++            sandbox = await prized.AsyncSandbox.create(
++                self._template,
++                vcpu=self._vcpu,
++                memory_mb=self._memory_mb,
++                disk_gb=self._disk_gb,
++                env_vars=self._env or None,
++                labels=self._labels,
++                auto_pause_min=self._auto_pause_min,
++                auto_delete_min=self._auto_delete_min,
++                max_runtime_min=self._max_runtime_min,
++                timeout=_LIFECYCLE_TIMEOUT,
++                api_key=self._api_key,
++                base_url=self._base_url,
++                edge_url=self._edge_url,
++            )
++        except prized.PrizedError as error:
++            if error.code in _CREDENTIAL_CODES:
++                raise _credential_error(error) from error
++            if error.code in _REFUSAL_CODES:
++                raise WorkspaceUnavailableError(
++                    f'Prized could not create the sandbox ({error.code}): {error.message}'
++                ) from error
++            raise
++        # Recorded here, before any setup that can fail and even if the caller was cancelled meanwhile
++        # (`run_to_completion` re-raises the cancellation only after this returns).
++        self._sandbox = sandbox
++        self._ref = WorkspaceRef(provider=PROVIDER, id=sandbox.id)
++        self._working_dir_pending = self._working_dir is not None
++        # Logged at creation, so the id can be found whatever ends the run before it is stored.
++        logger.info('Created Prized sandbox %s', sandbox.id)
++        return sandbox
++
++    async def _attach(self, sandbox_id: str) -> AsyncSandbox:
++        try:
++            with anyio.fail_after(_LIFECYCLE_TIMEOUT):
++                sandbox = await prized.AsyncSandbox.connect(
++                    sandbox_id, api_key=self._api_key, base_url=self._base_url, edge_url=self._edge_url
++                )
++        except prized.PrizedError as error:
++            if error.code in _CREDENTIAL_CODES:
++                raise _credential_error(error) from error
++            if error.code == 'not_found':
++                raise _gone(
++                    sandbox_id, 'was not found (it was deleted, expired, or belongs to another workspace)'
++                ) from error
++            raise
++        if sandbox.state in _GONE_STATES:
++            await _close_quietly(sandbox)
++            raise _gone(sandbox_id, f'is {sandbox.state}')
++        return sandbox
++
++    async def _make_working_dir(self, sandbox: AsyncSandbox) -> None:
++        directory = self._working_dir
++        assert directory is not None
++        with anyio.CancelScope(shield=True):
++            async with self._mapped_errors(sandbox, f'Could not create working_dir {directory!r}'):
++                result = await sandbox.exec(
++                    shlex.join(['mkdir', '-p', '--', directory]), cwd='/', timeout=int(_REQUEST_TIMEOUT)
++                )
++            if result.exit_code != 0:
++                raise WorkspaceError(
++                    f'Could not create working_dir {directory!r} in Prized sandbox {sandbox.id}: {result.stderr.strip()}'
++                )
++            self._working_dir_pending = False
++
++    async def aclose(self) -> None:
++        """Release the SDK's HTTP connections. The sandbox keeps running; a later operation attaches by `ref`.
++
++        `PrizedSandbox` calls this when the run that used the backend ends.
++        """
++        if not running_on_asyncio():
++            return
++        if self._operations:
++            # An operation in flight, such as a create or a cancelled command still being stopped, needs the
++            # handle: the last one to finish closes it.
++            self._close_after_operation = True
++            return
++        if self._sandbox is None:
++            return
++
++        async def close() -> None:
++            # Under the lock, so a sandbox still being created is recorded before its handle closes.
++            async with self._lock:
++                sandbox = self._detach()
++            if sandbox is not None:
++                await _close_quietly(sandbox)
++
++        await run_to_completion(close)
++
++    def _detach(self) -> AsyncSandbox | None:
++        """Forget the handle and what was learned through it; a later operation attaches by `ref` again."""
++        sandbox, self._sandbox = self._sandbox, None
++        self._resolved_working_dir = None
++        return sandbox
++
++    @asynccontextmanager
++    async def _operation(self) -> AsyncGenerator[None]:
++        self._operations += 1
++        try:
++            yield
++        finally:
++            self._operations -= 1
++            if self._operations == 0 and self._close_after_operation and self._sandbox is not None:
++                # Detached before any await, so an operation starting meanwhile opens its own handle.
++                sandbox = self._detach()
++                assert sandbox is not None
++                await run_to_completion(lambda: _close_quietly(sandbox))
++
++    @asynccontextmanager
++    async def _mapped_errors(self, sandbox: AsyncSandbox, context: str) -> AsyncGenerator[None]:
++        """Raise `WorkspaceUnavailableError` for a sandbox that is gone or a refused key; let transient errors through."""
++        try:
++            yield
++        except prized.PrizedError as error:
++            if isinstance(error, prized.CommandTimeoutError):
++                raise
++            if error.code in _CREDENTIAL_CODES:
++                raise _credential_error(error) from error
++            if error.code == 'sandbox_deleted':
++                raise _gone(sandbox.id, 'was deleted') from error
++            if error.code in _MAYBE_GONE_CODES and (gone := await self._probe(sandbox)) is not None:
++                raise gone from error
++            if error.code in _REFUSAL_CODES:
++                # A resume on the first command can be refused just like a create.
++                raise WorkspaceUnavailableError(f'{context} ({error.code}): {error.message}') from error
++            if error.code == 'spawn_failed':
++                if 'argument list too long' in str(error):
++                    raise WorkspaceError(
++                        f'{context}: the command line is too long for Prized sandbox {sandbox.id}; '
++                        'pass large data in a file instead'
++                    ) from error
++                if self._working_dir is not None:
++                    raise WorkspaceError(
++                        f'{context}: working_dir {self._working_dir!r} may not exist in Prized sandbox {sandbox.id} '
++                        f'({error.message}). Create it there, or pass a working_dir that exists.'
++                    ) from error
++                raise WorkspaceError(f'{context}: {error.message}') from error
++            raise
++
++    async def _probe(self, sandbox: AsyncSandbox) -> WorkspaceUnavailableError | None:
++        """`WorkspaceUnavailableError` if the sandbox is deleted or failed; an inconclusive lookup counts as alive."""
++        with anyio.CancelScope(shield=True), anyio.move_on_after(_REQUEST_TIMEOUT):
++            try:
++                await sandbox.refresh()
++            except prized.PrizedError as error:
++                if error.code == 'not_found':
++                    return _gone(sandbox.id, 'no longer exists (it was deleted or reached its run time)')
++                return None
++            except Exception:
++                return None
++            if sandbox.state in _GONE_STATES:
++                return _gone(sandbox.id, f'is {sandbox.state}')
++        return None
++
++    async def working_dir(self) -> str:
++        """Return the canonical directory commands start in, probed once per connection."""
++        async with self._operation():
++            if self._resolved_working_dir is None:
++                result = await self.run(['pwd', '-P'], timeout=_REQUEST_TIMEOUT)
++                printed = result.stdout.removesuffix('\n')
++                if result.exit_code != 0 or not posixpath.isabs(printed):
++                    raise WorkspaceError(
++                        'Could not determine the working directory of the Prized sandbox: '
++                        f'`pwd -P` exited {result.exit_code} and printed {result.stdout!r}.'
++                    )
++                self._resolved_working_dir = printed
++            return self._resolved_working_dir
++
++    async def run(
++        self,
++        command: WorkspaceCommand,
++        *,
++        shell: bool = False,
++        env: Mapping[str, str] | None = None,
++        timeout: float | None = None,
++    ) -> CommandResult:
++        async with self._operation():
++            check_timeout(timeout)
++            argv = command_argv(command, shell)
++            check_env(env)
++            # Acquiring the sandbox has its own bounds; the timeout is the command's alone.
++            sandbox = await self._acquire()
++            command_env = {**self._env, **(env or {})}
++            if timeout is None or timeout > _MAX_BLOCKING_SECONDS:
++                return await self._run_detached(sandbox, argv, command_env, timeout)
++            return await self._run_blocking(sandbox, argv, command_env, timeout)
++
++    async def _staged(self, sandbox: AsyncSandbox, command: str) -> str:
++        """`command`, or for a long one, a line that sources it from a file written with the file API.
++
++        Sourced, so `$$` stays the edge's `bash -c`; the file removes itself before the command runs.
++        """
++        if len(command.encode()) <= _MAX_INLINE_COMMAND_BYTES:
++            return command
++        path = f'{_SCRIPT_DIR}/{uuid.uuid4().hex}.sh'
++        async with self._mapped_errors(sandbox, 'Could not stage the command'):
++            await sandbox.files.write(path, f'rm -f {shlex.quote(path)}\n{command}\n')
++        return f'. {shlex.quote(path)}'
++
++    async def _run_blocking(
++        self, sandbox: AsyncSandbox, argv: Sequence[str], env: Mapping[str, str], timeout: float
++    ) -> CommandResult:
++        """One exec call. The line records its process group, so a cancelled call can stop it."""
++        pid_file = f'{_RUN_DIR}/{uuid.uuid4().hex}.pid'
++        # `$$` is the edge's `bash -c`, which leads its own process group.
++        line = await self._staged(
++            sandbox,
++            f'{{ mkdir -p {_RUN_DIR} && printf %s "$$" > {pid_file}; }} 2>/dev/null; '
++            f'{shlex.join(argv)} </dev/null; __pai_status=$?; rm -f {pid_file}; exit $__pai_status',
++        )
++        limit = max(1, math.ceil(timeout))
++
++        async def stop() -> None:
++            await sandbox.exec(_stop_script(pid_file), cwd='/', timeout=int(_REQUEST_TIMEOUT))
++
++        try:
++            with anyio.fail_after(limit + _ANSWER_SLACK):
++                async with self._mapped_errors(sandbox, 'Could not run the command'):
++                    result = await self._watched(
++                        sandbox,
++                        sandbox.exec(line, cwd=self._working_dir, env=env or None, timeout=limit),
++                    )
++        except prized.CommandTimeoutError as error:
++            raise WorkspaceTimeoutError(
++                f'Command timed out after {timeout:g} seconds', stdout=error.stdout or '', stderr=error.stderr or ''
++            ) from error
++        except TimeoutError as error:
++            # The edge did not answer in time: stop the command ourselves.
++            await stop_shielded(stop, grace=_REQUEST_TIMEOUT)
++            raise WorkspaceTimeoutError(f'Command timed out after {timeout:g} seconds') from error
++        except WorkspaceError:
++            raise
++        except BaseException:
++            # Cancelled, or the answer was lost: the command may still be running.
++            await stop_shielded(stop, grace=_REQUEST_TIMEOUT)
++            raise
++        if result.truncated:
++            raise _too_much_output(result.stdout, result.stderr, _BLOCKING_OUTPUT_LIMIT)
++        return CommandResult(exit_code=result.exit_code, stdout=result.stdout, stderr=result.stderr)
++
++    async def _run_detached(
++        self, sandbox: AsyncSandbox, argv: Sequence[str], env: Mapping[str, str], timeout: float | None
++    ) -> CommandResult:
++        """A long or unbounded command: started detached in its own session and polled until it exits."""
++        limit = 0 if timeout is None else math.ceil(timeout)
++        line = await self._staged(sandbox, f'{shlex.join(argv)} </dev/null')
++        async with self._mapped_errors(sandbox, 'Could not start the command'):
++            handle = await sandbox.exec(line, cwd=self._working_dir, env=env or None, timeout=limit, background=True)
++
++        async def stop() -> None:
++            if await handle.kill():
++                await anyio.sleep(2)
++                await handle.kill('SIGKILL')
++
++        try:
++            async with self._mapped_errors(sandbox, 'Could not wait for the command'):
++                result = await handle.wait()
++        except prized.CommandTimeoutError as error:
++            raise WorkspaceTimeoutError(
++                f'Command timed out after {timeout:g} seconds', stdout=error.stdout or '', stderr=error.stderr or ''
++            ) from error
++        except WorkspaceError:
++            raise
++        except BaseException:
++            await stop_shielded(stop, grace=_REQUEST_TIMEOUT)
++            raise
++        with anyio.move_on_after(_REQUEST_TIMEOUT, shield=True):
++            try:
++                await handle.cleanup()
++            except Exception:
++                pass
++        if result.truncated:
++            raise _too_much_output(result.stdout, result.stderr, _DETACHED_OUTPUT_LIMIT)
++        return CommandResult(exit_code=result.exit_code, stdout=result.stdout, stderr=result.stderr)
++
++    async def read_bytes(self, path: str) -> bytes:
++        """Read a file with the file API in one call when it is under `/home/prized`; through the shell otherwise.
++
++        Whatever the file API refuses (not a regular file, unreadable, missing, outside the home directory) is
++        read through the shell instead, which raises the builtin error the protocol promises.
++        """
++        async with self._operation():
++            sandbox = await self._acquire()
++            target = path if posixpath.isabs(path) else posixpath.join(await self.working_dir(), path)
++            if target == _HOME or target.startswith(_HOME + '/'):
++                try:
++                    return await sandbox.files.read_bytes(target)
++                except prized.PrizedError as error:
++                    if error.code in _CREDENTIAL_CODES:
++                        raise _credential_error(error) from error
++            return await _ShellFilesystem(self).read_bytes(path)
++
++    async def write_bytes(self, path: str, data: bytes) -> None:
++        await _ShellFilesystem(self).write_bytes(path, data)
++
++    async def stat(self, path: str) -> FileEntry:
++        return await _ShellFilesystem(self).stat(path)
++
++    async def list_dir(self, path: str) -> Sequence[FileEntry]:
++        return await _ShellFilesystem(self).list_dir(path)
++
++    async def make_dir(self, path: str) -> None:
++        await _ShellFilesystem(self).make_dir(path)
++
++    async def remove(self, path: str) -> None:
++        await _ShellFilesystem(self).remove(path)
++
++    async def exists(self, path: str) -> bool:
++        return await _ShellFilesystem(self).exists(path)
++
++    async def _watched(self, sandbox: AsyncSandbox, call: Awaitable[_T]) -> _T:
++        """Await an exec call while checking, every few seconds, that the sandbox still exists.
++
++        A call in flight when its sandbox is deleted gets no answer until the HTTP timeout, so without
++        this a deleted sandbox would read as a slow command.
++        """
++        task = asyncio.ensure_future(call)
++        try:
++            while True:
++                done, _ = await asyncio.wait([task], timeout=_WATCH_INTERVAL)
++                if done:
++                    return task.result()
++                if (gone := await self._probe(sandbox)) is not None:
++                    raise gone
++        finally:
++            if not task.done():
++                task.cancel()
++                with anyio.CancelScope(shield=True):
++                    await asyncio.wait([task])
++
++
++def _stop_script(pid_file: str) -> str:
++    """Stop the command whose shell's pid is in `pid_file`: TERM, then KILL after two seconds.
++
++    The shell leads its own process group on Prized's edge, so the whole group is signalled; its process
++    tree is signalled too, in case a future edge stops giving each call a group of its own (the group is
++    then never the edge's: only a pid that leads its own group is signalled as one). Waits up to two
++    seconds for the file, in case the cancelled call has not started yet.
++    """
++    quoted = shlex.quote(pid_file)
++    return (
++        'tree() { for c in $(ps -o pid= --ppid "$1" 2>/dev/null); do echo "$c"; tree "$c"; done; }; '
++        f'f={quoted}; i=0; while [ ! -s "$f" ] && [ $i -lt 20 ]; do sleep 0.1; i=$((i+1)); done; '
++        '[ -s "$f" ] || exit 0; pg=$(cat "$f"); '
++        # Taken before any signal: once the shell dies its children are reparented and no tree leads to them.
++        'pids="$pg $(tree "$pg")"; group=0; kill -0 -- "-$pg" 2>/dev/null && group=1; '
++        'stop() { [ $group = 1 ] && kill "-$1" -- "-$pg" 2>/dev/null; for p in $pids; do kill "-$1" "$p" 2>/dev/null; done; }; '
++        'alive() { [ $group = 1 ] && kill -0 -- "-$pg" 2>/dev/null && return 0; for p in $pids; do kill -0 "$p" 2>/dev/null && return 0; done; return 1; }; '
++        'stop TERM; i=0; while alive && [ $i -lt 20 ]; do sleep 0.1; i=$((i+1)); done; '
++        'stop KILL; rm -f "$f"; exit 0'
++    )
+diff --git a/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/_capability.py b/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/_capability.py
+new file mode 100644
+index 000000000..be8237547
+--- /dev/null
++++ b/src/pydantic_ai_harness/pydantic_ai_harness/prized_sandbox/_capability.py
+@@ -0,0 +1,231 @@
++"""Capability that supplies a Prized sandbox to an agent run."""
++
++from __future__ import annotations
++
++from collections.abc import Mapping
++from dataclasses import dataclass, field
++from typing import TYPE_CHECKING, Any
++
++from pydantic_ai.capabilities import AbstractCapability, WrapRunHandler
++from pydantic_ai.tools import AgentDepsT, RunContext
++from pydantic_ai.workspaces import WorkspaceBackend, WorkspaceRef
++from pydantic_ai_harness._workspace import innermost_backend
++from pydantic_ai_harness._workspace_provider import (
++    check_env,
++    check_integer,
++    check_provider,
++    check_working_dir,
++    reject_defer_loading,
++)
++from pydantic_ai_harness.prized_sandbox._backend import (
++    DEFAULT_TEMPLATE,
++    PROVIDER,
++    PrizedSandboxBackend,
++    destroy_sandbox,
++)
++
++if TYPE_CHECKING:
++    from pydantic_ai.agent import AgentRunResult
++
++
++class _SuppliedBackend(PrizedSandboxBackend):
++    """The backend `PrizedSandbox` built for one run; the capability closes its handle when that run ends."""
++
++    def __init__(self, *, run_id: str | None, **kwargs: Any) -> None:
++        super().__init__(**kwargs)
++        self.run_id = run_id
++        # Until a run claims it, nothing closes this backend: Temporal builds one per activity and
++        # drops it, so its own handle closes after each operation instead.
++        self._close_after_operation = True
++
++    def claim(self, owned: bool) -> None:
++        """Keep the handle open across operations while the run that closes it is in progress."""
++        self._close_after_operation = not owned
++
++
++@dataclass(kw_only=True)
++class PrizedSandbox(AbstractCapability[AgentDepsT]):
++    """Supply a [Prized](https://prized.dev) sandbox, a Firecracker microVM, as the run's workspace.
++
++    A run with no reference creates a fresh sandbox on first use; pass a `WorkspaceRef` to attach to an
++    existing one. Ending a run does not delete the sandbox: it pauses itself after `auto_pause_min` idle
++    minutes with its memory and running processes, and the next command resumes it where it stopped.
++    `pause(ref)` pauses it at once, `fork(ref)` copies it live, and `destroy(ref)` deletes it.
++    Commands run under `bash` as the sandbox's non-root `prized` user.
++
++    This capability supplies the workspace only. Compose it with capabilities that use it, such as
++    `Coder`, `Shell`, and `FileSystem`. See
++    [Workspaces](https://pydantic.dev/docs/ai/core-concepts/workspace/) for more.
++    """
++
++    template: str = DEFAULT_TEMPLATE
++    """Template a newly created sandbox starts from: `prized-base-v1` (Ubuntu 24.04 with Python, Node and
++    git) or `prized-agent-v1` (adds Claude Code and Codex). An unknown template raises
++    `WorkspaceUnavailableError` on first use."""
++
++    vcpu: int | None = None
++    """vCPUs of a newly created sandbox; the template's default when `None` (2 on Prized's free tier)."""
++
++    memory_mb: int | None = None
++    """Memory of a newly created sandbox in MiB; the template's default when `None` (4096 on the free tier)."""
++
++    disk_gb: int | None = None
++    """Disk of a newly created sandbox in GiB; the template's default when `None`."""
++
++    auto_pause_min: int | None = 10
++    """Idle minutes before a newly created sandbox pauses itself, memory and processes kept; the next
++    command resumes it. `0` turns it off, and `None` keeps Prized's default (off)."""
++
++    auto_delete_min: int | None = None
++    """Minutes paused before a newly created sandbox deletes itself; `None` keeps Prized's default (never)."""
++
++    max_runtime_min: int | None = None
++    """Minutes of running before a newly created sandbox is deleted; Prized's default when `None`
++    (24 hours; 60 minutes on the free tier)."""
++
++    working_dir: str | None = None
++    """Absolute directory commands start in and relative paths resolve against; `None` uses the
++    sandbox's own (`/home/prized/work`). Created on a new sandbox; an attached sandbox must already have it."""
++
++    env: Mapping[str, str] | None = field(default=None, repr=False)
++    """Environment variables every command gets, also on an attached sandbox; a command's `env` is
++    layered on top. Nothing is read from the host."""
++
++    labels: Mapping[str, str] | None = None
++    """Labels for a newly created sandbox, to find it later; `created-by=pydantic-ai` is always added."""
++
++    api_key: str | None = field(default=None, repr=False)
++    """A Prized API key; when `None`, `PRIZED_API_KEY` from the environment."""
++
++    base_url: str | None = None
++    """The Prized API; Prized's own when `None`."""
++
++    edge_url: str | None = None
++    """The command endpoint; the one the API names for each sandbox when `None`."""
++
++    def __post_init__(self) -> None:
++        reject_defer_loading('PrizedSandbox', self.defer_loading)
++        # Checked here rather than at the first workspace operation, so a bad value fails where it is written.
++        check_working_dir(self.working_dir)
++        check_integer('vcpu', self.vcpu, optional=True)
++        check_integer('memory_mb', self.memory_mb, optional=True)
++        check_integer('disk_gb', self.disk_gb, optional=True)
++        check_integer('auto_pause_min', self.auto_pause_min, minimum=0, optional=True)
++        check_integer('auto_delete_min', self.auto_delete_min, minimum=0, optional=True)
++        check_integer('max_runtime_min', self.max_runtime_min, optional=True)
++        check_env(self.env)
++
++    @classmethod
++    def from_spec(
++        cls,
++        *,
++        id: str | None = None,
++        description: str | None = None,
++        defer_loading: bool = False,
++        template: str = DEFAULT_TEMPLATE,
++        vcpu: int | None = None,
++        memory_mb: int | None = None,
++        disk_gb: int | None = None,
++        auto_pause_min: int | None = 10,
++        auto_delete_min: int | None = None,
++        max_runtime_min: int | None = None,
++        working_dir: str | None = None,
++        env: Mapping[str, str] | None = None,
++        labels: Mapping[str, str] | None = None,
++    ) -> PrizedSandbox[Any]:
++        """Build from an agent spec, naming the fields a spec can express (credentials stay out of specs)."""
++        return cls(
++            id=id,
++            description=description,
++            defer_loading=defer_loading,
++            template=template,
++            vcpu=vcpu,
++            memory_mb=memory_mb,
++            disk_gb=disk_gb,
++            auto_pause_min=auto_pause_min,
++            auto_delete_min=auto_delete_min,
++            max_runtime_min=max_runtime_min,
++            working_dir=working_dir,
++            env=env,
++            labels=labels,
++        )
++
++    def backend(self, ref: WorkspaceRef) -> PrizedSandboxBackend:
++        """Construct a lazy backend for an existing sandbox."""
++        return PrizedSandboxBackend(
++            ref=ref,
++            working_dir=self.working_dir,
++            env=self.env,
++            api_key=self.api_key,
++            base_url=self.base_url,
++            edge_url=self.edge_url,
++        )
++
++    async def destroy(self, ref: WorkspaceRef) -> None:
++        """Delete a sandbox by id, whatever state it is in, without resuming it.
++
++        A sandbox that no longer exists is already gone, so destroying it returns quietly.
++        """
++        check_provider(ref, PROVIDER)
++        await destroy_sandbox(ref.id, api_key=self.api_key, base_url=self.base_url, edge_url=self.edge_url)
++
++    async def pause(self, ref: WorkspaceRef) -> None:
++        """Pause a sandbox now, with its memory and running processes; no compute is charged while it is paused.
++
++        The next run that attaches to it, or any command, resumes it where it stopped.
++        """
++        backend = self.backend(ref)
++        try:
++            await backend.pause()
++        finally:
++            await backend.aclose()
++
++    async def fork(self, ref: WorkspaceRef) -> WorkspaceRef:
++        """Copy a sandbox live into a new sandbox and return the copy's ref.
++
++        The copy has the sandbox's files, memory and running processes as they are now, and the two change
++        independently after: pass its ref as `workspace=` to run an agent in the copy, and `destroy` it when
++        you are done. A paused sandbox is copied as it was paused and stays paused.
++        """
++        backend = self.backend(ref)
++        try:
++            return await backend.fork()
++        finally:
++            await backend.aclose()
++
++    def get_workspace(self, ctx: RunContext[AgentDepsT], *, ref: WorkspaceRef | None) -> WorkspaceBackend | None:
++        """Build the backend for this run. No I/O here: it attaches or creates on first use."""
++        if ref is not None and ref.provider != PROVIDER:
++            return None
++        return _SuppliedBackend(
++            run_id=ctx.run_id,
++            ref=ref,
++            template=self.template,
++            vcpu=self.vcpu,
++            memory_mb=self.memory_mb,
++            disk_gb=self.disk_gb,
++            working_dir=self.working_dir,
++            env=self.env,
++            labels=self.labels,
++            auto_pause_min=self.auto_pause_min,
++            auto_delete_min=self.auto_delete_min,
++            max_runtime_min=self.max_runtime_min,
++            api_key=self.api_key,
++            base_url=self.base_url,
++            edge_url=self.edge_url,
++        )
++
++    async def wrap_run(self, ctx: RunContext[AgentDepsT], *, handler: WrapRunHandler) -> AgentRunResult[Any]:
++        # Only the backend this run built: one passed in as `workspace=`, such as a parent run's
++        # handed to a subagent, belongs to the run that built it and may still be in use.
++        backend = innermost_backend(ctx.workspace)
++        owned = backend if isinstance(backend, _SuppliedBackend) and backend.run_id == ctx.run_id else None
++        if owned is not None:
++            owned.claim(True)
++        try:
++            return await handler()
++        finally:
++            if owned is not None:
++                # `result.workspace` outlives the run, with no one left to close it.
++                owned.claim(False)
++                await owned.aclose()
+diff --git a/src/pydantic_ai_harness/pyproject.toml b/src/pydantic_ai_harness/pyproject.toml
+index 5e2f9a02c..4fd520f51 100644
+--- a/src/pydantic_ai_harness/pyproject.toml
++++ b/src/pydantic_ai_harness/pyproject.toml
+@@ -66,6 +66,9 @@ sprites = ["sprites-py>=0.7.0,<0.8"]
+ # boxd's SDK is on 0.x, where a minor release can change the API, so cap per minor. 0.2.20 added
+ # `machines.fs` and an `AuthenticationError` that means only refused or missing credentials.
+ boxd = ["boxd>=0.2.20,<0.3"]
++# Prized's SDK is on 0.x, where a minor release can change the API, so cap per minor. 0.1.2 is the
++# first with the retry and timeout behavior the backend relies on.
++prized = ["prized>=0.1.2,<0.2"]
+ # 1.1.1 is the oldest SDK the backend is verified against; 2.x may change the API.
+ opensandbox = ["opensandbox>=1.1.1,<2"]
+ # Daytona's current SDK line is 0.x; the older 1.0.1 and the 2.0 pre-release are other APIs.
+diff --git a/tests/harness/prized_sandbox/__init__.py b/tests/harness/prized_sandbox/__init__.py
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/tests/harness/prized_sandbox/conftest.py b/tests/harness/prized_sandbox/conftest.py
+new file mode 100644
+index 000000000..8896a1ebe
+--- /dev/null
++++ b/tests/harness/prized_sandbox/conftest.py
+@@ -0,0 +1,109 @@
++"""Shared fixtures for PrizedSandbox tests."""
++
++from __future__ import annotations
++
++import importlib.util
++import os
++import types
++from collections.abc import AsyncGenerator, Iterator
++from pathlib import Path
++from typing import TYPE_CHECKING
++
++import pytest
++from typing_extensions import TypedDict
++
++_HAS_PRIZED = importlib.util.find_spec('prized') is not None
++collect_ignore = [] if _HAS_PRIZED else ['test_prized_live.py', 'test_prized_sandbox.py', 'test_conformance.py']
++
++# Live sandboxes are deleted by the tests that create them; CI stops a live job after 15 minutes, before a
++# `finally` can run, so each one also pauses after a short idle time and has a short run time: a sandbox
++# left behind that way stops using its vCPUs, and is deleted when its run time ends.
++LIVE_AUTO_PAUSE_MIN = 5
++LIVE_MAX_RUNTIME_MIN = 30
++LIVE_LABELS = {
++    'pydantic-ai-test': 'live',
++    **dict(item.split('=', 1) for item in os.environ.get('PRIZED_TEST_LABELS', '').split(',') if '=' in item),
++}
++
++if TYPE_CHECKING or _HAS_PRIZED:  # pragma: no branch - the SDK-installed and slim jobs take opposite branches
++    import prized
++
++    from .fake_prized import FakePrized
++
++
++class Connection(TypedDict):
++    base_url: str | None
++    edge_url: str | None
++
++
++def live_connection() -> Connection:
++    """Connection options for the live tier: the SDK's defaults unless the environment points elsewhere."""
++    return Connection(
++        base_url=os.environ.get('PRIZED_BASE_URL') or None, edge_url=os.environ.get('PRIZED_EDGE_URL') or None
++    )
++
++
++def pytest_runtest_setup(item: pytest.Item) -> None:
++    """Gate the live tier, before any live fixture can create a sandbox.
++
++    It runs only with `PYDANTIC_AI_HARNESS_PRIZED_LIVE=1` and a non-empty `PRIZED_API_KEY`. Otherwise it
++    skips, unless `PRIZED_REQUIRE_LIVE=1` (CI's live job sets it), where a missing key fails instead: a
++    live job that tested nothing must not pass as a silent skip.
++    """
++    if item.get_closest_marker('prized_live') is None:
++        return
++    opted_in = os.getenv('PYDANTIC_AI_HARNESS_PRIZED_LIVE') == '1'
++    if opted_in and os.getenv('PRIZED_API_KEY'):  # pragma: no cover - live job
++        return
++    reason = 'requires PYDANTIC_AI_HARNESS_PRIZED_LIVE=1 and a non-empty PRIZED_API_KEY'
++    if os.getenv('PRIZED_REQUIRE_LIVE') == '1':  # pragma: no cover - live job
++        pytest.fail(f'PRIZED_REQUIRE_LIVE=1 but the live tier cannot run: it {reason}.')
++    pytest.skip(reason)
++
++
++class _PoisonedPrized(types.ModuleType):
++    """A `prized` stand-in that fails loudly on any attribute access.
++
++    The real SDK is installed in the dev venv for the live tier, so a unit test that forgets the
++    `fake_prized` fixture would otherwise reach production and, with a developer API key configured,
++    create real billed sandboxes.
++    """
++
++    def __getattr__(self, name: str) -> object:  # pragma: no cover - tripwire, hit only by a misbehaving test
++        raise AssertionError(
++            'A prized_sandbox unit test touched the real `prized` package. '
++            'Use the `fake_prized` fixture, or mark the test `prized_live`.'
++        )
++
++
++@pytest.fixture(autouse=True)
++def _no_real_prized(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
++    """Poison `prized` for every test here except the opt-in live tier."""
++    if 'prized_live' in request.keywords:  # pragma: no cover - live tier runs without coverage
++        yield
++        return
++    monkeypatch.setattr('pydantic_ai_harness.prized_sandbox._backend.prized', _PoisonedPrized('prized'))
++    yield
++
++
++if _HAS_PRIZED:  # pragma: no branch - the fixture cannot be defined without its SDK-backed fake
++
++    @pytest.fixture
++    async def fake_prized(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> AsyncGenerator[FakePrized]:
++        """Swap the SDK's `AsyncSandbox` for the fake and return its control surface.
++
++        The real module stays in place for its error types, which the backend matches on.
++        """
++        fake = FakePrized()
++        # Resolved so the working directory `pwd -P` reports matches it on hosts whose temp
++        # directory sits behind a symlink.
++        fake.host_root = tmp_path.resolve()
++        monkeypatch.setattr('pydantic_ai_harness.prized_sandbox._backend.prized', prized)
++        monkeypatch.setattr(prized, 'AsyncSandbox', fake.sandbox_class)
++        monkeypatch.setenv('PRIZED_API_KEY', 'dcp_fake')
++        # Long command lines are staged in this directory with the file API, which the fake keeps on the host.
++        monkeypatch.setattr('pydantic_ai_harness.prized_sandbox._backend._SCRIPT_DIR', str(fake.host_root / 'scripts'))
++        # The fake's sandboxes live under `host_root`, which stands in for `/home/prized` for the file API.
++        monkeypatch.setattr('pydantic_ai_harness.prized_sandbox._backend._HOME', str(fake.host_root))
++        yield fake
++        await fake.reap()
+diff --git a/tests/harness/prized_sandbox/fake_prized.py b/tests/harness/prized_sandbox/fake_prized.py
+new file mode 100644
+index 000000000..d5f9c817c
+--- /dev/null
++++ b/tests/harness/prized_sandbox/fake_prized.py
+@@ -0,0 +1,363 @@
++"""A stand-in for the Prized SDK's `AsyncSandbox`, for tests that must not reach Prized.
++
++Each fake sandbox is a directory under `host_root`, and its commands run there with the host's
++`bash`, in their own session, as Prized's edge runs them: a cancelled call leaves its command
++running, exactly as a lost answer does on the real edge, so the backend must stop it itself.
++The real `prized` module stays in place for its error and result types.
++"""
++
++from __future__ import annotations
++
++import asyncio
++import os
++import shutil
++import signal
++import stat
++import uuid
++from collections.abc import Mapping
++from dataclasses import dataclass, field
++from pathlib import Path
++
++import prized
++from prized import CommandTimeoutError, ExecResult, PrizedError
++
++
++@dataclass
++class _Record:
++    id: str
++    root: Path
++    labels: dict[str, str]
++    env_vars: dict[str, str]
++    state: str = 'running'
++    pauses: int = 0
++    resumes: int = 0
++    procs: set[asyncio.subprocess.Process] = field(default_factory=lambda: set[asyncio.subprocess.Process]())
++
++
++class FakePrized:
++    """The fake's control surface: its sandboxes, and switches for the failures tests need."""
++
++    def __init__(self) -> None:
++        self.host_root: Path | None = None
++        self.sandboxes: dict[str, _Record] = {}
++        self.created: list[str] = []
++        self.refuse_create: str | None = None
++        self.bad_keys: set[str] = {'dcp_rejected'}
++        self.calls: list[tuple[str, str]] = []
++
++    def record(self, sandbox_id: str) -> _Record:
++        return self.sandboxes[sandbox_id]
++
++    def delete_behind_backs(self, sandbox_id: str) -> None:
++        """Delete a sandbox as its run time ending would: commands in flight die with it."""
++        record = self.sandboxes[sandbox_id]
++        record.state = 'deleted'
++        for proc in list(record.procs):
++            _kill_group(proc, signal.SIGKILL)
++
++    async def reap(self) -> None:
++        for record in self.sandboxes.values():
++            for proc in list(record.procs):
++                _kill_group(proc, signal.SIGKILL)
++                with _suppress():
++                    await proc.wait()
++
++    # The class the backend calls, bound to this controller.
++    @property
++    def sandbox_class(self) -> type[FakeAsyncSandbox]:
++        controller = self
++
++        class _Bound(FakeAsyncSandbox):
++            fake = controller
++
++        return _Bound
++
++
++class _suppress:
++    def __enter__(self) -> None:
++        return None
++
++    def __exit__(self, *exc: object) -> bool:
++        return True
++
++
++def _kill_group(proc: asyncio.subprocess.Process, sig: signal.Signals) -> None:
++    try:
++        os.killpg(proc.pid, sig)
++    except (ProcessLookupError, PermissionError):
++        pass
++
++
++def _check_key(fake: FakePrized, api_key: str | None) -> None:
++    key = api_key if api_key is not None else os.environ.get('PRIZED_API_KEY', 'dcp_fake')
++    if not key:
++        raise PrizedError('missing_api_key')
++    if key in fake.bad_keys:
++        raise PrizedError('unauthorized', status=401)
++
++
++class FakeCommandHandle:
++    def __init__(
++        self, sandbox: FakeAsyncSandbox, proc: asyncio.subprocess.Process, outputs: tuple[Path, Path], timeout: int
++    ) -> None:
++        self._sandbox, self._proc, self._outputs, self._timeout = sandbox, proc, outputs, timeout
++        self._result: ExecResult | None = None
++
++    async def wait(self) -> ExecResult:
++        if self._result is None:
++            self._result = await self._sandbox.collect(self._proc, self._outputs, self._timeout)
++        return self._result
++
++    async def kill(self, signal_name: str = 'SIGTERM') -> bool:
++        if self._proc.returncode is not None:
++            return False
++        _kill_group(self._proc, getattr(signal, signal_name))
++        return True
++
++    async def cleanup(self) -> None:
++        return None
++
++
++# The edge wraps a detached or `full_output` command line, and refuses one this long (Linux's 128 KiB cap on
++# one argument, after the wrapper's encoding).
++WRAPPED_COMMAND_LIMIT = 64 * 1024
++
++
++class FakeFiles:
++    """`sandbox.files`: writes land on the host, and only under `host_root` (the edge's `/home/prized`)."""
++
++    def __init__(self, sandbox: FakeAsyncSandbox) -> None:
++        self._sandbox = sandbox
++
++    async def write(self, path: str, data: str | bytes, mode: int | None = None) -> None:
++        self._sandbox.live()
++        root = self._sandbox.fake.host_root
++        assert root is not None
++        target = Path(path)
++        if not target.is_relative_to(root):
++            raise PrizedError('path_outside_root', status=403, sandbox_id=self._sandbox.id)
++        payload = data.encode() if isinstance(data, str) else data
++
++        def write() -> None:
++            target.parent.mkdir(parents=True, exist_ok=True)
++            target.write_bytes(payload)
++
++        await asyncio.to_thread(write)
++
++    async def read_bytes(self, path: str) -> bytes:
++        """As the edge's file API: follows symlinks, honors permissions, and refuses what isn't a regular file."""
++        self._sandbox.fake.calls.append(('read', path))
++        self._sandbox.live()
++        root = self._sandbox.fake.host_root
++        assert root is not None
++        target = Path(path)
++        if not target.is_relative_to(root):
++            raise PrizedError('path_outside_root', status=403, sandbox_id=self._sandbox.id)
++
++        def read() -> bytes:
++            mode = target.stat().st_mode  # raises FileNotFoundError, NotADirectoryError, PermissionError
++            if not stat.S_ISREG(mode):
++                raise IsADirectoryError(path)
++            return target.read_bytes()
++
++        try:
++            return await asyncio.to_thread(read)
++        except (FileNotFoundError, NotADirectoryError):
++            raise PrizedError('not_found', status=404, sandbox_id=self._sandbox.id) from None
++        except IsADirectoryError:
++            raise PrizedError('not_regular_file', status=400, sandbox_id=self._sandbox.id) from None
++        except PermissionError:
++            raise PrizedError('permission_denied', status=403, sandbox_id=self._sandbox.id) from None
++
++
++class FakeAsyncSandbox:
++    fake: FakePrized
++
++    def __init__(self, record: _Record) -> None:
++        self._record = record
++        self.id = record.id
++        self.state = record.state
++        self.labels = dict(record.labels)
++        self.closed = False
++        self.files = FakeFiles(self)
++
++    @classmethod
++    async def create(
++        cls,
++        template: str = 'prized-base-v1',
++        *,
++        env_vars: Mapping[str, str] | None = None,
++        labels: Mapping[str, str] | None = None,
++        api_key: str | None = None,
++        **_: object,
++    ) -> FakeAsyncSandbox:
++        _check_key(cls.fake, api_key)
++        if cls.fake.refuse_create is not None:
++            raise PrizedError(cls.fake.refuse_create, status=402)
++        if template not in ('prized-base-v1', 'prized-agent-v1'):
++            raise PrizedError('template_not_found', status=404)
++        assert cls.fake.host_root is not None, 'set fake.host_root first'
++        sandbox_id = f'sbx_{uuid.uuid4().hex[:16]}'
++        root = cls.fake.host_root / sandbox_id
++        # Off the event loop: the suite's blockbuster refuses blocking file calls in async code.
++        await asyncio.to_thread((root / 'work').mkdir, parents=True)
++        record = _Record(sandbox_id, root, dict(labels or {}), dict(env_vars or {}))
++        cls.fake.sandboxes[sandbox_id] = record
++        cls.fake.created.append(sandbox_id)
++        return cls(record)
++
++    @classmethod
++    async def connect(cls, sandbox_id: str, *, api_key: str | None = None, **_: object) -> FakeAsyncSandbox:
++        _check_key(cls.fake, api_key)
++        record = cls.fake.sandboxes.get(sandbox_id)
++        if record is None or record.state == 'deleted':
++            raise PrizedError('not_found', status=404, sandbox_id=sandbox_id)
++        return cls(record)
++
++    def live(self) -> _Record:
++        if self.closed:
++            raise prized.HandleClosedError('handle is closed', sandbox_id=self.id)
++        record = self._record
++        if record.state == 'deleted':
++            raise PrizedError('not_found', status=404, sandbox_id=self.id)
++        if record.state == 'paused':
++            record.state = 'running'
++            record.resumes += 1
++        self.state = record.state
++        return record
++
++    async def refresh(self) -> FakeAsyncSandbox:
++        if self._record.state == 'deleted':
++            raise PrizedError('not_found', status=404, sandbox_id=self.id)
++        self.state = self._record.state
++        return self
++
++    async def _spawn(
++        self, command: str, cwd: str | None, env: Mapping[str, str] | None
++    ) -> tuple[asyncio.subprocess.Process, tuple[Path, Path]]:
++        record = self.live()
++        directory = cwd if cwd is not None else str(record.root / 'work')
++        if not await asyncio.to_thread(os.path.isdir, directory):
++            raise PrizedError('spawn_failed', status=400, sandbox_id=self.id)
++        full_env = {
++            'PATH': os.environ.get('PATH', '/usr/bin:/bin'),
++            'HOME': str(record.root),
++            **record.env_vars,
++            **(env or {}),
++        }
++        # Output goes to files, as on the edge: the command's exit is what ends the call, not the
++        # pipes closing, which a background child that inherited them would hold open.
++        logs = record.root / '.fake-runs'
++        name = uuid.uuid4().hex
++        out_path, err_path = logs / f'{name}.out', logs / f'{name}.err'
++
++        def open_logs() -> tuple[int, int]:
++            logs.mkdir(exist_ok=True)
++            return os.open(out_path, os.O_WRONLY | os.O_CREAT, 0o600), os.open(
++                err_path, os.O_WRONLY | os.O_CREAT, 0o600
++            )
++
++        out_fd, err_fd = await asyncio.to_thread(open_logs)
++        try:
++            proc = await asyncio.create_subprocess_exec(
++                'bash',
++                '-c',
++                command,
++                cwd=directory,
++                env=full_env,
++                stdin=asyncio.subprocess.DEVNULL,
++                stdout=out_fd,
++                stderr=err_fd,
++                start_new_session=True,
++            )
++        finally:
++            os.close(out_fd)
++            os.close(err_fd)
++        record.procs.add(proc)
++        return proc, (out_path, err_path)
++
++    async def collect(self, proc: asyncio.subprocess.Process, outputs: tuple[Path, Path], timeout: int) -> ExecResult:
++        """Wait for the command itself, as the edge does. Shielded, so a cancelled caller leaves it running."""
++        out_path, err_path = outputs
++
++        async def output() -> tuple[str, str]:
++            stdout = await asyncio.to_thread(out_path.read_bytes)
++            stderr = await asyncio.to_thread(err_path.read_bytes)
++            return stdout.decode(errors='replace'), stderr.decode(errors='replace')
++
++        waited = asyncio.ensure_future(proc.wait())
++        try:
++            await asyncio.wait_for(asyncio.shield(waited), timeout or None)
++        except TimeoutError:
++            _kill_group(proc, signal.SIGKILL)
++            await waited
++            stdout, stderr = await output()
++            raise CommandTimeoutError(
++                ExecResult(stdout, stderr, -1, timed_out=True), timeout, sandbox_id=self.id
++            ) from None
++        finally:
++            if waited.done():
++                self._record.procs.discard(proc)
++        if self._record.state == 'deleted':
++            raise PrizedError('sandbox_deleted', status=410, sandbox_id=self.id)
++        stdout, stderr = await output()
++        code = proc.returncode if proc.returncode is not None and proc.returncode >= 0 else 128 - (proc.returncode or 0)
++        return ExecResult(stdout, stderr, code)
++
++    async def exec(
++        self,
++        command: str,
++        *,
++        cwd: str | None = None,
++        env: Mapping[str, str] | None = None,
++        timeout: int | None = None,
++        background: bool = False,
++        full_output: bool = False,
++        **_: object,
++    ) -> ExecResult | FakeCommandHandle:
++        self.fake.calls.append(('exec', self.id))
++        if (background or full_output) and len(command.encode()) > WRAPPED_COMMAND_LIMIT:
++            raise PrizedError(
++                'spawn_failed', 'fork/exec /bin/bash: argument list too long', status=400, sandbox_id=self.id
++            )
++        proc, outputs = await self._spawn(command, cwd, env)
++        limit = 60 if timeout is None else timeout
++        if background:
++            return FakeCommandHandle(self, proc, outputs, limit)
++        return await self.collect(proc, outputs, limit)
++
++    async def fork(
++        self, count: int = 1, *, labels: Mapping[str, str] | None = None, **_: object
++    ) -> list[FakeAsyncSandbox]:
++        record = self.live()
++        copies: list[FakeAsyncSandbox] = []
++        for _i in range(count):
++            sandbox_id = f'sbx_{uuid.uuid4().hex[:16]}'
++            assert self.fake.host_root is not None
++            root = self.fake.host_root / sandbox_id
++            await asyncio.to_thread(shutil.copytree, record.root, root, symlinks=True)
++            copy = _Record(
++                sandbox_id, root, dict(labels if labels is not None else record.labels), dict(record.env_vars)
++            )
++            self.fake.sandboxes[sandbox_id] = copy
++            self.fake.created.append(sandbox_id)
++            copies.append(type(self)(copy))
++        return copies
++
++    async def pause(self, **_: object) -> None:
++        record = self.live()
++        record.state = 'paused'
++        record.pauses += 1
++        self.state = 'paused'
++
++    async def resume(self, **_: object) -> None:
++        self.live()
++
++    async def delete(self, **_: object) -> None:
++        if self._record.state == 'deleted':
++            return
++        self.fake.delete_behind_backs(self.id)
++        self.state = 'deleted'
++
++    async def close(self) -> None:
++        self.closed = True
+diff --git a/tests/harness/prized_sandbox/test_conformance.py b/tests/harness/prized_sandbox/test_conformance.py
+new file mode 100644
+index 000000000..c23bf61a4
+--- /dev/null
++++ b/tests/harness/prized_sandbox/test_conformance.py
+@@ -0,0 +1,110 @@
++"""Pydantic AI's workspace backend conformance suite, run against `PrizedSandboxBackend`.
++
++`TestFakePrizedSandboxBackend` runs everywhere, over the fake Prized SDK, where commands act on a
++temporary host directory. `TestLivePrizedSandboxBackend` runs the same rules against a real sandbox
++and is gated like `test_prized_live.py`.
++"""
++
++from __future__ import annotations
++
++from collections.abc import AsyncIterator, Awaitable, Callable
++
++import pytest
++
++from pydantic_ai.workspaces import WorkspaceBackend, WorkspaceRef
++from pydantic_ai.workspaces.conformance import WorkspaceBackendSuite
++from pydantic_ai_harness.prized_sandbox import PrizedSandbox, PrizedSandboxBackend
++
++from .conftest import LIVE_AUTO_PAUSE_MIN, LIVE_LABELS, LIVE_MAX_RUNTIME_MIN, live_connection
++from .fake_prized import FakePrized
++
++
++async def _delete(backend: WorkspaceBackend) -> None:
++    assert isinstance(backend, PrizedSandboxBackend) and backend.ref is not None
++    await PrizedSandbox(**live_connection()).destroy(backend.ref)
++
++
++class TestFakePrizedSandboxBackend(WorkspaceBackendSuite):
++    @pytest.fixture
++    def backend(self, fake_prized: FakePrized) -> PrizedSandboxBackend:
++        return PrizedSandboxBackend()
++
++    @pytest.fixture
++    def fresh_backend(self, fake_prized: FakePrized) -> Callable[[], WorkspaceBackend]:
++        return PrizedSandboxBackend
++
++    @pytest.fixture
++    def attach_backend(self) -> Callable[[WorkspaceRef], WorkspaceBackend]:
++        return lambda ref: PrizedSandboxBackend(ref=ref)
++
++    @pytest.fixture
++    def destroy_environment(self) -> Callable[[WorkspaceBackend], Awaitable[None]]:
++        return _delete
++
++
++def _live_backend() -> PrizedSandboxBackend:
++    return PrizedSandboxBackend(
++        vcpu=2,
++        memory_mb=4096,
++        labels=LIVE_LABELS,
++        auto_pause_min=LIVE_AUTO_PAUSE_MIN,
++        max_runtime_min=LIVE_MAX_RUNTIME_MIN,
++        **live_connection(),
++    )
++
++
++@pytest.mark.prized_live
++# The live tier runs without coverage; in CI only its gate fixtures run, to skip it.
++class TestLivePrizedSandboxBackend(WorkspaceBackendSuite):  # pragma: lax no cover
++    # Class-scoped so the rules share one sandbox instead of creating one each; the suite runs
++    # its destroy rule last.
++    @pytest.fixture(scope='class')
++    @classmethod
++    async def backend(cls) -> AsyncIterator[PrizedSandboxBackend]:
++        backend = _live_backend()
++        try:
++            await backend.working_dir()  # creates the sandbox
++            yield backend
++        finally:
++            try:
++                if backend.ref is not None:
++                    await _delete(backend)
++            finally:
++                await backend.aclose()
++
++    # The suite never deletes what `fresh_backend` creates, and uses it for its destructive rules too,
++    # so each sandbox is deleted here.
++    @pytest.fixture
++    async def fresh_backend(self) -> AsyncIterator[Callable[[], WorkspaceBackend]]:
++        created: list[PrizedSandboxBackend] = []
++
++        def create() -> WorkspaceBackend:
++            backend = _live_backend()
++            created.append(backend)
++            return backend
++
++        yield create
++        for backend in created:
++            try:
++                if backend.ref is not None:
++                    await _delete(backend)
++            finally:
++                await backend.aclose()
++
++    # The suite drops the backend it attaches; each one opened its own handle, which is closed here.
++    @pytest.fixture
++    async def attach_backend(self) -> AsyncIterator[Callable[[WorkspaceRef], WorkspaceBackend]]:
++        attached: list[PrizedSandboxBackend] = []
++
++        def attach(ref: WorkspaceRef) -> WorkspaceBackend:
++            backend = PrizedSandboxBackend(ref=ref, **live_connection())
++            attached.append(backend)
++            return backend
++
++        yield attach
++        for backend in attached:
++            await backend.aclose()
++
++    @pytest.fixture
++    def destroy_environment(self) -> Callable[[WorkspaceBackend], Awaitable[None]]:
++        return _delete
+diff --git a/tests/harness/prized_sandbox/test_prized_live.py b/tests/harness/prized_sandbox/test_prized_live.py
+new file mode 100644
+index 000000000..6b37bfe19
+--- /dev/null
++++ b/tests/harness/prized_sandbox/test_prized_live.py
+@@ -0,0 +1,186 @@
++"""Integration tests that require a real Prized sandbox.
++
++The fake-backed suites cover the harness-owned logic: deadline handling, protocol translation, and
++exception mapping. This live tier admits only what a correctly written fake could not catch: real
++process execution on Prized's edge, process-group stops over a real command, and real lifecycle state
++(pause, resume and fork) in Prized's control plane.
++
++Gating: the `prized_live` marker; skipped unless `PYDANTIC_AI_HARNESS_PRIZED_LIVE=1` and a non-empty
++`PRIZED_API_KEY` (fails instead when `PRIZED_REQUIRE_LIVE=1`). See `conftest.py`.
++
++Run locally:
++`PYDANTIC_AI_HARNESS_PRIZED_LIVE=1 uv run pytest -m prized_live tests/harness/prized_sandbox/`
++"""
++
++from __future__ import annotations
++
++from collections.abc import AsyncGenerator
++from contextlib import asynccontextmanager
++
++import anyio
++import pytest
++
++from pydantic_ai.workspaces import WorkspaceTimeoutError, WorkspaceUnavailableError
++from pydantic_ai_harness.coder import Coder
++from pydantic_ai_harness.prized_sandbox import PrizedSandbox, PrizedSandboxBackend
++
++from .._tool_calls import call_tools
++from .conftest import LIVE_AUTO_PAUSE_MIN, LIVE_LABELS, LIVE_MAX_RUNTIME_MIN, live_connection
++
++pytestmark = [pytest.mark.prized_live, pytest.mark.anyio]
++
++# A process that keeps counting into a file; a copy or a resumed sandbox that still has it keeps counting.
++# Single-quoted inside, so the loop's `$i` is the inner shell's.
++_TICKER = "nohup sh -c 'i=0; while true; do i=$((i+1)); echo $i > ticks; sleep 0.2; done' >/dev/null 2>&1 &"
++_TICKING = 'a=$(cat ticks); sleep 1; b=$(cat ticks); [ "$b" -gt "$a" ] && echo ticking || echo stopped'
++
++
++@pytest.fixture
++def anyio_backend() -> str:
++    return 'asyncio'
++
++
++def _capability() -> PrizedSandbox[None]:
++    return PrizedSandbox(
++        vcpu=2,
++        memory_mb=4096,
++        labels=LIVE_LABELS,
++        auto_pause_min=LIVE_AUTO_PAUSE_MIN,
++        max_runtime_min=LIVE_MAX_RUNTIME_MIN,
++        **live_connection(),
++    )
++
++
++@asynccontextmanager
++async def _owned() -> AsyncGenerator[PrizedSandboxBackend]:
++    backend = PrizedSandboxBackend(
++        vcpu=2,
++        memory_mb=4096,
++        labels=LIVE_LABELS,
++        auto_pause_min=LIVE_AUTO_PAUSE_MIN,
++        max_runtime_min=LIVE_MAX_RUNTIME_MIN,
++        **live_connection(),
++    )
++    try:
++        yield backend
++    finally:
++        try:
++            if backend.ref is not None:
++                await _capability().destroy(backend.ref)
++        finally:
++            await backend.aclose()
++
++
++async def test_commands_get_a_usable_environment() -> None:
++    """Validates the fake-encoded assumptions that commands run as `prized` in `/home/prized/work` with the
++    image's `PATH`, and that a per-call `env` adds to it."""
++    async with _owned() as backend:
++        result = await backend.run(
++            'whoami; pwd -P; echo "$PATH"; python3 --version; git --version', shell=True, timeout=60
++        )
++        user, cwd, path, python, git = result.stdout.splitlines()
++        assert (user, cwd) == ('prized', '/home/prized/work')
++        assert path and python.startswith('Python 3') and git.startswith('git version')
++        assert await backend.working_dir() == '/home/prized/work'
++        result = await backend.run('echo "$FOO"; echo "$PATH"', shell=True, env={'FOO': '1'}, timeout=60)
++        assert result.stdout.splitlines() == ['1', path]
++
++
++async def test_timeout_raises_with_the_partial_output_and_stops_the_command() -> None:
++    """Validates that a timeout keeps what the command printed and that the command does not live on."""
++    async with _owned() as backend:
++        with pytest.raises(WorkspaceTimeoutError) as caught:
++            await backend.run('echo started; sleep 8; touch finished', shell=True, timeout=2)
++        assert 'started' in caught.value.stdout
++        await anyio.sleep(8)
++        assert (
++            await backend.run('ls finished 2>/dev/null || echo absent', shell=True, timeout=60)
++        ).stdout == 'absent\n'
++
++
++async def test_cancelling_a_command_stops_its_process_group() -> None:
++    """Validates the fake-encoded assumption that the edge's `bash -c` leads its own process group, so the
++    stop script that follows a cancelled call reaches every process the command started."""
++    async with _owned() as backend:
++        await backend.run(['true'], timeout=60)
++        with anyio.move_on_after(2):
++            await backend.run('sleep 6 & sleep 6; touch finished', shell=True, timeout=60)
++        await anyio.sleep(7)
++        assert (
++            await backend.run('ls finished 2>/dev/null || echo absent', shell=True, timeout=60)
++        ).stdout == 'absent\n'
++
++
++async def test_pause_keeps_memory_and_the_next_command_resumes_it() -> None:
++    """What the fake can't show: a paused sandbox keeps its running processes, and a command resumes it."""
++    capability = _capability()
++    async with _owned() as backend:
++        await backend.run(['sh', '-c', _TICKER], timeout=60)
++        assert backend.ref is not None
++        await capability.pause(backend.ref)
++        await backend.aclose()  # its handle still says running; a fresh one reads the state
++        probe = capability.backend(backend.ref)
++        handle = await probe.get_sandbox()
++        try:
++            assert handle.state == 'paused'
++        finally:
++            await handle.close()
++            await probe.aclose()
++        resumed = capability.backend(backend.ref)
++        try:
++            assert (await resumed.run(['sh', '-c', _TICKING], timeout=60)).stdout == 'ticking\n'
++        finally:
++            await resumed.aclose()
++
++
++async def test_fork_copies_files_and_running_processes_and_the_copies_diverge() -> None:
++    """What the fake can't show: the copy starts with the sandbox's files and running processes, and the two
++    change independently after."""
++    capability = _capability()
++    async with _owned() as source:
++        await source.run(['sh', '-c', f'echo before > state.txt; {_TICKER}'], timeout=60)
++        assert source.ref is not None
++        ref = await capability.fork(source.ref)
++        try:
++            assert ref != source.ref
++            copy = capability.backend(ref)
++            assert (
++                await copy.run(['sh', '-c', f'cat state.txt; {_TICKING}'], timeout=60)
++            ).stdout == 'before\nticking\n'
++            await copy.run(['sh', '-c', 'echo after > state.txt'], timeout=60)
++            await copy.aclose()
++            assert (await source.run(['cat', 'state.txt'], timeout=60)).stdout == 'before\n'
++        finally:
++            await capability.destroy(ref)
++
++
++async def test_a_sandbox_deleted_during_a_command_is_unavailable() -> None:
++    """Validates that a command in flight when its sandbox is deleted ends as unavailable, not as a slow command."""
++    capability = _capability()
++    async with _owned() as backend:
++        await backend.run(['true'], timeout=60)
++        assert backend.ref is not None
++        ref = backend.ref
++
++        async def delete_soon() -> None:
++            await anyio.sleep(2)
++            await capability.destroy(ref)
++
++        async with anyio.create_task_group() as group:
++            group.start_soon(delete_soon)
++            with pytest.raises(WorkspaceUnavailableError):
++                await backend.run(['sleep', '60'], timeout=120)
++
++
++async def test_coder_tools_run_in_the_sandbox() -> None:
++    """A file `Coder` writes through the shell is where a command started in the working directory finds it."""
++    async with _owned() as backend:
++        results = await call_tools(
++            [Coder()],
++            [
++                ('write_file', {'path': 'hello.py', 'content': "print('hi from prized')\n"}),
++                ('shell', {'command': 'python3 hello.py'}),
++            ],
++            workspace=backend,
++        )
++        assert 'hi from prized' in results[1]
+diff --git a/tests/harness/prized_sandbox/test_prized_sandbox.py b/tests/harness/prized_sandbox/test_prized_sandbox.py
+new file mode 100644
+index 000000000..fcc394296
+--- /dev/null
++++ b/tests/harness/prized_sandbox/test_prized_sandbox.py
+@@ -0,0 +1,218 @@
++"""PrizedSandbox and PrizedSandboxBackend over the fake Prized SDK (see `fake_prized.py`)."""
++
++from __future__ import annotations
++
++import asyncio
++from pathlib import Path
++
++import anyio
++import pytest
++
++from pydantic_ai.exceptions import UserError
++from pydantic_ai.workspaces import WorkspaceError, WorkspaceRef, WorkspaceTimeoutError, WorkspaceUnavailableError
++from pydantic_ai_harness.coder import Coder
++from pydantic_ai_harness.prized_sandbox import PrizedSandbox, PrizedSandboxBackend
++
++from .._tool_calls import call_tools
++from .fake_prized import FakePrized
++
++pytestmark = pytest.mark.anyio
++
++
++@pytest.fixture
++def anyio_backend() -> str:
++    return 'asyncio'
++
++
++def test_building_does_no_io_and_has_no_ref() -> None:
++    assert PrizedSandboxBackend().ref is None
++
++
++def test_refs_of_another_provider_or_without_an_id_are_refused() -> None:
++    with pytest.raises(ValueError, match='unsupported workspace provider'):
++        PrizedSandboxBackend(ref=WorkspaceRef(provider='e2b', id='x'))
++    with pytest.raises(ValueError, match='cannot be empty'):
++        PrizedSandboxBackend(ref=WorkspaceRef(provider='prized', id=' '))
++
++
++@pytest.mark.parametrize(
++    'kwargs',
++    [{'working_dir': 'relative'}, {'auto_pause_min': -1}, {'vcpu': 0}, {'defer_loading': True}, {'env': {'A=B': '1'}}],
++)
++def test_bad_settings_fail_where_they_are_written(kwargs: dict[str, object]) -> None:
++    with pytest.raises((UserError, ValueError)):
++        PrizedSandbox(**kwargs)  # pyright: ignore[reportArgumentType]
++
++
++def test_the_capability_declines_refs_it_does_not_own() -> None:
++    class Ctx:
++        run_id = 'run-1'
++
++    capability = PrizedSandbox()
++    assert capability.get_workspace(Ctx(), ref=WorkspaceRef(provider='modal', id='sb-1')) is None  # pyright: ignore[reportArgumentType]
++    backend = capability.get_workspace(Ctx(), ref=WorkspaceRef(provider='prized', id='sbx_1'))  # pyright: ignore[reportArgumentType]
++    assert isinstance(backend, PrizedSandboxBackend) and backend.ref == WorkspaceRef(provider='prized', id='sbx_1')
++
++
++def test_api_key_stays_out_of_repr() -> None:
++    assert 'dcp_secret' not in repr(PrizedSandbox(api_key='dcp_secret'))
++
++
++async def test_first_use_creates_one_labelled_sandbox_even_when_racing(fake_prized: FakePrized) -> None:
++    backend = PrizedSandboxBackend(labels={'team': 'evals'})
++    results = await asyncio.gather(*(backend.run(['echo', str(i)], timeout=30) for i in range(5)))
++    assert [r.stdout for r in results] == [f'{i}\n' for i in range(5)]
++    assert len(fake_prized.created) == 1
++    assert backend.ref == WorkspaceRef(provider='prized', id=fake_prized.created[0])
++    assert fake_prized.record(fake_prized.created[0]).labels == {'created-by': 'pydantic-ai', 'team': 'evals'}
++    await backend.aclose()
++
++
++async def test_env_layers_per_command_over_the_backend(fake_prized: FakePrized) -> None:
++    backend = PrizedSandboxBackend(env={'A': 'backend', 'B': 'backend'})
++    result = await backend.run('echo "$A $B"', shell=True, env={'B': 'command'}, timeout=30)
++    assert result.stdout == 'backend command\n'
++
++
++async def test_a_new_sandbox_gets_its_working_dir(fake_prized: FakePrized, tmp_path: Path) -> None:
++    directory = str(tmp_path.resolve() / 'project' / 'src')
++    backend = PrizedSandboxBackend(working_dir=directory)
++    assert (await backend.run(['pwd', '-P'], timeout=30)).stdout == f'{directory}\n'
++    assert await backend.working_dir() == directory
++
++
++async def test_an_attached_sandbox_without_its_working_dir_is_an_error(fake_prized: FakePrized, tmp_path: Path) -> None:
++    first = PrizedSandboxBackend()
++    await first.run(['true'], timeout=30)
++    assert first.ref is not None
++    attached = PrizedSandboxBackend(ref=first.ref, working_dir=str(tmp_path / 'missing'))
++    with pytest.raises(WorkspaceError, match='may not exist'):
++        await attached.run(['true'], timeout=30)
++
++
++async def test_a_deleted_sandbox_is_unavailable_and_never_replaced(fake_prized: FakePrized) -> None:
++    first = PrizedSandboxBackend()
++    await first.run(['true'], timeout=30)
++    assert first.ref is not None
++    await PrizedSandbox().destroy(first.ref)
++    await PrizedSandbox().destroy(first.ref)  # already gone: quiet
++    with pytest.raises(WorkspaceUnavailableError, match="workspace='new'"):
++        await PrizedSandboxBackend(ref=first.ref).run(['true'], timeout=30)
++    assert len(fake_prized.created) == 1
++
++
++async def test_a_refused_key_is_unavailable_without_quoting_the_key(fake_prized: FakePrized) -> None:
++    with pytest.raises(WorkspaceUnavailableError, match='unauthorized') as caught:
++        await PrizedSandboxBackend(api_key='dcp_rejected').run(['true'], timeout=30)
++    assert 'dcp_rejected' not in str(caught.value)
++
++
++async def test_a_refused_create_is_unavailable(fake_prized: FakePrized) -> None:
++    fake_prized.refuse_create = 'paid_balance_required'
++    with pytest.raises(WorkspaceUnavailableError, match='paid_balance_required'):
++        await PrizedSandboxBackend().run(['true'], timeout=30)
++
++
++async def test_a_timeout_raises_with_partial_output_and_stops_the_command(fake_prized: FakePrized) -> None:
++    backend = PrizedSandboxBackend()
++    with pytest.raises(WorkspaceTimeoutError) as caught:
++        await backend.run('echo started; sleep 5; touch finished', shell=True, timeout=1)
++    assert caught.value.stdout == 'started\n'
++    await anyio.sleep(5)
++    assert (await backend.run(['ls'], timeout=30)).stdout == ''
++
++
++async def test_cancelling_a_command_stops_it(fake_prized: FakePrized) -> None:
++    backend = PrizedSandboxBackend()
++    await backend.run(['true'], timeout=30)
++    with anyio.move_on_after(1):
++        await backend.run('sleep 3; touch finished', shell=True, timeout=30)
++    await anyio.sleep(3.5)
++    assert (await backend.run(['ls'], timeout=30)).stdout == ''
++
++
++async def test_a_long_or_unbounded_command_runs_detached(fake_prized: FakePrized) -> None:
++    backend = PrizedSandboxBackend()
++    assert (await backend.run(['echo', 'no limit'])).stdout == 'no limit\n'
++    assert (await backend.run(['echo', 'long'], timeout=3600)).stdout == 'long\n'
++
++
++async def test_reads_use_the_file_api_and_fall_back_to_the_shell(fake_prized: FakePrized) -> None:
++    """A regular file under the home directory is one file API call; anything it refuses goes through the shell."""
++    backend = PrizedSandboxBackend()
++    await backend.run('printf data > plain; mkfifo pipe; mkdir dir', shell=True, timeout=30)
++    assert await backend.read_bytes('plain') == b'data'
++    root = await backend.working_dir()
++    assert ('read', f'{root}/plain') in fake_prized.calls
++    with pytest.raises(IsADirectoryError):
++        await backend.read_bytes('dir')
++    with pytest.raises(FileNotFoundError):
++        await backend.read_bytes('missing')
++
++
++@pytest.mark.parametrize('timeout', [30, None])
++async def test_a_long_command_line_runs_from_a_staged_file(fake_prized: FakePrized, timeout: float | None) -> None:
++    """The edge refuses a wrapped command line past about 64 KiB, so a long one is written to a file and sourced."""
++    backend = PrizedSandboxBackend()
++    payload = 'x' * (100 * 1024)  # past the edge's limit for a wrapped line, under Linux's 128 KiB per argument
++    result = await backend.run(['sh', '-c', 'printf %s "$1" | wc -c', 'sh', payload], timeout=timeout)
++    assert result.stdout.strip() == str(len(payload))
++    assert fake_prized.host_root is not None
++    assert list((fake_prized.host_root / 'scripts').iterdir()) == []  # the file removed itself
++
++
++async def test_a_sandbox_deleted_during_a_command_is_unavailable(
++    fake_prized: FakePrized, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    monkeypatch.setattr('pydantic_ai_harness.prized_sandbox._backend._WATCH_INTERVAL', 0.2)
++    backend = PrizedSandboxBackend()
++    await backend.run(['true'], timeout=30)
++    assert backend.ref is not None
++    sandbox_id = backend.ref.id
++
++    async def delete_soon() -> None:
++        await anyio.sleep(0.5)
++        fake_prized.delete_behind_backs(sandbox_id)
++
++    async with anyio.create_task_group() as group:
++        group.start_soon(delete_soon)
++        with pytest.raises(WorkspaceUnavailableError, match=r'no longer exists|deleted'):
++            await backend.run(['sleep', '20'], timeout=30)
++
++
++async def test_pause_keeps_files_and_the_next_command_resumes(fake_prized: FakePrized) -> None:
++    capability = PrizedSandbox()
++    backend = PrizedSandboxBackend()
++    await backend.run('echo kept > state.txt', shell=True, timeout=30)
++    assert backend.ref is not None
++    await capability.pause(backend.ref)
++    record = fake_prized.record(backend.ref.id)
++    assert (record.state, record.pauses) == ('paused', 1)
++    assert (await capability.backend(backend.ref).run(['cat', 'state.txt'], timeout=30)).stdout == 'kept\n'
++    assert (record.state, record.resumes) == ('running', 1)
++
++
++async def test_fork_copies_the_sandbox_and_the_copies_diverge(fake_prized: FakePrized) -> None:
++    capability = PrizedSandbox()
++    source = PrizedSandboxBackend()
++    await source.run('echo before > state.txt', shell=True, timeout=30)
++    assert source.ref is not None
++    ref = await capability.fork(source.ref)
++    assert ref.provider == 'prized' and ref != source.ref
++    copy = capability.backend(ref)
++    assert (await copy.run(['cat', 'state.txt'], timeout=30)).stdout == 'before\n'
++    await copy.run('echo after > state.txt', shell=True, timeout=30)
++    assert (await source.run(['cat', 'state.txt'], timeout=30)).stdout == 'before\n'
++    assert fake_prized.record(ref.id).labels['forked-from'] == source.ref.id
++
++
++async def test_coder_tools_run_in_the_sandbox(fake_prized: FakePrized) -> None:
++    results = await call_tools(
++        [PrizedSandbox(), Coder()],
++        [
++            ('write_file', {'path': 'hello.py', 'content': "print('hi from prized')\n"}),
++            ('shell', {'command': 'python3 hello.py'}),
++        ],
++    )
++    assert 'hi from prized' in results[1]
++    assert len(fake_prized.created) == 1
+diff --git a/tests/harness/test_capability_combine.py b/tests/harness/test_capability_combine.py
+index b332318e3..fef4680c1 100644
+--- a/tests/harness/test_capability_combine.py
++++ b/tests/harness/test_capability_combine.py
+@@ -323,6 +323,7 @@ COMBINE_POLICY: dict[str, Policy] = {
+     'SpritesSandbox': Anonymous('two coexist; the first supplies the run workspace, as core picks the first supplier'),
+     'DaytonaSandbox': Anonymous('two coexist; the first supplies the run workspace, as core picks the first supplier'),
+     'BoxdSandbox': Anonymous('two coexist; the first supplies the run workspace, as core picks the first supplier'),
++    'PrizedSandbox': Anonymous('two coexist; the first supplies the run workspace, as core picks the first supplier'),
+     'SmolSandbox': Anonymous('two coexist; the first supplies the run workspace, as core picks the first supplier'),
+     'BoxLiteSandbox': Anonymous('two coexist; the first supplies the run workspace, as core picks the first supplier'),
+     'BubblewrapSandbox': Anonymous('a structural wrapper, applied once per wrapped workspace capability'),
+diff --git a/tests/harness/test_docs_parity.py b/tests/harness/test_docs_parity.py
+index 6764ee9c1..b06720c5d 100644
+--- a/tests/harness/test_docs_parity.py
++++ b/tests/harness/test_docs_parity.py
+@@ -170,6 +170,7 @@ _CAPABILITY_PAGE_META = {
+     'sprites-sandbox.md': ('sprites_sandbox', 'Sprites Sandbox'),
+     'daytona-sandbox.md': ('daytona_sandbox', 'Daytona Sandbox'),
+     'boxd-sandbox.md': ('boxd_sandbox', 'boxd Sandbox'),
++    'prized-sandbox.md': ('prized_sandbox', 'Prized Sandbox'),
+     'smol-sandbox.md': ('smol_sandbox', 'Smol Sandbox'),
+     'boxlite-sandbox.md': ('boxlite_sandbox', 'BoxLite Sandbox'),
+     'ssh-workspace.md': ('ssh_workspace', 'SSH Workspace'),
+diff --git a/tests/harness/test_history_append_only.py b/tests/harness/test_history_append_only.py
+index f85de96f2..4d007154f 100644
+--- a/tests/harness/test_history_append_only.py
++++ b/tests/harness/test_history_append_only.py
+@@ -619,6 +619,7 @@ ALLOWED: dict[str, Allowed] = {
+ 
+ OPTIONAL_DEPENDENCIES: dict[str, str] = {
+     'BoxdSandbox': 'boxd',
++    'PrizedSandbox': 'prized',
+     'BoxLiteSandbox': 'boxlite',
+     'BrowserUse': 'browser_use',
+     'DaytonaSandbox': 'daytona',
