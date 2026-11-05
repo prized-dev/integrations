@@ -158,6 +158,14 @@ case $DIR in
   cursor)
     # spawn.sh against a stand-in `prized` and a stub Cursor `agent` (test/): no keys, no network.
     offline bash test/test.sh ;;
+  conductor)
+    # move.sh against a stand-in `prized` whose box is a folder, a stand-in tmux and a local bare repo
+    # (test/): no keys, no network. The Python it runs on the box is linted on its own first.
+    "$PYTHON" -m venv "$WORK/venv"
+    "$WORK/venv/bin/pip" install -q "ruff==0.17.1"
+    bash move.sh --print-helper >"$WORK/move_helper.py"
+    "$WORK/venv/bin/ruff" check --no-cache --isolated --select E4,E7,E9,F,B "$WORK/move_helper.py"
+    offline bash test/test.sh ;;
   github-issues)
     # One standard-library script: ruff, then the offline tests against a stand-in GitHub API on loopback,
     # a local bare repo, and stand-ins for claude, codex and systemctl (tests/bin).

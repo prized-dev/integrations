@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# A stand-in for tmux on the box: a session is a file in ~/.faketmux holding its start directory,
+# its -e variables, and the keys sent to it.
+set -euo pipefail
+D=$HOME/.faketmux
+mkdir -p "$D"
+target() { local t=${1#=}; printf '%s' "${t%:}"; }
+case $1 in
+  has-session) [ -f "$D/$(target "$3")" ] ;;
+  new-session)
+    shift
+    name='' dir='' envs=()
+    while [ $# -gt 0 ]; do
+      case $1 in
+        -d) shift ;;
+        -s) name=$2; shift 2 ;;
+        -c) dir=$2; shift 2 ;;
+        -e) envs+=("$2"); shift 2 ;;
+        *) shift ;;
+      esac
+    done
+    [ ! -f "$D/$name" ] || { echo "duplicate session: $name" >&2; exit 1; }
+    { echo "dir=$dir"; for e in ${envs[@]+"${envs[@]}"}; do echo "env $e"; done; } >"$D/$name" ;;
+  send-keys)
+    t=$(target "$3")
+    [ "$4" = -l ] && echo "keys=$5" >>"$D/$t"
+    true ;;
+  kill-session) rm -f "$D/$(target "$3")" ;;
+  *) echo "fake tmux: no $1" >&2; exit 2 ;;
+esac
