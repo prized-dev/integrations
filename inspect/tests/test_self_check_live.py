@@ -14,8 +14,13 @@ pytestmark = [
     pytest.mark.skipif(os.environ.get("PRIZED_LIVE") != "1", reason="PRIZED_LIVE=1 not set"),
 ]
 
-# Prized runs commands as the unprivileged user `prized` (no root, no sudo).
-XFAIL = {"test_exec_as_user": "no root in Prized sandboxes"}
+# Prized runs commands as the unprivileged user `prized` (no root, no sudo). These checks add a user
+# as root first (the file ones arrived in inspect-ai 0.3.287).
+XFAIL = {
+    "test_exec_as_user": "no root in Prized sandboxes",
+    "test_read_file_as_user": "no root in Prized sandboxes",
+    "test_write_file_as_user": "no root in Prized sandboxes",
+}
 LABELS = {"test": "inspect-prized"}
 if os.environ.get("PRIZED_TEST_TASK"):
     LABELS["task"] = os.environ["PRIZED_TEST_TASK"]
