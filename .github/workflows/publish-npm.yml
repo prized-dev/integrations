@@ -27,7 +27,7 @@ on:
       package:
         description: "Folder to publish"
         type: choice
-        options: [mastra, langchain-js]
+        options: [mastra, langchain-js, pi]
       dry_run:
         description: "Test, build, pack and test-install only; publish nothing"
         type: boolean
@@ -85,7 +85,7 @@ jobs:
             echo "::error::$name@$version is already on npm; bump the version first"; exit 1
           fi
           echo "$name $version, publish=$PUBLISH"
-      - name: The tarball installs and imports in a clean directory
+      - name: The tarball installs and loads in a clean directory
         run: |
           set -euo pipefail
           name=$(node -p "require('$GITHUB_WORKSPACE/$DIR/package.json').name")
@@ -93,6 +93,23 @@ jobs:
           work=$(mktemp -d)
           cd "$work"
           npm init -y >/dev/null 2>&1
+          if [ "$(node -p "Boolean(require('$GITHUB_WORKSPACE/$DIR/package.json').pi)")" = true ]; then
+            # A Pi package ships TypeScript that Pi loads itself (Node won't strip types under
+            # node_modules, so it can't be imported): install it with `pi install` into a fresh Pi,
+            # then load it and check it adds its flags to `pi --help`.
+            npm install --no-audit --no-fund --loglevel=error @earendil-works/pi-coding-agent
+            pi="$work/node_modules/.bin/pi"
+            HOME=$(mktemp -d) PI_CODING_AGENT_DIR=$(mktemp -d) PI_TELEMETRY=0
+            export HOME PI_CODING_AGENT_DIR PI_TELEMETRY
+            "$pi" install "npm:$tgz"
+            pkg="$PI_CODING_AGENT_DIR/npm/node_modules/$name"
+            node -e "const p=require(process.argv[1]+'/package.json'); for (const e of p.pi.extensions ?? []) require('fs').accessSync(require('path').join(process.argv[1], e)); console.log('pi.extensions:', (p.pi.extensions ?? []).join(', '))" "$pkg"
+            added=$(diff <(PI_OFFLINE=1 "$pi" --help) <(PI_OFFLINE=1 "$pi" -e "$pkg" --help) | sed -n 's/^> //p' || true)
+            [ -n "$added" ] || { echo "::error::Pi $("$pi" --version) did not load $name: it added no flags to pi --help"; exit 1; }
+            echo "$name loads in Pi $("$pi" --version); the flags it adds:"
+            echo "$added"
+            exit 0
+          fi
           npm install --no-audit --no-fund --loglevel=error "$tgz"
           node --input-type=module -e "const name=process.argv[1]; const m=await import(name); const k=Object.keys(m); if(!k.length){console.error('no exports from '+name);process.exit(1);} console.log(name,'imported; exports:',k.slice(0,6).join(', '));" "$name"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
