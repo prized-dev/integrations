@@ -78,8 +78,27 @@ Leaving `async with session` deletes the sandbox, or pauses it with `pause_on_ex
 | `auto_pause_min`, `auto_delete_min`, `max_runtime_min` | Off, off, 1,440 (60 on the free tier) | Automatic pause and delete |
 | `pause_on_exit` | `False` | Pause instead of delete at the end of a run, so `resume()` continues in the same sandbox with its files and installs (the SDK ends the run's commands before the pause) |
 | `timeouts` | | `PrizedSandboxTimeouts`: per-command default, startup, and archive timeouts |
+| `exposed_ports` | `()` | Ports `resolve_exposed_port()` gives an https URL ([Exposed ports](#exposed-ports)); any port but 22 and 81 |
+| `exposed_port_auth` | `token` | `token`: the URL carries a token for that one port. `key`: send the API key in `Prized-Key` |
+| `exposed_port_url_ttl_s` | 3,600 | How long a token URL works, 60 to 86,400 seconds; each `resolve_exposed_port()` makes a new one |
 
 `PrizedSandboxClient(api_key=..., api_url=...)` reads `PRIZED_API_KEY` and `PRIZED_API_URL` when they are not passed.
+
+## Exposed ports
+
+A server the agent starts on a port in `exposed_ports`, on any address, answers at an https URL:
+
+```python
+options = PrizedSandboxClientOptions(exposed_ports=[3000])
+# ... once the agent has started a server on port 3000:
+endpoint = await session.resolve_exposed_port(3000)
+print(endpoint.url_for("http"))  # https://3000-sbx-....prized.link/?prized_token=dpt_...
+```
+
+- **`token` (default).** The URL works on its own for a browser tab, `curl`, `fetch` and WebSockets, until `exposed_port_url_ttl_s` passes. A tab's first visit shows a Prized notice. It needs a workspace that has paid in; on free credit only, `resolve_exposed_port()` raises `ExposedPortUnavailableError` saying so.
+- **The token is in the query.** For a path, keep it: `f"https://{endpoint.host}/api/items?{endpoint.query}"`. `urljoin(endpoint.url_for("http"), "api/items")` drops it. Printing or logging `endpoint` shows the token too.
+- **`key`.** The URL is `https://<port>-<sandbox id>.p.prized.dev/`, and each request sends `Prized-Key: <your API key>`. It works on the free tier, for programs only (no browser tab), for as long as the key does. Send the key to that host only.
+- **Paused sandboxes.** A token never wakes one: `resolve_exposed_port()` resumes a sandbox that paused after `auto_pause_min`, so call it again for a fresh URL. The key wakes the sandbox on every request, even after the run paused it (`pause_on_exit`); send `Prized-Auto-Resume: false` to stop that. Once the session has paused or deleted its sandbox, `resolve_exposed_port()` raises.
 
 ## Pause and resume
 
@@ -97,7 +116,8 @@ The saved session state holds the sandbox's id, the options above, and the SDK's
 | `RunloopSandboxClientOptions(blueprint_name=...)` | `PrizedSandboxClientOptions(template=...)` |
 | `env_vars`, `pause_on_exit` | Same names |
 | `metadata` | `labels` |
-| `exposed_ports`, tunnels, gateways, MCP, managed secrets, mounts | Not supported |
+| `exposed_ports` | Same name: a token URL, or the key in a header |
+| tunnels, gateways, MCP, managed secrets, mounts | Not supported |
 
 Runloop session state cannot be resumed on Prized; start new runs.
 
@@ -105,7 +125,6 @@ Runloop session state cannot be resumed on Prized; start new runs.
 
 - **Isolation.** Each session gets its own sandbox, a Firecracker microVM. Nothing runs on your machine, and nothing falls back to it.
 - **No root.** Commands run as `prized` without sudo, so manifest users other than `prized`, manifest groups, and mounts are refused before a sandbox is created. The other manifest entries work: files, directories, local files and directories, and git repos. An entry whose `group` is anything but `prized` fails when the session starts, since that `chgrp` needs root.
-- **No inbound network.** Sandboxes reach the internet, but nothing reaches them: there is no `exposed_ports` option, and `resolve_exposed_port()` raises `ExposedPortUnavailableError`.
 - **Commands.** A command that outlives `exec_command`'s yield keeps running, and `write_stdin` polls it or types into it (with `tty=True`, Ctrl-C included). It runs until it exits or the session ends, unless the tool call passes a `timeout`. A command run with `exec` takes up to an hour (`PrizedSandboxTimeouts.exec_timeout_unbounded_s`) and keeps the first 4 MiB of its output and of its errors.
 - **Snapshots.** Symlinks are kept as links, so a virtualenv in the workspace comes back working in a replacement sandbox; hard-linked files come back as separate copies.
 - **Run time.** 24 hours of running by default, up to 7 days with `max_runtime_min`; on the free tier 60 minutes, 2 vCPU and 4 GB.
@@ -128,7 +147,7 @@ FLOOR=1 scripts/test.sh openai-agents    # the offline tests against openai-agen
 cd openai-agents
 uv sync
 uv run pytest                                          # offline, against an in-process fake of the API
-PRIZED_LIVE_TESTS=1 PRIZED_API_KEY=dcp_... uv run pytest -m live   # the SDK's lifecycle test on real sandboxes
+PRIZED_LIVE_TESTS=1 PRIZED_API_KEY=dcp_... uv run pytest -m live   # the lifecycle and exposed-port tests on real sandboxes
 PRIZED_API_KEY=dcp_... uv run python scripts/live_agent.py         # a coding agent end to end, scripted model turns
 ```
 

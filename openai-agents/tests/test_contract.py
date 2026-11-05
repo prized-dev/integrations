@@ -8,7 +8,8 @@
   the same options when that sandbox is gone.
 - Malformed timeouts, which options carry as given, are refused by `create()`
   before any request is sent.
-- Exposed ports are refused, never served some other way.
+- Exposed ports get a URL from Prized itself (a port token, or the key in a header); the
+  sandbox's own ports 22 and 81 are refused before a sandbox is made.
 """
 
 from __future__ import annotations
@@ -59,7 +60,7 @@ dumped = json.loads(json.dumps(options.model_dump(mode="json")))
 out["round_trip"] = BaseSandboxClientOptions.parse(dumped) == options
 out["refused"] = []
 for bad in (
-    {"type": "prized", "exposed_ports": [8080]},
+    {"type": "prized", "exposed_ports": [22]},
     {"type": "prized", "vcpu": "four"},
     {"type": "prized", "template": 5},
 ):
@@ -157,19 +158,23 @@ async def test_malformed_timeouts_are_refused_before_any_request(
     assert fake.calls("POST", r"^/api/v1/sandboxes$") == []
 
 
-async def test_exposed_ports_are_refused(
+async def test_exposed_ports_resolve_and_reserved_ports_are_refused(
     make_client: Callable[..., PrizedSandboxClient], fake: FakePrized
 ) -> None:
-    with pytest.raises(TypeError, match="exposed_ports"):
-        PrizedSandboxClientOptions.model_validate({"exposed_ports": [8080]})
-    # A state that names a port (written by hand, or by another tool) still gets
-    # no endpoint: Prized has no inbound network, and nothing is served instead.
+    # The sandbox's own ports (22, 81) have no URL: refused before a sandbox is made.
+    with pytest.raises(ValidationError, match="sandbox's own"):
+        PrizedSandboxClientOptions.model_validate({"exposed_ports": [22]})
+    # A 0.1.0 state that names a port (written by hand, or by another tool) now gets a
+    # token URL for it, like a state written by this version.
     payload = _saved()
     payload["sandbox_id"] = fake.add_sandbox(state="paused", template="prized-agent-v1")
     payload["exposed_ports"] = [8080]
     client = make_client()
     session = await client.resume(client.deserialize_session_state(payload))
+    endpoint = await session.resolve_exposed_port(8080)
+    assert endpoint.tls
+    assert endpoint.query == f"prized_token={fake.port_tokens[-1]}"
     with pytest.raises(ExposedPortUnavailableError) as refused:
-        await session.resolve_exposed_port(8080)
-    assert refused.value.context["reason"] == "backend_unavailable"
+        await session.resolve_exposed_port(9090)
+    assert refused.value.context["reason"] == "not_configured"
     await client.delete(session)
