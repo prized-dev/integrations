@@ -8,6 +8,7 @@ Each folder is its own package with its own README, tests and release. You need 
 | --- | --- | --- | --- | --- |
 | [`openai-agents`](openai-agents) | OpenAI Agents SDK: sandbox client | `openai-agents-prized` | Works now: on PyPI | [README](openai-agents/README.md) |
 | [`herdr`](herdr) | herdr: plugin (the agent in a sandbox or box, paused when its pane closes; a box as a machine) | `herdr plugin install prized-dev/integrations/herdr` | Works now: tested in herdr 0.9.3 and on live sandboxes; not in herdr's marketplace yet | [README](herdr/README.md) |
+| [`t3code`](t3code) | T3 Code: `prized-t3`, a box ready as an SSH environment before you add it, and `fork` for another machine T3 Code sees as its own | `prized-t3` (one sh script) | Works now: run against live boxes and T3 Code 0.1.7's own SSH launch script; not yet clicked through in the desktop app | [README](t3code/README.md) |
 | [`hermes`](hermes) | Hermes Agent: terminal backend plugin | `hermes plugins install prized-dev/integrations/hermes` | Works now | [README](hermes/README.md) |
 | [`harbor`](harbor) | Harbor (Terminal-Bench): environment | `harbor-prized` | Works now: install from this repo (not on PyPI yet) | [README](harbor/README.md) |
 | [`paseo`](paseo) | Paseo: plugin (hosts on sandboxes; Stop pauses them with their memory and processes) | `paseo plugin add github:prized-dev/integrations:paseo` | Works now: loaded in Paseo 0.14 and run against live sandboxes; not in Paseo's registry yet | [README](paseo/README.md) |

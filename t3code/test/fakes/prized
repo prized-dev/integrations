@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# A stand-in for the prized CLI: boxes are directories under $FAKE_ROOT/boxes/<name> holding
+# state (running, suspended, ...), alias (present once the box is in the SSH config) and home/.
+# Every call is appended to $FAKE_ROOT/calls.log.
+set -euo pipefail
+R=${FAKE_ROOT:?}
+printf '%s\n' "$*" >> "$R/calls.log"
+json_box() { printf '{"box":{"id":"00000000-0000-4000-8000-000000000000","hostname":"%s","observedState":"%s","tier":"lite"},"ok":true}\n' "$1" "$(cat "$R/boxes/$1/state")"; }
+need() { [ -d "$R/boxes/$1" ] || { echo "prized: no box named $1" >&2; exit 1; }; }
+
+box=
+if [ "${1:-}" = --box ]; then box=$2; shift 2; fi
+case "${1:-} ${2:-}" in
+  "info --json")
+    [ -s "$R/default" ] || { echo "prized: no box configured" >&2; exit 1; }
+    json_box "$(cat "$R/default")" ;;
+  info\ *)
+    need "$2"; json_box "$2" ;;
+  "box resume")
+    need "$3"; echo running > "$R/boxes/$3/state"; echo "✓ $3 is running" ;;
+  "box auto-pause")
+    need "$3"; echo "$4" > "$R/boxes/$3/auto-pause" ;;
+  "box new")
+    shift 2; name=mango
+    while [ $# -gt 0 ]; do case $1 in --tier) shift ;; --*) ;; *) name=$1 ;; esac; shift; done
+    mkdir -p "$R/boxes/$name/home"; echo running > "$R/boxes/$name/state"
+    cp -a "$R/template-home/." "$R/boxes/$name/home/" 2>/dev/null || true
+    json_box "$name" ;;
+  "init --box")
+    need "$3"; touch "$R/boxes/$3/alias"; echo "✓ ssh config" ;;
+  fork\ *)
+    src=$2; shift 2; name=banana
+    while [ $# -gt 0 ]; do case $1 in --name) name=$2; shift ;; --tier) shift ;; esac; shift; done
+    need "$src"; [ ! -e "$R/boxes/$name" ] || { echo "prized: $name exists" >&2; exit 1; }
+    mkdir -p "$R/boxes/$name"; cp -a "$R/boxes/$src/home" "$R/boxes/$name/home"; echo running > "$R/boxes/$name/state"
+    echo "$name: copying the disk" >&2; echo "$name: running" >&2
+    printf '{"box":{"id":"11111111-0000-4000-8000-000000000000","hostname":"%s","observedState":"running"},"ok":true,"state":"running","waited":true}\n' "$name" ;;
+  "agents handoff")
+    echo "handoff to ${box:-default}" ;;
+  *)
+    echo "fake prized: unexpected call: $*" >&2; exit 64 ;;
+esac

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# A stand-in for curl: release downloads come from $FAKE_RELEASES (the path after .../download/),
+# and the latest-release redirect answers v0.1.7. Each download is logged to $FAKE_ROOT/downloads.log.
+set -euo pipefail
+out='' url='' write=''
+while [ $# -gt 0 ]; do
+  case $1 in
+    -o) out=$2; shift ;;
+    -w) write=$2; shift ;;
+    --connect-timeout | --max-time) shift ;;
+    -*) ;;
+    *) url=$1 ;;
+  esac
+  shift
+done
+case $url in
+  https://github.com/pingdotgg/t3code/releases/latest)
+    [ "$write" = '%{url_effective}' ] && printf 'https://github.com/pingdotgg/t3code/releases/tag/v0.1.7' ;;
+  https://github.com/pingdotgg/t3code/releases/download/*)
+    rel=${url#https://github.com/pingdotgg/t3code/releases/download/}
+    [ -f "$FAKE_RELEASES/$rel" ] || { echo "curl: (22) The requested URL returned error: 404" >&2; exit 22; }
+    printf '%s\n' "$rel" >> "$FAKE_ROOT/downloads.log"
+    cp "$FAKE_RELEASES/$rel" "$out" ;;
+  *) echo "fake curl: unexpected URL $url" >&2; exit 7 ;;
+esac

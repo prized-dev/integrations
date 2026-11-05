@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# A stand-in for systemctl --user on the box: t3code.service is active only with FAKE_T3_SERVICE=1.
+set -euo pipefail
+printf 'systemctl %s\n' "$*" >> "$FAKE_ROOT/calls.log"
+case " $* " in
+  *" is-active "*) [ "${FAKE_T3_SERVICE:-0}" = 1 ] ;;
+  *) exit 0 ;;
+esac

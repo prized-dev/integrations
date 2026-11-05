@@ -45,6 +45,7 @@ jobs:
           - { dir: hermes, python: "3.12" }
           - { dir: dify, python: "3.12" }
           - { dir: cursor }
+          - { dir: t3code }
           - { dir: github-issues, python: "3.10" }
           - { dir: github-issues, python: "3.13" }
           - { dir: claude-managed-agents }
@@ -84,3 +85,5 @@ jobs:
           shellcheck scripts/test.sh claude-managed-agents/on-work.sh claude-managed-agents/test/test.sh
           cursor/spawn.sh cursor/test/test.sh cursor/test/stub-agent cursor/test/sandbox-bin/curl
           herdr/test/fakes/herdr herdr/test/fakes/ssh
+          t3code/prized-t3 t3code/test/test.sh t3code/test/fakes/prized t3code/test/fakes/ssh
+          t3code/test/box-bin/curl t3code/test/box-bin/sudo t3code/test/box-bin/systemctl

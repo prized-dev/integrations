@@ -214,6 +214,12 @@ case $DIR in
     npm run typecheck
     npm run build
     offline npm test ;;
+  t3code)
+    # prized-t3, one POSIX sh script: test/test.sh against stand-ins for prized and ssh (test/fakes)
+    # whose box is a directory where the script's box-side parts run with the real sh, tar and
+    # sha256sum; T3 Code's releases are fake archives built by the test. TEST_SH=dash|bash|... picks
+    # the shell the script runs under.
+    offline bash test/test.sh ;;
   herdr)
     # A herdr plugin with no dependencies: node --test against stand-ins for prized, herdr and ssh
     # (test/fakes). The fake sandbox runs the plugin's remote scripts with the real bash, tar and git.

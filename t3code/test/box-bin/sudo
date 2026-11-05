@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# A stand-in for the box's passwordless sudo: `sudo -n CMD...` runs CMD with SUDO_USER set, or
+# refuses when FAKE_SUDO=0. Calls are logged to $FAKE_ROOT/sudo.log.
+set -euo pipefail
+[ "${1:-}" = -n ] && shift
+[ "${FAKE_SUDO:-1}" = 1 ] || { echo "sudo: a password is required" >&2; exit 1; }
+printf '%s\n' "$*" >> "$FAKE_ROOT/sudo.log"
+exec env SUDO_USER=fake "$@"

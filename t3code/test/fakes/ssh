@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# A stand-in for ssh to a fake Prized box: runs the remote command with the real sh in the box's
+# home ($FAKE_ROOT/boxes/<host>/home), with test/box-bin first on its PATH. Like the real stanza,
+# it fails for a box not yet in the SSH config and refuses a paused box.
+set -euo pipefail
+R=${FAKE_ROOT:?}
+printf 'ssh %s\n' "$*" >> "$R/calls.log"
+while [ $# -gt 0 ]; do
+  case $1 in
+    -o | -p | -L) shift 2 ;;
+    -G | -n | -N | -T) shift ;;
+    --) shift; break ;;
+    -*) echo "fake ssh: unexpected option $1" >&2; exit 64 ;;
+    *) break ;;
+  esac
+done
+host=${1:?fake ssh: no host}; shift
+host=${host#*@}
+box=$R/boxes/$host
+[ -e "$box/alias" ] || { echo "ssh: Could not resolve hostname $host: Name or service not known" >&2; exit 255; }
+state=$(cat "$box/state")
+[ "$state" = running ] || { echo "prized: $host is paused; prized box resume $host wakes it" >&2; exit 255; }
+[ $# -gt 0 ] || { echo "fake ssh: no command" >&2; exit 64; }
+cd "$box/home"
+# ssh hands the remote shell its words joined by spaces.
+exec env -i HOME="$box/home" USER=fake PATH="$FAKE_BOX_BIN:/usr/local/bin:/usr/bin:/bin" \
+  FAKE_ROOT="$R" FAKE_RELEASES="$FAKE_RELEASES" FAKE_SUDO="${FAKE_SUDO:-1}" FAKE_T3_SERVICE="${FAKE_T3_SERVICE:-0}" sh -c "$*"
