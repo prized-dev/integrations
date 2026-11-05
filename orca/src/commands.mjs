@@ -21,6 +21,7 @@ import {
   runPrized,
   shellSignIn,
   shellSignInError,
+  sshHostname,
   sshRun,
   versionOk,
 } from "./cli.mjs";
@@ -34,6 +35,7 @@ import {
   pullScript,
   readStdin,
   recipeResult,
+  sandboxRemoteUrl,
   sourceFromOrca,
 } from "./recipe.mjs";
 import {
@@ -293,7 +295,15 @@ export async function create(env = process.env) {
     live();
     const run = await client.exec(
       sandbox,
-      checkoutScript({ root, bundlePath, bundleRef: bundle.ref, head: src.head, branch: src.branch, repoUrl: src.repoUrl, identity }),
+      checkoutScript({
+        root,
+        bundlePath,
+        bundleRef: bundle.ref,
+        head: src.head,
+        branch: src.branch,
+        repoUrl: sandboxRemoteUrl(src.repoUrl, (host) => sshHostname(host, env)),
+        identity,
+      }),
       240,
     );
     if (run.exitCode !== 0) throw new UserError(`the checkout in the sandbox failed (exit ${run.exitCode}): ${run.stderr.trim()}`);
@@ -466,74 +476,109 @@ function realpath(p) {
   }
 }
 
+const PULL_USAGE = "usage: prized-orca pull [ID] [--as BRANCH]";
+
+// What the sandbox printed, safe for a terminal: no control characters.
+function plain(text) {
+  return String(text).replace(/[\u0000-\u0008\u000b-\u001f\u007f-\u009f]/g, "?").trim();
+}
+
 // Copy the workspace's branch from its sandbox into the project's own repository on this machine, so
 // it can be pushed from here with the user's own git sign-in: no git credential goes into the
 // sandbox. Only commits travel: a bundle of what the workspace added since it started, made in the
 // sandbox and downloaded through the API. The local branch is created, or fast-forwarded; one that
-// has moved apart, or is checked out here, is left alone (--as names another branch).
+// has moved apart, or is checked out here, is left alone (--as names another branch). A workspace
+// Orca put to sleep is resumed for the copy and paused again.
 export async function pull(argv, env = process.env) {
+  if (argv.includes("--help") || argv.includes("-h")) {
+    say(PULL_USAGE);
+    return;
+  }
   const flags = parseFlags(argv);
-  const id = argv.find((a, i) => !a.startsWith("--") && argv[i - 1] !== "--as");
-  const [sid, entry] = pickWorkspace(id, env);
+  for (const k of Object.keys(flags)) if (k !== "as") throw new UserError(`unknown option --${k}`, PULL_USAGE);
+  const ids = argv.filter((a, i) => !a.startsWith("-") && argv[i - 1] !== "--as");
+  if (ids.length > 1) throw new UserError(`one workspace at a time: ${ids.join(" ")}`, PULL_USAGE);
+  const [sid, entry] = pickWorkspace(ids[0], env);
   if (!entry.repoPath || !fs.existsSync(entry.repoPath)) throw new UserError(`the project's repository for ${sid} is not at ${entry.repoPath ?? "a recorded path"} any more`);
   if (!entry.projectRoot) throw new UserError(`no checkout is recorded for ${sid}`);
   if (flags.as !== undefined && (typeof flags.as !== "string" || git(["check-ref-format", "--branch", flags.as], { cwd: entry.repoPath, env }).status !== 0)) {
-    throw new UserError(`--as needs a branch name`);
+    throw new UserError("--as needs a branch name", PULL_USAGE);
   }
   const base = /^[0-9a-f]{40}([0-9a-f]{24})?$/.test(entry.baseCommit ?? "") ? entry.baseCommit : null;
-
   const { client } = api(env);
-  let sandbox = await client.get(sid);
-  if (!sandbox || ["deleting", "deleted"].includes(sandbox.state)) throw new UserError(`${sid} is gone: its run time ended, or it was deleted`);
-  const wasPaused = ["paused", "pausing"].includes(sandbox.state);
-  if (wasPaused) {
-    say(`${sid} is paused; resuming it to read the checkout…`);
-    sandbox = await client.resume(sid);
-  } else if (sandbox.state !== "running") {
-    sandbox = await client.waitFor(sid, ["running"]);
-  }
-
   const bundlePath = `${entry.projectRoot}/.git/prized-orca-pull.bundle`;
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prized-orca-pull-"));
+
+  // Put back to sleep only what Orca has asleep, and only while it still does: a wake in Orca
+  // meanwhile, or an idle pause (which comes back by itself), is left running.
+  let resumed = false;
+  let sleeping = null;
+  const sleepAgain = () =>
+    (sleeping ??= (async () => {
+      fs.rmSync(dir, { recursive: true, force: true });
+      if (!resumed || !getEntry(sid, env)?.asleep) return;
+      say(`pausing ${sid} again…`);
+      await pauseFirmly(client, sid).catch((error) => say(`could not pause it again: ${error.message}`));
+    })());
+  const onSignal = (signal) => {
+    sleepAgain().finally(() => {
+      trace({ cmd: "pull", sandbox: sid, ok: false, cancelled: signal }, env);
+      process.exit(130);
+    });
+  };
+  process.once("SIGINT", onSignal);
+  process.once("SIGTERM", onSignal);
   try {
+    let sandbox = await client.get(sid);
+    if (!sandbox || ["deleting", "deleted"].includes(sandbox.state)) throw new UserError(`${sid} is gone: its run time ended, or it was deleted`);
+    if (["paused", "pausing"].includes(sandbox.state)) {
+      say(`${sid} is paused; resuming it to read the checkout…`);
+      resumed = Boolean(entry.asleep);
+      sandbox = await client.resume(sid);
+    } else if (sandbox.state !== "running") {
+      sandbox = await client.waitFor(sid, ["running"]);
+    }
+
     // From the start commit, which this repository has; the whole branch if it doesn't.
     let got;
     for (const since of base ? [base, null] : [null]) {
       const run = await client.exec(sandbox, pullScript({ root: entry.projectRoot, bundlePath, base: since }), 240);
-      if (run.exitCode !== 0) throw new UserError(`reading the workspace's branch failed (exit ${run.exitCode}): ${run.stderr.trim()}`);
+      if (run.exitCode !== 0) throw new UserError(`reading the workspace's branch failed (exit ${run.exitCode}): ${plain(run.stderr)}`);
       const [branch, head, dirty, count] = run.stdout.trim().split("\n").slice(-4);
-      got = { branch, head, dirty: Number(dirty), count: Number(count), file: path.join(dir, "pull.bundle") };
+      got = { branch, head, dirty: Number(dirty), count: Number(count), since, file: path.join(dir, "pull.bundle") };
       const named = branch && git(["check-ref-format", "--branch", branch], { cwd: entry.repoPath, env }).status === 0;
-      if (!named || !/^[0-9a-f]{40}([0-9a-f]{24})?$/.test(head ?? "") || !Number.isInteger(got.count)) throw new UserError(`the sandbox answered ${JSON.stringify(run.stdout.slice(-200))}`);
+      if (!named || !/^[0-9a-f]{40}([0-9a-f]{24})?$/.test(head ?? "") || !Number.isInteger(got.count)) throw new UserError(`the sandbox answered ${JSON.stringify(plain(run.stdout).slice(-200))}`);
       if (got.count === 0) break;
-      fs.writeFileSync(got.file, await client.download(sandbox, bundlePath));
-      await client.exec(sandbox, `rm -f ${sq(bundlePath)}`, 60).catch(() => {});
+      try {
+        fs.writeFileSync(got.file, await client.download(sandbox, bundlePath));
+      } finally {
+        await client.exec(sandbox, `rm -f ${sq(bundlePath)}`, 60).catch(() => {});
+      }
       if (git(["bundle", "verify", "-q", got.file], { cwd: entry.repoPath, env }).status === 0) break;
       if (!since) throw new UserError(`the bundle from ${sid} does not fit ${entry.repoPath}`);
     }
-    const { branch, head, dirty, count } = got;
+    const { branch, head, dirty, count, since } = got;
     const target = typeof flags.as === "string" ? flags.as : branch;
     if (count > 0) {
-      const r = git(["fetch", "--quiet", "--no-tags", "--no-write-fetch-head", got.file, `refs/heads/${branch}:refs/heads/${target}`], { cwd: entry.repoPath, env });
+      const r = git(["fetch", "--no-tags", "--no-recurse-submodules", got.file, `refs/heads/${branch}:refs/heads/${target}`], { cwd: entry.repoPath, env });
       if (r.status !== 0) {
         throw new UserError(
           `git could not put ${branch} from ${sid} into the branch ${target} here: ${(r.stderr || r.stdout).trim()}`,
-          `${target} has moved apart from the workspace's branch, or is checked out here; pull into a new branch: prized-orca pull ${sid} --as ${branch}-sandbox`,
+          `if ${target} has commits the workspace's branch doesn't, or is checked out here, pull into a new branch: prized-orca pull ${sid} --as ${sq(`${branch}-sandbox`)}`,
         );
       }
-      say(`pulled ${branch} from ${sid} into ${entry.repoPath} as the branch ${target} (${head.slice(0, 12)}, ${count} commit${count === 1 ? "" : "s"} since the workspace started)`);
-      say(`push it from here with your own git sign-in: git -C ${sq(entry.repoPath)} push origin ${target}`);
+      const counted = `${count} commit${count === 1 ? "" : "s"}${since ? " since the workspace started" : ""}`;
+      say(`pulled ${branch} from ${sid} into ${entry.repoPath} as the branch ${target} (${head.slice(0, 12)}, ${counted})`);
+      say(`push it from here with your own git sign-in: git -C ${sq(entry.repoPath)} push origin ${sq(target)}`);
     } else {
       say(`${branch} in ${sid} has no commits since the workspace started: nothing to pull`);
     }
     if (dirty > 0) say(`note: ${dirty} uncommitted change${dirty === 1 ? "" : "s"} in the workspace stayed there: commit ${dirty === 1 ? "it" : "them"} in the workspace, then pull again`);
     trace({ cmd: "pull", sandbox: sid, commits: count, ok: true }, env);
   } finally {
-    fs.rmSync(dir, { recursive: true, force: true });
-    if (wasPaused) {
-      say(`pausing ${sid} again…`);
-      await pauseFirmly(client, sid).catch((error) => say(`could not pause it again: ${error.message}`));
-    }
+    await sleepAgain();
+    process.removeListener("SIGINT", onSignal);
+    process.removeListener("SIGTERM", onSignal);
   }
 }
 
@@ -617,7 +662,8 @@ function parseFlags(argv) {
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (!a.startsWith("--")) continue;
-    const [k, v] = a.slice(2).split("=", 2);
+    const eq = a.indexOf("=");
+    const [k, v] = eq === -1 ? [a.slice(2), undefined] : [a.slice(2, eq), a.slice(eq + 1)];
     flags[k] = v ?? (argv[i + 1] && !argv[i + 1].startsWith("--") ? argv[++i] : true);
   }
   return flags;

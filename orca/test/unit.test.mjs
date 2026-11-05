@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { PrizedApi, PrizedApiError, apiBase, canWriteSandboxes } from "../src/api.mjs";
-import { PROBE_SANDBOX, prizedFailure, shellSignIn, versionOk } from "../src/cli.mjs";
+import { PROBE_SANDBOX, prizedFailure, shellSignIn, sshHostname, versionOk } from "../src/cli.mjs";
 import { pauseFirmly, runtimeRefusal } from "../src/commands.mjs";
 import { keyFromLoginShell, resolveKey } from "../src/key.mjs";
 import { checkoutScript, parsePayload, pullScript, recipeResult, sandboxRemoteUrl, sourceFromOrca, stripCredentials } from "../src/recipe.mjs";
@@ -326,8 +326,31 @@ describe("Orca's side", () => {
     ]) {
       assert.equal(sandboxRemoteUrl(from), to, from);
     }
-    const script = checkoutScript({ root: "/r", bundlePath: "/b", bundleRef: "refs/x", head: "a".repeat(40), branch: "b", repoUrl: "git@github.com:acme/app.git", identity: {} });
-    assert.match(script, /git remote add origin 'https:\/\/github\.com\/acme\/app\.git'/);
+    // an alias from ~/.ssh/config, as `ssh -G` resolves it
+    const aliases = { "github-work": "github.com", "github.com-work": "github.com" };
+    const hostnameOf = (h) => aliases[h] ?? h;
+    for (const [from, to] of [
+      ["git@github-work:acme/app.git", "https://github.com/acme/app.git"],
+      ["git@github.com-work:acme/app.git", "https://github.com/acme/app.git"],
+      ["ssh://git@ssh.github.com:443/acme/app.git", "https://github.com/acme/app.git"],
+      ["git@ssh.dev.azure.com:v3/org/proj/app", "git@ssh.dev.azure.com:v3/org/proj/app"],
+      ["git@nowhere:acme/app.git", "git@nowhere:acme/app.git"],
+    ]) {
+      assert.equal(sandboxRemoteUrl(from, hostnameOf), to, from);
+    }
+  });
+
+  test("ssh -G names the real host behind an alias, and an unknown name stays itself", { skip: spawnSync("ssh", ["-V"]).error ? "no ssh" : false }, () => {
+    const dir = tempDir();
+    try {
+      const config = path.join(dir, "config");
+      fs.writeFileSync(config, "Host github-work\n    HostName github.com\n    IdentityFile ~/.ssh/work\n");
+      const env = { PATH: process.env.PATH, HOME: dir, PRIZED_ORCA_SSH_CONFIG: config };
+      assert.equal(sshHostname("github-work", env), "github.com");
+      assert.equal(sshHostname("gitlab.example.com", env), "gitlab.example.com");
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
   });
 
   test("the pull script bundles only what the workspace added, and says what it left behind", () => {
@@ -357,6 +380,11 @@ describe("Orca's side", () => {
       assert.equal(listed, `${head} refs/heads/feat/x`);
       assert.equal(spawnSync("git", ["-C", repo.dir, "bundle", "verify", "-q", bundlePath], { env }).status, 0, "the user's repo has what it needs");
       assert.deepEqual(run(null), ["feat/x", head, "1", "2"], "without a start commit, the whole branch");
+      // a tag with the branch's name doesn't confuse it
+      g(box, "tag", "feat/x", repo.first);
+      assert.deepEqual(run(repo.first), ["feat/x", head, "1", "1"]);
+      assert.equal(spawnSync("git", ["bundle", "list-heads", bundlePath], { encoding: "utf8", env }).stdout.trim(), `${head} refs/heads/feat/x`);
+      assert.throws(() => pullScript({ root: box, bundlePath, base: "HEAD; rm -rf ~" }), /not a commit id/);
       g(box, "checkout", "-q", "--detach");
       const detached = spawnSync("bash", ["-c", pullScript({ root: box, bundlePath, base: null })], { encoding: "utf8", env });
       assert.equal(detached.status, 3);
@@ -377,5 +405,10 @@ describe("Orca's side", () => {
     const e = prizedFailure("could not open a shell in sbx_1", { status: 8, stderr: "prized: a shell in a sandbox opens with your prized login, not an API key", stdout: "" });
     assert.match(e.message, /signed in with an API key/);
     assert.match(e.hint, /prized login/);
+    // signed out (or a login that expired): the real CLI's hint mentions an API key too
+    const out = prizedFailure("could not open a shell in sbx_1", { status: 8, stderr: "prized: not signed in\n  ↳ prized login: a shell opens with your sign-in, not an API key", stdout: "" });
+    assert.match(out.message, /the prized CLI is not signed in/);
+    const expired = run({ FAKE_NOT_SIGNED_IN: "1" });
+    assert.equal(expired.kind, "signed-out");
   });
 });

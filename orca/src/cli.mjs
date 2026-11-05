@@ -78,8 +78,11 @@ export function runPrized(bin, args, { timeoutMs = 120_000, env = process.env } 
 }
 
 // The CLI's answer when its sign-in is an API key (`prized login --token`), not a browser login:
-// 403 ssh_requires_login for a Full access key, 403 key_access_denied for a Custom one.
-const KEY_SIGN_IN = /not an API key|ssh_requires_login|API key is limited|may not use sandboxes|key_access_denied/i;
+// 403 ssh_requires_login for a Full access key, 403 key_access_denied for a Custom one. Matched on
+// the message line alone: the hint under "prized: not signed in" says "…not an API key" too.
+const KEY_SIGN_IN = /opens with your prized login, not an API key|API key is limited|may not use sandboxes/i;
+const SIGNED_OUT = /not signed in|has expired/i;
+const message = (text) => String(text).split("\n").find((l) => l.startsWith("prized:")) ?? "";
 const KEY_SIGN_IN_HINT =
   "run `prized login` and sign in in the browser: the CLI is signed in with an API key (prized login --token), " +
   "and a shell in a sandbox opens only with a browser sign-in. PRIZED_API_KEY in your profile stays as it is";
@@ -91,8 +94,9 @@ export const PROBE_SANDBOX = "sbx_0000000000000000";
 export function shellSignIn(bin, opts = {}) {
   const r = runPrized(bin, ["sandbox", "ssh", PROBE_SANDBOX, "--", "true"], { timeoutMs: 45_000, ...opts });
   const said = `${r.stderr}\n${r.stdout}`;
-  const detail = said.trim().split("\n").filter(Boolean).slice(-3).join(" / ");
-  if (KEY_SIGN_IN.test(said)) return { ok: false, kind: "api-key", detail };
+  const detail = said.trim().split("\n").filter(Boolean).slice(0, 2).join(" / ");
+  if (r.status === 8 && SIGNED_OUT.test(message(said))) return { ok: false, kind: "signed-out", detail };
+  if (KEY_SIGN_IN.test(message(said))) return { ok: false, kind: "api-key", detail };
   if (r.status === 8) return { ok: false, kind: "signed-out", detail };
   if (r.status === 5 && /no sandbox/i.test(said)) return { ok: true, kind: "login", detail };
   return { ok: null, kind: "unknown", detail: detail || `exit ${r.status}` };
@@ -105,7 +109,7 @@ export function shellSignInError(signIn) {
 
 export function prizedFailure(what, result) {
   const said = String(result.stderr || result.stdout || "").trim().split("\n").slice(-6).join("\n");
-  if (KEY_SIGN_IN.test(said)) return new UserError(`${what}: the prized CLI is signed in with an API key${said ? `\n${said}` : ""}`, KEY_SIGN_IN_HINT);
+  if (!(result.status === 8 && SIGNED_OUT.test(message(said))) && KEY_SIGN_IN.test(message(said))) return new UserError(`${what}: the prized CLI is signed in with an API key${said ? `\n${said}` : ""}`, KEY_SIGN_IN_HINT);
   if (result.status === 8) {
     return new UserError(`${what}: the prized CLI is not signed in${said ? `\n${said}` : ""}`, "run `prized login` in a terminal (shells open with your login, not an API key)");
   }
@@ -156,6 +160,15 @@ export function sshArgs(target, command, env = process.env) {
   );
   if (command) args.push(command);
   return args;
+}
+
+// The host ssh would connect to for a name, after ~/.ssh/config's aliases (`ssh -G` reads the
+// config and connects to nothing), or the name itself.
+export function sshHostname(host, env = process.env) {
+  const args = [...(env.PRIZED_ORCA_SSH_CONFIG ? ["-F", userSshConfig(env)] : []), "-G", "--", host];
+  const r = spawnSync("ssh", args, { encoding: "utf8", env: childEnv(env), timeout: 10_000 });
+  const m = r.status === 0 ? /^hostname (\S+)$/m.exec(r.stdout ?? "") : null;
+  return m ? m[1] : host;
 }
 
 // Run one command over the exact connection Orca will dial. Resolves with ssh's exit and output.

@@ -25,7 +25,9 @@ if (env.PRIZED_API_KEY) {
   process.exit(99);
 }
 if (env.FAKE_NOT_SIGNED_IN === "1") {
-  process.stderr.write("not signed in\n");
+  // the real CLI's words (internal/cli/sandboxssh.go): its hint for a shell mentions an API key too
+  process.stderr.write("prized: not signed in\n");
+  if (args[1] === "ssh") process.stderr.write("  ↳ prized login: a shell opens with your sign-in, not an API key\n");
   process.exit(8);
 }
 // FAKE_LIVE_API (test/live.mjs): the real API, with FAKE_LOGIN_BEARER standing in for a login.

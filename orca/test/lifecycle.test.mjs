@@ -63,8 +63,10 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
       workspaceId: "ws-1",
       workspaceName: "fix login bug",
       repoPath: repo.dir,
-      // Orca strips credentials from the URL it passes; the plugin strips them again regardless.
-      repoUrl: "https://example.com/acme/app.git",
+      // An SSH address through an alias in ~/.ssh/config (setup's test writes "Host other" there): the
+      // sandbox gets https://example.com/acme/app.git. Orca passes no credentials; the plugin strips
+      // any regardless.
+      repoUrl: "git@other:acme/app.git",
       branch: "ada/fix-login",
       ref: "origin/main",
       expectedRefHead: repo.first,
@@ -260,7 +262,7 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
     assert.equal(r.status, 0, r.stderr);
     assert.equal(r.stdout, "");
     assert.match(r.stderr, new RegExp(`pulled ada/fix-login from ${id} into .* as the branch ada/fix-login \\([0-9a-f]{12}, 2 commits since the workspace started\\)`));
-    assert.match(r.stderr, /push it from here with your own git sign-in: git -C '.*' push origin ada\/fix-login/);
+    assert.match(r.stderr, /push it from here with your own git sign-in: git -C '.*' push origin 'ada\/fix-login'$/m);
     assert.match(r.stderr, /1 uncommitted change in the workspace stayed there/);
     assert.equal(here("rev-parse", "refs/heads/ada/fix-login"), head);
     assert.equal(fs.existsSync(path.join(root, ".git", "prized-orca-pull.bundle")), false, "the bundle is gone from the sandbox");
@@ -283,12 +285,40 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
     here("update-ref", "refs/heads/ada/fix-login", apartCommit);
     const apart = await runAdapter(["pull", id], { env });
     assert.notEqual(apart.status, 0);
-    assert.match(apart.stderr, /pull into a new branch: prized-orca pull sbx_\S+ --as ada\/fix-login-sandbox/);
+    assert.match(apart.stderr, /non-fast-forward/);
+    assert.match(apart.stderr, /pull into a new branch: prized-orca pull sbx_\S+ --as 'ada\/fix-login-sandbox'/);
     assert.equal(here("rev-parse", "refs/heads/ada/fix-login"), apartCommit, "left alone");
     const as = await runAdapter(["pull", id, "--as", "ada/from-sandbox"], { env });
     assert.equal(as.status, 0, as.stderr);
     assert.equal(here("rev-parse", "refs/heads/ada/from-sandbox"), head);
+    assert.match(as.stderr, /push origin 'ada\/from-sandbox'/);
     assert.equal(sbx.state, "paused");
+    const bad = await runAdapter(["pull", id, "--force"], { env });
+    assert.notEqual(bad.status, 0);
+    assert.match(bad.stderr, /unknown option --force/);
+
+    // two workspaces: the one whose project this folder is, or a list to name one from
+    const file = path.join(home, ".prized-orca", "state.json");
+    const saved = fs.readFileSync(file, "utf8");
+    const two = JSON.parse(saved);
+    two.sandboxes.sbx_00000000000000bb = { repoPath: api.root, projectRoot: "/home/prized/work/other", workspaceName: "other one", asleep: false };
+    fs.writeFileSync(file, JSON.stringify(two));
+    const which = await runAdapter(["pull"], { env, cwd: env.TMPDIR });
+    assert.notEqual(which.status, 0);
+    assert.match(which.stderr, new RegExp(`which workspace\\? .*${id}.*sbx_00000000000000bb \\("other one"`));
+    const fromRepo = await runAdapter(["pull", "--as", "ada/from-repo-folder"], { env, cwd: repo.dir });
+    assert.equal(fromRepo.status, 0, fromRepo.stderr);
+    assert.equal(here("rev-parse", "refs/heads/ada/from-repo-folder"), head);
+    fs.writeFileSync(file, saved);
+
+    // an idle pause (not Orca's sleep) is left running after the copy: it pauses itself again
+    const woke = await phase("resume");
+    assert.equal(woke.exitCode, 0, woke.stderr);
+    sbx.state = "paused";
+    const idle = await runAdapter(["pull", id, "--as", "ada/idle"], { env });
+    assert.equal(idle.status, 0, idle.stderr);
+    assert.equal(sbx.state, "running");
+    assert.doesNotMatch(idle.stderr, /pausing/);
     const unknown = await runAdapter(["pull", "sbx_00000000000000aa"], { env });
     assert.notEqual(unknown.status, 0);
     assert.match(unknown.stderr, /backs no Orca workspace on this machine/);

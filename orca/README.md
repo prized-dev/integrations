@@ -57,7 +57,7 @@ git push origin <branch>
 
 `pull` copies the workspace's branch into your local repository as a branch of the same name. It copies commits only, so commit first. A sleeping workspace is woken for the copy and put back to sleep. With several Prized Sandbox workspaces, name one: `prized-orca pull sbx_…` (`prized-orca list` shows them). If your local branch of that name has other commits, `--as <new-branch>` copies it to a new branch instead.
 
-**From the workspace's terminal.** The sandbox has no SSH key and no `gh`, and its `origin` is your repository's HTTPS address. Make a [fine-grained GitHub token](https://github.com/settings/personal-access-tokens/new) for this one repository, with **Contents: Read and write** and a short expiry. Then:
+**From the workspace's terminal.** The sandbox has no SSH key and no `gh`, and its `origin` is your repository's HTTPS address (`git@github.com:you/app.git` becomes `https://github.com/you/app.git`). Make a [fine-grained GitHub token](https://github.com/settings/personal-access-tokens/new) for this one repository, with **Contents: Read and write** and a short expiry. Then:
 
 ```bash
 git config --global credential.helper store

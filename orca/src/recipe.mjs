@@ -146,32 +146,41 @@ export function gitIdentity(repoPath) {
 
 // origin as the sandbox can use it. A sandbox has no SSH key, and its connection carries no agent
 // forwarding, so an SSH remote (git@host:owner/repo, ssh://…) can't sign in there: it gets the same
-// repository over HTTPS, which fetches a public repository as it is and pushes with a token. A host
-// without a dot (an alias from ~/.ssh/config) and every other URL stay as they are.
-export function sandboxRemoteUrl(url) {
+// repository over HTTPS, which fetches a public repository as it is and pushes with a token.
+// hostnameOf turns an alias from ~/.ssh/config (github-work, github.com-work) into the real host.
+// A host that still isn't a domain, Azure DevOps (whose HTTPS path differs), and every other URL
+// stay as they are.
+export function sandboxRemoteUrl(url, hostnameOf = (host) => host) {
   const s = String(url ?? "");
-  const host = "([A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)+)";
-  const m = new RegExp(`^ssh://(?:[^@/]+@)?${host}(?::\\d+)?/+(.+)$`).exec(s) ?? new RegExp(`^[^@/:]+@${host}:(?!/)(.+)$`).exec(s);
-  return m ? `https://${m[1]}/${m[2]}` : s;
+  const m = /^ssh:\/\/(?:[^@/]+@)?([A-Za-z0-9._-]+)(?::\d+)?\/+(.+)$/.exec(s) ?? /^(?:[^@/:]+@)?([A-Za-z0-9._-]{2,}):(?!\/)(.+)$/.exec(s);
+  if (!m) return s;
+  let host = String(hostnameOf(m[1]) || m[1]).toLowerCase();
+  if (host === "ssh.github.com") host = "github.com";
+  if (!/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(host) || /(^|\.)(dev\.azure\.com|visualstudio\.com)$/.test(host)) return s;
+  return `https://${host}/${m[2].replace(/^\/+/, "")}`;
 }
+
+const COMMIT = /^[0-9a-f]{40}([0-9a-f]{24})?$/;
 
 // Runs in the sandbox (bash, as its user): makes a bundle at BUNDLE of the branch checked out at ROOT,
 // holding only the commits after BASE (the commit the workspace started from, which the user's own
 // repository has), or its whole history without one. Prints the branch, its commit, how many
 // uncommitted changes the checkout has, and how many commits are in the bundle (0: no bundle).
 export function pullScript({ root, bundlePath, base }) {
-  const since = base ? sq(base) : "";
+  if (base && !COMMIT.test(base)) throw new UserError(`not a commit id: ${base}`);
   return [
     "set -e",
     `cd ${sq(root)}`,
-    'b=$(git symbolic-ref --short -q HEAD) || { echo "the checkout is not on a branch (a detached HEAD): check out a branch in it first" >&2; exit 3; }',
+    'ref=$(git symbolic-ref -q HEAD) || { echo "the checkout is not on a branch (a detached HEAD): check out a branch in it first" >&2; exit 3; }',
+    'case $ref in refs/heads/*) ;; *) echo "the checkout is on $ref, not a branch" >&2; exit 3 ;; esac',
+    'b=${ref#refs/heads/}',
     "head=$(git rev-parse HEAD)",
     "dirty=$(git status --porcelain | wc -l | tr -d ' ')",
     `rm -f ${sq(bundlePath)}`,
-    since
-      ? `if git cat-file -e ${since}^{commit} 2>/dev/null; then n=$(git rev-list --count ${since}..HEAD); not="--not ${base}"; else n=$(git rev-list --count HEAD); not=""; fi`
+    base
+      ? `if git cat-file -e ${base}^{commit} 2>/dev/null; then n=$(git rev-list --count ${base}..HEAD); not="--not ${base}"; else n=$(git rev-list --count HEAD); not=""; fi`
       : 'n=$(git rev-list --count HEAD); not=""',
-    `if [ "$n" -gt 0 ]; then git bundle create -q ${sq(bundlePath)} "refs/heads/$b" $not; fi`,
+    `if [ "$n" -gt 0 ]; then git bundle create -q ${sq(bundlePath)} "$ref" $not; fi`,
     `printf '%s\\n%s\\n%s\\n%s\\n' "$b" "$head" "$dirty" "$n"`,
   ].join("\n");
 }
@@ -187,7 +196,7 @@ export function checkoutScript({ root, bundlePath, bundleRef, head, branch, repo
     `git -c init.defaultBranch=${sq(branch)} init --quiet ${sq(root)}`,
     `cd ${sq(root)}`,
     `git fetch --quiet ${sq(bundlePath)} ${sq(`${bundleRef}:refs/prized-orca/source`)}`,
-    repoUrl ? `git remote add origin ${sq(sandboxRemoteUrl(repoUrl))}` : "true",
+    repoUrl ? `git remote add origin ${sq(repoUrl)}` : "true",
     `git checkout --quiet -B ${sq(branch)} ${sq(head)}`,
     "git update-ref -d refs/prized-orca/source",
     identity.name ? `git config user.name ${sq(identity.name)}` : "true",
