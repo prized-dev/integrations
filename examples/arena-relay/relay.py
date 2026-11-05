@@ -110,15 +110,22 @@ class Api:
         )
         return r.status_code, _doc(r)
 
-    async def probe(self, url: str) -> Tuple[int, Optional[float]]:
+    async def probe(self, url: str, limit: float) -> Tuple[int, Optional[float]]:
         """GET a copy's live URL (its token in the query, no API key): the
-        status, and Retry-After in seconds when the proxy sent one."""
-        async with self.probe_slots:
-            r = await self.probe_client.get(url, timeout=3)
-        retry = None
-        with contextlib.suppress(TypeError, ValueError):
-            retry = float(r.headers.get("retry-after"))
-        return r.status_code, retry
+        status, and Retry-After in seconds when the proxy sent one. Only the
+        status line and headers are read, and the whole call, the wait for a
+        probe slot included, takes at most `limit` seconds (asyncio.TimeoutError
+        past it), so a copy that trickles bytes can't hold a slot."""
+
+        async def go() -> Tuple[int, Optional[float]]:
+            async with self.probe_slots:
+                async with self.probe_client.stream("GET", url, timeout=limit) as r:
+                    retry = None
+                    with contextlib.suppress(TypeError, ValueError):
+                        retry = float(r.headers.get("retry-after"))
+                    return r.status_code, retry
+
+        return await asyncio.wait_for(go(), timeout=limit)
 
     async def delete(self, sid: str) -> bool:
         """True once the sandbox is deleted or going (404 counts: it is gone)."""
@@ -461,14 +468,21 @@ class Relay:
         while True:
             self.stats["fork_calls"] += 1
             t = mono()
+            key = f"{batch}-{want}"
+
+            def replay(w: int = want, k: str = key) -> Any:
+                # The same body and Idempotency-Key, without the hold: the API
+                # answers with the copies the lost call made, once it commits.
+                return self.api.fork(cid, w, labels, self.max_runtime_min, k, cfg.fork_timeout, False)
+
             try:
                 status, doc = await self.api.fork(
-                    cid, want, labels, self.max_runtime_min, f"{batch}-{want}", cfg.fork_timeout, cfg.ready == "hold"
+                    cid, want, labels, self.max_runtime_min, key, cfg.fork_timeout, cfg.ready == "hold"
                 )
             except BaseException as exc:
                 # No answer, or cancelled mid-call: the copies may exist. The
-                # sweep runs on its own task, so the viewers go back at once.
-                self.spawn(self._purge_batch(batch, "fork_unanswered"))
+                # cleanup runs on its own task, so the viewers go back at once.
+                self.spawn(self._reclaim(batch, "fork_unanswered", replay))
                 if isinstance(exc, Exception):
                     raise ForkFailed(f"no answer: {exc!r}") from exc
                 raise
@@ -489,7 +503,8 @@ class Relay:
             self.log("batch", contestant=cid, batch=batch, asked=n, got=0, tries=tries)
             if status >= 500 or status == 429:
                 # A 5xx may come after the copies were made; try again next window.
-                self.spawn(self._purge_batch(batch, f"fork_{status}"))
+                # A 429 rate limit made nothing: one sweep is enough.
+                self.spawn(self._reclaim(batch, f"fork_{status}", replay) if status >= 500 else self._sweep(batch, "fork_429"))
                 raise ForkFailed(f"{status} {doc.get('error')}")
             # Any other refusal (contestant gone or paused, bad key): it will
             # not change in a second, so the viewers hear it now.
@@ -577,10 +592,10 @@ class Relay:
         while mono() < deadline:
             pause = PROBE_EVERY
             try:
-                last, retry_after = await self.api.probe(url)
+                last, retry_after = await self.api.probe(url, max(0.05, min(3.0, deadline - mono())))
                 if last == 429:
-                    pause = min(5.0, retry_after if retry_after is not None else 1.0)
-            except httpx.HTTPError as exc:
+                    pause = max(PROBE_EVERY, min(5.0, retry_after if retry_after is not None else 1.0))
+            except (httpx.HTTPError, asyncio.TimeoutError) as exc:
                 last = type(exc).__name__
             trace["probe_answers"][str(last)] = trace["probe_answers"].get(str(last), 0) + 1
             if isinstance(last, int) and last < 400:
@@ -664,12 +679,32 @@ class Relay:
             self.deleted.update(gone)
             self.log("sweep", batch=batch, reason=reason, deleted=gone)
 
-    async def _purge_batch(self, batch: str, reason: str) -> None:
-        """A fork with no answer: delete every copy of its batch by label now,
-        and again in a few seconds in the background, in case the fork was
-        still committing. The reconcile pass catches anything later still."""
+    async def _reclaim(self, batch: str, reason: str, replay: Optional[Callable[[], Any]] = None) -> None:
+        """A fork with no answer, or a 5xx: its copies may exist, or may still
+        be committing. Delete what the batch label finds now. Then replay the
+        fork with the same Idempotency-Key: the API takes the workspace lock
+        first, so the replay waits for the lost call to commit and answers
+        with its copies (or makes them now, if the call never arrived), and
+        either way they are deleted. If the replay gets no answer either, keep
+        sweeping by label until fork_timeout after the replay gave up.
+        close() waits for this."""
         await self._sweep(batch, reason)
-        self.spawn(self._sweep(batch, reason + "_again", 3.0))
+        if replay is not None:
+            try:
+                status, doc = await asyncio.wait_for(replay(), timeout=self.cfg.fork_timeout)
+                ids = [d["id"] for d in (doc.get("sandboxes") or []) if isinstance(d, dict) and d.get("id")]
+                await asyncio.gather(*(self._delete(sid, reason + "_replay") for sid in ids))
+                if status < 500:
+                    await self._sweep(batch, reason + "_after_replay")
+                    return
+            except Exception:
+                pass
+        end = mono() + self.cfg.fork_timeout
+        pause = 1.0
+        while mono() < end:
+            await asyncio.sleep(min(pause, max(0.0, end - mono())))
+            await self._sweep(batch, reason + "_again")
+            pause = min(pause * 2, 8.0)
 
     async def _purge_ids(self, ids: List[str], batch: Optional[str], reason: str) -> None:
         """A fork that answered: its answer listed every copy. The label sweep
@@ -743,8 +778,9 @@ class Relay:
         for t in self._bg:
             t.cancel()
         await asyncio.gather(*(self.release(sid, "shutdown") for sid in list(self.live)), return_exceptions=True)
-        if self.tasks:
-            await asyncio.wait(list(self.tasks), timeout=20)
+        end = mono() + self.cfg.fork_timeout * 2 + 10  # a replay, then its sweeps
+        while self.tasks and mono() < end:
+            await asyncio.wait(list(self.tasks), timeout=max(0.01, end - mono()))
         swept: List[str] = []
         left: List[str] = []
         for attempt in range(6):
@@ -771,16 +807,6 @@ class Relay:
             },
             **{k: (round(v, 1) if isinstance(v, float) else v) for k, v in self.stats.items()},
         }
-
-
-async def _finish(coro: Any) -> None:
-    """Run cleanup to its end even if the caller is cancelled meanwhile."""
-    task = asyncio.ensure_future(coro)
-    try:
-        await asyncio.shield(task)
-    except asyncio.CancelledError:
-        await asyncio.wait([task])
-        raise
 
 
 def _int(x: Any) -> int:
@@ -929,7 +955,9 @@ async def _write(writer: asyncio.StreamWriter, status: int, doc: Any) -> None:
 
 
 async def _hangup(reader: asyncio.StreamReader) -> None:
-    """Returns when the viewer closes its side (EOF). Stray bytes are not a hangup."""
+    """Returns when the viewer closes its side (EOF). Stray bytes are not a
+    hangup. A client that half-closes (shutdown(SHUT_WR)) after sending its
+    request reads as gone too, and gets no answer: HTTP clients don't do that."""
     while await reader.read(4096):
         pass
 

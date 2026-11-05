@@ -37,19 +37,19 @@ Error answers:
 
 1. **Collects viewers for one window** (`--window`, 1 s). The first request for a contestant opens it. It closes early if the queue already fills the room.
 2. **Forks once, at the room it has.** `count` is the queue, or `--cap` (36 live copies per contestant) minus the copies live or in flight, whichever is smaller. A fork is all or nothing. If the API answers `409 fork_capacity` with `fits`, or `429 sandbox_quota_exceeded` with `admitted`, the relay forks again at that number. The next window opens while a fork is still in flight, so forks can overlap.
-3. **Hands out each copy when it answers.** This is `--ready probe`, the default. The relay forks without a hold and mints each copy's port token right away. It then polls each URL on `--probe-path` until the copy itself answers 2xx or 3xx, and hands that copy to the longest-waiting viewer. Probes go out 12 at a time and back off on a 429. `--ready hold` uses `?wait=running` (SDK 0.1.2 doesn't send it) and hands the whole batch out when the hold answers.
+3. **Hands out each copy when it answers.** This is `--ready probe`, the default. The relay forks without a hold and mints each copy's port token right away. It then polls each URL on `--probe-path` until the copy itself answers 2xx or 3xx, and hands that copy to the longest-waiting viewer. Probes go out 12 at a time, read only the status line and headers, and give up after 3 s. On a 429 they wait for the proxy's Retry-After (1-5 s). `--ready hold` uses `?wait=running` (SDK 0.1.2 doesn't send it) and hands the whole batch out when the hold answers.
 4. **Queues the overflow or says `full`.** Viewers the room can't cover go back to the front of the queue for the next window. If no room frees up within `--queue-max` (10 s), they get `full`. The answer is immediate when the copies that expire before the deadline still can't cover the queue.
 5. **Deletes every copy after `--ttl`** (300 s), or sooner when its viewer hands it back or hangs up.
 
 ### No copy is left behind
 
 - **Labels and a backstop.** Every copy carries `relay=<name>`, `relay_run=<run>` and `relay_batch=<batch>`, plus your `--label`s. Its `maxRuntimeMin` is the TTL plus 2 minutes, so the API deletes it even if the relay dies.
-- **A fork with no answer** (a timeout, a dropped connection or a 5xx) has its batch deleted by label, once right away and again 3 s later.
+- **A fork with no answer** (a timeout, a dropped connection, a cancel at shutdown, or a 5xx) has its batch deleted by label right away. Then the relay replays the fork with the same Idempotency-Key. The API takes the workspace lock before it checks the key, so the replay waits for the lost call to commit and answers with its copies, and the relay deletes them. If the call never arrived, the replay makes the copies and the relay deletes those. If the replay gets no answer either, the relay sweeps by label for another `fork_timeout` (30 s).
 - **An error after the fork answered** deletes every copy not yet handed out. A failed token mint or probe deletes only that copy, and its viewer goes back in the queue.
 - **A viewer who hangs up** gets its copy deleted, whether the copy is still being made, being written back, or already handed out.
 - **Failed deletes** are retried after 0.5 s, 1 s, 2 s and 4 s, then every 5 s.
 - **Reconcile.** Every 15 s, a pass deletes anything under this run that the relay doesn't hold.
-- **SIGTERM** answers every waiting viewer `full` (`shutting_down`) and deletes the run. It gives in-flight forks 2 s, cancels them, and their copies are swept by label. Then it repeats sweep and list until nothing of the run is left.
+- **SIGTERM** answers every waiting viewer `full` (`shutting_down`) and deletes the run. It gives in-flight forks 2 s, then cancels them, and each cancelled fork is replayed and swept as above. Then it waits for every cleanup to finish and repeats sweep and list until nothing of the run is left. That usually takes a few seconds. If the API stops answering, it can take up to 70 s.
 - **Startup** deletes anything an earlier run under the same `--name` left, for example after a SIGKILL.
 
 ## Numbers
@@ -71,6 +71,8 @@ These are real runs from Nov 5, 2026, in our own workspace:
 
 Every run ended with 0 copies left. The relay's own count matched the CLI's listing, and the product database showed all 0 still running.
 
+After the second review's fixes, one more run with 25 viewers came in at p50 4.1 s and p95 5.3 s. One viewer waited 10.8 s: the host had room for 16 copies, not 17, so that viewer was served by the next fork.
+
 For comparison, the CLI load test on Nov 4 made 25 separate `prized sandbox fork` calls. Its fork p95 was 22.9 s and its ready p95 was 24.1 s.
 
 ### Where the time goes
@@ -89,7 +91,7 @@ For comparison, the CLI load test on Nov 4 made 25 separate `prized sandbox fork
 
 ### Cost
 
-Every run in this README was billed to our workspace at list price ($0.131 an hour for each 2 vCPU / 4 GB copy). The total was $1.41 for 904 copies, about 48 s each, plus the contestant. A viewer who keeps a copy for the default 5 minutes costs about $0.011.
+Every run in this README was billed to our workspace at list price ($0.131 an hour for each 2 vCPU / 4 GB copy). The total was $1.45 for 929 copies, about 48 s each, plus two contestants. A viewer who keeps a copy for the default 5 minutes costs about $0.011.
 
 ## Limits
 
@@ -97,6 +99,8 @@ Every run in this README was billed to our workspace at list price ($0.131 an ho
 - **One process.** The queue and the copies live in memory. Run one relay per `--name`, because its startup sweep deletes that name's copies.
 - **Billing.** The copies bill to the relay's workspace, and port tokens need a paid workspace.
 - **No auth on the relay's own HTTP.** It listens on 127.0.0.1, and anyone who can reach it can delete any copy by id. Put it behind your app's auth.
+- **Half-closed connections.** A client that half-closes its connection (`shutdown(SHUT_WR)`) after sending the request is treated as gone and gets no answer. HTTP clients don't do this.
+- **One slow contestant can delay the others' probes**, but only up to `fork_timeout`. The 12 probe slots are shared by every contestant.
 
 ## Tests
 
@@ -104,7 +108,7 @@ Every run in this README was billed to our workspace at list price ($0.131 an ho
 python test_offline.py
 ```
 
-19 tests run the relay against a fake API, with no key and no network:
+22 tests run the relay against a fake API, with no key and no network beyond loopback:
 
 - one fork per burst, the cap and fast `full` answers, and the API's `fits`
 - an error after a fork, a lost fork answer swept by label, and token failures
@@ -114,3 +118,5 @@ python test_offline.py
 - a bug inside a flush, a closed stderr, and a permanent refusal answered with 502
 - shutdown with viewers requeued, and shutdown with a slow fork
 - the HTTP routes, including stray bytes and chunked bodies
+- a copy that never finishes its headers while 12 probes are in flight
+- a fork that commits after shutdown cancelled it, with and without an answer to the replay

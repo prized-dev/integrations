@@ -8,6 +8,7 @@ from __future__ import annotations
 import asyncio
 import json
 import re
+import time
 from typing import Any, Dict, List, Optional
 from urllib.parse import parse_qsl, urlsplit
 
@@ -37,6 +38,7 @@ class FakeApi:
         self.forks: List[Dict[str, Any]] = []
         self.seq = 0
         self.probes = 0
+        self.by_key: Dict[str, List[str]] = {}  # Idempotency-Key -> the copies its fork made
         self.probed: Dict[str, int] = {}
         self.slow: Dict[str, int] = {}  # copy id -> probes before its URL answers
         self.holds: List[bool] = []
@@ -59,6 +61,10 @@ class FakeApi:
             assert dict(q) in ({"wait": "running", "waitTimeoutMs": "8000"}, {})
             self.holds.append(bool(q))
             assert set(body) == {"count", "labels", "maxRuntimeMin"}
+            key = req.headers.get("idempotency-key")
+            if key in self.by_key:  # a replay answers the copies the first call made, as the API does
+                self.forks.append({"count": body["count"], "status": 200, "replay": True})
+                return httpx.Response(200, json={"sandboxes": [dict(self.sandboxes[i]) for i in self.by_key[key]]})
             await asyncio.sleep(self.fork_delay)
             if self.fork_status:
                 self.forks.append({"count": body["count"], "status": self.fork_status})
@@ -75,6 +81,8 @@ class FakeApi:
                 self.sandboxes[sid] = {"id": sid, "state": "running", "labels": dict(body["labels"])}
                 made.append(dict(self.sandboxes[sid]))
             self.forks.append({"count": n, "status": 202, "labels": body["labels"]})
+            if key:
+                self.by_key[key] = [d["id"] for d in made]
             if self.fail_fork_after_create and len(self.forks) == self.fail_fork_after_create:
                 raise httpx.ReadTimeout("answer lost", request=req)
             await asyncio.sleep(self.answer_delay)
@@ -451,6 +459,164 @@ def test_a_hangup_as_the_copy_comes_gives_the_copy_back() -> None:
         assert fake.live() == [] and relay.live == {}
         server.close()
         await relay.close()
+    run(go())
+
+
+# --- from the second review (Nov 5) ---
+
+
+def test_a_copy_that_never_finishes_its_headers_cannot_hold_the_probes() -> None:
+    """A's copies answer the probe one byte every 0.3 s and never finish the
+    headers, so no read timeout fires. 12 of them fill every probe slot. B's
+    copy answers at once and must still be served, and A's viewers answered."""
+    a, b = "sbx_contestantA001", "sbx_contestantB001"
+    parent_of: Dict[str, str] = {}
+
+    async def copies(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        line = (await reader.readline()).decode()
+        while (await reader.readline()) not in (b"\r\n", b""):
+            pass
+        sid = dict(parse_qsl(line.split(" ")[1].split("?", 1)[-1])).get("sid", "")
+        try:
+            if parent_of.get(sid) == a:
+                for ch in b"HTTP/1.1 200 OK\r\nX-Slow: " + b"x" * 1000:
+                    writer.write(bytes([ch]))
+                    await writer.drain()
+                    await asyncio.sleep(0.3)
+            else:
+                writer.write(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok")
+                await writer.drain()
+        except Exception:
+            pass
+        writer.close()
+
+    class Fake(FakeApi):
+        async def __call__(self, req: httpx.Request) -> httpx.Response:
+            m = re.fullmatch(r"/api/v1/sandboxes/([^/]+)/ports/(\d+)/token", req.url.path)
+            if req.method == "POST" and m and m.group(1) in self.live():
+                return httpx.Response(200, json={"url": f"http://127.0.0.1:{self.port}/?prized_token=t&sid={m.group(1)}"})
+            r = await super().__call__(req)
+            m = re.fullmatch(r"/api/v1/sandboxes/([^/]+)/fork", req.url.path)
+            if m and r.status_code == 202:
+                for d in json.loads(r.content)["sandboxes"]:
+                    parent_of[d["id"]] = m.group(1)
+            return r
+
+    async def go() -> None:
+        server = await asyncio.start_server(copies, "127.0.0.1", 0)
+        fake = Fake()
+        fake.port = server.sockets[0].getsockname()[1]  # type: ignore[attr-defined]
+        cfg = R.Config(contestants=[a, b], window=0.1, ttl=60.0, queue_max=2.0, fork_timeout=3.0,
+                       reconcile_every=5.0, ready="probe")
+        api_client = httpx.AsyncClient(transport=httpx.MockTransport(fake))
+        probes = httpx.AsyncClient()
+        relay = R.Relay(cfg, R.Api("https://api.example", "dcp_000000000000", api_client, probes))
+        await relay.startup()
+        t0 = time.monotonic()
+        a_tasks = [asyncio.ensure_future(relay.batchers[a].request(f"a{i}")) for i in range(R.PROBE_SLOTS)]
+        await asyncio.sleep(0.5)
+        b_task = asyncio.ensure_future(relay.batchers[b].request("b0"))
+        await asyncio.wait([b_task], timeout=6.0)
+        assert b_task.done() and isinstance(b_task.result(), R.Copy), "B starved by A's probes"
+        await asyncio.wait(a_tasks, timeout=8.0 - (time.monotonic() - t0))
+        assert all(t.done() for t in a_tasks), "an A viewer was never answered"
+        assert all(isinstance(t.exception(), (R.Full, R.ForkFailed)) for t in a_tasks)
+        await asyncio.sleep(0.5)
+        assert relay.api.probe_slots._value == R.PROBE_SLOTS  # every slot came back
+        out = await relay.close(grace=0.2)
+        assert fake.live() == [] and out["left_not_deleting"] == []
+        server.close()
+        await probes.aclose()
+        await api_client.aclose()
+    run(go())
+
+
+def test_close_reclaims_a_fork_that_commits_after_it_was_cancelled() -> None:
+    """The API commits a cancelled fork 1.5 s after the POST came in. Shutdown
+    replays the fork with its Idempotency-Key, which waits for the commit as the
+    API's workspace lock does, and deletes what it answers. Nothing is left."""
+    class LateCommit(FakeApi):
+        def __init__(self) -> None:
+            super().__init__()
+            self.committed: Dict[str, asyncio.Event] = {}
+
+        async def __call__(self, req: httpx.Request) -> httpx.Response:
+            if req.method == "POST" and re.fullmatch(r"/api/v1/sandboxes/[^/]+/fork", req.url.path):
+                key = req.headers["idempotency-key"]
+                if key in self.committed:  # a replay: waits for the first call to commit, then answers its copies
+                    await self.committed[key].wait()
+                    return httpx.Response(200, json={"sandboxes": [dict(self.sandboxes[i]) for i in self.by_key[key]]})
+                body = json.loads(req.content)
+                self.committed[key] = asyncio.Event()
+
+                def commit() -> None:
+                    ids = []
+                    for _ in range(body["count"]):
+                        self.seq += 1
+                        sid = f"sbx_copy{self.seq:012d}"
+                        self.sandboxes[sid] = {"id": sid, "state": "running", "labels": dict(body["labels"])}
+                        ids.append(sid)
+                    self.by_key[key] = ids
+                    self.committed[key].set()
+
+                asyncio.get_running_loop().call_later(1.5, commit)
+                await asyncio.sleep(10)
+                return httpx.Response(504, json={"error": "timeout"})
+            if req.url.path == "/api/v1/sandboxes":
+                await asyncio.sleep(0.2)  # a real round trip for list and delete by label
+            return await super().__call__(req)
+
+    async def go() -> None:
+        fake = LateCommit()
+        cfg = R.Config(contestants=[CID], window=0.1, ttl=60.0, queue_max=20.0, reconcile_every=5.0, ready="probe")
+        client = httpx.AsyncClient(transport=httpx.MockTransport(fake))
+        relay = R.Relay(cfg, R.Api("https://api.example", "dcp_000000000000", client))
+        await relay.startup()
+        v = asyncio.ensure_future(relay.batchers[CID].request("v0"))
+        await asyncio.sleep(0.5)
+        out = await relay.close(grace=0.2)
+        assert out["left_not_deleting"] == [] and not [t for t in relay.tasks if not t.done()]
+        assert v.done() and isinstance(v.exception(), R.Full)
+        await client.aclose()
+        await asyncio.sleep(2.0)
+        assert len(fake.sandboxes) == 1 and fake.live() == []
+    run(go())
+
+
+def test_close_keeps_sweeping_when_the_replay_gets_no_answer_either() -> None:
+    """No idempotency and no answers at all: every fork call commits 1.5 s
+    later and never answers. The relay sweeps by label until fork_timeout after
+    its replay gave up, and close() waits for that."""
+    class NeverAnswers(FakeApi):
+        async def __call__(self, req: httpx.Request) -> httpx.Response:
+            if req.method == "POST" and re.fullmatch(r"/api/v1/sandboxes/[^/]+/fork", req.url.path):
+                body = json.loads(req.content)
+
+                def commit() -> None:
+                    for _ in range(body["count"]):
+                        self.seq += 1
+                        sid = f"sbx_copy{self.seq:012d}"
+                        self.sandboxes[sid] = {"id": sid, "state": "running", "labels": dict(body["labels"])}
+
+                asyncio.get_running_loop().call_later(1.5, commit)
+                await asyncio.sleep(30)
+                return httpx.Response(504, json={"error": "timeout"})
+            return await super().__call__(req)
+
+    async def go() -> None:
+        fake = NeverAnswers()
+        cfg = R.Config(contestants=[CID], window=0.1, ttl=60.0, queue_max=20.0, reconcile_every=5.0,
+                       fork_timeout=2.0, ready="probe")
+        client = httpx.AsyncClient(transport=httpx.MockTransport(fake))
+        relay = R.Relay(cfg, R.Api("https://api.example", "dcp_000000000000", client))
+        await relay.startup()
+        v = asyncio.ensure_future(relay.batchers[CID].request("v0"))
+        await asyncio.sleep(0.5)
+        out = await relay.close(grace=0.2)
+        assert out["left_not_deleting"] == [] and v.done() and isinstance(v.exception(), R.Full)
+        await client.aclose()
+        await asyncio.sleep(2.0)
+        assert len(fake.sandboxes) == 2 and fake.live() == []  # the lost call's copy and the replay's
     run(go())
 
 
