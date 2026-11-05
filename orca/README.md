@@ -76,7 +76,7 @@ Pass them to setup (`setup --vcpu 4`), or edit `~/.prized-orca/config.json`. New
 - No root and no Docker: agents run as `prized`, without sudo.
 - The repository's history has to bundle to 100 MB or less.
 - Sandboxes run in Oregon (`us-west-2`).
-- On the free tier a sandbox is 2 vCPU and 4 GB at most and runs 60 minutes in all; paused time doesn't count ([Free tier](https://prized.dev/docs/sandboxes?via=orca#free-tier)).
+- On the free tier a sandbox is 2 vCPU and 4 GB at most and runs 60 minutes in all, then it is deleted; paused time doesn't count ([Free tier](https://prized.dev/docs/sandboxes?via=orca#free-tier)). For agents that run for hours, add a Prized box as an SSH host instead: [Run Orca's agents on a Prized box](https://prized.dev/docs/orca?via=orca).
 - Your `prized login` and `PRIZED_API_KEY` must be in the same workspace.
 - macOS and Linux only.
 
