@@ -130,15 +130,22 @@ export async function mintSandboxKey(options: MintOptions = {}): Promise<Sandbox
       ...(options.spendCapUsd === undefined ? {} : { spendCapUsd: options.spendCapUsd }),
     });
   } catch (err) {
-    // The route is not there: scoped keys are off on this API, or it predates them. (The mint sends no
-    // sandboxIds, the only other way it answers 404.)
+    // Any 404 is "not here": scoped keys are off on this API, it predates them, the workspace has no
+    // sandboxes, or PRIZED_BASE_URL is not a Prized API. (The mint sends no sandboxIds, the one 404 that
+    // would mean something else.) Nothing was minted.
     if (isPrizedError(err) && err.status === 404) {
-      return { available: false, reason: `this Prized API does not offer scoped keys (it answered the mint with 404 ${err.code})` };
+      return {
+        available: false,
+        reason: `this Prized API does not offer scoped keys here (it answered the mint with 404 ${err.code}): they may be off, the API older than them, or PRIZED_BASE_URL wrong`,
+      };
     }
     throw err;
   }
-  // Whatever answered, your own key never goes on to a sandbox.
-  if (key.token === apiKey) throw new Error('The Prized API answered the mint with your own key, so it was not passed on.');
+  // Whatever answered, your own key never goes on to a sandbox (the SDK refuses this too; this holds for any SDK).
+  if (key.token.trim() === apiKey || key.token.includes(apiKey)) {
+    await api.revokeScopedKey(key.id, client).catch(() => undefined);
+    throw new Error('The Prized API answered the mint with your own key, so it was not passed on.');
+  }
   const revokeScopedKey = api.revokeScopedKey.bind(api);
   return new SandboxKey(key.id, key.expiresAt, { PRIZED_API_KEY: key.token }, () => revokeScopedKey(key.id, client));
 }

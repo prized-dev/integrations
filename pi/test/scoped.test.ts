@@ -17,7 +17,7 @@ import { DEFAULT_TTL_SECONDS, mintSandboxKey, PLUGIN_OPS, SandboxKey } from '../
 
 const PARENT = `dcp_${'ab'.repeat(24)}`;
 
-type Mode = 'on' | 'off' | 'old' | 'echo' | 'key_required';
+type Mode = 'on' | 'off' | 'old' | 'proxy404' | 'echo' | 'key_required' | 'too_many';
 
 /** The API's side, as far as these routes go. */
 class FakeApi {
@@ -39,8 +39,14 @@ class FakeApi {
       const route = /^\/api\/v1\/api-keys\/scoped(?:\/([^/]+))?$/.exec(path);
       // The flag off answers 404 before any auth; a release from before it has no such route at all.
       if (!route || this.mode === 'off' || this.mode === 'old') return send(404, { error: 'not_found' });
+      // A proxy or a wrong PRIZED_BASE_URL: a page, not the API.
+      if (this.mode === 'proxy404') {
+        res.writeHead(404, { 'content-type': 'text/html' });
+        return res.end('<html><body>Not Found</body></html>');
+      }
       if (req.headers.authorization !== `Bearer ${PARENT}`) return send(401, { error: 'unauthorized' });
       if (this.mode === 'key_required') return send(403, { error: 'key_required', message: 'A scoped key is minted from an API key.' });
+      if (this.mode === 'too_many') return send(429, { error: 'too_many_scoped_keys', message: 'This key already has 100 live scoped keys.' });
       if (route[1] !== undefined && req.method === 'DELETE') {
         const key = this.keys.find((k) => k.id === route[1] && !k.revoked);
         if (!key) return send(404, { error: 'not_found' });
@@ -85,8 +91,19 @@ const standIn = {
   Sandbox: {
     async scopedKey(o: Record<string, unknown>) {
       const { apiKey, baseUrl, edgeUrl: _edge, ...body } = o;
-      const res = await fetch(`${baseUrl}/api/v1/api-keys/scoped`, { method: 'POST', headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' }, body: JSON.stringify(body) });
-      const doc = (await res.json()) as Record<string, string>;
+      let res: Response;
+      try {
+        res = await fetch(`${baseUrl}/api/v1/api-keys/scoped`, { method: 'POST', headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' }, body: JSON.stringify(body) });
+      } catch (cause) {
+        throw new PrizedError('network_error', null, { cause });
+      }
+      const text = await res.text();
+      let doc: Record<string, string> = {};
+      try {
+        doc = JSON.parse(text) as Record<string, string>;
+      } catch {
+        // An answer that is not the API's (a proxy's page), as the SDK reads it: http_error.
+      }
       if (res.status !== 201) throw new PrizedError(doc.error ?? 'http_error', doc.message, { status: res.status });
       return { id: doc.id!, token: doc.token!, expiresAt: new Date(doc.expiresAt!) };
     },
@@ -146,7 +163,7 @@ describe.each(sdks)('mintSandboxKey through %s', (_name, sdk) => {
     expect(await key.revoke()).toBe(false);
   });
 
-  it.each(['off', 'old'] as const)('an API with scoped keys %s is "not available", and nothing is minted', async (mode) => {
+  it.each(['off', 'old', 'proxy404'] as const)('an API answering the mint with 404 (%s) is "not available", and nothing is minted', async (mode) => {
     api.mode = mode;
     const key = await mintSandboxKey({ env: hostEnv(), sdk });
     expect(key).toEqual({ available: false, reason: expect.stringMatching(/does not offer scoped keys.*404/) });
@@ -157,13 +174,24 @@ describe.each(sdks)('mintSandboxKey through %s', (_name, sdk) => {
   it('an answer carrying your own key is refused, never passed on', async () => {
     api.mode = 'echo';
     const error = await mintSandboxKey({ env: hostEnv(), sdk }).then(() => undefined, (e: unknown) => e as Error);
-    expect(error?.message).toMatch(/your own key, so it was not passed on/);
-    expect(error?.message).not.toContain(PARENT);
+    // The SDK refuses it itself (bad_response); the helper does whatever SDK it is given.
+    expect(error?.message).toMatch(/your own key, so it was not passed on|the key it was minted from, so it was not used/);
+    expect(`${String(error)} ${inspect(error, { depth: 5 })}`).not.toContain(PARENT.slice(4, 16));
   });
 
-  it('any other refusal throws: a key that cannot mint is a setup to fix, not a reason to carry on', async () => {
-    api.mode = 'key_required';
-    await expect(mintSandboxKey({ env: hostEnv(), sdk })).rejects.toMatchObject({ code: 'key_required', status: 403 });
+  it.each([
+    ['key_required', 403],
+    ['too_many_scoped_keys', 429],
+  ] as const)('any other refusal throws (%s): a key that cannot mint is a setup to fix, not a reason to carry on', async (code, status) => {
+    api.mode = code === 'key_required' ? 'key_required' : 'too_many';
+    await expect(mintSandboxKey({ env: hostEnv(), sdk })).rejects.toMatchObject({ code, status });
+    expect(api.keys).toHaveLength(0);
+  });
+
+  it('an API it cannot reach throws, rather than "not available"', async () => {
+    const url = api.url;
+    await api.close();
+    await expect(mintSandboxKey({ env: { PRIZED_API_KEY: PARENT, PRIZED_BASE_URL: url }, sdk })).rejects.toMatchObject({ code: 'network_error' });
   });
 });
 
