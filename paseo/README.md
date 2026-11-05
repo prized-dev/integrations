@@ -47,7 +47,7 @@ or paste `github:prized-dev/integrations:paseo` into **Settings → Plugins → 
 - Oregon (`us-west-2`) only.
 - No root and no Docker inside a sandbox: the agents run as `prized`, without sudo. For Docker, use a [box](https://prized.dev/docs/paseo?via=paseo).
 - Nothing reaches a sandbox from the internet: no ports to open, no SSH host.
-- On Prized's free credit, a sandbox is at most 2 vCPU and 4 GB and runs 60 minutes in all (paused time does not count).
+- On Prized's free credit, a sandbox is at most 2 vCPU and 4 GB and runs 60 minutes in all (paused time does not count), then it is deleted. For agents that run for hours, add a Prized box as an SSH host instead: [Run Paseo's agents on a Prized box](https://prized.dev/docs/paseo?via=paseo).
 - Sandboxes created before you change the agent keys, size or running time keep what they were created with.
 
 ## Tests
