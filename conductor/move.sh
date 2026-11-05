@@ -91,7 +91,7 @@ put_helper() {
   t=$(tmpfile)
   helper_py >"$t"
   box "mkdir -p .local/share/prized-conductor" >/dev/null || die "couldn't reach the box"
-  pz cp "$t" ":$HELPER" >/dev/null || die "couldn't copy the helper to the box"
+  pz cp -q "$t" ":$HELPER" >/dev/null || die "couldn't copy the helper to the box"
 }
 # check_branch BRANCH: stop when BRANCH has commits here that origin doesn't, since the box clones
 # from origin; warn when its worktree here has uncommitted changes.
@@ -226,14 +226,14 @@ main() {
   # 2. The files only this machine has: Conductor's local and user settings, and the scripts you saved.
   if [ -n "$TOP" ] && [ -f "$TOP/.conductor/settings.local.toml" ] && ! git -C "$TOP" ls-files --error-unmatch .conductor/settings.local.toml >/dev/null 2>&1; then
     box "mkdir -p $ROOT/.conductor" >/dev/null
-    pz cp "$TOP/.conductor/settings.local.toml" ":$ROOT/.conductor/settings.local.toml" >/dev/null && say "Copied .conductor/settings.local.toml"
+    pz cp -q "$TOP/.conductor/settings.local.toml" ":$ROOT/.conductor/settings.local.toml" >/dev/null && say "Copied .conductor/settings.local.toml"
   fi
   if [ -f "$HOME/.conductor/settings.toml" ]; then
-    pz cp "$HOME/.conductor/settings.toml" ":$STATE/user-settings.toml" >/dev/null && say "Copied your ~/.conductor/settings.toml (read under the repo's settings)"
+    pz cp -q "$HOME/.conductor/settings.toml" ":$STATE/user-settings.toml" >/dev/null && say "Copied your ~/.conductor/settings.toml (read under the repo's settings)"
   fi
-  [ -z "$SETUP_FILE" ] || pz cp "$SETUP_FILE" ":$STATE/setup.sh" >/dev/null
+  [ -z "$SETUP_FILE" ] || pz cp -q "$SETUP_FILE" ":$STATE/setup.sh" >/dev/null
   if [ -n "$INSTALL_FILE" ]; then
-    pz cp "$INSTALL_FILE" ":$STATE/install.sh" >/dev/null
+    pz cp -q "$INSTALL_FILE" ":$STATE/install.sh" >/dev/null
     say "Running $(basename "$INSTALL_FILE") on the box, from your home folder:"
     box "bash -l -c 'set -euo pipefail; . $STATE/install.sh'" >&2 ||
       die "$(basename "$INSTALL_FILE") failed on the box. The box runs Ubuntu 24.04, so dnf lines become apt-get. Fix it, then run this again"
@@ -271,12 +271,13 @@ main() {
       if [ "$FILES" = yes ] || ask "Copy them to the box too? They can hold secrets."; then
         tgz=$(tmpfile)
         COPYFILE_DISABLE=1 tar -C "$TOP" -czf "$tgz" --null -T "$list"
-        pz cp "$tgz" ":$STATE/files.tgz" >/dev/null
-        pz cp "$list" ":$STATE/files.list" >/dev/null
+        pz cp -q "$tgz" ":$STATE/files.tgz" >/dev/null
+        pz cp -q "$list" ":$STATE/files.list" >/dev/null
         box "tar -xzpf $STATE/files.tgz -C $ROOT --warning=no-unknown-keyword; s=\$?; rm -f $STATE/files.tgz; exit \$s" >&2 ||
           die "couldn't unpack them on the box"
       else
-        say "  Not copied: --files copies them, --no-files stops this question."
+        say "  Not copied, here or into the new worktrees: --files copies them, --no-files stops this question."
+        FILES=no
       fi
     fi
   fi

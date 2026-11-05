@@ -34,6 +34,7 @@ case $cmd in
     cd "$FAKE_BOX"
     HOME=$FAKE_BOX PATH="$HERE/box-bin:$PATH" exec sh -c "$*" ;;
   cp)
+    [ "$1" != -q ] || shift
     src=$1 dst=${2#:}
     case $dst in /*) ;; *) dst=$FAKE_BOX/$dst ;; esac
     mkdir -p "$(dirname "$dst")"
