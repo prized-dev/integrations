@@ -45,11 +45,17 @@ jobs:
           - { dir: hermes, python: "3.12" }
           - { dir: dify, python: "3.12" }
           - { dir: cursor }
+          - { dir: github-issues, python: "3.10" }
+          - { dir: github-issues, python: "3.13" }
           - { dir: claude-managed-agents }
           - { dir: langchain-js, node: "22" }
           - { dir: langchain-js, node: "24" }
+          - { dir: paseo, node: "22" }
+          - { dir: paseo, node: "24" }
           - { dir: mastra, node: "22", floor: true }
           - { dir: mastra, node: "24" }
+          - { dir: herdr, node: "22" }
+          - { dir: herdr, node: "24" }
           - { dir: pi, node: "22", floor: true }
           - { dir: pi, node: "24" }
     steps:
@@ -79,3 +85,4 @@ jobs:
       - run: >-
           shellcheck scripts/test.sh claude-managed-agents/on-work.sh claude-managed-agents/test/test.sh
           cursor/spawn.sh cursor/test/test.sh cursor/test/stub-agent cursor/test/sandbox-bin/curl
+          herdr/test/fakes/herdr herdr/test/fakes/ssh

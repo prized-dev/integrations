@@ -158,6 +158,13 @@ case $DIR in
   cursor)
     # spawn.sh against a stand-in `prized` and a stub Cursor `agent` (test/): no keys, no network.
     offline bash test/test.sh ;;
+  github-issues)
+    # One standard-library script: ruff, then the offline tests against a stand-in GitHub API on loopback,
+    # a local bare repo, and stand-ins for claude, codex and systemctl (tests/bin).
+    "$PYTHON" -m venv "$WORK/venv"
+    "$WORK/venv/bin/pip" install -q "ruff==0.17.1"
+    "$WORK/venv/bin/ruff" check . && "$WORK/venv/bin/ruff" format --check .
+    offline "$PYTHON" -W ignore::ResourceWarning -m unittest discover -s tests -v ;;
   dify)
     # A Dify plugin ships as a .difypkg, not a wheel: requirements.txt is what Dify installs, and
     # pyproject.toml holds only the lint and test settings.
@@ -187,6 +194,14 @@ case $DIR in
     npm run typecheck
     npm run build
     offline npm test ;;
+  paseo)
+    # A Paseo plugin: Paseo compiles it itself, so there is no build. Typecheck against the pinned
+    # Paseo SDK, then node --test (Node 22.18+ runs the .ts sources) against an in-memory Prized API.
+    cp -r "$ROOT/$DIR/." "$WORK/pkg"
+    cd "$WORK/pkg"
+    npm install --no-audit --no-fund --no-package-lock --loglevel=error
+    npm run typecheck
+    offline node --test ;;
   mastra)
     # Same flow as langchain-js; FLOOR=1 pins the oldest @mastra/core the package supports.
     need_sdk node
@@ -199,6 +214,13 @@ case $DIR in
     npm run typecheck
     npm run build
     offline npm test ;;
+  herdr)
+    # A herdr plugin with no dependencies: node --test against stand-ins for prized, herdr and ssh
+    # (test/fakes). The fake sandbox runs the plugin's remote scripts with the real bash, tar and git.
+    cp -r "$ROOT/$DIR/." "$WORK/pkg"
+    cd "$WORK/pkg"
+    node --version
+    offline node --test ;;
   pi)
     # Pi loads the TypeScript source, so there is no build. The tests drive Pi's real agent loop with a
     # scripted model and a fake sandbox, and run the git, tar and shell commands the extension sends for
