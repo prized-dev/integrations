@@ -7,10 +7,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { PrizedApi, PrizedApiError, apiBase, canWriteSandboxes } from "../src/api.mjs";
-import { versionOk } from "../src/cli.mjs";
+import { PROBE_SANDBOX, prizedFailure, shellSignIn, versionOk } from "../src/cli.mjs";
 import { pauseFirmly, runtimeRefusal } from "../src/commands.mjs";
 import { keyFromLoginShell, resolveKey } from "../src/key.mjs";
-import { checkoutScript, parsePayload, recipeResult, sourceFromOrca, stripCredentials } from "../src/recipe.mjs";
+import { checkoutScript, parsePayload, pullScript, recipeResult, sandboxRemoteUrl, sourceFromOrca, stripCredentials } from "../src/recipe.mjs";
 import {
   INCLUDE_MARK,
   addUserInclude,
@@ -312,5 +312,70 @@ describe("Orca's side", () => {
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
+  });
+
+  test("an SSH origin becomes the same repository over HTTPS in the sandbox, which has no SSH key", () => {
+    for (const [from, to] of [
+      ["git@github.com:acme/app.git", "https://github.com/acme/app.git"],
+      ["ssh://git@github.com/acme/app.git", "https://github.com/acme/app.git"],
+      ["ssh://git@gitlab.example.com:2222/team/app.git", "https://gitlab.example.com/team/app.git"],
+      ["https://github.com/acme/app.git", "https://github.com/acme/app.git"],
+      ["git@github-work:acme/app.git", "git@github-work:acme/app.git"],
+      ["/srv/git/app.git", "/srv/git/app.git"],
+      ["", ""],
+    ]) {
+      assert.equal(sandboxRemoteUrl(from), to, from);
+    }
+    const script = checkoutScript({ root: "/r", bundlePath: "/b", bundleRef: "refs/x", head: "a".repeat(40), branch: "b", repoUrl: "git@github.com:acme/app.git", identity: {} });
+    assert.match(script, /git remote add origin 'https:\/\/github\.com\/acme\/app\.git'/);
+  });
+
+  test("the pull script bundles only what the workspace added, and says what it left behind", () => {
+    const dir = tempDir();
+    try {
+      const repo = makeRepo(path.join(dir, "repo"));
+      const box = path.join(dir, "sandbox");
+      const env = { PATH: process.env.PATH, HOME: dir, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: path.join(dir, "gc") };
+      const g = (cwd, ...a) => spawnSync("git", ["-C", cwd, ...a], { encoding: "utf8", env }).stdout.trim();
+      spawnSync("git", ["clone", "-q", "-b", "main", repo.dir, box], { env });
+      g(box, "checkout", "-q", "-b", "feat/x", repo.first);
+      const bundlePath = path.join(box, ".git", "prized-orca-pull.bundle");
+      const run = (base) => {
+        const r = spawnSync("bash", ["-c", pullScript({ root: box, bundlePath, base })], { encoding: "utf8", env });
+        assert.equal(r.status, 0, r.stderr);
+        return r.stdout.trim().split("\n");
+      };
+      assert.deepEqual(run(repo.first), ["feat/x", repo.first, "0", "0"]);
+      assert.equal(fs.existsSync(bundlePath), false, "nothing new, no bundle");
+      fs.writeFileSync(path.join(box, "a.txt"), "a\n");
+      g(box, "add", "a.txt");
+      g(box, "-c", "user.name=A", "-c", "user.email=a@example.com", "commit", "-q", "-m", "a");
+      fs.writeFileSync(path.join(box, "b.txt"), "not committed\n");
+      const head = g(box, "rev-parse", "HEAD");
+      assert.deepEqual(run(repo.first), ["feat/x", head, "1", "1"]);
+      const listed = spawnSync("git", ["bundle", "list-heads", bundlePath], { encoding: "utf8", env }).stdout.trim();
+      assert.equal(listed, `${head} refs/heads/feat/x`);
+      assert.equal(spawnSync("git", ["-C", repo.dir, "bundle", "verify", "-q", bundlePath], { env }).status, 0, "the user's repo has what it needs");
+      assert.deepEqual(run(null), ["feat/x", head, "1", "2"], "without a start commit, the whole branch");
+      g(box, "checkout", "-q", "--detach");
+      const detached = spawnSync("bash", ["-c", pullScript({ root: box, bundlePath, base: null })], { encoding: "utf8", env });
+      assert.equal(detached.status, 3);
+      assert.match(detached.stderr, /not on a branch/);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("which sign-in the CLI opens shells with: a login, an API key, or none", () => {
+    const run = (extra) => shellSignIn(path.join(FAKES, "prized"), { env: { PATH: process.env.PATH, HOME: "/nonexistent", ...extra } });
+    assert.deepEqual(
+      [run({ FAKE_CLI_SIGNIN: "api-key" }).kind, run({ FAKE_CLI_SIGNIN: "limited" }).kind, run({ FAKE_NOT_SIGNED_IN: "1" }).kind],
+      ["api-key", "api-key", "signed-out"],
+    );
+    assert.equal(run({ FAKE_CLI_SIGNIN: "api-key" }).ok, false);
+    assert.match(PROBE_SANDBOX, /^sbx_[0-9a-f]{16}$/);
+    const e = prizedFailure("could not open a shell in sbx_1", { status: 8, stderr: "prized: a shell in a sandbox opens with your prized login, not an API key", stdout: "" });
+    assert.match(e.message, /signed in with an API key/);
+    assert.match(e.hint, /prized login/);
   });
 });

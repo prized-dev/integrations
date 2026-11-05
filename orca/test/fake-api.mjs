@@ -144,6 +144,14 @@ export async function startFakeApi(root, options = {}) {
         fs.writeFileSync(dest, body);
         return json(res, 200, { path: dest, bytes: body.length });
       }
+      if (parts[2] === "files" && parts[3] === "download" && req.method === "GET") {
+        const src = url.searchParams.get("path");
+        if (!src?.startsWith(`${s.home}/`)) return json(res, 400, { error: "bad_path" });
+        if (!fs.existsSync(src) || !fs.statSync(src).isFile()) return json(res, 404, { error: "not_found" });
+        const bytes = fs.readFileSync(src);
+        res.writeHead(200, { "Content-Type": "application/octet-stream", "Content-Length": bytes.length });
+        return res.end(bytes);
+      }
       if (parts[2] === "process" && parts[3] === "execute") {
         const input = JSON.parse(body.toString());
         if (opts.failExec && opts.failExec.test(input.command)) return json(res, 200, { stdout: "", stderr: "injected failure", exitCode: 1 });

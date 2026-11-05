@@ -1,5 +1,5 @@
 // The adapter's commands. Orca runs create, suspend, resume and destroy (vm-recipe.json); ssh runs
-// cert-hook and proxy (the include file); people run setup, doctor, list and uninstall.
+// cert-hook and proxy (the include file); people run setup, doctor, list, pull and uninstall.
 
 import { spawn, spawnSync } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
@@ -9,7 +9,21 @@ import path from "node:path";
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
 import { PrizedApi, PrizedApiError, apiBase, canWriteSandboxes } from "./api.mjs";
-import { MIN_CLI, childEnv, cliSandboxState, findPrized, openShell, prizedVersion, requirePrized, runPrized, sshRun, versionOk } from "./cli.mjs";
+import {
+  MIN_CLI,
+  childEnv,
+  cliSandboxState,
+  findPrized,
+  git,
+  openShell,
+  prizedVersion,
+  requirePrized,
+  runPrized,
+  shellSignIn,
+  shellSignInError,
+  sshRun,
+  versionOk,
+} from "./cli.mjs";
 import { resolveKey, keyFromLoginShell } from "./key.mjs";
 import {
   checkoutScript,
@@ -17,6 +31,7 @@ import {
   gitIdentity,
   makeBundle,
   parsePayload,
+  pullScript,
   readStdin,
   recipeResult,
   sourceFromOrca,
@@ -164,6 +179,9 @@ export async function create(env = process.env) {
   const prized = requirePrized(config, env);
   const adapter = adapterPath(env);
   const { client } = api(env);
+  // Before anything is made: a CLI that can't open a shell would fail this create at its last step.
+  const signIn = shellSignIn(prized, { env });
+  if (signIn.ok === false) throw shellSignInError(signIn);
   const src = sourceFromOrca(env);
   if (!src.fromOrca) say(`no pinned commit from Orca (a doctor run?): using ${src.head.slice(0, 12)} on ${src.branch}`);
 
@@ -291,6 +309,7 @@ export async function create(env = process.env) {
         workspaceName: env.ORCA_WORKSPACE_NAME || null,
         repoPath: src.repoPath,
         projectRoot: root,
+        baseCommit: src.head,
         asleep: false,
       },
       env,
@@ -415,6 +434,107 @@ export async function destroy(env = process.env) {
   say(deleted ? `deleting ${p.id}` : `${p.id} was already gone`);
   dropEntry(p.id, env);
   if (fs.existsSync(paths(env).bin)) writeInclude(adapterPath(env), env);
+}
+
+// ---------------------------------------------------------------- pull
+
+// The workspace to pull from: the one named, the only one, or the one whose project is the git
+// repository the command runs in.
+function pickWorkspace(id, env) {
+  const all = readState(env).sandboxes;
+  if (id) {
+    if (!isSandboxId(id)) throw new UserError(`not a sandbox id: ${id}`);
+    if (!all[id]) throw new UserError(`${id} backs no Orca workspace on this machine`, "prized-orca list shows the ones that do");
+    return [id, all[id]];
+  }
+  const entries = Object.entries(all);
+  if (entries.length === 1) return entries[0];
+  if (!entries.length) throw new UserError("no Orca workspace on this machine runs on a Prized sandbox");
+  const top = git(["rev-parse", "--show-toplevel"], { cwd: process.cwd(), env });
+  const here = top.status === 0 ? realpath(top.stdout.trim()) : null;
+  const mine = here ? entries.filter(([, e]) => e.repoPath && realpath(e.repoPath) === here) : [];
+  if (mine.length === 1) return mine[0];
+  const names = (mine.length ? mine : entries).map(([sid, e]) => `${sid} (${e.workspaceName ? `"${e.workspaceName}", ` : ""}${e.repoPath ?? "?"})`);
+  throw new UserError(`which workspace? ${names.join(", ")}`, "name it: prized-orca pull ID");
+}
+
+function realpath(p) {
+  try {
+    return fs.realpathSync(p);
+  } catch {
+    return p;
+  }
+}
+
+// Copy the workspace's branch from its sandbox into the project's own repository on this machine, so
+// it can be pushed from here with the user's own git sign-in: no git credential goes into the
+// sandbox. Only commits travel: a bundle of what the workspace added since it started, made in the
+// sandbox and downloaded through the API. The local branch is created, or fast-forwarded; one that
+// has moved apart, or is checked out here, is left alone (--as names another branch).
+export async function pull(argv, env = process.env) {
+  const flags = parseFlags(argv);
+  const id = argv.find((a, i) => !a.startsWith("--") && argv[i - 1] !== "--as");
+  const [sid, entry] = pickWorkspace(id, env);
+  if (!entry.repoPath || !fs.existsSync(entry.repoPath)) throw new UserError(`the project's repository for ${sid} is not at ${entry.repoPath ?? "a recorded path"} any more`);
+  if (!entry.projectRoot) throw new UserError(`no checkout is recorded for ${sid}`);
+  if (flags.as !== undefined && (typeof flags.as !== "string" || git(["check-ref-format", "--branch", flags.as], { cwd: entry.repoPath, env }).status !== 0)) {
+    throw new UserError(`--as needs a branch name`);
+  }
+  const base = /^[0-9a-f]{40}([0-9a-f]{24})?$/.test(entry.baseCommit ?? "") ? entry.baseCommit : null;
+
+  const { client } = api(env);
+  let sandbox = await client.get(sid);
+  if (!sandbox || ["deleting", "deleted"].includes(sandbox.state)) throw new UserError(`${sid} is gone: its run time ended, or it was deleted`);
+  const wasPaused = ["paused", "pausing"].includes(sandbox.state);
+  if (wasPaused) {
+    say(`${sid} is paused; resuming it to read the checkout…`);
+    sandbox = await client.resume(sid);
+  } else if (sandbox.state !== "running") {
+    sandbox = await client.waitFor(sid, ["running"]);
+  }
+
+  const bundlePath = `${entry.projectRoot}/.git/prized-orca-pull.bundle`;
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prized-orca-pull-"));
+  try {
+    // From the start commit, which this repository has; the whole branch if it doesn't.
+    let got;
+    for (const since of base ? [base, null] : [null]) {
+      const run = await client.exec(sandbox, pullScript({ root: entry.projectRoot, bundlePath, base: since }), 240);
+      if (run.exitCode !== 0) throw new UserError(`reading the workspace's branch failed (exit ${run.exitCode}): ${run.stderr.trim()}`);
+      const [branch, head, dirty, count] = run.stdout.trim().split("\n").slice(-4);
+      got = { branch, head, dirty: Number(dirty), count: Number(count), file: path.join(dir, "pull.bundle") };
+      const named = branch && git(["check-ref-format", "--branch", branch], { cwd: entry.repoPath, env }).status === 0;
+      if (!named || !/^[0-9a-f]{40}([0-9a-f]{24})?$/.test(head ?? "") || !Number.isInteger(got.count)) throw new UserError(`the sandbox answered ${JSON.stringify(run.stdout.slice(-200))}`);
+      if (got.count === 0) break;
+      fs.writeFileSync(got.file, await client.download(sandbox, bundlePath));
+      await client.exec(sandbox, `rm -f ${sq(bundlePath)}`, 60).catch(() => {});
+      if (git(["bundle", "verify", "-q", got.file], { cwd: entry.repoPath, env }).status === 0) break;
+      if (!since) throw new UserError(`the bundle from ${sid} does not fit ${entry.repoPath}`);
+    }
+    const { branch, head, dirty, count } = got;
+    const target = typeof flags.as === "string" ? flags.as : branch;
+    if (count > 0) {
+      const r = git(["fetch", "--quiet", "--no-tags", "--no-write-fetch-head", got.file, `refs/heads/${branch}:refs/heads/${target}`], { cwd: entry.repoPath, env });
+      if (r.status !== 0) {
+        throw new UserError(
+          `git could not put ${branch} from ${sid} into the branch ${target} here: ${(r.stderr || r.stdout).trim()}`,
+          `${target} has moved apart from the workspace's branch, or is checked out here; pull into a new branch: prized-orca pull ${sid} --as ${branch}-sandbox`,
+        );
+      }
+      say(`pulled ${branch} from ${sid} into ${entry.repoPath} as the branch ${target} (${head.slice(0, 12)}, ${count} commit${count === 1 ? "" : "s"} since the workspace started)`);
+      say(`push it from here with your own git sign-in: git -C ${sq(entry.repoPath)} push origin ${target}`);
+    } else {
+      say(`${branch} in ${sid} has no commits since the workspace started: nothing to pull`);
+    }
+    if (dirty > 0) say(`note: ${dirty} uncommitted change${dirty === 1 ? "" : "s"} in the workspace stayed there: commit ${dirty === 1 ? "it" : "them"} in the workspace, then pull again`);
+    trace({ cmd: "pull", sandbox: sid, commits: count, ok: true }, env);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+    if (wasPaused) {
+      say(`pausing ${sid} again…`);
+      await pauseFirmly(client, sid).catch((error) => say(`could not pause it again: ${error.message}`));
+    }
+  }
 }
 
 // ---------------------------------------------------------------- ssh's side
@@ -560,7 +680,10 @@ export async function setup(argv, env = process.env) {
   const signedIn = runPrized(prized, ["sandbox", "ls", "--json"], { env, timeoutMs: 60_000 });
   if (signedIn.status === 8) throw new UserError("the prized CLI is not signed in", "run `prized login` (sandbox shells open with your login), then run setup again");
   if (signedIn.status !== 0) throw new UserError(`\`prized sandbox ls\` failed (exit ${signedIn.status}): ${signedIn.stderr.trim()}`);
-  say(`prized CLI: ${prized} ${version.join(".")} (signed in)`);
+  const signIn = shellSignIn(prized, { env });
+  if (signIn.ok === false) throw shellSignInError(signIn);
+  say(`prized CLI: ${prized} ${version.join(".")} (${signIn.ok ? "signed in with prized login" : "signed in"})`);
+  if (signIn.ok === null) say(`note: could not confirm the CLI opens sandbox shells with your prized login (${signIn.detail})`);
 
   const { client, source } = api(env);
   const me = await client.me();
@@ -619,8 +742,18 @@ export async function doctor(env = process.env) {
   if (prized) {
     const version = prizedVersion(prized, env);
     add(`prized CLI ${MIN_CLI.join(".")} or later`, versionOk(version), version ? version.join(".") : "unknown version");
-    const r = runPrized(prized, ["sandbox", "ls", "--json"], { env, timeoutMs: 60_000 });
-    add("prized login (opens shells)", r.status === 0, r.status === 0 ? "signed in" : r.status === 8 ? "not signed in: run prized login" : `exit ${r.status}`);
+    const signIn = shellSignIn(prized, { env });
+    add(
+      "prized login (opens shells)",
+      signIn.ok !== false,
+      signIn.ok
+        ? "signed in"
+        : signIn.kind === "api-key"
+          ? "signed in with an API key, which can't open a shell: run prized login and sign in in the browser"
+          : signIn.kind === "signed-out"
+            ? "not signed in: run prized login"
+            : `could not tell (${signIn.detail})`,
+    );
   }
   try {
     const { client, source } = api(env);
@@ -676,6 +809,8 @@ export const HELP = `prized-orca ${VERSION}: the Prized Sandbox plugin for Orca 
              check the prized CLI and PRIZED_API_KEY, install the adapter, add the ssh include
   doctor     check this machine without creating anything
   list       the sandboxes Orca workspaces run on
+  pull [ID] [--as BRANCH]
+             copy a workspace's branch into the project's repository here, to push it from here
   uninstall [--force]
              take the ssh include out and remove the plugin's files
 

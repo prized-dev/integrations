@@ -8,7 +8,7 @@ Status: experimental. Run in Orca 1.4.250 on Linux (create, an agent in the work
 
 You need Orca 1.4.245 or later on macOS or Linux, Node.js 22 or later, Git, OpenSSH, and the `prized` CLI (0.21.9 or later).
 
-1. Install the CLI and sign in. Shells in a sandbox open with your sign-in, never with an API key.
+1. Install the CLI and sign in with `prized login`, in the browser. Shells in a sandbox open with that sign-in, never with an API key: a CLI signed in with `prized login --token` can't open one, and setup stops if yours is.
 
    ```bash
    curl -fsSL https://prized.dev/install.sh | sh
@@ -37,12 +37,34 @@ You need Orca 1.4.245 or later on macOS or Linux, Node.js 22 or later, Git, Open
 
 | Orca | The plugin |
 | --- | --- |
-| Create | Creates a sandbox (`prized-agent-v1`: Ubuntu 24.04 with Git, Node.js, Claude Code and Codex), uploads the exact commit Orca picked as a Git bundle (no Git credential goes in), checks it out on the workspace branch in `/home/prized/work/<repo>` with your Git name and email, opens a shell once with your login, and checks the SSH connection Orca will use. If a step fails, or you cancel in Orca, it deletes the sandbox. |
+| Create | Creates a sandbox (`prized-agent-v1`: Ubuntu 24.04 with Git, Node.js, Claude Code and Codex), uploads the exact commit Orca picked as a Git bundle (no Git credential goes in), checks it out on the workspace branch in `/home/prized/work/<repo>` with your Git name and email and your repository's HTTPS address as `origin`, opens a shell once with your login, and checks the SSH connection Orca will use. If a step fails, or you cancel in Orca, it deletes the sandbox. |
 | Sleep (right-click the workspace) | Orca first closes the workspace's terminals and agents. Then the plugin pauses the sandbox: its memory, files and the processes still running (a tmux session, or a process started with `setsid`) are kept, and only storage is billed. Orca's reconnects are refused while it sleeps, so nothing wakes it by accident. |
 | Wake (open the workspace) | Resumes the sandbox; the processes kept at sleep carry on, and Orca opens its terminals and agents again. |
-| Remove Project from Orca (right-click the workspace) | Deletes the sandbox. A Prized Sandbox workspace is its project's primary checkout, so Orca offers this instead of Delete Worktree. |
+| Remove Project from Orca (right-click the workspace) | Deletes the sandbox, with every commit you haven't pushed or pulled ([Push your work](#push-your-work)). A Prized Sandbox workspace is its project's primary checkout, so Orca offers this instead of Delete Worktree. |
 
 While Orca is connected, the sandbox counts as in use and keeps running (and billing); sleep the workspace to pause it. Closing Orca stops nothing: with no connection open, the sandbox pauses itself after 30 idle minutes and keeps its memory, and the next connection from Orca resumes it.
+
+## Push your work
+
+Removing the workspace deletes its sandbox and everything in it. Push first, one of two ways.
+
+**From this computer, with your own Git sign-in.** Nothing goes into the sandbox. Commit in the workspace, then run this in the project's folder:
+
+```bash
+~/.prized-orca/bin/prized-orca pull
+git push origin <branch>
+```
+
+`pull` copies the workspace's branch into your local repository as a branch of the same name. It copies commits only, so commit first. A sleeping workspace is woken for the copy and put back to sleep. With several Prized Sandbox workspaces, name one: `prized-orca pull sbx_…` (`prized-orca list` shows them). If your local branch of that name has other commits, `--as <new-branch>` copies it to a new branch instead.
+
+**From the workspace's terminal.** The sandbox has no SSH key and no `gh`, and its `origin` is your repository's HTTPS address. Make a [fine-grained GitHub token](https://github.com/settings/personal-access-tokens/new) for this one repository, with **Contents: Read and write** and a short expiry. Then:
+
+```bash
+git config --global credential.helper store
+git push -u origin HEAD     # user name: your GitHub user name; password: the token
+```
+
+Git keeps the token in `~/.git-credentials` until the sandbox is deleted. Anything running in the sandbox can use it, your agents included.
 
 ## How the SSH connection works
 
@@ -70,7 +92,6 @@ Pass them to setup (`setup --vcpu 4`), or edit `~/.prized-orca/config.json`. New
 ## Limits
 
 - The workspace's agents start signed out. Sign Claude Code or Codex in from the workspace's terminal the first time; each new workspace is a fresh sandbox.
-- To push from a workspace, sign in to GitHub in its terminal (`gh auth login`, then `gh auth setup-git`).
 - Orca installs its own server in each new sandbox on the first connection, which can take a few minutes.
 - The connection carries no port forwarding, so Orca's port forwards don't reach a sandbox. `prized sandbox port <id> <port>` gives an https URL for a port instead.
 - No root and no Docker: agents run as `prized`, without sudo.
@@ -82,7 +103,7 @@ Pass them to setup (`setup --vcpu 4`), or edit `~/.prized-orca/config.json`. New
 
 ## Uninstall
 
-Remove each Prized Sandbox workspace in Orca first (right-click it > **Remove Project from Orca**, which deletes its sandbox). Then remove the plugin under **Settings > Plugins**, and run:
+Push what you want to keep ([Push your work](#push-your-work)), then remove each Prized Sandbox workspace in Orca (right-click it > **Remove Project from Orca**, which deletes its sandbox). Then remove the plugin under **Settings > Plugins**, and run:
 
 ```bash
 ~/.prized-orca/bin/prized-orca uninstall
@@ -98,7 +119,7 @@ npm test
 
 The offline tests run Orca's side from a stand-in written from Orca's published recipe contract (`test/orca-harness.mjs`), against a stand-in for the Prized API on `127.0.0.1` and a fake `prized` CLI. The SSH side is real OpenSSH: `ssh` with the plugin's include, and a local `sshd` set up like a sandbox (a certificate authority for users, a host certificate and the forced command). Without `sshd` the lifecycle tests are skipped.
 
-A live check creates one sandbox in your workspace, runs it through create, sleep, wake and delete, and checks that a process started before sleep is the same one after wake. It bills a few cents.
+A live check creates one sandbox in your workspace and runs it through create, sleep, wake, a `pull` of a commit made in it while it sleeps, and delete. It checks that a process started before sleep is the same one after wake. It bills a few cents.
 
 ```bash
 PRIZED_ORCA_LIVE=1 PRIZED_API_KEY=dcp_... node test/live.mjs

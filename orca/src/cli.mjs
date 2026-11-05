@@ -77,8 +77,35 @@ export function runPrized(bin, args, { timeoutMs = 120_000, env = process.env } 
   return { status: result.status ?? (result.error ? 124 : 1), stdout: result.stdout ?? "", stderr: redact(result.stderr ?? "") };
 }
 
+// The CLI's answer when its sign-in is an API key (`prized login --token`), not a browser login:
+// 403 ssh_requires_login for a Full access key, 403 key_access_denied for a Custom one.
+const KEY_SIGN_IN = /not an API key|ssh_requires_login|API key is limited|may not use sandboxes|key_access_denied/i;
+const KEY_SIGN_IN_HINT =
+  "run `prized login` and sign in in the browser: the CLI is signed in with an API key (prized login --token), " +
+  "and a shell in a sandbox opens only with a browser sign-in. PRIZED_API_KEY in your profile stays as it is";
+
+// Which sign-in the CLI would open a sandbox shell with, without making or waking anything: ask for
+// a shell in a sandbox that doesn't exist. Prized checks the credential before it looks the sandbox
+// up, so a browser login gets "no sandbox …" (exit 5), and an API key or no sign-in is refused.
+export const PROBE_SANDBOX = "sbx_0000000000000000";
+export function shellSignIn(bin, opts = {}) {
+  const r = runPrized(bin, ["sandbox", "ssh", PROBE_SANDBOX, "--", "true"], { timeoutMs: 45_000, ...opts });
+  const said = `${r.stderr}\n${r.stdout}`;
+  const detail = said.trim().split("\n").filter(Boolean).slice(-3).join(" / ");
+  if (KEY_SIGN_IN.test(said)) return { ok: false, kind: "api-key", detail };
+  if (r.status === 8) return { ok: false, kind: "signed-out", detail };
+  if (r.status === 5 && /no sandbox/i.test(said)) return { ok: true, kind: "login", detail };
+  return { ok: null, kind: "unknown", detail: detail || `exit ${r.status}` };
+}
+
+export function shellSignInError(signIn) {
+  if (signIn.kind === "api-key") return new UserError("the prized CLI is signed in with an API key, so it can't open a shell in a sandbox", KEY_SIGN_IN_HINT);
+  return new UserError("the prized CLI is not signed in", "run `prized login` (sandbox shells open with your browser sign-in), then try again");
+}
+
 export function prizedFailure(what, result) {
   const said = String(result.stderr || result.stdout || "").trim().split("\n").slice(-6).join("\n");
+  if (KEY_SIGN_IN.test(said)) return new UserError(`${what}: the prized CLI is signed in with an API key${said ? `\n${said}` : ""}`, KEY_SIGN_IN_HINT);
   if (result.status === 8) {
     return new UserError(`${what}: the prized CLI is not signed in${said ? `\n${said}` : ""}`, "run `prized login` in a terminal (shells open with your login, not an API key)");
   }

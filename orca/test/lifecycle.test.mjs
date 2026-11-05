@@ -11,7 +11,7 @@ import path from "node:path";
 import { after, before, describe, test } from "node:test";
 import { API_KEY, startFakeApi } from "./fake-api.mjs";
 import { machineLabel } from "../src/commands.mjs";
-import { PKG, allText, haveSshKit, makeRepo, makeSshdKit, runAdapter, tempDir, testEnv } from "./helpers.mjs";
+import { PKG, allText, haveSshKit, makeRepo, makeSshdKit, runAdapter, sh, tempDir, testEnv } from "./helpers.mjs";
 import { checkoutModeFailure, orcaSsh, orcaSshExit, parseRecipe, parseResult, payload, resumeIntegrityError, runPhase } from "./orca-harness.mjs";
 
 const kit = haveSshKit();
@@ -91,7 +91,7 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
     const r = await runAdapter(["setup", "--yes"], { env });
     assert.equal(r.status, 0, r.stderr);
     assert.equal(r.stdout, "");
-    assert.match(r.stderr, /prized CLI: .* 0\.21\.9 \(signed in\)/);
+    assert.match(r.stderr, /prized CLI: .* 0\.21\.9 \(signed in with prized login\)/);
     assert.ok(fs.existsSync(path.join(home, ".prized-orca", "bin", "prized-orca")));
     const cfg = fs.readFileSync(env.PRIZED_ORCA_SSH_CONFIG, "utf8");
     assert.ok(cfg.startsWith(`# Added by the Prized Orca plugin (prized-orca setup): Orca workspaces on Prized sandboxes.\nInclude "${home}/.prized-orca/ssh_config"\n\nHost other\n`));
@@ -104,6 +104,13 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
     const old = await runAdapter(["setup", "--yes"], { env: { ...env, FAKE_CLI_VERSION: "0.21.8" } });
     assert.notEqual(old.status, 0);
     assert.match(old.stderr, /needs 0\.21\.9 or later/);
+    // `prized login --token`: lists sandboxes fine, but Prized refuses it a shell
+    for (const signin of ["api-key", "limited"]) {
+      const keyed = await runAdapter(["setup", "--yes"], { env: { ...env, FAKE_CLI_SIGNIN: signin } });
+      assert.notEqual(keyed.status, 0, signin);
+      assert.match(keyed.stderr, /the prized CLI is signed in with an API key, so it can't open a shell in a sandbox/);
+      assert.match(keyed.stderr, /run `prized login` and sign in in the browser/);
+    }
   });
 
   test("create: a sandbox with the exact commit checked out, and a result Orca accepts", async () => {
@@ -233,6 +240,60 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
     assert.equal(api.sandboxes.get(id).pauses, pauses + 2);
   });
 
+  test("pull brings the workspace's branch here to push from here, and puts a sleeping sandbox back to sleep", async () => {
+    const root = created.connection.projectRoot;
+    const sbx = api.sandboxes.get(id);
+    assert.equal(sbx.state, "paused", "the workspace is asleep in Orca (the test before)");
+    const genv = { ...process.env, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: env.GIT_CONFIG_GLOBAL };
+    const inSandbox = (...a) => sh("git", ["-C", root, ...a], { env: genv });
+    const here = (...a) => sh("git", ["-C", repo.dir, ...a], { env: genv });
+    for (const f of ["login.js", "notes.md"]) {
+      fs.writeFileSync(path.join(root, f), `${f}\n`);
+      inSandbox("add", f);
+      inSandbox("commit", "-q", "-m", `add ${f}`);
+    }
+    fs.writeFileSync(path.join(root, "scratch.txt"), "not committed\n");
+    const head = inSandbox("rev-parse", "HEAD");
+    const { resumes, pauses } = sbx;
+
+    const r = await runAdapter(["pull"], { env, cwd: repo.dir });
+    assert.equal(r.status, 0, r.stderr);
+    assert.equal(r.stdout, "");
+    assert.match(r.stderr, new RegExp(`pulled ada/fix-login from ${id} into .* as the branch ada/fix-login \\([0-9a-f]{12}, 2 commits since the workspace started\\)`));
+    assert.match(r.stderr, /push it from here with your own git sign-in: git -C '.*' push origin ada\/fix-login/);
+    assert.match(r.stderr, /1 uncommitted change in the workspace stayed there/);
+    assert.equal(here("rev-parse", "refs/heads/ada/fix-login"), head);
+    assert.equal(fs.existsSync(path.join(root, ".git", "prized-orca-pull.bundle")), false, "the bundle is gone from the sandbox");
+    assert.equal(sbx.state, "paused", "asleep before, asleep after");
+    assert.equal(sbx.resumes, resumes + 1);
+    assert.ok(sbx.pauses > pauses);
+    assert.equal(state()[id].asleep, true);
+    assert.match(fs.readFileSync(path.join(home, ".prized-orca", "lifecycle.log"), "utf8"), new RegExp(`"cmd":"pull","sandbox":"${id}","commits":2,"ok":true`));
+
+    // from here it pushes with this machine's own git sign-in (a bare repository stands in for GitHub)
+    const bare = path.join(api.root, "origin.git");
+    sh("git", ["init", "-q", "--bare", bare], { env: genv });
+    here("push", "-q", bare, "ada/fix-login");
+    assert.equal(sh("git", ["-C", bare, "rev-parse", "refs/heads/ada/fix-login"], { env: genv }), head);
+
+    // pulling again is a no-op fast-forward; a local branch that moved apart is left alone
+    const again = await runAdapter(["pull", id], { env });
+    assert.equal(again.status, 0, again.stderr);
+    const apartCommit = here("commit-tree", `${repo.first}^{tree}`, "-p", repo.first, "-m", "made here");
+    here("update-ref", "refs/heads/ada/fix-login", apartCommit);
+    const apart = await runAdapter(["pull", id], { env });
+    assert.notEqual(apart.status, 0);
+    assert.match(apart.stderr, /pull into a new branch: prized-orca pull sbx_\S+ --as ada\/fix-login-sandbox/);
+    assert.equal(here("rev-parse", "refs/heads/ada/fix-login"), apartCommit, "left alone");
+    const as = await runAdapter(["pull", id, "--as", "ada/from-sandbox"], { env });
+    assert.equal(as.status, 0, as.stderr);
+    assert.equal(here("rev-parse", "refs/heads/ada/from-sandbox"), head);
+    assert.equal(sbx.state, "paused");
+    const unknown = await runAdapter(["pull", "sbx_00000000000000aa"], { env });
+    assert.notEqual(unknown.status, 0);
+    assert.match(unknown.stderr, /backs no Orca workspace on this machine/);
+  });
+
   test("destroy deletes the sandbox and its ssh block, and is safe to repeat", async () => {
     const r = await phase("destroy");
     assert.equal(r.exitCode, 0, r.stderr);
@@ -241,6 +302,16 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
     assert.deepEqual(state(), {});
     const again = await phase("destroy");
     assert.equal(again.exitCode, 0, again.stderr);
+  });
+
+  test("a CLI signed in with an API key stops the create before anything is made", async () => {
+    const before = api.requests.length;
+    const r = await phase("create", { context: { ...context, instanceId: "orca-keyed-1" }, env: { ...env, FAKE_CLI_SIGNIN: "api-key" } });
+    assert.notEqual(r.exitCode, 0);
+    assert.equal(r.stdout, "");
+    assert.match(r.stderr, /signed in with an API key, so it can't open a shell in a sandbox/);
+    assert.equal(instanceSandboxes("orca-keyed-1").length, 0);
+    assert.equal(api.requests.slice(before).filter((q) => q.method === "POST" && q.path === "/api/v1/sandboxes").length, 0, "no create was sent");
   });
 
   test("a create that fails deletes the sandbox it made and prints no result", async () => {
@@ -355,6 +426,10 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
   test("doctor names a sandbox the plugin made that backs no workspace", async () => {
     const ok = await runAdapter(["doctor"], { env });
     assert.equal(ok.status, 0, ok.stderr);
+    assert.match(ok.stderr, /ok   prized login \(opens shells\): signed in/);
+    const keyed = await runAdapter(["doctor"], { env: { ...env, FAKE_CLI_SIGNIN: "limited" } });
+    assert.equal(keyed.status, 1);
+    assert.match(keyed.stderr, /FAIL prized login \(opens shells\): signed in with an API key, which can't open a shell: run prized login/);
     const old = new Date(Date.now() - 3_600_000).toISOString();
     const add = (id, labels, createdAt = old) => api.sandboxes.set(id, { id, state: "paused", labels, home: api.root, createdAt });
     add("sbx_00000000000000fd", { via: "orca", "orca-host": "0123456789ab", "orca-workspace": "a teammate's" });

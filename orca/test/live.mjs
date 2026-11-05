@@ -8,8 +8,10 @@
 // The shell half runs through stand-ins (test/fakes/prized in live mode, test/fakes/ssh-via-api),
 // with your key standing in for a `prized login`; lifecycle.test.mjs checks the ssh half against a
 // real sshd. What it checks here, on a real sandbox: the create body is accepted, the repository
-// lands at the pinned commit, a process started before sleep is the same process after wake, the
-// result after wake passes Orca's integrity check, and destroy leaves a 404.
+// lands at the pinned commit with an SSH origin turned into HTTPS, a process started before sleep is
+// the same process after wake, the result after wake passes Orca's integrity check, a commit made in
+// the workspace comes back to this machine with `pull` while it sleeps (and pushes from here), and
+// destroy leaves a 404.
 //
 // The key goes to the plugin as PRIZED_API_KEY and to the stand-ins as FAKE_LOGIN_BEARER; nothing
 // here prints it.
@@ -17,7 +19,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { FAKES, PKG, makeRepo, makeSshdKit, runAdapter, tempDir, testEnv } from "./helpers.mjs";
+import { FAKES, PKG, makeRepo, makeSshdKit, runAdapter, sh as hostSh, tempDir, testEnv } from "./helpers.mjs";
 import { parseRecipe, parseResult, payload, resumeIntegrityError, runPhase } from "./orca-harness.mjs";
 
 if (process.env.PRIZED_ORCA_LIVE !== "1" || !process.env.PRIZED_API_KEY) {
@@ -63,7 +65,8 @@ const context = {
   workspaceId: "live",
   workspaceName: "prized-orca live check",
   repoPath: repo.dir,
-  repoUrl: "https://example.com/acme/app.git",
+  // an SSH origin, as many laptops have: the sandbox has no SSH key, so it gets HTTPS
+  repoUrl: "git@github.com:acme/app.git",
   branch: "live/check",
   ref: "origin/main",
   expectedRefHead: repo.first,
@@ -88,7 +91,7 @@ try {
   const projectRoot = created.connection.projectRoot;
   const head = await sh(sandbox, `git -C '${projectRoot}' rev-parse HEAD; git -C '${projectRoot}' branch --show-current; git -C '${projectRoot}' remote get-url origin`);
   report.checkout = head.stdout.trim().split("\n");
-  assert.deepEqual(report.checkout, [repo.first, "live/check", "https://example.com/acme/app.git"]);
+  assert.deepEqual(report.checkout, [repo.first, "live/check", "https://github.com/acme/app.git"]);
 
   // What Orca's SSH mode needs on the host, as this template has it.
   const probe = await sh(
@@ -125,6 +128,36 @@ try {
   report.processAfterWake = { pid, lstart: after, same: after === lstart && after !== "" };
   assert.equal(report.processAfterWake.same, true, "the process did not survive the pause");
   log("resumed; same process", pid);
+
+  // A commit made in the workspace, and one change left uncommitted; then Orca puts it to sleep.
+  const made = await sh(sandbox, `cd '${projectRoot}' && echo fixed > login.js && git add login.js && git commit -q -m 'fix login' && echo wip > scratch.txt && git rev-parse HEAD`);
+  assert.equal(made.exitCode, 0, made.stderr);
+  const wsHead = made.stdout.trim().split("\n").pop();
+  r = await runPhase({ command: recipe.suspend, mode: "suspend", context, recipe, baseEnv: env, stdin: payload("suspend", recipe, context, created) });
+  assert.equal(r.exitCode, 0, "second suspend failed");
+  t = Date.now();
+  const pulled = await runAdapter(["pull", id], { env });
+  process.stderr.write(pulled.stderr);
+  assert.equal(pulled.status, 0, "pull failed");
+  const genv = { ...process.env, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: env.GIT_CONFIG_GLOBAL };
+  const localHead = hostSh("git", ["-C", repo.dir, "rev-parse", "refs/heads/live/check"], { env: genv });
+  ({ sandbox } = await get(id));
+  const bare = path.join(root, "origin.git");
+  hostSh("git", ["init", "-q", "--bare", bare], { env: genv });
+  hostSh("git", ["-C", repo.dir, "push", "-q", bare, "live/check"], { env: genv });
+  report.pull = {
+    ms: Date.now() - t,
+    workspaceHead: wsHead,
+    localHead,
+    same: localHead === wsHead,
+    stateAfter: sandbox.state,
+    pushedHead: hostSh("git", ["-C", bare, "rev-parse", "refs/heads/live/check"], { env: genv }),
+    said: pulled.stderr.trim().split("\n").filter((l) => /pulled|uncommitted|push it/.test(l)),
+  };
+  assert.equal(report.pull.same, true, "pull did not bring the workspace's commit");
+  assert.equal(report.pull.stateAfter, "paused", "pull did not put the sleeping sandbox back to sleep");
+  assert.equal(report.pull.pushedHead, wsHead);
+  log("pulled", wsHead.slice(0, 12), "while asleep; paused again");
 } catch (error) {
   report.error = error.message;
   log("FAILED:", error.message);

@@ -144,6 +144,38 @@ export function gitIdentity(repoPath) {
   };
 }
 
+// origin as the sandbox can use it. A sandbox has no SSH key, and its connection carries no agent
+// forwarding, so an SSH remote (git@host:owner/repo, ssh://…) can't sign in there: it gets the same
+// repository over HTTPS, which fetches a public repository as it is and pushes with a token. A host
+// without a dot (an alias from ~/.ssh/config) and every other URL stay as they are.
+export function sandboxRemoteUrl(url) {
+  const s = String(url ?? "");
+  const host = "([A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)+)";
+  const m = new RegExp(`^ssh://(?:[^@/]+@)?${host}(?::\\d+)?/+(.+)$`).exec(s) ?? new RegExp(`^[^@/:]+@${host}:(?!/)(.+)$`).exec(s);
+  return m ? `https://${m[1]}/${m[2]}` : s;
+}
+
+// Runs in the sandbox (bash, as its user): makes a bundle at BUNDLE of the branch checked out at ROOT,
+// holding only the commits after BASE (the commit the workspace started from, which the user's own
+// repository has), or its whole history without one. Prints the branch, its commit, how many
+// uncommitted changes the checkout has, and how many commits are in the bundle (0: no bundle).
+export function pullScript({ root, bundlePath, base }) {
+  const since = base ? sq(base) : "";
+  return [
+    "set -e",
+    `cd ${sq(root)}`,
+    'b=$(git symbolic-ref --short -q HEAD) || { echo "the checkout is not on a branch (a detached HEAD): check out a branch in it first" >&2; exit 3; }',
+    "head=$(git rev-parse HEAD)",
+    "dirty=$(git status --porcelain | wc -l | tr -d ' ')",
+    `rm -f ${sq(bundlePath)}`,
+    since
+      ? `if git cat-file -e ${since}^{commit} 2>/dev/null; then n=$(git rev-list --count ${since}..HEAD); not="--not ${base}"; else n=$(git rev-list --count HEAD); not=""; fi`
+      : 'n=$(git rev-list --count HEAD); not=""',
+    `if [ "$n" -gt 0 ]; then git bundle create -q ${sq(bundlePath)} "refs/heads/$b" $not; fi`,
+    `printf '%s\\n%s\\n%s\\n%s\\n' "$b" "$head" "$dirty" "$n"`,
+  ].join("\n");
+}
+
 // Runs in the sandbox (bash, as its user): a fresh repository at ROOT holding the bundle's commit on
 // the workspace branch, with the real remote as origin and the user's git name and email. Prints the
 // checked-out commit last.
@@ -155,7 +187,7 @@ export function checkoutScript({ root, bundlePath, bundleRef, head, branch, repo
     `git -c init.defaultBranch=${sq(branch)} init --quiet ${sq(root)}`,
     `cd ${sq(root)}`,
     `git fetch --quiet ${sq(bundlePath)} ${sq(`${bundleRef}:refs/prized-orca/source`)}`,
-    repoUrl ? `git remote add origin ${sq(repoUrl)}` : "true",
+    repoUrl ? `git remote add origin ${sq(sandboxRemoteUrl(repoUrl))}` : "true",
     `git checkout --quiet -B ${sq(branch)} ${sq(head)}`,
     "git update-ref -d refs/prized-orca/source",
     identity.name ? `git config user.name ${sq(identity.name)}` : "true",

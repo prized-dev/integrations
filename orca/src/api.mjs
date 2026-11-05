@@ -56,7 +56,7 @@ export class PrizedApi {
     return raw.replace(/\/+$/, "");
   }
 
-  async request(method, url, { body, raw, headers = {}, timeoutMs = 120_000 } = {}) {
+  async request(method, url, { body, raw, headers = {}, timeoutMs = 120_000, binary = false } = {}) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     let response;
@@ -81,6 +81,7 @@ export class PrizedApi {
     } finally {
       clearTimeout(timer);
     }
+    if (binary && response.ok) return { status: response.status, data: Buffer.from(await response.arrayBuffer()) };
     const text = await response.text();
     let data = null;
     try {
@@ -190,6 +191,11 @@ export class PrizedApi {
   async upload(sandbox, remotePath, bytes) {
     const url = `${this.edge(sandbox)}/files/upload?${new URLSearchParams({ path: remotePath })}`;
     await this.request("POST", url, { raw: bytes, timeoutMs: 600_000 });
+  }
+
+  async download(sandbox, remotePath) {
+    const url = `${this.edge(sandbox)}/files/download?${new URLSearchParams({ path: remotePath })}`;
+    return (await this.request("GET", url, { binary: true, headers: { Accept: "application/octet-stream" }, timeoutMs: 600_000 })).data;
   }
 
   // One command, answered when it ends. Kept well under Node fetch's 300 s answer limit.

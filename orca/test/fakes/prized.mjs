@@ -7,6 +7,8 @@
 // ssh with that config, as the CLI does.
 //
 // It logs its arguments only (FAKE_CLI_LOG), and refuses to run if PRIZED_API_KEY reached it.
+// FAKE_CLI_SIGNIN=api-key or limited: signed in with a Full or a Custom API key instead (`prized login
+// --token`), which lists sandboxes but is refused a shell, in the real CLI's words.
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
@@ -55,9 +57,17 @@ async function main() {
     return 0;
   }
   if (sub === "ssh") {
-    if (env.FAKE_SSH_DELAY_MS) await new Promise((resolve) => setTimeout(resolve, Number(env.FAKE_SSH_DELAY_MS)));
+    // Prized checks the credential before it looks the sandbox up (core/src/handlers/sandboxSsh.ts).
+    if (env.FAKE_CLI_SIGNIN === "api-key") {
+      return process.stderr.write("prized: a shell in a sandbox opens with your prized login, not an API key\n  ↳ prized login\n"), 8;
+    }
+    if (env.FAKE_CLI_SIGNIN === "limited") {
+      process.stderr.write("prized: This API key is limited and cannot call this route. Use a full-access key.\n");
+      return process.stderr.write("  ↳ use a key with Sandboxes access (Settings > API keys), or unset PRIZED_API_KEY to use your prized login\n"), 5;
+    }
     let r = await api("GET", `/sandboxes/${id}`);
-    if (r.status === 404) return process.stderr.write(`no sandbox ${id}\n`), 5;
+    if (r.status === 404) return process.stderr.write(`prized: no sandbox ${id} in this workspace\n  ↳ prized sandbox ls lists yours\n`), 5;
+    if (env.FAKE_SSH_DELAY_MS) await new Promise((resolve) => setTimeout(resolve, Number(env.FAKE_SSH_DELAY_MS)));
     if (r.body.sandbox.state === "paused") await api("POST", `/sandboxes/${id}/resume?wait=running`);
     const kit = env.FAKE_SSHD_DIR;
     const conf = path.join(os.homedir(), ".config", "prized");

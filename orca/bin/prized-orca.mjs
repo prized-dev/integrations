@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // The Prized Sandbox adapter for Orca. Orca runs `create`, `suspend`, `resume` and `destroy` (see
 // vm-recipe.json); ssh runs `cert-hook` and `proxy` (see src/sshconf.mjs); people run `setup`,
-// `doctor`, `list` and `uninstall`.
+// `doctor`, `list`, `pull` and `uninstall`.
 //
 // Contract: create and resume print exactly one JSON object on stdout, the result Orca reads.
 // Everything else goes to stderr.
 
-import { HELP, certHook, create, destroy, doctor, list, proxy, resume, setup, suspend, uninstall } from "../src/commands.mjs";
+import { HELP, certHook, create, destroy, doctor, list, proxy, pull, resume, setup, suspend, uninstall } from "../src/commands.mjs";
 import { UserError, VERSION, redact, say, trace } from "../src/util.mjs";
 
 // Keep stdout for the recipe result, whatever else prints.
@@ -26,6 +26,7 @@ const commands = {
   setup: () => setup(rest),
   doctor: () => doctor(),
   list: () => list(),
+  pull: () => pull(rest),
   uninstall: () => uninstall(rest),
 };
 
