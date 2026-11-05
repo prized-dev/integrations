@@ -1,13 +1,11 @@
 # inspect-prized
 
-> **Not on PyPI yet.** Until it is, install `inspect-prized` from this repo with the line below. The Prized Python SDK it uses (`prized`) is on PyPI.
-
 A sandbox environment for [Inspect AI](https://inspect.aisi.org.uk/) that runs each sample in its own [Prized](https://prized.dev/docs/sandboxes?via=inspect) sandbox, a Firecracker microVM in the cloud. Sample cleanup deletes it.
 
 ## Install
 
 ```sh
-pip install "inspect-prized @ git+https://github.com/prized-dev/integrations#subdirectory=inspect"
+pip install inspect-prized
 export PRIZED_API_KEY=dcp_...   # prized.dev/dashboard/workspace/api-keys?via=inspect
 ```
 
