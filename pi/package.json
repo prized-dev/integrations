@@ -39,7 +39,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "vitest run test/workspace.test.ts test/unit.test.ts test/pi.test.ts",
+    "test": "vitest run test/workspace.test.ts test/unit.test.ts test/pi.test.ts test/scoped.test.ts",
     "test:live": "tsx test/live.ts",
     "prepublishOnly": "npm run typecheck && npm test"
   },

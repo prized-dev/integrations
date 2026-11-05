@@ -48,6 +48,26 @@ To give Pi its task on the command line, put `--prized` after it (`pi -p "fix th
 | `/prized pause` | Pause now (the next tool call resumes it) |
 | `/prized delete` | Delete the sandbox; the next tool call starts a new one from your checkout |
 
+## Pi itself in a sandbox
+
+Normally Pi runs on your machine, and no key goes into the sandbox. If you run Pi itself in a sandbox (a CI runner, a cloud agent), keep your `PRIZED_API_KEY` out of it: on the machine that holds the key, mint a short-lived scoped key and pass only that in.
+
+```ts
+import { Sandbox } from '@prized/sdk';
+import { mintSandboxKey } from '@prized/pi/src/scoped.ts'; // TypeScript: run with Bun or tsx
+
+const key = await mintSandboxKey({ spendCapUsd: 5 }); // from your PRIZED_API_KEY
+if (!key.available) throw new Error(key.reason);       // nothing was minted
+const runner = await Sandbox.create({ envVars: key.env });
+// ... install Pi and @prized/pi in `runner` and run `pi --prized` there
+await key.revoke();                                    // when the run is done
+```
+
+- The key lasts 4 hours (`ttlSeconds`, up to a day, never past your own key). It reaches only the sandboxes Pi makes with it (and their forks), plus any carrying all of `labels`, and only for what the extension does with them. It can't reach your boxes, secrets, workspace settings, billing or other keys, or mint another key.
+- `pi -c` finds a kept sandbox again with the same key. A new key reaches it only through `labels`.
+- If the installed `@prized/sdk` has no `Sandbox.scopedKey`, or the Prized API doesn't offer scoped keys (it answers 404), you get `{ available: false, reason }` and nothing is minted. Any other refusal throws. It never hands back your own key.
+- Printing the result shows its id and expiry, not the key. `key.env` holds the key: pass it on, don't log it.
+
 ## What to know
 
 - **What runs where.** Only the four tools run in the sandbox. Pi's own files, settings, `AGENTS.md` and the model calls stay on your machine, your environment variables are not forwarded, and `PRIZED_API_KEY` never enters the sandbox. If the sandbox cannot start, the tool call fails; it is never run on your machine instead.
