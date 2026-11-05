@@ -13,6 +13,10 @@
 //   6. /prized-pull --all: applied to the checkout; with nothing left to pull, the exit deletes the sandbox.
 //
 // Writes $E2E/result.json with every check. Needs: node, npm, git, and network for npm.
+//
+// E2E_KEY=scoped: no relay and no broker. PRIZED_API_KEY here is a short-lived scoped key that the machine
+// holding the long-lived key minted for this run (scoped-run.mjs, src/scoped.ts), and the plugin talks to
+// Prized itself. The checks that read the relay's log read the API instead, with that key.
 import { execFileSync, spawn } from 'node:child_process';
 import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
@@ -23,6 +27,8 @@ const VERSION = process.env.OPENCODE_VERSION ?? '1.19.5';
 const SDK_PORT = Number(process.env.SDK_PORT ?? 4021);
 const MOCK_PORT = Number(process.env.MOCK_PORT ?? 4011);
 const APP = `${E2E}/app`;
+const SCOPED = process.env.E2E_KEY === 'scoped';
+const API = (process.env.PRIZED_BASE_URL || 'https://api.prized.dev').replace(/\/+$/, '');
 const checks = [];
 const t0 = Date.now();
 const note = (s) => process.stdout.write(`[${((Date.now() - t0) / 1000).toFixed(1)}s] ${s}\n`);
@@ -78,10 +84,15 @@ const env = {
   XDG_DATA_HOME: `${E2E}/home/.local/share`,
   XDG_CACHE_HOME: `${E2E}/home/.cache`,
   XDG_STATE_HOME: `${E2E}/home/.local/state`,
-  // Not a key: the relay drops it, and the broker outside this sandbox adds the real one.
-  PRIZED_API_KEY: 'dcp_relay_placeholder_not_a_key',
-  PRIZED_BASE_URL: `http://127.0.0.1:${SDK_PORT}`,
-  PRIZED_EDGE_URL: `http://127.0.0.1:${SDK_PORT}/__edge`,
+  ...(SCOPED
+    ? // The scoped key this sandbox was started with, and the API it came from.
+      Object.fromEntries(['PRIZED_API_KEY', 'PRIZED_BASE_URL', 'PRIZED_EDGE_URL'].filter((k) => process.env[k]).map((k) => [k, process.env[k]]))
+    : {
+        // Not a key: the relay drops it, and the broker outside this sandbox adds the real one.
+        PRIZED_API_KEY: 'dcp_relay_placeholder_not_a_key',
+        PRIZED_BASE_URL: `http://127.0.0.1:${SDK_PORT}`,
+        PRIZED_EDGE_URL: `http://127.0.0.1:${SDK_PORT}/__edge`,
+      }),
   OPENCODE_DISABLE_AUTOUPDATE: '1',
   OPENCODE_DISABLE_DEFAULT_PLUGINS: '1',
   OPENCODE_DISABLE_LSP_DOWNLOAD: '1',
@@ -121,6 +132,15 @@ function userText(needle) {
 
 const relayCalls = () => (existsSync('/tmp/relay.jsonl') ? readFileSync('/tmp/relay.jsonl', 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)).filter((l) => l.kind === 'call') : []);
 
+/** E2E_KEY=scoped: the API, with this sandbox's scoped key. */
+async function api(method, path) {
+  const res = await fetch(`${API}/api/v1${path}`, { method, headers: { authorization: `Bearer ${process.env.PRIZED_API_KEY}` }, signal: AbortSignal.timeout(20_000) });
+  return { status: res.status, json: await res.json().catch(() => null) };
+}
+/** The live sandboxes of a session, as the scoped key sees them. */
+const sessionSandboxes = async (session) =>
+  ((await api('GET', `/sandboxes?label=${encodeURIComponent(`opencode-session=${session}`)}`)).json?.sandboxes ?? []).filter((s) => s.state !== 'deleted');
+
 async function main() {
   note(`OpenCode ${VERSION}`);
   mkdirSync(E2E, { recursive: true });
@@ -129,7 +149,16 @@ async function main() {
   rmSync(`${E2E}/plugin`, { recursive: true, force: true });
   sh(`npm install --prefix ${E2E}/plugin --no-audit --no-fund --loglevel=error ${E2E}/${tgz}`);
   check('the packed plugin installs with its dependencies only', existsSync(`${E2E}/plugin/node_modules/opencode-prized/index.ts`) && existsSync(`${E2E}/plugin/node_modules/@prized/sdk`) && !existsSync(`${E2E}/plugin/node_modules/@opencode-ai/plugin`));
-  check('no Prized key in this sandbox', !Object.entries(process.env).some(([k, v]) => /^dcp_/.test(v ?? '') && k !== 'PRIZED_API_KEY') && !/^dcp_(?!relay_placeholder)/.test(process.env.PRIZED_API_KEY ?? ''));
+  if (SCOPED) {
+    const me = await api('GET', '/me');
+    check('the only Prized key in this sandbox is a scoped one', me.json?.key?.kind === 'scoped' && !Object.entries(process.env).some(([k, v]) => /^dcp_/.test(v ?? '') && k !== 'PRIZED_API_KEY'), JSON.stringify(me.json?.key ?? me.status));
+    const outside = await Promise.all([api('GET', '/boxes'), api('GET', '/secrets'), api('POST', '/api-keys/scoped')]);
+    check('it reaches nothing outside its scope (boxes, secrets, minting: 403)', outside.every((r) => r.status === 403), outside.map((r) => r.status).join(','));
+    const seen = await api('GET', '/sandboxes');
+    check('it sees no sandbox it did not make, not even this one', seen.status === 200 && seen.json?.sandboxes?.length === 0, JSON.stringify(seen.json).slice(0, 400));
+  } else {
+    check('no Prized key in this sandbox', !Object.entries(process.env).some(([k, v]) => /^dcp_/.test(v ?? '') && k !== 'PRIZED_API_KEY') && !/^dcp_(?!relay_placeholder)/.test(process.env.PRIZED_API_KEY ?? ''));
+  }
   setup();
   mkdirSync(env.HOME, { recursive: true });
   sh(`opencode --version`, APP, env);
@@ -181,13 +210,16 @@ async function main() {
   let paused = false;
   for (let i = 0; i < 40 && !paused; i += 1) {
     await new Promise((r) => setTimeout(r, 500));
-    paused = relayCalls().slice(before).some((c) => c.method === 'POST' && /\/pause/.test(c.path) && c.status < 300);
+    paused = SCOPED
+      ? (await sessionSandboxes(S))[0]?.state === 'paused'
+      : relayCalls().slice(before).some((c) => c.method === 'POST' && /\/pause/.test(c.path) && c.status < 300);
   }
   check('in a long-running OpenCode, the sandbox pauses by itself once the session is idle (pauseSeconds 4)', paused, `waited ${Date.now() - pauseWait} ms`);
   const resumeAt = relayCalls().length;
   await prompt('E2E-AFTER-PAUSE is it still up');
   const tA = toolResults('E2E-AFTER-PAUSE');
-  check('the next turn resumes it and the server is still running', /ALIVE-AFTER-PAUSE/.test(tA[0] ?? '') && relayCalls().slice(resumeAt).some((c) => /\/resume/.test(c.path)), tA[0]);
+  const resumed = SCOPED ? (await sessionSandboxes(S))[0]?.state === 'running' : relayCalls().slice(resumeAt).some((c) => /\/resume/.test(c.path));
+  check('the next turn resumes it and the server is still running', /ALIVE-AFTER-PAUSE/.test(tA[0] ?? '') && resumed, tA[0]);
   srv.kill('SIGTERM');
   await new Promise((r) => setTimeout(r, 4000));
 
@@ -195,7 +227,12 @@ async function main() {
   const r6 = await opencode(['run', '--format', 'json', '--session', S, '--fork', 'E2E-FORK in a fork']);
   const tF = toolResults('E2E-FORK');
   check('a forked session gets a copy of the sandbox, server and all', /FORK-SERVER-ALIVE/.test(tF[0] ?? '') && r6.sessionID && r6.sessionID !== S, `${tF[0]} ${r6.err.slice(-800)}`);
-  check('the fork came from a sandbox fork', relayCalls().some((c) => /\/fork/.test(c.path) && c.status < 300), '');
+  const forkedFrom = SCOPED ? [(await sessionSandboxes(S))[0]?.id, (await sessionSandboxes(r6.sessionID))[0]?.id] : [];
+  check(
+    'the fork came from a sandbox fork',
+    SCOPED ? forkedFrom.every(Boolean) && forkedFrom[0] !== forkedFrom[1] : relayCalls().some((c) => /\/fork/.test(c.path) && c.status < 300),
+    forkedFrom.join(' '),
+  );
   const r7 = await opencode(['run', '--format', 'json', '--session', S, 'E2E-TURN-3 parent check']);
   const t3 = toolResults('E2E-TURN-3');
   check('the parent sandbox does not see what the fork wrote', /PARENT-CLEAN/.test(t3[0] ?? ''), `${t3[0]} ${r7.err.slice(-400)}`);
@@ -218,7 +255,12 @@ async function main() {
   check('the new executable arrives executable, the edit to bin/run arrives', existsSync(`${APP}/deploy.sh`) && (statSync(`${APP}/deploy.sh`).mode & 0o111) !== 0 && readFileSync(`${APP}/bin/run`, 'utf8').includes('echo extra'), status);
   check('the changes land unstaged, for git diff', / M app\.py/.test(status) && /\?\? deploy\.sh/.test(status), status);
 
-  check('on exit, a sandbox with nothing left to pull is deleted', relayCalls().some((c) => c.method === 'DELETE' && c.status < 300), '');
+  const left = SCOPED ? await sessionSandboxes(S) : [];
+  check(
+    'on exit, a sandbox with nothing left to pull is deleted',
+    SCOPED ? left.every((s) => s.state === 'deleting') : relayCalls().some((c) => c.method === 'DELETE' && c.status < 300),
+    JSON.stringify(left.map((s) => [s.id, s.state])),
+  );
 
   const calls = relayCalls();
   const result = {
@@ -229,7 +271,8 @@ async function main() {
     failed: checks.filter((c) => !c.ok).length,
     checks,
     timing: { turn1Ms: r1.ms, turn2Ms: r2.ms, pullMs: r4.ms, forkMs: r6.ms, forkTurnMs: r6.ms },
-    relay: { calls: calls.length, medianMs: calls.map((c) => c.ms).sort((a, b) => a - b)[Math.floor(calls.length / 2)], denied: calls.filter((c) => c.status === 403).length },
+    key: SCOPED ? 'scoped' : 'relay',
+    relay: SCOPED ? null : { calls: calls.length, medianMs: calls.map((c) => c.ms).sort((a, b) => a - b)[Math.floor(calls.length / 2)], denied: calls.filter((c) => c.status === 403).length },
   };
   writeFileSync(`${E2E}/result.json`, JSON.stringify(result, null, 2));
   writeFileSync(`${E2E}/serve.log`, srvErr);

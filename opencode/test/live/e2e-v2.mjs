@@ -7,7 +7,8 @@
 //   3. `--fork`: a copy of the sandbox with the server running; the parent untouched;
 //   4. /prized-pull through OpenCode 2's command API: held back, then applied with --all.
 //
-// Writes $E2E/result-v2.json.
+// Writes $E2E/result-v2.json. E2E_KEY=scoped: no relay and no broker, PRIZED_API_KEY is a scoped key the host
+// minted for this run (as in e2e.mjs).
 import { execFileSync, spawn } from 'node:child_process';
 import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 
@@ -17,6 +18,8 @@ const VERSION = process.env.OPENCODE2_VERSION ?? '2.2.5';
 const SDK_PORT = Number(process.env.SDK_PORT ?? 4021);
 const MOCK_PORT = Number(process.env.MOCK_PORT ?? 4011);
 const APP = `${E2E}/app`;
+const SCOPED = process.env.E2E_KEY === 'scoped';
+const API = (process.env.PRIZED_BASE_URL || 'https://api.prized.dev').replace(/\/+$/, '');
 const checks = [];
 const t0 = Date.now();
 const note = (s) => process.stdout.write(`[${((Date.now() - t0) / 1000).toFixed(1)}s] ${s}\n`);
@@ -68,10 +71,14 @@ const env = {
   XDG_CACHE_HOME: `${E2E}/home2/.cache`,
   XDG_STATE_HOME: `${E2E}/home2/.local/state`,
   MOCK_API_KEY: 'not-a-key',
-  // Not a key: the relay drops it, and the broker outside this sandbox adds the real one.
-  PRIZED_API_KEY: 'dcp_relay_placeholder_not_a_key',
-  PRIZED_BASE_URL: `http://127.0.0.1:${SDK_PORT}`,
-  PRIZED_EDGE_URL: `http://127.0.0.1:${SDK_PORT}/__edge`,
+  ...(SCOPED
+    ? Object.fromEntries(['PRIZED_API_KEY', 'PRIZED_BASE_URL', 'PRIZED_EDGE_URL'].filter((k) => process.env[k]).map((k) => [k, process.env[k]]))
+    : {
+        // Not a key: the relay drops it, and the broker outside this sandbox adds the real one.
+        PRIZED_API_KEY: 'dcp_relay_placeholder_not_a_key',
+        PRIZED_BASE_URL: `http://127.0.0.1:${SDK_PORT}`,
+        PRIZED_EDGE_URL: `http://127.0.0.1:${SDK_PORT}/__edge`,
+      }),
   OPENCODE_DISABLE_AUTOUPDATE: '1',
   TERM: 'dumb',
 };
@@ -128,6 +135,12 @@ function toolResults(marker) {
 }
 const relayCalls = () => (existsSync('/tmp/relay.jsonl') ? readFileSync('/tmp/relay.jsonl', 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)).filter((l) => l.kind === 'call') : []);
 
+/** E2E_KEY=scoped: the live sandboxes of a session, as this sandbox's scoped key sees them. */
+async function sessionSandboxes(session) {
+  const res = await fetch(`${API}/api/v1/sandboxes?label=${encodeURIComponent(`opencode-session=${session}`)}`, { headers: { authorization: `Bearer ${process.env.PRIZED_API_KEY}` }, signal: AbortSignal.timeout(20_000) });
+  return ((await res.json().catch(() => null))?.sandboxes ?? []).filter((s) => s.state !== 'deleted');
+}
+
 async function main() {
   note(`OpenCode ${VERSION}`);
   if (!existsSync(`${E2E}/cli2/node_modules/.bin/opencode`)) sh(`npm install --prefix ${E2E}/cli2 --no-audit --no-fund --loglevel=error @opencode/cli@${VERSION}`);
@@ -160,7 +173,10 @@ async function main() {
 
   const r3 = await opencode(['--session', S, '--fork', 'E2E-FORK in a fork']);
   const tF = toolResults('E2E-FORK');
-  check('a forked session gets a copy of the sandbox, server and all', /FORK-SERVER-ALIVE/.test(tF[0] ?? '') && relayCalls().some((c) => /\/fork/.test(c.path) && c.status < 300), `${tF[0]} ${r3.err.slice(-800)}`);
+  const forked = SCOPED
+    ? (await sessionSandboxes(r3.sessionID ?? '-')).length === 1 && (await sessionSandboxes(r3.sessionID ?? '-'))[0]?.id !== (await sessionSandboxes(S))[0]?.id
+    : relayCalls().some((c) => /\/fork/.test(c.path) && c.status < 300);
+  check('a forked session gets a copy of the sandbox, server and all', /FORK-SERVER-ALIVE/.test(tF[0] ?? '') && forked, `${tF[0]} ${r3.err.slice(-800)}`);
   const r4 = await opencode(['--session', S, 'E2E-TURN-3 parent check']);
   const t3 = toolResults('E2E-TURN-3');
   check('the parent does not see what the fork wrote', /PARENT-CLEAN/.test(t3[0] ?? ''), `${t3[0]} ${r4.err.slice(-400)}`);
@@ -176,7 +192,7 @@ async function main() {
   check('/prized-pull --all applies the changes for git diff', /review with git diff/.test(applied) && readFileSync(`${APP}/app.py`, 'utf8').includes('Hello from the sandbox') && existsSync(`${APP}/deploy.sh`) && (statSync(`${APP}/deploy.sh`).mode & 0o111) !== 0, `${applied.slice(0, 600)} ${sh('git status --porcelain', APP)}`);
 
   const calls = relayCalls();
-  const result = { opencode: VERSION, session: S, passed: checks.filter((c) => c.ok).length, failed: checks.filter((c) => !c.ok).length, checks, timing: { turn1Ms: r1.ms, turn2Ms: r2.ms, forkMs: r3.ms }, relay: { calls: calls.length, denied: calls.filter((c) => c.status === 403).length } };
+  const result = { opencode: VERSION, session: S, passed: checks.filter((c) => c.ok).length, failed: checks.filter((c) => !c.ok).length, checks, timing: { turn1Ms: r1.ms, turn2Ms: r2.ms, forkMs: r3.ms }, key: SCOPED ? 'scoped' : 'relay', relay: SCOPED ? null : { calls: calls.length, denied: calls.filter((c) => c.status === 403).length } };
   writeFileSync(`${E2E}/result-v2.json`, JSON.stringify(result, null, 2));
   note(`${result.passed} passed, ${result.failed} failed`);
 }

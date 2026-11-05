@@ -62,6 +62,26 @@ In `opencode.json`, as `["file:///path/to/integrations/opencode", { ... }]` (Ope
 
 The key comes only from `PRIZED_API_KEY` in the environment, never from a config file. `PRIZED_BASE_URL` and `PRIZED_EDGE_URL` point the plugin at a control plane other than prized.dev.
 
+## OpenCode itself in a sandbox
+
+Normally only the tools run in a sandbox, and no key goes into it. If you run OpenCode itself in a sandbox (a CI runner, a cloud agent), keep your `PRIZED_API_KEY` out of it: on the machine that holds the key, mint a short-lived scoped key and pass only that in.
+
+```ts
+import { Sandbox } from '@prized/sdk';
+import { mintSandboxKey } from 'opencode-prized/scoped'; // TypeScript: run with Bun or tsx
+
+const key = await mintSandboxKey({ spendCapUsd: 5 }); // from your PRIZED_API_KEY
+if (!key.available) throw new Error(key.reason);       // nothing was minted
+const runner = await Sandbox.create({ envVars: key.env });
+// ... install OpenCode and this plugin in `runner` and run it there
+await key.revoke();                                    // when the run is done
+```
+
+- The key lasts 4 hours (`ttlSeconds`, up to a day, never past your own key). It reaches only the sandboxes the plugin makes with it (and their forks), plus any carrying all of `labels`, and only for what the plugin does with them. It can't reach your boxes, secrets, workspace settings, billing or other keys, or mint another key.
+- A sandbox kept at exit is found again by the same key. A new key reaches it only through `labels`.
+- If the installed `@prized/sdk` has no `Sandbox.scopedKey`, or the Prized API doesn't offer scoped keys (it answers 404), you get `{ available: false, reason }` and nothing is minted. Any other refusal throws. It never hands back your own key.
+- Printing the result shows its id and expiry, not the key. `key.env` holds the key: pass it on, don't log it.
+
 ## What to know
 
 - **What runs where.** Only the tools above run in the sandbox. Your environment variables are not forwarded, and if the sandbox cannot start, or an option is wrong, the tool fails: it never runs on your machine instead. A file that holds your `PRIZED_API_KEY` stops the upload. Tools that would act on your machine are off (`lsp`; in OpenCode 2 also image generation and worktree tools). Your own `!` shell commands, MCP servers and `webfetch` still run on your machine. If the plugin cannot load at all (its folder or dependencies missing), OpenCode runs its own tools as usual, so check that `/prized` answers.

@@ -101,6 +101,9 @@ What the plugin does, which OpenCode API it rests on (file and line), and how it
   - The broker learns sandbox ids only from the API's own create, fork, get and list answers, never from the edge, whose answers carry what the sandbox wrote.
   - It sends the key only to `https://*.prized.dev`, and allows only the `process/` and `files/` edge routes. It refuses `..` and encoded slashes, rebuilds the list query from label selectors, and forwards only an allowlist of headers.
 - The same relay pattern could let an agent in a sandbox drive other sandboxes without holding a key. It is test scaffolding here, not a product feature.
+- **Scoped keys replace the broker** where the Prized API offers them. `src/scoped.ts` (`mintSandboxKey`, exported as `opencode-prized/scoped`) runs on the machine that holds the long-lived key and mints a key that lives 4 hours, does only what the plugin does (`read`, `create`, `exec`, `pause`, `resume`, `fork`, `delete`) and reaches only the sandboxes it makes, their forks and any selected by `labels`. Only that key goes into the sandbox that runs OpenCode, whose plugin uses it like any key.
+  - It fails closed: an installed `@prized/sdk` without `Sandbox.scopedKey`, or a 404 from the mint (scoped keys off, or an API from before them), is `{ available: false }` and nothing is minted. Any other refusal throws. An answer that carries the long-lived key back is refused.
+  - `test/live/scoped-run.mjs` runs the live test this way, with no relay and no broker: it mints the key, creates the runner with only that key, runs `e2e.mjs` with `E2E_KEY=scoped` (the relay checks read the API instead, plus: the key is scoped, it gets 403 for boxes, secrets and minting, it lists no sandbox it did not make), then deletes what the key made, revokes it and checks it is refused. `test/scoped.test.ts` covers the helper offline against a stand-in for the API.
 
 ## Tests
 

@@ -14,7 +14,8 @@
   "main": "./index.ts",
   "exports": {
     ".": "./index.ts",
-    "./server": "./index.ts"
+    "./server": "./index.ts",
+    "./scoped": "./src/scoped.ts"
   },
   "files": [
     "index.ts",
@@ -39,7 +40,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "vitest run test/unit.test.ts test/tools.test.ts test/plugin.test.ts test/v2.test.ts",
+    "test": "vitest run test/unit.test.ts test/tools.test.ts test/plugin.test.ts test/v2.test.ts test/scoped.test.ts",
     "prepublishOnly": "npm run typecheck && npm test"
   },
   "dependencies": {
