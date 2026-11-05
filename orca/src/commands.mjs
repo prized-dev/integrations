@@ -221,8 +221,12 @@ export async function create(env = process.env) {
       }
       if (made.bundleDir) fs.rmSync(made.bundleDir, { recursive: true, force: true });
     })());
+  // The exit below skips the caller's end-of-command trace, so a cancelled create logs its own.
   const onSignal = (signal) => {
-    cleanup(signal).finally(() => process.exit(130));
+    cleanup(signal).finally(() => {
+      trace({ cmd: "create", ok: false, cancelled: signal, sandbox: made.id, instance }, env);
+      process.exit(130);
+    });
   };
   process.once("SIGINT", onSignal);
   process.once("SIGTERM", onSignal);

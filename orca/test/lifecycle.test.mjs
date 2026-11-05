@@ -281,6 +281,8 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
     assert.equal(made[0].state, "deleted");
     assert.match(r.stderr, new RegExp(`deleted ${made[0].id}`), "the delete was answered before the exit");
     assert.deepEqual(state(), {});
+    const log = fs.readFileSync(path.join(home, ".prized-orca", "lifecycle.log"), "utf8");
+    assert.match(log, new RegExp(`"cmd":"create","ok":false,"cancelled":"SIGTERM","sandbox":"${made[0].id}","instance":"orca-cancel-2"`));
   });
 
   test("a definite refusal makes nothing, so nothing is deleted and the exit is quick", async () => {
