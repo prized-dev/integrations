@@ -45,7 +45,8 @@ REPO is your repo's main checkout (default: this folder), or a GitHub repo
   --port-base N           the first workspace's CONDUCTOR_PORT (default 4100);
                           each workspace gets 10 ports, as in Conductor
   --archive BRANCH        archive a workspace: run the archive script, stop its
-                          sessions, remove its worktree (the branch stays)
+                          sessions, remove its worktree (the branch stays); with
+                          uncommitted changes it stops, unless --force
   --print-helper          print the Python this runs on the box, and stop
   -y, --yes               answer yes to every question, prized setup's too
   -h, --help              this help
@@ -76,7 +77,7 @@ ask() {
 }
 # name_for FOLDER: the name prized setup gives the project's folder on the box (~/code/<name>).
 name_for() {
-  printf '%s' "$1" | LC_ALL=C tr 'A-Z' 'a-z' | LC_ALL=C sed -E 's/[^a-z0-9._-]+/-/g; s/-+/-/g; s/^[._-]+//; s/-+$//'
+  printf '%s' "$1" | LC_ALL=C tr '[:upper:]' '[:lower:]' | LC_ALL=C sed -E 's/[^a-z0-9._-]+/-/g; s/-+/-/g; s/^[._-]+//; s/-+$//'
 }
 tmpfile() { mktemp "${TMPDIR:-/tmp}/prized-conductor.XXXXXX"; }
 put_helper() {
@@ -89,7 +90,7 @@ put_helper() {
 }
 
 main() {
-  SRC= AGENT=claude RUN=0 SETUP_FILE= INSTALL_FILE= FILES=ask BOX= PORT_BASE=4100 ARCHIVE= YES=0 COUNT=2
+  SRC='' AGENT=claude RUN=0 SETUP_FILE='' INSTALL_FILE='' FILES=ask BOX='' PORT_BASE=4100 ARCHIVE='' FORCE='' YES=0 COUNT=2
   BRANCHES=() PASS=()
   while [ $# -gt 0 ]; do
     case $1 in
@@ -104,6 +105,7 @@ main() {
       --box) [ $# -ge 2 ] || die "--box needs a box name"; BOX=$2; shift 2 ;;
       --port-base) [ $# -ge 2 ] || die "--port-base needs a port"; PORT_BASE=$2; shift 2 ;;
       --archive) [ $# -ge 2 ] || die "--archive needs a branch name"; ARCHIVE=$2; shift 2 ;;
+      --force) FORCE=" --force"; shift ;;
       --print-helper) helper_py; exit 0 ;;
       -y | --yes) YES=1; shift ;;
       -h | --help) usage; exit 0 ;;
@@ -115,9 +117,9 @@ main() {
 
   case $AGENT in claude | codex | none) ;; *) die "--agent takes claude, codex or none, not $AGENT" ;; esac
   case $COUNT in '' | *[!0-9]*) die "-n takes a number, not $COUNT" ;; esac
-  [ "$COUNT" -ge 1 ] && [ "$COUNT" -le 20 ] || die "-n takes 1 to 20"
+  if [ "$COUNT" -lt 1 ] || [ "$COUNT" -gt 20 ]; then die "-n takes 1 to 20"; fi
   case $PORT_BASE in '' | *[!0-9]*) die "--port-base takes a port number" ;; esac
-  [ "$PORT_BASE" -ge 1024 ] && [ "$PORT_BASE" -le 65000 ] || die "--port-base takes 1024 to 65000"
+  if [ "$PORT_BASE" -lt 1024 ] || [ "$PORT_BASE" -gt 65000 ]; then die "--port-base takes 1024 to 65000"; fi
   [ -z "$SETUP_FILE" ] || [ -f "$SETUP_FILE" ] || die "no setup script at $SETUP_FILE"
   [ -z "$INSTALL_FILE" ] || [ -f "$INSTALL_FILE" ] || die "no install script at $INSTALL_FILE"
   if [ ${#BRANCHES[@]} -eq 0 ]; then
@@ -135,7 +137,7 @@ main() {
   command -v prized >/dev/null 2>&1 || die "the Prized CLI isn't installed. Sign up at https://prized.dev/sign-in?via=conductor (the tour installs it and signs this machine in), then run this again"
   command -v git >/dev/null 2>&1 || die "git isn't installed"
 
-  local TOP= SLUG= NAME
+  local TOP='' SLUG='' NAME
   if [ -z "$SRC" ] || [ -d "$SRC" ]; then
     TOP=$(git -C "${SRC:-.}" rev-parse --show-toplevel 2>/dev/null) || die "${SRC:-this folder} is not a git checkout. Run this in your repo's main checkout, or pass owner/repo"
     git -C "$TOP" remote get-url origin >/dev/null 2>&1 || die "$TOP has no origin remote. Push it to GitHub first: the box clones it from there"
@@ -159,7 +161,7 @@ main() {
 
   if [ -n "$ARCHIVE" ]; then
     put_helper
-    box "python3 -I $HELPER archive $(q "$ROOT") --project $(q "$NAME") $(q "$ARCHIVE")"
+    box "python3 -I $HELPER archive $(q "$ROOT") --project $(q "$NAME") $(q "$ARCHIVE")$FORCE"
     return
   fi
 
@@ -227,14 +229,15 @@ main() {
   fi
 
   # 4. A worktree per workspace, set up the way Conductor sets one up, each with its own tmux session.
-  local APPLY="python3 -I $HELPER apply $(q "$ROOT") --project $(q "$NAME") --agent $AGENT --port-base $PORT_BASE" OUT
+  local APPLY OUT
+  APPLY="python3 -I $HELPER apply $(q "$ROOT") --project $(q "$NAME") --agent $AGENT --port-base $PORT_BASE"
   [ "$RUN" = 0 ] || APPLY="$APPLY --run"
   [ -z "$SETUP_FILE" ] || APPLY="$APPLY --setup $(q ".local/share/prized-conductor/$NAME.setup.sh")"
   for b in "${BRANCHES[@]}"; do APPLY="$APPLY $(q "$b")"; done
   OUT=$(box "$APPLY") || die "setting up the workspaces failed (above). Fix it and run this again: it picks up where it stopped"
 
   # 5. An agent in each workspace, through prized agents run.
-  local AGENT_ARGS=() ROWS=() kind ws branch dir port setup session first= r
+  local AGENT_ARGS=() ROWS=() kind ws branch dir port setup session first='' r
   case $AGENT in
     claude) AGENT_ARGS=(--permission-mode auto) ;;
     codex) AGENT_ARGS=(--sandbox workspace-write --ask-for-approval never) ;;
@@ -481,7 +484,7 @@ def files_to_copy(root, patterns):
     if not cands:
         return []
     r = git(root, "check-ignore", "-z", "--stdin", check=False, inp="\0".join(cands) + "\0")
-    ignored = set(p for p in r.stdout.split("\0") if p)
+    ignored = {p for p in r.stdout.split("\0") if p}
     return [p for p in cands if p in ignored]
 
 
@@ -578,7 +581,10 @@ def ensure_tools(root, setup, sdir):
     log = os.path.join(sdir, "tools.log")
     pj = package_json(root)
     words = set(re.findall(r"[A-Za-z0-9_.-]+", setup))
-    exists = lambda f: os.path.exists(os.path.join(root, f))  # noqa: E731
+
+    def exists(f):
+        return os.path.exists(os.path.join(root, f))
+
     pm_field = (pj or {}).get("packageManager") if isinstance((pj or {}).get("packageManager"), str) else ""
     if (pj is not None or words & {"npm", "npx", "pnpm", "yarn", "node", "corepack"}) and not have("node"):
         ver = "24"
@@ -772,6 +778,9 @@ def cmd_archive(a):
     wdir = os.path.join(os.path.dirname(root), "%s-%s" % (a.project, s))
     if not os.path.isdir(wdir):
         die("no workspace %s at %s" % (a.branch, tilde(wdir)))
+    dirty = git(wdir, "status", "--porcelain", check=False).stdout.splitlines()
+    if dirty and not a.force:
+        die("%s has %d uncommitted change(s); commit and push them, or add --force to throw them away" % (tilde(wdir), len(dirty)))
     c = read_config(root, "local")
     env = {}
     envf = os.path.join(sdir, s + ".env")
@@ -790,9 +799,9 @@ def cmd_archive(a):
         if has_session(name):
             tmux("kill-session", "-t", "=" + name)
             say("%s: stopped session %s" % (s, name))
-    r = git(root, "worktree", "remove", wdir, check=False)
+    r = git(root, "worktree", "remove", *(["--force"] if a.force else []), wdir, check=False)
     if r.returncode != 0:
-        die("%s; commit or stash its changes, or remove it with git worktree remove --force" % (r.stderr.strip() or "git worktree remove failed"))
+        die(r.stderr.strip() or "git worktree remove failed")
     for ext in (".json", ".env", "-setup.log", "-run.sh"):
         try:
             os.unlink(os.path.join(sdir, s + ext))
@@ -819,6 +828,7 @@ def main():
     ar.add_argument("root")
     ar.add_argument("--project", required=True)
     ar.add_argument("branch")
+    ar.add_argument("--force", action="store_true")
     a = p.parse_args()
     if not os.path.isdir(os.path.join(HOME, a.root, ".git")):
         die("no git repo at ~/%s on the box" % a.root)

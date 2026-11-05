@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+# check() evals its single-quoted condition later, so variables set here are used there.
+# shellcheck disable=SC2016,SC2034
+# Offline tests for move.sh. `prized` is a stand-in whose box is a folder (fake-prized), tmux on the
+# box is a stand-in whose sessions are files (box-bin/tmux), and origin is a local bare repo. No
+# network, no keys.
+set -euo pipefail
+HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+MOVE=$HERE/../move.sh
+T=$(mktemp -d)
+trap 'rm -rf "$T"' EXIT
+mkdir -p "$T/bin" "$T/box"
+ln -s "$HERE/fake-prized" "$T/bin/prized"
+export PATH="$T/bin:$PATH" FAKE_BOX=$T/box
+export GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@example.com GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@example.com
+B=$T/box
+FAILS=0
+check() { if eval "$2"; then echo "ok   $1"; else echo "FAIL $1"; FAILS=$((FAILS + 1)); fi; }
+# run DIR ARGS...: move.sh as `curl | bash` runs it (the script on stdin), from DIR.
+run() {
+  local dir=$1
+  shift
+  CODE=0
+  (cd "$dir" && bash -s -- "$@" <"$MOVE") >"$T/out" 2>&1 || CODE=$?
+}
+session() { cat "$B/.faketmux/$1" 2>/dev/null; }
+
+# origin: a bare repo with conductor.json and a pushed branch `existing`; the Mac checkout of it has
+# one gitignored .env file, one .env file git doesn't ignore, and one ignored file that isn't .env*.
+mkrepo() { # mkrepo NAME: $T/src/NAME pushed to $T/origin/NAME.git, cloned to $T/mac/NAME
+  local n=$1
+  git init -q -b main "$T/src/$n"
+  printf '.env.local\nconfig/local.json\n' >"$T/src/$n/.gitignore"
+  cat >"$T/src/$n/conductor.json" <<'JSON'
+{
+  "scripts": {
+    "setup": "echo \"$CONDUCTOR_WORKSPACE_NAME $CONDUCTOR_PORT $CONDUCTOR_ROOT_PATH $CONDUCTOR_IS_LOCAL $CONDUCTOR_DEFAULT_BRANCH $CONDUCTOR_WORKSPACE_PATH\" > setup-ran; echo x >> \"$HOME/setup-count-$CONDUCTOR_WORKSPACE_NAME\"; [ ! -f \"$HOME/fail-setup\" ] || exit 3",
+    "run": "echo serving on $CONDUCTOR_PORT",
+    "archive": "touch \"$CONDUCTOR_ROOT_PATH/archived-$CONDUCTOR_WORKSPACE_NAME\""
+  }
+}
+JSON
+  git -C "$T/src/$n" add -A
+  git -C "$T/src/$n" commit -q -m init
+  git -C "$T/src/$n" checkout -q -b existing
+  echo on-existing >"$T/src/$n/existing.txt"
+  git -C "$T/src/$n" add -A
+  git -C "$T/src/$n" commit -q -m existing
+  git -C "$T/src/$n" checkout -q main
+  git clone -q --bare "$T/src/$n" "$T/origin/$n.git"
+  git clone -q "$T/origin/$n.git" "$T/mac/$n"
+  echo 'SECRET=fake' >"$T/mac/$n/.env.local"
+  echo 'not ignored' >"$T/mac/$n/.envrc"
+  mkdir -p "$T/mac/$n/config"
+  echo '{}' >"$T/mac/$n/config/local.json"
+}
+mkrepo app
+A=$B/code/app
+
+echo "# a move from the checkout, under curl | bash: worktrees, files, setup, agents"
+run "$T/mac/app" -w feature/login -w existing --files
+check "exits 0" '[ "$CODE" = 0 ] || { cat "$T/out"; false; }'
+check "prized setup clones the checkout and signs claude in" 'grep -qx "prized setup $T/mac/app --clone --no-start --no-attach --agent claude" "$B/../calls.log"'
+check "a worktree per branch beside the clone" '[ "$(git -C "$A" worktree list | wc -l)" = 3 ] && [ -d "$B/code/app-feature-login" ] && [ -d "$B/code/app-existing" ]'
+check "a new branch starts from origin's default branch, with no upstream yet" '[ "$(git -C "$B/code/app-feature-login" rev-parse HEAD)" = "$(git -C "$A" rev-parse origin/main)" ] && ! git -C "$B/code/app-feature-login" rev-parse --abbrev-ref "@{u}" >/dev/null 2>&1'
+check "a branch origin has is checked out, tracking it" '[ -f "$B/code/app-existing/existing.txt" ] && [ "$(git -C "$B/code/app-existing" rev-parse --abbrev-ref "@{u}")" = origin/existing ]'
+check "setup ran in each with Conductor's variables" 'grep -qx "feature-login 4100 $A 1 main $B/code/app-feature-login" "$B/code/app-feature-login/setup-ran" && grep -qx "existing 4110 $A 1 main $B/code/app-existing" "$B/code/app-existing/setup-ran"'
+check "the gitignored .env file is copied to the clone and each worktree" '[ "$(cat "$A/.env.local")" = SECRET=fake ] && [ -f "$B/code/app-feature-login/.env.local" ] && [ -f "$B/code/app-existing/.env.local" ]'
+check "a .env file git doesn't ignore, and an ignored non-.env file, are not" '[ ! -e "$A/.envrc" ] && [ ! -e "$A/config/local.json" ]'
+check "a tmux session per workspace, in its worktree, with its variables" 'session claude-feature-login | grep -qx "dir=$B/code/app-feature-login" && session claude-feature-login | grep -qx "env CONDUCTOR_PORT=4100" && session claude-existing | grep -qx "env CONDUCTOR_PORT=4110"'
+check "claude started in each, in auto mode" 'session claude-feature-login | grep -qx "agent=claude dir=code/app-feature-login args=--permission-mode auto" && session claude-existing | grep -q "^agent=claude dir=code/app-existing"'
+check "says how to open one" 'grep -q "prized ssh -s claude-feature-login" "$T/out"'
+check "the box helper ran from its copy on the box" '[ -f "$B/.local/share/prized-conductor/move.py" ]'
+
+echo "# re-running changes nothing"
+run "$T/mac/app" -w feature/login -w existing --files
+check "exits 0" '[ "$CODE" = 0 ]'
+check "setup didn't run again" '[ "$(wc -l <"$B/setup-count-feature-login")" = 1 ] && grep -q "setup ran here before" "$T/out"'
+check "same ports" 'session claude-existing | grep -qx "env CONDUCTOR_PORT=4110"'
+
+echo "# a failed setup is reported, and retried on the next run"
+touch "$B/fail-setup"
+run "$T/mac/app" -w broken --no-files
+check "exits 0, says setup failed" '[ "$CODE" = 0 ] && grep -q "broken: setup failed (exit 3)" "$T/out" && grep -q "setup failed(exit 3)" "$T/out"'
+rm "$B/fail-setup"
+run "$T/mac/app" -w broken --no-files
+check "the next run runs it again" '[ "$(wc -l <"$B/setup-count-broken")" = 2 ] && grep -q "setup ok" "$T/out"'
+
+echo "# .conductor/settings.toml wins over conductor.json; settings.local.toml and .worktreeinclude count"
+mkrepo app2
+mkdir -p "$T/src/app2/.conductor"
+cat >"$T/src/app2/.conductor/settings.toml" <<'TOML'
+"$schema" = "https://conductor.build/schemas/settings.repo.schema.json"
+[scripts]
+setup = """
+echo "toml $FOO $ONLY_LOCAL $CONDUCTOR_PORT" > toml-ran
+"""
+run_mode = "nonconcurrent"
+
+[scripts.run.web]
+command = "echo web"
+
+[scripts.run.api]
+command = "echo api on $((CONDUCTOR_PORT + 1))"
+default = true
+
+[environment_variables]
+FOO = "shared"
+PATH = "/nope"
+
+[environment_variables.local]
+ONLY_LOCAL = "yes"
+TOML
+printf 'config/local.json\n' >"$T/src/app2/.worktreeinclude"
+git -C "$T/src/app2" add -A
+git -C "$T/src/app2" commit -q -m settings
+git -C "$T/src/app2" push -q "$T/origin/app2.git" main
+git -C "$T/mac/app2" pull -q
+printf '[environment_variables]\nFOO = "mine"\n' >"$T/mac/app2/.conductor/settings.local.toml"
+run "$T/mac/app2" -w a -w b --run --files --agent codex
+check "exits 0" '[ "$CODE" = 0 ] || { cat "$T/out"; false; }'
+check "the settings.toml setup ran, not conductor.json's, with settings.local.toml on top" '[ "$(cat "$B/code/app2-a/toml-ran")" = "toml mine yes 4130" ] && [ ! -e "$B/code/app2-a/setup-ran" ]'
+check "a reserved name stays out" '! session codex-a | grep -q "^env PATH=" && grep -q "not set (reserved" "$T/out"'
+check "ports don't overlap another repo's" '[ "$(cat "$B/code/app2-b/toml-ran")" = "toml mine yes 4140" ]'
+check ".worktreeinclude replaces the .env* default" '[ -f "$B/code/app2-a/config/local.json" ] && [ ! -e "$B/code/app2-a/.env.local" ]'
+check "settings.local.toml came from the checkout" '[ -f "$B/code/app2/.conductor/settings.local.toml" ]'
+check "nonconcurrent: one run script, the default action" '[ -f "$B/.faketmux/run-a" ] && [ ! -e "$B/.faketmux/run-b" ] && grep -qx "echo api on \$((CONDUCTOR_PORT + 1))" "$B/.local/share/prized-conductor/app2/a-run.sh"'
+check "codex starts in its sandbox, never asking" 'session codex-a | grep -qx "agent=codex dir=code/app2-a args=--sandbox workspace-write --ask-for-approval never"'
+
+echo "# --setup: the Conductor Cloud setup script, as a cloud workspace runs it"
+printf 'echo "cloud $CONDUCTOR_IS_LOCAL $CONDUCTOR_ROOT_PATH" > cloud-ran\n' >"$T/cloud-setup.sh"
+run "$T/mac/app" -w c --setup "$T/cloud-setup.sh" --agent none --no-files
+check "exits 0" '[ "$CODE" = 0 ]'
+check "it runs instead of the repo's, with CONDUCTOR_IS_LOCAL=0 and the workspace as root" '[ "$(cat "$B/code/app-c/cloud-ran")" = "cloud 0 $B/code/app-c" ] && [ ! -e "$B/code/app-c/setup-ran" ]'
+check "--agent none starts no session" '[ ! -e "$B/.faketmux/none-c" ] && [ ! -e "$B/.faketmux/claude-c" ]'
+
+echo "# --archive: the archive script, the sessions stopped, the worktree gone, the branch kept"
+run "$T/mac/app" --archive existing
+check "uncommitted changes stop it before anything runs" '[ "$CODE" = 1 ] && grep -q "uncommitted change" "$T/out" && [ -f "$B/.faketmux/claude-existing" ] && [ ! -e "$A/archived-existing" ]'
+run "$T/mac/app" --archive existing --force
+check "--force goes ahead" '[ "$CODE" = 0 ] || { cat "$T/out"; false; }'
+check "archive script ran with the workspace's variables" '[ -f "$A/archived-existing" ]'
+check "its session stopped, its worktree removed, its branch kept" '[ ! -e "$B/.faketmux/claude-existing" ] && [ ! -d "$B/code/app-existing" ] && git -C "$A" show-ref --verify --quiet refs/heads/existing'
+
+echo "# bad input stops before anything runs"
+: >"$B/../calls.log"
+for bad in -x a..b "a b" "a;b" "/x"; do
+  run "$T/mac/app" -w "$bad"
+  check "refuses branch \"$bad\"" '[ "$CODE" = 1 ] && grep -q "is not a branch name" "$T/out"'
+done
+run "$T/mac/app" --agent cursor
+check "refuses an agent it can't start" '[ "$CODE" = 1 ]'
+mkdir -p "$T/notgit"
+run "$T/notgit" -w x
+check "a folder that isn't a checkout" '[ "$CODE" = 1 ] && grep -q "is not a git checkout" "$T/out"'
+check "none of them called prized" '[ ! -s "$B/../calls.log" ]'
+
+echo "# --print-helper prints the box helper, which compiles"
+bash "$MOVE" --print-helper >"$T/helper.py"
+check "compiles" 'python3 -I -m py_compile "$T/helper.py"'
+
+if [ "$FAILS" != 0 ]; then echo "$FAILS failed"; exit 1; fi
+echo "all passed"
