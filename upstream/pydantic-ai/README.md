@@ -20,9 +20,9 @@ PYDANTIC_AI_HARNESS_PRIZED_LIVE=1 PRIZED_API_KEY=dcp_... uv run pytest -m prized
 
 Made against pydantic-ai `8b455f22` (2026-11-05). Results on that commit with prized 0.1.2:
 
-- Offline: 62 tests pass, the whole conformance suite over the fake among them, plus the repo's registry tests (`test_docs_parity`, `test_capability_combine`, `test_history_append_only`: 750 in all). `ruff format`, `ruff check` and `pyright` are clean on the new files.
-- Live, against Prized's production API: the live tier passes. That is the conformance suite over a real sandbox, plus process-group stops, pause with a running process, live fork with a running process, deletion mid-command, and `Coder`'s tools.
-- The live run was made from a sandbox that held no Prized key; its API calls went through a relay that added the key outside it. That relay adds about 0.3 s per call, so the conformance suite's 8 MiB file round trip (about 470 calls through the shell filesystem) took 6 minutes there. Direct, it is a fraction of that.
+- Offline: 63 tests pass, the whole conformance suite over the fake among them (37 rules pass; the `SupportsRealpath` rule skips, as this backend leaves realpath to the shell), plus the repo's registry tests (`test_docs_parity`, `test_capability_combine`, `test_history_append_only`: 751 in all). `ruff format`, `ruff check` and `pyright` are clean on the new files.
+- Live, against Prized's production API: 44 pass, with the same rule skipped. That is the conformance suite over a real sandbox, plus process-group stops, pause with a running process, live fork with a running process, deletion mid-command, and `Coder`'s tools. The final run took 553 s.
+- The live run was made from a sandbox that held no Prized key; its API calls went through a relay that added the key outside it. That relay adds about 0.3 s per call, so the conformance suite's 8 MiB file round trip took 282 s there: its write is about 170 shell calls, while the read is one file API call. Direct, the write is a fraction of that.
 - A real agent (`agent_demo.py`, Claude Sonnet 5.5):
   - It wrote and ran a prime sieve (9592) and started an HTTP server.
   - The sandbox paused in 0.46 s. The next run, from the message history, resumed it with the server still answering (200).
