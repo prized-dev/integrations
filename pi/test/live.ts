@@ -5,8 +5,9 @@
  *
  *   PRIZED_API_KEY=dcp_... npm run test:live      (LIVE_DEBUG=1 also prints every event Pi emits)
  *
- * It creates up to two 1 vCPU sandboxes in your workspace, labelled created-by=pi-prized, and deletes
- * them at the end (failures included). Needs git and Node on this machine; python3 runs in the sandbox.
+ * It creates three 1 vCPU sandboxes in your workspace (two at a time at most), labelled
+ * created-by=pi-prized, and deletes them at the end (failures included). Needs git and Node on this
+ * machine; python3 runs in the sandbox.
  */
 import { type ChildProcess, execFileSync, spawn } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';

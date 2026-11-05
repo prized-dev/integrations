@@ -1,7 +1,5 @@
 # @prized/pi
 
-> **Coming 2026-11-05.** `@prized/pi` is not on npm yet. The Prized TypeScript SDK it uses (`@prized/sdk`) is.
-
 A [Pi](https://pi.dev) extension that runs the coding agent's `bash`, `read`, `write` and `edit` tools in a [Prized sandbox](https://prized.dev/docs/sandboxes?via=pi), a Firecracker microVM, while Pi, the model calls and your files stay on your machine. The sandbox **pauses between turns with its memory**: a dev server or watcher the agent started is still running at the next command, and again after `pi -c` when the sandbox was kept. `/fork` copies the sandbox, processes and all.
 
 ## Install
@@ -61,7 +59,7 @@ To give Pi its task on the command line, put `--prized` after it (`pi -p "fix th
 - **No URL for a server yet.** Ports of a sandbox are not reachable from outside, so the agent cannot hand you a preview link.
 - **If Pi is killed** (Ctrl-C in print mode, `kill -9`), the sandbox pauses itself after `--prized-idle` minutes, and Prized deletes it when its run time ends.
 - **Forking.** The parent sandbox is left paused when a session is forked, so you can go back to it; `prized sandbox ls --label created-by=pi-prized` lists what this extension made.
-- **Tested** on Linux: the offline tests on Pi 1.0.0 and 1.4.0, and the live test, which runs the real Pi 1.4.0 against the real API. The `git` and `tar` calls are written for both GNU and BSD `tar`, so macOS should work, but it has not been run. Native Windows has not been tried; Pi on WSL works like Linux.
+- **Tested** on Linux: the offline tests on Pi 1.0.0 and 1.5.0, and the live test, which runs the real Pi 1.5.0 against the real API. The `git` and `tar` calls are written for both GNU and BSD `tar`, so macOS should work, but it has not been run. Native Windows and WSL have not been tried.
 
 ## Cost
 
@@ -74,7 +72,7 @@ npm test               # offline: a fake of the Prized sandbox, Pi's real tools 
 PRIZED_API_KEY=dcp_... npm run test:live   # the real Pi against the real API
 ```
 
-Offline, the tests run the git, tar and shell commands the extension sends for real in temp directories (they need `git`, `tar` and `bash`). The live test creates up to two 1 vCPU sandboxes in your workspace, labelled `created-by=pi-prized`, drives Pi in RPC mode through a fix, a pause, a pull, a fork and a resume with a scripted model (no model key), and deletes them at the end.
+Offline, the tests run the git, tar and shell commands the extension sends for real in temp directories (they need `git`, `tar` and `bash`). The live test creates three 1 vCPU sandboxes in your workspace (two at a time at most), labelled `created-by=pi-prized`, drives Pi in RPC mode through a fix, a pause, a pull, a fork and a resume, then runs it once in print mode, all with a scripted model (no model key), and deletes them at the end.
 
 ## License
 
