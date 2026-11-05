@@ -23,6 +23,7 @@ Each folder is its own package with its own README, tests and release. You need 
 | [`pydantic-ai`](pydantic-ai) | Pydantic AI: workspace | `pydantic-ai-prized` | On PyPI: `pip install pydantic-ai-prized` | [README](pydantic-ai/README.md) |
 | [`langchain-js`](langchain-js) | LangChain Deep Agents (JS): sandbox | `@prized/langchain` | Not on npm yet | [README](langchain-js/README.md) |
 | [`mastra`](mastra) | Mastra: workspace sandbox and filesystem | `@prized/mastra` | Not on npm yet | [README](mastra/README.md) |
+| [`pi`](pi) | Pi coding agent: extension (Pi's tools run in a sandbox that pauses between turns) | `@prized/pi` | Not on npm yet | [README](pi/README.md) |
 
 A Python package that isn't on PyPI yet installs from this repo: its README gives the line. The Prized SDKs they use are published (`prized` on PyPI, `@prized/sdk` on npm).
 
