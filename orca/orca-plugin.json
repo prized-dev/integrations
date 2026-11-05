@@ -6,7 +6,7 @@
   "publisher": "prized-dev",
   "name": "Prized Sandbox",
   "version": "0.1.0",
-  "description": "Run each Orca workspace in its own Prized sandbox, reached over SSH. Sleeping the workspace pauses the sandbox with its memory and files, so a dev server or tmux session in it carries on when you wake it.",
+  "description": "Run each Orca workspace in its own Prized sandbox, reached over SSH. Sleeping the workspace pauses the sandbox with its memory and files, so a tmux session in it carries on when you wake it.",
   "license": "Apache-2.0",
   "homepage": "https://prized.dev/docs/orca?via=orca",
   "repository": "https://github.com/prized-dev/orca-prized-plugin",

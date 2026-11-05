@@ -1,8 +1,8 @@
 # Prized Sandbox for Orca
 
-Run each [Orca](https://www.onorca.dev) workspace in its own [Prized sandbox](https://prized.dev/docs/sandboxes?via=orca). Orca reaches the sandbox over SSH and runs your agents there. Sleep the workspace and the sandbox pauses with its memory and files, so a dev server or tmux session in it carries on when you wake it.
+Run each [Orca](https://www.onorca.dev) workspace in its own [Prized sandbox](https://prized.dev/docs/sandboxes?via=orca). Orca reaches the sandbox over SSH and runs your agents there. Sleep the workspace and Orca closes its terminals, then the sandbox pauses with its memory and files, so a tmux session in it carries on when you wake it.
 
-Status: experimental. Run in Orca 1.4.250 on Linux (create, an agent in the workspace over SSH, sleep, wake, cancel and delete) against a stand-in for Prized, and through create, sleep, wake and delete against a real sandbox by a harness that makes Orca's recipe calls. Not yet run in Orca against a real sandbox, so Orca's SSH connection to a real one is untested.
+Status: experimental. Run in Orca 1.4.250 on Linux (create, an agent in the workspace over SSH, sleep, wake, cancel and remove) against a stand-in for Prized, and through create, sleep, wake and delete against a real sandbox by a harness that makes Orca's recipe calls. Not yet run in Orca against a real sandbox, so Orca's SSH connection to a real one is untested.
 
 ## Set up
 
@@ -27,9 +27,9 @@ You need Orca 1.4.245 or later on macOS or Linux, Node.js 22 or later, Git, Open
    npx -y github:prized-dev/orca-prized-plugin#v0.1.0 setup
    ```
 
-4. In Orca, turn on **Settings > Experimental > Cloud VM**. Then install the plugin: press **Open in Orca** on [its page](https://www.onorca.dev/plugins/prized-dev/orca-prized-plugin) (Orca asks once to add the community catalog), or use **Settings > Plugins > Add plugin > From a Git URL…** with `https://github.com/prized-dev/orca-prized-plugin.git#v0.1.0`.
+4. In Orca, turn on **Settings > Experimental > Cloud VM**. Then install the plugin: press **Open in Orca** on [its page](https://www.onorca.dev/plugins/prized-dev/orca-prized-plugin), or use **Settings > Plugins > Add plugin > From a Git URL…** with `https://github.com/prized-dev/orca-prized-plugin.git#v0.1.0`.
 
-5. Create a workspace and pick **Prized Sandbox** under **Run on > Per-Workspace Environment**. Orca lists that entry while **Run on** is this computer; with a sandbox selected, **Run on** offers a worktree inside that sandbox instead.
+5. Create a workspace and pick **Prized Sandbox** under **Run on > Per-Workspace Environment**. Orca lists that entry only while **Run on** is this computer, so switch **Run on** back to it if it shows a sandbox.
 
 `~/.prized-orca/bin/prized-orca doctor` checks all of this without creating anything. It also names any sandbox the plugin made on this machine that no workspace uses (a create killed outright), so you can delete it.
 
@@ -38,7 +38,7 @@ You need Orca 1.4.245 or later on macOS or Linux, Node.js 22 or later, Git, Open
 | Orca | The plugin |
 | --- | --- |
 | Create | Creates a sandbox (`prized-agent-v1`: Ubuntu 24.04 with Git, Node.js, Claude Code and Codex), uploads the exact commit Orca picked as a Git bundle (no Git credential goes in), checks it out on the workspace branch in `/home/prized/work/<repo>` with your Git name and email, opens a shell once with your login, and checks the SSH connection Orca will use. If a step fails, or you cancel in Orca, it deletes the sandbox. |
-| Sleep (right-click the workspace) | Orca first closes the workspace's terminals and agents. Then the plugin pauses the sandbox: its memory, files and the processes still running (a dev server started with `nohup`, a tmux session) are kept, and only storage is billed. Orca's reconnects are refused while it sleeps, so nothing wakes it by accident. |
+| Sleep (right-click the workspace) | Orca first closes the workspace's terminals and agents. Then the plugin pauses the sandbox: its memory, files and the processes still running (a tmux session, or a process started with `setsid`) are kept, and only storage is billed. Orca's reconnects are refused while it sleeps, so nothing wakes it by accident. |
 | Wake (open the workspace) | Resumes the sandbox; the processes kept at sleep carry on, and Orca opens its terminals and agents again. |
 | Remove Project from Orca (right-click the workspace) | Deletes the sandbox. A Prized Sandbox workspace is its project's primary checkout, so Orca offers this instead of Delete Worktree. |
 
