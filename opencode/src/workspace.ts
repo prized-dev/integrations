@@ -345,6 +345,32 @@ export function patchFiles(patch: Buffer): ChangedFile[] {
   return files;
 }
 
+/**
+ * Check, with git itself on your machine, that the files `git apply` would touch are exactly the files the
+ * review read from the headers. The patch comes from a sandbox the agent controls (even its `git` could be
+ * swapped), so a section without a `diff --git` header, or any other trick, must not slip past the review.
+ */
+export async function verifyPatch(patch: Buffer, files: ChangedFile[], cwd: string): Promise<void> {
+  const out = await run('git', ['apply', '--numstat', '-z', '-'], { cwd, input: patch });
+  const seen = new Set<string>();
+  const parts = splitNul(out);
+  for (let i = 0; i < parts.length; i += 1) {
+    const rec = parts[i] as Buffer;
+    const fields = rec.toString('latin1').split('\t');
+    // "added\tdeleted\tpath", or for a rename "added\tdeleted\t" then old and new as the next two records.
+    if (fields.length < 3 || fields[2] === '') {
+      throw new Error('the patch from the sandbox renames or copies a file, which this plugin never asks git for, so nothing was applied');
+    }
+    seen.add(Buffer.from(fields.slice(2).join('\t'), 'latin1').toString('utf8'));
+  }
+  const listed = new Set(files.map((f) => f.path));
+  const extra = [...seen].filter((p) => !listed.has(p));
+  const missing = [...listed].filter((p) => !seen.has(p));
+  if (extra.length || missing.length) {
+    throw new Error(`the patch from the sandbox does not match its own file list (${[...extra, ...missing].slice(0, 3).join(', ')}), so nothing was applied`);
+  }
+}
+
 /** `git apply --stat` of the patch, on your machine: the summary a review shows is the patch's own. */
 export async function localStat(patch: Buffer, cwd: string): Promise<string> {
   return (await run('git', ['apply', '--stat', '-'], { cwd, input: patch })).toString().trimEnd();

