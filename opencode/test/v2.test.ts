@@ -2,7 +2,9 @@
  * The OpenCode 2 plugin against a stand-in for OpenCode 2's plugin Context: the built-in tools it
  * updates, the session hooks, commands and permissions, with the fake sandbox running real git and bash.
  */
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 
 import { beforeEach, describe, expect, it } from 'vitest';
 
@@ -21,7 +23,7 @@ let repo: string;
 function fakeOpenCode(sessions: Record<string, { parentID?: string; fork?: { sessionID: string } }> = {}) {
   const builtinCalls: string[] = [];
   const tools: Record<string, Tool> = {};
-  for (const name of ['shell', 'read', 'write', 'edit', 'patch', 'glob', 'grep', 'webfetch']) {
+  for (const name of ['shell', 'read', 'write', 'edit', 'patch', 'glob', 'grep', 'webfetch', 'experimental_image_generate', 'opencode_worktree_create']) {
     tools[name] = { description: `built-in ${name}`, output: { schema: true }, execute: async () => builtinCalls.push(name) };
   }
   const hooks: Record<string, Array<(e: never) => unknown>> = {};
@@ -33,7 +35,7 @@ function fakeOpenCode(sessions: Record<string, { parentID?: string; fork?: { ses
     location: { directory: repo },
     tool: {
       transform: async (fn) => {
-        fn({ update: (id, f) => (tools[id] ? f(tools[id] as never) : undefined) });
+        fn({ update: (id, f) => (tools[id] ? f(tools[id] as never) : undefined), remove: (id) => void delete tools[id] });
       },
     },
     session: {
@@ -72,12 +74,14 @@ beforeEach(() => {
 describe('the OpenCode 2 plugin', () => {
   it("swaps the executors of OpenCode's file and shell tools and leaves the rest alone", async () => {
     const oc = fakeOpenCode();
-    const dispose = await createV2Setup({ sdk: fakeSdk(), env: { PRIZED_API_KEY: 'dcp_000test' } })(oc.ctx);
+    const dispose = await createV2Setup({ sdk: fakeSdk(), env: { PRIZED_API_KEY: 'dcp_000test' }, limits: { stateDir: mkdtempSync(path.join(tmpdir(), 'oc-state-')) } })(oc.ctx);
     for (const n of ['shell', 'read', 'write', 'edit', 'patch', 'glob', 'grep']) {
       expect(oc.tools[n]?.description).not.toMatch(/^built-in/);
       expect(oc.tools[n]?.output).toBeUndefined();
     }
     expect(oc.tools.webfetch?.description).toBe('built-in webfetch');
+    expect(oc.tools.experimental_image_generate).toBeUndefined();
+    expect(oc.tools.opencode_worktree_create).toBeUndefined();
     const r = await oc.run('shell', { command: 'pwd' });
     expect(String(r.content)).toContain(`/home/prized/work/${name()}`);
     expect(oc.asserts[0]).toMatchObject({ action: 'shell', resources: ['pwd'], sessionID: 'ses_1', source: { type: 'tool', messageID: 'msg_1', id: 'call_1' } });
@@ -94,7 +98,7 @@ describe('the OpenCode 2 plugin', () => {
 
   it('pauses on the idle hook, tells the model where it works, and replaces the local shell description', async () => {
     const oc = fakeOpenCode();
-    await createV2Setup({ sdk: fakeSdk(), env: { PRIZED_API_KEY: 'dcp_000test' } })(oc.ctx);
+    await createV2Setup({ sdk: fakeSdk(), env: { PRIZED_API_KEY: 'dcp_000test' }, limits: { stateDir: mkdtempSync(path.join(tmpdir(), 'oc-state-')) } })(oc.ctx);
     await oc.run('shell', { command: 'true' });
     await new Promise((r) => setTimeout(r, 1300));
     expect(world.events.some((e) => e.startsWith('pause'))).toBe(false); // the session is still working
@@ -109,7 +113,7 @@ describe('the OpenCode 2 plugin', () => {
 
   it('forks the parent sandbox for a forked session', async () => {
     const oc = fakeOpenCode({ ses_2: { fork: { sessionID: 'ses_1' } } });
-    await createV2Setup({ sdk: fakeSdk(), env: { PRIZED_API_KEY: 'dcp_000test' } })(oc.ctx);
+    await createV2Setup({ sdk: fakeSdk(), env: { PRIZED_API_KEY: 'dcp_000test' }, limits: { stateDir: mkdtempSync(path.join(tmpdir(), 'oc-state-')) } })(oc.ctx);
     await oc.run('write', { path: `${repo}/base.txt`, content: 'b\n' });
     const r = await oc.run('shell', { command: 'cat base.txt; echo f > fork.txt' }, 'ses_2');
     expect(String(r.content)).toContain('b');
@@ -121,7 +125,7 @@ describe('the OpenCode 2 plugin', () => {
 
   it('/prized-pull posts its result into the session and applies with --all', async () => {
     const oc = fakeOpenCode();
-    await createV2Setup({ sdk: fakeSdk(), env: { PRIZED_API_KEY: 'dcp_000test' } })(oc.ctx);
+    await createV2Setup({ sdk: fakeSdk(), env: { PRIZED_API_KEY: 'dcp_000test' }, limits: { stateDir: mkdtempSync(path.join(tmpdir(), 'oc-state-')) } })(oc.ctx);
     await oc.run('shell', { command: 'echo x >> bin/run' });
     await oc.commands['prized-pull']?.({ sessionID: 'ses_1', prompt: { text: '' } });
     expect(oc.synthetic.at(-1)?.text).toContain('a change to an executable file: bin/run');
@@ -136,5 +140,21 @@ describe('the OpenCode 2 plugin', () => {
     await expect(oc.run('shell', { command: `touch ${repo}/pwned` })).rejects.toThrow(/No Prized API key/);
     expect(existsSync(`${repo}/pwned`)).toBe(false);
     expect(oc.builtinCalls).toEqual([]);
+  });
+
+  it('fails closed on a bad option', async () => {
+    const oc = fakeOpenCode();
+    oc.ctx.options = { vcpu: 99 };
+    await createV2Setup({ sdk: fakeSdk(), env: { PRIZED_API_KEY: 'dcp_000test' }, limits: { stateDir: mkdtempSync(path.join(tmpdir(), 'oc-state-')) } })(oc.ctx);
+    await expect(oc.run('shell', { command: `touch ${repo}/pwned` })).rejects.toThrow(/vcpu/);
+    expect(existsSync(`${repo}/pwned`)).toBe(false);
+    expect(oc.builtinCalls).toEqual([]);
+  });
+
+  it('honours background for the shell tool', async () => {
+    const oc = fakeOpenCode();
+    await createV2Setup({ sdk: fakeSdk(), env: { PRIZED_API_KEY: 'dcp_000test' }, limits: { stateDir: mkdtempSync(path.join(tmpdir(), 'oc-state-')) } })(oc.ctx);
+    const r = await oc.run('shell', { command: 'sleep 30', background: true });
+    expect(String(r.content)).toContain('Started in the background');
   });
 });

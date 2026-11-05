@@ -134,6 +134,7 @@ export function applyChunks(path: string, content: string, chunks: Chunk[]): str
     lines.splice(idx, old.length, ...neu);
     at = idx + neu.length;
   }
-  const out = `${lines.join('\n')}${trailing || lines.length ? '\n' : ''}`;
+  // Keep the file's own ending: a final newline only if it had one (an empty file counts as having one).
+  const out = `${lines.join('\n')}${trailing && lines.length ? '\n' : ''}`;
   return crlf ? out.replaceAll('\n', '\r\n') : out;
 }

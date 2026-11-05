@@ -45,7 +45,7 @@ interface V2Tool {
 export interface V2Context {
   options?: { [k: string]: unknown };
   location: { directory: string };
-  tool: { transform(fn: (editor: { update(id: string, fn: (tool: V2Tool) => void): void }) => void): Promise<unknown> };
+  tool: { transform(fn: (editor: { update(id: string, fn: (tool: V2Tool) => void): void; remove(id: string): void }) => void): Promise<unknown> };
   session: {
     hook(name: string, fn: (event: never) => void | Promise<void>): Promise<unknown>;
     get(input: { sessionID: string }): Promise<{ parentID?: string; fork?: { sessionID: string } } | undefined>;
@@ -57,6 +57,8 @@ export interface V2Context {
 }
 
 const ACTION: { [permission: string]: string } = { bash: 'shell' };
+/** OpenCode 2 built-ins that read or write your machine (packages/core/src/tool/plugin/image-generate.ts, opencode.ts). */
+const HOST_ONLY = ['experimental_image_generate', 'opencode_worktree_create', 'opencode_worktree_remove', 'opencode_session_move', 'worktree_create', 'worktree_remove', 'session_move', 'lsp'];
 
 function argsText(prompt: unknown): string {
   // The prompt after the command name: a string, or parts with text.
@@ -71,11 +73,19 @@ function result(r: Result): { content: string | Array<{ type: string; text?: str
   return { content: [{ type: 'text', text: r.output }, ...r.attachments.map((a) => ({ type: 'file', uri: a.url, mime: a.mime }))], metadata: r.metadata };
 }
 
-export function createV2Setup(deps: { sdk?: Sdk; env?: NodeJS.ProcessEnv; limits?: { maxUploadBytes?: number } } = {}) {
+export function createV2Setup(deps: { sdk?: Sdk; env?: NodeJS.ProcessEnv; limits?: { maxUploadBytes?: number; stateDir?: string } } = {}) {
   return async function setup(ctx: V2Context): Promise<() => Promise<void>> {
-    const config = readConfig(ctx.options as Options);
+    // Never throw from here: a plugin that fails to set up leaves OpenCode's own tools running on your machine.
+    // A bad option instead makes every tool call fail with the reason.
+    let setupError: string | undefined;
+    let config = readConfig(undefined);
+    try {
+      config = readConfig(ctx.options as Options);
+    } catch (err) {
+      setupError = `${(err as Error).message}.`;
+    }
     const env = readEnv(deps.env ?? process.env);
-    const hostCwd = await realpath(ctx.location.directory);
+    const hostCwd = await realpath(ctx.location.directory).catch(() => ctx.location.directory);
     const layout = layoutFor(hostCwd, await gitRoot(hostCwd));
     const host: Host = {
       async rootOf(sessionID) {
@@ -102,13 +112,17 @@ export function createV2Setup(deps: { sdk?: Sdk; env?: NodeJS.ProcessEnv; limits
         else console.info(line);
       },
     };
-    const sandboxes = new Sandboxes(deps.sdk ?? { Sandbox }, config, env, layout, host, deps.limits);
+    const sandboxes = new Sandboxes(deps.sdk ?? { Sandbox }, config, env, layout, host, deps.limits, setupError);
+    if (setupError) host.notify(`${setupError} The tools refuse to run until it is fixed.`, 'error');
     const tools = new Tools(sandboxes);
 
     const call = (c: V2ToolContext): Call => ({
       sessionID: c.sessionID,
       abort: c.signal,
-      progress: (u) => void c.progress({ ...(u.metadata ?? {}), ...(u.title ? { title: u.title } : {}) }).catch(() => undefined),
+      // No live progress: OpenCode 2 kills a call whose progress lands before its runner has marked it
+      // called or after it settled (packages/core/src/session/runner/publish-llm-event.ts L548-551), and its
+      // TUI streams shell output only from its own local shell service anyway. The result carries it all.
+      progress: () => undefined,
       ask: (req) =>
         ctx.permission.assert({
           sessionID: c.sessionID,
@@ -132,7 +146,9 @@ export function createV2Setup(deps: { sdk?: Sdk; env?: NodeJS.ProcessEnv; limits
     };
 
     await ctx.tool.transform((editor) => {
-      editor.update('shell', (t) => swap(t, DESCRIPTIONS.bash, (i: { command: string; workdir?: string; timeout?: number }, c) => tools.bash(i, call(c))));
+      // Built-ins that act on your machine whatever we do: off while the sandbox is on.
+      for (const id of HOST_ONLY) editor.remove(id);
+      editor.update('shell', (t) => swap(t, DESCRIPTIONS.bash, (i: { command: string; workdir?: string; timeout?: number; background?: boolean }, c) => tools.bash(i, call(c))));
       editor.update('read', (t) => {
         const builtin = t.execute;
         t.description = DESCRIPTIONS.read;
@@ -152,8 +168,10 @@ export function createV2Setup(deps: { sdk?: Sdk; env?: NodeJS.ProcessEnv; limits
         ),
       );
       editor.update('patch', (t) => swap(t, DESCRIPTIONS.apply_patch, (i: { patchText: string }, c) => tools.applyPatch(i, call(c))));
-      editor.update('glob', (t) => swap(t, DESCRIPTIONS.glob, (i: { pattern: string; path?: string }, c) => tools.glob(i, call(c))));
-      editor.update('grep', (t) => swap(t, DESCRIPTIONS.grep, (i: { pattern: string; path?: string; include?: string }, c) => tools.grep(i, call(c))));
+      editor.update('glob', (t) => swap(t, DESCRIPTIONS.glob, (i: { pattern: string; path?: string; limit?: number }, c) => tools.glob(i, call(c))));
+      editor.update('grep', (t) =>
+        swap(t, DESCRIPTIONS.grep, (i: { pattern: string; path?: string; include?: string; literal?: boolean; caseSensitive?: boolean; limit?: number }, c) => tools.grep(i, call(c))),
+      );
     });
 
     const note =
@@ -174,21 +192,30 @@ export function createV2Setup(deps: { sdk?: Sdk; env?: NodeJS.ProcessEnv; limits
       await sandboxes.status(event.sessionID, false).catch(() => undefined);
     });
 
+    // The command runs here, not in the model. Its result goes into the session and wakes it, so the user
+    // sees it at once (OpenCode 2's server has no other way to show text) and the model knows it happened.
+    const post = (sessionID: string, command: string, text: string) =>
+      ctx.session.synthetic({
+        sessionID,
+        text: `The user ran /${command}, which the Prized plugin has already carried out. Its result:\n\n${text}\n\nTell the user the result in a sentence or two. Do not call any tools for this.`,
+        resume: true,
+      });
     await ctx.command.transform((editor) => {
       editor.add({
         name: 'prized',
         description: 'Prized sandbox: id, state, size, changes not pulled yet',
         execute: async ({ sessionID }) => {
           const text = await sandboxes.statusText(sessionID).catch((err: Error) => `Prized: ${err.message}`);
-          await ctx.session.synthetic({ sessionID, text, resume: false });
+          await post(sessionID, 'prized', text);
         },
       });
       editor.add({
         name: 'prized-pull',
         description: 'Bring the Prized sandbox changes to your checkout [--branch] [--all]',
         execute: async ({ sessionID, prompt }) => {
-          const text = await sandboxes.pullText(sessionID, argsText(prompt)).catch((err: Error) => `Prized: ${err.message}`);
-          await ctx.session.synthetic({ sessionID, text, resume: false });
+          const args = argsText(prompt).trim();
+          const text = await sandboxes.pullText(sessionID, args).catch((err: Error) => `Prized: ${err.message}`);
+          await post(sessionID, `prized-pull${args ? ` ${args}` : ''}`, text);
         },
       });
     });

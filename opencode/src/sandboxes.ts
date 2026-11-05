@@ -13,11 +13,15 @@
  * Host-agnostic: the OpenCode plugin adapters (v1.ts) give it a Host.
  */
 
+import { lstat, mkdir, readFile, writeFile } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+
 import { PrizedError, Sandbox } from '@prized/sdk';
 
 import { AUTO_DELETE_MIN, type Config, type Env } from './config.ts';
 import type { Layout } from './paths.ts';
-import { type Changes, type Packed, capStat, changes, diffOf, leftBehind, pack, pull, risks, riskyFiles, send, sh, shq } from './workspace.ts';
+import { type ChangedFile, type Changes, type Packed, capStat, changes, diffOf, leftBehind, localStat, pack, pull, risks, send, sh, shq } from './workspace.ts';
 
 export const LABEL_CREATOR = 'opencode-prized';
 const GONE = new Set(['sandbox_deleted', 'not_found']);
@@ -98,8 +102,6 @@ interface Active extends SandboxRef {
   inflight: number;
   /** Sessions of this tree that are working (OpenCode said "busy" and not yet "idle"). */
   working: Set<string>;
-  /** OpenCode has told us about this tree's sessions; until then a quiet spell after a tool call counts as idle. */
-  heard: boolean;
   timer?: NodeJS.Timeout;
   warnedExpiry?: boolean;
 }
@@ -113,6 +115,9 @@ export class Sandboxes {
   private readonly roots = new Map<string, string>();
   /** Sessions OpenCode said are busy before their sandbox existed. */
   private readonly early = new Map<string, Set<string>>();
+  /** Where the tree each session's held-back review showed is kept, on your machine (never in the sandbox,
+   *  which the agent controls), so `--all` applies that tree and no other, across restarts too. */
+  private readonly reviewFile: string;
   private disposed = false;
 
   constructor(
@@ -121,10 +126,34 @@ export class Sandboxes {
     private readonly env: Env,
     readonly layout: Layout,
     private readonly host: Host,
-    private readonly limits: { maxUploadBytes?: number } = {},
-  ) {}
+    private readonly limits: { maxUploadBytes?: number; stateDir?: string } = {},
+    /** Why the plugin is not set up (a bad option): every tool call fails with it, nothing runs anywhere. */
+    private readonly setupError?: string,
+  ) {
+    const state = limits.stateDir ?? path.join(process.env.XDG_STATE_HOME || path.join(os.homedir(), '.local', 'state'), 'opencode-prized');
+    this.reviewFile = path.join(state, 'reviewed.json');
+  }
+
+  private async reviewed(): Promise<{ [root: string]: { tree: string; at: number } }> {
+    try {
+      return JSON.parse(await readFile(this.reviewFile, 'utf8'));
+    } catch {
+      return {};
+    }
+  }
+
+  private async setReviewed(root: string, tree: string | undefined): Promise<void> {
+    const all = await this.reviewed();
+    if (tree === undefined) delete all[root];
+    else all[root] = { tree, at: Date.now() };
+    // Keep the newest hundred.
+    const kept = Object.fromEntries(Object.entries(all).sort((a, b) => b[1].at - a[1].at).slice(0, 100));
+    await mkdir(path.dirname(this.reviewFile), { recursive: true });
+    await writeFile(this.reviewFile, JSON.stringify(kept), { mode: 0o600 });
+  }
 
   private client() {
+    if (this.setupError) throw new Error(`${this.setupError} Nothing ran (and nothing ran on your machine) until it is fixed.`);
     if (!this.env.apiKey) throw new Error(`No Prized API key, so nothing ran (and nothing ran on your machine). ${KEY_HELP}`);
     return { apiKey: this.env.apiKey, baseUrl: this.env.baseUrl, edgeUrl: this.env.edgeUrl };
   }
@@ -132,9 +161,14 @@ export class Sandboxes {
   async root(sessionID: string): Promise<string> {
     const known = this.roots.get(sessionID);
     if (known) return known;
-    const root = await this.host.rootOf(sessionID).catch(() => sessionID);
-    this.roots.set(sessionID, root);
-    return root;
+    try {
+      const root = await this.host.rootOf(sessionID);
+      this.roots.set(sessionID, root);
+      return root;
+    } catch {
+      // Not known this time (OpenCode did not answer): use the session itself, and ask again next call.
+      return sessionID;
+    }
   }
 
   /** The sandbox for a tool call in `sessionID`, started (or reconnected, or forked) on first use. */
@@ -230,7 +264,7 @@ export class Sandboxes {
       if (!sb) {
         let packed: Packed | undefined;
         if (this.layout.hostRoot) {
-          packed = await pack(this.layout.hostRoot, this.limits.maxUploadBytes);
+          packed = await pack(this.layout.hostRoot, this.limits.maxUploadBytes, this.env.apiKey ? [this.env.apiKey] : []);
           if (packed.skipped.length) {
             const n = packed.skipped.length;
             this.host.notify(`left out ${n} nested repositor${n === 1 ? 'y' : 'ies'} or submodule${n === 1 ? '' : 's'}: ${packed.skipped.slice(0, 5).join(', ')}`, 'warning');
@@ -250,6 +284,12 @@ export class Sandboxes {
         await send(sb, packed ?? { tarball: Buffer.alloc(0), files: 0, skipped: [] }, this.layout.dir);
         if (this.layout.cwd !== this.layout.dir) await sh(sb, `mkdir -p ${shq(this.layout.cwd)}`);
       }
+      if (this.disposed) {
+        // OpenCode shut down while this sandbox was starting: nobody will close it, so do not keep it.
+        await created?.delete().catch(() => undefined);
+        created = undefined;
+        throw new Error('OpenCode is shutting down');
+      }
       const a: Active = {
         sandboxId: sb.id,
         owner: root,
@@ -257,7 +297,6 @@ export class Sandboxes {
         power: new Power(sb, sb.state === 'paused'),
         inflight: 0,
         working: this.early.get(root) ?? new Set(),
-        heard: this.early.has(root),
       };
       this.early.delete(root);
       this.active.set(root, a);
@@ -313,8 +352,6 @@ export class Sandboxes {
     if (!a) {
       working = this.early.get(root) ?? new Set();
       this.early.set(root, working);
-    } else {
-      a.heard = true;
     }
     if (busy) working?.add(sessionID);
     else working?.delete(sessionID);
@@ -343,6 +380,7 @@ export class Sandboxes {
 
   /** The sandbox of a session if it already exists or existed before a restart; never creates one. */
   private async existing(sessionID: string): Promise<Active | undefined> {
+    if (this.disposed) return undefined;
     const root = await this.root(sessionID);
     const a = this.active.get(root) ?? (await this.starting.get(root)?.catch(() => undefined));
     if (a) return a;
@@ -354,6 +392,7 @@ export class Sandboxes {
 
   /** `/prized`: what the session's sandbox is doing. */
   async statusText(sessionID: string): Promise<string> {
+    if (this.setupError) return `Prized is not set up: ${this.setupError}`;
     if (!this.env.apiKey) return `Prized is not set up: no API key. ${KEY_HELP}`;
     const a = await this.existing(sessionID);
     if (!a) return 'No Prized sandbox for this session yet. It starts with the first tool call.';
@@ -374,33 +413,42 @@ export class Sandboxes {
     const flags = new Set(args.split(/\s+/).filter(Boolean));
     const unknown = [...flags].filter((f) => f !== '--branch' && f !== '--all');
     if (unknown.length) return `Unknown option ${unknown.join(' ')}. Use /prized-pull, /prized-pull --branch, and --all to include changes that need a second look.`;
+    if (this.setupError) return `Prized is not set up: ${this.setupError}`;
     if (!this.layout.hostRoot) return 'OpenCode was not started in a git checkout, so there is nowhere to pull to.';
     if (!this.env.apiKey) return `Prized is not set up: no API key. ${KEY_HELP}`;
+    const hostRoot = this.layout.hostRoot;
     const a = await this.existing(sessionID);
     if (!a) return 'No Prized sandbox for this session yet, so there is nothing to pull.';
     const t = this.targetOf(a);
     const c = await t.use((sb) => changes(sb, this.layout.dir));
     const left = leftBehind(c);
     if (!c.stat) return ['No changes to pull.', left].filter(Boolean).join(' ');
-    const care = risks(c.files);
-    if (care.length && !flags.has('--all')) {
+    // Everything below is read on this machine from the patch that will be applied.
+    const stat = await localStat(c.patch, hostRoot);
+    const care = [...risks(c.files), ...(await executableHere(hostRoot, c.files))];
+    const root = await this.root(sessionID);
+    // --all applies only the changes a review showed; anything newer gets a review of its own first.
+    if (care.length && (!flags.has('--all') || (await this.reviewed())[root]?.tree !== c.tree)) {
+      await this.setReviewed(root, c.tree);
+      const changed = flags.has('--all') ? ['The changes are not the ones the last review showed, so nothing was applied. Here they are again.', ''] : [];
       return [
+        ...changed,
         'Not pulled yet. These changes need a second look before they reach your machine:',
         ...care.slice(0, 12).map((r) => `- ${r}`),
         '',
         'Their diff:',
-        await t.use((sb) => diffOf(sb, this.layout.dir, c, riskyFiles(c.files))),
+        diffOf(c.patch, [...new Set(c.files.filter((f) => risks([f]).length > 0 || care.some((r) => r.endsWith(`: ${f.path}`))).map((f) => f.path))]),
         '',
-        `All changes:\n${capStat(c.stat)}`,
+        `All changes:\n${capStat(stat)}`,
         '',
-        'Run /prized-pull --all to apply everything (add --branch to commit it on a branch instead).',
+        'Run /prized-pull --all to apply exactly these (add --branch to commit them on a branch instead).',
       ].join('\n');
     }
-    const root = await this.root(sessionID);
     const branch = flags.has('--branch') ? `opencode/${root.replace(/[^\w-]/g, '').slice(-12)}` : undefined;
-    await t.use((sb) => pull(sb, this.layout.dir, this.layout.hostRoot as string, c, branch));
-    const where = branch ? `Committed on the local branch ${branch} in ${this.layout.hostRoot}; push it with git push.` : `Pulled into ${this.layout.hostRoot}; review with git diff.`;
-    return [where, capStat(c.stat), care.length ? `Included, as you asked:\n${care.map((r) => `- ${r}`).join('\n')}` : '', left].filter(Boolean).join('\n');
+    await t.use((sb) => pull(sb, this.layout.dir, hostRoot, { ...c, stat }, branch));
+    await this.setReviewed(root, undefined).catch(() => undefined);
+    const where = branch ? `Committed on the local branch ${branch} in ${hostRoot}; push it with git push.` : `Pulled into ${hostRoot}; review with git diff.`;
+    return [where, capStat(stat), care.length ? `Included, as you asked:\n${care.map((r) => `- ${r}`).join('\n')}` : '', left].filter(Boolean).join('\n');
   }
 
   /** The user deleted a session: delete its sandbox, unless it holds changes nobody pulled. */
@@ -411,12 +459,12 @@ export class Sandboxes {
     if (!a) return;
     this.cancel(a);
     this.active.delete(root);
-    const note = await this.close(a, false);
+    const note = await this.close(a, false, true);
     if (note) this.host.notify(note, 'warning');
   }
 
   /** Delete it if there is nothing to pull (unless `keep`), else pause it. Returns what the user should know, if anything. */
-  private async close(a: Active, keep: boolean): Promise<string | undefined> {
+  private async close(a: Active, keep: boolean, deletedSession = false): Promise<string | undefined> {
     let c: Changes | undefined;
     try {
       await a.power.wake();
@@ -432,7 +480,9 @@ export class Sandboxes {
       const left = leftBehind(c);
       return (
         `Prized sandbox ${a.sandboxId} is paused with changes you have not pulled:\n${c.stat ? capStat(c.stat) : ''}${left ? `\n${left}` : ''}\n` +
-        `Continue the session (opencode --session ${a.owner}) and run /prized-pull to bring them back, or delete it with: prized sandbox rm ${a.sandboxId}. ` +
+        (deletedSession
+          ? `The session was deleted, so read the files with the prized CLI (prized sandbox exec ${a.sandboxId}), or delete it with: prized sandbox rm ${a.sandboxId}. `
+          : `Continue the session (opencode --session ${a.owner}) and run /prized-pull to bring them back, or delete it with: prized sandbox rm ${a.sandboxId}. `) +
         'Prized deletes it a week after it paused.'
       );
     }
@@ -461,6 +511,25 @@ export class Sandboxes {
     );
     return notes.filter((n): n is string => !!n);
   }
+}
+
+/**
+ * Files the patch changes that are executable or symlinks on your machine now, whatever the patch says their
+ * mode was: an edit to one is code you may run later.
+ */
+async function executableHere(root: string, files: ChangedFile[]): Promise<string[]> {
+  const out: string[] = [];
+  for (const f of files) {
+    if (f.oldMode === '000000' || f.oldMode === '100755' || f.oldMode === '120000') continue; // listed by risks() already, or new
+    try {
+      const st = await lstat(path.join(root, f.path));
+      if (st.isSymbolicLink()) out.push(`a change to a symlink on your machine: ${f.path}`);
+      else if (st.isFile() && (st.mode & 0o111) !== 0) out.push(`a change to an executable file: ${f.path} (read the diff)`);
+    } catch {
+      // not on your machine: the patch would create it
+    }
+  }
+  return out;
 }
 
 /** Whether Prized no longer has this sandbox. An error that says nothing about it counts as "still there". */

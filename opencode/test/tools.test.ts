@@ -110,6 +110,37 @@ describe('tools in the sandbox', () => {
     expect(zero.output).toBe('No files found');
   });
 
+  it('runs a background command detached and returns at once', async () => {
+    const started = Date.now();
+    const r = await tools.bash({ command: 'sleep 30; echo late', background: true }, makeCall());
+    expect(Date.now() - started).toBeLessThan(5000);
+    expect(r.output).toMatch(/Started in the background in the sandbox \(pid \d+\)/);
+  });
+
+  it('reads and writes outside /home/prized through a copy, and refuses to edit non-UTF-8 files', async () => {
+    const out = `/tmp/oc-prized-test-${process.pid}.txt`;
+    await tools.write({ filePath: out, content: 'outside\n' }, makeCall());
+    const r = await tools.read({ filePath: out }, makeCall());
+    expect(r.output).toContain('1: outside');
+    await tools.bash({ command: "printf 'caf\\351\\n' > latin1.txt" }, makeCall());
+    await expect(tools.edit({ filePath: `${repo}/latin1.txt`, oldString: 'caf', newString: 'cafe' }, makeCall())).rejects.toThrow(/not UTF-8/);
+  });
+
+  it('greps literally and case-insensitively when asked, and caps results', async () => {
+    await tools.bash({ command: 'printf "foo(1)\\nFOO(2)\\n" > src/f.txt' }, makeCall());
+    const lit = await tools.grep({ pattern: 'foo(', literal: true }, makeCall());
+    expect(lit.output).toContain('Line 1: foo(1)');
+    const ci = await tools.grep({ pattern: 'foo\\(', caseSensitive: false }, makeCall());
+    expect(ci.output).toContain('Found 2 matches');
+    const capped = await tools.grep({ pattern: 'o', limit: 1 }, makeCall());
+    expect(capped.output).toMatch(/showing first 1/);
+  });
+
+  it('reads the default number of lines when limit is 0', async () => {
+    const r = await tools.read({ filePath: `${repo}/app.py`, limit: 0 }, makeCall());
+    expect(r.output).toContain('2:     print("Hi")');
+  });
+
   it('applies a patch: add, update with move, delete', async () => {
     const r = await tools.applyPatch(
       {

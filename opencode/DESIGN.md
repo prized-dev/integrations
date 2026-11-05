@@ -29,6 +29,7 @@ What the plugin does, which OpenCode API it rests on (file and line), and how it
   - `Session.fork` copies the messages and the tool parts with their metadata (`session/session.ts` L691-733).
   - Every tool result records `metadata.prized = { sandboxId, owner }`.
   - On a forked session's first tool call, the newest record names a sandbox whose owner is another session. The plugin forks that sandbox (`Sandbox.fork`, processes included) and labels the copy with the new session's id. This is pi-prized's "inherited entry, different owner, copy it", unchanged.
+- **Setup errors fail closed:** `server()` never throws. OpenCode 1 drops a plugin that fails to load without a word (`plugin/index.ts` L224-241), and its local tools would then run. With a bad option, the tools still replace the built-ins and refuse with the reason.
 - **Restart:** sandboxes carry the labels `created-by=opencode-prized` and `opencode-session=<root>`. A new OpenCode process finds the session's sandbox with `Sandbox.list({labels})` and keeps no local state.
 - **Commands:**
   - The `config` hook adds `/prized` and `/prized-pull` to `cfg.command` (`plugin/index.ts` L245-253; `command/index.ts` L90-103 reads them).
@@ -50,7 +51,12 @@ What the plugin does, which OpenCode API it rests on (file and line), and how it
 - **Commands:** `ctx.command.transform(editor => editor.add({name, execute}))` (`packages/plugin/src/promise/command.ts` L7-26) runs plugin code. The result goes into the session with `ctx.session.synthetic`, and no model turn is needed.
 - **Prompt:** the `context`, `compaction` and `generate` hooks add the same paragraph. They also replace the shell tool's description, which the built-in fills with your machine's OS and shell.
 - **Exit:** the cleanup returned from `setup` runs on unload and server close.
-- **Tested against stand-ins for these calls** (`test/v2.test.ts`), not yet in a live OpenCode 2 (see Tests).
+- **Background:** OpenCode 2's shell takes `background`. The replacement starts the command detached with `setsid nohup`, writes its output to a file, and returns the pid at once.
+- **Off:** built-ins that act on your machine are removed with `editor.remove`: `experimental_image_generate` (`tool/plugin/image-generate.ts` L27), worktree create/remove and session move (`tool/plugin/opencode.ts` L139-190), and `lsp`.
+- **Found live, fixed:**
+  - Result metadata must be plain JSON. An `undefined` value made OpenCode 2 drop the call's result, so the model saw "Tool result missing". `Tools.meta()` now round-trips through JSON.
+  - Progress is not sent. The runner kills a call whose progress lands before it is marked called or after it settled (`packages/core/src/session/runner/publish-llm-event.ts` L548-551), and its TUI streams shell output only from its local shell service.
+  - A command's result is posted with `resume: true`. With `resume: false` it waited in the session inbox until the next prompt, so the user saw nothing.
 
 ## Shared core (ported from `@prized/pi`, integrations branch `pi-prized` 4d4b73b)
 
@@ -58,7 +64,11 @@ What the plugin does, which OpenCode API it rests on (file and line), and how it
   1. It packs the git working tree with `git ls-files --cached --others --exclude-standard`, so ignored files stay home.
   2. It uploads one tarball and commits a baseline in the sandbox.
   3. It pulls by diffing the sandbox tree against that baseline and running `git apply` locally. `git apply --check` comes first, so a conflict applies nothing.
-- `risks()` is pi's review list, with `.opencode/` and `opencode.json(c)` added. It flags a symlink, an executable that is new, made executable or **edited in place** ("a change to an executable file: X (read the diff)"), and a file tools run on their own. `/prized-pull` refuses to apply such changes until `--all`, and shows their diff (`git diff` in the sandbox, capped at 200 lines).
+- **The review is read from the patch that is applied.** `changes()` asks git in the sandbox for a plain patch: `--no-ext-diff --no-textconv --no-renames`, fixed `a/` `b/` prefixes, `--full-index --binary`, in a scratch folder per call. `patchFiles()` then reads every path and mode from that patch's own headers, on your machine, and refuses a rename or copy. `localStat()` runs `git apply --stat` on the same bytes, and `diffOf()` cuts the shown diff from them. A file that is executable or a symlink in your checkout counts as such whatever the patch claims (`executableHere`). The sandbox, which the agent controls, cannot show one patch and apply another.
+- `risks()` is pi's review list, with more added: `.opencode/`, `opencode.json(c)`, `AGENTS.md`, `CLAUDE.md` (OpenCode loads them as instructions), `.gitignore` (dropping `.env` from it uploads `.env` next time), commitlint and lint-staged configs, `.idea/`, `.zed/`, `.cargo/`, `.circleci/` and `.gitlab-ci.yml`. Names are matched case-insensitively, because on macOS `.Husky/` lands in `.husky/`. It flags a symlink, an executable that is new, made executable or **edited in place** ("a change to an executable file: X (read the diff)"), and a file tools run on their own. `/prized-pull` refuses to apply such changes until `--all` and shows their diff, capped at 200 lines.
+- `--all` applies only the tree the last review showed. That tree is recorded on your machine, in `$XDG_STATE_HOME/opencode-prized/reviewed.json`, never in the sandbox. If the agent changes anything after the review, `--all` shows a new review instead of applying.
+- `--branch` runs every git command with `core.hooksPath=/dev/null` and commits with `--no-verify`. A pulled `.husky/pre-commit` or commitlint config never runs on your machine.
+- Upload refuses a file that contains your `PRIZED_API_KEY`, such as an `.envrc` git does not ignore.
 - `src/sandboxes.ts` holds one sandbox per root session:
   - it reconnects by label, forks on an inherited record, or creates and uploads;
   - the `Power` chain (pause and resume one at a time, each checking state first) is pi's;
@@ -82,24 +92,39 @@ What the plugin does, which OpenCode API it rests on (file and line), and how it
     - exec and files on the edge.
     Everything else gets 403. A probe of `GET /api/v1/me` from A got 403.
   - Hand-offs are at-least-once with dedupe by job id. The preview edge rate-limits bursts (429), so replies retry.
+  - The broker learns sandbox ids only from the API's own create, fork, get and list answers, never from the edge, whose answers carry what the sandbox wrote.
+  - It sends the key only to `https://*.prized.dev`, and allows only the `process/` and `files/` edge routes. It refuses `..` and encoded slashes, rebuilds the list query from label selectors, and forwards only an allowlist of headers.
 - The same relay pattern could let an agent in a sandbox drive other sandboxes without holding a key. It is test scaffolding here, not a product feature.
 
 ## Tests
 
-- **Offline** (`npm test`, 40 tests): unit tests (paths, glob, edit, patch, config, review), the tools against a fake sandbox that runs the real git, tar and bash commands, the OpenCode 1 plugin through its hooks with a fake client, and the OpenCode 2 setup against a stand-in Context. `npm run typecheck` checks the OpenCode 1 plugin against `@opencode-ai/plugin` 1.19.5's real `Hooks`, `PluginInput` and `PluginModule` types (`test/api-types.ts`).
-- **Live** (`test/live/`), OpenCode 1.19.5 with the packed plugin, in the keyless sandbox A, with a scripted model (`mock-model.mjs`; no model key), driving a second sandbox through the broker. **30 of 30 checks passed**:
-  1. The first turn (sandbox create, upload, 9 tool calls) took 8.1 s:
-     - the model was offered one `bash` with only `command` required;
+- **Offline** (`npm test`, 56 tests):
+  - unit tests: paths, glob, edit, patch, config, the patch-header parser, the review list;
+  - the tools against a fake sandbox that runs the real git, tar and bash commands;
+  - the OpenCode 1 plugin through its hooks, with a fake client;
+  - the OpenCode 2 setup against a stand-in Context;
+  - the review fixes: a bad option fails closed; a file holding the key stops the upload; `--all` refuses a tree it did not review; an executable on your machine counts whatever the patch says; `--branch` runs no hooks; background shell; reads outside `/home/prized`; non-UTF-8 files are left alone.
+
+  `npm run typecheck` checks the OpenCode 1 plugin against the real `Hooks`, `PluginInput` and `PluginModule` types of `@opencode-ai/plugin` 1.19.5 (`test/api-types.ts`).
+- **Live, OpenCode 1.19.5** (`test/live/e2e.mjs`): **30 of 30**. The packed plugin ran in the keyless sandbox A with a scripted model (`mock-model.mjs`; no model key), driving a second sandbox through the broker.
+  1. The first turn (sandbox create, upload, 9 tool calls) took 8 to 9 s:
+     - the model was offered one `bash`, with only `command` required;
      - bash ran in `/home/prized/work/app`, and no `PRIZED_` variables reached it;
      - a server started in the background;
-     - edit, write, read, glob and grep all worked, with local paths in the results;
+     - edit, write, read, glob and grep worked, with local paths in their results;
      - `.env` was not uploaded;
      - the checkout was untouched.
   2. On exit the sandbox was kept paused with its changes, and OpenCode printed how to get them.
-  3. After a new `opencode run --session`, the plugin reconnected and the server from turn 1 still answered HTTP 200.
-  4. In `opencode serve`, the sandbox paused by itself 4 s after the session went idle. The next turn resumed it, with the server still alive.
-  5. `--fork` forked the sandbox, and the server was alive in the copy. The parent did not see the fork's file.
-  6. `/prized-pull` held back, naming "a change to an executable file: bin/run (read the diff)" and "an executable: deploy.sh", and showed the diff. `--all` applied everything unstaged, with the exec bit kept.
-  7. On exit, the parent sandbox, with nothing left to pull, was deleted. From outside, only the fork's sandbox remained, paused.
-  8. Relay calls had a median of 30 ms, and none were denied.
-- **Not tested live:** OpenCode 2 (the setup is tested offline against the API above), macOS and Windows hosts, and the interactive TUI. The TUI renders the same tool parts and permission prompts as `opencode run`.
+  3. A new `opencode run --session` reconnected, and the server from turn 1 still answered HTTP 200.
+  4. In `opencode serve`, the sandbox paused by itself 4 s after the session went idle. The next turn resumed it, with the server alive.
+  5. `--fork` forked the sandbox, with the server alive in the copy. The parent did not see the fork's file.
+  6. `/prized-pull` held back, naming "a change to an executable file: bin/run (read the diff)" and "an executable: deploy.sh", and showed their diff. `--all` applied everything unstaged, with the exec bit kept. On exit, the parent sandbox, with nothing left to pull, was deleted.
+  7. Relay calls had a median of 30 ms, and none were denied.
+- **Live, OpenCode 2.2.5** (`test/live/e2e-v2.mjs`, `opencode run --standalone`): **14 of 14**.
+  1. OpenCode offered its own `shell`, `read`, `glob` and `grep`, once each, with our executors behind them.
+  2. Turn 1 ran 9 tools in the sandbox, with no host env and no `.env`.
+  3. A new process reconnected, with the server still up.
+  4. `--fork` forked the sandbox, and the parent stayed clean.
+  5. `/prized-pull`, through `opencode api session.command`, held back with the diff, then applied with `--all`.
+- Independent check from outside, after each run: `prized sandbox ls --label oc-e2e=<run>` showed only the fork's sandbox left, paused.
+- **Not tested:** macOS and Windows hosts, and the interactive TUIs. They render the same tool parts and prompts that `run` and `serve` produce.

@@ -73,20 +73,30 @@ function call(ctx: V1ToolContext): Call {
 
 const out = (r: Result) => ({ title: r.title, output: r.output, metadata: r.metadata, ...(r.attachments ? { attachments: r.attachments } : {}) });
 
-export function createV1Plugin(deps: { sdk?: Sdk; env?: NodeJS.ProcessEnv; limits?: { maxUploadBytes?: number } } = {}) {
+export function createV1Plugin(deps: { sdk?: Sdk; env?: NodeJS.ProcessEnv; limits?: { maxUploadBytes?: number; stateDir?: string } } = {}) {
   return async function server(input: V1Input, options?: Options) {
-    const config = readConfig(options);
+    // Never throw from here: OpenCode 1 drops a plugin that fails to load without a word, and its own tools
+    // would then run on your machine. A bad option instead makes every tool call fail with the reason.
+    let setupError: string | undefined;
+    let config = readConfig(undefined);
+    try {
+      config = readConfig(options);
+    } catch (err) {
+      setupError = `${(err as Error).message}.`;
+    }
     const env = readEnv(deps.env ?? process.env);
-    const hostCwd = await realpath(input.directory);
+    const hostCwd = await realpath(input.directory).catch(() => input.directory);
     const layout = layoutFor(hostCwd, await gitRoot(hostCwd));
     const log = (level: 'info' | 'warn' | 'error', message: string) => void input.client.app?.log({ body: { service: SERVICE, level, message } }).catch(() => undefined);
     const host: Host = {
       async rootOf(sessionID) {
         let id = sessionID;
         for (let i = 0; i < 16; i += 1) {
-          const s = (await input.client.session.get({ path: { id } })).data;
-          if (!s?.parentID) return id;
-          id = s.parentID;
+          const r = (await input.client.session.get({ path: { id } })) as { data?: { parentID?: string }; error?: unknown };
+          // The client answers an error instead of throwing it; an unknown parent must not make a subagent a root.
+          if (!r.data) throw new Error(`OpenCode did not return session ${id}`);
+          if (!r.data.parentID) return id;
+          id = r.data.parentID;
         }
         return id;
       },
@@ -107,7 +117,8 @@ export function createV1Plugin(deps: { sdk?: Sdk; env?: NodeJS.ProcessEnv; limit
         void input.client.tui?.showToast({ body: { message, variant: level } }).catch(() => undefined);
       },
     };
-    const sandboxes = new Sandboxes(deps.sdk ?? { Sandbox }, config, env, layout, host, deps.limits);
+    const sandboxes = new Sandboxes(deps.sdk ?? { Sandbox }, config, env, layout, host, deps.limits, setupError);
+    if (setupError) host.notify(`${setupError} The tools refuse to run until it is fixed.`, 'error');
     const tools = new Tools(sandboxes);
     const s = z;
 

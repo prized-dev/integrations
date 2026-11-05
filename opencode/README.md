@@ -2,7 +2,7 @@
 
 > **Not on npm yet.** Until it is, install it from this repo (below). The Prized TypeScript SDK it uses (`@prized/sdk`) is on npm.
 
-An [OpenCode](https://opencode.ai) plugin that runs the agent's `bash`, `read`, `write`, `edit`, `glob`, `grep` and `apply_patch` tools in a [Prized sandbox](https://prized.dev/docs/sandboxes?via=opencode), a Firecracker microVM. OpenCode, the model calls and your files stay on your machine. The sandbox **pauses between turns with its memory**, so a dev server or watcher the agent started is still running next turn, even after you restart OpenCode. A forked session gets its own copy of the sandbox, running processes included.
+An [OpenCode](https://opencode.ai) plugin that runs the agent's `bash`, `read`, `write`, `edit`, `glob`, `grep` and `apply_patch` tools in a [Prized sandbox](https://prized.dev/docs/sandboxes?via=opencode), a Firecracker microVM. OpenCode, the model calls and your files stay on your machine. The sandbox **pauses between turns with its memory**, so a dev server or watcher the agent started is still running next turn. A forked session gets its own copy of the sandbox, running processes included.
 
 ## Install
 
@@ -41,9 +41,9 @@ An [OpenCode](https://opencode.ai) plugin that runs the agent's `bash`, `read`, 
 1. **Start.** Run `opencode` as usual. The first tool call starts the sandbox and uploads your git working tree: tracked files and new files, with your uncommitted changes. Files git ignores, such as `.env`, stay on your machine.
 2. **Work.** The tools run in the sandbox, in `/home/prized/work/<project>`. Paths the model gives under your project folder map there.
 3. **Pause.** When the session goes idle, the sandbox pauses after `pauseSeconds` (20 by default), memory included; the next tool call resumes it. A paused sandbox bills storage only.
-4. **Pull.** `/prized-pull` brings the changes to your checkout, unstaged, for `git diff`. If they include a symlink, an executable (new, made executable, or edited) or a file your tools run on their own (`.husky/`, `.envrc`, `.opencode/`, `.github/workflows/`, ...), it applies nothing, lists them with their diff, and waits for `/prized-pull --all`. `--branch` commits on the local branch `opencode/<session>` instead. Files come back only this way.
+4. **Pull.** `/prized-pull` brings the changes to your checkout, unstaged, for `git diff`. If they include a symlink, an executable (new, made executable, or edited) or a file your tools run or load on their own (`.husky/`, `.envrc`, `.opencode/`, `.github/workflows/`, `AGENTS.md`, `.gitignore`, ...), it applies nothing, lists them with their diff, and waits for `/prized-pull --all`, which applies exactly the changes that review showed. `--branch` commits on the local branch `opencode/<session>` instead, with your git hooks off. Files come back only this way.
 5. **Fork.** Fork a session in OpenCode, and the fork's first tool call copies the sandbox as it is now. The parent's sandbox is left as it was.
-6. **Leave.** When OpenCode exits, a sandbox with nothing left to pull is deleted. One with changes is paused and kept, and OpenCode prints how to get them; continuing the session reconnects to it. Prized deletes a paused sandbox a week after it paused.
+6. **Leave.** When OpenCode exits, a sandbox with nothing left to pull is deleted (set `keep` to keep it, processes and all). One with changes is paused and kept, and OpenCode prints how to get them; continuing the session reconnects to it, with its processes. Prized deletes a paused sandbox a week after it paused.
 
 `/prized` shows the sandbox: id, state, size and what has not been pulled.
 
@@ -64,12 +64,12 @@ The key comes only from `PRIZED_API_KEY` in the environment, never from a config
 
 ## What to know
 
-- **What runs where.** Only the tools above run in the sandbox. Your environment variables are not forwarded, `PRIZED_API_KEY` never enters the sandbox, and if the sandbox cannot start the tool fails: it never runs on your machine instead. `lsp` is refused. Your own `!` shell commands, MCP servers and `webfetch` still run on your machine.
+- **What runs where.** Only the tools above run in the sandbox. Your environment variables are not forwarded, and if the sandbox cannot start, or an option is wrong, the tool fails: it never runs on your machine instead. A file that holds your `PRIZED_API_KEY` stops the upload. Tools that would act on your machine are off (`lsp`; in OpenCode 2 also image generation and worktree tools). Your own `!` shell commands, MCP servers and `webfetch` still run on your machine. If the plugin cannot load at all (its folder or dependencies missing), OpenCode runs its own tools as usual, so check that `/prized` answers.
 - **The machine.** Commands run as the user `prized` (no sudo). `pip install` needs a virtualenv (`python3 -m venv ~/.venv`).
 - **Undo.** OpenCode's `/undo` rewinds the conversation and your local files, not the sandbox: undo there with git or by asking the agent.
 - **Size.** The project goes up as one tarball of at most 100 MiB packed. Git history does not go up, and submodules and nested repositories are left out.
 - **No URL for a server yet.** A sandbox's ports are not reachable from your browser, so the agent cannot hand you a preview link.
-- **Tested** on Linux with OpenCode 1.19.5 (live, below) and against OpenCode 2.2.5's plugin API (offline). macOS should work the same; Windows is untested.
+- **Tested** live on Linux with OpenCode 1.19.5 and OpenCode 2.2.5 (see `DESIGN.md`). macOS should work the same; Windows is untested.
 
 ## Cost
 

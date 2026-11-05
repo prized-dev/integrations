@@ -23,7 +23,7 @@ Each folder is its own package with its own README, tests and release. You need 
 | [`pydantic-ai`](pydantic-ai) | Pydantic AI: workspace | `pydantic-ai-prized` | Not on PyPI yet: install from this repo | [README](pydantic-ai/README.md) |
 | [`langchain-js`](langchain-js) | LangChain Deep Agents (JS): sandbox | `@prized/langchain` | Not on npm yet | [README](langchain-js/README.md) |
 | [`mastra`](mastra) | Mastra: workspace sandbox and filesystem | `@prized/mastra` | Not on npm yet | [README](mastra/README.md) |
-| [`opencode`](opencode) | OpenCode 1 and 2: plugin (OpenCode's tools run in a sandbox that pauses between turns) | `opencode-prized` | Works now: tested live in OpenCode 1.19.5; install from this repo (not on npm yet) | [README](opencode/README.md) |
+| [`opencode`](opencode) | OpenCode 1 and 2: plugin (OpenCode's tools run in a sandbox that pauses between turns) | `opencode-prized` | Works now: tested live in OpenCode 1.19.5 and 2.2.5; install from this repo (not on npm yet) | [README](opencode/README.md) |
 
 A Python package that isn't on PyPI yet installs from this repo: its README gives the line. The Prized SDKs they use are published (`prized` on PyPI, `@prized/sdk` on npm).
 

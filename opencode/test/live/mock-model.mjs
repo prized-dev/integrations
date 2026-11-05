@@ -61,7 +61,12 @@ function decide(body) {
   if (!marker) return { text: user.includes('The user ran /') ? 'Done.' : 'OK.' };
   const item = SCRIPTS[marker][step];
   if (item === undefined || typeof item === 'string') return { text: item ?? 'Done.' };
-  return { tool: { id: `call_${marker}_${step}`, name: item.name, args: item.args } };
+  // OpenCode 2 names the tools shell and patch and takes `path`, not `filePath`.
+  const v2 = body.tools.some((t) => t.function?.name === 'shell');
+  if (!v2) return { tool: { id: `call_${marker}_${step}`, name: item.name, args: item.args } };
+  const { filePath, description, ...rest } = item.args;
+  const name = item.name === 'bash' ? 'shell' : item.name === 'apply_patch' ? 'patch' : item.name;
+  return { tool: { id: `call_${marker}_${step}`, name, args: filePath === undefined ? rest : { path: filePath, ...rest } } };
 }
 
 const server = http.createServer((req, res) => {

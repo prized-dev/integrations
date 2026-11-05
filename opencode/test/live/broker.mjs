@@ -31,44 +31,66 @@ const relayHeaders = { 'Prized-Key': KEY, 'Prized-Auto-Resume': 'false' };
 const ours = new Map();
 const EXTRA = { 'oc-e2e': RUN, agent: 'agent-xp', task: 'opencode-prized-1105' };
 
-function remember(json) {
-  const visit = (v) => {
-    if (!v || typeof v !== 'object') return;
-    if (Array.isArray(v)) return v.forEach(visit);
-    if (typeof v.id === 'string' && v.id.startsWith('sbx_') && v.labels?.['oc-e2e'] === RUN) {
-      ours.set(v.id, typeof v.toolboxBase === 'string' ? new URL(v.toolboxBase).origin : EDGE);
-    }
-    Object.values(v).forEach(visit);
-  };
-  visit(json);
+/** An edge origin the key may go to: https on a prized.dev host, nothing else. */
+function edgeOrigin(raw) {
+  try {
+    const u = new URL(raw);
+    if (u.protocol === 'https:' && (u.hostname === 'prized.dev' || u.hostname.endsWith('.prized.dev'))) return u.origin;
+  } catch {
+    // not a URL
+  }
+  return EDGE;
 }
+
+/** Learn this run's sandboxes from the API's own create, fork, get and list answers, never from the edge, whose
+ *  answers carry what the sandbox wrote. */
+function remember(json) {
+  const docs = [json, json?.sandbox, ...(Array.isArray(json?.sandboxes) ? json.sandboxes : [])];
+  for (const v of docs) {
+    if (v && typeof v.id === 'string' && /^sbx_[0-9a-f]+$/.test(v.id) && v.labels?.['oc-e2e'] === RUN) {
+      ours.set(v.id, typeof v.toolboxBase === 'string' ? edgeOrigin(v.toolboxBase) : EDGE);
+    }
+  }
+}
+
+/** The headers of the plugin's request that go on to Prized; everything else (and any key) is dropped. */
+const PASS = new Set(['content-type', 'accept', 'idempotency-key', 'user-agent', 'prized-auto-resume', 'x-prized-sdk']);
 
 const deny = (why) => ({ status: 403, headers: { 'content-type': 'application/json' }, body: Buffer.from(JSON.stringify({ error: { code: 'forbidden_by_broker', message: why } })) });
 
 /** Decide and rewrite: returns { url, body, auth } to send, or a ready answer. */
 function plan(job) {
+  if (typeof job.path !== 'string' || !job.path.startsWith('/') || /%2e|%2f|%5c|\.\.|\\/i.test(job.path.split('?')[0])) {
+    return { answer: deny('an odd path') };
+  }
   const u = new URL(job.path, 'http://relay');
   const body = Buffer.from(job.body ?? '', 'base64');
   if (u.pathname === '/__edge/healthz' || u.pathname === '/healthz') return { url: `${EDGE}/healthz`, body: undefined, auth: false };
-  const edge = /^\/__edge\/v1\/sandbox\/(sbx_[\w]+)(\/.*)$/.exec(u.pathname);
+  // The edge routes the SDK uses for exec and files, and nothing else.
+  const edge = /^\/__edge\/v1\/sandbox\/(sbx_[0-9a-f]+)(\/(?:process|files)\/[a-z][a-z/_-]*)$/.exec(u.pathname);
   if (edge) {
     const origin = ours.get(edge[1]);
     if (!origin) return { answer: deny(`edge call for a sandbox this run did not make: ${edge[1]}`) };
-    return { url: `${origin}/v1/sandbox/${edge[1]}${edge[2]}${u.search}`, body, auth: true };
+    return { url: `${origin}/v1/sandbox/${edge[1]}${edge[2]}${u.search}`, body, auth: true, api: false };
   }
+  if (u.pathname.startsWith('/__edge/')) return { answer: deny(`not an edge call the plugin needs: ${u.pathname}`) };
   if (u.pathname === '/api/v1/sandboxes' && job.method === 'POST') {
     const doc = JSON.parse(body.toString() || '{}');
     if (doc.labels?.['created-by'] !== 'opencode-prized') return { answer: deny('create without created-by=opencode-prized') };
     doc.labels = { ...doc.labels, ...EXTRA };
-    doc.resources = { ...(doc.resources ?? {}), vcpu: Math.min(doc.resources?.vcpu ?? 2, 2) };
+    doc.resources = { ...(doc.resources ?? {}), vcpu: Math.min(doc.resources?.vcpu ?? 2, 2), diskGb: Math.min(doc.resources?.diskGb ?? 10, 10) };
     if (doc.resources.memoryGb !== undefined) doc.resources.memoryGb = Math.min(doc.resources.memoryGb, 4);
     else doc.resources.memoryMb = Math.min(doc.resources.memoryMb ?? 4096, 4096);
     doc.maxRuntimeMin = Math.min(doc.maxRuntimeMin ?? 120, 120);
-    return { url: `${API}${u.pathname}${u.search}`, body: Buffer.from(JSON.stringify(doc)), auth: true };
+    return { url: `${API}${u.pathname}${u.search}`, body: Buffer.from(JSON.stringify(doc)), auth: true, api: true };
   }
   if (u.pathname === '/api/v1/sandboxes' && job.method === 'GET') {
-    u.searchParams.append('label', `oc-e2e=${RUN}`);
-    return { url: `${API}${u.pathname}?${u.searchParams}`, body: undefined, auth: true };
+    // Rebuilt from the label selectors alone, with the run's label added.
+    const q = new URLSearchParams();
+    for (const l of u.searchParams.getAll('label')) if (/^[\w.-]{1,64}=[^&]{0,256}$/.test(l) && !l.startsWith('oc-e2e=')) q.append('label', l);
+    q.append('label', `oc-e2e=${RUN}`);
+    for (const k of ['state', 'wait']) for (const v of u.searchParams.getAll(k)) q.append(k, v);
+    return { url: `${API}${u.pathname}?${q}`, body: undefined, auth: true, api: true };
   }
   const one = /^\/api\/v1\/sandboxes\/(sbx_[\w]+)(\/(pause|resume|fork))?$/.exec(u.pathname);
   if (one) {
@@ -81,9 +103,10 @@ function plan(job) {
       const doc = JSON.parse(body.toString() || '{}');
       doc.labels = { ...(doc.labels ?? {}), ...EXTRA };
       doc.count = Math.min(doc.count ?? 1, 1);
+      if (doc.maxRuntimeMin !== undefined) doc.maxRuntimeMin = Math.min(doc.maxRuntimeMin, 120);
       b = Buffer.from(JSON.stringify(doc));
     }
-    return { url: `${API}${u.pathname}${u.search}`, body: b, auth: true };
+    return { url: `${API}${u.pathname}${u.search}`, body: b, auth: true, api: true };
   }
   return { answer: deny(`not a call the plugin needs: ${job.method} ${u.pathname}`) };
 }
@@ -100,14 +123,14 @@ async function handle(job) {
   const p = plan(job);
   let answer = p.answer;
   if (!answer) {
-    const headers = { ...job.headers };
-    for (const k of Object.keys(headers)) if (/^(authorization|prized-key|cookie|host)$/i.test(k)) delete headers[k];
+    const headers = {};
+    for (const [k, v] of Object.entries(job.headers ?? {})) if (PASS.has(k.toLowerCase()) && typeof v === 'string') headers[k] = v;
     if (p.auth) headers.authorization = `Bearer ${KEY}`;
     try {
       const body = job.method === 'GET' || job.method === 'HEAD' || !p.body?.length ? undefined : p.body;
       const r = await fetch(p.url, { method: job.method, headers, body, redirect: 'manual' });
       const buf = Buffer.from(await r.arrayBuffer());
-      if ((r.headers.get('content-type') ?? '').includes('json')) {
+      if (p.api && (r.headers.get('content-type') ?? '').includes('json')) {
         try {
           remember(JSON.parse(buf.toString()));
         } catch {
