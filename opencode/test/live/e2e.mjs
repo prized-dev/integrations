@@ -137,9 +137,11 @@ async function api(method, path) {
   const res = await fetch(`${API}/api/v1${path}`, { method, headers: { authorization: `Bearer ${process.env.PRIZED_API_KEY}` }, signal: AbortSignal.timeout(20_000) });
   return { status: res.status, json: await res.json().catch(() => null) };
 }
-/** The live sandboxes of a session, as the scoped key sees them. */
-const sessionSandboxes = async (session) =>
-  ((await api('GET', `/sandboxes?label=${encodeURIComponent(`opencode-session=${session}`)}`)).json?.sandboxes ?? []).filter((s) => s.state !== 'deleted');
+/** The live sandboxes of a session, as the scoped key sees them; null when the API did not answer 200. */
+async function sessionSandboxes(session) {
+  const res = await api('GET', `/sandboxes?label=${encodeURIComponent(`opencode-session=${session}`)}`);
+  return res.status === 200 && Array.isArray(res.json?.sandboxes) ? res.json.sandboxes.filter((s) => s.state !== 'deleted') : null;
+}
 
 async function main() {
   note(`OpenCode ${VERSION}`);
@@ -211,14 +213,14 @@ async function main() {
   for (let i = 0; i < 40 && !paused; i += 1) {
     await new Promise((r) => setTimeout(r, 500));
     paused = SCOPED
-      ? (await sessionSandboxes(S))[0]?.state === 'paused'
+      ? (await sessionSandboxes(S))?.[0]?.state === 'paused'
       : relayCalls().slice(before).some((c) => c.method === 'POST' && /\/pause/.test(c.path) && c.status < 300);
   }
   check('in a long-running OpenCode, the sandbox pauses by itself once the session is idle (pauseSeconds 4)', paused, `waited ${Date.now() - pauseWait} ms`);
   const resumeAt = relayCalls().length;
   await prompt('E2E-AFTER-PAUSE is it still up');
   const tA = toolResults('E2E-AFTER-PAUSE');
-  const resumed = SCOPED ? (await sessionSandboxes(S))[0]?.state === 'running' : relayCalls().slice(resumeAt).some((c) => /\/resume/.test(c.path));
+  const resumed = SCOPED ? (await sessionSandboxes(S))?.[0]?.state === 'running' : relayCalls().slice(resumeAt).some((c) => /\/resume/.test(c.path));
   check('the next turn resumes it and the server is still running', /ALIVE-AFTER-PAUSE/.test(tA[0] ?? '') && resumed, tA[0]);
   srv.kill('SIGTERM');
   await new Promise((r) => setTimeout(r, 4000));
@@ -227,7 +229,7 @@ async function main() {
   const r6 = await opencode(['run', '--format', 'json', '--session', S, '--fork', 'E2E-FORK in a fork']);
   const tF = toolResults('E2E-FORK');
   check('a forked session gets a copy of the sandbox, server and all', /FORK-SERVER-ALIVE/.test(tF[0] ?? '') && r6.sessionID && r6.sessionID !== S, `${tF[0]} ${r6.err.slice(-800)}`);
-  const forkedFrom = SCOPED ? [(await sessionSandboxes(S))[0]?.id, (await sessionSandboxes(r6.sessionID))[0]?.id] : [];
+  const forkedFrom = SCOPED ? [(await sessionSandboxes(S))?.[0]?.id, (await sessionSandboxes(r6.sessionID))?.[0]?.id] : [];
   check(
     'the fork came from a sandbox fork',
     SCOPED ? forkedFrom.every(Boolean) && forkedFrom[0] !== forkedFrom[1] : relayCalls().some((c) => /\/fork/.test(c.path) && c.status < 300),
@@ -255,11 +257,14 @@ async function main() {
   check('the new executable arrives executable, the edit to bin/run arrives', existsSync(`${APP}/deploy.sh`) && (statSync(`${APP}/deploy.sh`).mode & 0o111) !== 0 && readFileSync(`${APP}/bin/run`, 'utf8').includes('echo extra'), status);
   check('the changes land unstaged, for git diff', / M app\.py/.test(status) && /\?\? deploy\.sh/.test(status), status);
 
-  const left = SCOPED ? await sessionSandboxes(S) : [];
+  // The parent's sandbox, by the id seen before the exit: gone (404) or on its way.
+  const gone = SCOPED && forkedFrom[0] ? await api('GET', `/sandboxes/${forkedFrom[0]}`) : null;
   check(
     'on exit, a sandbox with nothing left to pull is deleted',
-    SCOPED ? left.every((s) => s.state === 'deleting') : relayCalls().some((c) => c.method === 'DELETE' && c.status < 300),
-    JSON.stringify(left.map((s) => [s.id, s.state])),
+    SCOPED
+      ? gone !== null && (gone.status === 404 || ['deleting', 'deleted'].includes(gone.json?.sandbox?.state))
+      : relayCalls().some((c) => c.method === 'DELETE' && c.status < 300),
+    gone === null ? 'no parent sandbox id' : `${gone.status} ${gone.json?.sandbox?.state ?? ''}`,
   );
 
   const calls = relayCalls();

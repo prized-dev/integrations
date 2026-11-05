@@ -138,7 +138,8 @@ const relayCalls = () => (existsSync('/tmp/relay.jsonl') ? readFileSync('/tmp/re
 /** E2E_KEY=scoped: the live sandboxes of a session, as this sandbox's scoped key sees them. */
 async function sessionSandboxes(session) {
   const res = await fetch(`${API}/api/v1/sandboxes?label=${encodeURIComponent(`opencode-session=${session}`)}`, { headers: { authorization: `Bearer ${process.env.PRIZED_API_KEY}` }, signal: AbortSignal.timeout(20_000) });
-  return ((await res.json().catch(() => null))?.sandboxes ?? []).filter((s) => s.state !== 'deleted');
+  const doc = await res.json().catch(() => null);
+  return res.status === 200 && Array.isArray(doc?.sandboxes) ? doc.sandboxes.filter((s) => s.state !== 'deleted') : [];
 }
 
 async function main() {
@@ -173,9 +174,9 @@ async function main() {
 
   const r3 = await opencode(['--session', S, '--fork', 'E2E-FORK in a fork']);
   const tF = toolResults('E2E-FORK');
-  const forked = SCOPED
-    ? (await sessionSandboxes(r3.sessionID ?? '-')).length === 1 && (await sessionSandboxes(r3.sessionID ?? '-'))[0]?.id !== (await sessionSandboxes(S))[0]?.id
-    : relayCalls().some((c) => /\/fork/.test(c.path) && c.status < 300);
+  const [parentSb] = SCOPED ? await sessionSandboxes(S) : [];
+  const forkSbs = SCOPED ? await sessionSandboxes(r3.sessionID ?? '-') : [];
+  const forked = SCOPED ? Boolean(parentSb?.id) && forkSbs.length === 1 && forkSbs[0].id !== parentSb.id : relayCalls().some((c) => /\/fork/.test(c.path) && c.status < 300);
   check('a forked session gets a copy of the sandbox, server and all', /FORK-SERVER-ALIVE/.test(tF[0] ?? '') && forked, `${tF[0]} ${r3.err.slice(-800)}`);
   const r4 = await opencode(['--session', S, 'E2E-TURN-3 parent check']);
   const t3 = toolResults('E2E-TURN-3');
