@@ -28,6 +28,14 @@ Four rules, held by every operation: what an operation made is undone when it fa
 | delete | refused, or still there | `delete()` raises; the next one tries again | `test_sandbox::test_delete_raises_when_the_sandbox_is_still_there` |
 | delete | answer lost | sandbox read: `deleting` or gone is done | `test_delete_whose_answer_is_lost_reads_the_sandbox` |
 | delete | cancelled midway | finishes in the background | `test_delete_cancelled_midway_still_deletes` |
+| exposed port | not in `exposed_ports` | `ExposedPortUnavailableError` (`not_configured`); nothing sent | `test_ports::test_a_port_not_in_exposed_ports_is_refused_without_a_request` |
+| exposed port | token refused (free credit only, `preview_unavailable`, ...) | `ExposedPortUnavailableError` with the API's code; on free credit only, a hint names `exposed_port_auth='key'` | `test_ports::test_a_workspace_with_free_credit_only_is_told_what_to_do` |
+| exposed port | token answer lost | asked again: a token nobody holds expires on its own | `test_ports::test_a_lost_token_answer_is_asked_again` |
+| exposed port | the API names a URL the key may not go to, or another sandbox's port, or a URL a parser could read another host from (a backslash, userinfo) | `ExposedPortUnavailableError`; the key is never pointed there | `test_ports::test_key_auth_never_points_the_key_at_a_host_it_may_not_go_to` |
+| exposed port | a token answer with no usable URL (no token, a path, a bad port) | `ExposedPortUnavailableError`; a token never appears in an error | `test_ports::test_a_token_answer_that_cannot_be_used_is_refused` |
+| exposed port | sandbox paused (`auto_pause_min`) | resumed first, since a token never wakes it | `test_ports::test_a_paused_sandbox_is_resumed_before_its_token_url_is_made` |
+| exposed port | sandbox can't be resumed (in `error`, gone) | `ExposedPortUnavailableError` (`sandbox_not_running`); no token made | `test_ports::test_no_url_for_a_sandbox_that_cannot_run` |
+| exposed port | the session already paused or deleted its sandbox | `ExposedPortUnavailableError` (`session_released`); nothing sent, so the key can't wake it | `test_ports::test_no_url_once_the_session_has_released_its_sandbox` |
 | fork | | never called: the SDK's sandbox interface has no fork | |
 | exec | answer lost (timeout, 502, a proxy's 503) | never resent; `retryable=None`, since it may have run | `test_exec_answered_by_a_proxy_503_is_not_marked_retryable` |
 | exec | answer lost, or one that could not be read | the error says which: it never reached the sandbox, it may or may not have run, or it ran (a 2xx it could not read) | `test_api::test_a_command_whose_connection_drops_never_reads_as_could_not_reach`, `test_api::test_a_2xx_it_could_not_read_says_the_command_ran` |

@@ -13,15 +13,16 @@ and the PTY calls behind `exec_command` and `write_stdin` (a process that
 outlives one call runs in the background, with a TTY on request), and
 validates every path against the workspace inside the sandbox. A paused
 Prized sandbox keeps its memory and disk, so `pause_on_exit=True` lets a later
-`resume()` continue in the same sandbox.
+`resume()` continue in the same sandbox. `resolve_exposed_port()` gives a
+port in `exposed_ports` its https URL, with a token for that port in the
+URL or for the API key in a header (`exposed_port_auth`).
 
-Not supported, because a Prized sandbox has no root and no inbound network:
-manifest users other than `prized`, any manifest group, mounts, and exposed
-ports.
+Not supported, because a Prized sandbox has no root: manifest users other
+than `prized`, any manifest group, and mounts.
 
 The parts: `_options` (options and state), `_lifecycle` (create, resume,
 pause, delete, each undone on failure), `_core` (commands), `_files`,
-`_pty`, and `_scripts` (what runs in the sandbox).
+`_pty`, `_ports` (exposed ports), and `_scripts` (what runs in the sandbox).
 """
 
 from __future__ import annotations
@@ -57,6 +58,7 @@ from openai_agents_prized._options import (
     create_body,
     resolve_manifest_root,
 )
+from openai_agents_prized._ports import PrizedPortsMixin
 from openai_agents_prized._pty import PrizedPtyMixin
 
 if TYPE_CHECKING:
@@ -68,7 +70,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger("openai_agents_prized")
 
 
-class PrizedSandboxSession(PrizedPtyMixin, PrizedFilesMixin):
+class PrizedSandboxSession(PrizedPtyMixin, PrizedFilesMixin, PrizedPortsMixin):
     """A sandbox session backed by one Prized sandbox."""
 
     @classmethod
@@ -228,6 +230,7 @@ class PrizedSandboxClient(BaseSandboxClient[PrizedSandboxClientOptions | None]):
             session_id=session_id,
             manifest=manifest,
             snapshot=resolve_snapshot(snapshot, str(session_id)),
+            exposed_ports=options.exposed_ports,
             sandbox_id="",
             template=options.template,
             vcpu=options.vcpu,
@@ -240,6 +243,8 @@ class PrizedSandboxClient(BaseSandboxClient[PrizedSandboxClientOptions | None]):
             max_runtime_min=options.max_runtime_min,
             pause_on_exit=options.pause_on_exit,
             timeouts=coerce_timeouts(options.timeouts),
+            exposed_port_url_ttl_s=options.exposed_port_url_ttl_s,
+            exposed_port_auth=options.exposed_port_auth,
         )
         sandbox, toolbox = await create_running(
             self._client, create_body(state), start_s=state.timeouts.start_s

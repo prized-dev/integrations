@@ -45,6 +45,8 @@ if TYPE_CHECKING:
 API_ORIGIN = "https://api.prized.dev"
 EDGE_ORIGIN = "https://edge.prized.dev"
 API_KEY = "dcp_test_key"
+PREVIEW_DOMAIN = "p.prized.dev"
+BROWSER_DOMAIN = "prized.link"
 PRIZED_HOME = "/home/prized"
 TEMPLATES = frozenset({"prized-base-v1", "prized-agent-v1"})
 CREATE_FIELDS = frozenset(
@@ -130,6 +132,7 @@ class FakeSandbox:
             "expiresAt": "2026-10-14T19:02:11Z",
             "errorReason": "boot failed" if self.state == "error" else None,
             "toolboxBase": f"{EDGE_ORIGIN}/v1/sandbox/{self.id}",
+            "previewUrlTemplate": f"https://{{port}}-{self.id.replace('_', '-')}.{PREVIEW_DOMAIN}/",
             "createdAt": "2026-10-14T17:02:11Z",
             "lastActiveAt": "2026-10-14T17:02:11Z",
         }
@@ -183,6 +186,13 @@ class FakePrized:
         # The edge's limit on one upload or download.
         self.max_transfer = 100 * 1024 * 1024
         self.exec_hooks: list[tuple[str, Callable[[FakeSandbox], None]]] = []
+        # Port tokens: the API refuses them while the workspace has only free
+        # credit, and answers `browserUrl` only where there is a browser domain.
+        self.free_credit_only = False
+        self.browser_domain = True
+        self.port_tokens: list[str] = []
+        # The sandbox's state when each token was made.
+        self.port_token_states: list[str] = []
         self.lock = threading.Lock()
         self._ids = itertools.count(1)
 
@@ -394,6 +404,8 @@ class FakePrized:
                 sandbox.state = "pausing"
                 status = self._hold(sandbox, want, 202)
                 return httpx.Response(status, json={"sandbox": sandbox.document()})
+            if method == "POST" and verb.startswith("ports/") and verb.endswith("/token"):
+                return self._port_token(sandbox, verb.split("/")[1], doc)
             if method == "POST" and verb == "resume":
                 if sandbox.state in {"paused", "pausing"}:
                     sandbox.state = "starting"
@@ -401,6 +413,48 @@ class FakePrized:
                 status = self._hold(sandbox, want, 202)
                 return httpx.Response(status, json={"sandbox": sandbox.document()})
         return _error(404, "not_found")
+
+    def _port_token(  # noqa: PLR0911  # one answer per refusal the API documents
+        self, sandbox: FakeSandbox, raw_port: str, doc: Any
+    ) -> httpx.Response:
+        """`POST /sandboxes/{id}/ports/{port}/token`, as docs/sandboxes-api.mdx states it."""
+        if not raw_port.isdigit() or not 1 <= int(raw_port) <= 65535:
+            return _error(400, "bad_request")
+        port = int(raw_port)
+        if port in {22, 81}:
+            return _error(400, "port_reserved")
+        doc = doc if doc is not None else {}
+        if not isinstance(doc, dict):
+            return _error(400, "bad_request")
+        unknown = sorted(set(doc) - {"expiresIn"})
+        if unknown:
+            return _error(422, "unknown_field", field=unknown[0])
+        expires_in = doc.get("expiresIn", 3600)
+        if isinstance(expires_in, bool) or not isinstance(expires_in, int):
+            return _error(400, "bad_request")
+        if not 60 <= expires_in <= 86400:
+            return _error(400, "bad_request")
+        if self.free_credit_only:
+            return _error(
+                402, "share_links_need_payment", message="The workspace has only free credit."
+            )
+        # A token never changes the sandbox's state: a paused one stays paused.
+        token = f"dpt_{uuid.uuid4().hex}"
+        self.port_tokens.append(token)
+        self.port_token_states.append(sandbox.state)
+        host = f"{port}-{sandbox.id.replace('_', '-')}"
+        browser = f"https://{host}.{BROWSER_DOMAIN}/?prized_token={token}"
+        return httpx.Response(
+            201,
+            json={
+                "sandboxId": sandbox.id,
+                "port": port,
+                "url": f"https://{host}.{PREVIEW_DOMAIN}/?prized_token={token}",
+                "browserUrl": browser if self.browser_domain else None,
+                "token": token,
+                "expiresAt": "2026-10-14T18:02:11Z",
+            },
+        )
 
     def _create(self, doc: Any, key: str | None) -> httpx.Response:
         if not isinstance(doc, dict):

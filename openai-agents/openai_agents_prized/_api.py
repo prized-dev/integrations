@@ -315,6 +315,45 @@ class AsyncPrizedClient:
             if exc.code != "not_found":
                 raise
 
+    async def create_port_token(
+        self, sandbox_id: str, port: int, *, expires_in: int
+    ) -> dict[str, Any]:
+        """Make a token for one port of a sandbox (`POST /sandboxes/{id}/ports/{port}/token`).
+
+        The token opens only that port, until it expires or the key that
+        made it is revoked; it never wakes a paused sandbox.
+
+        Args:
+            sandbox_id: The sandbox's id.
+            port: The port: 1 to 65535 but 22 and 81.
+            expires_in: Seconds the token lasts, 60 to 86400.
+
+        Returns:
+            The answer: `url` (the port's URL with the token in its
+            `prized_token` query parameter, for programs), `browserUrl` (the
+            same on the browser domain, which opens in a browser tab too;
+            `None` where the deployment has none), `token`, and `expiresAt`.
+
+        Raises:
+            PrizedAPIError: If the API refuses (`share_links_need_payment`
+                while the workspace has only free credit, `port_reserved`,
+                `preview_unavailable`, ...) or answers without a URL.
+        """
+        path = f"{_sandbox_path(sandbox_id)}/ports/{port}/token"
+        answer = await self._request(
+            "POST",
+            self._api(path),
+            json_body={"expiresIn": expires_in},
+            # A second copy makes a second token that nobody holds, which
+            # expires on its own: safe to send again after a lost answer.
+            retry="safe",
+        )
+        doc = _json(answer)
+        if not isinstance(doc.get("url"), str) or not isinstance(doc.get("token"), str):
+            msg = "The API answered a port token without its url or token."
+            raise PrizedAPIError("bad_response", msg, status=answer.status_code)
+        return doc
+
     # --- the edge ------------------------------------------------------------
 
     async def execute(
