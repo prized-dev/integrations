@@ -6,7 +6,7 @@ set -euo pipefail
 R=${FAKE_ROOT:?}
 printf '%s\n' "$*" >> "$R/calls.log"
 json_box() { printf '{"box":{"id":"00000000-0000-4000-8000-000000000000","hostname":"%s","observedState":"%s","tier":"lite"},"ok":true}\n' "$1" "$(cat "$R/boxes/$1/state")"; }
-need() { [ -d "$R/boxes/$1" ] || { echo "prized: no box named $1" >&2; exit 1; }; }
+need() { [ -d "$R/boxes/$1" ] || { printf '{"ok":false,"message":"no box named %s"}\n' "$1"; exit 1; }; }
 
 box=
 if [ "${1:-}" = --box ]; then box=$2; shift 2; fi
@@ -19,7 +19,8 @@ case "${1:-} ${2:-}" in
   "box resume")
     need "$3"; echo running > "$R/boxes/$3/state"; echo "✓ $3 is running" ;;
   "box auto-pause")
-    need "$3"; echo "$4" > "$R/boxes/$3/auto-pause" ;;
+    need "$3"; [ "${FAKE_AUTOPAUSE_FAIL:-}" != 1 ] || { echo "prized: auto-pause refused" >&2; exit 1; }
+    echo "$4" > "$R/boxes/$3/auto-pause" ;;
   "box new")
     shift 2; name=mango
     while [ $# -gt 0 ]; do case $1 in --tier) shift ;; --*) ;; *) name=$1 ;; esac; shift; done
@@ -34,7 +35,9 @@ case "${1:-} ${2:-}" in
     need "$src"; [ ! -e "$R/boxes/$name" ] || { echo "prized: $name exists" >&2; exit 1; }
     mkdir -p "$R/boxes/$name"; cp -a "$R/boxes/$src/home" "$R/boxes/$name/home"; echo running > "$R/boxes/$name/state"
     echo "$name: copying the disk" >&2; echo "$name: running" >&2
-    printf '{"box":{"id":"11111111-0000-4000-8000-000000000000","hostname":"%s","observedState":"running"},"ok":true,"state":"running","waited":true}\n' "$name" ;;
+    answer=${FAKE_FORK_ANSWER:-$name}
+    extra=''; [ -z "${FAKE_FORK_EXTRA:-}" ] || extra=',"source":{"hostname":"'"$src"'"}'
+    printf '{"box":{"id":"11111111-0000-4000-8000-000000000000","hostname":"%s","observedState":"running"}%s,"ok":true,"state":"running","waited":true}\n' "$answer" "$extra" ;;
   "agents handoff")
     echo "handoff to ${box:-default}" ;;
   *)

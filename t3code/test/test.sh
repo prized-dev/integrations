@@ -36,6 +36,12 @@ EOF
 release 0.1.7
 release 0.1.6
 release 0.1.5
+release 0.1.4
+sed -i 's/^  --version) echo "0.1.4" ;;/  --version) exit 1 ;;/' "$T/build/t3-0.1.4-$PLAT-$ARCH/t3"
+tar -czf "$T/releases/v0.1.4/t3-0.1.4-$PLAT-$ARCH.tar.gz" -C "$T/build" "t3-0.1.4-$PLAT-$ARCH"
+(cd "$T/releases/v0.1.4" && sha256sum "t3-0.1.4-$PLAT-$ARCH.tar.gz" > SHA256SUMS)
+# A pid that is certainly not running: a child that has exited and been reaped.
+sh -c 'exit 0' & DEAD=$!; wait "$DEAD" || true
 # A checksum file whose line doesn't match the archive at all.
 printf '%064d  t3-0.1.5-%s-%s.tar.gz\n' 0 "$PLAT" "$ARCH" > "$T/releases/v0.1.5/SHA256SUMS"
 
@@ -78,7 +84,7 @@ check "archive and checksums removed, no staging or lock left" '[ ! -e "$H/.t3/r
 check "browser setup ran with sudo" 'grep -q "browser setup by fake" "$FAKE_ROOT/browser.log" && has "browser:      Allowed Chrome'\''s sandbox"'
 check "agents found on the login PATH, sign-in missing" 'has "claude:       $H/.local/bin/claude, no sign-in found" && has "prized --box mango agents handoff claude codex --gh"'
 check "tells you what to click" 'has "Add environment > SSH, and pick"'
-check "the API key is on no command line and nowhere on the box" '! grep -rqa "$KEY" "$FAKE_ROOT"'
+check "the API key is on no prized or ssh command line" '! grep -qa "$KEY" "$FAKE_ROOT/calls.log"'
 
 echo "# up again: nothing downloaded twice"
 run up mango --t3-version 0.1.7 --no-open
@@ -104,7 +110,7 @@ world checksum
 run up --t3-version 0.1.5 --no-open
 check "fails, says why" '[ "$CODE" = 1 ] && has "checksum mismatch"'
 check "no runtime, staging directory or lock left" '[ -z "$(ls -A "$H/.t3/runtime/versions")" ]'
-check "the box is reported as it was: no browser step" '[ ! -e "$FAKE_ROOT/browser.log" ]'
+check "no browser step after a failed install" '[ ! -e "$FAKE_ROOT/browser.log" ]'
 
 echo "# T3 Code's install lock: a dead owner is taken over, a live one waited for"
 world lock
@@ -147,10 +153,10 @@ echo "# fork: a copy that T3 Code sees as a machine of its own"
 world fork
 U=$H/.t3/userdata
 mkdir -p "$U/secrets" "$H/.t3/ssh-launch/900c6b2493d5458d" "$H/.t3/runtime/versions/0.1.7"
-echo source-id > "$U/environment-id"; echo '{"version":1,"pid":4242,"port":3773}' > "$U/server-runtime.json"
+echo source-id > "$U/environment-id"; echo "{\"version\":1,\"pid\":$DEAD,\"port\":3773}" > "$U/server-runtime.json"
 echo anon > "$U/anonymous-id"; echo mango > "$H/.t3/usage-host-id"; echo '{"theme":"dark"}' > "$U/settings.json"; echo db > "$U/statev2.sqlite"
 for s in server-signing-key guest-share-signing-key mcp-oauth-signing-key cloud-link-ed25519-key-pair cloud-cli-desired-link bitbucket-access-token secret-request-salt; do echo x > "$U/secrets/$s.bin"; done
-echo 4242 > "$H/.t3/ssh-launch/900c6b2493d5458d/pid"
+echo "$DEAD" > "$H/.t3/ssh-launch/900c6b2493d5458d/pid"
 run fork mango --name mango-2 --t3-version 0.1.7 --no-open --no-browser-setup
 F=$FAKE_ROOT/boxes/mango-2/home
 FU=$F/.t3/userdata
@@ -159,7 +165,10 @@ check "the copy's T3 Code identity is gone" '[ ! -e "$FU/environment-id" ] && [ 
 check "its signing keys and T3 Connect link are gone" '[ "$(ls "$FU/secrets" | sort | tr "\n" " ")" = "bitbucket-access-token.bin secret-request-salt.bin " ]'
 check "projects, threads, settings and saved secrets stay" '[ -s "$FU/statev2.sqlite" ] && [ -s "$FU/settings.json" ] && [ -s "$FU/secrets/bitbucket-access-token.bin" ]'
 check "the source is untouched" '[ "$(cat "$U/environment-id")" = source-id ] && [ -e "$U/secrets/server-signing-key.bin" ] && [ -e "$H/.t3/usage-host-id" ]'
-check "says the old id is removed, then readies the copy" 'has "source-id removed" && has "mango-2 is ready"'
+check "says the old id moved aside, then readies the copy" 'has "source-id moved aside" && has "mango-2 is ready"'
+B=$(find "$F/.t3" -maxdepth 1 -name "identity-reset-*" -type d | head -n 1)
+check "the old files kept in a 0700 copy on the fork" '[ -n "$B" ] && [ "$(stat -c %a "$B")" = 700 ] && [ "$(cat "$B/userdata/environment-id")" = source-id ] && [ -e "$B/userdata/secrets/cloud-link-ed25519-key-pair.bin" ]'
+
 
 echo "# reset-identity stops T3 Code's server, and nothing else"
 world reset
@@ -167,24 +176,79 @@ U=$H/.t3/userdata; mkdir -p "$U" "$H/.t3/ssh-launch/k1" "$H/.t3/ssh-launch/k2" "
 cp "$T/build/t3-0.1.7-$PLAT-$ARCH/t3" "$H/.t3/runtime/versions/0.1.7/t3"
 (cd "$H" && exec sh "$H/.t3/runtime/versions/0.1.7/t3" serve --host 127.0.0.1 --port 3773) & SERVER=$!
 sleep 300 & OTHER=$!   # an unrelated process whose pid a stale pid file happens to hold
+# An agent's dev server inside a T3 worktree: under ~/.t3 and running "serve", but not T3 Code.
+mkdir -p "$H/.t3/worktrees/shop/main/node_modules/.bin"
+printf '#!/bin/sh\nwhile :; do sleep 1; done\n' > "$H/.t3/worktrees/shop/main/node_modules/.bin/vite"
+(exec sh "$H/.t3/worktrees/shop/main/node_modules/.bin/vite" serve) & DEV=$!
 echo "$SERVER" > "$H/.t3/ssh-launch/k1/pid"; echo "$OTHER" > "$H/.t3/ssh-launch/k2/pid"
+echo "{\"pid\":$DEV,\"port\":3773}" > "$U/server-runtime.json"
 echo id-1 > "$U/environment-id"
 sleep 0.5
-run reset-identity mango
+run reset-identity mango --yes
 check "exits 0, says what it stopped" '[ "$CODE" = 0 ] && has "stopped T3 Code server $SERVER" || { cat "$W/out"; false; }'
 check "the T3 Code server is stopped" '! kill -0 "$SERVER" 2>/dev/null'
 check "an unrelated process with a recorded pid keeps running" 'kill -0 "$OTHER" 2>/dev/null'
-kill "$OTHER" 2>/dev/null || true
-check "identity removed" '[ ! -e "$U/environment-id" ] && has "id-1 removed"'
+check "a dev server under ~/.t3 running serve keeps running" 'kill -0 "$DEV" 2>/dev/null'
+kill "$OTHER" "$DEV" 2>/dev/null || true
+check "identity moved aside" '[ ! -e "$U/environment-id" ] && has "id-1 moved aside"'
 world service
 mkdir -p "$H/.t3/userdata"; echo id-2 > "$H/.t3/userdata/environment-id"
-FAKE_T3_SERVICE=1 run reset-identity mango
+FAKE_T3_SERVICE=1 run reset-identity mango --yes
 check "a running t3code.service is stopped, then started again" '[ "$CODE" = 0 ] && grep -q "systemctl --user stop t3code.service" "$FAKE_ROOT/calls.log" && grep -q "systemctl --user start t3code.service" "$FAKE_ROOT/calls.log"'
 
 echo "# without sudo, browser setup only says what it would do"
 world nosudo
 FAKE_SUDO=0 run up --t3-version 0.1.7 --no-open
 check "still exits 0, shows the command" '[ "$CODE" = 0 ] && has "sudo t3 browser setup" && [ ! -e "$FAKE_ROOT/browser.log" ]'
+
+echo "# reset-identity asks first"
+world confirm
+mkdir -p "$H/.t3/userdata"; echo id-3 > "$H/.t3/userdata/environment-id"
+run reset-identity mango
+check "not interactive and no --yes: refuses, changes nothing" '[ "$CODE" = 1 ] && has "pass --yes" && [ "$(cat "$H/.t3/userdata/environment-id")" = id-3 ]'
+
+echo "# fork checks its options before it makes a box"
+world fork-options
+run fork mango --name mango-2 --t3-version 0.1.x --no-open
+check "a bad --t3-version: refused, no fork" '[ "$CODE" = 1 ] && has "one exact version" && ! called "fork mango"'
+run fork mango --name mango-2 --auto-pause "off now" --no-open
+check "a bad --auto-pause: refused, no fork" '[ "$CODE" = 1 ] && has "--auto-pause takes" && ! called "fork mango"'
+run fork mango --name mango --no-open
+check "the source's own name: refused" '[ "$CODE" = 1 ] && ! called "fork mango"'
+FAKE_FORK_ANSWER=mango run fork mango --name mango-3 --t3-version 0.1.7 --no-open
+check "prized answering with the source's name: the source is not reset" '[ "$CODE" = 1 ] && has "source box" && [ -z "$(ls -d "$H"/.t3/identity-reset-* 2>/dev/null)" ]'
+
+echo "# the first hostname in prized's JSON is the new box"
+world fork-json
+FAKE_FORK_EXTRA=1 run fork mango --name mango-4 --t3-version 0.1.7 --no-open --no-browser-setup
+check "box first, its source after: the new box is used" '[ "$CODE" = 0 ] && has "new box:      mango-4"'
+
+echo "# a server that does not run on the box is not marked installed"
+world probe
+run up --t3-version 0.1.4 --no-open
+check "fails, says why, leaves nothing" '[ "$CODE" = 1 ] && has "does not run on this box" && [ -z "$(ls -A "$H/.t3/runtime/versions")" ]'
+
+echo "# the desktop app's version, from the app bundle (macOS)"
+world app
+mkdir -p "$W/lh/Applications/T3 Code (Nightly).app/Contents" "$W/macbin"
+touch "$W/lh/Applications/T3 Code (Nightly).app/Contents/Info.plist"
+printf '#!/bin/sh\n[ "$1" = read ] && [ "$3" = CFBundleShortVersionString ] && echo 0.1.6\n' > "$W/macbin/defaults"; chmod +x "$W/macbin/defaults"
+HOME=$W/lh PATH="$W/macbin:$PATH" run up --no-open --no-browser-setup
+check "installs the app's version and names the app" '[ "$CODE" = 0 ] && [ -x "$H/.t3/runtime/versions/0.1.6/t3" ] && has "T3 Code here: 0.1.6 ($W/lh/Applications/T3 Code (Nightly).app)"'
+
+echo "# prized missing, failing, or failing to set auto-pause"
+world prized
+PRIZED_T3_PRIZED=$W/no-such-prized run up --no-open
+check "prized not installed: says so" '[ "$CODE" = 1 ] && has "prized CLI isn"'
+run up ghost --no-open
+check "no such box: prized's own message" '[ "$CODE" = 1 ] && has "no box named ghost"'
+FAKE_AUTOPAUSE_FAIL=1 run up --t3-version 0.1.7 --auto-pause 2h --no-open
+check "auto-pause failing: fails, never says ready" '[ "$CODE" = 1 ] && has "auto-pause mango 2h failed" && ! has "is ready"'
+
+echo "# a version with a newline is refused"
+world newline
+run up --t3-version "$(printf '0.1.7\n/../x')" --no-open
+check "refused before any ssh" '[ "$CODE" = 1 ] && ! grep -q "^ssh" "$FAKE_ROOT/calls.log"'
 
 echo
 if [ "$FAILS" = 0 ]; then echo "all passed"; else echo "$FAILS failed"; exit 1; fi

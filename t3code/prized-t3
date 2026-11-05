@@ -7,6 +7,8 @@
 #   prized-t3 check [BOX]        what T3 Code will find on BOX, changing nothing
 #   prized-t3 reset-identity BOX give BOX a new T3 Code identity (after a `prized fork` made by hand)
 #
+# Its box-side install (PREWARM_SCRIPT) is adapted from T3 Code's SSH runner; see the MIT notice there.
+#
 # T3 Code (https://github.com/pingdotgg/t3code, MIT) adds a remote machine as an SSH host: its
 # desktop app lists the hosts in ~/.ssh/config, installs its server under ~/.t3/runtime there and
 # tunnels to it. This script does the box's side of that before you click: the box is awake, its
@@ -18,20 +20,19 @@ set -eu
 PRIZED_T3_VERSION=0.1.0
 PRIZED=${PRIZED_T3_PRIZED:-prized}
 SSH=${PRIZED_T3_SSH:-ssh}
-# T3 Code's own variable for a mirror of its release downloads.
-RELEASE_BASE=${T3CODE_RELEASE_BASE_URL:-https://github.com/pingdotgg/t3code/releases/download}
-RELEASE_BASE=${RELEASE_BASE%/}
+# Where T3 Code's desktop app downloads its server from (packages/shared/src/cliRelease.ts).
+RELEASE_BASE=https://github.com/pingdotgg/t3code/releases/download
 GUIDE='https://prized.dev/docs/t3-code?via=t3code'
 
 say() { printf '%s\n' "$*"; }
 warn() { printf 'prized-t3: %s\n' "$*" >&2; }
 die() { warn "$*"; exit 1; }
 interactive() { [ -t 0 ] && [ -t 1 ] && [ -z "${PRIZED_T3_NO_PROMPT:-}" ]; }
-ask() { # ask QUESTION: yes unless the answer starts with n; no when not interactive
+ask() { # ask QUESTION: yes only for an answer starting with y; no when not interactive
   interactive || return 1
-  printf '%s [Y/n] ' "$1"
+  printf '%s [y/N] ' "$1"
   read -r ask_answer || return 1
-  case $ask_answer in [Nn]*) return 1 ;; esac
+  case $ask_answer in [Yy]*) return 0 ;; *) return 1 ;; esac
 }
 
 usage() {
@@ -48,7 +49,9 @@ prized-t3 $PRIZED_T3_VERSION: make a Prized box a T3 Code environment
   prized-t3 fork BOX [--name NEW] [--tier TIER] [up options]
                                      copy BOX's disk into a new box with its own T3 Code identity
   prized-t3 check [BOX]              what T3 Code will find on BOX, changing nothing
-  prized-t3 reset-identity BOX       give BOX a new T3 Code identity (stops T3 Code's server there)
+  prized-t3 reset-identity BOX [--yes]
+                                     give BOX a new T3 Code identity (stops T3 Code's server there;
+                                     the old files move to ~/.t3/identity-reset-<time>)
 
 Then in T3 Code: Settings > Environments > Add environment > SSH, and pick the box.
 Guide: $GUIDE
@@ -57,14 +60,20 @@ EOF
 
 # --- small helpers -----------------------------------------------------------------------------
 
-# json_str KEY: the first "KEY":"value" in compact JSON on stdin (prized prints compact JSON).
-json_str() { sed -n "s/.*\"$1\":\"\\([^\"]*\\)\".*/\\1/p" | head -n 1; }
+# json_str KEY: the value of the first "KEY":"value" in compact JSON on stdin (prized prints compact JSON).
+json_str() { grep -o "\"$1\":\"[^\"]*\"" | head -n 1 | cut -d '"' -f 4; }
 
 valid_box() { # box names: lowercase letters, digits and hyphens, as prized allows
   case $1 in '' | -* | *[!a-z0-9-]*) return 1 ;; esac
 }
 valid_version() { # one exact version, as T3 Code requires for a runtime directory name
+  [ "$(printf '%s' "$1" | wc -l)" -eq 0 ] || return 1
   printf '%s\n' "$1" | grep -Eq '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$'
+}
+
+valid_pause() { # an idle window prized takes (45m, 2h, 90, 7d) or off
+  case $1 in off) return 0 ;; '' | *[!0-9mhd]*) return 1 ;; esac
+  printf '%s\n' "$1" | grep -Eq '^[0-9]+[mhd]?$'
 }
 
 box_ssh() { # box_ssh BOX CMD...: plain ssh, as T3 Code runs it, never asking for a password
@@ -80,23 +89,38 @@ remote() {
     # shellcheck disable=SC2089 # quotes for the remote shell, on purpose
     r_args="$r_args '$(printf '%s' "$r_arg" | sed "s/'/'\\\\''/g")'"
   done
-  # shellcheck disable=SC2086,SC2090 # r_args is quoted for the remote shell above
-  printf '%s\n' "$r_script" | box_ssh "$r_box" sh -l -s -- $r_args
+  # One string: ssh hands it to the box's shell as is, so nothing here splits or globs the args.
+  printf '%s\n' "$r_script" | box_ssh "$r_box" "sh -l -s --$r_args"
 }
 
-default_box() {
-  db=$("$PRIZED" info --json 2>/dev/null | json_str hostname) || true
-  [ -n "$db" ] || die "no default box: name one (prized-t3 up BOX), or create one with prized-t3 up --new"
-  printf '%s\n' "$db"
+need_prized() {
+  command -v "$PRIZED" >/dev/null 2>&1 || die "the prized CLI isn't installed: curl -fsSL https://prized.dev/install.sh | sh, then prized login"
 }
-
-box_state() { "$PRIZED" info "$1" --json 2>/dev/null | json_str observedState; }
+# prized_info [BOX]: sets INFO to `prized info --json` for BOX (the default box without one), or dies
+# with prized's own message (signed out, offline, no such box).
+prized_info() {
+  if INFO=$("$PRIZED" info ${1:+"$1"} --json 2>&1); then return 0; fi
+  pi_msg=$(printf '%s\n' "$INFO" | json_str message)
+  [ -n "$pi_msg" ] || pi_msg=$(printf '%s\n' "$INFO" | tail -n 1)
+  if [ -n "${1:-}" ]; then die "prized info $1: ${pi_msg:-failed}"; fi
+  die "no default box (${pi_msg:-prized info failed}): name one, or create one with prized-t3 up --new"
+}
+default_box() { # sets BOX_NAME to the default box
+  prized_info
+  BOX_NAME=$(printf '%s\n' "$INFO" | json_str hostname)
+  [ -n "$BOX_NAME" ] || die "prized info names no default box: name one, or create one with prized-t3 up --new"
+}
+box_state() { # sets STATE for BOX
+  prized_info "$1"
+  STATE=$(printf '%s\n' "$INFO" | json_str observedState)
+  [ -n "$STATE" ] || die "prized info $1 gave no state"
+}
 
 wake() { # wake BOX: resume it unless it is running; T3 Code's 10 s ssh timeout won't wait for a wake
-  w_state=$(box_state "$1") || true
+  box_state "$1"
+  w_state=$STATE
   case $w_state in
     running) ;;
-    '') die "prized can't find a box named $1 (prized box ls lists yours)" ;;
     *)
       say "  $1 is $w_state: resuming it"
       "$PRIZED" box resume "$1" --wait >/dev/null || die "prized box resume $1 failed"
@@ -105,24 +129,26 @@ wake() { # wake BOX: resume it unless it is running; T3 Code's 10 s ssh timeout 
 }
 
 ensure_alias() { # ensure_alias BOX: plain `ssh BOX` works, adding BOX to the SSH config if needed
-  if box_ssh "$1" true 2>/dev/null; then return 0; fi
+  if box_ssh "$1" true </dev/null 2>/dev/null; then return 0; fi
   say "  adding $1 to your SSH config (prized init --box $1)"
-  "$PRIZED" init --box "$1" --non-interactive --no-daemon >/dev/null 2>&1 || true
-  box_ssh "$1" true 2>/dev/null && return 0
+  "$PRIZED" init --box "$1" --non-interactive --no-daemon </dev/null >/dev/null 2>&1 || true
+  box_ssh "$1" true </dev/null 2>/dev/null && return 0
   die "plain ssh does not reach $1. T3 Code needs that: run prized init --box $1, then prized-t3 up $1 again"
 }
 
-# t3_version: the T3 Code desktop app's version here (its server must match it exactly), else empty.
+# t3_version: sets T3_VER to the T3 Code desktop app's version here (its server must match it
+# exactly) and T3_APP to the app it found, else leaves them empty.
 t3_version() {
+  T3_VER='' T3_APP=''
   for tv_app in "/Applications/T3 Code (Beta).app" "/Applications/T3 Code (Nightly).app" "/Applications/T3 Code.app" \
     "$HOME/Applications/T3 Code (Beta).app" "$HOME/Applications/T3 Code (Nightly).app" "$HOME/Applications/T3 Code.app"; do
     if [ -f "$tv_app/Contents/Info.plist" ] && command -v defaults >/dev/null 2>&1; then
       tv=$(defaults read "$tv_app/Contents/Info" CFBundleShortVersionString 2>/dev/null) || tv=
-      if [ -n "$tv" ]; then T3_APP=$tv_app; printf '%s\n' "$tv"; return 0; fi
+      if [ -n "$tv" ]; then T3_APP=$tv_app T3_VER=$tv; return 0; fi
     fi
   done
   if command -v t3 >/dev/null 2>&1; then
-    t3 --version 2>/dev/null | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?' | head -n 1
+    T3_VER=$(t3 --version 2>/dev/null | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?' | head -n 1) || T3_VER=''
   fi
 }
 
@@ -157,7 +183,27 @@ true
 
 # Install T3 Code's server for one version where its SSH launcher looks for it, so the first
 # connect starts at once: ~/.t3/runtime/versions/V with .install-complete, the same lock, staging
-# directory, SHA256SUMS check and --version probe as its runner (packages/ssh/src/tunnel.ts).
+# directory, SHA256SUMS check and --version probe as its runner. This script is adapted from
+# REMOTE_RUNNER_SCRIPT in T3 Code's packages/ssh/src/tunnel.ts, which carries this notice:
+#
+#   MIT License
+#
+#   Copyright (c) 2026 T3 Tools Inc.
+#
+#   Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+#   and associated documentation files (the "Software"), to deal in the Software without
+#   restriction, including without limitation the rights to use, copy, modify, merge, publish,
+#   distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+#   Software is furnished to do so, subject to the following conditions:
+#
+#   The above copyright notice and this permission notice shall be included in all copies or
+#   substantial portions of the Software.
+#
+#   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+#   BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+#   DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # shellcheck disable=SC2016 # expands on the box
 PREWARM_SCRIPT='
 set -eu
@@ -220,16 +266,25 @@ if sudo -n true 2>/dev/null; then sudo -n "$T3" browser setup; else "$T3" browse
 
 # A fork boots with its source's ~/.t3, so T3 Code would take it for the same machine: its client
 # files a host with a known environment id as another route to that machine. Stop T3 Code's
-# servers here, then remove what identifies this machine to T3 Code and to T3 Connect; projects,
-# threads, settings and your own saved secrets stay. T3 Code makes a new identity on its next start.
+# servers here, then move aside what identifies this machine to T3 Code and to T3 Connect (into
+# ~/.t3/identity-reset-<time>, 0700); projects, threads, settings and your own saved secrets stay.
+# T3 Code makes a new identity on its next start.
 # shellcheck disable=SC2016 # expands on the box
 RESET_SCRIPT='
 set -eu
 T3="$HOME/.t3" U="$HOME/.t3/userdata"
 [ -d "$T3" ] || { echo "nothing to reset: no ~/.t3 on this box"; exit 0; }
+# A T3 Code server: its runtime binary, or the launcher script that execs it, running "serve".
 is_t3_server() {
   [ -n "$1" ] && [ -r "/proc/$1/cmdline" ] || return 1
-  tr "\000" " " < "/proc/$1/cmdline" | grep -q "/\.t3/.* serve"
+  tr "\000" "\n" < "/proc/$1/cmdline" | awk -v rt="$T3/runtime/versions/" -v sl="$T3/ssh-launch/" "
+    function runtime(a) { return index(a, rt) == 1 && substr(a, length(rt) + 1) ~ /^[^\\/]+\\/t3\$/ }
+    function launcher(a) { return index(a, sl) == 1 && substr(a, length(sl) + 1) ~ /^[^\\/]+\\/run-t3\\.sh\$/ }
+    NR == 1 { a0 = \$0 } NR == 2 { a1 = \$0 } NR == 3 { a2 = \$0 }
+    END {
+      shell = (a0 ~ /(^|\\/)(sh|dash|bash)\$/)
+      exit !((runtime(a0) && a1 == \"serve\") || (shell && (runtime(a1) || launcher(a1)) && a2 == \"serve\"))
+    }"
 }
 stop_pid() {
   is_t3_server "$1" || return 0
@@ -245,12 +300,22 @@ fi
 for f in "$T3"/ssh-launch/*/pid; do [ -f "$f" ] && stop_pid "$(cat "$f" 2>/dev/null || true)"; done
 stop_pid "$(sed -n "s/.*\"pid\":\([0-9]*\).*/\1/p" "$U/server-runtime.json" 2>/dev/null | head -n 1)"
 old=$(cat "$U/environment-id" 2>/dev/null || true)
-rm -f "$U/environment-id" "$U/environment-id.recovery" "$U/server-runtime.json" "$U/anonymous-id" "$T3/usage-host-id"
-rm -f "$U/secrets/server-signing-key.bin" "$U/secrets/guest-share-signing-key.bin" \
-  "$U/secrets/mcp-oauth-signing-key.bin" "$U"/secrets/cloud-*.bin
-rm -rf "$T3/ssh-launch"
+B="$T3/identity-reset-$(date +%Y%m%d-%H%M%S)"
+umask 077
+moved=0
+for f in "$U/environment-id" "$U/environment-id.recovery" "$U/server-runtime.json" "$U/anonymous-id" \
+  "$T3/usage-host-id" "$U/secrets/server-signing-key.bin" "$U/secrets/guest-share-signing-key.bin" \
+  "$U/secrets/mcp-oauth-signing-key.bin" "$U/secrets/asset-access-signing-key.bin" "$U"/secrets/cloud-*.bin \
+  "$T3/ssh-launch"; do
+  [ -e "$f" ] || continue
+  rel=${f#"$T3"/}
+  mkdir -p "$B/$(dirname "$rel")"
+  mv "$f" "$B/$rel"
+  moved=$((moved + 1))
+done
 [ "$service" = no ] || { systemctl --user start t3code.service && echo "started t3code.service"; }
-echo "reset ${old:-(none yet)}"
+[ "$moved" = 0 ] || echo "kept a copy of the old files in ~/${B#"$HOME"/}"
+echo "reset ${old:--}"
 '
 
 # --- commands ------------------------------------------------------------------------------------
@@ -281,7 +346,7 @@ report() {
     fi
   done
   [ -z "$AGENTS_MISSING" ] || say "  not found:    $AGENTS_MISSING (on a non-interactive login shell's PATH, where T3 Code looks)"
-  rp_rt=$(printf '%s\n' "$rp_out" | sed -n 's/^runtime=//p' | tr '\n' ' ')
+  rp_rt=$(printf '%s\n' "$rp_out" | sed -n 's/^runtime=//p' | tr '\n' ' ' | sed 's/ *$//')
   say "  T3 server:    ${rp_rt:-not installed yet}"
   rp_id=$(rp environment_id)
   if [ "$rp_id" = - ]; then say "  T3 identity:  none yet (made on the first start)"; else say "  T3 identity:  $rp_id"; fi
@@ -294,13 +359,14 @@ report() {
 
 cmd_check() {
   ck_box=${1:-}
-  [ -n "$ck_box" ] || ck_box=$(default_box)
+  need_prized
+  if [ -z "$ck_box" ]; then default_box; ck_box=$BOX_NAME; fi
   valid_box "$ck_box" || die "not a box name: $ck_box"
-  ck_state=$(box_state "$ck_box") || true
-  [ -n "$ck_state" ] || die "prized can't find a box named $ck_box"
+  box_state "$ck_box"
+  ck_state=$STATE
   say "$ck_box ($ck_state)"
   [ "$ck_state" = running ] || { say "  paused: prized-t3 up $ck_box wakes it and checks the rest"; return 0; }
-  if ! box_ssh "$ck_box" true 2>/dev/null; then
+  if ! box_ssh "$ck_box" true </dev/null 2>/dev/null; then
     say "  ssh $ck_box:   doesn't connect (prized-t3 up $ck_box adds it to your SSH config)"
     return 0
   fi
@@ -309,14 +375,32 @@ cmd_check() {
 }
 
 cmd_reset() {
-  rs_box=${1:-}
-  valid_box "$rs_box" || die "usage: prized-t3 reset-identity BOX"
+  rs_box='' rs_yes=''
+  for rs_arg in "$@"; do
+    case $rs_arg in
+      -y | --yes) rs_yes=yes ;;
+      -*) die "unknown option $rs_arg (prized-t3 --help)" ;;
+      *) [ -z "$rs_box" ] || die "one box at a time"; rs_box=$rs_arg ;;
+    esac
+  done
+  valid_box "$rs_box" || die "usage: prized-t3 reset-identity BOX [--yes]"
+  need_prized
+  if [ -z "$rs_yes" ]; then
+    interactive || die "reset-identity stops T3 Code's server on $rs_box and unlinks it from T3 Connect: pass --yes to go ahead"
+    printf 'This stops T3 Code on %s and gives it a new identity: devices paired with it pair again, and its\nT3 Connect link is removed. Type %s to go ahead: ' "$rs_box" "$rs_box"
+    read -r rs_answer || rs_answer=''
+    [ "$rs_answer" = "$rs_box" ] || die "nothing changed"
+  fi
   wake "$rs_box"
   ensure_alias "$rs_box"
   rs_out=$(remote "$rs_box" "$RESET_SCRIPT") || die "could not reset T3 Code's identity on $rs_box"
   printf '%s\n' "$rs_out" | sed -n '/^reset /!s/^/  /p'
   rs_old=$(printf '%s\n' "$rs_out" | sed -n 's/^reset //p')
-  say "  T3 identity:  $rs_old removed; T3 Code makes a new one when it next starts there"
+  case $rs_old in
+    '') ;;
+    -) say "  T3 identity:  none yet; T3 Code makes one when it first starts there" ;;
+    *) say "  T3 identity:  $rs_old moved aside; T3 Code makes a new one when it next starts there" ;;
+  esac
 }
 
 cmd_up() {
@@ -338,6 +422,8 @@ cmd_up() {
   [ -z "$up_version" ] || valid_version "$up_version" || die "--t3-version takes one exact version, such as 0.1.7"
   [ -z "$up_box" ] || valid_box "$up_box" || die "not a box name: $up_box"
   [ -z "$up_tier" ] || [ -n "$up_new" ] || die "--tier goes with --new (prized resize changes an existing box)"
+  [ -z "$up_pause" ] || valid_pause "$up_pause" || die "--auto-pause takes a window such as 45m, 2h or 7d, or off"
+  need_prized
 
   if [ -n "$up_new" ]; then
     say "Creating a box${up_box:+ named $up_box}"
@@ -345,16 +431,20 @@ cmd_up() {
     up_box=$(printf '%s\n' "$up_json" | json_str hostname)
     [ -n "$up_box" ] || die "prized box new did not name the new box"
   fi
-  [ -n "$up_box" ] || up_box=$(default_box)
+  if [ -z "$up_box" ]; then default_box; up_box=$BOX_NAME; fi
   say "Getting $up_box ready for T3 Code"
   wake "$up_box"
   ensure_alias "$up_box"
   say "  ssh $up_box:   ok"
-  [ -z "$up_pause" ] || { "$PRIZED" box auto-pause "$up_box" "$up_pause" >/dev/null && say "  auto-pause:   $up_pause"; }
+  if [ -n "$up_pause" ]; then
+    "$PRIZED" box auto-pause "$up_box" "$up_pause" >/dev/null || die "prized box auto-pause $up_box $up_pause failed"
+    say "  auto-pause:   $up_pause"
+  fi
 
-  T3_APP=
+  T3_APP=''
   if [ -z "$up_version" ]; then
-    up_version=$(t3_version) || up_version=
+    t3_version
+    up_version=$T3_VER
     if [ -n "$up_version" ]; then
       say "  T3 Code here: $up_version${T3_APP:+ ($T3_APP)}"
     else
@@ -379,7 +469,7 @@ cmd_up() {
 
   report "$up_box"
   if [ -n "$SIGNED_OUT" ]; then
-    if ask "Copy your$SIGNED_OUT sign-in and GitHub login from this computer to $up_box (prized agents handoff)?"; then
+    if ask "Copy your$SIGNED_OUT sign-in and your GitHub login (gh) from this computer to $up_box (prized agents handoff)?"; then
       # shellcheck disable=SC2086 # agent names
       "$PRIZED" --box "$up_box" agents handoff $SIGNED_OUT --gh || warn "prized agents handoff did not finish"
     else
@@ -397,32 +487,42 @@ cmd_up() {
 }
 
 cmd_fork() {
-  fk_src='' fk_name='' fk_tier='' fk_rest=''
+  fk_src='' fk_name='' fk_tier='' fk_version='' fk_pause='' fk_nobrowser='' fk_noopen=''
   while [ $# -gt 0 ]; do
     case $1 in
       --name) [ $# -ge 2 ] || die "$1 needs a value"; fk_name=$2; shift ;;
       --tier | --size) [ $# -ge 2 ] || die "$1 needs a value"; fk_tier=$2; shift ;;
+      --t3-version) [ $# -ge 2 ] || die "$1 needs a value"; fk_version=$2; shift ;;
+      --auto-pause) [ $# -ge 2 ] || die "$1 needs a value"; fk_pause=$2; shift ;;
+      --no-browser-setup) fk_nobrowser=yes ;;
+      --no-open) fk_noopen=yes ;;
       -h | --help) usage; exit 0 ;;
-      --t3-version | --auto-pause) [ $# -ge 2 ] || die "$1 needs a value"; fk_rest="$fk_rest $1 $2"; shift ;;
-      --no-browser-setup | --no-open) fk_rest="$fk_rest $1" ;;
       -*) die "unknown option $1 (prized-t3 --help)" ;;
       *) [ -z "$fk_src" ] || die "one box at a time"; fk_src=$1 ;;
     esac
     shift
   done
+  # Everything is checked before the fork: a fork takes minutes and makes a billed box.
   valid_box "$fk_src" || die "usage: prized-t3 fork BOX [--name NEW]"
   [ -z "$fk_name" ] || valid_box "$fk_name" || die "not a box name: $fk_name"
-  case $fk_rest in *[!a-zA-Z0-9.\ -]*) die "unexpected characters in the options" ;; esac
+  [ "$fk_name" != "$fk_src" ] || die "the fork needs a name of its own"
+  [ -z "$fk_version" ] || valid_version "$fk_version" || die "--t3-version takes one exact version, such as 0.1.7"
+  [ -z "$fk_pause" ] || valid_pause "$fk_pause" || die "--auto-pause takes a window such as 45m, 2h or 7d, or off"
+  need_prized
+  box_state "$fk_src"
   say "Forking $fk_src (its disk now: repos, sign-ins, T3 Code projects and threads)"
   fk_json=$("$PRIZED" fork "$fk_src" ${fk_name:+--name "$fk_name"} ${fk_tier:+--tier "$fk_tier"} --wait --json) ||
     die "prized fork $fk_src failed"
   fk_new=$(printf '%s\n' "$fk_json" | json_str hostname)
   [ -n "$fk_new" ] || fk_new=$fk_name
   [ -n "$fk_new" ] || die "prized fork did not name the new box"
+  valid_box "$fk_new" || die "prized fork named the new box $fk_new, which is not a box name"
+  # The reset below changes the box it is given: never the source.
+  [ "$fk_new" != "$fk_src" ] || die "prized fork answered with the source box's name; nothing reset"
   say "  new box:      $fk_new"
-  cmd_reset "$fk_new"
-  # shellcheck disable=SC2086 # options checked above
-  cmd_up "$fk_new" $fk_rest
+  cmd_reset "$fk_new" --yes
+  cmd_up "$fk_new" ${fk_version:+--t3-version "$fk_version"} ${fk_pause:+--auto-pause "$fk_pause"} \
+    ${fk_nobrowser:+--no-browser-setup} ${fk_noopen:+--no-open}
 }
 
 case ${1:-} in
