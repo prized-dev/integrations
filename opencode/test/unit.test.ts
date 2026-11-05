@@ -5,8 +5,8 @@ import { replace } from '../src/edit.ts';
 import { globMatcher } from '../src/glob.ts';
 import { type Hunk, applyChunks, parsePatch } from '../src/patch.ts';
 import { layoutFor, relative, toHost, toSandbox } from '../src/paths.ts';
-import { diffOf, parseRaw, patchFiles, risks, verifyPatch } from '../src/workspace.ts';
-import { makeRepo } from './helpers.ts';
+import { appliedModes, diffOf, parseRaw, patchFiles, risks, verifyPatch } from '../src/workspace.ts';
+import { gitIn, makeRepo } from './helpers.ts';
 
 describe('paths', () => {
   const l = layoutFor('/Users/me/app/src', '/Users/me/app');
@@ -233,6 +233,38 @@ describe('a patch that hides a file from the review', () => {
   it('passes an honest patch', async () => {
     const honest = Buffer.from(['diff --git a/x.txt b/x.txt', 'new file mode 100644', 'index 0000000..ce01362', '--- /dev/null', '+++ b/x.txt', '@@ -0,0 +1 @@', '+hello', ''].join('\n'));
     await expect(verifyPatch(honest, patchFiles(honest), makeRepo())).resolves.toBeUndefined();
+  });
+});
+
+describe('modes as git applies them', () => {
+  it('sees the symlink an index line tries to hide, and refuses header tricks', async () => {
+    // git takes the mode on `new file mode`; a later index line only names the old mode.
+    const masked = Buffer.from(
+      ['diff --git a/link b/link', 'new file mode 120000', 'index 0000000..1234567 100644', '--- /dev/null', '+++ b/link', '@@ -0,0 +1 @@', '+/etc', '\\ No newline at end of file', ''].join('\n'),
+    );
+    expect(() => patchFiles(masked)).toThrow(/not one git wrote/);
+    const repo = makeRepo();
+    const files = await appliedModes(masked, repo, ['link']);
+    expect(files).toEqual([{ path: 'link', oldMode: '000000', newMode: '120000' }]);
+    expect(risks(files)).toEqual(['a symlink: link']);
+    expect(gitIn(repo, 'status', '--porcelain')).toBe(''); // nothing written to the checkout or its repository
+  });
+
+  it('refuses a header line ending in CR', () => {
+    const crlf = Buffer.from(['diff --git a/x b/x', 'new file mode 100755\r', 'index 0000000..ce01362', '--- /dev/null', '+++ b/x', '@@ -0,0 +1 @@', '+hi', ''].join('\n'));
+    expect(() => patchFiles(crlf)).toThrow(/CR/);
+  });
+
+  it('reads an in-place edit of a file executable in your checkout as an edit to an executable', async () => {
+    const repo = makeRepo(); // bin/run is 100755 there
+    const edit = Buffer.from(gitIn(repo, 'diff', 'HEAD') || '');
+    expect(edit.length).toBe(0);
+    const patch = Buffer.from(
+      ['diff --git a/bin/run b/bin/run', 'index 85ba14d..5911198 100644', '--- a/bin/run', '+++ b/bin/run', '@@ -1,2 +1,3 @@', ' #!/bin/sh', ' echo run', '+echo extra', ''].join('\n'),
+    );
+    const files = await appliedModes(patch, repo, ['bin/run']);
+    expect(files[0]?.oldMode).toBe('100755');
+    expect(risks(files).join()).toMatch(/executable/);
   });
 });
 

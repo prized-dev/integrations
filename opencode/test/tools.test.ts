@@ -54,7 +54,7 @@ describe('tools in the sandbox', () => {
     const r = await tools.bash({ command: 'echo "[$OC_PRIZED_TEST_SECRET]"; exit 3', workdir: `${repo}/src` }, call);
     expect(r.output).toContain('[]');
     expect(r.output).toContain('exit code 3');
-    expect(call.asks[0]).toEqual({ permission: 'bash', patterns: ['echo "[$OC_PRIZED_TEST_SECRET]"; exit 3'] });
+    expect(call.asks[0]).toEqual({ permission: 'bash', patterns: ['echo "[$OC_PRIZED_TEST_SECRET]"', 'exit 3'] });
     const where = await tools.bash({ command: 'pwd', workdir: `${repo}/src` }, makeCall());
     expect(where.output.trim()).toMatch(/\/home\/prized\/work\/.+\/src$/);
     const slow = await tools.bash({ command: 'sleep 5', timeout: 300 }, makeCall());

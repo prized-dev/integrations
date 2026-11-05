@@ -39,13 +39,23 @@ interface V2Tool {
   description: string;
   execute: Exec;
   output?: unknown;
+  options?: { permission?: string };
 }
 
 /** The slice of OpenCode 2's plugin `Context` this plugin uses (packages/plugin/src/promise/plugin.ts L27-59). */
 export interface V2Context {
   options?: { [k: string]: unknown };
   location: { directory: string };
-  tool: { transform(fn: (editor: { update(id: string, fn: (tool: V2Tool) => void): void; remove(id: string): void }) => void): Promise<unknown> };
+  tool: {
+    transform(
+      fn: (editor: {
+        update(id: string, fn: (tool: V2Tool) => void): void;
+        remove(id: string): void;
+        get(id: string): (V2Tool & { id: string }) | undefined;
+        list(): ReadonlyArray<V2Tool & { id: string }>;
+      }) => void,
+    ): Promise<unknown>;
+  };
   session: {
     hook(name: string, fn: (event: never) => void | Promise<void>): Promise<unknown>;
     get(input: { sessionID: string }): Promise<{ parentID?: string; fork?: { sessionID: string } } | undefined>;
@@ -58,6 +68,10 @@ export interface V2Context {
 
 const ACTION: { [permission: string]: string } = { bash: 'shell' };
 /** OpenCode 2 built-ins that read or write your machine (packages/core/src/tool/plugin/image-generate.ts, opencode.ts). */
+/** The built-ins this plugin swaps the executor of. */
+const REPLACED = ['shell', 'read', 'write', 'edit', 'patch', 'glob', 'grep'];
+/** Names a file or shell tool goes by in OpenCode, for the case where one of REPLACED is missing. */
+const FILE_TOOL = /^(bash|shell|exec|read|write|edit|multiedit|patch|apply_patch|glob|grep|list|ls)$/;
 const HOST_ONLY = ['experimental_image_generate', 'opencode_worktree_create', 'opencode_worktree_remove', 'opencode_session_move', 'worktree_create', 'worktree_remove', 'session_move', 'lsp'];
 
 function argsText(prompt: unknown): string {
@@ -145,9 +159,18 @@ export function createV2Setup(deps: { sdk?: Sdk; env?: NodeJS.ProcessEnv; limits
       };
     };
 
+    let missing: string[] = [];
     await ctx.tool.transform((editor) => {
       // Built-ins that act on your machine whatever we do: off while the sandbox is on.
       for (const id of HOST_ONLY) editor.remove(id);
+      // `update` skips an id that is not there. If OpenCode renamed a tool this plugin replaces, take out every
+      // tool that could touch your files rather than leave one running on your machine.
+      missing = REPLACED.filter((id) => !editor.get(id));
+      if (missing.length) {
+        for (const t of editor.list()) {
+          if (!REPLACED.includes(t.id) && (t.options?.permission === 'edit' || FILE_TOOL.test(t.id))) editor.remove(t.id);
+        }
+      }
       editor.update('shell', (t) => swap(t, DESCRIPTIONS.bash, (i: { command: string; workdir?: string; timeout?: number; background?: boolean }, c) => tools.bash(i, call(c))));
       editor.update('read', (t) => {
         const builtin = t.execute;
@@ -173,6 +196,10 @@ export function createV2Setup(deps: { sdk?: Sdk; env?: NodeJS.ProcessEnv; limits
         swap(t, DESCRIPTIONS.grep, (i: { pattern: string; path?: string; include?: string; literal?: boolean; caseSensitive?: boolean; limit?: number }, c) => tools.grep(i, call(c))),
       );
     });
+
+    if (missing.length) {
+      host.notify(`OpenCode's tools are not the ones this plugin knows (${missing.join(', ')} not found), so it took out the file and shell tools it could not replace. Update opencode-prized.`, 'error');
+    }
 
     const note =
       `Your shell, read, write, edit, patch, glob and grep tools run in a Prized sandbox (a Linux microVM, user prized, no sudo) that holds a copy of the project, not on the user's machine. ` +

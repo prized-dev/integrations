@@ -11,7 +11,9 @@
  */
 
 import { spawn } from 'node:child_process';
-import { lstatSync, readFileSync } from 'node:fs';
+import { lstatSync, readFileSync, readlinkSync } from 'node:fs';
+import { mkdir, mkdtemp, rm } from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 
 import type { Sandbox } from '@prized/sdk';
@@ -39,11 +41,11 @@ export class OutputTooBig extends Error {}
 export function run(
   cmd: string,
   args: string[],
-  opts: { cwd: string; input?: Buffer | string; ok?: (code: number, stderr: string) => boolean; maxOut?: number },
+  opts: { cwd: string; input?: Buffer | string; ok?: (code: number, stderr: string) => boolean; maxOut?: number; env?: NodeJS.ProcessEnv },
 ): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     // COPYFILE_DISABLE stops macOS tar from adding `._*` metadata files.
-    const child = spawn(cmd, args, { cwd: opts.cwd, env: { ...process.env, COPYFILE_DISABLE: '1' } });
+    const child = spawn(cmd, args, { cwd: opts.cwd, env: { ...process.env, ...opts.env, COPYFILE_DISABLE: '1' } });
     const out: Buffer[] = [];
     const err: Buffer[] = [];
     let size = 0;
@@ -316,16 +318,35 @@ function headerPath(line: string): string {
  */
 export function patchFiles(patch: Buffer): ChangedFile[] {
   const files: ChangedFile[] = [];
+  const seen = new Set<string>();
   let cur: ChangedFile | undefined;
   let inHeader = false;
+  // git writes a mode on the index line only when nothing else in the header names one: anything else is not git's.
+  let named = false;
+  let indexMode = false;
+  const odd = (why: string) => new Error(`the patch from the sandbox is not one git wrote (${why}), so nothing was applied`);
   for (const line of patch.toString('latin1').split('\n')) {
     if (line.startsWith('diff --git ')) {
+      if (line.includes('\r')) throw odd('a header line ends in CR');
       cur = { path: Buffer.from(headerPath(line), 'latin1').toString('utf8'), oldMode: '100644', newMode: '100644' };
+      if (seen.has(cur.path)) throw odd(`${cur.path} twice`);
+      seen.add(cur.path);
       files.push(cur);
       inHeader = true;
+      named = false;
+      indexMode = false;
       continue;
     }
     if (!cur || !inHeader) continue;
+    if (line.includes('\r') && !/^(--- |\+\+\+ )/.test(line)) throw odd('a header line ends in CR');
+    if (/^(new file mode|deleted file mode|old mode|new mode) /.test(line)) {
+      if (indexMode) throw odd(`modes named twice for ${cur.path}`);
+      named = true;
+    }
+    if (/^index [0-9a-f]+\.\.[0-9a-f]+ \d+$/.test(line)) {
+      if (named) throw odd(`modes named twice for ${cur.path}`);
+      indexMode = true;
+    }
     let m: RegExpExecArray | null;
     if ((m = /^new file mode (\d{6})$/.exec(line))) {
       cur.oldMode = '000000';
@@ -368,6 +389,60 @@ export async function verifyPatch(patch: Buffer, files: ChangedFile[], cwd: stri
   const missing = [...listed].filter((p) => !seen.has(p));
   if (extra.length || missing.length) {
     throw new Error(`the patch from the sandbox does not match its own file list (${[...extra, ...missing].slice(0, 3).join(', ')}), so nothing was applied`);
+  }
+}
+
+/**
+ * What `git apply` will leave on your machine, asked of git itself: the touched files, as they are in your
+ * checkout now, go into a scratch index (blobs into a scratch object folder, so nothing is written to your
+ * repository), the patch is applied to that index with `--cached`, and `git ls-files -s` reports each file's
+ * mode afterwards. The review lists from this, so no reading of the patch text can disagree with git about a
+ * symlink or an executable. Fails, applying nothing, where the real apply would conflict.
+ */
+export async function appliedModes(patch: Buffer, root: string, paths: string[]): Promise<ChangedFile[]> {
+  const scratchDir = await mkdtemp(path.join(os.tmpdir(), 'opencode-prized-'));
+  const env = { GIT_INDEX_FILE: path.join(scratchDir, 'index'), GIT_OBJECT_DIRECTORY: path.join(scratchDir, 'objects') };
+  const git = (args: string[], input?: Buffer | string) => run('git', ['-c', 'core.hooksPath=/dev/null', ...args], { cwd: root, input, env });
+  try {
+    await mkdir(env.GIT_OBJECT_DIRECTORY, { recursive: true });
+    const before = new Map<string, string>();
+    const entries: Buffer[] = [];
+    for (const p of paths) {
+      const full = path.join(root, p);
+      let st;
+      try {
+        st = lstatSync(full);
+      } catch {
+        continue; // not in your checkout: the patch creates it
+      }
+      let mode: string;
+      let content: Buffer;
+      if (st.isSymbolicLink()) {
+        mode = '120000';
+        content = Buffer.from(readlinkSync(full, { encoding: 'buffer' }));
+      } else if (st.isFile()) {
+        mode = st.mode & 0o111 ? '100755' : '100644';
+        content = readFileSync(full);
+      } else {
+        throw new Error(`${p} is not a file in your checkout, so nothing was applied`);
+      }
+      const sha = (await git(['hash-object', '-w', '--stdin'], content)).toString().trim();
+      before.set(p, mode);
+      entries.push(Buffer.concat([Buffer.from(`${mode} ${sha}\t`), Buffer.from(p), Buffer.from([0])]));
+    }
+    if (entries.length) await git(['update-index', '-z', '--index-info'], Buffer.concat(entries));
+    await git(['apply', '--cached', '--whitespace=nowarn', '-'], patch).catch((err: Error) => {
+      throw new Error(`your files changed in a way that conflicts, so nothing was applied: ${err.message}`);
+    });
+    const after = new Map<string, string>();
+    for (const rec of splitNul(await git(['ls-files', '-s', '-z']))) {
+      const s = rec.toString('utf8');
+      const tab = s.indexOf('\t');
+      after.set(s.slice(tab + 1), s.slice(0, 6));
+    }
+    return paths.map((p) => ({ path: p, oldMode: before.get(p) ?? '000000', newMode: after.get(p) ?? '000000' }));
+  } finally {
+    await rm(scratchDir, { recursive: true, force: true });
   }
 }
 

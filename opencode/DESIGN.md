@@ -52,6 +52,7 @@ What the plugin does, which OpenCode API it rests on (file and line), and how it
 - **Prompt:** the `context`, `compaction` and `generate` hooks add the same paragraph. They also replace the shell tool's description, which the built-in fills with your machine's OS and shell.
 - **Exit:** the cleanup returned from `setup` runs on unload and server close.
 - **Background:** OpenCode 2's shell takes `background`. The replacement starts the command detached with `setsid nohup`, writes its output to a file, and returns the pid at once.
+- **Rename guard:** if a tool this plugin replaces is missing (OpenCode renamed it), every file or shell tool it could not replace is removed, and the plugin reports an error. It never leaves such a tool running locally.
 - **Off:** built-ins that act on your machine are removed with `editor.remove`: `experimental_image_generate` (`tool/plugin/image-generate.ts` L27), worktree create/remove and session move (`tool/plugin/opencode.ts` L139-190), and `lsp`.
 - **Found live, fixed:**
   - Result metadata must be plain JSON. An `undefined` value made OpenCode 2 drop the call's result, so the model saw "Tool result missing". `Tools.meta()` now round-trips through JSON.
@@ -64,9 +65,14 @@ What the plugin does, which OpenCode API it rests on (file and line), and how it
   1. It packs the git working tree with `git ls-files --cached --others --exclude-standard`, so ignored files stay home.
   2. It uploads one tarball and commits a baseline in the sandbox.
   3. It pulls by diffing the sandbox tree against that baseline and running `git apply` locally. `git apply --check` comes first, so a conflict applies nothing.
-- **The review is read from the patch that is applied.** `changes()` asks git in the sandbox for a plain patch: `--no-ext-diff --no-textconv --no-renames`, fixed `a/` `b/` prefixes, `--full-index --binary`, in a scratch folder per call. `patchFiles()` then reads every path and mode from that patch's own headers, on your machine, and refuses a rename or copy. `localStat()` runs `git apply --stat` on the same bytes, and `diffOf()` cuts the shown diff from them. A file that is executable or a symlink in your checkout counts as such whatever the patch claims (`executableHere`). The sandbox, which the agent controls, cannot show one patch and apply another.
+- **The review comes from git on your machine.** The checks below all run on your machine, against the patch that is then applied. The sandbox, which the agent controls (its `git` too), cannot show one change and apply another.
+  1. `changes()` asks git in the sandbox for a plain patch: `--no-ext-diff --no-textconv --no-renames`, fixed `a/` `b/` prefixes, `--full-index --binary`, in a scratch folder per call.
+  2. `patchFiles()` reads that patch's headers strictly, as git writes them. It refuses renames, copies, a path listed twice, CR in a header, and a mode named twice.
+  3. `verifyPatch()` checks with `git apply --numstat -z` that git would touch exactly those files. A plain unified-diff section with no `diff --git` line cannot slip through.
+  4. `appliedModes()` puts the touched files, as they are in your checkout, into a scratch index, with blobs in a scratch object folder so your repository is untouched. It applies the patch there with `git apply --cached` and reads each file's resulting mode with `git ls-files -s`. The review list comes from git's own answer, so a header that seems to say "100644" but makes git create a symlink or an executable is still listed.
+  5. `localStat()` (`git apply --stat`) and `diffOf()` show the same bytes.
 - `risks()` is pi's review list, with more added: `.opencode/`, `opencode.json(c)`, `AGENTS.md`, `CLAUDE.md` (OpenCode loads them as instructions), `.gitignore` (dropping `.env` from it uploads `.env` next time), commitlint and lint-staged configs, `.idea/`, `.zed/`, `.cargo/`, `.circleci/` and `.gitlab-ci.yml`. Names are matched case-insensitively, because on macOS `.Husky/` lands in `.husky/`. It flags a symlink, an executable that is new, made executable or **edited in place** ("a change to an executable file: X (read the diff)"), and a file tools run on their own. `/prized-pull` refuses to apply such changes until `--all` and shows their diff, capped at 200 lines.
-- `--all` applies only the tree the last review showed. That tree is recorded on your machine, in `$XDG_STATE_HOME/opencode-prized/reviewed.json`, never in the sandbox. If the agent changes anything after the review, `--all` shows a new review instead of applying.
+- `--all` applies only the patch the last review showed. A sha256 of the patch bytes is recorded on your machine, in `$XDG_STATE_HOME/opencode-prized/reviewed.json`, never in the sandbox. If the agent changes anything after the review, `--all` shows a new review instead of applying.
 - `--branch` runs every git command with `core.hooksPath=/dev/null` and commits with `--no-verify`. A pulled `.husky/pre-commit` or commitlint config never runs on your machine.
 - Upload refuses a file that contains your `PRIZED_API_KEY`, such as an `.envrc` git does not ignore.
 - `src/sandboxes.ts` holds one sandbox per root session:
@@ -98,12 +104,12 @@ What the plugin does, which OpenCode API it rests on (file and line), and how it
 
 ## Tests
 
-- **Offline** (`npm test`, 56 tests):
+- **Offline** (`npm test`, 62 tests):
   - unit tests: paths, glob, edit, patch, config, the patch-header parser, the review list;
   - the tools against a fake sandbox that runs the real git, tar and bash commands;
   - the OpenCode 1 plugin through its hooks, with a fake client;
   - the OpenCode 2 setup against a stand-in Context;
-  - the review fixes: a bad option fails closed; a file holding the key stops the upload; `--all` refuses a tree it did not review; an executable on your machine counts whatever the patch says; `--branch` runs no hooks; background shell; reads outside `/home/prized`; non-UTF-8 files are left alone.
+  - the review fixes: a symlink hidden behind an index-line mode, a CR in a header, an unlisted unified-diff section; a bad option fails closed; a file holding the key stops the upload; `--all` refuses a tree it did not review; an executable on your machine counts whatever the patch says; `--branch` runs no hooks; background shell; reads outside `/home/prized`; non-UTF-8 files are left alone.
 
   `npm run typecheck` checks the OpenCode 1 plugin against the real `Hooks`, `PluginInput` and `PluginModule` types of `@opencode-ai/plugin` 1.19.5 (`test/api-types.ts`).
 - **Live, OpenCode 1.19.5** (`test/live/e2e.mjs`): **30 of 30**. The packed plugin ran in the keyless sandbox A with a scripted model (`mock-model.mjs`; no model key), driving a second sandbox through the broker.

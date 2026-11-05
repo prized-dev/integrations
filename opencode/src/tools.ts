@@ -141,8 +141,12 @@ export class Tools {
     if (args.timeout !== undefined && !(Number.isFinite(args.timeout) && args.timeout >= 0)) {
       throw new Error(`Invalid timeout value: ${args.timeout}. Timeout must be a positive number.`);
     }
-    const first = args.command.trim().split(/\s+/)[0] ?? '';
-    await call.ask({ permission: 'bash', patterns: [args.command], always: [`${first} *`], metadata: { command: args.command } });
+    // One pattern per simple command, as OpenCode's own bash tool asks, so a rule such as "git push*": "deny"
+    // also catches `make && git push`. (A rough split; it only shapes the prompt, the command runs in the sandbox.)
+    const parts = args.command.split(/&&|\|\||;|\||\n/).map((x) => x.trim()).filter(Boolean);
+    const patterns = parts.length ? parts : [args.command];
+    const always = [...new Set(patterns.map((x) => `${x.split(/\s+/)[0]} *`))];
+    await call.ask({ permission: 'bash', patterns, always, metadata: { command: args.command } });
     const t = await this.target(call);
     const cwd = args.workdir ? toSandbox(args.workdir, t.layout) : t.layout.cwd;
     if (args.background) {

@@ -13,7 +13,8 @@
  * Host-agnostic: the OpenCode plugin adapters (v1.ts) give it a Host.
  */
 
-import { lstat, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -21,7 +22,7 @@ import { PrizedError, Sandbox } from '@prized/sdk';
 
 import { AUTO_DELETE_MIN, type Config, type Env } from './config.ts';
 import type { Layout } from './paths.ts';
-import { type ChangedFile, type Changes, type Packed, capStat, changes, diffOf, leftBehind, localStat, pack, pull, risks, send, sh, shq, verifyPatch } from './workspace.ts';
+import { type Changes, type Packed, appliedModes, capStat, changes, diffOf, leftBehind, localStat, pack, pull, risks, riskyFiles, send, sh, shq, verifyPatch } from './workspace.ts';
 
 export const LABEL_CREATOR = 'opencode-prized';
 const GONE = new Set(['sandbox_deleted', 'not_found']);
@@ -115,8 +116,8 @@ export class Sandboxes {
   private readonly roots = new Map<string, string>();
   /** Sessions OpenCode said are busy before their sandbox existed. */
   private readonly early = new Map<string, Set<string>>();
-  /** Where the tree each session's held-back review showed is kept, on your machine (never in the sandbox,
-   *  which the agent controls), so `--all` applies that tree and no other, across restarts too. */
+  /** Where a hash of the patch each session's held-back review showed is kept, on your machine (never in the
+   *  sandbox, which the agent controls), so `--all` applies that patch and no other, across restarts too. */
   private readonly reviewFile: string;
   private disposed = false;
 
@@ -350,6 +351,7 @@ export class Sandboxes {
     const a = this.active.get(root);
     let working = a?.working;
     if (!a) {
+      if (!busy && !this.early.has(root)) return;
       working = this.early.get(root) ?? new Set();
       this.early.set(root, working);
     }
@@ -426,11 +428,16 @@ export class Sandboxes {
     // Everything below is read on this machine from the patch that will be applied.
     await verifyPatch(c.patch, c.files, hostRoot);
     const stat = await localStat(c.patch, hostRoot);
-    const care = [...risks(c.files), ...(await executableHere(hostRoot, c.files))];
+    // Modes as git will leave them, from your checkout and the patch, not from the patch's header text.
+    const files = await appliedModes(c.patch, hostRoot, c.files.map((f) => f.path));
+    const care = risks(files);
     const root = await this.root(sessionID);
     // --all applies only the changes a review showed; anything newer gets a review of its own first.
-    if (care.length && (!flags.has('--all') || (await this.reviewed())[root]?.tree !== c.tree)) {
-      await this.setReviewed(root, c.tree);
+    // The review is bound to the patch bytes themselves, hashed here: the tree id the sandbox reports is the
+    // agent's to fake.
+    const seen = createHash('sha256').update(c.patch).digest('hex');
+    if (care.length && (!flags.has('--all') || (await this.reviewed())[root]?.tree !== seen)) {
+      await this.setReviewed(root, seen);
       const changed = flags.has('--all') ? ['The changes are not the ones the last review showed, so nothing was applied. Here they are again.', ''] : [];
       return [
         ...changed,
@@ -438,7 +445,7 @@ export class Sandboxes {
         ...care.slice(0, 12).map((r) => `- ${r}`),
         '',
         'Their diff:',
-        diffOf(c.patch, [...new Set(c.files.filter((f) => risks([f]).length > 0 || care.some((r) => r.endsWith(`: ${f.path}`))).map((f) => f.path))]),
+        diffOf(c.patch, riskyFiles(files)),
         '',
         `All changes:\n${capStat(stat)}`,
         '',
@@ -512,25 +519,6 @@ export class Sandboxes {
     );
     return notes.filter((n): n is string => !!n);
   }
-}
-
-/**
- * Files the patch changes that are executable or symlinks on your machine now, whatever the patch says their
- * mode was: an edit to one is code you may run later.
- */
-async function executableHere(root: string, files: ChangedFile[]): Promise<string[]> {
-  const out: string[] = [];
-  for (const f of files) {
-    if (f.oldMode === '000000' || f.oldMode === '100755' || f.oldMode === '120000') continue; // listed by risks() already, or new
-    try {
-      const st = await lstat(path.join(root, f.path));
-      if (st.isSymbolicLink()) out.push(`a change to a symlink on your machine: ${f.path}`);
-      else if (st.isFile() && (st.mode & 0o111) !== 0) out.push(`a change to an executable file: ${f.path} (read the diff)`);
-    } catch {
-      // not on your machine: the patch would create it
-    }
-  }
-  return out;
 }
 
 /** Whether Prized no longer has this sandbox. An error that says nothing about it counts as "still there". */

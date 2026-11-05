@@ -35,7 +35,12 @@ function fakeOpenCode(sessions: Record<string, { parentID?: string; fork?: { ses
     location: { directory: repo },
     tool: {
       transform: async (fn) => {
-        fn({ update: (id, f) => (tools[id] ? f(tools[id] as never) : undefined), remove: (id) => void delete tools[id] });
+        fn({
+          update: (id, f) => (tools[id] ? f(tools[id] as never) : undefined),
+          remove: (id) => void delete tools[id],
+          get: (id) => (tools[id] ? ({ ...tools[id], id } as never) : undefined),
+          list: () => Object.entries(tools).map(([id, t]) => ({ ...t, id }) as never),
+        });
       },
     },
     session: {
@@ -156,5 +161,15 @@ describe('the OpenCode 2 plugin', () => {
     await createV2Setup({ sdk: fakeSdk(), env: { PRIZED_API_KEY: 'dcp_000test' }, limits: { stateDir: mkdtempSync(path.join(tmpdir(), 'oc-state-')) } })(oc.ctx);
     const r = await oc.run('shell', { command: 'sleep 30', background: true });
     expect(String(r.content)).toContain('Started in the background');
+  });
+
+  it('takes out file tools it cannot replace when OpenCode renames one', async () => {
+    const oc = fakeOpenCode();
+    delete oc.tools.glob;
+    oc.tools.list = { description: 'built-in list', execute: async () => oc.builtinCalls.push('list') };
+    await createV2Setup({ sdk: fakeSdk(), env: { PRIZED_API_KEY: 'dcp_000test' }, limits: { stateDir: mkdtempSync(path.join(tmpdir(), 'oc-state-')) } })(oc.ctx);
+    expect(oc.tools.list).toBeUndefined();
+    expect(oc.tools.webfetch?.description).toBe('built-in webfetch');
+    expect(oc.tools.shell?.description).not.toMatch(/^built-in/);
   });
 });
