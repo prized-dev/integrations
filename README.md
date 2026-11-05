@@ -16,7 +16,7 @@ Each folder is its own package with its own README, tests and release. You need 
 | [`github-issues`](github-issues) | GitHub issues: label an issue `prized` and the Claude Code or Codex on your Prized box opens the pull request; `/prized` comments continue the same session | `prized_issues.py` (a poller you run on your box, not a GitHub App) | Works now: run end to end with Claude Code against a stand-in for github.com; Codex and github.com itself not run yet | [README](github-issues/README.md) |
 | [`claude-managed-agents`](claude-managed-agents) | Claude Managed Agents: self-hosted environment | `on-work.sh` | Works now | [README](claude-managed-agents/README.md) |
 | [`cursor`](cursor) | Cursor Cloud Agents: Team Pool spawn hook (one sandbox per agent) | `spawn.sh` | Team Pools need Cursor Enterprise; not yet run in a real pool, tested end to end with a My Machines worker | [README](cursor/README.md) |
-| [`inspect`](inspect) | Inspect AI: sandbox environment | `inspect-prized` | Not on PyPI yet: install from this repo | [README](inspect/README.md) |
+| [`inspect`](inspect) | Inspect AI: sandbox environment | `inspect-prized` | On PyPI: `pip install inspect-prized` | [README](inspect/README.md) |
 | [`adk`](adk) | Google ADK: environment and code executor | `prized-adk` | On PyPI: `pip install prized-adk` | [README](adk/README.md) |
 | [`strands`](strands) | Strands Agents: sandbox | `strands-prized` | On PyPI: `pip install strands-prized` | [README](strands/README.md) |
 | [`agent-framework`](agent-framework) | Microsoft Agent Framework: shell tool and file store | `agent-framework-prized` | On PyPI: `pip install agent-framework-prized` | [README](agent-framework/README.md) |
