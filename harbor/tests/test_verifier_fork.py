@@ -55,7 +55,7 @@ class _Box:
         self.log.append(("exec", cmd))
         return ExecResult(stdout="0\n0\n", stderr="", exit_code=0)
 
-    async def fork(self, count=1, *, labels=None):
+    async def fork(self, count=1, *, labels=None, timeout=None):
         if self.fork_error is not None:
             raise self.fork_error
         self.fork_labels = labels
@@ -282,3 +282,63 @@ def _script(command: str) -> str:
     import base64
 
     return base64.b64decode(command.split(" - ", 1)[1]).decode()
+
+
+@pytest.mark.asyncio
+async def test_compare_keeps_only_the_verifiers_own_steps(tmp_path):
+    environment = _environment(tmp_path, "compare")
+    environment._sandbox = _Box("sbx_agent")
+    await _verify(environment, tmp_path)
+    kinds = [kind for kind, _ in environment._verifier_steps]
+    # not the unpack, pack and cleanup commands the transfers run for themselves
+    assert kinds == ["exec", "upload_tar", "exec", "download_dir"]
+    await environment.stop(delete=True)
+
+
+@pytest.mark.asyncio
+async def test_a_filtered_verifier_download_ends_it_too(tmp_path, monkeypatch):
+    environment = _environment(tmp_path, "true")
+    environment._sandbox = agent = _Box("sbx_agent")
+    calls = []
+
+    async def filtered(self, *, source_dir, target_dir, **filters):
+        calls.append((source_dir, filters))
+
+    monkeypatch.setattr(
+        _module.BaseEnvironment, "download_dir_filtered", filtered, raising=False
+    )
+    await environment.exec(REWARD_RM, user="root")
+    assert environment._sandbox is agent.copies[0]
+    await environment.download_dir_filtered(
+        source_dir="/logs/verifier", target_dir=tmp_path / "x", include=["*.txt"]
+    )
+    assert calls == [("/logs/verifier", {"include": ["*.txt"]})]
+    assert environment._sandbox is agent
+    await environment.stop(delete=True)
+
+
+@pytest.mark.asyncio
+async def test_the_fork_keeps_the_old_hostname_resolvable(tmp_path):
+    environment = _environment(tmp_path, "true")
+    environment._sandbox = agent = _Box("sbx_agent")
+    await environment.exec(REWARD_RM, user="root")
+    fixup = agent.copies[0].execs()[0]
+    assert "/home/prized/runtime-hostname" in fixup
+    assert "$new $old" in fixup  # the hosts line names both
+    await environment.stop(delete=True)
+
+
+@pytest.mark.asyncio
+async def test_compare_skips_a_verifier_that_never_finished_in_the_fork(tmp_path):
+    environment = _environment(tmp_path, "compare")
+    environment._sandbox = agent = _Box("sbx_agent")
+    await environment.exec(REWARD_RM, user="root")  # then Harbor's timeout hits
+    fork = agent.copies[0]
+    await environment.stop(delete=True)
+    assert agent.execs() == []  # nothing replayed on the agent's sandbox
+    assert agent.deleted and fork.deleted
+    record = json.loads(
+        (environment.trial_paths.trial_dir / "verifier-fork.json").read_text()
+    )
+    assert record["fork_completed"] is False and record["agree"] is None
+    assert environment._fork_record == {}  # a second start begins clean

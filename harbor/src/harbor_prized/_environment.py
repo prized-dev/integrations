@@ -59,6 +59,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import contextlib
 import json
 import logging
 import math
@@ -68,7 +69,7 @@ import shlex
 import time
 import tomllib
 import uuid
-from collections.abc import Awaitable
+from collections.abc import Awaitable, Iterator
 from pathlib import Path
 from typing import override
 
@@ -136,6 +137,9 @@ _INLINE_LIMIT = 60_000  # longer scripts are uploaded instead of passed inline
 _VERIFIER_DIR = str(EnvironmentPaths.verifier_dir)
 _TESTS_DIR = str(EnvironmentPaths.tests_dir)
 _REPLAY_TIMEOUT_SEC = 3600  # verifier_fork=compare: the replay on the agent's sandbox
+_FORK_TIMEOUT_SEC = 120  # the fork counts against the verifier's own timeout
+# The sandbox's hostname at start, outside the image.
+_HOSTNAME = f"{_HOME}/runtime-hostname"
 _ENV_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 _WINDOWS_HOST = os.name == "nt"  # its files have no POSIX modes to keep
 
@@ -271,9 +275,9 @@ class PrizedEnvironment(BaseEnvironment):
         if isinstance(labels, str):  # --ek labels=team=evals,run=42
             labels = dict(p.split("=", 1) for p in labels.split(",") if "=" in p)
         self._verifier_fork = _fork_mode(verifier_fork)
-        if self._verifier_fork and "__verifier__" in session_id:
-            # Harbor's own separate verifier environment: nothing ran before
-            # its verifier, so there is nothing live to keep.
+        if self._verifier_fork and not session_id.endswith("__env"):
+            # Only Harbor's agent environment (session "<trial>__env"), not its
+            # separate verifier environments: nothing ran before their verifier.
             self._verifier_fork = None
         if self._verifier_fork and _has_steps(Path(environment_dir).parent):
             logger.warning(
@@ -289,6 +293,7 @@ class PrizedEnvironment(BaseEnvironment):
         self._fork_phase = "agent"  # agent, verifier (in the fork), done
         self._fork_record: dict[str, object] = {}
         self._verifier_steps: list[tuple[str, dict[str, object]]] = []
+        self._in_transfer = 0  # inside an upload or download: its own commands
         self._template = template
         self._max_runtime_min = int(max_runtime_min)
         self._paused_ttl_min = int(paused_ttl_min)
@@ -540,6 +545,7 @@ class PrizedEnvironment(BaseEnvironment):
             + f"rm -f {_ROOT}/etc/resolv.conf {_ROOT}/etc/hosts {_ROOT}/etc/hostname; "
             f"cp /etc/resolv.conf {_ROOT}/etc/resolv.conf; "
             f'printf "{_HOSTS}" > {_ROOT}/etc/hosts; hostname > {_ROOT}/etc/hostname; '
+            f"hostname > {_HOSTNAME}; "
             f"if [ -d {_ROOT}/etc/apt/apt.conf.d ]; then echo 'APT::Sandbox::User \"root\";' "
             f"> {_ROOT}/etc/apt/apt.conf.d/99runtime-sandbox-user; fi; "
             # dpkg installs files with mode 0 and then sets the mode, which the
@@ -581,24 +587,29 @@ class PrizedEnvironment(BaseEnvironment):
 
     @override
     async def stop(self, delete: bool) -> None:
-        cancelled = False
-        if self._verifier_fork == "compare" and self._agent_sandbox is not None:
-            try:
-                await self._compare_on_agent_sandbox()
-            except asyncio.CancelledError:  # skip the comparison, still stop
-                cancelled = True
-        if self._fork_record:
-            self._write_fork_record()
         for heartbeat in (self._heartbeat, self._fork_heartbeat):
             if heartbeat is not None:
                 heartbeat.cancel()
         self._heartbeat = self._fork_heartbeat = None
-        sandboxes = [self._agent_sandbox or self._sandbox, self._fork_sandbox]
-        self._sandbox = self._agent_sandbox = self._fork_sandbox = None
-        self._fork_phase, self._verifier_steps = "agent", []
-        for sandbox in sandboxes:
-            if sandbox is not None:
-                await _despite_cancel(self._stop_sandbox(sandbox, delete))
+        agent = self._agent_sandbox or self._sandbox
+        fork, self._fork_sandbox = self._fork_sandbox, None
+        cancelled = False
+        try:
+            # The fork first: the verifier's output is already in the trial dir.
+            if fork is not None:
+                await _despite_cancel(self._stop_sandbox(fork, delete))
+            if self._verifier_fork == "compare" and self._agent_sandbox is not None:
+                try:
+                    await self._compare_on_agent_sandbox()
+                except asyncio.CancelledError:  # skip the comparison, still stop
+                    cancelled = True
+            if self._fork_record:
+                self._write_fork_record()
+        finally:
+            self._sandbox = self._agent_sandbox = None
+            self._fork_phase, self._verifier_steps, self._fork_record = "agent", [], {}
+            if agent is not None:
+                await _despite_cancel(self._stop_sandbox(agent, delete))
         if cancelled:
             raise asyncio.CancelledError
 
@@ -625,7 +636,10 @@ class PrizedEnvironment(BaseEnvironment):
         started = time.monotonic()
         try:
             fork = (
-                await agent.fork(labels={**self._labels, "harbor-role": "verifier"})
+                await agent.fork(
+                    labels={**self._labels, "harbor-role": "verifier"},
+                    timeout=_FORK_TIMEOUT_SEC,
+                )
             )[0]
         except PrizedError as exc:
             self._fork_phase = "done"
@@ -638,14 +652,17 @@ class PrizedEnvironment(BaseEnvironment):
         fork_sec = time.monotonic() - started
         self._agent_sandbox, self._fork_sandbox, self._sandbox = agent, fork, fork
         self._fork_heartbeat = asyncio.create_task(self._keep_alive(fork))
-        # The copy has a hostname of its own: the image's /etc/hostname and its
-        # /etc/hosts line for it follow, keeping any other edits the agent made.
+        # The copy has a hostname (and IP) of its own. The image's /etc/hosts
+        # line for the agent sandbox's name gets the new one too, so config that
+        # names the old host still resolves, and its /etc/hostname follows unless
+        # the agent changed it.
         try:
             fixup = await self._host_exec(
-                f"old=$(cat {_ROOT}/etc/hostname 2>/dev/null); new=$(hostname); "
-                'if [ -n "$old" ] && [ "$old" != "$new" ]; then '
-                f'sed -i "s/[[:space:]]$old\\$/\\t$new/" {_ROOT}/etc/hosts; '
-                f'echo "$new" > {_ROOT}/etc/hostname; fi',
+                f"old=$(cat {_HOSTNAME} 2>/dev/null || cat {_ROOT}/etc/hostname); "
+                'new=$(hostname); if [ -n "$old" ] && [ "$old" != "$new" ]; then '
+                f'sed -i "s/[[:space:]]$old\\$/\\t$new $old/" {_ROOT}/etc/hosts || exit 1; '
+                f'if [ "$(cat {_ROOT}/etc/hostname)" = "$old" ]; then '
+                f'echo "$new" > {_ROOT}/etc/hostname || exit 1; fi; fi',
                 timeout_sec=60,
             )
             fixup_ok = fixup.return_code == 0
@@ -676,20 +693,40 @@ class PrizedEnvironment(BaseEnvironment):
             self._fork_record["verifier_sec"] = round(time.monotonic() - started, 3)
 
     def _remember(self, kind: str, **step: object) -> None:
-        """verifier_fork=compare: a verifier step, to run again on the agent's sandbox."""
-        if self._verifier_fork == "compare" and self._fork_phase == "verifier":
+        """verifier_fork=compare: a verifier step, to run again on the agent's
+        sandbox (not the commands an upload or download runs for itself)."""
+        if (
+            self._verifier_fork == "compare"
+            and self._fork_phase == "verifier"
+            and not self._in_transfer
+        ):
             self._verifier_steps.append((kind, step))
+
+    @contextlib.contextmanager
+    def _transfer(self) -> Iterator[None]:
+        self._in_transfer += 1
+        try:
+            yield
+        finally:
+            self._in_transfer -= 1
 
     async def _compare_on_agent_sandbox(self) -> None:
         """Runs the verifier's steps again, in order, on the agent's own
         sandbox, the way shared mode runs them, with its output in
         ``verifier-agent-sandbox/`` of the trial dir."""
         steps, self._verifier_steps = self._verifier_steps, []
-        if not steps or self._agent_sandbox is None:
-            return
-        self._sandbox, self._fork_phase = self._agent_sandbox, "done"
-        out = self.trial_paths.trial_dir / "verifier-agent-sandbox"
         record = self._fork_record
+        record["fork_completed"] = self._fork_phase == "done"
+        if not steps or self._agent_sandbox is None or self._fork_phase != "done":
+            # Timed out or failed in the fork: nothing to compare against.
+            record["agree"] = None
+            return
+        self._sandbox = self._agent_sandbox
+        out = self.trial_paths.trial_dir / "verifier-agent-sandbox"
+        verifier_sec = record.get("verifier_sec")
+        limit = _REPLAY_TIMEOUT_SEC
+        if isinstance(verifier_sec, float):  # as long as the fork took, with room
+            limit = min(limit, max(120.0, 3 * verifier_sec))
         started = time.monotonic()
         try:
             seen = await self._host_exec(
@@ -700,7 +737,7 @@ class PrizedEnvironment(BaseEnvironment):
             tests, logs = ((seen.stdout or "0\n0").split() + ["0", "0"])[:2]
             record["agent_sandbox_had_tests"] = tests != "0"
             record["agent_sandbox_had_verifier_files"] = logs != "0"
-            async with asyncio.timeout(_REPLAY_TIMEOUT_SEC):
+            async with asyncio.timeout(limit):
                 for kind, step in steps:
                     if kind == "exec":
                         await self.exec(**step)  # type: ignore[arg-type]
@@ -708,16 +745,12 @@ class PrizedEnvironment(BaseEnvironment):
                         await self._upload_tar(step["data"], step["target_dir"])  # type: ignore[arg-type]
                     elif kind == "upload_file":
                         await self._upload_bytes(**step)  # type: ignore[arg-type]
-                    elif kind == "download_dir":
-                        source, target = (
-                            step["source_dir"],
-                            Path(str(step["target_dir"])),
-                        )
-                        try:
-                            rel = target.relative_to(self.trial_paths.verifier_dir)
-                        except ValueError:
-                            continue
-                        await self.download_dir(str(source), out / rel)
+                    elif kind == "download_dir" and _under(
+                        str(step["source_dir"]), _VERIFIER_DIR
+                    ):
+                        # Harbor may download into a staging dir to filter
+                        # logs: the replay keeps the whole verifier dir.
+                        await self.download_dir(str(step["source_dir"]), out)
             record["agent_sandbox_rewards"] = _read_rewards(out)
         except Exception as exc:  # noqa: BLE001 (a comparison never fails the trial)
             record["agent_sandbox_error"] = repr(exc)
@@ -728,10 +761,12 @@ class PrizedEnvironment(BaseEnvironment):
         agent_rewards = record.get("agent_sandbox_rewards")
         agree = fork_rewards is not None and fork_rewards == agent_rewards
         record["agree"] = agree if agent_rewards is not None else None
+        verdict = "same verdict" if agree else "DIFFERENT verdicts"
+        if fork_rewards is None or agent_rewards is None:
+            verdict = "no verdict to compare"
         self.logger.info(
-            f"verifier_fork=compare: fork {record.get('fork_rewards')}, agent's "
-            f"sandbox {record.get('agent_sandbox_rewards')}: "
-            + ("same verdict" if agree else "DIFFERENT verdicts")
+            f"verifier_fork=compare: fork {fork_rewards}, agent's sandbox "
+            f"{agent_rewards}: {verdict}"
         )
 
     def _write_fork_record(self) -> None:
@@ -917,7 +952,8 @@ class PrizedEnvironment(BaseEnvironment):
         data = source.read_bytes()
         await self._verifier_starts(target=target_path)
         self._remember("upload_file", data=data, target_path=target_path, mode=mode)
-        await self._upload_bytes(data, target_path, mode)
+        with self._transfer():
+            await self._upload_bytes(data, target_path, mode)
 
     async def _upload_bytes(
         self, data: bytes, target_path: str, mode: int | None
@@ -942,7 +978,8 @@ class PrizedEnvironment(BaseEnvironment):
         data = buffer.getvalue()
         await self._verifier_starts(target=target_dir)
         self._remember("upload_tar", data=data, target_dir=target_dir)
-        await self._upload_tar(data, target_dir)
+        with self._transfer():
+            await self._upload_tar(data, target_dir)
 
     async def _upload_tar(self, data: bytes, target_dir: str) -> None:
         staged = f"{_XFER}/up-{uuid.uuid4().hex[:8]}.tar.gz"
@@ -963,10 +1000,11 @@ class PrizedEnvironment(BaseEnvironment):
         )
         staged = f"{_XFER}/down-{uuid.uuid4().hex[:8]}"
         try:
-            await self._checked(
-                f"cp -L {shlex.quote(source_path)} {staged} && chmod 600 {staged}",
-                f"Failed to read {source_path}",
-            )
+            with self._transfer():
+                await self._checked(
+                    f"cp -L {shlex.quote(source_path)} {staged} && chmod 600 {staged}",
+                    f"Failed to read {source_path}",
+                )
             data = await self._get(_ROOT + staged)
         finally:
             await _despite_cancel(self._discard(staged))
@@ -977,8 +1015,23 @@ class PrizedEnvironment(BaseEnvironment):
     @override
     async def download_dir(self, source_dir: str, target_dir: Path | str) -> None:
         self._remember("download_dir", source_dir=source_dir, target_dir=target_dir)
-        await self._download_dir(source_dir, target_dir)
+        with self._transfer():
+            await self._download_dir(source_dir, target_dir)
         if _under(source_dir, _VERIFIER_DIR):  # the verifier's last step
+            self._verifier_ends()
+
+    @override
+    async def download_dir_filtered(
+        self, *, source_dir: str, target_dir: Path | str, **filters
+    ) -> None:
+        # Harbor's verifier uses this with --verifier-include-logs and the like:
+        # one step for the comparison, and the end of the verifier all the same.
+        self._remember("download_dir", source_dir=source_dir, target_dir=target_dir)
+        with self._transfer():
+            await super().download_dir_filtered(
+                source_dir=source_dir, target_dir=target_dir, **filters
+            )
+        if _under(source_dir, _VERIFIER_DIR):
             self._verifier_ends()
 
     async def _download_dir(self, source_dir: str, target_dir: Path | str) -> None:
