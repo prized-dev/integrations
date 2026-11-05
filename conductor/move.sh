@@ -677,11 +677,22 @@ def install(what, script, log):
 
 def ensure_tools(root, setup, sdir):
     """Conductor Cloud's machines came with Node 24, npm and pnpm; a fresh box has no Node. Bring
-    the JavaScript and Python tools this repo's lockfiles or setup script name, when the box lacks
-    them, the way prized setup brings them (fnm for Node, corepack for pnpm and yarn)."""
+    the tools this repo's lockfiles or setup script name, when the box lacks them: Node through
+    fnm (as prized setup does) with pnpm or yarn through corepack, Bun, Ruby and mise, uv, direnv."""
     log = os.path.join(sdir, "tools.log")
     pj = package_json(root)
-    words = set(re.findall(r"[A-Za-z0-9_.-]+", setup))
+    # The setup script's words, and those of the repo files it runs (a script, or the Makefile).
+    text = setup
+    named = set(re.findall(r"[A-Za-z0-9_./-]+", setup)) | ({"Makefile"} if re.search(r"\bmake\b", setup) else set())
+    for rel in sorted(named)[:20]:
+        path = os.path.realpath(os.path.join(root, rel))
+        if path.startswith(os.path.realpath(root) + os.sep) and os.path.isfile(path):
+            try:
+                with open(path, encoding="utf-8", errors="replace") as f:
+                    text += "\n" + f.read(65536)
+            except OSError:
+                pass
+    words = set(re.findall(r"[A-Za-z0-9_.-]+", text))
 
     def exists(f):
         return os.path.exists(os.path.join(root, f))
@@ -713,6 +724,11 @@ def ensure_tools(root, setup, sdir):
         tag = " -s bun-v" + shlex.quote(pm_field[4:].split("+")[0]) if pm_field.startswith("bun@") else ""
         if install("Bun", "curl -fsSL https://bun.sh/install | bash" + tag, log):
             add_profile_hook(BUN_HOOK)
+    if ("mise" in words or exists("mise.toml") or exists(".mise.toml")) and not have("mise"):
+        if install("mise", "curl -fsSL https://mise.run | MISE_INSTALL_PATH=$HOME/.local/bin/mise sh; $HOME/.local/bin/mise settings ruby.compile=false", log):
+            add_profile_hook(MISE_HOOK)
+    if "direnv" in words and not have("direnv"):
+        install("direnv", "a='sudo -n env DEBIAN_FRONTEND=noninteractive apt-get'; $a install -y -qq direnv || { $a update -qq && $a install -y -qq direnv; }", log)
     if (exists("Gemfile") or words & {"bundle", "ruby", "rails", "gem"}) and not have("ruby"):
         ver = "3"
         for f in (".ruby-version", ".tool-versions"):
