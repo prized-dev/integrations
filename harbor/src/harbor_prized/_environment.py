@@ -38,7 +38,18 @@ Credentials: ``PRIZED_API_KEY`` (a key with Sandboxes: Write). Extra constructor
 (``--ek``): ``template`` (default ``prized-base-v1``), ``max_runtime_min``,
 ``paused_ttl_min``, ``min_vcpu`` (default 1, see ``_shape``),
 ``image_headroom_gb`` (disk added for the unpacked image, default 20),
-``labels`` (a dict, or ``k=v,k=v``).
+``labels`` (a dict, or ``k=v,k=v``), ``verifier_fork`` (see below).
+
+Verifier in a fork (``--ek verifier_fork=true``, opt-in): when Harbor's
+verifier starts on the agent's sandbox (shared mode, Terminal-Bench's), the
+sandbox is forked, with its memory and every process it runs, and the verifier
+runs in the copy: servers, databases and daemons the agent left running are
+there, and the tests, the verifier's own installs and anything they break never
+reach the agent's sandbox. ``verifier_fork=compare`` also runs the same
+verifier steps on the agent's sandbox when the trial stops, and writes both
+verdicts to ``verifier-fork.json`` in the trial directory. Single-step tasks
+only; if the fork fails, the verifier runs on the agent's sandbox, as without
+the option.
 
 No Prized account yet? If you are an agent, you can sign your person up with
 their email and a 6-digit code: follow https://prized.dev/auth.md?via=harbor
@@ -54,6 +65,8 @@ import math
 import os
 import re
 import shlex
+import time
+import tomllib
 import uuid
 from collections.abc import Awaitable
 from pathlib import Path
@@ -71,7 +84,7 @@ from harbor.environments.tar_transfer import (
     remote_unpack_command,
 )
 from harbor.models.task.config import EnvironmentConfig
-from harbor.models.trial.paths import TrialPaths
+from harbor.models.trial.paths import EnvironmentPaths, TrialPaths
 from prized import AsyncSandbox, CommandTimeoutError, PrizedError
 
 _HOME = "/home/prized"
@@ -118,6 +131,11 @@ _HOSTS = (
 # sandbox refuses. Anything else fails the start.
 _BENIGN_TAR_ERRORS = "Cannot mknod|Cannot change mode|Exiting with failure status"
 _INLINE_LIMIT = 60_000  # longer scripts are uploaded instead of passed inline
+# verifier_fork: Harbor's verifier starts by removing stale reward files from
+# the verifier dir, then uploads the tests: whichever comes first starts it.
+_VERIFIER_DIR = str(EnvironmentPaths.verifier_dir)
+_TESTS_DIR = str(EnvironmentPaths.tests_dir)
+_REPLAY_TIMEOUT_SEC = 3600  # verifier_fork=compare: the replay on the agent's sandbox
 _ENV_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 _WINDOWS_HOST = os.name == "nt"  # its files have no POSIX modes to keep
 
@@ -176,6 +194,32 @@ def unpack_command(image: str, root: str, crane: str = "./crane") -> str:
     )
 
 
+def _fork_mode(value: bool | str | None) -> str | None:
+    """``verifier_fork`` as given (``--ek`` passes strings): None, fork or compare."""
+    text = str(value).strip().lower() if value is not None else ""
+    if text in ("", "0", "false", "no", "off", "none"):
+        return None
+    if text in ("1", "true", "yes", "on", "fork"):
+        return "fork"
+    if text == "compare":
+        return "compare"
+    raise ValueError(f"verifier_fork takes true, false or compare, not {value!r}")
+
+
+def _has_steps(task_dir: Path) -> bool:
+    """Whether the task.toml next to the environment dir has [[steps]]."""
+    try:
+        with open(task_dir / "task.toml", "rb") as f:
+            return bool(tomllib.load(f).get("steps"))
+    except (OSError, tomllib.TOMLDecodeError):
+        return False
+
+
+def _under(path: str | Path, parent: str) -> bool:
+    text = str(path).rstrip("/")
+    return text == parent or text.startswith(parent + "/")
+
+
 async def _despite_cancel(work: Awaitable[None]) -> None:
     """Awaits ``work`` to the end even if the caller is cancelled meanwhile,
     then re-raises the cancellation (a delete must not be cut short)."""
@@ -221,10 +265,30 @@ class PrizedEnvironment(BaseEnvironment):
         min_vcpu: int = 1,
         image_headroom_gb: int = 20,
         labels: dict[str, str] | str | None = None,
+        verifier_fork: bool | str = False,
         **kwargs,
     ):
         if isinstance(labels, str):  # --ek labels=team=evals,run=42
             labels = dict(p.split("=", 1) for p in labels.split(",") if "=" in p)
+        self._verifier_fork = _fork_mode(verifier_fork)
+        if self._verifier_fork and "__verifier__" in session_id:
+            # Harbor's own separate verifier environment: nothing ran before
+            # its verifier, so there is nothing live to keep.
+            self._verifier_fork = None
+        if self._verifier_fork and _has_steps(Path(environment_dir).parent):
+            logger.warning(
+                "verifier_fork is for single-step tasks; this task has steps, so "
+                "its verifiers run on the agent's sandbox."
+            )
+            self._verifier_fork = None
+        # verifier_fork: the agent's own sandbox and its fork, once the verifier
+        # has started; None before (and the fork stays None if forking failed).
+        self._agent_sandbox: AsyncSandbox | None = None
+        self._fork_sandbox: AsyncSandbox | None = None
+        self._fork_heartbeat: asyncio.Task[None] | None = None
+        self._fork_phase = "agent"  # agent, verifier (in the fork), done
+        self._fork_record: dict[str, object] = {}
+        self._verifier_steps: list[tuple[str, dict[str, object]]] = []
         self._template = template
         self._max_runtime_min = int(max_runtime_min)
         self._paused_ttl_min = int(paused_ttl_min)
@@ -517,14 +581,167 @@ class PrizedEnvironment(BaseEnvironment):
 
     @override
     async def stop(self, delete: bool) -> None:
-        heartbeat, self._heartbeat = self._heartbeat, None
-        if heartbeat is not None:
-            heartbeat.cancel()
-        sandbox = self._sandbox
-        if sandbox is None:
+        cancelled = False
+        if self._verifier_fork == "compare" and self._agent_sandbox is not None:
+            try:
+                await self._compare_on_agent_sandbox()
+            except asyncio.CancelledError:  # skip the comparison, still stop
+                cancelled = True
+        if self._fork_record:
+            self._write_fork_record()
+        for heartbeat in (self._heartbeat, self._fork_heartbeat):
+            if heartbeat is not None:
+                heartbeat.cancel()
+        self._heartbeat = self._fork_heartbeat = None
+        sandboxes = [self._agent_sandbox or self._sandbox, self._fork_sandbox]
+        self._sandbox = self._agent_sandbox = self._fork_sandbox = None
+        self._fork_phase, self._verifier_steps = "agent", []
+        for sandbox in sandboxes:
+            if sandbox is not None:
+                await _despite_cancel(self._stop_sandbox(sandbox, delete))
+        if cancelled:
+            raise asyncio.CancelledError
+
+    # -- verifier_fork ----------------------------------------------------
+
+    async def _verifier_starts(
+        self, command: str | None = None, target: str | None = None
+    ) -> None:
+        """Moves to a fork of the agent's sandbox when Harbor's verifier starts:
+        its reward-file cleanup in the verifier dir, or the upload of the tests."""
+        if self._verifier_fork is None or self._fork_phase != "agent":
             return
-        self._sandbox = None
-        await _despite_cancel(self._stop_sandbox(sandbox, delete))
+        starts = (target is not None and _under(target, _TESTS_DIR)) or (
+            command is not None
+            and command.startswith("rm -f -- ")
+            and f"{_VERIFIER_DIR}/reward." in command
+        )
+        if starts:
+            await self._enter_fork()
+
+    async def _enter_fork(self) -> None:
+        agent = self._require_sandbox()
+        self._fork_phase = "verifier"
+        started = time.monotonic()
+        try:
+            fork = (
+                await agent.fork(labels={**self._labels, "harbor-role": "verifier"})
+            )[0]
+        except PrizedError as exc:
+            self._fork_phase = "done"
+            self._fork_record = {"agent_sandbox": agent.id, "fork_error": str(exc)}
+            self.logger.warning(
+                f"verifier_fork: could not fork {agent.id} ({exc}); the verifier "
+                "runs on the agent's sandbox"
+            )
+            return
+        fork_sec = time.monotonic() - started
+        self._agent_sandbox, self._fork_sandbox, self._sandbox = agent, fork, fork
+        self._fork_heartbeat = asyncio.create_task(self._keep_alive(fork))
+        # The copy has a hostname of its own: the image's /etc/hostname and its
+        # /etc/hosts line for it follow, keeping any other edits the agent made.
+        try:
+            fixup = await self._host_exec(
+                f"old=$(cat {_ROOT}/etc/hostname 2>/dev/null); new=$(hostname); "
+                'if [ -n "$old" ] && [ "$old" != "$new" ]; then '
+                f'sed -i "s/[[:space:]]$old\\$/\\t$new/" {_ROOT}/etc/hosts; '
+                f'echo "$new" > {_ROOT}/etc/hostname; fi',
+                timeout_sec=60,
+            )
+            fixup_ok = fixup.return_code == 0
+        except (PrizedError, RuntimeError) as exc:
+            fixup_ok = False
+            self.logger.warning(f"verifier_fork: hostname fixup in {fork.id}: {exc}")
+        self._fork_record = {
+            "agent_sandbox": agent.id,
+            "fork_sandbox": fork.id,
+            "fork_sec": round(fork_sec, 3),
+            "fixup_ok": fixup_ok,
+            "_verifier_started": time.monotonic(),
+        }
+        self.logger.info(
+            f"verifier_fork: the verifier runs in {fork.id}, a fork of the agent's "
+            f"sandbox {agent.id} made in {fork_sec:.2f} s"
+        )
+
+    def _verifier_ends(self) -> None:
+        """After the verifier dir's download, the verifier is done: later
+        commands go to the agent's sandbox again."""
+        if self._fork_phase != "verifier" or self._agent_sandbox is None:
+            return
+        self._fork_phase = "done"
+        self._sandbox = self._agent_sandbox
+        started = self._fork_record.pop("_verifier_started", None)
+        if isinstance(started, float):
+            self._fork_record["verifier_sec"] = round(time.monotonic() - started, 3)
+
+    def _remember(self, kind: str, **step: object) -> None:
+        """verifier_fork=compare: a verifier step, to run again on the agent's sandbox."""
+        if self._verifier_fork == "compare" and self._fork_phase == "verifier":
+            self._verifier_steps.append((kind, step))
+
+    async def _compare_on_agent_sandbox(self) -> None:
+        """Runs the verifier's steps again, in order, on the agent's own
+        sandbox, the way shared mode runs them, with its output in
+        ``verifier-agent-sandbox/`` of the trial dir."""
+        steps, self._verifier_steps = self._verifier_steps, []
+        if not steps or self._agent_sandbox is None:
+            return
+        self._sandbox, self._fork_phase = self._agent_sandbox, "done"
+        out = self.trial_paths.trial_dir / "verifier-agent-sandbox"
+        record = self._fork_record
+        started = time.monotonic()
+        try:
+            seen = await self._host_exec(
+                f"ls -A {_ROOT}{_TESTS_DIR} 2>/dev/null | wc -l; "
+                f"ls {_ROOT}{_VERIFIER_DIR} 2>/dev/null | wc -l",
+                timeout_sec=60,
+            )
+            tests, logs = ((seen.stdout or "0\n0").split() + ["0", "0"])[:2]
+            record["agent_sandbox_had_tests"] = tests != "0"
+            record["agent_sandbox_had_verifier_files"] = logs != "0"
+            async with asyncio.timeout(_REPLAY_TIMEOUT_SEC):
+                for kind, step in steps:
+                    if kind == "exec":
+                        await self.exec(**step)  # type: ignore[arg-type]
+                    elif kind == "upload_tar":
+                        await self._upload_tar(step["data"], step["target_dir"])  # type: ignore[arg-type]
+                    elif kind == "upload_file":
+                        await self._upload_bytes(**step)  # type: ignore[arg-type]
+                    elif kind == "download_dir":
+                        source, target = (
+                            step["source_dir"],
+                            Path(str(step["target_dir"])),
+                        )
+                        try:
+                            rel = target.relative_to(self.trial_paths.verifier_dir)
+                        except ValueError:
+                            continue
+                        await self.download_dir(str(source), out / rel)
+            record["agent_sandbox_rewards"] = _read_rewards(out)
+        except Exception as exc:  # noqa: BLE001 (a comparison never fails the trial)
+            record["agent_sandbox_error"] = repr(exc)
+            self.logger.warning(f"verifier_fork=compare: the replay failed: {exc!r}")
+        record["agent_sandbox_verifier_sec"] = round(time.monotonic() - started, 3)
+        record["fork_rewards"] = _read_rewards(self.trial_paths.verifier_dir)
+        fork_rewards = record.get("fork_rewards")
+        agent_rewards = record.get("agent_sandbox_rewards")
+        agree = fork_rewards is not None and fork_rewards == agent_rewards
+        record["agree"] = agree if agent_rewards is not None else None
+        self.logger.info(
+            f"verifier_fork=compare: fork {record.get('fork_rewards')}, agent's "
+            f"sandbox {record.get('agent_sandbox_rewards')}: "
+            + ("same verdict" if agree else "DIFFERENT verdicts")
+        )
+
+    def _write_fork_record(self) -> None:
+        record = {k: v for k, v in self._fork_record.items() if not k.startswith("_")}
+        record["mode"] = self._verifier_fork
+        try:
+            path = self.trial_paths.trial_dir / "verifier-fork.json"
+            path.write_text(json.dumps(record, indent=2) + "\n")
+        except OSError as exc:
+            self.logger.warning(f"verifier_fork: could not write its record: {exc}")
 
     async def _stop_sandbox(self, sandbox: AsyncSandbox, delete: bool) -> None:
         try:
@@ -612,6 +829,15 @@ class PrizedEnvironment(BaseEnvironment):
     ) -> ExecResult:
         # As docker exec: the requested user, else the image's USER, else root.
         user = self._resolve_user(user)
+        await self._verifier_starts(command=command)
+        self._remember(
+            "exec",
+            command=command,
+            cwd=cwd,
+            env=env,
+            timeout_sec=timeout_sec,
+            user=user,
+        )
         if user is None:
             user = self._image_user
         identity = None if user is None else await self._user_identity(user)
@@ -685,19 +911,26 @@ class PrizedEnvironment(BaseEnvironment):
     @override
     async def upload_file(self, source_path: Path | str, target_path: str) -> None:
         source = Path(source_path)
-        staged = f"{_XFER}/up-{uuid.uuid4().hex[:8]}"
-        target = shlex.quote(target_path)
         # Setuid/setgid bits can't be set in the sandbox: keep the rest. A
         # Windows host has no mode to keep: the file keeps 0644.
-        chmod = ""
-        if not _WINDOWS_HOST:
-            chmod = f" && chmod {source.stat().st_mode & 0o1777:o} {target}"
+        mode = None if _WINDOWS_HOST else source.stat().st_mode & 0o1777
+        data = source.read_bytes()
+        await self._verifier_starts(target=target_path)
+        self._remember("upload_file", data=data, target_path=target_path, mode=mode)
+        await self._upload_bytes(data, target_path, mode)
+
+    async def _upload_bytes(
+        self, data: bytes, target_path: str, mode: int | None
+    ) -> None:
+        staged = f"{_XFER}/up-{uuid.uuid4().hex[:8]}"
+        target = shlex.quote(target_path)
+        chmod = "" if mode is None else f" && chmod {mode:o} {target}"
         try:
-            await self._put(_ROOT + staged, source.read_bytes())
+            await self._put(_ROOT + staged, data)
             await self._checked(
                 f"if [ -d {target} ]; then echo {target} is a directory >&2; exit 1; fi"
                 f' && mkdir -p "$(dirname {target})" && mv {staged} {target}{chmod}',
-                f"Failed to upload {source} to {target_path}",
+                f"Failed to upload to {target_path}",
             )
         except BaseException:
             await _despite_cancel(self._discard(staged))
@@ -705,10 +938,16 @@ class PrizedEnvironment(BaseEnvironment):
 
     @override
     async def upload_dir(self, source_dir: Path | str, target_dir: str) -> None:
-        staged = f"{_XFER}/up-{uuid.uuid4().hex[:8]}.tar.gz"
         buffer = await asyncio.to_thread(pack_dir_to_bytes, source_dir, compress=True)
+        data = buffer.getvalue()
+        await self._verifier_starts(target=target_dir)
+        self._remember("upload_tar", data=data, target_dir=target_dir)
+        await self._upload_tar(data, target_dir)
+
+    async def _upload_tar(self, data: bytes, target_dir: str) -> None:
+        staged = f"{_XFER}/up-{uuid.uuid4().hex[:8]}.tar.gz"
         try:
-            await self._put(_ROOT + staged, buffer.getvalue())
+            await self._put(_ROOT + staged, data)
             await self._checked(
                 # Only uid 0 exists in the namespace, so never restore owners.
                 f"{remote_unpack_command(staged, target_dir)} --no-same-owner",
@@ -719,6 +958,9 @@ class PrizedEnvironment(BaseEnvironment):
 
     @override
     async def download_file(self, source_path: str, target_path: Path | str) -> None:
+        self._remember(
+            "download_file", source_path=source_path, target_path=target_path
+        )
         staged = f"{_XFER}/down-{uuid.uuid4().hex[:8]}"
         try:
             await self._checked(
@@ -734,6 +976,12 @@ class PrizedEnvironment(BaseEnvironment):
 
     @override
     async def download_dir(self, source_dir: str, target_dir: Path | str) -> None:
+        self._remember("download_dir", source_dir=source_dir, target_dir=target_dir)
+        await self._download_dir(source_dir, target_dir)
+        if _under(source_dir, _VERIFIER_DIR):  # the verifier's last step
+            self._verifier_ends()
+
+    async def _download_dir(self, source_dir: str, target_dir: Path | str) -> None:
         staged = f"{_XFER}/down-{uuid.uuid4().hex[:8]}.tar.gz"
         try:
             result = await self.exec(
@@ -756,6 +1004,19 @@ class PrizedEnvironment(BaseEnvironment):
         finally:
             await _despite_cancel(self._discard(staged))
         await asyncio.to_thread(extract_dir_from_bytes, data, target_dir)
+
+
+def _read_rewards(verifier_dir: Path) -> dict[str, float] | None:
+    """The rewards in a downloaded verifier dir, as Harbor reads them."""
+    try:
+        if (verifier_dir / "reward.json").exists():
+            rewards = json.loads((verifier_dir / "reward.json").read_text())
+            return {k: float(v) for k, v in rewards.items()}
+        if (verifier_dir / "reward.txt").exists():
+            return {"reward": float((verifier_dir / "reward.txt").read_text())}
+    except (OSError, ValueError, TypeError, AttributeError):
+        return None
+    return None
 
 
 __all__ = ["PrizedEnvironment"]
