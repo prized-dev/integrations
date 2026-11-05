@@ -6,11 +6,15 @@
 # From a terminal: gh workflow run publish-pypi.yml -R prized-dev/integrations --ref main -f package=<folder>
 # (a dry run; add -f dry_run=false to publish).
 #
-# One-time setup:
-# - GitHub: Settings > Environments > New environment "pypi", deployment branches: main only.
-# - PyPI, once per package: add a pending trusted publisher (https://pypi.org/manage/account/publishing/)
-#   with the package's PyPI name, owner prized-dev, repository integrations, workflow publish-pypi.yml,
-#   environment pypi.
+# One-time setup, once per package (each package publishes from its own environment, pypi-<folder>,
+# because PyPI keeps one pending trusted publisher per owner/repository/workflow/environment, so
+# packages sharing one environment could not all be registered before their first release):
+# - GitHub: Settings > Environments > New environment "pypi-<folder>" (e.g. pypi-strands),
+#   deployment branches: main only. That rule, not the check below, keeps a branch from publishing.
+# - PyPI: add a pending trusted publisher (https://pypi.org/manage/account/publishing/) with the
+#   package's PyPI name, owner prized-dev, repository integrations, workflow publish-pypi.yml,
+#   environment pypi-<folder>. An account holds a few pending publishers at a time; each turns
+#   into the project's trusted publisher at its first release, which frees its place.
 name: publish-pypi
 
 on:
@@ -90,7 +94,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     environment:
-      name: pypi
+      name: pypi-${{ inputs.package }}
       url: https://pypi.org/p/${{ needs.build.outputs.name }}
     permissions:
       id-token: write # trusted publishing: the OIDC token PyPI exchanges for a short-lived upload token
