@@ -106,6 +106,11 @@ case $DIR in
       "pip install -q pyink==25.12.0 isort==8.0.1 && pyink --check src tests examples && isort --check-only src tests examples" ;;
   strands)
     py dev yes "strands-agents==1.59.0" "ruff check . && ruff format --check . && mypy src" ;;
+  smolagents)
+    # Offline, the kernel this package uploads runs for real, on a real unix socket, inside a
+    # stand-in sandbox (bash in a temp dir), so the whole protocol is exercised with no key and no
+    # network. FLOOR=1 pins the oldest smolagents it supports (the first with SafeSerializer).
+    py dev yes "smolagents==1.25.0" "ruff check . && ruff format --check . && mypy src" ;;
   agent-framework)
     py dev yes "agent-framework-core==1.19.0 agent-framework-tools==1.0.0b260918" \
       "ruff check . && ruff format --check . && mypy src" ;;

@@ -1,0 +1,71 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "smolagents-prized"
+dynamic = ["version"]
+description = "Prized Sandboxes for smolagents: run a CodeAgent's Python in a Firecracker microVM."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.10,<3.15"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["smolagents", "agents", "ai", "sandbox", "code-interpreter", "prized", "microvm"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Typing :: Typed",
+]
+dependencies = [
+  "smolagents>=1.25,<2",
+  "prized>=0.1.2,<0.2",
+]
+
+[project.optional-dependencies]
+# numpy and pillow: smolagents' tool code imports them at module level, so the offline tests (whose
+# "sandbox" is the local Python) need them present, as a real sandbox would have them.
+dev = ["pytest>=8", "ruff>=0.11", "mypy>=1.15", "numpy", "pillow"]
+
+[project.urls]
+Homepage = "https://prized.dev/sandboxes?via=smolagents"
+Documentation = "https://prized.dev/docs/sandboxes?via=smolagents"
+Source = "https://github.com/prized-dev/integrations/tree/main/smolagents"
+Issues = "https://github.com/prized-dev/integrations/issues"
+
+[tool.hatch.version]
+path = "src/smolagents_prized/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/smolagents_prized"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/smolagents_prized", "tests", "README.md", "LICENSE", "pyproject.toml"]
+
+[tool.ruff]
+line-length = 120
+include = ["src/**/*.py", "tests/**/*.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "RUF", "S"]
+# The in-sandbox kernel runs the agent's code on purpose (exec/eval and a shell), and the tests build
+# command strings and a unix socket; those are the job, not findings.
+per-file-ignores = { "src/smolagents_prized/_kernel.py" = ["S"], "tests/**" = ["S"] }
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = ["smolagents.*"]
+follow_imports = "silent"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = ["live: talks to the real Prized API (needs PRIZED_API_KEY and PRIZED_LIVE=1)"]
