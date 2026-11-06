@@ -1,0 +1,22 @@
+name: prized
+repo: https://github.com/prized-dev/integrations
+sha: 6abf570a047be10c5e7a8e1cdbd868fa226550d9
+subdir: hermes
+version: "0.1.0"
+title: Prized Sandboxes
+description: "Terminal backend that runs Hermes terminal, execute_code and file tools in a Prized sandbox, a Linux microVM that is paused with its memory and processes when Hermes releases it and resumed at the next command. Disclosure — requires a Prized API key (PRIZED_API_KEY), which is stripped from every subprocess Hermes spawns and never sent into the sandbox; every command and the files the file tools touch are sent to Prized (api.prized.dev); your Hermes skills, the ~/.hermes cache and credential files a skill or terminal.credential_files names (never .env or auth.json) are uploaded into the sandbox, and changed skill and cache files are copied back when Hermes releases it (credential files are upload-only); sandboxes are created, paused and resumed in the key's Prized workspace and billed to it; in persistent mode (the default) the plugin never deletes a sandbox, so a paused sandbox is kept, and billed for its storage, until you delete it; dangerous-command approval is skipped inside the sandbox."
+maintainer: Prized
+tier: community
+category: tools
+requires_hermes: ">=0.22.5"
+docs_url: https://github.com/prized-dev/integrations/tree/main/hermes#readme
+platforms: []
+known_issues:
+  - "Two Hermes processes on one Hermes home (the CLI while the gateway runs) with scope instance each count only their own users of the shared sandbox, so one releasing it pauses it under the other's running command until that one's next command resumes it. Use one home per process (scope session avoids it only between the CLI and gateway or WebUI sessions)."
+  - "Stopping a background process from Hermes kills only its wrapper shell, and once Hermes releases the sandbox it reports the process as exited though it still runs (Hermes core behaviour on remote backends). Stop it with kill or pkill in the sandbox."
+capabilities:
+  provides_tools: []
+  provides_hooks: []
+  provides_middleware: []
+  requires_env:
+    - PRIZED_API_KEY
