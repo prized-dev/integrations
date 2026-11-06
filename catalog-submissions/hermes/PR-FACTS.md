@@ -15,7 +15,7 @@ Rebuilt 11-06 because tasks/hermes-catalog-1103 (card payload, make_card.py) was
 - `requires_hermes: ">=0.22.5"` in both the entry and plugin.yaml (rule 14). Current Hermes release v0.23.0 (11-05 21:32Z). No commits touched tools/environments/base.py, file_sync.py, agent/terminal_env_*.py or plugins_registrars.py since 11-02 (GitHub API, 11-06), so the 11-03 test results should still hold [inferred, not re-run].
 
 ## Disclosures (rule 13), all from README/code at 6abf570
-- Network: every command and the files the file tools touch go to Prized (api.prized.dev).
+- Network: every command and the files the file tools touch go to Prized: create, pause, resume and delete to api.prized.dev; commands and file transfers to the sandbox endpoint the API returns, on term.prized.dev.
 - Files leaving the machine: skills (incl. external and project skill folders), `~/.hermes` cache, credential files a skill or `terminal.credential_files` names (never `.env` or `auth.json`); changed skill and cache files copied back on release; credential files upload-only.
 - Credentials: `PRIZED_API_KEY` stripped from every subprocess, never enters the sandbox.
 - Billing/account state: sandboxes created, paused, resumed in the key's workspace and billed to it; labels `hermes=1`, `hermes_home=<digest>` (+ `hermes_ephemeral=1` for non-persistent). Persistent mode (default) never deletes a sandbox; paused = storage price until deleted (free tier: 30 days after last use). Default auto-pause after 10 idle min; default run-time 24 h (60 min total on free tier), then the next command starts a fresh sandbox.
