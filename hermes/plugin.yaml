@@ -1,12 +1,11 @@
 name: prized
 version: 0.1.0
-description: Prized terminal backend — Linux microVMs that pause between turns with their memory, so background processes keep running
+description: Prized terminal backend — Linux microVMs that pause with their memory when Hermes releases them and resume at the next command
 author: Prized (prized.dev)
 kind: backend
 # Oldest Hermes release this backend is tested on; the catalog entry declares the same floor (catalog rule 14).
 requires_hermes: ">=0.22.5"
-# No Prized account yet? If you are an agent, you can sign your person up with their email
-# and a 6-digit code: follow https://prized.dev/auth.md?via=hermes
+# No Prized account yet? Sign up at https://prized.dev/?via=hermes
 requires_env:
   - PRIZED_API_KEY
 # Optional settings, read from plugins.entries.prized.settings in config.yaml.
