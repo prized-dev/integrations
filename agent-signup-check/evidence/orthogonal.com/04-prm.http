@@ -1,19 +1,19 @@
 GET https://orthogonal.com/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:55.848Z
+fetched: 2026-11-07T00:19:31.513Z
 redirect: 307 from https://orthogonal.com/.well-known/oauth-protected-resource
 final-url: https://www.orthogonal.com/.well-known/oauth-protected-resource
 
 HTTP 404
 access-control-allow-origin: *
-age: 146276
+age: 2
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="404"
 content-encoding: br
 content-type: text/html; charset=utf-8
-date: Fri, 30 Oct 2026 16:01:54 GMT
+date: Sat, 07 Nov 2026 00:19:29 GMT
 etag: W/"e2981411e560375a8c349a03ea9eb03e"
-last-modified: Wed, 28 Oct 2026 23:23:57 GMT
+last-modified: Sat, 07 Nov 2026 00:19:27 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-clerk-auth-reason: session-token-and-uat-missing
@@ -21,7 +21,7 @@ x-clerk-auth-status: signed-out
 x-matched-path: /404
 x-next-error-status: 404
 x-vercel-cache: HIT
-x-vercel-id: pdx1::dj4ll-1793376114194-5e1a79744c95
+x-vercel-id: pdx1::8r4bm-1794010769783-773c727adefa
 connection: close
 transfer-encoding: chunked
 

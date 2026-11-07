@@ -1,22 +1,24 @@
 GET https://api.anthropic.com/v1/models
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:30.457Z
+fetched: 2026-11-07T00:18:06.048Z
 final-url: https://api.anthropic.com/v1/models
 
 HTTP 401
-date: Fri, 30 Oct 2026 16:00:26 GMT
+date: Sat, 07 Nov 2026 00:18:02 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
 x-should-retry: false
-request-id: req_011CgYhaamYKNCeFoaeNZoKy
+cache-control: private, no-store
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+request-id: req_011CgncBo4ZGUSS24pFgGF9m
 vary: Accept-Encoding
 content-encoding: br
 server: cloudflare
-server-timing: x-originResponse;dur=17
+server-timing: x-originResponse;dur=5
 x-robots-tag: none
 content-security-policy: default-src 'none'; frame-ancestors 'none'
 cf-cache-status: DYNAMIC
-cf-ray: a52ba205de361509-PDX
+cf-ray: a568288cefba0ccf-PDX
 
-{"type":"error","error":{"type":"authentication_error","message":"x-api-key header is required"},"request_id":"req_011CgYhaamYKNCeFoaeNZoKy"}
+{"type":"error","error":{"type":"authentication_error","message":"x-api-key header is required"},"request_id":"req_011CgncBo4ZGUSS24pFgGF9m"}

@@ -1,17 +1,26 @@
 GET https://api.planetscale.com/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:19.380Z
+fetched: 2026-11-07T00:18:55.137Z
 final-url: https://api.planetscale.com/.well-known/oauth-protected-resource
 
-HTTP 404
-date: Fri, 30 Oct 2026 16:01:18 GMT
-content-type: application/json; charset=UTF-8
+HTTP 200
+date: Sat, 07 Nov 2026 00:18:53 GMT
+content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
-x-request-id: d47399f0-98a9-4191-99ec-4b23ad2c26a2
-x-runtime: 0.003693
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-download-options: noopen
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+vary: Accept,X-Requested-With,Origin,Accept-Encoding
+etag: W/"216110fc10258d730e2ea38fd589cff2"
+cache-control: max-age=0, private, must-revalidate
+content-security-policy: default-src 'none'; font-src 'self'; connect-src 'self'; img-src 'self'; manifest-src 'self'; object-src 'none'; script-src 'self' 'nonce-pKUp6iZ3X+uPpEjM/gVjcfPxr1NMvMBz91xVPRB7Y2o='; style-src 'self'; style-src-elem 'self' 'sha256-WAyOw4V+FqDc35lQPyRADLBWbuNK8ahvYEaQIYF1+Ps='
+x-request-id: b3c8401f-e330-44c6-8a65-88c2b7dbab8f
+x-runtime: 0.003540
 strict-transport-security: max-age=63072000; includeSubDomains; preload
-vary: Origin,Accept-Encoding
 content-encoding: gzip
 
-{"status":404,"error":"Not Found"}
+{"resource":"https://api.planetscale.com","authorization_servers":["https://api.planetscale.com"],"bearer_methods_supported":["header"],"resource_name":"PlanetScale API","resource_documentation":"https://planetscale.com/docs/api/reference/getting-started-with-planetscale-api"}

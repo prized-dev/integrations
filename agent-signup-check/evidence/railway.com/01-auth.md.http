@@ -1,24 +1,22 @@
 GET https://railway.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:51.094Z
+fetched: 2026-11-07T00:18:28.055Z
 final-url: https://railway.com/auth.md
 
 HTTP 200
 cache-control: public, max-age=300, s-maxage=300, stale-while-revalidate=3600
 content-security-policy: frame-ancestors 'self' https://railway.com
 content-type: text/markdown; charset=utf-8
-date: Fri, 30 Oct 2026 16:00:48 GMT
+date: Sat, 07 Nov 2026 00:18:25 GMT
 server: railway-hikari
-vary: Accept, accept-encoding
+vary: Accept
 x-frame-options: SAMEORIGIN
 x-permitted-cross-domain-policies: none
-x-railway-request-id: 7EtC1g4sTTagpunlljLL4A
-content-encoding: gzip
-age: 349
-x-cache: STALE
-x-hikari-trace: lax1.sx7j,lax1.e74w
-x-railway-edge: lax1
+x-railway-request-id: Jw_TL7THSJOBP3YCwUFZXw
+x-cache: MISS
 transfer-encoding: chunked
+x-hikari-trace: lax1.ez9k,lax1.e74w
+x-railway-edge: lax1
 connection: close
 
 # Authenticating to Railway

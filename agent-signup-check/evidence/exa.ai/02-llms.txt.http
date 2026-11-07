@@ -1,6 +1,6 @@
 GET https://exa.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:47.304Z
+fetched: 2026-11-07T00:19:20.254Z
 final-url: https://exa.ai/llms.txt
 
 HTTP 200
@@ -11,9 +11,9 @@ content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/plain; charset=utf-8
-date: Fri, 30 Oct 2026 16:01:45 GMT
-etag: W/"7932686ce1884bedcb9cc7957c08a23d"
-last-modified: Fri, 30 Oct 2026 16:01:45 GMT
+date: Sat, 07 Nov 2026 00:19:18 GMT
+etag: W/"6c40afae7e2bd8e473c9f3a007ebc9c5"
+last-modified: Sat, 07 Nov 2026 00:19:18 GMT
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
@@ -21,7 +21,7 @@ x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /llms.txt
 x-vercel-cache: MISS
-x-vercel-id: pdx1::4s4xt-1793376104887-d1e204de7113
+x-vercel-id: pdx1::pr872-1794010757992-1a75511cf5b0
 connection: close
 transfer-encoding: chunked
 
@@ -96,6 +96,7 @@ Search the web and extract contents from the results. Built for AI applications 
 
 Extract clean, LLM-ready web content from any URL, including JavaScript-rendered pages, PDFs, and complex layouts.
 
+- [Contents API](https://exa.ai/products/contents)
 - [Contents API documentation](https://exa.ai/docs/contents/quickstart.md)
 
 ### Agent
@@ -146,6 +147,9 @@ Exa powers web search and data retrieval for coding agents, research agents, GTM
 - [Coding agents with current docs and code search](https://exa.ai/use-cases/coding)
 - [LLM grounding and web search for inference providers](https://exa.ai/use-cases/inference-providers)
 - [LLM training data and RL environments](https://exa.ai/use-cases/model-training)
+- [Financial research, due diligence, and risk monitoring](https://exa.ai/use-cases/finance)
+- [Legal research and compliance monitoring with cited sources](https://exa.ai/use-cases/legal)
+- [Candidate sourcing and recruiting data](https://exa.ai/use-cases/recruiting)
 - [Demos](https://exa.ai/demos)
 
 ## Integrations

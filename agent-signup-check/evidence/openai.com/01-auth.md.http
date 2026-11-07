@@ -1,10 +1,10 @@
 GET https://openai.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:29.012Z
+fetched: 2026-11-07T00:18:04.667Z
 final-url: https://openai.com/auth.md
 
 HTTP 403
-date: Fri, 30 Oct 2026 16:00:24 GMT
+date: Sat, 07 Nov 2026 00:18:00 GMT
 content-type: text/html; charset=UTF-8
 transfer-encoding: chunked
 connection: close
@@ -19,13 +19,13 @@ cross-origin-resource-policy: same-origin
 origin-agent-cluster: ?1
 permissions-policy: accelerometer=(),camera=(),clipboard-read=(),clipboard-write=(),geolocation=(),gyroscope=(),hid=(),magnetometer=(),microphone=(),payment=(),publickey-credentials-get=(),screen-wake-lock=(),serial=(),sync-xhr=(),usb=(),xr-spatial-tracking=*
 referrer-policy: same-origin
-server-timing: chlray;desc="a52ba1fc0feeff0e"
+server-timing: chlray;desc="a56828841a08b338"
 x-content-type-options: nosniff
 strict-transport-security: max-age=31536000; includeSubDomains; preload
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=F5rwbyUx6ETzMZPbqkVSBbOBp6H83e7hP%2FaMdzpq22LgIpmHedepTPmklDjyhXxfHZyOUW%2Fg1G8iY21%2B%2FkDoVj3PzJPFNUzvMws6Xao%2BtRLE8%2Fn0nf0fFpvQ3dk%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=1cDgvI7HNQ%2BeoYsggxKHMF21wf2eZLoRTl47OTq15D0QjcrzYyLbSLhNGEM7x4MKhHR04eCL37dUFUqPkid0Gj0LX2kv%2Fw%2FRlWX594DFMNLbeA3vKtn9q46cpys%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.01,"max_age":604800}
 content-encoding: br
-cf-ray: a52ba1fc0feeff0e-PDX
+cf-ray: a56828841a08b338-PDX
 alt-svc: h3=":443"; ma=86400
 
 <html>
@@ -50,7 +50,7 @@ alt-svc: h3=":443"; ma=86400
           />
         </svg>
       </div>
-      <div class="data"><div class="main-wrapper" role="main"><div class="main-content"><noscript><div class="h2"><span id="challenge-error-text">Enable JavaScript and cookies to continue</span></div></noscript></div></div><script>(function(){window._cf_chl_opt = {cFPWv: 'g',cH: '[redacted]',cITimeS: '1793376024',cRay: 'a52ba1fc0feeff0e',cTplC:1,cTplO:0,cTplV:5,cType: 'managed',cUPMDTk:"[redacted]",cvId: '3',cZone: 'openai.com',fa:"[redacted]",md: '[redacted]',mdrd: '[redacted]',};var a = document.createElement('script');a.src = '/cdn-cgi/challenge-platform/h/g/orchestrate/chl_page/v1?ray=a52ba1fc0feeff0e';window._cf_chl_opt.cOgUHash = location.hash === '' && location.href.indexOf('#') !== -1 ? '#' : location.hash;window._cf_chl_opt.cOgUQuery = location.search === '' && location.href.slice(0, location.href.length - window._cf_chl_opt.cOgUHash.length).indexOf('?') !== -1 ? '?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,"/auth.md?__cf_chl_rt_tk=[redacted]"+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());</script></div>
+      <div class="data"><div class="main-wrapper" role="main"><div class="main-content"><noscript><div class="h2"><span id="challenge-error-text">Enable JavaScript and cookies to continue</span></div></noscript></div></div><script>(function(){window._cf_chl_opt = {cFPWv: 'b',cH: '[redacted]',cITimeS: '1794010680',cRay: 'a56828841a08b338',cTplC:1,cTplO:0,cTplV:5,cType: 'managed',cUPMDTk:"[redacted]",cvId: '3',cZone: 'openai.com',fa:"[redacted]",md: '[redacted]',mdrd: '[redacted]',};var a = document.createElement('script');a.src = '/cdn-cgi/challenge-platform/h/b/orchestrate/chl_page/v1?ray=a56828841a08b338';window._cf_chl_opt.cOgUHash = location.hash === '' && location.href.indexOf('#') !== -1 ? '#' : location.hash;window._cf_chl_opt.cOgUQuery = location.search === '' && location.href.slice(0, location.href.length - window._cf_chl_opt.cOgUHash.length).indexOf('?') !== -1 ? '?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,"/auth.md?__cf_chl_rt_tk=[redacted]"+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());</script></div>
     </div>
   <script>!function(){var e=document.createElement("iframe");function n(){var n=e.contentDocument||e.contentWindow.document;if(n){var t=n.createElement("script");t.nonce="",t.innerHTML="window['__CF$cv$params']={r:'792f8224776acf9f',m:'hMcSCCrnIkr7c8Pec6Na6boaaFAnQ6S0ypG2GKRbKgc-1675305063-0-AaJn0SqKZQnadmRQ5O1dM9xMkXWyP+ll7gpl2NHeoNbZTEXMjlB10KkwnEU3hf0/gMODfKqcBGLVecql6U04GGs+iJ/kNrNqj1FgfAOlQV+T2koMQMvUy1zr9tegBBX6BikfccHZhwoJhnXc0eTcg58=',s:[0x60b082f691,0xee65a67e11],u:'/cdn-cgi/challenge-platform/h/b'};var now=Date.now()/1000,offset=14400,ts=''+(Math.floor(now)-Math.floor(now%offset)),_cpo=document.createElement('script');_cpo.nonce='',_cpo.src='/cdn-cgi/challenge-platform/h/b/scripts/alpha/invisible.js?ts='+ts,document.getElementsByTagName('head')[0].appendChild(_cpo);",n.getElementsByTagName("head")[0].appendChild(t)}}if(e.height=1,e.width=1,e.style.position="absolute",e.style.top=0,e.style.left=0,e.style.border="none",e.style.visibility="hidden",document.body.appendChild(e),"loading"!==document.readyState)n();else if(window.addEventListener)document.addEventListener("DOMContentLoaded",n);else{var t=document.onreadystatechange||function(){};document.onreadystatechange=function(e){t(e),"loading"!==document.readyState&&(document.onreadystatechange=t,n())}}}();</script></body>
 </html>

@@ -1,15 +1,15 @@
 GET https://lemonsqueezy.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:59.913Z
+fetched: 2026-11-07T00:19:33.606Z
 redirect: 301 from https://lemonsqueezy.com/llms.txt
 final-url: https://www.lemonsqueezy.com/llms.txt
 
 HTTP 404
-date: Fri, 30 Oct 2026 16:01:55 GMT
+date: Sat, 07 Nov 2026 00:19:29 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a52ba43199305ecd-PDX
+cf-ray: a5682aaefad0302c-PDX
 cf-cache-status: DYNAMIC
 cache-control: max-age=43200
 last-modified: Mon, 15 Jun 2026 17:00:57 GMT

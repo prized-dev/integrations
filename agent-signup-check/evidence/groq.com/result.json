@@ -1,6 +1,6 @@
 {
  "site": "groq.com",
- "checkedAt": "2026-10-30T16:00:32.773Z",
+ "checkedAt": "2026-11-07T00:18:08.222Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 2,
@@ -71,7 +71,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 251,
+   "ms": 236,
    "redirects": 0
   },
   {
@@ -81,7 +81,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 218,
+   "ms": 68,
    "redirects": 0
   },
   {
@@ -91,7 +91,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 59,
+   "ms": 46,
    "redirects": 0
   },
   {
@@ -101,7 +101,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 123,
+   "ms": 86,
    "redirects": 0
   },
   {
@@ -111,7 +111,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 214,
+   "ms": 221,
    "redirects": 0
   },
   {
@@ -121,7 +121,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 52,
+   "ms": 43,
    "redirects": 0
   },
   {
@@ -131,7 +131,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 223,
+   "ms": 234,
    "redirects": 0
   },
   {
@@ -141,7 +141,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 214,
+   "ms": 219,
    "redirects": 0
   }
  ]

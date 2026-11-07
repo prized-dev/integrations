@@ -1,8 +1,8 @@
 {
  "site": "deno.com",
- "checkedAt": "2026-10-30T16:01:15.254Z",
+ "checkedAt": "2026-11-07T00:18:50.732Z",
  "checker": "agent-signup-check/0.2.2",
- "passed": 1,
+ "passed": 0,
  "partial": 1,
  "total": 7,
  "whoActs": null,
@@ -53,10 +53,12 @@
    "id": "markdown",
    "name": "Docs in Markdown",
    "url": "https://docs.deno.com/llms.txt",
-   "heading": "# Deno",
-   "bytes": 5053,
-   "status": "pass",
-   "reason": "llms.txt found at a docs path"
+   "tried": [
+    "https://deno.com/llms.txt",
+    "https://docs.deno.com/llms.txt"
+   ],
+   "status": "fail",
+   "reason": "https://deno.com/llms.txt answers with an HTML page; https://docs.deno.com/llms.txt answers HTTP 500"
   }
  ],
  "requests": [
@@ -67,7 +69,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 358,
+   "ms": 328,
    "redirects": 0
   },
   {
@@ -77,7 +79,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 313,
+   "ms": 256,
    "redirects": 0
   },
   {
@@ -87,17 +89,17 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 163,
+   "ms": 252,
    "redirects": 0
   },
   {
    "label": "llms.txt (docs)",
    "url": "https://docs.deno.com/llms.txt",
    "finalUrl": "https://docs.deno.com/llms.txt",
-   "status": 200,
+   "status": 500,
    "error": null,
-   "contentType": "text/plain; charset=utf-8",
-   "ms": 197,
+   "contentType": "text/plain;charset=UTF-8",
+   "ms": 219,
    "redirects": 0
   },
   {
@@ -107,7 +109,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 260,
+   "ms": 223,
    "redirects": 0
   },
   {
@@ -117,7 +119,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain;charset=UTF-8",
-   "ms": 149,
+   "ms": 216,
    "redirects": 0
   },
   {
@@ -127,7 +129,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 265,
+   "ms": 206,
    "redirects": 0
   },
   {
@@ -137,7 +139,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 369,
+   "ms": 258,
    "redirects": 0
   }
  ]

@@ -1,6 +1,6 @@
 {
  "site": "digitalocean.com",
- "checkedAt": "2026-10-30T16:01:06.577Z",
+ "checkedAt": "2026-11-07T00:18:42.216Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 1,
@@ -52,11 +52,11 @@
   {
    "id": "markdown",
    "name": "Docs in Markdown",
-   "url": "https://docs.digitalocean.com/llms.txt",
-   "heading": "# DigitalOcean Documentation",
-   "bytes": 72919,
+   "url": "https://www.digitalocean.com/llms.txt",
+   "heading": "# DigitalOcean",
+   "bytes": 11872,
    "status": "pass",
-   "reason": "llms.txt found at a docs path"
+   "reason": "llms.txt found"
   }
  ],
  "requests": [
@@ -67,17 +67,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 443,
+   "ms": 519,
    "redirects": 1
   },
   {
    "label": "llms.txt",
    "url": "https://digitalocean.com/llms.txt",
    "finalUrl": "https://www.digitalocean.com/llms.txt",
-   "status": 404,
+   "status": 200,
    "error": null,
-   "contentType": "text/html; charset=utf-8",
-   "ms": 451,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 317,
    "redirects": 1
   },
   {
@@ -87,17 +87,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 142,
-   "redirects": 0
-  },
-  {
-   "label": "llms.txt (docs)",
-   "url": "https://docs.digitalocean.com/llms.txt",
-   "finalUrl": "https://docs.digitalocean.com/llms.txt",
-   "status": 200,
-   "error": null,
-   "contentType": "text/plain; charset=utf-8",
-   "ms": 366,
+   "ms": 129,
    "redirects": 0
   },
   {
@@ -107,7 +97,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 398,
+   "ms": 239,
    "redirects": 1
   },
   {
@@ -117,7 +107,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 142,
+   "ms": 137,
    "redirects": 0
   },
   {
@@ -127,7 +117,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 229,
+   "ms": 252,
    "redirects": 1
   },
   {
@@ -137,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 304,
+   "ms": 332,
    "redirects": 1
   }
  ]

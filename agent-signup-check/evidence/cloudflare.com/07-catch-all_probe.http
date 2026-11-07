@@ -1,10 +1,10 @@
 GET https://www.cloudflare.com/agent-signup-check-no-such-page.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:55.207Z
+fetched: 2026-11-07T00:18:32.292Z
 final-url: https://www.cloudflare.com/agent-signup-check-no-such-page.md
 
 HTTP 404
-date: Fri, 30 Oct 2026 16:00:54 GMT
+date: Sat, 07 Nov 2026 00:18:31 GMT
 content-type: text/plain; charset=UTF-8
 content-length: 12
 connection: close
@@ -15,10 +15,10 @@ x-content-type-options: nosniff
 x-frame-options: SAMEORIGIN
 x-xss-protection: 1; mode=block
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=fVAj8NExWtGiZIbr6jY9Q62zLRiTZ4hnLRYVMv%2BAhlJOJHk%2ByU4Pm2skEy64IkHtpdh63bUs2SKqacufPiLIBpsvYW%2FqiF85qR72v%2BzQxOaequkJA0XZseIn6elJTVFHxBqkUg%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=5g%2Fc0rvmOXGiGjEn00AvaPnjg4NvE8%2BzMQZCtlRWprIS%2FBFjog6mp7v5Vjo16mVx7NJVQshQLKBH1zjIYCRNIdzVWn0DyxblGExVDlMRxyIEn9ModqeLFM60is7h6540ESN55g%3D%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 server: cloudflare
-cf-ray: a52ba2b19cc3eedd-PDX
+cf-ray: a56829411b632f25-PDX
 alt-svc: h3=":443"; ma=86400
 
 not found :(

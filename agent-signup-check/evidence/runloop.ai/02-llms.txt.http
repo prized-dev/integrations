@@ -1,18 +1,18 @@
 GET https://runloop.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:58.933Z
+fetched: 2026-11-07T00:18:35.584Z
 final-url: https://runloop.ai/llms.txt
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:00:56 GMT
+date: Sat, 07 Nov 2026 00:18:32 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a52ba2beefafeb97-SEA
+cf-ray: a568294b6e9bad2d-SEA
 cf-cache-status: HIT
-age: 8086
+age: 42147
 content-encoding: gzip
-last-modified: Fri, 30 Oct 2026 15:55:07 GMT
+last-modified: Fri, 06 Nov 2026 19:58:55 GMT
 server: cloudflare
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: accept-encoding

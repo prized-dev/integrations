@@ -1,19 +1,19 @@
 GET https://supabase.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:16.889Z
+fetched: 2026-11-07T00:18:52.127Z
 final-url: https://supabase.com/llms.txt
 
 HTTP 200
-age: 349
+age: 2443
 cache-control: public
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Fri, 30 Oct 2026 15:55:25 GMT
+date: Fri, 06 Nov 2026 23:38:06 GMT
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::iad1::vb2fq-1793376073998-951c0307cdb1
+x-vercel-id: pdx1::iad1::l2xp2-1794010729197-4c06562f8860
 connection: close
 transfer-encoding: chunked
 

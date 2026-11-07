@@ -1,18 +1,18 @@
 GET https://inkbox.ai/.well-known/oauth-authorization-server
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:34.387Z
+fetched: 2026-11-07T00:19:10.758Z
 final-url: https://inkbox.ai/.well-known/oauth-authorization-server
 
 HTTP 200
 content-type: application/json
 content-length: 651
 connection: close
-date: Fri, 30 Oct 2026 16:01:33 GMT
+date: Sat, 07 Nov 2026 00:19:09 GMT
 server: uvicorn
 x-cache: Miss from cloudfront
-via: 1.1 f94332f6513a4c7b3f2217e6b2ddc08c.cloudfront.net (CloudFront)
+via: 1.1 2830cb5e13bca87f2bb0e5ab70955cce.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: 6-XlonYuVNefMrz9vkfHXR3D_m6QScDtSMM-zlgHs-8tsfC__1vjEQ==
+x-amz-cf-id: xKWMyGtNakgniKhAj3Yx1BijBKBKawwoyuAX-ut9rfUizyM2brxsvw==
 
 {"issuer":"https://inkbox.ai/mcp/oauth","authorization_endpoint":"https://inkbox.ai/mcp/oauth/authorize","token_endpoint":"https://inkbox.ai/mcp/oauth/token","registration_endpoint":"https://inkbox.ai/mcp/oauth/register","revocation_endpoint":"https://inkbox.ai/mcp/oauth/revoke","response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["none"],"scopes_supported":["inkbox.full_service"],"revocation_endpoint_auth_methods_supported":["none"],"client_id_metadata_document_supported":true,"resource_indicators_supported":true}

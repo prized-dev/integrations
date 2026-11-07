@@ -1,20 +1,20 @@
 GET https://kernel.sh/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:37.100Z
+fetched: 2026-11-07T00:19:12.211Z
 redirect: 301 from https://kernel.sh/llms.txt
 final-url: https://www.kernel.sh/llms.txt
 
 HTTP 200
-age: 349
+age: 0
 cache-control: public, max-age=3600
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Fri, 30 Oct 2026 15:55:45 GMT
+date: Sat, 07 Nov 2026 00:19:10 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::iad1::vpmxq-1793376094928-28e17ae1e13f
+x-vercel-cache: MISS
+x-vercel-id: pdx1::iad1::2qxnw-1794010749943-4beba91bf4ef
 connection: close
 transfer-encoding: chunked
 

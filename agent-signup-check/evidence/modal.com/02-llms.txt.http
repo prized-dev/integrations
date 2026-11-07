@@ -1,6 +1,6 @@
 GET https://modal.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:48.390Z
+fetched: 2026-11-07T00:18:25.326Z
 final-url: https://modal.com/llms.txt
 
 HTTP 200
@@ -14,16 +14,16 @@ referrer-policy: no-referrer
 strict-transport-security: max-age=63072000; includeSubDomains; preload
 cross-origin-opener-policy: same-origin
 cache-control: no-cache
-date: Fri, 30 Oct 2026 16:00:46 GMT
-x-envoy-upstream-service-time: 1
+date: Sat, 07 Nov 2026 00:18:23 GMT
+x-envoy-upstream-service-time: 43
 content-encoding: gzip
 server: envoy
 vary: Accept-Encoding
 x-cache: Miss from cloudfront
-via: 1.1 d220e3f3d93439a8c69225156c6ae800.cloudfront.net (CloudFront)
-x-amz-cf-pop: HIO52-P2
+via: 1.1 a73c4443f00fb366a3a7226697ad0b6c.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: VKjx4iDrWBXkILAWchf9y6HkZu2UBmw8Hwya_3TikpSe1ORIFMRlKg==
+x-amz-cf-id: EZHxuw1NPw01E64WGX60d1OawYBfyNt4upRZU3iXfXKo7gibDSAUFQ==
 
 # Modal Documentation
 
@@ -145,10 +145,6 @@ The docs are organized into three main sections:
   - [Using OIDC to authenticate with external services](https://modal.com/docs/guide/oidc-integration.md)
   - [Connecting Modal to your Datadog account](https://modal.com/docs/guide/datadog-integration.md)
   - [Connecting Modal to your OpenTelemetry provider](https://modal.com/docs/guide/otel-integration.md)
-  - [Okta SSO](https://modal.com/docs/guide/okta-sso.md)
-  - [Microsoft Entra SSO](https://modal.com/docs/guide/entra-sso.md)
-  - [Custom SAML SSO](https://modal.com/docs/guide/saml-sso.md)
-  - [SCIM Integration](https://modal.com/docs/guide/scim.md)
   - [Slack notifications (Beta)](https://modal.com/docs/guide/slack-notifications.md)
 - Workspace & account settings
   - [Workspaces](https://modal.com/docs/guide/workspaces.md)
@@ -159,6 +155,12 @@ The docs are organized into three main sections:
   - [Billing](https://modal.com/docs/guide/billing.md)
   - [Network egress billing](https://modal.com/docs/guide/network-egress-billing.md)
   - [Budgets](https://modal.com/docs/guide/budgets.md)
+- Identity and provisioning
+  - [Okta SSO](https://modal.com/docs/guide/okta-sso.md)
+  - [Microsoft Entra SSO](https://modal.com/docs/guide/entra-sso.md)
+  - [Google Workspace SSO](https://modal.com/docs/guide/google-sso.md)
+  - [Custom SAML SSO](https://modal.com/docs/guide/saml-sso.md)
+  - [SCIM Integration](https://modal.com/docs/guide/scim.md)
 - Other topics
   - [Feature maturity](https://modal.com/docs/guide/feature-maturity.md)
   - [Restricted Functions](https://modal.com/docs/guide/restricted-access.md)
@@ -198,7 +200,6 @@ The docs are organized into three main sections:
   - [Generate video clips with LTX-Video](https://modal.com/docs/examples/ltx.md)
   - [Run Stable Diffusion with a CLI, API, and web UI](https://modal.com/docs/examples/text_to_image.md)
 - Audio
-  - [Deploy a Moshi voice chatbot](https://modal.com/docs/examples/llm-voice-chat.md)
   - [Stream transcripts at the speed of speech using Kyutai STT](https://modal.com/docs/examples/streaming_kyutai_stt.md)
   - [Make music with ACE-Step](https://modal.com/docs/examples/generate_music.md)
   - [Generate speech with Chatterbox](https://modal.com/docs/examples/chatterbox_tts.md)

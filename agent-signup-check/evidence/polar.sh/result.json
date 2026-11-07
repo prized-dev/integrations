@@ -1,8 +1,8 @@
 {
  "site": "polar.sh",
- "checkedAt": "2026-10-30T16:01:58.155Z",
+ "checkedAt": "2026-11-07T00:19:31.631Z",
  "checker": "agent-signup-check/0.2.2",
- "passed": 5,
+ "passed": 4,
  "partial": 0,
  "total": 7,
  "whoActs": "nobody (anonymous)",
@@ -71,32 +71,34 @@
   {
    "id": "markdown",
    "name": "Docs in Markdown",
-   "url": "https://polar.sh/docs/llms.txt",
-   "heading": "# Polar",
-   "bytes": 86695,
-   "status": "pass",
-   "reason": "llms.txt found"
+   "url": "https://docs.polar.sh/llms.txt",
+   "tried": [
+    "https://polar.sh/llms.txt",
+    "https://docs.polar.sh/llms.txt"
+   ],
+   "status": "fail",
+   "reason": "https://polar.sh/llms.txt not found (HTTP 404) (after a redirect to https://polar.sh/docs/llms.txt); https://docs.polar.sh/llms.txt not found (HTTP 404) (after a redirect to https://polar.sh/docs/llms.txt)"
   }
  ],
  "requests": [
   {
    "label": "auth.md",
    "url": "https://polar.sh/auth.md",
-   "finalUrl": "https://polar.sh/auth.md",
-   "status": 404,
+   "finalUrl": "https://api.polar.sh/auth.md",
+   "status": 200,
    "error": null,
-   "contentType": "text/html; charset=utf-8",
-   "ms": 206,
-   "redirects": 0
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 209,
+   "redirects": 1
   },
   {
    "label": "llms.txt",
    "url": "https://polar.sh/llms.txt",
    "finalUrl": "https://polar.sh/docs/llms.txt",
-   "status": 200,
+   "status": 404,
    "error": null,
-   "contentType": "text/plain; charset=utf-8",
-   "ms": 155,
+   "contentType": "text/plain; charset=UTF-8",
+   "ms": 321,
    "redirects": 1
   },
   {
@@ -106,8 +108,18 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 247,
+   "ms": 127,
    "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://docs.polar.sh/llms.txt",
+   "finalUrl": "https://polar.sh/docs/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/plain; charset=UTF-8",
+   "ms": 250,
+   "redirects": 1
   },
   {
    "label": "prm (from 401)",
@@ -116,7 +128,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 127,
+   "ms": 224,
    "redirects": 0
   },
   {
@@ -126,17 +138,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 255,
-   "redirects": 0
-  },
-  {
-   "label": "auth.md (agent_auth.skill)",
-   "url": "https://api.polar.sh/auth.md",
-   "finalUrl": "https://api.polar.sh/auth.md",
-   "status": 200,
-   "error": null,
-   "contentType": "text/markdown; charset=utf-8",
-   "ms": 145,
+   "ms": 121,
    "redirects": 0
   },
   {
@@ -146,7 +148,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 344,
+   "ms": 162,
    "redirects": 0
   }
  ]

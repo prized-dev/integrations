@@ -1,18 +1,18 @@
 GET https://runpod.io/.well-known/oauth-authorization-server
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:09.586Z
+fetched: 2026-11-07T00:18:46.396Z
 final-url: https://runpod.io/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Fri, 30 Oct 2026 16:01:08 GMT
+date: Sat, 07 Nov 2026 00:18:45 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a52ba30d1d9a1760-SEA
+cf-ray: a568299a0ac1ea78-SEA
 cf-cache-status: EXPIRED
 cache-control: no-transform
 content-encoding: gzip
-etag: W/"6ae3fd24-58"
+etag: W/"6aee0229-58"
 server: cloudflare
 vary: accept-encoding
 x-content-type-options: nosniff

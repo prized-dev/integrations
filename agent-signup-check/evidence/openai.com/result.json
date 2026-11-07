@@ -1,6 +1,6 @@
 {
  "site": "openai.com",
- "checkedAt": "2026-10-30T16:00:29.012Z",
+ "checkedAt": "2026-11-07T00:18:04.667Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 2,
  "partial": 0,
@@ -67,17 +67,17 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 62,
+   "ms": 50,
    "redirects": 0
   },
   {
    "label": "llms.txt",
    "url": "https://openai.com/llms.txt",
    "finalUrl": "https://openai.com/llms.txt",
-   "status": 404,
+   "status": 403,
    "error": null,
-   "contentType": "text/html; charset=utf-8",
-   "ms": 248,
+   "contentType": "text/html; charset=UTF-8",
+   "ms": 30,
    "redirects": 0
   },
   {
@@ -87,7 +87,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 84,
+   "ms": 154,
    "redirects": 0
   },
   {
@@ -97,7 +97,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 55,
+   "ms": 49,
    "redirects": 0
   },
   {
@@ -107,7 +107,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 288,
+   "ms": 329,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 404,
    "error": null,
    "contentType": null,
-   "ms": 248,
+   "ms": 90,
    "redirects": 0
   },
   {
@@ -127,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 386,
+   "ms": 377,
    "redirects": 0
   },
   {
@@ -137,7 +137,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 309,
+   "ms": 241,
    "redirects": 0
   }
  ]

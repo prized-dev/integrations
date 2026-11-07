@@ -1,6 +1,6 @@
 {
  "site": "koyeb.com",
- "checkedAt": "2026-10-30T16:01:00.905Z",
+ "checkedAt": "2026-11-07T00:18:37.027Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 0,
  "partial": 1,
@@ -69,7 +69,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 331,
+   "ms": 303,
    "redirects": 1
   },
   {
@@ -79,7 +79,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 179,
+   "ms": 173,
    "redirects": 1
   },
   {
@@ -89,7 +89,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 649,
+   "ms": 648,
    "redirects": 0
   },
   {
@@ -99,7 +99,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 215,
+   "ms": 181,
    "redirects": 0
   },
   {
@@ -109,7 +109,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 143,
+   "ms": 135,
    "redirects": 1
   },
   {
@@ -119,7 +119,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html",
-   "ms": 440,
+   "ms": 439,
    "redirects": 0
   },
   {
@@ -129,7 +129,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 138,
+   "ms": 168,
    "redirects": 1
   },
   {
@@ -139,7 +139,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 161,
+   "ms": 132,
    "redirects": 1
   }
  ]

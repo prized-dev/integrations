@@ -1,23 +1,23 @@
 GET https://api.jina.ai/v1/embeddings
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:54.445Z
+fetched: 2026-11-07T00:19:27.381Z
 final-url: https://api.jina.ai/v1/embeddings
 
 HTTP 401
-date: Fri, 30 Oct 2026 16:01:51 GMT
+date: Sat, 07 Nov 2026 00:19:24 GMT
 content-type: application/json
-content-length: 225
+content-length: 223
 connection: close
-cf-ray: a52ba41b4ecab57f-PDX
+cf-ray: a5682a8fa9d25ed4-PDX
 cf-cache-status: DYNAMIC
 content-encoding: gzip
 server: cloudflare
 vary: Accept-Encoding
 x-served-by: cf-worker-gcp-direct
 alt-svc: h3=":443"; ma=86400
-x-cloud-trace-context: 032b492d16901f34758fd98e6f47f6a8
-x-request-id: 032b492d16901f34758fd98e6f47f6a8
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=roL7cXy%2FeRQZzUzjKvbhm5EqhHtGj6%2Bl4rhBKCWzbzwZnVvEhKi%2Bi39nuSm%2Fg3itCw6LPCRQaGZTboMOocamTpU5%2FNDPw93yBWaswk8JWK7Jdti%2B9bH2Vgn3uXuj"}]}
+x-cloud-trace-context: fbfd631a40f129e4223a48f234baf23d
+x-request-id: fbfd631a40f129e4223a48f234baf23d
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=7PMW8TjhqWLPx4EHokErvPp63gb%2F0Wzej8utYyuOZatwqjlRGUVFRJfRI26OaMX83thfeJwAoF4MZDscrgpoBA8e0JhVzZu9TOqI1epMxKzukPpx0KLJRJQsOjJ5"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 
-{"detail":"Authentication required. Provide your API key via the Authorization header: 'Authorization: Bearer <api-key>'. Get your API key at https://jina.ai/api-dashboard/key-manager.","request_id":"032b492d16901f34758fd98e6f47f6a8","code":"AUTH_MISSING_API_KEY"}
+{"detail":"Authentication required. Provide your API key via the Authorization header: 'Authorization: Bearer <api-key>'. Get your API key at https://jina.ai/api-dashboard/key-manager.","request_id":"fbfd631a40f129e4223a48f234baf23d","code":"AUTH_MISSING_API_KEY"}

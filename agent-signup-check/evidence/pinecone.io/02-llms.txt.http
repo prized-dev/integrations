@@ -1,24 +1,20 @@
 GET https://pinecone.io/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:22.259Z
+fetched: 2026-11-07T00:18:57.405Z
 redirect: 308 from https://pinecone.io/llms.txt
 final-url: https://www.pinecone.io/llms.txt
 
 HTTP 200
-access-control-allow-origin: *
-age: 349
-cache-control: public, max-age=0, s-maxage=43200
-content-disposition: inline
+age: 32295
+cache-control: public, max-age=0
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Fri, 30 Oct 2026 16:01:19 GMT
-etag: W/"c17538c76afb9e924abdbe301380c7b3"
+date: Fri, 06 Nov 2026 15:20:39 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
-vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::jxz8n-1793376079932-c3abc40889be
+x-vercel-id: pdx1::iad1::pr872-1794010734950-1aba4d376a0e
 connection: close
 transfer-encoding: chunked
 
@@ -100,6 +96,7 @@ Pinecone's comparisons with the systems teams usually weigh it against, plus gui
 - [Research](https://www.pinecone.io/research/)
 - [Community](https://www.pinecone.io/community/)
 - [Pricing](https://www.pinecone.io/pricing/md/)
+- [Brand assets: logos, icons, colors, and usage rules](https://www.pinecone.io/brand/md/)
 - [Contact](https://www.pinecone.io/contact/)
 
 ## API Rate Limits
@@ -222,6 +219,7 @@ The Pinecone Database API enforces per-project rate limits on read and write req
 
 ## Blog
 
+- [Webinar Recap: From Data to Vectors to Context](https://www.pinecone.io/blog/webinar-recap-data-to-vectors-to-context/md/) (2026-11-06)
 - [Introducing pg_pinecone: Open-Source Search for Your Postgres Data](https://www.pinecone.io/blog/introducing-pg-pinecone/md/) (2026-10-27)
 - [How to Migrate from Chroma Cloud to Pinecone](https://www.pinecone.io/blog/migrate-chroma-cloud-to-pinecone/md/) (2026-10-26)
 - [When vectors became an implementation detail](https://www.pinecone.io/blog/when-vectors-became-an-implementation-detail/md/) (2026-10-22)
@@ -248,9 +246,6 @@ The Pinecone Database API enforces per-project rate limits on read and write req
 - [Full Text Search in Pinecone, Now in Public Preview](https://www.pinecone.io/blog/full-text-search/md/) (2026-05-07)
 - [Full Text Search: Architecture and Design](https://www.pinecone.io/blog/full-text-search-architecture/md/) (2026-05-07)
 - [Builder Plan: for the stage between prototype and scale](https://www.pinecone.io/blog/builder-plan/md/) (2026-05-06)
-- [Introducing Pinecone Marketplace:  Getting to Production in Minutes](https://www.pinecone.io/blog/marketplace/md/) (2026-05-05)
-- [Better Models Won’t Save Your Agent ](https://www.pinecone.io/blog/introducing-nexus-knowledge-engine/md/) (2026-05-04)
-- [Pinecone Nexus: The Knowledge Engine for Agents](https://www.pinecone.io/blog/knowledge-infrastructure-for-agents/md/) (2026-05-04)
 
 ## Case Studies
 

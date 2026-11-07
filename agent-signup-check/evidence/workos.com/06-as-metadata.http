@@ -1,39 +1,42 @@
 GET https://workos.com/.well-known/oauth-authorization-server
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:08.325Z
+fetched: 2026-11-07T00:19:41.948Z
 redirect: 302 from https://workos.com/.well-known/oauth-authorization-server
 final-url: https://signin.workos.com/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:02:07 GMT
+date: Sat, 07 Nov 2026 00:19:41 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a52ba47b6e1c5913-PDX
+cf-ray: a5682af4afa9c8da-PDX
 cf-cache-status: HIT
-age: 281
+age: 121
 cache-control: public, max-age=300
-etag: W/"532-/3NoXtibHNVSP39JDUGC84oB6lE"
-expires: Fri, 30 Oct 2026 16:07:07 GMT
+etag: W/"564-VE1DOlodDSvoHVNfC9adfSNWuNA"
+expires: Sat, 07 Nov 2026 00:24:41 GMT
 server: cloudflare
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch,Origin, Accept-Encoding
 access-control-allow-credentials: true
 content-security-policy: frame-ancestors https://bolt.new https://lovable.dev https://replit.com https://riff.new https://v0.app
-content-security-policy-report-only: default-src 'self'; script-src 'self' 'nonce-j+RViurDnIuniphUQlxzbg==' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' *; img-src * data:; font-src * data:; connect-src *; frame-src 'self' https://challenges.cloudflare.com; frame-ancestors https://bolt.new https://lovable.dev https://replit.com https://riff.new https://v0.app; upgrade-insecure-requests; worker-src 'self'; report-uri https://browser-intake-datadoghq.com/api/v2/logs?dd-api-key=pubb28ba93eb59013963476c6dd6c190040&dd-evp-origin=content-security-policy&ddsource=csp-report; report-to csp-datadog
+content-security-policy-report-only: default-src 'self'; script-src 'self' 'nonce-CfC2T76tGbkj0V3sfFf1YQ==' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' *; img-src * data:; font-src * data:; connect-src *; frame-src 'self' https://challenges.cloudflare.com; frame-ancestors https://bolt.new https://lovable.dev https://replit.com https://riff.new https://v0.app; upgrade-insecure-requests; worker-src 'self'; report-uri https://browser-intake-datadoghq.com/api/v2/logs?dd-api-key=pubb28ba93eb59013963476c6dd6c190040&dd-evp-origin=content-security-policy&ddsource=csp-report; report-to csp-datadog
 expect-ct: max-age=0
 referrer-policy: no-referrer-when-downgrade
 reporting-endpoints: csp-datadog="https://browser-intake-datadoghq.com/api/v2/logs?dd-api-key=pubb28ba93eb59013963476c6dd6c190040&dd-evp-origin=content-security-policy&ddsource=csp-report"
 x-content-type-options: nosniff
 x-dns-prefetch-control: off
 x-download-options: noopen
-x-envoy-upstream-service-time: 49
+x-envoy-upstream-service-time: 71
 x-frame-options: SAMEORIGIN
-x-nonce: j+RViurDnIuniphUQlxzbg==
+x-nonce: CfC2T76tGbkj0V3sfFf1YQ==
 x-permitted-cross-domain-policies: none
-x-request-id: 64e84876-d319-4433-9b94-08bb458ea10c
+x-ratelimit-limit: 1000, 24000;w=60, 1000;w=1
+x-ratelimit-remaining: 987
+x-ratelimit-reset: 1
+x-request-id: cc1a05bd-ba01-4eaf-9ade-5053fb7d5b99
 x-workos-app: authkit
 x-xss-protection: 0
 content-encoding: gzip
 
-{"authorization_grant_profiles_supported":["urn:ietf:params:oauth:grant-profile:id-jag"],"authorization_endpoint":"https://signin.workos.com/oauth2/authorize","client_id_metadata_document_supported":true,"code_challenge_methods_supported":["S256"],"device_authorization_endpoint":"https://signin.workos.com/oauth2/device_authorization","grant_types_supported":["authorization_code","refresh_token","urn:ietf:params:oauth:grant-type:device_code","urn:ietf:params:oauth:grant-type:jwt-bearer"],"introspection_endpoint":"https://signin.workos.com/oauth2/introspection","issuer":"https://signin.workos.com","jwks_uri":"https://signin.workos.com/oauth2/jwks","registration_endpoint":"https://signin.workos.com/oauth2/register","scopes_supported":["email","offline_access","openid","profile"],"response_modes_supported":["query"],"response_types_supported":["code"],"token_endpoint":"https://signin.workos.com/oauth2/token","token_endpoint_auth_methods_supported":["none","client_secret_post","client_secret_basic","private_key_jwt"],"agent_auth":{"skill":"https://signin.workos.com/agent/auth.md","identity_endpoint":"https://signin.workos.com/agent/identity","claim_endpoint":"https://signin.workos.com/agent/identity/claim","revocation_endpoint":"https://signin.workos.com/oauth2/revoke","identity_types_supported":["service_auth"]}}
+{"authorization_grant_profiles_supported":["urn:ietf:params:oauth:grant-profile:id-jag"],"authorization_endpoint":"https://signin.workos.com/oauth2/authorize","client_id_metadata_document_supported":true,"code_challenge_methods_supported":["S256"],"device_authorization_endpoint":"https://signin.workos.com/oauth2/device_authorization","grant_types_supported":["authorization_code","refresh_token","urn:ietf:params:oauth:grant-type:device_code","urn:ietf:params:oauth:grant-type:jwt-bearer","urn:ietf:params:oauth:grant-type:token-exchange"],"introspection_endpoint":"https://signin.workos.com/oauth2/introspection","issuer":"https://signin.workos.com","jwks_uri":"https://signin.workos.com/oauth2/jwks","registration_endpoint":"https://signin.workos.com/oauth2/register","scopes_supported":["email","offline_access","openid","profile"],"response_modes_supported":["query"],"response_types_supported":["code"],"token_endpoint":"https://signin.workos.com/oauth2/token","token_endpoint_auth_methods_supported":["none","client_secret_post","client_secret_basic","private_key_jwt"],"agent_auth":{"skill":"https://signin.workos.com/agent/auth.md","identity_endpoint":"https://signin.workos.com/agent/identity","claim_endpoint":"https://signin.workos.com/agent/identity/claim","revocation_endpoint":"https://signin.workos.com/oauth2/revoke","identity_types_supported":["service_auth"]}}

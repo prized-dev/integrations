@@ -1,9 +1,9 @@
 {
  "site": "agentphone.to",
- "checkedAt": "2026-10-30T16:01:48.144Z",
+ "checkedAt": "2026-11-07T00:19:07.700Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 1,
- "partial": 1,
+ "partial": 2,
  "total": 7,
  "whoActs": "the person confirms an email code (from llms.txt prose)",
  "checks": [
@@ -36,10 +36,10 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://api.agentphone.ai/v1/numbers",
-   "httpStatus": null,
+   "httpStatus": 401,
    "www_authenticate": null,
-   "status": "fail",
-   "reason": "API: timeout"
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
   },
   {
    "id": "limits",
@@ -71,7 +71,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 195,
+   "ms": 209,
    "redirects": 1
   },
   {
@@ -81,17 +81,17 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 132,
+   "ms": 179,
    "redirects": 1
   },
   {
    "label": "api",
    "url": "https://api.agentphone.ai/v1/numbers",
    "finalUrl": "https://api.agentphone.ai/v1/numbers",
-   "status": null,
-   "error": "timeout",
-   "contentType": null,
-   "ms": 8001,
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 113,
    "redirects": 0
   },
   {
@@ -101,17 +101,17 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 281,
+   "ms": 126,
    "redirects": 1
   },
   {
    "label": "prm (API host)",
    "url": "https://api.agentphone.ai/.well-known/oauth-protected-resource",
    "finalUrl": "https://api.agentphone.ai/.well-known/oauth-protected-resource",
-   "status": null,
-   "error": "timeout",
-   "contentType": null,
-   "ms": 8000,
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 53,
    "redirects": 0
   },
   {
@@ -121,7 +121,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 183,
+   "ms": 124,
    "redirects": 1
   },
   {
@@ -131,7 +131,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 136,
+   "ms": 125,
    "redirects": 1
   }
  ]

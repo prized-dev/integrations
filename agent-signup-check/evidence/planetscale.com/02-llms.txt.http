@@ -1,31 +1,31 @@
 GET https://planetscale.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:19.380Z
+fetched: 2026-11-07T00:18:55.137Z
 redirect: 307 from https://planetscale.com/llms.txt
 final-url: https://planetscale.com/docs/llms.txt
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:01:16 GMT
+date: Sat, 07 Nov 2026 00:18:52 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a52ba33f1f6dc4ac-PDX
+cf-ray: a56829bf0dafc3af-PDX
 cf-cache-status: DYNAMIC
-age: 349
+age: 1057
 cache-control: public
 content-encoding: br
-etag: W/"eYQNmCv15t-uVGj65PCHG-j2WRSCZgwP_A-QAKKQL6Q"
+etag: "0KwkQU-qhHY1_TsboaXNvWlGWdSpLqC5VudxRkEbgQU"
 server: cloudflare
 strict-transport-security: max-age=63072000
 vary: accept-encoding
-cf-placement: local-PDX
+cf-placement: remote-EWR
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4021
-x-vercel-cache: MISS
-x-vercel-id: pdx1:pdx1:iad1::iad1::hjmbz-1793376076780-f29738ad8f9d
+x-mintlify-client-version: 0.0.4076
+x-vercel-cache: STALE
+x-vercel-id: iad1:iad1:iad1::iad1::l876n-1794010731453-36a579b4717a
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
-x-version: dpl_DGmhKsAzJdVqypJzon18vViniWRY
+x-version: dpl_ATnXPMW25DMPUr9VBw6kL6MfBt6T
 alt-svc: h3=":443"; ma=86400
 
 # PlanetScale
@@ -153,7 +153,7 @@ alt-svc: h3=":443"; ma=86400
 
 #### Foundations
 
-- [Overview](https://planetscale.com/docs/neki/overview.md): The components of a Neki deployment and how they fit together
+- [PlanetScale Neki overview](https://planetscale.com/docs/neki/overview.md): The components of a Neki deployment and how they fit together
 - [When to shard](https://planetscale.com/docs/neki/when-to-shard.md): Whether a Postgres workload needs horizontal sharding
 - [Neki vs PlanetScale Postgres](https://planetscale.com/docs/neki/coming-from-postgres.md): The upgrade path from regular Postgres to Neki
 - [Neki vs Vitess](https://planetscale.com/docs/neki/vitess-and-postgres.md): Vitess concepts mapped to Neki's Postgres architecture
@@ -193,8 +193,8 @@ alt-svc: h3=":443"; ma=86400
 #### Getting started
 
 - [Neki database dashboard](https://planetscale.com/docs/neki/neki-dashboard.md): Cluster topology, summary statistics, and query performance for a Neki database
-- [Neki quickstart](https://planetscale.com/docs/neki/tutorials/planetscale-quick-start-guide.md): Create a single-shard Neki database, connect, and insert data
-- [Neki sharding quickstart](https://planetscale.com/docs/neki/tutorials/sharding-quick-start-guide.md): Add a shard and route a new table with a data topology
+- [PlanetScale Neki quickstart](https://planetscale.com/docs/neki/tutorials/planetscale-quick-start-guide.md): Create a single-shard Neki database, connect, and insert data
+- [PlanetScale Neki sharding quickstart](https://planetscale.com/docs/neki/tutorials/sharding-quick-start-guide.md): Add a shard and route a new table with a data topology
 - [Neki best practices](https://planetscale.com/docs/neki/best-practices.md): Data placement, transaction scope, and workload isolation
 
 #### Connecting
@@ -253,8 +253,8 @@ alt-svc: h3=":443"; ma=86400
 - [Connect a Bun application to Neki](https://planetscale.com/docs/neki/guides/bun.md): Bun SQL connections and replica routing
 - [Connect Cloudflare Workers to Neki](https://planetscale.com/docs/neki/guides/cloudflare-workers.md): Cloudflare Workers connection pooling through Hyperdrive
 
-- [Postgres (108 pages)](https://planetscale.com/docs/_llms/postgres.txt): Documentation for Postgres.
-- [API Reference (268 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Documentation for API Reference.
+- [Postgres (109 pages)](https://planetscale.com/docs/_llms/postgres.txt): Documentation for Postgres.
+- [API Reference (269 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Documentation for API Reference.
 
 ## CLI Reference
 
@@ -329,8 +329,8 @@ alt-svc: h3=":443"; ma=86400
 ## Indexes
 
 - [Vitess (188 pages)](https://planetscale.com/docs/_llms/vitess.txt): Documentation for Vitess.
-- [Postgres (108 pages)](https://planetscale.com/docs/_llms/postgres.txt): Documentation for Postgres.
-- [API Reference (268 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Documentation for API Reference.
+- [Postgres (109 pages)](https://planetscale.com/docs/_llms/postgres.txt): Documentation for Postgres.
+- [API Reference (269 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Documentation for API Reference.
 
 
 This documentation is built and hosted on [Mintlify](https://mintlify.com), a developer documentation platform.

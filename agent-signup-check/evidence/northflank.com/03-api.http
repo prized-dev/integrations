@@ -1,23 +1,29 @@
 GET https://api.northflank.com/v1/projects
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:53.559Z
+fetched: 2026-11-07T00:18:30.138Z
 final-url: https://api.northflank.com/v1/projects
 
 HTTP 401
-vary: Origin, Accept-Encoding
+connection: close
+content-length: 49
 access-control-allow-origin: *
 x-dns-prefetch-control: off
 x-frame-options: SAMEORIGIN
-strict-transport-security: max-age=15552000; includeSubDomains
 x-download-options: noopen
 x-content-type-options: nosniff
 x-xss-protection: 1; mode=block
 content-type: application/json; charset=utf-8
 x-response-time: 1ms
-content-length: 49
-date: Fri, 30 Oct 2026 16:00:50 GMT
-x-envoy-upstream-service-time: 5
+x-envoy-upstream-service-time: 2
 server: istio-envoy
-connection: close
+accept-ranges: bytes
+date: Sat, 07 Nov 2026 00:18:27 GMT
+via: 1.1 varnish
+x-served-by: cache-bfi-kbfi7400052-BFI
+x-cache: MISS
+x-cache-hits: 0
+x-timer: S1794010707.220489,VS0,VE144
+vary: Origin, Accept-Encoding
+strict-transport-security: max-age=300
 
 {"error":{"status":401,"message":"Unauthorized"}}

@@ -1,10 +1,10 @@
 GET https://boat.dev/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:10.778Z
+fetched: 2026-11-07T00:18:46.373Z
 final-url: https://boat.dev/.well-known/oauth-protected-resource
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:01:09 GMT
+date: Sat, 07 Nov 2026 00:18:44 GMT
 content-type: application/json;charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -17,10 +17,10 @@ access-control-max-age: 86400
 cf-cache-status: DYNAMIC
 via: 1.1 Caddy, 1.1 Caddy
 content-encoding: gzip
-ratelimit: "ip";r=9998;t=60
+ratelimit: "ip";r=9997;t=60
 ratelimit-policy: "ip";q=10000;w=60
 server: cloudflare
 vary: Accept-Encoding
-cf-ray: a52ba30e7b96ff1a-PDX
+cf-ray: a568299438fedebd-PDX
 
 {"resource":"https://boat.dev/api/box/v1/","resource_name":"Boat","resource_logo_uri":"https://boat.dev/logo/full_logo.json","authorization_servers":["https://boat.dev/"],"scopes_supported":["box.me","box.limits","box.write","box.billing"],"bearer_methods_supported":["header"]}

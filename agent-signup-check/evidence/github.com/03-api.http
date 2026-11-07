@@ -1,6 +1,6 @@
 GET https://api.github.com/user
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:02.992Z
+fetched: 2026-11-07T00:19:36.483Z
 final-url: https://api.github.com/user
 
 HTTP 401
@@ -16,15 +16,15 @@ referrer-policy: origin-when-cross-origin, strict-origin-when-cross-origin
 content-security-policy: default-src 'none'
 vary: Accept-Encoding, Accept, X-Requested-With
 server: github.com
-date: Fri, 30 Oct 2026 16:02:00 GMT
+date: Sat, 07 Nov 2026 00:19:34 GMT
 x-ratelimit-limit: 60
-x-ratelimit-remaining: 57
-x-ratelimit-used: 3
+x-ratelimit-remaining: 59
+x-ratelimit-used: 1
 x-ratelimit-resource: core
-x-ratelimit-reset: 1793379371
+x-ratelimit-reset: 1794014374
 content-length: 120
-x-github-request-id: DCCC:32A534:91E9:F321:6AE4BF78
-x-github-edge-region: westus2
+x-github-request-id: B034:B499E:B46A48:101ED5B:6AEE6E96
+x-github-edge-region: sea
 connection: close
 
 {

@@ -1,6 +1,6 @@
 GET https://prized.dev/.well-known/oauth-authorization-server
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:45.780Z
+fetched: 2026-11-07T00:18:22.297Z
 final-url: https://prized.dev/.well-known/oauth-authorization-server
 
 HTTP 200
@@ -10,14 +10,14 @@ cache-control: public, max-age=300
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: application/json
-date: Fri, 30 Oct 2026 16:00:45 GMT
+date: Sat, 07 Nov 2026 00:18:21 GMT
 referrer-policy: no-referrer
 server: Vercel
 strict-transport-security: max-age=63072000
 x-frame-options: DENY
 x-matched-path: /.well-known/oauth-authorization-server
 x-vercel-cache: MISS
-x-vercel-id: pdx1::pdx1::c659l-1793376044973-474f8ede59a0
+x-vercel-id: pdx1::pdx1::g2bpc-1794010701359-8df75eaf7ba3
 connection: close
 transfer-encoding: chunked
 

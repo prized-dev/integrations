@@ -1,12 +1,12 @@
 GET https://us.posthog.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:05.012Z
+fetched: 2026-11-07T00:19:40.523Z
 final-url: https://us.posthog.com/auth.md
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:02:03 GMT
+date: Sat, 07 Nov 2026 00:19:39 GMT
 content-type: text/markdown; charset=utf-8
-content-length: 14631
+content-length: 15379
 connection: close
 allow: GET, HEAD, OPTIONS
 x-frame-options: SAMEORIGIN
@@ -16,7 +16,7 @@ x-content-type-options: nosniff
 referrer-policy: strict-origin-when-cross-origin
 cross-origin-opener-policy: same-origin
 server: envoy
-x-envoy-upstream-service-time: 11
+x-envoy-upstream-service-time: 9
 strict-transport-security: max-age=31536000; includeSubDomains
 
 # PostHog
@@ -33,9 +33,9 @@ PostHog is an open-source platform for product analytics, session replay, featur
 - OAuth 2.0: standard authorization-code flow for an app acting on behalf of a user. See https://posthog.com/docs/api/oauth
 - Personal API keys: long-lived keys for scripts and server-to-server use. See https://posthog.com/docs/api#authentication
 
-## Agent registration via ID-JAG (Enterprise, beta)
+## Agent registration via ID-JAG (Scale and Enterprise)
 
-Available on the Enterprise plan with XAA enabled, and currently in beta, so most clients should use one of the options above. With it configured, an agent presents an [ID-JAG](https://xaa.dev) identity assertion (`identity_assertion`) to the token endpoint using the JWT-bearer grant (`urn:ietf:params:oauth:grant-type:jwt-bearer`) and receives a scoped, short-lived OAuth access token bound to the user. The agent must also authenticate as a registered client, with a client secret or `private_key_jwt`, and the ID-JAG's `client_id` must name that client. See https://posthog.com/docs/settings/id-jag
+Available to organizations on the Scale or Enterprise platform add-on that have XAA configured. It only works once an organization admin sets up XAA, so most clients should use one of the options above. With it configured, an agent presents an [ID-JAG](https://xaa.dev) identity assertion (`identity_assertion`) to the token endpoint using the JWT-bearer grant (`urn:ietf:params:oauth:grant-type:jwt-bearer`) and receives a scoped, short-lived OAuth access token bound to the user. The agent must also authenticate as a registered client, with a client secret or `private_key_jwt`, and the ID-JAG's `client_id` must name that client. See https://posthog.com/docs/settings/id-jag
 
 - Identity endpoint: `https://us.posthog.com/oauth/token/`
 - Assertion type: `urn:ietf:params:oauth:token-type:id-jag`
@@ -158,6 +158,8 @@ The user-claimed device flow (`service_auth`, `anonymous`) is not supported yet.
 - `insight_variable:write`: Write access to insight_variable
 - `integration:read`: Read access to integration
 - `integration:write`: Write access to integration
+- `knowledge_writer:read`: Read access to knowledge_writer
+- `knowledge_writer:write`: Write access to knowledge_writer
 - `legal_document:read`: Read access to legal_document
 - `legal_document:write`: Write access to legal_document
 - `link:read`: Read access to link
@@ -226,6 +228,8 @@ The user-claimed device flow (`service_auth`, `anonymous`) is not supported yet.
 - `sharing_configuration:write`: Write access to sharing_configuration
 - `signal_scout:read`: Read access to signal_scout
 - `signal_scout:write`: Write access to signal_scout
+- `signal_usage:read`: Read access to signal_usage
+- `signal_usage:write`: Write access to signal_usage
 - `stamphog:read`: Read access to stamphog
 - `stamphog:write`: Write access to stamphog
 - `streamlit_app:read`: Read access to streamlit_app
@@ -248,6 +252,8 @@ The user-claimed device flow (`service_auth`, `anonymous`) is not supported yet.
 - `toolbar:write`: Write access to toolbar
 - `tracing:read`: Read access to tracing
 - `tracing:write`: Write access to tracing
+- `transactional_email:read`: Read access to transactional_email
+- `transactional_email:write`: Write access to transactional_email
 - `field_note:read`: Read access to field_note
 - `field_note:write`: Write access to field_note
 - `uploaded_media:read`: Read access to uploaded_media
@@ -274,6 +280,10 @@ The user-claimed device flow (`service_auth`, `anonymous`) is not supported yet.
 - `web_analytics:write`: Write access to web_analytics
 - `webhook:read`: Read access to webhook
 - `webhook:write`: Write access to webhook
+- `workload_trust_policy:read`: Read access to workload_trust_policy
+- `workload_trust_policy:write`: Write access to workload_trust_policy
+- `workload_trust_policy_request:read`: Read access to workload_trust_policy_request
+- `workload_trust_policy_request:write`: Write access to workload_trust_policy_request
 
 
 ## Changing scopes

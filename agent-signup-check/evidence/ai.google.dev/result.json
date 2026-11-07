@@ -1,6 +1,6 @@
 {
  "site": "ai.google.dev",
- "checkedAt": "2026-10-30T16:00:29.384Z",
+ "checkedAt": "2026-11-07T00:18:05.477Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 1,
@@ -52,9 +52,9 @@
   {
    "id": "markdown",
    "name": "Docs in Markdown",
-   "url": "https://ai.google.dev/gemini-api/docs/llms.txt",
-   "heading": "# Gemini API",
-   "bytes": 38219,
+   "url": "https://aistudio.google.com/llms.txt",
+   "heading": "# Gemini API & AI Studio Documentation",
+   "bytes": 66990,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -67,7 +67,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 411,
+   "ms": 341,
    "redirects": 0
   },
   {
@@ -77,7 +77,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 236,
+   "ms": 256,
    "redirects": 0
   },
   {
@@ -87,18 +87,18 @@
    "status": 403,
    "error": null,
    "contentType": "application/json; charset=UTF-8",
-   "ms": 85,
+   "ms": 80,
    "redirects": 0
   },
   {
    "label": "llms.txt (docs)",
    "url": "https://ai.google.dev/gemini-api/docs/llms.txt",
-   "finalUrl": "https://ai.google.dev/gemini-api/docs/llms.txt",
+   "finalUrl": "https://aistudio.google.com/llms.txt",
    "status": 200,
    "error": null,
-   "contentType": "text/markdown; charset=utf-8",
-   "ms": 167,
-   "redirects": 0
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 278,
+   "redirects": 1
   },
   {
    "label": "prm",
@@ -107,7 +107,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 310,
+   "ms": 245,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 242,
+   "ms": 73,
    "redirects": 0
   },
   {
@@ -127,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 307,
+   "ms": 456,
    "redirects": 0
   },
   {
@@ -137,7 +137,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 291,
+   "ms": 215,
    "redirects": 0
   }
  ]

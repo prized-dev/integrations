@@ -1,6 +1,6 @@
 GET https://browser-use.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:41.788Z
+fetched: 2026-11-07T00:19:16.484Z
 final-url: https://browser-use.com/auth.md
 
 HTTP 200
@@ -8,8 +8,8 @@ age: 0
 cache-control: public, max-age=0, must-revalidate
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Fri, 30 Oct 2026 16:01:37 GMT
-link: <https://browser-use.com/auth>; rel="canonical"
+date: Sat, 07 Nov 2026 00:19:12 GMT
+link: <https://browser-use.com/developers>; rel="canonical"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: Accept-Encoding
@@ -17,23 +17,13 @@ x-content-source: pages-for-llms
 x-matched-path: /api/md/[[...path]]
 x-robots-tag: noindex
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::b6zdx-1793376097718-be45b9d55949
+x-vercel-id: pdx1::iad1::drpq4-1794010752247-5f194bfe0525
 connection: close
 transfer-encoding: chunked
 
-BROWSER USE
-
-- Browser Use Agents: give Browser Use a task and receive completed work. API V4 is current for new integrations.
-- Browser Infrastructure: connect your agent or automation to managed browsers through SDK, REST, or CDP. Starts at $0.02/browser-hour.
-- Developer tools: Open Source, Browser Harness, SDK, and MCP support the two products above.
-
-[Developer Index](https://browser-use.com/index.md)
-[Product Map](https://browser-use.com/llms.txt)
-[Full Product Context](https://browser-use.com/llms-full.txt)
-[Pricing](https://browser-use.com/pricing.md)
-[Cloud Docs](https://docs.browser-use.com/cloud/quickstart)
-[Open Source Docs](https://docs.browser-use.com/open-source/introduction)
-
+---
+title: "Browser Use authentication for agents"
+canonical: "https://browser-use.com/developers"
 ---
 
 # Browser Use authentication for agents
@@ -69,3 +59,18 @@ The Browser Use authorization server advertises Authorization Code with PKCE and
 - Protected-resource metadata: [browser-use.com/.well-known/oauth-protected-resource](https://browser-use.com/.well-known/oauth-protected-resource)
 
 Request the `mcp` scope only when calling the Browser Use MCP resource. Finer-grained REST API OAuth scopes are not currently advertised by the public authorization metadata.
+
+---
+
+BROWSER USE
+
+- Browser Use Agents: give Browser Use a task and receive completed work. API V4 is current for new integrations.
+- Browser Infrastructure: connect your agent or automation to managed browsers through SDK, REST, or CDP. Starts at $0.02/browser-hour.
+- Developer tools: Open Source, Browser Harness, SDK, and MCP support the two products above.
+
+[Developer Index](https://browser-use.com/index.md)
+[Product Map](https://browser-use.com/llms.txt)
+[Full Product Context](https://browser-use.com/llms-full.txt)
+[Pricing](https://browser-use.com/pricing.md)
+[Cloud Docs](https://docs.browser-use.com/cloud/quickstart)
+[Open Source Docs](https://docs.browser-use.com/open-source/introduction)

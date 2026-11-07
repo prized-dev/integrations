@@ -1,16 +1,16 @@
 GET https://api.useautumn.com/v1/customers
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:01.154Z
+fetched: 2026-11-07T00:19:35.421Z
 final-url: https://api.useautumn.com/v1/customers
 
 HTTP 401
-date: Fri, 30 Oct 2026 16:01:59 GMT
+date: Sat, 07 Nov 2026 00:19:33 GMT
 content-type: application/json
 content-length: 97
 connection: close
 access-control-allow-credentials: true
 access-control-expose-headers: Content-Length
-vary: Origin
+vary: Accept-Encoding, Origin
 x-region: us-east-2
 
 {"message":"Secret key not found in Authorization header","code":"no_secret_key","env":"sandbox"}

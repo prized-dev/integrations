@@ -1,6 +1,6 @@
 GET https://parallel.ai/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:52.625Z
+fetched: 2026-11-07T00:19:27.328Z
 final-url: https://parallel.ai/auth.md
 
 HTTP 200
@@ -13,13 +13,13 @@ cache-control: no-store
 content-encoding: br
 content-security-policy: frame-ancestors 'self' https://parallel-v2.sanity.studio https://sanity.io https://www.sanity.io
 content-type: text/markdown; charset=utf-8
-date: Fri, 30 Oct 2026 16:01:48 GMT
+date: Sat, 07 Nov 2026 00:19:21 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: Origin, Access-Control-Request-Headers
 x-matched-path: /auth.md
 x-vercel-cache: MISS
-x-vercel-id: pdx1:pdx1:pdx1::iad1::bj4g9-1793376108187-5d990e0f58ea
+x-vercel-id: pdx1:pdx1:pdx1::iad1::66ptt-1794010761326-232b260d9207
 connection: close
 transfer-encoding: chunked
 
@@ -51,7 +51,7 @@ sees and approves them during the claim. Supported scopes:
 - `keys:delete` — Delete an API key — `DELETE /service/v1/apps/{app_id}/keys/{api_key_id}`.
 - `balance:read` — Read the org's prepaid credit balance — `GET /service/v1/balance`.
 - `balance:add` — Charge the org's default card and top up balance — `POST /service/v1/balance/add`.
-- `usage:read` — Reserved scope.
+- `usage:read` — Read the org's daily usage and cost line items — `GET /service/v1/usage`.
 - `tenants:manage` — Reserved scope.
 
 ## 1. Register an identity

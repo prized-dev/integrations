@@ -1,6 +1,6 @@
 {
  "site": "modal.com",
- "checkedAt": "2026-10-30T16:00:48.390Z",
+ "checkedAt": "2026-11-07T00:18:25.326Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 1,
@@ -40,7 +40,7 @@
    "where": "llms.txt",
    "url": "https://modal.com/llms.txt",
    "match": "[Budgets](",
-   "snippet": "dal.com/docs/guide/network-egress-billing.md) - [Budgets](https://modal.com/docs/guide/budgets.md) - Other topics - [Feature maturity](https://modal.com/doc",
+   "snippet": "dal.com/docs/guide/network-egress-billing.md) - [Budgets](https://modal.com/docs/guide/budgets.md) - Identity and provisioning - [Okta SSO](https://modal.co",
    "status": "partial",
    "reason": "llms.txt mentions budgets in prose; no machine-readable cap"
   },
@@ -55,7 +55,7 @@
    "name": "Docs in Markdown",
    "url": "https://modal.com/llms.txt",
    "heading": "# Modal Documentation",
-   "bytes": 28003,
+   "bytes": 28016,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -68,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 398,
+   "ms": 376,
    "redirects": 0
   },
   {
@@ -78,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 104,
+   "ms": 303,
    "redirects": 0
   },
   {
@@ -88,7 +88,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 395,
+   "ms": 170,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 106,
+   "ms": 353,
    "redirects": 0
   },
   {
@@ -108,7 +108,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 104,
+   "ms": 322,
    "redirects": 0
   }
  ]

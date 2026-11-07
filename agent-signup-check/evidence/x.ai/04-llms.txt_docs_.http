@@ -1,10 +1,10 @@
 GET https://docs.x.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:36.473Z
+fetched: 2026-11-07T00:18:12.249Z
 final-url: https://docs.x.ai/llms.txt
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:00:34 GMT
+date: Sat, 07 Nov 2026 00:18:10 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -17,7 +17,7 @@ strict-transport-security: max-age=31536000; includeSubDomains
 cf-cache-status: DYNAMIC
 content-encoding: gzip
 server: cloudflare
-cf-ray: a52ba2371ded6192-PDX
+cf-ray: a56828be0e558e5d-PDX
 
 # SpaceXSI API Documentation
 
@@ -99,6 +99,7 @@ Add the programming language you want code examples in to the `Accept-Language` 
 - [Advanced API Usage — WebSocket Mode](https://docs.x.ai/developers/advanced-api-usage/websocket-mode.md)
 - [Advanced API Usage — mTLS Authentication](https://docs.x.ai/developers/advanced-api-usage/mtls.md)
 - [Advanced API Usage — Regional Endpoints](https://docs.x.ai/developers/advanced-api-usage/regions.md)
+- [Advanced API Usage — Output Watermarking](https://docs.x.ai/developers/advanced-api-usage/watermarking.md)
 - [Advanced API Usage — Cost Tracking](https://docs.x.ai/developers/cost-tracking.md)
 - [Advanced API Usage — Debugging Errors](https://docs.x.ai/developers/debugging.md)
 - [Advanced API Usage — Cookbook](https://docs.x.ai/cookbook.md)
@@ -167,31 +168,32 @@ Add the programming language you want code examples in to the `Accept-Language` 
 
 ## Grok Bot
 
-- [Get Started](https://docs.x.ai/grok-bot/overview.md)
-- [Get Started — Get started](https://docs.x.ai/grok-bot/get-started.md)
-- [Get Started — Use cases](https://docs.x.ai/grok-bot/use-cases.md)
-- [Get Started — Grok Bot for Mobile](https://docs.x.ai/grok-bot/mobile.md)
-- [Work with Grok Bot](https://docs.x.ai/grok-bot/bots.md)
-- [Work with Grok Bot — Shared Bots](https://docs.x.ai/grok-bot/shared-bots.md)
-- [Work with Grok Bot — Message and collaborate](https://docs.x.ai/grok-bot/chat-and-collaboration.md)
-- [Work with Grok Bot — Tag @bot on X](https://docs.x.ai/grok-bot/tag-on-x.md)
-- [Work with Grok Bot — Files and results](https://docs.x.ai/grok-bot/files-and-results.md)
-- [Work with Grok Bot — Use the computer and apps](https://docs.x.ai/grok-bot/computer-and-apps.md)
-- [Work with Grok Bot — Vault and secure sign-in](https://docs.x.ai/grok-bot/vault.md)
-- [Work with Grok Bot — Skills and routines](https://docs.x.ai/grok-bot/skills-routines-and-automations.md)
-- [Manage and protect](https://docs.x.ai/grok-bot/settings-and-notifications.md)
-- [Manage and protect — Approvals, security, and privacy](https://docs.x.ai/grok-bot/approvals-security-and-privacy.md)
-- [Manage and protect — Teams and enterprises](https://docs.x.ai/grok-bot/teams-and-enterprises.md)
-- [Manage and protect — Teams and enterprises — Deploy to your organization](https://docs.x.ai/grok-bot/deployment.md)
-- [Manage and protect — Teams and enterprises — Identity and access](https://docs.x.ai/grok-bot/identity-and-access.md)
-- [Manage and protect — Teams and enterprises — Private networks](https://docs.x.ai/grok-bot/private-networks.md)
-- [Manage and protect — Teams and enterprises — TLS-inspecting proxies](https://docs.x.ai/grok-bot/proxies.md)
-- [Manage and protect — Teams and enterprises — Manage computers](https://docs.x.ai/grok-bot/computers.md)
-- [Manage and protect — Teams and enterprises — Inference hooks](https://docs.x.ai/grok-bot/inference-hooks.md)
-- [Manage and protect — Teams and enterprises — Grok Bot security](https://docs.x.ai/grok-bot/security.md)
-- [Manage and protect — Teams and enterprises — Grok Bot security FAQ](https://docs.x.ai/grok-bot/security-faq.md)
-- [Help](https://docs.x.ai/grok-bot/troubleshooting.md)
-- [Help — FAQ](https://docs.x.ai/grok-bot/faq.md)
+- [Get started](https://docs.x.ai/grok-bot/overview.md)
+- [Get started — Get started](https://docs.x.ai/grok-bot/get-started.md)
+- [Get started — Use cases](https://docs.x.ai/grok-bot/use-cases.md)
+- [Get started — How Grok Bot works](https://docs.x.ai/grok-bot/how-grok-bot-works.md)
+- [Use Grok Bot](https://docs.x.ai/grok-bot/bots.md)
+- [Use Grok Bot — Message and collaborate](https://docs.x.ai/grok-bot/chat-and-collaboration.md)
+- [Use Grok Bot — Files and results](https://docs.x.ai/grok-bot/files-and-results.md)
+- [Use Grok Bot — Use the computer and apps](https://docs.x.ai/grok-bot/computer-and-apps.md)
+- [Use Grok Bot — Skills and routines](https://docs.x.ai/grok-bot/skills-routines-and-automations.md)
+- [Use Grok Bot — Approvals and privacy](https://docs.x.ai/grok-bot/approvals-security-and-privacy.md)
+- [Use Grok Bot — Vault and secure sign-in](https://docs.x.ai/grok-bot/vault.md)
+- [Use Grok Bot — Shared Bots](https://docs.x.ai/grok-bot/shared-bots.md)
+- [Use Grok Bot — Grok Bot for Mobile](https://docs.x.ai/grok-bot/mobile.md)
+- [Use Grok Bot — Tag @bot on X](https://docs.x.ai/grok-bot/tag-on-x.md)
+- [Teams and enterprises](https://docs.x.ai/grok-bot/teams-and-enterprises.md)
+- [Teams and enterprises — Deploy to your organization](https://docs.x.ai/grok-bot/deployment.md)
+- [Teams and enterprises — Identity and access](https://docs.x.ai/grok-bot/identity-and-access.md)
+- [Teams and enterprises — Private networks](https://docs.x.ai/grok-bot/private-networks.md)
+- [Teams and enterprises — TLS-inspecting proxies](https://docs.x.ai/grok-bot/proxies.md)
+- [Teams and enterprises — Manage computers](https://docs.x.ai/grok-bot/computers.md)
+- [Teams and enterprises — Inference hooks](https://docs.x.ai/grok-bot/inference-hooks.md)
+- [Teams and enterprises — Security](https://docs.x.ai/grok-bot/security.md)
+- [Teams and enterprises — Security FAQ](https://docs.x.ai/grok-bot/security-faq.md)
+- [Reference](https://docs.x.ai/grok-bot/settings-and-notifications.md)
+- [Reference — Troubleshooting](https://docs.x.ai/grok-bot/troubleshooting.md)
+- [Reference — FAQ](https://docs.x.ai/grok-bot/faq.md)
 
 ## Grok
 

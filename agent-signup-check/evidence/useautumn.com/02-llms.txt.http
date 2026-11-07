@@ -1,26 +1,26 @@
 GET https://useautumn.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:01.154Z
+fetched: 2026-11-07T00:19:35.421Z
 final-url: https://useautumn.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 13233
+age: 19904
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-security-policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://ddwl4m2hdecbv.cloudfront.net https://app.rb2b.com https://b2bjsstore.s3.us-west-2.amazonaws.com https://s3-us-west-2.amazonaws.com https://a.usbrowserspeed.com https://alocdn.com https://pro.ip-api.com https://liadm.com https://*.liadm.com https://9xgnrndqve.execute-api.us-west-2.amazonaws.com https://us.i.posthog.com https://us-assets.i.posthog.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://framerusercontent.com https://ddwl4m2hdecbv.cloudfront.net https://app.rb2b.com https://b2bjsstore.s3.us-west-2.amazonaws.com https://s3-us-west-2.amazonaws.com https://a.usbrowserspeed.com https://alocdn.com https://pro.ip-api.com https://liadm.com https://*.liadm.com https://9xgnrndqve.execute-api.us-west-2.amazonaws.com; font-src 'self' data:; media-src 'self'; connect-src 'self' https://*.vercel.app https://vitals.vercel-insights.com https://ddwl4m2hdecbv.cloudfront.net https://app.rb2b.com https://b2bjsstore.s3.us-west-2.amazonaws.com https://s3-us-west-2.amazonaws.com https://a.usbrowserspeed.com https://alocdn.com https://pro.ip-api.com https://liadm.com https://*.liadm.com https://9xgnrndqve.execute-api.us-west-2.amazonaws.com https://us.i.posthog.com https://us-assets.i.posthog.com; frame-src 'self' https://ddwl4m2hdecbv.cloudfront.net https://app.rb2b.com https://b2bjsstore.s3.us-west-2.amazonaws.com https://s3-us-west-2.amazonaws.com https://a.usbrowserspeed.com https://alocdn.com https://pro.ip-api.com https://liadm.com https://*.liadm.com https://9xgnrndqve.execute-api.us-west-2.amazonaws.com; frame-ancestors 'none'
 content-type: text/plain; charset=utf-8
 cross-origin-opener-policy: same-origin
-date: Fri, 30 Oct 2026 16:01:58 GMT
-etag: W/"4fda709afd3146f6a6b9b81c7118c655"
+date: Sat, 07 Nov 2026 00:19:32 GMT
+etag: W/"020cbf2540f6a67ec2dddebd533ee123"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-frame-options: DENY
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::6mpgq-1793376118580-33581218bd68
+x-vercel-id: pdx1::ptbqh-1794010772185-0cdad9d9776a
 connection: close
 transfer-encoding: chunked
 

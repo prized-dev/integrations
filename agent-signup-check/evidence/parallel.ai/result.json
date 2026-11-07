@@ -1,6 +1,6 @@
 {
  "site": "parallel.ai",
- "checkedAt": "2026-10-30T16:01:52.625Z",
+ "checkedAt": "2026-11-07T00:19:27.328Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 4,
@@ -62,7 +62,7 @@
    "where": "auth.md",
    "url": "https://parallel.ai/auth.md",
    "match": "top up balance — `POST /service/v1/balance",
-   "snippet": "`balance:add` — Charge the org's default card and top up balance — `POST /service/v1/balance/add`. - `usage:read` — Reserved scope. - `tenants:manage` — Reserve",
+   "snippet": "`balance:add` — Charge the org's default card and top up balance — `POST /service/v1/balance/add`. - `usage:read` — Read the org's daily usage and cost line ite",
    "status": "partial",
    "reason": "auth.md mentions a payment path (top up balance — `POST /service/v1/balance) in prose; nothing machine-readable"
   },
@@ -71,7 +71,7 @@
    "name": "Docs in Markdown",
    "url": "https://parallel.ai/llms.txt",
    "heading": "# Parallel",
-   "bytes": 3500,
+   "bytes": 3561,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -84,7 +84,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 188,
+   "ms": 220,
    "redirects": 0
   },
   {
@@ -94,7 +94,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 87,
+   "ms": 299,
    "redirects": 0
   },
   {
@@ -104,7 +104,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 1089,
+   "ms": 1081,
    "redirects": 0
   },
   {
@@ -114,7 +114,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 73,
+   "ms": 592,
    "redirects": 0
   },
   {
@@ -124,7 +124,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 83,
+   "ms": 77,
    "redirects": 0
   },
   {
@@ -134,7 +134,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 78,
+   "ms": 502,
    "redirects": 0
   },
   {
@@ -144,7 +144,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 283,
+   "ms": 679,
    "redirects": 0
   },
   {
@@ -154,7 +154,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 195,
+   "ms": 187,
    "redirects": 0
   }
  ]

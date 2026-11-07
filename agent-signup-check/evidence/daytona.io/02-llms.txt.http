@@ -1,6 +1,6 @@
 GET https://daytona.io/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:49.193Z
+fetched: 2026-11-07T00:18:26.096Z
 redirect: 301 from https://daytona.io/llms.txt
 redirect: 308 from https://www.daytona.io/llms.txt
 final-url: https://www.daytona.io/docs/llms.txt
@@ -9,18 +9,18 @@ HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Fri, 30 Oct 2026 16:00:46 GMT
+date: Sat, 07 Nov 2026 00:18:23 GMT
 content-encoding: br
 x-powered-by: Express
 x-frame-options: SAMEORIGIN
 cache-control: public, max-age=0
-last-modified: Fri, 30 Oct 2026 11:26:07 GMT
-etag: W/"3712d-1a18c8f5898"
+last-modified: Tue, 03 Nov 2026 15:22:26 GMT
+etag: W/"3717f-1a1a2012350"
 vary: Accept-Encoding
 x-cache: Miss from cloudfront
-via: 1.1 f94332f6513a4c7b3f2217e6b2ddc08c.cloudfront.net (CloudFront)
+via: 1.1 05cf67c96e96cd376921ba5b65795a56.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: NF23SXckQP3AOzA8PaX3bmbx7zgzsNphBxH_SHjYNiJigNGBsjgJmA==
+x-amz-cf-id: XuDAXSZ6kF3Pgn_B-kOv62O1aRKoVcO-9gNr8nVbOSAkGFr8KsTaEA==
 
 # Daytona
 
@@ -483,6 +483,7 @@ Full documentation: https://www.daytona.io/docs/llms-full.txt
 - [Outbound proxy](https://www.daytona.io/docs/en/network-limits.md#outbound-proxy)
 - [Network allow list format](https://www.daytona.io/docs/en/network-limits.md#network-allow-list-format)
 - [Domain allow list format](https://www.daytona.io/docs/en/network-limits.md#domain-allow-list-format)
+- [HTTPS traffic](https://www.daytona.io/docs/en/network-limits.md#https-traffic)
 - [Test network access](https://www.daytona.io/docs/en/network-limits.md#test-network-access)
 - [Security benefits](https://www.daytona.io/docs/en/network-limits.md#security-benefits)
 - [Essential services](https://www.daytona.io/docs/en/network-limits.md#essential-services)

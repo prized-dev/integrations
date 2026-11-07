@@ -1,27 +1,27 @@
 GET https://docs.nano-gpt.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:42.172Z
+fetched: 2026-11-07T00:18:19.012Z
 final-url: https://docs.nano-gpt.com/llms.txt
 
 HTTP 200
-age: 2602
+age: 2719
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a52ba25b0b311bed-PDX
+cf-ray: a56828e4b89fefa4-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Fri, 30 Oct 2026 16:00:40 GMT
-etag: W/"Mw37D8v9UTYBFh8jKWdxJJHX6J1_PXZD9OD3QPa5RMY"
+date: Sat, 07 Nov 2026 00:18:16 GMT
+etag: "Tbcj_kug-8wk2-qn1oJq9TXCRkXlctR-dJBAaEx2NlM"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4021
+x-mintlify-client-version: 0.0.4076
 x-vercel-cache: MISS
-x-vercel-id: pdx1:hnd1:iad1::iad1::ctxtj-1793376040127-3a5dab9cf988
+x-vercel-id: pdx1:cle1:iad1::iad1::qkg6h-1794010696396-233845755f7e
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_EnxDqhjaNc9a8MVa833TGULPd9uJ
+x-version: dpl_8LJbrAiZvr1K98WQNZXCyY5AvT34
 connection: close
 transfer-encoding: chunked
 
@@ -53,6 +53,7 @@ transfer-encoding: chunked
 - [Completions](https://docs.nano-gpt.com/api-reference/endpoint/completion.md): Creates a completion for the provided prompt. This endpoint is available on a best-effort basis for legacy compatibility, and performance may be less consistent than /v1/chat/completions because not all upstream providers support the legacy completions API.
 - [v1/audio/transcriptions (STT)](https://docs.nano-gpt.com/api-reference/endpoint/audio-transcriptions.md): OpenAI-compatible speech-to-text transcription endpoint
 - [Embeddings](https://docs.nano-gpt.com/api-reference/endpoint/embeddings.md): Create embeddings for text using OpenAI-compatible and alternative embedding models
+- [Rerank](https://docs.nano-gpt.com/api-reference/endpoint/rerank.md): Order text documents by relevance to a query
 - [Embedding Models](https://docs.nano-gpt.com/api-reference/endpoint/embedding-models.md): List all available embedding models with detailed information
 - [Generate Images](https://docs.nano-gpt.com/api-reference/endpoint/image-api-generate.md): Generate text-to-image and image-to-image outputs through NanoGPT's normalized Image API endpoint
 - [Image Generation (OpenAI-Compatible)](https://docs.nano-gpt.com/api-reference/endpoint/image-generation-openai.md): Creates an image generation for the provided prompt (OpenAI-compatible). For unauthenticated accountless x402 quote requests, include x-x402: true.
@@ -72,12 +73,10 @@ transfer-encoding: chunked
 - [TTS Status](https://docs.nano-gpt.com/api-reference/endpoint/tts-status.md)
 - [Voice Cloning](https://docs.nano-gpt.com/api-reference/endpoint/voice-cloning.md): Clone voices from reference audio and reuse them with compatible TTS models
 - [TEE Attestation](https://docs.nano-gpt.com/api-reference/endpoint/tee-attestation.md): Fetch TEE attestation report for a model
-- [TEE Signature](https://docs.nano-gpt.com/api-reference/endpoint/tee-signature.md): Fetch ECDSA signature for a chat request
-- [Retrieve Midjourney Generation Status](https://docs.nano-gpt.com/api-reference/endpoint/check-midjourney-status.md): Check the status of an asynchronous Midjourney image generation task
+- [TEE Signature](https://docs.nano-gpt.com/api-reference/endpoint/tee-signature.md): Fetch the signed receipt for a chat request, using its X-Receipt-Id value or response body id. The key must belong to the account that made the request.
 - [Video Generation](https://docs.nano-gpt.com/api-reference/endpoint/video-generation.md): Generate videos using supported text-to-video, image-to-video, and video-to-video models. The response includes a runId and pending status; poll the status endpoint for completion. See the docs for the current model list and required inputs.
 - [Video Status (Unified)](https://docs.nano-gpt.com/api-reference/endpoint/video-status-unified.md): Unified video status endpoint that works across all video backends. Check the status of a video generation request using only the request ID and receive normalized status information.
 - [Video Recover](https://docs.nano-gpt.com/api-reference/endpoint/video-recover.md): Recover recent video generation runs for a user.
-- [Video Extend](https://docs.nano-gpt.com/api-reference/endpoint/video-extend.md): Extend a Midjourney video using a task-based flow (taskId + index).
 - [Video Content](https://docs.nano-gpt.com/api-reference/endpoint/video-content.md): Proxy content retrieval for Sora 2 videos.
 - [Check Balance](https://docs.nano-gpt.com/api-reference/endpoint/check-balance.md): Check the account balance
 - [Usage](https://docs.nano-gpt.com/api-reference/endpoint/usage.md): Retrieve aggregate spend, request, and token usage for the authenticated API key
@@ -94,12 +93,13 @@ transfer-encoding: chunked
 - [Speech-to-Text (STT)](https://docs.nano-gpt.com/api-reference/speech-to-text.md): Complete guide to speech-to-text transcription APIs
 - [Text-to-Speech (TTS)](https://docs.nano-gpt.com/api-reference/text-to-speech.md): Complete guide to text-to-speech synthesis APIs
 - [Music Generation](https://docs.nano-gpt.com/api-reference/music-generation.md): Generate music from text prompts using NanoGPT's OpenAI-compatible audio/speech endpoint.
-- [TEE Verification](https://docs.nano-gpt.com/api-reference/tee-verification.md): Guide to verifying TEE attestation reports and signatures for TEE-backed models.
+- [TEE Verification](https://docs.nano-gpt.com/api-reference/tee-verification.md): Check that a TEE-backed response came from an attested gateway and a verified upstream.
 - [Evals and Observability](https://docs.nano-gpt.com/api-reference/evals.md): Run prompt and model experiments, freeze datasets, version scorers, inspect traces, and aggregate eval metrics.
 - [Teams](https://docs.nano-gpt.com/api-reference/teams.md): Complete API reference for the NanoGPT Teams feature
 - [Management API](https://docs.nano-gpt.com/api-reference/management-api.md): Monitor subscription quotas or manage API keys with separate, scoped credentials.
 - [API Hosts](https://docs.nano-gpt.com/api-reference/miscellaneous/api-hosts.md): Choose the direct API host for inference, uploads, and long-running requests.
-- [Rate Limits](https://docs.nano-gpt.com/api-reference/miscellaneous/rate-limits.md): Information about API rate limits
+- [Rate Limits](https://docs.nano-gpt.com/api-reference/miscellaneous/rate-limits.md): Spending and usage limits you can set, and the limits NanoGPT applies by endpoint
+- [Webhooks](https://docs.nano-gpt.com/api-reference/miscellaneous/webhooks.md): Get a signed HTTP request when a batch or video job finishes, or when something changes on a team.
 - [Error Handling](https://docs.nano-gpt.com/api-reference/miscellaneous/error-handling.md): Error formats, status codes, and retry guidance for the NanoGPT API.
 - [Inline Moderation](https://docs.nano-gpt.com/api-reference/miscellaneous/inline-moderation.md): Run a paid input safety preflight before selected generation requests
 - [Accountless x402 API Payments](https://docs.nano-gpt.com/api-reference/miscellaneous/x402.md): Opt in to accountless payment quotes for supported NanoGPT API endpoints, pay with a supported crypto rail, and complete or replay the original request.
@@ -117,6 +117,7 @@ transfer-encoding: chunked
 - [Provider Selection](https://docs.nano-gpt.com/api-reference/miscellaneous/provider-selection.md): Choose the upstream provider for supported open-source models
 - [Distillation Policy](https://docs.nano-gpt.com/api-reference/miscellaneous/distillation-policy.md): Identify text models and provider routes whose outputs may be used for model distillation or training
 - [Model Suffixes](https://docs.nano-gpt.com/api-reference/miscellaneous/model-suffixes.md): Supported suffixes for web search, memory, PII redaction, caching, reasoning effort and visibility, thinking variants, and provider routing preferences.
+- [Model Presets](https://docs.nano-gpt.com/api-reference/miscellaneous/model-presets.md): Save a model with its settings and call it by name
 - [PII Redaction](https://docs.nano-gpt.com/api-reference/miscellaneous/pii-redaction.md): Optional PII redaction for API and web chat requests.
 - [OAuth PKCE](https://docs.nano-gpt.com/api-reference/miscellaneous/oauth-pkce.md): Let users sign in with NanoGPT and receive an app-specific API key through authorization-code PKCE.
 - [Brave](https://docs.nano-gpt.com/api-reference/miscellaneous/brave.md): Brave provider notes
@@ -125,24 +126,23 @@ transfer-encoding: chunked
 - [Auto Recharge](https://docs.nano-gpt.com/api-reference/miscellaneous/auto-recharge.md): Information about automatically recharging your account
 - [Chrome Extension](https://docs.nano-gpt.com/api-reference/miscellaneous/chrome-extension.md): Information about the NanoGPT Chrome Extension
 - [URL Parameters (Web App)](https://docs.nano-gpt.com/web-app/url-parameters.md): Currently supported URL parameters for the NanoGPT web app UI.
-- [JavaScript Library](https://docs.nano-gpt.com/api-reference/miscellaneous/javascript.md): Node.js library for interacting with NanoGPT API
+- [JavaScript SDK](https://docs.nano-gpt.com/api-reference/miscellaneous/javascript.md): Use the official NanoGPT client, @nanogpt/sdk, from JavaScript
 - [Context Memory](https://docs.nano-gpt.com/api-reference/miscellaneous/context-memory.md): Lossless, hierarchical episodic memory for unlimited AI conversations
-- [TypeScript Library](https://docs.nano-gpt.com/api-reference/miscellaneous/typescript.md): TypeScript client for NanoGPT API
+- [TypeScript SDK](https://docs.nano-gpt.com/api-reference/miscellaneous/typescript.md): The official NanoGPT client for TypeScript, @nanogpt/sdk
 - [Model Context Protocol (MCP)](https://docs.nano-gpt.com/api-reference/miscellaneous/mcp-server.md): Integrate NanoGPT into your AI workflows via MCP
 - [Integrations](https://docs.nano-gpt.com/integrations.md): Set up NanoGPT in coding agents, chat frontends, automation tools, and OpenAI-compatible clients.
 - [CLI Device Login](https://docs.nano-gpt.com/integrations/cli-login.md): Integrate NanoGPT device login into your CLI app
 - [Cline](https://docs.nano-gpt.com/integrations/cline.md): Using NanoGPT with Cline CLI interface
 - [Codex CLI](https://docs.nano-gpt.com/integrations/codex-cli.md): Using OpenAI Codex CLI with NanoGPT
 - [Grok CLI](https://docs.nano-gpt.com/integrations/grok-cli.md): Use Grok CLI with NanoGPT and current Grok models
-- [Gemini CLI](https://docs.nano-gpt.com/integrations/gemini-cli.md): Use Gemini CLI with NanoGPT via the OpenRouter compatible fork
-- [Claude Code](https://docs.nano-gpt.com/integrations/claude-code.md): Use Claude Code with NanoGPT and Claude + 400 models
+- [Claude Code](https://docs.nano-gpt.com/integrations/claude-code.md): Use Claude Code with Claude and other models on NanoGPT
 - [DeepSeek Harness](https://docs.nano-gpt.com/integrations/deepseek-harness.md): Use DeepSeek Harness (dsh) with DeepSeek V4 and other NanoGPT models
 - [Roo Code](https://docs.nano-gpt.com/integrations/roocode.md): Using NanoGPT with Roo Code interface
 - [Kilo Code](https://docs.nano-gpt.com/integrations/kilocode.md): Using NanoGPT with Kilo Code interface
 - [Cursor](https://docs.nano-gpt.com/integrations/cursor.md): Using NanoGPT with Cursor AI-powered code editor
 - [Fluent](https://docs.nano-gpt.com/integrations/fluent.md): Use NanoGPT models and MCP tools in Fluent for macOS
 - [MCP](https://docs.nano-gpt.com/integrations/mcp.md): Use NanoGPT via MCP-compatible clients
-- [n8n](https://docs.nano-gpt.com/integrations/n8n.md): Use n8n OpenAI nodes with NanoGPT to access 50+ models in your workflows
+- [n8n](https://docs.nano-gpt.com/integrations/n8n.md): Use n8n OpenAI nodes with NanoGPT to access its text models in your workflows
 - [SillyTavern](https://docs.nano-gpt.com/integrations/sillytavern.md): Using NanoGPT with SillyTavern for character-based chat
 - [RisuAI](https://docs.nano-gpt.com/integrations/risuai.md): Using NanoGPT with RisuAI for chat and character-based conversations
 - [OpenWebUI](https://docs.nano-gpt.com/integrations/openwebui.md): Using NanoGPT with OpenWebUI for an open-source ChatGPT-like interface

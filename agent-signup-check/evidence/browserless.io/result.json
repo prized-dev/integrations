@@ -1,6 +1,6 @@
 {
  "site": "browserless.io",
- "checkedAt": "2026-10-30T16:01:46.932Z",
+ "checkedAt": "2026-11-07T00:19:20.755Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 2,
  "partial": 1,
@@ -59,7 +59,7 @@
    "name": "Docs in Markdown",
    "url": "https://www.browserless.io/llms.txt",
    "heading": "# Browserless",
-   "bytes": 3255,
+   "bytes": 3421,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -72,7 +72,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 197,
+   "ms": 177,
    "redirects": 1
   },
   {
@@ -82,7 +82,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=UTF-8",
-   "ms": 241,
+   "ms": 203,
    "redirects": 1
   },
   {
@@ -102,7 +102,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 223,
+   "ms": 217,
    "redirects": 1
   },
   {
@@ -112,7 +112,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 204,
+   "ms": 206,
    "redirects": 0
   },
   {
@@ -122,7 +122,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 277,
+   "ms": 152,
    "redirects": 1
   }
  ]

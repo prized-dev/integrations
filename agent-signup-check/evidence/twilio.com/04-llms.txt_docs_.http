@@ -1,27 +1,26 @@
 GET https://www.twilio.com/docs/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:31.860Z
+fetched: 2026-11-07T00:19:07.984Z
 final-url: https://www.twilio.com/docs/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=UTF-8
 transfer-encoding: chunked
 connection: close
-date: Fri, 30 Oct 2026 10:57:44 GMT
-cache-control: public, s-maxage=86400, stale-while-revalidate=86400
-accept-ranges: bytes
-last-modified: Fri, 30 Oct 2026 07:17:31 GMT
-etag: W/"5d1ff-1a18babbef8"
-content-encoding: gzip
-x-envoy-upstream-service-time: 4
+date: Sat, 07 Nov 2026 00:19:04 GMT
 server: istio-envoy
 x-envoy-decorator-operation: docs-site.docs-site.svc.cluster.local:3000/*
+cache-control: public, s-maxage=86400, stale-while-revalidate=86400
+accept-ranges: bytes
+last-modified: Fri, 06 Nov 2026 23:29:43 GMT
+etag: W/"5e491-1a1b3325658"
+content-encoding: gzip
+x-envoy-upstream-service-time: 3
 vary: Accept-Encoding
-via: 1.1 2e87eef03ab555daefa684d946e111b4.cloudfront.net (CloudFront)
-age: 18223
-x-cache: Hit from cloudfront
+via: 1.1 e2ad8d56b8dbdb69144113ad1c008e02.cloudfront.net (CloudFront)
+x-cache: Miss from cloudfront
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: NBB5m3uIHIbCiPZYtX4FNcsgdazW3Oaa1cf5KMxGn-oe2cNM2nO2uA==
+x-amz-cf-id: nT5EtOYGgH0I2fApZ_MiWYUjpK5CBFoy8acsddXeb5j5f6-cGZbwgg==
 
 # Twilio Documentation
 
@@ -230,6 +229,7 @@ x-amz-cf-id: NBB5m3uIHIbCiPZYtX4FNcsgdazW3Oaa1cf5KMxGn-oe2cNM2nO2uA==
 * [Getting started](/docs/flex/developer/flex-sdk/getting-started.md): Get started with the Flex SDK. Create a Vite app, install the @twilio/flex-sdk package, and initialize the client to build a custom contact center.
 * [Flex SDK glossary](/docs/flex/developer/flex-sdk/glossary.md): A glossary of key Flex SDK terms for workers, tasks, voice calls, conversations, authorization, and the SDK client to help you build a contact center.
 * [Flex SDK overview](/docs/flex/developer/flex-sdk.md): The Flex SDK lets you embed Twilio Flex Contact Center as a Service (CCaaS) features into any web app, including TaskRouter, Voice, and Conversations.
+* [Use the Flex SDK in multiple tabs or sessions](/docs/flex/developer/flex-sdk/multiple-sessions.md): Learn how to avoid reservation conflicts when an agent runs the Flex SDK in several browser tabs, windows, or devices, or alongside the Flex UI.
 * [Flex SDK methods](/docs/flex/developer/flex-sdk/sdk-methods.md): Reference for Flex SDK methods, including worker, task, voice, conversation, supervisor, authorization, and SDK client methods, with code examples.
 * [Flex developer documentation](/docs/flex/developer.md): Twilio Flex allows developers to customize the digital sales and service experience, providing full control over customer engagement.
 * [Export Data from Flex Insights via API](/docs/flex/developer/insights/api/export-data.md): Learn how to export reports from within Flex Insights to store the data in a warehouse of your own.
@@ -379,6 +379,17 @@ x-amz-cf-id: NBB5m3uIHIbCiPZYtX4FNcsgdazW3Oaa1cf5KMxGn-oe2cNM2nO2uA==
 ## General Usage
 
 * [Anti-Fraud Developer's Guide](/docs/usage/anti-fraud-developer-guide.md): Learn how to build applications that prevent bad actors from compromising your app, including best practices, fraud scenarios, and anti-fraud practices.
+* [Additional API security features](/docs/usage/api-security-reference-guide/additional-features.md): Learn about additional Twilio API security features, including Public Key Client Validation, Twilio Interconnect, and concurrency limits.
+* [API security in transit](/docs/usage/api-security-reference-guide/api-in-transit.md): Learn how Twilio protects API requests in transit, including encryption, vanity URLs, and security requirements for your apps.
+* [Authentication anti-patterns](/docs/usage/api-security-reference-guide/auth-anti-patterns.md): Learn about common authentication anti-patterns and practices to avoid when securing your Twilio integrations.
+* [Defense-in-depth strategy](/docs/usage/api-security-reference-guide/defense-in-depth-strategy.md): Learn about Twilio API security best practices and defense-in-depth strategies for protecting your integrations.
+* [FAQ about API security](/docs/usage/api-security-reference-guide/faq.md): Get answers to common questions on API security.
+* [HTTP methods for API interactions](/docs/usage/api-security-reference-guide/https-interactions-methods.md): Learn about the HTTP methods used in Twilio's REST API including GET, POST, DELETE, and common HTTP status codes.
+* [Incident response for credential exposure](/docs/usage/api-security-reference-guide/incident-response.md): Learn about best practices for responding to Twilio credential exposure incidents.
+* [API Security Reference Guide](/docs/usage/api-security-reference-guide.md): Learn how to secure your Twilio API integrations, including authentication methods, secrets management, encryption in transit, webhook validation, and defense-in-depth best practices.
+* [Secrets management](/docs/usage/api-security-reference-guide/secrets-management.md): Learn how to securely store and manage Twilio API credentials in your applications.
+* [Secure authentication](/docs/usage/api-security-reference-guide/secure-auth.md): Learn about Twilio authentication methods including OAuth 2.0, API keys, and Auth Token authentication for securing your API integrations.
+* [Webhook security](/docs/usage/api-security-reference-guide/webhook.md): Learn how to secure your Twilio webhooks, including HTTPS requirements, signature validation, request body validation, replay protection, error handling, and endpoint security.
 * [REST API: Addresses](/docs/usage/api/address.md): An Address instance resource represents your or your customer's physical
   location within a country.
 * [REST API: Applications](/docs/usage/api/applications.md): Full API reference for the Application Resource (also called a "TwiML App") in Twilio's Voice REST API.
@@ -414,6 +425,7 @@ x-amz-cf-id: NBB5m3uIHIbCiPZYtX4FNcsgdazW3Oaa1cf5KMxGn-oe2cNM2nO2uA==
 * [Security](/docs/usage/security.md): Twilio protects communications between Twilio and your web application with encryption. Learn how to authenticate, report vulnerabilities, and detect fraud
 * [ISO/IEC Certification](/docs/usage/security/iso-iec-certification.md): Learn how Twilio's certified compliance with ISO/IEC 27001 standards assures your protection.
 * [Twilio trial account](/docs/usage/trials.md): Explore the Twilio trial experience. Learn about product-specific free units, trial restrictions, 30-day expiration, and post-upgrade free units.
+* [Legacy Console trial accounts transition FAQ](/docs/usage/trials/legacy-console-trial-transition.md): Answers to common questions about Legacy Console trial accounts expiring and moving to the new Twilio Console, including key dates, notice emails, and how to upgrade.
 * [Try out Twilio Email](/docs/usage/trials/try-out-email.md): Start building with a Twilio email trial account. Send and receive your first emails within a few minutes.
 * [Try out Twilio Lookup](/docs/usage/trials/try-out-lookup.md): Start building with a Twilio trial account. Perform your first phone number intelligence request within a few minutes.
 * [Try out Twilio SMS Messaging](/docs/usage/trials/try-out-sms.md): Start building with a Twilio trial account. Send and receive your first SMS messages within a few minutes.
@@ -424,7 +436,7 @@ x-amz-cf-id: NBB5m3uIHIbCiPZYtX4FNcsgdazW3Oaa1cf5KMxGn-oe2cNM2nO2uA==
 * [Debugging Events Webhook](/docs/usage/troubleshooting/debugging-event-webhooks.md): Learn about how you can use the Console Debugger webhook to solve errors, what its callback parameters are, and what its payload contains.
 * [Twilio Debugger](/docs/usage/troubleshooting/debugging-your-application.md): Troubleshoot issues with Twilio APIs, webhooks, and more with the Twilio Debugger.
 * [A Beginner's Guide to the Command Line](/docs/usage/tutorials/a-beginners-guide-to-the-command-line.md): Learn all about shells, files, directories, arguments, and useful commands in this beginner's guide to the Command Line. Includes a sample script to send SMS.&#x20;
-* [How To Make REST API Requests in PowerShell](/docs/usage/tutorials/how-to-make-http-basic-request-twilio-powershell.md): We'll show Powershell's Invoke-WebRequest making a REST API request to an HTTP Basic Authentication protected endpoint to send an outbound SMS text message.
+* [How to make REST API requests in PowerShell](/docs/usage/tutorials/how-to-make-http-basic-request-twilio-powershell.md): We'll show Powershell's Invoke-WebRequest making a REST API request to an HTTP Basic Authentication protected endpoint to send an outbound SMS text message.
 * [Secure your C# / ASP.NET app by validating incoming Twilio requests](/docs/usage/tutorials/how-to-secure-your-csharp-aspnet-app-by-validating-incoming-twilio-requests.md): Secure the actions in your C# / ASP.NET application which accepts incoming requests from Twilio. Use the Twilio C# SDK's request validator utility to confirm incoming requests to your views genuinely originated from Twilio.
 * [Secure your C# / ASP.NET Core app by validating incoming Twilio requests](/docs/usage/tutorials/how-to-secure-your-csharp-aspnet-core-app-by-validating-incoming-twilio-requests.md): Secure the actions in your C# / ASP.NET Core application which accepts incoming requests from Twilio. Use the Twilio C# SDK's request validator utility to confirm incoming requests to your views genuinely originated from Twilio.
 * [Secure your Express app by validating incoming Twilio requests](/docs/usage/tutorials/how-to-secure-your-express-app-by-validating-incoming-twilio-requests.md): Secure the views in your Express application which accepts incoming requests from Twilio. Use the Twilio Node SDK's webhook middleware to confirm incoming requests to your views genuinely originated from Twilio.
@@ -438,7 +450,7 @@ x-amz-cf-id: NBB5m3uIHIbCiPZYtX4FNcsgdazW3Oaa1cf5KMxGn-oe2cNM2nO2uA==
 * [How to use ngrok with Windows and Visual Studio to test webhooks](/docs/usage/tutorials/how-use-ngrok-windows-and-visual-studio-test-webhooks.md): Learn how to use ngrok with Visual Studio and IIS Express on Windows to expose your local ASP.NET app and test Twilio webhooks from a public URL.
 * [Twilio API responses](/docs/usage/twilios-response.md): Explore the various response formats, exceptions, and resources returned from Twilio to your application
 * [Get Started with Twilio Webhooks](/docs/usage/webhooks/getting-started-twilio-webhooks.md): Get started using Twilio webhooks with this step-by-step guide that tells you what you need to do to process incoming callbacks from Twilio servers.
-* [Introduction to Webhooks](/docs/usage/webhooks.md): Launching point for information about Twilio webhooks, including product-specific guides, tutorials, and getting started information.
+* [Introduction to Webhooks](/docs/usage/webhooks.md): Launching point for Twilio webhooks, including product-specific guides, tutorials, and getting started information.
 * [Messaging Webhooks](/docs/usage/webhooks/messaging-webhooks.md): Learn how to use webhooks to process events in your Twilio Programmable Messaging application. You can use Twilio webhooks to handle incoming messages as well as tracking delivery status on outbound messages.
 * [Voice Webhooks](/docs/usage/webhooks/voice-webhooks.md): Learn how to work with webhooks from Twilio Programmable Voice to process events in your web application. Set your project up to receive HTTPS callbacks from Twilio when important events occur, such as an inbound voice call to your Twilio phone number.
 * [Authenticate webhooks with OAuth 2.0, Basic, or Digest](/docs/usage/webhooks/webhook-auth-profiles.md): Let Twilio authenticate itself to your webhook endpoints using OAuth 2.0 client credentials, HTTP Basic, or HTTP Digest.
@@ -803,7 +815,7 @@ x-amz-cf-id: NBB5m3uIHIbCiPZYtX4FNcsgdazW3Oaa1cf5KMxGn-oe2cNM2nO2uA==
 * [Get started with Facebook Messenger (public beta)](/docs/messaging/channels/facebook-messenger.md): Receive and respond to messages from your Facebook pages using Flex and Twilio's APIs
 * [Twilio Messaging Channels](/docs/messaging/channels.md): Twilio Messaging Channels include SMS, MMS and a collection of 3rd-party integrations (WhatsApp, Facebook Messenger) to send and receive messages using the Programmable Messaging APIs and other Twilio products.
 * [A2P 10DLC - Gather the Required Business Information](/docs/messaging/compliance/a2p-10dlc/collect-business-info.md): Begin the A2P 10DLC onboarding process for your business or your customers' businesses. This page covers the information needed for registration.
-* [New Direct Sole Proprietor Registration Overview](</docs/messaging/compliance/a2p-10dlc/direct-sole-proprietor-registration-overview-new experience.md>): Register A2P 10DLC messaging as a Sole Proprietor Brand in the Twilio Console. Create a brand, register a campaign, and add a 10DLC phone number sender.
+* [Direct Sole Proprietor Registration in the Twilio Console](</docs/messaging/compliance/a2p-10dlc/direct-sole-proprietor-registration-overview-new experience.md>): Register A2P 10DLC messaging as a Sole Proprietor Brand in the Twilio Console. Assign your number to a Messaging Service, register a brand, and register a campaign.
 * [Direct Sole Proprietor Registration Overview](/docs/messaging/compliance/a2p-10dlc/direct-sole-proprietor-registration-overview.md): Register A2P 10DLC messaging as a Sole Proprietor Brand in the Twilio Console. Create a Starter Profile, register a brand and campaign, and add a 10DLC sender.
 * [Direct Standard and Low-Volume Standard Registration Guide](/docs/messaging/compliance/a2p-10dlc/direct-standard-onboarding.md): A step-by-step guide for Direct customers to onboard Standard Brands to US A2P 10DLC messaging.
 * [Set Up A2P 10DLC Event Streams](/docs/messaging/compliance/a2p-10dlc/event-streams-setup.md): Guide to configuring Event Streams for Twilio A2P Brands, Campaigns, and 10DLC Phone Numbers, covering both API and Console methods.
@@ -1324,6 +1336,7 @@ x-amz-cf-id: NBB5m3uIHIbCiPZYtX4FNcsgdazW3Oaa1cf5KMxGn-oe2cNM2nO2uA==
 * [Secure your Twilio account](/docs/email/concepts/security/secure-account.md): Secure your Twilio Email account and establish best security practices.
 * [Encrypt with TLS](/docs/email/concepts/security/tls.md): Twilio uses Transport Layer Security when delivering email.
 * [Twilio Email](/docs/email.md): Twilio Email lets you send transactional and marketing email with domain authentication, delivery tracking, and a scalable API.
+* [Analyze email performance](/docs/email/insights.md): Twilio Email Insights shows near real-time delivery and engagement trends for the email messages that you send.
 * [Check email message delivery](/docs/email/logs.md): Twilio Email Logs record the delivery status of email messages that you send.
 * [Authenticate email messages using DNS](/docs/email/security/domains.md): Set up domain authentication in Twilio Email so inbox providers can verify your messages originate from the domain in the sending email address.
 * [Configure account settings](/docs/email/settings.md): Twilio Email Settings manage bounce and spam notifications, IP address restrictions, and exceptions to email suppressions.
@@ -1713,6 +1726,13 @@ x-amz-cf-id: NBB5m3uIHIbCiPZYtX4FNcsgdazW3Oaa1cf5KMxGn-oe2cNM2nO2uA==
 * [Click Tracking Best Practices](/docs/sendgrid/ui/analytics-and-reporting/click-tracking-html-best-practices.md): Format HTML links so Twilio SendGrid click tracking can find and replace them, and learn how to disable click tracking for individual links.
 * [Deliverability Insights](/docs/sendgrid/ui/analytics-and-reporting/deliverability-insights.md): Explore Twilio SendGrid's Deliverability Insights, a dashboard providing detailed insights into email delivery performance.
 * [Email Activity Feed](/docs/sendgrid/ui/analytics-and-reporting/email-activity-feed.md): Learn how to use the Email Activity Feed to view recent email-activity events, troubleshoot delivery issues, and access extended event history.
+* [Email Insights Audience Health tab](/docs/sendgrid/ui/analytics-and-reporting/email-insights/audience-health.md): Use the Email Insights Audience Health tab to understand open and click trends, engagement by recipient domain, and how often recipients engage.
+* [Email Insights data freshness and retention](/docs/sendgrid/ui/analytics-and-reporting/email-insights/data-freshness.md): Learn when events appear in Email Insights, how far back Email Insights history goes, and how long aggregate analytics are retained.
+* [Email Insights Delivery Errors tab](/docs/sendgrid/ui/analytics-and-reporting/email-insights/delivery-errors.md): Use the Email Insights Delivery Errors tab to diagnose bounced, blocked, and deferred email by classification, recipient domain, and sending IP address.
+* [Differences between Email Insights and Stats](/docs/sendgrid/ui/analytics-and-reporting/email-insights/differences-from-stats.md): Email Insights and Stats count some metrics differently. Learn why the numbers can differ for the same date range.
+* [Email Insights filters and dimensions](/docs/sendgrid/ui/analytics-and-reporting/email-insights/filters.md): Filter Email Insights by recipient domain, category, template, IP pool, device, and more to isolate the email you want to analyze.
+* [Email Insights](/docs/sendgrid/ui/analytics-and-reporting/email-insights.md): Email Insights gives you near real-time visibility into your email deliverability and engagement through three prebuilt dashboards.
+* [Email Insights Overview tab](/docs/sendgrid/ui/analytics-and-reporting/email-insights/overview.md): The Email Insights Overview tab summarizes how much email you sent, how much was delivered, and how your recipients are engaging.
 * [Email Logs](/docs/sendgrid/ui/analytics-and-reporting/email-logs.md): Email Logs is a next-generation solution for accessing and troubleshooting detailed email data with clear, detailed, and near real-time visibility.
 * [Marketing Campaigns Statistics](/docs/sendgrid/ui/analytics-and-reporting/marketing-campaigns-stats.md): Explore current features of Twilio SendGrid's Marketing Campaigns and Deliverability Insights for enhanced email delivery performance analysis and click tracking.
 * [Spam Reports](/docs/sendgrid/ui/analytics-and-reporting/spam-reports.md): When a recipient marks your email as spam, their mail provider will let SendGrid know. We will help to prevent you from sending email to this recipient again.

@@ -1,18 +1,18 @@
 GET https://e2b.dev/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:47.196Z
+fetched: 2026-11-07T00:18:23.575Z
 final-url: https://e2b.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 5148
+age: 168243
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'self';
 content-type: text/plain; charset=utf-8
-date: Fri, 30 Oct 2026 16:00:44 GMT
-etag: W/"388fb8eb0530ca776bad59e3b7b556d8"
+date: Sat, 07 Nov 2026 00:18:21 GMT
+etag: W/"58848a1b5f08622daccf42fdb78b5150"
 permissions-policy: camera=(), microphone=(), geolocation=()
 server: Vercel
 strict-transport-security: max-age=63072000; includeSubDomains; preload
@@ -22,7 +22,7 @@ x-dns-prefetch-control: on
 x-frame-options: SAMEORIGIN
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::rqhlp-1793376044312-969318396686
+x-vercel-id: pdx1::zpfch-1794010701035-074915896efa
 x-xss-protection: 1; mode=block
 connection: close
 transfer-encoding: chunked
@@ -67,6 +67,7 @@ E2B provides compute for agents. Bring your own model and orchestration framewor
 - [Customers](https://e2b.dev/customers.md): Case studies from teams running agents on E2B.
 - [Enterprise](https://e2b.dev/enterprise.md): BYOC deploys sandboxes into your own AWS, GCP, or Azure account, inside your VPC, provisioned and operated by E2B. SOC 2 Type II, HIPAA BAA, GDPR DPA.
 - [BYOC (Bring Your Own Cloud)](https://docs.e2b.dev/byoc): Deploy E2B sandboxes into your own AWS, GCP, or Azure account and VPC, operated by E2B. Enterprise plans. Not the same as self-hosting.
+- [BYOC (Bring Your Own Cloud)](https://e2b.dev/byoc.md): E2B sandboxes in your own AWS, GCP, or Azure account. Data stays in your VPC, E2B operates the cluster, code stays the same.
 - [Security and compliance](https://e2b.dev/security.md): SOC 2 Type II, HIPAA BAA on Enterprise plans, per-sandbox Firecracker microVM isolation, BYOC, and how to get the SOC 2 report, bridge letter, pen test, and DPA.
 - [Open Source](https://e2b.dev/open-source.md): E2B's Apache-2.0 runtime, SDKs, and open-source projects.
 - [Cookbook](https://e2b.dev/cookbook.md): Ready-to-run examples for code execution and agent workflows.

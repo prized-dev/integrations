@@ -1,18 +1,18 @@
 GET https://runloop.ai/.well-known/x402
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:58.933Z
+fetched: 2026-11-07T00:18:35.584Z
 final-url: https://runloop.ai/.well-known/x402
 
 HTTP 404
-date: Fri, 30 Oct 2026 16:00:58 GMT
+date: Sat, 07 Nov 2026 00:18:35 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a52ba2cd4f10d98e-SEA
+cf-ray: a56829598fd3d462-SEA
 cf-cache-status: EXPIRED
 cache-control: no-transform
 content-encoding: gzip
-etag: W/"6ae3fd24-58"
+etag: W/"6aee0229-58"
 server: cloudflare
 vary: accept-encoding
 x-content-type-options: nosniff

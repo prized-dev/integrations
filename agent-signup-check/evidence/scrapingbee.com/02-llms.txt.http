@@ -1,11 +1,11 @@
 GET https://scrapingbee.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:46.611Z
+fetched: 2026-11-07T00:19:21.289Z
 redirect: 301 from https://scrapingbee.com/llms.txt
 final-url: https://www.scrapingbee.com/llms.txt
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:01:42 GMT
+date: Sat, 07 Nov 2026 00:19:17 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -14,11 +14,11 @@ cache-control: public, max-age=0, must-revalidate
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 referrer-policy: strict-origin-when-cross-origin
 x-content-type-options: nosniff
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=YTeGRN%2FlTGCUoTC%2BorMycDC82sp%2Buop7RQVUHpH2D2jULE%2F5z3W4up6yPvvE68xiqWmPtJggpB3hBmv5TqEYQ0dxEmGvur5r87BvRLqApQZoCUWF9jUfLe8hUIWNvBbzuHP%2Fbhzl"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=HZ1BDask1CmGMOnQW11YJvE5uJZ1tOH%2B2cuMQGaPyskk0QLNp6oHqTx41Bg960pkYg5hpH7n%2Bn2gNEiHxD2YFZZ6ep3dvRcLcxqWMKArfKIfcSAyq%2FUq7JCtQWJy3oYNav3bYk5x"}]}
 etag: W/"52f02b767cfa8de8d53ddd994f4bc617"
 content-encoding: br
 server: cloudflare
-cf-ray: a52ba3e1a9589bf9-PDX
+cf-ray: a5682a616e83c62a-PDX
 alt-svc: h3=":443"; ma=86400
 
 # ScrapingBee Documentation

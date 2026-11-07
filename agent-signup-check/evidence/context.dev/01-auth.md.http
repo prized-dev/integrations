@@ -1,19 +1,19 @@
 GET https://context.dev/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:52.735Z
+fetched: 2026-11-07T00:19:27.970Z
 redirect: 301 from https://context.dev/auth.md
 final-url: https://www.context.dev/auth.md
 
 HTTP 200
 access-control-allow-origin: *
-age: 911
+age: 0
 cache-control: public, max-age=3600
 content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'self' https://*.context.dev
 content-type: text/markdown; charset=utf-8
-date: Fri, 30 Oct 2026 16:01:49 GMT
-etag: W/"8d5f12586d98c62a79ad83ed3b68c01c"
+date: Sat, 07 Nov 2026 00:19:23 GMT
+etag: W/"809c3b7fd827b7581c5eb856fe0eeddc"
 permissions-policy: camera=(), microphone=(), geolocation=()
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -21,8 +21,8 @@ strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-content-type-options: nosniff
 x-matched-path: /auth.md
-x-vercel-cache: HIT
-x-vercel-id: pdx1::swn4x-1793376109885-e49f9b924e20
+x-vercel-cache: PRERENDER
+x-vercel-id: pdx1::xprfb-1794010763454-e499cfd1d25a
 connection: close
 transfer-encoding: chunked
 
@@ -56,14 +56,6 @@ Context.dev is the **web scraping API for AI agents**: scrape, crawl, and extrac
 ## Supported registration method (v1)
 
 Only `service_auth` is supported. Send the user's email as `login_hint`; the user completes signup, email verification, and claim ceremony on a service-owned page.
-
-## Agent signup gift
-
-Reuse an existing valid API key first. For new customers, this setup flow can include **1,000 extra API credits** (code AGENTGIFT), on top of their normal allowance. Check the registration response for an offer; if absent, do not promise a bonus.
-
-When an offer is returned, mention it alongside the setup link and code: “I found an agent signup offer for 1,000 extra Context credits. It is included in your setup link, subject to new-customer eligibility.” Use offer.claim_by as the deadline; do not invent exclusivity or urgency. No coupon entry or card is required.
-
-Complete verified signup and agent claim before offer.claim_by. First-time customers creating a new organization only; one gift per person and organization. Additional emails, agents, keys, or organizations do not qualify again. Credits are added automatically under the plan's existing balance rules, with no separate bonus expiry, cash value, transfer, subscription, or rate-limit increase. Eligibility is checked at claim time. Regenerating an expired setup link for the same email preserves the original offer deadline. Existing offers remain valid until that deadline if the campaign stops issuing new offers. Only confirm the grant to the user when the token response includes signup_gift_credits. Then save the returned credential and verify it with one small API request for the original task.
 
 ## Step 1: Discover
 
@@ -158,7 +150,7 @@ Copy the template below every time. Replace `{verification_uri}`, `{user_code}`,
 
 The user completes Step 3 in **their own browser**.
 
-If the user asks to use another email, stop polling the old registration and start Step 2 again with their preferred email. Deliver the new link and code, then poll with the new claim_token. The old link cannot authorize the new email. Check the new registration's offer before promising a gift; do not send the user to ordinary signup and leave the agent setup unfinished.
+If the user asks to use another email, stop polling the old registration and start Step 2 again with their preferred email. Deliver the new link and code, then poll with the new claim_token. The old link cannot authorize the new email. Do not send the user to ordinary signup and leave the agent setup unfinished.
 
 Expected user flow on the setup page:
 

@@ -1,6 +1,6 @@
 {
  "site": "freestyle.sh",
- "checkedAt": "2026-10-30T16:01:01.978Z",
+ "checkedAt": "2026-11-07T00:18:38.643Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 1,
@@ -54,7 +54,7 @@
    "name": "Docs in Markdown",
    "url": "https://www.freestyle.sh/llms.txt",
    "heading": "# Freestyle",
-   "bytes": 28887,
+   "bytes": 29518,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -67,7 +67,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 187,
+   "ms": 116,
    "redirects": 1
   },
   {
@@ -77,7 +77,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 88,
+   "ms": 62,
    "redirects": 1
   },
   {
@@ -87,7 +87,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 120,
+   "ms": 161,
    "redirects": 0
   },
   {
@@ -97,7 +97,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 87,
+   "ms": 50,
    "redirects": 1
   },
   {
@@ -107,7 +107,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 107,
+   "ms": 115,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 59,
+   "ms": 54,
    "redirects": 1
   },
   {
@@ -127,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 71,
+   "ms": 124,
    "redirects": 1
   }
  ]

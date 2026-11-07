@@ -1,6 +1,6 @@
 {
  "site": "northflank.com",
- "checkedAt": "2026-10-30T16:00:53.559Z",
+ "checkedAt": "2026-11-07T00:18:30.138Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 1,
@@ -54,7 +54,7 @@
    "name": "Docs in Markdown",
    "url": "https://northflank.com/docs/llms.txt",
    "heading": "# Northflank Documentation",
-   "bytes": 78389,
+   "bytes": 78570,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -67,7 +67,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 248,
+   "ms": 275,
    "redirects": 0
   },
   {
@@ -77,7 +77,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 195,
+   "ms": 210,
    "redirects": 0
   },
   {
@@ -87,7 +87,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 414,
+   "ms": 187,
    "redirects": 0
   },
   {
@@ -97,7 +97,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown",
-   "ms": 36,
+   "ms": 177,
    "redirects": 0
   },
   {
@@ -107,7 +107,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 215,
+   "ms": 201,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 407,
+   "ms": 184,
    "redirects": 0
   },
   {
@@ -127,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 214,
+   "ms": 204,
    "redirects": 0
   },
   {
@@ -137,7 +137,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 228,
+   "ms": 200,
    "redirects": 0
   }
  ]

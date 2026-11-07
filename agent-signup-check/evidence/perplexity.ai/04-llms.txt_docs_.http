@@ -1,27 +1,27 @@
 GET https://docs.perplexity.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:38.679Z
+fetched: 2026-11-07T00:18:13.650Z
 final-url: https://docs.perplexity.ai/llms.txt
 
 HTTP 200
-age: 785
+age: 2042
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a52ba24179e2ff03-PDX
+cf-ray: a56828c45cf39694-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Fri, 30 Oct 2026 16:00:36 GMT
-etag: W/"g6z4k_Ej_H6iA-b9K3_XWPOwYi513WqzyDvEmzBf1xI"
+date: Sat, 07 Nov 2026 00:18:11 GMT
+etag: "H1KPgv6zjfjgCGdkLCKN1RMuCgBYJnfcqmbf0ZJhi44"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4021
-x-vercel-cache: MISS
-x-vercel-id: pdx1:iad1:iad1::iad1::b6zdx-1793376036043-5192f94780c7
+x-mintlify-client-version: 0.0.4076
+x-vercel-cache: STALE
+x-vercel-id: pdx1:fra1:iad1::iad1::zx7sr-1794010691212-c2bc616dca49
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_EnxDqhjaNc9a8MVa833TGULPd9uJ
+x-version: dpl_8LJbrAiZvr1K98WQNZXCyY5AvT34
 connection: close
 transfer-encoding: chunked
 
@@ -160,6 +160,8 @@ transfer-encoding: chunked
 - [Check a Chart for Misleading Design with a Decision Model](https://docs.perplexity.ai/docs/cookbook/examples/decisions-api-chart-check/README.md): Send a chart image to the Decisions API with yes/no questions about misleading design and your brand guide, and get a probability for each. Your code gates the checks by chart type, compares them to cutoffs, labels the chart, and prints why.
 - [Enrich a CSV of Companies Overnight with the Batch API](https://docs.perplexity.ai/docs/cookbook/examples/batch-api-company-enrichment/README.md): Write one web-grounded Agent API request per CSV row to a JSONL file, run them asynchronously with the Batch API, and join the output back to your rows by custom_id.
 - [Track What the Web Said Each Week About a Topic, and Build a Report](https://docs.perplexity.ai/docs/cookbook/examples/agent-api-story-timeline/README.md): Search engines tell you what the web says today. This recipe shows what was being reported about a topic during each week of a date range: the Agent API searches each week with publication-date filters, explains how the story changed, and counts the outlets that covered it, while your code writes th…
+- [Use Decisions API grounded web search to fact check claims](https://docs.perplexity.ai/docs/cookbook/examples/decisions-api-web-grounding/README.md): Fact check claims with the Decisions API in web_grounding mode. Put the claim first in each state so the search sees it, read search_results, and let your code turn the probability the model returns into a supported, contradicted, or review verdict.
+- [Search Your Docs Folder with pplx-embed-v2, Dense and Contextual](https://docs.perplexity.ai/docs/cookbook/examples/embeddings-docs-search/README.md): Index a folder of Markdown files with pplx-embed-v2 in dense and contextual mode, and store them as int8 vectors. Score approaches against your own questions. Query the 9b index with the 0.6b model.
 - [Build a Data Analytics Agent Using Custom Connectors](https://docs.perplexity.ai/docs/cookbook/examples/agent-api-data-analyst/README.md): Ask your agent why conversions fell, have it inspect the data, and turn the investigation into a chart for you to review.
 - [Turn Agent Failures into Regression Tests](https://docs.perplexity.ai/docs/cookbook/examples/agent-api-regression-testing/README.md): Build a web-grounded API troubleshooting advisor, then catch unsafe retry advice and unsupported answers before switching models.
 - [RAG with Perplexity Embeddings](https://docs.perplexity.ai/docs/cookbook/articles/embeddings-rag/README.md): Build an end-to-end retrieval-augmented generation pipeline using Perplexity's standard and contextualized embedding models.
@@ -209,7 +211,7 @@ transfer-encoding: chunked
 - [Generate Auth Token](https://docs.perplexity.ai/api-reference/generate-auth-token-post.md): Generates a new authentication token for API access.
 - [Revoke Auth Token](https://docs.perplexity.ai/api-reference/revoke-auth-token-post.md): Revokes an existing authentication token.
 - [Usage Analytics](https://docs.perplexity.ai/api-reference/computer-analytics-usage-get.md): Returns your organization's Perplexity usage analytics as a bucketed time series for a single dataset. Requires an organization analytics API key, generated by an org admin from Settings → Organization → Computer in the Perplexity web app. Only complete UTC grid buckets are returned: start_time snap…
-- [Usage Analytics per Member](https://docs.perplexity.ai/api-reference/computer-analytics-usage-v2-get.md): Returns your organization's Perplexity usage broken down per member, as daily buckets. Each day lists one row per member with usage that day, keyed by email. credit_usage carries a Model breakdown and an optional legacy Credit Source breakdown, subject to the same availability rules as v1; query_vol…
+- [Usage Analytics per Member](https://docs.perplexity.ai/api-reference/computer-analytics-usage-v2-get.md): Returns your organization's Perplexity usage broken down per member, as daily buckets. Each day lists one row per member with usage that day, keyed by email. credit_usage returns each member's total credits and a Model breakdown; query_volume carries Feature, Project and Comet. Read the available ax…
 - [List audit events](https://docs.perplexity.ai/api-reference/admin-audit-events-get.md): Returns the organization's audit events, newest first. Requires an **audit log API key** (scope `audit_logs:read`) created by an org admin under **Enterprise APIs → Audit API**; Sonar API keys are rejected with `403`. Without time parameters the endpoint covers the most recent 30 days; a single requ…
 
 ## OpenAPI Specs

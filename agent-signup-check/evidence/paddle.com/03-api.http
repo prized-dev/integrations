@@ -1,10 +1,10 @@
 GET https://api.paddle.com/event-types
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:01.199Z
+fetched: 2026-11-07T00:19:36.493Z
 final-url: https://api.paddle.com/event-types
 
 HTTP 403
-date: Fri, 30 Oct 2026 16:01:55 GMT
+date: Sat, 07 Nov 2026 00:19:30 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
@@ -12,29 +12,29 @@ allow-stale: false
 cache-control: no-cache, private
 caller-source: api
 content-security-policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'
-correlation-id: a9e6ad8e-dad7-43de-8173-192cb891d9ab
+correlation-id: cf7fdac9-61c2-4295-b070-1d0cad554553
 cross-origin-embedder-policy: require-corp
 cross-origin-opener-policy: same-origin
 cross-origin-resource-policy: same-site
 customer-id: 
 original-ipcountry: US
 original-url: https://api.paddle.com/event-types
-originated-at: 2026-10-30T16:01:55.380774658Z
+originated-at: 2026-11-07T00:19:30.619250697Z
 paddleint-mode: live
 permissions-policy: accelerometer=(),ambient-light-sensor=(),autoplay=(),battery=(),camera=(),display-capture=(),document-domain=(),encrypted-media=(),fullscreen=(),gamepad=(),geolocation=(),gyroscope=(),layout-animations=(self),legacy-image-formats=(self),magnetometer=(),microphone=(),midi=(),oversized-images=(self),payment=(),picture-in-picture=(),publickey-credentials-get=(),screen-wake-lock=(),speaker-selection=(),sync-xhr=(self),unoptimized-images=(self),unsized-media=(self),usb=(),web-share=(),xr-spatial-tracking=()
 priority: high
 referrer-policy: no-referrer
-request-id: a9e6ad8e-dad7-43de-8173-192cb891d9ab
+request-id: cf7fdac9-61c2-4295-b070-1d0cad554553
 server: cloudflare
 skip-count: false
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-content-type-options: nosniff
-x-correlation-id: a9e6ad8e-dad7-43de-8173-192cb891d9ab
+x-correlation-id: cf7fdac9-61c2-4295-b070-1d0cad554553
 x-frame-options: deny
 x-permitted-cross-domain-policies: none
 x-robots-tag: noindex, nofollow
 cf-cache-status: DYNAMIC
 content-encoding: br
-cf-ray: a52ba430dca79bf9-PDX
+cf-ray: a5682ab41d30efac-PDX
 
-{"error":{"type":"request_error","code":"authentication_missing","detail":"Authentication header missing.","documentation_url":"https://developer.paddle.com/v1/errors/shared/authentication_missing"},"meta":{"request_id":"a9e6ad8e-dad7-43de-8173-192cb891d9ab"}}
+{"error":{"type":"request_error","code":"authentication_missing","detail":"Authentication header missing.","documentation_url":"https://developer.paddle.com/v1/errors/shared/authentication_missing"},"meta":{"request_id":"cf7fdac9-61c2-4295-b070-1d0cad554553"}}

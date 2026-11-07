@@ -1,6 +1,6 @@
 GET https://documentation.mailgun.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:35.279Z
+fetched: 2026-11-07T00:19:14.254Z
 final-url: https://documentation.mailgun.com/llms.txt
 
 HTTP 200
@@ -9,13 +9,13 @@ alt-svc: h3=":10443"; ma=2592000
 cache-control: no-store
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Fri, 30 Oct 2026 16:01:29 GMT
+date: Sat, 07 Nov 2026 00:19:07 GMT
 vary: Accept-Encoding
-via: 2.0 Caddy, 1.1 Caddy, 1.1 6a708dc90d82be1e14d5e74acbc05bbe.cloudfront.net (CloudFront)
-x-amz-cf-id: Ad8iJzUdULJuT8TC3AuivR6873V0CBJMrL3QIxn0Q2byxUKgAugJuw==
+via: 2.0 Caddy, 1.1 Caddy, 1.1 790dd2637efddd54756eabb102d0e234.cloudfront.net (CloudFront)
+x-amz-cf-id: K8zZc6OQF9xofbFWDgDyHW8KzAg1knJEaDasx17NGpGEvigsveRxCg==
 x-amz-cf-pop: IAD61-P10
 x-cache: Miss from cloudfront
-x-request-id: cds-181ad771-f39c-4a17-862c-4d362eb8b740, cds-181ad771-f39c-4a17-862c-4d362eb8b740
+x-request-id: cds-3d0d1471-1091-49aa-893c-b988c8d129d1, cds-3d0d1471-1091-49aa-893c-b988c8d129d1
 connection: close
 transfer-encoding: chunked
 
@@ -29,13 +29,6 @@ All of the Mailgun Send documentation.
  - [Mailgun MCP Server](https://documentation.mailgun.com/docs/mailgun/mcp.md)
  - [Getting started Sending Email](https://documentation.mailgun.com/docs/mailgun/get-started.md): Getting Started with Mailgun Send
  - [Quickstart guide](https://documentation.mailgun.com/docs/mailgun/quickstart.md): Quickly get started with Mailgun Send
- - [Golang SDK Reference](https://documentation.mailgun.com/docs/mailgun/sdk/go_sdk.md): Get started with Go on Mailgun
- - [Introduction SDK reference](https://documentation.mailgun.com/docs/mailgun/sdk/introduction.md): Get started with SDKs on Mailgun
- - [Java SDK Reference](https://documentation.mailgun.com/docs/mailgun/sdk/java_sdk.md): Get started with Java on Mailgun
- - [Node.js SDK Reference](https://documentation.mailgun.com/docs/mailgun/sdk/nodejs_sdk.md): Get started with Node.js on Mailgun
- - [PHP SDK Reference](https://documentation.mailgun.com/docs/mailgun/sdk/php_sdk.md): Get started with PHP on Mailgun
- - [Python SDK Reference](https://documentation.mailgun.com/docs/mailgun/sdk/python_sdk.md): Get started with Python on Mailgun
- - [Ruby SDK Reference](https://documentation.mailgun.com/docs/mailgun/sdk/ruby_sdk.md): Get started with Ruby on Mailgun
  - [Overview | Mailgun API | Sinch](https://documentation.mailgun.com/docs/mailgun/api-reference/api-overview.md): The Mailgun API enables you to send, track, and receive email effortlessly.
  - [Developer Tools| Mailgun API | Sinch](https://documentation.mailgun.com/docs/mailgun/api-reference/developer-tools.md): The Mailgun API enables you to send, track, and receive email effortlessly.
  - [Integrations Overview](https://documentation.mailgun.com/docs/mailgun/api-reference/integrations-overview.md): An overview of the tools available to seamlessly integrate with our email products, enabling automation, data synchronization, and enhanced functionality.
@@ -43,6 +36,13 @@ All of the Mailgun Send documentation.
  - [Mailbox API](https://documentation.mailgun.com/docs/mailgun/api-reference/mailboxes.md): Mailgun Mailbox API allows you to programmatically create as many mailboxes as you wish
  - [Authentication | Mailgun API | Sinch](https://documentation.mailgun.com/docs/mailgun/api-reference/mg-auth.md): The Mailgun API enables you to send, track, and receive email effortlessly.
  - [Razor Error Codes](https://documentation.mailgun.com/docs/mailgun/api-reference/razor.md): Razor is Mailgun's reputation system for detecting spammers and phishers as well as improving deliverability for legitimate customers.
+ - [Golang SDK Reference](https://documentation.mailgun.com/docs/mailgun/sdk/go_sdk.md): Get started with Go on Mailgun
+ - [Introduction SDK reference](https://documentation.mailgun.com/docs/mailgun/sdk/introduction.md): Get started with SDKs on Mailgun
+ - [Java SDK Reference](https://documentation.mailgun.com/docs/mailgun/sdk/java_sdk.md): Get started with Java on Mailgun
+ - [Node.js SDK Reference](https://documentation.mailgun.com/docs/mailgun/sdk/nodejs_sdk.md): Get started with Node.js on Mailgun
+ - [PHP SDK Reference](https://documentation.mailgun.com/docs/mailgun/sdk/php_sdk.md): Get started with PHP on Mailgun
+ - [Python SDK Reference](https://documentation.mailgun.com/docs/mailgun/sdk/python_sdk.md): Get started with Python on Mailgun
+ - [Ruby SDK Reference](https://documentation.mailgun.com/docs/mailgun/sdk/ruby_sdk.md): Get started with Ruby on Mailgun
  - [Best Practices](https://documentation.mailgun.com/docs/mailgun/email-best-practices/auth_bestpractice.md): Best practices for Authentication
  - [Best Practices](https://documentation.mailgun.com/docs/mailgun/email-best-practices/bounce_esp.md): Best Practices for Bounce and ESP Feedback Handling
  - [Best Practices](https://documentation.mailgun.com/docs/mailgun/email-best-practices/dns.md): Best Practices for DNS
@@ -69,8 +69,8 @@ All of the Mailgun Send documentation.
  - [Datadog](https://documentation.mailgun.com/docs/mailgun/api-reference/analytics/datadog.md): Datadog integration with Mailgun
  - [Mailgun Webhooks](https://documentation.mailgun.com/docs/mailgun/api-reference/analytics/mg-webhooks.md): Mailgun Webhooks integration with Mailgun
  - [Splunk](https://documentation.mailgun.com/docs/mailgun/api-reference/analytics/splunk.md): Splunk integration with Mailgun
- - [n8n](https://documentation.mailgun.com/docs/mailgun/api-reference/auto-work/n8n.md): n8n integration with Mailgun
  - [Make](https://documentation.mailgun.com/docs/mailgun/api-reference/auto-work/make.md): Make integration with Mailgun
+ - [n8n](https://documentation.mailgun.com/docs/mailgun/api-reference/auto-work/n8n.md): n8n integration with Mailgun
  - [Pipedream](https://documentation.mailgun.com/docs/mailgun/api-reference/auto-work/pipedream.md): Pipedream integration with Mailgun
  - [Workato](https://documentation.mailgun.com/docs/mailgun/api-reference/auto-work/workato.md): Workato integration with Mailgun
  - [Zapier](https://documentation.mailgun.com/docs/mailgun/api-reference/auto-work/zapier.md): Zapier integration with Mailgun
@@ -97,8 +97,8 @@ All of the Mailgun Send documentation.
  - [Forwards](https://documentation.mailgun.com/docs/mailgun/user-manual/receive-forward-store/forwards.md): The Forwards API is a streamlined way to configure inbound email processing on your Mailgun account. It is designed as a simpler, more scalable alternative to Mailgun's existing Routes service — purpose-built for the common case of forwarding incoming email to one or more destinations.
  - [Receiving, Forwarding, and Storing Messages](https://documentation.mailgun.com/docs/mailgun/user-manual/receive-forward-store/receive-forward-store.md): Receiving, Forwarding and Storing Messages enables you to receive emails sent to Mailgun, with options to forward messages to another address, send email data to a webhook via HTTP POST, or temporarily store emails for later access.
  - [Route actions](https://documentation.mailgun.com/docs/mailgun/user-manual/receive-forward-store/receive-http.md): The forward() action allows receiving email messages via HTTP by sending an HTTP POST request to a specified URL when used as a route destination.
- - [Route actions](https://documentation.mailgun.com/docs/mailgun/user-manual/receive-forward-store/route-actions.md): Email route actions define what happens when a route expression evaluates to true, allowing you to forward emails, store them temporarily, or stop further processing using the actions forward(), store(), and stop().
  - [Route Filters](https://documentation.mailgun.com/docs/mailgun/user-manual/receive-forward-store/route-filters.md): Route filters are expressions that decide when an action is triggered.
+ - [Route actions](https://documentation.mailgun.com/docs/mailgun/user-manual/receive-forward-store/route-actions.md): Email route actions define what happens when a route expression evaluates to true, allowing you to forward emails, store them temporarily, or stop further processing using the actions forward(), store(), and stop().
  - [Receiving, Forwarding,and Storing Messages](https://documentation.mailgun.com/docs/mailgun/user-manual/receive-forward-store/routes.md): Email routes let you define a list of rules to handle incoming emails, similar to routing in MVC frameworks like Django or Ruby on Rails. When an email matches a route expression, you can perform actions such as forwarding or storing the message..
  - [Receiving, Forwarding,and Storing Messages](https://documentation.mailgun.com/docs/mailgun/user-manual/receive-forward-store/spam-filter.md): A spam filter automatically detects and blocks unwanted or harmful messages, protecting you from scams, phishing attempts, and inbox clutter.
  - [Receiving, Forwarding,and Storing Messages](https://documentation.mailgun.com/docs/mailgun/user-manual/receive-forward-store/store-retreive.md): You can choose to be notified when the message is stored by including a URL with the notify parameter when setting up the store action or you can retrieve the message later
@@ -113,8 +113,8 @@ All of the Mailgun Send documentation.
  - [Sending Messages](https://documentation.mailgun.com/docs/mailgun/user-manual/sending-messages/message-queue.md): Message Queue allows you to submit a large number of messages without being blocked.
  - [Sending Messages](https://documentation.mailgun.com/docs/mailgun/user-manual/sending-messages/pass-sending-options.md): Passing Sending Options gives you a variety of options for sending email messages.
  - [Sending Messages](https://documentation.mailgun.com/docs/mailgun/user-manual/sending-messages/schedule-delivery.md): Mailgun allows you to request a specific time for delivering messages.
- - [Sending Messages with Attachments](https://documentation.mailgun.com/docs/mailgun/user-manual/sending-messages/send-attachments.md): Sending emails with attachments lets you include files directly in your messages, making it easy to share important content with recipients.
  - [Sending AMP Messages](https://documentation.mailgun.com/docs/mailgun/user-manual/sending-messages/send-amp.md): Sending AMP messages lets you deliver dynamic, interactive emails—like carousels, forms, or real-time updates—directly to users’ inboxes for a more engaging email experience
+ - [Sending Messages with Attachments](https://documentation.mailgun.com/docs/mailgun/user-manual/sending-messages/send-attachments.md): Sending emails with attachments lets you include files directly in your messages, making it easy to share important content with recipients.
  - [Sending Messages via HTTP](https://documentation.mailgun.com/docs/mailgun/user-manual/sending-messages/send-http.md): Sending emails via HTTP lets you programmatically send messages through an API by making HTTP requests, allowing for fast, reliable, and automated email delivery from your applications
  - [Sending Messages via SMTP](https://documentation.mailgun.com/docs/mailgun/user-manual/sending-messages/send-smtp.md): Sending emails via SMTP lets you deliver messages using a standard email protocol, making it easy to integrate with email clients and servers for reliable and widely supported email sending.
  - [Sending Messages with STO](https://documentation.mailgun.com/docs/mailgun/user-manual/sending-messages/send-sto.md): Sending emails with STO (Send Time Optimization) allows you to automatically deliver messages at the optimal time for each recipient, increasing the chances of engagement by sending when they're most likely to open.
@@ -145,8 +145,8 @@ All of the Mailgun Send documentation.
  - [Tracking Unsubscribes](https://documentation.mailgun.com/docs/mailgun/user-manual/tracking-messages/tracking-unsubscribes.md): Tracking unsubscribes helps you monitor when recipients opt out of your emails, allowing you to manage your mailing list and maintain compliance with email regulations.
  - [Configuring Webhooks](https://documentation.mailgun.com/docs/mailgun/user-manual/webhooks/configuring-webhooks.md): Webhooks can either be configured at the account or domain level.
  - [Securing Webhooks](https://documentation.mailgun.com/docs/mailgun/user-manual/webhooks/securing-webhooks.md): Learn how to ensure your application securely accepts webhook requests
- - [Webhook Retries](https://documentation.mailgun.com/docs/mailgun/user-manual/webhooks/webhook-retries.md): Learn how webhook retries are handled
  - [Webhook Payloads](https://documentation.mailgun.com/docs/mailgun/user-manual/webhooks/webhook-payloads.md): View example payloads for webhook events.
+ - [Webhook Retries](https://documentation.mailgun.com/docs/mailgun/user-manual/webhooks/webhook-retries.md): Learn how webhook retries are handled
  - [Webhooks](https://documentation.mailgun.com/docs/mailgun/user-manual/webhooks/webhooks.md): Webhooks allow your application to programmatically receive information in near real-time whenever an event happens on your Mailgun account.
 
 ## Mailgun Send OAS
@@ -164,8 +164,8 @@ All of the Mailgun Optimize documentation.
  - [Domain Blocklist Monitoring](https://documentation.mailgun.com/docs/inboxready/domain-blocklist-ir.md): Monitor your domains against our curated list of blocklist providers to make sure you aren't being blocked.
  - [Domains for Optimize API.](https://documentation.mailgun.com/docs/inboxready/domains-ir.md): This section covers domain management for Sinch Optimize products, providing APIs to register domains for reputation monitoring tools like Spam Trap Monitoring and Domain Blocklist Monitoring.
  - [Mailgun Optimize](https://documentation.mailgun.com/docs/inboxready/intro-ir.md): Mailgun Optimize is a suite of deliverability-focused tools and services, formerly known as InboxReady, that helps businesses improve their email sender reputation and ensure emails land in the inbox, not the spam folder
- - [Spam Trap Monitoring](https://documentation.mailgun.com/docs/inboxready/spam-trap-ir.md): Our spam trap monitoring service surfaces how much of your email is being sent to known spam traps.
  - [IP Blocklist Monitoring](https://documentation.mailgun.com/docs/inboxready/ip-blocklist-ir.md): Blocklist Monitoring enables you to keep an eye on your reputation through monitoring every IP address you have against our curated list of blocklist providers to make sure you aren't being blocked.
+ - [Spam Trap Monitoring](https://documentation.mailgun.com/docs/inboxready/spam-trap-ir.md): Our spam trap monitoring service surfaces how much of your email is being sent to known spam traps.
  - [Mailgun Optimize](https://documentation.mailgun.com/docs/inboxready/api-reference/api-overview.md): Getting Started with Optimize
 
 ## Mailgun Optimize OAS

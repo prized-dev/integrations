@@ -1,23 +1,23 @@
 GET https://steel.dev/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:38.090Z
+fetched: 2026-11-07T00:19:14.091Z
 final-url: https://steel.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 154207
+age: 126928
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Fri, 30 Oct 2026 16:01:35 GMT
-etag: W/"f60d57594af9012748284af6e8d802b1"
+date: Sat, 07 Nov 2026 00:19:11 GMT
+etag: W/"127df627c1e11f6aecfd015add62d781"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::vkbx8-1793376095727-cfff116681ee
+x-vercel-id: pdx1::nk7vl-1794010751428-8b3f55410f15
 connection: close
 transfer-encoding: chunked
 

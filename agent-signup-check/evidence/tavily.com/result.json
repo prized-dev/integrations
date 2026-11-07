@@ -1,9 +1,9 @@
 {
  "site": "tavily.com",
- "checkedAt": "2026-10-30T16:01:51.100Z",
+ "checkedAt": "2026-11-07T00:19:23.266Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 1,
- "partial": 2,
+ "partial": 3,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -40,8 +40,12 @@
   {
    "id": "limits",
    "name": "Spend limits",
-   "status": "fail",
-   "reason": "No spend cap in metadata, auth.md or llms.txt"
+   "where": "llms.txt",
+   "url": "https://docs.tavily.com/llms.txt",
+   "match": "credit limit",
+   "snippet": "kspaces, each with its own members, API keys, and credit limit, while billing stays with the organization. - [Headers & Authentication](https://docs.tavily.com/",
+   "status": "partial",
+   "reason": "llms.txt mentions credit limit in prose; no machine-readable cap"
   },
   {
    "id": "payment",
@@ -49,7 +53,7 @@
    "where": "llms.txt",
    "url": "https://docs.tavily.com/llms.txt",
    "match": "x402",
-   "snippet": "s web capabilities to AI coding agents. - [Tavily x402](https://docs.tavily.com/documentation/machine-payments/x402.md): Agents pay per request for Advanced Sea",
+   "snippet": "avily-tavily-search-api?search=tavily). - [Tavily x402](https://docs.tavily.com/documentation/machine-payments/x402.md): AI agents pay per request for Tavily Ad",
    "status": "partial",
    "reason": "llms.txt mentions a payment path (x402) in prose; nothing machine-readable"
   },
@@ -58,7 +62,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.tavily.com/llms.txt",
    "heading": "# Tavily Docs",
-   "bytes": 22215,
+   "bytes": 19483,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -71,7 +75,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 330,
+   "ms": 349,
    "redirects": 1
   },
   {
@@ -81,7 +85,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 430,
+   "ms": 194,
    "redirects": 2
   },
   {
@@ -91,7 +95,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 215,
+   "ms": 247,
    "redirects": 0
   },
   {
@@ -101,7 +105,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 191,
+   "ms": 178,
    "redirects": 1
   },
   {
@@ -111,7 +115,7 @@
    "status": 404,
    "error": null,
    "contentType": null,
-   "ms": 190,
+   "ms": 169,
    "redirects": 0
   },
   {
@@ -121,7 +125,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 169,
+   "ms": 182,
    "redirects": 1
   },
   {
@@ -131,7 +135,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 170,
+   "ms": 193,
    "redirects": 1
   }
  ]

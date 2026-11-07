@@ -1,33 +1,33 @@
 GET https://gitlab.com/api/v4/user
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:03.868Z
+fetched: 2026-11-07T00:19:38.610Z
 final-url: https://gitlab.com/api/v4/user
 
 HTTP 401
-date: Fri, 30 Oct 2026 16:02:01 GMT
+date: Sat, 07 Nov 2026 00:19:36 GMT
 content-type: application/json
 content-length: 30
 connection: close
-cf-ray: a52ba4593b9de5c0-PDX
+cf-ray: a5682ad9ccb0c54c-PDX
 cf-cache-status: BYPASS
 cache-control: no-store, private, max-age=0
 server: cloudflare
 strict-transport-security: max-age=31536000
 vary: Origin
 content-security-policy: default-src 'none'
-gitlab-lb: haproxy-main-01-lb-gprd
+gitlab-lb: haproxy-main-31-lb-gprd
 gitlab-sv: api-gke-us-east1-b
 nel: {"max_age": 0}
 ratelimit-limit: 500
 ratelimit-name: throttle_unauthenticated_api
 ratelimit-observed: 1
 ratelimit-remaining: 499
-ratelimit-reset: 1793376180
+ratelimit-reset: 1794010800
 referrer-policy: strict-origin-when-cross-origin
 x-content-type-options: nosniff
 x-frame-options: SAMEORIGIN
-x-gitlab-meta: {"correlation_id":"a52ba4593b9de5c0-PDX","version":"1"}
-x-request-id: a52ba4593b9de5c0-PDX
-x-runtime: 0.031771
+x-gitlab-meta: {"correlation_id":"a5682ad9ccb0c54c-PDX","version":"1"}
+x-request-id: a5682ad9ccb0c54c-PDX
+x-runtime: 0.046921
 
 {"message":"401 Unauthorized"}

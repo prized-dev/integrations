@@ -1,33 +1,164 @@
 GET https://polar.sh/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:58.155Z
-final-url: https://polar.sh/auth.md
+fetched: 2026-11-07T00:19:31.631Z
+redirect: 307 from https://polar.sh/auth.md
+final-url: https://api.polar.sh/auth.md
 
-HTTP 404
-date: Fri, 30 Oct 2026 16:01:54 GMT
-content-type: text/html; charset=utf-8
-transfer-encoding: chunked
+HTTP 200
+date: Sat, 07 Nov 2026 00:19:28 GMT
+content-type: text/markdown; charset=utf-8
+content-length: 2183
 connection: close
-age: 0
-cache-control: private, no-cache, no-store, max-age=0, must-revalidate
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=JFrOyBOlfZbwFCSnuWFLLfk5%2FHsBKqX%2BOI7sf99SRuvEQIzxyvI6XSdjp4YTohLtrNWrtsxkgfN9POPw5Aps1lfY9KzIaRDS%2Fdx0ExLkpBziHCCa9yIhKRmw"}]}
-content-security-policy: default-src 'self';    connect-src 'self' https://api.polar.sh https://polar-production-files.s3.amazonaws.com https://polar-public-files.s3.amazonaws.com https://api.stripe.com https://maps.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://chat.uk.plain.com https://prod-uk-services-attachm-attachmentsuploadbucket2-1l2e4906o2asm.s3.eu-west-2.amazonaws.com;    frame-src 'self' https://challenges.cloudflare.com https://*.js.stripe.com https://js.stripe.com https://hooks.stripe.com https://customer-wl21dabnj6qtvcai.cloudflarestream.com videodelivery.net *.cloudflarestream.com;    script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://*.js.stripe.com https://js.stripe.com https://maps.googleapis.com https://www.googletagmanager.com https://chat.cdn-plain.com https://embed.cloudflarestream.com;    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;    img-src 'self' blob: data: https://www.gravatar.com https://img.logo.dev https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://polar-public-files.s3.amazonaws.com https://uploads.polar.sh https://prod-uk-services-workspac-workspacefilespublicbuck-vs4gjqpqjkh6.s3.amazonaws.com https://prod-uk-services-attachm-attachmentsbucket28b3ccf-uwfssb4vt2us.s3.eu-west-2.amazonaws.com https://i0.wp.com;    font-src 'self';    object-src 'none';    base-uri 'self';    upgrade-insecure-requests;  form-action 'self' https://api.polar.sh polar:;  frame-ancestors 'none';
-link: </_next/static/immutable/chunks/1fs0wpldwspuv.css>; rel=preload; as="style"
-permissions-policy: payment=(), publickey-credentials-get=(), camera=(), microphone=(), geolocation=()
+cache-control: private, no-store
+content-encoding: br
+polar-version: 2026-10
+rndr-id: 38228979-a58c-42f4
 server: cloudflare
-strict-transport-security: max-age=63072000
-vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, accept-encoding
-x-frame-options: DENY
-x-matched-path: /404
-x-powered-by: Next.js
-x-vercel-cache: MISS
-x-vercel-id: pdx1::cle1::mms46-1793376114522-b926e410f8d4
+strict-transport-security: max-age=63072000; includeSubDomains
+vary: Accept-Encoding
+x-render-origin-server: uvicorn
 cf-cache-status: DYNAMIC
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-content-encoding: br
-cf-ray: a52ba42b894c31df-PDX
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=GGFQCUMywB0BYQa7%2Fq4FHvmnX3UnkB1qa6lkc%2Br2P3XAU2mQMgiJ6qwlHTHGpqsB4CMIbckJ51%2FjG5dZg6DqcT8XwIHKjBV9brQC45xr98JI7DAbylSMYY29wyar1g%3D%3D"}]}
+cf-ray: a5682aa4e818efde-PDX
 alt-svc: h3=":443"; ma=86400
 
-<!DOCTYPE html><html id="__next_error__"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/immutable/chunks/1-3f1wkox2hk-.js"/><script src="/_next/static/immutable/chunks/22xraxcwtflpd.js" async=""></script><script src="/_next/static/immutable/chunks/0vamxp25qt0rb.js" async=""></script><script src="/_next/static/immutable/chunks/3lhjww6b8r1ot.js" async=""></script><script src="/_next/static/immutable/chunks/3kg0l6c52of3d.js" async=""></script><script src="/_next/static/immutable/chunks/2uj8mldaw32dx.js" async=""></script><script src="/_next/static/immutable/chunks/turbopack-0yiyqzd3u8xfj.js" async=""></script><meta name="robots" content="noindex"/><meta name="sentry-trace" content="e62b3c5f49ff4434a0c3c6277b900bfc-8abadc271cd229d6-0"/><meta name="baggage" content="sentry-environment=production,sentry-release=67f9a0bd078283387dc2dd16bcfc8337fc513e2d,sentry-public_key=c7523f6f8c409a31d187f624255df3b4,sentry-trace_id=e62b3c5f49ff4434a0c3c6277b900bfc,sentry-org_id=4505046560538624,sentry-sampled=false,sentry-sample_rand=0.3523285145412649,sentry-sample_rate=0.1"/><script src="/_next/static/immutable/chunks/0c0hxoamwjsbw.js" noModule=""></script></head><body><div hidden=""><!--$--><!--/$--></div><script src="/_next/static/immutable/chunks/1-3f1wkox2hk-.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n3:I[479093,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\"],\"default\"]\n4:I[59065,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\"],\"default\"]\n6:I[685846,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\"],\"OutletBoundary\"]\n7:\"$Sreact.suspense\"\na:I[685846,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\"],\"ViewportBoundary\"]\nc:I[685846,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\"],\"MetadataBoundary\"]\ne:I[465320,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\",\"/_next/static/immutable/chunks/3zt92ufa2-wa2.js\"],\"default\"]\n:HL[\"/_next/static/immutable/chunks/1fs0wpldwspuv.css\",\"style\"]\n9:X\n0:{\"P\":null,\"c\":[\"\",\"auth.md\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"404\",{\"children\":[\"__PAGE__\",{},\"$undefined\",\"$undefined\",4096]},\"$undefined\",\"$undefined\",4096]},\"$undefined\",\"$undefined\",4112],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/immutable/chunks/1fs0wpldwspuv.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-1\",{\"src\":\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-2\",{\"src\":\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-3\",{\"src\":\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-4\",{\"src\":\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-5\",{\"src\":\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-6\",{\"src\":\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-7\",{\"src\":\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-8\",{\"src\":\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"async\":true,\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-9\",{\"src\":\"/_next/static/immutable/chunks/165usedm93hcj.js\",\"async\":true,\"nonce\":\"$undefined\"}]],\"$L2\"]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[\"$L5\",null,[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@8\"}]}]]}],{},null,false,null]},null,false,\"$9\"]},null,false,null],[\"$\",\"$1\",\"h\",{\"children\":[[\"$\",\"meta\",null,{\"name\":\"robots\",\"content\":\"noindex\"}],[\"$\",\"$La\",null,{\"children\":\"$Lb\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$Lc\",null,{\"children\":[\"$\",\"$7\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Ld\"}]}]}],null]}],false]],\"m\":\"$undefined\",\"G\":[\"$e\",[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/immutable/chunks/1fs0wpldwspuv.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]]],\"S\":false,\"h\":null,\"r\":\"$undefined\",\"s\":\"$undefined\",\"a\":\"$undefined\",\"l\":\"$undefined\",\"p\":\"$undefined\",\"d\":\"$undefined\",\"b\":\"g5Vm6I4zUK4KRqkwuDQ52\"}\n5:E{\"digest\":\"NEXT_HTTP_ERROR_FALLBACK;404\"}\nf:I[267831,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\"],\"ExperimentProvider\"]\n10:I[725980,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\"],\"UserContextProvider\"]\n11:I[598473,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\",\"/_next/static/immutable/chunks/3baa4e3tqu2oj.js\",\"/_next/static/immutable/chunks/3diorw1gl-db7.js\",\"/_next/static/immutable/chunks/05857m4js1tkc.js\",\"/_next/static/immutable/chunks/3b80ot-8v7wpp.js\",\"/_next/static/immutable/chunks/1r63gtffrcp93.js\",\"/_next/static/immutable/chunks/35yl2j2ass2mn.js\"],\"PolarPostHogProvider\"]\n12:I[598473,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\",\"/_next/static/immutable/chunks/3baa4e3tqu2oj.js\",\"/_next/static/immutable/chunks/3diorw1gl-db7.js\",\"/_next/static/immutable/chunks/05857m4js1tkc.js\",\"/_next/static/immutable/chunks/3b80ot-8v7wpp.js\",\"/_next/static/immutable/chunks/1r63gtffrcp93.js\",\"/_next/static/immutable/chunks/35yl2j2ass2mn.js\"],\"PolarQueryClientProvider\"]\n13:I[598473,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\",\"/_next/static/immutable/chunks/3baa4e3tqu2oj.js\",\"/_next/static/immutable/chunks/3diorw1gl-db7.js\",\"/_next/static/immutable/chunks/05857m4js1tkc.js\",\"/_next/static/immutable/chunks/3b80ot-8v7wpp.js\",\"/_next/static/immutable/chunks/1r63gtffrcp93.js\",\"/_next/static/immutable/chunks/35yl2j2ass2mn.js\"],\"PolarNuqsProvider\"]\n14:I[598473,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\",\"/_next/static/immutable/chunks/3baa4e3tqu2oj.js\",\"/_next/static/immutable/chunks/3diorw1gl-db7.js\",\"/_next/static/immutable/chunks/05857m4js1tkc.js\",\"/_next/static/immutable/chunks/3b80ot-8v7wpp.js\",\"/_next/static/immutable/chunks/1r63gtffrcp93.js\",\"/_next/static/immutable/chunks/35yl2j2ass2mn.js\"],\"PolarMotionProvider\"]\n15:I[659282,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\"],\"SessionRefreshModal\"]\n16:I[990314,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\",\"/_next/static/immutable/chunks/3g2dy-n82oqba.js\"],\"default\"]\n17:I[598473,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\",\"/_next/static/immutable/chunks/3baa4e3tqu2oj.js\",\"/_next/static/immutable/chunks/3diorw1gl-db7.js\",\"/_next/static/immutable/chunks/05857m4js1tkc.js\",\"/_next/static/immutable/chunks/3b80ot-8v7wpp.js\",\"/_next/static/immutable/chunks/1r63gtffrcp93.js\",\"/_next/static/immutable/chunks/35yl2j2ass2mn.js\"],\"PolarThemeProvider\"]\n18:I[231138,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\",\"/_next/static/immutable/chunks/3baa4e3tqu2oj.js\",\"/_next/static/immutable/chunks/3diorw1gl-db7.js\",\"/_next/static/immutable/chunks/05857m4js1tkc.js\",\"/_next/static/immutable/chunks/3b80ot-8v7wpp.js\",\"/_next/static/immutable/chunks/1r63gtffrcp93.js\",\"/_next/static/immutable/chunks/35yl2j2ass2mn.js\"],\"default\"]\n19:I[709167,[\"/_next/static/immutable/chunks/0zgaa7ch4ijvm.js\",\"/_next/static/immutable/chunks/11tudgzbr9lhf.js\",\"/_next/static/immutable/chunks/2g6_d132_zd1x.js\",\"/_next/static/immutable/chunks/1e6bp6zf22vwj.js\",\"/_next/static/immutable/chunks/3z8ig_ssn_nvw.js\",\"/_next/static/immutable/chunks/1pojw933mz564.js\",\"/_next/static/immutable/chunks/2bp1vfzt8o2xv.js\",\"/_next/static/immutable/chunks/2gcvdqq7xzc_7.js\",\"/_next/static/immutable/chunks/1kx0eoautm7jj.js\",\"/_next/static/immutable/chunks/165usedm93hcj.js\",\"/_next/static/immutable/chunks/3baa4e3tqu2oj.js\",\"/_next/static/immutable/chunks/3diorw1gl-db7.js\",\"/_next/static/immu
+# auth.md
 
-[body trimmed for publication: kept 16384 of 32939 characters; sha256 of the published body 61f01bebc8f8c70baa4155066724ef601ba666e493103daabcf2264fb22703f1]
+You are an agent. Polar lets you sign up on your own, build an organization (products, benefits,
+meters, checkouts), and hand it over to a human later. Follow the steps in order.
+
+## Step 1: Discover
+
+- Protected resource metadata: `GET https://api.polar.sh/.well-known/oauth-protected-resource`
+- Authorization server metadata: `GET https://api.polar.sh/.well-known/oauth-authorization-server`. Its `agent_auth` block
+  lists the endpoints below.
+
+## Step 2: Sign up
+
+Polar supports the `anonymous` registration type only. You don't need anything from the human yet.
+
+```http
+POST https://api.polar.sh/v1/agent/identity
+Content-Type: application/json
+
+{ "type": "anonymous", "name": "<what you call yourself, shown to the human>" }
+```
+
+Response:
+
+```json
+{
+  "registration_id": "<your agent ID>",
+  "registration_type": "anonymous",
+  "identity_assertion": "<JWT>",
+  "assertion_expires": "<ISO 8601>",
+  "pre_claim_scopes": ["products:write", "..."],
+  "claim_url": "https://api.polar.sh/v1/agent/identity/claim",
+  "claim_token": "polar_act_...",
+  "claim_token_expires": "<ISO 8601>",
+  "post_claim_scopes": ["..."]
+}
+```
+
+Keep `identity_assertion` (30 days, reusable) and `claim_token` (30 days, returned once, keep it
+secret).
+
+## Step 3: Get an access token
+
+```http
+POST https://api.polar.sh/v1/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=<identity_assertion>
+```
+
+You get an `access_token` that lasts one hour, and no refresh token. When it expires, repeat
+this step with the same assertion. Once a human claimed you, use the assertion the claim poll
+returned (Step 4): the one from sign-up stops working.
+
+If you get `invalid_grant`, your assertion expired or you were revoked. Before the claim, sign up
+again. After it, ask the human to connect you to their account another way, such as Polar's MCP
+server or CLI.
+
+Call the API with `Authorization: Bearer <access_token>`. Before the claim you can create one
+organization and set up its products, benefits, discounts, files, meters, events, checkouts and
+checkout links. You can't touch customers, orders, subscriptions, refunds, payouts, members,
+webhooks or organization access tokens until a human claims you.
+
+## Step 4: Hand over to a human (claim)
+
+When you're done, ask the human for their email, then start a claim:
+
+```http
+POST https://api.polar.sh/v1/agent/identity/claim
+Content-Type: application/json
+
+{ "claim_token": "<claim_token>", "email": "<the human's email>" }
+```
+
+Response:
+
+```json
+{
+  "registration_id": "<your agent ID>",
+  "status": "initiated",
+  "expires_at": "<ISO 8601>",
+  "claim_attempt": {
+    "user_code": "amber-river-lemon",
+    "expires_in": 604800,
+    "verification_uri": "<link to the Polar dashboard>",
+    "interval": 5
+  }
+}
+```
+
+Give the human the `verification_uri` and the `user_code` in one message. The code is three
+words joined by hyphens; pass it on exactly as you received it, for example:
+
+> Open this link, sign in to Polar with <email>, and enter this code: **amber-river-lemon**
+
+Only the human signed in with that email can claim you. The link and code expire after 7 days.
+Starting a new claim replaces them with a new pair, valid for 7 more days, as long as your claim
+token is valid (30 days after sign-up).
+
+Then poll every `interval` seconds:
+
+```http
+POST https://api.polar.sh/v1/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:workos:agent-auth:grant-type:claim&claim_token=<claim_token>
+```
+
+- `authorization_pending`: the human hasn't entered the code yet. Keep polling.
+- `slow_down`: you're polling too fast. Add 5 seconds to your interval.
+- `expired_token`: the link and code expired, or your claim token did. Start a new claim; if that
+  answers `claim_expired`, sign up again.
+- Success: an `access_token` for the human, plus a new `identity_assertion` and
+  `assertion_expires`. The claim token stops working.
+
+Once claimed, you act on behalf of the human: the organization is theirs, and you have their
+access. Everything issued to you before the claim stops working, including the old identity
+assertion. Use the new one in Step 3 from now on.
+
+## Errors
+
+| Code | Where | What to do |
+| --- | --- | --- |
+| HTTP 422 | `https://api.polar.sh/v1/agent/identity`, `https://api.polar.sh/v1/agent/identity/claim` | The body is invalid. Fix it; `detail` says how. |
+| HTTP 429 | any | Too many requests. Back off and retry later. |
+| `invalid_claim_token` (401) | `https://api.polar.sh/v1/agent/identity/claim` | The claim token is wrong, or you were revoked. Sign up again. |
+| `claimed_or_in_flight` (409) | `https://api.polar.sh/v1/agent/identity/claim` | You're already claimed. Poll the token endpoint with your claim token. |
+| `claim_expired` (410) | `https://api.polar.sh/v1/agent/identity/claim` | Your claim token expired. Sign up again. |
+| `invalid_grant` | token endpoint, JWT bearer | See Step 3. |
+| `invalid_grant` | token endpoint, claim poll | The claim token is wrong, already used, or you were revoked. |
+| `invalid_client` | token endpoint | Don't send a `client_id`: Polar knows your client from your credentials. |
+| `authorization_pending`, `slow_down`, `expired_token` | token endpoint, claim poll | See Step 4. |
+
+## Revoking
+
+To revoke an access token, `POST https://api.polar.sh/v1/oauth2/revoke` with
+`token=<access_token>&token_type_hint=access_token`. Your identity assertion keeps working.
+
+API reference: https://polar.sh/docs

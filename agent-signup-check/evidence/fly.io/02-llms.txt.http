@@ -1,6 +1,6 @@
 GET https://fly.io/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:50.660Z
+fetched: 2026-11-07T00:18:26.930Z
 final-url: https://fly.io/llms.txt
 
 HTTP 200
@@ -8,10 +8,10 @@ accept-ranges: bytes
 cache-control: max-age=0, private, must-revalidate
 content-encoding: br
 content-type: text/plain
-date: Fri, 30 Oct 2026 16:00:47 GMT
-etag: "6ae3e3f9-162f"
-fly-request-id: 01M66RNMJGB33YGKFKBBRG56NN-lax
-last-modified: Fri, 30 Oct 2026 00:25:29 GMT
+date: Sat, 07 Nov 2026 00:18:24 GMT
+etag: "6aee250f-15d6"
+fly-request-id: 01M6SNXT46JS2EMEMF4CJXM9CK-sjc
+last-modified: Fri, 06 Nov 2026 19:05:51 GMT
 server: Fly/366e4bf88 (2026-10-27)
 transfer-encoding: chunked
 via: 1.1 fly.io, 1.1 fly.io, 1.1 fly.io
@@ -61,9 +61,9 @@ Fly Sprites (`https://api.sprites.dev/v1`):
 - [sprites-py](https://pypi.org/project/sprites-py/): Python SDK. `pip install sprites-py`.
 - [sprites-go](https://pkg.go.dev/github.com/superfly/sprites-go): Go SDK with an `exec.Cmd`-style API. Module `github.com/superfly/sprites-go`.
 - [sprites](https://hex.pm/packages/sprites): Elixir SDK. `{:sprites, "~> 0.2"}` in mix.exs.
-- [Sprites MCP server](https://sprites.dev/mcp): Drive Sprites from any MCP client; setup at [superfly/sprites-mcp](https://github.com/superfly/sprites-mcp).
 
 Tooling:
+- [Fly MCP server and setup guide](https://mcp.fly.io): Manage Sprites and other Fly.io resources from an MCP client using browser OAuth.
 - [flyctl](https://docs.fly.io/flyctl/install): The `fly` CLI. `curl -L https://fly.io/install.sh | sh` or `brew install flyctl`.
 - [@flydotio/dockerfile](https://www.npmjs.com/package/@flydotio/dockerfile) and [dockerfile-rails](https://rubygems.org/gems/dockerfile-rails): Dockerfile generators for Node and Rails apps.
 
@@ -78,16 +78,15 @@ Tooling:
 
 Each section's index lists every page in it, newest first, as Markdown.
 
-- [The Fly Blog](https://fly.io/blog/index.md): 204 pages
+- [The Fly Blog](https://fly.io/blog/index.md): 216 pages
 - [Customer Stories](https://fly.io/customer-stories/index.md): 16 pages
 - [Django Beats](https://fly.io/django-beats/index.md): 16 pages
-- [Infra Log](https://fly.io/infra-log/index.md): 145 pages
+- [Infra Log](https://fly.io/infra-log/index.md): 147 pages
 - [The JavaScript Journal](https://fly.io/javascript-journal/index.md): 12 pages
 - [Fly Jobs](https://fly.io/jobs/index.md): 4 pages
 - [Laravel Bytes](https://fly.io/laravel-bytes/index.md): 64 pages
-- [Guides to microVMs, Sandboxes, and Cloud Hosting](https://fly.io/learn/index.md): 40 pages
+- [Guides to microVMs, Sandboxes, and Cloud Hosting](https://fly.io/learn/index.md): 43 pages
 - [Legal](https://fly.io/legal/index.md): 8 pages
 - [The Phoenix Files](https://fly.io/phoenix-files/index.md): 97 pages
 - [The Ruby Dispatch](https://fly.io/ruby-dispatch/index.md): 35 pages
-- [The Sprites Blog](https://fly.io/sprites-blog/index.md): 11 pages
 - [AI Toolbox Turnout](https://fly.io/toolbox-turnout/index.md): 2 pages

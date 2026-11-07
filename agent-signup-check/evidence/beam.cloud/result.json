@@ -1,6 +1,6 @@
 {
  "site": "beam.cloud",
- "checkedAt": "2026-10-30T16:01:04.592Z",
+ "checkedAt": "2026-11-07T00:18:40.330Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 2,
  "partial": 0,
@@ -52,11 +52,11 @@
   {
    "id": "markdown",
    "name": "Docs in Markdown",
-   "url": "https://docs.beam.cloud/llms.txt",
+   "url": "https://www.beam.cloud/llms.txt",
    "heading": "# Beam",
-   "bytes": 14625,
+   "bytes": 3378,
    "status": "pass",
-   "reason": "llms.txt found at a docs path"
+   "reason": "llms.txt found"
   }
  ],
  "requests": [
@@ -67,17 +67,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 102,
+   "ms": 249,
    "redirects": 1
   },
   {
    "label": "llms.txt",
    "url": "https://beam.cloud/llms.txt",
    "finalUrl": "https://www.beam.cloud/llms.txt",
-   "status": 404,
+   "status": 200,
    "error": null,
-   "contentType": "text/html; charset=utf-8",
-   "ms": 112,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 199,
    "redirects": 1
   },
   {
@@ -87,17 +87,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 141,
-   "redirects": 0
-  },
-  {
-   "label": "llms.txt (docs)",
-   "url": "https://docs.beam.cloud/llms.txt",
-   "finalUrl": "https://docs.beam.cloud/llms.txt",
-   "status": 200,
-   "error": null,
-   "contentType": "text/plain; charset=utf-8",
-   "ms": 210,
+   "ms": 156,
    "redirects": 0
   },
   {
@@ -107,7 +97,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 112,
+   "ms": 61,
    "redirects": 1
   },
   {
@@ -117,7 +107,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 137,
+   "ms": 114,
    "redirects": 0
   },
   {
@@ -127,7 +117,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 79,
+   "ms": 66,
    "redirects": 1
   },
   {
@@ -137,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 72,
+   "ms": 64,
    "redirects": 1
   }
  ]

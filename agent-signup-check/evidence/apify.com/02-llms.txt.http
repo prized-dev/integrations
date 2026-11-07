@@ -1,13 +1,13 @@
 GET https://apify.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:44.293Z
+fetched: 2026-11-07T00:19:18.669Z
 final-url: https://apify.com/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=UTF-8
 transfer-encoding: chunked
 connection: close
-date: Fri, 30 Oct 2026 15:55:50 GMT
+date: Sat, 07 Nov 2026 00:19:15 GMT
 content-encoding: gzip
 strict-transport-security: max-age=15768000
 x-permitted-cross-domain-policies: none
@@ -24,15 +24,14 @@ access-control-allow-headers: Content-Type
 access-control-expose-headers: Link
 cache-control: public, max-age=7200
 accept-ranges: bytes
-last-modified: Fri, 30 Oct 2026 14:02:53 GMT
-etag: W/"41be-1a18d1edec8"
+last-modified: Fri, 06 Nov 2026 16:01:49 GMT
+etag: W/"44e1-1a1b19845c8"
 vary: Accept-Encoding
-x-cache: Hit from cloudfront
-via: 1.1 f899e87b32a4b595456b11b0a317a23c.cloudfront.net (CloudFront)
+x-cache: Miss from cloudfront
+via: 1.1 d4998a91f031605ae65d0bc2f0798e54.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: e6_OE-W2GATk1J7AbTW25yxEZZZXsuAirCS4TT-G7dhPmC7kYesnNw==
-age: 351
+x-amz-cf-id: fNTVteQFbkn06EJjFpPnz3-iqpFeMhOqJD2U0TWw_VWVATg1CPPTSA==
 
 # Apify
 
@@ -43,7 +42,9 @@ AI agents reach Apify in three ways. An interactive agent connects the MCP serve
 **Important notes:**
 
 - No account is needed to explore. Search the Store with `GET https://api.apify.com/v2/store?search={keywords}`, read any Actor by appending `.md` to its page URL, or connect the anonymous MCP tools at https://mcp.apify.com/?tools=search-actors,fetch-actor-details,search-apify-docs,fetch-apify-docs. Running Actors and reading private run or storage data requires authentication.
+- Don't guess Actor IDs or API paths: a guess returns a 404. Take the ID from Store search: use the result's `id`, or join `username` and `name` as `username~actor-name` in API URLs. The owner is often not `apify` (Google Maps is `compass/crawler-google-places`). An Actor's input schema is in `data.actorDefinition.input` of `GET https://api.apify.com/v2/actors/{username}~{actor-name}/builds/default`, with no token needed for a public Actor.
 - Creating an account is free and requires no credit card: the free plan renews $5 of usage credit every month, and if that credit runs out, access pauses until the next month instead of being billed. There is nothing to cancel.
+- If a request fails because nobody is signed in, including a 402 that offers x402 payment, tell the user how to fix it instead of stopping: connect https://mcp.apify.com and sign in through the browser first; otherwise create a token at https://console.apify.com/settings/integrations and set it as an environment variable rather than pasting it into chat.
 - An Actor is not an AI agent. It is a serverless cloud program that takes JSON input, runs on Apify’s infrastructure, and returns structured output. On Apify, "Actor" always means this and is always capitalized, i.e. "Actor", not "actor".
 - Apify Store is a marketplace: most Actors are built, priced, and maintained by independent creators rather than by Apify, so each one has its own owner, pricing model, and README.
 - Install `apify-client`, not `apify`, to call Actors from your own code. The `apify` package is the SDK for building them, and picking the wrong one is the most common integration mistake.

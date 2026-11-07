@@ -1,15 +1,15 @@
 GET https://api.render.com/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:51.200Z
+fetched: 2026-11-07T00:18:28.143Z
 final-url: https://api.render.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Fri, 30 Oct 2026 16:00:50 GMT
+date: Sat, 07 Nov 2026 00:18:27 GMT
 content-type: text/plain; charset=utf-8
 content-length: 19
 connection: close
 referrer-policy: same-origin
-render-request-id: api-7848478698-nlpwn/yw4zccRgfv-2285837
+render-request-id: api-7956df5859-9l98n/1R3Z3qYd37-853311
 strict-transport-security: max-age=315360000; includeSubDomains; preload
 vary: Origin
 x-content-type-options: nosniff
@@ -17,7 +17,7 @@ x-frame-options: DENY
 x-xss-protection: 1; mode=block
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a52ba2995b9f998f-SEA
+cf-ray: a56829271904b91c-SEA
 alt-svc: h3=":443"; ma=86400
 
 404 page not found

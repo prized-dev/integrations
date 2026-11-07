@@ -1,19 +1,19 @@
 GET https://firecrawl.dev/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:40.969Z
+fetched: 2026-11-07T00:19:17.504Z
 redirect: 308 from https://firecrawl.dev/auth.md
 final-url: https://www.firecrawl.dev/auth.md
 
 HTTP 200
 access-control-allow-origin: *
-age: 350
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="auth.md"
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Fri, 30 Oct 2026 16:01:38 GMT
-etag: W/"24dc2b213bf0fdc3b3ad1cc7681c0727"
-last-modified: Fri, 30 Oct 2026 15:55:48 GMT
+date: Sat, 07 Nov 2026 00:19:14 GMT
+etag: W/"777a37c9e43464828e35486a80f58416"
+last-modified: Sat, 07 Nov 2026 00:19:14 GMT
 permissions-policy: geolocation=(self), microphone=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), display-capture=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), autoplay=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), speaker-selection=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), storage-access=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai")
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -21,8 +21,8 @@ strict-transport-security: max-age=63072000
 x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /auth.md
-x-vercel-cache: HIT
-x-vercel-id: pdx1::hjmbz-1793376098251-0406e54bf1bc
+x-vercel-cache: MISS
+x-vercel-id: pdx1::ft9r9-1794010754195-2cd1c88c7868
 connection: close
 transfer-encoding: chunked
 
@@ -196,6 +196,7 @@ Firecrawl returns OAuth-style JSON errors:
 | `replay_detected`             | 401  | No        | Mint a fresh WorkOS ID-JAG with a new `jti`. Do not retry the same assertion.                                                                                     |
 | `rate_limited`                | 429  | Yes       | Wait before retrying with a fresh WorkOS ID-JAG.                                                                                                                  |
 | `invalid_assertion`           | 401  | No\*      | Mint a fresh WorkOS ID-JAG with correct issuer, audience, type, signature, expiry, and verified email. Used when the failure does not match a more specific code. |
+| `signup_not_permitted`        | 403  | No        | The verified email cannot be used to create a Firecrawl account. Use a different identity.                                                                        |
 | `server_error`                | 500  | Yes       | Retry with backoff. Indicates a Firecrawl-side failure after the JWT was accepted (provisioning or replay-store outage)—not an assertion fault.                   |
 
 \*Retryable only after fixing the underlying assertion (mint a fresh ID-JAG). Do not retry the same assertion indefinitely.

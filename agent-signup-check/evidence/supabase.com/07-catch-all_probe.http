@@ -1,6 +1,6 @@
 GET https://supabase.com/agent-signup-check-no-such-page.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:16.889Z
+fetched: 2026-11-07T00:18:52.127Z
 final-url: https://supabase.com/agent-signup-check-no-such-page.md
 
 HTTP 404
@@ -8,7 +8,7 @@ age: 0
 cache-control: no-store
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Fri, 30 Oct 2026 16:01:16 GMT
+date: Sat, 07 Nov 2026 00:18:51 GMT
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: Accept
@@ -16,7 +16,7 @@ x-content-type-options: nosniff
 x-matched-path: /api-v2/md-404/[[...path]]
 x-nextjs-rewritten-path: /agent-signup-check-no-such-page.md
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::cjltv-1793376075976-11b32bd72bb6
+x-vercel-id: pdx1::iad1::ptbqh-1794010731234-6f2b6eb77b7d
 connection: close
 transfer-encoding: chunked
 

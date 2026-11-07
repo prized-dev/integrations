@@ -1,19 +1,19 @@
 GET https://replicate.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:41.936Z
+fetched: 2026-11-07T00:18:17.296Z
 final-url: https://replicate.com/auth.md
 
 HTTP 404
-date: Fri, 30 Oct 2026 16:00:38 GMT
+date: Sat, 07 Nov 2026 00:18:13 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a52ba24f2ca45ecc-PDX
+cf-ray: a56828d37cb7ff0f-PDX
 cf-cache-status: DYNAMIC
 server: cloudflare
 strict-transport-security: max-age=15552000
 vary: Cookie, origin, accept-encoding
-content-security-policy-report-only: style-src 'report-sample' 'self' 'unsafe-inline' https://static.replicateassets.com https://googletagmanager.com https://tagmanager.google.com https://fonts.googleapis.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; script-src 'report-sample' 'self' 'nonce-c7c2e8A7bzK1os+4k9XlOQ==' https://static.replicateassets.com https://www.googletagmanager.com https://tagmanager.google.com https://*.googletagmanager.com https://challenges.cloudflare.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; img-src 'report-sample' 'self' blob: data: https://replicate.delivery https://*.replicate.delivery https://og.replicateassets.com https://static.replicateassets.com https://*.githubusercontent.com https://github.com https://www.googletagmanager.com https://ssl.gstatic.com https://www.gstatic.com https://*.google-analytics.com https://*.googletagmanager.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; default-src 'self'; font-src 'report-sample' 'self' data: https://fonts.replicateassets.com https://fonts.gstatic.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; frame-src 'report-sample' 'self' https://replicate-search.replicate-search.workers.dev; connect-src 'report-sample' 'self' https://stream.replicate.com https://replicate.delivery https://*.replicate.delivery https://*.sentry.io https://og.replicateassets.com https://static.replicateassets.com https://www.googletagmanager.com https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://www.cloudflarestatus.com https://replicate-search.replicate-search.workers.dev; worker-src https://static.replicateassets.com; media-src 'report-sample' 'self' https://replicate.delivery https://*.replicate.delivery https://static.replicateassets.com https://*.sentry.io https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net
+content-security-policy-report-only: connect-src 'report-sample' 'self' https://stream.replicate.com https://replicate.delivery https://*.replicate.delivery https://*.sentry.io https://og.replicateassets.com https://static.replicateassets.com https://www.googletagmanager.com https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://www.cloudflarestatus.com https://replicate-search.replicate-search.workers.dev; worker-src https://static.replicateassets.com; default-src 'self'; font-src 'report-sample' 'self' data: https://fonts.replicateassets.com https://fonts.gstatic.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; frame-src 'report-sample' 'self' https://replicate-search.replicate-search.workers.dev; script-src 'report-sample' 'self' 'nonce-7dRhxvhuTK3Lu8AQk55aYA==' https://static.replicateassets.com https://www.googletagmanager.com https://tagmanager.google.com https://*.googletagmanager.com https://challenges.cloudflare.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; media-src 'report-sample' 'self' https://replicate.delivery https://*.replicate.delivery https://static.replicateassets.com https://*.sentry.io https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; img-src 'report-sample' 'self' blob: data: https://replicate.delivery https://*.replicate.delivery https://og.replicateassets.com https://static.replicateassets.com https://*.githubusercontent.com https://github.com https://www.googletagmanager.com https://ssl.gstatic.com https://www.gstatic.com https://*.google-analytics.com https://*.googletagmanager.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; style-src 'report-sample' 'self' 'unsafe-inline' https://static.replicateassets.com https://googletagmanager.com https://tagmanager.google.com https://fonts.googleapis.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net
 cross-origin-opener-policy: same-origin
 expect-ct: max-age=86400, enforce
 referrer-policy: same-origin
@@ -62,7 +62,7 @@ alt-svc: h3=":443"; ma=86400
           href="https://d31rfu1d3w8e4q.cloudfront.net/static/apple-touch-icon.39c0aa0659e3.png" />
 
     
-  <script nonce="c7c2e8A7bzK1os+4k9XlOQ==">
+  <script nonce="7dRhxvhuTK3Lu8AQk55aYA==">
     /* beautify ignore:start */
     window.dataLayer = window.dataLayer || [];
     
@@ -77,7 +77,7 @@ alt-svc: h3=":443"; ma=86400
     
     /* beautify ignore:end */
   </script>
-  <script nonce="c7c2e8A7bzK1os+4k9XlOQ==">
+  <script nonce="7dRhxvhuTK3Lu8AQk55aYA==">
     (function(w, d, s, l, i) {
       w[l] = w[l] || [];
       w[l].push({
@@ -100,7 +100,7 @@ alt-svc: h3=":443"; ma=86400
     
 
     <link  rel="stylesheet" href="https://d31rfu1d3w8e4q.cloudfront.net/static/dist/index-B-PDs4zH.css" />
-<script type="module" crossorigin="" src="https://d31rfu1d3w8e4q.cloudfront.net/static/dist/index-CC6xk2Gp.js"></script>
+<script type="module" crossorigin="" src="https://d31rfu1d3w8e4q.cloudfront.net/static/dist/index-S-hXp6If.js"></script>
 
     <link rel="stylesheet"
           href="https://d31rfu1d3w8e4q.cloudfront.net/static/dist/indexCss-CCkFL4yq.css" />
@@ -151,11 +151,11 @@ alt-svc: h3=":443"; ma=86400
     
     
       <meta name="anonymous-id"
-            content="01d4bf8d-9b71-40d8-94cb-eb4df99225b5" />
+            content="47e10b41-a867-4221-8591-fbe4c1cf8ab5" />
     
 
     
-      <script nonce="c7c2e8A7bzK1os+4k9XlOQ==">
+      <script nonce="7dRhxvhuTK3Lu8AQk55aYA==">
         const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
         if (prefersDarkScheme) {
@@ -188,10 +188,10 @@ alt-svc: h3=":443"; ma=86400
 
 <div class="h-[var(--header-height)] mb-6 no-focus">
   
-    <script id="react-component-props-794b33d6-5f2c-4f99-aa67-89baa65af048" type="application/json">{"activePath": "/auth.md", "isAuthenticated": false, "theme": "", "showSeedanceBanner": true, "__flags": {"web-api-token-show-once": true, "show-open-ai-api-instructions": false}}</script>
+    <script id="react-component-props-1ab8dad7-4cb7-487f-9357-46ed26c48935" type="application/json">{"activePath": "/auth.md", "isAuthenticated": false, "theme": "", "showSeedanceBanner": true, "__flags": {"web-api-token-show-once": true, "show-open-ai-api-instructions": false}}</script>
 
 <div data-component="Navigation"
-     data-props="react-component-props-794b33d6-5f2c-4f99-aa67-89baa65af048">
+     data-props="react-component-props-1ab8dad7-4cb7-487f-9357-46ed26c48935">
   
 </div>
 
@@ -243,18 +243,21 @@ alt-svc: h3=":443"; ma=86400
     
 
 <a class="no-default flex flex-col group border border-r8-gray-12 hover:bg-r8-gray-3 focus:bg-r8-gray-12"
-   href="/recraft-ai/recraft-v4-styles-pro"
-   title="recraft-ai/recraft-v4-styles-pro">
+   href="/alibaba/wan-3"
+   title="alibaba/wan-3">
   <div class="h-80 group-focus:ring ring-r8-gray-12 flex-shrink-0 bg-r8-gray-3">
     
 
 
   <div class=" h-full w-full overflow-hidden">
     
-      <img data-src="https://tjzk.replicate.delivery/models_models_featured_image/dbd9d8e2-7785-4e50-86af-248a58b11985/tmp7v9r3gq3.png"
-           alt=""
-           role="presentation"
-           class="object-cover object-center w-full h-full lazy" />
+      <script id="react-component-props-d90c41d5-72b4-4a67-b021-678da0c5d834" type="application/json">{"url": "https://tjzk.replicate.delivery/models_models_featured_image/dffa7cb3-6010-4237-9557-2290a9c4e2d8/wan-3-featured.mp4", "__flags": {"web-api-token-show-once": true, "show-open-ai-api-instructions": false}}</script>
+
+<div data-component="VideoCoverImage"
+     data-props="react-component-props-d90c41d5-72b4-4a67-b021-678da0c5d834">
+  
+</div>
+
     
   </div>
 
@@ -278,12 +281,12 @@ alt-svc: h3=":443"; ma=86400
 
             </span>
           
-          <span class="text-r8-gray-11 group-focus:text-r8-gray-1">recraft-ai</span>
+          <span class="text-r8-gray-11 group-focus:text-r8-gray-1">alibaba</span>
           <span class="text-r8-gray-11 group-focus:text-r8-gray-1">/</span>
-          <span class="font-semibold text-r8-gray-12 group-focus:text-r8-gray-1">recraft-v4-styles-pro</span>
+          <span class="font-semibold text-r8-gray-12 group-focus:text-r8-gray-1">wan-3</span>
         </h4>
         <p class="mt-2 text-r8-sm text-r8-gray-12 group-focus:text-r8-gray-1">
-          Recraft V4 Styles Pro generates 2K raster images that match a reusable style or attached reference images. Built for print-ready, style-consistent assets.
+          Wan 3.0 generates video from a text prompt or a starting image, with cinematic motion and support for 480p, 720p, and 1080p output up to 30 seconds.
         </p>
         
       </div>
@@ -299,7 +302,7 @@ alt-svc: h3=":443"; ma=86400
   </path>
 </svg>
 
-          243 runs
+          71.5K runs
         </div>
         
       </div>
@@ -320,10 +323,10 @@ alt-svc: h3=":443"; ma=86400
         
 
 <div class="footer no-focus">
-  <script id="react-component-props-831175de-5e9d-49ec-b507-20f5af356be7" type="application/json">{"theme": "", "__flags": {"web-api-token-show-once": true, "show-open-ai-api-instructions": false}}</script>
+  <script id="react-component-props-9a249d29-b2d1-485a-9d13-e3fa6fe6bfe5" type="application/json">{"theme": "", "__flags": {"web-api-token-show-once": true, "show-open-ai-api-instructions": false}}</script>
 
 <div data-component="Footer"
-     data-props="react-component-props-831175de-5e9d-49ec-b507-20f5af356be7">
+     data-props="react-component-props-9a249d29-b2d1-485a-9d13-e3fa6fe6bfe5">
   
 </div>
 
@@ -333,11 +336,11 @@ alt-svc: h3=":443"; ma=86400
 
     
 
-    <script nonce="c7c2e8A7bzK1os+4k9XlOQ==">
+    <script nonce="7dRhxvhuTK3Lu8AQk55aYA==">
       window.VIDEOJS_NO_DYNAMIC_STYLE = true;
     </script>
 
-    <script nonce="c7c2e8A7bzK1os+4k9XlOQ==">
+    <script nonce="7dRhxvhuTK3Lu8AQk55aYA==">
       const header = document.getElementById("app-header");
 
       function monitorHeaderStickiness() {

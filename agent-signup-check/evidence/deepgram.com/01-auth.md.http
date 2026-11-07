@@ -1,18 +1,18 @@
 GET https://deepgram.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:45.232Z
+fetched: 2026-11-07T00:18:22.090Z
 final-url: https://deepgram.com/auth.md
 
 HTTP 404
-age: 347
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-length: 0
-date: Fri, 30 Oct 2026 06:21:01 GMT
+date: Sat, 07 Nov 2026 00:18:19 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /api/markdown/[[...slug]]
 x-nextjs-rewritten-path: /api/markdown/auth
-x-vercel-cache: STALE
-x-vercel-id: pdx1::iad1::b6zdx-1793376041971-df8eff277b0b
+x-vercel-cache: REVALIDATED
+x-vercel-id: pdx1::iad1::nk7vl-1794010698570-929374bf38ce
 connection: close
 

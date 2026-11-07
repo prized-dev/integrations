@@ -1,6 +1,6 @@
 {
  "site": "brightdata.com",
- "checkedAt": "2026-10-30T16:01:43.448Z",
+ "checkedAt": "2026-11-07T00:19:17.511Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 4,
  "partial": 1,
@@ -88,7 +88,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 171,
+   "ms": 109,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=UTF-8",
-   "ms": 365,
+   "ms": 331,
    "redirects": 0
   },
   {
@@ -108,7 +108,7 @@
    "status": 401,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 182,
+   "ms": 186,
    "redirects": 0
   },
   {
@@ -118,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 144,
+   "ms": 137,
    "redirects": 0
   },
   {
@@ -128,7 +128,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 195,
+   "ms": 171,
    "redirects": 0
   },
   {
@@ -138,7 +138,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 127,
+   "ms": 102,
    "redirects": 0
   },
   {
@@ -148,7 +148,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 152,
+   "ms": 120,
    "redirects": 0
   }
  ]

@@ -1,7 +1,27 @@
 GET https://api.agentphone.ai/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:48.144Z
+fetched: 2026-11-07T00:19:07.700Z
 final-url: https://api.agentphone.ai/.well-known/oauth-protected-resource
 
-error: timeout
+HTTP 404
+date: Sat, 07 Nov 2026 00:19:06 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+permissions-policy: camera=(), microphone=(), geolocation=()
+referrer-policy: strict-origin-when-cross-origin
+server: cloudflare
+strict-transport-security: max-age=31536000; includeSubDomains
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-railway-request-id: RIJU2mKrRZe8NdYw0_TJvA
+x-request-id: 7913f2a7-538d-47f8-bbb5-471c0cec89cf
+x-xss-protection: 0
+x-hikari-trace: sjc1.mwfn
+x-railway-edge: sjc1
+cf-cache-status: DYNAMIC
+speculation-rules: "/cdn-cgi/speculation"
+content-encoding: gzip
+cf-ray: a5682a1d3b38b024-PDX
 
+{"detail":"Not Found","error":{"message":"Not Found","code":"HTTP_404","type":"api_error"},"request_id":"7913f2a7-538d-47f8-bbb5-471c0cec89cf"}

@@ -1,22 +1,22 @@
 GET https://freestyle.sh/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:01.978Z
+fetched: 2026-11-07T00:18:38.643Z
 redirect: 301 from https://freestyle.sh/llms.txt
 final-url: https://www.freestyle.sh/llms.txt
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:00:59 GMT
+date: Sat, 07 Nov 2026 00:18:36 GMT
 content-type: text/plain
 transfer-encoding: chunked
 connection: close
 cf-cache-status: HIT
 cache-control: public, max-age=0, must-revalidate
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=peBYG%2BuEMNSTZGU5cWmiEgfKo0dj5A0EtAdhzjydFuv3RJqemxT%2BP1ramFUvmzPKZfvOGU43kPNn8e9A4vKFm%2BabFgEvpC7IzC3Mm98zutd%2B8ggEsGk%2Bg%2FwjL3bi2znGnZA%3D"}]}
-etag: W/"863955f81c0e20311572b29ce32ea4bd"
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=kSj7%2BsEdxVeo9O1DrwlL%2Fa0YRuUvx116qmFYERi1sv8D%2Ff53FhthQ6vWp54o%2Bvi392oD%2FPD7kcsZk6v8CKzb4mrrctaV8WwrDkm8GwXNmUsMvilUti2VxMmLZDOKkWE3MmM%3D"}]}
+etag: W/"f28e27418099881eda2d3a78491ded4c"
 content-encoding: br
 server: cloudflare
-cf-ray: a52ba2d41cfab248-PDX
+cf-ray: a56829603dfab298-PDX
 
 # Freestyle
 
@@ -129,9 +129,11 @@ curl https://www.freestyle.sh/docs/bash --data-binary 'ls /docs'
 - [Firewall](https://www.freestyle.sh/docs/vms/network/firewall): Allow network traffic between VMs, private networks, address ranges, and the public Internet.
 - [Inbound TLS](https://www.freestyle.sh/docs/vms/network/tls-inbound): Publish web apps, databases, mailboxes, and game servers at a public domain.
 - [Outbound TLS](https://www.freestyle.sh/docs/vms/network/tls-outbound): Connect VMs to APIs, databases, storage, and proxies.
-- [Tunnels](https://www.freestyle.sh/docs/vms/network/tunnels): Use WireGuard to connect your computer to Freestyle private networks.
+- [Tunnels](https://www.freestyle.sh/docs/vms/network/tunnels): Connect your computer or Tailscale tailnet to Freestyle private networks.
 - [PTY Sessions](https://www.freestyle.sh/docs/vms/pty): Open interactive terminal sessions on a VM and reattach after disconnecting.
 - [Forward Auth](https://www.freestyle.sh/docs/vms/forward-auth): Authorize public HTTP requests at the Freestyle edge before they reach a VM.
+- [Kali Snapshot](https://www.freestyle.sh/docs/vms/base-snapshots/kali): A security workbench with 4 vCPU, 8 GiB of memory, a 32 GB disk, and Kali's security tools preinstalled.
+- [BusyBox Snapshot](https://www.freestyle.sh/docs/vms/base-snapshots/busybox): Our smallest base snapshot: a Linux VM with 1 vCPU, 128 MiB of memory, and a 1 GB disk.
 - [Pricing and Limits](https://www.freestyle.sh/docs/vms/pricing-and-limits): How Freestyle VMs are priced, what each plan includes, and the per-plan limits that apply to your account.
 - [Freestyle CLI](https://www.freestyle.sh/docs/cli): Install and use the Freestyle CLI to manage VMs, VPCs, domains, and identities.
 - [VM CLI](https://www.freestyle.sh/docs/vms/cli): Create and operate VMs, snapshots, terminals, and guest files with the Freestyle CLI.
@@ -148,6 +150,7 @@ curl https://www.freestyle.sh/docs/bash --data-binary 'ls /docs'
 - [Reverse Engineering with AI Agents on Kali Linux](https://www.freestyle.sh/docs/guides/reverse-engineer-a-binary-with-an-ai-agent): A practical workflow for agents analyzing real binaries: preserve the sample, triage its format, test hypotheses, branch experiments, and report reproducible evidence.
 - [Select OpenAI Models and Inject Authentication](https://www.freestyle.sh/docs/guides/select-openai-models-and-inject-auth): Call OpenAI from a sandbox with an API key held at the edge, choose the model from your controller, and rotate credentials without rebuilding the VM.
 - [Select Anthropic Models and Inject Authentication](https://www.freestyle.sh/docs/guides/select-anthropic-models-and-inject-auth): Call Anthropic Messages from a sandbox with edge-injected credentials, select a Claude model in your controller, and rotate model access.
+- [Inject a Claude Code OAuth Token at the Edge](https://www.freestyle.sh/docs/guides/inject-claude-code-oauth-token-at-the-edge): Run Claude Code in a sandbox on a Claude subscription token held at the Freestyle edge, so the VM and its snapshot never store the credential, and rotate it without a rebuild.
 - [Select OpenRouter Models and Inject Authentication](https://www.freestyle.sh/docs/guides/select-openrouter-models-and-inject-auth): Call OpenRouter from a sandbox with edge-injected credentials, choose models and fallback lists in your controller, and configure provider routing.
 - [How to Use Hugging Face with Credential Injection](https://www.freestyle.sh/docs/guides/use-hugging-face-with-credential-injection): Call Hugging Face Inference Providers from a Freestyle VM while keeping the real access token at the edge.
 - [How to Use Jev in a Sandbox](https://www.freestyle.sh/docs/guides/use-jev-in-a-sandbox): Call TypeSafe AI's Jev from a Freestyle VM with its API key held at the edge, then use typed decisions to route agent work.
@@ -181,7 +184,7 @@ curl https://www.freestyle.sh/docs/bash --data-binary 'ls /docs'
 - [How to Connect to PostHog with Credential Injection](https://www.freestyle.sh/docs/guides/connect-to-posthog-with-credential-injection): Query PostHog's private API from a Freestyle VM while keeping the real personal API key at the Freestyle edge.
 - [How to Connect to Keycard with Credential Injection](https://www.freestyle.sh/docs/guides/connect-to-keycard-with-credential-injection): Use Keycard to authorize API access from a Freestyle sandbox, with scoped tokens injected at the edge and kept out of the VM.
 - [How to Use Private Git Repositories in a Sandbox](https://www.freestyle.sh/docs/guides/use-private-git-repositories-in-a-sandbox): Clone, fetch, and push over HTTPS with Git credentials injected at the edge, keeping tokens outside your sandbox.
-- [How to Use S3 as a Git Remote in a Sandbox](https://www.freestyle.sh/docs/guides/use-s3-as-a-git-remote-in-a-sandbox): Clone and push Git repositories stored in an S3 bucket, keep large files in Git LFS in the same bucket, and scope storage credentials to one repository prefix at the edge.
+- [How to Use S3 as a Git Remote in a Sandbox](https://www.freestyle.sh/docs/guides/use-s3-as-a-git-remote-in-a-sandbox): Mount an S3-backed Git repository without downloading every file first, keep dependency I/O on local disk, and scope storage access at the edge.
 - [How to Run a Jupyter Notebook Server in a Sandbox](https://www.freestyle.sh/docs/guides/run-jupyter-in-a-sandbox): Bake JupyterLab into a VM snapshot, then open the notebook on a public domain.
 - [How to Run Iron Proxy on a Router VM](https://www.freestyle.sh/docs/guides/run-iron-proxy-on-a-router-vm): Route a VM through a router VM that runs iron-proxy, then configure the client VM to use that proxy by default.
 - [How to Inspect Sandbox Traffic with mitmproxy](https://www.freestyle.sh/docs/guides/inspect-sandbox-traffic-with-mitmproxy): Inspect sandbox HTTP and HTTPS with mitmproxy, identify each VM by its private source IP, and keep the web UI private.

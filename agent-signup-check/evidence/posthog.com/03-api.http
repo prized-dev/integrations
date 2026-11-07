@@ -1,10 +1,10 @@
 GET https://us.posthog.com/api/projects/
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:05.012Z
+fetched: 2026-11-07T00:19:40.523Z
 final-url: https://us.posthog.com/api/projects/
 
 HTTP 401
-date: Fri, 30 Oct 2026 16:02:02 GMT
+date: Sat, 07 Nov 2026 00:19:37 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close

@@ -1,18 +1,18 @@
 GET https://api.cloudflare.com/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:55.207Z
+fetched: 2026-11-07T00:18:32.292Z
 final-url: https://api.cloudflare.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Fri, 30 Oct 2026 16:00:52 GMT
+date: Sat, 07 Nov 2026 00:18:30 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
-cf-ray: a52ba2aa7979a11a-PDX
+cf-ray: a568293b7e01ff01-PDX
 cf-cache-status: DYNAMIC
 cache-control: no-store
 server: cloudflare
-cf-auditlog-id: 01a18d8a-e696-7e7d-983d-2edcd8ca7903
+cf-auditlog-id: 01a1b35f-0130-742d-bc9a-dfe2dce5a2ce
 api-version: 2026-10-01.epoch
 content-encoding: gzip
 

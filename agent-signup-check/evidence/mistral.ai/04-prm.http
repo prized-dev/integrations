@@ -1,10 +1,10 @@
 GET https://mistral.ai/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:30.291Z
+fetched: 2026-11-07T00:18:06.140Z
 final-url: https://mistral.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Fri, 30 Oct 2026 16:00:27 GMT
+date: Sat, 07 Nov 2026 00:18:03 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -15,13 +15,13 @@ server: cloudflare
 strict-transport-security: max-age=15552000; includeSubDomains; preload
 vary: Accept-Encoding
 x-content-type-options: nosniff
-x-nf-request-id: 01M66RN0H4DXAK03G4HRTSF5CH
+x-nf-request-id: 01M6SNX5TT130BMH0MWBFSN0YA
 cf-cache-status: EXPIRED
 content-encoding: br
-cf-ray: a52ba2090b7c1d89-PDX
+cf-ray: a56828915e085eea-PDX
 alt-svc: h3=":443"; ma=86400
 
-<!DOCTYPE html><html data-astro-transition-scope="astro-v2o6jcai-1" lang="en" class><head><meta charset="UTF-8"><title>Frontier AI LLMs, assistants, agents, services | Mistral AI</title><meta name="description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex-swap.min.css" integrity="sha384-/YlNbK67U4WeyjZpwGJd2C4H3Lm8gq0m47PFlrmuKj9TDQzW6HbfSbWI6gpHx2ol" crossorigin="anonymous"><link rel="canonical" href="https://mistral.ai/404/"><meta property="og:title" content="Frontier AI LLMs, assistants, agents, services | Mistral AI"><meta property="og:description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><meta property="og:type" content="website"><meta property="og:url" content="https://mistral.ai/404/"><meta property="og:site_name" content="Mistral"><meta property="og:image" content="https://mistral.ai/cms-media/api/media/file/cover-mistral-sovereign%20copie.webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Frontier AI LLMs, assistants, agents, services | Mistral AI"><meta name="twitter:description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><meta name="twitter:image" content="https://mistral.ai/cms-media/api/media/file/cover-mistral-sovereign%20copie.webp"><meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0"><link rel="sitemap" href="/sitemap-index.xml"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.BpUIsosY.js?dpl=6ae3844da0718a08567e65ba"></script><script>
+<!DOCTYPE html><html data-astro-transition-scope="astro-v2o6jcai-1" lang="en" class><head><meta charset="UTF-8"><title>Frontier AI LLMs, assistants, agents, services | Mistral AI</title><meta name="description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex-swap.min.css" integrity="sha384-/YlNbK67U4WeyjZpwGJd2C4H3Lm8gq0m47PFlrmuKj9TDQzW6HbfSbWI6gpHx2ol" crossorigin="anonymous"><link rel="canonical" href="https://mistral.ai/404/"><meta property="og:title" content="Frontier AI LLMs, assistants, agents, services | Mistral AI"><meta property="og:description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><meta property="og:type" content="website"><meta property="og:url" content="https://mistral.ai/404/"><meta property="og:site_name" content="Mistral"><meta property="og:image" content="https://mistral.ai/cms-media/api/media/file/cover-mistral-sovereign%20copie.webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Frontier AI LLMs, assistants, agents, services | Mistral AI"><meta name="twitter:description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><meta name="twitter:image" content="https://mistral.ai/cms-media/api/media/file/cover-mistral-sovereign%20copie.webp"><meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0"><link rel="sitemap" href="/sitemap-index.xml"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.Bhesp8YC.js?dpl=6aee0a780db43cb5574b1948"></script><script>
       ;(function () {
         function applyTheme(doc) {
           try {
@@ -74,10 +74,10 @@ alt-svc: h3=":443"; ma=86400
         // openAxeptioCookies() stops working (SDK DOM refs point to detached
         // nodes). A full reload re-runs GTM → re-injects Axeptio → works again.
         //
-        // Fix: tag every node injected post-render, park the exact same nodes
+        // Persist injected UI and styles, but never page metadata. Park the nodes
         // under <html> (outside head/body) during the swap, then move them back
-        // after. Nodes stay in the same document throughout — no cross-document
-        // adoption — so the Axeptio SDK's JS references remain valid. Scripts
+        // after. Nodes stay in the same document throughout - no cross-document
+        // adoption - so the Axeptio SDK's JS references remain valid. Scripts
         // are skipped so the SDK is never re-executed (no duplicate banner).
         var PERSIST = 'data-consent-persist'
         var PARK = 'data-consent-park'
@@ -85,7 +85,8 @@ alt-svc: h3=":443"; ma=86400
 
         function tag(node) {
           if (!node || node.nodeType !== 1) return
-          if (node.tagName === 'SCRIPT') return
+          if (node.tagName === 'SCRIPT' || node.tagName === 'TITLE' || node.tagName === 'META') return
+          if (node.tagName === 'LINK' && node.getAttribute('rel') !== 'stylesheet') return
           if (node.hasAttribute(PERSIST) || node.hasAttribute(PARK)) return
           // Don't tag Astro's own transition/runtime nodes
           if (node.id === 'main' || node.id === 'mistral-data') return
@@ -93,22 +94,22 @@ alt-svc: h3=":443"; ma=86400
           node.setAttribute(PERSIST, '')
         }
 
+        function tagAddedNodes(records) {
+          for (var i = 0; i < records.length; i++) {
+            var added = records[i].addedNodes
+            for (var j = 0; j < added.length; j++) tag(added[j])
+          }
+        }
+
         function observeTarget(target) {
           if (!target || !observer) return
           observer.observe(target, { childList: true })
         }
 
-        // Start after DOM is parsed so we don't tag server-rendered head/body
-        // elements still being added by the HTML parser. Axeptio is injected
-        // by GTM via requestIdleCallback, which fires after DOMContentLoaded.
+        // Start after parsing so server-rendered head/body nodes are not tagged.
         function startObserver() {
           if (observer) return
-          observer = new MutationObserver(function (records) {
-            for (var i = 0; i < records.length; i++) {
-              var added = records[i].addedNodes
-              for (var j = 0; j < added.length; j++) tag(added[j])
-            }
-          })
+          observer = new MutationObserver(tagAddedNodes)
           observeTarget(document.head)
           observeTarget(document.body)
         }
@@ -121,6 +122,11 @@ alt-svc: h3=":443"; ma=86400
 
         // Park tagged nodes under <html> so they survive the head/body swap.
         document.addEventListener('astro:before-swap', function () {
+          if (observer) {
+            // Capture pending consent injections, then ignore Astro's swap mutations.
+            tagAddedNodes(observer.takeRecords())
+            observer.disconnect()
+          }
           var nodes = document.querySelectorAll('[' + PERSIST + ']')
           for (var i = 0; i < nodes.length; i++) {
             var n = nodes[i]
@@ -137,17 +143,18 @@ alt-svc: h3=":443"; ma=86400
             var n = parked[i]
             var origin = n.getAttribute(PARK)
             n.removeAttribute(PARK)
-            if (origin === 'head' || n.tagName === 'STYLE' || n.tagName === 'LINK' || n.tagName === 'META') {
+            if (origin === 'head' || n.tagName === 'STYLE' || n.tagName === 'LINK') {
               document.head.appendChild(n)
             } else {
               document.body.appendChild(n)
             }
           }
-          // Re-observe body in case it was replaced
-          if (observer) observeTarget(document.body)
+          // Resume only after restoration, using the current head and body.
+          observeTarget(document.head)
+          observeTarget(document.body)
         })
       })()
-    </script><link rel="alternate" type="application/rss+xml" title="Mistral" href="https://mistral.ai/news/rss"><link rel="stylesheet" href="/_astro/astro.G2fphV-O.css"><style>html.lenis,html.lenis body{height:auto}.lenis:not(.lenis-autoToggle).lenis-stopped{overflow:clip}.lenis [data-lenis-prevent],.lenis [data-lenis-prevent-wheel],.lenis [data-lenis-prevent-touch],.lenis [data-lenis-prevent-vertical],.lenis [data-lenis-prevent-horizontal]{overscroll-behavior:contain}.lenis.lenis-smooth iframe{pointer-events:none}.lenis.lenis-autoToggle{transition-behavior:allow-discrete;transition-property:overflow;transition-duration:1ms}
+    </script><link rel="alternate" type="application/rss+xml" title="Mistral" href="https://mistral.ai/news/rss"><link rel="stylesheet" href="/_astro/astro.DoQnj-bQ.css"><style>html.lenis,html.lenis body{height:auto}.lenis:not(.lenis-autoToggle).lenis-stopped{overflow:clip}.lenis [data-lenis-prevent],.lenis [data-lenis-prevent-wheel],.lenis [data-lenis-prevent-touch],.lenis [data-lenis-prevent-vertical],.lenis [data-lenis-prevent-horizontal]{overscroll-behavior:contain}.lenis.lenis-smooth iframe{pointer-events:none}.lenis.lenis-autoToggle{transition-behavior:allow-discrete;transition-property:overflow;transition-duration:1ms}
 </style><style>[data-astro-transition-scope="astro-v2o6jcai-1"] { view-transition-name: root; }@layer astro { ::view-transition-old(root) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(root) { animation: none; mix-blend-mode: normal; }::view-transition-group(root) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-v2o6jcai-1"],
 			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-v2o6jcai-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-v2o6jcai-1"],
 			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-v2o6jcai-1"] { animation: none; mix-blend-mode: normal; }</style></head><body><!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TX82W9W8" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><!-- End Google Tag Manager (noscript) --><global-navigation><header class="fixed z-50 flex items-center justify-between dark:text-white transition-colors top-0 w-full left-0 border-b border-border-primary divide-x divide-border-primary bg-surface-brand-secondary" data-header><div class="max-w-432 mx-auto relative h-auto flex items-center justify-between w-full divide-x divide-border-primary"><a href="/" rel="home" aria-label="Go to homepage" class="w-12 h-12 md:w-30 nav-item-home shrink-0 grid place-content-center overflow-hidden hover:bg-surface-brand-primary 2xl:border-l border-border-primary" data-interactive data-mobile-logo><span class="relative w-24 hidden md:block"><svg  viewBox="0 0 98 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -189,6 +196,6 @@ alt-svc: h3=":443"; ma=86400
 <path d="M12.9995 17H16.9995L16.9995 21H12.9995L12.9995 17Z" fill="currentColor"/>
 <path d="M16.9995 21H20.9995L20.9995 25H16.9995V21Z" fill="currentColor"/>
 </svg>
-</span></a><div class="flex lg:hidden items-center w-full divide-x divide-border-primary"><div class="relative overflow-hidden flex items-center justify-center w-full h-12" id="mobile-cta"><div class="flex items-center justify-center gap-2" id="mobile-cta-default"><a href="/contact/" clas
+</span></a><div class="flex lg:hi
 
-[body trimmed for publication: kept 16384 of 159054 characters; sha256 of the published body 59038e99f997f69a6d14316809bcbd19f973feaf1c463ad72514e1aead4b05ae]
+[body trimmed for publication: kept 16384 of 163035 characters; sha256 of the published body 655ec7b056b5fc63e38d70af9111906efbf86c31ebcd790d149e0d9fd873c0d2]

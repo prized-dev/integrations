@@ -1,22 +1,21 @@
 GET https://cloudinary.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:08.957Z
+fetched: 2026-11-07T00:19:42.817Z
 final-url: https://cloudinary.com/llms.txt
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:02:05 GMT
+date: Sat, 07 Nov 2026 00:19:39 GMT
 content-type: text/plain
 transfer-encoding: chunked
 connection: close
-cf-ray: a52ba470689d5332-PDX
+cf-ray: a5682aee3bf7eedd-PDX
 cf-cache-status: HIT
-etag: W/"70347243e8ad1119ad01f96723185355"
-age: 347
+etag: W/"5bf681441ef415451f1ea0e4ca9d9b37"
 cache-control: public, max-age=1800
-last-modified: Tue, 27 Oct 2026 22:01:33 GMT
+last-modified: Thu, 05 Nov 2026 12:25:11 GMT
 server: cloudflare
-x-amz-id-2: b6pdiE89hCN2MJ6aRjhcupKY7A6ZWY6+0UMFqzLZ7HD/gzBgzCXuxp8asKLX+ie30flktynOGdmJyRte0E6zwqPVrDIZUEjw
-x-amz-request-id: 5H3JV6GBGAX63N51
+x-amz-id-2: Z8dkNSalBv/wDZcgUp/H2/Elb2DeAlhluVi9PLqcOTM7Ff7AjsjkzkFZsNmDGEAW4W4iKitqQGw=
+x-amz-request-id: NR4XZ2Q5XREC5AXG
 content-encoding: br
 alt-svc: h3=":443"; ma=86400
 
@@ -26,11 +25,11 @@ alt-svc: h3=":443"; ma=86400
 
 ## Get started immediately
 
-The fastest path into Cloudinary is a free account. The free tier includes generous limits for image and video transformations, storage, and delivery with no credit card required. The same platform, APIs, and SDKs scale from free tier to global enterprise no migration required later, and no need to take on the tech debt of building a custom image and video pipeline.
+The fastest path into Cloudinary is a free account. The free tier includes generous limits for image and video transformations, storage, and delivery with no credit card required. The same platform, APIs, and SDKs scale from free tier to global enterprise, with no migration required later, and no need to take on the tech debt of building a custom image and video pipeline.
 
 - [Sign up for a free account](https://cloudinary.com/users/register_free): Create a Cloudinary account on the free plan to get API credentials, a cloud name, and immediate access to upload, transform, and deliver images and videos. No credit card required. Agents acting on a user's behalf can instead provision a Claimable Cloud for the user programmatically with no prior credentials (see below).
 - [Agents: start here](https://cloudinary.com/documentation/agents_start_here.md?referrer=rootllms): Step-by-step onboarding for AI agents: provision a Claimable Cloud, handle credentials safely, load Cloudinary agent tools, and find the machine-readable docs.
-- [Claimable Cloud provisioning](https://cloudinary.com/documentation/claimable_cloud_provisioning.md?referrer=rootllms): One command creates a Claimable Cloud (it becomes a free account with one product environment once claimed) on a user's behalf with no prior credentials: `npx @cloudinary/cloud`. It saves the working `CLOUDINARY_URL` credentials, the claim URL, and the expiry time to `./.env`, and prints the claim URL; pass `--ip` with the viewer's public IP address (repeatable, up to three) when the media will be viewed on a different machine, and `--email` to pre-fill the claim page. Or call the API directly: `POST https://api.cloudinary.com/v1_1/provisioning/clouds` with `delivery_ips` in the JSON body: one to three public IP addresses that media delivery is allowed from, or `["requester_ip"]` to use the calling machine's public IP (`email` optional). The response includes `cloud_name`, `api_key`, `api_secret`, `expires_at`, and `claim_url`. The credentials work right away, but until the cloud is claimed, media delivery is restricted to the `delivery_ips` addresses, so set them to where the media will actually be viewed. No terms are accepted and no payment method is attached until the user claims the cloud as a permanent account: share the claim URL with the user, who enters their email there and confirms it from a verification email. Claiming removes the delivery IP restriction and keeps the same credentials. Fully reversible: the Claimable Cloud expires automatically if not claimed within the 24-hour claim window, and the agent can then provision a new one. Full parameter and error reference: https://cloudinary.com/documentation/claimable_cloud_provisioning.md
+- [Claimable Cloud provisioning](https://cloudinary.com/documentation/claimable_cloud_provisioning.md?referrer=rootllms): One command creates a Claimable Cloud (it becomes a free account with one product environment once claimed) on a user's behalf with no prior credentials: `npx @cloudinary/cloud`. It saves the working `CLOUDINARY_URL` credentials, the claim URL, and the expiry time to `./.env`, and prints the claim URL; pass `--ip` with the viewer's public IP address (repeatable, up to three) when the media will be viewed on a different machine, and `--email` to pre-fill the claim page. Or call the API directly: `POST https://api.cloudinary.com/v1_1/provisioning/clouds` (all body parameters optional: `delivery_ips` lists up to three viewer public IP addresses that media delivery is allowed from, in addition to the calling machine's public IP, which is always included; `email` pre-fills the claim page). The response includes `cloud_name`, `api_key`, `api_secret`, `expires_at`, and `claim_url`. The credentials work right away, but until the cloud is claimed, media delivery is restricted to the calling machine's IP and any `delivery_ips` addresses, so add the addresses where the media will actually be viewed. No terms are accepted and no payment method is attached until the user claims the cloud as a permanent account: share the claim URL with the user, who enters their email there and confirms it from a verification email. Claiming removes the delivery IP restriction and keeps the same credentials. Fully reversible: the Claimable Cloud expires automatically if not claimed within the 24-hour claim window, and the agent can then provision a new one. Full parameter and error reference: https://cloudinary.com/documentation/claimable_cloud_provisioning.md
 - [SDK quick starts](https://cloudinary.com/documentation/sdk_quickstarts.md?referrer=rootllms): Get up and running with copy-paste quick starts for Node.js, Python, PHP, Java, Ruby, .NET, Go, Android, iOS, React, Vue, Angular, and more.
 - [AI agent tools and MCP servers](https://cloudinary.com/documentation/cloudinary_llm_mcp.md?referrer=rootllms): Install Cloudinary's MCP servers, agent skills, and transformation rules to let AI agents and LLMs generate reliable Cloudinary code and run real Cloudinary actions.
 - [Pricing](https://cloudinary.com/documentation/pricing.md?referrer=rootllms): Compare Free, Plus, Advanced, and custom Enterprise plans. Pricing is based on credits (a combined unit of transformations, storage, and bandwidth).

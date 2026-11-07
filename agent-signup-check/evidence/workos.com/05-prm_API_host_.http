@@ -1,14 +1,14 @@
 GET https://api.workos.com/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:08.325Z
+fetched: 2026-11-07T00:19:41.948Z
 final-url: https://api.workos.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Fri, 30 Oct 2026 16:02:06 GMT
+date: Sat, 07 Nov 2026 00:19:40 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a52ba4783bdbaee3-PDX
+cf-ray: a5682af1ef395ec1-PDX
 cf-cache-status: DYNAMIC
 etag: W/"46-Xmp0JJH9HvgA0pfe9mtavWSdM7Y"
 server: cloudflare
@@ -24,7 +24,7 @@ x-download-options: noopen
 x-envoy-upstream-service-time: 2
 x-frame-options: SAMEORIGIN
 x-permitted-cross-domain-policies: none
-x-request-id: 588041f0-1e61-43f6-a3e3-12c087f7822a
+x-request-id: 8fd9e13d-1d73-4d30-9349-a675e94096aa
 x-xss-protection: 0
 content-encoding: gzip
 

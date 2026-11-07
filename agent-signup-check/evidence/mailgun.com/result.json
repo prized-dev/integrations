@@ -1,6 +1,6 @@
 {
  "site": "mailgun.com",
- "checkedAt": "2026-10-30T16:01:35.279Z",
+ "checkedAt": "2026-11-07T00:19:14.254Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 2,
  "partial": 1,
@@ -72,7 +72,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 1169,
+   "ms": 1542,
    "redirects": 1
   },
   {
@@ -82,7 +82,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 1108,
+   "ms": 1133,
    "redirects": 1
   },
   {
@@ -92,7 +92,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 234,
+   "ms": 68,
    "redirects": 0
   },
   {
@@ -102,7 +102,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 248,
+   "ms": 347,
    "redirects": 0
   },
   {
@@ -112,7 +112,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=UTF-8",
-   "ms": 66,
+   "ms": 896,
    "redirects": 1
   },
   {
@@ -122,7 +122,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 243,
+   "ms": 54,
    "redirects": 0
   },
   {
@@ -132,7 +132,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=UTF-8",
-   "ms": 56,
+   "ms": 824,
    "redirects": 1
   },
   {
@@ -142,7 +142,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 1730,
+   "ms": 1026,
    "redirects": 1
   }
  ]

@@ -1,17 +1,17 @@
 GET https://rest.runpod.io/v1/pods
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:09.586Z
+fetched: 2026-11-07T00:18:46.396Z
 final-url: https://rest.runpod.io/v1/pods
 
 HTTP 401
-date: Fri, 30 Oct 2026 16:01:07 GMT
+date: Sat, 07 Nov 2026 00:18:43 GMT
 content-type: application/json
 content-length: 0
 connection: close
-x-request-id: req_8388f4d2-acca-459b-9b68-a0fc95ba7f48
-x-trace-id: trace_df62c7fe-f425-4925-b367-ecb2996158c1
-apigw-requestid: GELSihNwIAMEPQw=
+x-trace-id: trace_277d00c7-913c-4728-9f9f-eb3c0132e3f5
+x-request-id: req_dbd9d5a7-6d82-486d-ad52-5822f3284571
+apigw-requestid: GcYvpi5zoAMEctg=
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a52ba301ea915f03-PDX
+cf-ray: a568298ea904ef18-PDX
 

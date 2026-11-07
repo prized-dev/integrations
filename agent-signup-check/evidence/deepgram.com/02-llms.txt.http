@@ -1,24 +1,24 @@
 GET https://deepgram.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:45.232Z
+fetched: 2026-11-07T00:18:22.090Z
 final-url: https://deepgram.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 348
+age: 1318
 cache-control: public, max-age=300, s-maxage=300
 content-disposition: inline
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Fri, 30 Oct 2026 16:00:42 GMT
-etag: W/"ee894b99bd62475528a630419df3a5bb"
+date: Sat, 07 Nov 2026 00:18:19 GMT
+etag: W/"8b6a07f311c1be78539905fba255f7a0"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /api/llms
 x-nextjs-rewritten-path: /api/llms
 x-vercel-cache: STALE
-x-vercel-id: pdx1::cjltv-1793376042443-ec3d161a4e1e
+x-vercel-id: pdx1::76rnv-1794010699500-1dbebe0fc03d
 connection: close
 transfer-encoding: chunked
 

@@ -1,16 +1,16 @@
 GET https://api.vercel.com/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:48.620Z
+fetched: 2026-11-07T00:18:25.520Z
 final-url: https://api.vercel.com/.well-known/oauth-protected-resource
 
 HTTP 404
 age: 0
 cache-control: public, max-age=0, must-revalidate
 content-length: 84
-content-security-policy: default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live *.stripe.com twitter.com *.twitter.com *.google.com *.github.com *.codesandbox.io https://risk.clearbit.com wss://*.vercel.com localhost:* chrome-extension://*;script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: www.google.com www.gstatic.com *.youtube.com *.youtube-nocookie.com *.ytimg.com *.twimg.com cdn.ampproject.org *.googleapis.com *.fides-cdn.ethyca.com *.ethyca.com cdn.ethyca.com cdn.vercel-insights.com va.vercel-scripts.com si-next.vercel-scripts.com cdp.vercel.com vercel.com *.vercel.com *.vercel.sh vercel.live *.stripe.com twitter.com *.twitter.com *.google.com *.github.com *.codesandbox.io https://risk.clearbit.com wss://*.vercel.com localhost:* chrome-extension://*;child-src *.youtube.com *.youtube-nocookie.com *.stripe.com www.google.com github.com calendly.com *.vusercontent.net *.vercel.run *.tmp.now *.vercel.app vercel.com *.vercel.com *.vercel.sh vercel.live *.stripe.com twitter.com *.twitter.com *.google.com *.github.com *.codesandbox.io https://risk.clearbit.com wss://*.vercel.com localhost:* chrome-extension://*;style-src 'self' 'unsafe-inline' *.googleapis.com vercel.com *.vercel.com *.vercel.sh vercel.live *.stripe.com twitter.com *.twitter.com *.google.com *.github.com *.codesandbox.io https://risk.clearbit.com wss://*.vercel.com localhost:* chrome-extension://*;img-src * blob: data:;media-src 'self' videos.ctfassets.net user-images.githubusercontent.com replicate.delivery *.public.blob.vercel-storage.com *.private.blob.vercel-storage.com blob: data: vercel.com *.vercel.com *.vercel.sh vercel.live *.stripe.com twitter.com *.twitter.com *.google.com *.github.com *.codesandbox.io https://risk.clearbit.com wss://*.vercel.com localhost:* chrome-extension://*;connect-src wss://ws-us3.pusher.com data: * https://*.contentful.com cdp.vercel.com;font-src 'self' *.vercel.com *.gstatic.com vercel.live;frame-ancestors 'self' https://vercel.com https://app.contentful.com https://*.contentful.com https://*.vercel.sh https://*.vercel.com;worker-src 'self' *.vercel.com blob:
+content-security-policy: default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live localhost:* chrome-extension://*;script-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live localhost:* chrome-extension://* va.vercel-scripts.com *.fides-cdn.ethyca.com si-next.vercel-scripts.com 'unsafe-eval' 'unsafe-inline' blob: https://*.stripe.com https://accounts.google.com/gsi/client *.googleapis.com cdp.vercel.com;style-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live localhost:* chrome-extension://* 'unsafe-inline' https://accounts.google.com/gsi/style https://fonts.googleapis.com;img-src 'self' blob: data: vercel.com *.vercel.sh vercel.live *.vercel.com https://flag.vercel.app https://avatars.githubusercontent.com https://cdn.jsdelivr.net https://prod-uk-services-workspac-workspacefilespublicbuck-vs4gjqpqjkh6.s3.amazonaws.com https://vercel.com https://api-frameworks.vercel.sh https://api.vercel.com https://github.com https://images.ctfassets.net https://og-image.vercel.app https://cdn.cosmicjs.com https://cdn.raster.app https://img.youtube.com https://raw.githubusercontent.com https://www.datocms-assets.com https://t3.gstatic.com https://dmmcy0pwk6bqi.cloudfront.net https://basehub.earth https://7nyt0uhk7sse4zvn.public.blob.vercel-storage.com https://lishhsx6kmthaacj.public.blob.vercel-storage.com https://myyiyhf3s6nwxrpk.public.blob.vercel-storage.com https://fvqcrhkhgatlyl2m.public.blob.vercel-storage.com https://py8fhxnkzwtsqdo9.public.blob.vercel-storage.com https://*.stripe.com *.public.blob.vercel-storage.com *.private.blob.vercel-storage.com;media-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live localhost:* chrome-extension://* blob: data: videos.ctfassets.net user-images.githubusercontent.com *.public.blob.vercel-storage.com *.private.blob.vercel-storage.com;connect-src data: * wss://ws-us3.pusher.com cdp.vercel.com;font-src 'self' vercel.live *.vercel.com https://fonts.gstatic.com;child-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live localhost:* chrome-extension://* *.tmp.now https://www.youtube.com https://*.stripe.com https://accounts.google.com/gsi/;worker-src 'self' blob:;frame-ancestors 'self' https://vercel.com https://app.contentful.com https://*.contentful.com https://*.vercel.sh https://*.vercel.com;
 content-type: application/json; charset=utf-8
 cross-origin-opener-policy: restrict-properties
-date: Fri, 30 Oct 2026 16:00:47 GMT
+date: Sat, 07 Nov 2026 00:18:24 GMT
 etag: "kj134xr0hc2c"
 feature-policy: fullscreen 'self'; camera 'none'
 referrer-policy: origin-when-cross-origin
@@ -23,7 +23,7 @@ x-frame-options: DENY
 x-matched-path: /api/404
 x-vercel-cache: MISS
 x-vercel-front-api: true
-x-vercel-id: pdx1:sfo1:sfo1:sfo1:pdx1:sfo1:sfo1:sfo1::sfo1::np2rn-1793376047470-d3e506d70cd2
+x-vercel-id: pdx1:sfo1:sfo1:sfo1:pdx1:sfo1:sfo1:sfo1::sfo1::7m5v4-1794010704366-6a538b754f4c
 x-xss-protection: 0
 connection: close
 

@@ -1,22 +1,22 @@
 GET https://railway.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:51.094Z
+fetched: 2026-11-07T00:18:28.055Z
 final-url: https://railway.com/llms.txt
 
 HTTP 200
 content-security-policy: frame-ancestors 'self' https://railway.com
 content-type: text/plain; charset=utf-8
-date: Fri, 30 Oct 2026 16:00:48 GMT
-etag: W/"19e1-SNZwHiVb3ZSXWYSGnBcu4ZlawO0"
-last-modified: Thu, 29 Oct 2026 23:51:58 GMT
+date: Sat, 07 Nov 2026 00:18:25 GMT
+etag: W/"1b75-LVQPi7X8K2wiEZpm41FQgNs0G3M"
+last-modified: Fri, 06 Nov 2026 23:20:37 GMT
 server: railway-hikari
 vary: Accept-Encoding
 x-frame-options: SAMEORIGIN
 x-permitted-cross-domain-policies: none
-x-railway-request-id: HIowjP_mSsqdYd_-CYBc-A
+x-railway-request-id: EgCXCl3IRl6s3ACl0_TJvA
 content-encoding: gzip
 x-cache: DYNAMIC
-x-hikari-trace: lax1.z1hw
+x-hikari-trace: lax1.v9kt,lax1.z1hw
 x-railway-edge: lax1
 transfer-encoding: chunked
 connection: close
@@ -34,7 +34,7 @@ connection: close
 
 ## For AI Agents
 
-- [Railway for AI Agents](https://railway.com/agents.md): Critical setup instructions for agents — CLI setup with `bash <(curl -fsSL cli.new) --agents -y`, local MCP and agent skills, optional remote MCP, and core use cases (deploy, databases, volumes, functions, config).
+- [Railway for AI Coding Agents](https://railway.com/agents.md): Set up Railway in Claude Code, Codex, Cursor and other coding agents with `curl -fsSL agents.railway.com | sh` (installs the Railway CLI, agent skills and MCP server), per-agent setup for eight agents, an example session, and the operating briefing for agents: deploy, databases, volumes, functions, config.
 - [railway.com/index.md](https://railway.com/index.md): The same agent setup briefing, served at the site root
 - [Railway Remote MCP Server](https://railway.com/mcp.md): Connect AI coding agents to Railway over OAuth — no local install, no CLI login, no token files
 - [Authenticating to Railway](https://railway.com/auth.md): The four ways to hold a Railway credential — CLI login, remote MCP over OAuth, public API tokens, and Login with Railway — with the exact headers to send
@@ -64,6 +64,10 @@ connection: close
 - [Railway Templates](https://railway.com/llms-templates.md): One-click deploy templates with architecture details, service configs, and READMEs
 - [Railway Product Changelog](https://railway.com/llms-changelog.md): Product changelog entries with titles, dates, and links
 - [Railway Changelog Index](https://railway.com/changelog.md): Product updates ordered by date; individual entries are available at /changelog/<slug>.md
+
+## Guides
+
+- [Railway Guides](https://railway.com/guides.md): Tutorials, comparisons, and best practices for everything that runs on Railway: every topic with its newest guides, then every guide, with summaries. Each topic is also available at /guides/topics/<slug>.md and each guide at /guides/<slug>.md
 
 ## Programs & Events
 

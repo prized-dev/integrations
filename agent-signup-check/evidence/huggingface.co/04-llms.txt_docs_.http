@@ -1,28 +1,28 @@
 GET https://huggingface.co/docs/hub/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:39.377Z
+fetched: 2026-11-07T00:18:15.347Z
 final-url: https://huggingface.co/docs/hub/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Fri, 30 Oct 2026 16:00:37 GMT
+date: Sat, 07 Nov 2026 00:18:13 GMT
 content-encoding: gzip
-etag: W/"57de-SpPpELqM9hAp++2Epqv3fKMn+sI"
+etag: W/"5842-K7Zh97YFUNWcwgrOqpVJXQUQLMo"
 x-powered-by: huggingface-moon
-x-request-id: Root=1-6ae4bf25-094b6c490a41909464455918
-ratelimit: "pages";r=97;t=289
+x-request-id: Root=1-6aee6e45-453a2a476d2472ad18df6142
+ratelimit: "pages";r=97;t=70
 ratelimit-policy: "fixed window";"pages";q=100;w=300
 cross-origin-opener-policy: same-origin
 referrer-policy: strict-origin-when-cross-origin
 content-language: en
 vary: Accept-Encoding
 x-cache: Miss from cloudfront
-via: 1.1 a1f8044693d3f7f5c5e4c6cb7ec5cb9c.cloudfront.net (CloudFront)
+via: 1.1 72c969c05a55c9f561d81ee951899f80.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: PzR3o0ySn2RjAMxhxvZKu_XZoCuXQGtKcuarWprfAWhIPKQCc50gdg==
+x-amz-cf-id: zFuTVs6sPYOVval2O4sqebADV_3lKQYWnlagncsKy64A-Pg6s6az_g==
 strict-transport-security: max-age=31536000
 
 # Hub
@@ -91,6 +91,7 @@ strict-transport-security: max-age=31536000
 - [Daft](https://huggingface.co/docs/hub/datasets-daft.md)
 - [Hugging Face MCP Server](https://huggingface.co/docs/hub/agents-mcp.md)
 - [Model Cards](https://huggingface.co/docs/hub/model-cards.md)
+- [Migrating Data to Storage Buckets](https://huggingface.co/docs/hub/storage-buckets-migration.md)
 - [Using _Adapters_ at Hugging Face](https://huggingface.co/docs/hub/adapters.md)
 - [Webhook guide: Process new files in a bucket with Jobs](https://huggingface.co/docs/hub/webhooks-guide-bucket-jobs.md)
 - [Organization cards](https://huggingface.co/docs/hub/organizations-cards.md)

@@ -1,13 +1,13 @@
 GET https://docs.aws.amazon.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:05.409Z
+fetched: 2026-11-07T00:18:42.256Z
 final-url: https://docs.aws.amazon.com/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Fri, 30 Oct 2026 15:55:15 GMT
+date: Sat, 07 Nov 2026 00:09:31 GMT
 content-encoding: gzip
 server: Server
 cache-control: max-age=600
@@ -16,15 +16,15 @@ strict-transport-security: max-age=47304000; includeSubDomains
 x-xss-protection: 1; mode=block
 x-content-type-options: nosniff, nosniff
 content-security-policy: upgrade-insecure-requests;      script-src 'self' 'unsafe-inline' blob:        *.awsstatic.com        *.cdn.uis.awsstatic.com        *.cdn.console.awsstatic.com        d2c.aws.amazon.com        a0.awsstatic.com        *.feedback.console.aws.dev        *.shortbread.aws.dev        *.awswaf.com        *.contentsquare.net        app.contentsquare.com;      object-src 'none';
-last-modified: Fri, 30 Oct 2026 14:47:10 GMT
+last-modified: Fri, 06 Nov 2026 21:56:38 GMT
 accept-ranges: bytes
-etag: "1OUqxkQtc8BPn9ZxpikWOwBdkdA=-gzip"
+etag: "hO6Rw2cq2kMJ8eOgY0W0uzcvyiY=-gzip"
 vary: Accept-Encoding
 x-cache: Hit from cloudfront
-via: 1.1 e765e4220a4552156eaeff06c1304e0c.cloudfront.net (CloudFront)
+via: 1.1 11017c4db22106ac70e16ce75190a430.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P4
-x-amz-cf-id: fDDhniw49Gs9hxVks9NzK6lZs0-XUgAOEl_2FEcddUxe2HLNyD5ukg==
-age: 348
+x-amz-cf-id: wzELPu2_j3DaXWUdDgyctZiP8Ci2HqouHV5M51ki8cKh63IE0PVBfw==
+age: 549
 
 # Amazon Web Services (AWS) Documentation
 > This file provides structured access to AWS service documentation for large language models. Each section represents a service landing page with links to key documentation resources.
@@ -147,6 +147,8 @@ age: 348
 
 - [IAM Access Analyzer API Reference](https://docs.aws.amazon.com/access-analyzer/latest/APIReference/Welcome.md): AWS Identity and Access Management Access Analyzer helps you to set, verify, and refine your IAM policies by providing a suite of capabilities. [llms.txt](https://docs.aws.amazon.com/access-analyzer/latest/APIReference/llms.txt)
 
+- [Account Access Runtime API Reference](https://docs.aws.amazon.com/account-access-runtime/latest/APIReference/Welcome.md): Use the Account Access Runtime API to list the roles that you can access and retrieve temporary Amazon Web Services credentials for those roles. [llms.txt](https://docs.aws.amazon.com/account-access-runtime/latest/APIReference/llms.txt)
+
 - [Account access manager API Reference](https://docs.aws.amazon.com/account-access/latest/APIReference/Welcome.md): Account access manager enables you to manage applications and entitlements that grant IAM Identity Center principals access to IAM roles across accounts. [llms.txt](https://docs.aws.amazon.com/account-access/latest/APIReference/llms.txt)
 
 - [AWS Account Management API Reference](https://docs.aws.amazon.com/accounts/latest/APIReference/Welcome.md): The API operations in the Account Management (account) namespace enable you to modify your AWS account. [llms.txt](https://docs.aws.amazon.com/accounts/latest/APIReference/llms.txt)
@@ -258,6 +260,8 @@ age: 348
 - [AWS Artifact Welcome](https://docs.aws.amazon.com/artifact/latest/APIReference/Welcome.md): This reference provides descriptions of the low-level AWS Artifact Service API. [llms.txt](https://docs.aws.amazon.com/artifact/latest/APIReference/llms.txt)
 
 - [AWS Artifact User Guide](https://docs.aws.amazon.com/artifact/latest/ug/what-is-aws-artifact.md): Use AWS Artifact to download AWS security and compliance reports and other AWS published documents, and to manage agreements with AWS. [llms.txt](https://docs.aws.amazon.com/artifact/latest/ug/llms.txt)
+
+- [AWS assistant User Guide](https://docs.aws.amazon.com/assistant/latest/userguide/what-is.md): Learn how the AWS assistant helps you learn about AWS, understand your resources and costs, and troubleshoot problems. [llms.txt](https://docs.aws.amazon.com/assistant/latest/userguide/llms.txt)
 
 - [Amazon Athena API Reference](https://docs.aws.amazon.com/athena/latest/APIReference/Welcome.md): Amazon Athena is an interactive query service that lets you use standard SQL to analyze data directly in Amazon S3. [llms.txt](https://docs.aws.amazon.com/athena/latest/APIReference/llms.txt)
 
@@ -582,8 +586,6 @@ age: 348
 - [Amazon Corretto 21 Corretto 21 User Guide](https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/what-is-corretto-21.md): User guide for Amazon Corretto 21, the Amazon version of OpenJDK. [llms.txt](https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/llms.txt)
 
 - [Amazon Corretto 25 Corretto 25 User Guide](https://docs.aws.amazon.com/corretto/latest/corretto-25-ug/what-is-corretto-25.md): User guide for Amazon Corretto 25, the Amazon version of OpenJDK. [llms.txt](https://docs.aws.amazon.com/corretto/latest/corretto-25-ug/llms.txt)
-
-- [Amazon Corretto 26 Corretto 26 User Guide](https://docs.aws.amazon.com/corretto/latest/corretto-26-ug/what-is-corretto-26.md): User guide for Amazon Corretto 26, the Amazon version of OpenJDK. [llms.txt](https://docs.aws.amazon.com/corretto/latest/corretto-26-ug/llms.txt)
 
 - [Amazon Corretto 27 Corretto 27 User Guide](https://docs.aws.amazon.com/corretto/latest/corretto-27-ug/what-is-corretto-27.md): User guide for Amazon Corretto 27, the Amazon version of OpenJDK. [llms.txt](https://docs.aws.amazon.com/corretto/latest/corretto-27-ug/llms.txt)
 
@@ -935,7 +937,7 @@ age: 348
 
 - [AWS Regions and Availability Zones User Guide](https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions-availability-zones.md): Learn about concepts related to AWS Regions and Availability Zones. [llms.txt](https://docs.aws.amazon.com/global-infrastructure/latest/regions/llms.txt)
 
-- [AWS Glossary Reference](https://docs.aws.amazon.com/glossary/latest/reference/glos-chap.md): | | | | | | | | | | | | | | | | | | | | | | | |
+- [AWS Glossary Reference](https://docs.aws.amazon.com/glossary/latest/reference/glos-chap.md): Numbers and symbols | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X, Y, Z
 
 - [AWS Glue User Guide](https://docs.aws.amazon.com/glue/latest/dg/what-is-glue.md): Overview of AWS Glue, which provides a serverless environment to extract, transform, and load (ETL) data from AWS data sources to a target. [llms.txt](https://docs.aws.amazon.com/glue/latest/dg/llms.txt)
 
@@ -1213,7 +1215,7 @@ age: 348
 
 - [AWS Lambda Web API Reference](https://docs.aws.amazon.com/lambda/latest/lambda-web/Welcome.md): AWS Lambda Web Functions is a capability of AWS Lambda that you can use to run web applications and API backends as serverless HTTP servers. [llms.txt](https://docs.aws.amazon.com/lambda/latest/lambda-web/llms.txt)
 
-- [AWS Lambda MicroVMs API Reference](https://docs.aws.amazon.com/lambda/latest/microvm-api/Welcome.md): Provides APIs to create, manage, and operate AWS Lambda MicroVMs and their associated MicroVM Image environments. [llms.txt](https://docs.aws.amazon.com/lambda/latest/microvm-api/llms.txt)
+- [AWS Lambda MicroVMs API Reference](https://docs.aws.amazon.com/lambda/latest/microvm-api/Welcome.md): AWS Lambda MicroVMs provides APIs to create, manage, and operate MicroVMs and their associated MicroVM Image environments. [llms.txt](https://docs.aws.amazon.com/lambda/latest/microvm-api/llms.txt)
 
 - [AWS Launch Wizard Welcome](https://docs.aws.amazon.com/launchwizard/latest/APIReference/Welcome.md): AWS Launch Wizard offers a guided way of sizing, configuring, and deploying AWS resources for third party applications, such as Microsoft SQL Server Always On and HANA based SAP systems, without the need to manually identify and provision individual AWS resources. [llms.txt](https://docs.aws.amazon.com/launchwizard/latest/APIReference/llms.txt)
 
@@ -1258,10 +1260,6 @@ age: 348
 - [Amazon Location Service Amazon Location Service](https://docs.aws.amazon.com/location/previous/APIReference/Welcome.md): "Suite of geospatial services including Maps, Places, Routes, Tracking, and Geofencing" [llms.txt](https://docs.aws.amazon.com/location/previous/APIReference/llms.txt)
 
 - [Amazon Location Service Developer Guide](https://docs.aws.amazon.com/location/previous/developerguide/what-is-previous.md): Amazon Location Service is a geolocation service that developers can use to add location features into apps that can react to events. [llms.txt](https://docs.aws.amazon.com/location/previous/developerguide/llms.txt)
-
-- [Amazon Lookout for Equipment User Guide](https://docs.aws.amazon.com/lookout-for-equipment/latest/ug/what-is.md): Insert abstract text. [llms.txt](https://docs.aws.amazon.com/lookout-for-equipment/latest/ug/llms.txt)
-
-- [Amazon Lookout for Equipment User Guide](https://docs.aws.amazon.com/lookout-for-equipment/latest/userguide/what-is.md): Insert abstract text. [llms.txt](https://docs.aws.amazon.com/lookout-for-equipment/latest/userguide/llms.txt)
 
 - [AWS Mainframe Modernization API Reference](https://docs.aws.amazon.com/m2/latest/APIReference/Welcome.md) [llms.txt](https://docs.aws.amazon.com/m2/latest/APIReference/llms.txt)
 

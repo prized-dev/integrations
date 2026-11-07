@@ -1,15 +1,15 @@
 GET https://api.e2b.dev/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:47.196Z
+fetched: 2026-11-07T00:18:23.575Z
 final-url: https://api.e2b.dev/.well-known/oauth-protected-resource
 
 HTTP 404
 content-type: application/json; charset=utf-8
 vary: Origin
-date: Fri, 30 Oct 2026 16:00:45 GMT
+date: Sat, 07 Nov 2026 00:18:22 GMT
 content-length: 74
 x-ratelimit-limit: 60000
-x-ratelimit-remaining: 59999
+x-ratelimit-remaining: 60000
 x-ratelimit-reset: 0
 via: 1.1 google
 alt-svc: h3=":443"; ma=2592000

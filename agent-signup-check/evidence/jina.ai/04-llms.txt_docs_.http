@@ -1,10 +1,10 @@
 GET https://docs.jina.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:54.445Z
+fetched: 2026-11-07T00:19:27.381Z
 final-url: https://docs.jina.ai/llms.txt
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:01:52 GMT
+date: Sat, 07 Nov 2026 00:19:25 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -29,7 +29,7 @@ x-debug-is-browser: false
 x-debug-referrer: 
 x-debug-user-agent: prizedagentsignupcheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only get)
 x-documentation-type: implementation-guide
-x-generated-at: 2026-10-30T16:01:52.665Z
+x-generated-at: 2026-11-07T00:19:25.364Z
 x-guide-sections: core-apis,recommended-patterns,integration-guidelines,anti-patterns,limitations
 x-human-access: not-intended
 x-implementation-patterns: basic-search,rag-pipeline,fact-checking,classification,content-processing
@@ -44,11 +44,11 @@ x-robots-tag: noindex, follow
 x-signup-url: https://jina.ai/?sui=apikey
 x-supported-features: semantic-search,rag,fact-verification,webscraping,classification,content-processing,multilingual,multimodal
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=bFSgu%2BrV7PuD8oOPKgsuQ8syQiyI0Y0n%2BM7nMTAsMMdkLhqcF5H0lTW3nthSGtaZIQ5cXmb2pT6mYQWLrD%2ByR4rYktrBCZ6%2Bto12KbTfFDabZvL%2Bjzw3Yr6%2FMn49AQ%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=2VUY6KaVKGVH2OaiFI98lBOZZL67sHYt9ZvXgJZYe%2FzrG57d7shBlMEQdTLdDwgw2o8cA0r1oMGpQMWf1%2FVOk%2BUSnSmn26HKtaU3R1ErVInatzsWBAGPNnRdJrmoJA%3D%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 content-encoding: br
 server: cloudflare
-cf-ray: a52ba41dcc120bee-PDX
+cf-ray: a5682a923e305ee0-PDX
 alt-svc: h3=":443"; ma=86400
 
 You are an AI engineer designed to help users use Jina AI Search Foundation API's for their specific use case.

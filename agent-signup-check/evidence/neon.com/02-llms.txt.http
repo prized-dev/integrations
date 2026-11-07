@@ -1,24 +1,24 @@
 GET https://neon.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:18.333Z
+fetched: 2026-11-07T00:18:53.299Z
 final-url: https://neon.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 349
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Fri, 30 Oct 2026 16:01:15 GMT
-etag: W/"e5a043b80ce089d80eaa17c4f215c5d8"
-last-modified: Fri, 30 Oct 2026 15:55:26 GMT
+date: Sat, 07 Nov 2026 00:18:49 GMT
+etag: W/"7b32d2d028233527303bd63697d63252"
+last-modified: Sat, 07 Nov 2026 00:18:49 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /docs/llms.txt
 x-nextjs-rewritten-path: /docs/llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::vb2fq-1793376075699-a21340b845a3
+x-vercel-cache: MISS
+x-vercel-id: pdx1::f4wzc-1794010729551-96f91f6aff57
 connection: close
 transfer-encoding: chunked
 
@@ -26,9 +26,9 @@ transfer-encoding: chunked
 
 > Neon is a complete set of cloud backend primitives built around Lakebase Postgres, for developers, startups, and agent platforms, from Databricks. Services include Lakebase Postgres, Managed Better Auth, Realtime, Data API, Functions, Object Storage, AI Gateway. Lakebase Postgres on Neon includes autoscaling, instant restore, and scale-to-zero, with native branching, realtime and a fully reactive DX and works with any language, framework, or ORM that supports Postgres.
 
-**Get started.** Sign up for Neon or sign into an existing account. If the user cannot create an account right now, follow [Claimable Neon](https://neon.com/auth.md) to provision a Postgres project without signup. A human claims it later.
+**Get started.** The user needs a Neon account. If they cannot create one right now, [Claimable Neon](https://neon.com/auth.md) provisions a Postgres project without signup, and the user claims it later.
 
-If a Neon account is available, set things up locally by installing the Neon CLI and running the project init command to install the agent skills and creating/linking a Neon project:
+With an account, these commands install the Neon CLI, sign in, and run `neon init`, which installs the agent skills and creates or links a Neon project. Check with the user before running them:
 
 ```bash
 npm i -g neon
@@ -37,6 +37,8 @@ neon auth
 # in the project folder init Neon
 neon init
 ```
+
+To add only the agent skills to this project, offer `npx neon@latest skills -y`.
 
 Neon docs are available as markdown. Append `.md` to any doc URL or set `Accept: text/markdown`. This is the primary index. Sections with many pages show key pages and link to full sub-indexes.
 
@@ -82,7 +84,6 @@ First-time setup: org/project creation, connection strings, driver installation,
 - [Built to scale](https://neon.com/docs/get-started/production-readiness.md): Neon supports you from prototype to scale-up
 - [Connecting Neon to your stack](https://neon.com/docs/get-started/connect-neon.md): Learn how to integrate Neon into your application
 - [Database branching workflow primer](https://neon.com/docs/get-started/workflow-primer.md): An introduction to integrating Postgres branching into your development workflow
-- [Get started with your AI agent](https://neon.com/docs/get-started/with-an-agent.md): Set up Neon in your project using your AI coding assistant
 - [Getting ready for production](https://neon.com/docs/get-started/production-checklist.md): Guidelines to optimize price, performance, and reliability
 - [How a Neon backend fits together](https://neon.com/docs/get-started/backend-overview.md): Postgres, Object Storage, Functions, the AI Gateway, Auth, and the Data API, declared in one neon.ts and branched together
 - [Neon framework guides](https://neon.com/docs/get-started/frameworks.md): Find detailed instructions for connecting to Neon from various frameworks
@@ -110,7 +111,7 @@ Drivers, connection strings, pooling, local dev tooling, and troubleshooting.
 
 Install: `npm i -g neon`. Use this for terminal-first workflows, scripts, and CI/CD automation with `neon`.
 
-- [All 49 Neon CLI pages](https://neon.com/docs/cli/llms.txt) — key pages below
+- [All 50 Neon CLI pages](https://neon.com/docs/cli/llms.txt) — key pages below
 
 - [Neon CLI](https://neon.com/docs/cli.md): The Neon command-line interface: every command, with options and examples
 - [Neon CLI quickstart](https://neon.com/docs/cli/quickstart.md): Get set up with the Neon CLI in just a few steps
@@ -125,12 +126,12 @@ Install: `npm i -g neon`. Use this for terminal-first workflows, scripts, and CI
 
 Agent Skills, MCP integrations, vector search, and tools for building AI-powered applications with Neon.
 
-- [All 22 AI & Agents pages](https://neon.com/docs/ai/llms.txt) — key pages below
+- [All 24 AI & Agents pages](https://neon.com/docs/ai/llms.txt) — key pages below
 
 - [Neon MCP Server overview](https://neon.com/docs/ai/neon-mcp-server.md): Connect your AI assistant to Neon to manage projects, run queries, and make schema changes
-- [Connect MCP clients to Neon](https://neon.com/docs/ai/connect-mcp-clients-to-neon.md): Connect MCP clients like Cursor, Claude Code, VS Code, and ChatGPT to your Lakebase Postgres database on Neon.
+- [Set up other agents and MCP clients](https://neon.com/docs/ai/connect-mcp-clients-to-neon.md): Install Neon's agent skills and the Neon MCP Server in Devin Desktop, Cline, Zed, Gemini CLI, Kiro, Kimi Code, and other agents
 - [Agent Skills](https://neon.com/docs/ai/agent-skills.md): Teach your AI coding assistant how to work with Neon
-- [Claude Code plugin for Neon](https://neon.com/docs/ai/ai-claude-code-plugin.md)
+- [Set up your AI agent for Neon](https://neon.com/docs/ai/agent-setup.md): Connect Neon to your coding agent or chat app
 - [Lakebase Search](https://neon.com/docs/ai/lakebase-search.md): Scalable vector and full-text search for Postgres
 - [Database versioning with snapshots](https://neon.com/docs/ai/ai-database-versioning.md): How AI agents and codegen platforms implement database version control using snapshots and preview branches
 
@@ -150,7 +151,7 @@ Managed authentication built on Better Auth that branches with your database.
 
 Long-running serverless compute, close to your database.
 
-- [All 18 Neon Functions pages](https://neon.com/docs/compute/llms.txt) — key pages below
+- [All 19 Neon Functions pages](https://neon.com/docs/compute/llms.txt) — key pages below
 
 - [Neon Functions](https://neon.com/docs/compute/functions/overview.md): Long-running serverless functions on your Neon branch, next to your data.
 - [Get started with Neon Functions](https://neon.com/docs/compute/functions/get-started.md): Deploy your first Neon Function and call it over HTTP.
@@ -200,7 +201,7 @@ Realtime reactivity on standard Postgres. Live SQL API makes any SQL query live 
 
 - [All 16 Realtime pages](https://neon.com/docs/realtime/llms.txt) — key pages below
 
-- [Neon Realtime](https://neon.com/docs/realtime/overview.md): Realtime live SQL and reactive DX for building apps and agents.
+- [Neon Realtime](https://neon.com/docs/realtime/overview.md): Live queries that update your app's UI the moment your data changes.
 - [Quickstart](https://neon.com/docs/realtime/quickstart.md): Get started with Realtime.
 - [How it works](https://neon.com/docs/realtime/how-it-works.md)
 - [Next.js example](https://neon.com/docs/realtime/examples/nextjs.md): Full-stack example app using Realtime with Next.js.
@@ -239,7 +240,7 @@ Projects, branches, computes, roles, databases, and organization settings.
 
 Step-by-step integration guides for frameworks, ORMs, auth providers, and deployment platforms.
 
-- [All 170 Guides pages](https://neon.com/docs/guides/llms.txt) — key pages below
+- [All 163 Guides pages](https://neon.com/docs/guides/llms.txt) — key pages below
 
 - [Connect a Next.js application to Neon](https://neon.com/docs/guides/nextjs.md): Set up a Neon project in seconds and connect from a Next.js application
 - [Connect from Prisma to Neon](https://neon.com/docs/guides/prisma.md): Learn how to connect to Neon from Prisma
@@ -281,7 +282,7 @@ API reference, SDKs, Terraform provider, Postgres compatibility, and platform-le
 - [Effect bindings for the Neon SDK](https://neon.com/docs/reference/effect-sdk.md): Use the Neon Management SDK with Effect v4 — every call an Effect, every paginated list a Stream, with tagged errors and interruption.
 - [Get started with the Neon API](https://neon.com/docs/reference/api/get-started.md): Create an API key and make your first authenticated request.
 - [Manage Neon with Terraform](https://neon.com/docs/reference/terraform.md): Use Terraform to provision and manage your Neon projects, branches, endpoints, roles, databases, and other resources as code.
-- [Managed Better Auth and Data API SDK](https://neon.com/docs/reference/javascript-sdk.md): Reference documentation for @neondatabase/neon-js (authentication and Data API database queries)
+- [Managed Better Auth and Data API SDK](https://neon.com/docs/reference/javascript-sdk.md): Reference documentation for @neon/neon-js (authentication and Data API database queries)
 - [Metrics and logs reference](https://neon.com/docs/reference/metrics-logs.md): Complete reference for all metrics and log fields exported by Neon
 - [Migrate from @neondatabase/api-client to @neon/sdk](https://neon.com/docs/reference/migrate-api-client-to-sdk.md): Move Platform API automation from the legacy Axios client to the official fetch-based SDK
 - [Neon API](https://neon.com/docs/reference/api.md): Manage Neon projects, branches, and backend services over HTTP.
@@ -362,8 +363,8 @@ Contributor guides, component architecture, and documentation standards.
 
 - [Changelog](https://neon.com/docs/changelog): Latest updates and releases
 - [PostgreSQL Tutorial](https://neon.com/postgresql/tutorial): Comprehensive PostgreSQL tutorial and reference
-- [Community Guides](https://neon.com/guides): Step-by-step tutorials for frameworks and tools
-- [FAQs](https://neon.com/faqs): Frequently asked questions about Neon
+- [Community Guides](https://neon.com/guides.md): Step-by-step tutorials for frameworks and tools
+- [FAQs](https://neon.com/faqs): Short answers about building on Neon: Postgres, Auth, Object Storage, Functions, AI Gateway, pricing, and comparisons
 - [Glossary](https://neon.com/docs/reference/glossary.md)
 - [Blog](https://neon.com/blog.md): Engineering, product, and community posts from the Neon team
 - [neondatabase/website](https://github.com/neondatabase/website): Source for neon.com and these docs, with AGENTS.md for coding agents

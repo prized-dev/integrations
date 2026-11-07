@@ -1,14 +1,14 @@
 GET https://linear.app/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:05.280Z
+fetched: 2026-11-07T00:19:38.765Z
 final-url: https://linear.app/llms.txt
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:02:03 GMT
+date: Sat, 07 Nov 2026 00:19:36 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a52ba4631ae0b8b9-PDX
+cf-ray: a5682adb4dbfff03-PDX
 cf-cache-status: DYNAMIC
 cache-control: private, no-cache, no-store, max-age=0, must-revalidate
 content-encoding: gzip
@@ -35,9 +35,10 @@ Each page on linear.app is also available as Markdown. Add `.md` to the URL (use
 - [/ai](https://linear.app/ai.md)
 - [/careers](https://linear.app/careers.md)
 - [/changelog](https://linear.app/changelog.md)
-- [/coding-sessions](https://linear.app/coding-sessions.md)
+- [/coding-agent](https://linear.app/coding-agent.md)
 - [/resource-kit](https://linear.app/resource-kit.md)
 - [/contact](https://linear.app/contact.md)
+- [/contact/demo](https://linear.app/contact/demo.md)
 - [/contact/sales](https://linear.app/contact/sales.md)
 - [/contact/support](https://linear.app/contact/support.md)
 - [/customers](https://linear.app/customers.md)
@@ -84,59 +85,60 @@ Get an overview of Linear's features, integrations, and how to use them.
 ### Getting started
 
 - [Start Guide](https://linear.app/docs/start-guide.md)
-- [Concepts](https://linear.app/docs/conceptual-model.md)
-- [Download Linear](https://linear.app/docs/get-the-app.md)
+  - [Concepts](https://linear.app/docs/conceptual-model.md)
+  - [Download Linear](https://linear.app/docs/get-the-app.md)
 
 ### Intake
 
 - [Triage](https://linear.app/docs/triage.md)
 - [Linear Asks](https://linear.app/docs/linear-asks.md)
-- [Asks with Slack](https://linear.app/docs/linear-asks-slack.md)
-- [Asks with Email](https://linear.app/docs/linear-asks-email.md)
-- [Asks Web Forms](https://linear.app/docs/linear-asks-web-forms.md)
+  - [Asks with Slack](https://linear.app/docs/linear-asks-slack.md)
+  - [Asks with Email](https://linear.app/docs/linear-asks-email.md)
+  - [Asks Web Forms](https://linear.app/docs/linear-asks-web-forms.md)
 - [Customer Requests](https://linear.app/docs/customer-requests.md)
 
-### Projects and initiatives
+### Planning
 
 - [Projects](https://linear.app/docs/projects.md)
-- [Project milestones](https://linear.app/docs/project-milestones.md)
-- [Project priority](https://linear.app/docs/project-priority.md)
-- [Project status](https://linear.app/docs/project-status.md)
-- [Project labels](https://linear.app/docs/project-labels.md)
-- [Project dependencies](https://linear.app/docs/project-dependencies.md)
-- [Project notifications](https://linear.app/docs/project-notifications.md)
-- [Project templates](https://linear.app/docs/project-templates.md)
+  - [Project milestones](https://linear.app/docs/project-milestones.md)
+  - [Project priority](https://linear.app/docs/project-priority.md)
+  - [Project status](https://linear.app/docs/project-status.md)
+  - [Project labels](https://linear.app/docs/project-labels.md)
+  - [Project dependencies](https://linear.app/docs/project-dependencies.md)
+  - [Project notifications](https://linear.app/docs/project-notifications.md)
+  - [Project templates](https://linear.app/docs/project-templates.md)
 - [Initiatives](https://linear.app/docs/initiatives.md)
-- [Sub-initiatives](https://linear.app/docs/sub-initiatives.md)
+  - [Sub-initiatives](https://linear.app/docs/sub-initiatives.md)
 - [Initiative and project updates](https://linear.app/docs/initiative-and-project-updates.md)
 
 ### Issues and cycles
 
 - [Issues](https://linear.app/docs/creating-issues.md)
-- [Assign and delegate issues](https://linear.app/docs/assigning-issues.md)
-- [Issue properties](https://linear.app/docs/issue-properties-home.md)
-- [Select issues](https://linear.app/docs/select-issues.md)
-- [Parent and sub-issues](https://linear.app/docs/parent-and-sub-issues.md)
-- [Issue templates](https://linear.app/docs/issue-templates.md)
-- [Comments and reactions](https://linear.app/docs/comment-on-issues.md)
-- [Delete and archive issues](https://linear.app/docs/delete-archive-issues.md)
+  - [Issue properties](https://linear.app/docs/issue-properties-home.md)
+  - [Parent and sub-issues](https://linear.app/docs/parent-and-sub-issues.md)
+  - [Assign and delegate issues](https://linear.app/docs/assigning-issues.md)
+  - [Issue templates](https://linear.app/docs/issue-templates.md)
+  - [Comments and reactions](https://linear.app/docs/comment-on-issues.md)
+  - [Select issues](https://linear.app/docs/select-issues.md)
+  - [Delete and archive issues](https://linear.app/docs/delete-archive-issues.md)
 - [Cycles](https://linear.app/docs/use-cycles.md)
-
-### Coding and review
-
-- [Coding sessions](https://linear.app/docs/coding-sessions.md)
-- [Reviews](https://linear.app/docs/diffs.md)
 - [Releases](https://linear.app/docs/releases.md)
+
+### Reviews
+
+- [Reviews](https://linear.app/docs/diffs.md)
 - [Coding settings](https://linear.app/docs/code-and-reviews.md)
 
 ### Agents and automation
 
 - [Linear Agent](https://linear.app/docs/linear-agent.md)
+  - [Code Intelligence](https://linear.app/docs/code-intelligence.md)
+- [Linear cloud coding agent](https://linear.app/docs/linear-cloud-coding-agent.md)
 - [Loops](https://linear.app/docs/loops.md)
-- [AI Agents](https://linear.app/docs/agents-in-linear.md)
+- [Agent platform](https://linear.app/docs/agents-in-linear.md)
 - [Triage Intelligence](https://linear.app/docs/triage-intelligence.md)
-- [Code Intelligence](https://linear.app/docs/code-intelligence.md)
 - [MCP server](https://linear.app/docs/mcp.md)
+- [MCP connectors](https://linear.app/docs/connect-mcp-servers.md)
 
 ### Insights and outcomes
 
@@ -148,51 +150,51 @@ Get an overview of Linear's features, integrations, and how to use them.
 ### Working in Linear
 
 - [Inbox](https://linear.app/docs/inbox.md)
-- [My issues](https://linear.app/docs/my-issues.md)
+- [Documents](https://linear.app/docs/documents.md)
 - [Pulse](https://linear.app/docs/pulse.md)
+- [Custom Views](https://linear.app/docs/custom-views.md)
+  - [Board layout](https://linear.app/docs/board-layout.md)
+  - [Timeline](https://linear.app/docs/timeline.md)
+  - [Filters](https://linear.app/docs/filters.md)
+  - [Display options](https://linear.app/docs/display-options.md)
+- [Editor](https://linear.app/docs/editor.md)
+- [Search](https://linear.app/docs/search.md)
+- [My issues](https://linear.app/docs/my-issues.md)
 - [Favorites](https://linear.app/docs/favorites.md)
 - [Notifications](https://linear.app/docs/notifications.md)
 - [Preferences](https://linear.app/docs/account-preferences.md)
 - [Profile](https://linear.app/docs/profile.md)
-- [Documents](https://linear.app/docs/documents.md)
-- [Board layout](https://linear.app/docs/board-layout.md)
-- [Timeline](https://linear.app/docs/timeline.md)
-- [Custom Views](https://linear.app/docs/custom-views.md)
-- [Editor](https://linear.app/docs/editor.md)
-- [Search](https://linear.app/docs/search.md)
-- [Filters](https://linear.app/docs/filters.md)
-- [Display options](https://linear.app/docs/display-options.md)
 - [Security & Access](https://linear.app/docs/security-and-access.md)
 
 ### Integrations
 
-- [Integration Directory](https://linear.app/docs/integration-directory.md)
-- [Airbyte](https://linear.app/docs/airbyte.md)
-- [Discord](https://linear.app/docs/discord.md)
-- [Figma](https://linear.app/docs/figma.md)
-- [Front](https://linear.app/docs/front.md)
 - [GitHub](https://linear.app/docs/github-integration.md)
-- [GitLab](https://linear.app/docs/gitlab.md)
-- [Google Sheets](https://linear.app/docs/google-sheets.md)
-- [Gong](https://linear.app/docs/gong.md)
-- [Intercom](https://linear.app/docs/intercom.md)
 - [Jira](https://linear.app/docs/jira.md)
 - [Microsoft Teams](https://linear.app/docs/microsoft-teams.md)
-- [Notion](https://linear.app/docs/notion.md)
-- [Origin](https://linear.app/docs/origin.md)
-- [Salesforce](https://linear.app/docs/salesforce.md)
 - [Sentry](https://linear.app/docs/sentry.md)
 - [Slack](https://linear.app/docs/slack.md)
-- [Zapier](https://linear.app/docs/zapier.md)
-- [Zendesk](https://linear.app/docs/zendesk.md)
+- [Integration Directory](https://linear.app/docs/integration-directory.md)
+  - [Zendesk](https://linear.app/docs/zendesk.md)
+  - [Intercom](https://linear.app/docs/intercom.md)
+  - [Salesforce](https://linear.app/docs/salesforce.md)
+  - [Google Sheets](https://linear.app/docs/google-sheets.md)
+  - [GitLab](https://linear.app/docs/gitlab.md)
+  - [Figma](https://linear.app/docs/figma.md)
+  - [Gong](https://linear.app/docs/gong.md)
+  - [Airbyte](https://linear.app/docs/airbyte.md)
+  - [Zapier](https://linear.app/docs/zapier.md)
+  - [Notion](https://linear.app/docs/notion.md)
+  - [Origin](https://linear.app/docs/origin.md)
+  - [Discord](https://linear.app/docs/discord.md)
+  - [Front](https://linear.app/docs/front.md)
 
-### Administration
+### Workspace management
 
 - [Workspaces](https://linear.app/docs/workspaces.md)
 - [Teams](https://linear.app/docs/teams.md)
-- [Team pages](https://linear.app/docs/default-team-pages.md)
-- [Private teams](https://linear.app/docs/private-teams.md)
-- [Sub-teams](https://linear.app/docs/sub-teams.md)
+  - [Private teams](https://linear.app/docs/private-teams.md)
+  - [Sub-teams](https://linear.app/docs/sub-teams.md)
+  - [Team pages](https://linear.app/docs/default-team-pages.md)
 - [Login methods](https://linear.app/docs/login-methods.md)
 - [Invite members](https://linear.app/docs/invite-members.md)
 - [Members and roles](https://linear.app/docs/members-roles.md)
@@ -204,18 +206,18 @@ Get an overview of Linear's features, integrations, and how to use them.
 - [Audit log](https://linear.app/docs/audit-log.md)
 - [Billing and plans](https://linear.app/docs/billing-and-plans.md)
 - [AI Credits](https://linear.app/docs/ai-credits.md)
-- [Usage & limits](https://linear.app/docs/usage-and-limits.md)
+  - [Usage & limits](https://linear.app/docs/usage-and-limits.md)
 - [Exporting Data](https://linear.app/docs/exporting-data.md)
 
 ### Importers
 
 - [Import Guide](https://linear.app/docs/import-issues.md)
-- [Jira](https://linear.app/docs/jira-to-linear.md)
-- [GitHub Issues](https://linear.app/docs/github-to-linear.md)
-- [Asana](https://linear.app/docs/asana-to-linear.md)
-- [Shortcut](https://linear.app/docs/shortcut-to-linear.md)
-- [Linear](https://linear.app/docs/linear-to-linear.md)
-- [CLI Importer](https://linear.app/docs/cli-importer.md)
+  - [Jira](https://linear.app/docs/jira-to-linear.md)
+  - [GitHub Issues](https://linear.app/docs/github-to-linear.md)
+  - [Asana](https://linear.app/docs/asana-to-linear.md)
+  - [Shortcut](https://linear.app/docs/shortcut-to-linear.md)
+  - [Linear](https://linear.app/docs/linear-to-linear.md)
+  - [CLI Importer](https://linear.app/docs/cli-importer.md)
 
 ## Developers
 

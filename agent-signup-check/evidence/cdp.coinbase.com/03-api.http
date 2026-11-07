@@ -1,10 +1,10 @@
 GET https://api.cdp.coinbase.com/platform/v2/evm/accounts
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:00.516Z
+fetched: 2026-11-07T00:19:36.173Z
 final-url: https://api.cdp.coinbase.com/platform/v2/evm/accounts
 
 HTTP 401
-date: Fri, 30 Oct 2026 16:01:57 GMT
+date: Sat, 07 Nov 2026 00:19:33 GMT
 content-type: text/plain; charset=utf-8
 content-length: 13
 connection: close
@@ -17,15 +17,15 @@ access-control-expose-headers:
 access-control-max-age: 7200
 cache-control: no-store
 strict-transport-security: max-age=31536000; includeSubDomains; preload
-trace-id: 3842218955888902904
+trace-id: 6698550765617788796
 x-content-type-options: nosniff
 x-dns-prefetch-control: off
 x-download-options: noopen
 x-frame-options: SAMEORIGIN
 x-xss-protection: 1; mode=block
 server: cloudflare
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=nL6tMaDUqc9J%2FKJOB3uniAfbYnsaFrRWsz7M1bNR9onnzjIfF4xiIiAnbuvrXHN57UTZVAVSXkYUNHbaGLWUinQEtWEBT0%2FIMiWNAfzklB3hevuXOuCxTg9jHV%2Bdx2Ttw1sYwwTQ"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=P%2BpR5xPWiuobcZ5MzB0DiqL0zpBPXNBGQMjGvbPPUoFZNZfsDuR%2BlcyME34eppHR0KH6VPOdiQy8T8DPHh%2B37FkM4ndWSmvRVyJxiEvbdtJEpap96IDngu3wwKvWIPk6g5oWfIMB"}]}
 cf-cache-status: DYNAMIC
-cf-ray: a52ba43d9827e6e0-PDX
+cf-ray: a5682ac4cdea8e60-PDX
 
 Unauthorized

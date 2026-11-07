@@ -1,6 +1,6 @@
 {
  "site": "supabase.com",
- "checkedAt": "2026-10-30T16:01:16.889Z",
+ "checkedAt": "2026-11-07T00:18:52.127Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 2,
  "partial": 1,
@@ -75,7 +75,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 85,
+   "ms": 303,
    "redirects": 0
   },
   {
@@ -85,7 +85,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 99,
+   "ms": 195,
    "redirects": 0
   },
   {
@@ -95,7 +95,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 74,
+   "ms": 54,
    "redirects": 0
   },
   {
@@ -105,7 +105,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 169,
+   "ms": 166,
    "redirects": 0
   },
   {
@@ -115,7 +115,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 70,
+   "ms": 59,
    "redirects": 0
   },
   {
@@ -125,7 +125,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 69,
+   "ms": 62,
    "redirects": 0
   },
   {
@@ -135,7 +135,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 188,
+   "ms": 166,
    "redirects": 0
   },
   {
@@ -145,7 +145,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 157,
+   "ms": 160,
    "redirects": 0
   }
  ]

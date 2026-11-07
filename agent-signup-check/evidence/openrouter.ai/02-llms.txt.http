@@ -1,10 +1,10 @@
 GET https://openrouter.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:33.169Z
+fetched: 2026-11-07T00:18:09.043Z
 final-url: https://openrouter.ai/llms.txt
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:00:31 GMT
+date: Sat, 07 Nov 2026 00:18:06 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -20,26 +20,33 @@ vary: User-Agent, RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router
 x-frame-options: SAMEORIGIN
 x-matched-path: /llms.txt
 x-vercel-cache: MISS
-x-vercel-id: pdx1::sfo1::mms46-1793376031097-c64716ec7250
+x-vercel-id: pdx1::sfo1::76rnv-1794010686690-ee8b6d58ada8
 cf-cache-status: DYNAMIC
 permissions-policy: payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com" "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
 referrer-policy: no-referrer, strict-origin-when-cross-origin
-cf-ray: a52ba2224a5d2fbe-PDX
+cf-ray: a56828a7c8a3abbf-PDX
 alt-svc: h3=":443"; ma=86400
 
 # OpenRouter
 
-> A unified API for every major LLM. One endpoint, hundreds of models, with
-> routing, fallbacks, and cost tracking across providers.
+> One API for text, image, video, and audio models. Hundreds of models from
+> many providers behind one API key, with routing, fallbacks, and cost tracking.
 
 ## What OpenRouter is and when to use it
 
-OpenRouter is one OpenAI-compatible API in front of hundreds of models from
-many providers. Send `POST https://openrouter.ai/api/v1/chat/completions`
-with an OpenRouter API key and a `model` such as `openai/gpt-4o` or
-`anthropic/claude-sonnet-4`. Every chat model accepts that same request shape.
-Image, video, speech-to-text, and text-to-speech models use their own
-endpoints, described in each model's per-model guide below.
+OpenRouter is one OpenAI-compatible API in front of hundreds of text, image,
+video, and audio models from many providers. Send
+`POST https://openrouter.ai/api/v1/chat/completions` with an OpenRouter API key
+and a `model` such as `openai/gpt-4o` or `anthropic/claude-sonnet-4`.
+Every chat model accepts that same request shape. Media models use one
+dedicated endpoint per modality, with the same API key and the same bill:
+
+- Image generation: `POST https://openrouter.ai/api/v1/images`. Guide: https://openrouter.ai/docs/guides/overview/multimodal/image-generation.md. Models: https://openrouter.ai/collections/image-models.
+- Video generation: `POST https://openrouter.ai/api/v1/videos` (submit a job, poll it, download the clip). Guide: https://openrouter.ai/docs/guides/overview/multimodal/video-generation.md. Models: https://openrouter.ai/collections/video-models.
+- Text-to-speech: `POST https://openrouter.ai/api/v1/audio/speech`. Guide: https://openrouter.ai/docs/guides/overview/multimodal/tts.md. Models: https://openrouter.ai/collections/text-to-speech-models.
+- Speech-to-text: `POST https://openrouter.ai/api/v1/audio/transcriptions`. Guide: https://openrouter.ai/docs/guides/overview/multimodal/stt.md. Models: https://openrouter.ai/collections/speech-to-text-models.
+
+Each model's per-model guide below gives the exact request for that model.
 
 Use OpenRouter when you need to:
 
@@ -52,7 +59,7 @@ Getting started:
 
 - API keys are self-serve: sign up at https://openrouter.ai and create a key at https://openrouter.ai/settings/keys. No sales contact is needed.
 - Free tier: models with the `:free` variant cost nothing, and the free models router at `openrouter/free` picks one for you. Free usage is rate limited per day; buying credits raises the limit. See https://openrouter.ai/docs/api-reference/limits.md.
-- Pricing is pay-as-you-go per token with no markup on the provider's price: https://openrouter.ai/pricing.
+- Pricing is pay-as-you-go with no markup on the provider's price: per token for text models; per image, per second of video, or per character or minute of audio for media models: https://openrouter.ai/pricing.
 - MCP server for agents: https://mcp.openrouter.ai/mcp (OAuth in the browser, hosted by OpenRouter). Setup guide: https://openrouter.ai/docs/guides/overview/mcp-server.md.
 - OpenAPI description of the whole API: https://openrouter.ai/openapi.json.
 
@@ -69,7 +76,7 @@ Getting started:
 
 ## Models
 
-- [Models](https://openrouter.ai/models): Compare every model on OpenRouter by pricing, context length, and benchmarks, all through one API.
+- [Models](https://openrouter.ai/models): Compare every text, image, video, and audio model on OpenRouter by pricing, context length, and benchmarks, all through one API.
 - [Model API](https://openrouter.ai/api/v1/models): Machine-readable list of every model, with pricing and supported parameters.
 - Per-model guide: `https://openrouter.ai/{author}/{model}/llms.txt` returns one machine-readable guide with sections for every confirmed OpenRouter API that serves a public model: text/chat, image, video, speech-to-text, and text-to-speech.
 

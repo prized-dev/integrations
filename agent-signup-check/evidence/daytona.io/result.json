@@ -1,6 +1,6 @@
 {
  "site": "daytona.io",
- "checkedAt": "2026-10-30T16:00:49.193Z",
+ "checkedAt": "2026-11-07T00:18:26.096Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 1,
@@ -54,7 +54,7 @@
    "name": "Docs in Markdown",
    "url": "https://www.daytona.io/docs/llms.txt",
    "heading": "# Daytona",
-   "bytes": 225576,
+   "bytes": 225658,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -67,7 +67,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 424,
+   "ms": 274,
    "redirects": 1
   },
   {
@@ -77,7 +77,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 407,
+   "ms": 447,
    "redirects": 2
   },
   {
@@ -87,7 +87,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 107,
+   "ms": 114,
    "redirects": 0
   },
   {
@@ -97,7 +97,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 259,
+   "ms": 247,
    "redirects": 1
   },
   {
@@ -107,7 +107,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html",
-   "ms": 31,
+   "ms": 36,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 138,
+   "ms": 239,
    "redirects": 1
   },
   {
@@ -127,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 167,
+   "ms": 141,
    "redirects": 1
   }
  ]

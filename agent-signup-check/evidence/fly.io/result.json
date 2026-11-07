@@ -1,9 +1,9 @@
 {
  "site": "fly.io",
- "checkedAt": "2026-10-30T16:00:50.660Z",
+ "checkedAt": "2026-11-07T00:18:26.930Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 2,
- "partial": 1,
+ "partial": 2,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -24,8 +24,13 @@
    "id": "prm",
    "name": "Protected resource metadata",
    "url": "https://fly.io/.well-known/oauth-protected-resource",
-   "status": "fail",
-   "reason": "Protected resource metadata not found (HTTP 404)"
+   "via": "well-known",
+   "resource": "https://mcp.fly.io",
+   "authorization_servers": [
+    "https://fly.io/mcp/oauth"
+   ],
+   "status": "partial",
+   "reason": "resource (https://mcp.fly.io) does not match the URL the metadata came from; RFC 9728 section 3.3 says a client MUST NOT use it"
   },
   {
    "id": "register",
@@ -60,7 +65,7 @@
    "name": "Docs in Markdown",
    "url": "https://fly.io/llms.txt",
    "heading": "# Fly.io",
-   "bytes": 5679,
+   "bytes": 5590,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -73,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 113,
+   "ms": 76,
    "redirects": 0
   },
   {
@@ -83,7 +88,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 243,
+   "ms": 236,
    "redirects": 0
   },
   {
@@ -93,17 +98,17 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 110,
+   "ms": 166,
    "redirects": 0
   },
   {
    "label": "prm",
    "url": "https://fly.io/.well-known/oauth-protected-resource",
    "finalUrl": "https://fly.io/.well-known/oauth-protected-resource",
-   "status": 404,
+   "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 107,
+   "ms": 71,
    "redirects": 0
   },
   {
@@ -113,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 103,
+   "ms": 107,
    "redirects": 0
   },
   {
@@ -123,7 +128,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 104,
+   "ms": 69,
    "redirects": 0
   },
   {
@@ -133,7 +138,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 177,
+   "ms": 158,
    "redirects": 0
   },
   {
@@ -143,7 +148,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 103,
+   "ms": 66,
    "redirects": 0
   }
  ]

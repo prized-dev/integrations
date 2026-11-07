@@ -1,19 +1,27 @@
 GET https://api.steel.dev/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:38.090Z
+fetched: 2026-11-07T00:19:14.091Z
 final-url: https://api.steel.dev/.well-known/oauth-protected-resource
 
-HTTP 421
-date: Fri, 30 Oct 2026 16:01:37 GMT
-content-type: text/plain
+HTTP 404
+date: Sat, 07 Nov 2026 00:19:13 GMT
+content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
-x-trace-id: eb3ebf2406df84e131aad9b8e450e9a6
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=yIAmI0MIniNORZSTiLr1HrxYxSF3ZQG9WbZ0MSOuIRQz%2B0ZJTRdJE%2FkvP%2FWWS2ugFCXXilPSaKhOg5KiHSDZ7bhBRbKojvIm5xipo3LzY5Ow6jio5JZQRja5i%2BZI7LYN"}]}
+x-trace-id: 327b429991189ef83829b136d13bacf0
+strict-transport-security: max-age=63072000; includeSubDomains
+x-content-type-options: nosniff
+referrer-policy: no-referrer
+cache-control: private, no-store
+access-control-allow-origin: *
+access-control-expose-headers: Next-Cursor, ETag, Location, WWW-Authenticate, x-trace-id
+content-encoding: br
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=u9ztRuGX070JvN5ikGNhDFYvOzwybvUSuQG1MZUOTECPGn8s7Wa6z%2Bv2p7iqQyJvvRyQqHuK%2BoqKk2UDa3eiEvfvuJ8j9YLqKKW6APA4NDygd7KJBcPSfnMAmbNMzdZn"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 cf-cache-status: DYNAMIC
+vary: accept-encoding
 server: cloudflare
-cf-ray: a52ba3be1aa312b1-PDX
+cf-ray: a5682a463ce2da91-PDX
 alt-svc: h3=":443"; ma=86400
 
-No route defined for GET /.well-known/oauth-protected-resource
+{"message":"Route GET:/.well-known/oauth-protected-resource not found","error":"Not Found","statusCode":404}

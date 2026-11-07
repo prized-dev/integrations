@@ -1,6 +1,6 @@
 GET https://api.cohere.com/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:36.141Z
+fetched: 2026-11-07T00:18:12.401Z
 final-url: https://api.cohere.com/.well-known/oauth-protected-resource
 
 HTTP 401
@@ -12,12 +12,12 @@ pragma: no-cache
 vary: Origin,Accept-Encoding
 x-accel-expires: 0
 x-api-warning: Please set an API version, for more information please refer to https://docs.cohere.com/reference/about
-date: Fri, 30 Oct 2026 16:00:34 GMT
-x-envoy-upstream-service-time: 2
+date: Sat, 07 Nov 2026 00:18:10 GMT
+x-envoy-upstream-service-time: 1
 server: envoy
 via: 1.1 google
 alt-svc: h3=":443"; ma=2592000
 connection: close
 transfer-encoding: chunked
 
-{"id":"7a2824be-278c-4674-a967-2805199e9288","message":"no api key supplied"}
+{"id":"1c107b78-0ff2-4bb9-973a-b973bb148adc","message":"no api key supplied"}

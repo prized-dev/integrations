@@ -1,10 +1,10 @@
 GET https://render.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:51.200Z
+fetched: 2026-11-07T00:18:28.143Z
 final-url: https://render.com/llms.txt
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:00:49 GMT
+date: Sat, 07 Nov 2026 00:18:26 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -13,7 +13,7 @@ x-xss-protection: 1; mode=block
 content-encoding: br
 content-security-policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://assets.calendly.com https://scout-cdn.salesloft.com https://snap.licdn.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://www.googletagmanager.com https://www.gstatic.com ; connect-src 'self' https://*.algolia.net https://*.algolianet.com https://*.google-analytics.com https://*.google.com https://*.googletagmanager.com https://*.doubleclick.net https://www.googleadservices.com https://*.hsforms.com https://*.inkeep.com https://*.linkedin.com https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://*.segment.com https://*.segment.io https://api.unifyintent.com https://api.ashbyhq.com https://cdn.growthbook.io https://cdn.sanity.io https://hubspot-forms-static-embed.s3.amazonaws.com https://pagead2.googlesyndication.com https://scout.salesloft.com https://translate.googleapis.com ; worker-src 'self' blob: https://*.osano.com; report-uri https://render.report-uri.com/r/t/csp/reportOnly; report-to wizard;
 referrer-policy: same-origin
-rndr-id: a13e554c-e1d8-4a7c
+rndr-id: 7eec59b8-d0fd-4a23
 server: cloudflare
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
@@ -22,7 +22,7 @@ x-frame-options: SAMEORIGIN
 x-nextjs-cache: HIT
 x-render-origin-server: Render
 cf-cache-status: DYNAMIC
-cf-ray: a52ba2927909b9f4-SEA
+cf-ray: a56829203f3034d4-SEA
 alt-svc: h3=":443"; ma=86400
 
 # Render
@@ -139,26 +139,32 @@ Do not fetch it for single-topic lookups (it is over 900 KB). Instead, fetch ind
 - [Creating and Configuring Sandboxes](https://render.com/docs/sandboxes-creating.md): Configure sandbox compute, environment variables, and network access.
 - [Executing Commands in Sandboxes](https://render.com/docs/sandboxes-executing.md): Execute commands and read their output with the Render CLI or SDK.
 - [Managing Sandbox Files](https://render.com/docs/sandboxes-files.md): Upload and download files and directories.
-- [Managing Sandbox Snapshots](https://render.com/docs/sandboxes-snapshots.md): Capture sandbox state and restore it in new sandboxes.
+- [Managing Sandbox Snapshots](https://render.com/docs/sandboxes-snapshots.md): Capture a sandbox's state and restore it into other sandboxes.
+
+##### Use with…
+
+- [Claude Managed Agents with Render Sandboxes](https://render.com/docs/sandboxes-claude-managed-agents.md): Give Claude an isolated execution environment in your Render workspace.
+- [Cursor Cloud Agents with Render Sandboxes](https://render.com/docs/sandboxes-cursor-cloud-agents.md): Give Cursor an isolated execution environment in your Render workspace.
+- [OpenAI Agents API with Render Sandboxes](https://render.com/docs/sandboxes-openai-agents-api.md): Give Codex an isolated execution environment in your Render workspace.
 
 ##### SDK/CLI reference
 
 - [Sandboxes SDK for TypeScript](https://render.com/docs/sandboxes-sdk-typescript.md): Usage and symbol reference
 - [Sandboxes SDK for Python](https://render.com/docs/sandboxes-sdk-python.md): Usage and symbol reference
-- [Sandboxes CLI reference](https://render.com/docs/sandboxes-cli-reference.md)
 
 #### Workflows
 
-- [Intro to Render Workflows](https://render.com/docs/workflows.md): Orchestrate chains of long-running, distributed tasks.
+- [Intro to Render Workflows](https://render.com/docs/workflows.md): Orchestrate chains of distributed, long-running computation.
 - [Your First Workflow](https://render.com/docs/workflows-tutorial.md): Register your first task and trigger its first run.
 - [Limits and Pricing for Render Workflows](https://render.com/docs/workflows-limits.md)
 
 ##### How to…
 
-- Defining Workflow Tasks
-  - [v1 (current)](https://render.com/docs/workflows-defining.md)
-  - [v0](https://render.com/docs/workflows-defining/v0.md)
-- [Triggering Task Runs](https://render.com/docs/workflows-running.md): Kick off runs of registered workflow tasks.
+- Defining Tasks
+  - [v1 (current)](https://render.com/docs/workflows-defining-tasks.md)
+  - [v0](https://render.com/docs/workflows-defining-tasks/v0.md)
+- [Defining Flows](https://render.com/docs/workflows-defining-flows.md): Create sequences of checkpointed steps.
+- [Triggering Workflow Runs](https://render.com/docs/workflows-running.md): Kick off your registered tasks and flows.
 - [Local Dev with Render Workflows](https://render.com/docs/workflows-local-development.md): Run tasks locally for faster development and testing.
 
 ##### SDK reference
@@ -425,6 +431,7 @@ https://render.com/changelog.md
 
 Most recent 10 entries:
 
+- [Upcoming service preview and preview environment support for GitHub stacked PRs](https://render.com/changelog/upcoming-service-preview-and-preview-environment-support-for-github-stacked-prs.md)
 - [Updated default versions of Node.js and Bun](https://render.com/changelog/updated-default-versions-of-node-js-and-bun.md)
 - [Added support for Bun canary builds](https://render.com/changelog/added-support-for-bun-canary-builds.md)
 - [Added two Key Value plans and lowered prices for larger existing plans](https://render.com/changelog/added-two-key-value-plans-and-lowered-prices-for-larger-existing-plans.md)
@@ -434,7 +441,6 @@ Most recent 10 entries:
 - [Added usage telemetry to the Render CLI](https://render.com/changelog/added-usage-telemetry-to-the-render-cli.md)
 - [New compute plans, and new IDs for existing plans](https://render.com/changelog/new-compute-plans-and-new-ids-for-existing-plans.md)
 - [Reduced median service build time by 40% (all runtimes)](https://render.com/changelog/reduced-median-service-build-time-by-40-all-runtimes.md)
-- [Managed OIDC now supports Anthropic and OpenAI](https://render.com/changelog/managed-oidc-now-supports-anthropic-and-openai.md)
 
 ## Blog
 
@@ -442,6 +448,8 @@ https://render.com/blog
 
 Most recent 10 posts:
 
+- [How we built Render OIDC](https://render.com/blog/how-we-built-render-oidc.md)
+- [Introducing Render Sandboxes: A computer for every agent](https://render.com/blog/introducing-render-sandboxes.md)
 - [Control API access with Scoped API Keys](https://render.com/blog/scoped-api-keys-private-beta.md)
 - [Data needs its DevOps moment](https://render.com/blog/data-needs-its-devops-moment.md)
 - [Lower prices for Key Value services](https://render.com/blog/lower-prices-for-key-value-services.md)
@@ -450,13 +458,14 @@ Most recent 10 posts:
 - [New compute plans for memory-intensive applications](https://render.com/blog/new-compute-plans-for-memory-intensive-applications.md)
 - [How Render Workflows powers our internal data pipeline](https://render.com/blog/how-render-workflows-powers-our-internal-data-pipeline.md)
 - [Four minutes after midnight, Codex said the page was live](https://render.com/blog/four-minutes-after-midnight-codex-said-the-page-was-live.md)
-- [Search for agents splits discovery from proof](https://render.com/blog/search-for-agents-splits-discovery-from-proof.md)
-- [Build, deploy, and operate with coding agents on Render](https://render.com/blog/build-deploy-and-operate-with-coding-agents-on-render.md)
 
 ## Articles
 
 https://render.com/articles
 
+- [How to migrate a production app to a new hosting platform](https://render.com/articles/how-to-migrate-a-production-app-to-a-new-hosting-platform.md)
+- [Render Sandboxes vs Vercel Sandboxes](https://render.com/articles/render-sandboxes-vs-vercel-sandboxes.md)
+- [Set up self-hosted GitHub Actions runners on Render](https://render.com/articles/set-up-self-hosted-github-actions-runners-on-render.md)
 - [SSE vs WebSockets for Streaming Responses](https://render.com/articles/sse-vs-websockets-llm-streaming.md)
 - [Managed PostgreSQL Pricing in 2026: Compute, Storage, Backups, and Egress](https://render.com/articles/managed-postgresql-pricing-2026.md)
 - [Render Workflows vs Inngest: durable compute vs durable orchestration](https://render.com/articles/render-workflows-vs-inngest.md)
@@ -620,7 +629,7 @@ https://render.com/articles
 
 site: https://render.com
 owner: Render Services, Inc.
-last-generated: "2026-10-30"
+last-generated: "2026-11-07"
 
 ### Permissions
 

@@ -1,11 +1,11 @@
 GET https://api.brightdata.com/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:43.448Z
+fetched: 2026-11-07T00:19:17.511Z
 final-url: https://api.brightdata.com/.well-known/oauth-protected-resource
 
 HTTP 200
 server: nginx
-date: Fri, 30 Oct 2026 16:01:42 GMT
+date: Sat, 07 Nov 2026 00:19:16 GMT
 content-type: application/json; charset=utf-8
 content-length: 263
 connection: close

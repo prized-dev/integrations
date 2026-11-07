@@ -1,13 +1,13 @@
 GET https://api.browser-use.com/api/v4/runs
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:41.788Z
+fetched: 2026-11-07T00:19:16.484Z
 final-url: https://api.browser-use.com/api/v4/runs
 
 HTTP 401
-date: Fri, 30 Oct 2026 16:01:38 GMT
+date: Sat, 07 Nov 2026 00:19:13 GMT
 content-type: application/json
 content-length: 205
 connection: close
-x-request-id: 66b648257d536acd5098228d94f11e3b
+x-request-id: 5293e1bb104f46f8d5598fef63e5a9e4
 
 {"detail":"Missing X-Browser-Use-API-Key header. Sign up and create a key in one click at https://cloud.browser-use.com/settings?tab=api-keys\u0026new=1, then export BROWSER_USE_API_KEY=bu_... and retry."}

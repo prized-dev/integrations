@@ -1,38 +1,38 @@
 GET https://financialdatasets.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:53.101Z
+fetched: 2026-11-07T00:19:26.654Z
 redirect: 308 from https://financialdatasets.ai/llms.txt
 final-url: https://www.financialdatasets.ai/llms.txt
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:01:50 GMT
+date: Sat, 07 Nov 2026 00:19:24 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 access-control-allow-origin: *
-age: 69234
+age: 140977
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
-etag: W/"81e4aa6ace38213f8b02e982a903def4"
-last-modified: Thu, 29 Oct 2026 20:47:56 GMT
+etag: W/"4af05d03f6f803e48b62541fbea5bc5d"
+last-modified: Thu, 05 Nov 2026 09:09:46 GMT
 server: cloudflare
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::kprqm-1793376110588-effcb7345454
+x-vercel-id: pdx1::jcmqw-1794010764107-216a5381d47d
 cf-cache-status: DYNAMIC
 vary: accept-encoding
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=DN7BCGr1%2BU0%2FgoFXe3V3MdXc4HYa8nRy%2FDqq%2BedSzPWi3Gs%2BRvpuzUoS27VcJd1Q%2BxHNc%2FG4BmZXlrho4SRAxeq%2FoEUNq8bOAKZ6dFIVGK1WKgD65b4Ova7dm3gDmdyTVO9dvyFtoPmeixc%3D"}]}
-cf-ray: a52ba4130814b024-PDX
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Pxl%2Fc81SY3UUxq70%2BGezhjWRVviF0eT%2BNsUDSyefV5SEZ4qGr3w%2Bb93RonIV%2BbYTDbEfZc0AZZpEJOjadDtGXqvHgospaKfaqsFbWjt5EQIDIcEJBLqBeSfn%2BtjXdLcr5W7KHk2Mnw2PYfk%3D"}]}
+cf-ray: a5682a8b8c77148b-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Financial Datasets
 
 > Financial Datasets is an agent-friendly REST API providing institutional-grade stock market data for AI agents, quantitative research, and financial applications.
 
-Financial Datasets covers 27,530 active and delisted US tickers with 30+ years of historical data, plus annual fundamentals for 674 UK companies listed on the London Stock Exchange, with sub-200ms response times and 99.98% uptime. All endpoints use simple GET/POST requests with API key authentication.
+Financial Datasets covers 27,530 active and delisted US tickers with 30+ years of historical data, plus annual fundamentals for 674 UK companies and 376 French companies, with sub-200ms response times and 99.98% uptime. All endpoints use simple GET/POST requests with API key authentication.
 
 ## Base URL
 
@@ -57,6 +57,7 @@ No key and no account: pay with x402. Send a request with no X-API-KEY header to
 - [All Financial Statements](https://docs.financialdatasets.ai/api/financials/all-financial-statements): GET /financials
   - `ticker` (required), `period` (annual|quarterly|ttm, default: annual), `limit` (default: 4), `report_period` filters
   - UK companies: add `market=UK` to the ticker (UK tickers keep the exchange's spelling, e.g. `RR.`), or pass `isin` alone; `period=annual`; amounts in the company's reporting currency (`currency` field). List covered UK companies with GET /financials/income-statements/tickers/?market=UK. Guide: https://docs.financialdatasets.ai/guides/get-uk-fundamentals-python. Announcement: https://www.financialdatasets.ai/news/uk-fundamentals
+  - French companies: add `market=FR` to the ticker, or pass `isin` alone; `period=annual`; amounts in the company's reporting currency (`currency` field), EUR for most. List covered French companies with GET /financials/income-statements/tickers/?market=FR. Guide: https://docs.financialdatasets.ai/guides/get-france-fundamentals-python. Announcement: https://www.financialdatasets.ai/news/france-fundamentals
 
 ### Segmented Financials
 - [Income Statement Segments](https://docs.financialdatasets.ai/api/financials/income-statement-segments): GET /financials/income-statements/segments

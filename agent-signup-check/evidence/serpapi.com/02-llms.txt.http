@@ -1,10 +1,10 @@
 GET https://serpapi.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:49.792Z
+fetched: 2026-11-07T00:19:23.244Z
 final-url: https://serpapi.com/llms.txt
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:01:47 GMT
+date: Sat, 07 Nov 2026 00:19:21 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -15,15 +15,14 @@ x-download-options: noopen
 x-permitted-cross-domain-policies: none
 referrer-policy: strict-origin-when-cross-origin
 cache-control: max-age=604800, public
-etag: W/"de99657e87bf9345dd1932be57e2596b"
-x-request-id: 51bba558-1feb-4d17-be89-16b6c27932cc
-x-runtime: 0.008969
+etag: W/"eac11746b16ecfbc782a04b289f61cc6"
+x-request-id: 2e6d35db-a717-4a27-9de2-a70e57fbea6a
+x-runtime: 0.012095
 vary: accept-encoding
-age: 351
 cf-cache-status: HIT
 content-encoding: br
 server: cloudflare
-cf-ray: a52ba4017deab298-PDX
+cf-ray: a5682a795da511c8-PDX
 alt-svc: h3=":443"; ma=86400
 
 # SerpApi
@@ -34,7 +33,7 @@ alt-svc: h3=":443"; ma=86400
 - Sign up: https://serpapi.com/users/sign_up
 - API: https://serpapi.com/search
 - Example: `GET https://serpapi.com/search?api_key=YOUR_API_KEY&engine=google&q=Coffee`
-- Supported engines: Google, Airbnb, Apple App Store, Apple Maps, Baidu, Bing, Booking.com, Brave AI Mode, Amazon, DuckDuckGo, eBay, Facebook, Flightradar24, Instagram, Meta Ad Library, Naver, OpenTable, Search Index, The Home Depot, Target, Trader Joe's, Tripadvisor, Walmart, Yahoo!, Yandex, Yelp, YouTube, Extract, Zillow
+- Supported engines: Google, Airbnb, Apple App Store, Apple Maps, AutoZone, Baidu, Bing, Booking.com, Brave AI Mode, Brave Videos, Amazon, DoorDash, DuckDuckGo, eBay, Eventbrite, Facebook, Flightradar24, Glassdoor, Instagram, Indeed, Meta Ad Library, Naver, OpenTable, Pinterest, Qwant, Search Index, The Home Depot, Target, TikTok, Trader Joe's, Tripadvisor, Walmart, Yahoo!, Yandex, Yelp, YouTube, Extract, Zillow
 
 ## Pricing
 
@@ -66,6 +65,7 @@ alt-svc: h3=":443"; ma=86400
 - [Google Finance Markets API](https://serpapi.com/google-finance-markets.md): Scrape Google Finance Markets page with SerpApi's Google Finance Markets API. Extract stock names, values, price moments, related news, and more.
 - [Google Flights API](https://serpapi.com/google-flights-api.md): Use SerpApi's Google Flights API to scrape Google Flights information.
 - [Google Flights Autocomplete API](https://serpapi.com/google-flights-autocomplete-api.md): Scrape Google Flights Autocomplete suggestion results with SerpApi's Google Flights Autocomplete API.
+- [Google Flights Calendar API](https://serpapi.com/google-flights-calendar-api.md): Scrape Google Flights Calendar prices results with SerpApi's Google Flights Calendar API. Prices for different dates and travel classes available.
 - [Google Flights Deals API](https://serpapi.com/google-flights-deals-api.md): Scrape Google Flights Deals with SerpApi's Google Flights Deals API. Destination, price, dates, and more available.
 - [Google Forums API](https://serpapi.com/google-forums-api.md): Use SerpApi's Google Forums Engine Results API to scrape Google's Forums Platform. Forum titles, dates, links, and more.
 - [Google Hotels API](https://serpapi.com/google-hotels-api.md): Use SerpApi's Google Hotels API to scrape Google Hotels results.
@@ -117,6 +117,7 @@ alt-svc: h3=":443"; ma=86400
 - [Airbnb Search API](https://serpapi.com/airbnb-search-api.md): Scrape Airbnb search results with SerpApi's Airbnb Search API. Places to stay, prices for your dates, ratings, reviews, photos, locations, and more.
 - [Amazon Search API](https://serpapi.com/amazon-search-api.md): Scrape Amazon search engine products and categories with SerpApi's Amazon Search API. Product links, prices, ratings, delivery information, sponsored products, and more.
 - [Amazon Autocomplete API](https://serpapi.com/amazon-autocomplete-api.md): Scrape Amazon Autocomplete suggestion results with SerpApi's Amazon Autocomplete API. Keyword suggestions for any Amazon domain.
+- [Amazon Fresh API](https://serpapi.com/amazon-fresh-api.md): Scrape Amazon Fresh grocery search results with SerpApi's Amazon Fresh API. Product links, prices, ratings, delivery information, and filters for any delivery ZIP code.
 - [Amazon Product API](https://serpapi.com/amazon-product-api.md): Use SerpApi's Amazon Product API to scrape product details, including title, price, description, and more.
 - [Amazon Promotion API](https://serpapi.com/amazon-promotion-api.md): Scrape Amazon promotion pages with SerpApi's Amazon Promotion API. Promotion title, savings, schedule, terms, how to claim, and qualifying products.
 - [Apple App Store API](https://serpapi.com/apple-app-store.md): SerpApi's Apple App Store Search Scraper API allows you to scrape apps in order. Title, id number, link, price, version, description and much more deeper information in a well-structured json format.
@@ -124,6 +125,8 @@ alt-svc: h3=":443"; ma=86400
 - [Apple App Store Product API](https://serpapi.com/apple-product.md): SerpApi's Apple Product Page Scraper API allows you to scrape product pages via unique id of the product. Title, price, version, description, privacy details, in app purchases and much more deeper information is served in a well-structured json format.
 - [Apple Maps API](https://serpapi.com/apple-maps-api.md): Scrape Apple Maps search results with SerpApi's Apple Maps Search API. Business name, address, phone number, website, opening hours and more in an easy-to-understand JSON format.
 - [Apple Maps Places API](https://serpapi.com/apple-maps-places-api.md): Scrape Apple Maps Places with SerpApi's Apple Maps Places API. Get business name, address, phone number, website, opening hours and more in an easy-to-use structured JSON format.
+- [AutoZone Search API](https://serpapi.com/autozone-search-api.md): Scrape AutoZone parts search results with SerpApi's AutoZone Search API. Part numbers, brands, ratings, reviews, vehicle fitment, and in-store pickup availability at any AutoZone store.
+- [AutoZone Product API](https://serpapi.com/autozone-product-api.md): Scrape AutoZone product pages with SerpApi's AutoZone Product API. Title, brand, part number, specifications, images, ratings, reviews, variants, and in-store pickup availability at any AutoZone store.
 - [Baidu Search API](https://serpapi.com/baidu-search-api.md): Scrape Baidu search results in JSON format automatically using custom parameters. Search for keywords by language, date and more with SerpApi.
 - [Baidu News API](https://serpapi.com/baidu-news-api.md): Scrape Baidu News Results with SerpApi's Baidu News API. Search for keywords by language, with sorting and filtering options. Available in an easy-to-understand JSON.
 - [Baidu Maps API](https://serpapi.com/baidu-maps-api.md): Use SerpApi's Baidu Maps API to scrape Baidu Maps results, in China and around the world. Search places by city or near GPS coordinates: title, address, rating, reviews, price, hours, phone, coordinates, and more.
@@ -138,17 +141,26 @@ alt-svc: h3=":443"; ma=86400
 - [Bing Images API](https://serpapi.com/bing-images-api.md): Use SerpApi's Bing Images API to scrape Bing Images results. Links, titles, sources, and thumbnails
 - [Booking.com Search API](https://serpapi.com/booking-search-api.md): Scrape Booking.com search results with SerpApi's Booking.com Search API. Hotels and places to stay, prices for your dates, review scores, deals, locations, and more.
 - [Brave AI Mode API](https://serpapi.com/brave-ai-mode-api.md): Use SerpApi's Brave AI Mode API to scrape Brave AI search results including text blocks, references, and more.
+- [Brave Videos API](https://serpapi.com/brave-videos-api.md): Use SerpApi's Brave Videos API to scrape Brave Videos results. Titles, links, channels, durations, dates, views, and thumbnails of videos.
+- [DoorDash Search API](https://serpapi.com/doordash-search-api.md): Scrape DoorDash search results for delivery addresses in the US, Canada, Australia, and New Zealand with SerpApi's DoorDash Search API. Restaurants and stores with their ratings, delivery times, delivery fees, deals, dishes, products, prices, and more.
 - [DuckDuckGo Search API](https://serpapi.com/duckduckgo-search-api.md): Scrape DuckDuckGo search results in JSON format automatically, using custom parameters. Search for keywords by region, date, and more with SerpApi.
 - [Duck AI API](https://serpapi.com/duck-ai-api.md): Use SerpApi's Duck AI API (DuckDuckGo AI Chat API) to scrape Duck AI answers: text blocks, references, related searches, multi-turn conversations, and more.
 - [DuckDuckGo Maps API](https://serpapi.com/duckduckgo-maps-api.md): Use SerpApi's DuckDuckGo Maps API to scrape DuckDuckGo Maps results. Position, title, link, thumbnail, rating, address and more are available.
 - [DuckDuckGo News API](https://serpapi.com/duckduckgo-news-api.md): Scrape DuckDuckGo News search results in JSON format automatically, using custom parameters. Search for keywords by region, date, and more with SerpApi.
+- [DuckDuckGo Shopping API](https://serpapi.com/duckduckgo-shopping-api.md): Use SerpApi's DuckDuckGo Shopping API to scrape DuckDuckGo Shopping results. Title, link, store, price, rating, reviews, thumbnail, filters and more are available.
 - [DuckDuckGo Light API](https://serpapi.com/duckduckgo-light-api.md): Access the world's fastest DuckDuckGo Search API. Scrape DuckDuckGo search results in JSON format automatically using custom parameters. Search for keywords by location with SerpApi.
 - [eBay Search API](https://serpapi.com/ebay-search-api.md): Scrape eBay search engine seller listings with SerpApi's eBay Search Engine Results API. Product links, prices, condition ratings and more.
 - [eBay Product API](https://serpapi.com/ebay-product-api.md): Scrape full eBay Product results with SerpApi's eBay Product API. Product specs, prices, ratings, reviews and more.
 - [eBay Seller API](https://serpapi.com/ebay-seller-api.md): Scrape full eBay Seller results with SerpApi's eBay Seller API. Seller info, products for sale, ratings, reviews and more.
+- [Eventbrite Search API](https://serpapi.com/eventbrite-search-api.md): Scrape Eventbrite search results with SerpApi's Eventbrite Search API. Events in any city or online, with dates, venues, ticket prices, categories, and more.
+- [Facebook Marketplace API](https://serpapi.com/facebook-marketplace-api.md): Scrape Facebook Marketplace listings with SerpApi's Facebook Marketplace API. Search around any location, with prices, locations, photos, sellers, and more.
 - [Facebook Profile API](https://serpapi.com/facebook-profile-api.md): Scrape Facebook Profile with SerpApi's Facebook Profile API. Profile name, description, posts, photos, videos and more.
 - [Flightradar24 API](https://serpapi.com/flightradar24-api.md): Scrape live flights from Flightradar24 with SerpApi's Flightradar24 API. Flight numbers, callsigns, routes, aircraft, registrations, positions, and more.
+- [Glassdoor Jobs API](https://serpapi.com/glassdoor-jobs-api.md): Scrape Glassdoor job listings with SerpApi's Glassdoor Jobs API. Job titles, companies, ratings, locations, salaries, skills and more, with Glassdoor's filters.
+- [Glassdoor Companies API](https://serpapi.com/glassdoor-companies-api.md): Scrape Glassdoor company search results with SerpApi's Glassdoor Companies API. Company names, ratings by category, reviews, salaries and jobs counts, sizes, industries and more.
+- [Glassdoor Reviews API](https://serpapi.com/glassdoor-reviews-api.md): Scrape Glassdoor company reviews with SerpApi's Glassdoor Reviews API. Ratings, pros, cons, advice to management, job titles, employment status, employer responses and more.
 - [Instagram Profile API](https://serpapi.com/instagram-profile-api.md): Scrape Instagram Profile with SerpApi's Instagram Profile API. Profile bio, followers, following, posts, and more.
+- [Indeed Jobs API](https://serpapi.com/indeed-jobs-api.md): Scrape Indeed job search results with SerpApi's Indeed Jobs API. Job titles, companies, locations, salaries, job types, benefits and more.
 - [Instagram Popular API](https://serpapi.com/instagram-popular-api.md): Scrape Instagram Popular posts with SerpApi's Instagram Popular API. Reels, captions, view counts, creators, related keywords, and more.
 - [Meta Ad Library API](https://serpapi.com/meta-ad-library-api.md): Scrape the Meta Ad Library with SerpApi's Meta Ad Library API. Ads shown on Facebook, Instagram, Messenger, Threads, and the Audience Network, by keyword or advertiser, with their Library ID, dates, texts, images, videos, and spend.
 - [Naver Search API](https://serpapi.com/naver-search-api.md): Scrape Naver search results in JSON format automatically using custom parameters. Search for news, videos, web and knowledge graph.
@@ -156,11 +168,15 @@ alt-svc: h3=":443"; ma=86400
 - [Naver AI Overview API](https://serpapi.com/naver-ai-overview-api.md): Use SerpApi's Naver AI Overview API to scrape Naver AI Overview results including text blocks, references, and more.
 - [Naver Maps API](https://serpapi.com/naver-maps-api.md): Scrape Naver Maps search results with SerpApi's Naver Maps API. Place name, category, rating, reviews, address, phone number, opening state and more.
 - [OpenTable Reviews API](https://serpapi.com/open-table-reviews-api.md): Scrape OpenTable Reviews with SerpApi's OpenTable Reviews API. User information, rating, date, comment, owner responses and more.
+- [Pinterest Search API](https://serpapi.com/pinterest-search-api.md): Scrape Pinterest search results with SerpApi's Pinterest Search API. Pins with their titles, images, links, reactions, and pinners, plus videos, products, boards, and profiles.
+- [Qwant Search API](https://serpapi.com/qwant-search-api.md): Scrape Qwant search results in JSON format with SerpApi's Qwant Search API. Organic results, ads, knowledge graph, news, weather, and more for any of Qwant's 37 locales.
 - [Search Index](https://serpapi.com/search-index-api.md): SerpApi's own, LLM-first search index of web pages, places, and products. Fast, structured JSON for AI grounding, benchmarking, and search automation. No browser needed. Currently in preview.
 - [The Home Depot Search API](https://serpapi.com/home-depot-search-api.md): Scrape Home Depot product search results with SerpApi's Home Depot Search Engine Results API. Product titles, descriptions, prices and more.
 - [The Home Depot Product API](https://serpapi.com/home-depot-product.md): Scrape full Home Depot Product listing results with SerpApi's Home Depot Product Results API. Title, description, prices, upc, model number and more.
 - [The Home Depot Reviews API](https://serpapi.com/home-depot-product-reviews.md): Scrape full Home Depot Product's reviews with SerpApi's Home Depot Product Reviews API. Title, text, rating, reviewer, time, and more.
 - [Target Search API](https://serpapi.com/target-search-api.md): Scrape Target product search results with SerpApi's Target Search API. Prices, deals, ratings, reviews, and availability for pickup, delivery, and shipping at any Target store.
+- [TikTok Discover API](https://serpapi.com/tiktok-discover-api.md): Scrape TikTok Discover pages such as TikTok Trends with SerpApi's TikTok Discover API. Videos, views, likes, comments, shares, authors, music, hashtags and more.
+- [TikTok Shop API](https://serpapi.com/tiktok-shop-api.md): Scrape TikTok Shop product search results with SerpApi's TikTok Shop API. Prices, discounts, ratings, reviews, units sold, sellers, deals, and filters.
 - [Trader Joe's Search API](https://serpapi.com/trader-joes-search-api.md): Scrape Trader Joe's product search results with SerpApi's Trader Joe's Search API. Product titles, prices, sizes, categories, images, and more.
 - [Trader Joe's Product API](https://serpapi.com/trader-joes-product-api.md): Scrape Trader Joe's product pages with SerpApi's Trader Joe's Product API. Title, price, availability, images, description, ingredients, nutrition facts, and more.
 - [Tripadvisor Search API](https://serpapi.com/tripadvisor-search-api.md): Scrape Tripadvisor search results with SerpApi's Tripadvisor Search Engine Results API.
@@ -169,6 +185,7 @@ alt-svc: h3=":443"; ma=86400
 - [Walmart Search API](https://serpapi.com/walmart-search-api.md): Scrape Walmart product search results with SerpApi's Walmart Search Engine Results API. Product titles, descriptions, prices, IDs and more.
 - [Walmart Product API](https://serpapi.com/walmart-product-api.md): Scrape full Walmart Product listing results with SerpApi's Walmart Product API. Product title, description, prices, manufacturer, links and more.
 - [Walmart Reviews API](https://serpapi.com/walmart-product-reviews-api.md): Scrape full Walmart reviews with SerpApi's Walmart Reviews API. Ratings and reviews.
+- [Walmart Seller API](https://serpapi.com/walmart-seller-api.md): Scrape Walmart seller pages with SerpApi's Walmart Seller API. Seller details, ratings, contact information, and the seller's products with prices, sorting, filters, and pagination.
 - [Yahoo! Search API](https://serpapi.com/yahoo-search-api.md): Scrape Yahoo! search results in JSON format automatically using custom parameters. Search for keywords by location, date and more with SerpApi.
 - [Yahoo! Videos API](https://serpapi.com/yahoo-videos-api.md): Scrape Yahoo! Videos results with SerpApi's Yahoo! Videos API. Position, title, thumbnail, link, preview, source, duration, date and more.
 - [Yahoo! Images API](https://serpapi.com/yahoo-images-api.md): Scrape Yahoo! Images results with SerpApi's Yahoo! Images API. Position, title, thumbnail, link, original, source, size and more.

@@ -1,30 +1,30 @@
 GET https://huggingface.co/.well-known/x402
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:39.377Z
+fetched: 2026-11-07T00:18:15.347Z
 final-url: https://huggingface.co/.well-known/x402
 
 HTTP 401
 content-type: text/plain; charset=utf-8
 content-length: 29
 connection: close
-date: Fri, 30 Oct 2026 16:00:39 GMT
+date: Sat, 07 Nov 2026 00:18:15 GMT
 etag: W/"1d-DMkJvg8tpLoaQbsiq9Mz7l2CJyI"
 x-powered-by: huggingface-moon
-x-request-id: Root=1-6ae4bf27-72d12de16584b36e60962518
-ratelimit: "media";r=4997;t=287
+x-request-id: Root=1-6aee6e47-7cad2ac71fb3370e4381ee53
+ratelimit: "media";r=4997;t=68
 ratelimit-policy: "fixed window";"media";q=5000;w=300
 cross-origin-opener-policy: same-origin
 referrer-policy: strict-origin-when-cross-origin
 access-control-max-age: 86400
 access-control-allow-origin: https://huggingface.co
 vary: Origin
-access-control-expose-headers: X-Repo-Commit,X-Request-Id,X-Error-Code,X-Error-Message,X-Total-Count,ETag,Link,Accept-Ranges,Content-Range,X-Linked-Size,X-Linked-ETag,X-Xet-Hash,RateLimit,RateLimit-Policy
+access-control-expose-headers: X-Repo-Commit,X-HF-Warning,X-Request-Id,X-Error-Code,X-Error-Message,X-Total-Count,ETag,Link,Accept-Ranges,Content-Range,X-Linked-Size,X-Linked-ETag,X-Xet-Hash,RateLimit,RateLimit-Policy
 x-error-message: Invalid username or password.
 x-cache: Error from cloudfront
-via: 1.1 f17401b1ec04d969fad954494abb89fc.cloudfront.net (CloudFront)
+via: 1.1 4b63c15595b60dbcca6db6aeea9d3d72.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: 28R0blkrjvz-X4mybv56ai6nJ2MwiGC1tHLTqYG5c_xGujPs1owcnQ==
+x-amz-cf-id: NbEOx1NhEg5oLydFGC0QhPVPzGkSt-i6SKmhz3oK3VyWH1D4yZNShw==
 strict-transport-security: max-age=31536000
 
 Invalid username or password.

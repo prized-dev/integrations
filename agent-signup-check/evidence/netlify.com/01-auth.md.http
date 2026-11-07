@@ -1,6 +1,6 @@
 GET https://netlify.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:55.588Z
+fetched: 2026-11-07T00:18:32.225Z
 final-url: https://netlify.com/auth.md
 
 HTTP 200
@@ -11,15 +11,15 @@ cache-control: public,max-age=0,must-revalidate
 cache-status: "Netlify Edge"; fwd=miss; fwd-status=200; stored
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Fri, 30 Oct 2026 16:00:51 GMT
-etag: "4d7791937003889940ae83aabc8f7c78-ssl-df"
+date: Sat, 07 Nov 2026 00:18:28 GMT
+etag: W/"1617067b4fc45b88eded35783b6aa883-ssl"
 link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/ard.json>; rel="ard"; type="application/ai-catalog+json"
 netlify-vary: header=x-forwarded-proto
 permissions-policy: browsing-topics=()
 server: Netlify
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: Accept-Encoding
-x-nf-request-id: 01M66RNR2G4JB5DH53WRPGSBT7
+x-nf-request-id: 01M6SNXY7YNBFGBX9CMRD009PB
 connection: close
 transfer-encoding: chunked
 
@@ -29,7 +29,7 @@ How an AI agent gets credentials to act on a Netlify account. Every method ends 
 
 ## Discover
 
-- **MCP server (recommended for agents):** `https://netlify-mcp.netlify.app/mcp` (Streamable HTTP). Its OAuth details are published as RFC 9728 protected-resource metadata at `https://netlify-mcp.netlify.app/.well-known/oauth-protected-resource` and RFC 8414 authorization-server metadata at `https://netlify-mcp.netlify.app/.well-known/oauth-authorization-server`.
+- **MCP server (recommended for agents):** `https://mcp.netlify.com/mcp` (Streamable HTTP). Its OAuth details are published as RFC 9728 protected-resource metadata at `https://mcp.netlify.com/.well-known/oauth-protected-resource` and RFC 8414 authorization-server metadata at `https://mcp.netlify.com/.well-known/oauth-authorization-server`.
 - **REST API:** `https://api.netlify.com/api/v1/`, described by the OpenAPI spec at `https://open-api.netlify.com/swagger.json`.
 - **Catalog:** `https://www.netlify.com/.well-known/ard.json` lists the MCP server card, the OpenAPI spec, and Netlify's agent skills.
 
@@ -45,7 +45,7 @@ Use this for agents and AI clients that speak MCP. No token handling is needed b
 4. Send the user to the `authorization_endpoint` with the authorization-code flow and PKCE (`code_challenge_method=S256` is required). The user signs in and approves access on app.netlify.com.
 5. Exchange the code at the `token_endpoint`. Request the `offline_access` scope if you need a refresh token (`grant_type=refresh_token`).
 
-Most MCP clients do all of this automatically when you add the server URL. For example: `npx -y add-mcp https://netlify-mcp.netlify.app/mcp`.
+Most MCP clients do all of this automatically when you add the server URL. For example: `npx -y add-mcp https://mcp.netlify.com/mcp`.
 
 ### 2. Use a personal access token (scripts, CI, local tools)
 
@@ -78,7 +78,7 @@ The REST API allows up to 500 requests per minute for most requests, and deploys
 ## Errors
 
 - **REST API:** a missing, invalid, or revoked token returns `401` with the JSON body `{"code":401,"message":"Access Denied"}`. Get a new token; don't retry with the same one.
-- **MCP server:** returns `401` with `WWW-Authenticate: Bearer realm="MCP Server", resource_metadata="https://netlify-mcp.netlify.app/.well-known/oauth-protected-resource/mcp"`. An expired or invalid token also carries `error="invalid_token"`. Restart the OAuth flow, or use your refresh token.
+- **MCP server:** returns `401` with `WWW-Authenticate: Bearer realm="MCP Server", resource_metadata="https://mcp.netlify.com/.well-known/oauth-protected-resource/mcp"`. An expired or invalid token also carries `error="invalid_token"`. Restart the OAuth flow, or use your refresh token.
 - **SAML SSO teams:** personal access tokens are denied access to an SSO team unless access was granted when the token was created.
 
 ## Revocation

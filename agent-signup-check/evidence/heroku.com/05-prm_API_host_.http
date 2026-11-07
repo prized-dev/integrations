@@ -1,6 +1,6 @@
 GET https://api.heroku.com/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:01.435Z
+fetched: 2026-11-07T00:18:38.947Z
 final-url: https://api.heroku.com/.well-known/oauth-protected-resource
 
 HTTP 400
@@ -8,12 +8,12 @@ content-type: application/json; charset=utf-8
 content-length: 159
 connection: close
 content-security-policy: default-src 'none'; frame-ancestors 'none'
-date: Fri, 30 Oct 2026 16:00:58 GMT
-request-id: a781ef3b-e877-4170-9278-c6fc5c54aec8,7328d722-6738-902f-5fdc-573b2262d471,146fa008-db7b-5bca-bde3-a8dbca13d9e5,f461e533-5121-6000-f351-984c17a2f4f5
+date: Sat, 07 Nov 2026 00:18:34 GMT
+request-id: 04c63ed5-9594-4a97-bff4-1406582cf86f,ac45b382-c41e-2d6f-a103-8f2088d20673,3d1cd540-368a-5b31-a524-6e708bcd2de8,12235e63-104d-40a0-d490-c69a21a34b30
 strict-transport-security: max-age=31536000; includeSubDomains
-via: 1.1 spaces-router (0ec3aaa24c5a), 1.1 spaces-router (0b8a9a9e03f1), 1.1 06d442c8680c66c3ea5fc3c648c3bc86.cloudfront.net (CloudFront)
+via: 1.1 spaces-router (0ec3aaa24c5a), 1.1 spaces-router (0b8a9a9e03f1), 1.1 e27e33d2ef7d91c8ffc1afbdd6d85df0.cloudfront.net (CloudFront)
 x-cache: Error from cloudfront
 x-amz-cf-pop: HIO52-P5
-x-amz-cf-id: xOPjbq3RC25_q4aXD8lRDDRXuYw6N9boCC2JIY-1CdEndu4EWJaTsg==
+x-amz-cf-id: LgdfXU0Pwp8WuiYd9UY22CQjqZpH4d7qD1zuABzGfdI2fStjSQQMgA==
 
 {"id":"missing_version","error":"Please specify a version along with Heroku's API MIME type. For example, `Accept: application/vnd.heroku+json; version=3`.\n"}

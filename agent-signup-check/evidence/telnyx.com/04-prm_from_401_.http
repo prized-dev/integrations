@@ -1,16 +1,17 @@
 GET https://api.telnyx.com/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:31.364Z
+fetched: 2026-11-07T00:19:06.710Z
 final-url: https://api.telnyx.com/.well-known/oauth-protected-resource
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:01:30 GMT
+date: Sat, 07 Nov 2026 00:19:05 GMT
 content-type: application/json; charset=utf-8
 content-length: 273
 connection: close
+strict-transport-security: max-age=31536000
 content-encoding: gzip
 vary: accept-encoding
-x-request-id: f70b8943-abf3-4523-934a-c4846674b3f6
+x-request-id: be1cd034-15d3-4eb3-98e4-7eb75520b9bf
 access-control-allow-credentials: true
 access-control-allow-origin: *
 access-control-expose-headers: 
@@ -22,9 +23,8 @@ ratelimit-remaining: 4
 x-ratelimit-reset: 1
 ratelimit-reset: 1
 server: cloudflare
-x-envoy-upstream-service-time: 9
+x-envoy-upstream-service-time: 11
 cf-cache-status: DYNAMIC
-strict-transport-security: max-age=31536000
-cf-ray: a52ba392abeb8ce4-PDX
+cf-ray: a5682a16c95eb338-PDX
 
 {"resource":"https://api.telnyx.com","scopes_supported":["account_management.read","account_management.write","ai.read","ai.write","authentication_and_access.read","billing.read","edge_compute.read","edge_compute.write","enterprise_integrations.read","enterprise_integrations.write","fax.read","fax.write","messaging.read","messaging.write","networking.read","networking.write","numbers.read","numbers.write","reporting.read","reporting.write","speech.read","speech.write","storage.read","storage.write","verify.read","verify.write","video.read","video.write","voice.read","voice.write","wireless.read","wireless.write"],"authorization_servers":["https://api.telnyx.com"]}

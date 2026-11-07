@@ -1,19 +1,19 @@
 GET https://workos.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:08.325Z
+fetched: 2026-11-07T00:19:41.948Z
 final-url: https://workos.com/auth.md
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:02:04 GMT
+date: Sat, 07 Nov 2026 00:19:38 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a52ba46a5931ef34-PDX
+cf-ray: a5682ae7bee2ad76-PDX
 cf-cache-status: REVALIDATED
 access-control-allow-origin: *
 cache-control: public, max-age=0, must-revalidate
 server: cloudflare
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=MRmNc1Ci3ar09EX2VYoXZL6%2F%2FPnvOv47OOOL9rkY8F3u%2FgyIuyxwuSwyESKxj0imA6O9BTgJ28xDpXyH3kZgpCqj8ROXW%2B%2BywmBTF63v3dz%2BcRXv1JUjzI4dWFag%2B4yOy5HNSv7ct53nHzXVlM2UVw%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=m2%2Fm1sXnMLU%2FZDDvctrWvFDu8%2FAyb6GQM5Cc0X5zjrEl2WgkBGd1dtENPrY1jfcbIHNJyyWWDs3a04MbVOzut1AyP5RjT8vIFqAxzA%2BeOoszWAdh5JaxRJEL2AOg2yBv7gUM9wj8L7neHighBUxQoA%3D%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 etag: W/"50e6e153f0d57d23d5cd02b0e2dbdc6c"
 content-encoding: gzip

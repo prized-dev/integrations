@@ -1,25 +1,20 @@
 GET https://docs.gitlab.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:02:03.868Z
+fetched: 2026-11-07T00:19:38.610Z
 final-url: https://docs.gitlab.com/llms.txt
 
 HTTP 200
-date: Fri, 30 Oct 2026 16:02:02 GMT
-content-type: text/plain; charset=utf-8
+date: Sat, 07 Nov 2026 00:19:37 GMT
+content-type: text/plain
 transfer-encoding: chunked
 connection: close
-cache-control: public, max-age=14400
-expires: Fri, 30 Oct 2026 20:02:02 GMT
-last-modified: Fri, 30 Oct 2026 15:21:53 GMT
-permissions-policy: interest-cohort=()
-vary: Origin, Accept-Encoding
-x-request-id: 01M66RD8JW3A6B7DDJGKW32WGX
-etag: W/"fc7d2c1e7e21ec36122f3c5b5c5b1b8398eafa7c44fe21ae60d20b048e312941"
-age: 348
 cf-cache-status: HIT
+cache-control: public, max-age=0, must-revalidate
+x-docs-origin: cloudflare-worker
+etag: W/"222422bef41a0d1706f2980f48a83fe4"
 content-encoding: gzip
 server: cloudflare
-cf-ray: a52ba45c5bba20eb-PDX
+cf-ray: a5682adcef729976-PDX
 
 # GitLab Documentation
 Learn how to use and administer GitLab, the most scalable Git-based integrated platform for software development.
@@ -266,7 +261,7 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 [Customization](https://docs.gitlab.com/user/duo_agent_platform/customize): Customize GitLab Duo Agent Platform behavior to match your workflow, coding standards, and project requirements.
 [Code Suggestions](https://docs.gitlab.com/user/duo_agent_platform/code_suggestions): Code Suggestions helps you write code in GitLab more efficiently by using AI to suggest code as you type.
 [Models](https://docs.gitlab.com/user/duo_agent_platform/model_selection): Configure large language models for GitLab Duo features.
-[Contextual awareness](https://docs.gitlab.com/user/duo_agent_platform/context): Understand what context is available to GitLab Duo features and how to control what information they can access.
+[Contextual awareness](https://docs.gitlab.com/user/duo_agent_platform/context): Understand what context GitLab Duo features can use, and exclude project content from that context.
 [Composite identity](https://docs.gitlab.com/user/duo_agent_platform/composite_identity): Learn how composite identity combines a service account and a human user into a single token to enable secure, traceable agent actions.
 [Authentication](https://docs.gitlab.com/user/duo_agent_platform/authentication): Learn more about GitLab Duo Agent Platform authentication in the GitLab documentation.
 [Security threats](https://docs.gitlab.com/user/duo_agent_platform/security_threats): Understand common security threats in agentic systems, including prompt injection, and how to mitigate them to protect your agents and flows.
@@ -330,6 +325,10 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 [Indexed data](https://docs.gitlab.com/orbit/schema): See which GitLab data and code GitLab Orbit indexes.
 [Security](https://docs.gitlab.com/orbit/security): See how GitLab Orbit protects your data, and which roles you need.
 [Glossary](https://docs.gitlab.com/orbit/glossary): Definitions of the terms used in the GitLab Orbit documentation.
+
+### Credit usage
+
+[Credit usage](https://docs.gitlab.com/subscriptions/gitlab_orbit_credit_usage): Understand how GitLab Orbit consumes GitLab Credits, which requests are free, and which group is billed.
 
 ### Troubleshooting
 
@@ -796,7 +795,7 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 ### GitLab Flex
 
 [GitLab Flex](https://docs.gitlab.com/subscriptions/gitlab_flex): Understand how GitLab Flex works and manage your reservation.
-[GitLab Flex Usage dashboard](https://docs.gitlab.com/subscriptions/gitlab_flex_dashboard): View your GitLab Flex commitment and usage, adjust your reservation, and control your spend.
+[Flex dashboard](https://docs.gitlab.com/subscriptions/gitlab_flex_dashboard): View your GitLab Flex commitment and usage, adjust your reservation, and control your spend.
 
 ### Manage subscription
 
@@ -825,7 +824,7 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 ### GitLab Dedicated
 
 [GitLab Dedicated](https://docs.gitlab.com/subscriptions/gitlab_dedicated): Discover available features and benefits of a single-tenant SaaS solution.
-[GitLab Dedicated for Government](https://docs.gitlab.com/subscriptions/gitlab_dedicated_for_government): Single-tenant SaaS solution for government agencies and regulated industries.
+[GitLab Dedicated for Government](https://docs.gitlab.com/subscriptions/gitlab_dedicated_for_government): Single-tenant SaaS solution for US government agencies and regulated industries.
 
 ### GitLab Duo add-ons
 

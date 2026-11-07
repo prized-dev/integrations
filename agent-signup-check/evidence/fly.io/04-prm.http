@@ -1,19 +1,19 @@
 GET https://fly.io/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:50.660Z
+fetched: 2026-11-07T00:18:26.930Z
 final-url: https://fly.io/.well-known/oauth-protected-resource
 
-HTTP 404
+HTTP 200
+access-control-allow-origin: *
 cache-control: max-age=0, private, must-revalidate
 content-encoding: br
 content-type: application/json; charset=utf-8
-date: Fri, 30 Oct 2026 16:00:48 GMT
+date: Sat, 07 Nov 2026 00:18:24 GMT
 server: Fly/366e4bf88 (2026-10-27)
-vary: Accept
-x-request-id: GONaA7i4PMvRnecAACPh
+x-request-id: GOWbOyt5j9f7XqIAAa2B
 transfer-encoding: chunked
 via: 1.1 fly.io
-fly-request-id: 01M66RNNGC5E9EPBSZP66H2R1D-lax
+fly-request-id: 01M6SNXV3JHGRK7SFFKZVAJYSJ-sjc
 connection: close
 
-{"errors":{"detail":"not found"}}
+{"authorization_servers":["https://fly.io/mcp/oauth"],"bearer_methods_supported":["header"],"resource":"https://mcp.fly.io","scopes_supported":["fly:apps:delete","fly:certificates:read","fly:context:read","fly:machines:delete","fly:machines:exec","fly:machines:read","fly:machines:sensitive:read","fly:machines:write","fly:mpg:query","fly:mpg:read","fly:mpg:write","fly:network:read","fly:organizations:read","fly:read","fly:secrets:delete","fly:secrets:read","fly:secrets:write","fly:volumes:delete","fly:volumes:read","fly:volumes:write","sprites:read","sprites:write"]}

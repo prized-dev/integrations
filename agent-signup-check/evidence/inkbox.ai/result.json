@@ -1,6 +1,6 @@
 {
  "site": "inkbox.ai",
- "checkedAt": "2026-10-30T16:01:34.387Z",
+ "checkedAt": "2026-11-07T00:19:10.758Z",
  "checker": "agent-signup-check/0.2.2",
  "passed": 1,
  "partial": 3,
@@ -63,7 +63,7 @@
    "name": "Docs in Markdown",
    "url": "https://inkbox.ai/llms.txt",
    "heading": "# Inkbox",
-   "bytes": 22365,
+   "bytes": 23861,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -76,7 +76,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 207,
+   "ms": 244,
    "redirects": 0
   },
   {
@@ -86,7 +86,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 33,
+   "ms": 352,
    "redirects": 0
   },
   {
@@ -96,7 +96,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 121,
+   "ms": 95,
    "redirects": 0
   },
   {
@@ -106,7 +106,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 93,
+   "ms": 95,
    "redirects": 0
   },
   {
@@ -116,7 +116,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 94,
+   "ms": 89,
    "redirects": 0
   },
   {
@@ -126,7 +126,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 174,
+   "ms": 378,
    "redirects": 0
   }
  ]

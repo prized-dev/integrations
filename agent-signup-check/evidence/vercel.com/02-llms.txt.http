@@ -1,18 +1,18 @@
 GET https://vercel.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:00:48.620Z
+fetched: 2026-11-07T00:18:25.520Z
 final-url: https://vercel.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 2213
+age: 440
 cache-control: public, max-age=0, s-maxage=3600, stale-while-revalidate=86400
 content-disposition: inline
 content-encoding: br
-content-security-policy: default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live wss://*.vercel.com localhost:*;script-src 'self' 'unsafe-eval' 'unsafe-inline' www.google.com https://news.google.com www.google-analytics.com www.googleadservices.com www.gstatic.com *.youtube.com *.youtube-nocookie.com *.ytimg.com *.twimg.com cdn.ampproject.org www.googletagmanager.com *.googleapis.com *.fides-cdn.ethyca.com *.ethyca.com cdn.ethyca.com cdn.vercel-insights.com va.vercel-scripts.com app.cal.com *.cr-relay.com blob: vercel.com *.vercel.com *.vercel.sh vercel.live localhost:* chrome-extension://*;child-src *.youtube.com *.youtube-nocookie.com *.stripe.com www.google.com https://news.google.com td.doubleclick.net github.com calendly.com vercel.cal.com *.codesandbox.io vercel.com *.vercel.com *.vercel.sh vercel.live wss://*.vercel.com localhost:*;style-src 'self' 'unsafe-inline' *.googleapis.com vercel.com *.vercel.com *.vercel.sh vercel.live wss://*.vercel.com localhost:*;img-src * blob: data: https://images.ctfassets.net;media-src 'self' 7nyt0uhk7sse4zvn.public.blob.vercel-storage.com videos.ctfassets.net user-images.githubusercontent.com replicate.delivery stream.mux.com *.mux.com blob: data: vercel.com *.vercel.com *.vercel.sh vercel.live wss://*.vercel.com localhost:*;connect-src 'self' data: vercel.com *.vercel.com *.vercel.sh vercel.live wss://*.vercel.com www.vercel-status.com cdn.vercel-insights.com va.vercel-scripts.com cdp.vercel.com www.google-analytics.com https://news.google.com www.googletagmanager.com *.googleapis.com *.cr-relay.com *.ethyca.com cdn.ethyca.com https://*.contentful.com *.upstash.io vercel.cal.com app.cal.com api.vercel.com *.ingest.sentry.io *.ingest.us.sentry.io stream.mux.com *.mux.com *.codesandbox.io react-tweet.vercel.app;font-src 'self' *.vercel.com *.gstatic.com vercel.live *.vercel.sh;worker-src 'self' *.vercel.com blob:;frame-ancestors  'self'  https://vercel.com  https://app.contentful.com  https://*.contentful.com  https://*.vercel.sh  https://*.vercel.com
+content-security-policy: default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live localhost:*;script-src 'self' 'unsafe-eval' 'unsafe-inline' https://news.google.com https://*.fides-cdn.ethyca.com va.vercel-scripts.com https://app.cal.com blob: vercel.com *.vercel.com *.vercel.sh vercel.live localhost:* chrome-extension://*;child-src https://www.youtube-nocookie.com https://news.google.com https://vercel.cal.com https://*.codesandbox.io vercel.com *.vercel.com *.vercel.sh vercel.live localhost:*;style-src 'self' 'unsafe-inline' vercel.com *.vercel.com *.vercel.sh vercel.live localhost:*;img-src 'self' blob: data: vercel.com *.vercel.com *.vercel.sh vercel.live https://images.ctfassets.net https://7nyt0uhk7sse4zvn.public.blob.vercel-storage.com https://avatars.githubusercontent.com https://i.ytimg.com https://image.mux.com https://pbs.twimg.com https://www.gstatic.com/images/branding/;media-src 'self' 7nyt0uhk7sse4zvn.public.blob.vercel-storage.com videos.ctfassets.net https://*.mux.com blob: data: vercel.com *.vercel.com *.vercel.sh vercel.live localhost:*;connect-src 'self' data: vercel.com *.vercel.com *.vercel.sh vercel.live wss://*.vercel.com www.vercel-status.com cdp.vercel.com https://news.google.com https://*.fides-cdn.ethyca.com https://*.contentful.com *.ingest.sentry.io *.ingest.us.sentry.io https://*.mux.com *.codesandbox.io https://react-tweet.vercel.app;font-src 'self' *.vercel.com vercel.live *.vercel.sh;worker-src 'self' blob:;frame-ancestors  'self'  https://vercel.com  https://app.contentful.com  https://*.contentful.com  https://*.vercel.sh  https://*.vercel.com
 content-type: text/plain; charset=utf-8
-date: Fri, 30 Oct 2026 16:00:46 GMT
-etag: W/"fdc60fa8ba8f331a8473199b8b8111a0"
+date: Sat, 07 Nov 2026 00:18:23 GMT
+etag: W/"2940e254612cdb484a7cbe07e2a835c9"
 feature-policy: fullscreen 'self'; camera 'none'
 referrer-policy: origin-when-cross-origin
 server: Vercel
@@ -21,9 +21,9 @@ vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-pre
 x-content-type-options: nosniff
 x-dns-prefetch-control: on
 x-download-options: noopen
-x-matched-path: /flg~eyJhbGciOiJIUzI1NiJ9._v79_v39_f7-_v7-_v79_f7-_v7-_v79_v79_f39_v79_v79_v7-_g.fn6nYUGhigXaSd2wnfkdTaqD9utHfNFUHmhghgujn6c/llms.txt
+x-matched-path: /flg~eyJhbGciOiJIUzI1NiJ9._v79_v3-_f7-_f7-_v7-_f3-_f7-_f7-_v79_v7-_f3-_v79_v79_v7-_g.CSJ3_Tf7rtCmbYb7xYh-7rTGzlCbi3qNjrC9mkHIgus/llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::8vqn5-1793376046273-6257092eab2d
+x-vercel-id: pdx1::66ptt-1794010703204-0ff6f6b67086
 x-xss-protection: 0
 connection: close
 transfer-encoding: chunked

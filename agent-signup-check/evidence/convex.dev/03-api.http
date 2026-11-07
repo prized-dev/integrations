@@ -1,10 +1,10 @@
 GET https://api.convex.dev/v1/token_details
 user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-10-30T16:01:21.371Z
+fetched: 2026-11-07T00:18:56.385Z
 final-url: https://api.convex.dev/v1/token_details
 
 HTTP 401
-date: Fri, 30 Oct 2026 16:01:19 GMT
+date: Sat, 07 Nov 2026 00:18:54 GMT
 content-type: application/json
 content-length: 87
 connection: close
@@ -13,6 +13,6 @@ vary: origin, access-control-request-method, access-control-request-headers
 via: 1.1 Caddy
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a52ba34feea99b30-PDX
+cf-ray: a56829d259e787cd-PDX
 
 {"code":"MissingAccessToken","message":"An access token is required for this command."}
