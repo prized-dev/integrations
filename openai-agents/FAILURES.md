@@ -37,6 +37,7 @@ Four rules, held by every operation: what an operation made is undone when it fa
 | background process | kill arrives before its start | the start runs nothing | `test_a_kill_that_arrives_before_its_start_stops_the_start` |
 | background process | input not delivered | `ExecTransportError` (`stdin_not_delivered`), or the exit code if it exited | `test_input_that_cannot_be_delivered_is_an_error` |
 | background process | two polls at once | one at a time; each byte once | `test_concurrent_polls_return_each_byte_once` |
+| background process | killed after its leader exited, or with a child that left its tree, and the scripts run by dash or busybox `sh` rather than bash | the whole process group is killed, and polls still time out right, under each shell | `test_posix_sh::test_kill_ends_the_group_after_its_leader_exits`, `test_posix_sh::test_kill_ends_a_process_that_left_the_tree`, `test_posix_sh::test_a_command_runs_and_its_exit_is_read` |
 | write | link swapped in after the SDK's check | refused; nothing written outside | `test_write_never_follows_a_link_swapped_in_after_the_check` |
 | write | directory swapped for a link | refused | `test_write_never_follows_a_directory_swapped_for_a_link` |
 | write | hard link to a file outside | replaced, not written through | `test_write_replaces_a_hard_link_instead_of_writing_through_it` |

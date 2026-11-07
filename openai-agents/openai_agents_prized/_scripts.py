@@ -237,10 +237,12 @@ setsid bash -c '
 # and, base64-encoded, the output from byte $2 on (at most $4 bytes). Output
 # before $2 was delivered by an earlier answer, so its disk is given back
 # (the writer's offset is unchanged; the start of the file reads as zeros).
+# The clock is the kernel's uptime in ms (10 ms steps): busybox's `date` has
+# no `%N`, and uptime does not jump when the wall clock is set.
 PTY_POLL = r"""
 dir=$1; off=$2; wait_ms=$3; max=$4
 if [ "$off" -gt 0 ]; then fallocate -p -o 0 -l "$off" -- "$dir/out" 2>/dev/null || true; fi
-now() { date +%s%3N; }
+now() { read -r up _ < /proc/uptime; s=${up%.*}; c=${up#*.}; echo $(( s * 1000 + ${c#0} * 10 )); }
 end=$(( $(now) + wait_ms ))
 while [ ! -e "$dir/exit" ] && [ "$(now)" -lt "$end" ]; do sleep 0.05; done
 done=0; code=-
@@ -258,7 +260,10 @@ tail -c +"$(( off + 1 ))" -- "$dir/out" | head -c "$n" | base64 -w0
 # the directory first, and the process checks for the mark after writing its
 # pid, so one of the two always sees the other: a process whose pid is not
 # written yet runs nothing, and its marked directory stays as the claim that
-# keeps a late start from running.
+# keeps a late start from running. The group is named as `-PGID` straight
+# after the signal, with no `--`: dash reads `kill -KILL -- -PGID` as a bad
+# number and kills nothing, and busybox refuses the `--` (tests/test_posix_sh.py
+# runs these scripts under each).
 PTY_KILL = r"""
 tree() {
   local child
@@ -273,7 +278,7 @@ for dir in "$@"; do
     # Its tree only while it runs: once its exit file is there, its pid may
     # be another process's. Its group cannot be, while a member is left.
     if [ ! -e "$dir/exit" ]; then kill -KILL $(tree "$leader") 2>/dev/null; fi
-    kill -KILL -- "-$leader" 2>/dev/null
+    kill -KILL "-$leader" 2>/dev/null
     rm -rf -- "$dir"
   fi
 done
