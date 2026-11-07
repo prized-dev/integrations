@@ -1,5 +1,5 @@
 """``prized-managed-agents``: serve an environment (``serve``), make a warm parent to fork sessions
-from (``prepare``), or show what it runs (``status``)."""
+from (``prepare``) or delete one (``retire``), or show what it runs (``status``)."""
 
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ from prized import AsyncSandbox, PrizedError
 
 from . import __version__
 from . import worker as w
+from .account import PrizedAccount
 from .cma import CMA
 from .config import ConfigError, Settings
 from .orchestrator import Orchestrator
@@ -48,6 +49,8 @@ def main(argv: list[str] | None = None) -> int:
     prep.add_argument("--setup", action="append", default=[], help="a command to run in it first (repeatable)")
     prep.add_argument("--template", default=None)
     sub.add_parser("status", help="the queue, and the sandboxes this environment's sessions have")
+    ret = sub.add_parser("retire", help="delete a warm parent (sessions forked from it keep their copies)")
+    ret.add_argument("parent", nargs="?", help="the warm parent's id; without one, list them")
     args = p.parse_args(argv)
     _logging(args.log_format)
     if not os.environ.get("PRIZED_API_KEY"):
@@ -69,6 +72,8 @@ def main(argv: list[str] | None = None) -> int:
             return asyncio.run(_serve(settings, args.host, args.port))
         if args.cmd == "prepare":
             return asyncio.run(_prepare(settings, args.setup, args.template))
+        if args.cmd == "retire":
+            return asyncio.run(_retire(settings, args.parent))
         return asyncio.run(_status(settings))
     except PrizedError as err:
         print(f"prized: {err}", file=sys.stderr)
@@ -83,6 +88,36 @@ def _without_webhooks(s: Settings) -> Settings:
     return replace(s, webhook_key=None)
 
 
+async def free_tier_settings(settings: Settings, account: PrizedAccount) -> Settings:
+    """FREE_TIER=1 or 0 says; auto asks Prized. On the free tier, its safe defaults apply."""
+    log = logging.getLogger("prized_managed_agents")
+    if settings.free_tier == "0":
+        return settings
+    if settings.free_tier == "1":
+        free, how = True, "FREE_TIER=1"
+    else:
+        free, how = await account.free_tier()
+    if free is None:
+        log.info(
+            "can't tell whether this workspace is on Prized's free tier (%s): if it runs on the free credit, "
+            "set FREE_TIER=1",
+            how,
+        )
+        return settings
+    if not free:
+        return settings
+    settings, notes = settings.on_free_tier()
+    log.info(
+        "on Prized's free tier (%s): %s; each sandbox has 60 minutes of running in all%s",
+        how,
+        ", ".join(notes) or "settings unchanged",
+        "; when the disk is full, the session sandbox paused longest is deleted for a new one"
+        if settings.evict_paused
+        else "",
+    )
+    return settings
+
+
 async def _serve(settings: Settings, host: str, port: int) -> int:
     import uvicorn
 
@@ -90,8 +125,10 @@ async def _serve(settings: Settings, host: str, port: int) -> int:
     # One connection pool for every Prized call: each SDK call otherwise opens a client of its own,
     # kept open by the handles it returns, which a process that runs for weeks can't afford.
     prized_http = httpx.AsyncClient()
+    account = PrizedAccount(http_client=prized_http)
+    settings = await free_tier_settings(settings, account)
     verifier = Verifier(settings.webhook_key) if settings.webhook_key else None
-    orch = Orchestrator(settings, cma, SessionSandboxes(settings, http_client=prized_http))
+    orch = Orchestrator(settings, cma, SessionSandboxes(settings, http_client=prized_http), account=account)
     await orch.start()
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGTERM, signal.SIGINT):
@@ -129,6 +166,12 @@ async def _serve(settings: Settings, host: str, port: int) -> int:
 
 
 async def _prepare(settings: Settings, setup: list[str], template: str | None) -> int:
+    # Copies inherit the parent's auto-pause, so the free tier's shorter one is set on the parent.
+    account = PrizedAccount()
+    try:
+        settings = await free_tier_settings(settings, account)
+    finally:
+        await account.close()
     boxes = SessionSandboxes(settings)  # one call: the SDK's own client is fine
 
     async def ready(sb: Any) -> None:
@@ -144,6 +187,21 @@ async def _prepare(settings: Settings, setup: list[str], template: str | None) -
     print(sb.id)
     print(f"paused with ant {settings.ant_version} installed. Fork sessions from it:", file=sys.stderr)
     print(f"  export WARM_PARENT={sb.id}", file=sys.stderr)
+    return 0
+
+
+async def _retire(settings: Settings, parent: str | None) -> int:
+    boxes = SessionSandboxes(settings)
+    if parent is None:
+        for sb in await boxes.parents():
+            print(f"{sb.id}\t{sb.state}")
+        return 0
+    try:
+        await boxes.retire_parent(parent)
+    except PermissionError as err:
+        print(str(err), file=sys.stderr)
+        return 2
+    print(f"retired {parent}; unset WARM_PARENT if it names it", file=sys.stderr)
     return 0
 
 

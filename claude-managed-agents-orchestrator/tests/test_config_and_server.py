@@ -31,7 +31,7 @@ def test_settings_from_the_environment():
             "RUN_TIMEOUT": "90m",
             "PRIZED_LABELS": "team=infra, cost=cma",
             "MAX_SESSIONS": "7",
-            "ANTHROPIC_BASE_URL": "https://example.test/",
+            "ORCH_ANTHROPIC_BASE_URL": "https://example.test/",
         }
     )
     assert s.webhooks and s.keep_paused_s == 2 * 86400 and s.auto_pause_s == 1200 and s.run_timeout_s == 5400

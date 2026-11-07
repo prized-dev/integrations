@@ -45,6 +45,7 @@ import time
 from collections import OrderedDict
 from collections.abc import AsyncIterator, Callable
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from typing import Any
 
 from prized import PrizedError
@@ -52,7 +53,7 @@ from prized import PrizedError
 from . import worker as w
 from .cma import CMA, CMAError, Session, WorkItem
 from .config import Settings
-from .sandboxes import SESSION, Ensured, SessionSandboxes, gone
+from .sandboxes import SESSION, Ensured, SessionSandboxes, gone, idle_since
 from .webhooks import Event
 
 log = logging.getLogger("prized_managed_agents")
@@ -65,6 +66,8 @@ RETIRE_WAIT_S = 30.0  # how long an earlier run of the session gets to finish be
 # check (20 s). A run still starting after both counts as dead.
 LAUNCH_S = 60.0
 MAX_FAILURES = 10_000  # failed handoffs remembered (by work id), oldest forgotten first
+MAX_REMEMBERED = 10_000  # each session's last sandbox, so a vanished one is named on the next run
+LOW_RUN_S = 10 * 60  # on the free tier, say so when a sandbox has less running left than this
 MAX_STRAYS = 20  # leftover workers stopped per pass; more than that is the agent's doing
 
 
@@ -100,11 +103,16 @@ class Orchestrator:
         boxes: SessionSandboxes,
         *,
         clock: Callable[[], float] = time.monotonic,
+        account: Any = None,
+        now: Callable[[], datetime] = lambda: datetime.now(timezone.utc),
     ) -> None:
         self.s = settings
         self.cma = cma
         self.boxes = boxes
         self.clock = clock
+        self.now = now
+        self.account = account  # a PrizedAccount: why the free tier deleted a sandbox
+        self.last_box: OrderedDict[str, str] = OrderedDict()  # session -> the sandbox it last ran in
         self.runs: dict[str, Run] = {}  # by run id
         self.notes: list[Note] = []
         self.failures: OrderedDict[str, int] = OrderedDict()  # failed handoffs, by work id
@@ -122,11 +130,20 @@ class Orchestrator:
         self._stopping = asyncio.Event()
         self._tasks: set[asyncio.Task[Any]] = set()
         self._started = False
+        boxes.busy = lambda: self._busy  # never evict a sandbox whose session is being handed off
 
     # -- the loops -----------------------------------------------------------------------------
 
     async def start(self) -> None:
         """Check the environment key and the Prized key, and pick up runs a previous process left."""
+        log.info("the environment key goes to %s", self.s.base_url)
+        if self.s.ignored_base_url:
+            log.warning(
+                "ANTHROPIC_BASE_URL=%s is ignored: the environment key goes only to %s (set %s to change that)",
+                self.s.ignored_base_url,
+                self.s.base_url,
+                "ORCH_ANTHROPIC_BASE_URL",
+            )
         try:
             await self.cma.stats()
         except CMAError as err:
@@ -315,7 +332,15 @@ class Orchestrator:
                 template, fork_from = self._overrides(session)
                 made = await self.boxes.ensure(sid, template=template, fork_from=fork_from)
                 sb = made.sandbox
+                for victim, owner, since in made.evicted:
+                    self._note(
+                        owner,
+                        "evicted",
+                        f"{victim}, paused since {since:%Y-%m-%d %H:%MZ}: the free tier's disk was full "
+                        f"and {sid} needed a sandbox",
+                    )
                 self._note(sid, made.how, sb.id)
+                await self._name_lost_sandbox(sid, made)
                 if made.how != "created":
                     await self._clear_leftovers(sb, item.id)
                 # The run's directory first: from here the sandbox itself says a handoff is under way
@@ -337,6 +362,37 @@ class Orchestrator:
             self._handoff_failed(item, err)
             return
         await self._launch(item, made, rid)
+
+    async def _name_lost_sandbox(self, sid: str, made: Ensured) -> None:
+        """Remember the session's sandbox; if it had another one that is gone, say why, since the
+        session's files went with it. On the free tier, say when its run time is nearly used up."""
+        sb = made.sandbox
+        before = self.last_box.pop(sid, None)
+        self.last_box[sid] = sb.id
+        while len(self.last_box) > MAX_REMEMBERED:
+            self.last_box.popitem(last=False)
+        if made.fresh and before and before != sb.id:
+            why = await self._gone_reason(before) or "it was deleted"
+            self._note(sid, "sandbox gone", f"{before}: {why}; {sb.id} starts without the session's files")
+        expires = getattr(sb, "expires_at", None)
+        if self.s.free and expires is not None:
+            left = (expires if expires.tzinfo else expires.replace(tzinfo=timezone.utc)) - self.now()
+            if left.total_seconds() < LOW_RUN_S:
+                self._note(
+                    sid,
+                    "run time low",
+                    f"{sb.id} has {max(0, int(left.total_seconds() // 60))} minutes of running left on the free tier; "
+                    "then it is deleted with its files",
+                )
+
+    async def _gone_reason(self, sandbox_id: str) -> str | None:
+        if self.account is None:
+            return None
+        try:
+            return await self.account.gone_reason(sandbox_id)
+        except Exception as err:  # a reason is nice to have; never fail a handoff or a probe on it
+            log.debug("reading why %s is gone failed: %s", sandbox_id, err)
+            return None
 
     async def _launch(self, item: WorkItem, made: Ensured, rid: str) -> None:
         """Start ant, then decide from what the sandbox says, outside the handoff timeout. From the
@@ -548,8 +604,11 @@ class Orchestrator:
             statuses = {st.run_id: st for st in await self._runs_in(sb)}
         except Exception as err:
             if gone(err):
+                why = await self._gone_reason(sb.id)
                 for run in mine:
-                    self._note(run.session_id, "sandbox gone", f"{sb.id}; ending {run.work_id}")
+                    self._note(
+                        run.session_id, "sandbox gone", f"{sb.id}; ending {run.work_id}" + (f": {why}" if why else "")
+                    )
                     self.runs.pop(run.run_id, None)
                     with contextlib.suppress(CMAError):
                         await self.cma.stop(run.work_id, force=True)
@@ -767,7 +826,21 @@ class Orchestrator:
                             self._note(sid, "sweep failed", f"{sb.id}: {_describe(err)}")
                 elif sb.state == "running":
                     await self._pause_if_idle(sb, sid, "which no run was using")
+                elif sb.state == "paused" and self._past_keep_paused(sb):
+                    # Copies of a warm parent inherit its auto-delete (off, or WARM_PARENT_KEEP), so
+                    # KEEP_PAUSED is held here for them; Prized holds it for the others too.
+                    try:
+                        await sb.delete()
+                        swept.append(sb.id)
+                        self._note(sid, "swept", f"{sb.id} (paused past KEEP_PAUSED)")
+                    except Exception as err:
+                        if not gone(err):
+                            self._note(sid, "sweep failed", f"{sb.id}: {_describe(err)}")
         return swept
+
+    def _past_keep_paused(self, sb: Any) -> bool:
+        keep, since = self.s.keep_paused_s, idle_since(sb)
+        return bool(keep) and since is not None and (self.now() - since).total_seconds() > keep
 
     async def reconcile(self) -> None:
         """Pick up what a previous process left: a live worker in each running sandbox is supervised

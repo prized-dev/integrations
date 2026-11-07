@@ -173,7 +173,7 @@ async def harness(
     s = settings_for(mock, ant_dist, **over)
     cma = CMA(s.base_url, s.environment_id, s.environment_key)
     boxes = SessionSandboxes(s, api=world.api(), sleep=lambda _: asyncio.sleep(0))
-    orch = Orchestrator(s, cma, boxes)
+    orch = Orchestrator(s, cma, boxes, account=world.account())
     app = None
     server = None
     serving = None

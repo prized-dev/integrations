@@ -22,6 +22,7 @@ import signal
 import tempfile
 import time
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from typing import Any
 
 from prized import PrizedError
@@ -51,6 +52,42 @@ class World:
         self.fail_after_exec: list[tuple[str, PrizedError]] = []
         self.auto_pause_after: float | None = None
         self._watch: asyncio.Task[Any] | None = None
+        # The account's side (GET /api/v1/me and ?ended=1): whether the workspace is on the free
+        # tier (None: the key can't read billing), and the sandboxes the free tier deleted.
+        self.trial: bool | None = None
+        self.ended: dict[str, dict[str, Any]] = {}
+
+    def end_at_run_limit(self, sb: FakeSandbox) -> None:
+        """What the free tier does at a sandbox's 60 minutes: delete it, memory and files too."""
+        self.ended[sb.id] = {
+            "id": sb.id,
+            "reason": "free_tier_run_limit",
+            "limitMin": 60,
+            "message": "Its 60 minutes of running on the free tier ran out; a top-up lifts this.",
+        }
+        sb._signal(signal.SIGCONT)
+        sb._signal(signal.SIGKILL)
+        sb.state = "deleted"
+        self.calls.append(("run-limit", sb.id))
+
+    def account(self) -> Any:
+        world = self
+
+        class Account:
+            async def free_tier(self) -> tuple[bool | None, str]:
+                if world.trial is not None:
+                    return world.trial, "billing.trial in GET /api/v1/me"
+                if world.ended:
+                    return True, "the free tier's ended sandboxes"
+                return None, "the key can't read billing"
+
+            async def gone_reason(self, sandbox_id: str) -> str | None:
+                row = world.ended.get(sandbox_id)
+                if row is None:
+                    return None
+                return f"deleted at the free tier's {row['limitMin']}-minute run limit, memory and files with it"
+
+        return Account()
 
     def close(self) -> None:
         if self._watch is not None:
@@ -153,6 +190,10 @@ class FakeSandbox:
         os.makedirs(os.path.join(self.home, "work"), exist_ok=True)
         self.files = Files(self)
         self.active = time.monotonic()
+        self.created_at = datetime.now(timezone.utc)
+        self.last_active_at = self.created_at
+        self.expires_at: datetime | None = None
+        self.error_reason: str | None = None
 
     def __repr__(self) -> str:
         return f"FakeSandbox({self.id}, {self.state})"
@@ -160,6 +201,7 @@ class FakeSandbox:
     def _touch(self) -> None:
         self._gone()
         self.active = time.monotonic()
+        self.last_active_at = datetime.now(timezone.utc)
 
     def local(self, path: str) -> str:
         if path.startswith(HOME):

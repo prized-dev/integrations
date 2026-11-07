@@ -22,7 +22,7 @@ def test_serve_takes_a_webhook_serves_the_session_and_stops_on_sigterm(mock, wor
             "ANTHROPIC_ENVIRONMENT_ID": ENV_ID,
             "ANTHROPIC_ENVIRONMENT_KEY": ENV_KEY,
             "ANTHROPIC_WEBHOOK_SIGNING_KEY": WEBHOOK_KEY,
-            "ANTHROPIC_BASE_URL": mock.url,
+            "ORCH_ANTHROPIC_BASE_URL": mock.url,
             "ANT_URL": ant_dist["url"],
             "ANT_SHA256_AMD64": ant_dist["sha"]["amd64"],
             "ANT_SHA256_ARM64": ant_dist["sha"]["arm64"],

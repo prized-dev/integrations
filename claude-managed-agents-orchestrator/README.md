@@ -15,7 +15,8 @@ For one poller on a machine you keep running, with nothing to install but `ant` 
 3. On a machine that stays on, install it and export the four values:
 
    ```bash
-   pip install "git+https://github.com/prized-dev/integrations#subdirectory=claude-managed-agents-orchestrator"
+   python3 -m venv ~/.pma && ~/.pma/bin/pip install "git+https://github.com/prized-dev/integrations#subdirectory=claude-managed-agents-orchestrator"
+   export PATH="$HOME/.pma/bin:$PATH"
    export ANTHROPIC_ENVIRONMENT_ID=env_…
    export ANTHROPIC_ENVIRONMENT_KEY=sk-ant-oat01-…
    export ANTHROPIC_WEBHOOK_SIGNING_KEY=whsec_…
@@ -54,7 +55,7 @@ prized-managed-agents prepare --setup "git clone https://github.com/you/app && c
 export WARM_PARENT=sbx_…   # the id it prints
 ```
 
-The parent stays paused, with `ant` installed. Copies keep the parent's `AUTO_PAUSE` and `KEEP_PAUSED`, so set those when you run `prepare`.
+The parent stays paused, with `ant` installed, until you retire it: `prized-managed-agents retire` lists this environment's parents, and `prized-managed-agents retire sbx_…` deletes one (sessions forked from it keep their copies). Set `WARM_PARENT_KEEP` before `prepare` to have it deleted after that long paused instead. Copies keep the parent's `AUTO_PAUSE`, so set that when you run `prepare`; they would inherit its deletion timer too, so the sweep deletes a copy once it has been paused for `KEEP_PAUSED`. On the free tier Prized deletes any sandbox 30 days after its last use, a parent too.
 
 A session can choose for itself through its [metadata](https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes-workers#stage-files-for-a-session): `prized_template` picks the template, and `prized_fork_from` names a warm parent to fork. Only warm parents `prepare` made for this environment (labelled `prized-managed-agents-role=warm-parent`, with the environment's id and your `PRIZED_LABELS`) can be forked, this way or as `WARM_PARENT`. `SESSION_OVERRIDES=0` turns both off.
 
@@ -65,6 +66,7 @@ A session can choose for itself through its [metadata](https://platform.claude.c
 | `PRIZED_TEMPLATE` | `prized-base-v1` | The sandbox template. `prized-agent-v1` adds Claude Code and Codex |
 | `PRIZED_VCPU`, `PRIZED_MEMORY_GB`, `PRIZED_DISK_GB` | The template's | Each session's shape |
 | `WARM_PARENT` | | A paused sandbox from `prepare` to fork new sessions from |
+| `WARM_PARENT_KEEP` | `0` | How long a warm parent from `prepare` waits, paused, before it is deleted; `0` keeps it until it is retired |
 | `PRIZED_LABELS` | | Extra labels on every sandbox, `team=infra,cost=agents` |
 | `KEEP_PAUSED` | `7d` | How long a paused session's sandbox waits for its next run before it is deleted (up to `28d`; `0` keeps it) |
 | `MAX_RUNTIME` | Prized's, `24h` | A sandbox's run time, restarting on every resume (up to `7d` on a paid plan) |
@@ -78,7 +80,9 @@ A session can choose for itself through its [metadata](https://platform.claude.c
 | `ANT_VERSION`, `ANT_SHA256_AMD64`, `ANT_SHA256_ARM64` | `2.7.1` and its sha256s | Another `ant` release, with the sha256s of its `linux_amd64` and `linux_arm64` tarballs from its `checksums.txt` |
 | `ANT_URL` | GitHub's release URL | Where to download `ant` from (a mirror), with `{version}` and `{arch}` in it; the sha256 check still applies |
 | `PROBE_EVERY`, `SWEEP_EVERY` | `15s`, `5m` | How often running sandboxes are checked (keep it well under `AUTO_PAUSE`), and how often ended sessions' sandboxes are swept |
-| `ANTHROPIC_BASE_URL` | `https://api.anthropic.com` | Another API endpoint; passed to the worker too |
+| `ORCH_ANTHROPIC_BASE_URL` | `https://api.anthropic.com` | Another API endpoint, https only (or http to this machine); passed to the worker too. `ANTHROPIC_BASE_URL` is never read, since Claude Code and Anthropic's SDKs set it for gateways and proxies: the start says which URL the environment key goes to, and warns when `ANTHROPIC_BASE_URL` is set |
+| `FREE_TIER` | `auto` | Whether the workspace is on Prized's free tier: `auto` asks Prized at start (it can tell from a key that can read billing, or once the free tier has ended a sandbox), `1` says it is, `0` that it isn't. See [On the free tier](#on-the-free-tier) |
+| `EVICT_PAUSED` | `1` | On the free tier, when the disk is full, delete the session sandbox paused longest so a new session can start |
 | `HOST`, `PORT` | `127.0.0.1`, `8787` | Where the receiver listens: `POST /webhook`, `GET /healthz` |
 | `ANTHROPIC_ENVIRONMENT_KEY_PREVIOUS` | | After rotating the environment key, the old one, so runs started under it are still recognised (their ids are signed with a key derived from it). Used for nothing else |
 
@@ -89,11 +93,22 @@ A session can choose for itself through its [metadata](https://platform.claude.c
 - **Network.** Sandboxes have open outbound internet; there are no per-session egress rules yet.
 - **The receiver** must be reachable at a public HTTPS URL on 443 for webhooks. A Prized sandbox can't host it: a public port doesn't wake a paused sandbox. Without one, run with `--poll`.
 - **Files** last while the session's sandbox does: if it is deleted (after `KEEP_PAUSED`, at the end of its run time, or if its host fails), the next run starts from an empty working directory.
-- **Quotas.** 50 running sandboxes per workspace by default; on free credit, 10 at once and 60 minutes of running per sandbox. Paused sandboxes keep their disk: on a paid plan, paused storage past 20 GB costs $0.05 per GB-month ([Pause and resume](https://prized.dev/docs/sandboxes?via=claude-managed-agents-orchestrator#pause-and-resume)).
+- **Quotas.** 50 running sandboxes per workspace by default; on free credit, 10 at once and 60 minutes of running per sandbox ([On the free tier](#on-the-free-tier)). Paused sandboxes keep their disk: on a paid plan, paused storage past 20 GB costs $0.05 per GB-month ([Pause and resume](https://prized.dev/docs/sandboxes?via=claude-managed-agents-orchestrator#pause-and-resume)).
+
+## On the free tier
+
+A workspace on its free credit alone runs 10 sandboxes at once, each with 60 minutes of running in all, and has 100 GB of disk across its sandboxes, paused ones included ([Free tier](https://prized.dev/docs/sandboxes?via=claude-managed-agents-orchestrator#free-tier)). When it is on the free tier (`FREE_TIER`), the orchestrator says so at start, and:
+
+- **Changes the defaults** you haven't set: `MAX_SESSIONS` 10 (always: more would be refused), `MAX_IDLE` 10s, so each message spends its turn and little more of the 60 minutes, and `AUTO_PAUSE` 2m. A `MAX_RUNTIME` over 60 minutes is dropped, since Prized would refuse it.
+- **Makes room.** When Prized refuses a new session's sandbox because the disk is full, the session sandbox paused longest is deleted, with its files, and the log says `evicted` and whose. A refusal that says `"tier": "free"` turns this on even when `FREE_TIER` couldn't tell. `EVICT_PAUSED=0` turns it off, and then new sessions fail until a paused one is deleted.
+- **Names lost sandboxes.** When a session's sandbox used up its 60 minutes, Prized deleted it, memory and files with it. The log says `sandbox gone` with Prized's reason, mid-run or at the session's next message, which starts in a new sandbox. A sandbox with under 10 minutes of running left is named (`run time low`) when its session comes back.
+
+A top-up or a plan lifts all of this; restart with `FREE_TIER=0` (or let `auto` see it).
 
 ## Troubleshooting
 
 - **A session stays queued.** `prized-managed-agents status` shows the queue. No orchestrator is running, every slot is busy (`MAX_SESSIONS`), or each handoff fails: the log says why (`handoff failed`, then `gave up`).
+- **`HTTP 401` at start** (`is ANTHROPIC_ENVIRONMENT_KEY this environment's key?`): the key is wrong, revoked or for another environment. The line before it says where the key went; only `ORCH_ANTHROPIC_BASE_URL` changes that.
 - **Webhooks don't arrive.** The Console shows the endpoint's state; a redirect (3xx) or a private address disables it. Sessions still start within `RECONCILE_EVERY`.
 - **The worker's own log** is in the sandbox: `prized sandbox exec sbx_… -- "tail ~/.prized-managed-agents/runs/*/worker.log"`. When a run fails, the orchestrator prints its end.
 - **A run shows `"genuine": false`** in `prized-managed-agents status`: something in the sandbox wrote it, and the orchestrator ignores it. Runs started before you rotated the environment key show this too, unless you restart with the old key in `ANTHROPIC_ENVIRONMENT_KEY_PREVIOUS` until they have ended.
@@ -104,6 +119,6 @@ A session can choose for itself through its [metadata](https://platform.claude.c
 scripts/test.sh claude-managed-agents-orchestrator   # from the repo root: lint + offline tests
 ```
 
-The tests run the orchestrator against a stand-in for Anthropic's side built from the API reference: the work queue with its reclaim window and leases (heartbeats with optimistic concurrency, a lapsed lease goes back to the queue), the session endpoint, and webhooks signed with the Standard Webhooks library and retried as Anthropic retries them. Sandboxes are fake but their commands really run, so the in-sandbox scripts and the `ant` install are tested as they are, with a stub `ant` that speaks the lease protocol on the work item's token alone. They check the ack comes only after the worker started; that the environment key never reaches a sandbox (no command's environment, no file); that a follow-up resumes the same sandbox with its files; that ended sessions lose their sandboxes, by webhook and by sweep; that forged, stale and duplicate deliveries do nothing; that a failed handoff is left for the queue, cleans up (even when a cleanup step fails) and succeeds when the item comes back, and gives up after 3 tries; that a run longer than `AUTO_PAUSE` stays awake while one whose orchestrator died pauses; that a restarted orchestrator adopts running work, never pauses a sandbox whose worker is alive, and keeps each run's start time; that a worker frozen in a resumed sandbox is stopped before the next one starts; that a lost status check or launch answer leaves a healthy worker alone; that an item that comes again after a lost ack gets a new worker if the old one died; that runs an agent forges in its sandbox (signed with nothing, smuggled in by a newline, named for another session's work) add no run, take no slot and reach no other session; that only this environment's warm parents can be forked; and the signature check against the reference library on 300 random deliveries.
+The tests run the orchestrator against a stand-in for Anthropic's side built from the API reference: the work queue with its reclaim window and leases (heartbeats with optimistic concurrency, a lapsed lease goes back to the queue), the session endpoint, and webhooks signed with the Standard Webhooks library and retried as Anthropic retries them. Sandboxes are fake but their commands really run, so the in-sandbox scripts and the `ant` install are tested as they are, with a stub `ant` that speaks the lease protocol on the work item's token alone. They check the ack comes only after the worker started; that the environment key never reaches a sandbox (no command's environment, no file); that a follow-up resumes the same sandbox with its files; that ended sessions lose their sandboxes, by webhook and by sweep; that forged, stale and duplicate deliveries do nothing; that a failed handoff is left for the queue, cleans up (even when a cleanup step fails) and succeeds when the item comes back, and gives up after 3 tries; that a run longer than `AUTO_PAUSE` stays awake while one whose orchestrator died pauses; that a restarted orchestrator adopts running work, never pauses a sandbox whose worker is alive, and keeps each run's start time; that a worker frozen in a resumed sandbox is stopped before the next one starts; that a lost status check or launch answer leaves a healthy worker alone; that an item that comes again after a lost ack gets a new worker if the old one died; that runs an agent forges in its sandbox (signed with nothing, smuggled in by a newline, named for another session's work) add no run, take no slot and reach no other session; that only this environment's warm parents can be forked, a warm parent is kept until it is retired, and its copies are deleted once paused past `KEEP_PAUSED`; that the environment key never follows `ANTHROPIC_BASE_URL` and goes only to https (or this machine); that on the free tier the defaults change, a full disk deletes the session sandbox paused longest (and nothing off the free tier), and a sandbox the free tier deleted is named with Prized's reason; and the signature check against the reference library on 300 random deliveries.
 
 Prized Sandboxes and Claude Managed Agents are both in beta. Apache-2.0.
