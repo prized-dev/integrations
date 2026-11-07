@@ -40,6 +40,10 @@ from prized_managed_agents.server import WebhookApp  # noqa: E402
 from prized_managed_agents.webhooks import Verifier  # noqa: E402
 
 STUB_ANT = Path(__file__).parent / "bin" / "ant"
+# Substrings that pick out one in-sandbox script, for World.fail_exec and fail_after_exec.
+STATUS_CMD = 'for r in "$PMA_RUNS"/*/; do'
+LAUNCH_CMD = "setsid -f sh -c"
+COLLECT_CMD = 'touch "$r/collected"'
 BLOCKED: list[str] = []
 _SEND = httpx.AsyncClient.send
 _SEND_SYNC = httpx.Client.send
@@ -226,4 +230,17 @@ def sandbox_text(world: World) -> str:
     return "\n".join(out)
 
 
-__all__ = ["Harness", "harness", "run", "sandbox_text", "settings_for", "worker"]
+def craft_run(
+    sb: Any, session_id: str, work_id: str, *, now: float | None = None, key: str = mock_cma.ENV_KEY, **files: str
+) -> str:
+    """Write a run directory into a fake sandbox by hand, signed with ``key``, as an orchestrator of
+    that environment would have; ``files`` are its other files (done, pid, collected...)."""
+    rid = worker.run_id(worker.run_key(key), session_id, work_id, now=now)
+    d = Path(sb.home, worker.RUNS, rid)
+    d.mkdir(parents=True)
+    for name, text in {"session": session_id, "work": work_id, **files}.items():
+        (d / name).write_text(text)
+    return rid
+
+
+__all__ = ["Harness", "craft_run", "harness", "run", "sandbox_text", "settings_for", "worker"]

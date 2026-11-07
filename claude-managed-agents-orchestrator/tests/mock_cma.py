@@ -103,6 +103,7 @@ class MockCMA:
         self.empty_poll_status = 200  # 200 with a null body, or 204
         self.fail_next: dict[str, list[int]] = {}  # "ack" / "poll" / "stop" / "session": statuses to answer first
         self.reuse_work_ids = False  # the dispatcher says a work item's id can be its session's id
+        self.next_work_id: str | None = None  # the next session item's id, once
         # webhooks
         self.endpoint: str | None = None
         self.endpoint_disabled: str | None = None
@@ -188,6 +189,8 @@ class MockCMA:
 
     def _enqueue(self, sid: str, *, kind: str = "session") -> Item:
         wid = sid if (self.reuse_work_ids and sid) else f"work_{next(self.ids):04d}mock"
+        if self.next_work_id and kind == "session":
+            wid, self.next_work_id = self.next_work_id, None
         item = Item(wid, sid, kind=kind)
         old = self.items.get(wid)
         if old is not None and old.state != "stopped":

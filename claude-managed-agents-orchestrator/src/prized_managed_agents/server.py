@@ -5,9 +5,9 @@ received. It retries other answers (three attempts in all, 5 to 120 seconds apar
 endpoint on any 3xx, so this never redirects. The answers:
 
 - 200 once the event is acted on (the work queue, not the webhook, is the record: a run-started
-  event only wakes the intake, which claims whatever is queued), or for a retry already handled;
-- 401 for a delivery whose signature or timestamp doesn't check out;
-- 400 for a verified body that isn't an event; 413 past 1 MiB;
+  event only wakes the intake, which claims whatever is queued), for a retry already handled, and
+  for a verified delivery that isn't an event we read (ignored, so the endpoint stays healthy);
+- 401 for a delivery whose signature or timestamp doesn't check out; 413 past 1 MiB;
 - 503 while shutting down, so the delivery is retried, to this process's successor.
 """
 
@@ -91,7 +91,9 @@ class WebhookApp:
         try:
             event = Event.parse(doc)
         except WebhookError as err:
-            await _reply(send, 400, {"error": str(err)})
+            self.seen.add(msg_id)
+            log.warning("webhook %s: ignored a verified delivery: %s", msg_id, err)
+            await _reply(send, 200, {"status": "ignored"})
             return
         did = await self.orch.on_event(event)
         self.seen.add(msg_id)

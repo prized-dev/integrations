@@ -110,6 +110,14 @@ def main(argv):
         # A worker that dies at once, without stopping its item (a broken binary, say).
         print("stub ant: crashing as asked", file=sys.stderr, flush=True)
         os._exit(3)
+    elif session["metadata"].get("stub_die_once_after"):
+        # The first worker in this sandbox dies a little later, still without stopping its item.
+        mark = os.path.join(os.environ["HOME"], ".stub-died")
+        if not os.path.exists(mark):
+            open(mark, "w").close()
+            time.sleep(float(session["metadata"]["stub_die_once_after"]))
+            print("stub ant: dying as asked", file=sys.stderr, flush=True)
+            os._exit(4)
     idle_since = None
     while not state["stop"]:
         status, doc = call("GET", "/_stub/next")

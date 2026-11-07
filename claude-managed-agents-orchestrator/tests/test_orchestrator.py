@@ -13,6 +13,7 @@ from mock_cma import ENV_ID, ENV_KEY, WEBHOOK_KEY
 from prized import PrizedError
 
 from prized_managed_agents import worker as w
+from prized_managed_agents.sandboxes import ENVIRONMENT
 
 
 async def delivered(mock, *args, **kw):
@@ -268,6 +269,15 @@ def test_sessions_fork_a_warm_parent_and_only_a_warm_parent(mock, world, ant_dis
             mock.run(other.id, "true")
             await h.until(lambda: h.noted("gave up", other.id))
             assert "not a warm parent" in h.noted("gave up", other.id)[0].detail
+            # Nor another environment's warm parent in the same Prized workspace.
+            role = {"prized-managed-agents-role": "warm-parent"}
+            foreign = await world.api().create(labels={**h.orch.boxes.base, ENVIRONMENT: "env_other", **role})
+            third = mock.new_session(metadata={"prized_fork_from": foreign.id})
+            mock.run(third.id, "true")
+            await h.until(lambda: h.noted("gave up", third.id))
+            detail = h.noted("gave up", third.id)[0].detail
+            assert "not a warm parent of this environment" in detail and f"anthropic-environment={ENV_ID}" in detail
+            assert ("fork", foreign.id) not in world.calls and not world.live(**{"anthropic-session": third.id})
 
     run(go())
 

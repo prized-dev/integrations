@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 
 import pytest
+import standardwebhooks
 from conftest import run, settings_for
 from mock_cma import ENV_ID, ENV_KEY
 
@@ -48,6 +50,7 @@ def test_settings_from_the_environment():
         ({**BASE, "ANT_VERSION": "2.8.0"}, "ANT_SHA256_AMD64"),
         ({**BASE, "PRIZED_LABELS": "novalue"}, "key=value"),
         ({**BASE, "MAX_HANDOFFS": "x"}, "not a number"),
+        ({**BASE, "ANTHROPIC_WEBHOOK_SIGNING_KEY": "whsec_not*base64"}, "not a whsec_ key"),
     ],
 )
 def test_bad_settings_say_what_to_fix(env, match):
@@ -102,6 +105,16 @@ def test_the_receivers_other_answers_and_never_a_redirect(mock, world, ant_dist)
         assert (await call(app, "POST", "/webhook", b"x" * (MAX_BODY + 1)))[0] == 413
         off = WebhookApp(orch, None)
         assert (await call(off, "POST", "/webhook", b"{}"))[0] == 404
+        # A verified delivery that isn't an event we read: 200, so the endpoint stays healthy.
+        body = '{"type": "something_new", "id": "whe_new"}'
+        at = datetime.now(timezone.utc)
+        headers = {
+            "webhook-id": "whe_new",
+            "webhook-timestamp": str(int(at.timestamp())),
+            "webhook-signature": standardwebhooks.Webhook(s.webhook_key).sign("whe_new", at, body),
+        }
+        assert (await call(app, "POST", "/webhook", body.encode(), headers))[:2] == (200, {"status": "ignored"})
+        assert (await call(app, "POST", "/webhook", body.encode(), headers))[:2] == (200, {"status": "duplicate"})
         await orch.cma.close()
 
     run(go())

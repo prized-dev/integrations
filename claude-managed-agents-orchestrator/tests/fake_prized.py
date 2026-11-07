@@ -45,8 +45,10 @@ class World:
         self.created: list[dict[str, Any]] = []  # create() keywords, for assertions
         self.execs: list[tuple[str, dict[str, str]]] = []  # (sandbox id, env) of every command
         self.ids = itertools.count(1)
-        self.fail: dict[str, PrizedError] = {}  # "create", "resume", "fork": raise this once
+        self.fail: dict[str, PrizedError] = {}  # "create", "resume", "fork", "write": raise this once
         self.fail_exec: list[tuple[str, PrizedError]] = []  # (substring of the command, error), once each
+        # The same, but the command runs first and its answer is lost on the way back.
+        self.fail_after_exec: list[tuple[str, PrizedError]] = []
         self.auto_pause_after: float | None = None
         self._watch: asyncio.Task[Any] | None = None
 
@@ -122,6 +124,7 @@ class Files:
 
     async def write(self, path: str, data: str | bytes, *, mode: int | None = None) -> None:
         self.sb._touch()
+        self.sb.world._raise("write")
         dest = self.sb.local(path)
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         with open(dest, "wb") as fh:
@@ -221,6 +224,10 @@ class FakeSandbox:
             await asyncio.shield(proc.wait())
             raise
         self._touch()
+        for i, (needle, error) in enumerate(self.world.fail_after_exec):
+            if needle in cmd:
+                del self.world.fail_after_exec[i]
+                raise error
         return Result(out.decode(errors="replace"), err.decode(errors="replace"), proc.returncode or 0)
 
     def pids(self) -> list[int]:

@@ -7,22 +7,31 @@ sandboxes in place of Kubernetes pods:
    intake, which polls the queue until it is empty. It polls only while a handoff slot is free, so
    it never claims work it can't start.
 2. **Hand off.** The session's sandbox is resumed (files and processes as the last run left them),
-   or a warm parent is forked, or a sandbox is created. ant is installed if missing (checked against
-   its sha256), the work item's secret is written into the sandbox, and ``ant beta:worker run``
-   starts, detached. Only then is the item **acked**: a handoff that fails leaves it unacked, and
-   the queue hands it out again after the reclaim window (twice the handoff timeout). A sandbox made
-   for the failed attempt is deleted; one that holds the session's files is paused. After
-   ``max_handoff_attempts`` failures the item is stopped instead, so it doesn't come back forever.
+   or a warm parent is forked, or a sandbox is created. Runs a resumed sandbox still holds (a worker
+   frozen when the sandbox paused itself) are stopped first, so two workers never share it. ant is
+   installed if missing (checked against its sha256), the work item's secret is written into the
+   sandbox, and ``ant beta:worker run`` starts, detached. Only then is the item **acked**: a handoff
+   that fails before the launch leaves it unacked, and the queue hands it out again after the
+   reclaim window (twice the handoff timeout). A sandbox made for the failed attempt is deleted; one
+   that holds the session's files is paused. After ``max_handoff_attempts`` failures the item is
+   stopped instead, so it doesn't come back forever. Once ant is launched, nothing stops it unless
+   the sandbox says it has exited: a status check that fails leaves the run to the probes.
 3. **Supervise.** Every ``probe_every_s`` one status command per sandbox checks its workers. That
    is also what keeps the sandbox awake: Prized pauses a sandbox after ``auto_pause_s`` without
    commands, so if this process dies its sandboxes pause themselves.
 4. **Finish.** When a worker exits (a minute after the session goes idle, by default), the
    orchestrator asks the API about the session: terminated or gone, and the sandbox is deleted;
-   otherwise it is paused, memory and all, for the next run. ``session.status_terminated`` and
-   ``session.deleted`` webhooks, and a sweep every ``sweep_every_s``, delete the rest.
+   otherwise it is paused, memory and all, for the next run, once a status check shows nothing else
+   runs in it. ``session.status_terminated`` and ``session.deleted`` webhooks, and a sweep every
+   ``sweep_every_s``, delete the rest.
 
 The environment key stays in this process. A sandbox gets one work item's secret, which reaches
-that one session.
+that one session. What a sandbox reports about its runs is believed only for runs whose ids carry
+this environment's signature and whose session is the sandbox's own (``worker.genuine``), so the
+agent, which can write anything in its sandbox, can't make up runs.
+
+Run one orchestrator per environment, and on a restart stop the old process before starting the new
+one: two at once would each pause sandboxes the other is handing off.
 """
 
 from __future__ import annotations
@@ -33,8 +42,8 @@ import logging
 import random
 import re
 import time
-from collections import defaultdict
-from collections.abc import Callable
+from collections import OrderedDict
+from collections.abc import AsyncIterator, Callable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -52,6 +61,10 @@ _TEMPLATE = re.compile(r"[a-z0-9][a-z0-9._-]{0,63}")
 _SANDBOX_ID = re.compile(r"sbx_[A-Za-z0-9]{1,64}")
 SETTLE_S = 1.0  # a worker that dies at once (a bad secret, a broken binary) dies within this
 RETIRE_WAIT_S = 30.0  # how long an earlier run of the session gets to finish before it is stopped
+# The launch comes after the handoff timeout: the launch command (30 s), the settle and a status
+# check (20 s). A run still starting after both counts as dead.
+LAUNCH_S = 60.0
+MAX_FAILURES = 10_000  # failed handoffs remembered (by work id), oldest forgotten first
 
 
 class HandoffError(Exception):
@@ -93,9 +106,10 @@ class Orchestrator:
         self.clock = clock
         self.runs: dict[str, Run] = {}  # by run id
         self.notes: list[Note] = []
-        self.failures: dict[str, int] = defaultdict(int)  # failed handoffs, by work id
+        self.failures: OrderedDict[str, int] = OrderedDict()  # failed handoffs, by work id
+        self._key = w.run_key(settings.environment_key)
         self._busy: set[str] = set()  # sessions with a handoff under way
-        self._locks: dict[str, asyncio.Lock] = defaultdict(asyncio.Lock)
+        self._locks: dict[str, list[Any]] = {}  # session -> [lock, holders and waiters]
         self._slots = asyncio.Semaphore(settings.max_handoffs)
         self._handoffs = 0
         self._wake = asyncio.Event()
@@ -129,11 +143,17 @@ class Orchestrator:
             for t in tasks:
                 t.cancel()
             await asyncio.gather(*tasks, return_exceptions=True)
-            # Handoffs under way finish (bounded by their timeout); runs keep going in their
-            # sandboxes, which pause themselves after AUTO_PAUSE unless a new process takes over.
-            pending = [t for t in self._tasks if not t.done()]
-            if pending:
-                await asyncio.wait(pending, timeout=self.s.handoff_timeout_s + 15)
+            # Handoffs under way finish (bounded by their timeout), and so does what they start;
+            # runs keep going in their sandboxes, which pause themselves after AUTO_PAUSE unless a
+            # new process takes over.
+            loop = asyncio.get_running_loop()
+            deadline = loop.time() + self.s.handoff_timeout_s + LAUNCH_S
+            while True:
+                pending = [t for t in self._tasks if not t.done()]
+                left = deadline - loop.time()
+                if not pending or left <= 0:
+                    break
+                await asyncio.wait(pending, timeout=left)
             log.info("stopped: %d runs keep going in their sandboxes; a restart picks them up", len(self.runs))
 
     def stop(self) -> None:
@@ -153,6 +173,21 @@ class Orchestrator:
         self._tasks.add(task)
         task.add_done_callback(self._tasks.discard)
         return task
+
+    @contextlib.asynccontextmanager
+    async def _lock(self, sid: str) -> AsyncIterator[None]:
+        """The session's lock, forgotten once no one holds or waits for it."""
+        entry = self._locks.get(sid)
+        if entry is None:
+            entry = self._locks[sid] = [asyncio.Lock(), 0]
+        entry[1] += 1
+        try:
+            async with entry[0]:
+                yield
+        finally:
+            entry[1] -= 1
+            if entry[1] == 0 and self._locks.get(sid) is entry:
+                del self._locks[sid]
 
     async def _intake_loop(self) -> None:
         failures = 0
@@ -240,24 +275,35 @@ class Orchestrator:
             return
         self._busy.add(sid)
         try:
-            async with self._locks[sid]:
+            async with self._lock(sid):
                 for run in self._runs_of(sid):
                     if run.work_id == item.id and not run.acked:
-                        # Our earlier ack of this item failed: the worker that holds it is running.
-                        await self._ack_run(run)
-                        return
+                        # Our ack of this item didn't land, so the queue handed it out again. If its
+                        # worker still runs, ack it now; if not, start over with the new secret.
+                        if await self._still_running(run):
+                            await self._ack_run(run)
+                            return
+                        await self._finish(run, "its worker is gone and the item came again", keep=True)
                 await self._handoff(item)
         finally:
             self._busy.discard(sid)
 
+    async def _still_running(self, run: Run) -> bool:
+        try:
+            statuses = {st.run_id: st for st in await self._runs_in(run.sandbox)}
+        except Exception as err:
+            return not gone(err)  # unknown: keep the worker, as before the item came again
+        st = statuses.get(run.run_id)
+        return st is not None and self._live(st)
+
     async def _handoff(self, item: WorkItem) -> None:
         sid = item.session_id
+        rid = w.run_id(self._key, sid, item.id)  # bounded length, whatever the work id's
         made: Ensured | None = None
-        rid: str | None = None
-        launched = False
+        prepared = False
         try:
             async with _timeout(self.s.handoff_timeout_s):
-                await self._retire_earlier(sid)
+                await self._retire_earlier(sid, item.id)
                 session = await self._session_or_none(sid)
                 if session is not None and session.status == "terminated":
                     raise _Moot("the session has terminated")
@@ -265,31 +311,16 @@ class Orchestrator:
                 made = await self.boxes.ensure(sid, template=template, fork_from=fork_from)
                 sb = made.sandbox
                 self._note(sid, made.how, sb.id)
+                if made.how != "created":
+                    await self._clear_leftovers(sb, item.id)
                 await w.install_ant(sb, self.s)
-                rid = w.run_id(item.id)
-                await self._exec(sb, w.PREPARE_RUN, w.env(rid), timeout=30, what="preparing the run")
+                prepared = True
+                prep = w.env(rid, PMA_SESSION=sid, PMA_WORK=item.id)
+                await self._exec(sb, w.PREPARE_RUN, prep, timeout=30, what="preparing the run")
                 assert item.secret is not None
                 await sb.files.write(w.secret_path(rid), item.secret, mode=0o600)
-                launch_env = w.env(
-                    rid,
-                    PMA_WORKDIR=self.s.workdir,
-                    PMA_MAX_IDLE=str(self.s.max_idle_s),
-                    ANTHROPIC_SESSION_ID=sid,
-                    ANTHROPIC_WORK_ID=item.id,
-                    ANTHROPIC_ENVIRONMENT_ID=self.s.environment_id,
-                )
-                if self.s.base_url.rstrip("/") != "https://api.anthropic.com":
-                    launch_env["ANTHROPIC_BASE_URL"] = self.s.base_url
-                out = await self._exec(sb, w.LAUNCH, launch_env, timeout=30, what="starting ant")
-                launched = True
-                await asyncio.sleep(SETTLE_S)
-                status = {r.run_id: r for r in await self._status(sb)}.get(rid)
-                if status is None or status.state != "alive":
-                    tail = await self._collect(sb, rid, tail=15)
-                    code = status.number if status is not None else None
-                    raise HandoffError(f"ant exited at once (exit {code}): {tail.strip()[-600:] or out.strip()}")
         except BaseException as err:
-            await asyncio.shield(self._undo(sid, made, rid, launched))
+            await asyncio.shield(self._undo(sid, made, rid if prepared else None))
             if isinstance(err, _Moot):
                 await self._ack_and_stop(item, str(err))
                 await self._delete_session_sandboxes(sid, str(err))
@@ -298,11 +329,72 @@ class Orchestrator:
                 raise
             self._handoff_failed(item, err)
             return
-        run = Run(rid, sid, item.id, made.sandbox, self.clock(), acked=False)
+        await self._launch(item, made, rid)
+
+    async def _launch(self, item: WorkItem, made: Ensured, rid: str) -> None:
+        """Start ant, then decide from what the sandbox says, outside the handoff timeout. From the
+        launch on the worker may hold the secret and be serving the session, and stopping it would
+        stop the work item too, so it is stopped only when the sandbox says it has exited."""
+        sid, sb = item.session_id, made.sandbox
+        launch_env = w.env(
+            rid,
+            PMA_WORKDIR=self.s.workdir,
+            PMA_MAX_IDLE=str(self.s.max_idle_s),
+            ANTHROPIC_SESSION_ID=sid,
+            ANTHROPIC_WORK_ID=item.id,
+            ANTHROPIC_ENVIRONMENT_ID=self.s.environment_id,
+        )
+        if self.s.base_url.rstrip("/") != "https://api.anthropic.com":
+            launch_env["ANTHROPIC_BASE_URL"] = self.s.base_url
+        out, launch_err = "", None
+        try:
+            out = await self._exec(sb, w.LAUNCH, launch_env, timeout=30, what="starting ant")
+        except asyncio.CancelledError:
+            raise  # shutting down: if ant started, a restart adopts it
+        except Exception as err:
+            launch_err = err
+        await asyncio.sleep(SETTLE_S)
+        try:
+            st: w.RunStatus | None = {s.run_id: s for s in await self._runs_in(sb)}.get(rid)
+            read_err = None
+        except Exception as err:
+            st, read_err = None, err
+        lost = next((e for e in (launch_err, read_err) if e is not None and gone(e)), None)
+        if lost is not None:
+            self._handoff_failed(item, lost)  # the sandbox is gone, and its worker with it
+            return
+        if st is not None and st.state == "alive":
+            ack = True  # it runs, whatever the launch command's answer was
+        elif read_err is None or (launch_err is None and not out.startswith("started")):
+            # The sandbox says the worker isn't running (it exited, was killed, or never started),
+            # or the launch said it exited: nothing to stop, so clean up and leave it to the queue.
+            tail = ""
+            with contextlib.suppress(Exception):
+                tail = await self._collect(sb, rid, tail=15)
+            if launch_err is not None:
+                why: BaseException = launch_err
+            else:
+                code: Any = st.number if st is not None and st.state == "exited" else None
+                if code is None and out.startswith("exited"):
+                    code = out.split()[-1]
+                why = HandoffError(f"ant exited at once (exit {code}): {tail.strip()[-600:] or out.strip()}")
+            await asyncio.shield(self._undo(sid, made, None))
+            self._handoff_failed(item, why)
+            return
+        elif launch_err is None:
+            ack = True  # ant started and only the status check failed: the probes see how it goes
+            self._note(sid, "status unread", f"{item.id}: {_describe(read_err)}; the probes decide")
+        else:
+            # Neither command answered: ant may or may not be running. Leave the item unacked: if it
+            # comes again, a live worker gets the ack and a dead one is replaced.
+            ack = False
+            self._note(sid, "launch unclear", f"{item.id}: {_describe(launch_err)}")
+        run = Run(rid, sid, item.id, sb, self.clock(), acked=False)
         self.runs[rid] = run
         self.failures.pop(item.id, None)
-        self._note(sid, "worker started", f"{item.id} in {made.sandbox.id}")
-        await self._ack_run(run)
+        self._note(sid, "worker started", f"{item.id} in {sb.id}")
+        if ack:
+            await self._ack_run(run)
 
     async def _ack_run(self, run: Run) -> None:
         # The sandbox holds the secret now; an ack cut short would only redeliver the item.
@@ -315,40 +407,41 @@ class Orchestrator:
         with contextlib.suppress(Exception):
             await self._exec(run.sandbox, w.MARK_ACKED, w.env(run.run_id), timeout=20, what="marking the ack")
 
-    def _handoff_failed(self, item: WorkItem, err: BaseException) -> None:
+    def _handoff_failed(self, item: WorkItem, err: BaseException | None) -> None:
         sid = item.session_id
-        self.failures[item.id] += 1
-        n = self.failures[item.id]
-        why = _describe(err)
+        n = self.failures.pop(item.id, 0) + 1
+        why = _describe(err) if err is not None else "unknown"
         if n >= self.s.max_handoff_attempts:
-            self.failures.pop(item.id, None)
             self._note(sid, "gave up", f"{item.id} after {n} tries: {why}")
             self._spawn(self._ack_and_stop(item, f"{n} handoffs failed"))
-        else:
-            self._note(sid, "handoff failed", f"{item.id} (try {n} of {self.s.max_handoff_attempts}): {why}")
+            return
+        self.failures[item.id] = n
+        while len(self.failures) > MAX_FAILURES:
+            self.failures.popitem(last=False)
+        self._note(sid, "handoff failed", f"{item.id} (try {n} of {self.s.max_handoff_attempts}): {why}")
 
-    async def _undo(self, sid: str, made: Ensured | None, rid: str | None, launched: bool) -> None:
-        """Clean up a handoff that failed: stop its worker, drop the secret, and delete the sandbox
-        if this attempt made it (it holds nothing of the session's), else pause it."""
+    async def _undo(self, sid: str, made: Ensured | None, rid: str | None) -> None:
+        """Clean up a handoff that failed before its worker ran: drop the run and its secret, and
+        delete the sandbox if this attempt made it (it holds nothing of the session's), else pause it.
+        Each step is tried whatever happened to the one before."""
         if made is None:
             return
         sb = made.sandbox
-        try:
-            if rid is not None:
-                if launched:
-                    await self._exec(
-                        sb, w.STOP, w.env(rid, PMA_GRACE=str(self.s.stop_grace_s)), timeout=self.s.stop_grace_s + 20
-                    )
+        if rid is not None:
+            try:
                 await self._collect(sb, rid)
-            if made.fresh:
+            except Exception as err:
+                if not gone(err):
+                    self._note(sid, "cleanup failed", f"{sb.id}: {_describe(err)}")
+        if made.fresh:
+            try:
                 await sb.delete()
                 self._note(sid, "deleted", f"{sb.id}, made for the failed handoff")
-            elif not self._runs_of(sid):
-                await self.boxes.pause(sb)
-                self._note(sid, "paused", f"{sb.id} after the failed handoff")
-        except Exception as err:
-            if not gone(err):
-                self._note(sid, "cleanup failed", f"{sb.id}: {_describe(err)}")
+            except Exception as err:
+                if not gone(err):
+                    self._note(sid, "cleanup failed", f"{sb.id}: {_describe(err)}")
+            return
+        await self._pause_if_idle(sb, sid, "after the failed handoff", handing_off=True)
 
     async def _ack_and_stop(self, item: WorkItem, why: str) -> None:
         self._note(item.session_id or "-", "refused", f"{item.id}: {why}")
@@ -358,14 +451,14 @@ class Orchestrator:
         except CMAError as err:
             log.warning("%s: ending work item %s failed: %s", item.session_id, item.id, err)
 
-    async def _retire_earlier(self, sid: str) -> None:
+    async def _retire_earlier(self, sid: str, work_id: str) -> None:
         """A new work item means the session's earlier worker has let go of its own; give it a
         moment to exit, then stop it, so two workers never share the sandbox's tools."""
         earlier = self._runs_of(sid)
         deadline = self.clock() + RETIRE_WAIT_S
         while earlier:
             try:
-                alive = {st.run_id for st in await self._status(earlier[0].sandbox) if st.state == "alive"}
+                alive = {st.run_id for st in await self._runs_in(earlier[0].sandbox) if self._live(st)}
             except Exception as err:
                 if not gone(err):
                     raise
@@ -378,8 +471,24 @@ class Orchestrator:
             await asyncio.sleep(1.0)
         for run in earlier:
             self._note(sid, "stopping earlier worker", run.work_id)
-            await self._stop_run(run)
+            await self._stop_run(run, kill=run.work_id == work_id)
             await self._finish(run, "replaced by a new work item", keep=True)
+
+    async def _clear_leftovers(self, sb: Any, work_id: str) -> None:
+        """Runs the sandbox holds that no one supervises (a worker frozen when the sandbox paused
+        itself, or left by an orchestrator that died) go before a new worker starts: live ones are
+        stopped, ended ones collected. One whose work id is the new item's is killed outright, so
+        its own stop can't end the new item. Unsigned ones are stopped too (a worker from before the
+        environment key was rotated): only this session's sandbox is touched, just before its own
+        worker starts, so a forged one can only stop what the agent itself pointed it at."""
+        for st in await self._status(sb):
+            if st.run_id in self.runs:
+                continue
+            if st.state == "alive":
+                self._note(st.session_id, "stopping stale worker", f"{st.work_id} in {sb.id}")
+                await self._stop(sb, st.session_id, st.work_id, st.run_id, kill=st.work_id == work_id)
+            with contextlib.suppress(Exception):
+                await self._collect(sb, st.run_id)
 
     def _overrides(self, session: Session | None) -> tuple[str | None, str | None]:
         if session is None or not self.s.session_overrides:
@@ -425,7 +534,7 @@ class Orchestrator:
         if not mine:
             return
         try:
-            statuses = {r.run_id: r for r in await self._status(sb)}
+            statuses = {st.run_id: st for st in await self._runs_in(sb)}
         except Exception as err:
             if gone(err):
                 for run in mine:
@@ -449,8 +558,8 @@ class Orchestrator:
             if run.stopping:
                 continue  # its stop finishes it, under the session's lock
             st = statuses.get(run.run_id)
-            if st is None or st.state != "alive":
-                why = "worker gone" if st is None or st.state == "lost" else f"exit {st.number}"
+            if st is None or not self._live(st):
+                why = f"exit {st.number}" if st is not None and st.state == "exited" else "worker gone"
                 self._spawn(self._finish_locked(run, why))
             elif self.clock() - run.started > self.s.run_timeout_s:
                 run.stopping = True
@@ -460,25 +569,24 @@ class Orchestrator:
     async def _timeout_run(self, run: Run) -> None:
         # Under the lock from the stop to the pause: a pause while the stop command still runs
         # would freeze that command with the sandbox.
-        async with self._locks[run.session_id]:
+        async with self._lock(run.session_id):
             await self._stop_run(run)
             await self._finish(run, "run timeout")
 
-    async def _stop_run(self, run: Run) -> None:
+    async def _stop_run(self, run: Run, *, kill: bool = False) -> None:
+        await self._stop(run.sandbox, run.session_id, run.work_id, run.run_id, kill=kill)
+
+    async def _stop(self, sb: Any, sid: str, work_id: str, rid: str, *, kill: bool = False) -> None:
+        extra = {"PMA_GRACE": str(self.s.stop_grace_s), **({"PMA_SIGNAL": "KILL"} if kill else {})}
+        wait = self.s.stop_grace_s + 20
         try:
-            await self._exec(
-                run.sandbox,
-                w.STOP,
-                w.env(run.run_id, PMA_GRACE=str(self.s.stop_grace_s)),
-                timeout=self.s.stop_grace_s + 20,
-                what="stopping the worker",
-            )
+            await self._exec(sb, w.STOP, w.env(rid, **extra), timeout=wait, what="stopping the worker")
         except Exception as err:
             if not gone(err):
-                self._note(run.session_id, "stop failed", f"{run.work_id}: {_describe(err)}")
+                self._note(sid, "stop failed", f"{work_id}: {_describe(err)}")
 
     async def _finish_locked(self, run: Run, why: str) -> None:
-        async with self._locks[run.session_id]:
+        async with self._lock(run.session_id):
             await self._finish(run, why)
 
     async def _finish(self, run: Run, why: str, *, keep: bool = False) -> None:
@@ -493,18 +601,76 @@ class Orchestrator:
         self._note(sid, "run ended", f"{run.work_id}: {why}")
         if tail.strip():
             log.warning("%s: the end of ant's log for %s:\n%s", sid, run.work_id, tail.rstrip())
-        if keep or self._runs_of(sid) or sid in self._busy:
+        if not keep:
+            await self._wind_down(sb, sid)
+
+    async def _wind_down(self, sb: Any, sid: str) -> None:
+        """No run of ours is left in the sandbox: delete it if the session is over, else pause it.
+        Hold the session's lock."""
+        if self._runs_of(sid) or sid in self._busy:
             return
         state = await self._session_state(sid)
         if state in ("ended", "gone"):
             await self._delete_session_sandboxes(sid, f"session {state}")
             return
+        await self._pause_if_idle(sb, sid)
+
+    async def _pause_if_idle(self, sb: Any, sid: str, why: str = "", *, handing_off: bool = False) -> None:
+        """Pause the sandbox unless something still runs in it: what the sandbox itself says decides,
+        not only what this process knows (a live run it holds is adopted). Hold the session's lock.
+        ``handing_off``: the caller is this session's handoff, so its being busy is no reason to wait."""
+        if any(r.sandbox.id == sb.id for r in self.runs.values()):
+            return
+        try:
+            await sb.refresh()  # a command in a paused sandbox would resume it
+            if sb.state != "running":
+                return
+            statuses = await self._runs_in(sb)
+        except Exception as err:
+            if not gone(err):
+                self._note(sid, "pause skipped", f"{sb.id}: its runs can't be read ({_describe(err)})")
+            return
+        if await self._take_over(sb, statuses):
+            return
+        if not handing_off and sid in self._busy:
+            return  # a handoff is waiting for the lock: it uses the sandbox as it is
         try:
             await self.boxes.pause(sb)
-            self._note(sid, "paused", sb.id)
+            self._note(sid, "paused", f"{sb.id}{', ' + why if why else ''}")
         except Exception as err:
             if not gone(err):
                 self._note(sid, "pause failed", f"{sb.id}: {_describe(err)}; it pauses itself after AUTO_PAUSE")
+
+    async def _take_over(self, sb: Any, statuses: list[w.RunStatus], *, why: str = "") -> bool:
+        """Supervise what a sandbox none of our runs use holds: the newest live run is adopted, other
+        live ones stopped (one worker per sandbox), ended ones collected. True if a run lives (or is
+        starting) in it. Hold the session's lock."""
+        live = sorted((st for st in statuses if self._live(st)), key=lambda st: st.started or 0, reverse=True)
+        keep = next((st for st in live if st.state == "alive"), None)
+        for st in statuses:
+            if st is keep or st.run_id in self.runs:
+                continue
+            if st.state == "starting" and st in live:
+                continue  # a handoff of another process is under way: leave it be
+            if st.state == "alive":
+                self._note(st.session_id, "stopping extra worker", f"{st.work_id} in {sb.id}")
+                same_item = keep is not None and st.work_id == keep.work_id
+                await self._stop(sb, st.session_id, st.work_id, st.run_id, kill=same_item)
+            tail = ""
+            with contextlib.suppress(Exception):
+                tail = await self._collect(sb, st.run_id, tail=0 if st.number == 0 else 15)
+            if st.state != "alive":
+                self._note(st.session_id, "run ended", f"{st.work_id}: {why or 'while no orchestrator watched'}")
+                if tail.strip():
+                    log.warning("%s: the end of ant's log for %s:\n%s", st.session_id, st.work_id, tail.rstrip())
+        if keep is not None:
+            self._adopt(sb, keep)
+        return bool(live)
+
+    def _adopt(self, sb: Any, st: w.RunStatus) -> None:
+        age = max(0.0, time.time() - (st.started or time.time()))
+        self.runs[st.run_id] = Run(st.run_id, st.session_id, st.work_id, sb, self.clock() - age, acked=st.acked)
+        self._note(st.session_id, "adopted", f"{st.work_id} in {sb.id}")
 
     # -- sessions that end, and the sweep ------------------------------------------------------
 
@@ -528,7 +694,7 @@ class Orchestrator:
         arrive out of order, so the fetched session decides, not the event."""
         if not w.SAFE_ID.fullmatch(sid):
             return
-        async with self._locks[sid]:
+        async with self._lock(sid):
             state = await self._session_state(sid)
             if state not in ("ended", "gone"):
                 return
@@ -558,16 +724,16 @@ class Orchestrator:
 
     async def sweep(self) -> list[str]:
         """Delete the sandboxes of sessions that ended (a lost webhook, a stopped orchestrator), and
-        pause running ones that no run of ours uses. Paused ones of live sessions are kept until
-        KEEP_PAUSED deletes them."""
+        pause running ones that no run uses (a live run no one supervises is adopted instead).
+        Paused ones of live sessions are kept until KEEP_PAUSED deletes them."""
         swept: list[str] = []
         served = {r.sandbox.id for r in self.runs.values()}
         for sb in await self.boxes.managed():
             sid = (sb.labels or {}).get(SESSION, "")
             if sb.id in served or sid in self._busy or not w.SAFE_ID.fullmatch(sid):
                 continue
-            async with self._locks[sid]:
-                if sb.id in {r.sandbox.id for r in self.runs.values()}:
+            async with self._lock(sid):
+                if sid in self._busy or any(r.sandbox.id == sb.id for r in self.runs.values()):
                     continue
                 state = await self._session_state(sid)
                 if state in ("ended", "gone"):
@@ -579,15 +745,12 @@ class Orchestrator:
                         if not gone(err):
                             self._note(sid, "sweep failed", f"{sb.id}: {_describe(err)}")
                 elif sb.state == "running":
-                    with contextlib.suppress(Exception):
-                        if not any(st.state == "alive" for st in await self._status(sb)):
-                            await self.boxes.pause(sb)
-                            self._note(sid, "paused", f"{sb.id}, which no run was using")
+                    await self._pause_if_idle(sb, sid, "which no run was using")
         return swept
 
     async def reconcile(self) -> None:
-        """Pick up what a previous process left: running workers are supervised again, and ended
-        runs are finished."""
+        """Pick up what a previous process left: a live worker in each running sandbox is supervised
+        again (at most one per sandbox), and ended runs are finished."""
         try:
             boxes = await self.boxes.managed()
         except PrizedError as err:
@@ -595,26 +758,31 @@ class Orchestrator:
                 f"can't list Prized sandboxes: {err} (is PRIZED_API_KEY a key with Sandboxes: Write?)"
             ) from err
         for sb in boxes:
-            if sb.state != "running":
+            sid = (sb.labels or {}).get(SESSION, "")
+            if sb.state != "running" or not w.SAFE_ID.fullmatch(sid):
                 continue
-            try:
-                statuses = await self._status(sb)
-            except Exception as err:
-                log.warning("reconcile: can't read %s: %s", sb.id, _describe(err))
-                continue
-            for st in statuses:
-                run = Run(st.run_id, st.session_id, st.work_id, sb, self.clock(), acked=st.acked)
-                self.runs[st.run_id] = run
-                if st.state == "alive":
-                    self._note(st.session_id, "adopted", f"{st.work_id} in {sb.id}")
-                else:
-                    async with self._locks[st.session_id]:
-                        await self._finish(run, "ended while no orchestrator watched")
+            async with self._lock(sid):
+                try:
+                    statuses = await self._runs_in(sb)
+                except Exception as err:
+                    log.warning("reconcile: can't read %s: %s", sb.id, _describe(err))
+                    continue
+                if await self._take_over(sb, statuses) or not statuses:
+                    continue
+                await self._wind_down(sb, sid)  # runs ended while no one watched
 
     # -- helpers -------------------------------------------------------------------------------
 
     def _runs_of(self, sid: str) -> list[Run]:
         return [r for r in self.runs.values() if r.session_id == sid]
+
+    def _live(self, st: w.RunStatus) -> bool:
+        """Alive, or still starting within the time a handoff may take."""
+        if st.state == "alive":
+            return True
+        if st.state != "starting" or st.started is None:
+            return False
+        return time.time() - st.started < self.s.handoff_timeout_s + LAUNCH_S
 
     async def _session_or_none(self, sid: str) -> Session | None:
         """The session, for its metadata. A failed read doesn't block the run."""
@@ -642,6 +810,19 @@ class Orchestrator:
         if r.exit_code != 0:
             raise HandoffError(f"the status check failed ({r.exit_code}): {r.stderr.strip()[-200:]}")
         return w.parse_status(r.stdout)
+
+    async def _runs_in(self, sb: Any) -> list[w.RunStatus]:
+        """The sandbox's runs that an orchestrator of this environment started for the sandbox's own
+        session. Anything else in its status (the agent can write the files it is made from) is
+        ignored: it can't add runs, take slots, keep the sandbox awake or touch another session."""
+        sid = (sb.labels or {}).get(SESSION, "")
+        out = []
+        for st in await self._status(sb):
+            if st.session_id == sid and w.genuine(self._key, st):
+                out.append(st)
+            else:
+                log.debug("%s: ignoring a run line that isn't ours: %s", sb.id, st.run_id)
+        return out
 
     async def _collect(self, sb: Any, rid: str, *, tail: int = 0) -> str:
         r = await sb.exec(w.COLLECT, env=w.env(rid, PMA_TAIL=str(tail)), timeout=20)
@@ -690,8 +871,9 @@ async def _timeout(seconds: float) -> Any:
     except asyncio.CancelledError as err:
         if fired:
             uncancel = getattr(task, "uncancel", None)
-            if uncancel is not None:
-                uncancel()  # 3.11+: this cancellation was ours, not the caller's
+            # 3.11+: take back our own cancellation; if someone else cancelled too, theirs goes on.
+            if uncancel is not None and uncancel() > 0:
+                raise
             raise TimeoutError(f"timed out after {seconds:g}s") from err
         raise
     finally:

@@ -117,6 +117,13 @@ class Settings:
             raise ConfigError("HANDOFF_TIMEOUT must be at least 1s")
         if self.max_handoffs < 1 or self.max_sessions < 1:
             raise ConfigError("MAX_HANDOFFS and MAX_SESSIONS must be at least 1")
+        if self.webhook_key:
+            from .webhooks import decode_key
+
+            try:
+                decode_key(self.webhook_key)
+            except ValueError as err:
+                raise ConfigError(str(err)) from err
 
     @property
     def webhooks(self) -> bool:

@@ -90,9 +90,9 @@ async def _serve(settings: Settings, host: str, port: int) -> int:
     # One connection pool for every Prized call: each SDK call otherwise opens a client of its own,
     # kept open by the handles it returns, which a process that runs for weeks can't afford.
     prized_http = httpx.AsyncClient()
+    verifier = Verifier(settings.webhook_key) if settings.webhook_key else None
     orch = Orchestrator(settings, cma, SessionSandboxes(settings, http_client=prized_http))
     await orch.start()
-    verifier = Verifier(settings.webhook_key) if settings.webhook_key else None
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGTERM, signal.SIGINT):
         loop.add_signal_handler(sig, orch.stop)
@@ -154,13 +154,20 @@ async def _status(settings: Settings) -> int:
     finally:
         await cma.close()
     boxes = await SessionSandboxes(settings).managed()
+    key = w.run_key(settings.environment_key)
     out: dict[str, Any] = {"environment": settings.environment_id, "queue": stats, "sandboxes": []}
     for sb in boxes:
-        row = {"id": sb.id, "state": sb.state, "session": (sb.labels or {}).get(SESSION)}
+        sid = (sb.labels or {}).get(SESSION)
+        row = {"id": sb.id, "state": sb.state, "session": sid}
         if sb.state == "running":
             with contextlib.suppress(Exception):
                 r = await sb.exec(w.STATUS, env=w.env(), timeout=20)
-                row["runs"] = [st.__dict__ for st in w.parse_status(r.stdout)]
+                # genuine: started by this environment's orchestrator for this sandbox's session;
+                # the orchestrator ignores any other line (the agent can write the files behind it).
+                row["runs"] = [
+                    {**st.__dict__, "genuine": st.session_id == sid and w.genuine(key, st)}
+                    for st in w.parse_status(r.stdout)
+                ]
         out["sandboxes"].append(row)
     out["warm_parents"] = [
         {"id": sb.id, "state": sb.state}

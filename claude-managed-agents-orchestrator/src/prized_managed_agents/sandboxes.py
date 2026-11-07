@@ -132,9 +132,13 @@ class SessionSandboxes:
     async def _fork(self, parent_id: str, labels: dict[str, str], *, required: bool) -> Any | None:
         try:
             parent = await self.api.connect(parent_id, **self.connection)
-            if (parent.labels or {}).get(ROLE) != WARM_PARENT:
+            have = parent.labels or {}
+            missing = [f"{k}={v}" for k, v in {**self.base, ROLE: WARM_PARENT}.items() if have.get(k) != v]
+            if missing:
+                # Only this environment's own warm parents (same labels as its sessions' sandboxes):
+                # a session's metadata must not fork another environment's sandbox, or anything else.
                 raise PermissionError(
-                    f"{parent_id} is not a warm parent (it has no {ROLE}={WARM_PARENT} label); "
+                    f"{parent_id} is not a warm parent of this environment (it lacks {', '.join(missing)}); "
                     "make one with `prized-managed-agents prepare`"
                 )
             return (await parent.fork(1, labels=labels))[0]
