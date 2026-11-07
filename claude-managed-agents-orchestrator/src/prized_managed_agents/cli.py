@@ -154,7 +154,7 @@ async def _status(settings: Settings) -> int:
     finally:
         await cma.close()
     boxes = await SessionSandboxes(settings).managed()
-    key = w.run_key(settings.environment_key)
+    keys = [w.run_key(k) for k in (settings.environment_key, settings.previous_environment_key) if k]
     out: dict[str, Any] = {"environment": settings.environment_id, "queue": stats, "sandboxes": []}
     for sb in boxes:
         sid = (sb.labels or {}).get(SESSION)
@@ -165,7 +165,7 @@ async def _status(settings: Settings) -> int:
                 # genuine: started by this environment's orchestrator for this sandbox's session;
                 # the orchestrator ignores any other line (the agent can write the files behind it).
                 row["runs"] = [
-                    {**st.__dict__, "genuine": st.session_id == sid and w.genuine(key, st)}
+                    {**st.__dict__, "genuine": st.session_id == sid and w.genuine(keys, st)}
                     for st in w.parse_status(r.stdout)
                 ]
         out["sandboxes"].append(row)

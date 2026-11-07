@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import shlex
 import sys
 import time
 from pathlib import Path
@@ -16,7 +17,7 @@ from mock_cma import ENV_ID
 from prized import PrizedError
 
 from prized_managed_agents import worker as w
-from prized_managed_agents.cma import CMA, WorkItem
+from prized_managed_agents.cma import CMA, CMAError, WorkItem
 from prized_managed_agents.orchestrator import HandoffError, Orchestrator, _timeout
 from prized_managed_agents.sandboxes import SessionSandboxes
 
@@ -63,6 +64,83 @@ def test_a_launch_whose_answer_is_lost_is_kept_when_the_sandbox_says_it_runs(moc
             assert len(h.noted("worker started", s.id)) == 1 and mock.item(item.id).claims == 1
             assert work_file(h.sandbox_of(s.id), "served.txt").read_text() == "served\n"
             assert mock.item(item.id).stopped_by == "sessions_token"
+
+    run(go())
+
+
+def test_when_neither_the_launch_nor_the_check_answers_the_run_is_kept_unacked(mock, world, ant_dist):
+    async def go():
+        async with harness(mock, world, ant_dist) as h:
+            world.fail_after_exec.append((LAUNCH_CMD, flaky()))
+            world.fail_exec.append((STATUS_CMD, flaky()))
+            s = mock.new_session()
+            item = mock.run(s.id, "echo served > served.txt")
+            await h.until(lambda: h.noted("paused", s.id))
+            assert not world.fail_after_exec and not world.fail_exec
+            assert h.noted("launch unclear", s.id) and not h.noted("handoff failed", s.id)
+            # Not acked by us (it would be if the item came again with its worker alive), and served.
+            assert mock.item(item.id).acked_at is None and not h.noted("acked", s.id)
+            assert work_file(h.sandbox_of(s.id), "served.txt").read_text() == "served\n"
+            assert mock.item(item.id).stopped_by == "sessions_token"
+
+    run(go())
+
+
+def test_an_unclear_launch_that_never_ran_is_not_acked_when_its_item_comes_again(mock, world, ant_dist):
+    async def go():
+        async with harness(mock, world, ant_dist, webhook_key=None) as h:
+            world.fail_exec.append((LAUNCH_CMD, flaky()))  # refused before it ran...
+            world.fail_exec.append((STATUS_CMD, flaky()))  # ...and the check after it fails too
+            s = mock.new_session()
+            item = mock.run(s.id, "echo served > served.txt")
+            await h.until(lambda: h.noted("launch unclear", s.id))
+            # The run is "starting" for good: the probe lets it go, and the item, which comes again
+            # after the reclaim window, gets a worker of its own rather than an ack.
+            await h.until(lambda: len(h.noted("worker started", s.id)) == 2, timeout=30)
+            await h.until(lambda: work_file(h.sandbox_of(s.id), "served.txt").exists())
+            assert mock.item(item.id).claims == 2 and h.noted("acked", s.id)
+
+    run(go())
+
+
+def test_forged_workers_that_ignore_sigterm_cost_a_handoff_no_time(mock, world, ant_dist):
+    async def go():
+        async with harness(mock, world, ant_dist, handoff_timeout_s=3) as h:
+            s = mock.new_session()
+            sb = await world.api().create(labels=h.orch.boxes.labels(s.id))
+            for n in range(5):
+                deaf = f"trap '' TERM; echo $$ > \"$HOME/g{n}\"; exec sleep 300"
+                await sb.exec(f"setsid -f sh -c {shlex.quote(deaf)} < /dev/null > /dev/null 2>&1")
+            await asyncio.sleep(0.3)
+            for n in range(5):
+                d = Path(sb.home, w.RUNS, f"forged{n}")
+                d.mkdir(parents=True)
+                pgid = Path(sb.home, f"g{n}").read_text()
+                for name, text in {"session": s.id, "work": f"work_{n}", "pid": pgid}.items():
+                    (d / name).write_text(text)
+            await sb.pause()
+            mock.run(s.id, "echo served > served.txt")
+            await h.until(lambda: h.noted("paused", s.id), timeout=20)
+            assert len(h.noted("stopping stale worker", s.id)) == 5 and not h.noted("handoff failed", s.id)
+            assert work_file(sb, "served.txt").read_text() == "served\n"
+
+    run(go())
+
+
+def test_after_a_key_rotation_runs_signed_with_the_old_key_are_still_known(mock, world, ant_dist):
+    old_key = "sk-ant-oat01-the-key-before-rotation"
+
+    async def go():
+        async with harness(mock, world, ant_dist, previous_environment_key=old_key) as h:
+            await asyncio.sleep(0.3)  # past the first sweep
+            s = mock.new_session()
+            sb = await world.api().create(labels=h.orch.boxes.labels(s.id))
+            await sb.exec("setsid -f sh -c 'echo $$ > \"$HOME/g\"; exec sleep 3' < /dev/null > /dev/null 2>&1")
+            await asyncio.sleep(0.3)
+            craft_run(sb, s.id, "work_before", key=old_key, pid=Path(sb.home, "g").read_text())
+            await h.orch.sweep()
+            assert sb.state == "running" and h.noted("adopted", s.id)  # not paused mid-turn
+            await h.until(lambda: h.noted("paused", s.id), timeout=20)  # and paused once it ends
 
     run(go())
 
@@ -122,7 +200,7 @@ def test_a_restart_never_pauses_a_sandbox_whose_worker_is_alive(mock, world, ant
     async def go():
         async with harness(mock, world, ant_dist) as first:
             s = mock.new_session()
-            mock.run(s.id, "sleep 2.5; echo finished > out.txt")
+            mock.run(s.id, "sleep 5; echo finished > out.txt")
             await first.until(lambda: first.noted("acked", s.id))
             sb = first.sandbox_of(s.id)
         # An earlier run of the session that ended while no one watched, listed before the live one.
@@ -198,7 +276,15 @@ def test_a_worker_from_before_a_key_rotation_is_stopped_too_when_its_session_run
 def test_an_item_that_comes_again_after_a_lost_ack_gets_a_new_worker_if_the_old_one_died(mock, world, ant_dist):
     async def go():
         async with harness(mock, world, ant_dist, webhook_key=None, probe_every_s=3600) as h:
-            mock.fail_next["ack"] = [500] * 4  # every attempt at the first ack fails
+            real_ack, acks = h.orch.cma.ack, []
+
+            async def ack(work_id: str) -> bool:
+                acks.append(work_id)
+                if len(acks) == 1:
+                    raise CMAError("work ack", 500, "api_error", "lost")  # the first ack, retries and all
+                return await real_ack(work_id)
+
+            h.orch.cma.ack = ack
             s = mock.new_session(metadata={"stub_die_once_after": "1"})
             item = mock.run(s.id, "echo served > served.txt")
             await h.until(lambda: h.noted("ack failed", s.id))
@@ -215,7 +301,7 @@ def test_the_sweep_adopts_a_live_run_no_one_supervises(mock, world, ant_dist):
     async def go():
         async with harness(mock, world, ant_dist) as first:
             s = mock.new_session()
-            mock.run(s.id, "sleep 2; echo finished > out.txt")
+            mock.run(s.id, "sleep 5; echo finished > out.txt")
             await first.until(lambda: first.noted("acked", s.id))
             sb = first.sandbox_of(s.id)
         world.fail_exec.append((STATUS_CMD, flaky()))  # the restart can't read the sandbox
@@ -250,7 +336,7 @@ def test_a_run_adopted_after_a_restart_keeps_its_start_time(mock, world, ant_dis
     async def go():
         async with harness(mock, world, ant_dist) as first:
             s = mock.new_session()
-            mock.run(s.id, "sleep 3")
+            mock.run(s.id, "sleep 6")
             await first.until(lambda: first.noted("acked", s.id))
         await asyncio.sleep(1.2)
         async with harness(mock, world, ant_dist) as second:

@@ -41,7 +41,7 @@ from prized_managed_agents.webhooks import Verifier  # noqa: E402
 
 STUB_ANT = Path(__file__).parent / "bin" / "ant"
 # Substrings that pick out one in-sandbox script, for World.fail_exec and fail_after_exec.
-STATUS_CMD = 'for r in "$PMA_RUNS"/*/; do'
+STATUS_CMD = 'ls -1t "$PMA_RUNS"'
 LAUNCH_CMD = "setsid -f sh -c"
 COLLECT_CMD = 'touch "$r/collected"'
 BLOCKED: list[str] = []

@@ -63,6 +63,9 @@ class Settings:
     # With a signing key the orchestrator takes webhooks (and polls now and then as a backstop);
     # without one it long-polls the queue.
     webhook_key: str | None = field(default=None, repr=False)
+    # After rotating the environment key: the old one, so runs started under it are still known
+    # (run ids are signed with a key derived from it). Used for nothing else.
+    previous_environment_key: str | None = field(default=None, repr=False)
 
     # The sandboxes.
     template: str = "prized-base-v1"
@@ -178,6 +181,7 @@ class Settings:
             environment_key=get("ANTHROPIC_ENVIRONMENT_KEY") or "",
             base_url=(get("ANTHROPIC_BASE_URL") or DEFAULT_BASE_URL).rstrip("/"),
             webhook_key=get("ANTHROPIC_WEBHOOK_SIGNING_KEY"),
+            previous_environment_key=get("ANTHROPIC_ENVIRONMENT_KEY_PREVIOUS"),
             template=get("PRIZED_TEMPLATE") or "prized-base-v1",
             vcpu=num("PRIZED_VCPU", int),  # type: ignore[arg-type]
             memory_gb=num("PRIZED_MEMORY_GB", float),  # type: ignore[arg-type]

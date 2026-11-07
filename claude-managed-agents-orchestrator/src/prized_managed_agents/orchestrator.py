@@ -65,6 +65,7 @@ RETIRE_WAIT_S = 30.0  # how long an earlier run of the session gets to finish be
 # check (20 s). A run still starting after both counts as dead.
 LAUNCH_S = 60.0
 MAX_FAILURES = 10_000  # failed handoffs remembered (by work id), oldest forgotten first
+MAX_STRAYS = 20  # leftover workers stopped per pass; more than that is the agent's doing
 
 
 class HandoffError(Exception):
@@ -107,7 +108,11 @@ class Orchestrator:
         self.runs: dict[str, Run] = {}  # by run id
         self.notes: list[Note] = []
         self.failures: OrderedDict[str, int] = OrderedDict()  # failed handoffs, by work id
-        self._key = w.run_key(settings.environment_key)
+        self._key = w.run_key(settings.environment_key)  # signs new runs
+        # Recognises runs: also the key before a rotation, while its runs may still be under way.
+        self._keys = [self._key] + (
+            [w.run_key(settings.previous_environment_key)] if settings.previous_environment_key else []
+        )
         self._busy: set[str] = set()  # sessions with a handoff under way
         self._locks: dict[str, list[Any]] = {}  # session -> [lock, holders and waiters]
         self._slots = asyncio.Semaphore(settings.max_handoffs)
@@ -294,7 +299,7 @@ class Orchestrator:
         except Exception as err:
             return not gone(err)  # unknown: keep the worker, as before the item came again
         st = statuses.get(run.run_id)
-        return st is not None and self._live(st)
+        return st is not None and st.state == "alive"  # launched already: "starting" means it never ran
 
     async def _handoff(self, item: WorkItem) -> None:
         sid = item.session_id
@@ -313,10 +318,12 @@ class Orchestrator:
                 self._note(sid, made.how, sb.id)
                 if made.how != "created":
                     await self._clear_leftovers(sb, item.id)
-                await w.install_ant(sb, self.s)
+                # The run's directory first: from here the sandbox itself says a handoff is under way
+                # (a run "starting"), through the ant download too.
                 prepared = True
                 prep = w.env(rid, PMA_SESSION=sid, PMA_WORK=item.id)
                 await self._exec(sb, w.PREPARE_RUN, prep, timeout=30, what="preparing the run")
+                await w.install_ant(sb, self.s)
                 assert item.secret is not None
                 await sb.files.write(w.secret_path(rid), item.secret, mode=0o600)
         except BaseException as err:
@@ -360,11 +367,11 @@ class Orchestrator:
         except Exception as err:
             st, read_err = None, err
         lost = next((e for e in (launch_err, read_err) if e is not None and gone(e)), None)
-        if lost is not None:
-            self._handoff_failed(item, lost)  # the sandbox is gone, and its worker with it
-            return
         if st is not None and st.state == "alive":
             ack = True  # it runs, whatever the launch command's answer was
+        elif lost is not None:
+            self._handoff_failed(item, lost)  # the sandbox is gone, and its worker with it
+            return
         elif read_err is None or (launch_err is None and not out.startswith("started")):
             # The sandbox says the worker isn't running (it exited, was killed, or never started),
             # or the launch said it exited: nothing to stop, so clean up and leave it to the queue.
@@ -458,7 +465,7 @@ class Orchestrator:
         deadline = self.clock() + RETIRE_WAIT_S
         while earlier:
             try:
-                alive = {st.run_id for st in await self._runs_in(earlier[0].sandbox) if self._live(st)}
+                alive = {st.run_id for st in await self._runs_in(earlier[0].sandbox) if st.state == "alive"}
             except Exception as err:
                 if not gone(err):
                     raise
@@ -477,16 +484,20 @@ class Orchestrator:
     async def _clear_leftovers(self, sb: Any, work_id: str) -> None:
         """Runs the sandbox holds that no one supervises (a worker frozen when the sandbox paused
         itself, or left by an orchestrator that died) go before a new worker starts: live ones are
-        stopped, ended ones collected. One whose work id is the new item's is killed outright, so
-        its own stop can't end the new item. Unsigned ones are stopped too (a worker from before the
-        environment key was rotated): only this session's sandbox is touched, just before its own
-        worker starts, so a forged one can only stop what the agent itself pointed it at."""
-        for st in await self._status(sb):
-            if st.run_id in self.runs:
-                continue
-            if st.state == "alive":
-                self._note(st.session_id, "stopping stale worker", f"{st.work_id} in {sb.id}")
-                await self._stop(sb, st.session_id, st.work_id, st.run_id, kill=st.work_id == work_id)
+        killed, ended ones collected. Killed, not asked to stop: the new item means the old one is
+        over, and a worker's own stop could end the new item if the queue reused its id. Unsigned
+        ones go too (a worker from before the environment key was rotated): this is the session's
+        own sandbox, just before its own worker starts, so a forged one can only kill what the agent
+        pointed it at, and at most MAX_STRAYS a time."""
+        sid = (sb.labels or {}).get(SESSION, "")
+        statuses = [st for st in await self._status(sb) if st.run_id not in self.runs]
+        live = [st for st in statuses if st.state in ("alive", "stray")]
+        for st in live[:MAX_STRAYS]:
+            self._note(sid, "stopping stale worker", f"{st.work_id} in {sb.id}")
+            await self._stop(sb, sid, st.work_id, st.run_id, kill=True)
+        if len(live) > MAX_STRAYS:
+            self._note(sid, "too many stale workers", f"{sb.id}: {len(live) - MAX_STRAYS} left running")
+        for st in statuses[: MAX_STRAYS * 2]:
             with contextlib.suppress(Exception):
                 await self._collect(sb, st.run_id)
 
@@ -558,7 +569,7 @@ class Orchestrator:
             if run.stopping:
                 continue  # its stop finishes it, under the session's lock
             st = statuses.get(run.run_id)
-            if st is None or not self._live(st):
+            if st is None or st.state != "alive":  # a run of ours went through its launch: no "starting"
                 why = f"exit {st.number}" if st is not None and st.state == "exited" else "worker gone"
                 self._spawn(self._finish_locked(run, why))
             elif self.clock() - run.started > self.s.run_timeout_s:
@@ -642,33 +653,43 @@ class Orchestrator:
                 self._note(sid, "pause failed", f"{sb.id}: {_describe(err)}; it pauses itself after AUTO_PAUSE")
 
     async def _take_over(self, sb: Any, statuses: list[w.RunStatus], *, why: str = "") -> bool:
-        """Supervise what a sandbox none of our runs use holds: the newest live run is adopted, other
-        live ones stopped (one worker per sandbox), ended ones collected. True if a run lives (or is
-        starting) in it. Hold the session's lock."""
-        live = sorted((st for st in statuses if self._live(st)), key=lambda st: st.started or 0, reverse=True)
-        keep = next((st for st in live if st.state == "alive"), None)
+        """Supervise what a sandbox none of our runs use holds: the newest live run is adopted, unless
+        it is past RUN_TIMEOUT. Other live ones, and collected runs whose process group is alive
+        again (the agent can write a pid file), are killed, at most MAX_STRAYS a pass: one worker
+        per sandbox. Ended ones are collected. True if a run lives (or is starting) in it. Hold the
+        session's lock."""
+        sid = (sb.labels or {}).get(SESSION, "")
+        alive = sorted((st for st in statuses if st.state == "alive"), key=lambda st: st.started or 0, reverse=True)
+        keep = alive[0] if alive and self._age(alive[0]) <= self.s.run_timeout_s else None
+        starting = [st for st in statuses if st.state == "starting" and self._live(st)]
+        stops = 0
         for st in statuses:
-            if st is keep or st.run_id in self.runs:
-                continue
-            if st.state == "starting" and st in live:
-                continue  # a handoff of another process is under way: leave it be
-            if st.state == "alive":
-                self._note(st.session_id, "stopping extra worker", f"{st.work_id} in {sb.id}")
-                same_item = keep is not None and st.work_id == keep.work_id
-                await self._stop(sb, st.session_id, st.work_id, st.run_id, kill=same_item)
+            if st is keep or st in starting or st.run_id in self.runs:
+                continue  # (a run starting is another process's handoff under way: leave it be)
+            if st.state in ("alive", "stray"):
+                if stops >= MAX_STRAYS:
+                    continue
+                stops += 1
+                late = keep is None and bool(alive) and st is alive[0]
+                self._note(sid, "run timeout" if late else "stopping extra worker", f"{st.work_id} in {sb.id}")
+                await self._stop(sb, sid, st.work_id, st.run_id, kill=True)
             tail = ""
             with contextlib.suppress(Exception):
                 tail = await self._collect(sb, st.run_id, tail=0 if st.number == 0 else 15)
-            if st.state != "alive":
-                self._note(st.session_id, "run ended", f"{st.work_id}: {why or 'while no orchestrator watched'}")
+            if st.state not in ("alive", "stray"):
+                self._note(sid, "run ended", f"{st.work_id}: {why or 'while no orchestrator watched'}")
                 if tail.strip():
-                    log.warning("%s: the end of ant's log for %s:\n%s", st.session_id, st.work_id, tail.rstrip())
+                    log.warning("%s: the end of ant's log for %s:\n%s", sid, st.work_id, tail.rstrip())
         if keep is not None:
             self._adopt(sb, keep)
-        return bool(live)
+            return True
+        return bool(starting)
+
+    def _age(self, st: w.RunStatus) -> float:
+        return max(0.0, time.time() - (st.started or time.time()))
 
     def _adopt(self, sb: Any, st: w.RunStatus) -> None:
-        age = max(0.0, time.time() - (st.started or time.time()))
+        age = self._age(st)
         self.runs[st.run_id] = Run(st.run_id, st.session_id, st.work_id, sb, self.clock() - age, acked=st.acked)
         self._note(st.session_id, "adopted", f"{st.work_id} in {sb.id}")
 
@@ -777,7 +798,8 @@ class Orchestrator:
         return [r for r in self.runs.values() if r.session_id == sid]
 
     def _live(self, st: w.RunStatus) -> bool:
-        """Alive, or still starting within the time a handoff may take."""
+        """For a run no one here supervises: alive, or still starting within the time a handoff may
+        take. (A run of ours went through its launch, so for it only "alive" counts.)"""
         if st.state == "alive":
             return True
         if st.state != "starting" or st.started is None:
@@ -818,7 +840,7 @@ class Orchestrator:
         sid = (sb.labels or {}).get(SESSION, "")
         out = []
         for st in await self._status(sb):
-            if st.session_id == sid and w.genuine(self._key, st):
+            if st.session_id == sid and w.genuine(self._keys, st):
                 out.append(st)
             else:
                 log.debug("%s: ignoring a run line that isn't ours: %s", sb.id, st.run_id)

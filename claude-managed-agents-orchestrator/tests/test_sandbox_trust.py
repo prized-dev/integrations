@@ -5,9 +5,13 @@ another session."""
 from __future__ import annotations
 
 import asyncio
+import os
+import shutil
+import subprocess
 import time
 from pathlib import Path
 
+import pytest
 from conftest import COLLECT_CMD, LAUNCH_CMD, STATUS_CMD, craft_run, harness, run
 from mock_cma import ENV_KEY
 
@@ -43,7 +47,7 @@ def test_forged_status_lines_add_no_runs_take_no_slots_and_reach_no_other_sessio
         b = mock.new_session()
         async with harness(mock, world, ant_dist) as first:
             a = mock.new_session()
-            mock.run(a.id, FORGE.replace("OTHER", b.id), "sleep 5; echo done > a.txt")
+            mock.run(a.id, FORGE.replace("OTHER", b.id), "sleep 6; echo done > a.txt")
             await first.until(
                 lambda: (sb := first.sandbox_of(a.id)) is not None and Path(sb.home, "work", "forged.ok").exists()
             )
@@ -105,7 +109,7 @@ def test_the_status_script_prints_plain_fields_only_and_only_signed_runs_count(w
         got = {st.run_id: st for st in w.parse_status(r.stdout)}
         assert set(got) == {real, exited, tampered, other_key, collected_alive, pid_one}
         assert got[real].state == "starting" and got[exited].state == "exited" and got[exited].number == 0
-        assert got[collected_alive].state == "alive" and got[collected_alive].number == int(g)
+        assert got[collected_alive].state == "stray" and got[collected_alive].number == int(g)
         assert got[pid_one].state == "lost"
         genuine = {rid for rid, st in got.items() if w.genuine(key, st)}
         assert genuine == {real, exited, collected_alive, pid_one}
@@ -168,6 +172,64 @@ def test_stop_never_signals_pid_one_or_junk(world):
         assert not Path(sb.home, "kills").exists()
         rid = craft_run(sb, "sesn_a", "work_a", pid="4242")
         await sb.exec(w.STOP, env=w.env(rid, PMA_GRACE="1", PMA_SIGNAL="KILL", **fake_kill))
-        assert Path(sb.home, "kills").read_text().splitlines()[0] == "-KILL -- -4242"
+        assert Path(sb.home, "kills").read_text().splitlines()[0] == "-KILL -4242"
+
+    run(go())
+
+
+SHELLS = [sh for sh in (["dash"], ["busybox", "sh"], ["sh"]) if shutil.which(sh[0])]
+
+
+@pytest.mark.parametrize("shell", SHELLS, ids=[" ".join(sh) for sh in SHELLS])
+def test_the_scripts_work_under_plain_sh(tmp_path, shell):
+    # Not only bash: a template without it runs commands with sh, and dash's kill takes no "--".
+    home = tmp_path / "home"
+    home.mkdir()
+    env = {"PATH": "/usr/bin:/bin", "HOME": str(home), "PMA_RUNS": w.RUNS}
+    group = subprocess.Popen(["sleep", "30"], start_new_session=True)
+    try:
+        rid = w.run_id(w.run_key(ENV_KEY), "sesn_a", "work_a")
+        prep = {**env, "PMA_RUN": rid, "PMA_SESSION": "sesn_a", "PMA_WORK": "work_a"}
+        subprocess.run([*shell, "-c", w.PREPARE_RUN], env=prep, check=True)
+        Path(home, w.RUNS, rid, "pid").write_text(str(group.pid))
+
+        def status() -> list[w.RunStatus]:
+            out = subprocess.run([*shell, "-c", w.STATUS], env=env, check=True, capture_output=True, text=True)
+            return w.parse_status(out.stdout)
+
+        assert [(st.run_id, st.state, st.number) for st in status()] == [(rid, "alive", group.pid)]
+        subprocess.run([*shell, "-c", w.STOP], env={**env, "PMA_RUN": rid, "PMA_GRACE": "2"}, check=True)
+        assert group.wait(timeout=5) is not None
+        assert [st.state for st in status()] == ["lost"]
+        subprocess.run([*shell, "-c", w.COLLECT], env={**env, "PMA_RUN": rid}, check=True)
+        assert status() == [] and not Path(home, w.RUNS, rid, "pid").exists()
+    finally:
+        group.kill()
+
+
+def test_a_signed_run_the_agent_revives_is_killed_not_adopted(mock, world, ant_dist):
+    # The agent can't sign a run, but it can write into one of ours: point a collected run's pid
+    # file at a live process group, or keep an old run "alive" past RUN_TIMEOUT. Either would once
+    # have been adopted again and again, keeping the sandbox awake and a slot taken for good.
+    async def go():
+        async with harness(mock, world, ant_dist, run_timeout_s=60) as h:
+            await asyncio.sleep(0.3)  # past the first sweep
+            for case in ("collected", "past RUN_TIMEOUT"):
+                s = mock.new_session()
+                sb = await world.api().create(labels=h.orch.boxes.labels(s.id))
+                await sb.exec("setsid -f sh -c 'echo $$ > \"$HOME/g\"; exec sleep 300' < /dev/null > /dev/null 2>&1")
+                while not Path(sb.home, "g").exists() or not Path(sb.home, "g").read_text().strip():
+                    await asyncio.sleep(0.02)
+                pgid = int(Path(sb.home, "g").read_text())
+                if case == "collected":
+                    craft_run(sb, s.id, "work_revived", pid=str(pgid), collected="")
+                else:
+                    craft_run(sb, s.id, "work_old", now=time.time() - 3600, pid=str(pgid))
+                await h.orch.sweep()
+                assert sb.state == "paused", case
+                assert not h.noted("adopted", s.id) and not h.orch.runs, case
+                assert h.noted("stopping extra worker" if case == "collected" else "run timeout", s.id), case
+                with pytest.raises(ProcessLookupError):
+                    os.killpg(pgid, 0)
 
     run(go())
