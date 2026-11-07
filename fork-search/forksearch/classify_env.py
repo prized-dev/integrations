@@ -30,7 +30,11 @@ no model). Per trial, with A the sandbox the oracle runs in:
   timings, sizes, manifest checks and errors. Then B, C, K and A are deleted.
 
 ``shapes`` (``--ek shapes=PATH``) is a JSON map task -> {"image_headroom_gb",
-"min_vcpu"}: each sandbox's disk is the task's storage plus its measured image.
+"min_vcpu", "digest"}: each sandbox's disk is the task's storage plus its
+measured image. ``mirror`` (``--ek mirror=mirror.gcr.io``) pulls the task's
+image from that registry, pinned by the digest its Docker Hub tag had
+("digest"), instead of by tag from Docker Hub, whose anonymous limit is 100
+pulls an hour per IP. The digest names the same bytes on both registries.
 """
 
 from __future__ import annotations
@@ -257,7 +261,7 @@ class ClassifyEnvironment(PrizedEnvironment):
     """See the module doc. Only Harbor's agent environment (session
     ``<trial>__env``) classifies; any other session is a plain PrizedEnvironment."""
 
-    def __init__(self, *args, shapes: str | None = None, **kwargs):
+    def __init__(self, *args, shapes: str | None = None, mirror: str | None = None, **kwargs):
         kwargs.pop("verifier_fork", None)  # this environment does its own forking
         self._task = _task_name(kwargs.get("environment_name", ""), kwargs["environment_dir"])
         shape = {}
@@ -268,6 +272,12 @@ class ClassifyEnvironment(PrizedEnvironment):
             kwargs["image_headroom_gb"] = int(shape["image_headroom_gb"])
         if "min_vcpu" in shape:
             kwargs["min_vcpu"] = int(shape["min_vcpu"])
+        image = kwargs["task_env_config"].docker_image
+        pinned = None
+        if mirror and shape.get("digest") and image:
+            repo = image.rsplit(":", 1)[0] if ":" in image.rsplit("/", 1)[-1] else image
+            pinned = f"{mirror.rstrip('/')}/{repo}@{shape['digest']}"
+            kwargs["task_env_config"] = kwargs["task_env_config"].model_copy(update={"docker_image": pinned})
         labels = _labels(kwargs.get("labels"))
         session_id = kwargs["session_id"]
         self._role = "agent" if session_id.endswith("__env") else "other"
@@ -285,6 +295,8 @@ class ClassifyEnvironment(PrizedEnvironment):
             "session": session_id,
             "shape_table": shape,
             "verifier_timeout_sec": self._verifier_timeout_sec,
+            "image": image,
+            "image_ref": pinned or image,
         }
         if self._role == "agent":
             fresh_kwargs = dict(kwargs)

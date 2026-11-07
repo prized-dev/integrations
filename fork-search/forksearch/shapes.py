@@ -16,7 +16,8 @@ rows = json.load(open(src))
 table = {}
 for task, r in sorted(rows.items()):
     gb = (r.get("amd64_size_mb") or r["full_size_mb"]) / 1024
-    shape = {"image_headroom_gb": math.ceil(4 * gb) + 3, "compressed_mb": r.get("amd64_size_mb") or r["full_size_mb"]}
+    shape = {"image_headroom_gb": math.ceil(4 * gb) + 3, "compressed_mb": r.get("amd64_size_mb") or r["full_size_mb"],
+             "digest": r["tag_digest"]}
     if task in MIN_VCPU:
         shape["min_vcpu"] = MIN_VCPU[task]
     table[task] = shape

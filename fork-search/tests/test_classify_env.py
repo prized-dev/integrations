@@ -285,6 +285,19 @@ async def test_shapes_table_sizes_both_sandboxes(cloud, tmp_path):
     assert cloud.boxes["A"].labels["fs-role"] == "agent"
 
 
+async def test_mirror_pins_the_image_by_digest_for_both_sandboxes(cloud, tmp_path):
+    env = _env(tmp_path, shapes={"prized-test": {"digest": "sha256:abc"}})
+    assert env.task_env_config.docker_image == "python:3.12"  # no mirror asked: unchanged
+    env = ce.ClassifyEnvironment(
+        environment_dir=env.environment_dir, environment_name="prized-test", session_id="t__abc__env",
+        trial_paths=env.trial_paths, task_env_config=EnvironmentConfig(docker_image="alexgshaw/x:20251031"),
+        shapes=str(tmp_path / "shapes.json"), mirror="mirror.gcr.io",
+    )
+    assert env.task_env_config.docker_image == "mirror.gcr.io/alexgshaw/x@sha256:abc"
+    assert env._fresh.task_env_config.docker_image == "mirror.gcr.io/alexgshaw/x@sha256:abc"
+    assert env._cls["image"] == "alexgshaw/x:20251031"
+
+
 async def test_oracle_verifier_that_never_finishes_skips_replays(cloud, tmp_path):
     env = _env(tmp_path)
     await env.start(force_build=False)
