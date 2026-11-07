@@ -3,14 +3,14 @@
 Runs Hermes terminal, file and ``execute_code`` commands in a Prized sandbox: a
 Firecracker microVM (Ubuntu 24.04, user ``prized`` without sudo, home
 ``/home/prized``) driven through the Prized HTTP API
-(https://prized.dev/docs/sandboxes-api). It uses httpx, which Hermes already
+(https://prized.dev/docs/sandboxes-api?via=hermes). It uses httpx, which Hermes already
 ships, and no vendor SDK.
 
 Persistence (``terminal.container_persistent: true``, the default) is pause and
 resume, not snapshots. When Hermes releases the environment (the idle reaper,
-session end, exit) the sandbox is PAUSED: its memory and disk are kept, so
-background processes (a dev server, a watcher, a REPL) freeze and carry on when
-the next command arrives. The sandbox id is stored per task under HERMES_HOME,
+or exit) the sandbox is PAUSED: its memory and disk are kept, so processes
+still running in it (a dev server, a watcher) freeze and carry on when the next
+command arrives. The sandbox id is stored per task under HERMES_HOME,
 so a later Hermes process resumes the same live machine.
 
 Limits that shape this module:
@@ -98,7 +98,7 @@ _MAX_TRANSFER_BYTES = 100 * 1024 * 1024
 #: Exec answers where the command certainly did not run.
 _NOT_RUN = frozenset({429, 503})
 
-# Bounds from the create route (https://prized.dev/docs/sandboxes-api#create).
+# Bounds from the create route (https://prized.dev/docs/sandboxes-api?via=hermes#create).
 _VCPU_RANGE = (1, 32)
 _MEMORY_MB_RANGE = (1024, 131072)
 _TIMER_MIN_RANGE = (0, 40320)
@@ -111,9 +111,8 @@ _SCOPES = ("instance", "session")
 _INSTANCE_KEY = "instance"
 
 
-#: Added to a 401 (the key is missing or refused): an agent can make its person an account and a key.
-_SIGN_UP_HINT = ("No Prized account yet? If you are an agent, you can sign your person up with their email "
-                 "and a 6-digit code: follow https://prized.dev/auth.md?via=hermes")
+#: Added to a 401 (the key is missing or refused).
+_SIGN_UP_HINT = "No Prized account yet? Sign up at https://prized.dev/?via=hermes"
 
 
 class PrizedAPIError(RuntimeError):
@@ -446,7 +445,7 @@ class _SharedSyncManager(FileSyncManager):
 
 
 class PrizedEnvironment(BaseEnvironment):
-    """Prized sandbox backend: spawn-per-call over ``/process/execute``, paused between turns."""
+    """Prized sandbox backend: spawn-per-call over ``/process/execute``, paused when Hermes releases it."""
 
     _stdin_mode = "payload"
 
