@@ -1,6 +1,6 @@
 # pydantic-ai-prized
 
-> **Coming 2026-11-05.** `pydantic-ai-prized` is not on PyPI yet. The Prized Python SDK it uses (`prized`) is.
+> **Not on PyPI yet.** Until it is, install `pydantic-ai-prized` from this repo with the line below. The Prized Python SDK it uses (`prized`) is on PyPI.
 
 Run a [Pydantic AI](https://pydantic.dev/docs/ai/) agent's workspace in a [Prized](https://prized.dev/sandboxes?via=pydantic-ai) sandbox, a Firecracker microVM.
 Harness's `Coder`, `Shell`, `FileSystem` and every other workspace-aware capability run in it unchanged.
@@ -12,7 +12,7 @@ No Prized account yet? Your coding agent can sign you up with your email and a 6
 Get an API key at https://prized.dev/onboarding/sandboxes?via=pydantic-ai (free credit, no card), then:
 
 ```sh
-pip install pydantic-ai-prized "pydantic-ai-harness[coder,anthropic]"
+pip install "pydantic-ai-prized @ git+https://github.com/prized-dev/integrations#subdirectory=pydantic-ai" "pydantic-ai-harness[coder,anthropic]"
 export PRIZED_API_KEY=dcp_... ANTHROPIC_API_KEY=...
 ```
 

@@ -1,6 +1,6 @@
 # prized-adk
 
-> **Coming 2026-11-05.** `prized-adk` is not on PyPI yet. The Prized Python SDK it uses (`prized`) is.
+> **Not on PyPI yet.** Until it is, install `prized-adk` from this repo with the line below. The Prized Python SDK it uses (`prized`) is on PyPI.
 
 Run a [Google ADK](https://google.github.io/adk-docs/) agent's shell commands, files and code in a [Prized](https://prized.dev/?via=adk) sandbox: a Firecracker microVM with its own kernel that pauses with its memory, and forks into live copies.
 
@@ -10,7 +10,7 @@ Run a [Google ADK](https://google.github.io/adk-docs/) agent's shell commands, f
 ## Install
 
 ```sh
-pip install prized-adk
+pip install "prized-adk @ git+https://github.com/prized-dev/integrations#subdirectory=adk"
 export PRIZED_API_KEY=dcp_...
 ```
 

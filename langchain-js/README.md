@@ -1,6 +1,6 @@
 # @prized/langchain
 
-> **Coming 2026-11-05.** `@prized/langchain` is not on npm yet. The Prized TypeScript SDK it uses (`@prized/sdk`) is.
+> **Not on npm yet.** The install line below works once `@prized/langchain` is published. The Prized TypeScript SDK it uses (`@prized/sdk`) is on npm.
 
 A [Deep Agents](https://github.com/langchain-ai/deepagentsjs) (LangChain JS) sandbox backend on [Prized](https://prized.dev/docs/sandboxes?via=langchain-js): the agent's `execute` tool and its file tools (`read_file`, `write_file`, `edit_file`, `ls`, `glob`, `grep`) run in a Prized sandbox, a Firecracker microVM, instead of on your machine.
 

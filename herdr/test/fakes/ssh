@@ -1,0 +1,5 @@
+#!/bin/sh
+# A stand-in for OpenSSH: logs the call, prints what the linking step would, exits FAKE_SSH_STATUS.
+printf '%s\n' "$*" >> "${FAKE_SSH_LOG:?}"
+case "$*" in *"ln -s"*) echo "linked claude" ;; esac
+exit "${FAKE_SSH_STATUS:-0}"

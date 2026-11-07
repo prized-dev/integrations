@@ -1,0 +1,164 @@
+#!/usr/bin/env node
+// A stand-in for the `prized` CLI. Sandboxes and boxes are directories under FAKE_PRIZED_DIR; exec runs
+// the script with bash in that directory, with /home/prized mapped onto it and a stub tmux on PATH.
+// Every call is logged as argv plus booleans about the environment, never a value from it.
+
+import { spawnSync } from "node:child_process";
+import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+
+const root = process.env.FAKE_PRIZED_DIR;
+if (!root) {
+  process.stderr.write("FAKE_PRIZED_DIR is not set\n");
+  process.exit(2);
+}
+const args = process.argv.slice(2);
+// Only the calls that take input read it: an attach must leave the terminal's input alone.
+const takesInput = args[0] === "exec" || (args[0] === "sandbox" && args[1] === "cp" && args[2] === "-");
+const stdin = takesInput ? readStdin() : Buffer.alloc(0);
+fs.appendFileSync(
+  path.join(root, "log.jsonl"),
+  `${JSON.stringify({ args, stdinBytes: stdin.length, hasKey: Boolean(process.env.PRIZED_API_KEY) })}\n`,
+);
+
+function readStdin() {
+  try {
+    return fs.readFileSync(0);
+  } catch {
+    return Buffer.alloc(0);
+  }
+}
+
+const dbFile = path.join(root, "db.json");
+const db = fs.existsSync(dbFile) ? JSON.parse(fs.readFileSync(dbFile, "utf8")) : { sandboxes: {}, boxes: null };
+const save = () => fs.writeFileSync(dbFile, JSON.stringify(db, null, 2));
+const fail = (code, message) => {
+  process.stderr.write(`prized: ${message}\n`);
+  process.exit(code);
+};
+if (process.env.FAKE_PRIZED_EXIT) fail(Number(process.env.FAKE_PRIZED_EXIT), "forced failure");
+
+const sbxHome = (id) => path.join(root, "sbx", id, "home");
+const boxHome = (name) => path.join(root, "box", name, "home");
+const json = (v) => process.stdout.write(`${JSON.stringify(v)}\n`);
+const boxes = () => db.boxes ?? JSON.parse(process.env.FAKE_BOXES || '[{"hostname":"mango","observedState":"running","tier":"flow","region":"us-west-2"}]');
+
+function sandbox(id) {
+  const s = db.sandboxes[id];
+  if (!s || s.state === "deleted") fail(5, `no sandbox ${id}`);
+  return s;
+}
+
+function run(home, script, input) {
+  if (process.env.FAKE_FAIL_SCRIPT && script.includes(process.env.FAKE_FAIL_SCRIPT)) fail(1, "forced failure of this script");
+  fs.mkdirSync(path.join(home, "work"), { recursive: true });
+  const bin = path.join(root, "bin");
+  fs.mkdirSync(bin, { recursive: true });
+  const tmux = path.join(bin, "tmux");
+  if (!fs.existsSync(tmux)) {
+    fs.writeFileSync(
+      tmux,
+      `#!/bin/sh\necho "$*" >> "$HOME/.tmux-calls"\ncase "$1" in has-session) grep -q "new-session -d -s $(echo "$3" | sed 's/^=//') " "$HOME/.tmux-calls" ;; esac\n`,
+      { mode: 0o755 },
+    );
+  }
+  const real = script.replaceAll("/home/prized", home);
+  const r = spawnSync("bash", ["-c", real], {
+    cwd: path.join(home, "work"),
+    input,
+    env: { PATH: `${bin}:${process.env.PATH}`, HOME: home },
+  });
+  process.stdout.write(r.stdout);
+  process.stderr.write(r.stderr);
+  process.exit(r.status ?? 1);
+}
+
+function localPath(home, p) {
+  if (p.startsWith("~/")) return path.join(home, p.slice(2));
+  if (p.startsWith("/home/prized/")) return path.join(home, p.slice("/home/prized/".length));
+  return path.join(home, "work", p);
+}
+
+const [group, cmd, ...rest] = args;
+if (group === "sandbox") {
+  if (cmd === "create") {
+    const id = `sbx_${crypto.randomBytes(8).toString("hex")}`;
+    const labels = {};
+    rest.forEach((a, i) => {
+      if (a === "--label") {
+        const [k, v] = rest[i + 1].split("=");
+        labels[k] = v;
+      }
+    });
+    db.sandboxes[id] = { id, state: "running", labels, args: rest };
+    fs.mkdirSync(path.join(sbxHome(id), "work"), { recursive: true });
+    save();
+    process.stderr.write(`creating ${id}\n`);
+    if (process.env.FAKE_CREATE_THEN_DIE) process.exit(1);
+    process.stdout.write(`${id}\n`);
+  } else if (cmd === "exec") {
+    const id = rest[0];
+    const s = sandbox(id);
+    if (s.state === "paused") {
+      s.state = "running";
+      s.resumes = (s.resumes ?? 0) + 1;
+      save();
+    }
+    run(sbxHome(id), rest.slice(rest.indexOf("--") + 1).join(" "));
+  } else if (cmd === "cp") {
+    const [src, dst] = rest;
+    if (dst.includes(":")) {
+      const [id, p] = dst.split(/:(.*)/s);
+      sandbox(id);
+      const to = localPath(sbxHome(id), p);
+      fs.mkdirSync(path.dirname(to), { recursive: true });
+      if (src === "-") fs.writeFileSync(to, stdin);
+      else fs.copyFileSync(src, to);
+    } else {
+      const [id, p] = src.split(/:(.*)/s);
+      sandbox(id);
+      const from = localPath(sbxHome(id), p);
+      if (dst === "-") process.stdout.write(fs.readFileSync(from));
+      else fs.copyFileSync(from, dst);
+    }
+  } else if (cmd === "ssh") {
+    const s = sandbox(rest[0]);
+    s.state = "running";
+    s.attaches = (s.attaches ?? 0) + 1;
+    save();
+    process.stdout.write(`[attached to ${rest[0]} session ${rest[rest.indexOf("-s") + 1]}]\n`);
+    if (process.env.FAKE_SSH_SLEEP) spawnSync("sleep", [process.env.FAKE_SSH_SLEEP]);
+    process.exit(Number(process.env.FAKE_SSH_EXIT || 0));
+  } else if (cmd === "pause") {
+    sandbox(rest[0]).state = "paused";
+    save();
+  } else if (cmd === "resume") {
+    sandbox(rest[0]).state = "running";
+    save();
+  } else if (cmd === "get") {
+    json({ ok: true, sandbox: sandbox(rest[0]) });
+  } else if (cmd === "rm") {
+    sandbox(rest[0]).state = "deleted";
+    save();
+  } else if (cmd === "ls") {
+    const want = rest.includes("--label") ? rest[rest.indexOf("--label") + 1].split("=") : null;
+    const list = Object.values(db.sandboxes).filter((s) => s.state !== "deleted" && (!want || s.labels[want[0]] === want[1]));
+    json({ sandboxes: list });
+  } else fail(2, `fake: sandbox ${cmd}?`);
+} else if (group === "box") {
+  if (cmd === "ls") json({ boxes: boxes() });
+  else if (cmd === "resume") {
+    db.boxes = boxes().map((b) => (b.hostname === rest[0] ? { ...b, observedState: "running" } : b));
+    save();
+  } else fail(2, `fake: box ${cmd}?`);
+} else if (group === "exec") {
+  run(boxHome(cmd), rest.slice(rest.indexOf("--") + 1).join(" "), stdin);
+} else if (group === "ssh" && rest.includes("--kill")) {
+  // Like the real CLI: it asks first, and a closed stdin is a no.
+  if (!rest.includes("-y")) fail(1, "declined");
+  process.stdout.write(`killed session "${rest[rest.indexOf("--kill") + 1]}"\n`);
+} else if (group === "ssh") {
+  process.stdout.write(`[attached to box ${cmd}]\n`);
+  process.exit(Number(process.env.FAKE_SSH_EXIT || 0));
+} else fail(2, `fake: ${group}?`);

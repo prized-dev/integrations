@@ -1,6 +1,6 @@
 # Prized for Hermes Agent
 
-Prized terminal backend for [Hermes Agent](https://github.com/NousResearch/hermes-agent): Hermes runs its terminal, file and `execute_code` commands in a [Prized sandbox](https://prized.dev/docs/sandboxes?via=hermes), a Linux microVM that **pauses between turns with its memory**. A dev server, a watcher or a REPL the agent started is still running at the next command, in the same session or the next one.
+Prized terminal backend for [Hermes Agent](https://github.com/NousResearch/hermes-agent): Hermes runs its terminal, file and `execute_code` commands in a [Prized sandbox](https://prized.dev/docs/sandboxes?via=hermes), a Linux microVM that **pauses with its memory** when Hermes releases it (after `terminal.lifetime_seconds` idle, 300 s by default, or when Hermes exits) and resumes at the next command with its processes as they were. A dev server the agent started is still running, with the same PID, in this session or a later one (see [Background processes](#background-processes)). With `terminal.container_persistent: false` the sandbox is deleted instead when Hermes releases it.
 
 It registers `terminal.backend: prized` through the pluggable terminal-backend extension point (hermes-agent PR #94400), so it appears in `hermes setup`, `hermes status` / `hermes doctor`, the dashboard picker and subprocess secret stripping with no change to Hermes core. It needs no SDK: it calls the [Prized HTTP API](https://prized.dev/docs/sandboxes-api?via=hermes) with httpx, which Hermes already ships.
 
@@ -11,24 +11,32 @@ hermes plugins install prized-dev/integrations/hermes --enable
 hermes config set terminal.backend prized
 ```
 
-Create an API key on the [Prized API keys page](https://prized.dev/dashboard/workspace/api-keys?via=hermes) (Full access, or Custom with **Sandboxes: Write**) and save it in `~/.hermes/.env` as `PRIZED_API_KEY=dcp_...`. No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=hermes. It can also install the Prized skill with `npx skills add prized-dev/skills -g -y` (it should ask you first), so it knows when and how to use Prized the next time you ask for a sandbox. `hermes doctor` shows a "Prized API key" row and the settings in effect.
+Create an API key on the [Prized API keys page](https://prized.dev/dashboard/workspace/api-keys?via=hermes) (Full access, or Custom with **Sandboxes: Write**) and save it in `~/.hermes/.env` as `PRIZED_API_KEY=dcp_...`. No Prized account yet? Sign up at https://prized.dev/?via=hermes. Your coding agent can install the Prized skill with `npx skills add prized-dev/skills -g -y` (it should ask you first), so it knows when and how to use Prized the next time you ask for a sandbox. `hermes doctor` shows a "Prized API key" row and the settings in effect.
 
 ## Behaviour
 
 | | |
 | --- | --- |
 | Machine | Ubuntu 24.04 microVM from `prized-base-v1` (git, Python 3, Node.js 22, build tools). User `prized` without sudo, commands start in `/home/prized/work` |
-| Between turns | When Hermes releases the environment (its idle reaper, session end, exit), the sandbox is **paused**: memory and disk kept, compute not billed. The next command resumes it |
-| Sharing | `scope: instance` (default): one sandbox per Hermes home, shared by every session, cron job and subagent, so it is one machine for your agent. `scope: session`: one sandbox per session |
-| Lifetime | A sandbox is deleted when its run time is used up: 24 hours of running by default, up to 7 days with `max_runtime_min` (each resume restarts the clock), 60 minutes in all on the free tier. Paused time doesn't count: a paused sandbox is kept, for the price of its storage, until you delete it (on the free tier, until 30 days after its last use). The plugin never deletes a paused sandbox, and with `scope: session` each session leaves its own; `prized sandbox ls --label hermes=1` lists them. Once a sandbox is deleted, the next command starts a fresh one and its result carries `environment_recreated`, so the model knows processes and files there are gone |
-| Safety net | Every sandbox auto-pauses after 10 idle minutes, so a crashed Hermes never leaves one running |
-| Files | Credentials, skills and cache under `~/.hermes` are synced in (one tar per sync) and changed files are pulled back when the environment is released |
+| Pause | When Hermes releases the environment (its idle reaper, or exit), the sandbox is **paused**: memory and disk kept, compute not billed. The next command resumes it |
+| Sharing | `scope: instance` (default): one sandbox per Hermes home, shared by every session, cron job and subagent, so it is one machine for your agent. `scope: session`: one sandbox per Hermes session key (gateway and WebUI sessions); CLI and cron runs share the default one. Known issue: two Hermes processes on one home (the CLI while the gateway runs) each count only their own users of the instance sandbox, so one releasing it pauses it under the other's running command until its next command resumes it; use one home per process (`scope: session` avoids it only between the CLI and gateway or WebUI sessions: the CLI and the gateway's cron jobs still share the default sandbox) |
+| Lifetime | A sandbox is deleted when its run time is used up: 24 hours of running by default, up to 7 days with `max_runtime_min` (each resume restarts the clock), 60 minutes in all on the free tier. Paused time doesn't count: a paused sandbox is kept, for the price of its storage, until you delete it (on the free tier, until 30 days after its last use). In persistent mode (the default) the plugin never deletes a sandbox, and with `scope: session` each session leaves its own; `prized sandbox ls --label hermes=1` lists them. Once a sandbox is deleted, the next command starts a fresh one and its result carries `environment_recreated`, so the model knows processes and files there are gone |
+| Safety net | By default every sandbox auto-pauses after 10 idle minutes (`auto_pause_min`), so a crashed Hermes never leaves one running |
+| Files | Credential files a skill or `terminal.credential_files` names (never `.env` or `auth.json`), your skills (including external and project skill folders) and the `~/.hermes` cache are synced in (one tar per sync); changed and new skill and cache files are copied back when the environment is released (credential files are upload-only) |
+| Approvals | Hermes skips its approval prompts and dangerous-command checks for commands and `execute_code` in the sandbox, as for its other cloud sandbox backends (your `approvals.deny` rules still apply to commands): it is an isolated microVM with no host paths mounted |
 | Interrupt | Kills the command's process group in the sandbox; the sandbox keeps running |
 | Secrets | `PRIZED_API_KEY` is stripped from every subprocess the agent spawns and never enters the sandbox |
 
 In our tests on the live API, a background HTTP server and a counter loop survived every pause with the same PIDs.
 
-One thing to know: Hermes polls a background process it started (`background: true`) every 2 seconds for output. Each poll is a command, so while Hermes is running and watching such a process, the sandbox stays awake. Once Hermes exits or stops watching, the sandbox pauses and the process is frozen until the next command.
+### Background processes
+
+A process the agent starts with `background: true` runs in the sandbox until it exits or is killed there, and a pause freezes it with the sandbox, same PID. On this backend two Hermes core limits apply (seen live with hermes-agent main at c314285; the same core code in `process_registry.py` serves Hermes' other remote backends):
+
+- Stopping it from Hermes (the `process` tool's kill, the session-end sweep, a gateway shutdown) sends `kill` to its wrapper shell only, so the process itself keeps running. Stop it with `kill` or `pkill` in the sandbox.
+- Once Hermes releases the sandbox, it stops tracking the process: its `process` tools report it as exited, though it is still running.
+
+While Hermes watches a background process it polls it every 2 seconds, and each poll is a command, so the sandbox stays awake (and billed) while Hermes runs and watches it.
 
 ## Settings
 

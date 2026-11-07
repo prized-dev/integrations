@@ -1,6 +1,6 @@
 # @prized/mastra
 
-> **Coming 2026-11-05.** `@prized/mastra` is not on npm yet. The Prized TypeScript SDK it uses (`@prized/sdk`) is.
+> **Not on npm yet.** The install line below works once `@prized/mastra` is published. The Prized TypeScript SDK it uses (`@prized/sdk`) is on npm.
 
 A [Mastra](https://mastra.ai) workspace sandbox on [Prized](https://prized.dev/docs/sandboxes?via=mastra): an agent's `execute_command`, background processes and file tools (read, write, edit, list, grep) run in a Prized sandbox, a Firecracker microVM, instead of on your server. `stop()` pauses the sandbox with its memory and disk, and the same `id` resumes it later, from this process or another.
 

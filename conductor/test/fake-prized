@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# A stand-in for the prized CLI whose box is a folder ($FAKE_BOX, its home): setup clones the
+# checkout's origin there, exec runs the command line there with sh -c, cp copies into it, and
+# agents run checks the tmux session (a file, see box-bin/tmux) and records the start. Every call
+# is logged to $FAKE_BOX/../calls.log.
+set -euo pipefail
+: "${FAKE_BOX:?}"
+HERE=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)
+echo "prized $*" >>"$FAKE_BOX/../calls.log"
+cmd=$1
+shift
+case $cmd in
+  setup)
+    clone='' path=''
+    for a in "$@"; do
+      case $a in
+        --clone) clone=1 ;;
+        -*) ;;
+        *) [ -n "$path" ] || path=$a ;;
+      esac
+    done
+    if [ -n "$clone" ]; then
+      name=$(basename "$path" | tr '[:upper:]' '[:lower:]')
+      if [ ! -d "$FAKE_BOX/code/$name" ]; then
+        mkdir -p "$FAKE_BOX/code"
+        git clone -q "$(git -C "$path" remote get-url origin)" "$FAKE_BOX/code/$name"
+        echo "✓ project   box:~/code/$name (cloned)"
+      fi
+    fi
+    exit "${FAKE_SETUP_EXIT:-0}" ;;
+  exec)
+    [ "$1" = --timeout ] && shift 2
+    [ "$1" = -- ] && shift
+    cd "$FAKE_BOX"
+    HOME=$FAKE_BOX PATH="$HERE/box-bin:$PATH" exec sh -c "$*" ;;
+  cp)
+    [ "$1" != -q ] || shift
+    src=$1 dst=${2#:}
+    case $dst in /*) ;; *) dst=$FAKE_BOX/$dst ;; esac
+    mkdir -p "$(dirname "$dst")"
+    cp "$src" "$dst" ;;
+  agents)
+    [ "$1" = run ] || exit 2
+    agent=$2 session='' dir=''
+    shift 2
+    while [ $# -gt 0 ]; do
+      case $1 in
+        --session) session=$2; shift 2 ;;
+        --dir) dir=$2; shift 2 ;;
+        --) shift; break ;;
+        *) shift ;;
+      esac
+    done
+    [ -f "$FAKE_BOX/.faketmux/$session" ] || { echo "no session $session" >&2; exit 1; }
+    grep -q '^agent=' "$FAKE_BOX/.faketmux/$session" && { echo "something already runs in $session"; exit 0; }
+    echo "agent=$agent dir=$dir args=$*" >>"$FAKE_BOX/.faketmux/$session" ;;
+  *) echo "fake prized: no $cmd" >&2; exit 2 ;;
+esac

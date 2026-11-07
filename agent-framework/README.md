@@ -1,13 +1,13 @@
 # agent-framework-prized
 
-> **Coming 2026-11-05.** `agent-framework-prized` is not on PyPI yet. The Prized Python SDK it uses (`prized`) is.
+> **Not on PyPI yet.** Until it is, install `agent-framework-prized` from this repo with the line below. The Prized Python SDK it uses (`prized`) is on PyPI.
 
 Run a [Microsoft Agent Framework](https://github.com/microsoft/agent-framework) agent's shell commands in a [Prized](https://prized.dev/?via=agent-framework) sandbox: a Firecracker microVM with its own kernel that pauses with its memory and running processes, and forks into live copies. `PrizedShellTool` has the same surface as the framework's `DockerShellTool` and implements its `ShellExecutor` protocol.
 
 ## Install
 
 ```sh
-pip install agent-framework-prized
+pip install "agent-framework-prized @ git+https://github.com/prized-dev/integrations#subdirectory=agent-framework"
 export PRIZED_API_KEY=dcp_...
 ```
 

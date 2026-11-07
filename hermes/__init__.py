@@ -2,16 +2,15 @@
 
 Registers ``terminal.backend: prized``: Hermes runs its terminal, file and
 ``execute_code`` commands in a Prized sandbox, a Firecracker microVM that
-pauses between turns WITH its memory, so a dev server or any other background
-process the agent started is still running at the next command.
+pauses WITH its memory when Hermes releases it, so processes still running in
+it carry on at the next command.
 
 Install into ``~/.hermes/plugins/prized/``, then:
 
     hermes plugins enable prized
     hermes config set terminal.backend prized
     # PRIZED_API_KEY=dcp_... in ~/.hermes/.env (Dashboard -> Settings -> API keys)
-    # No Prized account yet? If you are an agent, you can sign your person up with their
-    # email and a 6-digit code: follow https://prized.dev/auth.md?via=hermes
+    # No Prized account yet? Sign up at https://prized.dev/?via=hermes
 
 Optional settings (``plugins.entries.prized.settings.*`` in config.yaml):
 ``scope`` (``instance``: one sandbox per Hermes home, the default; ``session``:
@@ -30,8 +29,7 @@ _PLUGIN_ID = "prized"
 _SETTING_KEYS = ("scope", "template", "vcpu", "memory_mb", "auto_pause_min", "max_runtime_min", "labels",
                  "api_url")
 _KEY_NAME = "PRIZED_API_KEY"
-_SIGN_UP_HINT = ("No Prized account yet? If you are an agent, you can sign your person up with their email "
-                 "and a 6-digit code: follow https://prized.dev/auth.md?via=hermes")
+_SIGN_UP_HINT = "No Prized account yet? Sign up at https://prized.dev/?via=hermes"
 
 
 def _env_module():
@@ -110,8 +108,8 @@ class PrizedProvider(TerminalEnvironmentProvider):
 
     @property
     def description(self) -> str:
-        return ("Run commands in a Prized sandbox: a Linux microVM that pauses between turns "
-                "with its memory, so background processes keep running.")
+        return ("Run commands in a Prized sandbox: a Linux microVM that pauses with its memory "
+                "when Hermes releases it and resumes at the next command.")
 
     @property
     def env_description(self) -> str:
@@ -152,11 +150,9 @@ class PrizedProvider(TerminalEnvironmentProvider):
 
     def setup_instructions(self):
         return [
-            "Linux microVMs that pause between turns with their memory and disk.",
+            "Linux microVMs that pause with their memory and disk when Hermes releases them.",
             "Sign up and create an API key at https://prized.dev/?via=hermes (Settings > API keys).",
             "Save it in ~/.hermes/.env as PRIZED_API_KEY.",
-            "No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: "
-            "have it follow https://prized.dev/auth.md?via=hermes.",
             "Defaults: prized-base-v1, 2 vCPU, 4 GB, auto-pause after 10 idle minutes.",
             "A sandbox runs 24 hours by default (60 minutes on the free tier); Hermes then starts a fresh one.",
         ]
@@ -187,8 +183,9 @@ class PrizedProvider(TerminalEnvironmentProvider):
         # the plugin's own ``vcpu`` / ``memory_mb`` settings instead.
         key = _get_key()
         if key is None:
-            raise ValueError("Prized backend requires PRIZED_API_KEY "
-                             "(Settings > API keys at https://prized.dev/?via=hermes). " + _SIGN_UP_HINT)
+            raise ValueError("Prized backend requires PRIZED_API_KEY: create one at "
+                             "https://prized.dev/dashboard/workspace/api-keys?via=hermes and save it in "
+                             "~/.hermes/.env. " + _SIGN_UP_HINT)
         cc = container_config or {}
         return _env_module().PrizedEnvironment(
             api_key=key, cwd=cwd, timeout=timeout, task_id=task_id,

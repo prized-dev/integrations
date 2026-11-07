@@ -1,13 +1,13 @@
 # strands-prized
 
-> **Coming 2026-11-05.** `strands-prized` is not on PyPI yet. The Prized Python SDK it uses (`prized`) is.
+> **Not on PyPI yet.** Until it is, install `strands-prized` from this repo with the line below. The Prized Python SDK it uses (`prized`) is on PyPI.
 
 Run a [Strands Agents](https://strandsagents.com/) agent's shell commands, code and file edits in a [Prized](https://prized.dev/?via=strands) sandbox: a Firecracker microVM with its own kernel that pauses with its memory and running processes, and forks into live copies.
 
 ## Install
 
 ```sh
-pip install strands-prized
+pip install "strands-prized @ git+https://github.com/prized-dev/integrations#subdirectory=strands"
 export PRIZED_API_KEY=dcp_...
 ```
 
