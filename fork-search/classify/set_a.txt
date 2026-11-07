@@ -1,0 +1,14 @@
+adaptive-rejection-sampler
+build-pmars
+build-pov-ray
+caffe-cifar-10
+compile-compcert
+crack-7z-hash
+hf-model-inference
+install-windows-3.11
+kv-store-grpc
+largest-eigenval
+nginx-request-logging
+pypi-server
+rstan-to-pystan
+sqlite-with-gcov
