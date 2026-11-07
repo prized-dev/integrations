@@ -61,11 +61,15 @@ class PrizedAccount:
         """True on the free tier, False off it, None when the key can't tell; and how it was told."""
         me = await self._get("/me")
         billing = (me or {}).get("billing")
-        if isinstance(billing, dict) and "trial" in billing:
-            return bool(billing.get("trial")), "billing.trial in GET /api/v1/me"
+        if isinstance(billing, dict) and billing.get("trial"):
+            return True, "billing.trial in GET /api/v1/me"
+        # trial is false for a workspace on credit that isn't the trial's (a promotion, an invite),
+        # which the free tier covers too; only the ended list then says so.
         listed = await self._get("/sandboxes?ended=1")
         if listed is not None and "ended" in listed:
             return True, "the free tier's ended sandboxes in GET /api/v1/sandboxes?ended=1"
+        if isinstance(billing, dict) and "trial" in billing:
+            return False, "billing.trial in GET /api/v1/me"
         return None, "the key can't read billing"
 
     async def ended(self) -> dict[str, dict[str, Any]]:

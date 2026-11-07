@@ -47,12 +47,13 @@ from collections.abc import AsyncIterator, Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
+from urllib.parse import urlsplit
 
 from prized import PrizedError
 
 from . import worker as w
 from .cma import CMA, CMAError, Session, WorkItem
-from .config import Settings
+from .config import LOOPBACK, Settings
 from .sandboxes import SESSION, Ensured, SessionSandboxes, gone, idle_since
 from .webhooks import Event
 
@@ -68,6 +69,7 @@ LAUNCH_S = 60.0
 MAX_FAILURES = 10_000  # failed handoffs remembered (by work id), oldest forgotten first
 MAX_REMEMBERED = 10_000  # each session's last sandbox, so a vanished one is named on the next run
 LOW_RUN_S = 10 * 60  # on the free tier, say so when a sandbox has less running left than this
+REASON_WAIT_S = 5.0  # how long asking Prized why a sandbox is gone may take, inside a handoff
 MAX_STRAYS = 20  # leftover workers stopped per pass; more than that is the agent's doing
 
 
@@ -130,13 +132,20 @@ class Orchestrator:
         self._stopping = asyncio.Event()
         self._tasks: set[asyncio.Task[Any]] = set()
         self._started = False
-        boxes.busy = lambda: self._busy  # never evict a sandbox whose session is being handed off
+        # Never evict a sandbox whose session is being handed off or has a run (a frozen one too).
+        boxes.busy = lambda: self._busy | {r.session_id for r in self.runs.values()}
 
     # -- the loops -----------------------------------------------------------------------------
 
     async def start(self) -> None:
         """Check the environment key and the Prized key, and pick up runs a previous process left."""
         log.info("the environment key goes to %s", self.s.base_url)
+        if urlsplit(self.s.base_url).hostname in LOOPBACK:
+            log.warning(
+                "%s is this machine: the worker in each sandbox gets it too, where it means the sandbox "
+                "itself, so this works only with sandboxes on this machine (the tests)",
+                self.s.base_url,
+            )
         if self.s.ignored_base_url:
             log.warning(
                 "ANTHROPIC_BASE_URL=%s is ignored: the environment key goes only to %s (set %s to change that)",
@@ -333,11 +342,9 @@ class Orchestrator:
                 made = await self.boxes.ensure(sid, template=template, fork_from=fork_from)
                 sb = made.sandbox
                 for victim, owner, since in made.evicted:
+                    when = f"paused since {since:%Y-%m-%d %H:%MZ}" if since else "paused"
                     self._note(
-                        owner,
-                        "evicted",
-                        f"{victim}, paused since {since:%Y-%m-%d %H:%MZ}: the free tier's disk was full "
-                        f"and {sid} needed a sandbox",
+                        owner, "evicted", f"{victim}, {when}: the free tier's disk was full and {sid} needed a sandbox"
                     )
                 self._note(sid, made.how, sb.id)
                 await self._name_lost_sandbox(sid, made)
@@ -367,10 +374,7 @@ class Orchestrator:
         """Remember the session's sandbox; if it had another one that is gone, say why, since the
         session's files went with it. On the free tier, say when its run time is nearly used up."""
         sb = made.sandbox
-        before = self.last_box.pop(sid, None)
-        self.last_box[sid] = sb.id
-        while len(self.last_box) > MAX_REMEMBERED:
-            self.last_box.popitem(last=False)
+        before = self.last_box.get(sid)  # updated once a worker runs here (_remember), not before
         if made.fresh and before and before != sb.id:
             why = await self._gone_reason(before) or "it was deleted"
             self._note(sid, "sandbox gone", f"{before}: {why}; {sb.id} starts without the session's files")
@@ -385,11 +389,17 @@ class Orchestrator:
                     "then it is deleted with its files",
                 )
 
+    def _remember(self, sid: str, sandbox_id: str) -> None:
+        self.last_box.pop(sid, None)
+        self.last_box[sid] = sandbox_id
+        while len(self.last_box) > MAX_REMEMBERED:
+            self.last_box.popitem(last=False)
+
     async def _gone_reason(self, sandbox_id: str) -> str | None:
         if self.account is None:
             return None
         try:
-            return await self.account.gone_reason(sandbox_id)
+            return await asyncio.wait_for(self.account.gone_reason(sandbox_id), REASON_WAIT_S)
         except Exception as err:  # a reason is nice to have; never fail a handoff or a probe on it
             log.debug("reading why %s is gone failed: %s", sandbox_id, err)
             return None
@@ -454,6 +464,7 @@ class Orchestrator:
             self._note(sid, "launch unclear", f"{item.id}: {_describe(launch_err)}")
         run = Run(rid, sid, item.id, sb, self.clock(), acked=False)
         self.runs[rid] = run
+        self._remember(run.session_id, run.sandbox.id)
         self.failures.pop(item.id, None)
         self._note(sid, "worker started", f"{item.id} in {sb.id}")
         if ack:
@@ -750,6 +761,7 @@ class Orchestrator:
     def _adopt(self, sb: Any, st: w.RunStatus) -> None:
         age = self._age(st)
         self.runs[st.run_id] = Run(st.run_id, st.session_id, st.work_id, sb, self.clock() - age, acked=st.acked)
+        self._remember(st.session_id, sb.id)
         self._note(st.session_id, "adopted", f"{st.work_id} in {sb.id}")
 
     # -- sessions that end, and the sweep ------------------------------------------------------
@@ -828,7 +840,17 @@ class Orchestrator:
                     await self._pause_if_idle(sb, sid, "which no run was using")
                 elif sb.state == "paused" and self._past_keep_paused(sb):
                     # Copies of a warm parent inherit its auto-delete (off, or WARM_PARENT_KEEP), so
-                    # KEEP_PAUSED is held here for them; Prized holds it for the others too.
+                    # KEEP_PAUSED is held here for them; Prized holds it for the others too. The list
+                    # is from the start of the pass: read the sandbox again, since a short run may
+                    # have used and paused it since.
+                    try:
+                        await sb.refresh()
+                    except Exception as err:
+                        if not gone(err):
+                            self._note(sid, "sweep failed", f"{sb.id}: {_describe(err)}")
+                        continue
+                    if sb.state != "paused" or not self._past_keep_paused(sb):
+                        continue
                     try:
                         await sb.delete()
                         swept.append(sb.id)

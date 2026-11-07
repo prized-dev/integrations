@@ -131,6 +131,8 @@ def test_free_tier_defaults_keep_what_was_named_and_drop_what_it_refuses():
     assert free.keep_paused_s == s.keep_paused_s and any("MAX_SESSIONS" in n for n in notes)
     plain, _ = Settings.from_env(BASE).on_free_tier()
     assert plain.max_idle_s == 10 and plain.max_sessions == 10
+    slow_probes, _ = Settings.from_env({**BASE, "PROBE_EVERY": "60s"}).on_free_tier()
+    assert slow_probes.auto_pause_s == 15 * 60  # 2m would let a served sandbox pause between probes
 
 
 def _account(routes: dict[str, httpx.Response]) -> Any:
@@ -157,6 +159,13 @@ def test_the_free_tier_is_read_from_prized():
         assert (await trial.free_tier())[0] is True
         paid = _account({"/api/v1/me": httpx.Response(200, json={"billing": {"trial": False}})})
         assert (await paid.free_tier())[0] is False
+        promo = _account(
+            {
+                "/api/v1/me": httpx.Response(200, json={"billing": {"trial": False}}),
+                "/api/v1/sandboxes?ended=1": httpx.Response(200, json={"sandboxes": [], **ended}),
+            }
+        )
+        assert (await promo.free_tier())[0] is True  # credit that isn't the trial's: still the free tier
         listed = _account(
             {
                 "/api/v1/me": httpx.Response(200, json={"billing": None}),
@@ -195,13 +204,48 @@ def test_on_the_free_tier_a_full_disk_deletes_the_session_paused_longest(mock, w
                 await h.until(lambda s=s: h.noted("paused", s.id))
             box_older, box_newer = h.sandbox_of(older.id), h.sandbox_of(newer.id)
             box_older.last_active_at = datetime.now(timezone.utc) - timedelta(hours=3)
-            world.fail["create"] = _disk_full()
+            # The disk holds two; a deleted sandbox counts until it is gone, as on Prized, so an
+            # eviction that doesn't wait for that would be refused again and evict the next one.
+            world.disk_cap, world.delete_delay = 2, 2.0
             mock.run(third.id, "true")
             await h.until(lambda: h.noted("paused", third.id), why="the new session to be served")
             assert box_older.state == "deleted" and box_newer.state == "paused"
             evicted = h.noted("evicted", older.id)
             assert evicted and box_older.id in evicted[0].detail and third.id in evicted[0].detail
-            assert not h.noted("handoff failed", third.id)
+            assert not h.noted("handoff failed", third.id) and len(h.noted("evicted")) == 1
+
+    run(go())
+
+
+def test_a_refusal_without_the_free_tiers_tag_evicts_nothing_even_when_told_free(mock, world, ant_dist):
+    # A workspace that topped up after the start: FREE_TIER said free, Prized's refusal says paid.
+    async def go():
+        async with harness(mock, world, ant_dist, free=True) as h:
+            first, second = mock.new_session(), mock.new_session()
+            mock.run(first.id, "true")
+            await h.until(lambda: h.noted("paused", first.id))
+            world.fail["create"] = PrizedError(
+                "sandbox_quota_exceeded", status=429, reason="retained_disk", body={"reason": "retained_disk"}
+            )
+            mock.run(second.id, "true")
+            await h.until(lambda: h.noted("handoff failed", second.id))
+            assert h.sandbox_of(first.id).state == "paused" and not h.noted("evicted")
+
+    run(go())
+
+
+def test_eviction_skips_sessions_with_a_handoff_or_a_run(mock, world, ant_dist):
+    async def go():
+        boxes = SessionSandboxes(settings_for(mock, ant_dist), api=world.api())
+        api = world.api()
+        old = await api.create(labels=boxes.labels("sesn_busy"))
+        new = await api.create(labels=boxes.labels("sesn_idle"))
+        for sb in (old, new):
+            await sb.pause()
+        old.last_active_at = datetime.now(timezone.utc) - timedelta(days=1)
+        boxes.busy = lambda: {"sesn_busy"}
+        victim = await boxes.evict_one("sesn_new")
+        assert victim is not None and victim[0] == new.id and old.state == "paused" and new.state == "deleted"
 
     run(go())
 
@@ -257,3 +301,27 @@ def test_on_the_free_tier_a_sandbox_nearly_out_of_run_time_is_named(mock, world,
 
 async def _noop() -> None:
     return None
+
+
+def test_a_slow_answer_about_a_lost_sandbox_never_fails_the_handoff(mock, world, ant_dist, monkeypatch):
+    monkeypatch.setattr("prized_managed_agents.orchestrator.REASON_WAIT_S", 0.2)
+
+    async def go():
+        async with harness(mock, world, ant_dist, handoff_timeout_s=2) as h:
+            import asyncio
+
+            async def slow(_sandbox_id: str) -> str:
+                await asyncio.sleep(30)
+                return "never read"
+
+            h.orch.account.gone_reason = slow
+            s = mock.new_session()
+            mock.run(s.id, "true")
+            await h.until(lambda: h.noted("paused", s.id))
+            world.end_at_run_limit(h.sandbox_of(s.id) or world.live()[0])
+            mock.run(s.id, "true")
+            await h.until(lambda: len(h.noted("paused", s.id)) == 2, why="the next message to be served")
+            gone = h.noted("sandbox gone", s.id)
+            assert gone and "it was deleted" in gone[-1].detail and not h.noted("handoff failed", s.id)
+
+    run(go())

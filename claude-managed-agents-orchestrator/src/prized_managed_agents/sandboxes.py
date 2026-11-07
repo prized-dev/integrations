@@ -42,6 +42,7 @@ def gone(err: BaseException) -> bool:
 # Free-tier refusals that deleting a paused sandbox can lift: paused sandboxes hold disk, not slots.
 ROOM_REASONS = ("retained_disk", "paused_limit")
 MAX_EVICTIONS = 3
+EVICT_WAIT_S = 30.0
 
 
 def free_tier_refusal(err: BaseException) -> bool:
@@ -51,7 +52,7 @@ def free_tier_refusal(err: BaseException) -> bool:
 def idle_since(sb: Any) -> datetime | None:
     """When the sandbox was last used (its last command, file call or resume), in UTC; None when
     Prized didn't say, and then nothing is deleted for its age."""
-    at = getattr(sb, "last_active_at", None) or getattr(sb, "created_at", None)
+    at = getattr(sb, "last_active_at", None)  # Prized's lastActiveAt; created_at would overstate its age
     if at is None:
         return None
     return at if at.tzinfo else at.replace(tzinfo=timezone.utc)
@@ -69,7 +70,7 @@ class Ensured:
     how: str  # running, resumed, forked or created
     fresh: bool  # made by this call, so it holds nothing of the session's yet
     # Paused sandboxes deleted to make room on the free tier: (sandbox id, its session, idle since).
-    evicted: list[tuple[str, str, datetime]] = field(default_factory=list)
+    evicted: list[tuple[str, str, datetime | None]] = field(default_factory=list)
 
 
 class SessionSandboxes:
@@ -133,7 +134,7 @@ class SessionSandboxes:
                     err.code,
                     f", {err.reason}" if err.reason else "",
                 )
-        evicted: list[tuple[str, str, datetime]] = []
+        evicted: list[tuple[str, str, datetime | None]] = []
         while True:
             try:
                 made = await self._new(session_id, template=template, fork_from=fork_from)
@@ -149,27 +150,36 @@ class SessionSandboxes:
             return made
 
     def _room_by_evicting(self, err: PrizedError) -> bool:
-        free = self.s.free or free_tier_refusal(err)
-        return free and self.s.evict_paused and err.code == "sandbox_quota_exceeded" and err.reason in ROOM_REASONS
+        # Only a refusal Prized tags as the free tier's: paid quotas have the same reasons, and a
+        # workspace can top up while the orchestrator runs.
+        return (
+            self.s.evict_paused
+            and free_tier_refusal(err)
+            and err.code == "sandbox_quota_exceeded"
+            and err.reason in ROOM_REASONS
+        )
 
-    async def evict_one(self, keep_session: str) -> tuple[str, str, datetime] | None:
+    async def evict_one(self, keep_session: str) -> tuple[str, str, datetime | None] | None:
         """Delete the session sandbox of this environment paused longest (never a warm parent, the
-        session being served, or one with a handoff under way), and say which."""
-        busy = set(self.busy()) | {keep_session}
-        paused = [
-            sb for sb in await self.managed() if sb.state == "paused" and (sb.labels or {}).get(SESSION) not in busy
-        ]
+        session being served, or one with a handoff or a run under way), wait until it is gone, and
+        say which."""
+        paused = [sb for sb in await self.managed() if sb.state == "paused"]
         latest = datetime.max.replace(tzinfo=timezone.utc)
         for sb in sorted(paused, key=lambda sb: idle_since(sb) or latest):
+            sid = (sb.labels or {}).get(SESSION, "")
+            # Checked again right before the delete, with no await in between: a handoff that began
+            # while the list was read has marked its session busy by now.
+            if sid == keep_session or sid in self.busy():
+                continue
             try:
-                await sb.delete()
+                # A deleted sandbox counts against the quota until it is gone, so wait for that.
+                await sb.delete(wait=True, timeout=EVICT_WAIT_S)
             except PrizedError as err:
                 if not gone(err):
                     raise
                 continue
-            sid = (sb.labels or {}).get(SESSION, "")
             log.warning("%s: deleted its paused sandbox %s to make room on the free tier", sid, sb.id)
-            return sb.id, sid, idle_since(sb) or latest
+            return sb.id, sid, idle_since(sb)
         return None
 
     async def _new(self, session_id: str, *, template: str | None, fork_from: str | None) -> Ensured:

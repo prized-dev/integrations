@@ -203,7 +203,8 @@ class Settings:
             put("MAX_SESSIONS", "max_sessions", FREE_SANDBOXES, f"{FREE_SANDBOXES}", force=True)
         if self.max_idle_s > FREE_MAX_IDLE_S:
             put("MAX_IDLE", "max_idle_s", FREE_MAX_IDLE_S, f"{FREE_MAX_IDLE_S}s")
-        if self.auto_pause_s > FREE_AUTO_PAUSE_S:
+        # Probes keep a served sandbox awake, so they must come well within AUTO_PAUSE.
+        if self.auto_pause_s > FREE_AUTO_PAUSE_S and self.probe_every_s * 4 <= FREE_AUTO_PAUSE_S:
             put("AUTO_PAUSE", "auto_pause_s", FREE_AUTO_PAUSE_S, f"{FREE_AUTO_PAUSE_S // 60}m")
         if self.max_runtime_s is not None and self.max_runtime_s > FREE_RUN_S:
             put("MAX_RUNTIME", "max_runtime_s", None, "left to Prized (60 minutes in all)", force=True)

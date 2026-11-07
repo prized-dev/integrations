@@ -56,6 +56,22 @@ class World:
         # tier (None: the key can't read billing), and the sandboxes the free tier deleted.
         self.trial: bool | None = None
         self.ended: dict[str, dict[str, Any]] = {}
+        # The free tier's disk, as a count: a create or fork is refused once this many sandboxes are
+        # not yet deleted ("deleting" ones count, as on Prized), with the free tier's tag.
+        self.disk_cap: int | None = None
+        # A delete without wait leaves the sandbox "deleting" this long, as Prized's does.
+        self.delete_delay = 0.0
+
+    def _check_disk(self) -> None:
+        held = [sb for sb in self.sandboxes.values() if sb.state != "deleted"]
+        if self.disk_cap is not None and len(held) >= self.disk_cap:
+            raise PrizedError(
+                "sandbox_quota_exceeded",
+                "The free tier's disk is in use.",
+                status=429,
+                reason="retained_disk",
+                body={"error": "sandbox_quota_exceeded", "reason": "retained_disk", "tier": "free"},
+            )
 
     def end_at_run_limit(self, sb: FakeSandbox) -> None:
         """What the free tier does at a sandbox's 60 minutes: delete it, memory and files too."""
@@ -129,6 +145,7 @@ class World:
             @staticmethod
             async def create(template: str = "prized-base-v1", **kw: Any) -> FakeSandbox:
                 world._raise("create")
+                world._check_disk()
                 world.created.append({"template": template, **kw})
                 return world.new(template, kw)
 
@@ -319,6 +336,7 @@ class FakeSandbox:
     async def fork(self, count: int = 1, *, labels: dict[str, str] | None = None, **_: Any) -> list[FakeSandbox]:
         self._gone()
         self.world._raise("fork")
+        self.world._check_disk()
         return [
             self.world.new(
                 self.template,
@@ -331,9 +349,18 @@ class FakeSandbox:
             for _ in range(count)
         ]
 
-    async def delete(self, **_: Any) -> None:
-        if self.state != "deleted":
+    async def delete(self, *, wait: bool = False, **_: Any) -> None:
+        if self.state not in ("deleted", "deleting"):
             self._signal(signal.SIGCONT)
             self._signal(signal.SIGKILL)
-            self.state = "deleted"
             self.world.calls.append(("delete", self.id))
+            if self.world.delete_delay > 0 and not wait:
+                self.state = "deleting"
+
+                async def later() -> None:
+                    await asyncio.sleep(self.world.delete_delay)
+                    self.state = "deleted"
+
+                asyncio.get_running_loop().create_task(later())
+                return
+        self.state = "deleted"
