@@ -4,6 +4,7 @@ Runs where Harbor 0.25 and harbor-prized are installed (the keyless runner):
     PYTHONPATH=~/fork-search python -m pytest -q ~/fork-search/tests
 """
 
+import asyncio
 import base64
 import io
 import json
@@ -46,6 +47,7 @@ class Cloud:
         self.events = []  # (box, kind, what) in global order
         self.fork_error = None
         self.fresh_errors = 0
+        self.fresh_delay = 0.0
 
 
 class Files:
@@ -127,6 +129,8 @@ def cloud(monkeypatch):
 
     async def fake_start(self, image):
         name = "A" if self.session_id.endswith("__env") else "B" if self.session_id.endswith("__transplant") else "V"
+        if name == "B" and c.fresh_delay:
+            await asyncio.sleep(c.fresh_delay)
         if name == "B" and c.fresh_errors:
             c.fresh_errors -= 1
             raise PrizedError("registry_error", "TOOMANYREQUESTS")
@@ -232,6 +236,13 @@ async def test_the_same_verifier_steps_run_on_every_copy(cloud, tmp_path):
     assert "bash /solution/solve.sh" not in b
 
 
+async def test_transplant_waits_for_a_slow_fresh_start(cloud, tmp_path):
+    cloud.fresh_delay = 0.3
+    rec = await _oracle_and_verify(_env(tmp_path), tmp_path)
+    assert rec["replays"]["transplant"]["rewards"] == {"reward": 0.0}
+    assert rec["copy"]["sha256_ok"] is True
+
+
 async def test_fresh_start_is_retried_then_reported(cloud, tmp_path):
     cloud.fresh_errors = 2
     rec = await _oracle_and_verify(_env(tmp_path), tmp_path)
@@ -311,7 +322,7 @@ def test_manifest_script_sees_content_and_modes_not_mtimes(tmp_path):
     assert first["files"] == 1 and first["sockets"] == 1 and first["bytes"] == 5
     os.utime(root / "sub" / "f.txt", (1, 1))
     assert _run_manifest(root, tmp_path / "m2")["content_sha256"] == first["content_sha256"]
-    os.chmod(root / "sub" / "f.txt", 0o600)
+    os.chmod(root / "sub" / "f.txt", 0o751 if (os.stat(root / "sub" / "f.txt").st_mode & 0o777) != 0o751 else 0o640)
     assert _run_manifest(root, tmp_path / "m3")["content_sha256"] != first["content_sha256"]
     (root / "sub" / "f.txt").write_text("hellO")
     assert _run_manifest(root, tmp_path / "m4")["content_sha256"] != first["content_sha256"]

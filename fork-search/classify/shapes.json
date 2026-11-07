@@ -1,0 +1,359 @@
+{
+ "adaptive-rejection-sampler": {
+  "compressed_mb": 28.4,
+  "image_headroom_gb": 4
+ },
+ "bn-fit-modify": {
+  "compressed_mb": 250.1,
+  "image_headroom_gb": 4
+ },
+ "break-filter-js-from-html": {
+  "compressed_mb": 364.7,
+  "image_headroom_gb": 5
+ },
+ "build-cython-ext": {
+  "compressed_mb": 289.2,
+  "image_headroom_gb": 5
+ },
+ "build-pmars": {
+  "compressed_mb": 58.3,
+  "image_headroom_gb": 4
+ },
+ "build-pov-ray": {
+  "compressed_mb": 155.5,
+  "image_headroom_gb": 4
+ },
+ "caffe-cifar-10": {
+  "compressed_mb": 203.3,
+  "image_headroom_gb": 4
+ },
+ "cancel-async-tasks": {
+  "compressed_mb": 42.1,
+  "image_headroom_gb": 4
+ },
+ "chess-best-move": {
+  "compressed_mb": 229.1,
+  "image_headroom_gb": 4
+ },
+ "circuit-fibsqrt": {
+  "compressed_mb": 142.2,
+  "image_headroom_gb": 4
+ },
+ "cobol-modernization": {
+  "compressed_mb": 154.5,
+  "image_headroom_gb": 4
+ },
+ "code-from-image": {
+  "compressed_mb": 42.2,
+  "image_headroom_gb": 4
+ },
+ "compile-compcert": {
+  "compressed_mb": 28.4,
+  "image_headroom_gb": 4
+ },
+ "configure-git-webserver": {
+  "compressed_mb": 69.0,
+  "image_headroom_gb": 4
+ },
+ "constraints-scheduling": {
+  "compressed_mb": 47.5,
+  "image_headroom_gb": 4
+ },
+ "count-dataset-tokens": {
+  "compressed_mb": 42.1,
+  "image_headroom_gb": 4
+ },
+ "crack-7z-hash": {
+  "compressed_mb": 339.4,
+  "image_headroom_gb": 5
+ },
+ "custom-memory-heap-crash": {
+  "compressed_mb": 1209.3,
+  "image_headroom_gb": 8
+ },
+ "db-wal-recovery": {
+  "compressed_mb": 167.2,
+  "image_headroom_gb": 4
+ },
+ "distribution-search": {
+  "compressed_mb": 172.7,
+  "image_headroom_gb": 4
+ },
+ "dna-assembly": {
+  "compressed_mb": 28.3,
+  "image_headroom_gb": 4
+ },
+ "dna-insert": {
+  "compressed_mb": 28.3,
+  "image_headroom_gb": 4
+ },
+ "extract-elf": {
+  "compressed_mb": 331.3,
+  "image_headroom_gb": 5
+ },
+ "extract-moves-from-video": {
+  "compressed_mb": 39.8,
+  "image_headroom_gb": 4
+ },
+ "feal-differential-cryptanalysis": {
+  "compressed_mb": 49.2,
+  "image_headroom_gb": 4
+ },
+ "feal-linear-cryptanalysis": {
+  "compressed_mb": 143.8,
+  "image_headroom_gb": 4
+ },
+ "filter-js-from-html": {
+  "compressed_mb": 360.5,
+  "image_headroom_gb": 5
+ },
+ "financial-document-processor": {
+  "compressed_mb": 49.4,
+  "image_headroom_gb": 4
+ },
+ "fix-code-vulnerability": {
+  "compressed_mb": 181.9,
+  "image_headroom_gb": 4
+ },
+ "fix-git": {
+  "compressed_mb": 148.5,
+  "image_headroom_gb": 4
+ },
+ "fix-ocaml-gc": {
+  "compressed_mb": 730.0,
+  "image_headroom_gb": 6
+ },
+ "gcode-to-text": {
+  "compressed_mb": 43.0,
+  "image_headroom_gb": 4
+ },
+ "git-leak-recovery": {
+  "compressed_mb": 91.3,
+  "image_headroom_gb": 4
+ },
+ "git-multibranch": {
+  "compressed_mb": 211.8,
+  "image_headroom_gb": 4
+ },
+ "gpt2-codegolf": {
+  "compressed_mb": 585.7,
+  "image_headroom_gb": 6
+ },
+ "headless-terminal": {
+  "compressed_mb": 59.4,
+  "image_headroom_gb": 4
+ },
+ "hf-model-inference": {
+  "compressed_mb": 313.4,
+  "image_headroom_gb": 5
+ },
+ "install-windows-3.11": {
+  "compressed_mb": 546.8,
+  "image_headroom_gb": 6
+ },
+ "kv-store-grpc": {
+  "compressed_mb": 42.1,
+  "image_headroom_gb": 4
+ },
+ "large-scale-text-editing": {
+  "compressed_mb": 69.9,
+  "image_headroom_gb": 4
+ },
+ "largest-eigenval": {
+  "compressed_mb": 80.8,
+  "image_headroom_gb": 4
+ },
+ "llm-inference-batching-scheduler": {
+  "compressed_mb": 42.1,
+  "image_headroom_gb": 4
+ },
+ "log-summary-date-ranges": {
+  "compressed_mb": 42.8,
+  "image_headroom_gb": 4
+ },
+ "mailman": {
+  "compressed_mb": 154.3,
+  "image_headroom_gb": 4
+ },
+ "make-doom-for-mips": {
+  "compressed_mb": 180.8,
+  "image_headroom_gb": 4
+ },
+ "make-mips-interpreter": {
+  "compressed_mb": 494.9,
+  "image_headroom_gb": 5
+ },
+ "mcmc-sampling-stan": {
+  "compressed_mb": 226.6,
+  "image_headroom_gb": 4
+ },
+ "merge-diff-arc-agi-task": {
+  "compressed_mb": 28.3,
+  "image_headroom_gb": 4
+ },
+ "model-extraction-relu-logits": {
+  "compressed_mb": 79.8,
+  "image_headroom_gb": 4
+ },
+ "modernize-scientific-stack": {
+  "compressed_mb": 330.6,
+  "image_headroom_gb": 5
+ },
+ "mteb-leaderboard": {
+  "compressed_mb": 633.1,
+  "image_headroom_gb": 6
+ },
+ "mteb-retrieve": {
+  "compressed_mb": 599.5,
+  "image_headroom_gb": 6
+ },
+ "multi-source-data-merger": {
+  "compressed_mb": 210.6,
+  "image_headroom_gb": 4
+ },
+ "nginx-request-logging": {
+  "compressed_mb": 64.2,
+  "image_headroom_gb": 4
+ },
+ "openssl-selfsigned-cert": {
+  "compressed_mb": 42.1,
+  "image_headroom_gb": 4
+ },
+ "overfull-hbox": {
+  "compressed_mb": 125.7,
+  "image_headroom_gb": 4
+ },
+ "password-recovery": {
+  "compressed_mb": 59.3,
+  "image_headroom_gb": 4
+ },
+ "path-tracing": {
+  "compressed_mb": 380.9,
+  "image_headroom_gb": 5
+ },
+ "path-tracing-reverse": {
+  "compressed_mb": 163.1,
+  "image_headroom_gb": 4
+ },
+ "polyglot-c-py": {
+  "compressed_mb": 141.7,
+  "image_headroom_gb": 4
+ },
+ "polyglot-rust-c": {
+  "compressed_mb": 258.7,
+  "image_headroom_gb": 5
+ },
+ "portfolio-optimization": {
+  "compressed_mb": 187.4,
+  "image_headroom_gb": 4
+ },
+ "protein-assembly": {
+  "compressed_mb": 42.2,
+  "image_headroom_gb": 4
+ },
+ "prove-plus-comm": {
+  "compressed_mb": 468.7,
+  "image_headroom_gb": 5
+ },
+ "pypi-server": {
+  "compressed_mb": 79.8,
+  "image_headroom_gb": 4
+ },
+ "pytorch-model-cli": {
+  "compressed_mb": 42.3,
+  "image_headroom_gb": 4
+ },
+ "pytorch-model-recovery": {
+  "compressed_mb": 257.2,
+  "image_headroom_gb": 5
+ },
+ "qemu-alpine-ssh": {
+  "compressed_mb": 1247.9,
+  "image_headroom_gb": 8
+ },
+ "qemu-startup": {
+  "compressed_mb": 1247.9,
+  "image_headroom_gb": 8
+ },
+ "query-optimize": {
+  "compressed_mb": 114.9,
+  "image_headroom_gb": 4
+ },
+ "raman-fitting": {
+  "compressed_mb": 42.2,
+  "image_headroom_gb": 4
+ },
+ "regex-chess": {
+  "compressed_mb": 53.0,
+  "image_headroom_gb": 4
+ },
+ "regex-log": {
+  "compressed_mb": 28.3,
+  "image_headroom_gb": 4
+ },
+ "reshard-c4-data": {
+  "compressed_mb": 1366.1,
+  "image_headroom_gb": 9
+ },
+ "rstan-to-pystan": {
+  "compressed_mb": 48.6,
+  "image_headroom_gb": 4
+ },
+ "sam-cell-seg": {
+  "compressed_mb": 392.4,
+  "image_headroom_gb": 5
+ },
+ "sanitize-git-repo": {
+  "compressed_mb": 193.5,
+  "image_headroom_gb": 4
+ },
+ "schemelike-metacircular-eval": {
+  "compressed_mb": 42.1,
+  "image_headroom_gb": 4
+ },
+ "sparql-university": {
+  "compressed_mb": 28.3,
+  "image_headroom_gb": 4
+ },
+ "sqlite-db-truncate": {
+  "compressed_mb": 42.1,
+  "image_headroom_gb": 4
+ },
+ "sqlite-with-gcov": {
+  "compressed_mb": 40.3,
+  "image_headroom_gb": 4
+ },
+ "torch-pipeline-parallelism": {
+  "compressed_mb": 28.3,
+  "image_headroom_gb": 4
+ },
+ "torch-tensor-parallelism": {
+  "compressed_mb": 28.3,
+  "image_headroom_gb": 4,
+  "min_vcpu": 4
+ },
+ "train-fasttext": {
+  "compressed_mb": 485.4,
+  "image_headroom_gb": 5
+ },
+ "tune-mjcf": {
+  "compressed_mb": 76.5,
+  "image_headroom_gb": 4
+ },
+ "video-processing": {
+  "compressed_mb": 297.4,
+  "image_headroom_gb": 5
+ },
+ "vulnerable-secret": {
+  "compressed_mb": 127.7,
+  "image_headroom_gb": 4
+ },
+ "winning-avg-corewars": {
+  "compressed_mb": 280.1,
+  "image_headroom_gb": 5
+ },
+ "write-compressor": {
+  "compressed_mb": 278.4,
+  "image_headroom_gb": 5
+ }
+}
