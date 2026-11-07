@@ -31,6 +31,20 @@ prized.dev: 5 of 7 pass, 1 partial  (agent-signup-check/0.2.2, 2026-10-30T17:48:
 
 Options: `--docs URL` tries a second llms.txt (default `https://<domain>/docs/llms.txt`), `--json` prints the full result, and `--save DIR` writes every response to a file, one per request.
 
+## Check it after every deploy
+
+A GitHub Action. Add this step after your deploy step:
+
+```yaml
+- uses: prized-dev/integrations/agent-signup-check/action@main
+  with:
+    domain: example.com
+    api: https://api.example.com/v1/me # optional, as --api above
+    fail-on: any-regression # or below-score 5, or never
+```
+
+prized.dev runs the seven checks on your public domain. The job summary lists them with a link to your row, and `any-regression` fails the step when a check is worse than your row. A domain that isn't on the board has no row, so pin today's score with `below-score N` instead. One request per run, no retries: a rate limit (4 fresh checks of a domain from one address in 10 minutes), an outage or a network error is a warning, never a failure. Prized wrote the check, the action and the spend-limits draft two of the checks accept. Inputs and outputs: [`action/action.yml`](action/action.yml).
+
 ## What it sends
 
 GET requests only: no POST, no sign-up, no form, no credential. At most 16 requests per domain, redirects included (usually 7 to 9). https on port 443 only, and every address a name resolves to must be public (checked on each connection, redirects included). 1 MB and 8 seconds per response. It names itself in its User-Agent: `PrizedAgentSignupCheck/<version> (+https://prized.dev/agent-signup-check; read-only GET)`.

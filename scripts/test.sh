@@ -223,9 +223,10 @@ case $DIR in
     npm run build
     offline npm test ;;
   agent-signup-check)
-    # One dependency-free Node file and its tools: no install. Syntax-check each, then the offline
-    # tests (a stub in place of the network, and a replay of the published evidence).
-    for f in *.mjs; do node --check "$f"; done
+    # One dependency-free Node file, its tools and the GitHub Action (action/): no install.
+    # Syntax-check each, then the offline tests (a stub in place of the network, a replay of the
+    # published evidence, and the action against recorded API answers on loopback).
+    for f in *.mjs action/*.mjs test/action-fixtures/*.mjs; do node --check "$f"; done
     offline node --test test/*.test.mjs ;;
   herdr)
     # A herdr plugin with no dependencies: node --test against stand-ins for prized, herdr and ssh

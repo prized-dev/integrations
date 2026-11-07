@@ -76,6 +76,58 @@ jobs:
           PYTHON: python
           FLOOR: ${{ matrix.floor && '1' || '' }}
 
+  # The GitHub Action (agent-signup-check/action) as a workflow uses it, against the API answers
+  # recorded in agent-signup-check/test/action-fixtures, served on 127.0.0.1: inputs in, outputs
+  # out, a regression failing the step and a rate limit only warning.
+  agent-signup-check-action:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Serve the recorded answers on 127.0.0.1
+        run: |
+          node agent-signup-check/test/action-fixtures/serve.mjs > "$RUNNER_TEMP/fixtures.log" 2>&1 &
+          for _ in $(seq 50); do grep -q '^PORT ' "$RUNNER_TEMP/fixtures.log" && break; sleep 0.1; done
+          port=$(sed -n 's/^PORT //p' "$RUNNER_TEMP/fixtures.log")
+          test -n "$port"
+          echo "AGENT_SIGNUP_CHECK_URL=http://127.0.0.1:$port/api/agent-signup-check" >> "$GITHUB_ENV"
+      - id: pass
+        uses: ./agent-signup-check/action
+        with:
+          domain: prized.dev
+      - id: regression
+        continue-on-error: true
+        uses: ./agent-signup-check/action
+        with:
+          domain: polar.sh
+      - id: limited
+        uses: ./agent-signup-check/action
+        with:
+          domain: rate-limited.example
+          fail-on: below-score 7
+      - name: Outputs and outcomes
+        env:
+          PASS_SCORE: ${{ steps.pass.outputs.score }}
+          PASS_FAILED: ${{ steps.pass.outputs.failed }}
+          PASS_ROW: ${{ steps.pass.outputs.row }}
+          PASS_RESULT: ${{ steps.pass.outputs.result }}
+          REGRESSION_OUTCOME: ${{ steps.regression.outcome }}
+          REGRESSIONS: ${{ steps.regression.outputs.regressions }}
+          LIMITED_OUTCOME: ${{ steps.limited.outcome }}
+          LIMITED_STATUS: ${{ steps.limited.outputs.status }}
+        run: |
+          set -x
+          test "$PASS_SCORE" = 5/7
+          test "$PASS_FAILED" = limits
+          test "$PASS_ROW" = "https://prized.dev/agent-signup-check?via=github-action#prized.dev"
+          test -s "$PASS_RESULT"
+          test "$REGRESSION_OUTCOME" = failure
+          test "$REGRESSIONS" = markdown
+          test "$LIMITED_OUTCOME" = success
+          test "$LIMITED_STATUS" = rate-limited
+
   shell:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
