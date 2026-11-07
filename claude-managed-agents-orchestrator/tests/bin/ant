@@ -1,0 +1,136 @@
+#!/usr/bin/env python3
+"""A stand-in for ``ant beta:worker run`` against tests/mock_cma.py, standard library only.
+
+It does what the real worker does at the work-item level (anthropic SDK lib/environments/_worker.py):
+reads the work item's secret (from ANTHROPIC_WORK_SECRET_FILE, else ANTHROPIC_WORK_SECRET), takes
+the sessions token out of it, and with that token alone: heartbeats the lease (NO_HEARTBEAT first,
+then the server's last value; a 412 means the lease is lost and it exits without stopping), reads
+the session, serves the session until it has been idle for --max-idle, stops on a heartbeat that
+says stopping, and force-stops the work item on the way out. SIGTERM ends it the same way.
+
+The tool calls come from the mock's /_stub side channel instead of the session event stream; each
+is run with bash in --workdir, as the real worker's bash tool does.
+"""
+
+import base64
+import json
+import os
+import signal
+import subprocess
+import sys
+import threading
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+
+VERSION = "2.7.1"
+HEARTBEAT_S = 0.2
+POLL_S = 0.05
+
+
+def main(argv):
+    if argv[1:2] == ["--version"]:
+        print(f"ant version {VERSION} (stub)")
+        return 0
+    if argv[1:3] != ["beta:worker", "run"]:
+        print(f"stub ant: unsupported command {argv[1:]}", file=sys.stderr)
+        return 2
+    args = argv[3:]
+    workdir = args[args.index("--workdir") + 1] if "--workdir" in args else os.getcwd()
+    max_idle = float(args[args.index("--max-idle") + 1].rstrip("s")) if "--max-idle" in args else 60.0
+    base = os.environ.get("ANTHROPIC_BASE_URL", "https://api.anthropic.com").rstrip("/")
+    env_id = os.environ["ANTHROPIC_ENVIRONMENT_ID"]
+    work_id = os.environ["ANTHROPIC_WORK_ID"]
+    session_id = os.environ["ANTHROPIC_SESSION_ID"]
+    secret_file = os.environ.get("ANTHROPIC_WORK_SECRET_FILE")
+    if secret_file and os.stat(secret_file).st_mode & 0o007:
+        # ant refuses a secret file every user can read or write (pkg/cmd/worker.go).
+        print(f"work secret file {secret_file} is world-accessible", file=sys.stderr)
+        return 1
+    secret = open(secret_file).read().strip() if secret_file else os.environ.get("ANTHROPIC_WORK_SECRET", "")
+    payload = json.loads(base64.urlsafe_b64decode(secret + "=" * (-len(secret) % 4)))
+    token = payload["sessions_token"]
+
+    def call(method, path, body=None, query=None):
+        url = base + path + ("?" + urllib.parse.urlencode(query) if query else "")
+        data = json.dumps(body).encode() if body is not None else None
+        req = urllib.request.Request(url, data=data, method=method)
+        req.add_header("Authorization", f"Bearer {token}")
+        req.add_header("anthropic-beta", "managed-agents-2026-04-01")
+        req.add_header("anthropic-version", "2026-10-21")
+        if data is not None:
+            req.add_header("content-type", "application/json")
+        try:
+            with urllib.request.urlopen(req, timeout=10) as r:
+                return r.status, json.loads(r.read() or b"null")
+        except urllib.error.HTTPError as e:
+            return e.code, json.loads(e.read() or b"null")
+
+    call(
+        "POST",
+        "/_stub/env",
+        {
+            "names": sorted(k for k in os.environ if k.startswith("ANTHROPIC_")),
+            "has_environment_key": bool(os.environ.get("ANTHROPIC_ENVIRONMENT_KEY")),
+            "secret_from_file": bool(secret_file),
+            "work_id": work_id,
+            "pid": os.getpid(),
+        },
+    )
+    print(f"stub ant: serving {session_id} ({work_id})", flush=True)
+    state = {"stop": False, "lost": False}
+
+    def heartbeat():
+        last = "NO_HEARTBEAT"
+        while not state["stop"]:
+            status, doc = call(
+                "POST", f"/v1/environments/{env_id}/work/{work_id}/heartbeat", query={"expected_last_heartbeat": last}
+            )
+            if status == 412:
+                print("stub ant: lease lost", flush=True)
+                state["lost"] = state["stop"] = True
+                return
+            if status == 200:
+                last = doc["last_heartbeat"]
+                if doc["state"] in ("stopping", "stopped") or not doc["lease_extended"]:
+                    print(f"stub ant: heartbeat says {doc['state']}", flush=True)
+                    state["stop"] = True
+                    return
+            time.sleep(HEARTBEAT_S)
+
+    signal.signal(signal.SIGTERM, lambda *_: state.__setitem__("stop", True))
+    hb = threading.Thread(target=heartbeat, daemon=True)
+    hb.start()
+    status, session = call("GET", f"/v1/sessions/{session_id}")
+    if status != 200:
+        print(f"stub ant: reading the session failed: HTTP {status}", file=sys.stderr, flush=True)
+        state["stop"] = True
+    elif session["metadata"].get("stub_crash"):
+        # A worker that dies at once, without stopping its item (a broken binary, say).
+        print("stub ant: crashing as asked", file=sys.stderr, flush=True)
+        os._exit(3)
+    idle_since = None
+    while not state["stop"]:
+        status, doc = call("GET", "/_stub/next")
+        if status != 200 or doc.get("stop"):
+            break
+        if doc.get("command"):
+            idle_since = None
+            done = subprocess.run(["bash", "-c", doc["command"]], cwd=workdir, capture_output=True, text=True)
+            call("POST", "/_stub/result", {"exit_code": done.returncode, "output": done.stdout + done.stderr})
+            continue
+        idle_since = idle_since or time.monotonic()
+        if max_idle and time.monotonic() - idle_since >= max_idle:
+            print("stub ant: idle; exiting", flush=True)
+            break
+        time.sleep(POLL_S)
+    state["stop"] = True
+    if not state["lost"]:
+        status, _ = call("POST", f"/v1/environments/{env_id}/work/{work_id}/stop", {"force": True})
+        print(f"stub ant: stop -> {status}", flush=True)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

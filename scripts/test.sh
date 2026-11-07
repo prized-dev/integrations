@@ -148,6 +148,12 @@ case $DIR in
     git -C "$WORK/hermes-agent" checkout -q "$HERMES_AGENT_SHA"
     (cd "$WORK/hermes-agent" && uv sync -q --locked --python 3.14 --group dev)
     offline HERMES_AGENT_REPO="$WORK/hermes-agent" "$WORK/hermes-agent/.venv/bin/python" -m pytest -rs -p no:cacheprovider tests ;;
+  claude-managed-agents-orchestrator)
+    # Offline: a stand-in for Anthropic's API on 127.0.0.1 (work queue, leases, sessions, signed
+    # webhooks with retries), fake sandboxes that run the in-sandbox scripts with bash, and a stub
+    # `ant` installed into them by URL and sha256 as the real one is.
+    py "test" yes "prized==0.1.3 httpx==0.24.1 uvicorn==0.30.0" \
+      "pip install -q ruff && ruff check . tests/bin/ant && ruff format --check . tests/bin/ant" ;;
   claude-managed-agents)
     # The test drives on-work.sh with the real `ant` poller, checked against its published sha256.
     curl -fsSL -o "$WORK/ant.tgz" \
