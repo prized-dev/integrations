@@ -276,7 +276,7 @@ def test_cancel_kills_the_command_s_process_group(fake):
     worker.join(timeout=20)
     set_interrupt(False, worker.ident)
     assert result["returncode"] == 130
-    assert any("kill -TERM" in s for s in fake.exec_scripts)
+    assert any("kill -s TERM" in s for s in fake.exec_scripts)
     time.sleep(5)
     assert not marker.exists()
     env.cleanup()
