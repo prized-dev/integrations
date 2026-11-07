@@ -294,5 +294,31 @@ check "the worker was stopped" '[ -e "$(seen "$D" work_c1)/term" ]'
 dump "$f"
 
 fi
+if want 11; then
+echo "== 11. the in-sandbox wait and stop scripts under each shell a sandbox's sh may be"
+# The edge runs them with bash, but on-work.sh writes them to work under dash and busybox too. They are
+# read from on-work.sh itself and run in a fake home against a real worker process group.
+W=.anthropic/work_sh
+eval "$(sed -n "/^read -r -d '' WAIT_FOR_RUN <<EOF/,/^EOF\$/p; /^read -r -d '' STOP_OURS <<EOF/,/^EOF\$/p" "$SCRIPT")"
+alive() { [ -e "/proc/$1" ] && ! grep -q '^State:[[:space:]]*Z' "/proc/$1/status" 2>/dev/null; }
+for shell in sh dash "busybox sh" bash; do
+  read -ra argv <<< "$shell"
+  command -v "${argv[0]}" >/dev/null || { echo "skip $shell: not installed"; continue; }
+  H=$T/sh-${argv[0]}; mkdir -p "$H/$W"
+  # A worker that finishes on SIGTERM, with a child in its process group.
+  setsid bash -c 'echo $$ > "$1/pid"; trap "exit 0" TERM; sleep 100 & echo $! > "$1/child"; while :; do sleep 0.1; done' bash "$H/$W" &
+  disown $!  # no job notice when it ends
+  wait_for 50 "[ -s '$H/$W/child' ]" || bad "$shell: the worker did not start"
+  leader=$(cat "$H/$W/pid"); child=$(cat "$H/$W/child")
+  HOME=$H timeout 20 "${argv[@]}" -c "$WAIT_FOR_RUN" & waiter=$!
+  sleep 1.5
+  check "$shell: the wait sees the live worker and keeps waiting" 'alive "$waiter"'
+  HOME=$H timeout 30 "${argv[@]}" -c "$STOP_OURS"
+  check "$shell: the stop ends the worker and its child" 'wait_for 50 "! alive $leader && ! alive $child"'
+  wait "$waiter"; code=$?
+  check "$shell: then the wait reports the worker gone (86)" '[ "$code" = 86 ]'
+  kill -KILL "$leader" "$child" 2>/dev/null
+done
+fi
 echo "== $FAILS failed"
 [ "$FAILS" = 0 ]

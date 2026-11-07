@@ -50,18 +50,21 @@ cd ~ && chmod 600 $W/secret && rm -f $W/done $W/pid && setsid -f sh -c '
   echo \$? > $W/done; rm -f $W/pid' < /dev/null > /dev/null 2>&1
 for i in \$(seq 50); do [ -s $W/pid ] && exit 0; sleep 0.1; done; echo "the worker did not start" >&2; exit 1
 EOF
-# Exits 0 when the run is done, 86 if the worker is gone without finishing.
+# Exits 0 when the run is done, 86 if the worker is gone without finishing. These scripts run under
+# whatever shell the sandbox has, so a group is signalled as `kill -s SIG -- -PGID` (POSIX; dash
+# kills nothing for `kill -TERM -- -PGID`) and probed as `kill -0 -PGID` (busybox answers 1 for
+# `kill -s 0 -- -PGID` while the group lives): test/posix-sh.sh runs them under sh, dash and busybox.
 read -r -d '' WAIT_FOR_RUN <<EOF || true
 cd ~ && while [ ! -e $W/done ]; do
-  { [ -s $W/pid ] && kill -0 -- "-\$(cat $W/pid)" 2>/dev/null; } || [ -e $W/done ] || exit 86
+  { [ -s $W/pid ] && kill -0 "-\$(cat $W/pid)" 2>/dev/null; } || [ -e $W/done ] || exit 86
   sleep 1
 done
 EOF
 # Stops this work item's worker: SIGTERM, up to 15 s to finish (ant kills this script 30 s after its
 # own SIGTERM), then SIGKILL. Removes the secret either way.
 read -r -d '' STOP_OURS <<EOF || true
-cd ~ && if [ -s $W/pid ]; then g=\$(cat $W/pid); kill -TERM -- "-\$g" 2>/dev/null
-  for i in \$(seq 30); do kill -0 -- "-\$g" 2>/dev/null || break; sleep 0.5; done; kill -KILL -- "-\$g" 2>/dev/null; fi
+cd ~ && if [ -s $W/pid ]; then g=\$(cat $W/pid); kill -s TERM -- "-\$g" 2>/dev/null
+  for i in \$(seq 30); do kill -0 "-\$g" 2>/dev/null || break; sleep 0.5; done; kill -s KILL -- "-\$g" 2>/dev/null; fi
 rm -f $W/pid $W/secret
 EOF
 

@@ -394,13 +394,15 @@ def _exec_script(cmd_string: str, *, login: bool, pid_path: str) -> str:
 
 
 def _cancel_script(pid_path: str) -> str:
+    # POSIX's `kill -s SIG -- -PGID`: dash kills nothing for `kill -TERM -- -PGID`
+    # (tests/test_posix_sh.py runs this under sh, dash, busybox and bash).
     q = shlex.quote(pid_path)
     return (f"for _ in $(seq 20); do [ -s {q} ] && break; sleep 0.1; done\n"
             f"p=$(cat {q} 2>/dev/null) || exit 0\n"
             '[ -n "$p" ] || exit 0\n'
-            'kill -TERM -- "-$p" 2>/dev/null\n'
+            'kill -s TERM -- "-$p" 2>/dev/null\n'
             "sleep 1\n"
-            'kill -KILL -- "-$p" 2>/dev/null\n'
+            'kill -s KILL -- "-$p" 2>/dev/null\n'
             f"rm -f {q} {q}.out\n"
             "exit 0\n")
 

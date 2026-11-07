@@ -576,15 +576,18 @@ async def _blocking_exec(sandbox: AsyncSandbox, line: str, cwd: str, env: Mappin
 def _stop_script(pid_file: str) -> str:
     """Stop the process group named in `pid_file`: TERM, then KILL after two seconds.
 
-    Waits up to two seconds for the file, in case the cancelled call has not started yet.
+    Waits up to two seconds for the file, in case the cancelled call has not started yet. Signals take
+    POSIX's `kill -s SIG -- -PGID`, which dash reads (it kills nothing for `kill -TERM -- -PGID`); the
+    probe is `kill -0 -PGID`, since busybox answers 1 for `kill -s 0 -- -PGID` even while the group
+    lives. tests/test_posix_sh.py runs it under sh, dash, busybox and bash.
     """
     quoted = shlex.quote(pid_file)
     return (
         f'f={quoted}; i=0; while [ ! -s "$f" ] && [ $i -lt 20 ]; do sleep 0.1; i=$((i+1)); done; '
         '[ -s "$f" ] || exit 0; pg=$(cat "$f"); '
-        'kill -TERM -- "-$pg" 2>/dev/null; i=0; '
-        'while kill -0 -- "-$pg" 2>/dev/null && [ $i -lt 20 ]; do sleep 0.1; i=$((i+1)); done; '
-        'kill -KILL -- "-$pg" 2>/dev/null; rm -f "$f"; exit 0'
+        'kill -s TERM -- "-$pg" 2>/dev/null; i=0; '
+        'while kill -0 "-$pg" 2>/dev/null && [ $i -lt 20 ]; do sleep 0.1; i=$((i+1)); done; '
+        'kill -s KILL -- "-$pg" 2>/dev/null; rm -f "$f"; exit 0'
     )
 
 
