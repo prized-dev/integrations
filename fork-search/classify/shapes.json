@@ -252,7 +252,7 @@
  "mteb-leaderboard": {
   "compressed_mb": 633.1,
   "digest": "sha256:a8538f4882ff132e0a20a75be3fffc07164318a7425ad19a6b4bf5268107feb4",
-  "image_headroom_gb": 6
+  "image_headroom_gb": 20
  },
  "mteb-retrieve": {
   "compressed_mb": 599.5,

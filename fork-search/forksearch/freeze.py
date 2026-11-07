@@ -47,7 +47,7 @@ FIELDS = [
     "task", "set", "reason", "eligible", "oracle", "control", "transplant", "T1",
     "solve_s_1", "solve_s_2", "solve_s_median", "T2", "kill", "P",
     "agent_timeout_s", "verifier_timeout_s", "cpus", "memory_mb", "vcpu_used", "disk_gb_used",
-    "image_mb", "compressed_mb", "workdir", "workdir_tar_mb", "outside_changed", "outside_top",
+    "image_mb", "compressed_mb", "image_digest", "workdir", "workdir_tar_mb", "outside_changed", "outside_top",
     "killed_procs", "manifest_note", "valid_trials", "invalid_trials", "trials",
 ]
 
@@ -149,6 +149,8 @@ def classify(task: str, trials: list[dict], meta: dict, shape: dict) -> dict:
     row["vcpu_used"] = (c0.get("shape") or {}).get("vcpu", "")
     row["disk_gb_used"] = (c0.get("shape") or {}).get("disk_gb", "")
     row["image_mb"] = max((c.get("image_mb") or 0) for c in clss) or ""
+    digests = sorted({c.get("image_digest") or "?" for c in clss})
+    row["image_digest"] = digests[0] if len(digests) == 1 else "MIXED " + " ".join(digests)
     row["workdir"] = c0.get("workdir", "")
     tars = [c.get("tar_bytes") for c in clss if c.get("tar_bytes") is not None]
     row["workdir_tar_mb"] = f"{max(tars) / 2**20:.1f}" if tars else ""
