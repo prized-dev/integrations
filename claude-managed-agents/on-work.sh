@@ -53,7 +53,8 @@ EOF
 # Exits 0 when the run is done, 86 if the worker is gone without finishing. These scripts run under
 # whatever shell the sandbox has, so a group is signalled as `kill -s SIG -- -PGID` (POSIX; dash
 # kills nothing for `kill -TERM -- -PGID`) and probed as `kill -0 -PGID` (busybox answers 1 for
-# `kill -s 0 -- -PGID` while the group lives): test/posix-sh.sh runs them under sh, dash and busybox.
+# `kill -s 0 -- -PGID` while the group lives). Section 11 of test/test.sh runs them under sh, dash,
+# busybox and bash.
 read -r -d '' WAIT_FOR_RUN <<EOF || true
 cd ~ && while [ ! -e $W/done ]; do
   { [ -s $W/pid ] && kill -0 "-\$(cat $W/pid)" 2>/dev/null; } || [ -e $W/done ] || exit 86
