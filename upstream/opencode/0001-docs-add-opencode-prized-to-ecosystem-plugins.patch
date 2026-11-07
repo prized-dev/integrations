@@ -1,0 +1,24 @@
+From 5849d79b00f6f9134aacf9cea756f7cc8a572239 Mon Sep 17 00:00:00 2001
+From: Hudson Griffith <28578738+HudsonGri@users.noreply.github.com>
+Date: Sat, 7 Nov 2026 20:03:10 +0000
+Subject: [PATCH] docs: add opencode-prized to ecosystem plugins
+
+---
+ packages/web/src/content/docs/ecosystem.mdx | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/packages/web/src/content/docs/ecosystem.mdx b/packages/web/src/content/docs/ecosystem.mdx
+index 6d4660f..1012d36 100644
+--- a/packages/web/src/content/docs/ecosystem.mdx
++++ b/packages/web/src/content/docs/ecosystem.mdx
+@@ -48,6 +48,7 @@ You can also check out [awesome-opencode](https://github.com/awesome-opencode/aw
+ | [opencode-goal-plugin](https://github.com/willytop8/OpenCode-goal-plugin)                          | Session-scoped `/goal` workflow that keeps objectives in context and auto-continues until complete                               |
+ | [opencode-tavily](https://github.com/tavily-ai/opencode-tavily)                                    | Web search, extraction, crawling, and deep research via the Tavily CLI                                                           |
+ | [opencode-supabase](https://github.com/supabase-community/opencode-supabase)                       | Supabase plugin for OpenCode: account login, Management API tools, bundled Supabase agent skills, and guided Supabase MCP setup. |
++| [opencode-prized](https://github.com/prized-dev/integrations/tree/main/opencode)                   | Run OpenCode's file and shell tools in Prized microVM sandboxes that pause between turns with memory and fork with the session   |
+ 
+ ---
+ 
+-- 
+2.43.0
+

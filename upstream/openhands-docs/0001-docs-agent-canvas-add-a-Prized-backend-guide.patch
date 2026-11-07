@@ -1,0 +1,228 @@
+From f93f28b741e641036526e2223f4b87b4bbee7bfa Mon Sep 17 00:00:00 2001
+From: Hudson Griffith <28578738+HudsonGri@users.noreply.github.com>
+Date: Sat, 7 Nov 2026 20:01:20 +0000
+Subject: [PATCH] docs(agent-canvas): add a Prized backend guide
+
+Run the Agent Canvas backend on a Prized cloud box as a systemd service on
+loopback, and reach it through the Prized CLI tunnel (prized proxy). Adds the
+page, its nav entry under Self-Host Backend Services, and a row in the Remote
+Backend deployment table.
+---
+ docs.json                                     |   3 +-
+ .../agent-canvas/backend-setup/prized.mdx     | 177 ++++++++++++++++++
+ .../agent-canvas/backend-setup/remote.mdx     |   1 +
+ 3 files changed, 180 insertions(+), 1 deletion(-)
+ create mode 100644 openhands/usage/agent-canvas/backend-setup/prized.mdx
+
+diff --git a/docs.json b/docs.json
+index 1c68993..0e339be 100644
+--- a/docs.json
++++ b/docs.json
+@@ -202,7 +202,8 @@
+               "openhands/usage/agent-canvas/backend-setup/docker",
+               "openhands/usage/agent-canvas/backend-setup/docker-execution",
+               "openhands/usage/agent-canvas/backend-setup/kubernetes",
+-              "openhands/usage/agent-canvas/backend-setup/modal"
++              "openhands/usage/agent-canvas/backend-setup/modal",
++              "openhands/usage/agent-canvas/backend-setup/prized"
+             ]
+           },
+           {
+diff --git a/openhands/usage/agent-canvas/backend-setup/prized.mdx b/openhands/usage/agent-canvas/backend-setup/prized.mdx
+new file mode 100644
+index 0000000..e9b8969
+--- /dev/null
++++ b/openhands/usage/agent-canvas/backend-setup/prized.mdx
+@@ -0,0 +1,177 @@
++---
++title: Prized Backend
++description: Run the Agent Canvas backend on a Prized cloud box and reach it through the Prized CLI tunnel.
++---
++
++Run the Agent Canvas backend on a [Prized](https://prized.dev) box: a cloud Linux VM with its own disk that pauses when idle. Agent Canvas stays on your laptop. It reaches the backend through the Prized CLI's encrypted tunnel, so the agent server listens only on the box's loopback and no port is open to the internet.
++
++<Warning>
++  The agent server can read and write the box's filesystem, run shell commands, and reach the network. Anyone who can open the tunnel to your box and has the API key can run code there. Keep the API key secret.
++</Warning>
++
++## When to Use It
++
++A Prized backend is a good fit when you want to:
++
++- Keep conversations running with your laptop closed
++- Give the agent a Linux VM with root, without managing a server, firewall rules, or a public URL
++- Stop paying for compute when idle: an idle box pauses itself, and a paused box bills only for its disk
++
++## Prerequisites
++
++- A [Prized account](https://prized.dev/sign-in) (new workspaces get \$30 of free credit)
++- The Prized CLI on your laptop, signed in:
++
++  ```bash
++  curl -fsSL https://prized.dev/install.sh | sh
++  prized login
++  ```
++
++- Agent Canvas on your laptop, for example `agent-canvas --frontend-only` (see [Setup](/openhands/usage/agent-canvas/setup))
++- An LLM API key (OpenAI, Anthropic, etc.)
++
++## 1. Create a Box
++
++```bash
++prized box new openhands --size lite --auto-pause 2h --wait
++```
++
++`lite` (Extra Small) has 2 vCPU, 8 GB of memory, and a 150 GB disk. `--auto-pause 2h` pauses the box after 2 hours without use; change it later with `prized box auto-pause openhands <window>`.
++
++<Note>
++  On the free credit a workspace runs one box at a time. To use the box you already have, skip this step and use its name instead of `openhands` below.
++</Note>
++
++## 2. Install Agent Canvas on the Box
++
++Open a shell on the box:
++
++```bash
++prized ssh openhands --no-forward
++```
++
++Then install Node.js 24, `uv`, and Agent Canvas, as on any [Ubuntu VM](/openhands/usage/agent-canvas/backend-setup/vm):
++
++```bash
++sudo apt-get update
++sudo apt-get install -y ca-certificates curl gnupg git
++curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
++sudo apt-get install -y nodejs
++curl -LsSf https://astral.sh/uv/install.sh | sh
++sudo npm install -g @openhands/agent-canvas
++```
++
++## 3. Run the Backend as a Service
++
++Still on the box, create the API key:
++
++```bash
++(umask 077; printf 'LOCAL_BACKEND_API_KEY=%s\n' "$(openssl rand -hex 32)" > ~/.agent-canvas.env)
++cat ~/.agent-canvas.env
++```
++
++Copy the value after `LOCAL_BACKEND_API_KEY=`. You'll enter it in Agent Canvas in step 5.
++
++Then install a service that starts the backend now and every time the box starts:
++
++```bash
++sudo tee /etc/systemd/system/agent-canvas.service >/dev/null <<EOF
++[Unit]
++Description=OpenHands Agent Canvas backend
++After=network-online.target
++Wants=network-online.target
++RequiresMountsFor=$HOME
++StartLimitIntervalSec=0
++
++[Service]
++User=$USER
++WorkingDirectory=$HOME
++EnvironmentFile=$HOME/.agent-canvas.env
++Environment=PATH=$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin
++ExecStart=$(which agent-canvas) --backend-only --public --port 8100
++Restart=always
++RestartSec=5
++
++[Install]
++WantedBy=multi-user.target
++EOF
++sudo systemctl daemon-reload
++sudo systemctl enable --now agent-canvas
++```
++
++The first start downloads the agent server and takes about a minute. Check it:
++
++```bash
++curl -s http://127.0.0.1:8100/health
++```
++
++It returns `{"status":"ok"}`. The backend listens on `127.0.0.1:8100` on the box only. It uses port 8100 because Agent Canvas uses port 8000 on your laptop by default.
++
++<Note>
++  Some boxes restart their processes when they pause: sizes above Small, boxes on infinite storage, pauses longer than 3 days, and, rarely, a pause whose memory snapshot fails. The service brings the backend back when the box resumes. Conversations, settings, and files live on the box's disk and survive pauses.
++</Note>
++
++## 4. Open the Tunnel
++
++On your laptop:
++
++```bash
++prized proxy openhands 8100
++```
++
++This forwards `localhost:8100` on your laptop to port 8100 on the box. Leave it running.
++
++If it says port 8100 is in use, run `prized ports ls`. If it shows the box's port 8100 mirrored, the Prized daemon already forwards it to your laptop (it does this for the box `prized login` or `prized setup` connected), so skip this step.
++
++## 5. Connect Agent Canvas
++
++1. Open Agent Canvas on your laptop.
++2. Click the backend switcher → `Manage Backends` → `Add Backend`.
++3. Fill in:
++   - **Name**: `Prized`
++   - **Host / Base URL**: `http://localhost:8100`
++   - **API Key**: the key from step 3
++4. Save and select it as the active backend.
++
++## 6. Configure Your LLM
++
++With the Prized backend selected, open `Settings`, choose a provider and model, and enter your API key. The settings are stored on the box.
++
++## Pausing and Resuming
++
++An idle box pauses by itself, and a paused box doesn't answer through the tunnel. If Agent Canvas can't reach the backend, resume the box:
++
++```bash
++prized box resume openhands --wait
++```
++
++Keep `prized proxy` running, or start it again; the backend answers once the box is running. To pause the box yourself, run `prized box pause openhands`.
++
++## Cost
++
++A box bills by the second while awake. A paused box pays only for its disk. See [Prized pricing](https://prized.dev/pricing) for current rates; at the time of writing, Extra Small costs \$0.068 an hour awake and \$0.015 an hour asleep.
++
++## Troubleshooting
++
++Check the service and its logs on the box:
++
++```bash
++prized ssh openhands --no-forward
++systemctl status agent-canvas
++sudo journalctl -u agent-canvas -n 50
++```
++
++## Tearing Down
++
++Delete the box and its disk (it asks you to type the box's name):
++
++```bash
++prized box delete openhands
++```
++
++## Related Guides
++
++- [Connect and Manage Backends](/openhands/usage/agent-canvas/backends)
++- [Remote Backend](/openhands/usage/agent-canvas/backend-setup/remote)
++- [VM / Self-Hosted Installation](/openhands/usage/agent-canvas/backend-setup/vm)
++- [Modal Backend](/openhands/usage/agent-canvas/backend-setup/modal)
+diff --git a/openhands/usage/agent-canvas/backend-setup/remote.mdx b/openhands/usage/agent-canvas/backend-setup/remote.mdx
+index dbdce30..82094e4 100644
+--- a/openhands/usage/agent-canvas/backend-setup/remote.mdx
++++ b/openhands/usage/agent-canvas/backend-setup/remote.mdx
+@@ -40,6 +40,7 @@ The selected backend becomes the execution environment for new conversations. It
+ | Docker | [Use Docker with Agent Canvas](/openhands/usage/agent-canvas/backend-setup/docker) |
+ | Kubernetes | [Kubernetes (Helm)](/openhands/usage/agent-canvas/backend-setup/kubernetes) |
+ | Modal | [Modal Backend](/openhands/usage/agent-canvas/backend-setup/modal) |
++| A Prized cloud box | [Prized Backend](/openhands/usage/agent-canvas/backend-setup/prized) |
+ | A managed OpenHands platform | [Cloud Backend](/openhands/usage/agent-canvas/backend-setup/cloud) |
+ | DigitalOcean sandboxes (no URL or API key to manage) | [DigitalOcean Managed Agents](/openhands/usage/agent-canvas/backend-setup/digitalocean) |
+ 
+-- 
+2.43.0
+

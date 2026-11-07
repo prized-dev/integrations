@@ -1,0 +1,54 @@
+From 2d00d960d818ed7d9e49bd98777e4b85cf6244fd Mon Sep 17 00:00:00 2001
+From: Hudson Griffith <28578738+HudsonGri@users.noreply.github.com>
+Date: Sat, 7 Nov 2026 20:02:47 +0000
+Subject: [PATCH] docs(coding-agent): add Prized sandboxes to the isolation
+ guide
+
+---
+ .../coding-agent/docs/containerization.md     | 25 ++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/packages/coding-agent/docs/containerization.md b/packages/coding-agent/docs/containerization.md
+index f65b94e..db8644b 100644
+--- a/packages/coding-agent/docs/containerization.md
++++ b/packages/coding-agent/docs/containerization.md
+@@ -12,8 +12,9 @@ You can isolate the complete Pi process or keep Pi on the host and route selecte
+ | Docker Sandboxes | Managed sandbox | Pi, built-in tools, `!` commands, and extensions | Provider credentials remain on the host and are substituted by the proxy | Managed local isolation without exposing the real provider key |
+ | OpenShell | Local or remote sandbox | Pi, built-in tools, `!` commands, and extensions | Policy-controlled credentials and inference routing | Filesystem, process, network, and credential policies |
+ | Gondolin extension | Host | Built-in tools and `!` commands | Stored Pi credentials remain on the host, but commands inherit host environment variables | A local micro-VM for tool execution while retaining the host interface |
++| Prized extension | Host | `bash`, `read`, `write`, `edit`, and `!` commands | Pi credentials and host environment variables stay on the host | A remote micro-VM that keeps its processes and memory between turns |
+ 
+-The method changes where extensions run. When the complete Pi process runs inside an isolated environment, its extensions run there too. When host Pi delegates built-in tools through Gondolin, other extension tools still run on the host unless they also delegate their work.
++The method changes where extensions run. When the complete Pi process runs inside an isolated environment, its extensions run there too. When host Pi delegates built-in tools through Gondolin or Prized, other extension tools still run on the host unless they also delegate their work.
+ 
+ ## Decide what Pi can access
+ 
+@@ -181,3 +182,25 @@ pi -e ~/.pi/agent/extensions/gondolin
+ The extension mounts the host working folder at `/workspace` in the VM and overrides `read`, `write`, `edit`, `bash`, `grep`, `find`, and `ls`. File changes under `/workspace` write through to the host.
+ 
+ Other extension tools still run on the host unless they explicitly delegate their operations. Review the [Gondolin example](../examples/extensions/gondolin/) before adding tools that could bypass the VM boundary.
++
++## Route tools through a Prized sandbox
++
++[Prized](https://prized.dev/docs/sandboxes) sandboxes are remote Firecracker micro-VMs. The [`@prized/pi`](https://github.com/prized-dev/integrations/tree/main/pi) extension keeps the Pi process, its credentials, and model calls on the host, and runs `bash`, `read`, `write`, `edit`, and `!` commands in a sandbox. Host environment variables are not forwarded into the sandbox.
++
++Your first prompt starts the sandbox and uploads the git working tree: tracked and new files that git does not ignore, up to 100 MiB packed. Changes stay in the sandbox until you apply them to the host with `/prized pull`. Prized deletes the sandbox, with anything not pulled, when its run time ends (60 minutes on the free tier, 24 hours by default on paid plans) or a week after it is left paused. Between turns the sandbox pauses with its memory, so a server the agent started is still running at the next command.
++
++### Install the extension
++
++```bash
++pi install npm:@prized/pi
++export PRIZED_API_KEY=<key from the Prized dashboard, API keys>
++```
++
++### Start Pi
++
++```bash
++cd /path/to/working-folder
++pi --prized
++```
++
++With `--prized`, `grep`, `find`, `ls`, and `powershell` are disabled because they would act on the host, and Pi skills are left out of the prompt; the agent searches with `bash` in the sandbox. Other extension tools still run on the host. See the [extension README](https://github.com/prized-dev/integrations/tree/main/pi#readme) for sandbox size, pause, and pull options.
+-- 
+2.43.0
+
