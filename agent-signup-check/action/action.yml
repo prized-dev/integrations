@@ -1,8 +1,9 @@
 # The agent sign-up check (../README.md) as a step: prized.dev runs the seven checks against your
-# domain, the step prints them to the job summary with a link to your row, and fails when a check
-# breaks. Prized wrote the check and the spend-limits draft two of the checks accept.
+# domain from its servers, the step prints them to the job summary with a link to your row, and
+# fails when a check breaks (fail-on). Prized wrote the check and the spend-limits draft two of
+# the checks accept.
 name: Agent sign-up check
-description: Can an AI agent sign up for your platform, pay and use it on its own? Runs Prized's seven checks against your domain and fails when one breaks.
+description: Can an AI agent sign up for your platform, pay and use it on its own? Has prized.dev run Prized's seven checks on your domain, and fails when one is worse than your row or the score drops below what you set.
 author: Prized
 branding:
   icon: check-circle
@@ -16,27 +17,31 @@ inputs:
     description: >-
       One endpoint of your API that needs a key, on the domain or a subdomain of it. The check calls
       it without one, to see how a signed-out agent is turned away. Leave it empty for a platform on
-      the prized.dev board (its row's endpoint is used) or to try https://api.<domain>/.
+      the prized.dev board: the row's own endpoint is used, so the comparison is like for like (with
+      an api of your own, a regression only warns). Empty off the board tries https://api.<domain>/
+      (api.example.com for any example.com host).
     required: false
     default: ''
   fail-on:
     description: >-
-      When the step fails. any-regression: a check is worse than your row on prized.dev (a domain
-      that isn't on the board has no row, so nothing fails). below-score N: fewer than N of the
-      seven checks pass. never: report only. A rate limit, an outage or a network error never fails
-      the step; inputs prized.dev refuses always do.
+      When the step fails. any-regression: a check is worse than your row on prized.dev (if the
+      row was scored by another checker version, it only warns until the row is scored again). A
+      domain that isn't on the board has no row, so nothing fails: use below-score.
+      below-score N: fewer than N checks pass. never: report only. A rate limit, an outage or a
+      network error never fails the step; inputs prized.dev refuses always do.
     required: false
     default: any-regression
   fresh:
     description: >-
-      true checks now. false accepts an answer up to 10 minutes old. prized.dev allows 4 fresh
-      checks of one domain from one address in 10 minutes; past that the step warns and passes.
+      true checks now. false accepts an answer up to 10 minutes old. prized.dev limits fresh checks
+      of a site (subdomains included) to 4 from one address and 10 from everyone in 10 minutes;
+      past that the step warns and passes.
     required: false
     default: 'true'
 
 outputs:
   status:
-    description: checked, rate-limited, unavailable (no answer, or not one the step understands) or invalid (inputs refused).
+    description: checked, rate-limited, unavailable (no answer, or not one the step understands) or invalid (inputs refused, or Node too old).
     value: ${{ steps.check.outputs.status }}
   score:
     description: Checks passed of the checks that ran, like 5/7. Empty when nothing was checked.
@@ -45,7 +50,7 @@ outputs:
     description: How many checks passed, like 5.
     value: ${{ steps.check.outputs.passed }}
   total:
-    description: How many checks ran (7, or 6 when the API was not probed).
+    description: How many checks ran (7, or 6 for a platform whose row on prized.dev has no API probe).
     value: ${{ steps.check.outputs.total }}
   failed:
     description: The checks that failed (not partly), comma-separated ids, like limits,payment.

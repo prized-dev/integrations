@@ -39,11 +39,11 @@ A GitHub Action. Add this step after your deploy step:
 - uses: prized-dev/integrations/agent-signup-check/action@main
   with:
     domain: example.com
-    api: https://api.example.com/v1/me # optional, as --api above
     fail-on: any-regression # or below-score 5, or never
+    # api: https://api.example.com/v1/me (off the board only, as --api above)
 ```
 
-prized.dev runs the seven checks on your public domain. The job summary lists them with a link to your row, and `any-regression` fails the step when a check is worse than your row. A domain that isn't on the board has no row, so pin today's score with `below-score N` instead. One request per run, no retries: a rate limit (4 fresh checks of a domain from one address in 10 minutes), an outage or a network error is a warning, never a failure. Prized wrote the check, the action and the spend-limits draft two of the checks accept. Inputs and outputs: [`action/action.yml`](action/action.yml).
+prized.dev runs the seven checks on your public domain from its servers, and the job summary lists them with a link to your row. On the board, `any-regression` fails the step when a check is worse than your row. Off the board there is no row, so pin today's score with `below-score N`. One request per run and no retries: a rate limit (4 fresh checks of a site from one address in 10 minutes), an outage or a network error is a warning, never a failure. Prized wrote the check, the action and the spend-limits draft two of the checks accept. Inputs and outputs: [`action/action.yml`](action/action.yml).
 
 ## What it sends
 

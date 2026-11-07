@@ -21,7 +21,7 @@ test.after(() => {
 });
 
 /** Run the step the way action.yml does, against a fixture server; resolves with what it left. */
-async function step(inputs, { answers = {}, url, env = {} } = {}) {
+async function step(inputs, { answers = {}, url, env = {}, script = RUN, nodeArgs = [] } = {}) {
   const log = [];
   const server = url ? null : await serve({ answers, log });
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'asc-action-'));
@@ -40,18 +40,21 @@ async function step(inputs, { answers = {}, url, env = {} } = {}) {
   };
   try {
     const { code, stdout } = await new Promise((resolve, reject) => {
-      const child = spawn(process.execPath, [RUN], { env: childEnv });
+      const child = spawn(process.execPath, [...nodeArgs, script], { env: childEnv });
       let out = '';
       child.stdout.on('data', (d) => (out += d));
       child.stderr.on('data', (d) => (out += d));
       child.on('error', reject);
       child.on('close', (c) => resolve({ code: c, stdout: out }));
     });
+    const md = fs.existsSync(summary) ? fs.readFileSync(summary, 'utf8') : '';
     return {
       code,
       stdout,
       log,
-      summary: fs.existsSync(summary) ? fs.readFileSync(summary, 'utf8') : '',
+      dir,
+      summary: md,
+      text: decode(md),
       outputs: fs.existsSync(output) ? parseOutputs(fs.readFileSync(output, 'utf8')) : {},
     };
   } finally {
@@ -61,6 +64,10 @@ async function step(inputs, { answers = {}, url, env = {} } = {}) {
     }
   }
 }
+
+/** The summary as it reads once rendered: entities decoded. */
+const decode = (s) =>
+  s.replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n))).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 
 /** GITHUB_OUTPUT's name<<DELIM ... DELIM records. */
 function parseOutputs(text) {
@@ -111,11 +118,11 @@ test('pass: prized.dev, listed, nothing worse than its row', async () => {
   });
   assert.equal(JSON.parse(fs.readFileSync(r.outputs.result, 'utf8')).site, 'prized.dev');
   // The summary: one row per check, and the link to the row on prized.dev.
-  assert.match(r.summary, /^### Agent sign-up check: prized\.dev, 5 of 7 \(1 partly\)$/m);
+  assert.match(r.text, /^### Agent sign-up check: prized\.dev, 5 of 7 \(1 partly\)$/m);
   assert.equal(r.summary.split('\n').filter((l) => /^\| (?!Check|---)/.test(l)).length, 7);
-  assert.match(r.summary, /\| Spend limits \| Fail \| Same \| No spend cap/);
+  assert.match(r.text, /\| Spend limits \| Fail \| Same \| No spend cap/);
   assert.match(r.summary, /\(https:\/\/prized\.dev\/agent-signup-check\?via=github-action#prized\.dev\)/);
-  assert.match(r.summary, /Prized wrote this check/);
+  assert.match(r.text, /Prized wrote this check/);
   assert.deepEqual(commandsIn(r.stdout).map((l) => l.split('::')[1].split(' ')[0]), ['notice']);
 });
 
@@ -127,8 +134,8 @@ test('regression: polar.sh broke a check its row passes, and the step fails', as
   assert.equal(r.outputs.regressions, 'markdown');
   assert.equal(r.outputs.failed, 'limits,payment,markdown');
   assert.match(r.summary, /\*\*Failed\.\*\*/);
-  assert.match(r.summary, /\| Docs in Markdown \| Fail \| \*\*Broke \(was Pass\)\*\* \|/);
-  assert.match(r.summary, /Since the Oct 30, 2026 row/);
+  assert.match(r.text, /\| Docs in Markdown \| Fail \| \*\*Broke \(was Pass\)\*\* \|/);
+  assert.match(r.text, /Since the Oct 30, 2026 row/);
   const cmds = commandsIn(r.stdout);
   assert.equal(cmds.length, 1);
   assert.match(cmds[0], /^::error title=Agent sign-up check::polar\.sh: 1 check is worse than its row on prized\.dev \(Oct 30, 2026 run\): Docs in Markdown \(was Pass, now Fail\)\./);
@@ -165,7 +172,7 @@ test('429: a warning, never a failure, and one request only', async () => {
     const cmds = commandsIn(r.stdout);
     assert.equal(cmds.length, 1);
     assert.match(cmds[0], /^::warning title=Agent sign-up check::prized\.dev rate-limited this check \(HTTP 429\).*Try again in 10 minutes\./);
-    assert.match(r.summary, /not checked/);
+    assert.match(r.text, /not checked/);
   }
 });
 
@@ -201,8 +208,8 @@ test('not on the board: any-regression has no row to compare with and says how t
   assert.equal(r.outputs.score, '1/7');
   assert.equal(r.outputs.row, 'https://prized.dev/agent-signup-check?domain=val.town&via=github-action');
   assert.match(commandsIn(r.stdout)[0], /^::notice .*set fail-on: below-score 1\./);
-  assert.match(r.summary, /^\| Check \| Now \| Why \|$/m);
-  assert.match(r.summary, /isn't on the prized\.dev board/);
+  assert.match(r.text, /^\| Check \| Now \| Why \|$/m);
+  assert.match(r.text, /isn't on the prized\.dev board/);
   const low = await step({ domain: 'val.town', 'fail-on': 'below-score 2' });
   assert.equal(low.code, 1);
 });
@@ -232,13 +239,89 @@ test("the checked site's own text cannot run workflow commands, set outputs or i
   const body = fixture('prized-dev.json');
   body.checks[0].reason = 'ok\n::set-output name=score::7/7\n::add-mask::x\r\n##[error]boom | <img src=x onerror=alert(1)> [click](https://evil.example) ![i](https://evil.example/p.png)';
   body.checks[1].name = 'Name\u2028::warning::x';
+  body.checks[0].reason += ' www.evil.example/phish $x^2$ team@evil.example';
+  body.checks[6].reason = '&'.repeat(5000);
+  body.checks[2].status = 'constructor';
   const r = await step({ domain: 'prized.dev' }, { answers: { 'prized.dev': { status: 200, body } } });
   assert.equal(r.code, 0, r.stdout);
   assert.deepEqual(commandsIn(r.stdout).map((l) => l.split('::')[1].split(' ')[0]), ['notice']);
   assert.equal(r.outputs.score, '5/7');
+  assert.ok(!/native code/.test(r.stdout + r.summary));
+  assert.ok(!r.summary.includes('@'), 'an email would be linked');
   assert.ok(!/<img|\]\(https:\/\/evil|!\[/.test(r.summary), r.summary);
+  // No autolink (www. or a scheme), no math, and the cut never splits an escape.
+  assert.ok(!/www\.|https:\/\/evil|\$/.test(r.summary.split('\n').find((l) => l.startsWith('| auth'))), r.summary);
+  assert.ok(!/&#?\w*\s*\|$/.test(r.summary.split('\n').find((l) => l.startsWith('| Docs'))));
   // Each check is still one table row.
   assert.equal(r.summary.split('\n').filter((l) => /^\| (?!Check|---)/.test(l)).length, 7);
+});
+
+test('a listed platform checked with an api of its own: a regression only warns, the row probed another URL', async () => {
+  const body = fixture('polar-sh-regression.json');
+  body.probedAsListed = false;
+  const r = await step({ domain: 'polar.sh', api: 'https://api.polar.sh/v1/orders/' }, { answers: { 'polar.sh': { status: 200, body } } });
+  assert.equal(r.code, 0, r.stdout);
+  assert.equal(r.outputs.regressions, 'markdown');
+  assert.match(commandsIn(r.stdout)[0], /^::warning .*probed the api you gave, not the API URL the row probed/);
+});
+
+test('below-score N above the checks a domain runs says so', async () => {
+  const body = fixture('prized-dev.json');
+  body.checks = body.checks.map((c) => (c.id === 'challenge' ? { ...c, status: 'skipped', reason: 'Not probed' } : c));
+  body.passed = 4;
+  body.total = 6;
+  body.listed.changes = [{ id: 'challenge', name: 'Key works without a browser', was: 'pass', now: 'skipped', change: 'changed' }];
+  const r = await step({ domain: 'prized.dev', 'fail-on': 'below-score 7' }, { answers: { 'prized.dev': { status: 200, body } } });
+  assert.equal(r.code, 1);
+  assert.equal(r.outputs.total, '6');
+  assert.equal(r.outputs.regressions, '', 'skipped is a change, not a regression');
+  assert.match(commandsIn(r.stdout)[0], /4 of 6 checks pass, below the 7 this step asks for \(only 6 checks run for this domain\)/);
+  assert.match(r.text, /\| Key works without a browser \| Skipped \| Changed \(was Pass\) \|/);
+});
+
+test("a 400 that isn't the API's own (a proxy's) is a warning, not refused inputs", async () => {
+  const r = await step({ domain: 'proxy.example' }, { answers: { 'proxy.example': { status: 400, raw: 'Bad Request' } } });
+  assert.equal(r.code, 0, r.stdout);
+  assert.equal(r.outputs.status, 'unavailable');
+});
+
+test('off the board with an api: the link opens the same check', async () => {
+  const body = fixture('val-town.json');
+  const r = await step({ domain: 'val.town', api: 'https://api.val.town/v1/me' }, { answers: { 'val.town': { status: 200, body } } });
+  assert.equal(r.outputs.row, 'https://prized.dev/agent-signup-check?domain=val.town&api=https%3A%2F%2Fapi.val.town%2Fv1%2Fme&via=github-action');
+});
+
+test('runs through a symlinked path, as on a runner whose work folder is a link', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'asc-link-'));
+  made.push(dir);
+  const link = path.join(dir, 'run.mjs');
+  fs.symlinkSync(RUN, link);
+  const r = await step({ domain: '' }, { script: link });
+  assert.equal(r.code, 1, r.stdout);
+  assert.match(r.stdout, /^::error title=Agent sign-up check::domain is required/m);
+  const ok = await step({ domain: 'prized.dev' }, { script: link });
+  assert.equal(ok.code, 0, ok.stdout);
+  assert.equal(ok.outputs.score, '5/7');
+});
+
+test('no fetch (Node before 18) fails the step instead of passing as a network error', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'asc-nofetch-'));
+  made.push(dir);
+  const pre = path.join(dir, 'no-fetch.cjs');
+  fs.writeFileSync(pre, 'delete globalThis.fetch;\n');
+  const r = await step({ domain: 'prized.dev' }, { nodeArgs: ['--require', pre] });
+  assert.equal(r.code, 1, r.stdout);
+  assert.equal(r.log.length, 0);
+  assert.equal(r.outputs.status, 'invalid');
+  assert.match(r.stdout, /^::error title=Agent sign-up check::This step needs Node 18 or later/m);
+  assert.match(r.text, /not run/);
+});
+
+test('two runs for one site in a job keep their own result files', async () => {
+  const a = await step({ domain: 'prized.dev' });
+  const b = await step({ domain: 'prized.dev' }, { env: { RUNNER_TEMP: a.dir } });
+  assert.notEqual(a.outputs.result, b.outputs.result);
+  assert.ok(fs.existsSync(a.outputs.result) && fs.existsSync(b.outputs.result));
 });
 
 // ---------------------------------------------------------------------------------------

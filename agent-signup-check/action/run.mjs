@@ -12,7 +12,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 
 export const VERSION = '0.1.0';
 export const API_URL = 'https://prized.dev/api/agent-signup-check';
@@ -108,14 +108,26 @@ function networkError(e) {
 // ---------------------------------------------------------------------------------------
 // What an answer means for the step.
 
-const isCheck = (c) => c && typeof c.id === 'string' && typeof c.name === 'string' && typeof c.status === 'string';
+const isStr = (s) => typeof s === 'string';
+const isInt = (n) => Number.isInteger(n) && n >= 0;
+const isCheck = (c) => c && isStr(c.id) && isStr(c.name) && isStr(c.status);
 const isResult = (b) =>
-  b && typeof b === 'object' && typeof b.site === 'string' && Number.isInteger(b.passed) && Number.isInteger(b.total) && Array.isArray(b.checks) && b.checks.length > 0 && b.checks.every(isCheck);
+  b && typeof b === 'object' && isStr(b.site) && isStr(b.checker) && isInt(b.passed) && isInt(b.partial) && isInt(b.total) &&
+  Array.isArray(b.checks) && b.checks.length > 0 && b.checks.every(isCheck);
+const isListed = (l) =>
+  l && typeof l === 'object' && isStr(l.site) && isStr(l.date) && isStr(l.checker) && isInt(l.passed) && isInt(l.total) &&
+  Array.isArray(l.changes) && l.changes.every((c) => c && isStr(c.id) && isStr(c.name) && isStr(c.was) && isStr(c.now) && isStr(c.change));
+/** A word from one of the tables above, never from the object prototype. */
+const word = (table, key) => (Object.prototype.hasOwnProperty.call(table, key) ? table[key] : null);
 
-/** The domain's place on prized.dev: its row when the board lists it, else the page with the domain filled in. */
-export function rowLink(site, listed) {
+/** The domain's place on prized.dev: its row when the board lists it, else the page with the
+ *  domain (and api, so it is the same check) filled in. */
+export function rowLink(site, listed, api = '') {
   const u = new URL(PAGE_URL);
-  if (!listed) u.searchParams.set('domain', site);
+  if (!listed) {
+    u.searchParams.set('domain', site);
+    if (api) u.searchParams.set('api', api);
+  }
   u.searchParams.set('via', 'github-action');
   // A site from the API is a bare host name; anything else gets the page, not a fragment.
   if (listed && /^[a-z0-9.-]+$/i.test(site)) u.hash = site;
@@ -132,15 +144,15 @@ export const shortDate = (iso) => {
  * annotation it shows (`level` and `message`) and its outputs. Pure, so the tests can feed it
  * recorded answers.
  */
-export function evaluate(answer, { failOn, domain }) {
-  const base = { status: 'unavailable', fail: false, level: 'warning', result: null, regressions: [], row: rowLink(domain, null) };
+export function evaluate(answer, { failOn, domain, api = '' }) {
+  const base = { status: 'unavailable', fail: false, level: 'warning', result: null, listed: null, regressions: [], row: rowLink(domain, null, api) };
   if (answer.error) {
     return { ...base, message: `Could not reach prized.dev (${answer.error}), so nothing was checked. This does not fail the step.` };
   }
   const { status, body } = answer;
-  const said = body && typeof body.message === 'string' ? ` ${oneLine(body.message).slice(0, 300)}` : '';
+  const said = body && isStr(body.message) ? ` ${oneLine(body.message).slice(0, 300)}` : '';
   if (status === 429) {
-    // The API allows 4 fresh checks of one domain per address per 10 minutes, and a few more
+    // The API allows 4 fresh checks of a site per address per 10 minutes, and has a few more
     // limits besides; its message says which one this was.
     const secs = Number(answer.retryAfter);
     const wait = secs > 0 ? ` Try again in ${secs < 120 ? `${Math.ceil(secs)} seconds` : `${Math.ceil(secs / 60)} minutes`}.` : '';
@@ -150,35 +162,42 @@ export function evaluate(answer, { failOn, domain }) {
       message: `prized.dev rate-limited this check (HTTP 429), so nothing was checked. This does not fail the step.${said}${wait}`,
     };
   }
-  if (status === 400) {
+  // The API's own refusal of the inputs (bad_domain, api_not_on_domain...), not a proxy's 400.
+  if (status === 400 && body && isStr(body.error)) {
     return { ...base, status: 'invalid', fail: true, level: 'error', message: `prized.dev refused the inputs (HTTP 400).${said}` };
   }
   if (status !== 200 || !isResult(body)) {
-    const what = status === 200 ? 'an answer this step does not understand' : `HTTP ${status}${body && typeof body.error === 'string' ? ` (${oneLine(body.error).slice(0, 40)})` : ''}`;
+    const what = status === 200 ? 'an answer this step does not understand' : `HTTP ${status}${body && isStr(body.error) ? ` (${oneLine(body.error).slice(0, 40)})` : ''}`;
     return { ...base, message: `prized.dev answered with ${what}, so nothing was checked. This does not fail the step.${status === 200 ? '' : said}` };
   }
 
   const result = body;
   const listed = isListed(result.listed) ? result.listed : null;
-  const row = rowLink(listed ? listed.site : result.site, listed);
+  const row = rowLink(listed ? listed.site : result.site, listed, api);
   const regressions = listed ? listed.changes.filter((c) => WORSE.has(c.change)) : [];
-  const score = `${result.passed} of ${result.total}`;
   const site = oneLine(result.site);
+  const score = `${result.passed} of ${result.total}`;
   const out = { ...base, status: 'checked', result, listed, regressions, row, level: 'notice' };
-  const worse = regressions.map((c) => `${oneLine(c.name)} (was ${MARK[c.was] || oneLine(c.was)}, now ${MARK[c.now] || oneLine(c.now)})`).join('; ');
+  const worse = regressions.map((c) => `${oneLine(c.name)} (was ${word(MARK, c.was) || oneLine(c.was)}, now ${word(MARK, c.now) || oneLine(c.now)})`).join('; ');
   const rowName = listed ? `its row on prized.dev (${shortDate(listed.date)} run)` : '';
-  const ruleChange = listed && listed.checker !== result.checker;
+  // A regression fails the step only when this check and the row were made the same way: by the
+  // same checker version, and probing the API URL the row probed (no api= of the step's own).
+  const unlike = !listed
+    ? ''
+    : listed.checker !== result.checker
+      ? ` The row was scored by ${oneLine(listed.checker)} and this check by ${oneLine(result.checker)}, so the change may be the checker's rules, not your site; this does not fail the step.`
+      : result.probedAsListed === false
+        ? ' This check probed the api you gave, not the API URL the row probed, so the change may be the URL; this does not fail the step (leave api empty to compare like for like).'
+        : '';
 
   if (failOn.mode === 'below-score' && result.passed < failOn.min) {
-    return { ...out, fail: true, level: 'error', message: `${site}: ${score} checks pass, below the ${failOn.min} this step asks for.${worse ? ` Worse than ${rowName}: ${worse}.` : ''}` };
+    const most = failOn.min > result.total ? ` (only ${result.total} checks run for this domain)` : '';
+    return { ...out, fail: true, level: 'error', message: `${site}: ${score} checks pass, below the ${failOn.min} this step asks for${most}.${worse ? ` Worse than ${rowName}: ${worse}.` : ''}` };
   }
   if (regressions.length) {
     const msg = `${site}: ${regressions.length === 1 ? '1 check is' : `${regressions.length} checks are`} worse than ${rowName}: ${worse}.`;
-    if (failOn.mode === 'any-regression' && !ruleChange) return { ...out, fail: true, level: 'error', message: msg };
-    const why = ruleChange
-      ? ` The row was scored by ${oneLine(listed.checker)} and this check by ${oneLine(result.checker)}, so the change may be the checker's rules, not your site; this does not fail the step.`
-      : '';
-    return { ...out, level: 'warning', message: msg + why };
+    if (failOn.mode === 'any-regression' && !unlike) return { ...out, fail: true, level: 'error', message: msg };
+    return { ...out, level: 'warning', message: msg + unlike };
   }
   if (failOn.mode === 'any-regression' && !listed) {
     return {
@@ -187,10 +206,6 @@ export function evaluate(answer, { failOn, domain }) {
     };
   }
   return { ...out, message: `${site}: ${score} checks pass${listed ? `, and none is worse than ${rowName}` : ''}.` };
-}
-
-function isListed(l) {
-  return l && typeof l === 'object' && typeof l.site === 'string' && typeof l.date === 'string' && Array.isArray(l.changes) && l.changes.every((c) => c && typeof c.id === 'string' && typeof c.change === 'string');
 }
 
 export function outputsOf(v, resultPath) {
@@ -217,13 +232,17 @@ export function oneLine(s) {
   return String(s ?? '').replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]+/g, ' ').trim();
 }
 
-/** Text that is safe in a Markdown table cell: no HTML, no links or images, no formatting, no pipes. */
-export function md(s) {
+/** Text that is safe in a Markdown table cell: no HTML, no links, autolinks or images, no
+ *  formatting or math, no pipes. `max` cuts the text, not the escapes. */
+export function md(s, max = Infinity) {
   return oneLine(s)
+    .slice(0, max)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/[\\`*_{}[\]()#+!|~:@]/g, (c) => `&#${c.charCodeAt(0)};`);
+    .replace(/[\\`*_{}[\]()#+!|~:.$]/g, (c) => `&#${c.charCodeAt(0)};`)
+    // GitHub links an email even through an escaped @; an empty comment splits it.
+    .replace(/@/g, '&#64;<!-- -->');
 }
 
 /** One line for the log: no legacy ##[command] either (the log also runs with commands stopped). */
@@ -251,11 +270,11 @@ export function summaryOf(v, inputs) {
     lines.push('| Check | Now | Why |', '| --- | --- | --- |');
   }
   for (const c of r.checks) {
-    const now = MARK[c.status] || md(c.status);
-    const why = md(c.reason).slice(0, 2000);
+    const now = word(MARK, c.status) || md(c.status, 20);
+    const why = md(c.reason, 600);
     if (listed) {
       const ch = byId.get(c.id);
-      const since = ch ? `${CHANGE[ch.change] || md(ch.change)} (was ${MARK[ch.was] || md(ch.was)})` : 'Same';
+      const since = ch ? `${word(CHANGE, ch.change) || md(ch.change, 20)} (was ${word(MARK, ch.was) || md(ch.was, 20)})` : 'Same';
       lines.push(`| ${md(c.name)} | ${now} | ${ch && WORSE.has(ch.change) ? `**${since}**` : since} | ${why} |`);
     } else {
       lines.push(`| ${md(c.name)} | ${now} | ${why} |`);
@@ -263,7 +282,7 @@ export function summaryOf(v, inputs) {
   }
   lines.push('');
   const where = listed
-    ? `[${md(r.site)} on prized.dev](${v.row}): ${listed.passed} of ${listed.total} in the ${md(shortDate(listed.date))} run, rank ${Number(listed.rank) || '?'}.`
+    ? `[${md(r.site)} on prized.dev](${v.row}): ${listed.passed} of ${listed.total} in the ${md(shortDate(listed.date))} run${isInt(listed.rank) ? `, rank ${listed.rank}` : ''}.`
     : `${md(r.site)} isn't on the prized.dev board. [Open it on prized.dev](${v.row}), or ask for a row: open a pull request that adds it to [targets.json](https://github.com/prized-dev/integrations/blob/main/agent-signup-check/targets.json).`;
   lines.push(where, '');
   const when = typeof r.checkedAt === 'string' ? md(r.checkedAt.replace(/\.\d+Z$/, 'Z')) : '';
@@ -281,8 +300,8 @@ export function logOf(v, inputs) {
   const byId = new Map((v.listed ? v.listed.changes : []).map((c) => [c.id, c]));
   for (const c of r.checks) {
     const ch = byId.get(c.id);
-    const since = ch ? `  [${CHANGE[ch.change] || logLine(ch.change)}, was ${LOG_MARK[ch.was] || logLine(ch.was)}]` : '';
-    lines.push(`  ${LOG_MARK[c.status] || logLine(c.status).slice(0, 4)}  ${logLine(c.name).padEnd(28)} ${logLine(c.reason).slice(0, 400)}${since}`);
+    const since = ch ? `  [${word(CHANGE, ch.change) || logLine(ch.change).slice(0, 20)}, was ${word(LOG_MARK, ch.was) || logLine(ch.was).slice(0, 20)}]` : '';
+    lines.push(`  ${word(LOG_MARK, c.status) || logLine(c.status).slice(0, 4)}  ${logLine(c.name).padEnd(28)} ${logLine(c.reason).slice(0, 400)}${since}`);
   }
   lines.push(`  ${v.row}`);
   return lines;
@@ -300,30 +319,42 @@ function setOutputs(file, outputs) {
 
 export async function main(env = process.env, out = process.stdout) {
   const print = (s) => out.write(`${s}\n`);
+  const refuse = (message) => {
+    // Nothing was asked of prized.dev: say why in the annotation, the summary and the outputs.
+    if (env.GITHUB_STEP_SUMMARY) fs.appendFileSync(env.GITHUB_STEP_SUMMARY, `### Agent sign-up check: not run\n\n${md(message)}\n\n`);
+    if (env.GITHUB_OUTPUT) setOutputs(env.GITHUB_OUTPUT, { status: 'invalid', score: '', passed: '', total: '', failed: '', regressions: '', row: '', result: '' });
+    print(`::error title=Agent sign-up check::${commandData(oneLine(message))}`);
+    return 1;
+  };
+  // Node before 18 has no fetch: that would read as a network error, a warning, and pass.
+  if (typeof fetch !== 'function' || typeof AbortSignal === 'undefined' || typeof AbortSignal.timeout !== 'function') {
+    return refuse(`This step needs Node 18 or later on the runner; this one has ${process.version}. Add actions/setup-node before it.`);
+  }
   let inputs;
   try {
     inputs = readInputs(env);
   } catch (e) {
-    print(`::error title=Agent sign-up check::${commandData(oneLine(e.message))}`);
-    return 1;
+    return refuse(e.message);
   }
   const url = requestUrl(env.AGENT_SIGNUP_CHECK_URL || API_URL, inputs);
   const timeoutMs = Number(env.AGENT_SIGNUP_CHECK_TIMEOUT_MS) > 0 ? Number(env.AGENT_SIGNUP_CHECK_TIMEOUT_MS) : TIMEOUT_MS;
   const answer = await callApi(url, { timeoutMs });
-  const v = evaluate(answer, { failOn: inputs.failOn, domain: inputs.domain });
+  const v = evaluate(answer, { failOn: inputs.failOn, domain: inputs.domain, api: inputs.api });
 
   let resultPath = '';
   if (v.result) {
-    const dir = path.join(env.RUNNER_TEMP || os.tmpdir(), 'agent-signup-check');
-    fs.mkdirSync(dir, { recursive: true });
-    resultPath = path.join(dir, `${v.result.site.replace(/[^a-z0-9.-]/gi, '_')}.json`);
+    // A folder of its own per run: two steps in one job may check the same site.
+    const dir = fs.mkdtempSync(path.join(env.RUNNER_TEMP || os.tmpdir(), 'agent-signup-check-'));
+    resultPath = path.join(dir, `${v.result.site.replace(/[^a-z0-9.-]/gi, '_').slice(0, 253)}.json`);
     fs.writeFileSync(resultPath, JSON.stringify(v.result, null, 1));
   }
 
-  // The log quotes the checked site; nothing in it may run as a workflow command.
+  // The log quotes the checked site; nothing in it may run as a workflow command. The lines are
+  // built first, so an error can't leave commands stopped.
+  const lines = logOf(v, inputs);
   const token = crypto.randomUUID();
   print(`::stop-commands::${token}`);
-  for (const line of logOf(v, inputs)) print(line);
+  for (const line of lines) print(line);
   print(`::${token}::`);
 
   if (env.GITHUB_STEP_SUMMARY) fs.appendFileSync(env.GITHUB_STEP_SUMMARY, `${summaryOf(v, inputs)}\n`);
@@ -332,7 +363,15 @@ export async function main(env = process.env, out = process.stdout) {
   return v.fail ? 1 : 0;
 }
 
-const invoked = process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
+// Run when started as a script, by any path to it: a runner's work folder may sit behind a
+// symlink, and Node resolves the module's own URL to the real path.
+const invoked = (() => {
+  try {
+    return Boolean(process.argv[1]) && fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url));
+  } catch {
+    return false;
+  }
+})();
 if (invoked) {
   main().then(
     (code) => process.exit(code),

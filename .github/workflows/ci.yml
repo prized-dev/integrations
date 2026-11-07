@@ -78,7 +78,8 @@ jobs:
 
   # The GitHub Action (agent-signup-check/action) as a workflow uses it, against the API answers
   # recorded in agent-signup-check/test/action-fixtures, served on 127.0.0.1: inputs in, outputs
-  # out, a regression failing the step and a rate limit only warning.
+  # out, a regression failing the step and a rate limit only warning. The regression step's ::error
+  # annotation on a green run is that test passing.
   agent-signup-check-action:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
