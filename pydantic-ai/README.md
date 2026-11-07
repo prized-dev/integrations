@@ -7,7 +7,7 @@ Harness's `Coder`, `Shell`, `FileSystem` and every other workspace-aware capabil
 
 ## Quickstart
 
-No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=pydantic-ai.
+No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=pydantic-ai. It can also install the Prized skill with `npx skills add prized-dev/skills -g -y` (it should ask you first), so it knows when and how to use Prized the next time you ask for a sandbox.
 
 Get an API key at https://prized.dev/onboarding/sandboxes?via=pydantic-ai (free credit, no card), then:
 

@@ -8,7 +8,7 @@ export PRIZED_API_KEY=dcp_...   # https://prized.dev/onboarding/sandboxes?via=ha
 harbor run -d terminal-bench@2.0 -a oracle -e harbor_prized:PrizedEnvironment -n 4
 ```
 
-No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=harbor.
+No Prized account yet? Your coding agent can sign you up with your email and a 6-digit code: have it follow https://prized.dev/auth.md?via=harbor. It can also install the Prized skill with `npx skills add prized-dev/skills -g -y` (it should ask you first), so it knows when and how to use Prized the next time you ask for a sandbox.
 
 Each trial gets its own sandbox, sized from the task's `cpus`, `memory` and `storage`, plus 20 GB of disk for the image. The task's prebuilt `docker_image` is unpacked with `crane`, and every command runs chrooted in an unprivileged user namespace, as uid 0 with the image's `ENV` and `WORKDIR`. The sandbox is deleted when the trial ends.
 
