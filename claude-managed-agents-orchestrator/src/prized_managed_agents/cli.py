@@ -13,6 +13,7 @@ import signal
 import sys
 from typing import Any
 
+import httpx
 from prized import AsyncSandbox, PrizedError
 
 from . import __version__
@@ -86,7 +87,10 @@ async def _serve(settings: Settings, host: str, port: int) -> int:
     import uvicorn
 
     cma = CMA(settings.base_url, settings.environment_id, settings.environment_key)
-    orch = Orchestrator(settings, cma, SessionSandboxes(settings))
+    # One connection pool for every Prized call: each SDK call otherwise opens a client of its own,
+    # kept open by the handles it returns, which a process that runs for weeks can't afford.
+    prized_http = httpx.AsyncClient()
+    orch = Orchestrator(settings, cma, SessionSandboxes(settings, http_client=prized_http))
     await orch.start()
     verifier = Verifier(settings.webhook_key) if settings.webhook_key else None
     loop = asyncio.get_running_loop()
@@ -120,11 +124,12 @@ async def _serve(settings: Settings, host: str, port: int) -> int:
             with contextlib.suppress(Exception):
                 await serving
         await cma.close()
+        await prized_http.aclose()
     return 0
 
 
 async def _prepare(settings: Settings, setup: list[str], template: str | None) -> int:
-    boxes = SessionSandboxes(settings)
+    boxes = SessionSandboxes(settings)  # one call: the SDK's own client is fine
 
     async def ready(sb: Any) -> None:
         await w.install_ant(sb, settings)

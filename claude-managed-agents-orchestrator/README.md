@@ -73,6 +73,8 @@ A session can choose for itself through its [metadata](https://platform.claude.c
 | `RECONCILE_EVERY` | `60s` | With webhooks, how often the queue is polled anyway |
 | `SESSION_OVERRIDES` | `1` | Whether session metadata may pick the template or a warm parent |
 | `ANT_VERSION`, `ANT_SHA256_AMD64`, `ANT_SHA256_ARM64` | `2.7.1` and its sha256s | Another `ant` release, with the sha256s of its `linux_amd64` and `linux_arm64` tarballs from its `checksums.txt` |
+| `ANT_URL` | GitHub's release URL | Where to download `ant` from (a mirror), with `{version}` and `{arch}` in it; the sha256 check still applies |
+| `PROBE_EVERY`, `SWEEP_EVERY` | `15s`, `5m` | How often running sandboxes are checked (keep it well under `AUTO_PAUSE`), and how often ended sessions' sandboxes are swept |
 | `ANTHROPIC_BASE_URL` | `https://api.anthropic.com` | Another API endpoint; passed to the worker too |
 | `HOST`, `PORT` | `127.0.0.1`, `8787` | Where the receiver listens: `POST /webhook`, `GET /healthz` |
 

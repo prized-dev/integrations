@@ -187,6 +187,9 @@ class Settings:
             max_handoffs=num("MAX_HANDOFFS", int, 8),  # type: ignore[arg-type]
             max_sessions=num("MAX_SESSIONS", int, 50),  # type: ignore[arg-type]
             reconcile_every_s=float(dur("RECONCILE_EVERY", 60)),
+            probe_every_s=float(dur("PROBE_EVERY", 15)),
+            sweep_every_s=float(dur("SWEEP_EVERY", 300)),
             ant_version=version,
             ant_sha256=sha,
+            ant_url=get("ANT_URL") or ANT_URL,
         )

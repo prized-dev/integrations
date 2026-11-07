@@ -2,6 +2,8 @@
 
 Run each [Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview) session's tools in a [Prized sandbox](https://prized.dev/docs/sandboxes?via=claude-managed-agents) of its own, through a [self-hosted environment](https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes). Claude runs on Anthropic's side. The sandbox runs the agent's commands and holds its files, and between messages it pauses with its files and processes, so the session's next message carries on where it stopped.
 
+To start sessions from a webhook instead of a poller, fork them from a prepared sandbox, and delete their sandboxes when they end, use the [orchestrator](../claude-managed-agents-orchestrator) (`prized-managed-agents`).
+
 ## Run it
 
 1. On a machine that stays on (Linux or macOS), install [`ant`](https://github.com/anthropics/anthropic-cli/releases) 2.3.0 or later, `jq`, and the `prized` CLI:
