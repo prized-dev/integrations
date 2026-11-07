@@ -1,0 +1,30 @@
+diff --git a/docs/guides/hosting-providers.md b/docs/guides/hosting-providers.md
+index e7cfb73..09ad31a 100644
+--- a/docs/guides/hosting-providers.md
++++ b/docs/guides/hosting-providers.md
+@@ -43,6 +43,7 @@ Prices are entry prices as of 2026-10-18, from each provider's site. Promotional
+ | [ClawBook.io](#clawbookio) | Managed | $20/mo | — | Partial | Crypto payments, global |
+ | [xCloud](#xcloud) | Managed | $9.99/mo (promo, renews $19.99) | No | Partial | Beginners, white-label |
+ | [DigitalOcean](#digitalocean) | VPS 1-Click | $24/mo | No | No | Developers |
++| [Prized](#prized) | Cloud VM (hourly) | $25/mo (Micro, 24/7) | Possible | — | Pause and resume, $30 starting credit |
+ | [ClawdHost](#clawdhost) | Managed | $29/mo | No | — | Simple single plan |
+ | [BoostedHost](#boostedhost) | VPS | Varies | Possible | — | Performance, Auto-Burst |
+ | [Everpod](#everpod) | Managed | $29/mo | — | — | One customer per machine, model usage included |
+@@ -412,6 +413,17 @@ OpenClaw image on a Simple Application Server, wired to Alibaba Cloud Model Stud
+ - **Features**: One-click deploy, web-based setup wizard, state persisted to Railway Volume, auto reverse proxying with auth, one-click backup exports
+ - **Best for**: Development and testing
+ 
++### Prized {#prized}
++
++Cloud Linux VMs ("boxes") that you run OpenClaw on yourself, created and managed with the `prized` CLI. A box can pause and resume.
++
++- **Guide**: [prized.dev/docs/openclaw](https://prized.dev/docs/openclaw)
++- **Price** (as of 2026-11-07): billed by the hour from a monthly plan of $10 to $1,000 that lands as credit. The size the guide uses, Micro (2 vCPU, 4 GB RAM, 80 GB disk), is $0.034/hour awake, about $25/month around the clock; asleep it pays only for its disk ($0.008/hour). New accounts get $30 of credit once, with no card ([billing](https://prized.dev/docs/billing))
++- **Locations**: Oregon, N. California, N. Virginia, Ohio, Frankfurt
++- **Features**: Ubuntu 24.04 with root and Docker; `systemctl --user` services start at boot and keep running after you log out; the Gateway stays on loopback and you reach the Control UI through an SSH tunnel
++- **Catch**: on the free credit a box auto-pauses after 2 hours idle, and a Gateway waiting for messages looks idle, so the guide turns auto-pause off for that box. While a box is paused, the assistant can't answer
++- **Local LLMs**: Possible on larger sizes (up to 32 vCPU, 128 GB RAM)
++
+ ### Other VPS Providers
+ 
+ | Provider | Starting Price | Notable Feature |
