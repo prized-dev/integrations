@@ -31,8 +31,9 @@ Claim (Terminus 2 double confirmation, T2:1618-1629 and T2:1745-1752): the first
 task_complete=True gets the confirmation question instead of a plain observation; only a
 second consecutive True ends the run. `claimed_complete` is the raw per-episode flag, so the
 detector's "claim" fires on the FIRST, unconfirmed claim. Live, the hook therefore runs
-before Terminus 2's `return` at T2:1748 can happen, and the nudge goes out with the
-confirmation question. `confirmed` marks the episode that would have ended the run.
+before Terminus 2's `return` at T2:1748 can happen, and the nudge replaces the
+confirmation question (detector.after_trigger, amendment 2026-11-07). `confirmed` marks
+the episode that would have ended the run.
 
 Live use (harness Terminus 2 subclass): in an override of `_dump_trajectory` (called at
 T2:1743 once per executed episode, before the next LLM call), take the newest

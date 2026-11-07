@@ -22,12 +22,19 @@ lowest leaf index. pass@1 = arm A's leaf 0.
 Reruns: a task-rep is rerun in every arm, so its highest `attempt` wins for every
 arm of that task-rep; an arm with no rows at that attempt is absent (and listed).
 Units invalid in any arm of a (task, rep) are dropped from all arms (complete-case
-pairing); fork failures are NOT invalid, they score 0 (the primary analysis), and
-a sensitivity analysis drops every task-rep with a fork failure in any fork arm.
+pairing); fork failures and parent deaths (fail_code parent_died) are NOT invalid,
+they score 0 (the primary analysis), and a sensitivity analysis drops every task-rep
+with either in any fork arm.
 
 Tested family: H1 (B vs A, set a) gates H2 (B vs A, all), H3 (B vs C, set a) and
 H4 (B vs D, set a), with Holm over {H2, H3, H4}. H4 uses the reps where all of A-D
 are valid (D may run in every rep or only rep 0). Everything else is exploratory.
+
+Verdict (decision 2026-11-07): WIN rests on accuracy alone (H1 rejects and the
+estimate is at least +5 points). Cost is secondary: B's mean usd_arm on set a is
+reported against A's with a +-10% band, and only B > 1.10 x A turns WIN into
+WIN_MORE_EXPENSIVE. With --pilot there is no verdict and no Holm family (the pilot is
+a screen): the output has pilot_go, and a failed go rule carries the NO_GO title.
 
 Raw-token rescoring: per unit, the parent's timeline (fork arms) and every leaf's
 timeline are summed into the arm's cumulative raw tokens; t* = the first time that
@@ -47,6 +54,8 @@ SEED = 1106
 ALPHA = 0.05
 PILOT_ALPHA = 0.10
 WIN_POINTS = 0.05
+COST_BAND = 0.10  # B's mean spend may exceed A's by up to 10% before WIN becomes WIN_MORE_EXPENSIVE
+EPS = 1e-9  # float slack at the registered lines: a delta made of tenths can land at 0.0499999...
 RAW_TOKEN_CAP = 2_900_000  # 4 x Vals' 727.86k tokens per test, rounded down
 
 
@@ -236,12 +245,17 @@ def spend(units, arm, stratum=None, exclude=frozenset()):
     if not v:
         return {}
     solved = sum(s["pass"] for s in v)
+    arm_usd = [s["usd_arm"] for s in v if s["usd_arm"] is not None]
+    actual_usd = [s["usd_actual"] for s in v if s["usd_actual"] is not None]
     return {
         "units": len(v),
         "pass_rate": solved / len(v),
-        "usd_arm_mean": sum(s["usd_arm"] for s in v) / len(v),
-        "usd_actual_mean": sum(s["usd_actual"] for s in v) / len(v),
-        "usd_per_solve": (sum(s["usd_arm"] for s in v) / solved) if solved else None,
+        # units without a cost record (e.g. a parent that died before any call) are left out
+        # of the cost means and counted here; they still count in every pass rate
+        "units_without_cost": len(v) - len(arm_usd),
+        "usd_arm_mean": _mean(arm_usd),
+        "usd_actual_mean": _mean(actual_usd),
+        "usd_per_solve": (sum(arm_usd) / solved) if solved and arm_usd else None,
         "selected1_rate": sum(s["sel"] for s in v) / len(v),
         "pass_rate_raw_tokens": sum(s["pass_raw"] for s in v) / len(v),
         "share_crossing_cap": sum(s["crossed_cap"] for s in v) / len(v),
@@ -277,6 +291,18 @@ def paired_time(units, metric, stratum, rng):
         "ci90": boot_ci(diffs, rng),
         "p_one_sided_B_faster": signflip_p([-d for d in diffs], rng),
     }
+
+
+def trigger_mix(units):
+    """First-trigger counts over valid units: per lineage in A (each attempt has its own
+    trigger), per unit in the fork arms (the shared parent's trigger)."""
+    mix = defaultdict(lambda: defaultdict(int))
+    for (t, r, a), u in units.items():
+        if not unit_scores(u)["valid"]:
+            continue
+        for row in (u if a == "A" else u[:1]):
+            mix[a][row.get("trigger") or "none"] += 1
+    return {a: dict(sorted(c.items())) for a, c in sorted(mix.items())}
 
 
 def holm(pvals, alpha):
@@ -325,13 +351,18 @@ def accounting(units, rows=None):
         for r in rows:
             top[(r["task"], r["rep"])] = max(top.get((r["task"], r["rep"]), 0), _attempt(r))
         earlier = defaultdict(set)
+        earlier_ff = defaultdict(set)
         arms_at = defaultdict(set)
         for r in rows:
             k = (r["task"], r["rep"])
             arms_at[(k, _attempt(r))].add(r["arm"])
             if _attempt(r) < top[k] and not r.get("valid", True):
                 earlier[k].add(f"{r['arm']}@{_attempt(r)}:{r.get('fail_code')}")
-        out["reruns"] = {f"{t}/{r}": {"final_attempt": top[(t, r)], "earlier_invalid": sorted(earlier[(t, r)])}
+            if _attempt(r) < top[k] and r.get("fork_failed"):
+                earlier_ff[k].add(f"{r['arm']}@{_attempt(r)}:{r.get('fail_code')}")
+        out["reruns"] = {f"{t}/{r}": {"final_attempt": top[(t, r)], "earlier_invalid": sorted(earlier[(t, r)]),
+                                      # fork failures and parent deaths a rerun of the task-rep replaced
+                                      "earlier_fork_failures": sorted(earlier_ff[(t, r)])}
                          for (t, r) in sorted(top) if top[(t, r)] > 0}
         stale = []
         for (t, r), a_top in sorted(top.items()):
@@ -341,10 +372,14 @@ def accounting(units, rows=None):
     return out
 
 
-# Post titles, fixed in advance (PREREG section 5). NEGATIVE splits on whether H1 rejected:
-# a significant gain whose 90% CI stays under +5 points is "beat it, but by less than 5".
+# Post titles, fixed in advance (PREREG sections 1 and 5). NEGATIVE splits on whether H1
+# rejected: a significant gain whose 90% CI stays under +5 points is "beat it, but by less
+# than 5". NO_GO is the pilot's title when the go rule fails (there is then no full run).
 TITLES = {
     "WIN": "Forking a live computer beat best-of-4 restarts on Terminal-Bench (pre-registered)",
+    "WIN_MORE_EXPENSIVE": ("Forking a live computer beat best-of-4 restarts on Terminal-Bench, "
+                           "but cost more (pre-registered)"),
+    "NO_GO": "Forking a live computer did not show a benefit at pilot scale on Terminal-Bench (pre-registered)",
     "NEGATIVE": "Forking a live computer did not beat best-of-4 restarts on Terminal-Bench (pre-registered)",
     "NEGATIVE_SMALL": ("Forking a live computer beat best-of-4 restarts on Terminal-Bench, "
                        "but by less than 5 points (pre-registered)"),
@@ -353,6 +388,8 @@ TITLES = {
 
 
 def verdict_title(v, c, alpha):
+    if v == "no data":
+        return None
     if v == "NEGATIVE" and c["p_one_sided"] <= alpha:
         return TITLES["NEGATIVE_SMALL"]
     return TITLES.get(v, v)
@@ -367,14 +404,30 @@ def reps_of_tasks(units, tasks):
     return frozenset((t, r) for (t, r, a) in units if t in tasks)
 
 
+def cost_compare(sp_b, sp_a):
+    """B's mean spend against A's (usd_arm, list price, parent included), with the +-10% band."""
+    b, a = sp_b.get("usd_arm_mean"), sp_a.get("usd_arm_mean")
+    if b is None or a is None:
+        return {"usd_arm_mean_B": b, "usd_arm_mean_A": a, "ratio_B_to_A": None, "band": "unknown", "dearer": False}
+    dearer = b > (1 + COST_BAND) * a + EPS
+    cheaper = b < (1 - COST_BAND) * a - EPS
+    r = b / a if a else (math.inf if b else 1.0)
+    band = "B more than 10% dearer" if dearer else "B more than 10% cheaper" if cheaper else "within +-10%"
+    return {"usd_arm_mean_B": b, "usd_arm_mean_A": a, "ratio_B_to_A": r, "band": band, "dearer": dearer}
+
+
 def verdict(c, sp_b, sp_a, alpha):
+    """Accuracy decides; cost can only turn WIN into WIN_MORE_EXPENSIVE (B > 1.10 x A)."""
     if c["n_tasks"] == 0:
         return "no data"
-    if c["p_one_sided"] <= alpha and c["delta"] >= WIN_POINTS and sp_b.get("usd_arm_mean", 9e9) <= sp_a.get("usd_arm_mean", 0):
-        return "WIN"
-    if c["ci90"][1] < WIN_POINTS:
+    if c["p_one_sided"] <= alpha and c["delta"] >= WIN_POINTS - EPS:
+        return "WIN_MORE_EXPENSIVE" if cost_compare(sp_b, sp_a)["dearer"] else "WIN"
+    if c["ci90"][1] < WIN_POINTS - EPS:
         return "NEGATIVE"
     return "INCONCLUSIVE"
+
+
+PILOT_NO_VERDICT = "none (pilot: a screen, not a claim)"
 
 
 def analyse(units, rows=None, pilot=False):
@@ -384,10 +437,17 @@ def analyse(units, rows=None, pilot=False):
            "arms": {a: {s: spend(units, a, st) for s, st in STRATA} for a in arms}}
     h1 = compare(units, "A", "B", "pass", "a", rng_for("H1"))
     out["H1_B_vs_A_subset_a"] = h1
-    out["H1_verdict"] = verdict(h1, spend(units, "B", "a"), spend(units, "A", "a"), alpha)
-    out["H1_title"] = verdict_title(out["H1_verdict"], h1, alpha)
+    out["H1_cost_B_vs_A_subset_a"] = cost_compare(spend(units, "B", "a"), spend(units, "A", "a"))
     if pilot:
+        # a screen, not a claim: no verdict, no Holm family; a failed go rule is the NO_GO post
         out["pilot_go"] = bool(h1["n_tasks"]) and h1["delta"] > 0
+        # no set-a data at all (everything invalid) is an infrastructure problem, not a NO-GO
+        out["H1_verdict"] = PILOT_NO_VERDICT if h1["n_tasks"] else "no data"
+        out["H1_title"] = None if (out["pilot_go"] or not h1["n_tasks"]) else TITLES["NO_GO"]
+    else:
+        out["H1_verdict"] = verdict(h1, spend(units, "B", "a"), spend(units, "A", "a"), alpha)
+        out["H1_title"] = verdict_title(out["H1_verdict"], h1, alpha)
+    sens_verdict = (lambda c, sb, sa: PILOT_NO_VERDICT) if pilot else (lambda c, sb, sa: verdict(c, sb, sa, alpha))
     # gatekept secondaries (Holm over H2, H3, H4) only if H1 rejected
     fam = {
         "H2": compare(units, "A", "B", "pass", None, rng_for("H2")),
@@ -395,17 +455,20 @@ def analyse(units, rows=None, pilot=False):
         "H4": compare(units, "D", "B", "pass", "a", rng_for("H4")),
     }
     out["H2_B_vs_A_all"], out["H3_B_vs_C_subset_a"], out["H4_B_vs_D_subset_a"] = fam["H2"], fam["H3"], fam["H4"]
-    if h1["p_one_sided"] <= alpha:
+    if pilot:
+        out["holm_rejected"] = "not tested (pilot)"
+    elif h1["p_one_sided"] <= alpha:
         out["holm_rejected"] = holm({h: fam[h]["p_one_sided"] for h in HOLM_FAMILY}, alpha)
     else:
         out["holm_rejected"] = "not tested (H1 not rejected)"
-    # sensitivity: drop every task-rep with a fork failure in any fork arm (primary keeps them as 0)
+    # sensitivity: drop every task-rep with a fork failure or a parent death (fail_code
+    # parent_died) in any fork arm; the primary keeps them as 0
     ex = fork_failed_reps(units)
     s1 = compare(units, "A", "B", "pass", "a", rng_for("S-H1"), exclude=ex)
     out["sensitivity_fork_failures_excluded"] = {
         "task_reps_dropped": sorted(f"{t}/{r}" for t, r in ex),
         "H1_B_vs_A_subset_a": s1,
-        "H1_verdict_if_excluded": verdict(s1, spend(units, "B", "a", ex), spend(units, "A", "a", ex), alpha),
+        "H1_verdict_if_excluded": sens_verdict(s1, spend(units, "B", "a", ex), spend(units, "A", "a", ex)),
         "H3_B_vs_C_subset_a": compare(units, "C", "B", "pass", "a", rng_for("S-H3"), exclude=ex),
         "H4_B_vs_D_subset_a": compare(units, "D", "B", "pass", "a", rng_for("S-H4"), exclude=ex),
     }
@@ -418,7 +481,7 @@ def analyse(units, rows=None, pilot=False):
         "tasks_dropped": sorted(bad_tasks),
         "invalid_units_by_arm": out["accounting"]["invalid_units_by_arm"],
         "H1_B_vs_A_subset_a": s2,
-        "H1_verdict_if_excluded": verdict(s2, spend(units, "B", "a", ex2), spend(units, "A", "a", ex2), alpha),
+        "H1_verdict_if_excluded": sens_verdict(s2, spend(units, "B", "a", ex2), spend(units, "A", "a", ex2)),
         "H3_B_vs_C_subset_a": compare(units, "C", "B", "pass", "a", rng_for("I-H3"), exclude=ex2),
         "H4_B_vs_D_subset_a": compare(units, "D", "B", "pass", "a", rng_for("I-H4"), exclude=ex2),
     }
@@ -438,6 +501,7 @@ def analyse(units, rows=None, pilot=False):
         "A_leaf0": {s: rate("A", "p1", st) for s, st in STRATA},
         "A_mean_over_leaves": {s: rate("A", "leaf_mean", st) for s, st in STRATA},
     }
+    out["trigger_mix"] = trigger_mix(units)
     out["time_to_first_pass"] = {a: {s: time_to_pass(units, a, st) for s, st in STRATA} for a in arms}
     out["time_to_first_pass"]["B_minus_A_subset_a"] = {
         "seconds": paired_time(units, "rm_time", "a", rng_for("T-s")),

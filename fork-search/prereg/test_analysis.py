@@ -269,7 +269,8 @@ def check_reruns():
     u = an.select_attempts(rows)
     assert an.unit_scores(u[("t0", 0, "B")])["pass"] == 1 and {r["attempt"] for r in u[("t0", 0, "B")]} == {1}
     acc = an.accounting(u, rows)
-    assert acc["reruns"] == {"t0/0": {"final_attempt": 1, "earlier_invalid": ["A@0:SANDBOX_5XX"]}}, acc
+    assert acc["reruns"] == {"t0/0": {"final_attempt": 1, "earlier_invalid": ["A@0:SANDBOX_5XX"],
+                                      "earlier_fork_failures": []}}, acc
     # still invalid at attempt 2 -> dropped and listed
     plan2 = [P("t1", a, attempt=k) for k in range(3) for a in "AB"]
     outs2 = [o for k in range(3) for o in (ok("t1", "A", attempt=k), infra("t1", "B", "RUNNER_LOST", attempt=k))]
@@ -334,7 +335,14 @@ def check_verdict_and_pairing():
     c = lambda p, d, hi, n=10: {"n_tasks": n, "delta": d, "p_one_sided": p, "ci90": (d - 0.1, hi)}  # noqa: E731
     sp = lambda x: {"usd_arm_mean": x}  # noqa: E731
     assert an.verdict(c(0.01, 0.08, 0.15), sp(1.0), sp(1.2), 0.05) == "WIN"
-    assert an.verdict(c(0.01, 0.08, 0.15), sp(1.3), sp(1.2), 0.05) == "INCONCLUSIVE"  # B costs more
+    # accuracy decides; cost only turns WIN into WIN_MORE_EXPENSIVE past +10%
+    assert an.verdict(c(0.01, 0.08, 0.15), sp(1.31), sp(1.2), 0.05) == "WIN"  # B 9% dearer: in the band
+    assert an.verdict(c(0.01, 0.08, 0.15), sp(1.4), sp(1.2), 0.05) == "WIN_MORE_EXPENSIVE"
+    assert an.verdict(c(0.01, 0.08, 0.15), {}, {}, 0.05) == "WIN"  # no cost data: accuracy alone
+    assert an.verdict(c(0.20, 0.08, 0.15), sp(2.0), sp(1.0), 0.05) == "INCONCLUSIVE"  # cost never upgrades
+    assert an.cost_compare(sp(1.4), sp(1.2))["band"] == "B more than 10% dearer"
+    assert an.cost_compare(sp(1.0), sp(1.2))["band"] == "B more than 10% cheaper"
+    assert an.cost_compare(sp(1.25), sp(1.2))["band"] == "within +-10%"
     assert an.verdict(c(0.30, 0.00, 0.04), sp(1.0), sp(1.2), 0.05) == "NEGATIVE"
     assert an.verdict(c(0.20, 0.03, 0.12), sp(1.0), sp(1.2), 0.05) == "INCONCLUSIVE"
     assert an.verdict(c(1.0, float("nan"), float("nan"), 0), {}, {}, 0.05) == "no data"
@@ -383,6 +391,8 @@ def check_negative_titles():
     assert an.verdict_title("NEGATIVE", c(0.40, 0.0, 0.03), 0.05) == an.TITLES["NEGATIVE"]
     assert "did not beat" in an.TITLES["NEGATIVE"]
     assert an.verdict_title("WIN", c(0.01, 0.08, 0.15), 0.05) == an.TITLES["WIN"]
+    assert an.verdict_title("WIN_MORE_EXPENSIVE", c(0.01, 0.08, 0.15), 0.05) == an.TITLES["WIN_MORE_EXPENSIVE"]
+    assert "but cost more" in an.TITLES["WIN_MORE_EXPENSIVE"] and "pilot scale" in an.TITLES["NO_GO"]
     # end to end: 400 a-tasks, B wins 5 more units than A and nothing else differs
     spec = {(f"t{i}", 0): {"A": N, "B": Y if i < 5 else N, "C": N} for i in range(400)}
     units, rows = scenario(spec)
@@ -414,24 +424,95 @@ def check_invalid_fork_sensitivity():
     assert out0["sensitivity_invalid_fork_units_excluded"]["tasks_dropped"] == []
 
 
-def check_parent_died_rerun_once():
-    """A parent that dies before its fork: invalid, rerun once, then dropped and listed."""
-    plan = [P("t0", a) for a in "ABCD"]
-    outs = [ok("t0", "A")] + [infra("t0", a, lg.PARENT_DIED) for a in "BCD"]
+def check_parent_died_scores_zero():
+    """A parent that dies before its fork is a FAIL for every fork arm (decision 2026-11-07):
+    4 valid rows scoring 0 in B, C and D, never rerun or dropped, counted against B in the
+    primary H1 and dropped only in the fork-failure sensitivity."""
+    plan = [P("t0", a) for a in "ABCD"] + [P("t1", a) for a in "ABCD"]
+    outs = [ok("t0", "A", Y)] + [ff("t0", a, lg.PARENT_DIED) for a in "BCD"] + [ok("t1", a) for a in "ABCD"]
     rows = lg.build_rows(plan, outs)
-    assert all(not r["valid"] for r in rows if r["arm"] != "A")
-    assert len(lg.rerun_status(plan, rows)["rerun_owed"]) == 1
-    plan += [P("t0", a, attempt=1) for a in "ABCD"]
-    outs += [ok("t0", "A", attempt=1)] + [infra("t0", a, lg.PARENT_DIED, attempt=1) for a in "BCD"]
-    rows = lg.build_rows(plan, outs)
+    dead = [r for r in rows if r["task"] == "t0" and r["arm"] != "A"]
+    assert len(dead) == 12 and all(r["valid"] and r["passed"] == 0 and r["fork_failed"]
+                                   and r["fail_code"] == lg.PARENT_DIED for r in dead), dead[0]
     st = lg.rerun_status(plan, rows)
-    assert st["rerun_owed"] == [] and st["dropped"][0]["invalid"] == ["B:parent_died", "C:parent_died", "D:parent_died"], st
-    # other infra failures still get two reruns
-    plan2 = [P("t1", a, attempt=k) for k in range(2) for a in "AB"]
-    outs2 = [o for k in range(2) for o in (ok("t1", "A", attempt=k), infra("t1", "B", "SANDBOX_5XX", attempt=k))]
-    assert len(lg.rerun_status(plan2, lg.build_rows(plan2, outs2))["rerun_owed"]) == 1
-    raises(lambda: lg.build_rows([P("t2", "A")], [infra("t2", "A", lg.PARENT_DIED)]))  # A has no parent
-    raises(lambda: lg.build_rows([P("t2", "B")], [ff("t2", "B", lg.PARENT_DIED)]))     # not a fork failure
+    assert st["rerun_owed"] == [] and st["dropped"] == [], st
+    out = an.analyse(an.select_attempts(rows), rows)
+    h1 = out["H1_B_vs_A_subset_a"]
+    assert h1["n_tasks"] == 2 and abs(h1["delta"] - (-0.5)) < 1e-9, h1  # t0 counts: A passed, B scored 0
+    sens = out["sensitivity_fork_failures_excluded"]
+    assert sens["task_reps_dropped"] == ["t0/0"] and sens["H1_B_vs_A_subset_a"]["n_tasks"] == 1, sens
+    assert out["accounting"]["fork_failures_by_code"][lg.PARENT_DIED] == ["t0/0/B", "t0/0/C", "t0/0/D"]
+    raises(lambda: lg.build_rows([P("t2", "A")], [ff("t2", "A", lg.PARENT_DIED)]))    # A has no parent
+    raises(lambda: lg.build_rows([P("t2", "B")], [infra("t2", "B", lg.PARENT_DIED)]))  # not dropped as infra
+    # one parent feeds B, C and D: a parent death in only some of them is an error
+    raises(lambda: lg.build_rows([P("t3", a) for a in "BC"], [ff("t3", "B", lg.PARENT_DIED), ok("t3", "C")]))
+
+
+def check_pilot_has_no_verdict():
+    """--pilot: no verdict and no Holm family (a screen, not a claim); a failed go rule
+    carries the NO_GO title, a passed one no title."""
+    good = {(f"t{i}", 0): {"A": N, "B": Y, "C": N} for i in range(8)}
+    bad = {(f"t{i}", 0): {"A": Y, "B": N, "C": N} for i in range(8)}
+    for spec, go in ((good, True), (bad, False)):
+        units, rows = scenario(spec)
+        out = an.analyse(units, rows, pilot=True)
+        assert out["pilot_go"] is go, out["pilot_go"]
+        verdicts = ("WIN", "WIN_MORE_EXPENSIVE", "NEGATIVE", "INCONCLUSIVE")
+        assert out["H1_verdict"].startswith("none (pilot") and out["holm_rejected"] == "not tested (pilot)", out
+        assert out["H1_title"] == (None if go else an.TITLES["NO_GO"]), out["H1_title"]
+        for k in ("sensitivity_fork_failures_excluded", "sensitivity_invalid_fork_units_excluded"):
+            assert out[k]["H1_verdict_if_excluded"] not in verdicts
+    full = an.analyse(*scenario(good))
+    assert full["H1_verdict"] == "WIN" and full["H1_title"] == an.TITLES["WIN"], full["H1_verdict"]
+
+
+def check_registered_lines_and_edges():
+    """Float slack at +5 points and at 1.10 x A, zero or missing spend, an all-invalid pilot,
+    a go rule at exactly 0, and the trigger mix (review of 6df54eb)."""
+    c = lambda p, d, hi: {"n_tasks": 14, "delta": d, "p_one_sided": p, "ci90": (d - 0.05, hi)}  # noqa: E731
+    sp = lambda x: {"usd_arm_mean": x}  # noqa: E731
+    five = sum([0.1, 0.1, 0.1, 0.3, 0.1] + [0.0] * 9) / 14  # an exact +5 points (14 x 10) that lands below 0.05
+    assert five < an.WIN_POINTS
+    assert an.verdict(c(0.031, five, 0.2), sp(1.0), sp(1.0), 0.05) == "WIN"
+    assert an.verdict(c(0.3, 0.0, five), sp(1.0), sp(1.0), 0.05) == "INCONCLUSIVE"  # upper bound is +5, not below
+    assert not an.cost_compare(sp(18.513), sp(16.83))["dearer"]  # exactly 1.10 x A stays in the band
+    assert an.verdict(c(0.031, 0.08, 0.2), sp(18.513), sp(16.83), 0.05) == "WIN"
+    assert an.cost_compare(sp(0.5), sp(0.0))["dearer"] and not an.cost_compare(sp(0.0), sp(0.0))["dearer"]
+    assert an.cost_compare({}, sp(1.0))["band"] == "unknown"
+    # a valid unit without a cost record does not crash the analysis; it is counted
+    plan = [P("t0", a) for a in "ABC"]
+    outs = [ok("t0", "A")] + [dict(ff("t0", a, lg.PARENT_DIED), usd_arm=None, usd_actual=None,
+                                   parent_tokens_timeline=[]) for a in "BC"]
+    rows = lg.build_rows(plan, outs)  # a parent can die before its first call: no timeline
+    out = an.analyse(an.select_attempts(rows), rows)
+    assert out["arms"]["B"]["a"]["units_without_cost"] == 1 and out["arms"]["B"]["a"]["usd_arm_mean"] is None
+    assert out["H1_cost_B_vs_A_subset_a"]["band"] == "unknown"
+    assert out["trigger_mix"]["A"] == {"none": 4} and out["trigger_mix"]["B"] == {"hard": 1}, out["trigger_mix"]
+    # go rule at exactly 0 is a NO-GO; an all-invalid pilot is "no data", not a NO-GO
+    tie = {(f"t{i}", 0): {"A": Y, "B": Y, "C": N} for i in range(4)}
+    out = an.analyse(*scenario(tie), pilot=True)
+    assert out["pilot_go"] is False and out["H1_title"] == an.TITLES["NO_GO"]
+    plan = [P("t0", a) for a in "ABC"]
+    rows = lg.build_rows(plan, [infra("t0", a) for a in "ABC"])
+    out = an.analyse(an.select_attempts(rows), rows, pilot=True)
+    assert out["pilot_go"] is False and out["H1_verdict"] == "no data" and out["H1_title"] is None, out["H1_title"]
+
+
+def check_parent_died_guards():
+    """parent_died is a unit outcome in every fork arm: never a leaf code, never with a fork
+    arm's outcome missing (a rerun would replace it); a rerun for another reason is listed."""
+    plan = [P("t0", a) for a in "ABCD"]
+    raises(lambda: lg.build_rows(plan, [ok("t0", "A")] + [ff("t0", a, lg.PARENT_DIED) for a in "BC"]))  # D missing
+    leaf_pd = ok("t0", "A")
+    leaf_pd["leaves"][0] = dict(leaf_pd["leaves"][0], fail_code=lg.PARENT_DIED)
+    raises(lambda: lg.build_rows([P("t0", "A")], [leaf_pd]))
+    # an A infra failure reruns the task-rep in every arm; the replaced parent death is listed
+    plan = [P("t0", a, attempt=k) for k in range(2) for a in "ABCD"]
+    outs = ([infra("t0", "A")] + [ff("t0", a, lg.PARENT_DIED) for a in "BCD"]
+            + [ok("t0", a, attempt=1) for a in "ABCD"])
+    rows = lg.build_rows(plan, outs)
+    acc = an.analyse(an.select_attempts(rows), rows)["accounting"]
+    assert acc["reruns"]["t0/0"]["earlier_fork_failures"] == ["B@0:parent_died", "C@0:parent_died", "D@0:parent_died"], acc
 
 
 # ---------- tests ----------
@@ -446,7 +527,8 @@ def test(fn):
 for chk in (check_four_rows, check_fork_sensitivity, check_cap, check_parent_counts, check_pass1, check_ttp,
             check_holm_family, check_h4_gated, check_h4_d_reps, check_missing_listed, check_reruns,
             check_ledger_rejects, check_unit_validity, check_verdict_and_pairing, check_backcompat,
-            check_negative_titles, check_invalid_fork_sensitivity, check_parent_died_rerun_once):
+            check_negative_titles, check_invalid_fork_sensitivity, check_parent_died_scores_zero,
+            check_pilot_has_no_verdict, check_registered_lines_and_edges, check_parent_died_guards):
     test(chk)
 
 
@@ -477,8 +559,15 @@ def breakage_invalid_sensitivity_per_rep():
 
 
 @test
-def breakage_parent_died_two_reruns():
-    breaks(check_parent_died_rerun_once, [(lg, "MAX_RERUNS_BY_CODE", {})])
+def breakage_parent_died_dropped():
+    orig = lg._dead_rows
+    dropped = lambda p, o: orig(p, o, valid=False, fork_failed=False, fail_code=o["fail_code"], stop_reason="none")  # noqa: E731
+    breaks(check_parent_died_scores_zero, [(lg, "_fork_failed_rows", dropped)])
+
+
+@test
+def breakage_pilot_gets_a_verdict():
+    breaks(check_pilot_has_no_verdict, [(an, "PILOT_NO_VERDICT", "WIN")])
 
 
 @test
@@ -593,7 +682,7 @@ def end_to_end_effect_moves_outputs():
             print(f"    {e:>5}  {'rep0' if d_first else 'all ':>5}  " +
                   "  ".join(f"{v:.3g}" if isinstance(v, float) else str(v) for v in h.values()))
         assert hi["H1_delta"] > lo["H1_delta"] + 0.15 and hi["H1_p"] < lo["H1_p"]
-        assert hi["H1_p"] <= an.ALPHA and lo["verdict"] != "WIN"
+        assert hi["H1_p"] <= an.ALPHA and not lo["verdict"].startswith("WIN")
         assert hi["H4_delta"] > lo["H4_delta"] + 0.15 and hi["sens_H1_delta"] > lo["sens_H1_delta"] + 0.15
         assert hi["raw_H1_delta"] > lo["raw_H1_delta"] + 0.1
         assert hi["B_pass_a"] > lo["B_pass_a"] and hi["A_pass_a"] == lo["A_pass_a"]

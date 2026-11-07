@@ -15,6 +15,8 @@ OUTCOME row, one per unit the harness finished or gave up on:
   status      ok | fork_failed | infra_failed
   fail_code   harness error code; required unless status is ok. The harness picks
               it from the error, in code, before any verifier output is read.
+              A parent that dies before its fork is status fork_failed with
+              fail_code parent_died, in every fork arm of the unit.
   deadline_s, usd_arm, usd_actual, trigger (claim|hard|cutoff|none), episodes
   end_s       for fork_failed: when the fork was given up (optional)
   parent_tokens_timeline  [[s_from_arm_start, cumulative_raw_tokens], ...] of the
@@ -37,9 +39,11 @@ Rules (PREREG section 4):
     valid=True, fork_failed=True, stop_reason=fork_failed. It counts against the arm.
   - non-fork infra failure: 4 rows, valid=False. The task-rep is rerun in every arm,
     up to MAX_RERUNS times, then dropped from all arms and listed.
-  - a parent that dies before its fork (fail_code parent_died, fork arms only): an
-    infra failure that is rerun once, then the task-rep is dropped and listed
-    (amendment 2026-11-07).
+  - a parent that dies before its fork (fail_code parent_died, fork arms only): a
+    fork-arm failure, scored like a fork failure (4 rows, passed=0, valid=True,
+    fork_failed=True) in B, C and D alike, never rerun or dropped (decision
+    2026-11-07; it replaces "rerun once, then drop"). One parent feeds B, C and D,
+    so a parent_died in one fork arm of a unit must be in all of its fork arms.
   - planned unit with no outcome: 4 rows, valid=False, missing=True, fail_code=missing.
   - an ok outcome whose leaf records are not exactly leaves 0-3: 4 rows, valid=False,
     fail_code=incomplete_leaves (treated like an infra failure).
@@ -60,8 +64,8 @@ STOP_REASONS = ("confirmed", "budget", "deadline", "session_died", "fork_failed"
 TRIGGERS = ("claim", "hard", "cutoff", "none")
 MAX_RERUNS = 2
 PARENT_DIED = "parent_died"
-# fewer reruns for some codes (amendment 2026-11-07): a parent that dies before its fork
-MAX_RERUNS_BY_CODE = {PARENT_DIED: 1}
+# fewer reruns for some codes; none since parent_died became a fork-arm failure (2026-11-07)
+MAX_RERUNS_BY_CODE: dict[str, int] = {}
 MISSING = "missing"
 INCOMPLETE = "incomplete_leaves"
 VERIFIER_CRASH = "verifier_crash"
@@ -129,6 +133,8 @@ def _leaf_row(plan_row, outcome, rec):
             raise LedgerError(f"{k} leaf {rec['leaf']}: bad trigger {rec['trigger']!r}")
         r["trigger"] = rec["trigger"]
     tl = _timeline(rec.get("tokens_timeline"), f"{k} leaf {rec['leaf']}")
+    if rec.get("fail_code") == PARENT_DIED:
+        raise LedgerError(f"{k} leaf {rec['leaf']}: parent_died is a unit outcome (status fork_failed), not a leaf code")
     if rec.get("fork_failed"):
         if plan_row["arm"] not in FORK_ARMS:
             raise LedgerError(f"{k}: arm A cannot have a fork failure")
@@ -174,13 +180,14 @@ def unit_rows(plan_row, outcome):
         raise LedgerError(f"{k}: bad status {status!r}")
     if status != "ok" and not outcome.get("fail_code"):
         raise LedgerError(f"{k}: status {status} needs a fail_code")
-    if outcome.get("fail_code") == PARENT_DIED and (plan_row["arm"] not in FORK_ARMS or status != "infra_failed"):
-        raise LedgerError(f"{k}: parent_died is an infra failure of a fork arm")
+    if outcome.get("fail_code") == PARENT_DIED and (plan_row["arm"] not in FORK_ARMS or status != "fork_failed"):
+        raise LedgerError(f"{k}: parent_died is a fork-arm failure (status fork_failed, arms B, C, D)")
     if outcome.get("trigger", "none") not in TRIGGERS:
         raise LedgerError(f"{k}: bad trigger {outcome.get('trigger')!r}")
     if plan_row["arm"] == "A" and outcome.get("parent_tokens_timeline"):
         raise LedgerError(f"{k}: arm A has no parent")
-    if plan_row["arm"] in FORK_ARMS and status != "infra_failed" and not outcome.get("parent_tokens_timeline"):
+    if (plan_row["arm"] in FORK_ARMS and status != "infra_failed" and outcome.get("fail_code") != PARENT_DIED
+            and not outcome.get("parent_tokens_timeline")):  # a parent can die before its first call
         raise LedgerError(f"{k}: a fork arm needs its parent's token timeline (the rescoring counts it)")
     pd, od = plan_row.get("deadline_s"), outcome.get("deadline_s")
     if pd is not None and od is not None and float(pd) != float(od):
@@ -230,7 +237,24 @@ def build_rows(plan, outcomes):
     for p in plan:
         rows.extend(unit_rows(p, by_key.get(_key(p))))
     _check_parents(rows)
+    _check_parent_deaths(plan, by_key)
     return rows
+
+
+def _check_parent_deaths(plan, by_key):
+    """B, C and D share one parent: if it died before the fork in one fork arm of a unit,
+    every planned fork arm of that unit must record the same parent_died. A missing fork-arm
+    outcome there is an error, not a missing unit: as a missing unit it would trigger a
+    rerun of the task-rep that replaces the parent death."""
+    arms = defaultdict(dict)
+    for p in plan:
+        k = _key(p)
+        if p["arm"] in FORK_ARMS:
+            o = by_key.get(k)
+            arms[(k[0], k[1], k[3])][p["arm"]] = None if o is None else o.get("fail_code") == PARENT_DIED
+    bad = [k for k, v in arms.items() if any(v.values()) and not all(v.values())]
+    if bad:
+        raise LedgerError(f"parent_died missing from some fork arms of {bad} (one parent feeds B, C and D)")
 
 
 def _check_parents(rows):
