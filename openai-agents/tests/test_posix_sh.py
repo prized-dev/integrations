@@ -1,10 +1,11 @@
 """The background-process scripts under each shell a sandbox's `sh` may be.
 
-The session runs `PTY_START`, `PTY_POLL` and `PTY_KILL` with bash and
-`PTY_STDIN` with `sh`, but each is written to work under any of them, so a
-template whose `sh` is dash or busybox (or a later change to `sh -c`) cannot
-leave a process running that the session believes it killed. The commands the
-scripts start still run under bash, as they do in a sandbox.
+The session runs `PTY_POLL` and `PTY_KILL` with bash and `PTY_STDIN` with
+`sh`, and each works under any of them, so a template whose `sh` is dash or
+busybox (or a later change to `sh -c`) cannot leave a process running that the
+session believes it killed. `PTY_START` needs bash, as the session runs it:
+without a terminal, dash and busybox turn job control off, and a background
+job then starts with SIGINT ignored, so Ctrl-C could never reach its command.
 """
 
 from __future__ import annotations
@@ -54,13 +55,17 @@ def shell(request: pytest.FixtureRequest) -> list[str]:
 
 @pytest.fixture
 def pids() -> Iterator[list[int]]:
-    """Pids a test started; whatever is left of them is killed after it."""
+    """Pids a test started; whatever is left of them, their trees and groups, is killed after it."""
     started: list[int] = []
     yield started
     for pid in started:
-        if _alive(pid):
+        if not _alive(pid):
+            continue
+        for each in _tree(pid):
             with contextlib.suppress(ProcessLookupError, PermissionError):
-                os.kill(pid, signal.SIGKILL)
+                os.kill(each, signal.SIGKILL)
+        with contextlib.suppress(ProcessLookupError, PermissionError):
+            os.killpg(pid, signal.SIGKILL)
 
 
 def _sh(
@@ -83,6 +88,23 @@ def _alive(pid: int) -> bool:
     return not stat.rsplit(") ", 1)[1].startswith(("Z", "X"))
 
 
+def _parent(pid: int) -> int | None:
+    try:
+        return int(Path(f"/proc/{pid}/stat").read_text().rsplit(") ", 1)[1].split()[1])
+    except (FileNotFoundError, ProcessLookupError):
+        return None
+
+
+def _tree(pid: int) -> set[int]:
+    """The pid and every descendant it still has."""
+    found = {pid}
+    for children in Path(f"/proc/{pid}/task").glob("*/children"):
+        with contextlib.suppress(FileNotFoundError, ProcessLookupError):
+            for child in children.read_text().split():
+                found |= _tree(int(child))
+    return found
+
+
 def _until(check: Callable[[], bool], seconds: float = 10) -> bool:
     end = time.monotonic() + seconds
     while time.monotonic() < end:
@@ -99,8 +121,8 @@ def _pid_in(path: Path, pids: list[int]) -> int:
     return pid
 
 
-def _start(shell: list[str], process: Path, command: str, pids: list[int], *, tty: bool) -> int:
-    started = _sh(shell, PTY_START, str(process), command, str(int(tty)))
+def _start(process: Path, command: str, pids: list[int], *, tty: bool) -> int:
+    started = _sh(SHELLS["bash"], PTY_START, str(process), command, str(int(tty)))
     assert started.returncode == 0, started.stderr
     return _pid_in(process / "pid", pids)
 
@@ -122,25 +144,38 @@ def test_a_command_runs_and_its_exit_is_read(
     shell: list[str], tmp_path: Path, pids: list[int]
 ) -> None:
     process = tmp_path / "pty" / "1"
-    _start(shell, process, "echo out; echo err >&2; exit 3", pids, tty=False)
+    _start(process, "echo out; echo err >&2; exit 3", pids, tty=False)
     assert _poll(shell, process) == ("1", "3", b"out\nerr\n")
+
+
+def test_a_poll_of_a_running_process_waits_as_long_as_it_is_told(
+    shell: list[str], tmp_path: Path, pids: list[int]
+) -> None:
+    process = tmp_path / "pty" / "1"
+    _start(process, "sleep 100", pids, tty=False)
+    started = time.monotonic()
+    assert _poll(shell, process, wait_ms=500) == ("0", "-", b"")
+    assert 0.45 <= time.monotonic() - started < 3
+    _kill(shell, process)
 
 
 def test_input_reaches_a_tty(shell: list[str], tmp_path: Path, pids: list[int]) -> None:
     process = tmp_path / "pty" / "1"
     loop = "printf 'ready\\n'; while IFS= read -r line; do printf 'got:%s\\n' \"$line\"; done"
-    leader = _start(shell, process, loop, pids, tty=True)
-    assert _until(lambda: b"ready" in (process / "out").read_bytes())
-    typed = subprocess.run(
-        [*shell, "-c", PTY_STDIN, "sh", str(process)],
-        capture_output=True,
-        timeout=30,
-        check=False,
-        env={**os.environ, PTY_STDIN_ENV: "hi\n"},
-    )
-    assert typed.returncode == 0, typed.stderr
-    assert _until(lambda: b"got:hi" in (process / "out").read_bytes())
-    _kill(shell, process)
+    leader = _start(process, loop, pids, tty=True)
+    try:
+        assert _until(lambda: b"ready" in (process / "out").read_bytes())
+        typed = subprocess.run(
+            [*shell, "-c", PTY_STDIN, "sh", str(process)],
+            capture_output=True,
+            timeout=30,
+            check=False,
+            env={**os.environ, PTY_STDIN_ENV: "hi\n"},
+        )
+        assert typed.returncode == 0, typed.stderr
+        assert _until(lambda: b"got:hi" in (process / "out").read_bytes())
+    finally:
+        _kill(shell, process)
     assert _until(lambda: not _alive(leader))
     assert not process.exists()
 
@@ -152,7 +187,7 @@ def test_kill_ends_the_group_after_its_leader_exits(
     # group kill reaches what it left behind.
     process = tmp_path / "pty" / "1"
     child = tmp_path / "child"
-    _start(shell, process, f"sleep 100 & echo $! > {shlex.quote(str(child))}", pids, tty=False)
+    _start(process, f"sleep 100 & echo $! > {shlex.quote(str(child))}", pids, tty=False)
     left = _pid_in(child, pids)
     assert _until((process / "exit").exists)
     assert _alive(left)
@@ -169,8 +204,10 @@ def test_kill_ends_a_process_that_left_the_tree(
     process = tmp_path / "pty" / "1"
     orphan = tmp_path / "orphan"
     command = f"(sleep 100 & echo $! > {shlex.quote(str(orphan))}); sleep 100"
-    leader = _start(shell, process, command, pids, tty=False)
+    leader = _start(process, command, pids, tty=False)
     left = _pid_in(orphan, pids)
+    # The subshell writes the pid before it exits: wait until it has.
+    assert _until(lambda: _parent(left) not in _tree(leader))
     _kill(shell, process)
     assert _until(lambda: not _alive(leader))
     assert _until(lambda: not _alive(left))
@@ -182,14 +219,19 @@ def test_a_kill_before_the_start_keeps_it_from_running(shell: list[str], tmp_pat
     _kill(shell, process)
     assert (process / "cancelled").exists()
     started = _sh(
-        shell, PTY_START, str(process), f"touch {shlex.quote(str(tmp_path / 'ran'))}", "0"
+        SHELLS["bash"], PTY_START, str(process), f"touch {shlex.quote(str(tmp_path / 'ran'))}", "0"
     )
     assert started.returncode != 0
     time.sleep(0.3)
     assert not (tmp_path / "ran").exists()
 
 
-def test_no_script_puts_dashes_before_a_process_group() -> None:
+def test_every_group_kill_takes_the_posix_form() -> None:
+    # `kill -s SIG -- -PGID`: dash cannot read `kill -SIG -- -PGID`, and posh
+    # and procps' kill do not signal the group for `kill -SIG -PGID`.
     scripts = {name: value for name, value in vars(_scripts).items() if isinstance(value, str)}
     for name, script in scripts.items():
-        assert not re.search(r"\bkill\s+-[A-Za-z0-9]+\s+--\s", script), name
+        for line in re.findall(r"\bkill\b[^\n;|&]*", script):
+            if re.search(r"\s\"?-\$", line):
+                assert re.match(r"kill -s [A-Z]+ -- \"-\$", line), (name, line)
+            assert not re.match(r"kill -[A-Za-z0-9]+ --", line), (name, line)

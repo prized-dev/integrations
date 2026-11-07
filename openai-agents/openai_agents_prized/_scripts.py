@@ -1,7 +1,8 @@
 """The bash scripts the session runs in the sandbox.
 
 Each one takes its inputs as positional arguments (never interpolated into
-the script) and runs as `bash -c SCRIPT bash ARG...`. The file scripts judge
+the script) and runs as `bash -c SCRIPT bash ARG...`, but for `PTY_STDIN`,
+which runs under `sh`. The file scripts judge
 paths with the SDK's own resolver (`RESOLVE_WORKSPACE_PATH_HELPER`, its
 arguments `ROOT PATH MODE [GRANT READ_ONLY]...`), on what the shell actually
 holds open, so a link swapped in after the SDK's own check cannot redirect a
@@ -214,7 +215,8 @@ mkdir -- "$dir"
 mkfifo -- "$dir/in"
 : > "$dir/out"
 # Job control: a background job of a shell without it starts with SIGINT
-# ignored, and then Ctrl-C through the TTY could never stop it.
+# ignored, and then Ctrl-C through the TTY could never stop it. Bash keeps it
+# with no terminal; dash and busybox turn it off, so this script needs bash.
 set -m
 setsid bash -c '
   dir=$1; cmd=$2; tty=$3
@@ -260,10 +262,10 @@ tail -c +"$(( off + 1 ))" -- "$dir/out" | head -c "$n" | base64 -w0
 # the directory first, and the process checks for the mark after writing its
 # pid, so one of the two always sees the other: a process whose pid is not
 # written yet runs nothing, and its marked directory stays as the claim that
-# keeps a late start from running. The group is named as `-PGID` straight
-# after the signal, with no `--`: dash reads `kill -KILL -- -PGID` as a bad
-# number and kills nothing, and busybox refuses the `--` (tests/test_posix_sh.py
-# runs these scripts under each).
+# keeps a late start from running. The group kill takes POSIX's form,
+# `kill -s KILL -- -PGID`: dash reads `kill -KILL -- -PGID` as a bad number
+# and kills nothing, and busybox complains about the `--` but still signals
+# (tests/test_posix_sh.py runs these scripts under each).
 PTY_KILL = r"""
 tree() {
   local child
@@ -278,7 +280,7 @@ for dir in "$@"; do
     # Its tree only while it runs: once its exit file is there, its pid may
     # be another process's. Its group cannot be, while a member is left.
     if [ ! -e "$dir/exit" ]; then kill -KILL $(tree "$leader") 2>/dev/null; fi
-    kill -KILL "-$leader" 2>/dev/null
+    kill -s KILL -- "-$leader" 2>/dev/null
     rm -rf -- "$dir"
   fi
 done

@@ -89,7 +89,7 @@ The saved session state holds the sandbox's id, the options above, and the SDK's
 
 ## Moving from Runloop
 
-`openai-agents` removed `RunloopSandboxClient`. Swap the client and options; the agent stays the same:
+`RunloopSandboxClient` is gone from `openai-agents`' main branch and docs (0.24.0 still ships it). Swap the client and options; the agent stays the same:
 
 | Runloop | Prized |
 | --- | --- |
@@ -106,7 +106,7 @@ Runloop session state cannot be resumed on Prized; start new runs.
 - **Isolation.** Each session gets its own sandbox, a Firecracker microVM. Nothing runs on your machine, and nothing falls back to it.
 - **No root.** Commands run as `prized` without sudo, so manifest users other than `prized`, manifest groups, and mounts are refused before a sandbox is created. The other manifest entries work: files, directories, local files and directories, and git repos. An entry whose `group` is anything but `prized` fails when the session starts, since that `chgrp` needs root.
 - **No inbound network.** Sandboxes reach the internet, but nothing reaches them: there is no `exposed_ports` option, and `resolve_exposed_port()` raises `ExposedPortUnavailableError`.
-- **Commands.** A command that outlives `exec_command`'s yield keeps running, and `write_stdin` polls it or types into it (with `tty=True`, Ctrl-C included). It runs until it exits or the session ends, unless the tool call passes a `timeout`. A command run with `exec` takes up to an hour (`PrizedSandboxTimeouts.exec_timeout_unbounded_s`) and keeps the first 4 MiB of its output and of its errors.
+- **Commands.** A command that outlives `exec_command`'s yield keeps running, and `write_stdin` polls it or types into it (with `tty=True`, Ctrl-C included). It runs until it exits or the session ends, and the session's end comes before a pause too. A command run with `exec` takes up to an hour (`PrizedSandboxTimeouts.exec_timeout_unbounded_s`) and keeps the first 4 MiB of its output and of its errors.
 - **Snapshots.** Symlinks are kept as links, so a virtualenv in the workspace comes back working in a replacement sandbox; hard-linked files come back as separate copies.
 - **Run time.** 24 hours of running by default, up to 7 days with `max_runtime_min`; on the free tier 60 minutes, 2 vCPU and 4 GB.
 - **Keys.** Code in the sandbox, the model's included, can read `env_vars`. Keep your Prized key out of them.
