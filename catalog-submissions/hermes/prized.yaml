@@ -1,6 +1,6 @@
 name: prized
 repo: https://github.com/prized-dev/integrations
-sha: 6abf570a047be10c5e7a8e1cdbd868fa226550d9
+sha: 9d0160e46a90b3e9a10d1fd8c102f5575d25c9d5
 subdir: hermes
 version: "0.1.0"
 title: Prized Sandboxes

@@ -4,8 +4,8 @@ Rebuilt 11-06 because tasks/hermes-catalog-1103 (card payload, make_card.py) was
 
 ## What the PR adds
 - One file: `plugin-catalog/prized.yaml` (copy of `prized.yaml` beside this file). Name `prized` is free in the catalog (checked 11-06).
-- Pin: `prized-dev/integrations@6abf570a047be10c5e7a8e1cdbd868fa226550d9`, `subdir: hermes`, version 0.1.0.
-  That is integrations PR #13's head. RE-PIN to #13's squash-merge commit on main before filing (a PR-branch commit can disappear after the branch is deleted).
+- Pin: `prized-dev/integrations@9d0160e46a90b3e9a10d1fd8c102f5575d25c9d5` (main, the squash merge of #13 on 11-06; its hermes/ tree 8eb64df is identical to 6abf570, the reviewed head), `subdir: hermes`, version 0.1.0.
+  Re-pinned 11-07 from #13's head to its squash merge on main, so the pin survives the PR branch being deleted.
 - Submitter must be the repo owner or a major contributor (rule 5): HudsonGri has admin on prized-dev/integrations (checked 11-06). Not a public org member, so say in the PR that Prized makes and maintains it.
 
 ## Hermes surfaces used (from the code at 6abf570)
