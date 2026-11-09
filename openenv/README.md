@@ -102,7 +102,7 @@ Measured on 11-09 in Oregon with 2 vCPU/4 GB environments, env time only (no mod
 
 A copy also keeps the parent's episode clock: MiniWoB ends an episode 1,000 s after `reset()`, counting time before the fork.
 
-`coding_env`'s `random` module is the server's too, and the server's WebSocket keepalive draws from it: uvicorn sends a ping every 20 s on each open connection, with a payload from `random.getrandbits(32)`. After `random.seed(5)` and 45 s idle on an open socket, the next draw was always `Random(5)`'s third value, not its first (3 of 3 runs); with the socket closed it was the first (2 of 2). So a seeded sequence there shifts with wall-clock time, in replays and in fork copies alike.
+`coding_env`'s `random` module is the server's too, and the server's WebSocket keepalive draws from it: uvicorn sends a ping every 20 s on each open connection, with a payload from `random.getrandbits(32)`. After `random.seed(5)` and 45 s idle on an open socket, the next draw was always `Random(5)`'s second value, not its first (3 of 3 runs); with the socket closed it was the first (2 of 2). So a seeded sequence there shifts with wall-clock time, in replays and in fork copies alike.
 
 ### Rate limits
 
