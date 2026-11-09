@@ -166,6 +166,7 @@ class PrizedDocker(DinDComposeOps):
     _COMPOSE_DIR = f"{_BASE}/compose"
     _ENVIRONMENT_DIR = f"{_BASE}/environment"
     _MOUNTS_DIR = f"{_BASE}/mounts"
+    _ENV_FILE = f"{_BASE}/compose/project.env"
     _STAGING_DIR = f"{_BASE}/staging"
     _MOUNTS_COMPOSE_NAME = "docker-compose-mounts.json"
     # Downloads never read bind-mount folders on the sandbox directly: files a
@@ -377,6 +378,10 @@ class PrizedDocker(DinDComposeOps):
             self._project_name,
             "--project-directory",
             self._ENVIRONMENT_DIR,
+            # A copy of the task's .env made at prepare(): a container that
+            # binds the task's folder can't change what Compose reads later.
+            "--env-file",
+            self._ENV_FILE,
         ]
         for path in self._compose_files(network_override):
             parts += ["-f", path]
@@ -401,7 +406,7 @@ class PrizedDocker(DinDComposeOps):
             write(local)
             await self._stage_file_to_host(local, f"{self._COMPOSE_DIR}/{name}")
 
-    def restricted_network_override(self, resolved: dict) -> dict:
+    def restricted_network_override(self, resolved: dict, raw: bool = False) -> dict:
         """For a trial with a restricted phase, from the project as Compose
         resolves it (``docker compose config``: includes, extends and
         variables applied): every network the project uses becomes internal
@@ -419,7 +424,9 @@ class PrizedDocker(DinDComposeOps):
                     f"{what}: the task uses the external network {net!r}, "
                     "which Prized can't close."
                 )
-            if str(spec.get("driver") or "bridge") != "bridge":
+            if str(spec.get("driver") or "bridge") != "bridge" and not (
+                raw and "$" in str(spec.get("driver"))
+            ):
                 raise ValueError(
                     f"{what}: the task's network {net!r} uses the "
                     f"{spec.get('driver')!r} driver, which Prized can't close."
@@ -450,6 +457,7 @@ class PrizedDocker(DinDComposeOps):
             outside = [
                 src
                 for src in _bind_sources(spec.get("volumes"))
+                if not (raw and "$" in src)
                 if not self._own_path(src)
             ]
             if outside or spec.get("devices") or spec.get("device_cgroup_rules"):
@@ -462,15 +470,16 @@ class PrizedDocker(DinDComposeOps):
             spec = spec if isinstance(spec, dict) else {}
             if spec.get("external"):
                 continue  # Compose made none; a missing one fails the start
-            if str(spec.get("driver") or "local") != "local":
+            if str(spec.get("driver") or "local") != "local" and not (
+                raw and "$" in str(spec.get("driver"))
+            ):
                 raise ValueError(
                     f"{what}: the task's volume {name!r} uses the "
                     f"{spec.get('driver')!r} driver, which Prized can't check."
                 )
+            # tmpfs (device: tmpfs) and the like mount nothing from the sandbox.
             device = str((spec.get("driver_opts") or {}).get("device") or "")
-            if device and not (
-                device.startswith("/") and self._own_path(self._absolute(device))
-            ):
+            if device.startswith("/") and not self._own_path(self._absolute(device)):
                 raise ValueError(
                     f"{what}: the task's volume {name!r} mounts {device} from "
                     "the sandbox, so it could change what enforces the network."
@@ -511,16 +520,22 @@ class PrizedDocker(DinDComposeOps):
         the Docker socket is the socket."""
         if not paths:
             return
+        # The two folders are resolved too, in case the home itself is a link.
+        roots = [self._ENVIRONMENT_DIR, self._MOUNTS_DIR]
         result = await self._sh(
-            shlex.join(["readlink", "-m", "--", *paths]), timeout_sec=60
+            shlex.join(["readlink", "-m", "--", *roots, *paths]), timeout_sec=60
         )
         real = (result.stdout or "").splitlines()
-        if result.return_code != 0 or len(real) != len(paths):
+        if result.return_code != 0 or len(real) != len(roots) + len(paths):
             raise RuntimeError(
                 f"Could not resolve the task's mounts: {result.stderr or result.stdout}"
             )
+        real_roots, real = real[: len(roots)], real[len(roots) :]
         for path, target in zip(paths, real, strict=True):
-            if _docker_socket(target) or not self._own_path(target):
+            inside = any(
+                target == root or target.startswith(root + "/") for root in real_roots
+            )
+            if _docker_socket(target) or not inside:
                 raise ValueError(
                     "This task's network policy (no-network): it mounts "
                     f"{path}, which is {target} on the sandbox, so it could "
@@ -604,7 +619,7 @@ class PrizedDocker(DinDComposeOps):
             opts = spec.get("driver_opts")
             if isinstance(opts, dict) and str(opts.get("device") or "").startswith("$"):
                 spec["driver_opts"] = {k: v for k, v in opts.items() if k != "device"}
-        self.restricted_network_override({"services": services, **top})
+        self.restricted_network_override({"services": services, **top}, raw=True)
 
     async def _resolved_project(self) -> dict:
         """The project as Compose resolves it, without the network override."""
@@ -990,6 +1005,13 @@ class PrizedDocker(DinDComposeOps):
                 f"mkdir -p {self._ENVIRONMENT_DIR}",
                 "Failed to create the project folder",
             )
+        q = shlex.quote
+        await self._sh_checked(
+            f"if [ -f {q(self._ENVIRONMENT_DIR + '/.env')} ]; then "
+            f"cp {q(self._ENVIRONMENT_DIR + '/.env')} {q(self._ENV_FILE)}; "
+            f"else : > {q(self._ENV_FILE)}; fi",
+            "Failed to copy the task's .env",
+        )
         for source, target in zip(
             env.extra_docker_compose_paths, self._extra_compose_paths(), strict=True
         ):

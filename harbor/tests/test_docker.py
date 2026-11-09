@@ -919,6 +919,70 @@ async def test_a_symlink_out_of_the_task_folder_is_refused(tmp_path, prized):
     assert prized.sandboxes[0].deleted
 
 
+async def test_a_home_that_is_a_link_is_not_a_reason_to_refuse(tmp_path, prized):
+    compose = "services:\n  main:\n    volumes: ['./data:/data']\n"
+    environment = _environment(
+        tmp_path,
+        files={**DOCKERFILE, "docker-compose.yaml": compose},
+        network_policy=NO_NETWORK,
+        ek={},
+    )
+    original = FakeDocker.__init__
+
+    def init(self, *args):
+        original(self, *args)
+        self.symlinks = {HOME: "/data/home/prized"}
+
+    FakeDocker.__init__ = init
+    try:
+        await environment.start(force_build=False)
+    finally:
+        FakeDocker.__init__ = original
+    assert not prized.sandboxes[0].docker.can_reach_internet("main")
+
+
+async def test_variables_and_tmpfs_volumes_are_left_to_compose(tmp_path, prized):
+    # A long-form bind from a variable resolves under Harbor's mounts, and a
+    # tmpfs named volume mounts nothing from the sandbox: neither is refused.
+    compose = (
+        "services:\n  main:\n    volumes:\n"
+        "      - {type: bind, source: '${HOST_VERIFIER_LOGS_PATH}', target: /v}\n"
+        "      - pg:/pg\n"
+        "volumes:\n  pg:\n    driver: local\n"
+        "    driver_opts: {type: tmpfs, device: tmpfs, o: size=256m}\n"
+    )
+    environment = _environment(
+        tmp_path,
+        files={**DOCKERFILE, "docker-compose.yaml": compose},
+        network_policy=NO_NETWORK,
+        ek={},
+    )
+    original = FakeDocker._long_volume
+
+    def long(volume):
+        v = original(volume)
+        if "HOST_VERIFIER_LOGS_PATH" in str(v.get("source")):
+            v = {**v, "source": f"{HOME}/harbor/mounts/logs/verifier"}
+        return v
+
+    FakeDocker._long_volume = staticmethod(long)
+    try:
+        await environment.start(force_build=False)
+    finally:
+        FakeDocker._long_volume = staticmethod(original)
+    assert not prized.sandboxes[0].docker.can_reach_internet("main")
+
+
+async def test_compose_reads_a_copy_of_the_tasks_env_file(tmp_path, prized):
+    environment = _environment(tmp_path, files={**DOCKERFILE, ".env": "TAG=1\n"}, ek={})
+    await environment.start(force_build=False)
+    sandbox = prized.sandboxes[0]
+    env_file = f"{HOME}/harbor/compose/project.env"
+    assert any(f"cp {PROJECT}/.env {env_file}" in e["cmd"] for e in sandbox.execs)
+    for argv in sandbox.compose_calls():
+        assert argv[argv.index("--env-file") + 1] == env_file
+
+
 async def test_compose_runs_against_the_sandboxs_own_daemon(tmp_path, prized):
     environment = _environment(tmp_path, files=DOCKERFILE, ek={})
     await environment.start(force_build=False)
