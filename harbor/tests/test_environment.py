@@ -922,3 +922,11 @@ def test_preflight_points_agents_at_sign_up(monkeypatch):
     monkeypatch.delenv("PRIZED_API_KEY", raising=False)
     with pytest.raises(SystemExit, match="auth.md"):
         PrizedEnvironment.preflight()
+
+
+def test_preflight_takes_harbors_kwargs(monkeypatch):
+    # Harbor after 0.25 calls preflight(kwargs=...); 0.24 and 0.25 call preflight().
+    monkeypatch.setenv("PRIZED_API_KEY", "key")
+    PrizedEnvironment.preflight()
+    PrizedEnvironment.preflight(kwargs={})
+    PrizedEnvironment.preflight(kwargs={"template": "prized-base-v1"})
