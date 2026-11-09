@@ -29,7 +29,7 @@ The same code built into Harbor main as `-e prized`, with the idle pause and hea
 
 ## Dockerfile and Compose tasks: use a Prized box
 
-This environment runs a task's prebuilt image without Docker, so it refuses tasks that build a Dockerfile, use Docker Compose or give a step no network (see [Limits](#limits)). Run those with Harbor's own `-e docker` on a [Prized box](https://prized.dev/docs?via=harbor) (a cloud VM with Docker), the way we ran Terminal-Bench 4.0 ([results](#terminal-bench-40)):
+This environment runs a task's prebuilt image without Docker, so it refuses tasks that build a Dockerfile or use Docker Compose, and, until Prized can switch a sandbox's network, ones that give a step no network (see [Limits](#limits)). Run those with Harbor's own `-e docker` on a [Prized box](https://prized.dev/docs?via=harbor) (a cloud VM with Docker), the way we ran Terminal-Bench 4.0 ([results](#terminal-bench-40)):
 
 ```bash
 prized box new tb --size max --storage standard --ttl 6h --wait   # Large: 16 vCPU, 64 GB
@@ -60,7 +60,7 @@ Every task on the Hub ships prebuilt, digest-pinned images for its environment a
 - Prebuilt `docker_image` tasks only, pulled without credentials. Dockerfile builds and Docker Compose tasks are refused before a sandbox starts; a verifier built from `tests/Dockerfile` is refused when the verifier starts, after the agent has run (use the box route above). The image's `ENTRYPOINT` and `CMD` don't run.
 - One id underneath: a non-root user runs as its own uid and gid, but owns every file root owns, has no supplementary groups, can't `sudo`, and doesn't see other users' processes (root sees everyone's). Programs that check a real user switch (an `sshd` login, Postfix) fail.
 - Images are pulled anonymously. Docker Hub limits anonymous pulls (100 an hour per IP address, as measured from a sandbox), so in a large run some starts can fail with `TOOMANYREQUESTS`; run those trials again later.
-- No network policies (`no-network`, `allow_internet = false`, allowlists) or GPUs: Harbor refuses those tasks before a sandbox starts, and a verifier with no network of its own when it starts. Storage is at most 128 GB.
+- Network policies: `no-network` (and `allow_internet = false`) and an allowlist with no hosts turn the sandbox's network off, enforced on the microVM by Prized, and Harbor may switch it between a trial's phases (setup with the network, the agent or the verifier without). The sandbox pulls the image with the network and switches before the task's first command. Where Prized can't switch a sandbox's network yet, the trial is refused with that reason (later trials of the run are refused before a sandbox is made, for 10 minutes). An allowlist that names hosts is refused, and so is a task that needs a GPU. Storage is at most 128 GB.
 - Concurrency: each Terminal-Bench trial takes 1 vCPU, 2 GB of memory and 30 GB of disk, so the workspace's sandbox and disk quotas set how many run at once. Lower `image_headroom_gb` to fit more, or ask team@prized.dev to raise the quota for large runs. On the free tier pass `--ek max_runtime_min=60` (its limit) and `-n 1`: its 100 GB of disk fits three trial sandboxes, and a trial whose verifier runs in its own environment holds two while it verifies.
 
 License: Apache-2.0.

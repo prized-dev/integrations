@@ -24,8 +24,15 @@ Limits, by design of that approach:
   switch (an sshd login, Postfix) fail. ``user:group`` with a group other than
   0 is not supported for root.
 - The chroot and namespaces are not a security boundary inside the sandbox
-  (the microVM is): no network policies, so ``no-network`` and allowlist
-  tasks are refused. No Docker Compose or GPUs.
+  (the microVM is). Network policies are enforced on the microVM, by Prized:
+  ``no-network`` and an ``allowlist`` with no hosts turn the sandbox's network
+  off, ``public`` turns it on, and Harbor may switch between them while the
+  trial runs (``dynamic_network_policy``: setup with the network, the agent
+  or the verifier without). The sandbox starts with the network, to pull the
+  image, and is switched before the task's first command. Where Prized cannot
+  switch a sandbox's network yet, its API says so (409
+  ``network_none_unavailable``) and such tasks are refused, as before. An
+  allowlist that names hosts is refused. No Docker Compose or GPUs.
 - A command has no time limit of its own: the ``prized`` SDK runs long ones
   detached and polls them, so they outlive a dropped connection. A trial's
   sandbox is deleted after ``max_runtime_min`` of running (default 1440, up
@@ -55,6 +62,7 @@ import math
 import os
 import re
 import shlex
+import time
 import uuid
 from collections.abc import Awaitable
 from pathlib import Path
@@ -71,7 +79,7 @@ from harbor.environments.tar_transfer import (
     remote_pack_command,
     remote_unpack_command,
 )
-from harbor.models.task.config import EnvironmentConfig
+from harbor.models.task.config import EnvironmentConfig, NetworkMode, NetworkPolicy
 from harbor.models.trial.paths import TrialPaths
 from prized import AsyncSandbox, CommandTimeoutError, PrizedError
 
@@ -128,6 +136,70 @@ _RUNTIME_FAILED = 125
 
 # Uploaded to _RUNTIME and run with the sandbox's python3.
 _RUNTIME_SCRIPT = (Path(__file__).parent / "_runtime.py").read_text()
+
+# A sandbox's network, changed while it runs: PUT /api/v1/sandboxes/{id}/network.
+# The API's 409 network_none_unavailable (or, while the feature is off, 404 on
+# the route) means it can't be done here: such tasks are refused.
+_NETWORK_UNAVAILABLE_CODES = ("network_none_unavailable",)
+_NETWORK_REFUSED = (
+    "Prized can't turn a sandbox's network off here yet, so this task, whose "
+    "no-network or allowlist phases need it, is refused (Prized enforces a "
+    "task's network policy or refuses the task). Run tasks whose network is "
+    "public, or use Harbor's -e docker on a Prized box"
+)
+# After a refusal, later trials of this process are refused before a sandbox
+# is made, for this long; then the next one asks again.
+_NETWORK_REFUSAL_TTL_SEC = 600.0
+# How long one switch may take, end to end, before the trial fails.
+_NETWORK_SWITCH_SEC = 120.0
+# Between asks after a refusal the API says is passing (another change, or
+# one that failed and kept the old network).
+_NETWORK_RETRY_SEC = 1.0
+_network_refused_at: float | None = None
+
+
+def _network_refused_recently() -> bool:
+    return (
+        _network_refused_at is not None
+        and time.monotonic() - _network_refused_at < _NETWORK_REFUSAL_TTL_SEC
+    )
+
+
+def _note_network_refused() -> None:
+    global _network_refused_at
+    _network_refused_at = time.monotonic()
+
+
+def api_network(policy: NetworkPolicy) -> str:
+    """The Prized network for a Harbor network policy: "default" for public,
+    "none" for no-network and for an allowlist with no hosts (nothing is
+    reachable either way). An allowlist with hosts can't be enforced."""
+    if policy.network_mode == NetworkMode.PUBLIC:
+        return "default"
+    if policy.network_mode == NetworkMode.NO_NETWORK or not policy.allowed_hosts:
+        return "none"
+    raise ValueError(
+        "Prized turns a sandbox's network on or off, but can't limit it to "
+        f"hosts: allowlist {policy.allowed_hosts} is not supported"
+    )
+
+
+async def put_network(sandbox: AsyncSandbox, network: str) -> dict[str, Any]:
+    """PUT /api/v1/sandboxes/{id}/network?wait=applied: the API answers once
+    the network is in force (200, ``networkChange.status`` "applied"), or
+    after its 8 s hold with the change still "pending" (202). Through the
+    SDK's transport (its key, retries and errors), which has no method for it
+    yet."""
+    transport = sandbox._t
+    answer = await transport.request(
+        "PUT",
+        transport.api(f"/sandboxes/{sandbox.id}/network"),
+        json={"network": network},
+        params={"wait": "applied"},
+        sandbox_id=sandbox.id,
+        deadline=transport.clock() + 60,
+    )
+    return answer.document or {}
 
 
 def tar_pack_succeeded(
@@ -254,6 +326,11 @@ class PrizedEnvironment(BaseEnvironment):
             task_env_config=task_env_config,
             **kwargs,
         )
+        for policy in self._network_policies:
+            api_network(policy)  # an allowlist with hosts: refused here
+        if self._needs_network_switch and _network_refused_recently():
+            # The API said so a moment ago: refused before a sandbox is made.
+            raise ValueError(f"{_NETWORK_REFUSED}.")
 
     @staticmethod
     @override
@@ -263,7 +340,28 @@ class PrizedEnvironment(BaseEnvironment):
     @property
     @override
     def capabilities(self) -> EnvironmentCapabilities:
-        return EnvironmentCapabilities()
+        # No network, an allowlist with no hosts (Harbor refuses one with
+        # hosts: no entry type is declared), and switching while the trial
+        # runs. Whether this Prized can, the API says at start (_start).
+        # Harbor versions without these fields get none of them.
+        fields = EnvironmentCapabilities.model_fields
+        network = ("disable_internet", "network_allowlist", "dynamic_network_policy")
+        return EnvironmentCapabilities(
+            **{name: True for name in network if name in fields}
+        )
+
+    @property
+    def _network_policies(self) -> list[NetworkPolicy]:
+        """The startup policy and every phase's (Harbor's base class keeps them)."""
+        policy = getattr(self, "_network_policy", None)
+        phases = getattr(self, "_phase_network_policies", None) or []
+        return [p for p in (policy, *phases) if p is not None]
+
+    @property
+    def _needs_network_switch(self) -> bool:
+        """Some policy of this trial is not public: Prized must turn the
+        sandbox's network off at some point."""
+        return any(p.network_mode != NetworkMode.PUBLIC for p in self._network_policies)
 
     @classmethod
     @override
@@ -454,6 +552,10 @@ class PrizedEnvironment(BaseEnvironment):
         self._heartbeat = asyncio.create_task(self._keep_alive(self._sandbox))
         self.logger.debug(f"Prized sandbox {self._sandbox.id} for {image}")
         try:
+            if self._needs_network_switch:
+                # Asks for the network it has: answered only where Prized can
+                # switch it, before the image is pulled for nothing.
+                await self._set_network("default", probe=True)
             await self._prepare_image(image)
             workdir = self.task_env_config.workdir or self._image_workdir
             await self._checked(
@@ -461,9 +563,62 @@ class PrizedEnvironment(BaseEnvironment):
             )
             await self.ensure_dirs(self._mount_targets(writable_only=True))
             await self._upload_environment_dir_after_start()
+            # Pulled with the network; the task starts under its own policy.
+            startup = api_network(self.network_policy)
+            if startup != "default":
+                await self._set_network(startup)
         except BaseException:  # a cancelled start must not leave the sandbox behind
             await _despite_cancel(self.stop(delete=True))
             raise
+
+    # -- network ------------------------------------------------------------
+
+    @override
+    async def _apply_network_policy(self, network_policy: NetworkPolicy) -> None:
+        # Harbor's set_network_policy, between a trial's phases.
+        await self._set_network(api_network(network_policy))
+
+    async def _set_network(self, network: str, probe: bool = False) -> None:
+        """Puts the sandbox's network to ``network`` and returns once Prized
+        enforces it. Where Prized can't (``probe``: also the route missing),
+        refuses the task; a change that failed is asked again, twice."""
+        sandbox = self._require_sandbox()
+        deadline = time.monotonic() + _NETWORK_SWITCH_SEC
+        failures = 0
+        while True:
+            try:
+                answer = await put_network(sandbox, network)
+            except PrizedError as exc:
+                unavailable = exc.code in _NETWORK_UNAVAILABLE_CODES or (
+                    probe and exc.status == 404
+                )
+                if unavailable:
+                    _note_network_refused()
+                    raise RuntimeError(
+                        f"{_NETWORK_REFUSED} (the API answered {exc.status} {exc.code})."
+                    ) from exc
+                retry = exc.code == "network_change_pending" or (
+                    exc.code == "network_change_failed" and failures < 2
+                )
+                if not retry or time.monotonic() >= deadline:
+                    raise RuntimeError(
+                        f"Prized could not set sandbox {sandbox.id}'s network to "
+                        f'"{network}": {exc}'
+                    ) from exc
+                failures += exc.code == "network_change_failed"
+                await asyncio.sleep(_NETWORK_RETRY_SEC)
+                continue
+            change = answer.get("networkChange") or {}
+            if change.get("status") == "applied":
+                self.logger.debug(f"Prized sandbox {sandbox.id} network: {network}")
+                return
+            if time.monotonic() >= deadline:
+                raise RuntimeError(
+                    f"Prized sandbox {sandbox.id}'s network did not change to "
+                    f'"{network}" within {_NETWORK_SWITCH_SEC:.0f} s (still '
+                    f"{change.get('status') or 'unknown'})"
+                )
+            # Still pending after the API's hold: the same request joins it.
 
     async def _prepare_image(self, image: str) -> None:
         q = shlex.quote

@@ -92,7 +92,9 @@ class _Sandbox:
         self.closed = True
 
 
-def _environment(tmp_path, network_policy=None, **config) -> PrizedEnvironment:
+def _environment(
+    tmp_path, network_policy=None, phase_network_policies=None, **config
+) -> PrizedEnvironment:
     environment_dir = tmp_path / "environment"
     environment_dir.mkdir(exist_ok=True)
     trial_paths = TrialPaths(trial_dir=tmp_path / "trial")
@@ -105,7 +107,13 @@ def _environment(tmp_path, network_policy=None, **config) -> PrizedEnvironment:
         task_env_config=EnvironmentConfig(**config),
         labels="team=evals,run=42",
         network_policy=network_policy,
+        phase_network_policies=phase_network_policies,
     )
+
+
+@pytest.fixture(autouse=True)
+def _no_network_refusal_remembered(monkeypatch):
+    monkeypatch.setattr(_module, "_network_refused_at", None)
 
 
 def _script(command: str) -> list[str]:
@@ -137,10 +145,9 @@ def test_refuses_storage_past_the_largest_disk(tmp_path):
         _environment(tmp_path, docker_image="python:3.12", storage_mb=200_000)
 
 
-@pytest.mark.parametrize("mode", [NetworkMode.NO_NETWORK, NetworkMode.ALLOWLIST])
-def test_refuses_network_policies(tmp_path, mode):
-    hosts = ["pypi.org"] if mode == NetworkMode.ALLOWLIST else []
-    policy = NetworkPolicy(network_mode=mode, allowed_hosts=hosts)
+@pytest.mark.parametrize("hosts", [["pypi.org"], ["10.0.0.0/8"], ["*.example.com"]])
+def test_refuses_allowlists_that_name_hosts(tmp_path, hosts):
+    policy = NetworkPolicy(network_mode=NetworkMode.ALLOWLIST, allowed_hosts=hosts)
     with pytest.raises(ValueError, match="is not supported by"):
         _environment(tmp_path, docker_image="python:3.12", network_policy=policy)
 
@@ -930,3 +937,254 @@ def test_preflight_takes_harbors_kwargs(monkeypatch):
     PrizedEnvironment.preflight()
     PrizedEnvironment.preflight(kwargs={})
     PrizedEnvironment.preflight(kwargs={"template": "prized-base-v1"})
+
+
+# -- network policies ---------------------------------------------------------
+
+NO_NETWORK = NetworkPolicy(network_mode=NetworkMode.NO_NETWORK)
+EMPTY_ALLOWLIST = NetworkPolicy(network_mode=NetworkMode.ALLOWLIST, allowed_hosts=[])
+PUBLIC = NetworkPolicy(network_mode=NetworkMode.PUBLIC)
+
+
+class _NetworkApi:
+    """Stands in for PUT /api/v1/sandboxes/{id}/network?wait=applied.
+
+    ``answers`` are taken one per call: a dict (the 2xx body's networkChange
+    status, "applied" or "pending"), or a PrizedError to raise. When they run
+    out, every call is applied. ``calls`` records (network, what the sandbox
+    had run by then).
+    """
+
+    def __init__(self, *answers) -> None:
+        self.answers = list(answers)
+        self.calls: list[tuple[str, int]] = []
+
+    async def __call__(self, sandbox, network):
+        self.calls.append((network, len(sandbox.execs)))
+        answer = self.answers.pop(0) if self.answers else "applied"
+        if isinstance(answer, Exception):
+            raise answer
+        return {"networkChange": {"status": answer, "network": network}}
+
+
+def _started_sandbox(monkeypatch, api: _NetworkApi) -> _Sandbox:
+    sandbox = _Sandbox()
+    sandbox.answer = lambda cmd: (
+        ExecResult(stdout="{}", stderr="", exit_code=0)
+        if "crane config" in cmd
+        else None
+    )
+
+    async def create(template, **kwargs):
+        return sandbox
+
+    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
+    monkeypatch.setattr(_module, "put_network", api)
+    return sandbox
+
+
+def _pulled_at(sandbox: _Sandbox) -> int:
+    return next(i for i, e in enumerate(sandbox.execs) if "crane" in e["cmd"])
+
+
+def test_declares_no_network_empty_allowlists_and_switching(tmp_path):
+    caps = _environment(tmp_path, docker_image="python:3.12").capabilities
+    assert (
+        caps.disable_internet,
+        caps.network_allowlist,
+        caps.dynamic_network_policy,
+    ) == (
+        True,
+        True,
+        True,
+    )
+    # No allowlist entry type: Harbor refuses any list that names a host.
+    assert not any(
+        getattr(caps, name)
+        for name in type(caps).model_fields
+        if name.startswith("network_allowlist_")
+    )
+
+
+def test_maps_harbors_policies_to_prizeds_two_networks():
+    assert _module.api_network(PUBLIC) == "default"
+    assert _module.api_network(NO_NETWORK) == "none"
+    assert _module.api_network(EMPTY_ALLOWLIST) == "none"
+    with pytest.raises(ValueError, match="can't limit it to hosts"):
+        _module.api_network(
+            NetworkPolicy(
+                network_mode=NetworkMode.ALLOWLIST, allowed_hosts=["pypi.org"]
+            )
+        )
+
+
+@pytest.mark.asyncio
+async def test_a_public_task_never_asks_for_a_network(tmp_path, monkeypatch):
+    api = _NetworkApi()
+    _started_sandbox(monkeypatch, api)
+    environment = _environment(tmp_path, docker_image="python:3.12")
+    await environment.start(force_build=False)
+    assert api.calls == []
+    await environment.stop(delete=True)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("policy", [NO_NETWORK, EMPTY_ALLOWLIST])
+async def test_a_no_network_task_pulls_with_the_network_then_turns_it_off(
+    tmp_path, monkeypatch, policy
+):
+    api = _NetworkApi()
+    sandbox = _started_sandbox(monkeypatch, api)
+    environment = _environment(
+        tmp_path, docker_image="python:3.12", network_policy=policy
+    )
+    await environment.start(force_build=False)
+    # The probe before the pull, "none" after everything start does.
+    assert [network for network, _ in api.calls] == ["default", "none"]
+    assert api.calls[0][1] <= _pulled_at(sandbox) < api.calls[1][1]
+    assert api.calls[1][1] == len(sandbox.execs)
+    assert not sandbox.deleted
+    await environment.stop(delete=True)
+
+
+@pytest.mark.asyncio
+async def test_harbor_switches_the_network_between_phases(tmp_path, monkeypatch):
+    # Setup public, the agent with no network: Harbor's set_network_policy
+    # around the agent phase, back to the baseline after it.
+    api = _NetworkApi()
+    _started_sandbox(monkeypatch, api)
+    environment = _environment(
+        tmp_path,
+        docker_image="python:3.12",
+        network_policy=PUBLIC,
+        phase_network_policies=[EMPTY_ALLOWLIST, NO_NETWORK],
+    )
+    await environment.start(force_build=False)
+    assert [n for n, _ in api.calls] == ["default"]  # the probe; it starts public
+    await environment.set_network_policy(EMPTY_ALLOWLIST)
+    await environment.set_network_policy(PUBLIC)
+    await environment.set_network_policy(NO_NETWORK)
+    await environment.set_network_policy(PUBLIC)
+    assert [n for n, _ in api.calls] == [
+        "default",
+        "none",
+        "default",
+        "none",
+        "default",
+    ]
+    assert environment.network_policy == PUBLIC
+    await environment.stop(delete=True)
+
+
+@pytest.mark.asyncio
+async def test_a_pending_change_is_asked_again_until_applied(tmp_path, monkeypatch):
+    api = _NetworkApi("applied", "pending", "pending", "applied")
+    _started_sandbox(monkeypatch, api)
+    environment = _environment(
+        tmp_path, docker_image="python:3.12", network_policy=NO_NETWORK
+    )
+    await environment.start(force_build=False)
+    assert [n for n, _ in api.calls] == ["default", "none", "none", "none"]
+    await environment.stop(delete=True)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "refusal",
+    [
+        PrizedError("network_none_unavailable", "cannot", status=409),
+        PrizedError("not_found", "Not found.", status=404),  # the route is off
+    ],
+)
+async def test_where_prized_cant_switch_the_task_is_refused_as_before(
+    tmp_path, monkeypatch, refusal
+):
+    api = _NetworkApi(refusal)
+    sandbox = _started_sandbox(monkeypatch, api)
+    environment = _environment(
+        tmp_path, docker_image="python:3.12", network_policy=NO_NETWORK
+    )
+    with pytest.raises(RuntimeError, match="network off here yet") as info:
+        await environment.start(force_build=False)
+    assert refusal.code in str(info.value)
+    # Nothing pulled, nothing left behind.
+    assert not any("crane" in e["cmd"] for e in sandbox.execs)
+    assert sandbox.deleted
+    # The next trial of this run is refused before a sandbox is made...
+    with pytest.raises(ValueError, match="network off here yet"):
+        _environment(tmp_path, docker_image="python:3.12", network_policy=NO_NETWORK)
+    # ...a public one runs as ever...
+    _environment(tmp_path, docker_image="python:3.12")
+    # ...and once the refusal is old, the API is asked again.
+    monkeypatch.setattr(_module, "_network_refused_at", -1e9)
+    _environment(tmp_path, docker_image="python:3.12", network_policy=NO_NETWORK)
+
+
+@pytest.mark.asyncio
+async def test_a_failed_change_is_asked_again_twice_then_fails_the_trial(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(_module, "_NETWORK_RETRY_SEC", 0)
+    failed = PrizedError("network_change_failed", "kept", status=503)
+    api = _NetworkApi("applied", failed, failed, failed)
+    sandbox = _started_sandbox(monkeypatch, api)
+    environment = _environment(
+        tmp_path, docker_image="python:3.12", network_policy=NO_NETWORK
+    )
+    with pytest.raises(RuntimeError, match='network to "none"'):
+        await environment.start(force_build=False)
+    assert [n for n, _ in api.calls] == ["default", "none", "none", "none"]
+    assert sandbox.deleted
+
+
+@pytest.mark.asyncio
+async def test_a_switch_refused_mid_trial_fails_it_without_remembering(
+    tmp_path, monkeypatch
+):
+    api = _NetworkApi()
+    _started_sandbox(monkeypatch, api)
+    environment = _environment(
+        tmp_path,
+        docker_image="python:3.12",
+        network_policy=PUBLIC,
+        phase_network_policies=[NO_NETWORK],
+    )
+    await environment.start(force_build=False)
+    api.answers.append(PrizedError("sandbox_not_running", "paused", status=409))
+    with pytest.raises(RuntimeError, match="sandbox_not_running|paused"):
+        await environment.set_network_policy(NO_NETWORK)
+    assert environment.network_policy == PUBLIC  # Harbor keeps the old one
+    assert _module._network_refused_at is None
+    await environment.stop(delete=True)
+
+
+@pytest.mark.asyncio
+async def test_put_network_goes_through_the_sdks_transport():
+    class _Transport:
+        def __init__(self):
+            self.seen = None
+
+        def api(self, path):
+            return f"https://prized.dev/api/v1{path}"
+
+        def clock(self):
+            return 100.0
+
+        async def request(self, method, url, **kwargs):
+            self.seen = (method, url, kwargs)
+
+            answer = type("Answer", (), {})()
+            answer.document = {"networkChange": {"status": "applied"}}
+            return answer
+
+    class _Sbx:
+        id = "sbx_1"
+        _t = _Transport()
+
+    answer = await _module.put_network(_Sbx(), "none")
+    assert answer == {"networkChange": {"status": "applied"}}
+    method, url, kwargs = _Sbx._t.seen
+    assert (method, url) == ("PUT", "https://prized.dev/api/v1/sandboxes/sbx_1/network")
+    assert kwargs["json"] == {"network": "none"}
+    assert kwargs["params"] == {"wait": "applied"}
+    assert kwargs["sandbox_id"] == "sbx_1"
