@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import inspect
 import io
+import logging
 import os
 import shutil
 import stat
@@ -822,6 +823,42 @@ def test_stop_deletes_once_and_closes_the_proxy(adapter):
         requests.get(f"{base_url}/health", timeout=1)
     with pytest.raises(RuntimeError, match="no active base_url"):
         provider.base_url  # noqa: B018
+
+
+class _Records(logging.Handler):
+    def __init__(self):
+        super().__init__()
+        self.messages: list[str] = []
+
+    def emit(self, record):
+        self.messages.append(record.getMessage())
+
+
+def _proxy_stop_logs(stop, edge) -> list[str]:
+    """Error records uvicorn logs while a used loopback proxy is stopped."""
+    from openenv.core.containers.runtime.hf_sandbox_provider import _LocalAuthProxy
+
+    proxy = _LocalAuthProxy(target_url=edge.url, headers={"Prized-Key": _KEY})
+    url = proxy.start()
+    assert requests.get(f"{url}/health", timeout=5).status_code == 200
+    records = _Records()
+    logger = logging.getLogger("uvicorn.error")  # configured once the proxy runs
+    logger.addHandler(records)
+    try:
+        stop(proxy)
+    finally:
+        logger.removeHandler(records)
+    return [m for m in records.messages if "Traceback" in m or "CancelledError" in m]
+
+
+def test_stopping_the_proxy_logs_no_lifespan_traceback(edge):
+    forced = _proxy_stop_logs(lambda proxy: proxy.stop(), edge)
+    if not forced:
+        pytest.skip("this uvicorn/starlette logs nothing on a forced stop")
+    graceful = _proxy_stop_logs(
+        lambda proxy: (prized_provider._stop_gracefully(proxy), proxy.stop()), edge
+    )
+    assert graceful == []
 
 
 def test_failed_delete_is_retried_by_the_next_stop(adapter):

@@ -84,6 +84,23 @@ def _uv_setup(root: str) -> str:
     )
 
 
+def _stop_gracefully(proxy: Any, timeout_s: float = 1.0) -> None:
+    """Let the loopback proxy's server shut down on its own first.
+
+    ``_LocalAuthProxy.stop()`` force-exits uvicorn, which cancels the app's
+    lifespan task, and Starlette then logs that cancellation as an ERROR with
+    a traceback: one per stopped sandbox. A graceful exit (clients have
+    already disconnected) ends the lifespan cleanly; ``stop()`` still runs
+    after it and forces whatever is left.
+    """
+    server = getattr(proxy, "_server", None)
+    thread = getattr(proxy, "_thread", None)
+    if server is None or thread is None:
+        return
+    server.should_exit = True
+    thread.join(timeout=timeout_s)
+
+
 def _raise_install_error(exc: ImportError) -> None:
     raise RuntimeError(
         "Prized sandbox support requires optional dependencies. "
@@ -718,6 +735,7 @@ class PrizedProvider(ContainerProvider):
         proxy_error: Optional[RuntimeError] = None
         if self._proxy is not None:
             try:
+                _stop_gracefully(self._proxy)
                 self._proxy.stop()
                 self._proxy = None
             except RuntimeError as exc:
