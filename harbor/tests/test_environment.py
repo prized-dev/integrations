@@ -93,7 +93,7 @@ class _Sandbox:
 
 
 def _environment(
-    tmp_path, network_policy=None, phase_network_policies=None, **config
+    tmp_path, network_policy=None, phase_network_policies=None, docker=None, **config
 ) -> PrizedEnvironment:
     environment_dir = tmp_path / "environment"
     environment_dir.mkdir(exist_ok=True)
@@ -108,6 +108,7 @@ def _environment(
         labels="team=evals,run=42",
         network_policy=network_policy,
         phase_network_policies=phase_network_policies,
+        docker=docker,
     )
 
 
@@ -128,16 +129,25 @@ def _runtime_calls(sandbox: _Sandbox) -> list[str]:
 # -- definition and shape ---------------------------------------------------
 
 
-def test_requires_prebuilt_image(tmp_path):
-    with pytest.raises(ValueError, match="docker_image"):
+def test_a_task_without_an_image_is_docker_modes_or_refused(tmp_path):
+    # No definition at all: Harbor's own error.
+    with pytest.raises(FileNotFoundError, match="docker_image"):
         _environment(tmp_path)
+    (tmp_path / "environment").mkdir(exist_ok=True)
+    (tmp_path / "environment" / "Dockerfile").write_text("FROM python:3.12\n")
+    # A Dockerfile: Docker mode by itself (test_docker.py), or the old refusal.
+    assert _environment(tmp_path)._docker
+    with pytest.raises(ValueError, match="docker_image") as info:
+        _environment(tmp_path, docker="false")
+    assert "Building from a Dockerfile is not supported" in str(info.value)
 
 
-def test_refuses_compose_tasks(tmp_path):
+def test_compose_tasks_are_docker_modes_or_refused(tmp_path):
     (tmp_path / "environment").mkdir()
     (tmp_path / "environment" / "docker-compose.yaml").write_text("services: {}\n")
+    assert _environment(tmp_path, docker_image="python:3.12")._docker
     with pytest.raises(ValueError, match="Docker Compose"):
-        _environment(tmp_path, docker_image="python:3.12")
+        _environment(tmp_path, docker_image="python:3.12", docker="false")
 
 
 def test_refuses_storage_past_the_largest_disk(tmp_path):

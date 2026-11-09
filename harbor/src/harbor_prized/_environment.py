@@ -12,9 +12,9 @@ requested user, and root can ``apt-get install``.
 Limits, by design of that approach:
 
 - Tasks need ``[environment].docker_image``, pullable without credentials.
-  Building from a Dockerfile (the task's, or a verifier image in
-  ``tests/Dockerfile``) is not supported; build and push the image first. The
-  image's ``ENTRYPOINT`` and ``CMD`` don't run.
+  A task built from a Dockerfile (the task's, or a verifier image in
+  ``tests/Dockerfile``) or using Docker Compose runs in Docker mode instead
+  (below). The image's ``ENTRYPOINT`` and ``CMD`` don't run.
 - One id: every user is the same sandbox user underneath. A non-root user runs
   with its own uid, gid and ``$HOME``, and without root's capabilities, but it
   owns every file root owns, has no supplementary groups, can't ``sudo``, and
@@ -32,7 +32,7 @@ Limits, by design of that approach:
   image, and is switched before the task's first command. Where Prized cannot
   switch a sandbox's network yet, its API says so (409
   ``network_none_unavailable``) and such tasks are refused, as before. An
-  allowlist that names hosts is refused. No Docker Compose or GPUs.
+  allowlist that names hosts is refused, in both modes. No GPUs.
 - A command has no time limit of its own: the ``prized`` SDK runs long ones
   detached and polls them, so they outlive a dropped connection. A trial's
   sandbox is deleted after ``max_runtime_min`` of running (default 1440, up
@@ -41,10 +41,27 @@ Limits, by design of that approach:
   it from pausing; one a crashed run left behind pauses itself after 30
   idle minutes, so it stops billing compute, and is deleted a day later.
 
+Docker mode (``_docker.py``) runs what the approach above can't: a task
+whose environment is built from a Dockerfile (no ``docker_image``, or a
+verifier image in ``tests/Dockerfile``) or uses Docker Compose. Its sandbox
+starts from ``prized-docker-v1`` and the task runs under ``docker compose``
+inside it, as Harbor's own Docker provider runs it: built there, with its
+sidecars and real users. Network policies are enforced by Docker inside the
+sandbox there (the project's networks are internal, and one egress network is
+attached or detached), so they don't need Prized's network switch. It is
+chosen by itself for such tasks (``docker=auto``); where Prized refuses the
+template (not active yet, or a workspace on free credit alone), such tasks
+are refused as before, with the reason, and later trials of the run are
+refused before a sandbox is made for ten minutes.
+
 Credentials: ``PRIZED_API_KEY`` (a key with Sandboxes: Write). Extra constructor parameters
-(``--ek``): ``template`` (default ``prized-base-v1``), ``max_runtime_min``,
-``paused_ttl_min``, ``min_vcpu`` (default 1, see ``_shape``),
-``image_headroom_gb`` (disk added for the unpacked image, default 20),
+(``--ek``): ``docker`` (``auto``, the default: Docker mode for Dockerfile and
+Compose tasks only; ``true`` for every task; ``false`` never), ``template``
+(default ``prized-base-v1``; a ``prized-docker-*`` one means ``docker=true``),
+``docker_template`` (default ``prized-docker-v1``), ``dockerd_wait_sec``
+(how long a Docker-mode start waits for the daemon, default 120),
+``max_runtime_min``, ``paused_ttl_min``, ``min_vcpu`` (default 1, see
+``_shape``), ``image_headroom_gb`` (disk added for the image, default 20),
 ``labels`` (a dict, or ``k=v,k=v``).
 
 No Prized account yet? If you are an agent, you can sign your person up with
@@ -73,6 +90,11 @@ from harbor.environments.capabilities import (
     EnvironmentCapabilities,
     EnvironmentResourceCapabilities,
 )
+from harbor.environments.compose_service_ops import (
+    ComposeServiceOpsMixin,
+    ComposeServiceTransport,
+)
+from harbor.environments.definition import require_agent_environment_definition
 from harbor.environments.tar_transfer import (
     extract_dir_from_bytes,
     pack_dir_to_bytes,
@@ -82,6 +104,8 @@ from harbor.environments.tar_transfer import (
 from harbor.models.task.config import EnvironmentConfig, NetworkMode, NetworkPolicy
 from harbor.models.trial.paths import TrialPaths
 from prized import AsyncSandbox, CommandTimeoutError, PrizedError
+
+from ._docker import DOCKER_TEMPLATE, PrizedDocker
 
 _HOME = "/home/prized"
 _ROOT = f"{_HOME}/rootfs"  # the image's filesystem, as seen from the sandbox
@@ -99,6 +123,31 @@ _SIGN_UP_HINT = (
     "their email and a 6-digit code: follow https://prized.dev/auth.md?via=harbor"
 )
 _MAX_DISK_GB = 128
+# dockerd, containerd and compose run beside the task's containers.
+_DOCKER_MEMORY_HEADROOM_MB = 512
+# What a task that needs Docker mode was told before it existed, and still is
+# where Prized refuses the Docker template.
+_DOCKERFILE_REFUSED = (
+    "Prized runs a task's prebuilt image: set [environment].docker_image "
+    "in task.toml. Building from a Dockerfile is not supported."
+)
+_COMPOSE_REFUSED = (
+    "Prized runs one container per trial: Docker Compose tasks "
+    "(environment/docker-compose.yaml) are not supported."
+)
+# A create from the Docker template answered with one of these: this
+# workspace can't use it (not listed, not active yet, a runtime this Prized
+# doesn't run, or a paid-only template on free credit alone).
+_TEMPLATE_REFUSAL_CODES = (
+    "template_not_found",
+    "template_inactive",
+    "template_runtime_incompatible",
+    "template_needs_payment",
+)
+# After a refusal, later Docker-mode trials of this process are refused
+# before a sandbox is made, for this long; then the next one asks again.
+_DOCKER_REFUSAL_TTL_SEC = 600.0
+_docker_refusal: tuple[float, str] | None = None  # (when, why)
 # A sandbox nothing touches for this long pauses itself (one a crashed run left
 # behind stops billing compute); while a trial runs, a heartbeat counts as use.
 _IDLE_PAUSE_MIN = 30
@@ -168,6 +217,33 @@ def _network_refused_recently() -> bool:
 def _note_network_refused() -> None:
     global _network_refused_at
     _network_refused_at = time.monotonic()
+
+
+def _docker_refused_recently() -> str | None:
+    """Why Prized refused the Docker template, if it did in the last ten minutes."""
+    if _docker_refusal is None:
+        return None
+    when, why = _docker_refusal
+    return why if time.monotonic() - when < _DOCKER_REFUSAL_TTL_SEC else None
+
+
+def _note_docker_refused(why: str) -> None:
+    global _docker_refusal
+    _docker_refusal = (time.monotonic(), why)
+
+
+def _docker_choice(value: bool | str | None) -> bool | None:
+    """``--ek docker``: True, False, or None for auto (the default)."""
+    if value is None or isinstance(value, bool):
+        return value
+    text = value.strip().lower()
+    if text in ("", "auto"):
+        return None
+    if text in ("1", "true", "yes", "on"):
+        return True
+    if text in ("0", "false", "no", "off"):
+        return False
+    raise ValueError(f"docker: expected auto, true or false, got {value!r}")
 
 
 def api_network(policy: NetworkPolicy) -> str:
@@ -267,8 +343,8 @@ async def _despite_cancel(work: Awaitable[None]) -> None:
     task.result()
 
 
-class PrizedEnvironment(BaseEnvironment):
-    """Runs a task's prebuilt image inside a Prized sandbox (see module doc)."""
+class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
+    """Runs a task's image inside a Prized sandbox (see module doc)."""
 
     @classmethod
     @override
@@ -292,7 +368,10 @@ class PrizedEnvironment(BaseEnvironment):
         trial_paths: TrialPaths,
         task_env_config: EnvironmentConfig,
         *args,
-        template: str = "prized-base-v1",
+        template: str | None = None,
+        docker: bool | str | None = None,
+        docker_template: str = DOCKER_TEMPLATE,
+        dockerd_wait_sec: float = 120,
         max_runtime_min: int = 1440,
         paused_ttl_min: int = 1440,
         min_vcpu: int = 1,
@@ -302,7 +381,31 @@ class PrizedEnvironment(BaseEnvironment):
     ):
         if isinstance(labels, str):  # --ek labels=team=evals,run=42
             labels = dict(p.split("=", 1) for p in labels.split(",") if "=" in p)
-        self._template = template
+        # Docker mode: asked for, implied by a Docker template, or (auto) for
+        # what the image unpacking can't run. Decided before
+        # BaseEnvironment.__init__, whose validators read the capabilities.
+        choice = _docker_choice(docker)
+        if choice is None and template and template.startswith("prized-docker"):
+            choice = True
+        self._docker_auto = choice is None
+        self._docker = (
+            self._needs_docker(
+                environment_dir,
+                task_env_config,
+                kwargs.get("extra_docker_compose"),
+            )
+            if choice is None
+            else choice
+        )
+        if self._docker:
+            self._template = (
+                template
+                if template and template.startswith("prized-docker")
+                else docker_template
+            )
+        else:
+            self._template = template or "prized-base-v1"
+        self._dockerd_wait_sec = float(dockerd_wait_sec)
         self._max_runtime_min = int(max_runtime_min)
         self._paused_ttl_min = int(paused_ttl_min)
         self._min_vcpu = int(min_vcpu)
@@ -328,9 +431,31 @@ class PrizedEnvironment(BaseEnvironment):
         )
         for policy in self._network_policies:
             api_network(policy)  # an allowlist with hosts: refused here
-        if self._needs_network_switch and _network_refused_recently():
+        if (
+            not self._docker
+            and self._needs_network_switch
+            and _network_refused_recently()
+        ):
             # The API said so a moment ago: refused before a sandbox is made.
             raise ValueError(f"{_NETWORK_REFUSED}.")
+        self._compose: PrizedDocker | None = (
+            PrizedDocker(self) if self._docker else None
+        )
+
+    @staticmethod
+    def _needs_docker(
+        environment_dir: Path,
+        task_env_config: EnvironmentConfig,
+        extra_docker_compose: Any = None,
+    ) -> bool:
+        """True for what unpacking a prebuilt image can't run: a task with no
+        ``docker_image`` (its environment is built from a Dockerfile), or one
+        that uses Docker Compose."""
+        return (
+            not task_env_config.docker_image
+            or (environment_dir / "docker-compose.yaml").exists()
+            or bool(extra_docker_compose)
+        )
 
     @staticmethod
     @override
@@ -344,11 +469,27 @@ class PrizedEnvironment(BaseEnvironment):
         # hosts: no entry type is declared), and switching while the trial
         # runs. Whether this Prized can, the API says at start (_start).
         # Harbor versions without these fields get none of them.
+        # In Docker mode Docker enforces them inside the sandbox, and the
+        # task's Compose services run too.
         fields = EnvironmentCapabilities.model_fields
         network = ("disable_internet", "network_allowlist", "dynamic_network_policy")
-        return EnvironmentCapabilities(
-            **{name: True for name in network if name in fields}
-        )
+        flags = {name: True for name in network if name in fields}
+        if self._docker:
+            flags["docker_compose"] = True
+        return EnvironmentCapabilities(**flags)
+
+    @property
+    @override
+    def _uses_compose(self) -> bool:
+        return self._docker
+
+    @override
+    def _compose_service_transport(
+        self, service: str | None
+    ) -> ComposeServiceTransport:
+        if self._compose is None:
+            raise self._compose_unsupported(service)
+        return self._compose
 
     @property
     def _network_policies(self) -> list[NetworkPolicy]:
@@ -356,6 +497,18 @@ class PrizedEnvironment(BaseEnvironment):
         policy = getattr(self, "_network_policy", None)
         phases = getattr(self, "_phase_network_policies", None) or []
         return [p for p in (policy, *phases) if p is not None]
+
+    @property
+    def _docker_restricted(self) -> bool:
+        """Docker mode: some policy of this trial closes the network, so the
+        project's networks are internal and egress is a network attached
+        while a phase is public (``_docker.py``)."""
+        return any(api_network(p) == "none" for p in self._network_policies)
+
+    @property
+    def _docker_startup_network(self) -> str:
+        policy = getattr(self, "_network_policy", None)
+        return "default" if policy is None else api_network(policy)
 
     @property
     def _needs_network_switch(self) -> bool:
@@ -375,22 +528,48 @@ class PrizedEnvironment(BaseEnvironment):
 
     @override
     def _validate_definition(self) -> None:
-        if not self.task_env_config.docker_image:
-            raise ValueError(
-                "Prized runs a task's prebuilt image: set [environment].docker_image "
-                "in task.toml. Building from a Dockerfile is not supported."
+        if self._docker:
+            require_agent_environment_definition(
+                self.environment_dir,
+                docker_image=self.task_env_config.docker_image,
+                extra_docker_compose_paths=self.extra_docker_compose_paths,
             )
-        if (self.environment_dir / "docker-compose.yaml").exists():
-            raise ValueError(
-                "Prized runs one container per trial: Docker Compose tasks "
-                "(environment/docker-compose.yaml) are not supported."
-            )
+            why = _docker_refused_recently()
+            if why is not None:
+                # Prized refused the Docker template a moment ago.
+                raise ValueError(self._docker_refused_message(why))
+        elif not self.task_env_config.docker_image:
+            raise ValueError(_DOCKERFILE_REFUSED)
+        elif (self.environment_dir / "docker-compose.yaml").exists():
+            raise ValueError(_COMPOSE_REFUSED)
         storage_gb = self._storage_gb()
         if storage_gb > _MAX_DISK_GB:
             raise ValueError(
                 f"The task asks for {storage_gb} GB of storage; a Prized sandbox "
                 f"has at most {_MAX_DISK_GB} GB of disk."
             )
+
+    def _docker_refused_message(self, why: str) -> str:
+        """The refusal for a Docker-mode task where Prized refused the template:
+        what such a task was told before Docker mode, and why it still is."""
+        if self._docker_auto:
+            before = (
+                _COMPOSE_REFUSED
+                if (self.environment_dir / "docker-compose.yaml").exists()
+                or self.extra_docker_compose_paths
+                else _DOCKERFILE_REFUSED
+            )
+            return (
+                f"{before} Prized builds Dockerfiles and runs Compose in "
+                f"{self._template} sandboxes, which this workspace can't use "
+                f"yet ({why})."
+            )
+        return (
+            f"Docker mode needs the {self._template} sandbox template, which "
+            f"this workspace can't use yet ({why}). Until it can, run Docker "
+            "and Compose tasks with Harbor's own `-e docker` on a Prized box: "
+            "https://github.com/prized-dev/integrations/tree/main/harbor#dockerfile-and-compose-tasks"
+        )
 
     # -- the sandbox ------------------------------------------------------
 
@@ -400,7 +579,10 @@ class PrizedEnvironment(BaseEnvironment):
         return self._sandbox
 
     async def _host_exec(
-        self, command: str, timeout_sec: int | None = 600
+        self,
+        command: str,
+        timeout_sec: int | None = 600,
+        env: dict[str, str] | None = None,
     ) -> ExecResult:
         """Runs a command on the sandbox itself, outside the image.
 
@@ -410,8 +592,9 @@ class PrizedEnvironment(BaseEnvironment):
         """
         sandbox = self._require_sandbox()
         try:
+            extra = {"env": env} if env else {}
             result = await sandbox.exec(
-                command, timeout=timeout_sec or 0, full_output=True
+                command, timeout=timeout_sec or 0, full_output=True, **extra
             )
         except CommandTimeoutError:
             raise RuntimeError(
@@ -488,10 +671,13 @@ class PrizedEnvironment(BaseEnvironment):
         torch-tensor-parallelism deadlocks in gloo's teardown below 4 vCPUs.
         The image is unpacked onto the sandbox's disk, so the disk is the
         task's storage plus room for it, as far as the largest disk allows.
+        In Docker mode the daemons get 512 MB of memory on top of the task's.
         """
         cpus = self._effective_cpus
         vcpu = max(self._min_vcpu, 1, math.ceil(cpus) if cpus else 2)
         memory_mb = max(1024, int(self._effective_memory_mb or 4096))
+        if self._docker:
+            memory_mb += _DOCKER_MEMORY_HEADROOM_MB
         disk_gb = min(
             _MAX_DISK_GB, max(10, self._storage_gb()) + self._image_headroom_gb
         )
@@ -500,24 +686,28 @@ class PrizedEnvironment(BaseEnvironment):
     @override
     async def start(self, force_build: bool) -> None:
         image = self.task_env_config.docker_image
-        if image is None:
+        if image is None and not self._docker:
             raise ValueError("Prized needs [environment].docker_image.")
-        if force_build and (self.environment_dir / "Dockerfile").exists():
+        if (
+            force_build
+            and not self._docker
+            and (self.environment_dir / "Dockerfile").exists()
+        ):
             self.logger.warning(
                 "Prized runs the prebuilt docker_image; force_build is ignored "
                 "and environment/Dockerfile is not built."
             )
         try:
-            await self._start(image)
+            await self._start(image, force_build)
         except PrizedError as exc:
             # A request that got no clear answer leaves the sandbox in doubt:
             # it was deleted, so start once more on a fresh one.
             if exc.code != "network_error":
                 raise
             self.logger.warning(f"Prized sandbox start failed ({exc}); retrying once")
-            await self._start(image)
+            await self._start(image, force_build)
 
-    async def _start(self, image: str) -> None:
+    async def _start(self, image: str | None, force_build: bool = False) -> None:
         if self._sandbox is not None:  # a second start replaces the first
             await self.stop(delete=True)
         vcpu, memory_mb, disk_gb = self._shape()
@@ -548,10 +738,27 @@ class PrizedEnvironment(BaseEnvironment):
                 raise RuntimeError(message) from exc
             if exc.code == "sandbox_quota_exceeded":
                 raise RuntimeError(f"{str(exc).rstrip('.')}. {_QUOTA_HINT}") from exc
+            if self._docker and exc.code in _TEMPLATE_REFUSAL_CODES:
+                # Not this workspace's yet: such tasks are refused as before.
+                why = f"{exc.status} {exc.code}"
+                if exc.code == "template_needs_payment" and exc.message:
+                    why = f"{why}: {exc.message.rstrip('.')}"
+                _note_docker_refused(why)
+                raise RuntimeError(self._docker_refused_message(why)) from exc
             raise
         self._heartbeat = asyncio.create_task(self._keep_alive(self._sandbox))
-        self.logger.debug(f"Prized sandbox {self._sandbox.id} for {image}")
+        self.logger.debug(
+            f"Prized sandbox {self._sandbox.id} ({self._template}) for "
+            f"{image or self.environment_dir}"
+        )
         try:
+            if self._compose is not None:
+                # Built or pulled with the sandbox's network; Docker puts the
+                # task's containers under its policy (_docker.py).
+                await self._compose.start(force_build)
+                await self._upload_environment_dir_after_start()
+                return
+            assert image is not None
             if self._needs_network_switch:
                 # Asks for the network it has: answered only where Prized can
                 # switch it, before the image is pulled for nothing.
@@ -576,6 +783,9 @@ class PrizedEnvironment(BaseEnvironment):
     @override
     async def _apply_network_policy(self, network_policy: NetworkPolicy) -> None:
         # Harbor's set_network_policy, between a trial's phases.
+        if self._compose is not None:
+            await self._compose.set_egress(api_network(network_policy) == "default")
+            return
         await self._set_network(api_network(network_policy))
 
     async def _set_network(self, network: str, probe: bool = False) -> None:
@@ -770,6 +980,14 @@ class PrizedEnvironment(BaseEnvironment):
         timeout_sec: int | None = None,
         user: str | int | None = None,
     ) -> ExecResult:
+        if self._compose is not None:
+            return await self._compose.exec(
+                command,
+                cwd=cwd or self.task_env_config.workdir,
+                env=self._merge_env(env),
+                timeout_sec=timeout_sec,
+                user=self._resolve_user(user),
+            )
         # As docker exec: the requested user, else the image's USER, else root.
         user = self._resolve_user(user)
         if user is None:
@@ -843,7 +1061,21 @@ class PrizedEnvironment(BaseEnvironment):
             raise RuntimeError(f"{what}: {result.stderr or result.stdout}")
 
     @override
+    async def is_dir(self, path: str, user: str | int | None = None) -> bool:
+        if self._compose is not None:
+            return await self._compose.is_dir(path, user=self._resolve_user(user))
+        return await super().is_dir(path, user=user)
+
+    @override
+    async def is_file(self, path: str, user: str | int | None = None) -> bool:
+        if self._compose is not None:
+            return await self._compose.is_file(path, user=self._resolve_user(user))
+        return await super().is_file(path, user=user)
+
+    @override
     async def upload_file(self, source_path: Path | str, target_path: str) -> None:
+        if self._compose is not None:
+            return await self._compose.upload_file(source_path, target_path)
         source = Path(source_path)
         staged = f"{_XFER}/up-{uuid.uuid4().hex[:8]}"
         target = shlex.quote(target_path)
@@ -865,6 +1097,8 @@ class PrizedEnvironment(BaseEnvironment):
 
     @override
     async def upload_dir(self, source_dir: Path | str, target_dir: str) -> None:
+        if self._compose is not None:
+            return await self._compose.upload_dir(source_dir, target_dir)
         staged = f"{_XFER}/up-{uuid.uuid4().hex[:8]}.tar.gz"
         buffer = await asyncio.to_thread(pack_dir_to_bytes, source_dir, compress=True)
         try:
@@ -879,6 +1113,8 @@ class PrizedEnvironment(BaseEnvironment):
 
     @override
     async def download_file(self, source_path: str, target_path: Path | str) -> None:
+        if self._compose is not None:
+            return await self._compose.download_file(source_path, target_path)
         staged = f"{_XFER}/down-{uuid.uuid4().hex[:8]}"
         try:
             await self._checked(
@@ -894,6 +1130,8 @@ class PrizedEnvironment(BaseEnvironment):
 
     @override
     async def download_dir(self, source_dir: str, target_dir: Path | str) -> None:
+        if self._compose is not None:
+            return await self._compose.download_dir(source_dir, target_dir)
         staged = f"{_XFER}/down-{uuid.uuid4().hex[:8]}.tar.gz"
         try:
             result = await self.exec(
