@@ -8,6 +8,7 @@ of a trial's phases, not only the commands sent.
 
 import io
 import json
+import posixpath
 import shlex
 import tarfile
 import time
@@ -70,6 +71,7 @@ class FakeDocker:
         self.resolved_extra: dict = {}  # what includes/extends would add to config
         self.garble_inspect = False
         self.drop_inspect_line = False
+        self.symlinks: dict[str, str] = {}  # path on the sandbox: where it points
 
     # -- what a container could reach --------------------------------------
 
@@ -107,21 +109,58 @@ class FakeDocker:
             docs.append(yaml.safe_load(text) or {})
         return docs
 
+    @staticmethod
+    def _long_volume(volume) -> dict:
+        """As Compose writes a volume: long form, a bind's source absolute
+        against the project folder, ``~`` expanded, named volumes by name."""
+        if isinstance(volume, str):
+            parts = volume.split(":")
+            if len(parts) == 1:
+                volume = {"type": "volume", "target": parts[0]}
+            else:
+                src = parts[0]
+                kind = "bind" if src.startswith(("/", ".", "~")) else "volume"
+                volume = {"type": kind, "source": src, "target": parts[1]}
+        source = str(volume.get("source") or "")
+        if volume.get("type") == "bind" and source and not source.startswith("/"):
+            if source.startswith("~"):
+                source = HOME + source[1:]
+            else:
+                source = f"{PROJECT}/{source}"
+            volume = {**volume, "source": posixpath.normpath(source)}
+        return volume
+
     def _resolved(self, files: list[str]) -> dict:
-        """``docker compose config --format json``: the files merged."""
+        """``docker compose config --format json``: the files merged, with
+        services' volumes merged by target and written in long form."""
         services: dict[str, dict] = {}
-        networks: dict[str, dict] = {}
+        top: dict[str, dict[str, dict]] = {
+            "networks": {},
+            "volumes": {},
+            "secrets": {},
+            "configs": {},
+        }
         for doc in [*self._compose_docs(files), self.resolved_extra]:
-            for name, spec in (doc.get("networks") or {}).items():
-                networks.setdefault(name, {}).update(spec or {})
+            for key, entries in top.items():
+                for name, spec in (doc.get(key) or {}).items():
+                    entries.setdefault(name, {}).update(spec or {})
             for name, spec in (doc.get("services") or {}).items():
-                services.setdefault(name, {}).update(spec or {})
+                merged = services.setdefault(name, {})
+                volumes = {
+                    v["target"]: v
+                    for v in map(self._long_volume, merged.get("volumes") or [])
+                }
+                for v in map(self._long_volume, (spec or {}).get("volumes") or []):
+                    volumes[v["target"]] = v
+                merged.update(spec or {})
+                merged["volumes"] = list(volumes.values())
+        networks = top["networks"]
         if any(
             not s.get("network_mode") and not s.get("networks")
             for s in services.values()
         ):
             networks.setdefault("default", {"name": "harbor_default"})
-        return {"name": "harbor", "services": services, "networks": networks}
+        return {"name": "harbor", "services": services, **top}
 
     def _up(self, files: list[str]) -> None:
         docs = self._compose_docs(files)
@@ -205,6 +244,14 @@ class FakeDocker:
             if self.drop_inspect_line:
                 lines = lines[:-1]
             return ExecResult(stdout="\n".join(lines) + "\n", stderr="", exit_code=0)
+        if cmd.startswith("readlink -m -- "):
+            out = ""
+            for path in shlex.split(cmd)[3:]:
+                for link, target in self.symlinks.items():
+                    if path == link or path.startswith(link + "/"):
+                        path = target + path[len(link) :]
+                out += path + "\n"
+            return ExecResult(stdout=out, stderr="", exit_code=0)
         if cmd.startswith(f"{DOCKER} network inspect -f "):
             argv = shlex.split(cmd)
             assert argv[4] == "{{.Name}} {{.Internal}}"
@@ -811,9 +858,25 @@ async def test_sidecars_stay_reachable_and_closed_with_main(tmp_path, prized):
             "Docker socket",
         ),
         ("    volumes: ['/usr:/host-usr']\n", "binds /usr"),
-        ("    volumes: ['../:/up']\n", "binds ../"),
-        ("    volumes: ['~/:/home-of-prized']\n", "binds ~/"),
+        ("    volumes: ['../:/up']\n", "binds /home/prized/harbor "),
+        ("    volumes: ['~/:/home-of-prized']\n", "binds /home/prized "),
         ("    devices: ['/dev/net/tun']\n", "binds devices"),
+        ("    device_cgroup_rules: ['b *:* rwm']\n", "binds devices"),
+        (
+            (
+                "    volumes: ['hostrun:/r']\nvolumes:\n  hostrun:\n    driver: local\n"
+                "    driver_opts: {type: none, o: bind, device: /run}\n"
+            ),
+            "volume 'hostrun' mounts /run",
+        ),
+        (
+            "    volumes: ['x:/x']\nvolumes:\n  x:\n    driver: nfs-plugin\n",
+            "'nfs-plugin' driver",
+        ),
+        (
+            "    secrets: [s]\nsecrets:\n  s:\n    file: /run/docker.sock\n",
+            "secret 's' mounts /run/docker.sock",
+        ),
     ],
 )
 async def test_restricted_trials_refuse_what_docker_could_not_hold_closed(
@@ -832,8 +895,50 @@ async def test_restricted_trials_refuse_what_docker_could_not_hold_closed(
     assert prized.creates == []
 
 
+async def test_a_symlink_out_of_the_task_folder_is_refused(tmp_path, prized):
+    # The upload keeps symlinks: ./data may point at the Docker socket's folder.
+    compose = "services:\n  main:\n    volumes: ['./data:/data']\n"
+    environment = _environment(
+        tmp_path,
+        files={**DOCKERFILE, "docker-compose.yaml": compose},
+        network_policy=NO_NETWORK,
+        ek={},
+    )
+    original = FakeDocker.__init__
+
+    def init(self, *args):
+        original(self, *args)
+        self.symlinks = {f"{PROJECT}/data": "/run"}
+
+    FakeDocker.__init__ = init
+    try:
+        with pytest.raises(ValueError, match="which is /run on the sandbox"):
+            await environment.start(force_build=False)
+    finally:
+        FakeDocker.__init__ = original
+    assert prized.sandboxes[0].deleted
+
+
+async def test_compose_runs_against_the_sandboxs_own_daemon(tmp_path, prized):
+    environment = _environment(tmp_path, files=DOCKERFILE, ek={})
+    await environment.start(force_build=False)
+    sandbox = prized.sandboxes[0]
+    compose_env = next(e["env"] for e in sandbox.execs if e["cmd"].endswith(" up -d"))
+    # A .env the task's containers could rewrite never picks the daemon.
+    assert compose_env["DOCKER_HOST"] == "unix:///var/run/docker.sock"
+
+
 async def test_the_projects_own_folders_may_be_bound(tmp_path, prized):
-    compose = "services:\n  main:\n    volumes: ['./data:/data', 'cache:/cache']\n"
+    compose = (
+        "services:\n  main:\n    volumes: ['./data:/data', '.:/app', 'cache:/cache']\n"
+        "  side:\n    image: alpine\n    volumes:\n"
+        "      - {type: bind, source: ./conf, target: /conf}\n"
+        "      - {type: bind, source: data2, target: /data2}\n"
+        "      - {type: tmpfs, target: /tmp}\n"
+        "      - ./scratch:/scratch:ro\n"
+        "    secrets: [s]\n"
+        "secrets:\n  s:\n    file: ./secret.txt\n"
+    )
     environment = _environment(
         tmp_path,
         files={**DOCKERFILE, "docker-compose.yaml": compose},

@@ -328,6 +328,9 @@ class PrizedDocker(DinDComposeOps):
         # The CLI's own config, whatever HOME the task's env sets (an unreadable
         # HOME would stop it loading the compose plugin).
         values["DOCKER_CONFIG"] = f"{_HOME}/.docker"
+        # The sandbox's daemon, whatever a .env in the task's folder (which a
+        # container that binds it can rewrite) says: the environment wins.
+        values["DOCKER_HOST"] = "unix:///var/run/docker.sock"
         return values
 
     def _compose_env_vars(self) -> dict[str, str]:
@@ -449,13 +452,80 @@ class PrizedDocker(DinDComposeOps):
                 for src in _bind_sources(spec.get("volumes"))
                 if not self._own_path(src)
             ]
-            if outside or spec.get("devices"):
+            if outside or spec.get("devices") or spec.get("device_cgroup_rules"):
                 raise ValueError(
                     f"{what}: service {service!r} binds "
                     f"{outside[0] if outside else 'devices'} from the sandbox, so "
                     "it could change what enforces the network."
                 )
+        for name, spec in (resolved.get("volumes") or {}).items():
+            spec = spec if isinstance(spec, dict) else {}
+            if spec.get("external"):
+                continue  # Compose made none; a missing one fails the start
+            if str(spec.get("driver") or "local") != "local":
+                raise ValueError(
+                    f"{what}: the task's volume {name!r} uses the "
+                    f"{spec.get('driver')!r} driver, which Prized can't check."
+                )
+            device = str((spec.get("driver_opts") or {}).get("device") or "")
+            if device and not (
+                device.startswith("/") and self._own_path(self._absolute(device))
+            ):
+                raise ValueError(
+                    f"{what}: the task's volume {name!r} mounts {device} from "
+                    "the sandbox, so it could change what enforces the network."
+                )
+        for key in ("secrets", "configs"):
+            for name, spec in (resolved.get(key) or {}).items():
+                file = str((spec if isinstance(spec, dict) else {}).get("file") or "")
+                if file and not self._own_path(self._absolute(file)):
+                    raise ValueError(
+                        f"{what}: the task's {key[:-1]} {name!r} mounts {file} from "
+                        "the sandbox, so it could change what enforces the network."
+                    )
         return {"networks": networks}
+
+    @staticmethod
+    def host_paths(resolved: dict) -> list[str]:
+        """Every path on the sandbox the resolved project mounts: bind
+        sources, local volumes' devices, file secrets and configs."""
+        paths = []
+        for spec in (resolved.get("services") or {}).values():
+            if isinstance(spec, dict):
+                paths += [
+                    p for p in _bind_sources(spec.get("volumes")) if p.startswith("/")
+                ]
+        for spec in (resolved.get("volumes") or {}).values():
+            device = str(((spec or {}).get("driver_opts") or {}).get("device") or "")
+            if device.startswith("/"):
+                paths.append(device)
+        for key in ("secrets", "configs"):
+            for spec in (resolved.get(key) or {}).values():
+                file = str((spec or {}).get("file") or "")
+                if file.startswith("/"):
+                    paths.append(file)
+        return sorted(set(paths))
+
+    async def _check_real_paths(self, paths: list[str]) -> None:
+        """Symlinks resolved on the sandbox: a link in the task's folder to
+        the Docker socket is the socket."""
+        if not paths:
+            return
+        result = await self._sh(
+            shlex.join(["readlink", "-m", "--", *paths]), timeout_sec=60
+        )
+        real = (result.stdout or "").splitlines()
+        if result.return_code != 0 or len(real) != len(paths):
+            raise RuntimeError(
+                f"Could not resolve the task's mounts: {result.stderr or result.stdout}"
+            )
+        for path, target in zip(paths, real, strict=True):
+            if _docker_socket(target) or not self._own_path(target):
+                raise ValueError(
+                    "This task's network policy (no-network): it mounts "
+                    f"{path}, which is {target} on the sandbox, so it could "
+                    "change what enforces the network."
+                )
 
     def _own_path(self, source: str) -> bool:
         """A bind source the project may use: the task's folder or Harbor's
@@ -466,13 +536,40 @@ class PrizedDocker(DinDComposeOps):
             for root in (self._ENVIRONMENT_DIR, self._MOUNTS_DIR)
         )
 
+    def _absolute(self, source: str) -> str:
+        """A host path as Compose resolves it: relative to the project
+        folder, ``~`` as the sandbox user's home."""
+        if source.startswith("~"):
+            source = _HOME + source[1:]
+        elif not source.startswith("/"):
+            source = posixpath.join(self._ENVIRONMENT_DIR, source)
+        return posixpath.normpath(source)
+
+    def _absolute_bind(self, volume: object) -> object:
+        """A raw compose volume with its bind source made absolute, as
+        Compose does (short ``src:dst`` and long ``type: bind`` forms)."""
+        if isinstance(volume, str) and ":" in volume:
+            source, rest = volume.split(":", 1)
+            if source.startswith((".", "~")):
+                return f"{self._absolute(source)}:{rest}"
+        elif isinstance(volume, dict) and volume.get("type") == "bind":
+            source = str(volume.get("source") or "")
+            if source and not source.startswith("$"):
+                return {**volume, "source": self._absolute(source)}
+        return volume
+
     def precheck(self) -> None:
         """The restricted-network check on the task's compose files as
         written (no includes, extends or variables), so most tasks Docker
         couldn't hold closed are refused before a sandbox is made. Files it
         can't read are left to the check on the resolved project."""
         services: dict[str, dict] = {}
-        networks: dict[str, dict] = {}
+        top: dict[str, dict[str, dict]] = {
+            "networks": {},
+            "volumes": {},
+            "secrets": {},
+            "configs": {},
+        }
         paths = [self._env.environment_dir / "docker-compose.yaml"]
         paths += list(self._env.extra_docker_compose_paths)
         for path in paths:
@@ -484,23 +581,30 @@ class PrizedDocker(DinDComposeOps):
                 continue
             if not isinstance(doc, dict):
                 continue
-            for name, spec in (doc.get("networks") or {}).items():
-                networks.setdefault(str(name), {}).update(
-                    spec if isinstance(spec, dict) else {}
-                )
+            for key, entries in top.items():
+                for name, spec in (doc.get(key) or {}).items():
+                    entries.setdefault(str(name), {}).update(
+                        spec if isinstance(spec, dict) else {}
+                    )
             for name, spec in (doc.get("services") or {}).items():
                 services.setdefault(str(name), {}).update(
                     spec if isinstance(spec, dict) else {}
                 )
-        # Relative binds are the project's own folder, as Compose resolves them.
+        # Relative binds are in the project's folder, as Compose resolves them.
         for spec in services.values():
             spec["volumes"] = [
-                f"{self._ENVIRONMENT_DIR}/{v[2:]}"
-                if isinstance(v, str) and v.startswith("./")
-                else v
-                for v in spec.get("volumes") or []
+                self._absolute_bind(v) for v in spec.get("volumes") or []
             ]
-        self.restricted_network_override({"services": services, "networks": networks})
+        # Variables are left to the check on the resolved project.
+        for key in ("secrets", "configs"):
+            for spec in top[key].values():
+                if str(spec.get("file") or "").startswith("$"):
+                    spec.pop("file")
+        for spec in top["volumes"].values():
+            opts = spec.get("driver_opts")
+            if isinstance(opts, dict) and str(opts.get("device") or "").startswith("$"):
+                spec["driver_opts"] = {k: v for k, v in opts.items() if k != "device"}
+        self.restricted_network_override({"services": services, **top})
 
     async def _resolved_project(self) -> dict:
         """The project as Compose resolves it, without the network override."""
@@ -911,7 +1015,9 @@ class PrizedDocker(DinDComposeOps):
         )
         if env._docker_restricted:
             # Checked on the project as Compose resolves it, then closed.
-            override = self.restricted_network_override(await self._resolved_project())
+            resolved = await self._resolved_project()
+            override = self.restricted_network_override(resolved)
+            await self._check_real_paths(self.host_paths(resolved))
             await self._write_json_override(
                 _NETWORK_NAME, lambda path: path.write_text(json.dumps(override))
             )
