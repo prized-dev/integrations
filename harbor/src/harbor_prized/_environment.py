@@ -52,8 +52,9 @@ sandbox there (the project's networks are internal, and one egress network is
 attached or detached), so they don't need Prized's network switch. It is
 chosen by itself for such tasks (``docker=auto``); where Prized refuses the
 template (not active yet, or a workspace on free credit alone), such tasks
-are refused as before, with the reason, and later trials of the run are
-refused before a sandbox is made for ten minutes.
+are refused as before, with the reason, and for ten minutes later trials
+of the run are refused when they start, before a sandbox is made; each
+trial records the refusal, and the job goes on with its other tasks.
 
 Credentials: ``PRIZED_API_KEY`` (a key with Sandboxes: Write). Extra constructor parameters
 (``--ek``): ``docker`` (``auto``, the default: Docker mode for Dockerfile and
@@ -668,10 +669,6 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
                 docker_image=self.task_env_config.docker_image,
                 extra_docker_compose_paths=self.extra_docker_compose_paths,
             )
-            why = _docker_refused_recently(self._template)
-            if why is not None:
-                # Prized refused the Docker template a moment ago.
-                raise ValueError(self._docker_refused_message(why))
             if self._docker_restricted and self._compose is not None:
                 # Before a sandbox is made, from the files as written; the
                 # sandbox checks the project as Compose resolves it.
@@ -827,6 +824,12 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
 
     @override
     async def start(self, force_build: bool) -> None:
+        why = _docker_refused_recently(self._template) if self._docker else None
+        if why is not None:
+            # Prized refused the Docker template a moment ago: refused before a
+            # sandbox is made, as this trial's error. (Raised while Harbor builds
+            # the environment, it would end the whole job, native tasks too.)
+            raise RuntimeError(self._docker_refused_message(why))
         image = self.task_env_config.docker_image
         if image is None and not self._docker:
             raise ValueError("Prized needs [environment].docker_image.")

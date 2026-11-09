@@ -545,9 +545,11 @@ async def test_a_refusal_is_remembered_so_later_trials_make_no_sandbox(
     prized.templates["prized-docker-v1"] = "deprecated"
     with pytest.raises(RuntimeError):
         await _environment(tmp_path, files=DOCKERFILE, ek={}).start(force_build=False)
-    # The next trial is refused where today's refusal was: building the env.
-    with pytest.raises(ValueError) as info:
-        _environment(tmp_path, files=DOCKERFILE, ek={})
+    # The next trial is built (a refusal here would end Harbor's whole job)
+    # and refused when it starts, before a sandbox is made: its own error.
+    later = _environment(tmp_path, files=DOCKERFILE, ek={})
+    with pytest.raises(RuntimeError) as info:
+        await later.start(force_build=False)
     assert str(info.value).startswith(_module._DOCKERFILE_REFUSED)
     assert "409 template_inactive" in str(info.value)
     # Native tasks are not touched by it, nor is another Docker template.
