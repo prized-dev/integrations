@@ -67,6 +67,8 @@ class FakeDocker:
         self.compose: list[list[str]] = []  # every compose argv
         self.connects: list[tuple[str, str]] = []
         self.stuck = False  # network connect/disconnect answers 0 but does nothing
+        self.resolved_extra: dict = {}  # what includes/extends would add to config
+        self.garble_inspect = False
 
     # -- what a container could reach --------------------------------------
 
@@ -103,6 +105,22 @@ class FakeDocker:
                 continue
             docs.append(yaml.safe_load(text) or {})
         return docs
+
+    def _resolved(self, files: list[str]) -> dict:
+        """``docker compose config --format json``: the files merged."""
+        services: dict[str, dict] = {}
+        networks: dict[str, dict] = {}
+        for doc in [*self._compose_docs(files), self.resolved_extra]:
+            for name, spec in (doc.get("networks") or {}).items():
+                networks.setdefault(name, {}).update(spec or {})
+            for name, spec in (doc.get("services") or {}).items():
+                services.setdefault(name, {}).update(spec or {})
+        if any(
+            not s.get("network_mode") and not s.get("networks")
+            for s in services.values()
+        ):
+            networks.setdefault("default", {"name": "harbor_default"})
+        return {"name": "harbor", "services": services, "networks": networks}
 
     def _up(self, files: list[str]) -> None:
         docs = self._compose_docs(files)
@@ -150,6 +168,11 @@ class FakeDocker:
             sub = argv[argv.index(files[-1]) + 1 :] if files else []
             if sub[:2] == ["up", "-d"]:
                 self._up(files)
+            if sub == ["config", "--format", "json"]:
+                assert not any(f.endswith("docker-compose-network.json") for f in files)
+                return ExecResult(
+                    stdout=json.dumps(self._resolved(files)), stderr="", exit_code=0
+                )
             return None
         if cmd.startswith(
             f"{DOCKER} ps -aq --filter label=com.docker.compose.project=harbor"
@@ -161,14 +184,17 @@ class FakeDocker:
             )
         if cmd.startswith(f"{DOCKER} inspect -f "):
             argv = shlex.split(cmd)
-            assert argv[3].startswith("{{.Id}} {{.HostConfig.NetworkMode}} ")
+            assert argv[3].startswith(
+                '{{.Id}} {{index .Config.Labels "com.docker.compose.service"}} '
+            )
             lines = []
             for short in argv[4:]:
                 cid = next(i for i in self.containers if i.startswith(short))
                 c = self.containers[cid]
-                lines.append(
-                    f"{cid} {c['mode']} {'on' if EGRESS in c['networks'] else 'off'}"
-                )
+                on = "on" if EGRESS in c["networks"] else "off"
+                lines.append(f"{cid} {c['service']} {c['mode']} {on}")
+            if self.garble_inspect:
+                lines[-1] = "Template parsing error"
             return ExecResult(stdout="\n".join(lines) + "\n", stderr="", exit_code=0)
         if cmd.startswith(
             (f"{DOCKER} network connect ", f"{DOCKER} network disconnect ")
@@ -677,7 +703,12 @@ async def test_a_swe_marathon_trial_switches_the_network_by_phase(tmp_path, priz
     override = json.loads(
         sandbox.files.content[f"{COMPOSE}/docker-compose-network.json"]
     )
-    assert override == {"networks": {"default": {"internal": True}}}
+    # Internal, and isolated: no address on the sandbox's side of the bridge.
+    assert override == {"networks": {"default": _docker_module._CLOSED_NETWORK}}
+    assert _docker_module._CLOSED_NETWORK["driver_opts"] == {
+        "com.docker.network.bridge.gateway_mode_ipv4": "isolated",
+        "com.docker.network.bridge.gateway_mode_ipv6": "isolated",
+    }
     assert docker.can_reach_internet("main")  # public setup
 
     await environment.set_network_policy(EMPTY_ALLOWLIST)
@@ -782,6 +813,107 @@ async def test_an_external_network_is_refused_for_restricted_trials(tmp_path, pr
     )
     with pytest.raises(ValueError, match="external network"):
         await environment.start(force_build=False)
+
+
+async def test_the_check_reads_the_project_as_compose_resolves_it(tmp_path, prized):
+    # extends, include or a variable can bring what the task's YAML doesn't
+    # say: the check reads `docker compose config`, not the files.
+    compose = "services:\n  helper:\n    extends: {file: base.yaml, service: x}\n"
+    environment = _environment(
+        tmp_path,
+        files={**DOCKERFILE, "docker-compose.yaml": compose},
+        network_policy=PUBLIC,
+        phase_network_policies=[NO_NETWORK],
+        ek={},
+    )
+    original = FakeDocker.__init__
+
+    def init(self, *args):
+        original(self, *args)
+        self.resolved_extra = {"services": {"helper": {"privileged": True}}}
+
+    FakeDocker.__init__ = init
+    try:
+        with pytest.raises(ValueError, match="'helper' is privileged"):
+            await environment.start(force_build=False)
+    finally:
+        FakeDocker.__init__ = original
+    assert prized.sandboxes[0].deleted
+
+
+async def test_a_network_with_another_driver_is_refused(tmp_path, prized):
+    compose = "services: {}\nnetworks:\n  lan:\n    driver: macvlan\n"
+    environment = _environment(
+        tmp_path,
+        files={**DOCKERFILE, "docker-compose.yaml": compose},
+        network_policy=NO_NETWORK,
+        ek={},
+    )
+    with pytest.raises(ValueError, match="'macvlan' driver"):
+        await environment.start(force_build=False)
+
+
+async def test_every_task_network_is_closed(tmp_path, prized):
+    compose = (
+        "services:\n  main:\n    networks: [back]\n"
+        "networks:\n  back:\n    driver_opts: {com.docker.network.bridge.name: br-x}\n"
+    )
+    environment = _environment(
+        tmp_path,
+        files={**DOCKERFILE, "docker-compose.yaml": compose},
+        network_policy=NO_NETWORK,
+        ek={},
+    )
+    await environment.start(force_build=False)
+    sandbox = prized.sandboxes[0]
+    override = json.loads(
+        sandbox.files.content[f"{COMPOSE}/docker-compose-network.json"]
+    )
+    assert override["networks"]["back"] == _docker_module._CLOSED_NETWORK
+    assert not sandbox.docker.can_reach_internet("main")
+
+
+async def test_an_unreadable_container_fails_the_switch_closed(tmp_path, prized):
+    environment = _environment(
+        tmp_path,
+        files=DOCKERFILE,
+        network_policy=PUBLIC,
+        phase_network_policies=[NO_NETWORK],
+        ek={},
+    )
+    await environment.start(force_build=False)
+    prized.sandboxes[0].docker.garble_inspect = True
+    with pytest.raises(RuntimeError, match="unexpected line"):
+        await environment.set_network_policy(NO_NETWORK)
+
+
+async def test_a_switch_without_main_fails(tmp_path, prized):
+    environment = _environment(
+        tmp_path,
+        files=DOCKERFILE,
+        network_policy=PUBLIC,
+        phase_network_policies=[NO_NETWORK],
+        ek={},
+    )
+    await environment.start(force_build=False)
+    prized.sandboxes[0].docker.containers.clear()
+    with pytest.raises(RuntimeError, match="main service's container is gone"):
+        await environment.set_network_policy(NO_NETWORK)
+
+
+async def test_a_main_without_a_network_of_its_own_switches_quietly(tmp_path, prized):
+    compose = "services:\n  main:\n    network_mode: none\n"
+    environment = _environment(
+        tmp_path,
+        files={**DOCKERFILE, "docker-compose.yaml": compose},
+        network_policy=PUBLIC,
+        phase_network_policies=[NO_NETWORK],
+        ek={},
+    )
+    await environment.start(force_build=False)
+    await environment.set_network_policy(NO_NETWORK)
+    await environment.set_network_policy(PUBLIC)
+    assert not prized.sandboxes[0].docker.can_reach_internet("main")
 
 
 async def test_public_trials_keep_the_tasks_own_networking(tmp_path, prized):

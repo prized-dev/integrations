@@ -51,7 +51,6 @@ import uuid
 from pathlib import Path
 from typing import TYPE_CHECKING, override
 
-import yaml
 from harbor.constants import MAIN_SERVICE_NAME
 from harbor.environments.base import ExecResult
 from harbor.environments.definition import should_use_prebuilt_docker_image
@@ -96,6 +95,16 @@ _NETWORK_NAME = "docker-compose-network.json"
 _OPEN_NETWORK_MODES = ("host", "bridge", "default")
 # What would let a container open its own network (or leave its namespaces).
 _OPEN_CAPS = frozenset({"ALL", "NET_ADMIN", "SYS_ADMIN", "SYS_MODULE", "BPF"})
+# Every network of a restricted trial's project: no route out, and no address
+# on the sandbox's side of the bridge, so containers can't reach the sandbox's
+# own services either (Docker 28 and later).
+_CLOSED_NETWORK = {
+    "internal": True,
+    "driver_opts": {
+        "com.docker.network.bridge.gateway_mode_ipv4": "isolated",
+        "com.docker.network.bridge.gateway_mode_ipv6": "isolated",
+    },
+}
 # Attached to the project's containers while a restricted trial's phase is
 # public; the project's own networks are internal (no route out).
 EGRESS_NETWORK = "harbor-prized-egress"
@@ -322,7 +331,7 @@ class PrizedDocker(DinDComposeOps):
             for index, _ in enumerate(self._env.extra_docker_compose_paths)
         ]
 
-    def _compose_files(self) -> list[str]:
+    def _compose_files(self, network_override: bool = True) -> list[str]:
         """Every compose file on the sandbox, in the order compose reads them."""
         built = COMPOSE_PREBUILT_PATH if self._use_prebuilt else COMPOSE_BUILD_PATH
         files = [
@@ -333,13 +342,15 @@ class PrizedDocker(DinDComposeOps):
             files.append(f"{self._ENVIRONMENT_DIR}/docker-compose.yaml")
         files += self._extra_compose_paths()
         files.append(f"{self._COMPOSE_DIR}/{ENV_COMPOSE_NAME}")
-        if self._env._docker_restricted:
+        if self._env._docker_restricted and network_override:
             files.append(f"{self._COMPOSE_DIR}/{_NETWORK_NAME}")
         # Last: compose merges volumes by target, and Harbor's log mounts must win.
         files.append(f"{self._COMPOSE_DIR}/{self._MOUNTS_COMPOSE_NAME}")
         return files
 
-    def compose_command(self, subcommand: list[str]) -> str:
+    def compose_command(
+        self, subcommand: list[str], network_override: bool = True
+    ) -> str:
         parts = [
             _DOCKER,
             "compose",
@@ -348,16 +359,19 @@ class PrizedDocker(DinDComposeOps):
             "--project-directory",
             self._ENVIRONMENT_DIR,
         ]
-        for path in self._compose_files():
+        for path in self._compose_files(network_override):
             parts += ["-f", path]
         return shlex.join([*parts, *subcommand])
 
     @override
     async def _compose_exec(
-        self, subcommand: list[str], timeout_sec: int | None = None
+        self,
+        subcommand: list[str],
+        timeout_sec: int | None = None,
+        network_override: bool = True,
     ) -> ExecResult:
         return await self._sh(
-            self.compose_command(subcommand),
+            self.compose_command(subcommand, network_override),
             timeout_sec=timeout_sec,
             env=self._compose_env_vars(),
         )
@@ -368,65 +382,72 @@ class PrizedDocker(DinDComposeOps):
             write(local)
             await self._stage_file_to_host(local, f"{self._COMPOSE_DIR}/{name}")
 
-    def _task_compose_docs(self) -> list[tuple[str, dict]]:
-        """The task's own compose files (and extra ones), parsed."""
-        paths = [self._env.environment_dir / "docker-compose.yaml"]
-        paths += list(self._env.extra_docker_compose_paths)
-        docs = []
-        for path in paths:
-            if path.exists():
-                doc = yaml.safe_load(path.read_text()) or {}
-                docs.append((path.name, doc if isinstance(doc, dict) else {}))
-        return docs
-
-    def restricted_network_override(self) -> dict:
-        """For a trial with a restricted phase: every network the project
-        uses becomes internal (no route out, service names still resolve), so
-        main reaches its sidecars and nothing reaches the internet unless
+    def restricted_network_override(self, resolved: dict) -> dict:
+        """For a trial with a restricted phase, from the project as Compose
+        resolves it (``docker compose config``: includes, extends and
+        variables applied): every network the project uses becomes internal
+        (no route out, service names still resolve) and isolated (no address
+        on the sandbox, so the sandbox's own services are out of reach too).
+        Main reaches its sidecars, and nothing reaches the internet unless
         ``set_egress`` attaches the egress network. Refuses what Docker
         couldn't hold closed."""
-        networks: dict[str, dict] = {"default": {"internal": True}}
         what = "This task's network policy (no-network)"
-        for name, doc in self._task_compose_docs():
-            for net, spec in (doc.get("networks") or {}).items():
-                if isinstance(spec, dict) and spec.get("external"):
-                    raise ValueError(
-                        f"{what}: {name} uses the external network {net!r}, "
-                        "which Prized can't close."
-                    )
-                networks[net] = {"internal": True}
-            for service, spec in (doc.get("services") or {}).items():
-                spec = spec if isinstance(spec, dict) else {}
-                mode = str(spec.get("network_mode") or "")
-                if mode in _OPEN_NETWORK_MODES:
-                    raise ValueError(
-                        f"{what}: service {service!r} in {name} uses "
-                        f"network_mode {mode!r}, which reaches the internet."
-                    )
-                caps = {
-                    str(c).upper().removeprefix("CAP_")
-                    for c in spec.get("cap_add") or []
-                }
-                if (
-                    spec.get("privileged")
-                    or caps & _OPEN_CAPS
-                    or spec.get("pid") == "host"
-                ):
-                    raise ValueError(
-                        f"{what}: service {service!r} in {name} is privileged, "
-                        "adds network or admin capabilities, or shares the "
-                        "sandbox's processes, so it could open its own network."
-                    )
-                if any(_docker_socket(v) for v in spec.get("volumes") or []):
-                    raise ValueError(
-                        f"{what}: service {service!r} in {name} mounts the Docker "
-                        "socket, so it could start containers with a network."
-                    )
+        networks: dict[str, dict] = {"default": dict(_CLOSED_NETWORK)}
+        for net, spec in (resolved.get("networks") or {}).items():
+            spec = spec if isinstance(spec, dict) else {}
+            if spec.get("external"):
+                raise ValueError(
+                    f"{what}: the task uses the external network {net!r}, "
+                    "which Prized can't close."
+                )
+            if str(spec.get("driver") or "bridge") != "bridge":
+                raise ValueError(
+                    f"{what}: the task's network {net!r} uses the "
+                    f"{spec.get('driver')!r} driver, which Prized can't close."
+                )
+            networks[net] = dict(_CLOSED_NETWORK)
+        for service, spec in (resolved.get("services") or {}).items():
+            spec = spec if isinstance(spec, dict) else {}
+            mode = str(spec.get("network_mode") or "")
+            if mode in _OPEN_NETWORK_MODES:
+                raise ValueError(
+                    f"{what}: service {service!r} uses network_mode {mode!r}, "
+                    "which reaches the internet."
+                )
+            caps = {
+                str(c).upper().removeprefix("CAP_") for c in spec.get("cap_add") or []
+            }
+            if spec.get("privileged") or caps & _OPEN_CAPS or spec.get("pid") == "host":
+                raise ValueError(
+                    f"{what}: service {service!r} is privileged, adds network or "
+                    "admin capabilities, or shares the sandbox's processes, so it "
+                    "could open its own network."
+                )
+            if any(_docker_socket(v) for v in spec.get("volumes") or []):
+                raise ValueError(
+                    f"{what}: service {service!r} mounts the Docker socket, so it "
+                    "could start containers with a network."
+                )
         return {"networks": networks}
 
-    async def _egress_states(self) -> dict[str, tuple[str, bool]]:
-        """Each of the project's containers (stopped ones too): its network
-        mode, and whether the egress network is attached."""
+    async def _resolved_project(self) -> dict:
+        """The project as Compose resolves it, without the network override."""
+        result = await self._compose_exec(
+            ["config", "--format", "json"], timeout_sec=120, network_override=False
+        )
+        if result.return_code != 0:
+            raise RuntimeError(
+                f"docker compose config failed: {result.stdout} {result.stderr}"
+            )
+        try:
+            resolved = json.loads(result.stdout or "")
+        except ValueError as exc:
+            raise RuntimeError(f"docker compose config: not JSON ({exc})") from None
+        return resolved if isinstance(resolved, dict) else {}
+
+    async def _egress_states(self) -> dict[str, tuple[str, str, bool]]:
+        """Each of the project's containers (stopped ones too): its service,
+        its network mode, and whether the egress network is attached."""
         listed = await self._sh(
             f"{_DOCKER} ps -aq --filter label=com.docker.compose.project={PROJECT}",
             timeout_sec=60,
@@ -437,7 +458,8 @@ class PrizedDocker(DinDComposeOps):
         if not ids:
             return {}
         template = (
-            "{{.Id}} {{.HostConfig.NetworkMode}} "
+            '{{.Id}} {{index .Config.Labels "com.docker.compose.service"}} '
+            "{{.HostConfig.NetworkMode}} "
             f'{{{{if index .NetworkSettings.Networks "{EGRESS_NETWORK}"}}}}on{{{{else}}}}off{{{{end}}}}'
         )
         inspected = await self._sh(
@@ -450,8 +472,14 @@ class PrizedDocker(DinDComposeOps):
         states = {}
         for line in (inspected.stdout or "").splitlines():
             parts = line.split()
-            if len(parts) == 3:
-                states[parts[0]] = (parts[1], parts[2] == "on")
+            if len(parts) != 4 or parts[3] not in ("on", "off"):
+                raise RuntimeError(f"docker inspect: unexpected line {line!r}")
+            states[parts[0]] = (parts[1], parts[2], parts[3] == "on")
+        if len(states) != len(ids):
+            # Fail closed: a container we can't read could have a network.
+            raise RuntimeError(
+                f"docker inspect described {len(states)} of {len(ids)} containers"
+            )
         return states
 
     @staticmethod
@@ -478,12 +506,10 @@ class PrizedDocker(DinDComposeOps):
                 "close it now."
             )
         states = await self._egress_states()
-        if not any(not self._follows_another(mode) for mode, _ in states.values()):
-            raise RuntimeError(
-                "Docker mode: the task has no container to put a network on"
-            )
+        if not any(service == MAIN_SERVICE_NAME for service, _, _ in states.values()):
+            raise RuntimeError("Docker mode: the main service's container is gone")
         verb = ["connect"] if on else ["disconnect", "--force"]
-        for cid, (mode, attached) in states.items():
+        for cid, (_, mode, attached) in states.items():
             if self._follows_another(mode) or attached == on:
                 continue
             result = await self._sh(
@@ -497,7 +523,7 @@ class PrizedDocker(DinDComposeOps):
                 )
         wrong = [
             cid
-            for cid, (mode, attached) in (await self._egress_states()).items()
+            for cid, (_, mode, attached) in (await self._egress_states()).items()
             if (mode in _OPEN_NETWORK_MODES and not on)
             or (not self._follows_another(mode) and attached != on)
         ]
@@ -706,17 +732,6 @@ class PrizedDocker(DinDComposeOps):
         )
         for path in (COMPOSE_BUILD_PATH, COMPOSE_PREBUILT_PATH):
             await self._stage_file_to_host(path, f"{self._COMPOSE_DIR}/{path.name}")
-        if env._docker_restricted:
-            override = self.restricted_network_override()
-            await self._write_json_override(
-                _NETWORK_NAME, lambda path: path.write_text(json.dumps(override))
-            )
-            net = shlex.quote(EGRESS_NETWORK)
-            await self._sh_checked(
-                f"{_DOCKER} network inspect {net} >/dev/null 2>&1 || "
-                f"{_DOCKER} network create --driver bridge {net} >/dev/null",
-                "Failed to create the egress network",
-            )
         await self._write_json_override(
             RESOURCES_COMPOSE_NAME,
             # As Harbor's Docker provider: the task's cpus and memory cap main,
@@ -768,6 +783,18 @@ class PrizedDocker(DinDComposeOps):
             docker_image=env.task_env_config.docker_image,
             force_build=force_build,
         )
+        if env._docker_restricted:
+            # Checked on the project as Compose resolves it, then closed.
+            override = self.restricted_network_override(await self._resolved_project())
+            await self._write_json_override(
+                _NETWORK_NAME, lambda path: path.write_text(json.dumps(override))
+            )
+            net = shlex.quote(EGRESS_NETWORK)
+            await self._sh_checked(
+                f"{_DOCKER} network inspect {net} >/dev/null 2>&1 || "
+                f"{_DOCKER} network create --driver bridge {net} >/dev/null",
+                "Failed to create the egress network",
+            )
         build_timeout = round(env.task_env_config.build_timeout_sec)
         began = time.monotonic()
         result = await self._compose_exec(["build"], timeout_sec=build_timeout)
