@@ -41,6 +41,32 @@ Port 8000 stays private. `start_container()` returns a loopback proxy URL (`http
 
 `public=True` makes the port public instead and returns its `https://` URL. That needs the workspace owner's key and a paid workspace, and counts toward the workspace's 10 public ports.
 
+## Start environments in seconds: `template="auto"`
+
+```python
+provider = PrizedProvider(template="auto")
+env = await CodingEnv.from_docker_image("space:openenv/coding_env", provider=provider)
+```
+
+The first start of an environment builds a base: it installs and starts the environment, forks it once to drop the install's memory, runs one throwaway `reset()` to warm it, and pauses it. Every later start, in this process or any other on the machine, forks that paused base instead of installing.
+
+Live on `coding_env` (2 vCPU/4 GB, Oregon, through a test relay, 11-09), from `from_docker_image()` to a connected client:
+
+| | start |
+|---|---|
+| fresh (no template) | 11.9-12.1 s (4 runs) |
+| `template="auto"`, first use (builds the base) | 22.0 s |
+| `template="auto"`, later uses | 3.0-3.1 s (2 runs; 2.5-2.7 s with `reseed_after_fork=False`) |
+
+A paused base bills storage only, about $0.65 a month at 2 vCPU/4 GB.
+
+- **Where bases are recorded:** `~/.local/state/openenv-prized/templates.json` (or `template_state=`, or `$OPENENV_PRIZED_STATE`), plain JSON with one entry per base: source, revision, shape, sandbox id, when it was built. A base is kept per source and revision, shape, `cmd`, `install_cmd`, env vars (hashed), the settings copies inherit (`max_runtime_min`, `auto_pause_min`, `template_auto_delete_min`) and API key. Pin a revision (`space:owner/name@<sha>`) to get a new base when the environment changes; an unpinned source keeps its first base, and its entry records the commit it was built from.
+- **Delete a base:** `provider.delete_template()` deletes it and its entry. Bases are labelled `openenv=template` (not with your `labels`, so cleaning up a run by its labels leaves the shared base alone), so `prized sandbox ls --label openenv=template` finds any whose entry is gone. A base is deleted after 7 days paused (`template_auto_delete_min`; `0` keeps it).
+- **If a fork fails** (quota, capacity, a deleted base), the environment starts fresh and the `openenv_prized` logger says why. A base that no longer exists or can't be forked again is deleted and forgotten, and the next start builds a new one. Every copy lands on the base's host, so a large burst of starts can run out of room there (`fork_capacity`) and fall back to fresh starts.
+- **Random numbers:** every copy starts with the base's memory, so the server's random generators would draw the same numbers in every environment. With `reseed_after_fork=True` (the default), the provider starts the server through a small launcher and, in each copy, signals it to reseed Python's `random` module and NumPy's global generator from `os.urandom`. Generators your environment holds itself (`self.rng = np.random.default_rng()`): define `prized_reseed(seed)` in the app's module (e.g. `server/app.py`) and reseed them there. Live on `coding_env`, two copies without reseeding drew the same first number; three reseeded copies drew three different ones. With your own `cmd=` there is no launcher, and a warning says so.
+
+Also inherited from the base: its clock (`time.monotonic()` carries on from the base, and a base hot-paused for minutes can make it jump, so timeouts may fire early), its labels (the provider relabels copies `openenv=server` plus your `labels`) and its settings (`max_runtime_min`, `auto_pause_min`; `auto_delete_min` is the base's 7 days). Outbound connections the server opened before the base was paused are dropped. Each copy counts its full disk (10 GB) toward the workspace's retained-disk quota. Sources only (`space:`, `git+`, `dir:`); `fork_base` is implied.
+
 ## Pause, resume, fork
 
 ```python
@@ -152,4 +178,4 @@ pip install -e '.[test]'
 pytest -q
 ```
 
-The tests use a fake SDK and a loopback stand-in for Prized's edge; no account needed. `tests/test_fork_group.py` runs real OpenEnv servers behind a fake Prized API whose fork copies the servers' sessions; `tests/test_fork_base.py` uses it for `fork_base` and `rebase()`, moving real WebSockets through the provider's proxy. `tests/test_live.py` runs `fork_group`, `fork_base` and `rebase()` on Prized with `coding_env` when `PRIZED_LIVE=1` and `PRIZED_API_KEY` are set.
+The tests use a fake SDK and a loopback stand-in for Prized's edge; no account needed. `tests/test_fork_group.py` runs real OpenEnv servers behind a fake Prized API whose fork copies the servers' sessions; `tests/test_fork_base.py` uses it for `fork_base` and `rebase()`, moving real WebSockets through the provider's proxy. `tests/test_template.py` covers `template="auto"` (build once, fork after, fallback, the state file, `delete_template()`) and runs the reseed launcher for real in a subprocess. `tests/test_live.py` runs `fork_group`, `fork_base`, `rebase()` and `template="auto"` on Prized with `coding_env` when `PRIZED_LIVE=1` and `PRIZED_API_KEY` are set.

@@ -32,6 +32,7 @@ from __future__ import annotations
 import copy
 import io
 import ipaddress
+import json
 import math
 import os
 import re
@@ -44,6 +45,9 @@ from typing import Any, Dict, List, Optional, Union
 from urllib.parse import urlsplit, urlunsplit
 
 from openenv.core.containers.runtime.providers import ContainerProvider
+
+from . import _template
+from ._template import log
 
 _DEFAULT_PORT = 8000
 _BASE_TEMPLATE = "prized-base-v1"
@@ -59,6 +63,11 @@ _DEFAULT_INSTALL_TIMEOUT_S = 600.0
 _DEFAULT_READY_TIMEOUT_S = 120.0
 _DEFAULT_REBASE_TIMEOUT_S = 60.0
 _FORK_BASES = ("install", "ready")
+_AUTO = "auto"
+_DEFAULT_API = "https://api.prized.dev"
+_DEFAULT_TEMPLATE_AUTO_DELETE_MIN = 7 * 24 * 60
+_WARM_TIMEOUT_S = 60.0
+_RECHECK_TIMEOUT_S = 15.0
 # The ASGI app when neither openenv.yaml nor a Dockerfile names one:
 # UVProvider's default.
 _DEFAULT_APP = "server.app:app"
@@ -119,6 +128,28 @@ def _fork_base_mode(value: Union[None, bool, str]) -> Optional[str]:
         return value
     raise ValueError(
         f"fork_base must be None, True, 'install' or 'ready' (got {value!r})"
+    )
+
+
+class _BaseGone(RuntimeError):
+    """A template's base no longer exists."""
+
+
+# A base in one of these states cannot be forked again.
+_GONE_STATES = ("deleted", "deleting", "failed", "error")
+_custom_cmd_warned: set = set()
+_SERVER_GONE = "its process is gone"
+
+
+def _gone(exc: BaseException) -> bool:
+    """True when a failure says the sandbox is not there any more."""
+    return (
+        isinstance(exc, _BaseGone)
+        or getattr(exc, "status", None) == 404
+        # A base whose memory Prized discarded (or that was resized) cannot
+        # be forked again: as good as gone.
+        or getattr(exc, "code", None)
+        in ("not_found", "sandbox_deleted", "parent_not_forkable")
     )
 
 
@@ -403,6 +434,16 @@ class _DefaultPrizedAdapter:
     def sandbox_id(self, sandbox: Any) -> str:
         return sandbox.id
 
+    def connect(self, sandbox_id: str) -> Any:
+        """A handle to an existing sandbox (a template's paused base)."""
+        return self._sandbox_cls.connect(sandbox_id, **self._connection)
+
+    def state(self, sandbox: Any) -> Optional[str]:
+        return getattr(sandbox, "state", None)
+
+    def release(self, sandbox: Any) -> None:
+        sandbox.close()
+
     def delete(self, sandbox: Any) -> None:
         # Close the handle only once the delete went through, so a failed
         # delete can be retried with the same handle.
@@ -453,6 +494,12 @@ class PrizedProvider(ContainerProvider):
     fork of the sandbox that installed it, which makes every later fork
     faster (see :meth:`rebase`).
 
+    ``template="auto"`` makes starting many environments fast: the first
+    start builds a paused, warmed base of the environment and every later
+    start (in any process sharing the state file) forks it, reseeding the
+    copy's random generators (``reseed_after_fork``). See
+    :meth:`delete_template`.
+
     Examples:
 
         ```python
@@ -490,6 +537,9 @@ class PrizedProvider(ContainerProvider):
         install_timeout_s: float = _DEFAULT_INSTALL_TIMEOUT_S,
         surface_server_logs: bool = False,
         fork_base: Union[None, bool, str] = None,
+        reseed_after_fork: bool = True,
+        template_state: Optional[str] = None,
+        template_auto_delete_min: int = _DEFAULT_TEMPLATE_AUTO_DELETE_MIN,
         base_url: Optional[str] = None,
         edge_url: Optional[str] = None,
         _adapter: Any = None,
@@ -509,7 +559,19 @@ class PrizedProvider(ContainerProvider):
                 ``PRIZED_API_KEY`` environment variable.
             template (`str`, *optional*):
                 Sandbox template. Defaults to ``prized-base-v1`` for a source and
-                ``prized-docker-v1`` for a registry image.
+                ``prized-docker-v1`` for a registry image. ``"auto"`` makes
+                one of the environment itself: the first ``start_container``
+                installs and starts it, warms it with one throwaway
+                ``reset()``, pauses it as a base and records the base's id
+                in a local state file (``template_state``); every later
+                start, in this process or another, forks that base, which
+                takes seconds instead of an install. Bases are kept per
+                source and revision, shape, ``cmd``, ``install_cmd``, env
+                vars and API key; a paused base bills storage only (about
+                $0.65 a month at 2 vCPU/4 GB). If a fork fails the
+                environment starts fresh, with a warning in the
+                ``openenv_prized`` log. :meth:`delete_template` deletes the
+                base. Sources only (``space:``, ``git+``, ``dir:``).
             vcpu, memory_gb, disk_gb (*optional*):
                 Sandbox shape; the template's default when omitted.
             labels (`dict`, *optional*):
@@ -566,6 +628,29 @@ class PrizedProvider(ContainerProvider):
                 12-14 s once per environment. Default `None`: no base. If
                 the base fork fails, the environment runs in the original
                 sandbox and a ``RuntimeWarning`` says so.
+            reseed_after_fork (`bool`, *optional*, defaults to `True`):
+                With ``template="auto"``: after forking the base, reseed the
+                server's random generators, which would otherwise draw the
+                same numbers in every copy. The provider starts the server
+                through a small launcher that, when signalled in a copy,
+                reseeds Python's ``random`` module and NumPy's global
+                generator from ``os.urandom`` and calls ``prized_reseed(seed)``
+                in the app's module if it defines one (put generators your
+                environment holds itself there). The seed is in
+                :attr:`last_template`. With your own ``cmd`` there is no
+                launcher: a ``RuntimeWarning`` says so, and reseeding is up to
+                your server.
+            template_state (`str`, *optional*):
+                The state file ``template="auto"`` records its bases in.
+                Defaults to ``$OPENENV_PRIZED_STATE``, else
+                ``~/.local/state/openenv-prized/templates.json``. It is plain
+                JSON: read it, or delete it to forget every base (the bases
+                themselves are labelled ``openenv=template``).
+            template_auto_delete_min (`int`, *optional*, defaults to `10080`):
+                A ``template="auto"`` base is deleted after this many minutes
+                paused (7 days), so a forgotten one stops billing; ``0`` keeps
+                it until :meth:`delete_template`. Fork copies inherit it as
+                their own ``auto_delete_min``.
             base_url, edge_url (`str`, *optional*):
                 Prized API and edge origins, for a local proxy or another
                 deployment. Defaults to Prized's.
@@ -575,10 +660,26 @@ class PrizedProvider(ContainerProvider):
         if public_expires_in is not None and not public:
             raise ValueError("public_expires_in applies only with public=True")
         self._fork_base = _fork_base_mode(fork_base)
+        self._template_auto = template == _AUTO
+        if self._template_auto and self._fork_base is not None:
+            raise ValueError(
+                "template='auto' already starts every environment from a "
+                "rebased base; drop fork_base"
+            )
+        if template_auto_delete_min is None or template_auto_delete_min < 0:
+            raise ValueError("template_auto_delete_min must be 0 or more minutes")
+        self._reseed_after_fork = bool(reseed_after_fork)
+        self._template_state = _template.StateFile(template_state)
+        self._template_auto_delete_min = template_auto_delete_min
+        # Which API and key a base belongs to, for its cache key.
+        self._api_origin = (base_url or _DEFAULT_API).rstrip("/")
+        self._key_fp = _template.key_fingerprint(
+            api_key if api_key is not None else os.environ.get("PRIZED_API_KEY")
+        )
 
         self._image = image
         self._env_vars = dict(env_vars) if env_vars is not None else None
-        self._template = template
+        self._template = None if self._template_auto else template
         self._vcpu = vcpu
         self._memory_gb = memory_gb
         self._disk_gb = disk_gb
@@ -614,6 +715,12 @@ class PrizedProvider(ContainerProvider):
         #: What the last :meth:`rebase` did: the sandbox ids, the sockets it
         #: moved and its phases in seconds.
         self.last_rebase: Optional[Dict[str, Any]] = None
+        #: With ``template="auto"``, what the last ``start_container`` did:
+        #: ``status`` (``"built"``, ``"forked"`` or ``"fresh"`` after a failed
+        #: fork), ``base`` (the base's sandbox id), ``key``, ``state`` (the
+        #: state file), ``reseed`` (what the copy's launcher reported, with
+        #: its ``seed``) and ``error`` for a fallback.
+        self.last_template: Optional[Dict[str, Any]] = None
 
         if _adapter is None:
             self._adapter: Any = _DefaultPrizedAdapter(
@@ -703,16 +810,46 @@ class PrizedProvider(ContainerProvider):
         upload = _tar_directory(source["location"]) if source["kind"] == "dir" else None
         docker = source["kind"] == "oci"
         if docker:
+            if self._template_auto:
+                raise ValueError(
+                    "template='auto' runs space:, git+ and dir: sources, not "
+                    "registry images"
+                )
             _check_docker_env(effective_env_vars)
         template = self._template or (_DOCKER_TEMPLATE if docker else _BASE_TEMPLATE)
 
         self._redact_values = {
             value for value in (effective_env_vars or {}).values() if value
         }
-
-        started = time.monotonic()
         self.timings = {}
         self.last_rebase = None
+        self.last_template = None
+        if self._template_auto:
+            return self._start_from_template(
+                source,
+                upload,
+                effective_image,
+                template,
+                cmd,
+                effective_env_vars,
+                ready_timeout_s,
+            )
+        return self._start_fresh(
+            source, upload, template, cmd, effective_env_vars, ready_timeout_s
+        )
+
+    def _start_fresh(
+        self,
+        source: Dict[str, Optional[str]],
+        upload: Optional[bytes],
+        template: str,
+        cmd: Optional[str],
+        effective_env_vars: Optional[Dict[str, str]],
+        ready_timeout_s: float,
+    ) -> str:
+        """Create a sandbox, install and start the environment in it."""
+        docker = source["kind"] == "oci"
+        started = time.monotonic()
         # A create failure created nothing, so just drop the recorded secrets.
         try:
             self._sandbox = self._adapter.create_sandbox(
@@ -972,6 +1109,57 @@ class PrizedProvider(ContainerProvider):
         with self._fork_lock:
             return self._rebase(timeout_s)
 
+    def delete_template(
+        self,
+        image: Optional[str] = None,
+        *,
+        env_vars: Optional[Dict[str, str]] = None,
+        cmd: Optional[str] = None,
+    ) -> Optional[str]:
+        """Delete the ``template="auto"`` base that ``start_container(image,
+        env_vars=env_vars, cmd=cmd)`` forks from, and forget it in the state
+        file. The arguments default to the constructor's, as in
+        ``start_container``. Environments already forked from it are not
+        touched. Returns the base's sandbox id, or `None` if there was no
+        base. Every base is labelled ``openenv=template``, so
+        ``Sandbox.delete_by_labels({"openenv": "template"})`` (or
+        ``prized sandbox ls --label openenv=template``) finds any this
+        state file has forgotten.
+        """
+        effective = image if image is not None else self._image
+        if effective is None:
+            raise ValueError("delete_template needs an image or source")
+        source = _parse_source(effective)
+        if source["kind"] == "oci":
+            raise ValueError("template='auto' bases are only built for sources")
+        upload = _tar_directory(source["location"]) if source["kind"] == "dir" else None
+        key, _ = self._template_key(
+            source,
+            upload,
+            effective,
+            self._template or _BASE_TEMPLATE,
+            cmd if cmd is not None else self._cmd,
+            dict(env_vars) if env_vars is not None else self._env_vars,
+        )
+        state = self._template_state
+        with state.building(key):  # not while another process builds it
+            entry = state.get(key)
+            if entry is None:
+                return None
+            sandbox_id = entry["sandbox_id"]
+            handle = None
+            try:
+                handle = self._adapter.connect(sandbox_id)
+                self._adapter.delete(handle)
+            except Exception as exc:
+                if not _gone(exc):
+                    raise
+            finally:
+                self._release(handle)
+            state.forget(key, sandbox_id)
+        log.info("openenv-prized: deleted template base %s (%s)", sandbox_id, effective)
+        return sandbox_id
+
     # ------------------------------------------------------------------
     # Internals
     # ------------------------------------------------------------------
@@ -1082,20 +1270,484 @@ class PrizedProvider(ContainerProvider):
             )
         return self._base_url
 
-    def _rebase_base(self) -> None:
+    def _rebase_base(self, what: Optional[str] = None) -> None:
         """start_container's rebase: if it fails, carry on in the original."""
         t = time.monotonic()
         try:
             self.rebase()
         except Exception as exc:
             warnings.warn(
-                f"fork_base={self._fork_base!r}: the base fork failed "
+                f"{what or f'fork_base={self._fork_base!r}'}: the base fork failed "
                 f"({type(exc).__name__}: {exc}); the environment runs in the "
                 "sandbox that installed it, whose forks are slower.",
                 RuntimeWarning,
                 stacklevel=4,
             )
         self._lap("rebase_s", t)
+
+    # ------------------------------------------------------------------
+    # template="auto"
+    # ------------------------------------------------------------------
+
+    def _template_key(
+        self,
+        source: Dict[str, Optional[str]],
+        upload: Optional[bytes],
+        image: str,
+        template: str,
+        cmd: Optional[str],
+        env_vars: Optional[Dict[str, str]],
+    ) -> "tuple[str, Dict[str, Any]]":
+        """The base's cache key, and the readable part of its state entry."""
+        if source["kind"] == "dir":
+            assert upload is not None
+            version = "sha256:" + _template.dir_digest(upload)
+            where: Dict[str, Any] = {}  # the content, wherever it lives
+        else:
+            version = source["ref"] or "unpinned"
+            where = {
+                "location": source["location"],
+                "subdirectory": source["subdirectory"],
+            }
+        about = {
+            "image": image.strip(),
+            "version": version,
+            "sandbox_template": template,
+            "shape": {
+                "vcpu": self._vcpu,
+                "memory_gb": self._memory_gb,
+                "disk_gb": self._disk_gb,
+            },
+        }
+        parts = {
+            "kind": source["kind"],
+            **where,
+            "version": version,
+            "sandbox_template": template,
+            "shape": about["shape"],
+            "cmd": cmd,
+            "install_cmd": self._install_cmd,
+            "env": _template.env_digest(env_vars),
+            # Copies inherit these from the base.
+            "max_runtime_min": self._max_runtime_min,
+            "auto_pause_min": self._auto_pause_min,
+            "auto_delete_min": self._template_auto_delete_min,
+            "api": self._api_origin,
+            "key": self._key_fp,
+        }
+        return _template.cache_key(parts), about
+
+    def _start_from_template(
+        self,
+        source: Dict[str, Optional[str]],
+        upload: Optional[bytes],
+        image: str,
+        template: str,
+        cmd: Optional[str],
+        env_vars: Optional[Dict[str, str]],
+        ready_timeout_s: float,
+    ) -> str:
+        started = time.monotonic()
+        key, about = self._template_key(source, upload, image, template, cmd, env_vars)
+        state = self._template_state
+        record: Dict[str, Any] = {"key": key, "state": state.path, "image": image}
+        self.last_template = record
+
+        def fresh(why: str, exc: BaseException) -> str:
+            log.warning(
+                "openenv-prized: %s (%s: %s); starting a fresh environment instead.",
+                why,
+                type(exc).__name__,
+                exc,
+            )
+            record.update(status="fresh", error=f"{type(exc).__name__}: {exc}"[:300])
+            self.timings = {}
+            return self._start_fresh(
+                source, upload, template, cmd, env_vars, ready_timeout_s
+            )
+
+        base = None
+        try:
+            entry = state.get(key)
+            if entry is None:
+                with state.building(key):
+                    # Another process may have built it while this one waited.
+                    entry = state.get(key)
+                    if entry is None:
+                        base, entry = self._build_template(
+                            key,
+                            about,
+                            source,
+                            upload,
+                            template,
+                            cmd,
+                            env_vars,
+                            ready_timeout_s,
+                        )
+                        record["status"] = "built"
+        except _template.StateFileError as exc:
+            return fresh(f"the template state {state.path} is unusable", exc)
+        record["base"] = entry["sandbox_id"]
+        record.setdefault("status", "forked")
+
+        t = time.monotonic()
+        base_state = None
+        try:
+            if base is None:
+                base = self._adapter.connect(entry["sandbox_id"])
+                self._lap("connect_s", t)
+                base_state = self._adapter_state(base)
+                if base_state in _GONE_STATES:
+                    raise _BaseGone(f"the base is {base_state}")
+            t = time.monotonic()
+            copies = self._adapter.fork(
+                base, count=1, labels={"openenv": "server", **self._labels}
+            )
+            if len(copies) != 1:
+                self._orphans += [c for c in copies if not self._deleted(c)]
+                raise RuntimeError(f"fork(1) returned {len(copies)} sandboxes")
+        except Exception as exc:
+            retired = _gone(exc) and self._retire_base(key, entry, base)
+            self._release(base)
+            return fresh(
+                f"could not fork template base {entry['sandbox_id']} for {image}"
+                + (
+                    "; it is gone or unusable, so the next start builds a new one"
+                    if retired
+                    else ""
+                ),
+                exc,
+            )
+        if base_state == "running":
+            # Someone resumed the base: pause it again so it doesn't bill compute.
+            try:
+                self._adapter.pause(base)
+            except Exception:
+                pass
+        self._release(base)
+        self._lap("fork_s", t)
+
+        self._docker = False
+        self._sandbox = copies[0]
+        try:
+            if self._reseed_after_fork:
+                t = time.monotonic()
+                record["reseed"] = self._reseed_copy(image, cmd)
+                self._lap("reseed_s", t)
+                if record["reseed"].get("error") == _SERVER_GONE:
+                    raise _BaseGone("the server is not running in the copy")
+            else:
+                record["reseed"] = "off"
+            t = time.monotonic()
+            self._base_url = self._open_endpoint()
+            self._lap("endpoint_s", t)
+            self._lap("total_s", started)
+        except _BaseGone as exc:
+            try:
+                self.stop_container()
+            except Exception:
+                pass
+            retired = self._retire_base(key, entry, None)
+            return fresh(
+                f"template base {entry['sandbox_id']} for {image} is broken"
+                + ("; the next start builds a new one" if retired else ""),
+                exc,
+            )
+        except BaseException:
+            try:
+                self.stop_container()
+            except Exception:
+                pass
+            raise
+        log.info(
+            "openenv-prized: %s %s from template base %s in %.1f s",
+            "built and forked" if record["status"] == "built" else "forked",
+            self.sandbox_id,
+            record["base"],
+            self.timings["total_s"],
+        )
+        return self._base_url
+
+    def _retire_base(self, key: str, entry: Dict[str, Any], base: Any) -> bool:
+        """Delete an unusable base (best effort) and forget it; True if forgotten."""
+        handle = base
+        try:
+            if handle is None:
+                handle = self._adapter.connect(entry["sandbox_id"])
+            self._adapter.delete(handle)
+        except Exception:
+            pass  # gone already, or the delete failed: its auto-delete still runs
+        finally:
+            if base is None:
+                self._release(handle)
+        try:
+            return self._template_state.forget(key, entry["sandbox_id"])
+        except _template.StateFileError:
+            return False
+
+    def _build_template(
+        self,
+        key: str,
+        about: Dict[str, Any],
+        source: Dict[str, Optional[str]],
+        upload: Optional[bytes],
+        template: str,
+        cmd: Optional[str],
+        env_vars: Optional[Dict[str, str]],
+        ready_timeout_s: float,
+    ) -> "tuple[Any, Dict[str, Any]]":
+        """Install, start, rebase, warm and pause a base; record it."""
+        log.info(
+            "openenv-prized: building a template base for %s (first use; later "
+            "starts fork it). State: %s",
+            about["image"],
+            self._template_state.path,
+        )
+        started = time.monotonic()
+        self._sandbox = self._adapter.create_sandbox(
+            template=template,
+            vcpu=self._vcpu,
+            memory_gb=self._memory_gb,
+            disk_gb=self._disk_gb,
+            # Not the caller's labels: the base outlives this run, and a
+            # cleanup by this run's labels must not delete it.
+            labels={"openenv": "template", "openenv-template": key[:12]},
+            max_runtime_min=self._max_runtime_min,
+            # Copies inherit these settings from the base.
+            auto_pause_min=self._auto_pause_min,
+            auto_delete_min=self._template_auto_delete_min,
+        )
+        self._docker = False
+        self._lap("create_s", started)
+        try:
+            t = time.monotonic()
+            env_root = self._fetch_and_install(source, upload)
+            self._lap("install_s", t)
+            commit = self._source_commit(source)
+            self._start_source(env_root, cmd, env_vars, launcher=cmd is None)
+            t = time.monotonic()
+            self._wait_ready_inside(ready_timeout_s)
+            self._lap("ready_s", t)
+            # Drop the install's memory, so each fork copies only the server's.
+            self._rebase_base("template='auto'")
+            t = time.monotonic()
+            warmed = self._warm(ready_timeout_s)
+            # Never save a base whose server the warm-up broke.
+            self._wait_ready_inside(_RECHECK_TIMEOUT_S)
+            self._lap("warm_s", t)
+            t = time.monotonic()
+            self._adapter.pause(self._sandbox)
+            self._lap("pause_s", t)
+        except BaseException:
+            try:
+                self.stop_container()
+            except Exception:
+                pass
+            raise
+        base, self._sandbox = self._sandbox, None
+        try:
+            # An original the rebase could not delete: one more try, then say so.
+            self._orphans = [o for o in self._orphans if not self._deleted(o)]
+            if self._orphans:
+                ids = " ".join(self._adapter.sandbox_id(o) for o in self._orphans)
+                warnings.warn(
+                    f"template='auto' could not delete the sandbox(es) the base was "
+                    f"forked from: {ids}. stop_container() retries.",
+                    RuntimeWarning,
+                    stacklevel=4,
+                )
+            entry = {
+                "sandbox_id": self._adapter.sandbox_id(base),
+                **about,
+                "commit": commit,
+                "built_at": _template.now_iso(),
+                "build_s": round(time.monotonic() - started, 1),
+                "warmed": warmed,
+                "reseed": "launcher" if cmd is None else "none (custom cmd)",
+                "api": self._api_origin,
+                "auto_delete_min": self._template_auto_delete_min,
+            }
+            self._template_state.put(key, entry)
+        except BaseException:
+            # Unrecorded, nothing would ever fork or delete it.
+            if not self._deleted(base):
+                self._orphans.append(base)
+            raise
+        log.info(
+            "openenv-prized: template base %s for %s built in %.1f s and paused",
+            entry["sandbox_id"],
+            about["image"],
+            entry["build_s"],
+        )
+        return base, entry
+
+    def _source_commit(self, source: Dict[str, Optional[str]]) -> Optional[str]:
+        """The commit a git source was built from (unpinned sources move)."""
+        if source["kind"] != "git":
+            return None
+        try:
+            code, out = self._run(
+                f"git -C {shlex.quote(self._path('env'))} rev-parse HEAD 2>/dev/null"
+            )
+        except Exception:
+            return None
+        out = out.strip()
+        return out if code == 0 and re.fullmatch(r"[0-9a-f]{40,64}", out) else None
+
+    def _warm(self, timeout_s: float) -> bool:
+        """One throwaway ``reset()``, so copies start with its code paths warm.
+        A failure only costs the copies' first reset some speed."""
+        try:
+            self._warm_reset(min(timeout_s, _WARM_TIMEOUT_S))
+            return True
+        except Exception as exc:
+            log.warning(
+                "openenv-prized: the template base's warm-up reset failed (%s: %s); "
+                "copies will run their first reset() colder.",
+                type(exc).__name__,
+                exc,
+            )
+            return False
+
+    def _warm_reset(self, timeout_s: float) -> None:
+        """reset() over a WebSocket, as a client's first call does, then close
+        the session so the base holds no episode."""
+        import requests
+        from websockets.exceptions import ConnectionClosed
+        from websockets.sync.client import connect
+
+        target = _require_secure_url(
+            self._adapter.port_url(self._sandbox, _DEFAULT_PORT)
+        )
+        headers = self._adapter.port_headers(self._sandbox)
+        loopback = _is_loopback(urlsplit(target).hostname)
+        deadline = time.monotonic() + timeout_s
+        not_found = 0
+        # The edge opens a port on its first request, and may answer 429.
+        while True:
+            status, delay = None, 0.5
+            try:
+                response = requests.get(
+                    f"{target}/health",
+                    headers=headers,
+                    timeout=10,
+                    proxies={"http": None, "https": None} if loopback else None,
+                )
+                status = response.status_code
+                if status == 200:
+                    break
+                not_found += status == 404
+                if status in (401, 402, 403) or not_found >= 2:
+                    # Asking again won't change it (and repeated 404s cost
+                    # the key its standing at the edge).
+                    raise RuntimeError(f"the edge refused the port: {status}")
+                if status == 429:
+                    try:
+                        delay = max(float(response.headers.get("Retry-After", 1)), 0.5)
+                    except ValueError:
+                        delay = 1.0
+            except requests.RequestException:
+                pass
+            if time.monotonic() + delay > deadline:
+                raise TimeoutError(f"/health did not answer 200 (last {status})")
+            _sleep(delay)
+
+        parts = urlsplit(target)
+        ws_url = urlunsplit(
+            parts._replace(
+                scheme="wss" if parts.scheme == "https" else "ws",
+                path=parts.path.rstrip("/") + "/ws",
+            )
+        )
+        options: Dict[str, Any] = {
+            "additional_headers": headers,
+            "open_timeout": timeout_s,
+            "max_size": None,
+        }
+        if loopback:
+            options["proxy"] = None
+        try:
+            ws = connect(ws_url, **options)
+        except TypeError:  # websockets < 15 has no proxy option
+            options.pop("proxy", None)
+            ws = connect(ws_url, **options)
+        with ws:
+            ws.send(json.dumps({"type": "reset", "data": {}}))
+            reply = json.loads(ws.recv(timeout=timeout_s))
+            if reply.get("type") == "error":
+                raise RuntimeError(
+                    f"reset failed: {self._redact(str(reply.get('data')), max_chars=200)}"
+                )
+            ws.send(json.dumps({"type": "close"}))
+            try:  # the server ends the session, then closes the socket
+                while True:
+                    ws.recv(timeout=10)
+            except (ConnectionClosed, TimeoutError):
+                pass
+
+    def _reseed_copy(self, image: str, cmd: Optional[str]) -> Dict[str, Any]:
+        """Signal the launcher in a fresh copy to reseed its server. Best
+        effort: a failure warns (the copy keeps the base's generator states)."""
+        if cmd is not None:
+            if image not in _custom_cmd_warned:
+                _custom_cmd_warned.add(image)
+                warnings.warn(
+                    "reseed_after_fork: with your own cmd the server is not "
+                    "started by openenv-prized's launcher, so copies keep the "
+                    "template's random generator states. Reseed from os.urandom "
+                    "in your server, or pass reseed_after_fork=False.",
+                    RuntimeWarning,
+                    stacklevel=4,
+                )
+            return {"error": "custom cmd: no launcher"}
+        try:
+            code, out = self._run(_template.reseed_script(self._root), timeout=30)
+        except Exception as exc:
+            code, out = -1, f"{type(exc).__name__}"
+        done: Dict[str, Any] = {}
+        if code == 0:
+            lines = out.strip().splitlines()
+            try:
+                parsed = json.loads(lines[-1]) if lines else None
+            except ValueError:
+                parsed = None
+            done = parsed if isinstance(parsed, dict) else {"error": "no report"}
+            if done.get("error"):
+                done["error"] = self._redact(str(done["error"]), max_chars=300)
+            if done.get("random") is not True or done.get("error"):
+                warnings.warn(
+                    "reseed_after_fork: the copy's server did not fully reseed "
+                    f"({done.get('error', 'random not reseeded')}).",
+                    RuntimeWarning,
+                    stacklevel=4,
+                )
+            return done
+        reason = {
+            10: "it was not started by openenv-prized's launcher",
+            11: _SERVER_GONE,
+            12: "it did not answer the reseed signal within 5 s",
+        }.get(code, f"the reseed command failed ({out[:80] or code})")
+        if code != 11:  # a dead server is handled by the caller
+            warnings.warn(
+                f"reseed_after_fork: could not reseed the copy's server ({reason}); "
+                "it keeps the template's random generator states.",
+                RuntimeWarning,
+                stacklevel=4,
+            )
+        return {"error": reason}
+
+    def _adapter_state(self, sandbox: Any) -> Optional[str]:
+        state = getattr(self._adapter, "state", None)
+        return state(sandbox) if state is not None else None
+
+    def _release(self, sandbox: Any) -> None:
+        """Let go of a handle to a sandbox that stays (a base)."""
+        release = getattr(self._adapter, "release", None)
+        if sandbox is not None and release is not None:
+            try:
+                release(sandbox)
+            except Exception:
+                pass
 
     def _wait_ready_inside(self, timeout_s: float) -> None:
         """Wait, inside the sandbox, until the server answers ``/health``.
@@ -1270,12 +1922,25 @@ class PrizedProvider(ContainerProvider):
         return _DEFAULT_APP
 
     def _start_source(
-        self, env_root: str, cmd: Optional[str], env_vars: Optional[Dict[str, str]]
+        self,
+        env_root: str,
+        cmd: Optional[str],
+        env_vars: Optional[Dict[str, str]],
+        *,
+        launcher: bool = False,
     ) -> None:
         if cmd is None:
             app = self._discover_app(env_root)
+            runner = "-m uvicorn"
+            if launcher:
+                # uvicorn behind a launcher a fork copy can signal to reseed.
+                path = self._path("prized_launch.py")
+                self._adapter.write(
+                    self._sandbox, path, _template.LAUNCHER.encode(), mode=0o644
+                )
+                runner = shlex.quote(path)
             cmd = (
-                f'"$UV" run --no-sync python -m uvicorn {shlex.quote(app)} '
+                f'"$UV" run --no-sync python {runner} {shlex.quote(app)} '
                 f"--host 0.0.0.0 --port {_DEFAULT_PORT}"
             )
         command = (

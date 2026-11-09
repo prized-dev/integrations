@@ -13,6 +13,9 @@ point the SDK at a local proxy; FORK_N sets the big group's size (default 16).
 ``test_fork_base_live`` starts coding_env with ``fork_base`` (FORK_BASE:
 ``ready``, the default, ``install`` or ``none`` for a control run), forks
 groups of 8 and rebases mid-episode with the client's socket open.
+``test_template_auto_live`` starts coding_env three times with
+``template="auto"`` (a build, then two forks of the paused base), checks
+each copy drew its own random numbers, and deletes the base.
 Prints one JSON line of measurements per check (run with ``-s``).
 """
 
@@ -277,3 +280,37 @@ async def test_fork_base_live():
     deleted = [b.provider.sandbox_id is None for b in branches]
     emit(check="cleanup", copies=len(branches), deleted=sum(deleted))
     assert base.sandbox_id is None and all(deleted)
+
+
+DRAW_ONLY = "import random\nprint('draw=' + str(random.random()))"
+
+
+@pytest.mark.asyncio
+async def test_template_auto_live(tmp_path):
+    """template="auto": the first start builds a base, later starts fork it."""
+    state = str(tmp_path / "templates.json")
+    draws, records = [], []
+    try:
+        for _ in range(3):
+            p = provider(template="auto", template_state=state)
+            t = time.monotonic()
+            env = await coding_env.CodingEnv.from_docker_image(
+                "space:openenv/coding_env", provider=p
+            )
+            start_s = round(time.monotonic() - t, 3)
+            async with env:
+                await env.reset()
+                draws.append(out(await run(env, DRAW_ONLY), "draw"))
+            records.append(p.last_template)
+            emit(
+                check="template", start_s=start_s, timings=p.timings, **p.last_template
+            )
+        assert [r["status"] for r in records] == ["built", "forked", "forked"]
+        assert len({r["base"] for r in records}) == 1
+        assert all(r["reseed"]["random"] is True for r in records)
+        assert len(set(draws)) == 3  # reseeded: no two copies draw alike
+    finally:
+        deleted = provider(template="auto", template_state=state).delete_template(
+            "space:openenv/coding_env"
+        )
+        emit(check="template-deleted", base=deleted)
