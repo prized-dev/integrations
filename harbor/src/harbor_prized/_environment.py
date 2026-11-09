@@ -48,6 +48,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import inspect
 import json
 import logging
 import math
@@ -57,7 +58,7 @@ import shlex
 import uuid
 from collections.abc import Awaitable
 from pathlib import Path
-from typing import override
+from typing import Any, override
 
 from harbor.environments.base import BaseEnvironment, ExecResult
 from harbor.environments.capabilities import (
@@ -199,7 +200,11 @@ class PrizedEnvironment(BaseEnvironment):
 
     @classmethod
     @override
-    def preflight(cls) -> None:
+    def preflight(cls, kwargs: dict[str, Any] | None = None) -> None:
+        # Harbor after 0.25 passes the --ek values and validates them in the
+        # base class; 0.24 and 0.25 call preflight() with none.
+        if "kwargs" in inspect.signature(BaseEnvironment.preflight).parameters:
+            super().preflight(kwargs)
         if not os.environ.get("PRIZED_API_KEY"):
             raise SystemExit(
                 "Prized requires PRIZED_API_KEY, a key with Sandboxes: Write "
