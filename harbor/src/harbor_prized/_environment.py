@@ -564,13 +564,6 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         )
         for policy in self._network_policies:
             api_network(policy)  # an allowlist with hosts: refused here
-        if (
-            not self._docker
-            and self._needs_network_switch
-            and _network_refused_recently()
-        ):
-            # The API said so a moment ago: refused before a sandbox is made.
-            raise ValueError(f"{_NETWORK_REFUSED}.")
 
     @staticmethod
     def _needs_docker(
@@ -823,13 +816,23 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         return vcpu, memory_mb, disk_gb
 
     @override
-    async def start(self, force_build: bool) -> None:
+    def _refuse_if_remembered(self) -> None:
+        """Where Prized refused what this trial needs a moment ago (the Docker
+        template, or switching a sandbox's network off), the trial is refused
+        before a sandbox is made, as its own error. (Raised while Harbor
+        builds the environment, it would end the whole job, other tasks too.)"""
         why = _docker_refused_recently(self._template) if self._docker else None
         if why is not None:
-            # Prized refused the Docker template a moment ago: refused before a
-            # sandbox is made, as this trial's error. (Raised while Harbor builds
-            # the environment, it would end the whole job, native tasks too.)
             raise RuntimeError(self._docker_refused_message(why))
+        if (
+            not self._docker
+            and self._needs_network_switch
+            and _network_refused_recently()
+        ):
+            raise RuntimeError(f"{_NETWORK_REFUSED}.")
+
+    async def start(self, force_build: bool) -> None:
+        self._refuse_if_remembered()
         image = self.task_env_config.docker_image
         if image is None and not self._docker:
             raise ValueError("Prized needs [environment].docker_image.")
@@ -864,6 +867,7 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
             self._docker = self._docker_for_network = False
             self._compose = None
             self._template = self._native_template
+            self._refuse_if_remembered()
             await self._start_once_more(image, force_build)
 
     async def _start_once_more(self, image: str | None, force_build: bool) -> None:

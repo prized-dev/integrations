@@ -1133,16 +1133,30 @@ async def test_where_prized_cant_switch_the_task_is_refused_as_before(
     # Nothing pulled, nothing left behind.
     assert not any("crane" in e["cmd"] for e in sandbox.execs)
     assert sandbox.deleted
-    # The next trial of this run is refused before a sandbox is made...
-    with pytest.raises(ValueError, match="network off here yet"):
-        _native_environment(
-            tmp_path, docker_image="python:3.12", network_policy=NO_NETWORK
+
+    # The next trial of this run is built (a refusal there would end
+    # Harbor's whole job) and refused when it starts, before a sandbox is made...
+    async def no_create(template, **kwargs):
+        raise AssertionError("made a sandbox")
+
+    monkeypatch.setattr(_module.AsyncSandbox, "create", no_create)
+    later = _native_environment(
+        tmp_path, docker_image="python:3.12", network_policy=NO_NETWORK
+    )
+    with pytest.raises(RuntimeError, match="network off here yet"):
+        await later.start(force_build=False)
+    # ...a public one runs as ever (here: goes on to make its sandbox)...
+    with pytest.raises(AssertionError, match="made a sandbox"):
+        await _native_environment(tmp_path, docker_image="python:3.12").start(
+            force_build=False
         )
-    # ...a public one runs as ever...
-    _native_environment(tmp_path, docker_image="python:3.12")
     # ...and once the refusal is old, the API is asked again.
     monkeypatch.setattr(_module, "_network_refused_at", -1e9)
-    _native_environment(tmp_path, docker_image="python:3.12", network_policy=NO_NETWORK)
+    again = _native_environment(
+        tmp_path, docker_image="python:3.12", network_policy=NO_NETWORK
+    )
+    with pytest.raises(AssertionError, match="made a sandbox"):
+        await again.start(force_build=False)
 
 
 @pytest.mark.asyncio

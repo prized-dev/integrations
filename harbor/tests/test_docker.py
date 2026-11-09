@@ -616,8 +616,8 @@ async def test_without_docker_mode_a_missing_template_is_the_sdk_error(
         await environment.start(force_build=False)
 
 
-def test_prizeds_network_switch_being_unavailable_does_not_refuse_docker_mode(
-    tmp_path, monkeypatch
+async def test_prizeds_network_switch_being_unavailable_does_not_refuse_docker_mode(
+    tmp_path, monkeypatch, prized
 ):
     # Native mode remembers that Prized can't switch a sandbox's network yet;
     # Docker mode doesn't need that switch.
@@ -638,14 +638,16 @@ def test_prizeds_network_switch_being_unavailable_does_not_refuse_docker_mode(
         ek={},
     )
     assert routed._docker and routed._docker_for_network
-    with pytest.raises(ValueError, match="can't turn a sandbox's network off"):
-        _environment(
-            tmp_path,
-            docker_image="ubuntu:24.04",
-            network_policy=PUBLIC,
-            phase_network_policies=[NO_NETWORK],
-            ek={"docker": "false"},
-        )
+    native = _environment(
+        tmp_path,
+        docker_image="ubuntu:24.04",
+        network_policy=PUBLIC,
+        phase_network_policies=[NO_NETWORK],
+        ek={"docker": "false"},
+    )
+    with pytest.raises(RuntimeError, match="can't turn a sandbox's network off"):
+        await native.start(force_build=False)
+    assert prized.creates == []  # refused before a sandbox is made
 
 
 # -- start --------------------------------------------------------------------------

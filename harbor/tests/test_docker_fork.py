@@ -794,3 +794,10 @@ async def test_a_routed_task_runs_natively_where_the_docker_template_is_refused(
         await routed().start(force_build=False)
     assert str(info.value).startswith(_module._NETWORK_REFUSED)
     assert "network_none_unavailable" in str(info.value)
+    # With both refusals remembered, the next one is refused with no sandbox.
+    monkeypatch.setattr(_module, "_docker_refusal", None)
+    before = len(creates)
+    with pytest.raises(RuntimeError) as info:
+        await routed().start(force_build=False)
+    assert str(info.value).startswith(_module._NETWORK_REFUSED)
+    assert creates[before:] == ["prized-docker-v1"]  # the native one never made
