@@ -297,6 +297,58 @@ async def test_attempts_of_tasks_sharing_a_dockerfile_all_fork_one_parent(
     assert cloud.alive() == []
 
 
+async def test_task_major_order_still_shares_one_build(tmp_path, cloud):
+    # TaskMajor runs a's attempts, then b's: a's last fork must not delete
+    # the parent while b, which hasn't started, may share it.
+    job = _Job(tmp_path, ["a", "a", "b", "b"])
+    await _run(job, ["a", "a"])
+    (parent,) = cloud.parents()
+    assert parent.state == "paused"
+    await _run(job, ["b", "b"])
+    assert len(cloud.parents()) == 1 and len(cloud.builds) == 1
+    assert len(cloud.copies()) == 4 and not cloud.fresh()
+    await _fork.close_parents()  # TaskMajor's on_job_end
+    assert cloud.alive() == []
+
+
+async def test_a_parent_kept_for_tasks_not_started_goes_at_the_jobs_end(
+    tmp_path, cloud
+):
+    job = _Job(tmp_path, ["a", "a", "b"])
+    await _run(job, ["a", "a"])
+    (parent,) = cloud.parents()
+    assert parent.state == "paused"  # b hasn't started: it may share it
+    # b has a Dockerfile of its own and one trial: it starts fresh.
+    environment = await _trial(job.environment("b", dockerfile=ALPINE))
+    assert environment._sandbox in cloud.fresh()
+    await environment.stop(delete=True)
+    assert parent.state == "paused"  # kept, within the budget, until the end
+    await _fork.close_parents()  # TaskMajor's on_job_end (or the exit sweep)
+    assert cloud.alive() == []
+
+
+async def test_without_docker_mode_a_parent_still_goes_after_its_last_fork(
+    tmp_path, cloud
+):
+    # Native keys are the task's: other tasks can't share them, so a task's
+    # parent goes with its last planned fork even while others haven't started.
+    job = _Job(tmp_path, ["p", "p", "q"])
+    for _ in range(2):
+        environment = job.environment(
+            "p", config={"docker_image": "python:3.12", "cpus": 1, "memory_mb": 2048}
+        )
+        environment._prepare_image = _no_unpack.__get__(environment)
+        await asyncio.wait_for(environment.start(force_build=False), 10)
+        assert not environment._docker
+        await environment.stop(delete=True)
+    (parent,) = cloud.parents()
+    assert parent.state == "deleted"
+
+
+async def _no_unpack(self, image, credentials=None):
+    return None
+
+
 async def test_different_environments_get_their_own_parents(tmp_path, cloud):
     job = _Job(tmp_path, ["a", "b", "a", "b"])
     for task in ["a", "b", "a", "b"]:

@@ -1132,6 +1132,7 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
             cache.plan(trial_dir.parent),
             disk_gb,
             trial_dir.name,
+            task_free=self._compose is not None,
         )
         copy: AsyncSandbox | None = None
         try:

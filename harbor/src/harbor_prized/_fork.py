@@ -22,9 +22,10 @@ In Docker mode (``_docker.py``) the parent is the sandbox right after the
 build and pulls: the images are there, no container has started. Its key is
 the environment's content (Harbor's ``environment_id``), the template and the
 shape, not the task, so tasks that share a Dockerfile share one build. The
-plan names tasks, not environments, so a key seen from a second task is kept
-as long as the budget allows (the plan can't say when the next task that
-shares it comes). A copy that fails to come up counts as a refused fork.
+plan names tasks, not environments, so such a parent is kept, as far as the
+budget allows, while the plan still has a task that hasn't started (it may
+share the environment), and a key seen from a second task is kept for the
+rest of the run. A copy that fails to come up counts as a refused fork.
 
 Parents are labelled ``harbor-fork-parent=1`` and ``harbor-fork-run=<this
 process>``, as well as with the run's own labels. Any still alive when the
@@ -133,6 +134,10 @@ class Plan:
     def knows(self, task: str | None) -> bool:
         return task is not None and task in self._uses
 
+    def has_unseen(self, seen: set[str | None]) -> bool:
+        """Whether a planned task hasn't started any trial yet."""
+        return any(task not in seen for task in self._uses)
+
     def use_after(self, task: str, arrived: int) -> int | None:
         """The plan position of the task's next trial once ``arrived`` have
         asked, or None when no later trial of it is planned."""
@@ -163,6 +168,8 @@ class ParentCache:
         self._made: list[Parent] = []  # every parent, to wait for after a quota refusal
         self._arrived: Counter[tuple[str, str | None]] = Counter()
         self._key_tasks: dict[str, set[str | None]] = {}
+        self._seen: set[str | None] = set()  # every task a trial was asked for
+        self._task_free: set[str] = set()  # keys any task may share (Docker mode)
         self._trials: set[tuple[str, str]] = set()
         self.quota_refused = False
         self._failures: Counter[str] = Counter()
@@ -177,16 +184,22 @@ class ParentCache:
     def parents(self) -> list[Parent]:
         return list(self._parents.values())
 
-    def _next_use(self, key: str) -> float | None:
+    def _next_use(self, key: str, keeping: bool = False) -> float | None:
         """Where the key's next trial is in the plan: None if none is
-        planned, _FAR if the plan doesn't know its task."""
+        planned, _FAR if the plan doesn't know its task. ``keeping`` (a
+        parent's last lease came back): a key any task may share is _FAR
+        while a planned task hasn't started."""
         if len(self._key_tasks.get(key, ())) > 1:
             return _FAR  # shared by tasks: the plan can't say when it's next needed
         plan, task = self._tasks.get(key, (None, None))
         if plan is None or task is None or not plan.knows(task):
             return _FAR
         position = plan.use_after(task, self._arrived[(key, task)])
-        return None if position is None else float(position)
+        if position is not None:
+            return float(position)
+        if keeping and key in self._task_free and plan.has_unseen(self._seen):
+            return _FAR
+        return None
 
     def _rank(self, parent: Parent) -> tuple[float, float]:
         """Eviction order: needed farthest ahead (or never) first, then the
@@ -201,13 +214,19 @@ class ParentCache:
         plan: Plan | None,
         disk_gb: int,
         trial: str,
+        task_free: bool = False,
     ) -> tuple[Lease | None, list[Parent]]:
         """A lease on the key's parent (to build, when ``builder``), or None
         to start fresh; with the parents evicted to make room, which the
         caller deletes. A trial counts once toward its task's plan, however
-        often it starts (a start retried, Harbor's own retries)."""
+        often it starts (a start retried, Harbor's own retries).
+        ``task_free``: the key is not the task's (Docker mode), so other
+        tasks may share the parent."""
         self._tasks.setdefault(key, (plan, task))
         self._key_tasks.setdefault(key, set()).add(task)
+        self._seen.add(task)
+        if task_free:
+            self._task_free.add(key)
         if (key, trial) not in self._trials:
             self._trials.add((key, trial))
             self._arrived[(key, task)] += 1
@@ -345,7 +364,8 @@ class ParentCache:
         if parent.leases > 0:
             return None
         current = self._parents.get(parent.key) is parent
-        if current and not self.closed and self._next_use(parent.key) is not None:
+        later = self._next_use(parent.key, keeping=True)
+        if current and not self.closed and later is not None:
             return None  # a later trial is planned, or the plan doesn't know
         self._forget(parent)
         return parent if parent.sandbox is not None else None
