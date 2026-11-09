@@ -12,7 +12,7 @@ the same episode::
         "space:openenv/coding_env", provider=PrizedProvider()))
     await env.reset()
     ...                                    # k steps: the shared prefix
-    async with fork_group(env, 8) as group:
+    async with fork_group(env, 8) as group:  # copies at step k+1: the reseed is a step
         results = await asyncio.gather(
             *(client.step(action) for client, action in zip(group, actions)))
     # the 8 copies are deleted; env is still at step k for the next group
@@ -857,9 +857,11 @@ def fork_group(
     whose server runs on a :class:`PrizedProvider` (``env``'s own provider, or
     ``provider=``). One ``fork(n)`` call copies the server's sandbox; each
     copy gets a client of ``env``'s class joined to the copied episode, at the
-    parent's step. ``env`` itself is detached for the fork and reconnects on
-    its next call, at the same step: don't use it until ``fork_group``
-    returns. Groups forked from one ``env`` at once take turns.
+    parent's step, or one step later where reseeding is an env step (as in
+    coding_env, whose copies start at k+1). ``env`` itself is detached for
+    the fork and reconnects on its next call, at the same step: don't use it
+    until ``fork_group`` returns. Groups forked from one ``env`` at once take
+    turns.
 
     Args:
         reseed: ``True`` reseeds each copy's environment RNG where

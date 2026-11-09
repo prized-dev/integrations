@@ -70,19 +70,19 @@ async with env:  # closing env deletes the parent's sandbox
     await forkable(env)  # before reset(): the episode goes in a session copies rejoin
     await env.reset()
     ...  # the shared prefix: k steps
-    async with fork_group(env, 8) as group:  # one fork(8): 8 clients, each at step k
+    async with fork_group(env, 8) as group:  # one fork(8): 8 clients, each at step k+1
         results = await asyncio.gather(*(c.step(a) for c, a in zip(group, actions)))
     # the 8 copies are deleted; env is still at step k for the next group
 ```
 
-Each copy holds the parent's episode at the parent's step (memory, processes and files; nothing is replayed), and:
+Each copy holds the parent's episode at the parent's step k (memory, processes and files; nothing is replayed). Its client starts at k, or at k+1 where reseeding takes an env step, as `coding_env`'s does (see the table below). Each copy also:
 
 - **gets its own RNG seed** (`reseed=True`) where the environment exposes one. The seed is in `group.branches[i].seed` (`seeds=` sets them). `reseed=False` leaves every copy on the parent's RNG state: common random numbers.
 - **reports its own episode id** from `state()` (`relabel=True`): `<parent id>/<group id>-b<i>`, with `parent_episode_id`, `branch_index`, `branch_step` and the server's own `server_episode_id`. The server isn't told: OpenEnv has no call that renames a running episode.
 
 | Environment | Copied with the fork | `reseed=True` does |
 |---|---|---|
-| `coding_env` | the REPL's `random` module | runs `random.seed(s)` as one env step, so copies start at step k+1. Generators the episode built itself (`random.Random(7)`) keep the copied state |
+| `coding_env` | the REPL's `random` module | runs `random.seed(s)` as one env step, so each copy's client starts at step k+1, not k (`branch_step` stays k). Generators the episode built itself (`random.Random(7)`) keep the copied state |
 | `browsergym_env` | the page's seeded `Math.random`, the task's NumPy RNG, Chromium | nothing (`"unsupported"`): BrowserGym's actions can't run page JavaScript. MiniWoB draws its task at `reset()` |
 | `echo_env` (MCP clients) | no randomness | nothing (`"no-rng"`). MCP clients already keep their episode in an HTTP session, so `forkable` has nothing to move |
 | others | unknown | warns once. Pass `reseed=<async (client, seed) -> None>`, or `register_reseeder()` |
