@@ -385,8 +385,15 @@ class PrizedDocker(DinDComposeOps):
                         f"{what}: service {service!r} in {name} uses "
                         f"network_mode {mode!r}, which reaches the internet."
                     )
-                caps = {str(c).upper().removeprefix("CAP_") for c in spec.get("cap_add") or []}
-                if spec.get("privileged") or caps & _OPEN_CAPS or spec.get("pid") == "host":
+                caps = {
+                    str(c).upper().removeprefix("CAP_")
+                    for c in spec.get("cap_add") or []
+                }
+                if (
+                    spec.get("privileged")
+                    or caps & _OPEN_CAPS
+                    or spec.get("pid") == "host"
+                ):
                     raise ValueError(
                         f"{what}: service {service!r} in {name} is privileged, "
                         "adds network or admin capabilities, or shares the "
@@ -449,7 +456,9 @@ class PrizedDocker(DinDComposeOps):
             )
         states = await self._egress_states()
         if not any(not self._follows_another(mode) for mode, _ in states.values()):
-            raise RuntimeError("Docker mode: the task has no container to put a network on")
+            raise RuntimeError(
+                "Docker mode: the task has no container to put a network on"
+            )
         verb = ["connect"] if on else ["disconnect", "--force"]
         for cid, (mode, attached) in states.items():
             if self._follows_another(mode) or attached == on:
@@ -759,7 +768,8 @@ class PrizedDocker(DinDComposeOps):
         startup network policy."""
         env = self._env
         result = await self._compose_exec(
-            ["up", "-d"], timeout_sec=max(round(env.task_env_config.build_timeout_sec), 600)
+            ["up", "-d"],
+            timeout_sec=max(round(env.task_env_config.build_timeout_sec), 600),
         )
         if result.return_code != 0:
             raise RuntimeError(

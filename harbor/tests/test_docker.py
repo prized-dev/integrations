@@ -132,12 +132,15 @@ class FakeDocker:
             if c["mode"].startswith("service:"):
                 c["mode"] = "container:" + self.container(c["mode"].split(":", 1)[1])
             elif not c["mode"]:
-                c["mode"] = sorted(c["networks"])[0]
+                c["mode"] = min(c["networks"])
 
     def run(self, cmd: str, env) -> ExecResult | None:
         if cmd.startswith(f"{DOCKER} info"):
             return ExecResult(stdout="29.9.2\n", stderr="", exit_code=0)
-        if cmd.startswith(f"{DOCKER} network inspect {EGRESS} ") and "network create" in cmd:
+        if (
+            cmd.startswith(f"{DOCKER} network inspect {EGRESS} ")
+            and "network create" in cmd
+        ):
             self.networks.setdefault(EGRESS, False)
             return OK
         if cmd.startswith(f"{DOCKER} compose "):
@@ -148,9 +151,13 @@ class FakeDocker:
             if sub[:2] == ["up", "-d"]:
                 self._up(files)
             return None
-        if cmd.startswith(f"{DOCKER} ps -aq --filter label=com.docker.compose.project=harbor"):
+        if cmd.startswith(
+            f"{DOCKER} ps -aq --filter label=com.docker.compose.project=harbor"
+        ):
             return ExecResult(
-                stdout="".join(f"{i[:12]}\n" for i in self.containers), stderr="", exit_code=0
+                stdout="".join(f"{i[:12]}\n" for i in self.containers),
+                stderr="",
+                exit_code=0,
             )
         if cmd.startswith(f"{DOCKER} inspect -f "):
             argv = shlex.split(cmd)
@@ -159,10 +166,12 @@ class FakeDocker:
             for short in argv[4:]:
                 cid = next(i for i in self.containers if i.startswith(short))
                 c = self.containers[cid]
-                lines.append(f"{cid} {c['mode']} {'on' if EGRESS in c['networks'] else 'off'}")
+                lines.append(
+                    f"{cid} {c['mode']} {'on' if EGRESS in c['networks'] else 'off'}"
+                )
             return ExecResult(stdout="\n".join(lines) + "\n", stderr="", exit_code=0)
-        if cmd.startswith(f"{DOCKER} network connect ") or cmd.startswith(
-            f"{DOCKER} network disconnect "
+        if cmd.startswith(
+            (f"{DOCKER} network connect ", f"{DOCKER} network disconnect ")
         ):
             argv = shlex.split(cmd)
             net, cid = argv[-2], argv[-1]
@@ -390,7 +399,9 @@ def test_docker_mode_still_needs_a_definition_and_a_disk_that_fits(tmp_path):
 
 
 def test_docker_mode_adds_memory_for_the_daemons(tmp_path):
-    environment = _environment(tmp_path, files=DOCKERFILE, cpus=1, memory_mb=2048, ek={})
+    environment = _environment(
+        tmp_path, files=DOCKERFILE, cpus=1, memory_mb=2048, ek={}
+    )
     assert environment._shape() == (1, 2560, 30)
 
 
@@ -571,7 +582,9 @@ async def test_start_runs_compose_from_the_prebuilt_image(tmp_path, monkeypatch)
     assert compose_env["DOCKER_CONFIG"] == f"{HOME}/.docker"
 
 
-async def test_force_build_builds_a_dockerfile_even_with_an_image(tmp_path, monkeypatch):
+async def test_force_build_builds_a_dockerfile_even_with_an_image(
+    tmp_path, monkeypatch
+):
     _, sandbox, _ = await _started(
         tmp_path,
         monkeypatch,
@@ -589,7 +602,9 @@ async def test_a_failed_build_fails_the_start_and_deletes(tmp_path, prized):
 
     async def failing(self, cmd, **kwargs):
         if cmd.startswith("/usr/bin/docker compose") and cmd.endswith(" build"):
-            return ExecResult(stdout="", stderr="E: Unable to locate package", exit_code=1)
+            return ExecResult(
+                stdout="", stderr="E: Unable to locate package", exit_code=1
+            )
         return await original(self, cmd, **kwargs)
 
     _Sandbox.exec = failing
@@ -637,7 +652,9 @@ async def test_a_swe_marathon_trial_switches_the_network_by_phase(tmp_path, priz
     # Built and pulled with the network; up with internal networks only.
     assert docker.networks["harbor_default"] is True
     assert docker.networks[EGRESS] is False
-    override = json.loads(sandbox.files.content[f"{COMPOSE}/docker-compose-network.json"])
+    override = json.loads(
+        sandbox.files.content[f"{COMPOSE}/docker-compose-network.json"]
+    )
     assert override == {"networks": {"default": {"internal": True}}}
     assert docker.can_reach_internet("main")  # public setup
 
@@ -688,7 +705,9 @@ async def test_sidecars_stay_reachable_and_closed_with_main(tmp_path, prized):
     await environment.start(force_build=False)
     sandbox = prized.sandboxes[0]
     docker = sandbox.docker
-    flags = _files_flags(next(c for c in sandbox.compose_calls() if _sub(c) == ["up", "-d"]))
+    flags = _files_flags(
+        next(c for c in sandbox.compose_calls() if _sub(c) == ["up", "-d"])
+    )
     assert flags.index(f"{PROJECT}/docker-compose.yaml") == 2
     assert flags[-2:] == [
         f"{COMPOSE}/docker-compose-network.json",
@@ -744,7 +763,10 @@ async def test_public_trials_keep_the_tasks_own_networking(tmp_path, prized):
         tmp_path, files={**DOCKERFILE, "docker-compose.yaml": compose}, ek={}
     )
     await environment.start(force_build=False)
-    assert f"{COMPOSE}/docker-compose-network.json" not in prized.sandboxes[0].files.content
+    assert (
+        f"{COMPOSE}/docker-compose-network.json"
+        not in prized.sandboxes[0].files.content
+    )
 
 
 async def test_a_switch_that_does_not_take_fails_loudly(tmp_path, prized):
@@ -771,7 +793,11 @@ async def test_a_container_on_the_hosts_network_counts_as_open(tmp_path, prized)
     )
     await environment.start(force_build=False)
     docker = prized.sandboxes[0].docker
-    docker.containers["rogue0123"] = {"service": "rogue", "mode": "host", "networks": set()}
+    docker.containers["rogue0123"] = {
+        "service": "rogue",
+        "mode": "host",
+        "networks": set(),
+    }
     with pytest.raises(RuntimeError, match="still on for rogue0123"):
         await environment.set_network_policy(NO_NETWORK)
 
