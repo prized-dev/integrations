@@ -113,6 +113,23 @@ def _single_file_tar(source: Path, name: str) -> bytes:
     return buffer.getvalue()
 
 
+def _docker_socket(volume: object) -> bool:
+    """A compose volume (short or long form) whose source is the Docker socket
+    or its folder."""
+    source = (
+        str(volume.get("source") or "")
+        if isinstance(volume, dict)
+        else str(volume).split(":", 1)[0]
+    )
+    source = posixpath.normpath(source) if source else ""
+    return source in (
+        "/var/run",
+        "/run",
+        "/var/run/docker.sock",
+        "/run/docker.sock",
+    ) or (source.endswith("/docker.sock"))
+
+
 def _under_home(path: str) -> bool:
     return path == _HOME or path.startswith(_HOME + "/")
 
@@ -398,6 +415,11 @@ class PrizedDocker(DinDComposeOps):
                         f"{what}: service {service!r} in {name} is privileged, "
                         "adds network or admin capabilities, or shares the "
                         "sandbox's processes, so it could open its own network."
+                    )
+                if any(_docker_socket(v) for v in spec.get("volumes") or []):
+                    raise ValueError(
+                        f"{what}: service {service!r} in {name} mounts the Docker "
+                        "socket, so it could start containers with a network."
                     )
         return {"networks": networks}
 

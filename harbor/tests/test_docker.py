@@ -727,6 +727,11 @@ async def test_sidecars_stay_reachable_and_closed_with_main(tmp_path, prized):
         ("    cap_add: [NET_ADMIN]\n", "privileged"),
         ("    cap_add: [CAP_SYS_ADMIN]\n", "privileged"),
         ("    pid: host\n", "privileged"),
+        ("    volumes: [/var/run/docker.sock:/var/run/docker.sock]\n", "Docker socket"),
+        (
+            "    volumes:\n      - type: bind\n        source: /run\n        target: /h\n",
+            "Docker socket",
+        ),
     ],
 )
 async def test_restricted_trials_refuse_what_docker_could_not_hold_closed(
