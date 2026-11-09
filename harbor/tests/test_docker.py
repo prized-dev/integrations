@@ -69,6 +69,7 @@ class FakeDocker:
         self.stuck = False  # network connect/disconnect answers 0 but does nothing
         self.resolved_extra: dict = {}  # what includes/extends would add to config
         self.garble_inspect = False
+        self.drop_inspect_line = False
 
     # -- what a container could reach --------------------------------------
 
@@ -192,10 +193,25 @@ class FakeDocker:
                 cid = next(i for i in self.containers if i.startswith(short))
                 c = self.containers[cid]
                 on = "on" if EGRESS in c["networks"] else "off"
-                lines.append(f"{cid} {c['service']} {c['mode']} {on}")
+                privileged = "true" if c.get("privileged") else "false"
+                nets = "".join(f"{n}," for n in sorted(c["networks"]))
+                if c["mode"] == "none":
+                    nets = "none,"
+                lines.append(
+                    f"{cid} {c['service']} {c['mode']} {on} {privileged} nets:{nets}"
+                )
             if self.garble_inspect:
                 lines[-1] = "Template parsing error"
+            if self.drop_inspect_line:
+                lines = lines[:-1]
             return ExecResult(stdout="\n".join(lines) + "\n", stderr="", exit_code=0)
+        if cmd.startswith(f"{DOCKER} network inspect -f "):
+            argv = shlex.split(cmd)
+            assert argv[4] == "{{.Name}} {{.Internal}}"
+            out = "".join(
+                f"{n} {'true' if self.networks[n] else 'false'}\n" for n in argv[5:]
+            )
+            return ExecResult(stdout=out, stderr="", exit_code=0)
         if cmd.startswith(
             (f"{DOCKER} network connect ", f"{DOCKER} network disconnect ")
         ):
@@ -515,6 +531,15 @@ async def test_a_refused_compose_task_keeps_the_compose_refusal(tmp_path, prized
     with pytest.raises(RuntimeError) as info:
         await environment.start(force_build=False)
     assert str(info.value).startswith(_module._COMPOSE_REFUSED + " ")
+    # Without an image, the missing image was named first, as before.
+    no_image = _environment(
+        tmp_path,
+        files={"docker-compose.yaml": "services:\n  db:\n    image: redis:7-alpine\n"},
+        ek={"docker_template": "prized-docker-v3"},
+    )
+    with pytest.raises(RuntimeError) as info:
+        await no_image.start(force_build=False)
+    assert str(info.value).startswith(_module._DOCKERFILE_REFUSED + " ")
 
 
 async def test_docker_true_on_a_refused_template_points_at_the_box_route(
@@ -785,34 +810,49 @@ async def test_sidecars_stay_reachable_and_closed_with_main(tmp_path, prized):
             "    volumes:\n      - type: bind\n        source: /run\n        target: /h\n",
             "Docker socket",
         ),
+        ("    volumes: ['/usr:/host-usr']\n", "binds /usr"),
+        ("    volumes: ['../:/up']\n", "binds ../"),
+        ("    volumes: ['~/:/home-of-prized']\n", "binds ~/"),
+        ("    devices: ['/dev/net/tun']\n", "binds devices"),
     ],
 )
 async def test_restricted_trials_refuse_what_docker_could_not_hold_closed(
     tmp_path, prized, service, match
 ):
+    # Refused where Harbor builds the environment: no sandbox is made.
     compose = "services:\n  helper:\n    image: alpine\n" + service
-    environment = _environment(
-        tmp_path,
-        files={**DOCKERFILE, "docker-compose.yaml": compose},
-        network_policy=PUBLIC,
-        phase_network_policies=[NO_NETWORK],
-        ek={},
-    )
     with pytest.raises(ValueError, match=match):
-        await environment.start(force_build=False)
-    assert prized.sandboxes[0].deleted
+        _environment(
+            tmp_path,
+            files={**DOCKERFILE, "docker-compose.yaml": compose},
+            network_policy=PUBLIC,
+            phase_network_policies=[NO_NETWORK],
+            ek={},
+        )
+    assert prized.creates == []
 
 
-async def test_an_external_network_is_refused_for_restricted_trials(tmp_path, prized):
-    compose = "services: {}\nnetworks:\n  shared:\n    external: true\n"
+async def test_the_projects_own_folders_may_be_bound(tmp_path, prized):
+    compose = "services:\n  main:\n    volumes: ['./data:/data', 'cache:/cache']\n"
     environment = _environment(
         tmp_path,
         files={**DOCKERFILE, "docker-compose.yaml": compose},
         network_policy=NO_NETWORK,
         ek={},
     )
+    await environment.start(force_build=False)
+    assert not prized.sandboxes[0].docker.can_reach_internet("main")
+
+
+async def test_an_external_network_is_refused_for_restricted_trials(tmp_path, prized):
+    compose = "services: {}\nnetworks:\n  shared:\n    external: true\n"
     with pytest.raises(ValueError, match="external network"):
-        await environment.start(force_build=False)
+        _environment(
+            tmp_path,
+            files={**DOCKERFILE, "docker-compose.yaml": compose},
+            network_policy=NO_NETWORK,
+            ek={},
+        )
 
 
 async def test_the_check_reads_the_project_as_compose_resolves_it(tmp_path, prized):
@@ -843,14 +883,37 @@ async def test_the_check_reads_the_project_as_compose_resolves_it(tmp_path, priz
 
 async def test_a_network_with_another_driver_is_refused(tmp_path, prized):
     compose = "services: {}\nnetworks:\n  lan:\n    driver: macvlan\n"
+    with pytest.raises(ValueError, match="'macvlan' driver"):
+        _environment(
+            tmp_path,
+            files={**DOCKERFILE, "docker-compose.yaml": compose},
+            network_policy=NO_NETWORK,
+            ek={},
+        )
+
+
+async def test_a_task_yaml_the_early_check_cant_read_is_left_to_the_sandbox(
+    tmp_path, prized
+):
+    compose = "services:\n  main: !reset {}\n"  # a Compose tag safe_load refuses
     environment = _environment(
         tmp_path,
         files={**DOCKERFILE, "docker-compose.yaml": compose},
         network_policy=NO_NETWORK,
         ek={},
     )
-    with pytest.raises(ValueError, match="'macvlan' driver"):
+    original = FakeDocker._compose_docs
+
+    def docs(self, files):
+        # Compose reads the tag; the fake just leaves the task's file out.
+        return original(self, [f for f in files if not f.startswith(PROJECT + "/")])
+
+    FakeDocker._compose_docs = docs
+    try:
         await environment.start(force_build=False)
+    finally:
+        FakeDocker._compose_docs = original
+    assert not prized.sandboxes[0].docker.can_reach_internet("main")
 
 
 async def test_every_task_network_is_closed(tmp_path, prized):
@@ -961,6 +1024,54 @@ async def test_a_container_on_the_hosts_network_counts_as_open(tmp_path, prized)
         await environment.set_network_policy(NO_NETWORK)
 
 
+async def _restricted_started(tmp_path, prized, **kwargs):
+    environment = _environment(
+        tmp_path,
+        files=DOCKERFILE,
+        network_policy=kwargs.pop("network_policy", PUBLIC),
+        phase_network_policies=kwargs.pop("phases", [NO_NETWORK]),
+        ek={},
+    )
+    await environment.start(force_build=False)
+    return environment, prized.sandboxes[0].docker
+
+
+async def test_a_container_on_a_network_that_reaches_out_fails_the_switch(
+    tmp_path, prized
+):
+    environment, docker = await _restricted_started(tmp_path, prized)
+    docker.containers[docker.container("main")]["networks"].add("bridge")
+    with pytest.raises(RuntimeError, match="doesn't hold internal: bridge"):
+        await environment.set_network_policy(NO_NETWORK)
+
+
+async def test_a_privileged_container_fails_the_switch(tmp_path, prized):
+    environment, docker = await _restricted_started(tmp_path, prized)
+    docker.containers[docker.container("main")]["privileged"] = True
+    with pytest.raises(RuntimeError, match="still on"):
+        await environment.set_network_policy(NO_NETWORK)
+
+
+async def test_a_container_inspect_leaves_out_fails_the_switch(tmp_path, prized):
+    environment, docker = await _restricted_started(tmp_path, prized)
+    docker.drop_inspect_line = True
+    with pytest.raises(RuntimeError, match="described 0 of 1 containers"):
+        await environment.set_network_policy(NO_NETWORK)
+
+
+async def test_a_restricted_baseline_with_public_phases_closes_again(tmp_path, prized):
+    # The baseline is closed and the phase open: after the phase, Harbor
+    # restores the baseline, which must close the network again.
+    environment, docker = await _restricted_started(
+        tmp_path, prized, network_policy=NO_NETWORK, phases=[PUBLIC]
+    )
+    assert not docker.can_reach_internet("main")
+    await environment.set_network_policy(PUBLIC)
+    assert docker.can_reach_internet("main")
+    await environment.set_network_policy(NO_NETWORK)
+    assert not docker.can_reach_internet("main")
+
+
 async def test_bind_mounts_live_under_the_home(tmp_path, monkeypatch):
     environment = _environment(tmp_path, docker_image="ubuntu:24.04")
     environment._mounts = [
@@ -1012,6 +1123,16 @@ async def test_a_daemon_that_never_answers_fails_the_start_and_deletes(
     with pytest.raises(RuntimeError, match="prized-docker-v1"):
         await environment.start(force_build=False)
     assert sandbox.deleted
+    # No docker CLI at all (exit 127): not a Docker template; asked once.
+    environment = _environment(tmp_path, docker_image="ubuntu:24.04")
+    sandbox = _Sandbox(tmp_path / "environment")
+    sandbox.answer = lambda cmd: (
+        missing if cmd.startswith("/usr/bin/docker info") else None
+    )
+    _fake_create(monkeypatch, sandbox)
+    with pytest.raises(RuntimeError, match="prized-docker-v1"):
+        await environment.start(force_build=False)
+    assert sum(e["cmd"].startswith("/usr/bin/docker info") for e in sandbox.execs) == 1
 
 
 async def test_a_hung_docker_info_is_asked_again(tmp_path, monkeypatch):

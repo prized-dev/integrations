@@ -410,6 +410,11 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         else:
             self._template = template or "prized-base-v1"
         self._dockerd_wait_sec = float(dockerd_wait_sec)
+        self._restricted: bool | None = None
+        # Before BaseEnvironment.__init__: its validators run the early check.
+        self._compose: PrizedDocker | None = (
+            PrizedDocker(self) if self._docker else None
+        )
         self._max_runtime_min = int(max_runtime_min)
         self._paused_ttl_min = int(paused_ttl_min)
         self._min_vcpu = int(min_vcpu)
@@ -442,9 +447,6 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         ):
             # The API said so a moment ago: refused before a sandbox is made.
             raise ValueError(f"{_NETWORK_REFUSED}.")
-        self._compose: PrizedDocker | None = (
-            PrizedDocker(self) if self._docker else None
-        )
 
     @staticmethod
     def _needs_docker(
@@ -506,8 +508,13 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
     def _docker_restricted(self) -> bool:
         """Docker mode: some policy of this trial closes the network, so the
         project's networks are internal and egress is a network attached
-        while a phase is public (``_docker.py``)."""
-        return any(api_network(p) == "none" for p in self._network_policies)
+        while a phase is public (``_docker.py``). Decided once, from the
+        policies the trial starts with: each switch replaces the current one."""
+        if self._restricted is None:
+            self._restricted = any(
+                api_network(p) == "none" for p in self._network_policies
+            )
+        return self._restricted
 
     @property
     def _docker_startup_network(self) -> str:
@@ -542,6 +549,10 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
             if why is not None:
                 # Prized refused the Docker template a moment ago.
                 raise ValueError(self._docker_refused_message(why))
+            if self._docker_restricted and self._compose is not None:
+                # Before a sandbox is made, from the files as written; the
+                # sandbox checks the project as Compose resolves it.
+                self._compose.precheck()
         elif not self.task_env_config.docker_image:
             raise ValueError(_DOCKERFILE_REFUSED)
         elif (self.environment_dir / "docker-compose.yaml").exists():
@@ -557,12 +568,16 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         """The refusal for a Docker-mode task where Prized refused the template:
         what such a task was told before Docker mode, and why it still is."""
         if self._docker_auto:
-            before = (
-                _COMPOSE_REFUSED
-                if (self.environment_dir / "docker-compose.yaml").exists()
-                or self.extra_docker_compose_paths
-                else _DOCKERFILE_REFUSED
-            )
+            # As before Docker mode: a missing image first, then Compose.
+            if not self.task_env_config.docker_image:
+                before = _DOCKERFILE_REFUSED
+            elif (self.environment_dir / "docker-compose.yaml").exists():
+                before = _COMPOSE_REFUSED
+            else:
+                before = (
+                    f"{self.type()} environment does not support "
+                    "--extra-docker-compose."
+                )
             return (
                 f"{before} Prized builds Dockerfiles and runs Compose in "
                 f"{self._template} sandboxes, which this workspace can't use "
