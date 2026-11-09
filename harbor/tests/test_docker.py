@@ -396,6 +396,15 @@ def test_docker_true_or_a_docker_template_runs_a_prebuilt_task_in_docker(tmp_pat
     assert pinned._docker and pinned._template == "prized-docker-v1"
 
 
+def test_harbors_coerced_flags_are_understood(tmp_path):
+    assert _environment(
+        tmp_path, docker_image="ubuntu:24.04", ek={"docker": True}
+    )._docker
+    assert _environment(tmp_path, docker_image="ubuntu:24.04", ek={"docker": 1})._docker
+    with pytest.raises(ValueError, match="Building from a Dockerfile"):
+        _environment(tmp_path, files=DOCKERFILE, ek={"docker": 0})
+
+
 def test_bad_docker_flag_is_refused(tmp_path):
     with pytest.raises(ValueError, match="auto, true or false"):
         _environment(tmp_path, docker_image="ubuntu:24.04", ek={"docker": "maybe"})
@@ -452,14 +461,17 @@ async def test_a_refusal_is_remembered_so_later_trials_make_no_sandbox(
         _environment(tmp_path, files=DOCKERFILE, ek={})
     assert str(info.value).startswith(_module._DOCKERFILE_REFUSED)
     assert "409 template_inactive" in str(info.value)
-    # Native tasks are not touched by it.
+    # Native tasks are not touched by it, nor is another Docker template.
     assert not _environment(tmp_path, docker_image="ubuntu:24.04", ek={})._docker
+    _environment(tmp_path, files=DOCKERFILE, ek={"docker_template": "prized-docker-v2"})
     assert len(prized.creates) == 1
     # Ten minutes on, the template may be active: the next trial asks again.
     prized.templates["prized-docker-v1"] = "active"
-    when, why = _module._docker_refusal
+    when, template, why = _module._docker_refusal
     monkeypatch.setattr(
-        _module, "_docker_refusal", (when - _module._DOCKER_REFUSAL_TTL_SEC - 1, why)
+        _module,
+        "_docker_refusal",
+        (when - _module._DOCKER_REFUSAL_TTL_SEC - 1, template, why),
     )
     environment = _environment(tmp_path, files=DOCKERFILE, ek={})
     await environment.start(force_build=False)

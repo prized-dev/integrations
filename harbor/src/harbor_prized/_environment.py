@@ -147,7 +147,7 @@ _TEMPLATE_REFUSAL_CODES = (
 # After a refusal, later Docker-mode trials of this process are refused
 # before a sandbox is made, for this long; then the next one asks again.
 _DOCKER_REFUSAL_TTL_SEC = 600.0
-_docker_refusal: tuple[float, str] | None = None  # (when, why)
+_docker_refusal: tuple[float, str, str] | None = None  # (when, template, why)
 # A sandbox nothing touches for this long pauses itself (one a crashed run left
 # behind stops billing compute); while a trial runs, a heartbeat counts as use.
 _IDLE_PAUSE_MIN = 30
@@ -219,24 +219,28 @@ def _note_network_refused() -> None:
     _network_refused_at = time.monotonic()
 
 
-def _docker_refused_recently() -> str | None:
-    """Why Prized refused the Docker template, if it did in the last ten minutes."""
+def _docker_refused_recently(template: str) -> str | None:
+    """Why Prized refused ``template``, if it did in the last ten minutes."""
     if _docker_refusal is None:
         return None
-    when, why = _docker_refusal
-    return why if time.monotonic() - when < _DOCKER_REFUSAL_TTL_SEC else None
+    when, refused, why = _docker_refusal
+    if refused != template or time.monotonic() - when >= _DOCKER_REFUSAL_TTL_SEC:
+        return None
+    return why
 
 
-def _note_docker_refused(why: str) -> None:
+def _note_docker_refused(template: str, why: str) -> None:
     global _docker_refusal
-    _docker_refusal = (time.monotonic(), why)
+    _docker_refusal = (time.monotonic(), template, why)
 
 
 def _docker_choice(value: bool | str | None) -> bool | None:
     """``--ek docker``: True, False, or None for auto (the default)."""
     if value is None or isinstance(value, bool):
         return value
-    text = value.strip().lower()
+    if isinstance(value, int):  # Harbor may coerce --ek docker=1
+        return bool(value)
+    text = str(value).strip().lower()
     if text in ("", "auto"):
         return None
     if text in ("1", "true", "yes", "on"):
@@ -534,7 +538,7 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
                 docker_image=self.task_env_config.docker_image,
                 extra_docker_compose_paths=self.extra_docker_compose_paths,
             )
-            why = _docker_refused_recently()
+            why = _docker_refused_recently(self._template)
             if why is not None:
                 # Prized refused the Docker template a moment ago.
                 raise ValueError(self._docker_refused_message(why))
@@ -743,7 +747,7 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
                 why = f"{exc.status} {exc.code}"
                 if exc.code == "template_needs_payment" and exc.message:
                     why = f"{why}: {exc.message.rstrip('.')}"
-                _note_docker_refused(why)
+                _note_docker_refused(self._template, why)
                 raise RuntimeError(self._docker_refused_message(why)) from exc
             raise
         self._heartbeat = asyncio.create_task(self._keep_alive(self._sandbox))
