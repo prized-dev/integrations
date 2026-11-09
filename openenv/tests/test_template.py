@@ -14,6 +14,7 @@ uvicorn.
 from __future__ import annotations
 
 import asyncio
+import itertools
 import json
 import logging
 import os
@@ -51,6 +52,11 @@ class _NotForkable(Exception):
     code = "parent_not_forkable"
 
 
+class _Capacity(Exception):
+    status = 409
+    code = "fork_capacity"
+
+
 class _TemplateAdapter(tfg._ForkingAdapter):
     def __init__(self, edge):
         super().__init__(edge)
@@ -59,6 +65,13 @@ class _TemplateAdapter(tfg._ForkingAdapter):
         self.paused: set = set()
         self.released: list = []
         self.fail_fork = None
+        self.fail_group_fork = None  # raised by a fork of more than one copy
+        self.create_barrier = None  # creates wait here: proves they overlap
+        self.dead_servers = 0  # this many reseeds find the server gone
+        self.port_url_failures = 0  # this many port_url calls raise
+        self.fork_entered = threading.Event()
+        self.fork_gate = None  # a fork waits for this event when set
+        self.hook_lock = threading.Lock()
         self.install_exit = 0
         self.reseed_exit = 0
         self.ws_opens = 0
@@ -73,6 +86,8 @@ class _TemplateAdapter(tfg._ForkingAdapter):
     def create_sandbox(self, **kwargs):
         if self.create_delay_s:
             time.sleep(self.create_delay_s)
+        if self.create_barrier is not None:
+            self.create_barrier.wait()
         sandbox = super().create_sandbox(**kwargs)
         sandbox.labels = kwargs["labels"]
         sandbox.settings = kwargs
@@ -97,6 +112,11 @@ class _TemplateAdapter(tfg._ForkingAdapter):
                 raise self.reseed_raises
             if self.reseed_exit:
                 return self.reseed_exit, ""
+            with self.hook_lock:
+                dead = self.dead_servers > 0
+                self.dead_servers -= dead
+            if dead:
+                return 11, ""
             done = self.reseed_report or {
                 "generation": 1,
                 "seed": 42,
@@ -110,8 +130,13 @@ class _TemplateAdapter(tfg._ForkingAdapter):
 
     def fork(self, sandbox, *, count, labels):
         self.events.append(("fork", sandbox.id))
+        self.fork_entered.set()
+        if self.fork_gate is not None:
+            assert self.fork_gate.wait(10)
         if self.fail_fork is not None:
             raise self.fail_fork
+        if count > 1 and self.fail_group_fork is not None:
+            raise self.fail_group_fork
         copies = super().fork(sandbox, count=count, labels=labels)
         self.copies.setdefault(sandbox.id, []).extend(c.id for c in copies)
         for c in copies:
@@ -129,6 +154,14 @@ class _TemplateAdapter(tfg._ForkingAdapter):
         if sandbox.id in self.states:
             return self.states[sandbox.id]
         return "paused" if sandbox.id in self.paused else "running"
+
+    def port_url(self, sandbox, port):
+        with self.hook_lock:
+            fail = self.port_url_failures > 0
+            self.port_url_failures -= fail
+        if fail:
+            raise RuntimeError("edge hiccup")
+        return super().port_url(sandbox, port)
 
     def port_headers(self, sandbox):
         if self.bad_headers_once:
@@ -810,3 +843,278 @@ def test_threads_wait_for_the_build_lock(state_path):
         order.append("b-in")
     thread.join()
     assert order == ["a-in", "a-out", "b-in"]
+
+
+# ---------------------------------------------------------------------------
+# start_many: one fork(N) of the base
+# ---------------------------------------------------------------------------
+async def _play(providers) -> list:
+    """/health, reset and one roll in each started provider, then close it."""
+
+    async def one(p):
+        await asyncio.to_thread(p.wait_for_ready, p.base_url, 10)
+        env = DiceEnv(base_url=p.base_url, provider=p)
+        async with env:
+            await env.reset()
+            return await roll(env)
+
+    return await asyncio.gather(*(one(p) for p in providers))
+
+
+def _template_creates(adapter):
+    return [e for e in adapter.events if e[0] == "create" and e[2] == "template"]
+
+
+@pytest.mark.asyncio
+async def test_start_many_builds_the_base_then_forks_it_once_for_the_group(
+    adapter, state_path
+):
+    factory = _provider(adapter, state_path, labels={"team": "rl"})
+    providers = await asyncio.to_thread(factory.start_many, 4)
+    record = factory.last_template
+    assert record["status"] == "built" and record["count"] == 4
+    base_id = record["base"]
+    assert factory.sandbox_id is None  # the factory runs nothing itself
+
+    # One fork of 4 copies, not 4 forks of one, labelled with the group.
+    forks = [f for f in adapter.forks if f["parent"] == base_id]
+    assert [f["count"] for f in forks] == [4]
+    assert forks[0]["labels"] == {
+        "openenv": "server",
+        "team": "rl",
+        "openenv-group": record["group"],
+    }
+    ids = {p.sandbox_id for p in providers}
+    assert ids == set(adapter.copies[base_id]) and len(ids) == 4
+    assert len({p.base_url for p in providers}) == 4
+    # Each copy reseeded once, and records what happened to it.
+    reseeds = [e[1] for e in adapter.events if e[0] == "reseed"]
+    assert sorted(reseeds) == sorted(ids)
+    for p in providers:
+        assert p.last_template["base"] == base_id
+        assert p.last_template["group"] == record["group"]
+        assert p.last_template["reseed"]["random"] is True
+        assert {"fork_s", "reseed_s", "endpoint_s", "total_s"} <= set(p.timings)
+
+    assert len(await _play(providers)) == 4
+    assert all(i in adapter.deleted for i in ids)
+    assert base_id in adapter.live and base_id in adapter.paused
+
+    # The next group: no build, one more fork(3).
+    creates = len(adapter.created)
+    again = _provider(adapter, state_path)
+    group = await asyncio.to_thread(again.start_many, 3, port=8000)
+    assert again.last_template["status"] == "forked"
+    assert len(adapter.created) == creates
+    assert [f["count"] for f in adapter.forks if f["parent"] == base_id] == [4, 3]
+    await _play(group)
+
+
+@pytest.mark.asyncio
+async def test_start_many_starts_one_by_one_when_the_group_fork_fails(
+    adapter, state_path, caplog
+):
+    await _use(_provider(adapter, state_path))
+    (entry,) = _entries(state_path).values()
+    base_id = entry["sandbox_id"]
+    adapter.fail_group_fork = _Capacity("the parent's machine had no room")
+
+    factory = _provider(adapter, state_path)
+    with caplog.at_level(logging.WARNING, logger="openenv_prized"):
+        providers = await asyncio.to_thread(factory.start_many, 3)
+    assert factory.last_template["status"] == "each"
+    assert "_Capacity" in factory.last_template["error"]
+    assert "total_s" in factory.timings
+    (line,) = [r.getMessage() for r in caplog.records if r.name == "openenv_prized"]
+    assert "one by one" in line and "gone" not in line
+    # Each started as start_container() would: a fork of one from the base.
+    assert [f["count"] for f in adapter.forks if f["parent"] == base_id] == [
+        1,
+        1,
+        1,
+        1,
+    ]
+    assert {p.last_template["status"] for p in providers} == {"forked"}
+    group = factory.last_template["group"]
+    assert factory.last_group == group
+    group_forks = [f for f in adapter.forks if f["parent"] == base_id][1:]
+    assert len(group_forks) == 3
+    assert all(f["labels"]["openenv-group"] == group for f in group_forks)
+    assert _entries(state_path) == {factory.last_template["key"]: entry}
+    await _play(providers)
+
+
+@pytest.mark.asyncio
+async def test_one_dead_copy_is_replaced_and_the_base_kept(adapter, state_path, caplog):
+    await _use(_provider(adapter, state_path))
+    (entry,) = _entries(state_path).values()
+    base_id = entry["sandbox_id"]
+    adapter.dead_servers = 1  # e.g. one copy OOM-killed
+
+    factory = _provider(adapter, state_path)
+    with caplog.at_level(logging.WARNING, logger="openenv_prized"):
+        providers = await asyncio.to_thread(factory.start_many, 3)
+    assert factory.last_template["status"] == "forked"
+    assert factory.last_template["replaced"] == 1
+    (line,) = [r.getMessage() for r in caplog.records if r.name == "openenv_prized"]
+    assert "1 of 3 copies" in line
+    # One fork(3), then one fork(1) for the dead copy; its copy deleted.
+    assert [f["count"] for f in adapter.forks if f["parent"] == base_id] == [
+        1,
+        3,
+        1,
+    ]
+    group_copies = adapter.copies[base_id][1:4]
+    assert sum(c in adapter.deleted for c in group_copies) == 1
+    assert adapter.forks[-1]["labels"]["openenv-group"] == factory.last_group
+    assert len({p.sandbox_id for p in providers}) == 3
+    assert base_id in adapter.live and _entries(state_path) == {
+        factory.last_template["key"]: entry
+    }
+    await _play(providers)
+
+
+@pytest.mark.asyncio
+async def test_a_copy_whose_endpoint_fails_is_replaced(adapter, state_path):
+    await _use(_provider(adapter, state_path))
+    base_id = next(iter(_entries(state_path).values()))["sandbox_id"]
+    adapter.port_url_failures = 1
+    factory = _provider(adapter, state_path)
+    providers = await asyncio.to_thread(factory.start_many, 2)
+    assert factory.last_template["replaced"] == 1
+    assert [f["count"] for f in adapter.forks if f["parent"] == base_id] == [1, 2, 1]
+    await _play(providers)
+    assert set(adapter.live) == {base_id}
+
+
+@pytest.mark.asyncio
+async def test_when_no_copy_has_a_server_the_base_is_retired_and_all_start_fresh(
+    adapter, state_path, caplog
+):
+    first = _provider(adapter, state_path)
+    await _use(first)
+    old_base = first.last_template["base"]
+    adapter.reseed_exit = 11  # every copy's server process is gone
+
+    factory = _provider(adapter, state_path)
+    with caplog.at_level(logging.WARNING, logger="openenv_prized"):
+        providers = await asyncio.to_thread(factory.start_many, 2)
+    assert factory.last_template["status"] == "fresh"
+    assert old_base in adapter.deleted
+    assert all(c in adapter.deleted for c in adapter.copies[old_base][1:])
+    # Fresh, not a rebuild that could fail the same way.
+    assert len(_template_creates(adapter)) == 1
+    fresh = [e for e in adapter.created if e.labels.get("openenv") == "server"]
+    assert len(fresh) == 2
+    assert all(c.labels["openenv-group"] == factory.last_group for c in fresh)
+    assert all(p._template_auto for p in providers)
+    assert {p.last_template for p in providers} == {None}
+    assert _entries(state_path) == {}
+    await _play(providers)
+    assert adapter.live == {}
+
+
+@pytest.mark.asyncio
+async def test_a_failed_group_start_stops_everything_it_started(adapter, state_path):
+    # Without template="auto": count parallel fresh starts; one install fails.
+    calls = itertools.count(1)
+    real_exec = adapter.exec
+
+    def flaky_exec(sandbox, command, **kwargs):
+        if "OPENENV_ROOT=" in command and next(calls) == 2:
+            return 5, ""
+        return real_exec(sandbox, command, **kwargs)
+
+    adapter.exec = flaky_exec
+    plain = PrizedProvider(_adapter=adapter, image=IMAGE)
+    with pytest.raises(RuntimeError, match="installing it"):
+        await asyncio.to_thread(plain.start_many, 3)
+    assert len(adapter.created) == 3
+    assert adapter.live == {}
+
+
+@pytest.mark.asyncio
+async def test_start_many_without_a_template_starts_fresh_in_parallel(
+    adapter, state_path
+):
+    adapter.create_barrier = threading.Barrier(3, timeout=10)  # breaks if serial
+    plain = PrizedProvider(_adapter=adapter, image=IMAGE, labels={"run": "7"})
+    providers = await asyncio.to_thread(plain.start_many, 3)
+    assert len(adapter.created) == 3 and adapter.forks == []
+    assert all(
+        s.labels == {"openenv": "server", "run": "7", "openenv-group": plain.last_group}
+        for s in adapter.created
+    )
+    assert len({p.sandbox_id for p in providers}) == 3
+    await _play(providers)
+    assert adapter.live == {}
+
+
+@pytest.mark.asyncio
+async def test_stop_many_stops_a_group_whose_list_was_lost(adapter, state_path):
+    factory = _provider(adapter, state_path)
+    providers = await asyncio.to_thread(factory.start_many, 3)
+    base_id = factory.last_template["base"]
+    del providers  # e.g. a cancelled asyncio.to_thread(factory.start_many, 3)
+    assert len(adapter.live) == 4
+    factory.stop_container()  # its own sandbox only: the group runs on
+    assert len(adapter.live) == 4
+    factory.stop_many()
+    assert set(adapter.live) == {base_id}
+    factory.stop_many()  # nothing left: safe again
+
+    # A delete that fails is kept and retried by the next call.
+    group = await asyncio.to_thread(factory.start_many, 2)
+    adapter.fail_delete = 1
+    with pytest.raises(RuntimeError, match="stop_many"):
+        factory.stop_many()
+    factory.stop_many()
+    assert set(adapter.live) == {base_id}
+    assert all(p.sandbox_id is None for p in group)
+
+
+@pytest.mark.asyncio
+async def test_stop_many_waits_for_a_start_many_still_running(adapter, state_path):
+    await _use(_provider(adapter, state_path))
+    base_id = next(iter(_entries(state_path).values()))["sandbox_id"]
+    adapter.fork_entered.clear()
+    adapter.fork_gate = threading.Event()
+    factory = _provider(adapter, state_path)
+    starting = asyncio.ensure_future(asyncio.to_thread(factory.start_many, 3))
+    assert await asyncio.to_thread(adapter.fork_entered.wait, 10)
+    stopping = asyncio.ensure_future(asyncio.to_thread(factory.stop_many))
+    await asyncio.sleep(0.2)
+    assert not stopping.done()  # it waits for the group to exist
+    adapter.fork_gate.set()
+    await starting
+    await stopping
+    assert set(adapter.live) == {base_id}
+
+
+@pytest.mark.asyncio
+async def test_secrets_are_redacted_in_each_copys_record(adapter, state_path):
+    secret = "s3cret-value"
+    await _use(_provider(adapter, state_path, env_vars={"TOKEN": secret}))
+    adapter.reseed_report = {"random": False, "error": f"boom {secret}"}
+    factory = _provider(adapter, state_path, env_vars={"TOKEN": secret})
+    with pytest.warns(RuntimeWarning, match="did not fully reseed"):
+        providers = await asyncio.to_thread(factory.start_many, 2)
+    for p in providers:
+        assert secret not in json.dumps(p.last_template)
+        assert "***" in p.last_template["reseed"]["error"]
+    assert secret not in json.dumps(factory.last_template)
+    await _play(providers)
+
+
+def test_start_many_arguments_are_checked(adapter, state_path):
+    factory = _provider(adapter, state_path)
+    for bad in (0, -1, True, 2.0, "3"):
+        with pytest.raises(ValueError, match="count"):
+            factory.start_many(bad)
+    with pytest.raises(ValueError, match="Unsupported"):
+        factory.start_many(2, nope=1)
+    with pytest.raises(ValueError, match="port"):
+        factory.start_many(2, port=9000)
+    with pytest.raises(ValueError, match="registry images"):
+        factory.start_many(2, "registry.hf.space/x:latest")
+    assert adapter.created == []

@@ -29,6 +29,7 @@ review/sign-off by the RFC authors.
 
 from __future__ import annotations
 
+import concurrent.futures
 import copy
 import io
 import ipaddress
@@ -41,7 +42,7 @@ import tarfile
 import threading
 import time
 import warnings
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from urllib.parse import urlsplit, urlunsplit
 
 from openenv.core.containers.runtime.providers import ContainerProvider
@@ -68,6 +69,8 @@ _DEFAULT_API = "https://api.prized.dev"
 _DEFAULT_TEMPLATE_AUTO_DELETE_MIN = 7 * 24 * 60
 _WARM_TIMEOUT_S = 60.0
 _RECHECK_TIMEOUT_S = 15.0
+# start_many(): at most this many starts or reseeds run at once.
+_MAX_PARALLEL_STARTS = 32
 # The ASGI app when neither openenv.yaml nor a Dockerfile names one:
 # UVProvider's default.
 _DEFAULT_APP = "server.app:app"
@@ -133,6 +136,70 @@ def _fork_base_mode(value: Union[None, bool, str]) -> Optional[str]:
 
 class _BaseGone(RuntimeError):
     """A template's base no longer exists."""
+
+
+class _NoFork(Exception):
+    """The template's base could not be forked: start without it."""
+
+    def __init__(self, why: str, cause: BaseException):
+        super().__init__(why)
+        self.why = why
+        self.cause = cause
+
+
+def _stop_all(providers: "List[PrizedProvider]") -> None:
+    """Best-effort ``stop_container()`` of each, for a group that failed. A
+    sandbox whose delete failed stays with its provider, which the provider
+    that started the group keeps, so its ``stop_many()`` retries it."""
+    for provider in providers:
+        try:
+            provider.stop_container()
+        except Exception:
+            pass
+
+
+def _in_parallel(
+    fn: Callable[[Any], Any], items: List[Any], *, stop_on_error: bool = True
+) -> List[Optional[BaseException]]:
+    """``fn(item)`` for every item, up to ``_MAX_PARALLEL_STARTS`` at a time;
+    per item, the error it raised or None. With ``stop_on_error``, the calls
+    not yet started when one fails are cancelled (their error is
+    ``CancelledError``). On an interrupt, the queued calls are cancelled and
+    the running ones finish before it propagates, so the caller can clean up
+    all they made."""
+    pool = concurrent.futures.ThreadPoolExecutor(
+        max_workers=max(1, min(len(items), _MAX_PARALLEL_STARTS))
+    )
+    try:
+        futures = [pool.submit(fn, item) for item in items]
+        _done, pending = concurrent.futures.wait(
+            futures,
+            return_when=concurrent.futures.FIRST_EXCEPTION
+            if stop_on_error
+            else concurrent.futures.ALL_COMPLETED,
+        )
+        for future in pending:
+            future.cancel()
+        concurrent.futures.wait(pending)
+    finally:
+        pool.shutdown(wait=True, cancel_futures=True)
+    return [
+        concurrent.futures.CancelledError() if f.cancelled() else f.exception()
+        for f in futures
+    ]
+
+
+# (source, upload, image, sandbox template, cmd, env vars, ready timeout):
+# one start's checked arguments.
+_Start = Tuple[
+    Dict[str, Optional[str]],
+    Optional[bytes],
+    str,
+    str,
+    Optional[str],
+    Optional[Dict[str, str]],
+    float,
+]
 
 
 # A base in one of these states cannot be forked again.
@@ -498,7 +565,8 @@ class PrizedProvider(ContainerProvider):
     start builds a paused, warmed base of the environment and every later
     start (in any process sharing the state file) forks it, reseeding the
     copy's random generators (``reseed_after_fork``). See
-    :meth:`delete_template`.
+    :meth:`delete_template`. :meth:`start_many` starts a group of
+    environments with one fork of the base.
 
     Examples:
 
@@ -708,6 +776,12 @@ class PrizedProvider(ContainerProvider):
         self._fork_lock = threading.Lock()
         # Originals a rebase could not delete; stop_container() retries them.
         self._orphans: List[Any] = []
+        # The providers start_many() started; stop_many() stops them. The
+        # lock is held while start_many() runs.
+        self._group: List[PrizedProvider] = []
+        self._group_lock = threading.Lock()
+        #: The ``openenv-group`` label value of the last :meth:`start_many`.
+        self.last_group: Optional[str] = None
         #: Seconds per phase of the last ``start_container``: ``create_s``,
         #: ``install_s`` (a source), ``ready_s`` (``fork_base="ready"``),
         #: ``rebase_s`` (with ``fork_base``), ``endpoint_s``, ``total_s``.
@@ -719,7 +793,9 @@ class PrizedProvider(ContainerProvider):
         #: ``status`` (``"built"``, ``"forked"`` or ``"fresh"`` after a failed
         #: fork), ``base`` (the base's sandbox id), ``key``, ``state`` (the
         #: state file), ``reseed`` (what the copy's launcher reported, with
-        #: its ``seed``) and ``error`` for a fallback.
+        #: its ``seed``) and ``error`` for a fallback. After
+        #: :meth:`start_many`, also ``count``, and ``status`` ``"each"`` when
+        #: the group fork failed and the environments started one by one.
         self.last_template: Optional[Dict[str, Any]] = None
 
         if _adapter is None:
@@ -774,6 +850,154 @@ class PrizedProvider(ContainerProvider):
                 "awaits cleanup. Call stop_container() (or close()) before "
                 "starting another; a second start would orphan it."
             )
+        return self._start_prepared(self._prepare_start(image, port, env_vars, kwargs))
+
+    def start_many(
+        self,
+        count: int,
+        image: Optional[str] = None,
+        port: Optional[int] = None,
+        env_vars: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
+    ) -> List["PrizedProvider"]:
+        """Start ``count`` environments at once.
+
+        With ``template="auto"`` this is one ``fork(count)`` of the
+        environment's base (built first if there is none) instead of
+        ``count`` separate forks: one API call that copies the base once for
+        the whole group. Each copy is reseeded (``reseed_after_fork``) and
+        gets its own endpoint; a copy that fails that is replaced by a start
+        of its own. If the group fork fails (the base's host has no room for
+        ``count`` copies, a quota, a deleted base), each environment starts
+        on its own as :meth:`start_container` starts one (a fork of the base,
+        else fresh) and ``last_template["status"]`` is ``"each"``. Without
+        ``template="auto"``, the environments start in parallel.
+
+        Returns one started provider per environment, each owning its
+        sandbox. Connect a client with ``EnvClient(base_url=p.base_url,
+        provider=p)``; closing the client (or ``p.stop_container()``) deletes
+        that sandbox. If starting fails, the environments already started
+        are stopped and the error is raised. This provider also remembers
+        what it started: :meth:`stop_many` stops all of it, for a group whose
+        list was lost (a cancelled ``asyncio.to_thread``). Every sandbox it
+        starts is labelled ``openenv-group=<last_group>``, so
+        ``prized sandbox ls --label openenv-group=<id>`` finds any left over
+        by a crash. Calls on one provider run one at a time.
+
+        Args:
+            count (`int`): How many environments.
+            image, port, env_vars, **kwargs: As for :meth:`start_container`.
+
+        Returns:
+            `list[PrizedProvider]`: ``count`` started providers.
+        """
+        if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+            raise ValueError("count must be a positive int")
+        if self._sandbox is not None or self._proxy is not None:
+            raise RuntimeError(
+                "start_many() returns new providers; call it on a provider "
+                "with no active sandbox."
+            )
+        start = self._prepare_start(image, port, env_vars, kwargs)
+        with self._group_lock:
+            # Forget environments of earlier groups that are stopped already.
+            self._group = [p for p in self._group if not p._idle()]
+            self._begin(start)
+            group = self.last_group = os.urandom(6).hex()
+            try:
+                if not self._template_auto:
+                    return self._start_each(count, start, group=group)
+                return self._start_many_from_template(count, start, group)
+            finally:
+                # The copies hold their own; this provider runs nothing.
+                self._redact_values = set()
+
+    def stop_many(self) -> None:
+        """Stop every environment :meth:`start_many` started on this
+        provider that is still running, as its own ``stop_container()``
+        would. For a group whose list was lost: if a :meth:`start_many` is
+        still running (a cancelled ``asyncio.to_thread`` doesn't stop its
+        thread), this waits for it first. A delete that fails is kept, and
+        calling this again retries it."""
+        with self._group_lock:
+            _stop_all(self._group)
+            self._group = [p for p in self._group if not p._idle()]
+            if self._group:
+                raise RuntimeError(
+                    f"Could not stop {len(self._group)} environment(s) "
+                    "start_many() started. stop_many() again retries."
+                )
+
+    def _start_prepared(self, start: "_Start") -> str:
+        """start_container() after its arguments were checked."""
+        self._begin(start)
+        source, upload, _image, template, cmd, env_vars, ready_timeout_s = start
+        if self._template_auto:
+            return self._start_from_template(*start)
+        return self._start_fresh(
+            source, upload, template, cmd, env_vars, ready_timeout_s
+        )
+
+    def _begin(self, start: "_Start") -> None:
+        """Reset the last start's records."""
+        self._redact_values = {value for value in (start[5] or {}).values() if value}
+        self.timings = {}
+        self.last_rebase = None
+        self.last_template = None
+
+    def _idle(self) -> bool:
+        return self._sandbox is None and self._proxy is None and not self._orphans
+
+    def _start_each(
+        self, count: int, start: "_Start", *, group: str, fresh: bool = False
+    ) -> List["PrizedProvider"]:
+        """``count`` starts in parallel, each in a new provider with this
+        one's configuration (the template path unless ``fresh``) and the
+        group's label."""
+        children = [self._child(None) for _ in range(count)]
+        for child in children:
+            child._labels["openenv-group"] = group
+        self._group += children
+
+        def start_one(child: "PrizedProvider") -> None:
+            if not fresh:
+                child._start_prepared(start)
+                return
+            child._template_auto = False
+            try:
+                child._start_prepared(start)
+            finally:
+                child._template_auto = self._template_auto
+
+        try:
+            errors = _in_parallel(start_one, children)
+        except BaseException:
+            _stop_all(children)
+            raise
+        failures = [e for e in errors if e is not None]
+        if failures:
+            _stop_all(children)
+            # The first real failure, not a start it cancelled.
+            raise next(
+                (
+                    e
+                    for e in failures
+                    if not isinstance(e, concurrent.futures.CancelledError)
+                ),
+                failures[0],
+            )
+        return children
+
+    def _prepare_start(
+        self,
+        image: Optional[str],
+        port: Optional[int],
+        env_vars: Optional[Dict[str, str]],
+        kwargs: Dict[str, Any],
+    ) -> "_Start":
+        """Check a start's arguments and resolve them: ``(source, upload,
+        image, sandbox template, cmd, env vars, ready timeout)``. Changes
+        nothing on the provider."""
         if port is not None and port != _DEFAULT_PORT:
             raise ValueError(
                 f"PrizedProvider only supports port {_DEFAULT_PORT} (got {port}), "
@@ -817,25 +1041,14 @@ class PrizedProvider(ContainerProvider):
                 )
             _check_docker_env(effective_env_vars)
         template = self._template or (_DOCKER_TEMPLATE if docker else _BASE_TEMPLATE)
-
-        self._redact_values = {
-            value for value in (effective_env_vars or {}).values() if value
-        }
-        self.timings = {}
-        self.last_rebase = None
-        self.last_template = None
-        if self._template_auto:
-            return self._start_from_template(
-                source,
-                upload,
-                effective_image,
-                template,
-                cmd,
-                effective_env_vars,
-                ready_timeout_s,
-            )
-        return self._start_fresh(
-            source, upload, template, cmd, effective_env_vars, ready_timeout_s
+        return (
+            source,
+            upload,
+            effective_image,
+            template,
+            cmd,
+            effective_env_vars,
+            ready_timeout_s,
         )
 
     def _start_fresh(
@@ -1349,8 +1562,11 @@ class PrizedProvider(ContainerProvider):
     ) -> str:
         started = time.monotonic()
         key, about = self._template_key(source, upload, image, template, cmd, env_vars)
-        state = self._template_state
-        record: Dict[str, Any] = {"key": key, "state": state.path, "image": image}
+        record: Dict[str, Any] = {
+            "key": key,
+            "state": self._template_state.path,
+            "image": image,
+        }
         self.last_template = record
 
         def fresh(why: str, exc: BaseException) -> str:
@@ -1366,81 +1582,26 @@ class PrizedProvider(ContainerProvider):
                 source, upload, template, cmd, env_vars, ready_timeout_s
             )
 
-        base = None
         try:
-            entry = state.get(key)
-            if entry is None:
-                with state.building(key):
-                    # Another process may have built it while this one waited.
-                    entry = state.get(key)
-                    if entry is None:
-                        base, entry = self._build_template(
-                            key,
-                            about,
-                            source,
-                            upload,
-                            template,
-                            cmd,
-                            env_vars,
-                            ready_timeout_s,
-                        )
-                        record["status"] = "built"
-        except _template.StateFileError as exc:
-            return fresh(f"the template state {state.path} is unusable", exc)
-        record["base"] = entry["sandbox_id"]
-        record.setdefault("status", "forked")
-
-        t = time.monotonic()
-        base_state = None
-        try:
-            if base is None:
-                base = self._adapter.connect(entry["sandbox_id"])
-                self._lap("connect_s", t)
-                base_state = self._adapter_state(base)
-                if base_state in _GONE_STATES:
-                    raise _BaseGone(f"the base is {base_state}")
-            t = time.monotonic()
-            copies = self._adapter.fork(
-                base, count=1, labels={"openenv": "server", **self._labels}
+            entry, copies = self._fork_template(
+                key,
+                about,
+                source,
+                upload,
+                image,
+                template,
+                cmd,
+                env_vars,
+                ready_timeout_s,
+                count=1,
+                record=record,
             )
-            if len(copies) != 1:
-                self._orphans += [c for c in copies if not self._deleted(c)]
-                raise RuntimeError(f"fork(1) returned {len(copies)} sandboxes")
-        except Exception as exc:
-            retired = _gone(exc) and self._retire_base(key, entry, base)
-            self._release(base)
-            return fresh(
-                f"could not fork template base {entry['sandbox_id']} for {image}"
-                + (
-                    "; it is gone or unusable, so the next start builds a new one"
-                    if retired
-                    else ""
-                ),
-                exc,
-            )
-        if base_state == "running":
-            # Someone resumed the base: pause it again so it doesn't bill compute.
-            try:
-                self._adapter.pause(base)
-            except Exception:
-                pass
-        self._release(base)
-        self._lap("fork_s", t)
+        except _NoFork as no_fork:
+            return fresh(no_fork.why, no_fork.cause)
 
-        self._docker = False
         self._sandbox = copies[0]
         try:
-            if self._reseed_after_fork:
-                t = time.monotonic()
-                record["reseed"] = self._reseed_copy(image, cmd)
-                self._lap("reseed_s", t)
-                if record["reseed"].get("error") == _SERVER_GONE:
-                    raise _BaseGone("the server is not running in the copy")
-            else:
-                record["reseed"] = "off"
-            t = time.monotonic()
-            self._base_url = self._open_endpoint()
-            self._lap("endpoint_s", t)
+            self._serve_copy(image, cmd, record)
             self._lap("total_s", started)
         except _BaseGone as exc:
             try:
@@ -1467,6 +1628,226 @@ class PrizedProvider(ContainerProvider):
             self.timings["total_s"],
         )
         return self._base_url
+
+    def _start_many_from_template(
+        self, count: int, start: "_Start", group: str
+    ) -> List["PrizedProvider"]:
+        """One ``fork(count)`` of the base; one start each when that fails."""
+        source, upload, image, template, cmd, env_vars, ready_timeout_s = start
+        started = time.monotonic()
+        key, about = self._template_key(source, upload, image, template, cmd, env_vars)
+        record: Dict[str, Any] = {
+            "key": key,
+            "state": self._template_state.path,
+            "image": image,
+            "count": count,
+            "group": group,
+        }
+        self.last_template = record
+
+        def each(
+            why: str, exc: BaseException, *, fresh: bool = False
+        ) -> List[PrizedProvider]:
+            log.warning(
+                "openenv-prized: %s (%s: %s); starting the %d environments %s instead.",
+                why,
+                type(exc).__name__,
+                exc,
+                count,
+                "fresh" if fresh else "one by one",
+            )
+            if record.get("status") == "built":
+                record["built"] = True
+            record.update(
+                status="fresh" if fresh else "each",
+                error=f"{type(exc).__name__}: {exc}"[:300],
+            )
+            children = self._start_each(count, start, group=group, fresh=fresh)
+            self._lap("total_s", started)
+            return children
+
+        try:
+            entry, copies = self._fork_template(
+                key,
+                about,
+                source,
+                upload,
+                image,
+                template,
+                cmd,
+                env_vars,
+                ready_timeout_s,
+                count=count,
+                record=record,
+                labels={"openenv-group": group},
+            )
+        except _NoFork as no_fork:
+            return each(no_fork.why, no_fork.cause)
+
+        children = [self._child(c) for c in copies]
+        self._group += children
+        records = [dict(record) for _ in children]
+        try:
+            # Reseeding is one command in each copy: run them all at once.
+            errors = _in_parallel(
+                lambda i: children[i]._serve_copy(image, cmd, records[i]),
+                list(range(count)),
+                stop_on_error=False,  # each copy that fails is replaced
+            )
+        except BaseException:
+            _stop_all(children)
+            raise
+        failed = [i for i, error in enumerate(errors) if error is not None]
+        if failed and all(isinstance(e, _BaseGone) for e in errors):
+            # No copy has a server: the base is broken. As start_container():
+            # retire it and start fresh (a rebuild here could fail the same way).
+            _stop_all(children)
+            retired = self._retire_base(key, entry, None)
+            return each(
+                f"template base {entry['sandbox_id']} for {image} is broken"
+                + ("; the next start builds a new one" if retired else ""),
+                errors[0],
+                fresh=True,
+            )
+        replacements: List[PrizedProvider] = []
+        if failed:
+            # Some copies failed (one OOM-killed, an endpoint error): keep the
+            # others and the base, and start the failed ones on their own.
+            first = errors[failed[0]]
+            log.warning(
+                "openenv-prized: %d of %d copies of template base %s failed "
+                "(%s: %s); starting %d on their own.",
+                len(failed),
+                count,
+                entry["sandbox_id"],
+                type(first).__name__,
+                first,
+                len(failed),
+            )
+            _stop_all([children[i] for i in failed])
+            try:
+                replacements = self._start_each(len(failed), start, group=group)
+            except BaseException:
+                _stop_all(children)
+                raise
+            record["replaced"] = len(failed)
+        self._lap("total_s", started)
+        for i, child in enumerate(children):
+            child.last_template = records[i]
+            child.timings = {**self.timings, **child.timings}
+            child.timings["total_s"] = self.timings["total_s"]
+        for i, replacement in zip(failed, replacements):
+            children[i] = replacement
+        log.info(
+            "openenv-prized: %s %d environments from template base %s in %.1f s",
+            "built and forked" if record["status"] == "built" else "forked",
+            count,
+            record["base"],
+            self.timings["total_s"],
+        )
+        return children
+
+    def _fork_template(
+        self,
+        key: str,
+        about: Dict[str, Any],
+        source: Dict[str, Optional[str]],
+        upload: Optional[bytes],
+        image: str,
+        template: str,
+        cmd: Optional[str],
+        env_vars: Optional[Dict[str, str]],
+        ready_timeout_s: float,
+        *,
+        count: int,
+        record: Dict[str, Any],
+        labels: Optional[Dict[str, str]] = None,
+    ) -> "tuple[Dict[str, Any], List[Any]]":
+        """Fork the base (built first if there is none) into ``count`` copies:
+        ``(its state entry, the copies)``. Raises ``_NoFork`` when the caller
+        should start without it."""
+        state = self._template_state
+        base = None
+        try:
+            entry = state.get(key)
+            if entry is None:
+                with state.building(key):
+                    # Another process may have built it while this one waited.
+                    entry = state.get(key)
+                    if entry is None:
+                        base, entry = self._build_template(
+                            key,
+                            about,
+                            source,
+                            upload,
+                            template,
+                            cmd,
+                            env_vars,
+                            ready_timeout_s,
+                        )
+                        record["status"] = "built"
+        except _template.StateFileError as exc:
+            raise _NoFork(f"the template state {state.path} is unusable", exc) from exc
+        record["base"] = entry["sandbox_id"]
+        record.setdefault("status", "forked")
+
+        t = time.monotonic()
+        base_state = None
+        try:
+            if base is None:
+                base = self._adapter.connect(entry["sandbox_id"])
+                self._lap("connect_s", t)
+                base_state = self._adapter_state(base)
+                if base_state in _GONE_STATES:
+                    raise _BaseGone(f"the base is {base_state}")
+            t = time.monotonic()
+            copies = self._adapter.fork(
+                base,
+                count=count,
+                labels={"openenv": "server", **self._labels, **(labels or {})},
+            )
+            if len(copies) != count:
+                self._orphans += [c for c in copies if not self._deleted(c)]
+                raise RuntimeError(f"fork({count}) returned {len(copies)} sandboxes")
+        except Exception as exc:
+            retired = _gone(exc) and self._retire_base(key, entry, base)
+            self._release(base)
+            raise _NoFork(
+                f"could not fork template base {entry['sandbox_id']} for {image}"
+                + (
+                    "; it is gone or unusable, so the next start builds a new one"
+                    if retired
+                    else ""
+                ),
+                exc,
+            ) from exc
+        if base_state == "running":
+            # Someone resumed the base: pause it again so it doesn't bill compute.
+            try:
+                self._adapter.pause(base)
+            except Exception:
+                pass
+        self._release(base)
+        self._lap("fork_s", t)
+        return entry, copies
+
+    def _serve_copy(
+        self, image: str, cmd: Optional[str], record: Dict[str, Any]
+    ) -> None:
+        """Reseed this provider's new copy of a base and open its endpoint.
+        Raises ``_BaseGone`` if the copy's server is not running."""
+        self._docker = False
+        if self._reseed_after_fork:
+            t = time.monotonic()
+            record["reseed"] = self._reseed_copy(image, cmd)
+            self._lap("reseed_s", t)
+            if record["reseed"].get("error") == _SERVER_GONE:
+                raise _BaseGone("the server is not running in the copy")
+        else:
+            record["reseed"] = "off"
+        t = time.monotonic()
+        self._base_url = self._open_endpoint()
+        self._lap("endpoint_s", t)
 
     def _retire_base(self, key: str, entry: Dict[str, Any], base: Any) -> bool:
         """Delete an unusable base (best effort) and forget it; True if forgotten."""
@@ -1810,6 +2191,9 @@ class PrizedProvider(ContainerProvider):
         child._base_url = None
         child._fork_lock = threading.Lock()
         child._orphans = []
+        child._group = []
+        child._group_lock = threading.Lock()
+        child.last_group = None
         child.timings = {}
         child.last_rebase = None
         return child

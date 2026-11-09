@@ -60,6 +60,26 @@ Live on `coding_env` (2 vCPU/4 GB, Oregon, through a test relay, 11-09), from `f
 
 A paused base bills storage only, about $0.65 a month at 2 vCPU/4 GB.
 
+For a group, `start_many(n)` forks the base once into `n` copies instead of making `n` separate forks, and returns one started provider per environment:
+
+```python
+providers = PrizedProvider(template="auto").start_many(8, "space:openenv/coding_env")
+# One provider per environment; closing its client deletes its sandbox.
+envs = [CodingEnv(base_url=p.base_url, provider=p) for p in providers]
+```
+
+Live on `openapp_env` (OpenApps and BrowserGym with Chromium, from a `dir:` source with its own `install_cmd` and `cmd`; 2 vCPU/4 GB, one host in Oregon, through a test relay, 11-09), 8 environments started at once, until all 8 had answered `/health` and finished their first `reset()`:
+
+| 8 at once | all 8 ready, median of rounds (range) | one env, median |
+|---|---|---|
+| fresh (no template) | 96.6 s (1 round) | 93.8 s |
+| `template="auto"`, 8 `start_container()` calls in parallel | 14.0 s (13.9-14.8 s, 6 rounds) | 13.5 s |
+| `start_many(8)` | 6.0 s (5.8-6.6 s, 6 rounds) | 5.9 s |
+
+The base was built once, in 65 s. A group fork is one checkpoint of the base for all 8 copies instead of one per fork. It took 1.6-2.2 s instead of 2.0-5.3 s, and each copy's first `reset()` took 3.2-3.5 s instead of 7.1-8.4 s. On `coding_env` (7 at once, reseeded): 3.7-4.0 s with separate starts, 2.6 s with `start_many(7)`.
+
+If the group fork fails (the base's host has no room for `n` copies, a quota), each environment starts as `start_container()` would, and `last_template["status"]` is `"each"`; a copy that fails to come up is replaced on its own. Every sandbox of a group is labelled `openenv-group=<provider.last_group>`, and `provider.stop_many()` stops a group whose list you lost (a cancelled `asyncio.to_thread`).
+
 - **Where bases are recorded:** `~/.local/state/openenv-prized/templates.json` (or `template_state=`, or `$OPENENV_PRIZED_STATE`), plain JSON with one entry per base: source, revision, shape, sandbox id, when it was built. A base is kept per source and revision, shape, `cmd`, `install_cmd`, env vars (hashed), the settings copies inherit (`max_runtime_min`, `auto_pause_min`, `template_auto_delete_min`) and API key. Pin a revision (`space:owner/name@<sha>`) to get a new base when the environment changes; an unpinned source keeps its first base, and its entry records the commit it was built from.
 - **Delete a base:** `provider.delete_template()` deletes it and its entry. Bases are labelled `openenv=template` (not with your `labels`, so cleaning up a run by its labels leaves the shared base alone), so `prized sandbox ls --label openenv=template` finds any whose entry is gone. A base is deleted after 7 days paused (`template_auto_delete_min`; `0` keeps it).
 - **If a fork fails** (quota, capacity, a deleted base), the environment starts fresh and the `openenv_prized` logger says why. A base that no longer exists or can't be forked again is deleted and forgotten, and the next start builds a new one. Every copy lands on the base's host, so a large burst of starts can run out of room there (`fork_capacity`) and fall back to fresh starts.
