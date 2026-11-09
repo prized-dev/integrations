@@ -175,6 +175,16 @@ class FakeDocker:
         ):
             argv = shlex.split(cmd)
             net, cid = argv[-2], argv[-1]
+            mode = self.containers[cid]["mode"]
+            if mode == "none" or mode.startswith("container:") or mode == "host":
+                # As dockerd answers: such a container has no network of its own.
+                return ExecResult(
+                    stdout="",
+                    stderr="Error response from daemon: container sharing network "
+                    "namespace with another container or host cannot be connected "
+                    "to any other network",
+                    exit_code=1,
+                )
             self.connects.append((argv[2], self.containers[cid]["service"]))
             if not self.stuck:
                 if argv[2] == "connect":
