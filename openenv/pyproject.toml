@@ -13,8 +13,9 @@ requires-python = ">=3.10"
 authors = [{ name = "Prized", email = "team@prized.dev" }]
 keywords = ["openenv", "reinforcement-learning", "sandbox", "prized", "microvm"]
 dependencies = [
-  # The provider uses two private helpers from openenv's runtime package
-  # (_LocalAuthProxy, parse_openenv_app_field): pinned to the minor it was tested on.
+  # The provider uses private helpers from openenv's runtime package
+  # (_LocalAuthProxy, which it subclasses, _to_ws_url, parse_openenv_app_field):
+  # pinned to the minor it was tested on.
   "openenv>=0.12.0,<0.13",
   # Beta SDK: pinned below the next minor.
   "prized>=0.1.3,<0.2",

@@ -32,12 +32,15 @@ from __future__ import annotations
 import copy
 import io
 import ipaddress
+import math
 import os
 import re
 import shlex
 import tarfile
+import threading
 import time
-from typing import Any, Dict, List, Optional
+import warnings
+from typing import Any, Dict, List, Optional, Union
 from urllib.parse import urlsplit, urlunsplit
 
 from openenv.core.containers.runtime.providers import ContainerProvider
@@ -51,6 +54,11 @@ _DOCKER_TEMPLATE = "prized-docker-v1"
 _DEFAULT_MAX_RUNTIME_MIN = 60
 _DEFAULT_AUTO_DELETE_MIN = 60
 _DEFAULT_INSTALL_TIMEOUT_S = 600.0
+# fork_base="ready": how long start_container() waits for /health inside the
+# sandbox, unless the caller passes wait_timeout (AutoEnv.from_env does).
+_DEFAULT_READY_TIMEOUT_S = 120.0
+_DEFAULT_REBASE_TIMEOUT_S = 60.0
+_FORK_BASES = ("install", "ready")
 # The ASGI app when neither openenv.yaml nor a Dockerfile names one:
 # UVProvider's default.
 _DEFAULT_APP = "server.app:app"
@@ -99,6 +107,19 @@ def _stop_gracefully(proxy: Any, timeout_s: float = 1.0) -> None:
         return
     server.should_exit = True
     thread.join(timeout=timeout_s)
+
+
+def _fork_base_mode(value: Union[None, bool, str]) -> Optional[str]:
+    """``fork_base`` as None, ``"install"`` or ``"ready"`` (what True means)."""
+    if value is None or value is False:
+        return None
+    if value is True:
+        return "ready"
+    if isinstance(value, str) and value in _FORK_BASES:
+        return value
+    raise ValueError(
+        f"fork_base must be None, True, 'install' or 'ready' (got {value!r})"
+    )
 
 
 def _raise_install_error(exc: ImportError) -> None:
@@ -427,7 +448,10 @@ class PrizedProvider(ContainerProvider):
 
     Beyond the contract, a running environment can be paused (memory and
     processes kept, compute not billed) and resumed, and forked into copies
-    that start with the server already running (see :meth:`fork`).
+    that start with the server already running (see :meth:`fork`). For an
+    environment you will fork many times, ``fork_base=True`` starts it in a
+    fork of the sandbox that installed it, which makes every later fork
+    faster (see :meth:`rebase`).
 
     Examples:
 
@@ -465,6 +489,7 @@ class PrizedProvider(ContainerProvider):
         install_cmd: Optional[str] = None,
         install_timeout_s: float = _DEFAULT_INSTALL_TIMEOUT_S,
         surface_server_logs: bool = False,
+        fork_base: Union[None, bool, str] = None,
         base_url: Optional[str] = None,
         edge_url: Optional[str] = None,
         _adapter: Any = None,
@@ -527,6 +552,20 @@ class PrizedProvider(ContainerProvider):
                 errors so secrets the workload printed cannot leak into
                 orchestrator/CI logs. When `True`, a best-effort redacted,
                 length-bounded excerpt is included (S4).
+            fork_base (`bool` or `str`, *optional*):
+                For environments you will fork (:meth:`fork`, ``fork_group``):
+                run the server in a fork of the sandbox that installed it,
+                and delete that sandbox. A fork then copies only the memory
+                the environment has touched since, not the whole install,
+                so it pauses the parent for less time and its copies start
+                faster. ``True`` or ``"ready"``: fork once the server
+                answers ``/health`` (checked inside the sandbox, up to
+                ``wait_timeout`` seconds, default 120). ``"install"``: fork
+                after the install, then start the server in the copy.
+                Costs one extra fork and a slower first episode, about
+                12-14 s once per environment. Default `None`: no base. If
+                the base fork fails, the environment runs in the original
+                sandbox and a ``RuntimeWarning`` says so.
             base_url, edge_url (`str`, *optional*):
                 Prized API and edge origins, for a local proxy or another
                 deployment. Defaults to Prized's.
@@ -535,6 +574,7 @@ class PrizedProvider(ContainerProvider):
         """
         if public_expires_in is not None and not public:
             raise ValueError("public_expires_in applies only with public=True")
+        self._fork_base = _fork_base_mode(fork_base)
 
         self._image = image
         self._env_vars = dict(env_vars) if env_vars is not None else None
@@ -562,6 +602,18 @@ class PrizedProvider(ContainerProvider):
         # Injected env-var values, used to scrub captured server output before
         # it is ever surfaced in an error (S4).
         self._redact_values: set[str] = set()
+        # fork() and rebase() take turns, so a fork never copies a sandbox
+        # that a rebase is about to delete.
+        self._fork_lock = threading.Lock()
+        # Originals a rebase could not delete; stop_container() retries them.
+        self._orphans: List[Any] = []
+        #: Seconds per phase of the last ``start_container``: ``create_s``,
+        #: ``install_s`` (a source), ``ready_s`` (``fork_base="ready"``),
+        #: ``rebase_s`` (with ``fork_base``), ``endpoint_s``, ``total_s``.
+        self.timings: Dict[str, float] = {}
+        #: What the last :meth:`rebase` did: the sandbox ids, the sockets it
+        #: moved and its phases in seconds.
+        self.last_rebase: Optional[Dict[str, Any]] = None
 
         if _adapter is None:
             self._adapter: Any = _DefaultPrizedAdapter(
@@ -594,8 +646,10 @@ class PrizedProvider(ContainerProvider):
                 Environment variables for the server, overriding the
                 constructor's.
             **kwargs:
-                ``cmd`` (`str`) overrides the server command. Unknown options
-                raise `ValueError` so typos cannot silently change behavior.
+                ``cmd`` (`str`) overrides the server command. ``wait_timeout``
+                (seconds) bounds ``fork_base="ready"``'s wait for the server.
+                Unknown options raise `ValueError` so typos cannot silently
+                change behavior.
 
         Returns:
             `str`: The base URL: a loopback proxy URL by default, or the public
@@ -629,8 +683,16 @@ class PrizedProvider(ContainerProvider):
 
         cmd = kwargs.pop("cmd", None) or self._cmd
         # AutoEnv.from_env() forwards this unconditionally via
-        # from_docker_image; it never reaches a provider's wait, so drop it.
-        kwargs.pop("wait_timeout", None)
+        # from_docker_image; it never reaches a provider's wait. It bounds
+        # fork_base="ready"'s wait for the server, which happens in here.
+        wait_timeout = kwargs.pop("wait_timeout", None)
+        ready_timeout_s = (
+            float(wait_timeout)
+            if isinstance(wait_timeout, (int, float))
+            and not isinstance(wait_timeout, bool)
+            and 0 < wait_timeout < math.inf
+            else _DEFAULT_READY_TIMEOUT_S
+        )
         if kwargs:
             unknown = ", ".join(sorted(kwargs))
             raise ValueError(f"Unsupported PrizedProvider start options: {unknown}")
@@ -648,6 +710,9 @@ class PrizedProvider(ContainerProvider):
             value for value in (effective_env_vars or {}).values() if value
         }
 
+        started = time.monotonic()
+        self.timings = {}
+        self.last_rebase = None
         # A create failure created nothing, so just drop the recorded secrets.
         try:
             self._sandbox = self._adapter.create_sandbox(
@@ -665,13 +730,26 @@ class PrizedProvider(ContainerProvider):
             raise
 
         self._docker = docker
+        self._lap("create_s", started)
         try:
+            t = time.monotonic()
             if docker:
                 self._start_image(source["location"], cmd, effective_env_vars)
             else:
                 env_root = self._fetch_and_install(source, upload)
+                self._lap("install_s", t)
+                if self._fork_base == "install":
+                    self._rebase_base()
                 self._start_source(env_root, cmd, effective_env_vars)
+            if self._fork_base == "ready":
+                t = time.monotonic()
+                self._wait_ready_inside(ready_timeout_s)
+                self._lap("ready_s", t)
+                self._rebase_base()
+            t = time.monotonic()
             self._base_url = self._open_endpoint()
+            self._lap("endpoint_s", t)
+            self._lap("total_s", started)
         except BaseException:
             # Interrupted or failed: delete the sandbox. A cleanup failure must
             # not mask the original error.
@@ -730,8 +808,13 @@ class PrizedProvider(ContainerProvider):
         """Stop the loopback proxy and delete the sandbox. Safe to call twice.
 
         If the delete fails, the sandbox is kept so a later call can retry it
-        (``EnvClient`` retries a failed stop on ``close()``).
+        (``EnvClient`` retries a failed stop on ``close()``). Originals that a
+        :meth:`rebase` could not delete are deleted here too.
         """
+        with self._fork_lock:  # not while a rebase swaps the sandbox
+            self._stop()
+
+    def _stop(self) -> None:
         proxy_error: Optional[RuntimeError] = None
         if self._proxy is not None:
             try:
@@ -749,9 +832,16 @@ class PrizedProvider(ContainerProvider):
         finally:
             self._base_url = None
             self._redact_values = set()
+            self._orphans = [s for s in self._orphans if not self._deleted(s)]
 
         if proxy_error is not None:
             raise proxy_error
+        if self._orphans:
+            ids = " ".join(self._adapter.sandbox_id(s) for s in self._orphans)
+            raise RuntimeError(
+                f"Could not delete the sandbox(es) a rebase left behind: {ids}. "
+                "stop_container() again retries."
+            )
 
     def close(self) -> None:
         """Stop the active sandbox (also invoked on context-manager exit)."""
@@ -807,12 +897,12 @@ class PrizedProvider(ContainerProvider):
         """
         if isinstance(count, bool) or not isinstance(count, int) or count < 1:
             raise ValueError("count must be a positive int")
-        sandbox = self._require_sandbox()
-        copies = self._adapter.fork(
-            sandbox,
-            count=count,
-            labels={"openenv": "server", **self._labels, **(labels or {})},
-        )
+        with self._fork_lock:
+            copies = self._adapter.fork(
+                self._require_sandbox(),
+                count=count,
+                labels={"openenv": "server", **self._labels, **(labels or {})},
+            )
         providers: List[PrizedProvider] = []
         try:
             for sandbox_copy in copies:
@@ -833,9 +923,224 @@ class PrizedProvider(ContainerProvider):
             raise
         return providers
 
+    @property
+    def fork_base(self) -> Optional[str]:
+        """``"ready"``, ``"install"`` or `None`: where ``start_container``
+        rebases the environment (see ``fork_base=`` and :meth:`rebase`)."""
+        return self._fork_base
+
+    def rebase(self, *, timeout_s: float = _DEFAULT_REBASE_TIMEOUT_S) -> Optional[str]:
+        """Move the environment into a fork of its own sandbox and delete the
+        original.
+
+        Prized forks a running sandbox by copying the memory it has touched
+        since it started. A sandbox that installed its environment has
+        touched all of it (on a 4 GB ``openapp_env``, the whole 4 GiB), so
+        every fork of it pays for that. A copy has touched only what it has
+        used since the fork, so its own forks are faster: on ``openapp_env``
+        the parent paused for 0.9-1.3 s per fork instead of 4.4-5.1 s.
+        ``fork_base=`` does this once in ``start_container``; call
+        ``rebase()`` yourself if a long-lived environment's forks grow slow
+        again.
+
+        The environment carries on where it was: the copy has the server's
+        memory and processes, so its sessions and episodes are kept. With
+        the default loopback proxy the base URL does not change and open
+        WebSockets stay open: each is detached from its session (a call in
+        flight finishes first, up to ``timeout_s``; past that the rebase
+        is called off) and joined to the same session in the copy.
+        WebSocket messages sent meanwhile wait; HTTP requests don't (MCP
+        tool calls go over HTTP). A WebSocket that owns its episode
+        (OpenEnv's default, without :func:`openenv_prized.forkable`) cannot
+        move, so ``rebase()`` refuses with ``RuntimeError`` while one is open.
+        With ``public=True`` the copy gets its own public URL, returned here:
+        disconnect clients first and point them at it.
+
+        The copy keeps the original's labels and settings; its
+        ``max_runtime_min`` starts again from the fork (each copy gets the
+        full window, as a new sandbox would). If the fork fails, nothing
+        changes; if the original cannot be deleted, it is
+        retried in :meth:`stop_container` and a ``RuntimeWarning`` says so.
+        Blocks for a few seconds; from async code, ``await
+        asyncio.to_thread(provider.rebase)``. Don't make calls on the
+        environment while it runs.
+
+        Returns the base URL (unchanged unless ``public=True``; `None` while
+        ``start_container`` has not opened it yet). :attr:`last_rebase` has
+        the sandbox ids and the time each phase took.
+        """
+        with self._fork_lock:
+            return self._rebase(timeout_s)
+
     # ------------------------------------------------------------------
     # Internals
     # ------------------------------------------------------------------
+
+    def _lap(self, name: str, since: float) -> None:
+        self.timings[name] = round(time.monotonic() - since, 3)
+
+    def _deleted(self, sandbox: Any) -> bool:
+        """Delete *sandbox*; False if that failed."""
+        try:
+            self._adapter.delete(sandbox)
+            return True
+        except Exception:
+            return False
+
+    def _rebase(self, timeout_s: float) -> Optional[str]:
+        started = time.monotonic()
+        original = self._require_sandbox()
+        proxy = self._proxy
+        record: Dict[str, Any] = {"from": self._adapter.sandbox_id(original)}
+        try:
+            t = time.monotonic()
+            record["sockets"] = proxy.hold(timeout_s) if proxy is not None else 0
+            record["detach_s"] = round(time.monotonic() - t, 3)
+            t = time.monotonic()
+            # No labels: the copy keeps the original's, whatever they are.
+            copies = self._adapter.fork(original, count=1, labels=None)
+            record["fork_s"] = round(time.monotonic() - t, 3)
+            if len(copies) != 1:
+                self._orphans += [c for c in copies if not self._deleted(c)]
+                raise RuntimeError(f"fork(1) returned {len(copies)} sandboxes")
+            copy_ = copies[0]
+            try:
+                public_url = None
+                if proxy is not None:
+                    target = _require_secure_url(
+                        self._adapter.port_url(copy_, _DEFAULT_PORT)
+                    )
+                    headers = self._adapter.port_headers(copy_)
+                elif self.public and self._base_url is not None:
+                    public_url = _require_secure_url(
+                        self._adapter.set_port_public(
+                            copy_, _DEFAULT_PORT, expires_in=self._public_expires_in
+                        )
+                    )
+            except BaseException:
+                if not self._deleted(copy_):
+                    self._orphans.append(copy_)
+                raise
+        except BaseException:
+            if proxy is not None:  # back to the original
+                try:
+                    lost, _ = proxy.release(timeout_s)
+                except Exception:
+                    lost = -1
+                if lost:
+                    warnings.warn(
+                        "rebase() failed, and some open WebSockets could not rejoin "
+                        "their sessions in the original sandbox; they were closed.",
+                        RuntimeWarning,
+                        stacklevel=3,
+                    )
+            raise
+
+        # The copy is the environment from here on. Until it is deleted, the
+        # original is an orphan that stop_container() deletes.
+        self._sandbox = copy_
+        self._orphans.append(original)
+        record["to"] = self._adapter.sandbox_id(copy_)
+        t = time.monotonic()
+        try:
+            if proxy is not None:
+                proxy.retarget(target, headers)
+                record["sockets_lost"], record["sockets_later"] = proxy.release(
+                    timeout_s
+                )
+            elif public_url is not None:
+                self._base_url = public_url
+        except Exception as exc:
+            record["sockets_lost"] = record["sockets"]
+            warnings.warn(
+                f"rebase() moved to {record['to']} but could not rejoin open "
+                f"WebSockets ({type(exc).__name__}: {exc}); they were closed.",
+                RuntimeWarning,
+                stacklevel=3,
+            )
+        finally:
+            record["attach_s"] = round(time.monotonic() - t, 3)
+            t = time.monotonic()
+            if self._deleted(original) or self._deleted(original):
+                self._orphans.remove(original)
+            else:
+                warnings.warn(
+                    f"rebase() could not delete the original sandbox "
+                    f"{record['from']}; stop_container() retries it.",
+                    RuntimeWarning,
+                    stacklevel=3,
+                )
+            record["delete_s"] = round(time.monotonic() - t, 3)
+            record["total_s"] = round(time.monotonic() - started, 3)
+            self.last_rebase = record
+        if record.get("sockets_lost"):
+            warnings.warn(
+                f"rebase() could not rejoin {record['sockets_lost']} open "
+                "WebSocket(s) to their sessions in the copy; they were closed.",
+                RuntimeWarning,
+                stacklevel=3,
+            )
+        return self._base_url
+
+    def _rebase_base(self) -> None:
+        """start_container's rebase: if it fails, carry on in the original."""
+        t = time.monotonic()
+        try:
+            self.rebase()
+        except Exception as exc:
+            warnings.warn(
+                f"fork_base={self._fork_base!r}: the base fork failed "
+                f"({type(exc).__name__}: {exc}); the environment runs in the "
+                "sandbox that installed it, whose forks are slower.",
+                RuntimeWarning,
+                stacklevel=4,
+            )
+        self._lap("rebase_s", t)
+
+    def _wait_ready_inside(self, timeout_s: float) -> None:
+        """Wait, inside the sandbox, until the server answers ``/health``.
+
+        One command polls ``127.0.0.1:8000`` every 0.2 s, so no port is
+        opened at the edge for a sandbox that is about to be replaced.
+        Exit codes: 7 the server died, 8 timed out, 9 neither curl nor
+        python3 to ask with.
+        """
+        url = f"http://127.0.0.1:{_DEFAULT_PORT}/health"
+        if self._docker:
+            alive = (
+                f"[ \"$(docker inspect -f '{{{{.State.Running}}}}' {_CONTAINER} "
+                '2>/dev/null)" != false ]'
+            )
+        else:
+            pid = shlex.quote(self._path("server.pid"))
+            alive = f"{{ ! test -s {pid} || kill -0 $(cat {pid}) 2>/dev/null; }}"
+        python_probe = shlex.quote(
+            "import urllib.request as u; "
+            f"u.build_opener(u.ProxyHandler({{}})).open({url!r}, timeout=2)"
+        )
+        script = (
+            f"end=$(( $(date +%s) + {int(math.ceil(timeout_s))} )); "
+            "if command -v curl >/dev/null 2>&1; then "
+            f"probe() {{ curl -fsS -o /dev/null --noproxy '*' --max-time 2 {url}; }}; "
+            "elif command -v python3 >/dev/null 2>&1; then "
+            f"probe() {{ python3 -c {python_probe}; }}; "
+            "else exit 9; fi; "
+            "while :; do probe >/dev/null 2>&1 && exit 0; "
+            f"{alive} || exit 7; "
+            '[ "$(date +%s)" -lt "$end" ] || exit 8; sleep 0.2; done'
+        )
+        code, _ = self._run(script, timeout=timeout_s + 30)
+        if code == 7:
+            raise RuntimeError(self._server_died_message())
+        if code == 9:
+            raise RuntimeError(
+                "fork_base='ready' checks the server with curl or python3 inside "
+                "the sandbox, and it has neither. Use fork_base='install'."
+            )
+        if code != 0:
+            raise TimeoutError(
+                f"Prized sandbox did not become ready within {timeout_s}s."
+            )
 
     def _require_sandbox(self) -> Any:
         if self._sandbox is None:
@@ -851,6 +1156,10 @@ class PrizedProvider(ContainerProvider):
         child._sandbox = sandbox
         child._proxy = None
         child._base_url = None
+        child._fork_lock = threading.Lock()
+        child._orphans = []
+        child.timings = {}
+        child.last_rebase = None
         return child
 
     def _path(self, name: str) -> str:
@@ -1005,6 +1314,19 @@ class PrizedProvider(ContainerProvider):
                 f"{_DOCKER_TEMPLATE} template (the default for images), or pass a "
                 "space:, git+ or dir: source to run without Docker."
             )
+        log = shlex.quote(self._path("install.log"))
+        if self._fork_base == "install":
+            # Pull, rebase, then run in the copy (its pull below is a no-op).
+            code, _ = self._run(
+                f"docker pull --quiet {shlex.quote(image)} > {log} 2>&1",
+                timeout=self._install_timeout_s,
+            )
+            if code != 0:
+                raise RuntimeError(
+                    f"Prized sandbox failed to pull the image (exit {code}). "
+                    f"{self._log_hint(self._path('install.log'))}"
+                )
+            self._rebase_base()
         # Values go through a 0600 file, removed once the container exists,
         # not docker's command line.
         env_file = self._path("server.env")
@@ -1013,7 +1335,6 @@ class PrizedProvider(ContainerProvider):
         )
         self._adapter.write(self._sandbox, env_file, env_lines.encode(), mode=0o600)
 
-        log = shlex.quote(self._path("install.log"))
         run = (
             f"docker run -d --name {_CONTAINER} -p {_DEFAULT_PORT}:{_DEFAULT_PORT} "
             f"--env-file {shlex.quote(env_file)} {shlex.quote(image)}"
@@ -1043,9 +1364,9 @@ class PrizedProvider(ContainerProvider):
         target = _require_secure_url(
             self._adapter.port_url(self._sandbox, _DEFAULT_PORT)
         )
-        from openenv.core.containers.runtime.hf_sandbox_provider import _LocalAuthProxy
+        from ._proxy import _SwitchingProxy
 
-        proxy = _LocalAuthProxy(
+        proxy = _SwitchingProxy(
             target_url=target, headers=self._adapter.port_headers(self._sandbox)
         )
         url = proxy.start()

@@ -64,7 +64,7 @@ from coding_env import CodeAction, CodingEnv
 from openenv_prized import PrizedProvider, fork_group, forkable
 
 env = await CodingEnv.from_docker_image(
-    "space:openenv/coding_env", provider=PrizedProvider()
+    "space:openenv/coding_env", provider=PrizedProvider(fork_base=True)
 )
 async with env:  # closing env deletes the parent's sandbox
     await forkable(env)  # before reset(): the episode goes in a session copies rejoin
@@ -88,6 +88,36 @@ Each copy holds the parent's episode at the parent's step k (memory, processes a
 | others | unknown | warns once. Pass `reseed=<async (client, seed) -> None>`, or `register_reseeder()` |
 
 [`examples/grpo_fork_group.py`](examples/grpo_fork_group.py) runs a whole loop on a CPU: a softmax policy over five candidate code cells, groups of 8 forked from one live coding_env state, group-relative advantages. Clients must be async (`await`); tested with `coding_env`. With `--no-reseed`, every `random_search` branch in every group drew the same numbers and scored the same 0.7368, so one lucky draw was rewarded every iteration: that is what common random numbers mean here.
+
+### Fork from a base: `fork_base`
+
+```python
+provider = PrizedProvider(fork_base=True)  # or "install"; default None
+```
+
+With `fork_base`, `start_container()` forks the new sandbox once, deletes the original and runs the environment in the copy. Every later fork then copies less. A fork copies the memory a sandbox has touched since it started: for the sandbox that ran the install, that's all of it, while a copy has touched only what the server used since.
+
+- `True` or `"ready"`: fork once the server answers `/health`, checked inside the sandbox (`wait_timeout`, default 120 s).
+- `"install"`: fork after the install, then start the server in the copy. Use it if your server opens connections at start that a copy couldn't keep.
+
+**Use it for environments you fork** (`fork()`, `fork_group`): a GRPO trainer forks hundreds of groups from one environment. Leave it off for environments you never fork, which would pay its cost for nothing.
+
+**What it saves.** On OpenEnv's `openapp_env` (a shop and a bank on SQLite, 2 vCPU/4 GB, Oregon, one host, 3 runs per cell; the same steps scripted by hand, before this option existed), from the fork call until every copy had finished its first action:
+
+| | `fork(4)` | `fork(8)` | parent paused per fork |
+|---|---|---|---|
+| no base: fork the sandbox that ran the install | 12.1 s | 11.5 s | 4.4-5.1 s |
+| `fork_base="install"` | 6.7 s | 8.4 s | 1.3 s |
+| `fork_base="ready"` | 6.3 s | 7.8 s | 0.9 s |
+| N warm environments, SQL restore + replay | 13.2 s | 13.4 s | - |
+
+Copies of a base also ran their first steps faster: their first probe took 0.8 s instead of 1.7-1.9 s. Copies matched their parent exactly in every arm, page and database rows (148 of 148). Over 10 episodes on one base, forks stayed fast (one slow fork in 10).
+
+**On a small environment it makes no difference.** Installing `coding_env` leaves little memory touched, so its forks were already fast. Live on 11-09 (3 runs each way, one host), `fork(8)` took a median 1.4 s on Prized's side with a base and 1.3 s without, 6 forks each (outliers both ways: one at 5.5 s with a base, two at 11 and 38 s without). The base added about 2.3 s to the start. If `fork_group`'s `timings["fork_s"]` is well over 2 s without a base, turn it on.
+
+**What it costs:** one extra `fork(1)`, and a slower first episode while the copy pages its memory in. On `openapp_env` that was 12 s (`"ready"`) to 14 s (`"install"`) more per environment, once, and under $0.001. It paid back after 3-5 groups.
+
+**`provider.rebase()`** does the same at any time: `fork(1)`, delete the original, carry on in the copy. Sessions are kept, and through the default loopback proxy the base URL stays the same and open WebSockets stay open: each is detached from its session (a call in flight finishes first, up to `timeout_s`, 60 s), then joined to the same session in the copy. WebSocket messages sent meanwhile wait; HTTP requests (MCP tool calls) don't, so make none while it runs. It refuses while a WebSocket that owns its episode is open (make clients `forkable` first). `provider.last_rebase` has the timings. Live on `coding_env`, with the client's socket open mid-episode, 6 of 6 rebases kept the socket and the episode, in 1.2-7.4 s (median 2.1 s), 0.2-0.4 s of it rejoining the socket. Call it if a long-lived environment's forks grow slow again; on `openapp_env` they didn't over 10 episodes. A copy gets a fresh `max_runtime_min` window.
 
 ### When fork wins
 
@@ -122,4 +152,4 @@ pip install -e '.[test]'
 pytest -q
 ```
 
-The tests use a fake SDK and a loopback stand-in for Prized's edge; no account needed. `tests/test_fork_group.py` runs real OpenEnv servers behind a fake Prized API whose fork copies the servers' sessions. `tests/test_live.py` runs `fork_group` on Prized with `coding_env` when `PRIZED_LIVE=1` and `PRIZED_API_KEY` are set.
+The tests use a fake SDK and a loopback stand-in for Prized's edge; no account needed. `tests/test_fork_group.py` runs real OpenEnv servers behind a fake Prized API whose fork copies the servers' sessions; `tests/test_fork_base.py` uses it for `fork_base` and `rebase()`, moving real WebSockets through the provider's proxy. `tests/test_live.py` runs `fork_group`, `fork_base` and `rebase()` on Prized with `coding_env` when `PRIZED_LIVE=1` and `PRIZED_API_KEY` are set.

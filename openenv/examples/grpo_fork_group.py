@@ -103,7 +103,11 @@ class Policy:
 
 
 async def main(args: argparse.Namespace) -> None:
-    provider = PrizedProvider(labels={"example": "grpo-fork-group"})
+    # fork_base: the parent runs in a fork of the sandbox that installed it, so
+    # each group's fork copies only what the server touched since.
+    provider = PrizedProvider(
+        labels={"example": "grpo-fork-group"}, fork_base=not args.no_fork_base
+    )
     started = time.monotonic()
     env = await CodingEnv.from_docker_image(
         "space:openenv/coding_env", provider=provider
@@ -181,6 +185,9 @@ if __name__ == "__main__":
     parser.add_argument("--lr", type=float, default=2.0)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--no-reseed", action="store_true")
+    parser.add_argument(
+        "--no-fork-base", action="store_true", help="fork the installing sandbox"
+    )
     parser.add_argument(
         "--json", action="store_true", help="one JSON line per iteration"
     )

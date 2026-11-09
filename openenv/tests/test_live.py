@@ -10,6 +10,9 @@ it with ``fork_group`` and checks what the helper promises: one fork call,
 every copy on the parent's exact state, its own RNG and episode id, the
 parent untouched, and every copy deleted. PRIZED_BASE_URL and PRIZED_EDGE_URL
 point the SDK at a local proxy; FORK_N sets the big group's size (default 16).
+``test_fork_base_live`` starts coding_env with ``fork_base`` (FORK_BASE:
+``ready``, the default, ``install`` or ``none`` for a control run), forks
+groups of 8 and rebases mid-episode with the client's socket open.
 Prints one JSON line of measurements per check (run with ``-s``).
 """
 
@@ -19,6 +22,8 @@ import asyncio
 import json
 import os
 import re
+import time
+from datetime import timedelta
 
 import pytest
 
@@ -188,3 +193,87 @@ async def test_fork_group_live_mcp_echo_env():
         assert (await env.state()).step_count == parent.step_count
     assert base.sandbox_id is None
     assert all(b.provider.sandbox_id is None for b in branches)
+
+
+@pytest.mark.asyncio
+async def test_fork_base_live():
+    """fork_base, fork_group(8) on the base, and a rebase mid-episode."""
+    mode = os.environ.get("FORK_BASE", "ready")
+    base = provider(fork_base=None if mode == "none" else mode)
+    t = time.monotonic()
+    env = await coding_env.CodingEnv.from_docker_image(
+        "space:openenv/coding_env", provider=base
+    )
+    start_s = round(time.monotonic() - t, 3)
+    branches: list = []
+    async with env:
+        info = await asyncio.to_thread(lambda: base._sandbox.refresh()._data)
+        emit(
+            check="start",
+            fork_base=base.fork_base,
+            start_s=start_s,
+            timings=base.timings,
+            rebase=base.last_rebase,
+            sandbox=base.sandbox_id,
+            labels=info.labels,
+            # The copy's own max-runtime window (30 min asked for).
+            runtime_left_min=round(
+                (info.expires_at - info.created_at).total_seconds() / 60, 2
+            ),
+        )
+        # The copy keeps the original's labels and gets its own runtime window.
+        assert info.labels.get("test") == "fork-group-live"
+        assert info.labels.get("openenv") == "server"
+        assert info.expires_at - info.created_at >= timedelta(minutes=29.9)
+        if mode != "none":
+            assert base.last_rebase["to"] == base.sandbox_id
+            assert base.last_rebase["from"] != base.sandbox_id
+        await forkable(env)
+        await env.reset()
+        for cell in PREFIX:
+            await run(env, cell)
+        parent_digest = out(await run(env, DIGEST), "state")
+
+        async def group_of_8(name: str, seeds: int) -> None:
+            k = (await env.state()).step_count
+            async with fork_group(env, 8, seeds=seeds) as group:
+                branches.extend(group.branches)
+                digests = await asyncio.gather(*(run(c, DIGEST) for c in group))
+                states = [await c.state() for c in group]
+                emit(check=name, stats=group.stats())
+                assert {out(d, "state") for d in digests} == {parent_digest}
+                assert {s.step_count for s in states} == {k + 2}  # reseed + digest
+                assert group.stats()["fork_base"] == base.fork_base
+
+        await group_of_8("group", 900)
+        await group_of_8("group-again", 910)
+
+        # Rebase mid-episode, with the client's socket open.
+        await run(env, "x_mid = 41")
+        socket, url, before = env._ws, env.base_url, base.sandbox_id
+        step = (await env.state()).step_count
+        t = time.monotonic()
+        await asyncio.to_thread(base.rebase)
+        rebase_s = round(time.monotonic() - t, 3)
+        after = out(
+            await run(env, "print('state=' + summary() + ':' + str(x_mid + 1))"),
+            "state",
+        )
+        emit(
+            check="rebase",
+            wall_s=rebase_s,
+            record=base.last_rebase,
+            same_socket=env._ws is socket,
+            same_url=env.base_url == url,
+        )
+        assert base.sandbox_id != before and env.base_url == url
+        assert env._ws is socket
+        assert after == parent_digest + ":42"
+        assert (await env.state()).step_count == step + 1
+        assert base.last_rebase["sockets"] == 1
+        assert base.last_rebase["sockets_lost"] == 0
+        await group_of_8("group-after-rebase", 920)
+
+    deleted = [b.provider.sandbox_id is None for b in branches]
+    emit(check="cleanup", copies=len(branches), deleted=sum(deleted))
+    assert base.sandbox_id is None and all(deleted)
