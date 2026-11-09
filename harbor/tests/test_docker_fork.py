@@ -87,6 +87,8 @@ class _Box:
                 cloud.builds.append(seen)
                 if built:
                     self.images.add("harbor-main")
+                    # A task compose file may name it: image: ${MAIN_IMAGE_NAME}
+                    self.images.add(env["MAIN_IMAGE_NAME"])
             elif sub[:1] == ["pull"]:
                 cloud.pulls.append(seen)
                 if not built:
@@ -94,6 +96,8 @@ class _Box:
             elif sub[:2] == ["up", "-d"]:
                 cloud.ups.append((*seen, sub))
                 need = "harbor-main" if built else env["PREBUILT_IMAGE_NAME"]
+                if built and cloud.compose_names_main_image:
+                    need = env["MAIN_IMAGE_NAME"]
                 if "--no-build" in sub and need not in self.images:
                     return ExecResult(
                         stdout="",
@@ -139,6 +143,7 @@ class _Cloud:
         self.ups: list[tuple] = []
         self.dockerd_dead_in_copies = False
         self.keep_credentials = False
+        self.compose_names_main_image = False
 
     async def create(self, template, **kwargs):
         self.creates.append({"template": template, **kwargs})
@@ -279,9 +284,8 @@ async def test_tasks_sharing_a_dockerfile_share_one_build(tmp_path, cloud):
     # The fresh trial builds (and its up rebuilds from cache); the parent once.
     assert [b[0] for b in cloud.builds if b[0] != fresh.id] == [parent.id]
     assert len(cloud.copies()) == 2
-    # Shared keys are kept for the next task; the job's end deletes them.
-    assert parent.state == "paused"
-    await _fork.close_parents()
+    # Once no planned trial is left, the parent goes with its last fork.
+    assert parent.state == "deleted"
     assert cloud.alive() == []
 
 
@@ -311,19 +315,63 @@ async def test_task_major_order_still_shares_one_build(tmp_path, cloud):
     assert cloud.alive() == []
 
 
-async def test_a_parent_kept_for_tasks_not_started_goes_at_the_jobs_end(
+async def test_a_parent_kept_for_a_task_not_started_goes_when_it_starts(
     tmp_path, cloud
 ):
     job = _Job(tmp_path, ["a", "a", "b"])
     await _run(job, ["a", "a"])
     (parent,) = cloud.parents()
     assert parent.state == "paused"  # b hasn't started: it may share it
-    # b has a Dockerfile of its own and one trial: it starts fresh.
+    # b has a Dockerfile of its own and one trial: it starts fresh, and a's
+    # parent, which no planned trial can need now, goes before it.
     environment = await _trial(job.environment("b", dockerfile=ALPINE))
     assert environment._sandbox in cloud.fresh()
+    assert parent.state == "deleted"
     await environment.stop(delete=True)
-    assert parent.state == "paused"  # kept, within the budget, until the end
-    await _fork.close_parents()  # TaskMajor's on_job_end (or the exit sweep)
+    assert cloud.alive() == []
+
+
+async def test_an_unforkable_task_counts_as_started(tmp_path, cloud):
+    job = _Job(tmp_path, ["a", "a", "big"])
+    await _run(job, ["a", "a"])
+    (parent,) = cloud.parents()
+    assert parent.state == "paused"
+    huge = job.environment("big", config={"cpus": 32, "memory_mb": 110 * 1024})
+    await _trial(huge)  # too big to fork: fresh, and every task has started
+    assert parent.state == "deleted"
+    await huge.stop(delete=True)
+    assert cloud.alive() == []
+
+
+async def test_a_shared_parent_is_ranked_by_its_tasks_next_trials(tmp_path, cloud):
+    # Harbor's order a, b, c, a, b, c; a and b share a Dockerfile, c has its
+    # own; room for one parent. The shared parent is needed again sooner (a at
+    # 3) than c's would be (at 5), so c starts fresh rather than evicting it.
+    job = _Job(tmp_path, ["a", "b", "c", "a", "b", "c"])
+    for task in ["a", "b", "c", "a", "b", "c"]:
+        dockerfile = ALPINE if task == "c" else UBUNTU
+        environment = await _trial(
+            job.environment(task, dockerfile=dockerfile, fork_disk_budget_gb=30)
+        )
+        await environment.stop(delete=True)
+    (parent,) = cloud.parents()
+    assert parent.labels["harbor-task"] == "a"
+    assert [f.labels["harbor-session"].split("__")[0] for f in cloud.fresh()] == [
+        "c",
+        "c",
+    ]
+    assert len(cloud.copies()) == 4
+    assert cloud.alive() == []
+
+
+async def test_tasks_whose_compose_names_the_main_image_share_it(tmp_path, cloud):
+    # Harbor adapters (financeagent, kumo, ml_dev_bench, gaia2) name main's
+    # image ${MAIN_IMAGE_NAME}: it must be the environment's, not the task's.
+    cloud.compose_names_main_image = True
+    job = _Job(tmp_path, ["a", "b", "a", "b"])
+    await _run(job, ["a", "b", "a", "b"])
+    assert len(cloud.copies()) == 4 and not cloud.fresh()
+    assert len(cloud.builds) == 1
     assert cloud.alive() == []
 
 
@@ -370,6 +418,33 @@ async def test_the_key_is_the_environment_not_the_task(tmp_path, cloud):
     assert a._fork_key(None, "x", True) != a._fork_key(None, "x")
     bigger = job.environment("a", config={"cpus": 4, "memory_mb": 2048})
     assert bigger._fork_key(None, "x") != a._fork_key(None, "x")
+
+    # Another prebuilt image or another extra compose file: another key.
+    def prebuilt(image):
+        config = {"cpus": 1, "memory_mb": 2048, "docker_image": image}
+        return job.environment("a", docker="true", config=config)
+
+    assert prebuilt("x:1")._fork_key(None, "x") != prebuilt("y:1")._fork_key(None, "x")
+    extra = tmp_path / "extra.yaml"
+    extra.write_text("services:\n  main:\n    environment: {A: 1}\n")
+    with_extra = job.environment("a", extra_docker_compose=[extra])
+    key = with_extra._fork_key(None, "x")
+    assert key != a._fork_key(None, "x")
+    extra.write_text("services:\n  main:\n    environment: {A: 2}\n")
+    assert (
+        job.environment("a", extra_docker_compose=[extra])._fork_key(None, "x") != key
+    )
+    # A symlink or a mode in the folder (Harbor's environment_id skips them).
+    before = job.environment("a")._fork_key(None, "x")
+    link = job.dir.parent / "environment-a" / "link"
+    link.symlink_to("Dockerfile")
+    assert job.environment("a")._fork_key(None, "x") != before
+    link.unlink()
+    dockerfile = job.dir.parent / "environment-a" / "Dockerfile"
+    mode = dockerfile.stat().st_mode
+    dockerfile.chmod(mode ^ 0o111)  # executable or not: COPY keeps it
+    assert job.environment("a")._fork_key(None, "x") != before
+    dockerfile.chmod(mode)
     with_env = job.environment(
         "a", config={"cpus": 1, "memory_mb": 2048, "env": {"V": "2"}}
     )
@@ -465,8 +540,8 @@ async def test_a_copy_missing_the_image_never_builds_it(tmp_path, cloud, caplog)
 async def test_parents_carry_the_labels_the_exit_sweep_deletes_by(
     tmp_path, cloud, monkeypatch
 ):
-    job = _Job(tmp_path, ["a", "b"])
-    await _run(job, ["a", "b"])
+    job = _Job(tmp_path, ["a", "b", "a", "c"])
+    await _run(job, ["a", "b", "a"])  # c hasn't started: the parent is kept
     (parent,) = cloud.parents()
     assert parent.state == "paused"
     assert parent.labels[_fork.PARENT_LABEL] == "1"
@@ -507,12 +582,15 @@ async def test_docker_mode_builds_and_pulls_with_registry_auth_only(
     _hub_env(monkeypatch)
     caplog.set_level("DEBUG")
     job = _Job(tmp_path, ["a"])
+    extra = tmp_path / "extra.yaml"
+    extra.write_text("services:\n  cache:\n    image: quay.io/org/cache:9\n")
     environment = await _trial(
         job.environment(
             "a",
             dockerfile="FROM ghcr.io/org/base:1\nFROM ubuntu:24.04\n",
             registry_auth="env",
             fork_mode=False,
+            extra_docker_compose=[extra],
         )
     )
     (box,) = cloud.boxes
@@ -526,6 +604,7 @@ async def test_docker_mode_builds_and_pulls_with_registry_auth_only(
     _no_secret_anywhere(cloud, caplog, FAKE_TOKEN, basic)
     # ghcr.io has no entry in env (Docker Hub only): said once, pulled anonymously.
     assert "no credentials for ghcr.io" in caplog.text
+    assert "no credentials for quay.io" in caplog.text  # from the extra file
     await environment.stop(delete=True)
 
 
@@ -577,6 +656,20 @@ def test_the_registries_a_docker_mode_start_may_pull_from(tmp_path):
         "quay.io/x/y:2",
         "postgres:16",
     ]
+    # A sidecar built from its own folder, and an extra compose file.
+    (tmp_path / "svc").mkdir()
+    (tmp_path / "svc" / "Dockerfile.dev").write_text("FROM registry.gitlab.com/g/p:3\n")
+    (tmp_path / "docker-compose.yaml").write_text(
+        "services:\n  s:\n    build:\n      context: svc\n      dockerfile: Dockerfile.dev\n"
+    )
+    extra = tmp_path / "extra.yaml"
+    extra.write_text("services:\n  cache:\n    image: ghcr.io/org/cache:9\n")
+    assert _docker_module.image_references(tmp_path, None, [extra]) == [
+        "ghcr.io/org/builder:1",
+        "quay.io/x/y:2",
+        "registry.gitlab.com/g/p:3",
+        "ghcr.io/org/cache:9",
+    ]
     config = json.loads(
         docker_cli_config({"index.docker.io": {"auth": "x"}, "ghcr.io": {"auth": "y"}})
     )
@@ -605,23 +698,99 @@ def test_auto_sends_a_restricted_prebuilt_task_to_docker_mode(tmp_path):
     routed = env(network_policy=PUBLIC, phase_network_policies=[NO_NETWORK])
     assert routed._docker and routed._template == "prized-docker-v1"
     assert not env(network_policy=NO_NETWORK, docker="false")._docker
+    # An explicit template asks for native mode.
+    assert not env(network_policy=NO_NETWORK, template="prized-base-v1")._docker
 
 
-async def test_a_refused_template_says_why_for_a_routed_task(tmp_path, monkeypatch):
-    async def refuse(template, **kwargs):
-        raise PrizedError("template_inactive", status=409)
+async def test_a_copy_uploads_the_environment_folder_for_a_prebuilt_task(
+    tmp_path, cloud, monkeypatch
+):
+    # A prebuilt task sent to Docker mode for its closed network: Harbor
+    # uploads environment/ into main after start, in every copy too.
+    uploads = []
+
+    async def upload(self):
+        uploads.append(self._sandbox.id)
+
+    monkeypatch.setattr(
+        PrizedEnvironment, "_upload_environment_dir_after_start", upload
+    )
+    job = _Job(tmp_path, ["p", "p"])
+    for _ in range(2):
+        environment = await _trial(
+            job.environment(
+                "p",
+                config={"docker_image": "python:3.12", "cpus": 1, "memory_mb": 2048},
+                network_policy=NO_NETWORK,
+            )
+        )
+        await environment.stop(delete=True)
+    assert uploads == [c.id for c in cloud.copies()] and len(uploads) == 2
+
+
+async def test_a_copy_failing_while_others_hold_the_parent_goes_with_the_last():
+    cache = _fork.ParentCache(120)
+    first, _ = cache.acquire("k", None, None, 30, "t1", task_free=True)
+    cache.mark_ready(first.parent, object(), _fork.ImageFacts({}, "/", None))
+    second, _ = cache.acquire("k", None, None, 30, "t2", task_free=True)
+    third, _ = cache.acquire("k", None, None, 30, "t3", task_free=True)
+    assert cache.release(first) is None
+    parent = first.parent
+    assert cache.copy_failed(parent) is None
+    assert cache.copy_failed(parent) is None  # a lease is out: not yet
+    assert cache.release(second) is None
+    assert cache.release(third) is parent  # the last lease takes it
+    assert cache.acquire("k", None, None, 30, "t4", task_free=True)[0] is None
+
+
+async def test_a_routed_task_runs_natively_where_the_docker_template_is_refused(
+    tmp_path, monkeypatch, caplog
+):
+    creates, switches = [], []
+    cloud = _Cloud()
+
+    async def create(template, **kwargs):
+        creates.append(template)
+        if template == "prized-docker-v1":
+            raise PrizedError("template_inactive", status=409)
+        return _Box(cloud, kwargs["labels"])
+
+    async def put(sandbox, network):
+        switches.append(network)
+        return {"networkChange": {"status": "applied", "network": network}}
 
     monkeypatch.setattr(_module, "_docker_refusal", None)
-    monkeypatch.setattr(_module.AsyncSandbox, "create", refuse)
+    monkeypatch.setattr(_module, "_network_refused_at", None)
+    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
+    monkeypatch.setattr(_module, "put_network", put)
     job = _Job(tmp_path, None)
-    environment = job.environment(
-        "p",
-        config={"docker_image": "python:3.12"},
-        fork_mode=False,
-        network_policy=NO_NETWORK,
-    )
+
+    def routed():
+        return job.environment(
+            "p",
+            config={"docker_image": "python:3.12"},
+            fork_mode=False,
+            network_policy=NO_NETWORK,
+        )
+
+    first = routed()
+    assert first._docker
+    await first.start(force_build=False)
+    # As before Docker mode: the base template, and Prized's own switch.
+    assert not first._docker and creates == ["prized-docker-v1", "prized-base-v1"]
+    assert switches == ["default", "none"]
+    assert "runs without Docker mode" in caplog.text
+    await first.stop(delete=True)
+    # The refusal is remembered: the next one doesn't ask for Docker mode.
+    assert not routed()._docker
+    # Where Prized can't switch either, that is the reason given.
+    monkeypatch.setattr(_module, "_docker_refusal", None)
+
+    async def no_switch(sandbox, network):
+        raise PrizedError("network_none_unavailable", status=409)
+
+    monkeypatch.setattr(_module, "put_network", no_switch)
     with pytest.raises(RuntimeError) as info:
-        await environment.start(force_build=False)
-    message = str(info.value)
-    assert message.startswith(_module._NETWORK_REFUSED)
-    assert message.endswith("(409 template_inactive).")
+        await routed().start(force_build=False)
+    assert str(info.value).startswith(_module._NETWORK_REFUSED)
+    assert "network_none_unavailable" in str(info.value)

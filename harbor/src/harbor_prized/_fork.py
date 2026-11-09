@@ -22,10 +22,11 @@ In Docker mode (``_docker.py``) the parent is the sandbox right after the
 build and pulls: the images are there, no container has started. Its key is
 the environment's content (Harbor's ``environment_id``), the template and the
 shape, not the task, so tasks that share a Dockerfile share one build. The
-plan names tasks, not environments, so such a parent is kept, as far as the
-budget allows, while the plan still has a task that hasn't started (it may
-share the environment), and a key seen from a second task is kept for the
-rest of the run. A copy that fails to come up counts as a refused fork.
+plan names tasks, not environments: such a parent's next use is the soonest
+planned trial of any task seen with it, and while a planned task hasn't
+started (it may share the environment) the parent is kept, as far as the
+budget allows; once every task has started, idle parents no planned trial
+can use are deleted. A copy that fails to come up counts as a refused fork.
 
 Parents are labelled ``harbor-fork-parent=1`` and ``harbor-fork-run=<this
 process>``, as well as with the run's own labels. Any still alive when the
@@ -185,21 +186,53 @@ class ParentCache:
         return list(self._parents.values())
 
     def _next_use(self, key: str, keeping: bool = False) -> float | None:
-        """Where the key's next trial is in the plan: None if none is
-        planned, _FAR if the plan doesn't know its task. ``keeping`` (a
-        parent's last lease came back): a key any task may share is _FAR
-        while a planned task hasn't started."""
-        if len(self._key_tasks.get(key, ())) > 1:
-            return _FAR  # shared by tasks: the plan can't say when it's next needed
-        plan, task = self._tasks.get(key, (None, None))
-        if plan is None or task is None or not plan.knows(task):
+        """Where the key's next trial is in the plan (the soonest of every
+        task seen with it): None if none is planned, _FAR if the plan doesn't
+        know a task. A key any task may share (Docker mode) is _FAR while a
+        planned task hasn't started, once two tasks have used it, or when
+        ``keeping`` (a parent's last lease came back): that task may share it."""
+        plan = self._tasks.get(key, (None, None))[0]
+        tasks = self._key_tasks.get(key, set())
+        if plan is None or not tasks or not all(plan.knows(t) for t in tasks):
             return _FAR
-        position = plan.use_after(task, self._arrived[(key, task)])
-        if position is not None:
-            return float(position)
-        if keeping and key in self._task_free and plan.has_unseen(self._seen):
+        positions = [
+            position
+            for t in tasks
+            if (position := plan.use_after(t, self._arrived[(key, t)])) is not None
+        ]
+        if positions:
+            return float(min(positions))
+        if (
+            (keeping or len(tasks) > 1)
+            and key in self._task_free
+            and plan.has_unseen(self._seen)
+        ):
             return _FAR
         return None
+
+    def seen(
+        self, task: str | None, plan: Plan | None, spare: str | None = None
+    ) -> list[Parent]:
+        """A trial of ``task`` has started. Once every planned task has, the
+        idle parents kept only for tasks not started yet (other than the
+        ``spare`` key's) are returned (and forgotten) for the caller to
+        delete."""
+        new = task not in self._seen
+        self._seen.add(task)
+        if not new or plan is None or plan.has_unseen(self._seen):
+            return []
+        stale = [
+            p
+            for p in self._parents.values()
+            if p.key in self._task_free
+            and p.key != spare
+            and p.leases == 0
+            and p.usable
+            and self._next_use(p.key, keeping=True) is None
+        ]
+        for parent in stale:
+            self._forget(parent)
+        return stale
 
     def _rank(self, parent: Parent) -> tuple[float, float]:
         """Eviction order: needed farthest ahead (or never) first, then the
@@ -224,12 +257,17 @@ class ParentCache:
         tasks may share the parent."""
         self._tasks.setdefault(key, (plan, task))
         self._key_tasks.setdefault(key, set()).add(task)
-        self._seen.add(task)
         if task_free:
             self._task_free.add(key)
         if (key, trial) not in self._trials:
             self._trials.add((key, trial))
             self._arrived[(key, task)] += 1
+        # Parents no planned task can need any more, once every task has started.
+        stale = self.seen(task, plan, spare=key)
+        lease, evicted = self._lease(key, disk_gb)
+        return lease, stale + evicted
+
+    def _lease(self, key: str, disk_gb: int) -> tuple[Lease | None, list[Parent]]:
         if self.closed or self._failures[key] >= MAX_FAILURES:
             return None, []
         parent = self._parents.get(key)

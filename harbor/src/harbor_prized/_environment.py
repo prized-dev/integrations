@@ -492,8 +492,13 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         # Auto also takes a prebuilt task with a closed phase (no-network, or
         # an allowlist with no hosts): Docker closes it inside the sandbox,
         # without waiting for Prized's network switch.
+        # Not where an explicit template asks for native mode, nor where Prized
+        # refused the Docker template a moment ago (then Prized's own network
+        # switch is the way; see start()).
         self._docker_for_network = (
             choice is None
+            and template is None
+            and _docker_refused_recently(docker_template) is None
             and not self._needs_docker(
                 environment_dir, task_env_config, kwargs.get("extra_docker_compose")
             )
@@ -523,6 +528,7 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
             )
         else:
             self._template = template or "prized-base-v1"
+        self._native_template = template or "prized-base-v1"
         self._dockerd_wait_sec = float(dockerd_wait_sec)
         self._restricted: bool | None = None
         # Before BaseEnvironment.__init__: its validators run the early check.
@@ -684,12 +690,6 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
     def _docker_refused_message(self, why: str) -> str:
         """The refusal for a Docker-mode task where Prized refused the template:
         what such a task was told before Docker mode, and why it still is."""
-        if self._docker_for_network:
-            return (
-                f"{_NETWORK_REFUSED}. Prized closes it with Docker in "
-                f"{self._template} sandboxes, which this workspace can't use "
-                f"yet ({why})."
-            )
         if self._docker_auto:
             # As before Docker mode: a missing image first, then Compose.
             if not self.task_env_config.docker_image:
@@ -840,6 +840,31 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
                 "and environment/Dockerfile is not built."
             )
         try:
+            await self._start_once_more(image, force_build)
+        except RuntimeError as exc:
+            refusal = exc.__cause__
+            if not (
+                self._docker_for_network
+                and isinstance(refusal, PrizedError)
+                and refusal.code in _TEMPLATE_REFUSAL_CODES
+            ):
+                raise
+            # A prebuilt task sent to Docker mode only for its closed network:
+            # where the Docker template is refused, it runs as it did before
+            # Docker mode, on Prized's own network switch (refused, with that
+            # reason, where Prized can't switch either).
+            self.logger.warning(
+                f"Prized refused {self._template} ({refusal.status} {refusal.code}); "
+                "this no-network task runs without Docker mode, on Prized's "
+                "network switch"
+            )
+            self._docker = self._docker_for_network = False
+            self._compose = None
+            self._template = self._native_template
+            await self._start_once_more(image, force_build)
+
+    async def _start_once_more(self, image: str | None, force_build: bool) -> None:
+        try:
             await self._start(image, force_build)
         except PrizedError as exc:
             # A request that got no clear answer leaves the sandbox in doubt:
@@ -871,7 +896,9 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
             return None
         if self._compose is not None:
             references = image_references(
-                self.environment_dir, self.task_env_config.docker_image
+                self.environment_dir,
+                self.task_env_config.docker_image,
+                self.extra_docker_compose_paths,
             )
             registries = sorted({HUB, *map(image_registry, references)})
             entries = {r: e for r in registries if (e := self._entry(r)) is not None}
@@ -1121,11 +1148,15 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         mode, its environment's), building the parent first if this trial is
         the first to need it. False: start fresh."""
         vcpu, memory_mb, disk_gb = self._shape()
-        if not _fork.forkable(vcpu, memory_mb):
-            return False
         trial_dir = self.trial_paths.trial_dir
         task = _fork.task_of(trial_dir)
         cache = _fork.cache(self._fork_disk_budget_gb)
+        if not _fork.forkable(vcpu, memory_mb):
+            # Its task has started, as far as parents kept for tasks not
+            # started yet are concerned.
+            stale = cache.seen(task, cache.plan(trial_dir.parent))
+            await _despite_cancel(_fork.delete_parents(stale, wait=True))
+            return False
         lease, evicted = cache.acquire(
             self._fork_key(image, task, force_build),
             task,

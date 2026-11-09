@@ -55,9 +55,11 @@ import asyncio
 import hashlib
 import io
 import json
+import os
 import posixpath
 import re
 import shlex
+import stat
 import tarfile
 import tempfile
 import time
@@ -133,34 +135,56 @@ _FROM = re.compile(
 )
 
 
-def image_references(environment_dir: Path, docker_image: str | None) -> list[str]:
-    """The images a Docker-mode start may pull, as far as the task's files
-    say: its ``docker_image``, the Dockerfile's ``FROM`` lines (not earlier
-    stages, ``scratch`` or ones built from ``ARG``s) and Compose ``image:``
-    values written out."""
-    found: list[str] = [docker_image] if docker_image else []
+def _from_lines(dockerfile: Path) -> list[str]:
+    """A Dockerfile's base images: not earlier stages, ``scratch`` or ones
+    built from ``ARG``s."""
     try:
-        text = (environment_dir / "Dockerfile").read_text(errors="replace")
+        text = dockerfile.read_text(errors="replace")
     except OSError:
-        text = ""
-    stages: set[str] = set()
+        return []
+    found, stages = [], set()
     for match in _FROM.finditer(text):
         ref, stage = match.group(1), match.group(2)
         if "$" not in ref and ref.lower() not in stages and ref != "scratch":
             found.append(ref)
         if stage:
             stages.add(stage.lower())
-    try:
-        compose = yaml.safe_load(
-            (environment_dir / "docker-compose.yaml").read_text(errors="replace")
-        )
-    except (OSError, yaml.YAMLError):
-        compose = None
-    services = compose.get("services") if isinstance(compose, dict) else None
-    for spec in (services or {}).values():
-        image = spec.get("image") if isinstance(spec, dict) else None
-        if isinstance(image, str) and image and "$" not in image:
-            found.append(image)
+    return found
+
+
+def image_references(
+    environment_dir: Path,
+    docker_image: str | None,
+    extra_compose: list[Path] | None = None,
+) -> list[str]:
+    """The images a Docker-mode start may pull, as far as the task's files
+    say: its ``docker_image``, the Dockerfile's ``FROM`` lines, and in each
+    compose file (the task's and any extra ones) every service's ``image:``
+    written out and the ``FROM`` lines of the Dockerfile its ``build:``
+    names."""
+    found: list[str] = [docker_image] if docker_image else []
+    found += _from_lines(environment_dir / "Dockerfile")
+    composes = [environment_dir / "docker-compose.yaml", *(extra_compose or [])]
+    for compose_path in composes:
+        try:
+            compose = yaml.safe_load(compose_path.read_text(errors="replace"))
+        except (OSError, yaml.YAMLError):
+            continue
+        services = compose.get("services") if isinstance(compose, dict) else None
+        for spec in (services or {}).values() if isinstance(services, dict) else ():
+            if not isinstance(spec, dict):
+                continue
+            image = spec.get("image")
+            if isinstance(image, str) and image and "$" not in image:
+                found.append(image)
+            build = spec.get("build")
+            if isinstance(build, str):
+                build = {"context": build}
+            if isinstance(build, dict) and isinstance(build.get("context", "."), str):
+                context = compose_path.parent / build.get("context", ".")
+                dockerfile = build.get("dockerfile") or "Dockerfile"
+                if isinstance(dockerfile, str) and "$" not in str(context):
+                    found += _from_lines(context / dockerfile)
     return list(dict.fromkeys(found))
 
 
@@ -367,7 +391,10 @@ class PrizedDocker(DinDComposeOps):
         env = self._env
         memory_mb = env._effective_memory_mb
         values = ComposeInfraEnvVars(
-            main_image_name=_sanitize_docker_image_name(f"hb__{env.environment_name}"),
+            # As Harbor's Docker provider: named for the environment's content,
+            # which a task's compose file may use (image: ${MAIN_IMAGE_NAME}),
+            # so a fork for another task with the same environment finds it.
+            main_image_name=_sanitize_docker_image_name(f"hb__{env.environment_id}"),
             context_dir=self._ENVIRONMENT_DIR,
             prebuilt_image_name=(
                 env.task_env_config.docker_image if self._use_prebuilt else None
@@ -457,11 +484,34 @@ class PrizedDocker(DinDComposeOps):
         )
 
     def build_digest(self) -> str:
-        """What a build reads besides the environment's files: the task's env
-        (Compose substitutes it into build args) and any extra compose files.
-        Hashed, so no value is kept or logged."""
+        """What a build reads besides the environment's file contents (Harbor's
+        ``environment_id``): the task's env (Compose substitutes it into build
+        args), any extra compose files, and the folder's symlinks, modes and
+        the files Harbor's hash leaves out (``.git``, ``__pycache__``), which
+        the build context carries. Hashed, so no value is kept or logged."""
         env = self._env
+        tree = []
+        if env.environment_dir.is_dir():
+            for path in sorted(env.environment_dir.rglob("*")):
+                info = path.lstat()
+                link = os.readlink(path) if path.is_symlink() else None
+                tree.append(
+                    (
+                        path.relative_to(env.environment_dir).as_posix(),
+                        info.st_mode,
+                        link,
+                    )
+                )
+        hidden = [
+            (rel, hashlib.sha256((env.environment_dir / rel).read_bytes()).hexdigest())
+            for rel, mode, link in tree
+            if link is None
+            and stat.S_ISREG(mode)
+            and {".git", "__pycache__", ".DS_Store"} & set(rel.split("/"))
+        ]
         parts = {
+            "tree": tree,
+            "hidden": hidden,
             "env": {
                 **resolve_env_vars(env.task_env_config.env or {}),
                 **env._persistent_env,
