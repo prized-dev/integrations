@@ -23,6 +23,18 @@ couldn't hold closed is refused before start: host or bridge networking, an
 external network, a privileged container, ``NET_ADMIN``-type capabilities,
 or the host's PID namespace.
 
+Build once, fork per trial (``--ek fork_mode=true``, ``_fork.py``): the
+sandbox right after ``prepare`` (images built and pulled, no container
+started, no credentials left) is paused as a parent, keyed on the
+environment's content rather than the task, and each trial forks it and runs
+``resume_copy``: the trial's own compose files, then ``up --no-build``.
+
+Registry credentials (``--ek registry_auth``): a ``config.json`` with the
+entries for the registries the build and pulls name (Docker Hub always) is
+written through the files API into a folder that is ``DOCKER_CONFIG`` for the
+build and the pulls only, and removed (and checked gone) before any container
+starts or the sandbox is paused. No secret is in a command line or a log.
+
 Topology::
 
     Harbor (this machine)
@@ -40,9 +52,11 @@ paths on the sandbox go through a shell ``mv``/``cp``.
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import io
 import json
 import posixpath
+import re
 import shlex
 import tarfile
 import tempfile
@@ -110,6 +124,44 @@ _CLOSED_NETWORK = {
 # public; the project's own networks are internal (no route out).
 EGRESS_NETWORK = "harbor-prized-egress"
 PROJECT = "harbor"
+# DOCKER_CONFIG for the build and the pulls when registry_auth gives
+# credentials (the same folder crane reads in the image approach); removed
+# before any container starts.
+PULL_AUTH_DIR = f"{_HOME}/.pull-auth"
+_FROM = re.compile(
+    r"^\s*FROM\s+(?:--\S+\s+)*(\S+)(?:\s+AS\s+(\S+))?", re.IGNORECASE | re.MULTILINE
+)
+
+
+def image_references(environment_dir: Path, docker_image: str | None) -> list[str]:
+    """The images a Docker-mode start may pull, as far as the task's files
+    say: its ``docker_image``, the Dockerfile's ``FROM`` lines (not earlier
+    stages, ``scratch`` or ones built from ``ARG``s) and Compose ``image:``
+    values written out."""
+    found: list[str] = [docker_image] if docker_image else []
+    try:
+        text = (environment_dir / "Dockerfile").read_text(errors="replace")
+    except OSError:
+        text = ""
+    stages: set[str] = set()
+    for match in _FROM.finditer(text):
+        ref, stage = match.group(1), match.group(2)
+        if "$" not in ref and ref.lower() not in stages and ref != "scratch":
+            found.append(ref)
+        if stage:
+            stages.add(stage.lower())
+    try:
+        compose = yaml.safe_load(
+            (environment_dir / "docker-compose.yaml").read_text(errors="replace")
+        )
+    except (OSError, yaml.YAMLError):
+        compose = None
+    services = compose.get("services") if isinstance(compose, dict) else None
+    for spec in (services or {}).values():
+        image = spec.get("image") if isinstance(spec, dict) else None
+        if isinstance(image, str) and image and "$" not in image:
+            found.append(image)
+    return list(dict.fromkeys(found))
 
 
 def _single_file_tar(source: Path, name: str) -> bytes:
@@ -393,12 +445,34 @@ class PrizedDocker(DinDComposeOps):
         subcommand: list[str],
         timeout_sec: int | None = None,
         network_override: bool = True,
+        docker_config: str | None = None,
     ) -> ExecResult:
+        env = self._compose_env_vars()
+        if docker_config is not None:  # registry_auth's, for the build and pulls
+            env["DOCKER_CONFIG"] = docker_config
         return await self._sh(
             self.compose_command(subcommand, network_override),
             timeout_sec=timeout_sec,
-            env=self._compose_env_vars(),
+            env=env,
         )
+
+    def build_digest(self) -> str:
+        """What a build reads besides the environment's files: the task's env
+        (Compose substitutes it into build args) and any extra compose files.
+        Hashed, so no value is kept or logged."""
+        env = self._env
+        parts = {
+            "env": {
+                **resolve_env_vars(env.task_env_config.env or {}),
+                **env._persistent_env,
+            },
+            "extra": [
+                hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                for p in env.extra_docker_compose_paths
+            ],
+        }
+        blob = json.dumps(parts, sort_keys=True, default=str).encode()
+        return hashlib.sha256(blob).hexdigest()
 
     async def _write_json_override(self, name: str, write) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -962,13 +1036,17 @@ class PrizedDocker(DinDComposeOps):
 
     async def start(self, force_build: bool) -> None:
         """Builds and pulls (``prepare``), then brings the project up
-        (``run``). Split so a built sandbox could be kept and forked."""
+        (``run``). Split so a built sandbox can be kept and forked."""
         await self.prepare(force_build)
         await self.run()
 
-    async def prepare(self, force_build: bool) -> None:
-        """Everything a trial's start does before its containers exist:
-        the compose files, the build context, the build and the pulls."""
+    async def prepare(
+        self, force_build: bool, credentials: bytes | None = None
+    ) -> None:
+        """Everything a trial's start does before its containers exist: the
+        compose files, the build context, the build and the pulls (with
+        ``credentials``, a Docker ``config.json``, if registry_auth gave any;
+        gone again when this returns)."""
         env = self._env
         await self.wait_for_docker(env._dockerd_wait_sec)
         await self._sh_checked(
@@ -977,6 +1055,57 @@ class PrizedDocker(DinDComposeOps):
         )
         for path in (COMPOSE_BUILD_PATH, COMPOSE_PREBUILT_PATH):
             await self._stage_file_to_host(path, f"{self._COMPOSE_DIR}/{path.name}")
+        if env.environment_dir.is_dir():
+            await self._stage_dir_to_host(env.environment_dir, self._ENVIRONMENT_DIR)
+        else:
+            await self._sh_checked(
+                f"mkdir -p {self._ENVIRONMENT_DIR}",
+                "Failed to create the project folder",
+            )
+        q = shlex.quote
+        await self._sh_checked(
+            f"if [ -f {q(self._ENVIRONMENT_DIR + '/.env')} ]; then "
+            f"cp {q(self._ENVIRONMENT_DIR + '/.env')} {q(self._ENV_FILE)}; "
+            f"else : > {q(self._ENV_FILE)}; fi",
+            "Failed to copy the task's .env",
+        )
+        await self.stage_trial(force_build)
+        docker_config = None
+        if credentials is not None:
+            await self._write_credentials(credentials)
+            docker_config = PULL_AUTH_DIR
+        await self._build_and_pull(docker_config)
+        if credentials is not None:
+            await self.forget_credentials()
+
+    async def _write_credentials(self, credentials: bytes) -> None:
+        """registry_auth's config.json, through the files API (no command line
+        carries it), in a folder of its own that also finds the CLI's plugins."""
+        await self._env._require_sandbox().files.write(
+            f"{PULL_AUTH_DIR}/config.json", credentials, mode=0o600
+        )
+        plugins, link = f"{_HOME}/.docker/cli-plugins", f"{PULL_AUTH_DIR}/cli-plugins"
+        await self._sh_checked(
+            f"chmod 700 {PULL_AUTH_DIR}; if [ -d {plugins} ]; then "
+            f"ln -sfn {plugins} {link}; fi",
+            "Failed to prepare the registry credentials",
+        )
+
+    async def forget_credentials(self) -> None:
+        """Removes registry_auth's folder and checks it is gone: no container,
+        copy or later command may find the credentials."""
+        gone = shlex.quote(PULL_AUTH_DIR)
+        result = await self._sh(f"rm -rf {gone} && ! test -e {gone}", timeout_sec=60)
+        if result.return_code != 0:
+            raise RuntimeError(
+                f"Docker mode: could not remove the registry credentials ({PULL_AUTH_DIR})"
+            )
+
+    async def stage_trial(self, force_build: bool) -> None:
+        """The compose files that are the trial's own (resources, env, mounts,
+        extra files and, for a restricted trial, the closed networks), written
+        again in a fork, whose parent was staged for another trial."""
+        env = self._env
         await self._write_json_override(
             RESOURCES_COMPOSE_NAME,
             # As Harbor's Docker provider: the task's cpus and memory cap main,
@@ -998,20 +1127,6 @@ class PrizedDocker(DinDComposeOps):
             ),
         )
         await self._stage_env_compose_file(self._COMPOSE_DIR)
-        if env.environment_dir.is_dir():
-            await self._stage_dir_to_host(env.environment_dir, self._ENVIRONMENT_DIR)
-        else:
-            await self._sh_checked(
-                f"mkdir -p {self._ENVIRONMENT_DIR}",
-                "Failed to create the project folder",
-            )
-        q = shlex.quote
-        await self._sh_checked(
-            f"if [ -f {q(self._ENVIRONMENT_DIR + '/.env')} ]; then "
-            f"cp {q(self._ENVIRONMENT_DIR + '/.env')} {q(self._ENV_FILE)}; "
-            f"else : > {q(self._ENV_FILE)}; fi",
-            "Failed to copy the task's .env",
-        )
         for source, target in zip(
             env.extra_docker_compose_paths, self._extra_compose_paths(), strict=True
         ):
@@ -1049,9 +1164,14 @@ class PrizedDocker(DinDComposeOps):
                 f"{_DOCKER} network create --driver bridge {net} >/dev/null",
                 "Failed to create the egress network",
             )
+
+    async def _build_and_pull(self, docker_config: str | None) -> None:
+        env = self._env
         build_timeout = round(env.task_env_config.build_timeout_sec)
         began = time.monotonic()
-        result = await self._compose_exec(["build"], timeout_sec=build_timeout)
+        result = await self._compose_exec(
+            ["build"], timeout_sec=build_timeout, docker_config=docker_config
+        )
         if result.return_code != 0:
             raise RuntimeError(
                 f"docker compose build failed: {result.stdout} {result.stderr}"
@@ -1064,6 +1184,7 @@ class PrizedDocker(DinDComposeOps):
         result = await self._compose_exec(
             ["pull", "--ignore-buildable", "--ignore-pull-failures", "--quiet"],
             timeout_sec=max(build_timeout, 600),
+            docker_config=docker_config,
         )
         if result.return_code != 0:
             env.logger.warning(
@@ -1071,13 +1192,29 @@ class PrizedDocker(DinDComposeOps):
             )
         env.logger.debug(f"Docker mode: pull in {time.monotonic() - began:.1f} s")
 
-    async def run(self) -> None:
+    async def resume_copy(self, force_build: bool) -> None:
+        """In a fork of a parent ``prepare`` left (built, nothing running):
+        the daemon answers, the trial's own compose files, then ``up``
+        without building. The project is always ``harbor``, so the built
+        image is ``harbor-main`` whichever task built it; Harbor's build file
+        says ``pull_policy: build``, so a plain ``up`` would build again, and
+        one the parent lacks fails the copy instead of building it."""
+        env = self._env
+        began = time.monotonic()
+        await self.wait_for_docker(env._dockerd_wait_sec)
+        await self.stage_trial(force_build)
+        env.logger.debug(
+            f"Docker mode: copy staged in {time.monotonic() - began:.1f} s"
+        )
+        await self.run(build=False)
+
+    async def run(self, build: bool = True) -> None:
         """Brings the built project up and puts it under the trial's
         startup network policy."""
         env = self._env
         began = time.monotonic()
         result = await self._compose_exec(
-            ["up", "-d"],
+            ["up", "-d"] if build else ["up", "-d", "--no-build"],
             timeout_sec=max(round(env.task_env_config.build_timeout_sec), 600),
         )
         if result.return_code != 0:

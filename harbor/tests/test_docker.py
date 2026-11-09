@@ -627,13 +627,22 @@ def test_prizeds_network_switch_being_unavailable_does_not_refuse_docker_mode(
         phase_network_policies=[NO_NETWORK],
         ek={},
     )
+    # A prebuilt task with a closed phase goes to Docker mode by itself too.
+    routed = _environment(
+        tmp_path,
+        docker_image="ubuntu:24.04",
+        network_policy=PUBLIC,
+        phase_network_policies=[NO_NETWORK],
+        ek={},
+    )
+    assert routed._docker and routed._docker_for_network
     with pytest.raises(ValueError, match="can't turn a sandbox's network off"):
         _environment(
             tmp_path,
             docker_image="ubuntu:24.04",
             network_policy=PUBLIC,
             phase_network_policies=[NO_NETWORK],
-            ek={},
+            ek={"docker": "false"},
         )
 
 

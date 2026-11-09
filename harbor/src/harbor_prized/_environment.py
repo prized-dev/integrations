@@ -11,10 +11,11 @@ requested user, and root can ``apt-get install``.
 
 Limits, by design of that approach:
 
-- Tasks need ``[environment].docker_image``, pullable without credentials.
-  A task built from a Dockerfile (the task's, or a verifier image in
-  ``tests/Dockerfile``) or using Docker Compose runs in Docker mode instead
-  (below). The image's ``ENTRYPOINT`` and ``CMD`` don't run.
+- Tasks need ``[environment].docker_image``, pulled anonymously unless
+  ``registry_auth`` is set (see below). A task built from a Dockerfile (the
+  task's, or a verifier image in ``tests/Dockerfile``) or using Docker Compose
+  runs in Docker mode instead (below). The image's ``ENTRYPOINT`` and ``CMD``
+  don't run.
 - One id: every user is the same sandbox user underneath. A non-root user runs
   with its own uid, gid and ``$HOME``, and without root's capabilities, but it
   owns every file root owns, has no supplementary groups, can't ``sudo``, and
@@ -56,13 +57,22 @@ refused before a sandbox is made for ten minutes.
 
 Credentials: ``PRIZED_API_KEY`` (a key with Sandboxes: Write). Extra constructor parameters
 (``--ek``): ``docker`` (``auto``, the default: Docker mode for Dockerfile and
-Compose tasks only; ``true`` for every task; ``false`` never), ``template``
-(default ``prized-base-v1``; a ``prized-docker-*`` one means ``docker=true``),
-``docker_template`` (default ``prized-docker-v1``), ``dockerd_wait_sec``
-(how long a Docker-mode start waits for the daemon, default 120),
-``max_runtime_min``, ``paused_ttl_min``, ``min_vcpu`` (default 1, see
-``_shape``), ``image_headroom_gb`` (disk added for the image, default 20),
-``labels`` (a dict, or ``k=v,k=v``).
+Compose tasks, and for tasks with a no-network phase; ``true`` for every task;
+``false`` never), ``template`` (default ``prized-base-v1``; a
+``prized-docker-*`` one means ``docker=true``), ``docker_template`` (default
+``prized-docker-v1``), ``dockerd_wait_sec`` (how long a Docker-mode start
+waits for the daemon, default 120), ``max_runtime_min``, ``paused_ttl_min``,
+``min_vcpu`` (default 1, see ``_shape``), ``image_headroom_gb`` (disk added
+for the image, default 20), ``labels`` (a dict, or ``k=v,k=v``),
+``registry_auth`` (where to find credentials for the image's registry:
+``env``, ``docker`` or a path to a Docker ``config.json``; see
+``_registry.py``), ``fork_mode`` (default false: each trial forks a paused
+parent instead of pulling or building again; see ``_fork.py``) and
+``fork_disk_budget_gb``. Docker Hub limits anonymous pulls per IP address, and
+sandboxes share their address, so a large run should pull with its own Docker
+Hub token. The credentials are on the sandbox only while crane pulls the image
+(or, in Docker mode, while Compose builds and pulls), never in a command or a
+log.
 
 No Prized account yet? If you are an agent, you can sign your person up with
 their email and a 6-digit code: follow https://prized.dev/auth.md?via=harbor
@@ -72,6 +82,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import hashlib
 import inspect
 import json
 import logging
@@ -105,7 +116,20 @@ from harbor.models.task.config import EnvironmentConfig, NetworkMode, NetworkPol
 from harbor.models.trial.paths import TrialPaths
 from prized import AsyncSandbox, CommandTimeoutError, PrizedError
 
-from ._docker import DOCKER_TEMPLATE, PrizedDocker
+from harbor_prized import _fork
+from harbor_prized._docker import (
+    DOCKER_TEMPLATE,
+    PULL_AUTH_DIR,
+    PrizedDocker,
+    image_references,
+)
+from harbor_prized._registry import (
+    HUB,
+    RegistryAuth,
+    docker_cli_config,
+    docker_config,
+    image_registry,
+)
 
 _HOME = "/home/prized"
 _ROOT = f"{_HOME}/rootfs"  # the image's filesystem, as seen from the sandbox
@@ -158,6 +182,17 @@ _QUOTA_HINT = (
     "is going, `prized sandbox rm --label harbor=1` removes them."
 )
 _CHUNK = 64 * 1024 * 1024  # the files API takes up to 100 MiB per request
+# crane's DOCKER_CONFIG while it pulls with registry_auth's credentials; removed
+# when the pull ends, before any of the trial's commands run.
+_PULL_AUTH_DIR = PULL_AUTH_DIR  # Docker mode's build and pulls use it too
+_WARNED_NO_CREDENTIALS: set[tuple[str, str]] = set()
+_REFUSED = r"401 Unauthorized|UNAUTHORIZED|DENIED"
+# Added when Docker Hub refuses an anonymous pull.
+_PULL_LIMIT_HINT = (
+    "Docker Hub limits anonymous pulls per IP address, and sandboxes share "
+    "theirs: pull with your own Docker Hub token (`--ek registry_auth=env` with "
+    "DOCKERHUB_USERNAME and DOCKERHUB_TOKEN set), or run the trial again later."
+)
 
 # Run by dpkg after each run (dpkg.cfg post-invoke): files a faked setuid chmod
 # left at mode 0 become 0755.
@@ -170,6 +205,13 @@ _HOSTS = (
     "127.0.0.1\tlocalhost\n"
     "::1\tlocalhost ip6-localhost ip6-loopback\n"
     "127.0.1.1\t$(hostname)\n"
+)
+# As Docker does: the sandbox's resolver, hosts and hostname in the image. A
+# fork gets a hostname and address of its own, so it writes them again.
+_IDENTITY = (
+    f"rm -f {_ROOT}/etc/resolv.conf {_ROOT}/etc/hosts {_ROOT}/etc/hostname; "
+    f"cp /etc/resolv.conf {_ROOT}/etc/resolv.conf; "
+    f'printf "{_HOSTS}" > {_ROOT}/etc/hosts; hostname > {_ROOT}/etc/hostname; '
 )
 # tar errors that unpacking an image as an unprivileged user may report and
 # that leave the image usable: device nodes, and setuid/setgid modes the
@@ -248,6 +290,16 @@ def _docker_choice(value: bool | str | None) -> bool | None:
     if text in ("0", "false", "no", "off"):
         return False
     raise ValueError(f"docker: expected auto, true or false, got {value!r}")
+
+
+def _closes_network(policy: object) -> bool:
+    """A policy Prized enforces by closing the network: no-network, or an
+    allowlist with no hosts."""
+    if not isinstance(policy, NetworkPolicy):
+        return False
+    return policy.network_mode == NetworkMode.NO_NETWORK or (
+        policy.network_mode == NetworkMode.ALLOWLIST and not policy.allowed_hosts
+    )
 
 
 def api_network(policy: NetworkPolicy) -> str:
@@ -329,6 +381,48 @@ def unpack_command(image: str, root: str, crane: str = "./crane") -> str:
     )
 
 
+def _registry_auth(value: object) -> RegistryAuth | None:
+    """``registry_auth`` as given (Harbor turns ``--ek x=false`` into False)."""
+    if value is None or value is False:
+        return None
+    usage = "registry_auth takes env, docker or the path of a Docker config.json"
+    if isinstance(value, (bool, int, float)):  # --ek registry_auth=true, =1
+        raise TypeError(
+            f"{usage}, not true or a number (Harbor reads --ek values as JSON)."
+        )
+    if not isinstance(value, str):  # never echoed: it may hold credentials
+        raise TypeError(
+            f"{usage}, never the credentials themselves (Harbor writes --ek "
+            "values into the job's config.json)."
+        )
+    source = value.strip()
+    if source.lower() in ("", "none", "off", "false"):
+        return None
+    return RegistryAuth(source)
+
+
+def _flag(name: str, value: object) -> bool:
+    """A yes/no option (Harbor reads ``--ek`` values as JSON: true, 1, "yes")."""
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int) and value in (0, 1):
+        return bool(value)
+    if isinstance(value, str):
+        word = value.strip().lower()
+        if word in ("1", "true", "yes", "on"):
+            return True
+        if word in ("", "0", "false", "no", "off"):
+            return False
+    raise TypeError(f"{name} takes true or false, not {value!r}")
+
+
+def pull_auth_prefix(directory: str) -> str:
+    """Bash that points crane at ``directory``'s config.json and removes the
+    directory when the script exits, whether the pull worked or not."""
+    q = shlex.quote(directory)
+    return f"export DOCKER_CONFIG={q}; trap {shlex.quote(f'rm -rf {q}')} EXIT; "
+
+
 async def _despite_cancel(work: Awaitable[None]) -> None:
     """Awaits ``work`` to the end even if the caller is cancelled meanwhile,
     then re-raises the cancellation (a delete must not be cut short)."""
@@ -381,6 +475,9 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         min_vcpu: int = 1,
         image_headroom_gb: int = 20,
         labels: dict[str, str] | str | None = None,
+        registry_auth: str | None = None,
+        fork_mode: bool | str = False,
+        fork_disk_budget_gb: int = _fork.DEFAULT_BUDGET_GB,
         **kwargs,
     ):
         if isinstance(labels, str):  # --ek labels=team=evals,run=42
@@ -392,12 +489,29 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         if choice is None and template and template.startswith("prized-docker"):
             choice = True
         self._docker_auto = choice is None
+        # Auto also takes a prebuilt task with a closed phase (no-network, or
+        # an allowlist with no hosts): Docker closes it inside the sandbox,
+        # without waiting for Prized's network switch.
+        self._docker_for_network = (
+            choice is None
+            and not self._needs_docker(
+                environment_dir, task_env_config, kwargs.get("extra_docker_compose")
+            )
+            and any(
+                _closes_network(p)
+                for p in (
+                    kwargs.get("network_policy"),
+                    *(kwargs.get("phase_network_policies") or []),
+                )
+            )
+        )
         self._docker = (
             self._needs_docker(
                 environment_dir,
                 task_env_config,
                 kwargs.get("extra_docker_compose"),
             )
+            or self._docker_for_network
             if choice is None
             else choice
         )
@@ -419,6 +533,9 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         self._paused_ttl_min = int(paused_ttl_min)
         self._min_vcpu = int(min_vcpu)
         self._image_headroom_gb = int(image_headroom_gb)
+        self._registry_auth = _registry_auth(registry_auth)
+        self._fork_mode = _flag("fork_mode", fork_mode)
+        self._fork_disk_budget_gb = int(fork_disk_budget_gb)
         self._labels = {
             "harbor": "1",
             "harbor-session": session_id[:256],
@@ -567,6 +684,12 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
     def _docker_refused_message(self, why: str) -> str:
         """The refusal for a Docker-mode task where Prized refused the template:
         what such a task was told before Docker mode, and why it still is."""
+        if self._docker_for_network:
+            return (
+                f"{_NETWORK_REFUSED}. Prized closes it with Docker in "
+                f"{self._template} sandboxes, which this workspace can't use "
+                f"yet ({why})."
+            )
         if self._docker_auto:
             # As before Docker mode: a missing image first, then Compose.
             if not self.task_env_config.docker_image:
@@ -726,17 +849,88 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
             self.logger.warning(f"Prized sandbox start failed ({exc}); retrying once")
             await self._start(image, force_build)
 
+    def _entry(self, registry: str) -> dict[str, str] | None:
+        """registry_auth's entry for ``registry``; a missing one is said once a run."""
+        assert self._registry_auth is not None
+        entry = self._registry_auth.for_registry(registry)
+        if entry is None:
+            key = (self._registry_auth.source, registry)
+            if key not in _WARNED_NO_CREDENTIALS:  # once a run, not once a trial
+                _WARNED_NO_CREDENTIALS.add(key)
+                self.logger.warning(
+                    f"registry_auth={self._registry_auth.source} has no "
+                    f"credentials for {registry}; its images are pulled anonymously."
+                )
+        return entry
+
+    def _pull_credentials(self, image: str | None) -> tuple[str, bytes] | None:
+        """registry_auth's credentials, read before a sandbox starts: the
+        image's registry's entry, or in Docker mode one for each registry
+        the build and pulls name (Docker Hub always)."""
+        if self._registry_auth is None:
+            return None
+        if self._compose is not None:
+            references = image_references(
+                self.environment_dir, self.task_env_config.docker_image
+            )
+            registries = sorted({HUB, *map(image_registry, references)})
+            entries = {r: e for r in registries if (e := self._entry(r)) is not None}
+            if not entries:
+                return None
+            names = ", ".join(entries)
+            self.logger.debug(
+                f"Docker mode builds and pulls with the credentials for {names} "
+                f"from {self._registry_auth.describe()}"
+            )
+            return names, docker_cli_config(entries)
+        assert image is not None
+        registry = image_registry(image)
+        entry = self._entry(registry)
+        if entry is None:
+            return None
+        self.logger.debug(
+            f"Pulling {image} with the credentials for {registry} from "
+            f"{self._registry_auth.describe()}"
+        )
+        return registry, docker_config(image, entry)
+
     async def _start(self, image: str | None, force_build: bool = False) -> None:
         if self._sandbox is not None:  # a second start replaces the first
             await self.stop(delete=True)
+        credentials = (
+            None  # no thread hop when there is nothing to read
+            if self._registry_auth is None
+            else await asyncio.to_thread(self._pull_credentials, image)
+        )
+        if self._fork_mode and await self._start_forked(
+            image, credentials, force_build
+        ):
+            return
+        try:
+            await self._start_fresh(image, credentials, self._labels, force_build)
+        except RuntimeError as exc:
+            # Fork mode's parents hold disk a fresh start would have had.
+            if not (
+                self._fork_mode
+                and _fork.disk_quota(exc.__cause__)
+                and await _fork.make_way()
+            ):
+                raise
+            self.logger.warning(
+                "Prized fork mode: a quota refused the start, so the fork parents "
+                "were deleted and the rest of the run starts fresh; starting again"
+            )
+            await self._start_fresh(image, credentials, self._labels, force_build)
+
+    async def _create(self, labels: dict[str, str]) -> AsyncSandbox:
         vcpu, memory_mb, disk_gb = self._shape()
         try:
-            self._sandbox = await AsyncSandbox.create(
+            return await AsyncSandbox.create(
                 self._template,
                 vcpu=vcpu,
                 memory_mb=memory_mb,
                 disk_gb=disk_gb,
-                labels=self._labels,
+                labels=labels,
                 max_runtime_min=self._max_runtime_min,
                 auto_pause_min=_IDLE_PAUSE_MIN,
                 auto_delete_min=self._paused_ttl_min,
@@ -765,6 +959,20 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
                 _note_docker_refused(self._template, why)
                 raise RuntimeError(self._docker_refused_message(why)) from exc
             raise
+
+    async def _start_fresh(
+        self,
+        image: str | None,
+        credentials: tuple[str, bytes] | None,
+        labels: dict[str, str],
+        force_build: bool = False,
+        parent: bool = False,
+    ) -> None:
+        """Creates a sandbox and unpacks the image into it (Docker mode:
+        builds and pulls, then brings the project up), as ``self._sandbox``.
+        A fork ``parent`` stops before anything of the trial's own: no
+        container (Docker mode), no switch of the network."""
+        self._sandbox = await self._create(labels)
         self._heartbeat = asyncio.create_task(self._keep_alive(self._sandbox))
         self.logger.debug(
             f"Prized sandbox {self._sandbox.id} ({self._template}) for "
@@ -774,30 +982,42 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
             if self._compose is not None:
                 # Built or pulled with the sandbox's network; Docker puts the
                 # task's containers under its policy (_docker.py).
-                await self._compose.start(force_build)
-                await self._upload_environment_dir_after_start()
+                await self._compose.prepare(
+                    force_build, None if credentials is None else credentials[1]
+                )
+                if not parent:
+                    await self._compose.run()
+                    await self._upload_environment_dir_after_start()
                 return
             assert image is not None
             if self._needs_network_switch:
                 # Asks for the network it has: answered only where Prized can
                 # switch it, before the image is pulled for nothing.
                 await self._set_network("default", probe=True)
-            await self._prepare_image(image)
+            await self._prepare_image(image, credentials)
             workdir = self.task_env_config.workdir or self._image_workdir
             await self._checked(
                 f"mkdir -p {shlex.quote(workdir)}", f"Failed to create {workdir}"
             )
             await self.ensure_dirs(self._mount_targets(writable_only=True))
             await self._upload_environment_dir_after_start()
-            # Pulled with the network; the task starts under its own policy.
-            startup = api_network(self.network_policy)
-            if startup != "default":
-                await self._set_network(startup)
+            if not parent:  # each copy of a parent switches its own
+                await self._set_startup_network()
         except BaseException:  # a cancelled start must not leave the sandbox behind
+            if credentials is not None:
+                # The setup's trap can't run if the setup was killed (its
+                # timeout), and a delete that fails leaves the sandbox up.
+                await _despite_cancel(self._remove_pull_auth())
             await _despite_cancel(self.stop(delete=True))
             raise
 
     # -- network ------------------------------------------------------------
+
+    async def _set_startup_network(self) -> None:
+        """Pulled with the network; the task starts under its own policy."""
+        startup = api_network(self.network_policy)
+        if startup != "default":
+            await self._set_network(startup)
 
     @override
     async def _apply_network_policy(self, network_policy: NetworkPolicy) -> None:
@@ -849,11 +1069,307 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
                 )
             # Still pending after the API's hold: the same request joins it.
 
-    async def _prepare_image(self, image: str) -> None:
+    # -- fork mode (see _fork.py) -------------------------------------------
+
+    def _fork_key(
+        self, image: str | None, task: str | None, force_build: bool = False
+    ) -> str:
+        """Everything a start depends on: trials with the same key can share a parent."""
+        environment = getattr(self, "environment_id", None)
+        if not isinstance(environment, str):  # Harbor 0.24 has no environment_id
+            environment = str(self.environment_dir.resolve())
+        if self._compose is not None:
+            # Docker mode: what the build and pulls read, not the task, so
+            # tasks with the same environment share one build. Each copy
+            # writes the trial's own compose files (resources, env, mounts,
+            # networks) before it starts any container.
+            parts: dict[str, Any] = {
+                "mode": "docker",
+                "template": self._template,
+                "shape": list(self._shape()),
+                "timers": [self._max_runtime_min, self._paused_ttl_min],
+                "environment": environment,
+                "image": self.task_env_config.docker_image,
+                "force_build": bool(force_build),
+                "build": self._compose.build_digest(),
+            }
+            blob = json.dumps(parts, sort_keys=True, default=str).encode()
+            return hashlib.sha256(blob).hexdigest()[:16]
+        parts = {
+            "template": self._template,
+            "shape": list(self._shape()),
+            # Copies inherit the timers. environment_id leaves out the image
+            # when environment/ has files.
+            "timers": [self._max_runtime_min, self._paused_ttl_min],
+            "image": image,
+            "environment": environment,
+            "task": task or self.environment_name,
+            "workdir": self.task_env_config.workdir,
+            "mounts": sorted(self._mount_targets(writable_only=True)),
+            "upload": getattr(self, "_enable_environment_dir_upload", True),
+        }
+        blob = json.dumps(parts, sort_keys=True, default=str).encode()
+        return hashlib.sha256(blob).hexdigest()[:16]
+
+    async def _start_forked(
+        self,
+        image: str | None,
+        credentials: tuple[str, bytes] | None,
+        force_build: bool = False,
+    ) -> bool:
+        """Starts the trial in a fork of its parent (its task's; in Docker
+        mode, its environment's), building the parent first if this trial is
+        the first to need it. False: start fresh."""
+        vcpu, memory_mb, disk_gb = self._shape()
+        if not _fork.forkable(vcpu, memory_mb):
+            return False
+        trial_dir = self.trial_paths.trial_dir
+        task = _fork.task_of(trial_dir)
+        cache = _fork.cache(self._fork_disk_budget_gb)
+        lease, evicted = cache.acquire(
+            self._fork_key(image, task, force_build),
+            task,
+            cache.plan(trial_dir.parent),
+            disk_gb,
+            trial_dir.name,
+        )
+        copy: AsyncSandbox | None = None
+        try:
+            if evicted:  # gone before the new parent counts toward the quota
+                await _despite_cancel(_fork.delete_parents(evicted, wait=True))
+            if lease is None:
+                return False
+            parent = lease.parent
+            if lease.builder:
+                if not await self._build_parent(
+                    cache, parent, image, credentials, force_build
+                ):
+                    return False
+            elif not await _fork.wait_ready(parent):
+                return False
+            source, facts = parent.sandbox, parent.facts
+            assert source is not None and facts is not None
+            began = time.monotonic()
+            copy = await self._fork_copy(cache, parent, source)
+            if copy is None:
+                return False
+            self._sandbox = copy  # from here, a failed start deletes it
+            forked = time.monotonic() - began
+        finally:
+            # The lease goes back as soon as the copy runs: the parent is
+            # idle (and can make way) while the copy is set up.
+            if lease is not None:
+                doomed = cache.release(lease)
+                if doomed is not None:
+                    try:
+                        await _despite_cancel(
+                            _fork.delete_parent(doomed, wait=cache.quota_refused)
+                        )
+                    except BaseException:
+                        if copy is not None:
+                            await _despite_cancel(self.stop(delete=True))
+                        raise
+        assert copy is not None
+        set_up = await self._set_up_copy(
+            copy, source.id, facts, began, forked, force_build
+        )
+        if not set_up:
+            # Fail closed: this trial builds fresh, and a parent whose copies
+            # keep failing is deleted (its key builds fresh from then on).
+            doomed = cache.copy_failed(parent)
+            if doomed is not None:
+                await _despite_cancel(_fork.delete_parent(doomed))
+        return set_up
+
+    async def _build_parent(
+        self,
+        cache: _fork.ParentCache,
+        parent: _fork.Parent,
+        image: str | None,
+        credentials: tuple[str, bytes] | None,
+        force_build: bool = False,
+    ) -> bool:
+        """Builds the parent: a fresh start under the parent's labels (Docker
+        mode: up to the build and pulls, no container), then paused, with no
+        credentials left on it. False: start fresh. A failure fresh mode would
+        meet too (a failed pull or build) is raised."""
+        labels = {
+            **self._labels,
+            "harbor-session": f"fork-parent-{parent.key}",
+            "harbor-task": self.environment_name[:256],
+            _fork.PARENT_LABEL: "1",
+            _fork.RUN_LABEL: _fork.RUN_ID,
+        }
+        if self._compose is not None:
+            labels["harbor-session"] = f"fork-parent-docker-{parent.key}"
+        _fork.note_build()
+        began = time.monotonic()
+        try:
+            await self._start_fresh(
+                image, credentials, labels, force_build, parent=True
+            )
+        except RuntimeError as exc:
+            if not _fork.disk_quota(exc.__cause__):
+                raise
+            self.logger.warning(
+                f"Prized fork mode: a quota refused a parent of {self.environment_name} "
+                f"({exc.__cause__}); the parents make way, and the rest of the run "
+                "starts fresh"
+            )
+            cache.build_failed(parent)
+            await _despite_cancel(_fork.delete_parents(cache.quota_hit(), wait=True))
+            return False
+        sandbox, heartbeat = self._sandbox, self._heartbeat
+        self._sandbox = self._heartbeat = None
+        if heartbeat is not None:
+            heartbeat.cancel()
+        assert sandbox is not None
+        built = time.monotonic()
+        try:
+            if credentials is not None:
+                # The setup's trap removed them; every copy would carry them, so check.
+                gone = shlex.quote(_PULL_AUTH_DIR)
+                result = await sandbox.exec(
+                    f"rm -rf {gone} && ! test -e {gone}", timeout=60, full_output=True
+                )
+                if result.exit_code != 0:
+                    raise RuntimeError(f"{_PULL_AUTH_DIR} is still there")
+            await sandbox.pause()
+        except BaseException as exc:
+            await _despite_cancel(self._stop_sandbox(sandbox, delete=True))
+            if not isinstance(exc, (PrizedError, RuntimeError)):
+                raise
+            self.logger.warning(
+                f"Prized fork mode: could not make {sandbox.id} a parent ({exc}); "
+                "starting fresh"
+            )
+            cache.build_failed(parent)
+            return False
+        facts = _fork.ImageFacts(
+            dict(self._image_env), self._image_workdir, self._image_user
+        )
+        if not cache.mark_ready(parent, sandbox, facts):
+            await _despite_cancel(_fork.delete_parent(parent))
+            return False
+        what = (
+            f"environment {parent.key} (Docker mode, built and pulled once)"
+            if self._compose is not None
+            else self.environment_name
+        )
+        self.logger.debug(
+            f"Prized sandbox {sandbox.id} is the paused parent of {what} "
+            f"(started in {built - began:.1f} s, paused in {time.monotonic() - built:.2f} s)"
+        )
+        return True
+
+    async def _set_up_copy(
+        self,
+        copy: AsyncSandbox,
+        source_id: str,
+        facts: _fork.ImageFacts,
+        began: float,
+        forked: float,
+        force_build: bool = False,
+    ) -> bool:
+        """Makes the trial's copy its sandbox: the image's facts, a heartbeat,
+        and its own hostname in the image, then the trial's startup network
+        (Docker mode: the trial's compose files and its containers, up
+        without a build). False (the copy deleted): start fresh."""
+        self._image_env = dict(facts.env)
+        self._image_workdir, self._image_user = facts.workdir, facts.user
+        self._heartbeat = asyncio.create_task(self._keep_alive(copy))
+        try:
+            if self._compose is not None:
+                await self._compose.resume_copy(force_build)
+                await self._upload_environment_dir_after_start()
+            else:
+                await self._host_checked(
+                    "set -e; " + _IDENTITY, "Could not write the copy's hostname"
+                )
+                await self._set_startup_network()
+        except BaseException as exc:
+            await _despite_cancel(self.stop(delete=True))
+            if not isinstance(exc, (PrizedError, RuntimeError)):
+                raise
+            again = (
+                "building it fresh" if self._compose is not None else "starting fresh"
+            )
+            self.logger.warning(
+                f"Prized fork mode: copy {copy.id} of {source_id} failed ({exc}); "
+                f"{again} for this trial"
+            )
+            return False
+        self.logger.debug(
+            f"Prized sandbox {copy.id} forked from {source_id} in {forked:.2f} s "
+            f"(ready in {time.monotonic() - began:.2f} s)"
+        )
+        return True
+
+    async def _fork_copy(
+        self, cache: _fork.ParentCache, parent: _fork.Parent, source: AsyncSandbox
+    ) -> AsyncSandbox | None:
+        """One running copy of ``source`` with this trial's labels, or None
+        (see ``_fork.fork_refusal`` for what each refusal does)."""
+        labels = {**self._labels, _fork.COPY_LABEL: source.id}
+        for attempt in (1, 2):
+            try:
+                copies = await source.fork(1, labels=labels)
+            except PrizedError as exc:
+                action, delay = _fork.fork_refusal(exc)
+                if action == "quota" and _fork.disk_quota(exc):
+                    # Parents make way: the idle ones go now, this one with
+                    # its last lease (before this trial's fresh start).
+                    idle = cache.quota_hit()
+                    if attempt == 1 and idle:
+                        await _despite_cancel(_fork.delete_parents(idle, wait=True))
+                        continue
+                elif attempt == 1 and action == "retry":
+                    self.logger.debug(f"Fork of {source.id} refused ({exc}); again")
+                    if delay:
+                        await asyncio.sleep(delay)
+                    continue
+                if action in ("drop", "never", "gone"):
+                    cache.drop(parent, failed=action != "gone", never=action == "never")
+                again = (
+                    "building it fresh"
+                    if self._compose is not None
+                    else "starting fresh"
+                )
+                self.logger.warning(
+                    f"Prized fork mode: could not fork {source.id} ({exc}); "
+                    f"{again} for this trial"
+                )
+                return None
+            return copies[0]
+        return None
+
+    async def _remove_pull_auth(self) -> None:
+        """Best-effort removal of registry_auth's credentials from the sandbox."""
+        try:
+            await self._host_exec(
+                f"rm -rf {shlex.quote(_PULL_AUTH_DIR)}", timeout_sec=60
+            )
+        except (PrizedError, RuntimeError) as exc:
+            self.logger.debug(f"Could not remove {_PULL_AUTH_DIR}: {exc}")
+
+    async def _prepare_image(
+        self, image: str, credentials: tuple[str, bytes] | None = None
+    ) -> None:
         q = shlex.quote
+        auth = ""
+        if credentials is not None:
+            # Through the files API, so the secret is in no command line. The
+            # trap removes it when the setup's shell exits, pass or fail; a
+            # setup killed at its timeout can't run the trap, so a failed start
+            # also removes it (_start) before deleting the sandbox.
+            await self._require_sandbox().files.write(
+                f"{_PULL_AUTH_DIR}/config.json", credentials[1], mode=0o600
+            )
+            auth = pull_auth_prefix(_PULL_AUTH_DIR)
         setup = (
-            "set -e; cd ~; umask 022; "
-            f"[ -x ./crane ] || {{ curl -fsSL --retry 3 -o crane.tgz {_CRANE_URL} && "
+            auth  # first, so nothing can fail before the trap is set
+            + "set -e; cd ~; umask 022; "
+            + f"[ -x ./crane ] || {{ curl -fsSL --retry 3 -o crane.tgz {_CRANE_URL} && "
             f"echo '{_CRANE_SHA256}  crane.tgz' | sha256sum -c --quiet && "
             "tar -xzf crane.tgz crane && rm crane.tgz; }; "
             f"mkdir -p {_ROOT}; "
@@ -861,11 +1377,8 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
             + f"mkdir -p {_ROOT}{_XFER} {_ROOT}/proc {_ROOT}/dev {_ROOT}/sys {_ROOT}/tmp {_ROOT}/etc; "
             f"chmod 1777 {_ROOT}/tmp; chmod 700 {_ROOT}{_XFER}; "
             + "".join(f"cp /bin/sleep {holder}; " for holder in _HOLDERS)
-            # As Docker does: the sandbox's resolver, hosts and hostname.
-            + f"rm -f {_ROOT}/etc/resolv.conf {_ROOT}/etc/hosts {_ROOT}/etc/hostname; "
-            f"cp /etc/resolv.conf {_ROOT}/etc/resolv.conf; "
-            f'printf "{_HOSTS}" > {_ROOT}/etc/hosts; hostname > {_ROOT}/etc/hostname; '
-            f"if [ -d {_ROOT}/etc/apt/apt.conf.d ]; then echo 'APT::Sandbox::User \"root\";' "
+            + _IDENTITY
+            + f"if [ -d {_ROOT}/etc/apt/apt.conf.d ]; then echo 'APT::Sandbox::User \"root\";' "
             f"> {_ROOT}/etc/apt/apt.conf.d/99runtime-sandbox-user; fi; "
             # dpkg installs files with mode 0 and then sets the mode, which the
             # seccomp filter skips for setuid/setgid files: open those up after.
@@ -875,8 +1388,10 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         )
         result = await self._host_exec(setup, timeout_sec=1800)
         if result.return_code != 0:
+            output = result.stderr or result.stdout or ""
+            hint = self._pull_hint(image, output, credentials is not None)
             raise RuntimeError(
-                f"Could not unpack {image} in the sandbox: {result.stderr or result.stdout}"
+                f"Could not unpack {image} in the sandbox: {output}{hint}"
             )
         config = json.loads(result.stdout or "{}").get("config") or {}
         for pair in config.get("Env") or []:
@@ -885,6 +1400,32 @@ class PrizedEnvironment(ComposeServiceOpsMixin, BaseEnvironment):
         self._image_workdir = config.get("WorkingDir") or "/"
         self._image_user = config.get("User") or None
         await self._put(_RUNTIME, _RUNTIME_SCRIPT.encode())
+
+    def _pull_hint(self, image: str, output: str, with_credentials: bool) -> str:
+        """What to do about a failed pull, when the output says why."""
+        auth = self._registry_auth
+        if "TOOMANYREQUESTS" in output and image_registry(image) == HUB:
+            if not with_credentials:
+                return f" {_PULL_LIMIT_HINT}"
+            return (
+                " Docker Hub's pull limit for the account in registry_auth was "
+                "reached: a free Personal account has a limit of its own, and paid "
+                "plans don't. Run the trials again later."
+            )
+        if not with_credentials or auth is None:
+            return ""
+        where = f"registry_auth={auth.source} ({auth.describe()})"
+        if "incorrect username or password" in output:
+            return (
+                f" {image_registry(image)} refused the credentials from {where}: "
+                "check the token."
+            )
+        if re.search(_REFUSED, output):
+            return (
+                f" {image_registry(image)} refused the pull with the credentials from "
+                f"{where}: check that they can read {image}, and that it exists."
+            )
+        return ""
 
     async def _keep_alive(self, sandbox: AsyncSandbox) -> None:
         """Counts as use every few minutes, so a trial between commands never
