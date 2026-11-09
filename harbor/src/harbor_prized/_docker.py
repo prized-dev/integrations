@@ -46,6 +46,7 @@ import posixpath
 import shlex
 import tarfile
 import tempfile
+import time
 import uuid
 from pathlib import Path
 from typing import TYPE_CHECKING, override
@@ -768,11 +769,14 @@ class PrizedDocker(DinDComposeOps):
             force_build=force_build,
         )
         build_timeout = round(env.task_env_config.build_timeout_sec)
+        began = time.monotonic()
         result = await self._compose_exec(["build"], timeout_sec=build_timeout)
         if result.return_code != 0:
             raise RuntimeError(
                 f"docker compose build failed: {result.stdout} {result.stderr}"
             )
+        env.logger.debug(f"Docker mode: build in {time.monotonic() - began:.1f} s")
+        began = time.monotonic()
         # The images the build did not make; pulls of big images take a while.
         # One that fails here (an image another service builds under that
         # name) is left to up, which pulls what is still missing or says why.
@@ -784,11 +788,13 @@ class PrizedDocker(DinDComposeOps):
             env.logger.warning(
                 f"docker compose pull: {(result.stderr or result.stdout).strip()[-500:]}"
             )
+        env.logger.debug(f"Docker mode: pull in {time.monotonic() - began:.1f} s")
 
     async def run(self) -> None:
         """Brings the built project up and puts it under the trial's
         startup network policy."""
         env = self._env
+        began = time.monotonic()
         result = await self._compose_exec(
             ["up", "-d"],
             timeout_sec=max(round(env.task_env_config.build_timeout_sec), 600),
@@ -798,6 +804,7 @@ class PrizedDocker(DinDComposeOps):
                 f"docker compose up failed: {result.stdout} {result.stderr}"
             )
         await self._wait_for_main(60)
+        env.logger.debug(f"Docker mode: up in {time.monotonic() - began:.1f} s")
         if env._docker_restricted:
             # Up with internal networks only; a public start opens them.
             await self.set_egress(env._docker_startup_network == "default")
