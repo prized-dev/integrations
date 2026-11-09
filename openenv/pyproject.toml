@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openenv-prized"
+version = "0.1.0"
+description = "Run OpenEnv environments in Prized sandboxes: a ContainerProvider with pause, resume and fork."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Prized", email = "team@prized.dev" }]
+keywords = ["openenv", "reinforcement-learning", "sandbox", "prized", "microvm"]
+dependencies = [
+  # The provider uses two private helpers from openenv's runtime package
+  # (_LocalAuthProxy, parse_openenv_app_field): pinned to the minor it was tested on.
+  "openenv>=0.12.0,<0.13",
+  # Beta SDK: pinned below the next minor.
+  "prized>=0.1.3,<0.2",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7", "pytest-asyncio>=0.21"]
+
+[project.urls]
+Homepage = "https://prized.dev/docs/sandboxes?via=openenv"
+Documentation = "https://github.com/prized-dev/integrations/tree/main/openenv"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/openenv_prized"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_default_fixture_loop_scope = "function"
+
+# The provider is the same module as OpenEnv's in-tree one, so it follows OpenEnv's lint settings.
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = ["E402", "E501"]
