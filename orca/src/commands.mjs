@@ -53,6 +53,7 @@ import {
 } from "./sshconf.mjs";
 import { dropEntry, getEntry, putEntry, readState, withLock } from "./state.mjs";
 import {
+  CancelledError,
   DOCS_URL,
   SETUP_COMMAND,
   UserError,
@@ -344,6 +345,12 @@ export async function create(env = process.env) {
     say(`${id} is ready: ${root}`);
   } catch (error) {
     await cleanup(error.message);
+    // Orca's Cancel killed a program this create was waiting on (the prized CLI opening the shell)
+    // before the handler above ran. The cleanup is the same; end as a cancel, as the handler does.
+    if (error instanceof CancelledError) {
+      trace({ cmd: "create", ok: false, cancelled: error.signal, sandbox: made.id, instance }, env);
+      process.exit(130);
+    }
     throw error;
   } finally {
     if (made.bundleDir) fs.rmSync(made.bundleDir, { recursive: true, force: true });

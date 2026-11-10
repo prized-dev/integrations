@@ -8,7 +8,7 @@ import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { INSTALL_CLI_URL, UserError, redact, userSshConfig } from "./util.mjs";
+import { CancelledError, INSTALL_CLI_URL, UserError, redact, userSshConfig } from "./util.mjs";
 
 export function childEnv(env = process.env) {
   const out = { ...env };
@@ -74,6 +74,8 @@ export function runPrized(bin, args, { timeoutMs = 120_000, env = process.env } 
   });
   if (result.error?.code === "ENOENT") throw new UserError(`the prized CLI is not at ${bin}`, `install it: ${INSTALL_CLI_URL}`);
   if (result.error && result.error.code !== "ETIMEDOUT") throw result.error;
+  // Killed by a signal, and not by the timeout above: a cancel (see CancelledError).
+  if (!result.error && (result.signal === "SIGTERM" || result.signal === "SIGINT")) throw new CancelledError(result.signal);
   return { status: result.status ?? (result.error ? 124 : 1), stdout: result.stdout ?? "", stderr: redact(result.stderr ?? "") };
 }
 

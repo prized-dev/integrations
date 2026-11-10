@@ -24,7 +24,7 @@ function certBefore(home, id) {
 }
 
 describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => {
-  let root, api, env, repo, recipe, context, created, id, home, ssh;
+  let root, api, env, repo, recipe, context, created, id, home, ssh, controlDir;
   const started = [];
   const instanceSandboxes = (instance) => [...api.sandboxes.values()].filter((s) => s.labels?.["orca-instance"] === instance);
   const state = () => JSON.parse(fs.readFileSync(path.join(home, ".prized-orca", "state.json"), "utf8")).sandboxes;
@@ -53,8 +53,11 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
       SPY_LOG: path.join(root, "spy.log"),
     });
     home = env.HOME;
-    // Orca's own control path has no space (ssh would read -o ControlPath=... as two words)
-    ssh = { configFile: env.PRIZED_ORCA_SSH_CONFIG, controlPath: path.join(api.root, "cm-%C"), env };
+    // Orca's own control path has no space (ssh would read -o ControlPath=... as two words). ssh
+    // refuses one of 108 bytes or more and %C is 40 of them, so under a long TMPDIR (a CI runner's)
+    // the socket goes in /tmp.
+    controlDir = fs.mkdtempSync(path.join(api.root.length <= 60 ? api.root : "/tmp", "cm-"));
+    ssh = { configFile: env.PRIZED_ORCA_SSH_CONFIG, controlPath: path.join(controlDir, "%C"), env };
     recipe = parseRecipe(fs.readFileSync(path.join(PKG, "vm-recipe.json"), "utf8"));
     context = {
       instanceId: "orca-7d1f0c2a-55aa-4b1e-9f00-123456789abc",
@@ -84,6 +87,7 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
       }
     }
     await api?.close();
+    if (controlDir) fs.rmSync(controlDir, { recursive: true, force: true });
     if (api) fs.rmSync(api.root, { recursive: true, force: true });
     if (root) fs.rmSync(root, { recursive: true, force: true });
   });
@@ -500,8 +504,16 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
     assert.equal(made[0].state, "deleted");
     assert.match(r.stderr, new RegExp(`deleted ${made[0].id}`), "the delete was answered before the exit");
     assert.deepEqual(state(), {});
+    // The signal reaches the prized CLI too, and this create is blocked on it: it still ends as a
+    // cancel, with one line in the log, not as a failed shell.
+    assert.doesNotMatch(r.stderr, /could not open a shell/);
     const log = fs.readFileSync(path.join(home, ".prized-orca", "lifecycle.log"), "utf8");
-    assert.match(log, new RegExp(`"cmd":"create","ok":false,"cancelled":"SIGTERM","sandbox":"${made[0].id}","instance":"orca-cancel-2"`));
+    const lines = log.split("\n").filter((l) => l.includes('"instance":"orca-cancel-2"') && !l.includes('"start":true') && !l.includes('"ms":'));
+    assert.deepEqual(lines.map((l) => JSON.parse(l)).map(({ t, pid, ...rest }) => rest), [
+      { cmd: "create", sandbox: made[0].id, instance: "orca-cancel-2" },
+      { cmd: "create", ok: false, cancelled: "SIGTERM", sandbox: made[0].id, instance: "orca-cancel-2" },
+    ]);
+    assert.doesNotMatch(log, /could not open a shell/);
   });
 
   test("a definite refusal makes nothing, so nothing is deleted and the exit is quick", async () => {

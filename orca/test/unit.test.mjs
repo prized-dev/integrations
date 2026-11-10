@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { PrizedApi, PrizedApiError, apiBase, canWriteSandboxes } from "../src/api.mjs";
-import { PROBE_SANDBOX, prizedFailure, shellSignIn, sshHostname, versionOk } from "../src/cli.mjs";
+import { PROBE_SANDBOX, prizedFailure, runPrized, shellSignIn, sshHostname, versionOk } from "../src/cli.mjs";
 import { pauseFirmly, runtimeRefusal } from "../src/commands.mjs";
 import { keyFromLoginShell, resolveKey } from "../src/key.mjs";
 import {
@@ -487,5 +487,19 @@ describe("Orca's side", () => {
     assert.match(out.message, /the prized CLI is not signed in/);
     const expired = run({ FAKE_NOT_SIGNED_IN: "1" });
     assert.equal(expired.kind, "signed-out");
+  });
+
+  test("a CLI call killed by a signal is a cancel; one that runs past its time is a timeout", () => {
+    // Orca's Cancel signals the whole process group, so the CLI dies while this process waits on it.
+    const env = { PATH: process.env.PATH };
+    for (const signal of ["TERM", "INT"]) {
+      assert.throws(
+        () => runPrized("/bin/sh", ["-c", `kill -${signal} $$; sleep 5`], { env }),
+        (e) => e.name === "CancelledError" && e.signal === `SIG${signal}` && e.message === `cancelled (SIG${signal})`,
+      );
+    }
+    assert.equal(runPrized("/bin/sh", ["-c", "sleep 5"], { env, timeoutMs: 200 }).status, 124);
+    assert.equal(prizedFailure("could not open a shell in sbx_1", { status: 124, stderr: "", stdout: "" }).message, "could not open a shell in sbx_1: timed out");
+    assert.equal(runPrized("/bin/sh", ["-c", "exit 3"], { env }).status, 3);
   });
 });

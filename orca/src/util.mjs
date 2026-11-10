@@ -20,6 +20,17 @@ export class UserError extends Error {
   }
 }
 
+// A child this process was waiting on was killed by a signal it didn't send. Orca's Cancel signals
+// the whole process group, so the child dies with it, and this process's own handler for the signal
+// may not have run yet (or at all) when the blocking call returns.
+export class CancelledError extends UserError {
+  constructor(signal) {
+    super(`cancelled (${signal})`);
+    this.name = "CancelledError";
+    this.signal = signal;
+  }
+}
+
 // ---------------------------------------------------------------- paths
 
 // The plugin's own directory: config, state, the managed ssh include, the installed adapter.
