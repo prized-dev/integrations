@@ -40,13 +40,13 @@ Prized wrote this checker, picked the platforms, and wrote auth-md-spend-limits,
 
 - A check sees what a platform publishes, not what its sign-up does after a POST. A platform that lets agents in through a CLI or an SDK it never describes in a public file scores lower here than it would in use.
 - One API URL per platform. A platform whose other endpoints answer differently is scored on the one listed.
-- Metadata on an MCP server's host is not read. Netlify, Cloudinary and Render publish this metadata for their MCP servers, on a separate host. This check reads a platform's site and REST API host only.
+- Metadata on an MCP server's host is not read. Netlify, Cloudinary and Render, among others, publish protected resource metadata for their MCP servers on separate hosts. This check reads a platform's site and its API host, not its MCP server's host.
 - Bot walls count against a platform: if a plain client gets a challenge page at `/auth.md`, an agent does too.
 - A platform that can't be reached in a run (every request failed twice) keeps its last row, marked as not checked with the date of the row kept, so a bad network day never reads as a regression.
 - Results change when platforms change their files. Each run is dated, and the weekly diff says what moved.
 
 ## Versions
 
-- 0.2.4 (2026-11-10). The API host is read for protected resource metadata even when the API itself is not probed (Railway and Linear, whose GraphQL APIs take POST only), and for authorization server metadata when the site has none. Scored again from the 2026-11-07 responses plus the files 0.2.4 newly reads (fetched 2026-11-10), six rows read differently. Railway's protected resource metadata passes: it is on its API host, backboard.railway.com, and Railway goes from 1 of 6 to 2 of 6. For Render, ElevenLabs, Blaxel, Beam and Linear the "Sign-up by API" reason changes from "Authorization server metadata not found" to "has no agent_auth block"; the verdict is the same. No other row changes. `results.json` is still the 2026-11-07 run, made with 0.2.2; the next run publishes these rows.
+- 0.2.4 (2026-11-10). The API host is read for protected resource metadata even when the API itself is not probed (Railway and Linear, whose GraphQL APIs take POST only), and for authorization server metadata when the site has none. Scored again from the 2026-11-07 responses plus the files 0.2.4 newly reads (fetched 2026-11-10), six rows read differently. Railway's protected resource metadata passes: it is on its API host, backboard.railway.com, and Railway goes from 1 of 6 to 2 of 6. Its "Sign-up by API" reason changes from "Authorization server metadata answers HTTP 406" to "has no agent_auth block", and for Render, ElevenLabs, Blaxel, Beam and Linear from "Authorization server metadata not found" to the same; those verdicts are unchanged. No other row changes. `results.json` is still the 2026-11-07 run, made with 0.2.2; the next run publishes these rows.
 - 0.2.3 was never published.
 - 0.2.2 made the 2026-11-07 run.

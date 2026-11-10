@@ -436,7 +436,8 @@ test('a 402 whose billing sits in JSON:API meta passes payment handoff', async (
 
 // ---------------------------------------------------------------------------------------
 // 0.2.4: the API host is read for metadata even when the API itself is not probed, and
-// authorization server metadata is looked for there too. Responses as recorded on 2026-11-10.
+// authorization server metadata is looked for there too. Responses recorded on 2026-11-10
+// (Railway's authorization server document is cut to the fields the checker reads).
 
 const json = (body, type = 'application/json; charset=utf-8') => ({ status: 200, headers: { 'content-type': type }, body });
 const RAILWAY_SKIP = 'GraphQL API that takes queries by POST only; this checker sends GET requests only';
@@ -521,6 +522,15 @@ test('a miss on the API host leaves the site\'s answer as the reason', async () 
   const get = async (url) => (url === 'https://api.render.com/.well-known/oauth-authorization-server' ? { url, finalUrl: url, hops: [], error: 'not in saved evidence' } : stub(pages)(url));
   const again = await checkSite('render.com', { api: 'https://api.render.com/v1/services', get });
   assert.deepEqual(again.checks.map((c) => [c.id, c.status, c.reason]), r.checks.map((c) => [c.id, c.status, c.reason]));
+});
+
+test('JSON on the API host that is not authorization server metadata is not taken for it', async () => {
+  const at = 'https://api.render.com/.well-known/oauth-authorization-server';
+  for (const body of ['{}', '{"message":"Unauthorized"}', '{"issuer":""}', '{"issuer":42}']) {
+    const r = await checkSite('render.com', { api: 'https://api.render.com/v1/services', get: stub({ ...RENDER, [at]: json(body) }) });
+    assert.equal(cell(r, 'register').reason, 'Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt', body);
+    assert.equal(cell(r, 'register').url, 'https://render.com/.well-known/oauth-authorization-server');
+  }
 });
 
 test('agent_auth on the API host counts only when its issuer is that host', async () => {

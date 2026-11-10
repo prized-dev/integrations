@@ -827,10 +827,11 @@ export async function checkSite(input, opts = {}) {
   let asR = await fetchOne('as-metadata', asUrl, JSONA);
   let asMeta = parseJson(asR);
   if (!asMeta && asVia === 'well-known' && apiHost) {
-    // Kept only when it is metadata: a miss here leaves the site's answer as the one reported.
+    // Kept only when it is metadata (RFC 8414 section 2 makes issuer required): an API that
+    // answers any path with some JSON, or a miss, leaves the site's answer as the one reported.
     const r = await fetchOne('as-metadata (API host)', `${apiHost}/.well-known/oauth-authorization-server`, JSONA);
     const j = parseJson(r);
-    if (j) { asR = r; asMeta = j; asIssuerExpected = apiHost; }
+    if (j && typeof j.issuer === 'string' && j.issuer) { asR = r; asMeta = j; asIssuerExpected = apiHost; }
   }
   const agentAuth = asMeta && asMeta.agent_auth && typeof asMeta.agent_auth === 'object' ? asMeta.agent_auth : null;
 
