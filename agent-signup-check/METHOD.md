@@ -6,7 +6,7 @@ How the agent sign-up check reads a platform, how the 100 were chosen, and what 
 
 [`targets.json`](targets.json) lists 100 developer platforms that AI agents sign up for or call, in eight categories: sandboxes and compute (28), LLM APIs (20), email, phone and messaging (11), browsers and scraping (10), search and data (9), databases and backend (8), dev tools (8), payments and billing (6). Prized picked them. Sandboxes and compute is the largest group because it is Prized's own market: Prized and the platforms it competes with are all in it.
 
-For each platform the list names one documented API URL that needs a key (`api`; listed as `apiProbed` in the results), and, where the docs live elsewhere, the docs llms.txt (`docs`). Five platforms have no API probe and are scored out of six: GraphQL-only APIs (Railway, Linear), platforms with no public REST API (Modal, Replit), and Stripe, whose API the tooling that made the first run was not allowed to call.
+For each platform the list names one documented API URL that needs a key (`api`; listed as `apiProbed` in the results), and, where the docs live elsewhere, the docs llms.txt (`docs`). Five platforms have no API probe and are scored out of six: GraphQL-only APIs (Railway, Linear), platforms with no public REST API (Modal, Replit), and Stripe, whose API the tooling that made the first run was not allowed to call. For the two GraphQL platforms the list still names the API URL: it is never requested, but its host is read for the metadata in steps 3 and 4 below. No API host is read for the other three.
 
 ## The requests
 
@@ -15,7 +15,7 @@ GET only, with `Accept` set for what is expected (Markdown, JSON). In order, sto
 1. `https://<domain>/auth.md`, `https://<domain>/llms.txt` and the API URL, signed out.
 2. A second llms.txt (the docs one, or `/docs/llms.txt`) when the root one is missing or doesn't start with an H1.
 3. Protected resource metadata (RFC 9728): the URL the API's `401` names in `resource_metadata`, then `/.well-known/oauth-protected-resource` on the site, then the same path on the API host, stopping at the first one a client may use.
-4. Authorization server metadata (RFC 8414) for the first authorization server that usable metadata names, else `https://<domain>/.well-known/oauth-authorization-server`.
+4. Authorization server metadata (RFC 8414) for the first authorization server that usable metadata names, else `https://<domain>/.well-known/oauth-authorization-server`, then the same path on the API host when the site has none.
 5. When `/auth.md` is missing, the auth.md that `agent_auth.skill` points to.
 6. When `/auth.md` is Markdown but not in the spec's shape, one made-up path (`/agent-signup-check-no-such-page.md`) to tell a real auth.md from a site that answers every path with the same page.
 7. x402 discovery: the `/.well-known/x402` URL the platform's auth.md or llms.txt names on its own site, else `https://<domain>/.well-known/x402`.
@@ -40,6 +40,13 @@ Prized wrote this checker, picked the platforms, and wrote auth-md-spend-limits,
 
 - A check sees what a platform publishes, not what its sign-up does after a POST. A platform that lets agents in through a CLI or an SDK it never describes in a public file scores lower here than it would in use.
 - One API URL per platform. A platform whose other endpoints answer differently is scored on the one listed.
+- Metadata on an MCP server's host is not read. Netlify, Cloudinary and Render publish this metadata for their MCP servers, on a separate host. This check reads a platform's site and REST API host only.
 - Bot walls count against a platform: if a plain client gets a challenge page at `/auth.md`, an agent does too.
 - A platform that can't be reached in a run (every request failed twice) keeps its last row, marked as not checked with the date of the row kept, so a bad network day never reads as a regression.
 - Results change when platforms change their files. Each run is dated, and the weekly diff says what moved.
+
+## Versions
+
+- 0.2.4 (2026-11-10). The API host is read for protected resource metadata even when the API itself is not probed (Railway and Linear, whose GraphQL APIs take POST only), and for authorization server metadata when the site has none. Scored again from the 2026-11-07 responses plus the files 0.2.4 newly reads (fetched 2026-11-10), six rows read differently. Railway's protected resource metadata passes: it is on its API host, backboard.railway.com, and Railway goes from 1 of 6 to 2 of 6. For Render, ElevenLabs, Blaxel, Beam and Linear the "Sign-up by API" reason changes from "Authorization server metadata not found" to "has no agent_auth block"; the verdict is the same. No other row changes. `results.json` is still the 2026-11-07 run, made with 0.2.2; the next run publishes these rows.
+- 0.2.3 was never published.
+- 0.2.2 made the 2026-11-07 run.

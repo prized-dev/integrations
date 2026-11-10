@@ -433,3 +433,119 @@ test('a 402 whose billing sits in JSON:API meta passes payment handoff', async (
   const r = await checkSite(BILLING_SITE, { api: 'https://api.two.example/v1/me', get: stub(pages) });
   assert.equal(r.checks.find((c) => c.id === 'payment').status, 'pass');
 });
+
+// ---------------------------------------------------------------------------------------
+// 0.2.4: the API host is read for metadata even when the API itself is not probed, and
+// authorization server metadata is looked for there too. Responses as recorded on 2026-11-10.
+
+const json = (body, type = 'application/json; charset=utf-8') => ({ status: 200, headers: { 'content-type': type }, body });
+const RAILWAY_SKIP = 'GraphQL API that takes queries by POST only; this checker sends GET requests only';
+const RAILWAY_NO_HTML = { status: 406, headers: { 'content-type': 'application/json' }, body: '{"error":"Only HTML requests are supported here"}' };
+const RAILWAY = {
+  'https://railway.com/llms.txt': md('# Railway\n\n> Deploy anything.\n'),
+  'https://railway.com/.well-known/oauth-protected-resource': RAILWAY_NO_HTML,
+  'https://railway.com/.well-known/oauth-authorization-server': RAILWAY_NO_HTML,
+  'https://railway.com/.well-known/x402': RAILWAY_NO_HTML,
+  'https://backboard.railway.com/.well-known/oauth-protected-resource': json(
+    '{"resource":"https://backboard.railway.com","authorization_servers":["https://backboard.railway.com"],"scopes_supported":["workspace:member"],"bearer_methods_supported":["header"]}',
+  ),
+  'https://backboard.railway.com/.well-known/oauth-authorization-server': json(
+    '{"issuer":"https://backboard.railway.com","authorization_endpoint":"https://backboard.railway.com/oauth/auth","token_endpoint":"https://backboard.railway.com/oauth/token","registration_endpoint":"https://backboard.railway.com/oauth/register","response_types_supported":["code"],"code_challenge_methods_supported":["S256"]}',
+  ),
+};
+const RENDER = {
+  'https://render.com/llms.txt': md('# Render\n\n- MCP OAuth 2.0 authorization server metadata: https://api.render.com/.well-known/oauth-authorization-server\n'),
+  'https://api.render.com/v1/services': { status: 401, headers: { 'content-type': 'application/json; charset=utf-8' }, body: '{"message":"Unauthorized"}' },
+  'https://api.render.com/.well-known/oauth-protected-resource': { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8' }, body: '404 page not found\n' },
+  'https://api.render.com/.well-known/oauth-authorization-server': json(
+    '{"issuer":"https://api.render.com","authorization_endpoint":"https://api.render.com/v1/oauth/authorize","token_endpoint":"https://api.render.com/v1/oauth/token","revocation_endpoint":"https://api.render.com/v1/oauth/token/revoke","introspection_endpoint":"https://api.render.com/v1/oauth/introspect","response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["none"],"revocation_endpoint_auth_methods_supported":["none"],"authorization_response_iss_parameter_supported":false}',
+    'application/json',
+  ),
+};
+const cell = (r, id) => r.checks.find((c) => c.id === id);
+const asked = (r) => r.requests.map((q) => q.url);
+
+test('a skipped API probe still has its host read for metadata (Railway)', async () => {
+  const r = await checkSite('railway.com', { api: 'https://backboard.railway.com/graphql/v2', skipApi: RAILWAY_SKIP, get: stub(RAILWAY) });
+  assert.equal(cell(r, 'prm').status, 'pass');
+  assert.equal(cell(r, 'prm').url, 'https://backboard.railway.com/.well-known/oauth-protected-resource');
+  assert.equal(cell(r, 'prm').via, 'api-well-known');
+  // The authorization server that metadata names is read, and has no agent_auth block.
+  assert.equal(cell(r, 'register').status, 'fail');
+  assert.match(cell(r, 'register').reason, /^Authorization server metadata has no agent_auth block/);
+  assert.equal(cell(r, 'register').url, 'https://backboard.railway.com/.well-known/oauth-authorization-server');
+  // What skipApi is for stays: the API URL itself is never requested, and the check is not counted.
+  assert.equal(cell(r, 'challenge').status, 'skipped');
+  assert.equal(cell(r, 'challenge').reason, RAILWAY_SKIP);
+  assert.equal(r.total, 6);
+  assert.equal(r.passed, 2);
+  assert.ok(!asked(r).some((u) => u.includes('/graphql')), 'the GraphQL endpoint is not requested');
+});
+
+test('a skipped probe with no API named reads no API host, and none is guessed', async () => {
+  const r = await checkSite('railway.com', { skipApi: RAILWAY_SKIP, get: stub(RAILWAY) });
+  assert.equal(cell(r, 'prm').status, 'fail');
+  assert.equal(cell(r, 'prm').reason, 'Protected resource metadata answers HTTP 406');
+  assert.ok(asked(r).every((u) => new URL(u).hostname === 'railway.com'), asked(r).join(' '));
+});
+
+test('a skipped probe on the site\'s own host adds no request', async () => {
+  const r = await checkSite('railway.com', { api: 'https://railway.com/graphql', skipApi: RAILWAY_SKIP, get: stub(RAILWAY) });
+  assert.ok(!r.requests.some((q) => /API host/.test(q.label)));
+  assert.ok(!asked(r).includes('https://railway.com/graphql'));
+});
+
+test('authorization server metadata on the API host is read when the site has none (Render)', async () => {
+  const r = await checkSite('render.com', { api: 'https://api.render.com/v1/services', get: stub(RENDER) });
+  const reg = cell(r, 'register');
+  assert.equal(reg.status, 'fail');
+  assert.equal(reg.reason, 'Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt');
+  assert.equal(reg.url, 'https://api.render.com/.well-known/oauth-authorization-server');
+  assert.deepEqual(
+    r.requests.filter((q) => /^as-metadata/.test(q.label)).map((q) => [q.label, q.url, q.status]),
+    [
+      ['as-metadata', 'https://render.com/.well-known/oauth-authorization-server', 404],
+      ['as-metadata (API host)', 'https://api.render.com/.well-known/oauth-authorization-server', 200],
+    ],
+  );
+  // Protected resource metadata is on neither host: that cell is unchanged.
+  assert.equal(cell(r, 'prm').reason, 'Protected resource metadata not found (HTTP 404)');
+});
+
+test('a miss on the API host leaves the site\'s answer as the reason', async () => {
+  const { 'https://api.render.com/.well-known/oauth-authorization-server': _gone, ...pages } = RENDER;
+  const r = await checkSite('render.com', { api: 'https://api.render.com/v1/services', get: stub(pages) });
+  assert.equal(cell(r, 'register').reason, 'Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt');
+  assert.equal(cell(r, 'register').url, 'https://render.com/.well-known/oauth-authorization-server');
+  // A request the saved evidence does not have (a replay of an older run) changes nothing either.
+  const get = async (url) => (url === 'https://api.render.com/.well-known/oauth-authorization-server' ? { url, finalUrl: url, hops: [], error: 'not in saved evidence' } : stub(pages)(url));
+  const again = await checkSite('render.com', { api: 'https://api.render.com/v1/services', get });
+  assert.deepEqual(again.checks.map((c) => [c.id, c.status, c.reason]), r.checks.map((c) => [c.id, c.status, c.reason]));
+});
+
+test('agent_auth on the API host counts only when its issuer is that host', async () => {
+  const meta = (issuer) => json(JSON.stringify({ issuer, token_endpoint: 'https://api.render.com/v1/oauth/token', agent_auth: { identity_endpoint: 'https://api.render.com/v1/agent/identity', identity_types_supported: ['anonymous'] } }));
+  const at = 'https://api.render.com/.well-known/oauth-authorization-server';
+  const good = await checkSite('render.com', { api: 'https://api.render.com/v1/services', get: stub({ ...RENDER, [at]: meta('https://api.render.com') }) });
+  assert.equal(cell(good, 'register').status, 'pass');
+  const other = await checkSite('render.com', { api: 'https://api.render.com/v1/services', get: stub({ ...RENDER, [at]: meta('https://render.com') }) });
+  assert.equal(cell(other, 'register').status, 'partial');
+  assert.match(cell(other, 'register').reason, /is not the authorization server it was fetched for/);
+});
+
+test('the site\'s own authorization server metadata still comes first', async () => {
+  const site = json('{"issuer":"https://render.com","token_endpoint":"https://render.com/token"}');
+  const r = await checkSite('render.com', { api: 'https://api.render.com/v1/services', get: stub({ ...RENDER, 'https://render.com/.well-known/oauth-authorization-server': site }) });
+  assert.ok(!r.requests.some((q) => q.label === 'as-metadata (API host)'));
+  assert.equal(cell(r, 'register').url, 'https://render.com/.well-known/oauth-authorization-server');
+});
+
+test('a published row does not call an unprobed API probed', async () => {
+  const { publish } = await import('../build-index.mjs');
+  const r = await checkSite('railway.com', { api: 'https://backboard.railway.com/graphql/v2', skipApi: RAILWAY_SKIP, get: stub(RAILWAY) });
+  const { _raw, ...clean } = r;
+  const run = { checker: 'agent-signup-check/test', generatedAt: '2026-11-10T00:00:00.000Z', checks: [], results: [{ name: 'Railway', category: 'Test', ...clean }] };
+  const { doc } = publish(run, [{ name: 'Railway', category: 'Test', site: 'railway.com', api: 'https://backboard.railway.com/graphql/v2', skipApi: RAILWAY_SKIP }]);
+  assert.equal(doc.results[0].apiProbed, null);
+  assert.equal(doc.results[0].apiNotProbed, RAILWAY_SKIP);
+});

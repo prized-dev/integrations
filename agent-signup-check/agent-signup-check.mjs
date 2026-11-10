@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Agent sign-up check, v0.2.2. Prized (https://prized.dev/agent-signup-check).
+// Agent sign-up check, v0.2.4. Prized (https://prized.dev/agent-signup-check).
 // Copyright 2026 Prized. Licensed under the Apache License, Version 2.0:
 // https://www.apache.org/licenses/LICENSE-2.0
 //
@@ -36,7 +36,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import zlib from 'node:zlib';
 
-export const VERSION = '0.2.2';
+export const VERSION = '0.2.4';
 export const USER_AGENT = `PrizedAgentSignupCheck/${VERSION} (+https://prized.dev/agent-signup-check; read-only GET)`;
 export const MAX_BYTES = 1024 * 1024;
 export const TIMEOUT_MS = 8000;
@@ -717,13 +717,14 @@ export function normalizeSite(input) {
 
 /**
  * Run the seven checks on one site. Options:
- *   api:      a documented API URL that needs a key (default https://api.<registrable domain>/)
+ *   api:      a documented API URL that needs a key (default https://api.<registrable domain>/).
+ *             With skipApi it is never requested, but its host is still read for metadata.
  *   docs:     a second llms.txt URL to try (default https://<domain>/docs/llms.txt)
  *   get:      the fetcher, (url, {accept}) => response (default guardedGet)
  *   pauseMs:  wait between requests (default 0)
  *   parallel: fetch the independent documents at once (default false)
  *   apiAccept: the Accept header the API needs (default application/json)
- *   skipApi:  a reason the API probe is not run
+ *   skipApi:  a reason the API probe is not run (the API URL itself is then never requested)
  *   signal:   an AbortSignal that stops every request at once
  */
 export async function checkSite(input, opts = {}) {
@@ -750,6 +751,15 @@ export async function checkSite(input, opts = {}) {
   if (!opts.skipApi) {
     apiUrl = opts.api || `https://api.${registrable(site)}/`;
     if (urlProblem(apiUrl)) apiUrl = null;
+  }
+  // The API's host, read for the two well-known metadata files. A skipped probe (skipApi: a
+  // GraphQL endpoint that takes POST only, say) still has a host when the caller names the API;
+  // no host is guessed for a platform whose API is not probed.
+  let apiHost = null;
+  {
+    const named = apiUrl || (opts.skipApi && opts.api && !urlProblem(opts.api) ? opts.api : null);
+    const o = named ? new URL(named).origin : null;
+    if (o && o !== `https://${site}`) apiHost = o;
   }
 
   // Round 1: auth.md, llms.txt, the API (independent of each other).
@@ -787,11 +797,7 @@ export async function checkSite(input, opts = {}) {
   // well-known path, then the API host's (auth.md Step 1: "the conventional path on the
   // resource server").
   const sitePrm = `https://${site}/.well-known/oauth-protected-resource`;
-  let apiPrm = null;
-  if (apiUrl) {
-    const o = new URL(apiUrl).origin;
-    if (o !== `https://${site}`) apiPrm = `${o}/.well-known/oauth-protected-resource`;
-  }
+  const apiPrm = apiHost ? `${apiHost}/.well-known/oauth-protected-resource` : null;
   let prmR = null;
   let prm = null;
   let prmVia = null;
@@ -807,7 +813,8 @@ export async function checkSite(input, opts = {}) {
     if (j && prmUsable(j, via, [url, r.finalUrl], apiUrl)) { prmR = r; prm = j; prmVia = via; prmOk = true; break; }
   }
 
-  // Round 4: authorization server metadata, from the PRM's authorization_servers, else this site's.
+  // Round 4: authorization server metadata, from the PRM's authorization_servers, else this
+  // site's, else the API host's (the same two places protected resource metadata is looked for).
   const asCandidates = [];
   // Only a PRM a client may use (RFC 9728 section 3.3) leads to its authorization server.
   if (prm && prmOk && Array.isArray(prm.authorization_servers)) {
@@ -815,9 +822,16 @@ export async function checkSite(input, opts = {}) {
     if (first) asCandidates.push(['prm', first, asMetadataUrl(first)]);
   }
   if (!asCandidates.length) asCandidates.push(['well-known', `https://${site}`, `https://${site}/.well-known/oauth-authorization-server`]);
-  const [, asIssuerExpected, asUrl] = asCandidates[0];
-  const asR = await fetchOne('as-metadata', asUrl, JSONA);
-  const asMeta = parseJson(asR);
+  const [asVia, , asUrl] = asCandidates[0];
+  let asIssuerExpected = asCandidates[0][1];
+  let asR = await fetchOne('as-metadata', asUrl, JSONA);
+  let asMeta = parseJson(asR);
+  if (!asMeta && asVia === 'well-known' && apiHost) {
+    // Kept only when it is metadata: a miss here leaves the site's answer as the one reported.
+    const r = await fetchOne('as-metadata (API host)', `${apiHost}/.well-known/oauth-authorization-server`, JSONA);
+    const j = parseJson(r);
+    if (j) { asR = r; asMeta = j; asIssuerExpected = apiHost; }
+  }
   const agentAuth = asMeta && asMeta.agent_auth && typeof asMeta.agent_auth === 'object' ? asMeta.agent_auth : null;
 
   // Round 5: auth.md named by agent_auth.skill, when /auth.md itself is missing.

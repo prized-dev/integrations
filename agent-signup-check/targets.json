@@ -192,6 +192,7 @@
   "name": "Railway",
   "category": "Sandboxes and compute",
   "site": "railway.com",
+  "api": "https://backboard.railway.com/graphql/v2",
   "docs": "https://docs.railway.com/llms.txt",
   "skipApi": "GraphQL API that takes queries by POST only; this checker sends GET requests only"
  },
@@ -671,6 +672,7 @@
   "name": "Linear",
   "category": "Dev tools",
   "site": "linear.app",
+  "api": "https://api.linear.app/graphql",
   "skipApi": "GraphQL API that takes queries by POST only; this checker sends GET requests only"
  },
  {

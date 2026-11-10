@@ -92,7 +92,8 @@ export function publish(run, targets) {
         name: r.name,
         category: r.category,
         site: r.site,
-        apiProbed: t.api ?? null,
+        // With skipApi the API URL names a host to read for metadata; it is not requested.
+        apiProbed: t.skipApi ? null : (t.api ?? null),
         apiNotProbed: t.skipApi ?? null,
         passed: r.passed,
         partial: r.partial,
