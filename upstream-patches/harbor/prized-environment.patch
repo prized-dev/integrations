@@ -1,0 +1,2718 @@
+From 0b80fd12e3ef51c1b1f7c2be3374e1b6749dd841 Mon Sep 17 00:00:00 2001
+From: Hux <hux-agent@users.noreply.github.com>
+Date: Tue, 10 Nov 2026 04:02:30 +0000
+Subject: [PATCH] feat(environments): add Prized sandbox provider
+
+---
+ AGENTS.md                                     |    4 +-
+ docs-mintlify/jobs/configs.mdx                |    2 +-
+ .../sandboxes/pre-integrated-sandboxes.mdx    |    7 +-
+ docs-mintlify/tasks/resources.mdx             |    6 +-
+ pyproject.toml                                |    2 +
+ src/harbor/environments/factory.py            |    5 +
+ src/harbor/environments/prized/__init__.py    |    3 +
+ src/harbor/environments/prized/_runtime.py    |  356 ++++++
+ src/harbor/environments/prized/environment.py |  770 ++++++++++++
+ src/harbor/models/environment_type.py         |    1 +
+ tests/unit/environments/test_prized.py        | 1065 +++++++++++++++++
+ .../unit/environments/test_prized_runtime.py  |  268 +++++
+ uv.lock                                       |   21 +-
+ 13 files changed, 2501 insertions(+), 9 deletions(-)
+ create mode 100644 src/harbor/environments/prized/__init__.py
+ create mode 100644 src/harbor/environments/prized/_runtime.py
+ create mode 100644 src/harbor/environments/prized/environment.py
+ create mode 100644 tests/unit/environments/test_prized.py
+ create mode 100644 tests/unit/environments/test_prized_runtime.py
+
+diff --git a/AGENTS.md b/AGENTS.md
+index 71be69b2..ebd9c85d 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -85,7 +85,8 @@ harbor/
+ │   │   ├── runta.py      # Runta cloud runtime environment
+ │   │   ├── sail.py       # Sail Sailbox environment
+ │   │   ├── boxd.py       # boxd microVM environment
+-│   │   └── superserve.py # Superserve sandbox environment
++│   │   ├── superserve.py # Superserve sandbox environment
++│   │   └── prized/       # Prized sandbox environment
+ │   ├── models/           # Pydantic data models
+ │   │   ├── agent/        # Agent context and metadata
+ │   │   ├── job/          # Job configuration and results
+@@ -192,6 +193,7 @@ Environments implement `BaseEnvironment` (in `src/harbor/environments/base.py`):
+ - **boxd** - boxd isolated microVM environment
+ - **superserve** - Superserve microVM sandboxes
+ - **aca-sandbox** - Azure Container Apps Sandboxes
++- **prized** - Prized sandboxes (Firecracker microVMs) running a task's prebuilt image
+ 
+ ### Trials and Jobs
+ 
+diff --git a/docs-mintlify/jobs/configs.mdx b/docs-mintlify/jobs/configs.mdx
+index b40004b3..39e9b0fc 100644
+--- a/docs-mintlify/jobs/configs.mdx
++++ b/docs-mintlify/jobs/configs.mdx
+@@ -321,7 +321,7 @@ See [Simulate a user](/jobs/simulate-a-user).
+ ## Environment
+ 
+ <ParamField body="environment.type" type="EnvironmentType | null" default={'"docker"'}>
+-  Pre-integrated environment provider: `docker`, `podman`, `daytona`, `e2b`, `modal`, `runloop`, `langsmith`, `ec2`, `gke`, `ack`, `openshift`, `novita`, `apple-container`, `singularity`, `islo`, `tensorlake`, `cwsandbox`, `use-computer`, `cua-cloud`, `blaxel`, `opensandbox`, `beam`, `skypilot`, `hf-sandbox`, `hyperbrowser`, `vercel`, `sail`, `superserve`, or `sbx`. See [Pre-integrated sandboxes](/sandboxes/pre-integrated-sandboxes).
++  Pre-integrated environment provider: `docker`, `podman`, `daytona`, `e2b`, `modal`, `runloop`, `langsmith`, `ec2`, `gke`, `ack`, `openshift`, `novita`, `apple-container`, `singularity`, `islo`, `tensorlake`, `cwsandbox`, `use-computer`, `cua-cloud`, `blaxel`, `opensandbox`, `beam`, `skypilot`, `hf-sandbox`, `hyperbrowser`, `vercel`, `sail`, `superserve`, `prized`, or `sbx`. See [Pre-integrated sandboxes](/sandboxes/pre-integrated-sandboxes).
+ </ParamField>
+ 
+ <ParamField body="environment.import_path" type="string | null" default="null">
+diff --git a/docs-mintlify/sandboxes/pre-integrated-sandboxes.mdx b/docs-mintlify/sandboxes/pre-integrated-sandboxes.mdx
+index 1df66132..394cbabb 100644
+--- a/docs-mintlify/sandboxes/pre-integrated-sandboxes.mdx
++++ b/docs-mintlify/sandboxes/pre-integrated-sandboxes.mdx
+@@ -130,7 +130,8 @@ not separate types in Harbor's API.
+   [`snowflake`](https://docs.snowflake.com/en/LIMITEDACCESS/developer-guide/cortex-sandboxes/overview),
+   [`boxd`](https://boxd.sh/),
+   [`superserve`](https://docs.superserve.ai/),
+-  [`aca-sandbox`](https://learn.microsoft.com/azure/container-apps/sandboxes-overview)
++  [`aca-sandbox`](https://learn.microsoft.com/azure/container-apps/sandboxes-overview),
++  [`prized`](https://prized.dev/docs/sandboxes)
+ </Accordion>
+ 
+ ## Common Sandbox cli options
+@@ -202,9 +203,9 @@ settings.
+   | Capability | Supported environments |
+   | --- | --- |
+   | CPU limit | `docker`, `podman`, `apple-container`, `modal`, `gke`, `openshift`, `skypilot`, `cwsandbox`, `opensandbox`, `ec2`, `runta`, `prime`, `smol`, `sbx`, `boxd`, `superserve` |
+-  | CPU request | `daytona`, `e2b`, `modal`, `runloop`, `gke`, `openshift`, `novita`, `islo`, `tensorlake`, `cwsandbox`, `beam`, `skypilot`, `hyperbrowser`, `vercel`, `runta`, `mosaic`, `sail`, `snowflake`, `superserve`, `aca-sandbox` |
++  | CPU request | `daytona`, `e2b`, `modal`, `runloop`, `gke`, `openshift`, `novita`, `islo`, `tensorlake`, `cwsandbox`, `beam`, `skypilot`, `hyperbrowser`, `vercel`, `runta`, `mosaic`, `sail`, `snowflake`, `superserve`, `aca-sandbox`, `prized` |
+   | Memory limit | `docker`, `podman`, `apple-container`, `modal`, `gke`, `openshift`, `skypilot`, `cwsandbox`, `opensandbox`, `ec2`, `runta`, `prime`, `smol`, `sbx`, `boxd`, `superserve` |
+-  | Memory request | `daytona`, `e2b`, `modal`, `runloop`, `gke`, `openshift`, `novita`, `islo`, `tensorlake`, `cwsandbox`, `blaxel`, `beam`, `skypilot`, `hyperbrowser`, `vercel`, `runta`, `mosaic`, `sail`, `snowflake`, `superserve`, `aca-sandbox` |
++  | Memory request | `daytona`, `e2b`, `modal`, `runloop`, `gke`, `openshift`, `novita`, `islo`, `tensorlake`, `cwsandbox`, `blaxel`, `beam`, `skypilot`, `hyperbrowser`, `vercel`, `runta`, `mosaic`, `sail`, `snowflake`, `superserve`, `aca-sandbox`, `prized` |
+ 
+   A **limit** is a hard ceiling. A **request** reserves or selects capacity.
+   `guarantee` requires both. When a provider declares resource capabilities,
+diff --git a/docs-mintlify/tasks/resources.mdx b/docs-mintlify/tasks/resources.mdx
+index 4490f592..d62abc64 100644
+--- a/docs-mintlify/tasks/resources.mdx
++++ b/docs-mintlify/tasks/resources.mdx
+@@ -100,9 +100,9 @@ Storage, GPUs, and TPUs do not have enforcement policies. Harbor passes their de
+ | --- | --- |
+ | CPU and memory limits | `apple-container`, `cwsandbox`, `docker`, `ec2`, `gke`, `modal`, `opensandbox`, `openshift`, `podman`, `skypilot`, `runta`, `prime`, `sbx`, `superserve` |
+ | Fractional CPUs (e.g. `0.5`) | `docker`, `gke`, `modal`, `openshift`, `podman`, `beam`, `opensandbox` |
+-| CPU requests | `beam`, `cwsandbox`, `daytona`, `e2b`, `gke`, `hyperbrowser`, `islo`, `modal`, `novita`, `openshift`, `runloop`, `skypilot`, `tensorlake`, `vercel`, `runta`, `sail`, `superserve` |
+-| Memory requests | `beam`, `blaxel`, `cwsandbox`, `daytona`, `e2b`, `gke`, `hyperbrowser`, `islo`, `modal`, `novita`, `openshift`, `runloop`, `skypilot`, `tensorlake`, `vercel`, `runta`, `sail`, `superserve` |
+-| Storage sizing | `ack`, `daytona`, `gke`, `hyperbrowser`, `islo`, `langsmith`, `runloop`, `runta`, `tensorlake`, `use-computer`, `prime`, `sail`, `superserve` |
++| CPU requests | `beam`, `cwsandbox`, `daytona`, `e2b`, `gke`, `hyperbrowser`, `islo`, `modal`, `novita`, `openshift`, `runloop`, `skypilot`, `tensorlake`, `vercel`, `runta`, `sail`, `superserve`, `prized` |
++| Memory requests | `beam`, `blaxel`, `cwsandbox`, `daytona`, `e2b`, `gke`, `hyperbrowser`, `islo`, `modal`, `novita`, `openshift`, `runloop`, `skypilot`, `tensorlake`, `vercel`, `runta`, `sail`, `superserve`, `prized` |
++| Storage sizing | `ack`, `daytona`, `gke`, `hyperbrowser`, `islo`, `langsmith`, `runloop`, `runta`, `tensorlake`, `use-computer`, `prime`, `sail`, `superserve`, `prized` |
+ | GPU allocation | `beam`, `daytona`, `gke`, `modal`, `opensandbox`, `prime`, `docker` |
+ | TPU allocation | `gke` |
+ 
+diff --git a/pyproject.toml b/pyproject.toml
+index f43a6369..5959c6ad 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -124,6 +124,7 @@ aca-sandbox = [
+     "azure-containerapps-sandbox>=0.1.0b4",
+     "dockerfile-parse>=2.0.1",
+ ]
++prized = ["prized>=0.1.3,<0.2"]
+ cloud = [
+     "harbor[cwsandbox]",
+     "harbor[e2b]",
+@@ -152,6 +153,7 @@ cloud = [
+     "harbor[boxd]",
+     "harbor[superserve]",
+     "harbor[aca-sandbox]",
++    "harbor[prized]",
+ ]
+ 
+ all = ["harbor[cloud]", "harbor[tinker]", "harbor[computer-1]", "harbor[dspy]", "harbor[adapter]"]
+diff --git a/src/harbor/environments/factory.py b/src/harbor/environments/factory.py
+index a1d5e8b5..b5787f2b 100644
+--- a/src/harbor/environments/factory.py
++++ b/src/harbor/environments/factory.py
+@@ -219,6 +219,11 @@ _ENVIRONMENT_REGISTRY: dict[EnvironmentType, _EnvEntry] = {
+         "ACASandboxEnvironment",
+         "aca-sandbox",
+     ),
++    EnvironmentType.PRIZED: _EnvEntry(
++        "harbor.environments.prized",
++        "PrizedEnvironment",
++        "prized",
++    ),
+ }
+ 
+ 
+diff --git a/src/harbor/environments/prized/__init__.py b/src/harbor/environments/prized/__init__.py
+new file mode 100644
+index 00000000..e2535ef0
+--- /dev/null
++++ b/src/harbor/environments/prized/__init__.py
+@@ -0,0 +1,3 @@
++from harbor.environments.prized.environment import PrizedEnvironment, PrizedOptions
++
++__all__ = ["PrizedEnvironment", "PrizedOptions"]
+diff --git a/src/harbor/environments/prized/_runtime.py b/src/harbor/environments/prized/_runtime.py
+new file mode 100644
+index 00000000..547f00d7
+--- /dev/null
++++ b/src/harbor/environments/prized/_runtime.py
+@@ -0,0 +1,356 @@
++"""Run one command of a Harbor trial inside the task's image, in a Prized sandbox.
++
++Harbor's Prized environment uploads this file to the sandbox, where it runs with the
++sandbox's own python3 (3.12 or later; standard library only)::
++
++    python3 runtime.py [--user UID:GID] (- BASE64_SCRIPT | /SCRIPT/IN/IMAGE)
++
++The task's image is unpacked at ``ROOT``. A Prized sandbox has no Docker and its
++user has no root, so a command runs chrooted into ``ROOT`` in an unprivileged
++user namespace that maps the sandbox's user to uid 0. With ``--user`` it runs in
++a namespace nested in that one, which maps the same user to ``UID:GID`` instead,
++so the command really runs as that uid, without root's capabilities.
++
++Every command of a trial joins the same namespaces, kept open by holder
++processes (copies of ``sleep`` named ``runtime-ns`` for root and
++``runtime-nsu`` for each other user), as the processes of one container share theirs: the sandbox mounts
++``/proc`` with ``hidepid=invisible``, so processes in sibling namespaces can't
++see each other, and ``pgrep`` or ``kill`` in a later command would miss what an
++earlier one started.
++
++Only one id exists in these namespaces: files that root owns appear owned by
++the user in the user's namespace, and other ids can't be given out. So root
++commands run under a seccomp filter that makes ``chown`` to any user,
++``setgroups``, switches to other users (``sudo``, ``su``, ``setpriv``) and
++setuid/setgid mode bits succeed without effect, as fakeroot does; without it
++dpkg, useradd, tar and sudo fail. Calls that stay on root (uid 0 or -1) run for
++real. A faked call also reports success where the real one would have failed
++for another reason (a missing file, say). dpkg creates a file with mode 0 and
++then sets its mode, so a setuid file it installs would keep mode 0: the
++environment adds a dpkg post-invoke hook that gives such files mode 0755.
++"""
++
++from __future__ import annotations
++
++import base64
++import ctypes
++import os
++import random
++import signal
++import struct
++import subprocess
++import sys
++import time
++from typing import Any
++
++HOME = "/home/prized"
++ROOT = f"{HOME}/rootfs"  # the image's filesystem, as seen from the sandbox
++XFER = "/.runtime-xfer"  # staging directory inside the image
++HOLDER = f"{HOME}/runtime-ns"  # a copy of sleep: holds root's namespaces open
++USER_HOLDER = f"{HOME}/runtime-nsu"  # another copy: holds a user's namespace open
++_PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
++
++# Starts root's namespace holder: $0 is ROOT, $1 the file to report its pid in.
++_ROOT_HOLDER = [
++    "unshare",
++    "-Urm",
++    "--fork",
++    "/bin/bash",
++    "-c",
++    (
++        'R=$0; mount -t proc proc "$R/proc" 2>/dev/null || mount --rbind /proc "$R/proc"; '
++        'mount --rbind /dev "$R/dev"; mount --rbind /sys "$R/sys" 2>/dev/null || true; '
++        f'echo $$ > "$1.tmp" && mv "$1.tmp" "$1"; exec {HOLDER} infinity'
++    ),
++    ROOT,
++]
++
++# -- the seccomp filter for root commands --------------------------------------
++
++# Classic BPF over struct seccomp_data: nr at 0, arch at 4, args[i] at 16 + 8 * i
++# (the low 32 bits on little-endian).
++_LD_W_ABS, _JEQ_K, _JSET_K, _RET_K = 0x20, 0x15, 0x45, 0x06
++_ALLOW, _SUCCEED = 0x7FFF0000, 0x00050000  # SECCOMP_RET_ALLOW, SECCOMP_RET_ERRNO | 0
++_SPECIAL_BITS = 0o6000  # S_ISUID | S_ISGID
++
++_ROOT_IDS = (0, 0xFFFFFFFF)  # uid/gid 0, or -1 for "unchanged"
++
++# arch -> (always succeed: chown family and setgroups,
++#          {chmod syscall: index of its mode argument},
++#          {set*id syscall: how many id arguments it takes})
++_SYSCALLS = {
++    0xC000003E: (  # x86_64
++        [92, 93, 94, 260, 116],
++        {90: 1, 91: 1, 268: 2, 452: 2},
++        {105: 1, 106: 1, 113: 2, 114: 2, 117: 3, 119: 3, 122: 1, 123: 1},
++    ),
++    0xC00000B7: (  # aarch64
++        [54, 55, 159],
++        {52: 1, 53: 2, 452: 2},
++        {143: 2, 144: 1, 145: 2, 146: 1, 147: 3, 149: 3, 151: 1, 152: 1},
++    ),
++}
++
++
++def build_filter() -> list[tuple[int, int, int, int]]:
++    """The filter as (code, jt, jf, k) instructions with relative jumps."""
++    # Jump targets are labels until the end; ("label", name) marks a position.
++    program: list[tuple[Any, ...]] = [(_LD_W_ABS, 0, 0, 4)]
++    for arch in _SYSCALLS:
++        program.append((_JEQ_K, f"arch{arch}", 0, arch))
++    program.append((_RET_K, 0, 0, _ALLOW))
++    for arch, (always, chmods, set_ids) in _SYSCALLS.items():
++        program += [("label", f"arch{arch}"), (_LD_W_ABS, 0, 0, 0)]
++        program += [(_JEQ_K, "succeed", 0, nr) for nr in always]
++        program += [(_JEQ_K, f"mode{arg}", 0, nr) for nr, arg in chmods.items()]
++        program += [(_JEQ_K, f"ids{n}_0", 0, nr) for nr, n in set_ids.items()]
++        program.append((_RET_K, 0, 0, _ALLOW))
++    # A set*id call runs for real if each id it names is 0 or -1, else it succeeds.
++    for n in (1, 2, 3):
++        for i in range(n):
++            done = f"ids{n}_{i + 1}"
++            program += [
++                ("label", f"ids{n}_{i}"),
++                (_LD_W_ABS, 0, 0, 16 + 8 * i),
++                (_JEQ_K, done, 0, _ROOT_IDS[0]),
++                (_JEQ_K, done, "succeed", _ROOT_IDS[1]),
++            ]
++        program += [("label", f"ids{n}_{n}"), (_RET_K, 0, 0, _ALLOW)]
++    for arg in (1, 2):
++        program += [
++            ("label", f"mode{arg}"),
++            (_LD_W_ABS, 0, 0, 16 + 8 * arg),
++            (_JSET_K, "succeed", 0, _SPECIAL_BITS),
++            (_RET_K, 0, 0, _ALLOW),
++        ]
++    program += [("label", "succeed"), (_RET_K, 0, 0, _SUCCEED)]
++
++    labels: dict[str, int] = {}
++    code: list[tuple[Any, ...]] = []
++    for ins in program:
++        if ins[0] == "label":
++            labels[ins[1]] = len(code)
++        else:
++            code.append(ins)
++
++    def jump(target: int | str, at: int) -> int:
++        return target if isinstance(target, int) else labels[target] - at - 1
++
++    return [(op, jump(jt, i), jump(jf, i), k) for i, (op, jt, jf, k) in enumerate(code)]
++
++
++def install_filter() -> None:
++    program = build_filter()
++    raw = b"".join(struct.pack("HBBI", *ins) for ins in program)
++    buffer = ctypes.create_string_buffer(raw)
++
++    class SockFprog(ctypes.Structure):
++        _fields_ = [("len", ctypes.c_ushort), ("filter", ctypes.c_void_p)]
++
++    prog = SockFprog(len(program), ctypes.addressof(buffer))
++    libc = ctypes.CDLL(None, use_errno=True)
++    # PR_SET_NO_NEW_PRIVS (38), then PR_SET_SECCOMP (22) with SECCOMP_MODE_FILTER (2).
++    if (
++        libc.prctl(38, 1, 0, 0, 0) != 0
++        or libc.prctl(22, 2, ctypes.byref(prog), 0, 0) != 0
++    ):
++        raise OSError(ctypes.get_errno(), "could not install the seccomp filter")
++
++
++# -- namespace holders ---------------------------------------------------------
++
++
++def user_holder_command(root_pid: int, uid: int, gid: int) -> list[str]:
++    """Starts a holder for UID:GID, nested in root's namespace (pid file in $1)."""
++    return [
++        "nsenter",
++        f"--target={root_pid}",
++        "--user",
++        "--mount",
++        "--preserve-credentials",
++        "--",
++        "unshare",
++        "--user",
++        f"--map-user={uid}",
++        f"--map-group={gid}",
++        "--fork",
++        "/bin/sh",
++        "-c",
++        f'echo $$ > "$1.tmp" && mv "$1.tmp" "$1"; exec {USER_HOLDER} infinity',
++        "sh",
++    ]
++
++
++def _proc_stat(pid: int) -> tuple[str, str, str]:
++    """comm, state and start time (clock ticks after boot) of a process."""
++    with open(f"/proc/{pid}/stat") as f:
++        name, _, rest = f.read().partition("(")[2].rpartition(")")
++    fields = rest.split()  # fields from the 3rd on: state is [0], starttime [19]
++    return name, fields[0], fields[19]
++
++
++def _holder_pid(pid_file: str, comm: str) -> int | None:
++    """The pid in pid_file, if that process is still the live holder named comm
++    that was recorded there (its start time too, when recorded)."""
++    try:
++        with open(pid_file) as f:
++            pid_text, _, started = f.read().strip().partition(" ")
++        pid = int(pid_text)
++        name, state, start = _proc_stat(pid)
++    except (OSError, ValueError, IndexError):
++        return None
++    if name != comm or state in "ZX" or (started and started != start):
++        return None
++    return pid
++
++
++def ensure_holder(
++    name: str, command: list[str], comm: str = "runtime-ns", timeout: float = 30
++) -> int:
++    """The pid of holder ``name``, started with ``command`` if it isn't running.
++
++    Called with the namespace lock held. Each attempt reports in its own file,
++    so a slow earlier holder can't overwrite a later one's pid, and an attempt
++    that doesn't come up in time is killed.
++    """
++    pid_file = f"{HOME}/{name}.pid"
++    pid = _holder_pid(pid_file, comm)
++    if pid is not None:
++        return pid
++    attempt, err_file = f"{pid_file}.{os.getpid()}", f"{HOME}/{name}.err"
++    for stale in (pid_file, attempt):
++        if os.path.exists(stale):
++            os.remove(stale)
++    with open(err_file, "wb") as err:
++        process = subprocess.Popen(
++            [*command, attempt],
++            stdin=subprocess.DEVNULL,
++            stdout=subprocess.DEVNULL,
++            stderr=err,
++            start_new_session=True,
++        )
++    deadline = time.monotonic() + timeout
++    while time.monotonic() < deadline:
++        pid = _holder_pid(attempt, comm)
++        if pid is not None:
++            with open(attempt, "w") as f:  # pid and start time, against pid reuse
++                f.write(f"{pid} {_proc_stat(pid)[2]}")
++            os.replace(attempt, pid_file)
++            return pid
++        time.sleep(0.05)
++    try:
++        os.killpg(process.pid, signal.SIGKILL)
++    except OSError:
++        pass
++    with open(err_file, errors="replace") as f:
++        raise RuntimeError(f"could not start the namespace holder {name}: {f.read()}")
++
++
++def stop_stale_user_holders(root_pid: int) -> None:
++    """Stops user holders nested in an earlier root holder (one that died)."""
++    for entry in os.listdir(HOME):
++        if not (entry.startswith("ns-") and entry.endswith(".pid")):
++            continue
++        if entry.startswith(f"ns-{root_pid}-"):
++            continue
++        pid = _holder_pid(f"{HOME}/{entry}", "runtime-nsu")
++        if pid is not None:
++            try:
++                os.kill(pid, signal.SIGKILL)
++            except OSError:
++                pass
++        os.remove(f"{HOME}/{entry}")
++
++
++# -- running a command ---------------------------------------------------------
++
++
++def _staged_script(arg: str, encoded: str | None) -> str:
++    """The script's path inside the image, writing an inline script there first."""
++    if encoded is None:
++        return arg
++    os.makedirs(ROOT + XFER, exist_ok=True)
++    path = f"{XFER}/cmd-{os.getpid()}-{random.randrange(1 << 32):08x}.sh"
++    with open(ROOT + path, "wb") as f:
++        f.write(base64.b64decode(encoded))
++    return path
++
++
++def _terminated(signum: int, frame: Any) -> None:
++    raise SystemExit(128 + signum)
++
++
++def main(argv: list[str]) -> None:
++    import fcntl  # Linux only, like everything below; imported here for the tests
++
++    # A timeout kills this process with SIGTERM: clean up on the way out.
++    signal.signal(signal.SIGTERM, _terminated)
++    user: tuple[int, int] | None = None
++    if argv[:1] == ["--user"]:
++        uid, gid = (int(part) for part in argv[1].split(":"))
++        user = None if uid == 0 else (uid, gid)
++        argv = argv[2:]
++    script, entered = None, False
++    try:
++        script = _staged_script(argv[0], argv[1] if argv[0] == "-" else None)
++        _enter(user, fcntl)
++        entered = True
++        env = {"PATH": _PATH, "TERM": "xterm"}
++        if user is None:
++            install_filter()
++            env["TAR_OPTIONS"] = "--no-same-owner"  # only uid 0 exists
++        # Python ignores SIGPIPE and SIGXFSZ, and an exec keeps ignored signals.
++        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
++        signal.signal(signal.SIGXFSZ, signal.SIG_DFL)
++        signal.signal(signal.SIGTERM, signal.SIG_DFL)
++        shell = "/bin/bash" if os.path.exists("/bin/bash") else "/bin/sh"
++        os.execve(shell, [shell, script], env)
++    except BaseException as exc:
++        # The script never ran, so it never removed itself; it holds the env.
++        if script is not None:
++            try:
++                os.remove(script if entered else ROOT + script)
++            except OSError:
++                pass
++        if isinstance(exc, SystemExit):
++            raise
++        print(f"prized runtime: {exc!r}", file=sys.stderr)
++        sys.exit(125)
++
++
++def _enter(user: tuple[int, int] | None, fcntl: Any) -> None:
++    """Joins the trial's namespaces (starting holders as needed) and chroots."""
++    with open(f"{HOME}/ns.lock", "a") as lock:
++        fcntl.flock(lock, fcntl.LOCK_EX)
++        known = _holder_pid(f"{HOME}/ns.pid", "runtime-ns")
++        root_pid = ensure_holder("ns", _ROOT_HOLDER)
++        if root_pid != known:
++            stop_stale_user_holders(root_pid)
++        user_pid = None
++        if user is not None:
++            user_pid = ensure_holder(
++                f"ns-{root_pid}-{user[0]}-{user[1]}",
++                user_holder_command(root_pid, *user),
++                comm="runtime-nsu",
++            )
++
++    # One thread only from here: setns into a user namespace requires it.
++    namespaces = [
++        (root_pid, "user", os.CLONE_NEWUSER),
++        (root_pid, "mnt", os.CLONE_NEWNS),
++    ]
++    if user_pid is not None:
++        namespaces.append((user_pid, "user", os.CLONE_NEWUSER))
++    fds = [
++        (os.open(f"/proc/{pid}/ns/{ns}", os.O_RDONLY), kind)
++        for pid, ns, kind in namespaces
++    ]
++    for fd, kind in fds:
++        os.setns(fd, kind)
++        os.close(fd)
++    os.chroot(ROOT)
++    os.chdir("/")
++
++
++if __name__ == "__main__":
++    main(sys.argv[1:])
+diff --git a/src/harbor/environments/prized/environment.py b/src/harbor/environments/prized/environment.py
+new file mode 100644
+index 00000000..4c89571d
+--- /dev/null
++++ b/src/harbor/environments/prized/environment.py
+@@ -0,0 +1,770 @@
++"""Prized environment: each trial runs in a Prized sandbox.
++
++A Prized sandbox (https://prized.dev/docs/sandboxes) is a Firecracker microVM
++started from a fixed template, not from a Docker image, and its user has no
++root. To run a task's image anyway, this environment unpacks the task's
++prebuilt ``docker_image`` into a root filesystem inside the sandbox (with
++``crane export``; crane is pinned and its checksum checked) and runs every
++command chrooted into it, in unprivileged user namespaces (``_runtime.py``).
++Commands see the image's files, ``ENV``, ``WORKDIR`` and ``USER``, run as root
++(uid 0 of the namespace) or as the requested user, and root can
++``apt-get install``.
++
++Limits, by design of that approach:
++
++- Tasks need ``[environment].docker_image``, pullable without credentials.
++  Building from a Dockerfile (the task's, or a verifier image in
++  ``tests/Dockerfile``) is not supported; build and push the image first. The
++  image's ``ENTRYPOINT`` and ``CMD`` don't run.
++- One id: every user is the same sandbox user underneath, so a non-root user
++  can't be kept away from root's files. Commands for a non-root user (an
++  ``[agent]`` or ``[verifier]`` user, or the image's ``USER``) are refused
++  unless ``allow_unenforced_users`` is set. With it, such a user runs with its
++  own uid, gid and ``$HOME``, and without root's capabilities, but it owns
++  every file root owns, has no supplementary groups, can't ``sudo``, and
++  doesn't see other users' processes (root sees everyone's). Root's ``chown``
++  to other users, its switches to other users (``su``, ``sudo -u``) and
++  setuid/setgid mode bits succeed without effect, as fakeroot does: the command
++  stays root, and programs that check a real user switch (an sshd login,
++  Postfix) fail. Root's group is always 0.
++- The chroot and namespaces are not a security boundary inside the sandbox
++  (the microVM is): no network policies, so ``no-network`` and allowlist
++  tasks are refused. No Docker Compose or GPUs.
++- A command has no time limit of its own: the ``prized`` SDK runs long ones
++  detached and polls them, so they outlive a dropped connection. A trial's
++  sandbox is deleted after ``max_runtime_min`` of running, or
++  ``paused_ttl_min`` after ``stop(delete=False)`` paused it. While the trial
++  runs, a heartbeat keeps it from pausing; one that a crashed Harbor left
++  behind pauses itself after 30 idle minutes, so it stops billing compute, and
++  is deleted ``paused_ttl_min`` later.
++
++Credentials: ``PRIZED_API_KEY``, a key with Sandboxes: Write. See
++``PrizedOptions`` for the ``--ek`` options.
++"""
++
++from __future__ import annotations
++
++import asyncio
++import base64
++import json
++import logging
++import math
++import os
++import re
++import shlex
++import uuid
++from collections.abc import Awaitable
++from pathlib import Path
++from typing import Any, override
++
++from pydantic import Field, field_validator
++
++from harbor.environments.base import BaseEnvironment, ExecResult
++from harbor.environments.capabilities import (
++    EnvironmentCapabilities,
++    EnvironmentResourceCapabilities,
++)
++from harbor.environments.definition import COMPOSE_FILE_NAME, DOCKERFILE_NAME
++from harbor.environments.options import EnvironmentOptions
++from harbor.environments.tar_transfer import (
++    extract_dir_from_bytes,
++    pack_dir_to_bytes,
++    remote_pack_command,
++    remote_unpack_command,
++    tar_pack_succeeded,
++)
++from harbor.models.environment_type import EnvironmentType
++from harbor.utils.optional_import import MissingExtraError
++
++try:
++    from prized import AsyncSandbox, CommandTimeoutError, PrizedError
++
++    _HAS_PRIZED = True
++except ImportError:
++    _HAS_PRIZED = False
++
++_HOME = "/home/prized"
++_ROOT = f"{_HOME}/rootfs"  # the image's filesystem, as seen from the sandbox
++_XFER = "/.runtime-xfer"  # staging dir inside the image's filesystem
++_RUNTIME = f"{_HOME}/runtime.py"  # on the sandbox, outside the image
++_HOLDERS = (f"{_HOME}/runtime-ns", f"{_HOME}/runtime-nsu")  # copies of sleep
++_CRANE_URL = (
++    "https://github.com/google/go-containerregistry/releases/download/"
++    "v0.22.1/go-containerregistry_Linux_x86_64.tar.gz"
++)
++_CRANE_SHA256 = "0ab7a1d6932a213aed964ce97666c3077fe691c8606413674a8b3e0b9ec4cda0"
++_API_KEYS_URL = "https://prized.dev/dashboard/workspace/api-keys"
++_MAX_DISK_GB = 128
++# A sandbox nothing touches for this long pauses itself (one a crashed run left
++# behind stops billing compute); while a trial runs, a heartbeat counts as use.
++_IDLE_PAUSE_MIN = 30
++_HEARTBEAT_SEC = 300
++# Added when a quota refuses the sandbox: paused or leftover trial sandboxes count.
++_QUOTA_HINT = (
++    "Paused or leftover Harbor sandboxes count toward your quotas: once no run "
++    "is going, `prized sandbox rm --label harbor=1` removes them."
++)
++_CHUNK = 64 * 1024 * 1024  # the files API takes up to 100 MiB per request
++
++# Run by dpkg after each run (dpkg.cfg post-invoke): files a faked setuid chmod
++# left at mode 0 become 0755.
++_DPKG_HOOK = (
++    "post-invoke=find /usr /bin /sbin /lib /lib64 /opt -xdev -type f -perm 0000 "
++    "-exec chmod 0755 {} + 2>/dev/null || true"
++)
++# What Docker writes into a container's /etc/hosts, for the sandbox's hostname.
++_HOSTS = (
++    "127.0.0.1\tlocalhost\n"
++    "::1\tlocalhost ip6-localhost ip6-loopback\n"
++    "127.0.1.1\t$(hostname)\n"
++)
++# tar errors that unpacking an image as an unprivileged user may report and
++# that leave the image usable: device nodes, and setuid/setgid modes the
++# sandbox refuses. Anything else fails the start.
++_BENIGN_TAR_ERRORS = "Cannot mknod|Cannot change mode|Exiting with failure status"
++_INLINE_LIMIT = 60_000  # longer scripts are uploaded instead of passed inline
++_ENV_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
++_WINDOWS_HOST = os.name == "nt"  # its files have no POSIX modes to keep
++
++logger = logging.getLogger(__name__)
++# runtime.py exits with this, and says "prized runtime:", when it can't run a command.
++_RUNTIME_FAILED = 125
++
++# Uploaded to _RUNTIME and run with the sandbox's python3.
++_RUNTIME_SCRIPT = (Path(__file__).parent / "_runtime.py").read_text()
++
++
++def unpack_command(image: str, root: str, crane: str = "./crane") -> str:
++    """Bash that unpacks ``image`` into ``root``, keeping its file modes.
++
++    It fails if crane fails (a pull cut short must not pass as an image), or if
++    tar reports anything but the benign errors above.
++    """
++    q = shlex.quote
++    return (
++        f"set +e; {crane} export {q(image)} - | "
++        f"tar --no-same-owner --preserve-permissions -x -C {q(root)} 2>tar.err; "
++        's="${PIPESTATUS[0]} ${PIPESTATUS[1]}"; set -e; '
++        'if [ "${s% *}" != 0 ]; then echo "crane export failed" >&2; '
++        "tail -5 tar.err >&2; exit 1; fi; "
++        f'if [ "${{s#* }}" != 0 ] && grep -v -E {q(_BENIGN_TAR_ERRORS)} tar.err | grep -q .; '
++        "then tail -5 tar.err >&2; df -h ~ >&2; exit 1; fi; "
++    )
++
++
++async def _despite_cancel(work: Awaitable[None]) -> None:
++    """Awaits ``work`` to the end even if the caller is cancelled meanwhile,
++    then re-raises the cancellation (a delete must not be cut short)."""
++    task = asyncio.ensure_future(work)
++    cancelled = False
++    while not task.done():
++        try:
++            # Unlike awaiting the task, wait() neither cancels it nor raises its error.
++            await asyncio.wait({task})
++        except asyncio.CancelledError:
++            cancelled = True
++    if cancelled:
++        if not task.cancelled() and task.exception() is not None:
++            logger.warning(f"Cleanup failed while cancelled: {task.exception()!r}")
++        raise asyncio.CancelledError
++    task.result()
++
++
++class PrizedOptions(EnvironmentOptions):
++    """User-facing kwargs for PrizedEnvironment."""
++
++    template: str = Field(
++        default="prized-base-v1",
++        min_length=1,
++        description="Sandbox template each trial's sandbox starts from.",
++    )
++    max_runtime_min: int = Field(
++        default=1440,
++        ge=1,
++        le=10080,
++        description="Minutes a sandbox may run before Prized deletes it.",
++    )
++    paused_ttl_min: int = Field(
++        default=1440,
++        ge=1,
++        description=(
++            "Minutes a paused sandbox is kept before it is deleted: one paused "
++            "by --no-delete, or one a crashed run left behind."
++        ),
++    )
++    min_vcpu: int = Field(
++        default=1,
++        ge=1,
++        description="Fewest vCPUs a trial's sandbox gets, whatever the task asks for.",
++    )
++    image_headroom_gb: int = Field(
++        default=20,
++        ge=0,
++        description="Disk added to the task's storage for the unpacked image.",
++    )
++    labels: dict[str, str] = Field(
++        default_factory=dict,
++        description=(
++            "Labels added to each sandbox, as a mapping or as 'key=value,key=value'."
++        ),
++    )
++    allow_unenforced_users: bool = Field(
++        default=False,
++        description=(
++            "Run commands for non-root users even though every user is one id "
++            "underneath: such a user can read and write root's files, so it is "
++            "not kept away from the grader. Off: those commands are refused."
++        ),
++    )
++
++    @field_validator("labels", mode="before")
++    @classmethod
++    def parse_labels(cls, value: Any) -> Any:
++        if isinstance(value, str):  # --ek labels=team=evals,run=42
++            pairs = [p for p in value.split(",") if p.strip()]
++            if not all("=" in p for p in pairs):
++                raise ValueError("labels must be key=value pairs separated by commas")
++            return dict(p.split("=", 1) for p in pairs)
++        return value
++
++
++class PrizedEnvironment(BaseEnvironment):
++    """Runs a task's prebuilt image inside a Prized sandbox (see module doc)."""
++
++    options_model = PrizedOptions
++    options: PrizedOptions
++
++    @classmethod
++    @override
++    def preflight(cls, kwargs: dict[str, Any] | None = None) -> None:
++        super().preflight(kwargs)
++        if not _HAS_PRIZED:
++            raise MissingExtraError(package="prized", extra="prized")
++        if not os.environ.get("PRIZED_API_KEY"):
++            raise SystemExit(
++                "Prized requires PRIZED_API_KEY, a key with Sandboxes: Write. "
++                f"Create one at {_API_KEYS_URL}."
++            )
++
++    def __init__(self, *args: Any, **kwargs: Any) -> None:
++        super().__init__(*args, **kwargs)
++        if not _HAS_PRIZED:
++            raise MissingExtraError(package="prized", extra="prized")
++        self._labels = {
++            **self.options.labels,
++            "harbor": "1",
++            "harbor-session": self.session_id[:256],
++        }
++        self._sandbox: AsyncSandbox | None = None
++        self._heartbeat: asyncio.Task[None] | None = None
++        self._warned_one_id = False
++        self._image_env: dict[str, str] = {}
++        self._image_workdir: str = "/"
++        self._image_user: str | None = None
++
++    @staticmethod
++    @override
++    def type() -> EnvironmentType:
++        return EnvironmentType.PRIZED
++
++    @property
++    @override
++    def capabilities(self) -> EnvironmentCapabilities:
++        return EnvironmentCapabilities()
++
++    @classmethod
++    @override
++    def resource_capabilities(cls) -> EnvironmentResourceCapabilities:
++        # Each trial's sandbox is created with at least the task's vCPUs and
++        # memory; fractional cpus (0.5) round up to whole vCPUs (_shape).
++        return EnvironmentResourceCapabilities(
++            cpu_request=True, memory_request=True, fractional_cpus=True
++        )
++
++    @override
++    def _validate_definition(self) -> None:
++        if not self.task_env_config.docker_image:
++            raise ValueError(
++                "Prized runs a task's prebuilt image: set [environment].docker_image "
++                "in task.toml. Building from a Dockerfile is not supported."
++            )
++        if (self.environment_dir / COMPOSE_FILE_NAME).exists():
++            raise ValueError(
++                "Prized runs one container per trial: Docker Compose tasks "
++                f"(environment/{COMPOSE_FILE_NAME}) are not supported."
++            )
++        storage_gb = self._storage_gb()
++        if storage_gb > _MAX_DISK_GB:
++            raise ValueError(
++                f"The task asks for {storage_gb} GB of storage; a Prized sandbox "
++                f"has at most {_MAX_DISK_GB} GB of disk."
++            )
++
++    # -- the sandbox ------------------------------------------------------
++
++    def _require_sandbox(self) -> AsyncSandbox:
++        if self._sandbox is None:
++            raise RuntimeError("Prized sandbox is not running; call start() first.")
++        return self._sandbox
++
++    async def _host_exec(
++        self, command: str, timeout_sec: int | None = 600
++    ) -> ExecResult:
++        """Runs a command on the sandbox itself, outside the image.
++
++        ``timeout_sec`` None or 0 is no limit. The SDK runs a command that may
++        last more than a few minutes detached and polls it, so a long agent run
++        outlives a dropped connection, and cancelling the call stops it.
++        """
++        sandbox = self._require_sandbox()
++        try:
++            result = await sandbox.exec(
++                command, timeout=timeout_sec or 0, full_output=True
++            )
++        except CommandTimeoutError:
++            raise RuntimeError(
++                f"Command timed out after {timeout_sec} seconds"
++            ) from None
++        return ExecResult(
++            stdout=result.stdout, stderr=result.stderr, return_code=result.exit_code
++        )
++
++    async def _host_checked(self, command: str, what: str) -> ExecResult:
++        result = await self._host_exec(command)
++        if result.return_code != 0:
++            raise RuntimeError(f"{what}: {result.stderr or result.stdout}")
++        return result
++
++    async def _put(self, host_path: str, data: bytes, mode: int | None = None) -> None:
++        """Writes a file on the sandbox, in parts if it is too big for one request."""
++        files = self._require_sandbox().files
++        if len(data) <= _CHUNK:
++            await files.write(host_path, data, mode=mode)
++            return
++        starts = range(0, len(data), _CHUNK)
++        parts = [f"{host_path}.part{i:04d}" for i in range(len(starts))]
++        q = shlex.quote
++        try:
++            for part, start in zip(parts, starts):
++                await files.write(part, data[start : start + _CHUNK])
++            chmod = f" && chmod {mode:o} {q(host_path)}" if mode is not None else ""
++            await self._host_checked(
++                f"cat {' '.join(q(p) for p in parts)} > {q(host_path)}{chmod} "
++                f"|| {{ rm -f {q(host_path)}; exit 1; }}",
++                f"Failed to assemble {host_path}",
++            )
++        finally:
++            await _despite_cancel(self._host_rm(" ".join(q(p) for p in parts)))
++
++    async def _get(self, host_path: str) -> bytes:
++        """Reads a file from the sandbox, in parts if it is too big for one request."""
++        files = self._require_sandbox().files
++        try:
++            return await files.read_bytes(host_path)
++        except PrizedError as exc:
++            if exc.code != "file_too_large":
++                raise
++        q = shlex.quote(host_path)
++        try:
++            listing = await self._host_checked(
++                f"split -b {_CHUNK} -d -a 4 {q} {q}.part && ls {q}.part*",
++                f"Failed to split {host_path}",
++            )
++            parts = (listing.stdout or "").split()
++            return b"".join([await files.read_bytes(part) for part in parts])
++        finally:
++            await _despite_cancel(self._host_rm(f"{q}.part*"))
++
++    async def _host_rm(self, paths: str) -> None:
++        """Best-effort ``rm -f`` on the sandbox (paths already quoted or globbed)."""
++        try:
++            await self._host_exec(f"rm -f {paths}", timeout_sec=60)
++        except (PrizedError, RuntimeError) as exc:
++            self.logger.debug(f"Could not remove {paths}: {exc}")
++
++    # -- lifecycle --------------------------------------------------------
++
++    def _storage_gb(self) -> int:
++        return -(-int(self._effective_storage_mb or 10240) // 1024)
++
++    def _shape(self) -> tuple[int, int, int]:
++        """vCPUs, memory (MB) and disk (GB) for the trial's sandbox.
++
++        vCPUs are the task's, rounded up (2 if it names none), or ``min_vcpu``
++        if that is more. A container limited to one CPU still runs its threads
++        in parallel across the host's cores, and a VM with few vCPUs can't:
++        torch-tensor-parallelism deadlocks in gloo's teardown below 4 vCPUs.
++        The image is unpacked onto the sandbox's disk, so the disk is the
++        task's storage plus room for it, as far as the largest disk allows.
++        """
++        cpus = self._effective_cpus
++        vcpu = max(self.options.min_vcpu, 1, math.ceil(cpus) if cpus else 2)
++        memory_mb = max(1024, int(self._effective_memory_mb or 4096))
++        disk_gb = min(
++            _MAX_DISK_GB, max(10, self._storage_gb()) + self.options.image_headroom_gb
++        )
++        return vcpu, memory_mb, disk_gb
++
++    @override
++    async def start(self, force_build: bool) -> None:
++        image = self.task_env_config.docker_image
++        if image is None:
++            raise ValueError("Prized needs [environment].docker_image.")
++        if force_build and (self.environment_dir / DOCKERFILE_NAME).exists():
++            self.logger.warning(
++                "Prized runs the prebuilt docker_image; force_build is ignored "
++                "and environment/Dockerfile is not built."
++            )
++        try:
++            await self._start(image)
++        except PrizedError as exc:
++            # A request that got no clear answer leaves the sandbox in doubt:
++            # it was deleted, so start once more on a fresh one.
++            if exc.code != "network_error":
++                raise
++            self.logger.warning(f"Prized sandbox start failed ({exc}); retrying once")
++            await self._start(image)
++
++    async def _start(self, image: str) -> None:
++        if self._sandbox is not None:  # a second start replaces the first
++            await self.stop(delete=True)
++        vcpu, memory_mb, disk_gb = self._shape()
++        try:
++            self._sandbox = await AsyncSandbox.create(
++                self.options.template,
++                vcpu=vcpu,
++                memory_mb=memory_mb,
++                disk_gb=disk_gb,
++                labels=self._labels,
++                max_runtime_min=self.options.max_runtime_min,
++                auto_pause_min=_IDLE_PAUSE_MIN,
++                auto_delete_min=self.options.paused_ttl_min,
++                timeout=600,
++            )
++        except PrizedError as exc:
++            if exc.code == "sandbox_quota_exceeded":
++                raise RuntimeError(f"{str(exc).rstrip('.')}. {_QUOTA_HINT}") from exc
++            raise
++        self._heartbeat = asyncio.create_task(self._keep_alive(self._sandbox))
++        self.logger.debug(f"Prized sandbox {self._sandbox.id} for {image}")
++        try:
++            await self._prepare_image(image)
++            workdir = self.task_env_config.workdir or self._image_workdir
++            await self._checked(
++                f"mkdir -p {shlex.quote(workdir)}", f"Failed to create {workdir}"
++            )
++            await self.ensure_dirs(self._mount_targets(writable_only=True))
++            await self._upload_environment_dir_after_start()
++        except BaseException:  # a cancelled start must not leave the sandbox behind
++            await _despite_cancel(self.stop(delete=True))
++            raise
++
++    async def _prepare_image(self, image: str) -> None:
++        q = shlex.quote
++        setup = (
++            "set -e; cd ~; umask 022; "
++            f"[ -x ./crane ] || {{ curl -fsSL --retry 3 -o crane.tgz {_CRANE_URL} && "
++            f"echo '{_CRANE_SHA256}  crane.tgz' | sha256sum -c --quiet && "
++            "tar -xzf crane.tgz crane && rm crane.tgz; }; "
++            f"mkdir -p {_ROOT}; "
++            + unpack_command(image, _ROOT)
++            + f"mkdir -p {_ROOT}{_XFER} {_ROOT}/proc {_ROOT}/dev {_ROOT}/sys {_ROOT}/tmp {_ROOT}/etc; "
++            f"chmod 1777 {_ROOT}/tmp; chmod 700 {_ROOT}{_XFER}; "
++            + "".join(f"cp /bin/sleep {holder}; " for holder in _HOLDERS)
++            # As Docker does: the sandbox's resolver, hosts and hostname.
++            + f"rm -f {_ROOT}/etc/resolv.conf {_ROOT}/etc/hosts {_ROOT}/etc/hostname; "
++            f"cp /etc/resolv.conf {_ROOT}/etc/resolv.conf; "
++            f'printf "{_HOSTS}" > {_ROOT}/etc/hosts; hostname > {_ROOT}/etc/hostname; '
++            f"if [ -d {_ROOT}/etc/apt/apt.conf.d ]; then echo 'APT::Sandbox::User \"root\";' "
++            f"> {_ROOT}/etc/apt/apt.conf.d/99runtime-sandbox-user; fi; "
++            # dpkg installs files with mode 0 and then sets the mode, which the
++            # seccomp filter skips for setuid/setgid files: open those up after.
++            f"if [ -d {_ROOT}/etc/dpkg ]; then mkdir -p {_ROOT}/etc/dpkg/dpkg.cfg.d && "
++            f"echo {q(_DPKG_HOOK)} > {_ROOT}/etc/dpkg/dpkg.cfg.d/99runtime-modes; fi; "
++            f"./crane config {q(image)}"
++        )
++        result = await self._host_exec(setup, timeout_sec=1800)
++        if result.return_code != 0:
++            raise RuntimeError(
++                f"Could not unpack {image} in the sandbox: {result.stderr or result.stdout}"
++            )
++        config = json.loads(result.stdout or "{}").get("config") or {}
++        for pair in config.get("Env") or []:
++            name, _, value = pair.partition("=")
++            self._image_env[name] = value
++        self._image_workdir = config.get("WorkingDir") or "/"
++        self._image_user = config.get("User") or None
++        await self._put(_RUNTIME, _RUNTIME_SCRIPT.encode())
++
++    async def _keep_alive(self, sandbox: AsyncSandbox) -> None:
++        """Counts as use every few minutes, so a trial between commands never
++        reaches ``_IDLE_PAUSE_MIN`` (commands and file requests count too)."""
++        while True:
++            await asyncio.sleep(_HEARTBEAT_SEC)
++            try:
++                await sandbox.keep_alive()
++            except PrizedError as exc:
++                if exc.status in (404, 410) or exc.code in (
++                    "not_found",
++                    "sandbox_deleted",
++                    "handle_closed",
++                ):
++                    return  # deleted under us: nothing left to keep alive
++                self.logger.warning(f"Prized sandbox {sandbox.id} keep-alive: {exc}")
++            except Exception as exc:  # noqa: BLE001 (the next beat tries again)
++                self.logger.warning(f"Prized sandbox {sandbox.id} keep-alive: {exc}")
++
++    @override
++    async def stop(self, delete: bool) -> None:
++        heartbeat, self._heartbeat = self._heartbeat, None
++        if heartbeat is not None:
++            heartbeat.cancel()
++        sandbox = self._sandbox
++        if sandbox is None:
++            return
++        self._sandbox = None
++        await _despite_cancel(self._stop_sandbox(sandbox, delete))
++
++    async def _stop_sandbox(self, sandbox: AsyncSandbox, delete: bool) -> None:
++        try:
++            if delete:
++                await sandbox.delete()
++            else:
++                # Kept for inspection: paused, it costs only its storage.
++                await sandbox.pause()
++                self.logger.info(
++                    f"Prized sandbox {sandbox.id} is paused; it is deleted after "
++                    f"{self.options.paused_ttl_min} minutes paused, or with "
++                    f"`prized sandbox rm {sandbox.id}`."
++                )
++        except PrizedError as exc:
++            if delete:
++                self.logger.error(f"Error deleting Prized sandbox {sandbox.id}: {exc}")
++            else:
++                # A sandbox that won't pause would run until max_runtime_min.
++                self.logger.error(
++                    f"Error pausing Prized sandbox {sandbox.id}, deleting it: {exc}"
++                )
++                try:
++                    await sandbox.delete()
++                except PrizedError as again:
++                    self.logger.error(
++                        f"Error deleting Prized sandbox {sandbox.id}: {again}"
++                    )
++        finally:
++            await sandbox.close()
++
++    # -- users ------------------------------------------------------------
++
++    async def _image_entries(self, path: str) -> list[list[str]]:
++        """Entries of an /etc/passwd-style file in the image whose ids are numbers."""
++        try:
++            text = (await self._get(_ROOT + path)).decode(errors="replace")
++        except PrizedError as exc:
++            if exc.code == "not_found":
++                return []
++            raise
++        entries = [line.split(":") for line in text.splitlines()]
++        return [e for e in entries if len(e) >= 4 and e[2].isdigit()]
++
++    async def _user_identity(self, user: str | int) -> tuple[int, int, str, str] | None:
++        """uid, gid, home and name for ``user`` (as ``docker exec -u`` takes it:
++        a name or uid, optionally ``:group``); None for root."""
++        name, _, group = str(user).partition(":")
++        if name in ("0", "root"):
++            if group not in ("", "0", "root"):
++                raise RuntimeError(f"Prized runs root with group 0 only, not {group!r}")
++            return None  # only uid 0 and gid 0 are mapped for root
++        passwd = await self._image_entries("/etc/passwd")
++        if name.isdigit():
++            entry = next((e for e in passwd if e[2] == name), None)
++        else:
++            entry = next((e for e in passwd if e[0] == name), None)
++            if entry is None:
++                raise RuntimeError(
++                    f"unable to find user {name}: no matching entries in passwd file"
++                )
++        uid = int(name) if entry is None else int(entry[2])
++        gid = int(entry[3]) if entry is not None and entry[3].isdigit() else 0
++        if group:
++            if group.isdigit():
++                gid = int(group)
++            else:
++                groups = await self._image_entries("/etc/group")
++                match = next((g for g in groups if g[0] == group), None)
++                if match is None:
++                    raise RuntimeError(
++                        f"unable to find group {group}: no matching entries in group file"
++                    )
++                gid = int(match[2])
++        if uid == 0:
++            return None
++        home = entry[5] if entry is not None and len(entry) > 5 and entry[5] else "/"
++        return uid, gid, home, entry[0] if entry is not None else name
++
++    # -- commands and files -----------------------------------------------
++
++    @override
++    async def exec(
++        self,
++        command: str,
++        cwd: str | None = None,
++        env: dict[str, str] | None = None,
++        timeout_sec: int | None = None,
++        user: str | int | None = None,
++    ) -> ExecResult:
++        # As docker exec: the requested user, else the image's USER, else root.
++        user = self._resolve_user(user)
++        if user is None:
++            user = self._image_user
++        identity = None if user is None else await self._user_identity(user)
++        uid, gid, home, name = identity or (0, 0, "/root", "root")
++        if uid != 0 and not self.options.allow_unenforced_users:
++            raise RuntimeError(
++                f"Prized can't keep user {name} (uid {uid}) away from root's files: "
++                "every user is one id underneath. Pass --ek "
++                "allow_unenforced_users=true to run it anyway."
++            )
++        if uid != 0 and not self._warned_one_id:
++            self._warned_one_id = True
++            self.logger.warning(
++                f"Prized runs {name} as uid {uid}, but every user is one id "
++                "underneath: it can read and write root's files, and su or sudo "
++                "-u inside a command stay root. User separation is not enforced."
++            )
++        merged = {
++            "HOME": home,
++            "USER": name,
++            "LOGNAME": name,
++            **self._image_env,
++            **self._startup_env(),
++            **(self._merge_env(env) or {}),
++        }
++        skipped = [k for k in merged if not _ENV_NAME.fullmatch(k)]
++        if skipped:
++            self.logger.debug(f"Prized can't export env names {skipped}; skipped")
++        workdir = cwd or self.task_env_config.workdir or self._image_workdir
++        # The script holds the command's env: bash keeps it open, so it goes first.
++        lines = ['rm -f -- "$0"', "umask 022"]  # Docker's umask, not the sandbox's
++        lines += [
++            f"export {k}={shlex.quote(v)}"
++            for k, v in merged.items()
++            if _ENV_NAME.fullmatch(k)
++        ]
++        lines.append(f"cd -- {shlex.quote(workdir)} >/dev/null || exit 1")
++        lines.append(command)
++        script = "\n".join(lines).encode()
++        user_arg = f"--user {uid}:{gid} " if identity else ""
++        if len(script) <= _INLINE_LIMIT:
++            return await self._run(
++                f"python3 {_RUNTIME} {user_arg}- {base64.b64encode(script).decode()}",
++                timeout_sec,
++            )
++        staged = f"{_XFER}/cmd-{uuid.uuid4().hex[:8]}.sh"
++        try:
++            await self._put(_ROOT + staged, script, mode=0o644)
++            return await self._run(
++                f"python3 {_RUNTIME} {user_arg}{staged}", timeout_sec
++            )
++        except BaseException:
++            # The script removes itself when it starts; one that never started
++            # still holds the command's env.
++            await _despite_cancel(self._discard(staged))
++            raise
++
++    async def _run(self, command: str, timeout_sec: int | None) -> ExecResult:
++        """Runs a runtime.py command; its own failures raise, the command's don't."""
++        result = await self._host_exec(command, timeout_sec=timeout_sec)
++        if result.return_code == _RUNTIME_FAILED and "prized runtime:" in (
++            result.stderr or ""
++        ):
++            raise RuntimeError(
++                f"Prized could not run the command: {(result.stderr or '').strip()}"
++            )
++        return result
++
++    async def _discard(self, staged: str) -> None:
++        await self._host_rm(shlex.quote(_ROOT + staged))
++
++    async def _checked(self, command: str, what: str) -> None:
++        result = await self.exec(command, cwd="/", timeout_sec=600, user=0)
++        if result.return_code != 0:
++            raise RuntimeError(f"{what}: {result.stderr or result.stdout}")
++
++    @override
++    async def upload_file(self, source_path: Path | str, target_path: str) -> None:
++        source = Path(source_path)
++        staged = f"{_XFER}/up-{uuid.uuid4().hex[:8]}"
++        target = shlex.quote(target_path)
++        # Setuid/setgid bits can't be set in the sandbox: keep the rest. A
++        # Windows host has no mode to keep: the file keeps 0644.
++        chmod = ""
++        if not _WINDOWS_HOST:
++            chmod = f" && chmod {source.stat().st_mode & 0o1777:o} {target}"
++        try:
++            await self._put(_ROOT + staged, source.read_bytes())
++            await self._checked(
++                f"if [ -d {target} ]; then echo {target} is a directory >&2; exit 1; fi"
++                f' && mkdir -p "$(dirname {target})" && mv {staged} {target}{chmod}',
++                f"Failed to upload {source} to {target_path}",
++            )
++        except BaseException:
++            await _despite_cancel(self._discard(staged))
++            raise
++
++    @override
++    async def upload_dir(self, source_dir: Path | str, target_dir: str) -> None:
++        staged = f"{_XFER}/up-{uuid.uuid4().hex[:8]}.tar.gz"
++        # Without the "." entry, so the target directory keeps its own mode.
++        buffer = await asyncio.to_thread(
++            pack_dir_to_bytes, source_dir, compress=True, include_root=False
++        )
++        try:
++            await self._put(_ROOT + staged, buffer.getvalue())
++            await self._checked(
++                # Only uid 0 exists in the namespace, so never restore owners.
++                remote_unpack_command(staged, target_dir, no_same_owner=True),
++                f"Failed to extract upload archive into {target_dir!r}",
++            )
++        finally:
++            await _despite_cancel(self._discard(staged))
++
++    @override
++    async def download_file(self, source_path: str, target_path: Path | str) -> None:
++        staged = f"{_XFER}/down-{uuid.uuid4().hex[:8]}"
++        try:
++            await self._checked(
++                f"cp -L {shlex.quote(source_path)} {staged} && chmod 600 {staged}",
++                f"Failed to read {source_path}",
++            )
++            data = await self._get(_ROOT + staged)
++        finally:
++            await _despite_cancel(self._discard(staged))
++        target = Path(target_path)
++        target.parent.mkdir(parents=True, exist_ok=True)
++        target.write_bytes(data)
++
++    @override
++    async def download_dir(self, source_dir: str, target_dir: Path | str) -> None:
++        staged = f"{_XFER}/down-{uuid.uuid4().hex[:8]}.tar.gz"
++        try:
++            result = await self.exec(
++                remote_pack_command(source_dir, staged),
++                cwd="/",
++                timeout_sec=600,
++                user=0,
++            )
++            # Logs still being written make tar warn "file changed as we read it".
++            if not tar_pack_succeeded(
++                result.return_code,
++                stdout=result.stdout,
++                stderr=result.stderr,
++                logger=self.logger,
++            ):
++                raise RuntimeError(
++                    f"Failed to archive {source_dir!r}: {result.stderr or result.stdout}"
++                )
++            data = await self._get(_ROOT + staged)
++        finally:
++            await _despite_cancel(self._discard(staged))
++        await asyncio.to_thread(extract_dir_from_bytes, data, target_dir)
+diff --git a/src/harbor/models/environment_type.py b/src/harbor/models/environment_type.py
+index 0f695ca1..5bf113b6 100644
+--- a/src/harbor/models/environment_type.py
++++ b/src/harbor/models/environment_type.py
+@@ -40,3 +40,4 @@ class EnvironmentType(str, Enum):
+     BOXD = "boxd"
+     SUPERSERVE = "superserve"
+     ACA_SANDBOX = "aca-sandbox"
++    PRIZED = "prized"
+diff --git a/tests/unit/environments/test_prized.py b/tests/unit/environments/test_prized.py
+new file mode 100644
+index 00000000..79a1d06f
+--- /dev/null
++++ b/tests/unit/environments/test_prized.py
+@@ -0,0 +1,1065 @@
++import asyncio
++import base64
++import io
++import os
++import shutil
++import subprocess
++import sys
++import tarfile
++from pathlib import Path
++
++import pytest
++
++pytest.importorskip("prized")
++
++from harbor.environments.prized import PrizedEnvironment
++from harbor.environments.prized import environment as _module
++from harbor.models.task.config import EnvironmentConfig, NetworkMode, NetworkPolicy
++from harbor.models.trial.paths import TrialPaths
++from prized import CommandTimeoutError, ExecResult, PrizedError
++
++PASSWD = (
++    "root:x:0:0:root:/root:/bin/bash\n"
++    "+::::::\n"  # a NIS entry: no numeric ids, skipped
++    "agent:x:1001:1002:Agent:/home/agent:/bin/bash\n"
++    "nohome:x:1003:1003::\n"
++)
++GROUP = "root:x:0:\nagent:x:1002:\nstaff:x:50:agent\n"
++RUNTIME = "python3 /home/prized/runtime.py "
++
++
++class _Files:
++    """Stands in for the SDK's files API, with a small per-request size limit."""
++
++    limit = 1 << 30
++
++    def __init__(self) -> None:
++        self.written: list[tuple[str, bytes, int | None]] = []
++        self.content = {
++            "/home/prized/rootfs/etc/passwd": PASSWD.encode(),
++            "/home/prized/rootfs/etc/group": GROUP.encode(),
++        }
++
++    async def write(self, path, data, mode=None):
++        self.written.append((path, data, mode))
++        self.content[path] = data
++
++    async def read_bytes(self, path):
++        data = self.content.get(path, b"")
++        if len(data) > self.limit:
++            raise PrizedError("file_too_large")
++        return data
++
++
++class _Sandbox:
++    """Stands in for prized.AsyncSandbox: records each command it is given.
++
++    ``answer(cmd)`` may return an ExecResult (or raise) for a command; by
++    default every command succeeds with "out"/"err".
++    """
++
++    id = "sbx_test"
++
++    def __init__(self, exit_code: int = 0, raises: Exception | None = None) -> None:
++        self.files = _Files()
++        self.execs: list[dict] = []
++        self.deleted = self.closed = self.paused = False
++        self.beats, self.beat_raises = 0, None
++        self._exit_code, self._raises = exit_code, raises
++        self.answer = None
++
++    async def exec(self, cmd, timeout=None, full_output=False):
++        self.execs.append({"cmd": cmd, "timeout": timeout, "full_output": full_output})
++        if self.answer is not None:
++            result = self.answer(cmd)
++            if result is not None:
++                return result
++        if self._raises is not None:
++            raise self._raises
++        return ExecResult(stdout="out", stderr="err", exit_code=self._exit_code)
++
++    async def delete(self):
++        self.deleted = True
++
++    async def pause(self):
++        self.paused = True
++
++    async def keep_alive(self):
++        self.beats += 1
++        if self.beat_raises is not None:
++            raise self.beat_raises
++
++    async def close(self):
++        self.closed = True
++
++
++def _environment(
++    tmp_path, network_policy=None, options=None, **config
++) -> PrizedEnvironment:
++    environment_dir = tmp_path / "environment"
++    environment_dir.mkdir(exist_ok=True)
++    trial_paths = TrialPaths(trial_dir=tmp_path / "trial")
++    trial_paths.mkdir()
++    return PrizedEnvironment(
++        environment_dir=environment_dir,
++        environment_name="prized-test",
++        session_id="prized-test",
++        trial_paths=trial_paths,
++        task_env_config=EnvironmentConfig(**config),
++        network_policy=network_policy,
++        **{"labels": "team=evals,run=42", **(options or {})},
++    )
++
++
++def _script(command: str) -> list[str]:
++    assert command.startswith(RUNTIME)
++    return base64.b64decode(command.split(" - ", 1)[1]).decode().splitlines()
++
++
++def _runtime_calls(sandbox: _Sandbox) -> list[str]:
++    return [e["cmd"] for e in sandbox.execs if e["cmd"].startswith(RUNTIME)]
++
++
++# -- definition and shape ---------------------------------------------------
++
++
++def test_requires_prebuilt_image(tmp_path):
++    with pytest.raises(ValueError, match="docker_image"):
++        _environment(tmp_path)
++
++
++def test_refuses_compose_tasks(tmp_path):
++    (tmp_path / "environment").mkdir()
++    (tmp_path / "environment" / "docker-compose.yaml").write_text("services: {}\n")
++    with pytest.raises(ValueError, match="Docker Compose"):
++        _environment(tmp_path, docker_image="python:3.12")
++
++
++def test_refuses_storage_past_the_largest_disk(tmp_path):
++    with pytest.raises(ValueError, match="at most 128 GB"):
++        _environment(tmp_path, docker_image="python:3.12", storage_mb=200_000)
++
++
++@pytest.mark.parametrize("mode", [NetworkMode.NO_NETWORK, NetworkMode.ALLOWLIST])
++def test_refuses_network_policies(tmp_path, mode):
++    hosts = ["pypi.org"] if mode == NetworkMode.ALLOWLIST else []
++    policy = NetworkPolicy(network_mode=mode, allowed_hosts=hosts)
++    with pytest.raises(ValueError, match="is not supported by"):
++        _environment(tmp_path, docker_image="python:3.12", network_policy=policy)
++
++
++def test_labels_from_key_value_string(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    assert environment._labels == {
++        "harbor": "1",
++        "harbor-session": "prized-test",
++        "team": "evals",
++        "run": "42",
++    }
++
++
++def test_harbors_own_labels_win(tmp_path):
++    environment = _environment(
++        tmp_path,
++        docker_image="python:3.12",
++        options={"labels": {"harbor": "0", "harbor-session": "x", "team": "a"}},
++    )
++    assert environment._labels == {
++        "harbor": "1",
++        "harbor-session": "prized-test",
++        "team": "a",
++    }
++
++
++@pytest.mark.parametrize(
++    ("config", "kwargs", "shape"),
++    [
++        ({}, {}, (2, 4096, 30)),  # no cpus in the task: 2
++        ({"cpus": 1, "memory_mb": 2048, "storage_mb": 10240}, {}, (1, 2048, 30)),
++        ({"cpus": 4, "memory_mb": 8192}, {}, (4, 8192, 30)),
++        ({"cpus": 1}, {"min_vcpu": 4}, (4, 4096, 30)),
++        ({"memory_mb": 512, "storage_mb": 120_000}, {}, (2, 1024, 128)),
++        ({"cpus": 1}, {"override_cpus": 8, "image_headroom_gb": 5}, (8, 4096, 15)),
++    ],
++)
++def test_sandbox_shape(tmp_path, config, kwargs, shape):
++    environment = _environment(
++        tmp_path, docker_image="python:3.12", options=kwargs, **config
++    )
++    assert environment._shape() == shape
++
++
++def test_fractional_cpus_round_up_to_whole_vcpus(tmp_path):
++    # Harbor refuses cpus = 0.5 in the constructor unless the provider says it
++    # takes fractional cpus.
++    assert PrizedEnvironment.resource_capabilities().fractional_cpus
++    environment = _environment(
++        tmp_path, docker_image="python:3.12", cpus=0.5, memory_mb=1024
++    )
++    assert environment._shape() == (1, 1024, 30)
++    environment = _environment(
++        tmp_path,
++        docker_image="python:3.12",
++        options={"override_cpus": 2.5},
++        cpus=1,
++        memory_mb=1024,
++    )
++    assert environment._shape() == (3, 1024, 30)
++
++
++# -- start and stop ---------------------------------------------------------
++
++
++@pytest.mark.asyncio
++async def test_start_creates_a_labelled_sandbox_and_unpacks_the_image(
++    tmp_path, monkeypatch
++):
++    environment = _environment(tmp_path, docker_image="python:3.12", cpus=1)
++    sandbox = _Sandbox()
++    sandbox.answer = lambda cmd: (
++        ExecResult(
++            stdout='{"config": {"Env": ["A=1"], "WorkingDir": "/w", "User": "app"}}',
++            stderr="",
++            exit_code=0,
++        )
++        if "crane config" in cmd
++        else None
++    )
++    created = {}
++
++    async def create(template, **kwargs):
++        created.update(template=template, **kwargs)
++        return sandbox
++
++    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
++    monkeypatch.setattr(_module.PrizedEnvironment, "_user_identity", _no_user)
++
++    await environment.start(force_build=False)
++
++    assert created["template"] == "prized-base-v1"
++    assert created["labels"]["harbor-session"] == "prized-test"
++    assert (created["max_runtime_min"], created["auto_delete_min"]) == (1440, 1440)
++    setup = sandbox.execs[0]["cmd"]
++    assert "set -e; cd ~; umask 022; " in setup
++    assert '"${PIPESTATUS[0]} ${PIPESTATUS[1]}"' in setup  # crane checked on its own
++    assert "--preserve-permissions" in setup
++    assert (environment._image_env, environment._image_workdir) == ({"A": "1"}, "/w")
++    assert environment._image_user == "app"
++    assert sandbox.files.written[0][0] == "/home/prized/runtime.py"
++    await environment.stop(delete=True)
++
++
++@pytest.mark.asyncio
++async def test_a_refused_key_raises_the_sdks_error(tmp_path, monkeypatch):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    error = PrizedError("unauthorized", "Unauthorized.", status=401)
++
++    async def create(template, **kwargs):
++        raise error
++
++    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
++
++    with pytest.raises(PrizedError) as info:
++        await environment.start(force_build=False)
++    assert info.value is error
++    assert environment._sandbox is None and environment._heartbeat is None
++
++
++@pytest.mark.asyncio
++async def test_a_heartbeat_keeps_the_sandbox_from_pausing_until_stop(
++    tmp_path, monkeypatch
++):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    sandbox = _Sandbox()
++    sandbox.beat_raises = PrizedError("network_error")  # a failed beat is retried
++    created = {}
++
++    async def create(template, **kwargs):
++        created.update(kwargs)
++        return sandbox
++
++    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
++    monkeypatch.setattr(_module.PrizedEnvironment, "_prepare_image", _no_image)
++    monkeypatch.setattr(_module, "_HEARTBEAT_SEC", 0.01)
++
++    await environment.start(force_build=False)
++    assert created["auto_pause_min"] == 30
++
++    async def beats(n):
++        while sandbox.beats < n:
++            await asyncio.sleep(0.01)
++
++    await asyncio.wait_for(beats(3), 5)
++    heartbeat = environment._heartbeat
++    await environment.stop(delete=True)
++    await asyncio.sleep(0)
++    assert heartbeat.cancelled()
++    beats = sandbox.beats
++    await asyncio.sleep(0.05)
++    assert sandbox.beats == beats and sandbox.deleted
++
++
++@pytest.mark.asyncio
++async def test_the_heartbeat_ends_when_the_sandbox_is_gone(tmp_path, monkeypatch):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    sandbox = _Sandbox()
++    sandbox.beat_raises = PrizedError("not_found", status=404)
++    monkeypatch.setattr(_module, "_HEARTBEAT_SEC", 0.01)
++
++    await asyncio.wait_for(environment._keep_alive(sandbox), 5)  # returns
++    assert sandbox.beats == 1
++
++
++@pytest.mark.asyncio
++async def test_a_quota_refusal_names_leftover_sandboxes(tmp_path, monkeypatch):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++
++    async def create(template, **kwargs):
++        raise PrizedError("sandbox_quota_exceeded", reason="retained_disk", status=429)
++
++    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
++    with pytest.raises(RuntimeError, match="--label harbor=1"):
++        await environment.start(force_build=False)
++
++
++async def _no_image(self, image):
++    return None
++
++
++async def _no_user(self, user):
++    return None
++
++
++@pytest.mark.asyncio
++async def test_a_failed_start_deletes_the_sandbox(tmp_path, monkeypatch):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    sandbox = _Sandbox(exit_code=1)
++
++    async def create(template, **kwargs):
++        return sandbox
++
++    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
++
++    with pytest.raises(RuntimeError, match="Could not unpack"):
++        await environment.start(force_build=False)
++
++    assert (sandbox.deleted, sandbox.closed, environment._sandbox) == (True, True, None)
++
++
++@pytest.mark.asyncio
++async def test_a_start_cut_off_by_the_network_is_retried_once(tmp_path, monkeypatch):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    sandboxes = []
++
++    async def create(template, **kwargs):
++        sandbox = _Sandbox()
++        if not sandboxes:  # the first one's setup gets no clear answer
++            sandbox._raises = PrizedError("network_error")
++        sandbox.answer = lambda cmd: (
++            ExecResult(stdout="{}", stderr="", exit_code=0)
++            if "crane config" in cmd and sandbox._raises is None
++            else None
++        )
++        sandboxes.append(sandbox)
++        return sandbox
++
++    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
++    await environment.start(force_build=False)
++
++    assert len(sandboxes) == 2
++    assert (sandboxes[0].deleted, sandboxes[1].deleted) == (True, False)
++    assert environment._sandbox is sandboxes[1]
++    started = sandboxes[1]
++
++    sandboxes.clear()
++    monkeypatch.setattr(
++        _module.AsyncSandbox, "create", _always(PrizedError("network_error"), sandboxes)
++    )
++    with pytest.raises(PrizedError):
++        await environment.start(force_build=False)
++    assert [s.deleted for s in sandboxes] == [True, True]  # twice at most
++    assert started.deleted  # a second start replaces the first sandbox
++    assert environment._heartbeat is None
++
++
++def _always(error, made):
++    async def create(template, **kwargs):
++        sandbox = _Sandbox(raises=error)
++        made.append(sandbox)
++        return sandbox
++
++    return create
++
++
++@pytest.mark.asyncio
++async def test_stop_deletes_the_sandbox(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++
++    await environment.stop(delete=True)
++
++    assert (sandbox.deleted, sandbox.closed, environment._sandbox) == (True, True, None)
++
++
++@pytest.mark.asyncio
++async def test_stop_without_delete_pauses_the_sandbox(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++
++    await environment.stop(delete=False)
++
++    assert (sandbox.paused, sandbox.deleted, sandbox.closed) == (True, False, True)
++
++
++@pytest.mark.asyncio
++async def test_a_cancelled_stop_still_finishes_the_delete(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++    started, release = asyncio.Event(), asyncio.Event()
++
++    async def slow_delete():
++        started.set()
++        await release.wait()
++        sandbox.deleted = True
++
++    sandbox.delete = slow_delete
++    stopping = asyncio.ensure_future(environment.stop(delete=True))
++    await started.wait()
++    stopping.cancel()
++    await asyncio.sleep(0)
++    release.set()
++    with pytest.raises(asyncio.CancelledError):
++        await stopping
++
++    assert (sandbox.deleted, sandbox.closed) == (True, True)
++
++
++# -- commands ---------------------------------------------------------------
++
++
++@pytest.mark.asyncio
++async def test_exec_runs_in_image_with_env_and_cwd(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._image_env = {"PATH": "/usr/local/bin:/usr/bin:/bin", "a.b": "x"}
++    environment._image_workdir = "/app"
++    environment._sandbox = sandbox = _Sandbox(exit_code=3)
++
++    result = await environment.exec("echo hi", env={"KEY": "va lue"}, timeout_sec=30)
++
++    assert (result.stdout, result.stderr, result.return_code) == ("out", "err", 3)
++    assert sandbox.execs[0]["timeout"] == 30
++    assert sandbox.execs[0]["full_output"] is True
++    assert _script(sandbox.execs[0]["cmd"]) == [
++        'rm -f -- "$0"',
++        "umask 022",
++        "export HOME=/root",
++        "export USER=root",
++        "export LOGNAME=root",
++        "export PATH=/usr/local/bin:/usr/bin:/bin",  # "a.b" can't be exported
++        "export KEY='va lue'",
++        "cd -- /app >/dev/null || exit 1",
++        "echo hi",
++    ]
++
++
++@pytest.mark.asyncio
++async def test_task_env_reaches_every_command(tmp_path):
++    environment = _environment(
++        tmp_path, docker_image="python:3.12", env={"TASK_VAR": "from-task"}
++    )
++    environment._image_env = {"TASK_VAR": "from-image", "LANG": "C.UTF-8"}
++    environment._sandbox = sandbox = _Sandbox()
++
++    await environment.exec("env", env={"EXTRA": "1"})
++
++    lines = _script(sandbox.execs[0]["cmd"])
++    assert "export LANG=C.UTF-8" in lines
++    assert [line for line in lines if "TASK_VAR" in line] == [
++        "export TASK_VAR=from-task"  # the task's env wins over the image's
++    ]
++    assert "export EXTRA=1" in lines
++
++
++@pytest.mark.asyncio
++async def test_no_timeout_means_no_limit(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++
++    await environment.exec("sleep 7200")
++
++    assert sandbox.execs[0]["timeout"] == 0  # the SDK runs it detached, no limit
++
++
++@pytest.mark.asyncio
++async def test_a_command_past_its_timeout_raises(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    killed = ExecResult(stdout="", stderr="", exit_code=-1, timed_out=True)
++    environment._sandbox = _Sandbox(raises=CommandTimeoutError(killed, 5.0))
++
++    with pytest.raises(RuntimeError, match="timed out after 5 seconds"):
++        await environment.exec("sleep 60", timeout_sec=5)
++
++
++@pytest.mark.asyncio
++async def test_long_scripts_are_uploaded_and_removed_if_they_never_ran(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++
++    await environment.exec("x" * 70_000)
++
++    path = sandbox.files.written[0][0]
++    assert path.startswith("/home/prized/rootfs/.runtime-xfer/cmd-")
++    assert sandbox.execs[0]["cmd"] == RUNTIME + path.removeprefix("/home/prized/rootfs")
++
++    sandbox._raises = PrizedError("sandbox_not_ready")
++    with pytest.raises(PrizedError):
++        await environment.exec("y" * 70_000)
++    staged = sandbox.files.written[1][0]
++    assert sandbox.execs[-1]["cmd"] == f"rm -f {staged}"
++
++
++# -- users ------------------------------------------------------------------
++
++
++@pytest.mark.asyncio
++async def test_exec_as_a_user_runs_with_its_ids_and_home(tmp_path, caplog):
++    environment = _environment(
++        tmp_path, docker_image="python:3.12", options={"allow_unenforced_users": True}
++    )
++    environment._image_env = {"PATH": "/usr/bin:/bin"}
++    environment._sandbox = sandbox = _Sandbox()
++
++    await environment.exec("id")
++    assert "User separation is not enforced" not in caplog.text
++    await environment.exec("id", user="agent")
++    with environment.with_default_user(1003):
++        await environment.exec("id")
++    await environment.exec("id", user="agent:staff")
++    await environment.exec("id", user="4242")
++    # Said once per trial, at the first command for a non-root user.
++    assert caplog.text.count("User separation is not enforced") == 1
++    sandbox.execs = sandbox.execs[1:]
++
++    commands = _runtime_calls(sandbox)
++    assert commands[0].startswith(RUNTIME + "--user 1001:1002 - ")
++    assert _script(commands[0])[2:5] == [
++        "export HOME=/home/agent",
++        "export USER=agent",
++        "export LOGNAME=agent",
++    ]
++    assert commands[1].startswith(RUNTIME + "--user 1003:1003 - ")
++    assert _script(commands[1])[2] == "export HOME=/"  # empty home field
++    assert commands[2].startswith(RUNTIME + "--user 1001:50 - ")
++    # A uid with no passwd entry runs as that uid in group 0, as with docker exec.
++    assert commands[3].startswith(RUNTIME + "--user 4242:0 - ")
++    assert _script(commands[3])[2:4] == ["export HOME=/", "export USER=4242"]
++
++
++@pytest.mark.asyncio
++async def test_the_images_user_is_the_default(tmp_path):
++    environment = _environment(
++        tmp_path, docker_image="python:3.12", options={"allow_unenforced_users": True}
++    )
++    environment._image_user = "agent"
++    environment._sandbox = sandbox = _Sandbox()
++
++    await environment.exec("id")
++    await environment.exec("id", user="root")
++    await environment.download_file("/etc/hostname", tmp_path / "hostname")
++
++    commands = _runtime_calls(sandbox)
++    assert commands[0].startswith(RUNTIME + "--user 1001:1002 - ")
++    assert all(c.startswith(RUNTIME + "- ") for c in commands[1:])  # root
++
++
++@pytest.mark.asyncio
++async def test_root_needs_no_passwd_lookup(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++    sandbox.files.content = {}  # reading would find nothing
++
++    for user in (None, "root", 0, "0", "root:root", "0:0"):
++        await environment.exec("id", user=user)
++
++    assert all(e["cmd"].startswith(RUNTIME + "- ") for e in sandbox.execs)
++    with pytest.raises(RuntimeError, match="group 0 only"):
++        await environment.exec("id", user="root:staff")
++
++
++@pytest.mark.asyncio
++async def test_non_root_users_are_refused_unless_allowed(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++
++    with pytest.raises(RuntimeError, match="allow_unenforced_users=true"):
++        await environment.exec("id", user="agent")
++    environment._image_user = "agent"  # the image's USER is refused too
++    with pytest.raises(RuntimeError, match="user agent \\(uid 1001\\)"):
++        await environment.exec("id")
++    await environment.exec("id", user="root")
++    assert [c for c in _runtime_calls(sandbox)] == [sandbox.execs[0]["cmd"]]
++    assert sandbox.execs[0]["cmd"].startswith(RUNTIME + "- ")
++
++
++@pytest.mark.asyncio
++async def test_a_failed_passwd_read_is_not_an_unknown_user(tmp_path):
++    environment = _environment(
++        tmp_path, docker_image="python:3.12", options={"allow_unenforced_users": True}
++    )
++    environment._sandbox = sandbox = _Sandbox()
++
++    async def read_bytes(path):
++        raise PrizedError("rate_limited", "Slow down.", status=429)
++
++    sandbox.files.read_bytes = read_bytes
++    with pytest.raises(PrizedError, match="Slow down"):
++        await environment.exec("id", user="agent")
++
++    async def missing(path):
++        raise PrizedError("not_found", "No such file.", status=404)
++
++    sandbox.files.read_bytes = missing  # no /etc/passwd: a uid still runs
++    await environment.exec("id", user="4242")
++    assert _runtime_calls(sandbox)[-1].startswith(RUNTIME + "--user 4242:0 - ")
++
++
++@pytest.mark.asyncio
++async def test_unknown_users_and_groups_are_refused(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++
++    with pytest.raises(RuntimeError, match="unable to find user nobody"):
++        await environment.exec("id", user="nobody")
++    with pytest.raises(RuntimeError, match="unable to find group wheel"):
++        await environment.exec("id", user="agent:wheel")
++    assert sandbox.execs == []
++
++
++# -- files ------------------------------------------------------------------
++
++
++@pytest.mark.asyncio
++async def test_upload_keeps_mode_without_setuid_bits(tmp_path, monkeypatch):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++    source = tmp_path / "tool"
++    source.write_text("#!/bin/sh\n")
++    real_stat = Path.stat
++
++    def setuid_stat(self, *args, **kwargs):  # some sandboxes refuse chmod u+s
++        st = real_stat(self, *args, **kwargs)
++        if self != source:
++            return st
++        return os.stat_result(((st.st_mode & ~0o7777) | 0o4755, *tuple(st)[1:]))
++
++    monkeypatch.setattr(Path, "stat", setuid_stat)
++    monkeypatch.setattr(_module, "_WINDOWS_HOST", False)
++    await environment.upload_file(source, "/usr/local/bin/tool")
++
++    script = _script(sandbox.execs[0]["cmd"])[-1]
++    assert script.startswith("if [ -d /usr/local/bin/tool ]; then")  # not into a dir
++    assert script.endswith("&& chmod 755 /usr/local/bin/tool")
++
++
++@pytest.mark.asyncio
++async def test_upload_of_a_mode_0_file_still_sets_a_mode(tmp_path, monkeypatch):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++    source = tmp_path / "secret"
++    source.write_text("x")
++    real_stat = Path.stat
++
++    def mode_0_stat(self, *args, **kwargs):
++        st = real_stat(self, *args, **kwargs)
++        if self != source:
++            return st
++        return os.stat_result((st.st_mode & ~0o7777, *tuple(st)[1:]))
++
++    monkeypatch.setattr(Path, "stat", mode_0_stat)
++    monkeypatch.setattr(_module, "_WINDOWS_HOST", False)
++    await environment.upload_file(source, "/root/secret")
++
++    assert _script(sandbox.execs[0]["cmd"])[-1].endswith("&& chmod 0 /root/secret")
++
++
++@pytest.mark.asyncio
++async def test_upload_from_windows_sets_no_mode(tmp_path, monkeypatch):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++    source = tmp_path / "test.sh"
++    source.write_text("echo\n")
++    monkeypatch.setattr(_module, "_WINDOWS_HOST", True)
++
++    await environment.upload_file(source, "/tests/test.sh")
++
++    assert "chmod" not in _script(sandbox.execs[0]["cmd"])[-1]
++
++
++@pytest.mark.asyncio
++async def test_a_failed_upload_removes_its_staged_copy(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox(exit_code=1)
++    source = tmp_path / "f"
++    source.write_text("x")
++
++    with pytest.raises(RuntimeError, match="Failed to upload"):
++        await environment.upload_file(source, "/tmp/f")
++
++    staged = sandbox.files.written[0][0]
++    assert sandbox.execs[-1]["cmd"] == f"rm -f {staged}"
++
++
++@pytest.mark.asyncio
++async def test_big_files_move_in_parts(tmp_path, monkeypatch):
++    monkeypatch.setattr(_module, "_CHUNK", 4)
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++
++    await environment._put("/home/prized/big", b"0123456789", mode=0o644)
++
++    assert [(p, d) for p, d, _ in sandbox.files.written] == [
++        ("/home/prized/big.part0000", b"0123"),
++        ("/home/prized/big.part0001", b"4567"),
++        ("/home/prized/big.part0002", b"89"),
++    ]
++    assembled = sandbox.execs[0]["cmd"]
++    assert assembled.startswith("cat /home/prized/big.part0000 ")
++    assert "> /home/prized/big && chmod 644 /home/prized/big || {" in assembled
++    assert sandbox.execs[-1]["cmd"].startswith("rm -f /home/prized/big.part0000")
++
++    sandbox.files.limit = 4
++    sandbox.files.content.update(
++        {"/home/prized/out": b"x" * 10, "/home/prized/out.part0000": b"abcd"}
++    )
++    sandbox.files.content["/home/prized/out.part0001"] = b"ef"
++    sandbox.answer = lambda cmd: (
++        ExecResult(
++            stdout="/home/prized/out.part0000\n/home/prized/out.part0001\n",
++            stderr="",
++            exit_code=0,
++        )
++        if cmd.startswith("split ")
++        else None
++    )
++    assert await environment._get("/home/prized/out") == b"abcdef"
++    assert sandbox.execs[-1]["cmd"] == "rm -f /home/prized/out.part*"
++
++
++@pytest.mark.asyncio
++async def test_download_dir_accepts_files_changed_while_packing(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++    changed = ExecResult(
++        stdout="",
++        stderr="tar: ./agent.log: file changed as we read it\n",
++        exit_code=1,
++    )
++    sandbox.answer = lambda cmd: changed if cmd.startswith(RUNTIME) else None
++    logs = tmp_path / "remote-logs"
++    logs.mkdir()
++    (logs / "agent.log").write_text("hello\n")
++    packed = _module.pack_dir_to_bytes(logs, compress=True)
++
++    async def read_bytes(path):
++        return packed.getvalue()
++
++    sandbox.files.read_bytes = read_bytes
++    await environment.download_dir("/logs/agent", tmp_path / "logs")
++
++    assert (tmp_path / "logs" / "agent.log").read_text() == "hello\n"
++    assert sandbox.execs[-1]["cmd"].startswith(
++        "rm -f /home/prized/rootfs/.runtime-xfer/"
++    )
++
++    sandbox.answer = lambda cmd: (
++        ExecResult(stdout="", stderr="tar: /x: Cannot open", exit_code=2)
++        if cmd.startswith(RUNTIME)
++        else None
++    )
++    with pytest.raises(RuntimeError, match="Failed to archive"):
++        await environment.download_dir("/x", tmp_path / "x")
++    assert sandbox.execs[-1]["cmd"].startswith(
++        "rm -f /home/prized/rootfs/.runtime-xfer/"
++    )
++
++
++@pytest.mark.asyncio
++async def test_upload_dir_extracts_without_resetting_the_target(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++    source = tmp_path / "src"
++    (source / "sub").mkdir(parents=True)
++    (source / "sub" / "file.txt").write_text("hi\n")
++
++    await environment.upload_dir(source, "/app")
++
++    staged, data, _ = sandbox.files.written[0]
++    assert staged.startswith("/home/prized/rootfs/.runtime-xfer/up-")
++    with tarfile.open(fileobj=io.BytesIO(data), mode="r:gz") as tar:
++        names = tar.getnames()
++    assert "." not in names  # /app keeps its own mode and owner
++    assert sorted(names) == ["sub", "sub/file.txt"]
++    unpack = _script(sandbox.execs[0]["cmd"])[-1]
++    assert unpack.startswith("mkdir -p /app && tar -xzf /.runtime-xfer/up-")
++    assert "--no-same-owner -C /app" in unpack
++    assert sandbox.execs[-1]["cmd"].startswith(
++        "rm -f /home/prized/rootfs/.runtime-xfer/up-"
++    )
++
++
++@pytest.mark.asyncio
++async def test_start_makes_the_workdir_and_uploads_the_environment_dir(
++    tmp_path, monkeypatch
++):
++    environment = _environment(tmp_path, docker_image="python:3.12", workdir="/app")
++    (environment.environment_dir / "NOTE.txt").write_text("for the agent\n")
++    sandbox = _Sandbox()
++
++    async def create(template, **kwargs):
++        return sandbox
++
++    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
++    monkeypatch.setattr(_module.PrizedEnvironment, "_prepare_image", _no_image)
++
++    await environment.start(force_build=False)
++
++    scripts = [_script(c)[-1] for c in _runtime_calls(sandbox)]
++    assert scripts[0] == "mkdir -p /app"
++    unpack = next(s for s in scripts if "tar -xzf" in s)
++    assert unpack.endswith("--no-same-owner -C /app")
++    uploaded = [w for w in sandbox.files.written if w[0].endswith(".tar.gz")]
++    with tarfile.open(fileobj=io.BytesIO(uploaded[0][1]), mode="r:gz") as tar:
++        assert tar.getnames() == ["NOTE.txt"]
++    await environment.stop(delete=True)
++    assert sandbox.deleted
++
++
++@pytest.mark.asyncio
++async def test_force_build_with_a_dockerfile_warns_it_is_not_built(
++    tmp_path, monkeypatch, caplog
++):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    (environment.environment_dir / "Dockerfile").write_text("FROM python:3.12\n")
++    sandbox = _Sandbox()
++
++    async def create(template, **kwargs):
++        return sandbox
++
++    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
++    monkeypatch.setattr(_module.PrizedEnvironment, "_prepare_image", _no_image)
++
++    await environment.start(force_build=True)
++
++    assert "environment/Dockerfile is not built" in caplog.text
++    assert not any(w[0].endswith(".tar.gz") for w in sandbox.files.written)
++    await environment.stop(delete=True)
++
++
++# -- behaviour that runs for real -------------------------------------------
++
++linux_only = pytest.mark.skipif(
++    not sys.platform.startswith("linux") or shutil.which("bash") is None,
++    reason="runs the unpack script with GNU tar under bash",
++)
++
++
++def _run_unpack(tmp_path, archive: bytes | None) -> subprocess.CompletedProcess:
++    """Runs the image unpack script with a fake crane that prints ``archive``
++    (or fails when it is None)."""
++    work = tmp_path / "work"
++    root = tmp_path / "root"
++    work.mkdir()
++    root.mkdir()
++    (work / "image.tar").write_bytes(archive or b"")
++    crane = work / "crane"
++    crane.write_text(
++        "#!/bin/sh\n"
++        + (
++            "cat image.tar\n"
++            if archive is not None
++            else "echo pull failed >&2; exit 1\n"
++        )
++    )
++    crane.chmod(0o755)
++    return subprocess.run(
++        [
++            "bash",
++            "-c",
++            "set -e; " + _module.unpack_command("img", str(root)) + "echo ok",
++        ],
++        cwd=work,
++        capture_output=True,
++        check=False,
++        text=True,
++    )
++
++
++def _tar(*members: tarfile.TarInfo, data: bytes = b"hi\n") -> bytes:
++    buffer = io.BytesIO()
++    with tarfile.open(fileobj=buffer, mode="w") as tar:
++        for member in members:
++            if member.isreg():
++                member.size = len(data)
++                tar.addfile(member, io.BytesIO(data))
++            else:
++                tar.addfile(member)
++    return buffer.getvalue()
++
++
++def _member(
++    name: str, kind: bytes = tarfile.REGTYPE, mode: int = 0o644
++) -> tarfile.TarInfo:
++    member = tarfile.TarInfo(name)
++    member.type, member.mode = kind, mode
++    return member
++
++
++@linux_only
++def test_unpack_keeps_modes_and_accepts_device_nodes(tmp_path):
++    archive = _tar(
++        _member("bin/tool", mode=0o755),
++        _member("etc/conf", mode=0o640),
++        _member("dev/null", kind=tarfile.CHRTYPE, mode=0o666),  # can't mknod
++    )
++    result = _run_unpack(tmp_path, archive)
++    assert result.returncode == 0, result.stderr
++    assert result.stdout.strip() == "ok"
++    assert (tmp_path / "root/bin/tool").stat().st_mode & 0o777 == 0o755
++    assert (tmp_path / "root/etc/conf").stat().st_mode & 0o777 == 0o640
++
++
++@linux_only
++def test_unpack_fails_when_the_pull_fails(tmp_path):
++    result = _run_unpack(tmp_path, None)
++    assert result.returncode == 1
++    assert "crane export failed" in result.stderr
++
++
++@linux_only
++def test_unpack_fails_on_a_truncated_image(tmp_path):
++    archive = _tar(_member("bin/tool", mode=0o755), data=b"x" * 10_000)
++    result = _run_unpack(tmp_path, archive[:5_000])
++    assert result.returncode == 1
++    assert "ok" not in result.stdout
++
++
++# -- cancellation and failures ------------------------------------------------
++
++
++@pytest.mark.asyncio
++async def test_cleanup_failing_while_cancelled_still_raises_the_cancel():
++    started = asyncio.Event()
++
++    async def failing_cleanup():
++        started.set()
++        await asyncio.sleep(0.01)
++        raise ValueError("sandbox gone")
++
++    async def caller():
++        await _module._despite_cancel(failing_cleanup())
++
++    task = asyncio.ensure_future(caller())
++    await started.wait()
++    task.cancel()
++    with pytest.raises(asyncio.CancelledError):
++        await task
++
++
++@pytest.mark.asyncio
++async def test_a_cancelled_start_deletes_the_sandbox(tmp_path, monkeypatch):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    sandbox = _Sandbox()
++    pulling = asyncio.Event()
++
++    async def slow_exec(cmd, timeout=None, full_output=False):
++        pulling.set()
++        await asyncio.sleep(3600)
++
++    sandbox.exec = slow_exec
++
++    async def create(template, **kwargs):
++        return sandbox
++
++    monkeypatch.setattr(_module.AsyncSandbox, "create", create)
++    starting = asyncio.ensure_future(environment.start(force_build=False))
++    await pulling.wait()
++    starting.cancel()
++    with pytest.raises(asyncio.CancelledError):
++        await starting
++    assert (sandbox.deleted, sandbox.closed) == (True, True)
++
++
++@pytest.mark.asyncio
++async def test_a_sandbox_that_wont_pause_is_deleted(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++
++    async def refuse_pause():
++        raise PrizedError("sandbox_quota_exceeded")
++
++    sandbox.pause = refuse_pause
++    await environment.stop(delete=False)
++
++    assert (sandbox.deleted, sandbox.closed) == (True, True)
++
++
++@pytest.mark.asyncio
++async def test_runtime_failures_raise_instead_of_passing_as_exit_codes(tmp_path):
++    environment = _environment(tmp_path, docker_image="python:3.12")
++    environment._sandbox = sandbox = _Sandbox()
++    sandbox.answer = lambda cmd: ExecResult(
++        stdout="",
++        stderr="prized runtime: RuntimeError('could not start the namespace holder')",
++        exit_code=125,
++    )
++    with pytest.raises(RuntimeError, match="could not run the command"):
++        await environment.exec("true")
++
++    sandbox.answer = lambda cmd: ExecResult(stdout="", stderr="", exit_code=125)
++    assert (await environment.exec("exit 125")).return_code == 125  # the command's own
++
++
++def test_preflight_needs_an_api_key(monkeypatch):
++    monkeypatch.delenv("PRIZED_API_KEY", raising=False)
++    with pytest.raises(SystemExit, match="PRIZED_API_KEY"):
++        PrizedEnvironment.preflight()
++    monkeypatch.setenv("PRIZED_API_KEY", "key")
++    PrizedEnvironment.preflight()
++
++
++def test_preflight_refuses_unknown_options(monkeypatch):
++    monkeypatch.setenv("PRIZED_API_KEY", "key")
++    with pytest.raises(ValueError, match="Unknown option 'tempalte'"):
++        PrizedEnvironment.preflight({"tempalte": "prized-base-v1"})
++
++
++@pytest.mark.parametrize(
++    ("kwargs", "message"),
++    [
++        ({"max_runtime_min": 0}, "max_runtime_min"),
++        ({"max_runtime_min": 10081}, "max_runtime_min"),
++        ({"min_vcpu": 0}, "min_vcpu"),
++        ({"template": ""}, "template"),
++    ],
++)
++def test_options_are_validated(kwargs, message):
++    with pytest.raises(ValueError, match=message):
++        PrizedEnvironment.parse_options(kwargs)
++
++
++def test_labels_take_a_mapping_or_key_value_pairs():
++    assert PrizedEnvironment.parse_options({"labels": {"a": "1"}}).labels == {"a": "1"}
++    assert PrizedEnvironment.parse_options({"labels": "a=1,b=x=y"}).labels == {
++        "a": "1",
++        "b": "x=y",
++    }
++    with pytest.raises(ValueError, match="key=value"):
++        PrizedEnvironment.parse_options({"labels": "a=1,oops"})
++
++
++def test_without_the_sdk_the_extra_is_named(tmp_path, monkeypatch):
++    monkeypatch.setattr(_module, "_HAS_PRIZED", False)
++    with pytest.raises(ImportError, match=r"harbor\[prized\]"):
++        PrizedEnvironment.preflight()
++    with pytest.raises(ImportError, match=r"harbor\[prized\]"):
++        _environment(tmp_path, docker_image="python:3.12")
+diff --git a/tests/unit/environments/test_prized_runtime.py b/tests/unit/environments/test_prized_runtime.py
+new file mode 100644
+index 00000000..c38faec8
+--- /dev/null
++++ b/tests/unit/environments/test_prized_runtime.py
+@@ -0,0 +1,268 @@
++"""The Prized environment's sandbox-side runtime: its seccomp filter, run through a
++classic-BPF interpreter, and its namespace holders."""
++
++import os
++import shutil
++import struct
++import subprocess
++import sys
++import time
++
++import pytest
++
++from harbor.environments.prized import _runtime as runtime
++from harbor.environments.prized import environment as _environment
++from harbor.environments.prized._runtime import build_filter
++
++X86_64, AARCH64, I386 = 0xC000003E, 0xC00000B7, 0x40000003
++SUCCEED, ALLOW = 0x00050000, 0x7FFF0000
++
++
++def _run(nr: int, arch: int, mode_arg: int = 0, mode: int = 0, args=None) -> int:
++    if args is None:
++        args = [0] * 6
++        args[mode_arg] = mode
++    args = list(args) + [0] * (6 - len(args))
++    data = struct.pack("<iIQ6Q", nr, arch, 0, *args)
++    program, acc, pc = build_filter(), 0, 0
++    while True:
++        code, jt, jf, k = program[pc]
++        if code == 0x20:  # BPF_LD | BPF_W | BPF_ABS
++            acc, pc = struct.unpack_from("<I", data, k)[0], pc + 1
++        elif code == 0x15:  # BPF_JMP | BPF_JEQ | BPF_K
++            pc += 1 + (jt if acc == k else jf)
++        elif code == 0x45:  # BPF_JMP | BPF_JSET | BPF_K
++            pc += 1 + (jt if acc & k else jf)
++        elif code == 0x06:  # BPF_RET | BPF_K
++            return k
++        else:
++            raise AssertionError(f"unexpected opcode {code:#x}")
++
++
++def test_jumps_fit_in_a_byte():
++    assert all(0 <= jt < 256 and 0 <= jf < 256 for _, jt, jf, _ in build_filter())
++
++
++@pytest.mark.parametrize("nr", [92, 93, 94, 260])  # chown, fchown, lchown, fchownat
++def test_chown_succeeds_without_effect_on_x86_64(nr):
++    assert _run(nr, X86_64) == SUCCEED
++
++
++@pytest.mark.parametrize(
++    ("nr", "arg", "mode", "want"),
++    [
++        (90, 1, 0o4755, SUCCEED),  # chmod u+s
++        (90, 1, 0o755, ALLOW),
++        (91, 1, 0o2755, SUCCEED),  # fchmod g+s
++        (268, 2, 0o6755, SUCCEED),  # fchmodat
++        (268, 2, 0o1777, ALLOW),  # the sticky bit is fine
++        (452, 2, 0o4000, SUCCEED),  # fchmodat2
++    ],
++)
++def test_only_setuid_and_setgid_modes_are_skipped(nr, arg, mode, want):
++    assert _run(nr, X86_64, arg, mode) == want
++
++
++NOBODY, UNCHANGED = 65534, 0xFFFFFFFF
++
++
++@pytest.mark.parametrize(
++    ("nr", "args", "want"),
++    [
++        (105, [0], ALLOW),  # setuid(0) stays real
++        (105, [NOBODY], SUCCEED),  # setuid to another user: stays root
++        (106, [1000], SUCCEED),  # setgid
++        (117, [UNCHANGED, 1, UNCHANGED], SUCCEED),  # sudo's setresuid(-1, 1, -1)
++        (117, [0, 0, 0], ALLOW),
++        (117, [UNCHANGED, 0, UNCHANGED], ALLOW),
++        (119, [0, 0, 1000], SUCCEED),  # setresgid, third id
++        (113, [UNCHANGED, 1000], SUCCEED),  # setreuid
++        (122, [1000], SUCCEED),  # setfsuid
++        (116, [0, 0], SUCCEED),  # setgroups is refused in the namespace: always ok
++    ],
++)
++def test_switching_to_another_user_succeeds_without_effect(nr, args, want):
++    assert _run(nr, X86_64, args=args) == want
++
++
++def test_other_syscalls_and_arches_pass_through():
++    assert _run(59, X86_64) == ALLOW  # execve
++    assert _run(107, X86_64, args=[1000]) == ALLOW  # geteuid
++    assert _run(146, AARCH64, args=[1000]) == SUCCEED  # setuid on aarch64
++    assert _run(159, AARCH64) == SUCCEED  # setgroups on aarch64
++    assert _run(54, AARCH64) == SUCCEED  # fchownat on aarch64
++    assert _run(53, AARCH64, 2, 0o4755) == SUCCEED
++    assert _run(92, AARCH64) == ALLOW  # 92 is not chown there
++    assert _run(182, I386) == ALLOW
++
++
++def test_the_environment_uploads_this_runtime():
++    assert "def build_filter" in _environment._RUNTIME_SCRIPT
++    assert (runtime.HOLDER, runtime.USER_HOLDER) == _environment._HOLDERS
++    assert (runtime.ROOT, runtime.XFER) == (_environment._ROOT, _environment._XFER)
++
++
++def test_user_holder_nests_in_roots_namespace():
++    command = runtime.user_holder_command(4242, 1001, 1002)
++    assert command[:6] == [
++        "nsenter",
++        "--target=4242",
++        "--user",
++        "--mount",
++        "--preserve-credentials",
++        "--",
++    ]
++    assert command[6:11] == [
++        "unshare",
++        "--user",
++        "--map-user=1001",
++        "--map-group=1002",
++        "--fork",
++    ]
++    assert command[-2].endswith(f"exec {runtime.USER_HOLDER} infinity")
++
++
++linux_only = pytest.mark.skipif(
++    sys.platform != "linux", reason="namespace holders run on the Linux sandbox"
++)
++
++
++@pytest.fixture
++def sandbox_home(tmp_path, monkeypatch):
++    """runtime's paths under tmp_path, with a holder binary named runtime-ns."""
++    sleep = shutil.which("sleep")
++    if sleep is None:
++        pytest.skip("no sleep binary")
++    holder, user_holder = tmp_path / "runtime-ns", tmp_path / "runtime-nsu"
++    shutil.copy(sleep, holder)
++    shutil.copy(sleep, user_holder)
++    monkeypatch.setattr(runtime, "HOME", str(tmp_path))
++    monkeypatch.setattr(runtime, "HOLDER", str(holder))
++    monkeypatch.setattr(runtime, "USER_HOLDER", str(user_holder))
++    yield tmp_path
++    for binary in (holder, user_holder):
++        subprocess.run(["pkill", "-f", str(binary)], check=False)
++
++
++def _fake_holder(holder) -> list[str]:
++    # Reports its pid in $1, then becomes the holder (as the real commands do).
++    return [
++        "/bin/sh",
++        "-c",
++        f'echo $$ > "$1.tmp" && mv "$1.tmp" "$1"; exec {holder} infinity',
++        "sh",
++    ]
++
++
++@linux_only
++def test_holder_is_started_once_and_reused(sandbox_home):
++    command = _fake_holder(runtime.HOLDER)
++    first = runtime.ensure_holder("ns", command)
++    with open(f"/proc/{first}/comm") as comm:
++        assert comm.read().strip() == "runtime-ns"
++    assert runtime.ensure_holder("ns", command) == first
++    pid, start = (sandbox_home / "ns.pid").read_text().split()
++    assert (int(pid), start) == (first, runtime._proc_stat(first)[2])
++
++
++@linux_only
++def test_a_dead_holder_is_replaced(sandbox_home):
++    command = _fake_holder(runtime.HOLDER)
++    first = runtime.ensure_holder("ns", command)
++    os.kill(first, 9)
++    deadline = time.monotonic() + 5
++    while runtime._holder_pid(str(sandbox_home / "ns.pid"), "runtime-ns") is not None:
++        assert time.monotonic() < deadline  # a zombie counts as dead too
++        time.sleep(0.02)
++    assert runtime.ensure_holder("ns", command) != first
++
++
++@linux_only
++def test_a_holder_with_another_name_is_not_root(sandbox_home):
++    # A dead root holder's pid reused by a user holder must not pass as root's.
++    user = runtime.ensure_holder(
++        "ns-1-1000-1000", _fake_holder(runtime.USER_HOLDER), comm="runtime-nsu"
++    )
++    (sandbox_home / "ns.pid").write_text(str(user))
++    assert runtime._holder_pid(str(sandbox_home / "ns.pid"), "runtime-ns") is None
++
++
++@linux_only
++def test_a_holder_that_never_starts_is_reported_and_killed(sandbox_home):
++    marker = sandbox_home / "still-running"
++    command = ["/bin/sh", "-c", f"echo boom >&2; sleep 2; touch {marker}", "sh"]
++    with pytest.raises(
++        RuntimeError, match="could not start the namespace holder ns: boom"
++    ):
++        runtime.ensure_holder("ns", command, timeout=0.5)
++    time.sleep(2.5)
++    assert not marker.exists()  # the late attempt was killed, not left behind
++
++
++@linux_only
++def test_user_holders_of_an_earlier_root_holder_are_stopped(sandbox_home):
++    stale = runtime.ensure_holder(
++        "ns-111-1000-1000", _fake_holder(runtime.USER_HOLDER), comm="runtime-nsu"
++    )
++    current = runtime.ensure_holder(
++        "ns-222-1000-1000", _fake_holder(runtime.USER_HOLDER), comm="runtime-nsu"
++    )
++    runtime.stop_stale_user_holders(222)
++    deadline = time.monotonic() + 5
++    while (sandbox_home / "ns-111-1000-1000.pid").exists() or _alive(stale):
++        assert time.monotonic() < deadline
++        time.sleep(0.02)
++    assert _alive(current)
++
++
++def _alive(pid: int) -> bool:
++    try:
++        with open(f"/proc/{pid}/stat") as f:
++            return f.read().rpartition(")")[2].split()[0] not in "ZX"
++    except OSError:
++        return False
++
++
++@linux_only
++def test_the_holder_does_not_keep_the_lock(sandbox_home):
++    import fcntl
++
++    with open(sandbox_home / "ns.lock", "a") as lock:
++        fcntl.flock(lock, fcntl.LOCK_EX)
++        runtime.ensure_holder("ns", _fake_holder(runtime.HOLDER))
++    with open(sandbox_home / "ns.lock", "a") as again:
++        fcntl.flock(again, fcntl.LOCK_EX | fcntl.LOCK_NB)  # raises if inherited
++
++
++def test_an_inline_script_is_staged_inside_the_image(tmp_path, monkeypatch):
++    monkeypatch.setattr(runtime, "ROOT", str(tmp_path))
++    path = runtime._staged_script("-", "ZWNobyBoaQ==")  # "echo hi"
++    assert path.startswith(f"{runtime.XFER}/cmd-")
++    assert (tmp_path / path.lstrip("/")).read_text() == "echo hi"
++    assert (
++        runtime._staged_script("/.runtime-xfer/big.sh", None) == "/.runtime-xfer/big.sh"
++    )
++
++
++@linux_only
++def test_a_reused_pid_with_another_start_time_is_not_the_holder(sandbox_home):
++    pid = runtime.ensure_holder("ns", _fake_holder(runtime.HOLDER))
++    (sandbox_home / "ns.pid").write_text(f"{pid} 1")  # recorded start time differs
++    assert runtime._holder_pid(str(sandbox_home / "ns.pid"), "runtime-ns") is None
++
++
++@linux_only
++def test_a_command_that_cannot_enter_is_removed_and_reported(
++    tmp_path, monkeypatch, capsys
++):
++    monkeypatch.setattr(runtime, "ROOT", str(tmp_path))
++
++    def cannot_enter(user, fcntl):
++        raise RuntimeError("could not start the namespace holder ns: boom")
++
++    monkeypatch.setattr(runtime, "_enter", cannot_enter)
++    with pytest.raises(SystemExit) as exited:
++        runtime.main(["-", "ZWNobyBzZWNyZXQ="])  # "echo secret"
++    assert exited.value.code == 125
++    assert "prized runtime:" in capsys.readouterr().err
++    assert list((tmp_path / runtime.XFER.lstrip("/")).iterdir()) == []
+diff --git a/uv.lock b/uv.lock
+index ebc0497d..ba1ff48c 100644
+--- a/uv.lock
++++ b/uv.lock
+@@ -1997,6 +1997,7 @@ all = [
+     { name = "openai" },
+     { name = "opensandbox" },
+     { name = "prime-sandboxes" },
++    { name = "prized" },
+     { name = "python-multipart" },
+     { name = "runloop-api-client" },
+     { name = "runta-sdk" },
+@@ -2045,6 +2046,7 @@ cloud = [
+     { name = "novita-sandbox" },
+     { name = "opensandbox" },
+     { name = "prime-sandboxes" },
++    { name = "prized" },
+     { name = "python-multipart" },
+     { name = "runloop-api-client" },
+     { name = "runta-sdk" },
+@@ -2127,6 +2129,9 @@ opensandbox = [
+ prime = [
+     { name = "prime-sandboxes" },
+ ]
++prized = [
++    { name = "prized" },
++]
+ runloop = [
+     { name = "dockerfile-parse" },
+     { name = "runloop-api-client" },
+@@ -2250,6 +2255,7 @@ requires-dist = [
+     { name = "harbor", extras = ["novita"], marker = "extra == 'cloud'" },
+     { name = "harbor", extras = ["opensandbox"], marker = "extra == 'cloud'" },
+     { name = "harbor", extras = ["prime"], marker = "extra == 'cloud'" },
++    { name = "harbor", extras = ["prized"], marker = "extra == 'cloud'" },
+     { name = "harbor", extras = ["runloop"], marker = "extra == 'cloud'" },
+     { name = "harbor", extras = ["runta"], marker = "extra == 'cloud'" },
+     { name = "harbor", extras = ["sail"], marker = "extra == 'cloud'" },
+@@ -2282,6 +2288,7 @@ requires-dist = [
+     { name = "pathspec", specifier = ">=1.0.3" },
+     { name = "platformdirs", specifier = ">=4.10.0" },
+     { name = "prime-sandboxes", marker = "extra == 'prime'", specifier = ">=0.3.0" },
++    { name = "prized", marker = "extra == 'prized'", specifier = ">=0.1.3,<0.2" },
+     { name = "pydantic", specifier = ">=2.14.0" },
+     { name = "pyjwt", specifier = ">=2.10.1" },
+     { name = "python-dotenv", specifier = ">=1.1.1" },
+@@ -2314,7 +2321,7 @@ requires-dist = [
+     { name = "vercel-sandbox", marker = "extra == 'vercel'", specifier = "==0.10.*" },
+     { name = "websockets", specifier = ">=15.0.1" },
+ ]
+-provides-extras = ["huggingface", "cua", "adapter", "langsmith", "fabric", "e2b", "daytona", "sbx", "islo", "modal", "runloop", "tensorlake", "gke", "ec2", "novita", "cwsandbox", "use-computer", "blaxel", "opensandbox", "beam", "hyperbrowser", "skypilot", "vercel", "kernel", "computer-1", "hf-sandbox", "runta", "mosaic", "smol", "sail", "snowflake", "boxd", "superserve", "aca-sandbox", "cloud", "all", "tinker", "dspy", "prime"]
++provides-extras = ["huggingface", "cua", "adapter", "langsmith", "fabric", "e2b", "daytona", "sbx", "islo", "modal", "runloop", "tensorlake", "gke", "ec2", "novita", "cwsandbox", "use-computer", "blaxel", "opensandbox", "beam", "hyperbrowser", "skypilot", "vercel", "kernel", "computer-1", "hf-sandbox", "runta", "mosaic", "smol", "sail", "snowflake", "boxd", "superserve", "aca-sandbox", "prized", "cloud", "all", "tinker", "dspy", "prime"]
+ 
+ [package.metadata.requires-dev]
+ dev = [
+@@ -4540,6 +4547,18 @@ wheels = [
+     { url = "https://files.pythonhosted.org/packages/5f/04/c77c7f260babf93978f912b85511e76f63a3cfa5bb11a8c34108177d5825/prime_sandboxes-0.3.0-py3-none-any.whl", hash = "sha256:19078ff508fa72de8f565422918faf367e2831ed8a2f26a5a6a98110e4062941", size = 71441, upload-time = "2026-09-18T01:32:30.062Z" },
+ ]
+ 
++[[package]]
++name = "prized"
++version = "0.1.3"
++source = { registry = "https://pypi.org/simple" }
++dependencies = [
++    { name = "httpx" },
++]
++sdist = { url = "https://files.pythonhosted.org/packages/bf/3f/846832bf4c8f6b0ef25c997709de95a2808c37a8ef2ea147fa4fef3a18b5/prized-0.1.3.tar.gz", hash = "sha256:9a77f088f3e06093c45afa663b5c9ad70d87b6fb537aa3c0a241aea895f51c7e", size = 105628, upload-time = "2026-11-05T16:10:19.503Z" }
++wheels = [
++    { url = "https://files.pythonhosted.org/packages/6d/a1/098cb1b9dceaedec1ff629dd004e68b1af3e9df55d5f98c45610e6bcddd7/prized-0.1.3-py3-none-any.whl", hash = "sha256:714cebb2f8a3cce1c17fb7bf880d57e6ad328ef09c5c3f90d0f764ea1ad8612d", size = 101207, upload-time = "2026-11-05T16:10:18.237Z" },
++]
++
+ [[package]]
+ name = "prompt-toolkit"
+ version = "3.0.52"
+-- 
+2.43.0
+
