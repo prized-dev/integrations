@@ -34,7 +34,7 @@ As an outside check, on the 37 platforms that Cloudflare's isitagentready.com al
 
 ## Prized's part
 
-Prized wrote this checker, picked the platforms, and wrote auth-md-spend-limits, a draft extension that the spend limits and payment handoff checks accept alongside the AAuth budgets Internet-Draft (draft-hardt-aauth-budgets-00, an individual submission), x402 and the `Payment` HTTP authentication scheme. Prized is in the list, scored by the same code, and sorted with everyone else. No platform, Prized included, passed either check through the Prized draft's fields. The `billing_url` and `billing_required` prose patterns were added to the payment check after reading Prized's and Boat's auth.md during the review; they apply to every platform.
+Prized wrote this checker, picked the platforms, and wrote auth-md-spend-limits, a draft extension that the spend limits and payment handoff checks accept alongside the AAuth budgets Internet-Draft (draft-hardt-aauth-budgets-00, an individual submission), x402 and the `Payment` HTTP authentication scheme. Prized is in the list, scored by the same code, and sorted with everyone else. In the run of 2026-11-07 no platform, Prized included, passed either check through the Prized draft's fields. A verdict that rests on them names `agent_auth.billing` in its reason, so each run's results show which platforms do, Prized among them. The `billing_url` and `billing_required` prose patterns were added to the payment check after reading Prized's and Boat's auth.md during the review; they apply to every platform.
 
 ## Limits
 
