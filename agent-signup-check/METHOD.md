@@ -20,7 +20,7 @@ GET only, with `Accept` set for what is expected (Markdown, JSON). In order, sto
 6. When `/auth.md` is Markdown but not in the spec's shape, one made-up path (`/agent-signup-check-no-such-page.md`) to tell a real auth.md from a site that answers every path with the same page.
 7. x402 discovery: the `/.well-known/x402` URL the platform's auth.md or llms.txt names on its own site, else `https://<domain>/.well-known/x402`.
 
-At most 16 requests per platform, redirect hops included; most use 7 to 9. https on port 443 only; every address a name resolves to must be public, checked again on each connection and redirect; at most 4 redirects; 1 MB and 8 seconds per response. A run does 4 platforms at a time with 300 ms between requests to the same platform.
+At most 16 requests per check of a platform, redirect hops included; most use 7 to 9. A weekly run checks a platform once more, alone, when a request failed on the network. https on port 443 only; every address a name resolves to must be public, checked again on each connection and redirect; at most 4 redirects; 1 MB and 8 seconds per response. A run does 4 platforms at a time with 300 ms between requests to the same platform.
 
 ## The verdicts
 
@@ -34,7 +34,7 @@ As an outside check, on the 37 platforms that Cloudflare's isitagentready.com al
 
 ## Prized's part
 
-Prized wrote this checker, picked the platforms, and wrote auth-md-spend-limits, a draft extension that the spend limits and payment handoff checks accept alongside the IETF AAuth budgets draft, x402 and the `Payment` HTTP authentication scheme. Prized is in the list, scored by the same code, and sorted with everyone else. No platform, Prized included, passed either check through the Prized draft's fields. The `billing_url` and `billing_required` prose patterns were added to the payment check after reading Prized's and Boat's auth.md during the review; they apply to every platform.
+Prized wrote this checker, picked the platforms, and wrote auth-md-spend-limits, a draft extension that the spend limits and payment handoff checks accept alongside the AAuth budgets Internet-Draft (draft-hardt-aauth-budgets-00, an individual submission), x402 and the `Payment` HTTP authentication scheme. Prized is in the list, scored by the same code, and sorted with everyone else. No platform, Prized included, passed either check through the Prized draft's fields. The `billing_url` and `billing_required` prose patterns were added to the payment check after reading Prized's and Boat's auth.md during the review; they apply to every platform.
 
 ## Limits
 
