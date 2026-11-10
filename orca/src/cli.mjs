@@ -74,9 +74,9 @@ export function runPrized(bin, args, { timeoutMs = 120_000, env = process.env } 
   });
   if (result.error?.code === "ENOENT") throw new UserError(`the prized CLI is not at ${bin}`, `install it: ${INSTALL_CLI_URL}`);
   if (result.error && result.error.code !== "ETIMEDOUT") throw result.error;
-  // Killed by a signal, and not by the timeout above: a cancel (see CancelledError).
-  if (!result.error && (result.signal === "SIGTERM" || result.signal === "SIGINT")) throw new CancelledError(result.signal);
-  return { status: result.status ?? (result.error ? 124 : 1), stdout: result.stdout ?? "", stderr: redact(result.stderr ?? "") };
+  // signal: what killed the CLI, when it wasn't the timeout above (Orca's Cancel signals the whole group).
+  const signal = result.error ? null : result.signal;
+  return { status: result.status ?? (result.error ? 124 : 1), signal, stdout: result.stdout ?? "", stderr: redact(result.stderr ?? "") };
 }
 
 // The CLI's answer when its sign-in is an API key (`prized login --token`), not a browser login:
@@ -123,6 +123,7 @@ export function prizedFailure(what, result) {
 // is resumed first, by the CLI itself.
 export function openShell(bin, id, opts = {}) {
   const result = runPrized(bin, ["sandbox", "ssh", id, "--", "true"], { timeoutMs: 180_000, ...opts });
+  if (result.signal === "SIGTERM" || result.signal === "SIGINT") throw new CancelledError(result.signal);
   if (result.status !== 0) throw prizedFailure(`could not open a shell in ${id}`, result);
 }
 

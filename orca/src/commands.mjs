@@ -61,6 +61,7 @@ import {
   checkPlainPath,
   cliSandboxDirs,
   isSandboxId,
+  loopTurn,
   paths,
   readJson,
   say,
@@ -345,8 +346,11 @@ export async function create(env = process.env) {
     say(`${id} is ready: ${root}`);
   } catch (error) {
     await cleanup(error.message);
-    // Orca's Cancel killed a program this create was waiting on (the prized CLI opening the shell)
-    // before the handler above ran. The cleanup is the same; end as a cancel, as the handler does.
+    // Orca's Cancel may be what failed this step: it signals the whole group, so a program this
+    // create was blocked on (git, the prized CLI) dies before the handler above has run. Let it
+    // run now: it ends the create as a cancel.
+    await loopTurn();
+    // Only the CLI was signalled: still a cancel, with the same cleanup.
     if (error instanceof CancelledError) {
       trace({ cmd: "create", ok: false, cancelled: error.signal, sandbox: made.id, instance }, env);
       process.exit(130);

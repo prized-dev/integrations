@@ -20,9 +20,8 @@ export class UserError extends Error {
   }
 }
 
-// A child this process was waiting on was killed by a signal it didn't send. Orca's Cancel signals
-// the whole process group, so the child dies with it, and this process's own handler for the signal
-// may not have run yet (or at all) when the blocking call returns.
+// The prized CLI was killed by a signal while this process waited on it. Orca's Cancel signals the
+// whole process group, so the CLI dies with it.
 export class CancelledError extends UserError {
   constructor(signal) {
     super(`cancelled (${signal})`);
@@ -30,6 +29,11 @@ export class CancelledError extends UserError {
     this.signal = signal;
   }
 }
+
+// One full turn of the event loop. A signal that arrived while this process was blocked on a child
+// (spawnSync) reaches its handler only when the loop next polls, so a command with a signal handler
+// waits this out before it takes the handler off.
+export const loopTurn = () => new Promise((resolve) => setImmediate(() => setImmediate(resolve)));
 
 // ---------------------------------------------------------------- paths
 

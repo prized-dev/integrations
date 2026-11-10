@@ -53,10 +53,10 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
       SPY_LOG: path.join(root, "spy.log"),
     });
     home = env.HOME;
-    // Orca's own control path has no space (ssh would read -o ControlPath=... as two words). ssh
-    // refuses one of 108 bytes or more and %C is 40 of them, so under a long TMPDIR (a CI runner's)
-    // the socket goes in /tmp.
-    controlDir = fs.mkdtempSync(path.join(api.root.length <= 60 ? api.root : "/tmp", "cm-"));
+    // Orca's own control path has no space (ssh would read -o ControlPath=... as two words), and a
+    // short one: ssh adds 17 bytes to it for a temporary name and a socket path holds 107, so under
+    // a long TMPDIR (a CI runner's) it would not fit.
+    controlDir = fs.mkdtempSync("/tmp/cm-");
     ssh = { configFile: env.PRIZED_ORCA_SSH_CONFIG, controlPath: path.join(controlDir, "%C"), env };
     recipe = parseRecipe(fs.readFileSync(path.join(PKG, "vm-recipe.json"), "utf8"));
     context = {
@@ -513,7 +513,24 @@ describe("a workspace on a Prized sandbox", { skip, concurrency: false }, () => 
       { cmd: "create", sandbox: made[0].id, instance: "orca-cancel-2" },
       { cmd: "create", ok: false, cancelled: "SIGTERM", sandbox: made[0].id, instance: "orca-cancel-2" },
     ]);
-    assert.doesNotMatch(log, /could not open a shell/);
+    assert.doesNotMatch(lines.join("\n") + log.split("\n").filter((l) => l.includes("orca-cancel-2")).join("\n"), /could not open a shell/);
+  });
+
+  test("Orca's Cancel while git bundles the repository ends as a cancel, with nothing made", async () => {
+    // git is one of the programs create blocks on; the signal kills it first.
+    const bin = path.join(root, "slow git");
+    fs.mkdirSync(bin);
+    const real = spawnSync("sh", ["-c", "command -v git"], { encoding: "utf8" }).stdout.trim();
+    fs.writeFileSync(path.join(bin, "git"), `#!/bin/sh\nfor a; do [ "$a" = bundle ] && sleep 6; done\nexec "${real}" "$@"\n`, { mode: 0o755 });
+    const r = await phase("create", { context: { ...context, instanceId: "orca-cancel-3" }, env: { ...env, PATH: `${bin}:${env.PATH}` }, cancelAfterMs: 2_500 });
+    assert.notEqual(r.exitCode, 0);
+    assert.equal(r.stdout, "");
+    assert.doesNotMatch(r.stderr, /failed/);
+    assert.deepEqual(instanceSandboxes("orca-cancel-3"), []);
+    assert.deepEqual(fs.readdirSync(env.TMPDIR), []);
+    const log = fs.readFileSync(path.join(home, ".prized-orca", "lifecycle.log"), "utf8");
+    const lines = log.split("\n").filter((l) => l.includes('"instance":"orca-cancel-3"') && !l.includes('"start":true'));
+    assert.deepEqual(lines.map((l) => JSON.parse(l)).map(({ t, pid, ...rest }) => rest), [{ cmd: "create", ok: false, cancelled: "SIGTERM", sandbox: null, instance: "orca-cancel-3" }]);
   });
 
   test("a definite refusal makes nothing, so nothing is deleted and the exit is quick", async () => {

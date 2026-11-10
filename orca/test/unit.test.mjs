@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { PrizedApi, PrizedApiError, apiBase, canWriteSandboxes } from "../src/api.mjs";
-import { PROBE_SANDBOX, prizedFailure, runPrized, shellSignIn, sshHostname, versionOk } from "../src/cli.mjs";
+import { PROBE_SANDBOX, openShell, prizedFailure, runPrized, shellSignIn, sshHostname, versionOk } from "../src/cli.mjs";
 import { pauseFirmly, runtimeRefusal } from "../src/commands.mjs";
 import { keyFromLoginShell, resolveKey } from "../src/key.mjs";
 import {
@@ -489,17 +489,20 @@ describe("Orca's side", () => {
     assert.equal(expired.kind, "signed-out");
   });
 
-  test("a CLI call killed by a signal is a cancel; one that runs past its time is a timeout", () => {
+  test("a shell the CLI was opening when a signal killed it is a cancel; one that runs past its time is a timeout", () => {
     // Orca's Cancel signals the whole process group, so the CLI dies while this process waits on it.
     const env = { PATH: process.env.PATH };
-    for (const signal of ["TERM", "INT"]) {
-      assert.throws(
-        () => runPrized("/bin/sh", ["-c", `kill -${signal} $$; sleep 5`], { env }),
-        (e) => e.name === "CancelledError" && e.signal === `SIG${signal}` && e.message === `cancelled (SIG${signal})`,
-      );
-    }
-    assert.equal(runPrized("/bin/sh", ["-c", "sleep 5"], { env, timeoutMs: 200 }).status, 124);
-    assert.equal(prizedFailure("could not open a shell in sbx_1", { status: 124, stderr: "", stdout: "" }).message, "could not open a shell in sbx_1: timed out");
-    assert.equal(runPrized("/bin/sh", ["-c", "exit 3"], { env }).status, 3);
+    const killed = (signal) => runPrized("/bin/sh", ["-c", `kill -${signal} $$; sleep 5`], { env });
+    assert.deepEqual([killed("TERM").signal, killed("INT").signal], ["SIGTERM", "SIGINT"]);
+    const dies = path.join(FAKES, "dies-of-sigterm");
+    assert.equal(fs.existsSync(dies), true);
+    assert.throws(
+      () => openShell(dies, "sbx_0000000000000001", { env }),
+      (e) => e.name === "CancelledError" && e.signal === "SIGTERM" && e.message === "cancelled (SIGTERM)",
+    );
+    const slow = runPrized("/bin/sh", ["-c", "sleep 5"], { env, timeoutMs: 200 });
+    assert.deepEqual([slow.status, slow.signal], [124, null]);
+    assert.equal(prizedFailure("could not open a shell in sbx_1", slow).message, "could not open a shell in sbx_1: timed out");
+    assert.deepEqual([runPrized("/bin/sh", ["-c", "exit 3"], { env }).status, runPrized("/bin/sh", ["-c", "exit 3"], { env }).signal], [3, null]);
   });
 });

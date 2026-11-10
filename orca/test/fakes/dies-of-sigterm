@@ -1,0 +1,4 @@
+#!/bin/sh
+# A CLI that a signal kills while the plugin waits on it (Orca's Cancel reaches the whole group).
+kill -TERM $$
+sleep 5
