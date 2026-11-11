@@ -33,7 +33,7 @@ export const md = (v) =>
   String(v ?? '')
     .replace(/\s+/g, ' ')
     .replace(/[\\`*_[\]<>|#@]/g, (c) => `\\${c}`);
-const MARK = { pass: 'P', partial: '~', fail: '.', skipped: '-' };
+const MARK = { pass: 'P', partial: '~', fail: '.', skipped: '-', unread: '?' };
 
 const byName = (a, b) => {
   const x = a.name.toLowerCase();
@@ -97,6 +97,8 @@ export function publish(run, targets) {
         apiNotProbed: t.skipApi ?? null,
         passed: r.passed,
         partial: r.partial,
+        // Counted here, after corrections: a corrected cell is no longer unread.
+        unread: r.checks.filter((c) => c.status === 'unread').length,
         total: r.total,
         whoActs: r.whoActs ?? null,
         checkedAt: r.checkedAt,
@@ -134,9 +136,15 @@ export function indexMarkdown(doc, { applied = [], stale = [], diffPath = null }
   );
   for (const c of doc.checks) {
     const skipped = count(rows, c.id, 'skipped');
+    const unread = count(rows, c.id, 'unread');
     L.push(
-      `- ${c.name}: ${count(rows, c.id, 'pass')} pass, ${count(rows, c.id, 'partial')} partly, ${count(rows, c.id, 'fail')} fail${skipped ? ` (not run on ${skipped})` : ''}, of ${n - skipped}.`,
+      `- ${c.name}: ${count(rows, c.id, 'pass')} pass, ${count(rows, c.id, 'partial')} partly, ${count(rows, c.id, 'fail')} fail${unread ? `, ${unread} not read` : ''}${skipped ? ` (not run on ${skipped})` : ''}, of ${n - skipped}.`,
     );
+  }
+  const unreadRows = rows.filter((r) => r.checks.some((c) => c.status === 'unread'));
+  if (unreadRows.length) {
+    const cells = unreadRows.reduce((a, r) => a + r.checks.filter((c) => c.status === 'unread').length, 0);
+    L.push(`- Not read: ${cells} check(s) on ${unreadRows.length} platform(s) (${unreadRows.map((r) => r.name).join(', ')}). The URL that decides the check answered with a server error, a 429, a bot challenge or nothing. Not read is not a fail; each reason says what the URL answered.`);
   }
   L.push(`- Score distribution (checks passed: platforms): ${[...dist.keys()].sort((a, b) => a - b).map((k) => `${k}: ${dist.get(k)}`).join(', ')}`);
   const prized = rows.find((r) => r.site === 'prized.dev');
@@ -150,25 +158,26 @@ export function indexMarkdown(doc, { applied = [], stale = [], diffPath = null }
   }
   L.push('', '## The checks', '');
   L.push(
-    'Each check is pass, partly or fail. "Partly" means the platform has the thing in prose an agent can read, or in a shape the spec says a client must not use, but not in the machine-readable form the spec defines.',
+    'Each check is pass, partly or fail. "Partly" means the platform has the thing in prose an agent can read, or in a shape the spec says a client must not use, but not in the machine-readable form the spec defines. A check is "not read" when the URL that decides it gave no answer; it is not counted as a fail.',
     '',
   );
   doc.checks.forEach((c, i) => L.push(`${i + 1}. **${c.name}** (\`${c.id}\`): ${c.question} Spec: [${c.spec}](${c.specUrl}).`));
   L.push('', '## Results', '');
   L.push(
-    'P pass, ~ partly, . fail, - not run. Ranked by checks passed; ties share a rank and are listed by name ("partly" never breaks a tie). Every cell has a reason and the URL it came from in the JSON file of the same date.',
+    'P pass, ~ partly, . fail, ? not read (the URL answered with a server error, a 429, a bot challenge or nothing), - not run. In the score, "+1~" is one partly and "1?" one check not read. Ranked by checks passed; ties share a rank and are listed by name ("partly" never breaks a tie). Every cell has a reason and the URL it came from in the JSON file of the same date.',
     '',
   );
   L.push(`| # | Platform | Category | Score | ${doc.checks.map((c) => c.name).join(' | ')} | Who acts at sign-up |`);
   L.push(`|---|---|---|---|${'---|'.repeat(doc.checks.length)}---|`);
   for (const r of rows) {
-    const score = `${r.passed}/${r.total}${r.partial ? ` +${r.partial}~` : ''}`;
+    const notRead = r.checks.filter((c) => c.status === 'unread').length;
+    const score = `${r.passed}/${r.total}${r.partial ? ` +${r.partial}~` : ''}${notRead ? ` ${notRead}?` : ''}`;
     const kept = r.notChecked ? ` (not checked ${r.notChecked.date}; from ${r.notChecked.keptFrom})` : '';
     L.push(`| ${rankOf(rows, r)} | ${md(r.name)} (${md(r.site)})${kept} | ${md(r.category)} | ${score} | ${r.checks.map((c) => MARK[c.status] ?? c.status).join(' | ')} | ${md(r.whoActs)} |`);
   }
   L.push('', '## Method', '');
   L.push(`- One run of \`agent-signup-check.mjs\` over the ${n} platforms in \`targets.json\`, 4 platforms at a time, 300 ms between requests to the same platform. The full method is in [METHOD.md](../METHOD.md).`);
-  L.push('- Read-only: GET requests only, to public documents meant for agents and to one documented API URL per platform without a key. No sign-ups, no POSTs, no forms, no credentials. At most 16 GETs per platform, redirect hops included.');
+  L.push('- Read-only: GET requests only, to public documents meant for agents and to one documented API URL per platform without a key. No sign-ups, no POSTs, no forms, no credentials. At most 24 GETs per platform, redirect hops included.');
   L.push(
     `- ${applied.length} cell(s) corrected by hand after review, each marked "Corrected after review" in the JSON with the checker's own verdict beside it${applied.length ? `: ${applied.map((a) => `${a.name} ${a.check} (${a.from} to ${a.to})`).join('; ')}` : ''}.`,
   );

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Agent sign-up check, v0.2.4. Prized (https://prized.dev/agent-signup-check).
+// Agent sign-up check, v0.2.5. Prized (https://prized.dev/agent-signup-check).
 // Copyright 2026 Prized. Licensed under the Apache License, Version 2.0:
 // https://www.apache.org/licenses/LICENSE-2.0
 //
@@ -16,9 +16,13 @@
 //             auth-md-spend-limits billing)
 //   markdown  docs an agent can read: /llms.txt (llmstxt.org)
 //
-// Read-only by construction: GET only, never a POST, never a sign-up, at most 16 GETs a site,
+// Read-only by construction: GET only, never a POST, never a sign-up, at most 24 GETs a site,
 // redirect hops included (usually 7 to 9), https on port 443 only, public IP addresses only (checked on every connection,
 // redirects included), 1 MB and 8 s per response.
+//
+// Each check is pass, partial or fail, or "unread" when the request that decides it got no answer
+// (a server error, a 429, a bot challenge on the file's own path, a network failure): what was
+// not read is not scored as a fail. "skipped" is a check that was not run at all.
 //
 // Usage:
 //   node agent-signup-check.mjs example.com [--api https://api.example.com/v1/me] [--docs URL] [--json] [--save DIR]
@@ -36,12 +40,15 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import zlib from 'node:zlib';
 
-export const VERSION = '0.2.4';
+export const VERSION = '0.2.5';
 export const USER_AGENT = `PrizedAgentSignupCheck/${VERSION} (+https://prized.dev/agent-signup-check; read-only GET)`;
 export const MAX_BYTES = 1024 * 1024;
 export const TIMEOUT_MS = 8000;
 export const MAX_REDIRECTS = 4;
-export const MAX_REQUESTS = 16;
+// A check sends up to 12 requests, and a site may redirect every path twice (cloudflare.com,
+// hetzner.com, cdp.coinbase.com): at 16 the last one, x402 discovery, was never answered for
+// those. The most any of the 100 platforms needed on 2026-11-11 was 20.
+export const MAX_REQUESTS = 24;
 
 export const CHECKS = [
   {
@@ -396,6 +403,49 @@ function blockedReason(r) {
   return null;
 }
 
+/** A failure of the network or the far end. Not the checker's own refusals (a non-public
+ *  address, http, too many redirects): those are facts about the URL and repeat every run. */
+export const NETWORK_ERROR = (e) => !!e && /^(timeout|incomplete body|request failed|E(?!BLOCKED\b)[A-Z_]{3,}|ERR_|CERT_|UNABLE_TO_|DEPTH_ZERO|SELF_SIGNED|HPE_)/.test(e);
+
+/** Network errors that are facts about the host, the same on every try: the name does not
+ *  exist, nothing listens on port 443, or its certificate cannot be trusted. They are answers
+ *  ("no such host"), not a file that went unread. A weekly run still asks once more. */
+const HOST_FACT = (e) => /^(ENOTFOUND|ECONNREFUSED|CERT_|UNABLE_TO_|DEPTH_ZERO|SELF_SIGNED|ERR_TLS_CERT_ALTNAME_INVALID)/.test(e);
+
+/** The last segment of a URL's path ("auth.md"), or '' when it cannot be parsed. */
+function lastSegment(u) {
+  try { return trimSlash(new URL(u).pathname).split('/').pop() || ''; } catch { return ''; }
+}
+
+/**
+ * Why a response is not an answer about the file asked for, or null when it is one. Not an
+ * answer: a network failure that could pass (a timeout, a reset, a body cut off), the check's
+ * own request budget running out, HTTP 429, HTTP 5xx, and a bot challenge on the file itself.
+ * Everything else is the platform's answer and is scored as before: 404 and 410, a plain 403 or
+ * 401, an HTML page, a redirect somewhere else, a host that does not exist or has a bad
+ * certificate.
+ */
+export function notAnswered(r) {
+  if (!r) return null;
+  if (r.error) {
+    const e = String(r.error);
+    if (NETWORK_ERROR(e) && !HOST_FACT(e)) return `a network failure (${e})`;
+    if (e === 'request budget spent') return 'nothing: the request budget ran out first';
+    return null;
+  }
+  const wall = blockedReason(r);
+  if (wall) {
+    // A challenge on the file's own path hides the file (www.example.com/auth.md, or
+    // /en/auth.md). One met only after the platform sent the request to a different page
+    // (gitlab.com/auth.md goes to /users/sign_in) is not about the file: the redirect was the
+    // platform's answer, and it stays a verdict.
+    const elsewhere = !!r.finalUrl && r.finalUrl !== r.url && lastSegment(r.finalUrl) !== lastSegment(r.url);
+    return elsewhere ? null : wall;
+  }
+  if (typeof r.status === 'number' && (r.status >= 500 || r.status === 429)) return `HTTP ${r.status}`;
+  return null;
+}
+
 function describeMiss(r, what) {
   if (!r) return `${what} was not fetched`;
   if (r.error) return `${what}: ${r.error}`;
@@ -726,6 +776,8 @@ export function normalizeSite(input) {
  *   apiAccept: the Accept header the API needs (default application/json)
  *   skipApi:  a reason the API probe is not run (the API URL itself is then never requested)
  *   signal:   an AbortSignal that stops every request at once
+ *   date:     the YYYY-MM-DD a "not read" reason carries (default today, UTC; a replay passes
+ *             the date the saved responses were fetched)
  */
 export async function checkSite(input, opts = {}) {
   const site = normalizeSite(input);
@@ -735,7 +787,11 @@ export async function checkSite(input, opts = {}) {
   // One budget for the whole check: every GET counts, redirect hops included.
   const budget = { left: MAX_REQUESTS };
   const fetchOne = async (label, url, accept) => {
-    if (budget.left <= 0) return { url, error: 'request budget spent' };
+    if (budget.left <= 0) {
+      // Listed with the rest, so the evidence shows what was never asked and a replay scores the same.
+      requests.push({ label, url, error: 'request budget spent' });
+      return { url, error: 'request budget spent' };
+    }
     if (opts.signal && opts.signal.aborted) return { url, error: 'aborted' };
     const slot = { label, url };
     requests.push(slot);
@@ -774,7 +830,14 @@ export async function checkSite(input, opts = {}) {
 
   // Round 2: a second llms.txt candidate when the root one is missing.
   let llmsSource = llmsR;
-  const llmsOk = (r) => ok(r) && !isHtml(r) && (r.body || '').trim().length > 0;
+  // A site that redirects /llms.txt away to a page it also serves for /auth.md has no llms.txt at
+  // the root: cdp.coinbase.com sends both to its landing page, which it serves as Markdown. Only
+  // when /llms.txt itself was redirected to something that is not an llms.txt: a real /llms.txt
+  // that /auth.md happens to redirect to, or to share a body with, stays an llms.txt.
+  const sameAsAuthmd = (r) => !!r && r.url === `https://${site}/llms.txt` && ok(r) && ok(authmdR) &&
+    !!r.finalUrl && r.finalUrl !== r.url && lastSegment(r.finalUrl) !== 'llms.txt' &&
+    (r.finalUrl === authmdR.finalUrl || ((r.body || '').trim().length > 0 && r.body === authmdR.body));
+  const llmsOk = (r) => ok(r) && !isHtml(r) && (r.body || '').trim().length > 0 && !sameAsAuthmd(r);
   // Also when the root one does not start with an H1: a docs llms.txt that does is a pass.
   // A not-found page with an H1 ("# Page Not Found") is not well formed either.
   const llmsWellFormed = (r) => llmsOk(r) && /^#\s+\S/.test(firstHeading(r.body)) && !/not found|\b404\b/i.test(firstHeading(r.body));
@@ -1061,7 +1124,7 @@ export async function checkSite(input, opts = {}) {
     if (!llmsText) {
       const last = requests.filter((r) => r.label.startsWith('llms.txt')).pop();
       const tried = requests.filter((r) => r.label.startsWith('llms.txt'));
-      const why = tried.map((r) => (ok(r) && isHtml(r) ? `${r.url} answers with an HTML page` : describeMiss(r, r.url))).join('; ');
+      const why = tried.map((r) => (ok(r) && isHtml(r) ? `${r.url} answers with an HTML page` : sameAsAuthmd(r) ? `${r.url} answers with the same page as /auth.md` : describeMiss(r, r.url))).join('; ');
       set('markdown', 'fail', why || 'llms.txt was not fetched', { url: last && last.url, tried: tried.map((r) => r.url) });
     } else {
       const first = firstHeading(llmsText);
@@ -1072,16 +1135,81 @@ export async function checkSite(input, opts = {}) {
     }
   }
 
+  // --- not read -----------------------------------------------------------------------
+  // A fail says the platform lacks something, and that is only known when every file the check
+  // reads was read. So a fail becomes "unread" when a request for one of those files got no
+  // answer (a server error, a 429, a bot challenge on the file itself, a network failure that
+  // could pass, or this check's own request budget). Unread is not a pass and not a fail: the
+  // reason says what the URL answered and on which date, the verdict it replaced is kept beside
+  // it, and the check still counts in the row's total, so a row reads "2 of 7, 1 not read" and
+  // never 2 of 6. A "partly" rests on something that was read, so it stays, and its reason
+  // names the file that was not. A pass is never changed, and neither is a fail whose own files
+  // all answered: one metadata URL that fails does not blank the checks that never read it.
+  const checkedAt = new Date().toISOString();
+  const onDate = /^\d{4}-\d{2}-\d{2}$/.test(str(opts.date)) ? opts.date : checkedAt.slice(0, 10);
+  {
+    const by = (prefix) => requests.filter((q) => q.label.startsWith(prefix));
+    const unanswered = (list) => list.map((q) => [q, notAnswered(q)]).filter(([, why]) => why);
+    // A bot wall in front of the API is the 401 check's own answer (its question names one),
+    // and it stays a fail. A server error, a 429 or a network failure there is not an answer.
+    const api = by('api').filter((q) => !blockedReason(q));
+    const as = by('as-metadata');
+    // Prose that went unread: /auth.md when no auth.md was read, llms.txt when no candidate was.
+    const prose = [...(authmdText ? [] : by('auth.md')), ...(llmsText ? [] : by('llms.txt'))];
+    // The files each check reads for itself (the README's "Passes when" column).
+    const feeds = {
+      authmd: authmdText ? [] : by('auth.md'),
+      prm: by('prm'),
+      // The authorization server's metadata; and, when none of it was read, the resource
+      // metadata that would have named the server.
+      register: asMeta ? as : [...as, ...by('prm')],
+      challenge: api,
+      // A cap can be in either metadata document (agent_auth.billing, or AAuth budgets).
+      limits: [...as, ...(prm ? [] : by('prm'))],
+      // The API's answer, x402 discovery (x402R itself: the budget may have stopped it before
+      // it was sent) and agent_auth.billing; and the prose, when it went unread and so could
+      // not name where the platform's x402 document is.
+      payment: [...api, x402R, ...as, ...(x402Ref ? [] : prose)],
+      markdown: by('llms.txt'),
+    };
+    // Prose can only lift these two to "partly", so unread prose leaves the verdict; the reason
+    // must still not say a file holds nothing when the file was never read.
+    const proseOnly = { register: prose, limits: prose };
+    for (const c of CHECKS) {
+      const cell = results[c.id];
+      if (!cell || cell.status === 'pass' || cell.status === 'skipped') continue;
+      const miss = unanswered(feeds[c.id])[0];
+      if (miss && cell.status === 'fail') {
+        results[c.id] = {
+          url: clipText(miss[0].url, 300),
+          answered: miss[1],
+          // What the checker would have said had it counted the non-answer, for the record.
+          was: cell.status,
+          wasReason: cell.reason,
+          status: 'unread',
+          reason: clipText(`Not read on ${onDate}: ${miss[0].url} answered with ${miss[1]}`, 400),
+        };
+        continue;
+      }
+      const other = miss || unanswered(proseOnly[c.id] || [])[0];
+      if (other) {
+        cell.notRead = clipText(other[0].url, 300);
+        cell.reason = clipText(`${cell.reason} (not read on ${onDate}: ${other[0].url} answered with ${other[1]})`, 400);
+      }
+    }
+  }
+
   const ordered = CHECKS.map((c) => ({ id: c.id, name: c.name, ...results[c.id] }));
   const passed = ordered.filter((c) => c.status === 'pass').length;
   const partial = ordered.filter((c) => c.status === 'partial').length;
   const applicable = ordered.filter((c) => c.status !== 'skipped').length;
   return {
     site,
-    checkedAt: new Date().toISOString(),
+    checkedAt,
     checker: `agent-signup-check/${VERSION}`,
     passed,
     partial,
+    unread: ordered.filter((c) => c.status === 'unread').length,
     total: applicable,
     whoActs,
     checks: ordered,
@@ -1125,10 +1253,10 @@ export function saveEvidence(dir, result) {
   fs.writeFileSync(path.join(d, 'result.json'), JSON.stringify(clean, null, 1));
 }
 
-const MARK = { pass: 'PASS', partial: 'PART', fail: 'FAIL', skipped: 'SKIP' };
+const MARK = { pass: 'PASS', partial: 'PART', fail: 'FAIL', skipped: 'SKIP', unread: ' ?? ' };
 
 function printResult(r) {
-  console.log(`${r.site}: ${r.passed} of ${r.total} pass, ${r.partial} partial  (${r.checker}, ${r.checkedAt})`);
+  console.log(`${r.site}: ${r.passed} of ${r.total} pass, ${r.partial} partial${r.unread ? `, ${r.unread} not read` : ''}  (${r.checker}, ${r.checkedAt})`);
   for (const c of r.checks) console.log(`  ${MARK[c.status] || c.status}  ${c.name.padEnd(28)} ${c.reason}`);
   if (r.whoActs) console.log(`  who has to act at sign-up: ${r.whoActs}`);
 }

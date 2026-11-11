@@ -33,11 +33,13 @@ Options: `--docs URL` tries a second llms.txt (default `https://<domain>/docs/ll
 
 ## What it sends
 
-GET requests only: no POST, no sign-up, no form, no credential. At most 16 requests per domain, redirects included (usually 7 to 9). https on port 443 only, and every address a name resolves to must be public (checked on each connection, redirects included). 1 MB and 8 seconds per response. It names itself in its User-Agent: `PrizedAgentSignupCheck/<version> (+https://prized.dev/agent-signup-check; read-only GET)`.
+GET requests only: no POST, no sign-up, no form, no credential. At most 24 GET requests per domain, redirects included (usually 7 to 9 requests; more GETs where a site redirects every path). https on port 443 only, and every address a name resolves to must be public (checked on each connection, redirects included). 1 MB and 8 seconds per response. It names itself in its User-Agent: `PrizedAgentSignupCheck/<version> (+https://prized.dev/agent-signup-check; read-only GET)`.
 
 ## The seven checks
 
 Each check passes, passes partly, or fails. Partly means the platform says it in prose an agent can read, or publishes it in a shape the spec tells clients not to use, but not in the machine-readable form the spec defines. Ranking counts passes only; partly never breaks a tie.
+
+A check is "not read" when it would be a fail and a file it reads got no answer: a server error, HTTP 429, a network failure that could pass, or a bot challenge on the file itself. Not read is not a fail and not a pass; the reason gives the URL, what it answered and the date, and the check still counts in the row's total ("2 of 7, 1 not read"). A 404, a plain 403, an HTML page, a host that does not exist or a redirect to a sign-in page is an answer and is scored. [METHOD.md](METHOD.md) has the full rule.
 
 | Check | Passes when | Partly when | Spec |
 | --- | --- | --- | --- |
@@ -47,7 +49,7 @@ Each check passes, passes partly, or fails. Partly means the platform says it in
 | **Key works without a browser** | a signed-out call to the API gets `401` with a `WWW-Authenticate` challenge (or `402`) | `401` with no challenge, or `403`, or `400` or `422` asking for a key | [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110#section-15.5.2) section 15.5.2, [RFC 6750](https://www.rfc-editor.org/rfc/rfc6750) section 3 |
 | **Spend limits** | metadata declares a spend cap the agent's key will have (`agent_auth.billing.default_spend_cap` in the draft's shape, with its `version`, `pricing_uri`, `limits_endpoint` and `manage_uri`; or AAuth `budget_units` / `usage_endpoint`) | a `default_spend_cap` out of that shape, an `owner_limits_uri` (the owner can set limits, agents get no default cap), vendor fields about money or limits, or spend limits described in prose | [auth-md-spend-limits 0.1](https://github.com/prized-dev/integrations/blob/auth-md-spend-limits/auth-md-spend-limits/README.md) (draft, Prized), [draft-hardt-aauth-budgets](https://datatracker.ietf.org/doc/draft-hardt-aauth-budgets/) |
 | **Payment handoff** | the API answers `402` with an x402 requirement, or `/.well-known/x402` is an x402 discovery document, or the API challenges with the `Payment` scheme or answers `402` with a billing object (top level, or JSON:API `meta`), or `agent_auth.billing` names a `pricing_uri` | a payment path (`402`, x402, `billing_url`, a checkout link) is described in prose | [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110#section-15.5.3) section 15.5.3, [x402 v2 HTTP transport](https://github.com/x402-foundation/x402/blob/main/specs/transports-v2/http.md), auth-md-spend-limits section 4 |
-| **Docs in Markdown** | `/llms.txt` (or the docs one) is text that starts with an H1 | a text file is there, but it doesn't start with an H1 | [llms.txt](https://llmstxt.org/) |
+| **Docs in Markdown** | `/llms.txt` (or the docs one) is text that starts with an H1, and is not a page the site redirects both `/llms.txt` and `/auth.md` to | a text file is there, but it doesn't start with an H1 | [llms.txt](https://llmstxt.org/) |
 
 Every verdict carries its reason, the URL it was read from and, for prose, the sentence that matched, so you can judge it yourself. [METHOD.md](METHOD.md) has the rest: how the 100 were picked, which API URL was probed for each, the request order and the limits of what a public file can show.
 
@@ -65,7 +67,7 @@ To add a platform, open a pull request that adds it to `targets.json`: its name,
 node agent-signup-check/weekly.mjs
 ```
 
-It checks every platform in `targets.json` again (4 at a time, 300 ms between requests to one platform; about 2 minutes) and writes `results/<date>.json` and `.md`, `results.json`, `diffs/<date>.md` (who improved, who regressed, what else moved) and `evidence/`. It commits nothing. A platform whose request failed on the network is checked a second time, alone. A platform that still can't be reached keeps its last row, marked as not checked with the date, rather than dropping to zero. It stops without writing anything if more than 10 platforms are unreachable (then the problem is the machine's network, not the platforms), or if it can't learn the machine's public address to scrub from the evidence (pass `--client-ip` to give it). Exit 0 means written, and 1 means written with something to read in the diff: a stale correction, a replay mismatch, or a platform not checked.
+It checks every platform in `targets.json` again (4 at a time, 300 ms between requests to one platform; about 2 minutes) and writes `results/<date>.json` and `.md`, `results.json`, `diffs/<date>.md` (who improved, who regressed, what else moved) and `evidence/`. It commits nothing. A platform where a request got no answer (a network failure, a server error, a 429, a bot challenge) is checked a second time, alone, and the diff records what both checks got; a check whose file is still unanswered is published as not read rather than as a fail (a bot wall in front of the API itself still fails the 401 check). A platform where nothing at all was answered keeps its last row, marked as not checked with the date, rather than dropping to zero. It stops without writing anything if more than 10 platforms are unreachable (then the problem is the machine's network, not the platforms), or if it can't learn the machine's public address to scrub from the evidence (pass `--client-ip` to give it). Exit 0 means written, and 1 means written with something to read in the diff: a stale correction, a replay mismatch, or a platform not checked.
 
 Other tools in this folder:
 

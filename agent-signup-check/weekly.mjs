@@ -39,16 +39,34 @@ import net from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { CHECKS, checkSite, guardedGet, isPublicAddress, saveEvidence, USER_AGENT, VERSION } from './agent-signup-check.mjs';
+import { CHECKS, checkSite, guardedGet, isPublicAddress, NETWORK_ERROR, notAnswered, saveEvidence, USER_AGENT, VERSION } from './agent-signup-check.mjs';
 import { indexMarkdown, loadTargets, md, publish, rankOf, rankSort } from './build-index.mjs';
 import { loadSite, replay, siteDir } from './replay.mjs';
 import { auditDir, scrubDir } from './scrub.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const MAX_UNREACHABLE = 10;
-// A failure of the network or the far end, worth a second try. Not the checker's own refusals
-// (a non-public address, http, too many redirects) or its request budget: those repeat every run.
-const NETWORK_ERROR = (e) => !!e && /^(timeout|incomplete body|request failed|E(?!BLOCKED\b)[A-Z_]{3,}|ERR_|CERT_|UNABLE_TO_|DEPTH_ZERO|SELF_SIGNED|HPE_)/.test(e);
+/** A request worth a second try: any network failure (also a host that did not resolve, which
+ *  the checker scores as an answer if it happens twice), a server error, a 429 or a bot
+ *  challenge. Not the checker's own refusals (a non-public address, http, too many redirects)
+ *  or its request budget: those repeat every run. */
+const noAnswer = (q) => NETWORK_ERROR(q.error) || (q.error !== 'request budget spent' && !!notAnswered(q));
+/** The requests of one check that are worth a second try. */
+export const unanswered = (r) => (r._raw || []).filter(noAnswer);
+const told = (r) => unanswered(r).map((q) => `${q.label} ${q.status ?? q.error}`).join(', ') || 'every request answered';
+const count = (r, status) => (r.checks || []).filter((c) => c.status === status).length;
+/**
+ * Which of two checks of one platform to publish, the first unless the second read more: more
+ * passes first (a pass that was read once is never dropped for a try that could not read it),
+ * then fewer checks not read, then fewer unanswered requests. A second check that threw loses.
+ */
+export function betterTry(first, second) {
+  if (second.error) return first;
+  const key = (r) => [-count(r, 'pass'), count(r, 'unread'), unanswered(r).length];
+  const [a, b] = [key(first), key(second)];
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return b[i] < a[i] ? second : first;
+  return first;
+}
 
 const readJson = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 const writeJson = (p, v) => fs.writeFileSync(p, `${JSON.stringify(v, null, 1)}\n`);
@@ -73,7 +91,7 @@ export function previousRun(dirs, date) {
   return earlier.length ? readJson(earlier.at(-1).file) : null;
 }
 
-const word = { pass: 'pass', partial: 'partly', fail: 'fail', skipped: 'not run' };
+const word = { pass: 'pass', partial: 'partly', fail: 'fail', skipped: 'not run', unread: 'not read' };
 
 /** What moved between two published runs. */
 export function diffRuns(prev, next) {
@@ -115,7 +133,7 @@ export function diffRuns(prev, next) {
 }
 
 /** The diff as Markdown. */
-export function diffMarkdown(d, { stale = [], mismatches = [], retried = [], errors = [], notChecked = [] } = {}) {
+export function diffMarkdown(d, { stale = [], mismatches = [], retried = [], errors = [], unread = [], notChecked = [] } = {}) {
   const L = [];
   L.push(`# Agent sign-up check: what changed, ${d.from ?? 'first run'} to ${d.to}`, '');
   L.push(`Checker \`${d.checkerTo}\`${d.checkerFrom && d.checkerFrom !== d.checkerTo ? ` (the previous run used \`${d.checkerFrom}\`; a checker change can move rows on its own)` : ''}. Full results: [results/${d.to}.md](../results/${d.to}.md).`, '');
@@ -134,8 +152,9 @@ export function diffMarkdown(d, { stale = [], mismatches = [], retried = [], err
   if (d.added.length) section('Added', d.added, (a) => `- ${a.name} (${a.site}): ${a.score}`);
   if (d.removed.length) section('Removed', d.removed, (a) => `- ${a.name} (${a.site})`);
   if (stale.length) section('Corrections that no longer apply (review them)', stale, (s) => `- ${s.name} ${s.check}: the correction expected the checker to say ${word[s.expected] ?? s.expected}; it now says ${word[s.now] ?? s.now}. Its note: ${md(s.note)}.`);
-  if (retried.length) section('Checked twice (a request failed the first time)', retried, (r) => `- ${r.name} (${r.site}): ${r.kept}`);
+  if (retried.length) section('Checked twice (a request got no answer the first time)', retried, (r) => `- ${r.name} (${r.site}): ${md(r.kept)}`);
   if (errors.length) section('Requests that failed in the published result', errors, (e) => `- ${e.name} (${e.site}): ${e.label} ${md(e.url)}: ${md(e.error)}`);
+  if (unread.length) section('Checks not read in the published result (not scored as a fail)', unread, (u) => `- ${u.name} (${u.site}): ${u.check}. ${md(u.reason)}`);
   if (mismatches.length) section('Replay mismatches (scrubbed evidence scores differently from the live run; look before publishing)', mismatches, (m) => `- ${m}`);
   return L.join('\n');
 }
@@ -153,12 +172,12 @@ async function learnClientIps() {
   return [v4, ...new Set(v6)];
 }
 
-async function runAll(targets, { getFor, concurrency, pauseMs }) {
+async function runAll(targets, { getFor, concurrency, pauseMs, dateFor }) {
   const out = new Array(targets.length);
   let next = 0;
   const one = async (t) => {
     try {
-      return await checkSite(t.site, { api: t.api || undefined, apiAccept: t.apiAccept || undefined, docs: t.docs || undefined, skipApi: t.skipApi || undefined, pauseMs, get: getFor(t) });
+      return await checkSite(t.site, { api: t.api || undefined, apiAccept: t.apiAccept || undefined, docs: t.docs || undefined, skipApi: t.skipApi || undefined, pauseMs, date: dateFor(t), get: getFor(t) });
     } catch (e) {
       return { site: t.site, error: String((e && e.message) || e).slice(0, 200) };
     }
@@ -173,8 +192,12 @@ async function runAll(targets, { getFor, concurrency, pauseMs }) {
   return { out, one };
 }
 
-const failedRequests = (r) => (r._raw || []).filter((q) => NETWORK_ERROR(q.error));
-const unreachable = (r) => r.error || ((r._raw || []).length > 0 && (r._raw || []).every((q) => NETWORK_ERROR(q.error)));
+/** Every request failed on the network: with more than MAX_UNREACHABLE such platforms the
+ *  problem is this machine, and nothing is written. */
+const networkDown = (r) => r.error || ((r._raw || []).length > 0 && (r._raw || []).every((q) => NETWORK_ERROR(q.error)));
+/** Nothing at all was answered (network failures, or a 429, a server error or a bot challenge
+ *  on every request): the platform was not checked, and its last row is kept. */
+const unreachable = (r) => r.error || ((r._raw || []).length > 0 && (r._raw || []).every(noAnswer));
 
 export async function weekly(opts) {
   const root = opts.root ?? HERE;
@@ -190,11 +213,16 @@ export async function weekly(opts) {
   let clientIps = opts.clientIps ?? [];
   const bad = clientIps.filter((ip) => !net.isIP(ip ?? ''));
   if (bad.length) throw Object.assign(new Error(`--client-ip needs an IP address, got ${bad.join(', ') || 'nothing'}`), { exit: 2 });
+  // The day a "not read" reason carries is the day the request was made: today for a live run
+  // (the checker's default, whatever --date names the run), and with --replay the day the saved
+  // responses were fetched.
+  let dateFor = () => undefined;
   if (opts.replay) {
     getFor = (t) => {
       const saved = loadSite(path.join(opts.replay, siteDir(t.site)));
       return async (url) => saved.get(url) || { url, finalUrl: url, hops: [], error: 'not in saved evidence' };
     };
+    dateFor = (t) => loadSite(path.join(opts.replay, siteDir(t.site))).fetchedAt ?? undefined;
   } else if (!clientIps.length) {
     clientIps = (await (opts.learnClientIps ?? learnClientIps)()) ?? [];
     if (!clientIps.length) throw Object.assign(new Error('could not learn this machine\'s public address; pass --client-ip so evidence can be scrubbed'), { exit: 2 });
@@ -203,31 +231,36 @@ export async function weekly(opts) {
   // 1. The run.
   const startedAt = new Date().toISOString();
   log(`checking ${targets.length} platforms, ${concurrency} at a time`);
-  const { out, one } = await runAll(targets, { getFor, concurrency, pauseMs: opts.replay || opts.getFor ? 0 : 300 });
-  const down = targets.filter((_, i) => unreachable(out[i]));
+  const { out, one } = await runAll(targets, { getFor, concurrency, dateFor, pauseMs: opts.replay || opts.getFor ? 0 : 300 });
+  const down = targets.filter((_, i) => networkDown(out[i]));
   if (down.length > MAX_UNREACHABLE) {
     throw Object.assign(new Error(`${down.length} platforms unreachable (${down.slice(0, 8).map((t) => t.site).join(', ')}...): this machine's network looks down; nothing written`), { exit: 2 });
   }
 
-  // 2. Once more, alone, for any platform where a request failed on the network.
+  // 2. Once more, alone, for any platform where a request got no answer (a network failure, a
+  // server error, a 429, a bot challenge); the diff records what both checks got. Off by
+  // default when the responses come from saved evidence or a stub: those answer the same twice.
   const retried = [];
+  const retry = opts.retry ?? !(opts.replay || opts.getFor);
   for (let i = 0; i < targets.length; i++) {
-    if (opts.replay || opts.getFor || out[i].error || !failedRequests(out[i]).length) continue;
+    if (!retry || out[i].error || !unanswered(out[i]).length) continue;
     const again = await one(targets[i]);
-    const better = !again.error && failedRequests(again).length < failedRequests(out[i]).length;
-    retried.push({ name: targets[i].name, site: targets[i].site, kept: better ? 'kept the second check' : 'kept the first check (the second was no better)' });
+    const better = betterTry(out[i], again) === again;
+    retried.push({ name: targets[i].name, site: targets[i].site, kept: `${better ? 'kept the second check' : 'kept the first check (the second was no better)'}. First: ${told(out[i])}. Second: ${again.error ? `the check failed: ${again.error}` : told(again)}` });
     if (better) out[i] = again;
   }
 
-  // A platform nothing could be fetched from (or whose check threw) was not checked: its last
-  // published row is kept, marked, rather than shown as a regression to 0.
+  // A platform nothing could be read from (every request went unanswered, twice, or its check
+  // threw) was not checked: its last published row is kept, marked, rather than shown as a
+  // regression to 0.
   const prev = previousRun([outDir, root], date);
   const prevBySite = new Map((prev?.results ?? []).map((r) => [r.site, r]));
   const notChecked = [];
   const checked = (i) => !unreachable(out[i]);
   for (let i = 0; i < targets.length; i++) {
     if (checked(i)) continue;
-    const why = out[i].error ? `the check failed: ${out[i].error}` : `every request failed (${failedRequests(out[i])[0]?.error ?? 'network'})`;
+    const first = unanswered(out[i])[0];
+    const why = out[i].error ? `the check failed: ${out[i].error}` : NETWORK_ERROR(first?.error) ? `every request failed (${first.error})` : `every request went unanswered (${first?.label ?? 'request'}: ${notAnswered(first) ?? 'no answer'})`;
     notChecked.push({ name: targets[i].name, site: targets[i].site, why, carried: prevBySite.has(targets[i].site) ? prev.date : null });
   }
 
@@ -282,6 +315,8 @@ export async function weekly(opts) {
     // 6. The diff against the newest earlier run.
     const d = diffRuns(prev, doc);
     const errors = doc.results.flatMap((r) => r.requests.filter((q) => NETWORK_ERROR(q.error)).map((q) => ({ name: r.name, site: r.site, label: q.label, url: q.url, error: q.error })));
+    // Checks published as "not read": what the URL answered, and what the verdict would have been.
+    const unread = doc.results.flatMap((r) => r.checks.filter((c) => c.status === 'unread').map((c) => ({ name: r.name, site: r.site, check: c.name, reason: c.reason, was: c.was ?? null })));
     const diffRel = `../diffs/${date}.md`;
 
     // 7. Write.
@@ -292,8 +327,8 @@ export async function weekly(opts) {
     const newest = datedRuns([outDir]).at(-1)?.date;
     if (newest === date) writeJson(path.join(outDir, 'results.json'), doc);
     else log(`results.json left as is: ${newest} is newer than ${date}`);
-    fs.writeFileSync(path.join(outDir, 'diffs', `${date}.md`), `${diffMarkdown(d, { stale, mismatches, retried, errors, notChecked })}\n`);
-    writeJson(path.join(outDir, 'diffs', `${date}.json`), { ...d, stale, mismatches, retried, errors, notChecked });
+    fs.writeFileSync(path.join(outDir, 'diffs', `${date}.md`), `${diffMarkdown(d, { stale, mismatches, retried, errors, unread, notChecked })}\n`);
+    writeJson(path.join(outDir, 'diffs', `${date}.json`), { ...d, stale, mismatches, retried, errors, unread, notChecked });
     const evidence = path.join(outDir, 'evidence');
     fs.rmSync(evidence, { recursive: true, force: true });
     fs.cpSync(staged, evidence, { recursive: true });
@@ -303,8 +338,9 @@ export async function weekly(opts) {
       `Since ${d.from ?? 'nothing'}: ${d.improved.length} improved${d.improved.length ? ` (${d.improved.map((e) => `${e.name} ${e.from} to ${e.to}`).join(', ')})` : ''}, ` +
       `${d.regressed.length} regressed${d.regressed.length ? ` (${d.regressed.map((e) => `${e.name} ${e.from} to ${e.to}`).join(', ')})` : ''}, ` +
       `${d.changed.length} other changes, ${d.added.length} added, ${d.removed.length} removed. ` +
-      `${applied.length} corrected, ${stale.length} stale corrections, ${mismatches.length} replay mismatches, ${errors.length} failed requests.`;
-    return { summary, warnings: stale.length + mismatches.length + notChecked.length, doc, diff: d, notChecked };
+      `${applied.length} corrected, ${stale.length} stale corrections, ${mismatches.length} replay mismatches, ${errors.length} failed requests, ` +
+      `not read: ${unread.length} check(s) on ${new Set(unread.map((u) => u.site)).size} platform(s).`;
+    return { summary, warnings: stale.length + mismatches.length + notChecked.length, doc, diff: d, notChecked, retried, unread };
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }

@@ -16,14 +16,17 @@ import { checkSite, CHECKS, VERSION } from './agent-signup-check.mjs';
 import { loadTargets } from './build-index.mjs';
 import { bodyOf, parseEvidence } from './scrub.mjs';
 
-/** The saved responses for one site, keyed by the URL first requested. */
+/** The saved responses for one site, keyed by the URL first requested. `fetchedAt` on the map
+ *  is when they were fetched (the `fetched:` line every file of one check shares), or null. */
 export function loadSite(dir) {
   const map = new Map();
+  map.fetchedAt = null;
   if (!fs.existsSync(dir)) return map;
   for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.http')).sort()) {
     const raw = fs.readFileSync(path.join(dir, f), 'utf8');
     const { request, response } = parseEvidence(raw);
     const url = request.split('\n')[0].replace(/^GET /, '');
+    map.fetchedAt ??= (request.match(/^fetched: (\d{4}-\d{2}-\d{2})T/m) || [])[1] || null;
     const finalUrl = (request.match(/^final-url: (.*)$/m) || [])[1] || url;
     const hops = [...request.matchAll(/^redirect: (\d+) from (.*)$/gm)].map((m) => ({ status: Number(m[1]), url: m[2] }));
     const err = (response.match(/^error: (.*)$/m) || [])[1];
@@ -52,7 +55,8 @@ export async function replay(targets, evDir) {
   for (const t of targets) {
     const saved = loadSite(path.join(evDir, siteDir(t.site)));
     const get = async (url) => saved.get(url) || { url, finalUrl: url, hops: [], error: 'not in saved evidence' };
-    const r = await checkSite(t.site, { api: t.api, apiAccept: t.apiAccept, docs: t.docs, skipApi: t.skipApi, get });
+    // A "not read" reason carries the day the responses were fetched, not the day of the replay.
+    const r = await checkSite(t.site, { api: t.api, apiAccept: t.apiAccept, docs: t.docs, skipApi: t.skipApi, get, date: saved.fetchedAt ?? undefined });
     const { _raw, ...clean } = r;
     results.push({ name: t.name, category: t.category, ...clean });
   }
