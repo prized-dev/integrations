@@ -276,6 +276,34 @@ unset FAKE_FOLLOW_DROP_ONCE
 check "it attached again and stayed until the worker ended" \
   '[ ! -e "$D/drop-once" ] && [ "$(jq -s "[.[] | select(.dropped)] | length" "$D/prized/follows.log")" = 1 ] && kept_awake "$D" s9-a && grep -q "worker exit 0" "$D/state/logs/s9-a.log"'
 dump "$f"
+# The same drop, and the status read that follows it is refused for a reason that has nothing to do with
+# the sandbox being gone (the CLI exits 5 for a rate limit as it does for a missing sandbox).
+D=$T/nine-b; f=$FAILS
+mkdir -p "$D"; touch "$D/drop-once" "$D/refuse-once"
+export FAKE_FOLLOW_DROP_ONCE=$D/drop-once FAKE_STATUS_REFUSED_ONCE=$D/refuse-once
+run_mock "$D" "$(queue "$(item s9-b envO lt_v1_o)")"
+wait_for 90 'completed "$D" s9-b && watched "$D" s9-b' || bad "s9-b did not finish in 90 s"
+finish
+unset FAKE_FOLLOW_DROP_ONCE FAKE_STATUS_REFUSED_ONCE
+check "a refused status read is not taken for a deleted sandbox: the watcher stayed to the end" \
+  '[ ! -e "$D/refuse-once" ] && ! grep -q "is gone" "$D/state/logs/s9-b.log" && kept_awake "$D" s9-b && grep -q "worker exit 0" "$D/state/logs/s9-b.log"'
+dump "$f"
+fi
+
+if want 10; then
+echo "== 10. the sandbox is deleted while its worker runs"
+export STUB_RUN_SECONDS=120
+D=$T/ten; f=$FAILS
+run_mock "$D" "$(queue "$(item s10-a envN lt_v1_n),$(item s10-b envP lt_v1_p)")"
+wait_for 60 'provisioned "$D" s10-a && provisioned "$D" s10-b' || bad "the two were not handed off in 60 s"
+N=$(sbx_of "$D" envN) P=$(sbx_of "$D" envP)
+set_meta "$D" "$N" '.state = "deleted"'    # gone: prized answers "no sandbox ... in this workspace"
+set_meta "$D" "$P" '.state = "deleting"'   # on its way out, as right after `prized sandbox rm`
+wait_for 30 'grep -q "is gone" "$D/state/logs/s10-a.log" && grep -q "is gone" "$D/state/logs/s10-b.log"' || bad "the watchers did not notice in 30 s"
+finish
+check "each watcher stops instead of trying for the rest of RUN_TIMEOUT" \
+  'grep -q "$N is gone (deleted)" "$D/state/logs/s10-a.log" && grep -q "$P is gone (deleting)" "$D/state/logs/s10-b.log" && ! grep -q "interaction ended" "$D"/state/logs/s10-*.log'
+dump "$f"
 fi
 
 echo "== $FAILS failed"

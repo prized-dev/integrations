@@ -36,9 +36,18 @@ def meta_path(sid):
 def load(sid):
     p = meta_path(sid)
     if not p.exists() or json.loads(p.read_text())["state"] == "deleted":
-        print(f"prized: sandbox {sid} not found", file=sys.stderr)
-        sys.exit(1)
+        refuse(f"no sandbox {sid} in this workspace", "prized sandbox ls lists yours")
     return json.loads(p.read_text())
+
+
+def refuse(message, hint=""):
+    """Fail as the real CLI does: exit 5 (a failed check: a missing sandbox, a rate limit and a held workspace
+    alike), with the failure envelope on stdout under --json and a `prized:` line on stderr otherwise."""
+    if "--json" in sys.argv:
+        print(json.dumps({"ok": False, "error": {"code": "CHECK_FAILED", "message": message, "hint": hint}}))
+    else:
+        print(f"prized: {message}", file=sys.stderr)
+    sys.exit(5)
 
 
 def save(m):
@@ -159,6 +168,8 @@ def follow(sid, pid_):
         sys.exit(1)
     start, offset = time.time(), 0
     while True:
+        if load(sid)["state"] == "deleting":  # a sandbox deleted under a follow ends it, as the real one does
+            refuse(f"sandbox {sid} is being deleted")
         done = (d / f"{pid_}.exit").exists()
         data = (d / f"{pid_}.out").read_bytes()
         sys.stdout.buffer.write(data[offset:])
@@ -226,6 +237,12 @@ def main():
     elif verb == "exec":
         sid = rest[0]
         m = load(sid)
+        if m["state"] == "deleting":  # nothing runs in a sandbox on its way out
+            refuse(f"sandbox {sid} is being deleted")
+        once = os.environ.get("FAKE_STATUS_REFUSED_ONCE")
+        if "status" in f and once and os.path.exists(once):  # a refusal that is not about the sandbox being gone
+            os.remove(once)
+            refuse("too many requests: try again in a moment")
         if "status" in f:
             print(json.dumps({"sandboxId": sid, "process": proc_doc(sid, f["status"])}))
             return

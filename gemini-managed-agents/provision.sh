@@ -64,7 +64,15 @@ if [ "${1:-}" = --watch ]; then
     case $running in
       false) break ;;
       true) unread=0 ;;  # the follow dropped while the worker runs: attach again
-      *)  # the sandbox can't be reached right now: keep trying until the worker's own limit has passed
+      *)  # the worker's state can't be read: stop if the sandbox is gone, else keep trying until the worker's own limit
+        # Gone means prized says so in words: a state that ends a sandbox, or its own "no sandbox" answer. Its
+        # exit code alone does not tell (a rate limit and a held workspace exit the same way as a missing sandbox).
+        out=$(prized sandbox get "$SBX" --json 2>/dev/null) || true
+        gone=$(jq -r --arg none "no sandbox $SBX in this workspace" '
+          if (.sandbox.state // "") | IN("error", "deleting", "deleted") then .sandbox.state
+          elif (.error.message // "") == $none or ((.error.hint // "") | startswith("it ended")) then "deleted"
+          else empty end' <<<"$out" 2>/dev/null) || gone=''
+        [ -z "$gone" ] || { log "$SBX is gone ($gone); nothing left to keep awake"; exit 0; }
         unread=$((unread + 1))
         [ "$unread" != 5 ] || log "can't read the worker's state in $SBX; still trying" ;;
     esac
