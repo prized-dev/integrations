@@ -39,13 +39,14 @@ case ${BASH_REMATCH[2]} in d) min=$((BASH_REMATCH[1] * 1440)) ;; h) min=$((BASH_
 [ "$min" -le 40320 ] || { log "CURSOR_HIBERNATE_TTL can be at most 28d (Prized's longest auto-delete)"; exit 1; }
 [ "$HIBERNATE" = 0 ] || command -v jq >/dev/null || { log "pausing workers needs jq on this machine (or set CURSOR_HIBERNATE=0)"; exit 1; }
 # A session token reaches only this claim and ends with it; a wake brings a fresh one for the same
-# claim. The service-account key stays here.
+# claim. The service-account key stays here, and nothing this script runs is handed it.
 : "${CURSOR_AUTH_TOKEN:?start the controller with --session-token, so the service-account key never enters a sandbox}"
-mkdir -p "$LOGS"
+unset CURSOR_API_KEY
+(umask 077; mkdir -p "$LOGS")              # a logs folder this script makes is the user's alone
 GEN=$(date +%s).$$                         # this start of the worker: a watcher acts only on its own
 WAIT=1800                                  # half-seconds to wait for this worker's lock: 15 minutes,
 if [ "$WAKE" = 1 ] && [[ ${CURSOR_WAKE_TIMEOUT_MS:-} =~ ^[0-9]{1,9}$ ]]; then  # or a wake's window
-  WAIT=$((CURSOR_WAKE_TIMEOUT_MS / 500)); [ "$WAIT" -le 1800 ] || WAIT=1800
+  WAIT=$((CURSOR_WAKE_TIMEOUT_MS / 500)); [ "$WAIT" -le 1800 ] || WAIT=1800; [ "$WAIT" -ge 1 ] || WAIT=1
 fi
 
 read -r -d '' INSTALL <<'EOF' || true
@@ -53,21 +54,26 @@ mkdir -p ~/work ~/.cursor-worker && chmod 700 ~/.cursor-worker
 [ -x ~/.local/bin/agent ] || curl -fsS https://cursor.com/install | bash >/dev/null 2>&1
 ~/.local/bin/agent --version
 EOF
-# The worker runs detached in a process group of its own; its exit code lands in ~/.cursor-worker/done.
+# The worker runs detached in a process group of its own. When it exits, its token file is removed
+# (so a sandbox that pauses with no watcher keeps none), then its exit code lands in
+# ~/.cursor-worker/done: in that order, so a wake that sees "done" can write its own token.
 read -r -d '' START <<EOF || true
 cd ~/work && rm -f ~/.cursor-worker/done ~/.cursor-worker/pid && echo $GEN > ~/.cursor-worker/gen && setsid -f sh -c '
   echo \$\$ > ~/.cursor-worker/pid
   . ~/.cursor-worker/env
   ~/.local/bin/agent worker --pool $CURSOR_POOL --worker-id $ID --auth-token-file ~/.cursor-worker/token \\
     --idle-release-timeout $IDLE $FLAGS start >> ~/.cursor-worker/worker.log 2>&1
-  echo \$? > ~/.cursor-worker/done' < /dev/null > /dev/null 2>&1
+  rc=\$?; rm -f ~/.cursor-worker/token; echo \$rc > ~/.cursor-worker/done' < /dev/null > /dev/null 2>&1
 for i in \$(seq 50); do [ -s ~/.cursor-worker/pid ] && exit 0; sleep 0.1; done; exit 1
 EOF
 # Ends a worker that is still there when a wake comes: Cursor sees it offline (that is why it woke
-# it), so it is on its way out or can't reach Cursor, and a fresh start serves the follow-up.
+# it), so it is on its way out or can't reach Cursor, and a fresh start serves the follow-up. It
+# waits for the worker's whole process group, not only the shell that leads it (which ends at once
+# on TERM): 10 seconds to exit, then KILL. Exits 1 if the group is still there after that.
 # shellcheck disable=SC2016 # runs in the sandbox
-STOP='p=$(cat ~/.cursor-worker/pid 2>/dev/null) && kill -TERM -- "-$p" 2>/dev/null || exit 0
-for i in $(seq 100); do kill -0 "$p" 2>/dev/null || exit 0; sleep 0.1; done; kill -KILL -- "-$p" 2>/dev/null; exit 0'
+STOP='p=$(cat ~/.cursor-worker/pid 2>/dev/null) && kill -s TERM -- "-$p" 2>/dev/null || exit 0
+for i in $(seq 100); do kill -s 0 -- "-$p" 2>/dev/null || exit 0; sleep 0.1; done; kill -s KILL -- "-$p" 2>/dev/null
+for i in $(seq 50); do kill -s 0 -- "-$p" 2>/dev/null || exit 0; sleep 0.1; done; exit 1'
 # Prints the running worker's generation, then "exited" once it has exited or "running" while it
 # runs. (Not an exit code: the prized CLI's own codes include 3 for an unreachable sandbox.)
 # shellcheck disable=SC2016 # runs in the sandbox
@@ -102,15 +108,17 @@ state_of() {
 # jq: an API time as seconds, its fraction kept, so workers paused in the same second sort right.
 TS='def ts: (. // "1970-01-01T00:00:00Z") | (sub("\\.[0-9]+"; "") | fromdateiso8601) + ((capture("(?<f>\\.[0-9]+)").f // "0") | tonumber);'
 
-# A paused worker is a cache. When the workspace has no room for a new sandbox, the pool's
-# longest-paused worker that no wake is using is deleted, and the create waits until it is gone.
+# A paused worker is a cache. When the workspace has no room for a new sandbox (or to resume this
+# worker's own), the pool's longest-paused other worker that no wake is using is deleted, and the
+# create or resume waits until it is gone.
+ROOM='limit of paused sandboxes|disk limit|running vCPUs|running memory'  # the refusals a paused sandbox counts toward
 make_room() {
   local old sbx _
   for old in $(prized sandbox ls --label "cursor-pool=$CURSOR_POOL" --json | jq -r "$TS"' [.sandboxes[]
       | select(.state == "paused" and (.labels["cursor-worker"] // "") != "")]
       | sort_by(.lastActiveAt // .createdAt | ts) | .[].labels["cursor-worker"]'); do
     if ! [[ $old =~ ^[A-Za-z0-9._-]+$ && $old != "$ID" ]] || ! lock "$old" try; then continue; fi
-    sbx=$(prized sandbox ls --label "cursor-worker=$old" --json | jq -r '.sandboxes[] | select(.state == "paused") | .id' | head -1)
+    sbx=$(prized sandbox ls --label "cursor-worker=$old" --json | jq -r '[.sandboxes[] | select(.state == "paused") | .id][0] // empty')
     if [ -n "$sbx" ] && prized sandbox rm "$sbx" >/dev/null; then
       log "deleting $sbx, paused worker $old, to make room"
       for _ in $(seq 60); do [ "$(state_of "$sbx")" = gone ] && break; sleep 1; done  # it counts until it is gone
@@ -135,9 +143,9 @@ fresh() {
   until SBX=$(prized sandbox create "${create[@]}" 2> "$err"); do
     code=$?
     cat "$err" >&2
-    # Exit 6 saying one of these is a quota paused sandboxes count toward (the message line only:
+    # Exit 6 saying one of $ROOM is a quota paused sandboxes count toward (the message line only:
     # the hint of the running-sandbox limit, which they don't count toward, mentions disk too).
-    if [ "$code" = 6 ] && [ "$try" -lt 4 ] && grep '^prized:' "$err" | grep -q -E 'limit of paused sandboxes|disk limit|running vCPUs|running memory' && make_room; then
+    if [ "$code" = 6 ] && [ "$try" -lt 4 ] && grep '^prized:' "$err" | grep -E "$ROOM" >/dev/null && make_room; then
       try=$((try + 1)); continue
     fi
     rm -f "$err"; return 1
@@ -157,7 +165,7 @@ fresh() {
 # 2 when it can't tell: then it leaves the sandbox alone, rather than start a second worker beside
 # one that may still be live.
 kept() {
-  local row state why _
+  local row state why err code=0 _
   for _ in 1 2 3; do
     row=$(prized sandbox ls --label "cursor-worker=$ID" --json | jq -r '.sandboxes | [.[] | select(.state != "deleting")] | (.[0] // {id: "", state: "none"}) | "\(.id) \(.state)"') && break
     sleep 2
@@ -170,7 +178,15 @@ kept() {
   done
   case $state in
     running) log "wake: $SBX is running" ;;
-    paused) prized sandbox resume "$SBX" >/dev/null || { log "wake: could not resume $SBX; it stays paused"; return 1; }
+    paused)
+      err=$(mktemp)
+      prized sandbox resume "$SBX" >/dev/null 2> "$err" || code=$?
+      # Refused for room (exit 6, as a create is): another paused worker makes way, and it tries once more.
+      if [ "$code" = 6 ] && grep '^prized:' "$err" | grep -E "$ROOM" >/dev/null && make_room; then
+        code=0; prized sandbox resume "$SBX" >/dev/null 2> "$err" || code=$?
+      fi
+      cat "$err" >&2; rm -f "$err"
+      [ "$code" = 0 ] || { log "wake: could not resume $SBX; it stays paused until it is deleted"; return 1; }
       log "resumed $SBX" ;;
     error)
       why=$(prized sandbox get "$SBX" --json 2>/dev/null | jq -r '.sandbox.errorReason // ""') || why=
@@ -196,7 +212,7 @@ remove() { if prized sandbox rm "$SBX" >/dev/null 2>&1; then log "deleted $SBX";
       # Never start a second worker beside one we can't see: leave it, and let the wake window lapse.
       [ -n "$state" ] || { log "wake: $SBX does not answer; leaving it"; exit 1; }
       if [ "${state#* }" = running ]; then
-        prized sandbox exec "$SBX" --timeout 30s -- "$STOP" >/dev/null
+        prized sandbox exec "$SBX" --timeout 30s -- "$STOP" >/dev/null || { log "wake: the worker still there did not stop; leaving it"; exit 1; }
         log "stopped the worker still there"
       fi ;;
     1) fresh ;;

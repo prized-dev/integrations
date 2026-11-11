@@ -6,9 +6,9 @@ Team Pools need a Cursor Enterprise plan. On any plan with Cloud Agents, you can
 
 ## Run it
 
-1. In Cursor's [Cloud Agents dashboard](https://cursor.com/dashboard/cloud-agents#self-hosted), a team admin turns on **Allow Self-Hosted Machines** and GitHub token minting for Team Pool workers. Then create a service account under **Settings → API Keys → Service Accounts** and copy its key.
+1. In Cursor's [Cloud Agents dashboard](https://cursor.com/dashboard/cloud-agents#self-hosted), a team admin turns on **Allow Self-Hosted Machines** and **SCM token minting**. Then create a service account under **Settings → API Keys → Service Accounts** and copy its key.
 
-2. On a machine that stays on (Linux or macOS), install the Cursor CLI and the `prized` CLI, and `jq` if it isn't there:
+2. On a Linux machine that stays on, install the Cursor CLI and the `prized` CLI, and `jq` if it isn't there:
 
    ```bash
    curl https://cursor.com/install -fsS | bash
@@ -53,8 +53,9 @@ curl https://api.cursor.com/v0/private-workers/pools -u "$CURSOR_API_KEY:" -H 'C
 
 - A paused worker is deleted by Prized after `CURSOR_HIBERNATE_TTL` (3 days unless set), even while this machine is down. `./reap.sh --older-than 1d --pool prized` deletes them sooner.
 - Each resume starts the sandbox's run time again (`MAX_RUNTIME`). Time added with `prized sandbox extend` lasts only until the next pause.
-- Paused sandboxes count toward the workspace's disk quota. When a new agent's sandbox doesn't fit, `spawn.sh` deletes the pool's longest-paused worker to make room.
-- A wake with nothing to resume starts a fresh sandbox under the same worker id. A new sandbox whose worker fails in its first 2 minutes is deleted; any other is paused like a released one.
+- Paused sandboxes count toward the workspace's disk quota and its limit of paused sandboxes, and may hold their CPU and memory for their resume. When a new agent's sandbox doesn't fit, or a wake's resume is refused for room, `spawn.sh` deletes the pool's longest-paused other worker to make room (up to three for one new sandbox).
+- A wake with nothing to resume starts a fresh sandbox under the same worker id. So does a wake whose sandbox can't be resumed: that sandbox stays paused until Prized deletes it. A new sandbox whose worker fails in its first 2 minutes is deleted; any other is paused like a released one.
+- A wake that finds the old worker still running stops it first (10 seconds to exit, then it is killed) and starts the new one only once it is gone.
 - Run one controller per pool: a wake carries no claim, so two controllers would both answer it.
 - `CURSOR_HIBERNATE=0` deletes each sandbox when its worker exits, as earlier versions did.
 
@@ -72,13 +73,13 @@ curl https://api.cursor.com/v0/private-workers/pools -u "$CURSOR_API_KEY:" -H 'C
 
 ## Keys in the sandbox
 
-The service account's key stays on the controller's machine. With `--session-token`, each sandbox gets only a session token for its own claim, in `~/.cursor-worker/token`, readable by the agent's tool calls. It stops working when the claim ends. `spawn.sh` refuses to run without one. Never pass your Prized API key into a sandbox.
+The service account's key stays on the controller's machine, and `spawn.sh` drops it from its own environment before it runs anything. With `--session-token`, each sandbox gets only a session token for its own claim, in `~/.cursor-worker/token`, readable by the agent's tool calls. It stops working when the claim ends, and the file is removed when the worker exits, so a paused sandbox keeps none. `spawn.sh` refuses to run without one. Never pass your Prized API key into a sandbox.
 
 ## Limits
 
 - **Pool name.** Any name but `default`: `--clone-git-repos` works only on a named any-repo pool.
 - **Working directory** `/home/prized/work`. Tools run as the user `prized`, without root.
-- **Not yet run in a real Team Pool.** Without an Enterprise service account, Cursor turns the pool worker away at sign-in. Up to that point `spawn.sh` has run against the real Prized API and Cursor. With its worker started as a My Machines worker instead, a Cursor agent ran end to end in the sandbox it created, and the sandbox was deleted once the worker exited. On 2026-11-07 a claim and then a wake ran against the real Prized API, with Cursor CLI 2026.11.05 installed in the sandbox and stand-in session tokens, so Cursor turned each worker away at sign-in. The claim created the sandbox and installed the CLI. When the worker exited, the sandbox was paused with its token file removed. The wake resumed the same sandbox, and a process started there before the first pause was still running after two pauses. The worker started again with the new token. Cursor's own wake hasn't been seen yet. Cursor's CLI says `--clone-git-repos` reuses a clean checkout of the same repository and fetches it to the requested ref, so a woken worker should keep its checkout. That hasn't been checked in a real pool.
+- **Not yet run in a real Team Pool.** Without an Enterprise service account, Cursor turns the pool worker away at sign-in. Up to that point `spawn.sh` has run against the real Prized API and Cursor. With its worker started as a My Machines worker instead, a Cursor agent ran end to end in the sandbox it created, and the sandbox was deleted once the worker exited. On 2026-11-07 a claim and then a wake ran against the real Prized API, with Cursor CLI 2026.11.05 installed in the sandbox and stand-in session tokens, so Cursor turned each worker away at sign-in. The claim created the sandbox and installed the CLI. When the worker exited, the sandbox was paused with its token file removed (the run set `PRIZED_CURSOR_FAIL_GRACE=0`: a new sandbox whose worker fails at once is otherwise deleted). The wake resumed the same sandbox, and a process started there before the first pause was still running after two pauses. The worker started again with the new token. Cursor's own wake hasn't been seen yet. Cursor's CLI says `--clone-git-repos` reuses a clean checkout of the same repository and fetches it to the requested ref, so a woken worker should keep its checkout. That hasn't been checked in a real pool.
 
 ## Test
 
@@ -86,4 +87,4 @@ The service account's key stays on the controller's machine. With `--session-tok
 test/test.sh
 ```
 
-Runs `spawn.sh` and `reap.sh` against a stand-in `prized` and a stub `agent`, offline, with no keys.
+Runs `spawn.sh` and `reap.sh` against a stand-in `prized` and a stub `agent`, offline, with no keys. The tests need Linux, and so far `spawn.sh` has only been run there.

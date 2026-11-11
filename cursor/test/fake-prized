@@ -8,7 +8,8 @@ FAKE_SANDBOX=<its directory> in its environment, so a pause can freeze them all 
 or a command carry them on (SIGCONT), the way a real pause keeps memory and processes. Every call is
 logged to calls.log. FAKE_QUOTA caps the sandboxes not deleted, as a workspace's disk quota does
 (FAKE_QUOTA_REASON=sandbox_limit: only the running ones, as the running-sandbox cap does).
-FAKE_DELETE_SECS keeps a deleted sandbox "deleting", still listed and counted, that long.
+FAKE_RESUME_QUOTA refuses a resume while more sandboxes than that are not deleted, as the running-vCPU
+limit does. FAKE_DELETE_SECS keeps a deleted sandbox "deleting", still listed and counted, that long.
 FAKE_LS_FAIL=1 makes every `ls` fail, as in an outage.
 """
 
@@ -26,8 +27,9 @@ HERE = Path(__file__).resolve().parent
 
 
 def log(argv):
+    # cursor_key: whether the caller handed this process Cursor's service-account key (never its value).
     with open(ROOT / "calls.log", "a") as f:
-        f.write(json.dumps({"t": time.time(), "argv": argv}) + "\n")
+        f.write(json.dumps({"t": time.time(), "argv": argv, "cursor_key": "CURSOR_API_KEY" in os.environ}) + "\n")
 
 
 def now():
@@ -187,6 +189,10 @@ def main():
         if m.get("resume_fails"):
             print(f"prized: sandbox {m['id']} can't be resumed (test)", file=sys.stderr)
             sys.exit(5)
+        quota = os.environ.get("FAKE_RESUME_QUOTA")  # the most sandboxes not deleted for a resume to fit
+        if quota and len([x for x in all_meta() if x["state"] != "deleted"]) > int(quota):
+            refuse("that would pass this workspace's limit on running vCPUs (16 vCPU)", 6,
+                   "delete a sandbox first (a paused one may keep its CPU for its resume), or ask for fewer vCPUs")
         wake(m)
     elif verb == "pause":
         time.sleep(float(os.environ.get("FAKE_PAUSE_DELAY", "0")))  # a real pause can take seconds

@@ -3,7 +3,11 @@
 # "serves" for STUB_RUN seconds and exits with STUB_EXIT, as a worker does after its idle window.
 # With STUB_DEVSERVER=1 it also leaves what an agent's session leaves behind: a file in the workspace
 # and a server that outlives the worker, counting in memory (~/work/devserver.state: "pid count").
+# With STUB_TERM_SECS=N it takes N seconds to exit after a TERM, as a worker closing its session may.
+# ~/.cursor-worker/order gets a "start" line per worker start and an "exit" line per such slow exit.
 if [ "${1:-}" = --version ]; then echo 2026.10.22-stub; exit 0; fi
+echo start >> ~/.cursor-worker/order
+[ -z "${STUB_TERM_SECS:-}" ] || trap 'sleep "$STUB_TERM_SECS"; echo exit >> ~/.cursor-worker/order; exit 143' TERM
 printf '%s\n' "$@" > ~/.cursor-worker/argv
 { echo "CURSOR_AGENT_WORKER_ID=${CURSOR_AGENT_WORKER_ID:-}"; echo "CURSOR_WORKER_NAME=${CURSOR_WORKER_NAME:-}"
   echo "CURSOR_API_KEY=${CURSOR_API_KEY:+set}"; echo "PWD=$PWD"; } > ~/.cursor-worker/seen-env

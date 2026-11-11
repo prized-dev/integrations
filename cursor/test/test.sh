@@ -83,6 +83,7 @@ wait_log "paused $SBX"
 check "paused, not deleted, once the worker releases (exit 0)" '[ "$(state)" = paused ] && [ "$(meta .pauses)" = 1 ] && grep -q "worker exited (0)" "$C/cursor-workers/$ID.log"'
 check "the paused sandbox keeps no token" '[ ! -e "$H/.cursor-worker/token" ]'
 check "worker's log saved beside the request's" 'grep -q "Worker is now running" "$C/cursor-workers/$ID.worker.log"'
+wait_for '[ ! -e "$C/cursor-workers/$ID.lock" ]' || true  # the watcher logs the pause, then drops its lock
 check "no lock left behind" '[ ! -e "$C/cursor-workers/$ID.lock" ]'
 
 echo "# a follow-up after the release: the wake resumes the same sandbox, its server still running"
@@ -116,6 +117,16 @@ check "the old worker stopped, one new one started with the wake's token" 'grep 
 wait_log "paused $SBX"
 sleep 1.5
 check "paused once, by the new start's watcher; the old one stood down" '[ "$(state)" = paused ] && [ "$(meta .pauses)" = 1 ] && [ "$(meta ".resumes // 0")" = 0 ] && grep -q "a newer start of the worker watches" "$C/cursor-workers/$ID.log"'
+
+echo "# a wake while the old worker takes its time over TERM: the new one starts only once it is gone"
+run slowstop STUB_RUN=30 STUB_TERM_SECS=3
+wait_log "worker started"
+wait_for '[ -s "$H/.cursor-worker/order" ]' || true
+wake slowstop STUB_RUN=1
+wait_log "worker started" 2
+wait_for '[ "$(wc -l < "$H/.cursor-worker/order")" -ge 3 ]' || true
+check "the old worker had exited before the new one started: never two at once" '[ "$(tr "\n" " " < "$H/.cursor-worker/order")" = "start exit start " ] || { echo "     got: $(tr "\n" " " < "$H/.cursor-worker/order")"; false; }'
+wait_log "paused $SBX"
 
 echo "# a watcher that finds its sandbox paused (polls stopped 5 minutes) leaves it for a wake"
 run autopaused STUB_RUN=20 PRIZED_CURSOR_POLL=0.5
@@ -183,6 +194,11 @@ mkdir "$C/cursor-workers/$ID.lock" && touch -d '-16 minutes' "$C/cursor-workers/
 wake stale STUB_RUN=0
 wait_log "worker started" 2
 check "a stale lock is broken" '[ "$(meta .resumes)" -ge 1 ]'
+run tiny STUB_RUN=0
+wait_log "paused $SBX"
+wake tiny STUB_RUN=0 CURSOR_WAKE_TIMEOUT_MS=100
+wait_log "worker started" 2
+check "a wake window under half a second still takes a free lock" '[ "$(meta ".resumes // 0")" -ge 1 ] && ! grep -q "could not take" "$C/cursor-workers/$ID.log"'
 
 echo "# out of room: the pool's longest-paused worker makes way for a new agent"
 run room STUB_RUN=0 CURSOR_AGENT_WORKER_ID=w-old
@@ -215,6 +231,15 @@ run room4 STUB_RUN=3 CURSOR_AGENT_WORKER_ID=w-next FAKE_QUOTA=2 FAKE_DELETE_SECS
 wait_log "worker started" 3
 check "one worker deleted, the longest paused (to the fraction of a second), the create waiting till it was gone" '[ "$(wc -l < "$C/root/deletes.log")" = 1 ] && grep -qx sbx_0000000000000002 "$C/root/deletes.log" && [ "$(state sbx_0000000000000001)" = paused ] && [ "$(meta ".labels[\"cursor-worker\"]" sbx_0000000000000003)" = w-next ]'
 
+echo "# a wake whose resume is refused for room: another paused worker makes way, and the same sandbox resumes"
+run room5 STUB_RUN=0 CURSOR_AGENT_WORKER_ID=w-first
+wait_log "paused"
+run room5 STUB_RUN=0 CURSOR_AGENT_WORKER_ID=w-mine
+wait_log "paused" 2
+wake room5 STUB_RUN=0 CURSOR_AGENT_WORKER_ID=w-mine FAKE_RESUME_QUOTA=1
+wait_log "worker started" 3
+check "the other paused worker deleted, this worker's own sandbox resumed, no fresh one" '[ "$(state sbx_0000000000000001)" = deleted ] && [ "$(sbx_count)" = 2 ] && [ "$(meta ".resumes // 0" sbx_0000000000000002)" -ge 1 ] && grep -q "to make room" "$C/cursor-workers/w-mine.log" && grep -q "resumed sbx_0000000000000002" "$C/cursor-workers/w-mine.log"'
+
 echo "# CURSOR_HIBERNATE=0: deleted on release, as before"
 run delete STUB_RUN=0 CURSOR_HIBERNATE=0
 wait_log "deleted"
@@ -237,7 +262,7 @@ wait_log "deleted"
 check "deleted, logged as killed" '[ "$(state)" = deleted ] && grep -q "worker exited (killed)" "$C/cursor-workers/$ID.log"'
 
 echo "# an outage while the worker serves never deletes or pauses its sandbox"
-run outage STUB_RUN=6 FAKE_EXEC_FAIL="$T/outage-count"
+run outage STUB_RUN=10 FAKE_EXEC_FAIL="$T/outage-count"
 wait_log "worker started"
 echo 8 > "$T/outage-count"  # the next 8 polls fail
 for i in $(seq 100); do [ "$(cat "$T/outage-count")" = 0 ] && break; sleep 0.1; done
@@ -259,6 +284,13 @@ wait_log "worker started"
 pkill -TERM -f "$SPAWN" || true
 wait_log "watcher stopped"
 check "not deleted or paused by the stopped watcher" '[ "$(state)" = running ]'
+kill_sandboxes
+run nowatcher STUB_RUN=3
+wait_log "worker started"
+pkill -TERM -f "$SPAWN" || true
+wait_log "watcher stopped"
+wait_for '[ -e "$H/.cursor-worker/done" ]' || true
+check "a worker that exits with no watcher left removes its own token file" '[ -e "$H/.cursor-worker/done" ] && [ ! -e "$H/.cursor-worker/token" ] && [ "$(state)" = running ]'
 kill_sandboxes
 
 echo "# settings"
@@ -326,6 +358,14 @@ CODE=0; reap --older-than forever
 check "a cutoff that isn't a duration: refused" '[ "$CODE" = 2 ]'
 CODE=0; reap --pool prized
 check "no cutoff: refused" '[ "$CODE" = 2 ]'
+
+echo "# keys, across everything every scenario above wrote: logs, sandbox files, the record of each prized call"
+# Every file under $T that holds an API key or a session token, but for a sandbox's own token file.
+leaks() { grep -rla -e "$SVC_KEY" -e "$PRIZED_KEY" -e "$TOKEN" -e "$TOKEN2" "$T" 2>/dev/null | grep -v '/\.cursor-worker/token$' || true; }
+check "no API key anywhere, and no session token outside a sandbox's token file" '[ -z "$(leaks)" ] || { echo "     in: $(leaks | head -5 | tr "\n" " ")"; false; }'
+# (No `grep -q` at the end of a pipe here: under pipefail its early exit would read as "no match".)
+check "the token files hold a session token, never an API key" '[ -z "$(find "$T" -path "*/.cursor-worker/token" -exec grep -la -e "$SVC_KEY" -e "$PRIZED_KEY" {} +)" ]'
+check "no prized call was handed Cursor's service-account key" '[ "$(cat "$T"/*/root/calls.log | wc -l)" -gt 100 ] && [ "$(cat "$T"/*/root/calls.log | grep -c "\"cursor_key\": true")" = 0 ]'
 
 echo
 if [ "$FAILS" = 0 ]; then echo "all passed"; else echo "$FAILS failed"; exit 1; fi
