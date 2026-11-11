@@ -5,6 +5,7 @@
 # (fake-prized), and Cursor's installer and `agent` CLI are stubs (sandbox-bin/curl, stub-agent). No
 # network, no keys.
 set -euo pipefail
+unset CURSOR_API_KEY PRIZED_API_KEY  # keys in the shell that runs the tests stay out of them
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 SPAWN=$HERE/../spawn.sh
 REAP=$HERE/../reap.sh
@@ -196,6 +197,7 @@ wait_log "worker started" 2
 check "a stale lock is broken" '[ "$(meta .resumes)" -ge 1 ]'
 run tiny STUB_RUN=0
 wait_log "paused $SBX"
+wait_for '[ ! -e "$C/cursor-workers/$ID.lock" ]' || true  # this wake gets one try at the lock
 wake tiny STUB_RUN=0 CURSOR_WAKE_TIMEOUT_MS=100
 wait_log "worker started" 2
 check "a wake window under half a second still takes a free lock" '[ "$(meta ".resumes // 0")" -ge 1 ] && ! grep -q "could not take" "$C/cursor-workers/$ID.log"'
