@@ -1,0 +1,20 @@
+#!/bin/sh
+# The fake sandbox's curl, for `curl -fsSL -o FILE URL` only. It serves STUB_CLI_TGZ for the one URL
+# provision.sh should ask for (gemini-api v0.4.6, Linux x86_64) and fails (curl -f's 22) for any other,
+# and counts its downloads in ~/curl.log.
+# If the file STUB_CURL_FAIL_ONCE names exists, it is removed and the download fails; if the file
+# STUB_EVIL_ONCE names exists, it is removed and STUB_EVIL_TGZ (a different gemini-api) is served instead.
+out='' url=''
+while [ $# -gt 0 ]; do
+  case $1 in -o) out=$2; shift 2 ;; -*) shift ;; *) url=$1; shift ;; esac
+done
+want=https://github.com/google-gemini/gemini-api-cli/releases/download/v0.4.6/gemini-api_Linux_x86_64.tar.gz
+echo "$url" >> "$HOME/curl.log"
+if [ "$url" != "$want" ] || [ -z "$out" ]; then echo "curl (test): unexpected request: -o '$out' '$url'" >&2; exit 22; fi
+if [ -n "${STUB_CURL_FAIL_ONCE:-}" ] && [ -e "$STUB_CURL_FAIL_ONCE" ]; then
+  rm -f "$STUB_CURL_FAIL_ONCE"; echo "curl: (22) The requested URL returned error: 503" >&2; exit 22
+fi
+if [ -n "${STUB_EVIL_ONCE:-}" ] && [ -e "$STUB_EVIL_ONCE" ]; then
+  rm -f "$STUB_EVIL_ONCE"; cp "$STUB_EVIL_TGZ" "$out"; exit 0
+fi
+cp "$STUB_CLI_TGZ" "$out"

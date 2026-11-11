@@ -49,6 +49,7 @@ jobs:
           - { dir: github-issues, python: "3.10" }
           - { dir: github-issues, python: "3.13" }
           - { dir: claude-managed-agents }
+          - { dir: gemini-managed-agents }
           - { dir: langchain-js, node: "22" }
           - { dir: langchain-js, node: "24" }
           - { dir: paseo, node: "22" }
@@ -83,6 +84,7 @@ jobs:
           persist-credentials: false
       - run: >-
           shellcheck scripts/test.sh claude-managed-agents/on-work.sh claude-managed-agents/test/test.sh
+          gemini-managed-agents/provision.sh gemini-managed-agents/test/test.sh gemini-managed-agents/test/sandbox-bin/curl
           cursor/spawn.sh cursor/test/test.sh cursor/test/stub-agent cursor/test/sandbox-bin/curl
           herdr/test/fakes/herdr herdr/test/fakes/ssh
           conductor/move.sh conductor/test/test.sh conductor/test/fake-prized conductor/test/box-bin/tmux

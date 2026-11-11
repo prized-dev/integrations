@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+"""Stands in for `gemini-api` inside a fake sandbox: `environments serve` only.
+
+It records what it was given under ~/.gemini-managed-agents/seen/<interaction id>/, logs "Attached
+interaction session" as the real worker does (before it connects), presents its lease token to the
+server it was pointed at after STUB_CONNECT_SECONDS (default 0), works for STUB_RUN_SECONDS (default
+2) the way an interaction's tool calls would (it leaves made-by-<interaction id> in its working
+directory), and logs "Completed interaction session".
+
+STUB_NEVER_ATTACH_ONCE names a file: if it exists it is removed and this worker hangs without
+logging anything. STUB_FAIL_AFTER_ATTACH=1 makes it exit 3 right after it connected.
+"""
+
+import os
+import signal
+import sys
+import time
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+args = sys.argv[1:]
+if args[:2] != ["environments", "serve"]:
+    sys.exit("stub-gemini-api: only environments serve")
+opts = dict(zip(args[2::2], args[3::2]))
+iid, token, server = opts["--interaction-id"], opts["--lease-token"], opts.get("--server-url", "")
+seen = Path.home() / ".gemini-managed-agents" / "seen" / iid
+seen.mkdir(parents=True, exist_ok=True)
+workdir = Path(opts["--workdir"])
+
+
+def stamp(name):
+    (seen / name).write_text(repr(time.time()))
+
+
+def say(line):
+    print(time.strftime("%Y/%m/%d %H:%M:%S"), f"[{iid}] {line}", file=sys.stderr, flush=True)
+
+
+def call(verb):
+    req = urllib.request.Request(f"{server}/v1beta/interactions/{iid}:{verb}", data=b"{}", method="POST")
+    req.add_header("x-goog-lease-token", token)
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return r.status
+    except urllib.error.HTTPError as e:
+        return e.code
+
+
+def on_term(signum, frame):
+    stamp("term")
+    sys.exit(143)
+
+
+signal.signal(signal.SIGTERM, on_term)
+(seen / "env").write_text("".join(f"{k}={v}\n" for k, v in sorted(os.environ.items())))
+(seen / "args").write_text(" ".join(a for a in args if a != token) + "\n")
+(seen / "token").write_text(token)
+(seen / "cwd").write_text(os.getcwd())
+(seen / "files-before").write_text("".join(f"{p.name}\n" for p in sorted(workdir.iterdir())))
+
+once = os.environ.get("STUB_NEVER_ATTACH_ONCE")
+if once and os.path.exists(once):
+    os.remove(once)
+    stamp("hung")
+    time.sleep(3600)
+# As the real worker does (envruntime/worker.go, ServeLeases): the line is logged before it connects.
+say("Attached interaction session")
+time.sleep(float(os.environ.get("STUB_CONNECT_SECONDS", "0")))
+status = call("attach")
+if status != 200:
+    say(f"session ended with error: attach failed: HTTP {status}")
+    sys.exit(1)
+stamp("start")
+if os.environ.get("STUB_FAIL_AFTER_ATTACH") == "1":
+    say("session ended with error: boom (test)")
+    sys.exit(3)
+(workdir / f"made-by-{iid}").touch()
+say("Executing function execute_bash")
+time.sleep(float(os.environ.get("STUB_RUN_SECONDS", "2")))
+call("complete")
+say("Completed interaction session")
+stamp("end")

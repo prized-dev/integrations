@@ -1,0 +1,271 @@
+#!/usr/bin/env python3
+"""A stand-in for the `prized` CLI, for test.sh: just the `prized sandbox` commands provision.sh uses.
+
+Each "sandbox" is a directory under $FAKE_PRIZED_ROOT whose home/ plays /home/prized. Commands run
+there with a clean environment, as they would in a real sandbox: nothing from this machine's
+environment gets in (except STUB_* settings for the stub worker). Every call is logged to calls.log,
+with whether a Gemini credential was in the CLI's own environment. Background commands (`exec
+--detach`) are real processes with their output in procs/<id>.out; every `--follow` records when it
+attached and when it let go in follows.log, so a test can tell whether a sandbox was kept awake.
+"""
+
+import json
+import os
+import secrets
+import signal
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(os.environ["FAKE_PRIZED_ROOT"])
+HERE = Path(__file__).resolve().parent
+GEMINI_CREDENTIALS = ("GEMINI_API_KEY", "GOOGLE_API_KEY", "GEMINI_ENVIRONMENT_KEY", "GEMINI_ACCESS_TOKEN")
+
+
+def log(argv):
+    with open(ROOT / "calls.log", "a") as f:
+        cred = any(k in os.environ for k in GEMINI_CREDENTIALS)
+        f.write(json.dumps({"t": time.time(), "argv": argv, "gemini_credential": cred}) + "\n")
+
+
+def meta_path(sid):
+    return ROOT / sid / "meta.json"
+
+
+def load(sid):
+    p = meta_path(sid)
+    if not p.exists() or json.loads(p.read_text())["state"] == "deleted":
+        print(f"prized: sandbox {sid} not found", file=sys.stderr)
+        sys.exit(1)
+    return json.loads(p.read_text())
+
+
+def save(m):
+    tmp = meta_path(m["id"]).with_suffix(".tmp%d" % os.getpid())
+    tmp.write_text(json.dumps(m))
+    os.replace(tmp, meta_path(m["id"]))
+
+
+def home(sid):
+    return ROOT / sid / "home"
+
+
+def flags(args, repeatable=("label", "env")):
+    out, rest, i = {}, [], 0
+    while i < len(args):
+        a = args[i]
+        if a == "--":
+            rest.extend(args[i:])
+            break
+        if a.startswith("--"):
+            name = a[2:]
+            if name in ("wait", "no-wait", "json", "detach"):
+                out[name] = True
+            else:
+                i += 1
+                if name in repeatable:
+                    out.setdefault(name, []).append(args[i])
+                else:
+                    out[name] = args[i]
+        else:
+            rest.append(a)
+        i += 1
+    return out, rest
+
+
+def seconds(d):
+    units = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+    return float(d[:-1]) * units[d[-1]] if d[-1] in units else float(d)
+
+
+def wake(m):
+    if m["state"] in ("paused", "pausing"):  # exec and cp resume a paused sandbox on their own
+        m["state"] = "running"
+        m["resumes"] = m.get("resumes", 0) + 1
+        save(m)
+
+
+def remote_path(sid, p):
+    p = p[2:] if p.startswith("~/") else p
+    return home(sid) / p if not p.startswith("/") else Path(p)
+
+
+def sandbox_env(f):
+    env = {"PATH": f"{HERE}/sandbox-bin:/usr/local/bin:/usr/bin:/bin", "LANG": "C.UTF-8"}
+    env.update({k: v for k, v in os.environ.items() if k.startswith("STUB_")})
+    env.update(kv.split("=", 1) for kv in f.get("env", []))
+    return env
+
+
+def proc_dir(sid):
+    d = ROOT / sid / "procs"
+    d.mkdir(exist_ok=True)
+    return d
+
+
+def proc_doc(sid, pid_):
+    """A background command's status, shaped like Prized's GET /process/{id}."""
+    d = proc_dir(sid)
+    if not (d / f"{pid_}.pid").exists():
+        print(f"prized: no process {pid_} in {sid}", file=sys.stderr)
+        sys.exit(5)
+    done = d / f"{pid_}.exit"
+    code = int(done.read_text()) if done.exists() and done.read_text().strip() else None
+    return {"processId": pid_, "running": code is None, "lost": False, "exitCode": code, "timedOut": (d / f"{pid_}.timedout").exists()}
+
+
+def detach(sid, cmd, f):
+    """Start cmd as a background command: a supervisor in a session of its own runs it and records its exit code."""
+    d, pid_ = proc_dir(sid), "p_" + secrets.token_hex(6)
+    timeout = seconds(f["timeout"]) if "timeout" in f else None
+    env = dict(sandbox_env(f), HOME=str(home(sid)))
+    if os.fork() == 0:
+        os.setsid()
+        devnull = os.open(os.devnull, os.O_RDWR)
+        for fd in (0, 1, 2):
+            os.dup2(devnull, fd)
+        with open(d / f"{pid_}.out", "wb") as out:
+            proc = subprocess.Popen(["bash", "-c", cmd], cwd=home(sid) / "work", env=env, stdout=out, stderr=out, start_new_session=True)
+            (d / f"{pid_}.pid").write_text(str(proc.pid))
+            try:
+                code = proc.wait(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                (d / f"{pid_}.timedout").touch()
+                os.killpg(proc.pid, signal.SIGTERM)
+                code = 143
+                proc.wait()
+            if code < 0:
+                code = 128 - code
+        (d / f"{pid_}.exit").write_text(str(code))
+        os._exit(0)
+    for _ in range(100):
+        if (d / f"{pid_}.pid").exists():
+            break
+        time.sleep(0.02)
+    print(pid_)
+
+
+def follow(sid, pid_):
+    """Print the command's output as it grows, until it ends; exit with its code. An attached follow keeps a sandbox awake."""
+    d = proc_dir(sid)
+    proc_doc(sid, pid_)
+    once = os.environ.get("FAKE_FOLLOW_DROP_ONCE")
+    if once and os.path.exists(once):  # the connection drops while the command still runs
+        os.remove(once)
+        with open(ROOT / "follows.log", "a") as fl:
+            fl.write(json.dumps({"sandbox": sid, "process": pid_, "start": time.time(), "end": time.time(), "dropped": True}) + "\n")
+        print("prized: connection lost", file=sys.stderr)
+        sys.exit(1)
+    start, offset = time.time(), 0
+    while True:
+        done = (d / f"{pid_}.exit").exists()
+        data = (d / f"{pid_}.out").read_bytes()
+        sys.stdout.buffer.write(data[offset:])
+        sys.stdout.flush()
+        offset = len(data)
+        if done:
+            break
+        time.sleep(0.1)
+    with open(ROOT / "follows.log", "a") as fl:
+        fl.write(json.dumps({"sandbox": sid, "process": pid_, "start": start, "end": time.time()}) + "\n")
+    sys.exit(proc_doc(sid, pid_)["exitCode"])
+
+
+def main():
+    argv = sys.argv[1:]
+    log(argv)
+    if argv[:1] != ["sandbox"]:
+        sys.exit("fake-prized: only `prized sandbox` is faked")
+    verb, args = argv[1], argv[2:]
+    f, rest = flags(args)
+
+    if verb == "ls":
+        want = dict(kv.split("=", 1) for kv in f.get("label", []))
+        boxes = []
+        for p in sorted(ROOT.glob("sbx_*/meta.json")):
+            m = json.loads(p.read_text())
+            if m["state"] != "deleted" and all(m["labels"].get(k) == v for k, v in want.items()):
+                boxes.append({"id": m["id"], "state": m["state"], "labels": m["labels"]})
+        print(json.dumps({"sandboxes": list(reversed(boxes))}))
+    elif verb == "create":
+        time.sleep(float(os.environ.get("FAKE_CREATE_DELAY", "0")))  # a real create takes a moment
+        n = 1
+        while True:  # the next free id, claimed by making its directory
+            sid = f"sbx_{n:016x}"
+            try:
+                (ROOT / sid).mkdir()
+                break
+            except FileExistsError:
+                n += 1
+        (home(sid) / "work").mkdir(parents=True)
+        labels = dict(kv.split("=", 1) for kv in f.get("label", []))
+        save({"id": sid, "state": "running", "labels": labels, "flags": f})
+        print(sid)
+    elif verb == "resume":
+        m = load(rest[0])
+        wake(m)
+    elif verb == "get":
+        m = load(rest[0])
+        print(json.dumps({"sandbox": {"id": m["id"], "state": m["state"], "labels": m["labels"]}}))
+    elif verb == "rm":
+        for sid in rest:
+            m = load(sid)
+            m["state"] = "deleted"
+            save(m)
+    elif verb == "cp":
+        src, dst = rest
+        if src != "-":
+            sys.exit("fake-prized: only `sandbox cp - ID:PATH` is faked")
+        sid, p = dst.split(":", 1)
+        wake(load(sid))
+        target = remote_path(sid, p)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(sys.stdin.buffer.read())
+        os.chmod(target, 0o644)
+    elif verb == "exec":
+        sid = rest[0]
+        m = load(sid)
+        if "status" in f:
+            print(json.dumps({"sandboxId": sid, "process": proc_doc(sid, f["status"])}))
+            return
+        wake(m)
+        if "logs" in f:
+            proc_doc(sid, f["logs"])
+            sys.stdout.buffer.write((proc_dir(sid) / f"{f['logs']}.out").read_bytes())
+            return
+        if "follow" in f:
+            follow(sid, f["follow"])
+        if "kill" in f:
+            doc = proc_doc(sid, f["kill"])
+            if doc["running"]:
+                try:
+                    os.killpg(int((proc_dir(sid) / f"{f['kill']}.pid").read_text()), signal.SIGTERM)
+                except OSError:
+                    pass
+            print(f"stopped {f['kill']} (TERM)" if doc["running"] else f"{f['kill']} had already ended", file=sys.stderr)
+            return
+        cmd = " ".join(rest[2:])  # rest[1] is "--"
+        if f.get("detach"):
+            return detach(sid, cmd, f)
+        env = dict(sandbox_env(f), HOME=str(home(sid)))
+        timeout = seconds(f.get("timeout", "5m"))
+        proc = subprocess.Popen(["bash", "-c", cmd], cwd=home(sid) / "work", env=env, start_new_session=True)
+
+        def stop(signum, frame):  # the caller went away: end its command too, so a test leaves nothing running
+            os.killpg(proc.pid, signal.SIGKILL)
+            sys.exit(128 + signum)
+
+        signal.signal(signal.SIGTERM, stop)
+        signal.signal(signal.SIGINT, stop)
+        try:
+            sys.exit(proc.wait(timeout=timeout))
+        except subprocess.TimeoutExpired:
+            os.killpg(proc.pid, 9)
+            sys.exit(124)
+    else:
+        sys.exit(f"fake-prized: sandbox {verb} is not faked")
+
+
+if __name__ == "__main__":
+    main()
