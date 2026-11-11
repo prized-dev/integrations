@@ -8,7 +8,6 @@ identity:
   icon: icon.svg
   tags:
     - utilities
-    - productivity
 credentials_for_provider:
   api_key:
     type: secret-input

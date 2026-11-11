@@ -65,6 +65,45 @@ def test_marketplace_metadata():
     assert "https://github.com/prized-dev/integrations" in readme
 
 
+# A manifest tag has to pass two lists: the Marketplace's controlled vocabulary (langgenius/dify-plugins,
+# .github/scripts/governance/check_manifest_tags.py, which fails a manifest with no top-level tags)
+# and the tags Dify's plugin daemon accepts when it packages or installs a plugin
+# (langgenius/dify-plugin-daemon, pkg/entities/manifest_entities/tags.go). The vocabulary's newer
+# tags (devtools, llm, security and the rest) are not in the daemon's list yet, so they are left out.
+# The provider's own tags pass a third, shorter list (dify_plugin's ToolLabelEnum, which has no
+# "agent"); the SDK load in the first test checks that one.
+MARKETPLACE_TAGS = {
+    "agent",
+    "business",
+    "design",
+    "education",
+    "entertainment",
+    "finance",
+    "image",
+    "news",
+    "other",
+    "productivity",
+    "rag",
+    "search",
+    "social",
+    "travel",
+    "utilities",
+    "videos",
+    "weather",
+}
+
+
+def test_tags_pass_the_marketplace_and_the_daemon():
+    manifest = yaml.safe_load((ROOT / "manifest.yaml").read_text())
+    provider = yaml.safe_load((ROOT / "provider" / "prized.yaml").read_text())
+    tags = manifest["tags"]
+    assert isinstance(tags, list) and 1 <= len(tags) <= 3
+    assert set(tags) <= MARKETPLACE_TAGS
+    assert tags == ["agent", "utilities"]
+    # The provider carries no tag the manifest lacks.
+    assert provider["identity"]["tags"] and set(provider["identity"]["tags"]) <= set(tags)
+
+
 def test_requirements_are_bounded():
     for line in (ROOT / "requirements.txt").read_text().splitlines():
         assert "==" in line, line  # exact pins: the Marketplace checks those for known vulnerabilities

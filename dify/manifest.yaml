@@ -7,6 +7,9 @@ label:
 description:
   en_US: Run commands, code and files in Prized Sandboxes, Linux microVMs that pause and resume.
 icon: icon.svg
+tags:
+  - agent
+  - utilities
 resource:
   memory: 268435456
   permission: {}
