@@ -118,7 +118,7 @@ export function indexMarkdown(doc, { applied = [], stale = [], diffPath = null }
   const rows = doc.results;
   const n = rows.length;
   const L = [];
-  const best = rows[0];
+  const best = rows[0] ?? { passed: 0 }; // no row at all: a run in which no platform could be checked
   const full = rows.filter((r) => r.passed === r.total);
   const dist = new Map();
   for (const r of rows) dist.set(r.passed, (dist.get(r.passed) ?? 0) + 1);

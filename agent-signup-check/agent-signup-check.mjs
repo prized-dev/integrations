@@ -1167,14 +1167,15 @@ export async function checkSite(input, opts = {}) {
       // A cap can be in either metadata document (agent_auth.billing, or AAuth budgets).
       limits: [...as, ...(prm ? [] : by('prm'))],
       // The API's answer, x402 discovery (x402R itself: the budget may have stopped it before
-      // it was sent) and agent_auth.billing; and the prose, when it went unread and so could
-      // not name where the platform's x402 document is.
-      payment: [...api, x402R, ...as, ...(x402Ref ? [] : prose)],
+      // it was sent) and agent_auth.billing.
+      payment: [...api, x402R, ...as],
       markdown: by('llms.txt'),
     };
-    // Prose can only lift these two to "partly", so unread prose leaves the verdict; the reason
-    // must still not say a file holds nothing when the file was never read.
-    const proseOnly = { register: prose, limits: prose };
+    // Prose (auth.md, llms.txt) is not one of these three checks' own files: it can lift
+    // sign-up by API and spend limits to "partly", and can name a second x402 URL for payment
+    // handoff. When it went unread and the check's own files all answered, the fail is a fail
+    // that was read; the reason must still not say a file holds nothing when it was never read.
+    const proseOnly = { register: prose, limits: prose, payment: x402Ref ? [] : prose };
     for (const c of CHECKS) {
       const cell = results[c.id];
       if (!cell || cell.status === 'pass' || cell.status === 'skipped') continue;

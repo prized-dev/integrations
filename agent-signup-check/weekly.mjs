@@ -195,9 +195,13 @@ async function runAll(targets, { getFor, concurrency, pauseMs, dateFor }) {
 /** Every request failed on the network: with more than MAX_UNREACHABLE such platforms the
  *  problem is this machine, and nothing is written. */
 const networkDown = (r) => r.error || ((r._raw || []).length > 0 && (r._raw || []).every((q) => NETWORK_ERROR(q.error)));
-/** Nothing at all was answered (network failures, or a 429, a server error or a bot challenge
- *  on every request): the platform was not checked, and its last row is kept. */
-const unreachable = (r) => r.error || ((r._raw || []).length > 0 && (r._raw || []).every(noAnswer));
+/** Nothing at all came back: every request failed on the network or answered HTTP 429 or 5xx.
+ *  The platform was not checked, and its last row is kept. A bot wall is not in this list: a
+ *  platform that challenges every request, its API included, is checked and shows what was
+ *  seen (the 401 check fails on a wall in front of the API, the files behind walls are not
+ *  read), instead of carrying an old row for as long as the wall stands. */
+const noReply = (q) => NETWORK_ERROR(q.error) || /^HTTP \d/.test(notAnswered(q) || '');
+const unreachable = (r) => r.error || ((r._raw || []).length > 0 && (r._raw || []).every(noReply));
 
 export async function weekly(opts) {
   const root = opts.root ?? HERE;
@@ -272,6 +276,7 @@ export async function weekly(opts) {
     fs.mkdirSync(raw, { recursive: true });
     out.forEach((r, i) => checked(i) && saveEvidence(raw, r));
     const counts = scrubDir(raw, staged, { clientIps });
+    fs.mkdirSync(staged, { recursive: true }); // there even when no platform was checked
     // A kept row keeps its evidence too (already scrubbed when it was published).
     for (const n of notChecked) {
       const old = [outDir, root].map((d) => path.join(d, 'evidence', siteDir(n.site))).find((d) => fs.existsSync(d));
@@ -298,7 +303,10 @@ export async function weekly(opts) {
     const { doc, applied, stale } = publish(run, targets);
     doc.date = date;
     for (const n of notChecked) {
-      if (n.carried) doc.results.push({ ...structuredClone(prevBySite.get(n.site)), notChecked: { date, reason: n.why, keptFrom: n.carried } });
+      if (!n.carried) continue;
+      const kept = structuredClone(prevBySite.get(n.site));
+      // A row kept a second time is still from the run that last read it, not from the last run.
+      doc.results.push({ ...kept, notChecked: { date, reason: n.why, keptFrom: kept.notChecked?.keptFrom ?? n.carried } });
     }
     rankSort(doc.results);
 
@@ -334,7 +342,7 @@ export async function weekly(opts) {
     fs.cpSync(staged, evidence, { recursive: true });
 
     const summary =
-      `${date}: ${doc.results.length} platforms (${notChecked.length} not checked), best ${doc.results[0].name} ${doc.results[0].passed}/${doc.results[0].total}. ` +
+      `${date}: ${doc.results.length} platforms (${notChecked.length} not checked), best ${doc.results[0] ? `${doc.results[0].name} ${doc.results[0].passed}/${doc.results[0].total}` : 'none'}. ` +
       `Since ${d.from ?? 'nothing'}: ${d.improved.length} improved${d.improved.length ? ` (${d.improved.map((e) => `${e.name} ${e.from} to ${e.to}`).join(', ')})` : ''}, ` +
       `${d.regressed.length} regressed${d.regressed.length ? ` (${d.regressed.map((e) => `${e.name} ${e.from} to ${e.to}`).join(', ')})` : ''}, ` +
       `${d.changed.length} other changes, ${d.added.length} added, ${d.removed.length} removed. ` +

@@ -318,17 +318,15 @@ test('the published evidence scores the same as the published results', async ()
   const replayed = new Map((await replay(targets, path.join(root, 'evidence'))).map((r) => [r.site, r]));
   assert.equal(published.results.length, targets.length);
   // A run made with this version of the checker must replay to the same verdict in every cell.
-  // The published run of 2026-11-07 was made with 0.2.2; 0.2.5 reads fourteen of its cells
+  // The published run of 2026-11-07 was made with 0.2.2; 0.2.5 reads eleven of its cells
   // differently from the same responses, and every other cell must still agree. This list goes
   // when the next run is published.
   const KNOWN = published.checker === `agent-signup-check/${VERSION}` ? {} : {
-    // A bot challenge on the file's own path, or a server error: not read, not a fail. With
-    // auth.md or llms.txt unread, payment handoff is unread too (they name where a platform's
-    // x402 document is).
-    'openai.com': { authmd: 'unread', payment: 'unread' },
-    'perplexity.ai': { authmd: 'unread', payment: 'unread' },
+    // A bot challenge on the file's own path, or a server error: not read, not a fail.
+    'openai.com': { authmd: 'unread' },
+    'perplexity.ai': { authmd: 'unread' },
     'codesandbox.io': { authmd: 'unread', prm: 'unread', register: 'unread', limits: 'unread', payment: 'unread', markdown: 'unread' },
-    'deno.com': { markdown: 'unread', payment: 'unread' },
+    'deno.com': { markdown: 'unread' },
     // Its x402 request was stopped by the old cap of 16 (saved as such), and its "llms.txt" was
     // the landing page it also serves at /auth.md; the docs llms.txt was not fetched that day.
     'cdp.coinbase.com': { payment: 'unread', markdown: 'fail' },
@@ -669,12 +667,14 @@ test('a docs llms.txt that answers HTTP 500 is not read, not a fail (Deno Deploy
   assert.equal(cell(r, 'challenge').status, 'partial');
   assert.equal(r.total, 7);
   assert.equal(r.passed, 0);
-  // No llms.txt was read, and an llms.txt can name where a platform's x402 document is, so
-  // payment handoff is not read either. The other fails had every file they read answered.
-  assert.equal(cell(r, 'payment').status, 'unread');
-  assert.equal(cell(r, 'payment').reason, 'Not read on 2026-11-11: https://docs.deno.com/llms.txt answered with HTTP 500');
-  assert.equal(r.unread, 2);
-  assert.deepEqual([cell(r, 'prm').status, cell(r, 'register').status, cell(r, 'limits').status], ['fail', 'fail', 'fail']);
+  // Only the check whose own file failed is not read. The others had every file they read
+  // answered: they stay fails, and the three that also look in llms.txt prose say it was not read.
+  assert.equal(r.unread, 1);
+  assert.deepEqual([cell(r, 'prm').status, cell(r, 'register').status, cell(r, 'limits').status, cell(r, 'payment').status], ['fail', 'fail', 'fail', 'fail']);
+  for (const id of ['register', 'limits', 'payment']) {
+    assert.match(cell(r, id).reason, / \(not read on 2026-11-11: https:\/\/docs\.deno\.com\/llms\.txt answered with HTTP 500\)$/, id);
+  }
+  assert.doesNotMatch(cell(r, 'prm').reason, /not read/);
   // Without a date the reason carries the day of the check.
   const today = await checkSite('deno.com', { api: 'https://api.deno.com/v2/apps', docs: 'https://docs.deno.com/llms.txt', get: stub(pages) });
   assert.equal(cell(today, 'markdown').reason, `Not read on ${today.checkedAt.slice(0, 10)}: https://docs.deno.com/llms.txt answered with HTTP 500`);
@@ -786,14 +786,19 @@ test('when /auth.md goes unread, checks that read its prose do not claim it says
   const base = { 'https://one.example/llms.txt': md('# One\n'), 'https://api.one.example/v1/me': API_401, 'https://one.example/pay/.well-known/x402': x402 };
   const read = await checkSite('one.example', { api: 'https://api.one.example/v1/me', get: stub({ ...base, 'https://one.example/auth.md': authmd }) });
   assert.deepEqual([cell(read, 'register').status, cell(read, 'limits').status, cell(read, 'payment').status], ['partial', 'partial', 'pass']);
-  // Unread, payment could still have passed through the URL auth.md names: not read. The other
-  // two could at most have been "partly": they stay fails, and say auth.md was not read.
+  // Unread, only the auth.md check itself is not read. The three others had their own files
+  // answered (the API, the standard x402 path, the metadata), so they are fails that were
+  // read; each says auth.md was not, since its prose could have changed the verdict.
   const unreadRun = await checkSite('one.example', { api: 'https://api.one.example/v1/me', date: '2026-11-11', get: stub({ ...base, 'https://one.example/auth.md': { status: 503, headers: {}, body: '' } }) });
-  assert.deepEqual([cell(unreadRun, 'authmd').status, cell(unreadRun, 'payment').status], ['unread', 'unread']);
-  for (const id of ['register', 'limits']) {
+  assert.equal(cell(unreadRun, 'authmd').status, 'unread');
+  assert.equal(unreadRun.unread, 1);
+  for (const id of ['register', 'limits', 'payment']) {
     assert.equal(cell(unreadRun, id).status, 'fail');
     assert.match(cell(unreadRun, id).reason, / \(not read on 2026-11-11: https:\/\/one\.example\/auth\.md answered with HTTP 503\)$/, id);
   }
+  // The root llms.txt behind a challenge with the docs one read: nothing was missed, no note.
+  const docsRead = await checkSite('one.example', { api: 'https://api.one.example/v1/me', docs: 'https://docs.one.example/llms.txt', get: stub({ 'https://one.example/llms.txt': CF_CHALLENGE, 'https://docs.one.example/llms.txt': md('# One\n'), 'https://api.one.example/v1/me': API_401 }) });
+  assert.equal(cell(docsRead, 'payment').reason, 'No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt');
 });
 
 test('an answer is an answer: 404, a plain 403, HTML at 200 and a 401 stay verdicts', async () => {
@@ -927,6 +932,34 @@ test('a platform that answers 429 to everything, twice, keeps its last row; it i
   assert.equal(row.notChecked.keptFrom, '2026-11-05');
   assert.equal(row.checks.find((c) => c.id === 'markdown').status, 'pass');
   assert.ok(second.warnings >= 1);
+  // Kept a second week, the row still says which run last read it.
+  const third = await weekly({ root, out: root, getFor: limited, retry: true, clientIps: ['203.0.113.9'], date: '2026-11-19', log: () => {} });
+  assert.deepEqual([third.doc.results[0].notChecked.date, third.doc.results[0].notChecked.keptFrom], ['2026-11-19', '2026-11-05']);
+
+  // With no earlier row to keep and nothing answered, the run still writes (the platform is
+  // listed under errors), it does not throw.
+  const fresh = tmp();
+  fs.writeFileSync(path.join(fresh, 'targets.json'), JSON.stringify(TARGETS));
+  const none = await weekly({ root: fresh, out: fresh, getFor: limited, retry: true, clientIps: ['203.0.113.9'], date: '2026-11-12', log: () => {} });
+  assert.deepEqual(none.notChecked.map((n) => [n.site, n.carried]), [['one.example', null]]);
+});
+
+test('a platform that puts a bot wall in front of everything, its API too, is checked, not carried', async () => {
+  // A wall is not "nothing came back": the row shows what was seen instead of keeping last
+  // week's verdicts for as long as the wall stands.
+  const root = tmp();
+  fs.writeFileSync(path.join(root, 'targets.json'), JSON.stringify(TARGETS));
+  await weekly({ root, out: root, getFor: () => stub(SITE_V2), clientIps: ['203.0.113.9'], date: '2026-11-05', log: () => {} });
+  const walled = () => async (url) => ({ url, finalUrl: url, hops: [], ...structuredClone(CF_CHALLENGE) });
+  const second = await weekly({ root, out: root, getFor: walled, retry: true, clientIps: ['203.0.113.9'], date: '2026-11-12', log: () => {} });
+  assert.deepEqual(second.notChecked, []);
+  const row = second.doc.results[0];
+  assert.equal(row.notChecked, undefined);
+  // The 401 check fails on the wall in front of the API (its own question); the files are not read.
+  assert.equal(row.checks.find((c) => c.id === 'challenge').status, 'fail');
+  assert.match(row.checks.find((c) => c.id === 'challenge').reason, /^The API answers with a Cloudflare bot challenge/);
+  assert.equal(row.unread, 6);
+  assert.equal(row.total, 7);
 });
 
 test('a weekly run tries a platform once more when a request got no answer, and records both tries', async () => {
@@ -961,12 +994,12 @@ test('a weekly run tries a platform once more when a request got no answer, and 
   // The day the request was made, whatever --date names the run.
   const asked = still.doc.results[0].checkedAt.slice(0, 10);
   assert.equal(cellMd.reason, `Not read on ${asked}: https://one.example/llms.txt answered with HTTP 503`);
-  assert.equal(still.doc.results[0].unread, 2);
-  assert.deepEqual(still.unread.map((u) => [u.site, u.check, u.was]), [['one.example', 'Payment handoff', 'fail'], ['one.example', 'Docs in Markdown', 'fail']]);
-  assert.match(still.summary, /not read: 2 check\(s\) on 1 platform\(s\)\.$/);
+  assert.equal(still.doc.results[0].unread, 1);
+  assert.deepEqual(still.unread.map((u) => [u.site, u.check, u.was]), [['one.example', 'Docs in Markdown', 'fail']]);
+  assert.match(still.summary, /not read: 1 check\(s\) on 1 platform\(s\)\.$/);
   const mdOut = fs.readFileSync(path.join(root2, 'results/2026-11-12.md'), 'utf8');
-  assert.match(mdOut, /- Not read: 2 check\(s\) on 1 platform\(s\) \(One\)/);
-  assert.match(mdOut, /\| One \(one\.example\) \| Test \| 1\/7 2\? \|/);
+  assert.match(mdOut, /- Not read: 1 check\(s\) on 1 platform\(s\) \(One\)/);
+  assert.match(mdOut, /\| One \(one\.example\) \| Test \| 1\/7 1\? \|/);
   // The saved responses score the same when replayed, and the reason keeps the day they were fetched.
   const again = await replay(TARGETS, path.join(root2, 'evidence'));
   assert.equal(again[0].checks.find((c) => c.id === 'markdown').status, 'unread');
