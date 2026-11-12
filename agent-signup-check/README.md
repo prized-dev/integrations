@@ -53,7 +53,7 @@ A check is "not read" when it would be a fail and a file it reads got no answer:
 
 Every verdict carries its reason, the URL it was read from and, for prose, the sentence that matched, so you can judge it yourself. [METHOD.md](METHOD.md) has the rest: how the 100 were picked, which API URL was probed for each, the request order and the limits of what a public file can show.
 
-Prized wrote this checker, and the spend-limits draft two of the checks accept. Prized is scored by the same code as everyone else and sorted with them. In the run of 2026-11-07 no platform, Prized included, passed a check through that draft's fields. A verdict that rests on them names `agent_auth.billing` in its reason, so each run's results show who does.
+Prized wrote this checker, and the spend-limits draft two of the checks accept. Prized is scored by the same code as everyone else and sorted with them. In the runs of 2026-11-07 and 2026-11-12 no platform, Prized included, passed a check through that draft's fields. A verdict that rests on them names `agent_auth.billing` in its reason, so each run's results show who does.
 
 ## Think a row is wrong?
 

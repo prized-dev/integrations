@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { checkSite, isPublicAddress, MAX_REQUESTS, normalizeSite, notAnswered, saveEvidence, urlProblem, VERSION } from '../agent-signup-check.mjs';
+import { checkSite, isPublicAddress, MAX_REQUESTS, normalizeSite, notAnswered, saveEvidence, urlProblem } from '../agent-signup-check.mjs';
 import { applyCorrections, loadTargets, md as mdText } from '../build-index.mjs';
 import { loadSite, replay } from '../replay.mjs';
 import { auditDir, bodyOf, HTML_KEEP, redactClientIps, scrubEvidence } from '../scrub.mjs';
@@ -317,28 +317,14 @@ test('the published evidence scores the same as the published results', async ()
   const published = JSON.parse(fs.readFileSync(path.join(root, 'results.json'), 'utf8'));
   const replayed = new Map((await replay(targets, path.join(root, 'evidence'))).map((r) => [r.site, r]));
   assert.equal(published.results.length, targets.length);
-  // A run made with this version of the checker must replay to the same verdict in every cell.
-  // The published run of 2026-11-07 was made with 0.2.2; 0.2.5 reads eleven of its cells
-  // differently from the same responses, and every other cell must still agree. This list goes
-  // when the next run is published.
-  const KNOWN = published.checker === `agent-signup-check/${VERSION}` ? {} : {
-    // A bot challenge on the file's own path, or a server error: not read, not a fail.
-    'openai.com': { authmd: 'unread' },
-    'perplexity.ai': { authmd: 'unread' },
-    'codesandbox.io': { authmd: 'unread', prm: 'unread', register: 'unread', limits: 'unread', payment: 'unread', markdown: 'unread' },
-    'deno.com': { markdown: 'unread' },
-    // Its x402 request was stopped by the old cap of 16 (saved as such), and its "llms.txt" was
-    // the landing page it also serves at /auth.md; the docs llms.txt was not fetched that day.
-    'cdp.coinbase.com': { payment: 'unread', markdown: 'fail' },
-  };
-  if (Object.keys(KNOWN).length) assert.equal(published.checker, 'agent-signup-check/0.2.2', 'the list of known differences is for the 2026-11-07 run');
+  // The published evidence must replay to the published verdict in every cell. (While
+  // results.json was the 2026-11-07 run, made with 0.2.2, a list of the cells 0.2.5 reads
+  // differently applied; the 2026-11-12 run is made with 0.2.5, so there is none.)
   for (const row of published.results) {
     const again = replayed.get(row.site);
     // A hand-corrected cell keeps the checker's own verdict as checkerStatus.
-    const expected = row.checks.map((c) => `${c.id}:${(KNOWN[row.site] ?? {})[c.id] ?? c.checkerStatus ?? c.status}`).join(' ');
+    const expected = row.checks.map((c) => `${c.id}:${c.checkerStatus ?? c.status}`).join(' ');
     assert.equal(again.checks.map((c) => `${c.id}:${c.status}`).join(' '), expected, row.site);
-    // Whatever a newer checker reads differently, it never takes a pass away for a non-answer.
-    for (const c of row.checks) if (c.status === 'pass') assert.notEqual(again.checks.find((x) => x.id === c.id).status, 'unread', `${row.site} ${c.id}`);
   }
   assert.deepEqual(auditDir(path.join(root, 'evidence')), []);
 });
