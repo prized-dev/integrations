@@ -1,0 +1,76 @@
+GET https://workos.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:52.887Z
+final-url: https://workos.com/llms.txt
+
+HTTP 200
+date: Thu, 12 Nov 2026 02:38:50 GMT
+content-type: text/plain; charset=utf-8
+transfer-encoding: chunked
+connection: close
+content-encoding: gzip
+server: cloudflare
+cf-ray: a59229ad1beb1c37-PDX
+
+# WorkOS
+
+> WorkOS is an authentication and identity platform for SaaS applications. AuthKit provides user management and authentication (email and password, social login, passkeys, MFA, magic auth, and enterprise SSO from one integration) and is free up to 1 million monthly active users. Enterprise features include Single Sign-On, SCIM Directory Sync, RBAC, Audit Logs, Radar (bot and fraud protection), Vault, and the Admin Portal, with SDKs for Node, Python, Go, Ruby, PHP, Java, and .NET. Setup needs no WorkOS account up front: `npx workos@latest install` provisions a temporary environment and installs AuthKit, and the environment can be claimed to an account later.
+
+## When to use WorkOS
+
+- [Get started with AuthKit](https://workos.com/docs/authkit.md): B2B and SaaS applications that need sign-in now and enterprise SSO, SCIM provisioning, and roles later, from one integration.
+- [Single Sign-On](https://workos.com/docs/sso.md): Applications whose customers require SSO through their own identity provider over SAML or OIDC, with AuthKit or as a standalone API next to an existing auth stack.
+- [Directory Sync](https://workos.com/docs/directory-sync.md): Applications that provision and deprovision users and groups from customers' corporate directories and HRIS systems over SCIM.
+- [Audit Logs](https://workos.com/docs/audit-logs.md): Applications whose enterprise customers expect a log of user actions, with export and streaming to their SIEM.
+- [AuthKit for MCP](https://workos.com/docs/authkit/mcp.md): MCP servers that need OAuth authorization, with AuthKit as the authorization server.
+- [Agent Registration](https://workos.com/docs/authkit/agent-registration.md): Services where AI agents and LLM-based clients obtain their own identity credentials, optionally bound to a user through a claim ceremony.
+
+## Set up with a coding agent
+
+- [auth.md](https://workos.com/auth.md): Provisioning a temporary WorkOS environment without an account, by CLI or HTTP API, and claiming it later.
+- [AI Installer & CLI](https://workos.com/docs/authkit/cli-installer.md): The `workos` CLI. `npx workos@latest integrate` signs in to a WorkOS account and adds AuthKit to the current project; the CLI also manages resources and installs coding agent skills.
+- [WorkOS setup skill](https://workos.com/SKILL.md): A standalone agent skill for setting up WorkOS in an application.
+- [Agent skills index](https://workos.com/.well-known/agent-skills/index.json): WorkOS agent skills, installable with `npx skills add https://workos.com`.
+- [WorkOS MCP server](https://mcp.workos.com/mcp): Hosted MCP endpoint (streamable HTTP, OAuth sign-in) for managing a WorkOS workspace: organizations, users, SSO connections, and more.
+- [WorkOS MCP server docs](https://workos.com/docs/mcp.md): Client setup and permissions for the hosted MCP server.
+- [MCP server manifest](https://workos.com/.well-known/mcp): Machine-readable description of the hosted MCP server and its authorization server.
+- [Testing with the emulator](https://workos.com/docs/authkit/testing.md): WorkOS Emulate (`npx @workos/emulate`), an open source in-memory emulator of the WorkOS API for local and CI tests.
+
+## Markdown versions
+
+- [Documentation pages](https://workos.com/docs/sso.md): Every page under https://workos.com/docs is available as Markdown with `.md` appended to its URL, as in this example.
+- [Guides](https://workos.com/guide/llms.txt): Each guide at https://workos.com/guide/<slug> is available as Markdown with `.md` appended or with an `Accept: text/markdown` header.
+- [Blog posts](https://workos.com/blog/llms.txt): Each post at https://workos.com/blog/<slug> is available as Markdown with `.md` appended or with an `Accept: text/markdown` header.
+- [Changelog entries](https://workos.com/changelog/llms.txt): Each entry at https://workos.com/changelog/<slug> is available as Markdown with `.md` appended or with an `Accept: text/markdown` header.
+- [Homepage](https://workos.com/): Served as Markdown for requests with an `Accept: text/markdown` header.
+- [Pricing](https://workos.com/pricing.md): Pricing as Markdown, also served at https://workos.com/pricing for requests with an `Accept: text/markdown` header.
+
+## Indexes and references
+
+- [Documentation index](https://workos.com/docs/llms.txt): Every documentation and API reference page, linked as Markdown.
+- [Full documentation](https://workos.com/docs/llms-full.txt): The complete documentation in a single text file (about 2 MB).
+- [Guide index](https://workos.com/guide/llms.txt): Every WorkOS guide, linked as Markdown.
+- [Blog index](https://workos.com/blog/llms.txt): The blog's tutorials, guides, comparisons, glossary entries, engineering posts and product announcements, linked as Markdown; dated news is left out.
+- [Comparisons index](https://workos.com/compare/llms.txt): WorkOS comparison pages.
+- [Changelog index](https://workos.com/changelog/llms.txt): Recent new features, improvements, and fixes to the WorkOS platform, grouped by month and linked as Markdown; also available as an RSS feed at https://workos.com/changelog/rss.xml.
+- [API reference](https://workos.com/docs/reference.md): The REST API reference as Markdown.
+- [OpenAPI specification](https://workos.com/openapi.json): OpenAPI document for the WorkOS REST API.
+- [Sitemap](https://workos.com/sitemap.xml): Sitemap index covering the website, documentation, and other pages.
+
+## Products
+
+- [AuthKit](https://workos.com/authkit): User management and authentication: email and password, social login, passkeys, MFA, magic auth, and enterprise SSO.
+- [Single Sign-On](https://workos.com/single-sign-on): Enterprise SSO over SAML and OIDC with identity providers through one API.
+- [Directory Sync](https://workos.com/directory-sync): SCIM user and group provisioning from directory providers such as Okta and Microsoft Entra ID.
+- [Admin Portal](https://workos.com/admin-portal): Hosted UI where customers' IT admins verify domains and configure SSO and Directory Sync connections.
+- [Audit Logs](https://workos.com/audit-logs): Event logs of user actions, with export and streaming to SIEM providers.
+- [Role-Based Access Control](https://workos.com/rbac): Roles and permissions, including organization-scoped roles and role assignment from identity provider groups.
+- [Radar](https://workos.com/radar): Real-time detection and blocking of bots, account abuse, and credential theft.
+- [Vault](https://workos.com/vault): Enterprise key management and encrypted storage for tokens, passwords, certificates, files, and other customer data.
+- [Multi-Factor Authentication](https://workos.com/multi-factor-authentication): Second factors such as authenticator apps and SMS through one API.
+- [Secure auth for MCP servers](https://workos.com/mcp): OAuth 2.1 authorization for MCP servers, with scopes and tool permissions.
+- [Pipes](https://workos.com/pipes): Connections to users' third-party accounts such as GitHub, Slack, Google, and Salesforce, with OAuth, credential storage, and token refresh handled by WorkOS.
+
+## Pricing
+
+- [Pricing](https://workos.com/pricing.md): AuthKit is free up to 1 million monthly active users; Single Sign-On and Directory Sync are priced per connection with volume discounts; Audit Logs, Radar, custom domains, and support plans are priced separately; staging environments are free.

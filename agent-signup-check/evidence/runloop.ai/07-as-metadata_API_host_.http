@@ -1,0 +1,16 @@
+GET https://api.runloop.ai/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:46.075Z
+final-url: https://api.runloop.ai/.well-known/oauth-authorization-server
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:37:45 GMT
+content-type: application/json
+x-content-type-options: nosniff
+referrer-policy: no-referrer
+strict-transport-security: max-age=31536000; includeSubDomains
+x-runloop-request-id: 88575eeb-a2e5-4d0f-8416-6f45617cc6a3
+content-length: 87
+connection: close
+
+{"title":"Endpoint GET /.well-known/oauth-authorization-server not found","status":404}

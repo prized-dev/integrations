@@ -1,0 +1,24 @@
+GET https://orthogonal.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:40.722Z
+redirect: 307 from https://orthogonal.com/.well-known/oauth-protected-resource
+final-url: https://www.orthogonal.com/.well-known/oauth-protected-resource
+
+HTTP 404
+age: 0
+cache-control: public, max-age=0, must-revalidate
+content-length: 0
+content-security-policy-report-only: default-src 'self'; script-src 'self' 'unsafe-inline' https://clerk.orthogonal.com https://challenges.cloudflare.com https://*.protect.clerk.com https://connect-js.stripe.com https://js.stripe.com https://www.googletagmanager.com https://app.chatwoot.com https://vercel.live; style-src 'self' 'unsafe-inline' https://vercel.live; img-src 'self' data: blob: https://img.clerk.com https://*.stripe.com https://www.googletagmanager.com https://*.google-analytics.com https://models.dev https://vercel.live https://vercel.com; font-src 'self' https://vercel.live https://assets.vercel.com; connect-src 'self' https://clerk.orthogonal.com https://*.protect.clerk.com:* https://www.googletagmanager.com https://*.google-analytics.com https://*.google.com https://vercel.live wss://ws-us3.pusher.com; frame-src 'self' https://challenges.cloudflare.com https://*.protect.clerk.com https://connect-js.stripe.com https://js.stripe.com https://app.chatwoot.com https://vercel.live https://trytako.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; report-uri /csp-reports
+date: Thu, 12 Nov 2026 02:38:38 GMT
+referrer-policy: strict-origin-when-cross-origin
+server: Vercel
+strict-transport-security: max-age=63072000
+x-clerk-auth-reason: session-token-and-uat-missing
+x-clerk-auth-status: signed-out
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-matched-path: /.well-known/oauth-protected-resource
+x-vercel-cache: MISS
+x-vercel-id: pdx1::cle1::28zlc-1794451118642-6d946750cab7
+connection: close
+

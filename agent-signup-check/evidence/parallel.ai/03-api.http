@@ -1,0 +1,16 @@
+GET https://api.parallel.ai/v1/tasks/runs/run_0
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:38.165Z
+final-url: https://api.parallel.ai/v1/tasks/runs/run_0
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:38:35 GMT
+content-type: application/json; charset=utf-8
+transfer-encoding: chunked
+connection: close
+server: cloudflare
+via: 1.1 google
+cf-cache-status: DYNAMIC
+cf-ray: a59229476cb6b338-PDX
+
+{"code":16,"message":"No API key provided (C.0)"}

@@ -1,0 +1,19 @@
+GET https://fly.io/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:37.689Z
+final-url: https://fly.io/.well-known/oauth-protected-resource
+
+HTTP 200
+access-control-allow-origin: *
+cache-control: max-age=0, private, must-revalidate
+content-encoding: br
+content-type: application/json; charset=utf-8
+date: Thu, 12 Nov 2026 02:37:35 GMT
+server: Fly/366e4bf88 (2026-10-27)
+x-request-id: GOcrujT6i4d_JuAAAUey
+transfer-encoding: chunked
+via: 1.1 fly.io
+fly-request-id: 01M76SW8NJ3H6N8CGN8XKAAN1Y-lax
+connection: close
+
+{"authorization_servers":["https://fly.io/mcp/oauth"],"bearer_methods_supported":["header"],"resource":"https://mcp.fly.io","scopes_supported":["fly:apps:delete","fly:certificates:read","fly:context:read","fly:machines:delete","fly:machines:exec","fly:machines:read","fly:machines:sensitive:read","fly:machines:write","fly:mpg:query","fly:mpg:read","fly:mpg:write","fly:network:read","fly:organizations:read","fly:read","fly:secrets:delete","fly:secrets:read","fly:secrets:write","fly:volumes:delete","fly:volumes:read","fly:volumes:write","sprites:read","sprites:write"]}

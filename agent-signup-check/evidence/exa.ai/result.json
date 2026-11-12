@@ -1,0 +1,148 @@
+{
+ "site": "exa.ai",
+ "checkedAt": "2026-11-12T02:38:30.664Z",
+ "checker": "agent-signup-check/0.2.5",
+ "passed": 2,
+ "partial": 3,
+ "unread": 0,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://exa.ai/auth.md",
+   "heading": "# Exa authentication for agents",
+   "registrationEndpoints": [],
+   "mentions": [],
+   "quote": ", not an auth.md agent-registration document: Exa does not support agent registration. It publishes no `agent_auth` metadata and offers no agent registration or",
+   "status": "partial",
+   "reason": "auth.md is published, and says agents cannot register here yet"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://exa.ai/.well-known/oauth-protected-resource",
+   "via": "well-known",
+   "resource": "https://mcp.exa.ai/mcp",
+   "authorization_servers": [
+    "https://auth.exa.ai"
+   ],
+   "status": "pass",
+   "reason": "Names 1 authorization server"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://auth.exa.ai/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.exa.ai/websets/v0/websets",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "where": "auth.md",
+   "url": "https://exa.ai/auth.md",
+   "match": "`402`",
+   "snippet": "`/search` or `/contents` with no API key returns `402` with tag `X402_PAYMENT_REQUIRED` and a `PAYMENT-REQUIRED` header that lists the price and the accepted U",
+   "status": "partial",
+   "reason": "auth.md mentions a payment path (`402`) in prose; nothing machine-readable"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://exa.ai/llms.txt",
+   "heading": "# Exa",
+   "bytes": 10534,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://exa.ai/auth.md",
+   "finalUrl": "https://exa.ai/auth.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 103,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://exa.ai/llms.txt",
+   "finalUrl": "https://exa.ai/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 220,
+   "redirects": 0
+  },
+  {
+   "label": "api",
+   "url": "https://api.exa.ai/websets/v0/websets",
+   "finalUrl": "https://api.exa.ai/websets/v0/websets",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 43,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://exa.ai/.well-known/oauth-protected-resource",
+   "finalUrl": "https://mcp.exa.ai/.well-known/oauth-protected-resource/mcp",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 33,
+   "redirects": 1
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://auth.exa.ai/.well-known/oauth-authorization-server",
+   "finalUrl": "https://auth.exa.ai/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 52,
+   "redirects": 0
+  },
+  {
+   "label": "catch-all probe",
+   "url": "https://exa.ai/agent-signup-check-no-such-page.md",
+   "finalUrl": "https://exa.ai/agent-signup-check-no-such-page.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 97,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://exa.ai/.well-known/x402",
+   "finalUrl": "https://exa.ai/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 161,
+   "redirects": 0
+  }
+ ]
+}

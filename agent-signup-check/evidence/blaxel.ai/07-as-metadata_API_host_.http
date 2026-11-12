@@ -1,0 +1,28 @@
+GET https://api.blaxel.ai/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:46.937Z
+final-url: https://api.blaxel.ai/.well-known/oauth-authorization-server
+
+HTTP 200
+content-type: application/json; charset=utf-8
+content-length: 850
+connection: close
+date: Thu, 12 Nov 2026 02:37:45 GMT
+x-cf-request-id: Lbg6DExUFl1uH-mOXGsL6SVdql4ADi1nhCHcyDoWkXLg2_9RNJI0Bg==
+access-control-allow-headers: Content-Type,Authorization,Content-Length,X-Requested-With,Accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers,X-Blaxel-Authorization,X-Blaxel-Workspace,mcp-protocol-version,mcp-session-id,Blaxel-Version,X-Team-Id
+access-control-allow-methods: GET, POST, OPTIONS
+access-control-allow-origin: *
+access-control-expose-headers: WWW-Authenticate, X-Blaxel-Error-Code
+blaxel-version: 2026-04-16
+x-cache: Miss from cloudfront
+via: 1.1 06d442c8680c66c3ea5fc3c648c3bc86.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P5
+alt-svc: h3=":443"; ma=86400
+x-amz-cf-id: Lbg6DExUFl1uH-mOXGsL6SVdql4ADi1nhCHcyDoWkXLg2_9RNJI0Bg==
+x-frame-options: DENY
+referrer-policy: strict-origin-when-cross-origin
+content-security-policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'
+x-content-type-options: nosniff
+strict-transport-security: max-age=63072000; includeSubDomains
+
+{"authorization_endpoint":"https://signin.blaxel.ai/oauth2/authorize","client_id_metadata_document_supported":true,"code_challenge_methods_supported":["S256"],"grant_types_supported":["authorization_code","refresh_token"],"id_token_signing_alg_values_supported":["RS256"],"introspection_endpoint":"https://signin.blaxel.ai/oauth2/introspection","issuer":"https://signin.blaxel.ai","jwks_uri":"https://api.blaxel.ai/v0/oauth/jwks.json","registration_endpoint":"https://api.blaxel.ai/v0/oauth/register","response_types_supported":["code"],"scopes_supported":["openid","email","profile","offline_access"],"subject_types_supported":["public"],"token_endpoint":"https://api.blaxel.ai/v0/oauth/token","token_endpoint_auth_methods_supported":["none","client_secret_post","client_secret_basic"],"userinfo_endpoint":"https://signin.blaxel.ai/oauth2/userinfo"}

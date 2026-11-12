@@ -1,0 +1,32 @@
+GET https://api.hyperbrowser.ai/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:26.489Z
+final-url: https://api.hyperbrowser.ai/.well-known/oauth-authorization-server
+
+HTTP 404
+content-security-policy: default-src 'none'
+x-frame-options: DENY
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+permissions-policy: camera=(), microphone=(), geolocation=()
+vary: Origin
+access-control-allow-credentials: true
+content-type: text/html; charset=utf-8
+x-cloud-trace-context: f0539c03ecae3ef53c7820fa5e2afbed
+date: Thu, 12 Nov 2026 02:38:25 GMT
+server: Google Frontend
+content-length: 177
+via: 1.1 google
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+connection: close
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /.well-known/oauth-authorization-server</pre>
+</body>
+</html>

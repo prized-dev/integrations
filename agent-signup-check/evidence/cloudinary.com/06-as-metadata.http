@@ -1,0 +1,20 @@
+GET https://cloudinary.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:54.845Z
+final-url: https://cloudinary.com/.well-known/oauth-authorization-server
+
+HTTP 403
+date: Thu, 12 Nov 2026 02:38:53 GMT
+content-type: application/xml
+transfer-encoding: chunked
+connection: close
+server: cloudflare
+x-amz-request-id: GG4XQZRE1DHYFMEA
+x-amz-id-2: XUJV+8SZwQvf8+M0xbfwWJd40GcrAhs+sWB2LpJtsLvGZoTQV61tOe/3fiaTo+D0SKOBfelZEBM=
+cf-cache-status: DYNAMIC
+content-encoding: br
+cf-ray: a59229bedff0acc8-PDX
+alt-svc: h3=":443"; ma=86400
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessDenied</Code><Message>Access Denied</Message><RequestId>GG4XQZRE1DHYFMEA</RequestId><HostId>XUJV+8SZwQvf8+M0xbfwWJd40GcrAhs+sWB2LpJtsLvGZoTQV61tOe/3fiaTo+D0SKOBfelZEBM=</HostId></Error>

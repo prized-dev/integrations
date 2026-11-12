@@ -1,0 +1,22 @@
+GET https://api.groq.com/openai/v1/models
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:17.744Z
+final-url: https://api.groq.com/openai/v1/models
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:37:14 GMT
+content-type: application/json
+content-length: 96
+connection: close
+cache-control: private, max-age=0, no-store, no-cache, must-revalidate
+server: cloudflare
+vary: Origin
+x-groq-region: dls
+x-request-id: req_01m76svmhre79v1fw5b1e4n4qn
+via: 1.1 google
+alt-svc: h3=":443"; ma=86400
+cf-cache-status: DYNAMIC
+strict-transport-security: max-age=15552000
+cf-ray: a5922756add4b8b9-PDX
+
+{"error":{"message":"Invalid API Key","type":"invalid_request_error","code":"invalid_api_key"}}

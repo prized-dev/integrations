@@ -1,0 +1,24 @@
+GET https://app.scrapingbee.com/api/v1/usage
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:34.421Z
+final-url: https://app.scrapingbee.com/api/v1/usage
+
+HTTP 400
+server: gunicorn
+date: Thu, 12 Nov 2026 02:38:29 GMT
+content-type: application/json
+content-length: 72
+access-control-allow-origin: *
+spb-cost: 0
+access-control-expose-headers: Spb-cost, Spb-auto-cost, Spb-initial-status-code, Spb-resolved-url, Spb-request-id
+spb-request-id: 8c09f1a0-a4af-46ce-954f-d4fb4a49be33
+permissions-policy: browsing-topics=()
+x-frame-options: SAMEORIGIN
+x-content-type-options: nosniff
+strict-transport-security: max-age=31556926; includeSubDomains
+referrer-policy: strict-origin-when-cross-origin
+vary: Cookie
+alt-svc: h3=":443";ma=60;
+connection: close
+
+{"errors":{"api_key":{"api_key":["Missing data for required field."]}}}

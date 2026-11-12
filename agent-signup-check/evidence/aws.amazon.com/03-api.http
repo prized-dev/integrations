@@ -1,0 +1,19 @@
+GET https://ec2.us-east-1.amazonaws.com/?Action=DescribeRegions&Version=2016-11-15
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:53.999Z
+final-url: https://ec2.us-east-1.amazonaws.com/?Action=DescribeRegions&Version=2016-11-15
+
+HTTP 400
+x-amzn-requestid: ea7f0195-8d50-4c7e-9cd2-1be89ade349d
+cache-control: no-cache, no-store
+strict-transport-security: max-age=31536000; includeSubDomains
+vary: accept-encoding
+content-encoding: gzip
+content-type: text/xml;charset=UTF-8
+transfer-encoding: chunked
+date: Thu, 12 Nov 2026 02:37:51 GMT
+connection: close
+server: AmazonEC2
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Response><Errors><Error><Code>MissingParameter</Code><Message>The request must contain the parameter AWSAccessKeyId</Message></Error></Errors><RequestID>ea7f0195-8d50-4c7e-9cd2-1be89ade349d</RequestID></Response>

@@ -1,0 +1,32 @@
+GET https://agentmail.to/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:10.820Z
+redirect: 307 from https://agentmail.to/.well-known/oauth-protected-resource
+final-url: https://www.agentmail.to/.well-known/oauth-protected-resource
+
+HTTP 200
+access-control-allow-origin: *
+age: 0
+cache-control: public, max-age=3600
+content-encoding: br
+content-type: application/json; charset=utf-8
+date: Thu, 12 Nov 2026 02:38:09 GMT
+link: </openapi.json>; rel="service-desc", </docs>; rel="service-doc", </llms.txt>; rel="https://llmstxt.org", </.well-known/api-catalog>; rel="api-catalog"
+server: Vercel
+strict-transport-security: max-age=63072000
+x-matched-path: /.well-known/oauth-protected-resource
+x-vercel-cache: MISS
+x-vercel-id: pdx1::iad1::p5d4c-1794451089334-24080da0c9bd
+connection: close
+transfer-encoding: chunked
+
+{
+  "resource": "https://mcp.agentmail.to",
+  "authorization_servers": [
+    "https://clerk.console.agentmail.to"
+  ],
+  "bearer_methods_supported": [
+    "header"
+  ],
+  "resource_documentation": "https://www.agentmail.to/auth.md"
+}

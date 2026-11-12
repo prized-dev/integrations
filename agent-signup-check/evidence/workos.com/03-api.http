@@ -1,0 +1,33 @@
+GET https://api.workos.com/organizations
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:52.887Z
+final-url: https://api.workos.com/organizations
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:38:50 GMT
+content-type: application/json; charset=utf-8
+content-length: 26
+connection: close
+cf-ray: a59229af293c613d-PDX
+cf-cache-status: DYNAMIC
+etag: W/"1a-pljHtlo127JYJR4E/RYOPb6ucbw"
+server: cloudflare
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Origin, Accept-Encoding
+access-control-allow-credentials: true
+content-security-policy: default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests
+expect-ct: max-age=0
+referrer-policy: no-referrer
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-download-options: noopen
+x-envoy-upstream-service-time: 2
+x-frame-options: SAMEORIGIN
+x-permitted-cross-domain-policies: none
+x-ratelimit-limit: 500, 500;w=1
+x-ratelimit-remaining: 328
+x-ratelimit-reset: 1
+x-request-id: 9025614c-91f3-4be7-bb29-01aaafc15d20
+x-xss-protection: 0
+
+{"message":"Unauthorized"}

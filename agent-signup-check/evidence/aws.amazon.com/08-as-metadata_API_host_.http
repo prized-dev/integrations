@@ -1,0 +1,19 @@
+GET https://ec2.us-east-1.amazonaws.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:53.999Z
+final-url: https://ec2.us-east-1.amazonaws.com/.well-known/oauth-authorization-server
+
+HTTP 400
+x-amzn-requestid: e9daa8e5-3210-4743-89a3-b09a172e124b
+cache-control: no-cache, no-store
+strict-transport-security: max-age=31536000; includeSubDomains
+vary: accept-encoding
+content-encoding: gzip
+content-type: text/xml;charset=UTF-8
+transfer-encoding: chunked
+date: Thu, 12 Nov 2026 02:37:53 GMT
+connection: close
+server: AmazonEC2
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Response><Errors><Error><Code>InvalidURI</Code><Message>The URI http://ec2.us-east-1.amazonaws.com/.well-known/oauth-authorization-server is  not valid</Message></Error></Errors><RequestID>e9daa8e5-3210-4743-89a3-b09a172e124b</RequestID></Response>

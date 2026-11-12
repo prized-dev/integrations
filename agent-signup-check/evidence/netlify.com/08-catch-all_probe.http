@@ -1,0 +1,32 @@
+GET https://netlify.com/agent-signup-check-no-such-page.md
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:42.898Z
+final-url: https://netlify.com/agent-signup-check-no-such-page.md
+
+HTTP 404
+cache-control: public, max-age=0, must-revalidate
+content-encoding: gzip
+content-type: text/markdown; charset=utf-8
+date: Thu, 12 Nov 2026 02:37:42 GMT
+server: Netlify
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Accept-Encoding, Accept
+x-nf-request-id: 01M76SWF752N1MJNZS7Z8TK5GH
+connection: close
+transfer-encoding: chunked
+
+---
+title: "Page not found"
+status: 404
+---
+
+# Page not found
+
+There is no page at this address on netlify.com. It may have moved or never existed.
+
+Start from one of these instead:
+
+- [llms.txt](https://www.netlify.com/llms.txt): an index of netlify.com content for agents
+- [Sitemap](https://www.netlify.com/sitemap-index.xml): every page on netlify.com
+- [Netlify docs](https://docs.netlify.com/): product and API documentation
+- [Homepage](https://www.netlify.com/)

@@ -1,0 +1,13 @@
+GET https://api.browser-use.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:27.550Z
+final-url: https://api.browser-use.com/.well-known/oauth-protected-resource
+
+HTTP 200
+date: Thu, 12 Nov 2026 02:38:25 GMT
+content-type: application/json
+content-length: 167
+connection: close
+server: uvicorn
+
+{"resource":"https://api.browser-use.com/mcp","authorization_servers":["https://api.browser-use.com"],"bearer_methods_supported":["header"],"scopes_supported":["mcp"]}

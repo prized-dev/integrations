@@ -1,0 +1,53 @@
+GET https://blaxel.ai/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:46.937Z
+final-url: https://blaxel.ai/llms.txt
+
+HTTP 200
+date: Thu, 12 Nov 2026 02:37:43 GMT
+content-type: text/plain; charset=utf-8
+transfer-encoding: chunked
+connection: close
+x-content-type-options: nosniff
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=RseNdBHdspuj7PFzQt1CD6bb4Il0i%2BxVjmkVCM2XWKR%2FxZa%2FiWkt28ShcDVGQZ27IsxPIUxbwunwX50ZSfO28iN12jv4AIL8JvvIUDroOOVClxnqTJvjT3lzr8E%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+access-control-allow-origin: *
+cache-control: public, max-age=0, must-revalidate
+referrer-policy: strict-origin-when-cross-origin
+strict-transport-security: max-age=63072000; includeSubDomains
+etag: W/"3b2932a472ab68d51f57775caa0df1b6"
+content-encoding: br
+server: cloudflare
+cf-cache-status: DYNAMIC
+vary: accept-encoding
+speculation-rules: "/cdn-cgi/speculation"
+cf-ray: a592280a389d8969-PDX
+alt-svc: h3=":443"; ma=86400
+
+# Blaxel
+
+> Blaxel is the infrastructure foundation for autonomous agents: hardware-isolated microVM sandboxes that boot in milliseconds, suspend to zero when idle and resume in about 25 milliseconds with memory and filesystem intact; persistent storage (in-memory snapshots, durable Volumes, shared Agent Drive); and programmable networking (outbound allow-lists, static IPs, secret-injecting egress proxy, model gateway).
+
+## Documentation for agents
+- [Docs index](https://docs.blaxel.ai/llms.txt): every docs page as Markdown with a one-line description, starting with the most-used recipes
+- [Full docs text](https://docs.blaxel.ai/llms-full.txt): the full text of the docs, split into one file per product
+- [Authentication for agents](https://docs.blaxel.ai/auth.md): how an agent signs in to Blaxel for a user, with an OAuth access token or an API key
+
+## Platform
+- [Compute](https://blaxel.ai/platform/compute): Sandboxes, Agent Runtime, Batch Jobs, MCP Servers
+- [Sandboxes](https://blaxel.ai/platform/sandboxes): perpetual sandboxes, ~25ms resume, $0 compute on standby
+- [Sandbox filesystem](https://blaxel.ai/platform/sandbox-filesystem): RAM-speed root filesystem, snapshots kept until deleted
+- [Storage](https://blaxel.ai/platform/storage): sandbox local filesystem, Volumes, Agent Drive
+- [Networking](https://blaxel.ai/platform/networking): outbound control, static IPs, proxy routing, model gateway
+
+## Pricing
+- [Pricing](https://blaxel.ai/pricing): usage-based. Sandbox active CPU $0.0000115 / GB RAM per second, snapshot storage $0.20 / GB-month, images $0.045 / GB-month. Up to $200 free credits. Tier-based quotas up to 100,000+ sandboxes.
+
+## Company
+- [Customers](https://blaxel.ai/customers)
+- [Solutions](https://blaxel.ai/solutions)
+- [Blog](https://blaxel.ai/blog)
+- [Security and compliance](https://blaxel.ai/company/security): SOC 2, HIPAA, ISO 27001
+- [Contact](https://blaxel.ai/contact)
+- [Documentation](https://docs.blaxel.ai)
+- [Console](https://app.blaxel.ai)

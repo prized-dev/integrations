@@ -1,0 +1,25 @@
+GET https://api.linear.app/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:51.119Z
+final-url: https://api.linear.app/.well-known/oauth-authorization-server
+
+HTTP 200
+date: Thu, 12 Nov 2026 02:38:50 GMT
+content-type: application/json; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a59229ac1fe2147f-PDX
+cf-cache-status: DYNAMIC
+cache-control: public, max-age=3600
+etag: W/"237-prZCLjevX6RtGdHrJXcJloHOluI"
+server: cloudflare
+vary: Accept-Encoding
+via: 1.1 google
+alt-svc: h3=":443"; ma=86400
+x-ratelimit-requests-limit: 120
+x-ratelimit-requests-remaining: 119
+x-ratelimit-requests-reset: 1794451190306
+x-request-id: a59229ac19d1c8da-PDX
+content-encoding: br
+
+{"issuer":"https://api.linear.app","authorization_endpoint":"https://linear.app/oauth/authorize","token_endpoint":"https://api.linear.app/oauth/token","revocation_endpoint":"https://api.linear.app/oauth/revoke","response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token","client_credentials","urn:ietf:params:oauth:grant-type:jwt-bearer"],"token_endpoint_auth_methods_supported":["client_secret_post","client_secret_basic","none"],"code_challenge_methods_supported":["S256"],"dpop_signing_alg_values_supported":["ES256","RS256"]}

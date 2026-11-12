@@ -1,0 +1,18 @@
+GET https://api.mailgun.net/v3/domains
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:20.489Z
+final-url: https://api.mailgun.net/v3/domains
+
+HTTP 401
+access-control-allow-credentials: true
+access-control-allow-origin: *
+cache-control: no-store
+content-length: 24
+content-type: application/json
+date: Thu, 12 Nov 2026 02:38:15 GMT
+strict-transport-security: max-age=63072000; includeSubDomains
+www-authenticate: Basic realm="MG API"
+x-xss-protection: 1; mode=block
+connection: close
+
+{"Error":"unauthorized"}

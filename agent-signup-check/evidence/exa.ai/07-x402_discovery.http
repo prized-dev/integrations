@@ -1,0 +1,124 @@
+GET https://exa.ai/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.664Z
+final-url: https://exa.ai/.well-known/x402
+
+HTTP 404
+access-control-allow-origin: *
+age: 0
+cache-control: public, max-age=3600, stale-while-revalidate=86400
+content-disposition: inline; filename="404"
+content-encoding: br
+content-security-policy: frame-ancestors 'none'
+content-type: text/html; charset=utf-8
+date: Thu, 12 Nov 2026 02:38:30 GMT
+etag: W/"c461dd7b8c326d88f90e3ac8850b7158"
+last-modified: Thu, 12 Nov 2026 02:38:30 GMT
+referrer-policy: strict-origin-when-cross-origin
+server: Vercel
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-matched-path: /404
+x-vercel-cache: MISS
+x-vercel-id: pdx1::kchgx-1794451110236-b254870270a3
+connection: close
+transfer-encoding: chunked
+
+<!DOCTYPE html><html lang="en" class="__variable_d8ebd1"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="/_next/static/media/e4af272ccee01ff0-s.p.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="/fonts/ABCArizonaFlare-Regular.woff2" as="font" crossorigin="anonymous" type="font/woff2"/><link rel="preload" href="/fonts/ABCDiatype-Regular.woff2" as="font" crossorigin="anonymous" type="font/woff2"/><link rel="preload" as="image" href="/images/logo/exa-logo-blue.svg"/><link rel="stylesheet" href="/_next/static/css/dec81853179fd727.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/css/d918260c95b3cdaf.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/css/d61834f24c78a354.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/webpack-007d85a902e2b1b7.js"/><script src="/_next/static/chunks/8df046ea-582ef1c7006f326b.js" async=""></script><script src="/_next/static/chunks/28381-680ae0b276e1bc35.js" async=""></script><script src="/_next/static/chunks/main-app-253643feb4a6e6af.js" async=""></script><script src="/_next/static/chunks/65776-52b086be25718d18.js" async=""></script><script src="/_next/static/chunks/app/not-found-4a73df791299075f.js" async=""></script><script src="/_next/static/chunks/app/global-error-f8a2647cc3bedbbc.js" async=""></script><script src="/_next/static/chunks/c2b750b4-724b9a85ea528268.js" async=""></script><script src="/_next/static/chunks/23682-ec0af95a867fc9f2.js" async=""></script><script src="/_next/static/chunks/15473-37857118ad219370.js" async=""></script><script src="/_next/static/chunks/69295-969cc1aca098af9d.js" async=""></script><script src="/_next/static/chunks/23144-1f268876ac09f402.js" async=""></script><script src="/_next/static/chunks/app/layout-31504c51ba03fa9f.js" async=""></script><meta name="robots" content="noindex"/><meta name="next-size-adjust" content=""/><link rel="search" type="application/opensearchdescription+xml" title="Exa" href="https://exa.ai/search/opensearch.xml"/><link rel="preload" href="/fonts/ABCArizonaFlare-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"/><link rel="preload" href="/fonts/ABCDiatype-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"/><title>Exa | Search API for AI Agents — Real-Time Web Data</title><meta name="description" content="Search API for AI agents that need real-time web data, deep research, and structured content from one endpoint. Try our API for free."/><meta name="application-name" content="Exa"/><link rel="author" href="https://exa.ai"/><meta name="author" content="Exa Labs"/><meta name="keywords" content="ai search engine,serp api,best ai search engine,search api,deep research api,web search api,web search ai,ai search api,deepresearch api,web crawling api,website crawler,metaphor,exa,api,search,ai,llms,webcrawler,web api,google search api,google serp api,people search engines,perplexity ai search engine features,ai search engine free,search engine ai,free people search engines,web api security,ai search engines,free ai search engine,web scraping api,bing search api,webcrawler search engine,search engine rankings api"/><link rel="canonical" href="https://exa.ai/_not-found"/><meta property="og:title" content="Exa"/><meta property="og:description" content="The Exa Web search API retrieves the best, realtime data from the web for your AI"/><meta property="og:url" content="https://exa.ai"/><meta property="og:site_name" content="Exa"/><meta property="og:image" content="https://exa.imgix.net/og-image-v4.png/"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:site" content="@exaailabs"/><meta name="twitter:creator" content="@exaailabs"/><meta name="twitter:title" content="Exa"/><meta name="twitter:description" content="The Exa API retrieves the best, realtime data from the web for your AI"/><meta name="twitter:image" content="https://exa.imgix.net/og-image-v4.png/"/><link rel="icon" href="/images/favicon-32x32.png"/><script id="url-sanitizer">(function(){
+  try {
+    var global = ["gclid","gclsrc","gbraid","wbraid","dclid","gad_source","gad_campaignid","fbclid","msclkid","li_fat_id","twclid","rdt_cid","ttclid","irclickid","mc_cid","mc_eid","_gl","grclid","graid","grcpid","gruid","grpuid","bfcid"];
+    var scoped = [["/blog",["category"],null,null],["/careers",["location"],null,null],["/claude",["ref"],null,null],["/pricing",["partner"],{"partner":["A16Z","SPC","ODF","GMI","SPEEDRUN"]},null],["/library",["date","latitude","longitude","team","season","t"],null,null],["/library/places",["ids"],null,{"ids":"^[0-9a-z]{11}(?:,[0-9a-z]{11}){0,9}$"}],["/library/flights",["direction","end","next","v","window","airline","exclude_airline","operated","status","results","depart","arrive","stops","via","avoid","max_minutes","max_layover","sort","summary"],{"direction":["DEPARTURES","ARRIVALS"],"next":["TRUE"],"operated":["TRUE"],"summary":["TRUE"],"sort":["FASTEST","EARLIEST","LATEST"]},{"end":"^[0-9]{4}-[0-9]{2}-[0-9]{2}$","v":"^[0-9a-f]{8}$","via":"^[A-Z0-9]{3}(?:,[A-Z0-9]{3})*$","avoid":"^[A-Z0-9]{3}(?:,[A-Z0-9]{3})*$","airline":"^[A-Z0-9]{2}(?:,[A-Z0-9]{2})*$","exclude_airline":"^[A-Z0-9]{2}(?:,[A-Z0-9]{2})*$","window":"^[0-9]{1,4}-[0-9]{1,4}$","depart":"^[0-9]{1,4}-[0-9]{1,4}$","arrive":"^[0-9]{1,4}-[0-9]{1,4}$","status":"^(?:cancelled|delayed|diverted)(?:,(?:cancelled|delayed|diverted))*$","results":"^[0-9]{1,4}$","stops":"^[0-2]$","max_minutes":"^[0-9]{1,4}$","max_layover":"^[0-9]{1,4}$"}],["/library/transit",["view","v","to","priced","mode"],{"view":["STATUS","SCHEDULE","BOARD","FARES","TRIP","OVERVIEW"],"priced":["TRUE"],"mode":["SUBWAY","RAIL","BUS","FERRY","TRAM"]},{"v":"^[0-9a-f]{8}$","to":"^[0-9a-z]{11}$"}],["/library/election/contests",["state","office"],null,{"state":"^[a-z]{2}$","office":"^(?:president|us-senate|governor|us-house|lieutenant-governor|attorney-general|supreme-court|appeals-court|state-senate|state-house|ballot-measures|office-[a-z0-9]{1,3})$"}]];
+    var url = new URL(window.location.href);
+    var path = url.pathname;
+    var onPath = function(prefix){ return path === prefix || path.indexOf(prefix + '/') === 0; };
+    var allowed = function(lower){
+      if (lower.indexOf('utm_') === 0 || global.indexOf(lower) !== -1) return true;
+      for (var s = 0; s < scoped.length; s++) {
+        if (onPath(scoped[s][0]) && scoped[s][1].indexOf(lower) !== -1) return true;
+      }
+      return false;
+    };
+    var valueAllowed = function(lower, value){
+      var upper = value.trim().toUpperCase();
+      for (var s = 0; s < scoped.length; s++) {
+        if (!onPath(scoped[s][0])) continue;
+        var legal = scoped[s][2] && scoped[s][2][lower];
+        if (legal && legal.indexOf(upper) === -1) return false;
+        var pattern = scoped[s][3] && scoped[s][3][lower];
+        if (pattern && !new RegExp(pattern).test(value)) return false;
+      }
+      return true;
+    };
+    var changed = false;
+    var keys = [];
+    url.searchParams.forEach(function(_, k){ if (keys.indexOf(k) === -1) keys.push(k); });
+    for (var i = 0; i < keys.length; i++) {
+      var lower = keys[i].toLowerCase();
+      var keep = allowed(lower);
+      var vals = url.searchParams.getAll(keys[i]);
+      for (var j = 0; keep && j < vals.length; j++) {
+        if (!valueAllowed(lower, vals[j])) keep = false;
+      }
+      if (!keep) {
+        url.searchParams.delete(keys[i]);
+        changed = true;
+      }
+    }
+    var fragment = url.hash ? url.hash.slice(1) : '';
+    if (url.hash) {
+      url.hash = '';
+      changed = true;
+    }
+    if (changed) {
+      window.history.replaceState(window.history.state, '', url.href);
+    }
+    if (fragment && /^(?=[\w.:-]*[A-Za-z])[\w.:-]{1,64}$/.test(fragment)) {
+      var scrollToAnchor = function(){
+        var id;
+        try { id = decodeURIComponent(fragment); } catch (_) { id = fragment; }
+        var el = document.getElementById(id);
+        if (el) el.scrollIntoView();
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', scrollToAnchor);
+      } else {
+        scrollToAnchor();
+      }
+    }
+  } catch (_) {}
+})();</script><script id="nav-variant-bootstrap">(function(){var c={"experiments":[{"key":"nav-resources-202611","variants":["control","test"],"cookieName":"exa_nav_variant","attributeName":"data-exp-nav-resources-202611"}],"overrideParam":"variant","requireStatisticsConsent":false,"allowOverride":false};var root=document.documentElement;
+    function cookie(n){var a=document.cookie.split(';');for(var i=0;i<a.length;i++){var p=a[i].trim();if(p.indexOf(n+'=')===0){try{return decodeURIComponent(p.substring(n.length+1));}catch(e){return;}}}}
+    var consent=c.requireStatisticsConsent===false||function d(a){let b;if(null==a||""===a)return!1;try{b=decodeURIComponent(a)}catch{return!1}let c=b.trim();return"-1"===c||/(?:^|[{,])\s*statistics\s*:\s*true\s*(?=[,}])/.test(c)}(cookie("CookieConsent"));
+    var crawler=/bot|crawler|spider|slurp|bingpreview|facebookexternalhit/i.test(navigator.userAgent);
+    c.experiments.forEach(function(e){var v,source;var q=c.allowOverride&&c.overrideParam?new URLSearchParams(location.search).get(c.overrideParam):null;
+      if(!crawler&&e.variants.indexOf(q)!==-1){v=q;source='override';}
+      else if(!crawler&&consent){var value=cookie(e.cookieName);if(e.variants.indexOf(value)!==-1){v=value;source='assigned';}}
+      root.setAttribute(e.attributeName,v||e.variants[0]);root.setAttribute(e.attributeName+'-source',source||'unassigned');
+    });})();</script><style id="nav-variant-style">html[data-exp-nav-resources-202611]:not([data-exp-nav-resources-202611="control"]) .nav-ab-control { display: none; }
+html:not([data-exp-nav-resources-202611="test"]) .nav-ab-test { display: none; }</style><script id="translate-crash-fix">(function(){
+            var rc = Node.prototype.removeChild;
+            Node.prototype.removeChild = function(c){
+              return c.parentNode !== this ? c : rc.call(this,c);
+            };
+            var ib = Node.prototype.insertBefore;
+            Node.prototype.insertBefore = function(n,r){
+              return r && r.parentNode !== this ? n : ib.call(this,n,r);
+            };
+          })();</script><script id="announcement-banner-dismissal-bootstrap">(function(){
+            try {
+              var key = "banner_dismissed_exa_3";
+              if (localStorage.getItem(key) === 'true') {
+                document.documentElement.setAttribute('data-announcement-banner-dismissed', 'true');
+              }
+            } catch (_) {}
+          })();</script><style id="announcement-banner-dismissal-style">
+              html[data-announcement-banner-dismissed="true"] .announcement-banner {
+                display: none !important;
+                height: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+              }
+            </style><script>(({protect:a})=>{function b(a){return new Promise((b,c)=>{if(document.querySelector(`script[src="${a}"]`))return void b();let d=document.createElement("script");d.src=a,d.async=!0,d.onload=()=>b(),d.onerror=a=>{console.error("Error loading script",a),c(a)},document.head.appendChild(d)})}var c=class a{#a;#b;#c=0;constructor(){let{promise:b,resolve:c}=a.#d();this.#a=b,this.#b=c,this.#e(),window.addEventListener("online",this.#f),window.addEventListener("visibilitychange",this.#f)}getChallenge=async()=>(await this.#g(),await this.#a.then(a=>"function"==typeof a?a():a));#f=()=>{if(document.hidden)return;let{promise:b,resolve:c}=a.#d();this.#a=b,this.#b=c,window.V_C=[],window.V_C.push=c;let d=document.querySelector('script[src*="c.js"]');d&&d.remove(),this.#c+=1};#e=()=>{if(window.V_C){let a=window.V_C.pop();a&&this.#b(a)}else window.V_C=[],window.V_C.push=this.#b};#g=()=>{let a=new URL("/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/a-4-a/c.js",window.location.origin);return a.searchParams.set("i",String(this.#c)),a.searchParams.set("v",String(3)),a.searchParams.set("h",window.location.host),b(a.pathname+a.search)};#h=()=>{window.V_C=void 0};static #d(){let a,b;return{promise:new Promise((c,d)=>{a=c,b=d}),resolve:a,reject:b}}},d=class a{#a=!1;#b;constructor(a){this.#b=a}get loaded(){return this.#a}load=async()=>{this.#a||await this.#f()};#c=()=>{if(typeof globalThis.window>"u")throw Error("KPSDK is not available in the server");if(!window.KPSDK)throw Error("KPSDK is not loaded");let b=this.#b.map(b=>{let c=a.#e(b.path);return{domain:c.host,path:c.pathname,method:b.method}});try{window.KPSDK.configure(b)}catch(a){console.error("Error configuring KPSDK...",a)}};#f=async()=>{let a=this;return new Promise((c,d)=>{let e=()=>{document.removeEventListener("kpsdk-load",e),this.#c()},f=()=>{document.removeEventListener("kpsdk-ready",f),a.#a=!0,c()};document.addEventListener("kpsdk-load",e,{once:!0}),document.addEventListener("kpsdk-ready",f,{once:!0}),b("/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/p.js").catch(a=>{document.removeEventListener("kpsdk-load",e),document.removeEventListener("kpsdk-ready",f),d(a)})})};static #e(a){let b;try{b=new URL(a)}catch{b=new URL(a,location.origin)}return b}},e=a=>{let b=a.replace(/[.?+^$[\]\\(){}|-]/g,"\\$&").split("*").join(".*");return RegExp(`^${b}$`)},f=({path:a,pattern:b})=>-1!==a.search(b);async function g(a,b,c){let d=XMLHttpRequest.prototype.open,g=XMLHttpRequest.prototype.send;XMLHttpRequest.prototype.open=function(a,b,c,e,f){return this._requestUrl=b.toString(),this._requestMethod=a,d.call(this,a,b,c??!0,e,f)},XMLHttpRequest.prototype.send=async function(d){let h=this._requestUrl;if(!h||this._isReexecution)return g.call(this,d);let i=new URL(h,location.href),j=i.origin===location.origin,k=this._requestMethod??"GET",l=c.find(a=>{let b=f({path:i.pathname,pattern:e(a.path)}),c=a.method.toLowerCase()===k.toLowerCase()||"*"===a.method;return b&&c});if(!l||!j)return g.call(this,d);let m=await a.getChallenge();if(this.setRequestHeader("x-is-human",JSON.stringify(m)),this.setRequestHeader("x-path",i.pathname),this.setRequestHeader("x-method",k),0!==m.b||b.loaded||((1===m.d||l?.advancedOptions?.checkLevel==="deepAnalysis")&&await b.load(),!b.loaded))return g.call(this,d);this.setRequestHeader("x-is-human",JSON.stringify(m)),this.setRequestHeader("x-path",i.pathname),this.setRequestHeader("x-method",k);let n=new XMLHttpRequest;return n._isReexecution=!0,n.open(k,h,!0),n.setRequestHeader("x-is-human",JSON.stringify(m)),n.setRequestHeader("x-path",i.pathname),n.setRequestHeader("x-method",k),this.timeout&&(n.timeout=this.timeout),this.responseType&&(n.responseType=this.responseType),this.withCredentials&&(n.withCredentials=this.withCredentials),n.onreadystatechange=()=>{Object.defineProperty(this,"readyState",{value:n.readyState,writable:!0,configurable:!0}),n.readyState===XMLHttpRequest.DONE&&(Object.defineProperty(this,"status",{value:n.status,writable:!0,configurable:!0}),Object.defineProperty(this,"statusText",{value:n.statusText,writable:!0,configurable:!0}),Object.defineProperty(this,"response",{value:n.response,writable:!0,configurable:!0}),Object.defineProperty(this,"responseText",{value:n.responseText,writable:!0,configurable:!0}),Object.defineProperty(this,"responseXML",{value:n.responseXML,writable:!0,configurable:!0}),this.getAllResponseHeaders=()=>n.getAllResponseHeaders(),this.getResponseHeader=a=>n.getResponseHeader(a)),this.onreadystatechange&&this.onreadystatechange.call(this,new Event("readystatechange"))},n.onload=a=>{this.onload&&this.onload.call(this,a)},n.onerror=a=>{this.onerror&&this.onerror.call(this,a)},n.onabort=a=>{this.onabort&&this.onabort.call(this,a)},n.ontimeout=a=>{this.ontimeout&&this.ontimeout.call(this,a)},n.onloadstart=a=>{this.onloadstart&&this.onloadstart.call(this,a)},n.onloadend=a=>{this.onloadend&&this.onloadend.call(this,a)},n.onprogress=a=>{this.onprogress&&this.onprogress.call(this,a)},n.send(d)}}!function({protect:a=[]}){let b;for(let b of a)if(b.advancedOptions?.checkLevel!==void 0&&"deepAnalysis"!==b.advancedOptions.checkLevel&&"basic"!==b.advancedOptions.checkLevel)throw Error(`Invalid checkLevel "${b.advancedOptions.checkLevel}" for route "${b.path
+
+[body trimmed for publication: kept 16384 of 77482 characters; sha256 of the published body 08ffea47f94f3457a2ec0a5c602fdb685aafe96251252d763653ce840778f050]

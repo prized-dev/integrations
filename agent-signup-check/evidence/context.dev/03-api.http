@@ -1,0 +1,23 @@
+GET https://api.context.dev/v1/brand/search?query=prized
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:36.960Z
+final-url: https://api.context.dev/v1/brand/search?query=prized
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:38:35 GMT
+content-type: application/json; charset=utf-8
+content-length: 293
+connection: close
+cf-ray: a592294c8cd4c895-PDX
+cf-cache-status: DYNAMIC
+server: cloudflare
+strict-transport-security: max-age=31536000; includeSubDomains
+vary: Origin, Accept-Encoding
+access-control-expose-headers: X-Context-ZDR,X-Request-Id
+x-request-id: 732de81e-05a9-45e0-9df5-46142c23a21f
+speculation-rules: "/cdn-cgi/speculation"
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=XKjReV9xVJPDH5teliQ%2BftPq%2BsNgN7uUK3gcAzHK8Ad4clvVCVOpUJOfagGMaKxeXUKeVDP1bj6dvuS8Fbg37ZU5%2FxNmaVAZDw5nI%2BDsopcvVOqM1fgljqnWlHZ%2FypIQFA%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+alt-svc: h3=":443"; ma=86400
+
+{"message":"Unauthorized: No API key provided, please create one at context.dev and include it in the request header under [Authorization: Bearer <your-api-key>] (no brackets). You can read more at docs.context.dev","error_code":"NOT_FOUND","request_id":"732de81e-05a9-45e0-9df5-46142c23a21f"}

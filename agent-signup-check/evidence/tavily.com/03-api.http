@@ -1,0 +1,13 @@
+GET https://api.tavily.com/usage
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:35.441Z
+final-url: https://api.tavily.com/usage
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:38:32 GMT
+content-type: application/json
+content-length: 53
+connection: close
+content-security-policy: default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';base-uri 'self';form-action 'self'; require-trusted-types-for 'script'; upgrade-insecure-requests;
+
+{"detail":{"error":"Unauthorized: missing API key."}}

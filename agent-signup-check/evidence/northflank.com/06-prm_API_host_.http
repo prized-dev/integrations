@@ -1,0 +1,29 @@
+GET https://api.northflank.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:39.926Z
+final-url: https://api.northflank.com/.well-known/oauth-protected-resource
+
+HTTP 404
+connection: close
+content-length: 82
+access-control-allow-origin: *
+x-dns-prefetch-control: off
+x-frame-options: SAMEORIGIN
+x-download-options: noopen
+x-content-type-options: nosniff
+x-xss-protection: 1; mode=block
+x-response-time: 0ms
+content-type: application/json; charset=utf-8
+x-envoy-upstream-service-time: 2
+server: istio-envoy
+accept-ranges: bytes
+date: Thu, 12 Nov 2026 02:37:38 GMT
+via: 1.1 varnish
+x-served-by: cache-bfi-kbfi7400036-BFI
+x-cache: MISS
+x-cache-hits: 0
+x-timer: S1794451058.867618,VS0,VE166
+vary: Origin, Accept-Encoding
+strict-transport-security: max-age=300
+
+{"error":{"status":404,"message":"Not found. The requested route does not exist"}}

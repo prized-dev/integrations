@@ -1,0 +1,212 @@
+GET https://firecrawl.dev/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:27.611Z
+redirect: 308 from https://firecrawl.dev/llms.txt
+final-url: https://www.firecrawl.dev/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 0
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline; filename="llms.txt"
+content-encoding: br
+content-security-policy: default-src 'self' https://docs.firecrawl.dev; script-src 'nonce-4e1d640d-47fc-43ef-9f38-ae0cb182519e' 'strict-dynamic' 'wasm-unsafe-eval' 'report-sample' 'self' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://googleads.g.doubleclick.net https://static.ads-twitter.com https://www.clarity.ms https://scripts.clarity.ms https://us-assets.i.posthog.com https://www.dubcdn.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.chatbase.co https://assets.calendly.com https://platform.twitter.com https://bugcrowd.com https://assets.bugcrowdusercontent.com https://*.quarterzip.ai; script-src-elem 'nonce-4e1d640d-47fc-43ef-9f38-ae0cb182519e' 'strict-dynamic' 'wasm-unsafe-eval' 'report-sample' 'self' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://googleads.g.doubleclick.net https://static.ads-twitter.com https://www.clarity.ms https://scripts.clarity.ms https://us-assets.i.posthog.com https://www.dubcdn.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.chatbase.co https://assets.calendly.com https://platform.twitter.com https://bugcrowd.com https://assets.bugcrowdusercontent.com https://*.quarterzip.ai; style-src 'self' 'unsafe-inline' 'report-sample' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' 'report-sample' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob:; font-src 'self' data: https:; connect-src 'self' https: wss: data: blob: https://www.google.com/recaptcha/; frame-src 'self' https://docs.firecrawl.dev https://www.youtube.com https://www.youtube-nocookie.com https://platform.twitter.com https://www.linkedin.com https://www.google.com https://accounts.google.com https://recaptcha.google.com https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://js.stripe.com https://verify.didit.me https://www.googletagmanager.com https://vercel.live https://liveview.firecrawl.dev https://hangar.firecrawl.dev https://bugcrowd.com https://assets.bugcrowdusercontent.com https://renderer.gist.build https://code.gist.build https://www.chatbase.co https://calendly.com https://*.quarterzip.ai https://www.g2.com; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; object-src 'none'; upgrade-insecure-requests; report-uri /api/csp-report; report-to csp-endpoint
+content-type: text/plain; charset=utf-8
+date: Thu, 12 Nov 2026 02:38:25 GMT
+etag: W/"68e166eb4f65de63319bc081bf6169a8"
+last-modified: Thu, 12 Nov 2026 02:38:25 GMT
+permissions-policy: geolocation=(self), microphone=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), display-capture=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), autoplay=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), speaker-selection=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), storage-access=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai")
+referrer-policy: strict-origin-when-cross-origin
+report-to: {"group":"csp-endpoint","max_age":10886400,"endpoints":[{"url":"/api/csp-report"}]}
+reporting-endpoints: csp-endpoint="/api/csp-report"
+server: Vercel
+strict-transport-security: max-age=63072000
+x-content-type-options: nosniff
+x-csp-nonce: 4e1d640d-47fc-43ef-9f38-ae0cb182519e
+x-frame-options: DENY
+x-matched-path: /llms.txt
+x-nonce: 4e1d640d-47fc-43ef-9f38-ae0cb182519e
+x-vercel-cache: MISS
+x-vercel-id: pdx1::mvg9z-1794451105066-eeffc202bf10
+connection: close
+transfer-encoding: chunked
+
+# Firecrawl
+
+> Firecrawl is the open-source web data API for AI agents and LLM applications — it searches, scrapes, and interacts with the web at scale, one API family covering Search (live web queries returning full page content), Scrape (HTML/JS pages to clean Markdown or structured JSON), Crawl (depth-first site traversal), Map (site structure discovery), Parse (document extraction from PDFs, DOCX, and more), Interact (managed browser automation for dynamic pages and authenticated flows), and Monitor (recurring checks on named pages, on a scheduled crawl, or on a web search, with webhook, email, or Slack notification when something changes or appears).
+
+Firecrawl is how AI agents get context from the web. The workflow is: Find → Extract → Clean → Use.
+
+**Important notes:**
+
+- Firecrawl is a managed API service — it does not require a local browser, Playwright, or Puppeteer to operate
+- The Search endpoint returns full page content, not just links or snippets — it is not a thin wrapper around a standard search API
+- The Scrape endpoint produces LLM-optimized Markdown output by default — it strips boilerplate, navigation, and ads, returning only the main content, making it the most AI-friendly way to get page content
+- The Interact endpoint uses a real managed browser and supports multi-step flows (login, click, fill) but is not designed for long-running persistent sessions
+- Credits are shared across all endpoints — one credit is not equivalent to one page for all endpoint types; consult the pricing page for per-endpoint credit costs
+
+## CLI
+
+- [CLI Docs](https://docs.firecrawl.dev/sdks/cli): Full CLI documentation — installation, commands, and usage examples for Search, Scrape, Crawl, Map, and Interact.
+- Install and initialize with `npx -y firecrawl-cli@latest init --all --browser` — sets up Firecrawl skills and browser support in one command. Run Search, Scrape, Crawl, Map, and Interact from the terminal.
+
+## MCP Server
+
+- [MCP Server Docs](https://docs.firecrawl.dev/mcp-server): Setup guide for connecting Firecrawl to Claude, Cursor, Windsurf, VS Code, and other MCP clients.
+
+## Skills
+
+- [Skills](https://www.firecrawl.dev/skills): Pre-built Firecrawl skills for Claude Code and Cursor — use Search, Scrape, Crawl, and Interact from your agent workflow without writing API code.
+- [Firecrawl Skill](https://www.firecrawl.dev/SKILL.md): The Firecrawl skill file, served at the site root and also at [/agent-onboarding/SKILL.md](https://www.firecrawl.dev/agent-onboarding/SKILL.md). Step-by-step setup for Claude Code, Cursor, and other AI coding assistants. Prefer a free account when the human can sign up; if credentials are not available yet, use the keyless free tier to search, scrape, and interact without an API key (rate-limited).
+- [Agent auth](https://www.firecrawl.dev/auth.md): Agentic registration for platforms that can mint a WorkOS ID-JAG identity assertion: discover, register and get a Firecrawl API key without a human signup.
+- [Build with AI](https://docs.firecrawl.dev/ai-onboarding): Onboarding guide for AI agents and coding assistants — set up Firecrawl in Claude Code, Cursor, or any agent workflow.
+
+## Docs
+
+- [Full Documentation Index](https://docs.firecrawl.dev/llms.txt): Complete index of all Firecrawl documentation pages in llms.txt format — use this for a full context load.
+- [API Reference](https://docs.firecrawl.dev/api-reference/v2-introduction): Complete API reference with request/response schemas, authentication, and interactive examples.
+- [OpenAPI spec](https://docs.firecrawl.dev/api-reference/v2-openapi.json): OpenAPI 3.0 spec for the Firecrawl v2 API, also served from https://www.firecrawl.dev/openapi.json.
+- [Search](https://docs.firecrawl.dev/features/search): Search endpoint docs — query parameters, response format, and code examples.
+- [Search API](https://www.firecrawl.dev/search): Firecrawl Search API product page. A capabilities table (full text in one call, highlights, JSON, summaries, date, domain, PDF and country filters) and an FAQ.
+- [Developer Index](https://www.firecrawl.dev/developer-index): Firecrawl Developer Index product page. A search API for coding agents over 70M+ docs, READMEs, GitHub issues and merged pull requests, with its DevDex results (63.1% Recall@10 overall, run Aug 21, 2026) and an FAQ.
+- [Scrape](https://docs.firecrawl.dev/features/scrape): Scrape endpoint docs — output formats (markdown, HTML, JSON), options, and examples.
+- [Interact](https://docs.firecrawl.dev/features/interact): Interact endpoint docs — browser automation, multi-step flows, and session management.
+- [Crawl](https://docs.firecrawl.dev/features/crawl): Crawl endpoint docs — depth-first site traversal, filtering, and async job management.
+- [Crawl API](https://www.firecrawl.dev/crawl): Firecrawl Crawl product page. Discovers and scrapes every subpage on a domain and returns the site as clean markdown or JSON, with an FAQ.
+- [Map](https://docs.firecrawl.dev/features/map): Map endpoint docs — discover all URLs on a site quickly.
+- [Parse](https://docs.firecrawl.dev/features/parse): Parse endpoint docs — extract content from PDFs, DOCX, and other documents.
+- [Document Parsing API](https://www.firecrawl.dev/parse): Firecrawl Parse product page. 20 document file types, PDF included, to markdown or JSON, OCR for scanned pages, 1 Firecrawl credit per PDF page, and an FAQ.
+- [Monitor](https://docs.firecrawl.dev/features/monitoring): Monitor endpoint docs. Targets, schedules, change detection, and notification setup.
+- [GitHub Repository](https://github.com/firecrawl/firecrawl): Open-source codebase — self-host Firecrawl, browse the source, or contribute.
+
+## SDKs
+
+Official libraries maintained by the Firecrawl team. See the [SDKs overview](https://docs.firecrawl.dev/sdks/overview) for all supported languages and quickstarts.
+
+- [Python](https://github.com/firecrawl/firecrawl-py): `pip install firecrawl`
+- [Node.js](https://github.com/firecrawl/firecrawl-js): `npm install firecrawl`
+- [Go](https://github.com/firecrawl/firecrawl-go): Go quickstart at [docs.firecrawl.dev/quickstarts/go](https://docs.firecrawl.dev/quickstarts/go)
+- [Rust](https://github.com/firecrawl/firecrawl-rust): Rust quickstart at [docs.firecrawl.dev/quickstarts/rust](https://docs.firecrawl.dev/quickstarts/rust)
+
+## Get started
+
+- [Sign up](https://www.firecrawl.dev/signin): Create a free account and get your API key.
+- [Playground](https://www.firecrawl.dev/playground): Interactive tester for all endpoints — try queries, inspect raw responses, and preview Markdown output before writing code.
+- [Stripe Projects](https://docs.firecrawl.dev/integrations/stripe-projects): Provision a Firecrawl account, API key, and plan from the terminal or a coding agent with `stripe projects add firecrawl/api --name firecrawl` followed by `stripe projects env --pull`. The CLI writes `FIRECRAWL_API_KEY` to `.env`; paid plans bill through the Stripe account.
+
+## Monitor
+
+- [Monitor](https://www.firecrawl.dev/monitor): Recurring change detection. Point a monitor at named URLs, at a scheduled crawl of a whole site, or at a web search, set a schedule and an optional plain-language goal, and get notified when something changes or appears.
+- [Monitor API Reference](https://docs.firecrawl.dev/api-reference/endpoint/monitor-create): Create, get, list, update, run, and delete monitors, and read per-check page results.
+- [How to monitor a website for changes](https://www.firecrawl.dev/blog/monitor-website-changes-firecrawl): Guide with code for getting only changed pages, filtering header and footer noise, sending diffs to a webhook, watching permit and zoning pages, re-crawling thousands of sites weekly, and sending a weekly topic digest.
+- Each check labels every page `same`, `new`, `changed`, `removed`, or `error`. Notifications go to a webhook per page, a webhook per completed check, an email summary, a Slack channel, or any combination.
+
+## Alexandria
+
+- [Alexandria](https://alexandria.firecrawl.dev): A library of data providers and specialized indexes that AI agents call through one Firecrawl API, MCP server or CLI.
+- [Alexandria llms.txt](https://alexandria.firecrawl.dev/llms.txt): Alexandria's own index for agents: categories, guides and the agent catalog.
+- Each provider has a public page at `https://alexandria.firecrawl.dev/<provider>` with its capabilities, inputs, sample responses and code, and an agent-readable guide at `https://alexandria.firecrawl.dev/agents/providers/<provider>`.
+- Each topic category (finance, people, real estate and more; not the catch-all Other) has a public page at `https://alexandria.firecrawl.dev/categories/<category>` listing every provider in it, and an agent-readable guide at `https://alexandria.firecrawl.dev/agents/categories/<category>`.
+
+## Benchmarks
+
+- [Benchmarks](https://www.firecrawl.dev/benchmarks): Benchmarks Firecrawl runs or appears in, with methodology and results. Firecrawl-run benchmarks are vendor-run; each page says which data and code are published.
+- [Legal Retrieval Benchmark](https://www.firecrawl.dev/benchmarks/legal-retrieval): Legal information retrieval benchmark (gold@1, gold@10 and bad@10 on 581 official-document requests) comparing the Firecrawl Government & Legal Index, Exa and Parallel, with Claude Code as a reference. The public half of the data and the scoring code are on GitHub.
+- [DevDex](https://www.firecrawl.dev/benchmarks/devdex): Developer retrieval benchmark (Recall@10 and MRR@10 across repo, issue-to-fix and docs retrieval) comparing Firecrawl, Parallel, Exa and Context7.
+- [Company Enrichment Benchmark](https://www.firecrawl.dev/benchmarks/company-enrichment): Apollo.io, Ocean.io, People Data Labs, ContactOut, FullEnrich and Data Legion compared on 200 US companies, scored against SEC filings and federal records. Firecrawl resells four of the six providers through Alexandria.
+- [Fantasy Data Benchmark](https://www.firecrawl.dev/benchmarks/fantasy): Firecrawl with Alexandria, web search and Flaim on 272 NFL fantasy questions, graded against nflverse and 7 sites.
+- [Web Search LLM Leaderboard](https://www.firecrawl.dev/benchmarks/search-lift): 10 AI models ranked by how well they answer 4,703 hard research questions from BrowseComp, DeepSearchQA, HLE and Firecrawl Search Bench, scored with and without Firecrawl Alexandria, with cost and time per question.
+- [Claude Opus 5.5 web search score](https://www.firecrawl.dev/benchmarks/search-lift/claude-opus-5-5): Claude Opus 5.5 on the Web Search LLM Leaderboard, with and without Firecrawl Alexandria, by question set, with cost, speed and closest rivals.
+- [GPT-6.1 Sol web search score](https://www.firecrawl.dev/benchmarks/search-lift/gpt-6-1-sol): GPT-6.1 Sol on the Web Search LLM Leaderboard, with and without Firecrawl Alexandria, by question set, with cost, speed and closest rivals.
+- [Kimi K3.1 Pro web search score](https://www.firecrawl.dev/benchmarks/search-lift/kimi-k3-1-pro): Kimi K3.1 Pro on the Web Search LLM Leaderboard, with and without Firecrawl Alexandria, by question set, with cost, speed and closest rivals.
+- [Pareto 26.9 web search score](https://www.firecrawl.dev/benchmarks/search-lift/pareto-26-9): Pareto 26.9 on the Web Search LLM Leaderboard, with and without Firecrawl Alexandria, by question set, with cost, speed and closest rivals.
+- [DeepSeek V4.1 Flash (1017) web search score](https://www.firecrawl.dev/benchmarks/search-lift/deepseek-v4-1-flash-1017): DeepSeek V4.1 Flash (1017) on the Web Search LLM Leaderboard, with and without Firecrawl Alexandria, by question set, with cost, speed and closest rivals.
+- [Mercury 3 web search score](https://www.firecrawl.dev/benchmarks/search-lift/mercury-3): Mercury 3 on the Web Search LLM Leaderboard, with and without Firecrawl Alexandria, by question set, with cost, speed and closest rivals.
+- [MiniMax M3.1 Flash web search score](https://www.firecrawl.dev/benchmarks/search-lift/minimax-m3-1-flash): MiniMax M3.1 Flash on the Web Search LLM Leaderboard, with and without Firecrawl Alexandria, by question set, with cost, speed and closest rivals.
+- [Claude Haiku 5.5 web search score](https://www.firecrawl.dev/benchmarks/search-lift/claude-haiku-5-5): Claude Haiku 5.5 on the Web Search LLM Leaderboard, with and without Firecrawl Alexandria, by question set, with cost, speed and closest rivals.
+- [GLM 5.3 Flash web search score](https://www.firecrawl.dev/benchmarks/search-lift/glm-5-3-flash): GLM 5.3 Flash on the Web Search LLM Leaderboard, with and without Firecrawl Alexandria, by question set, with cost, speed and closest rivals.
+- [Nemotron 3.5 Lightning web search score](https://www.firecrawl.dev/benchmarks/search-lift/nemotron-3-5-lightning): Nemotron 3.5 Lightning on the Web Search LLM Leaderboard, with and without Firecrawl Alexandria, by question set, with cost, speed and closest rivals.
+- [SimpleQA results for /search](https://www.firecrawl.dev/blog/introducing-our-most-accurate-search-yet): A GPT-5.4 agent with up to 20 tool calls using Firecrawl Search and Scrape scored 94.7% on the full SimpleQA set (best of two sessions). This is a multi-step agent result, not a single-search score.
+
+## Pricing
+
+- [Pricing](https://www.firecrawl.dev/pricing): Free (1,000 credits every month, refreshed monthly, no card required), Hobby ($19/month billed monthly, or $16/month billed annually, 5,000 credits), Standard ($99/month billed monthly, or $83/month billed annually, 100,000 credits), Growth ($399/month billed monthly, or $333/month billed annually, 500,000 credits), Scale ($749/month billed monthly, or $599/month billed annually, 1,000,000 credits), Enterprise (custom). Effective 2026-09-04.
+- [Pricing (Markdown)](https://www.firecrawl.dev/pricing.md): every plan, the per-plan pay-as-you-go rates, the full plan comparison tables and the billing FAQ in one file.
+- Pricing facts: 1 credit = 1 page on a basic scrape or crawl, and 1 credit per Map call. Search costs 2 credits per 10 results; Interact costs 2 credits per browser minute; Monitor costs 1 credit per page per check. Structured formats (JSON, Question, Highlight) add 4 credits per page. Credits are shared across all endpoints: search results and pages scraped draw on one balance. A scrape that returns no result is not charged. A page that responds with an error status such as 403 or 404 is still returned to you and costs 1 credit. Every price above is per month in USD; the lower figure in each pair is the effective monthly rate on an annual subscription, not a separate plan.
+- [Enterprise](https://www.firecrawl.dev/enterprise): Enterprise plan details: custom credits, SLAs, dedicated support, SSO, and the security and compliance features below.
+
+## Security and compliance
+
+- Firecrawl is SOC 2 Type II compliant (renewal in progress). The [Enterprise docs](https://docs.firecrawl.dev/enterprise) list the security, compliance, and access controls on Enterprise plans.
+- Zero data retention (ZDR): page content and extracted data are processed in memory and never persisted beyond the request, for [scrape](https://docs.firecrawl.dev/features/scrape#zero-data-retention-zdr), batch scrape, crawl, parse, [search](https://docs.firecrawl.dev/features/search#zero-data-retention-zdr), [interact](https://docs.firecrawl.dev/features/interact#zero-data-retention-zdr), and [agent](https://docs.firecrawl.dev/features/agent#zero-data-retention-zdr). An agent result stays retrievable for 24 hours and is then deleted. Agent ZDR needs Scrape and Search ZDR enabled and uses only Alexandria data providers that support ZDR. End-to-end search ZDR also has the upstream search provider enforce zero data retention; in anonymized mode, the provider may cache an anonymized query. ZDR searches do not return Alexandria data tools. Available on Enterprise plans.
+- [PII redaction](https://docs.firecrawl.dev/features/scrape#pii-redaction) removes personally identifiable information from scrape output.
+- Data Processing Agreements (DPA), custom MSAs, and vendor security reviews for Enterprise customers.
+- [SSO and SCIM](https://docs.firecrawl.dev/features/sso): SAML and OIDC single sign-on (Okta, Entra ID, Google Workspace, and more) and SCIM directory sync.
+- Access controls: static IP allowlisting, [IP restrictions](https://docs.firecrawl.dev/features/ip-restrictions), and [key restrictions](https://docs.firecrawl.dev/features/key-restrictions) per API key.
+- US data residency.
+- Scale: custom and reserved concurrency, and credits pooled across teams in one organization.
+- Buy through [AWS Marketplace](https://www.firecrawl.dev/integrations/aws-marketplace) or [Google Cloud Marketplace](https://www.firecrawl.dev/integrations/google-cloud-marketplace).
+
+## Integrations
+
+- [Integrations](https://www.firecrawl.dev/integrations): Native integrations with LlamaIndex, LangChain, Claude Code, Cursor, n8n, Make, Zapier, and Stripe Projects.
+- [Plugins](https://www.firecrawl.dev/plugins): Install links for Firecrawl integrations in ChatGPT, Claude, Grok Bot, Muse, Codex, Claude Code, Cursor and Gemini CLI, plus a setup prompt for any other agent.
+- [LangGraph](https://www.firecrawl.dev/integrations/langgraph): Add web search to a LangGraph agent with the FirecrawlSearch tool and a ToolNode, with Python code.
+- [LangChain](https://www.firecrawl.dev/integrations/langchain): The official langchain-firecrawl package. FirecrawlSearch and FirecrawlScrape agent tools for create_agent, plus a document loader with a search mode.
+- [LlamaIndex](https://www.firecrawl.dev/integrations/llamaindex): Give a LlamaIndex FunctionAgent web search with Firecrawl, or load search results as documents with FireCrawlWebReader.
+- [OpenAI](https://www.firecrawl.dev/integrations/openai): Define Firecrawl search as an OpenAI function calling tool (Responses API) or as a function_tool in the OpenAI Agents SDK.
+- [Dify](https://www.firecrawl.dev/integrations/workflow-automation/dify): Add web search to Dify agents with the official Firecrawl plugin (Search, Scrape, Crawl, Map, Monitor actions). Covers the Flowise Firecrawl block too.
+- [n8n](https://www.firecrawl.dev/integrations/n8n): The Firecrawl node's Search Web operation for n8n workflows, and Firecrawl as a tool on the n8n AI Agent node.
+- [Firecrawl in ChatGPT](https://www.firecrawl.dev/integrations/chatgpt): The official Firecrawl plugin for ChatGPT and Codex: search, scrape, map, crawl and interact from the chat, including summarizing every page on a site and reading JavaScript-heavy pages.
+- [Firecrawl in Claude](https://www.firecrawl.dev/integrations/claude): The official Firecrawl connector for Claude: web search, scraping into Markdown or JSON fields, research papers and the Firecrawl Developer Index, including extracting structured data from a list of URLs and adding sources to Claude's Research mode.
+
+## Use Cases
+
+- [Use Cases](https://www.firecrawl.dev/use-cases): Common production use cases — AI MCPs, autonomous agents, SEO analysis, e-commerce intelligence, financial research, and lead enrichment.
+- [Government and public records data](https://www.firecrawl.dev/use-cases/government-data): SAM.gov contract opportunities, Grants.gov funding, CourtListener case law, Federal Register rules through the Government Index, and state business registries for AI agents, from 120+ public records sources in Firecrawl Alexandria.
+- [Datasets](https://alexandria.firecrawl.dev/datasets): Ready-made and custom datasets in legal, finance, healthcare and code from Firecrawl Alexandria, delivered as Parquet, JSONL or CSV to your bucket, with the license on every row.
+- [Government & Legal Index](https://www.firecrawl.dev/gov-index): Search 30M+ data points of US law, from statutes and regulations to city codes and court opinions, free in Claude, ChatGPT, Grok Bot or the API, with the citation behind every answer.
+- [Fantasy football start/sit](https://alexandria.firecrawl.dev/fantasy): Live fantasy football rankings, projections and lineup advice from six expert sources, built on Alexandria providers.
+- [Fireround: startup funding news](https://www.firecrawl.dev/tools/fireround): Who just raised: the newest startup funding rounds with their amounts, stages and lead investors, and the last 30 days in numbers, live from the Fireround provider on Alexandria.
+- [Prompts to try in ChatGPT and Claude](https://alexandria.firecrawl.dev/prompts): Ready-to-copy prompts for ChatGPT, Claude and MCP clients, each with the answer it got back: ticket prices, prediction market odds, fantasy projections, open restaurant tables, flood zones and more, using Firecrawl Alexandria. Each prompt has its own page at `https://alexandria.firecrawl.dev/prompts/<slug>`.
+- [Product and price data for AI agents](https://www.firecrawl.dev/use-cases/product-teams): Retailer prices and store availability (Best Buy, Walmart, Newegg, Micro Center, Nike, Shopify), marketplace sold prices (StockX, HiBid, Cars & Bids) and catalog scraping through Firecrawl Alexandria and Firecrawl Scrape.
+- [Real estate and property data for AI agents](https://www.firecrawl.dev/use-cases/real-estate): Auction.com listings with valuations and comparable sales, ArcGIS parcel, zoning and flood zone layers, NYC property records, weather history and wildfire risk through Firecrawl Alexandria.
+
+## Alternatives
+
+- [Alternatives](https://www.firecrawl.dev/alternatives): Comparison pages vs Bright Data, Apify, Playwright, SerpAPI, and other web data tools.
+
+## Customers
+
+- [Customers](https://www.firecrawl.dev/customers): Firecrawl customers, from Apple, Shopify and Canva to Zapier and Replit, with customer stories and quotes by use case.
+
+## Blog
+
+- [Blog](https://www.firecrawl.dev/blog): Tutorials, guides, and product updates on web search, scrape, crawl, and building AI agent workflows.
+- [What is a web search API?](https://www.firecrawl.dev/blog/web-search-api): How a web search API returns live, LLM-ready results to AI agents, how to choose one, cost at startup volume, and a step-by-step Firecrawl Search guide with curl, SDK, CLI and function-calling code.
+- [Best RapidAPI alternatives for AI agents](https://www.firecrawl.dev/blog/rapidapi-alternatives): Firecrawl Alexandria compared with RapidAPI (Nokia API Hub) and Apify Store for AI agents that need data APIs.
+- [How to add web search to an AI app](https://www.firecrawl.dev/blog/add-web-search-to-ai-app): Python and TypeScript code for Firecrawl Search, a chatbot tool-calling loop, web search for local LLMs on Ollama, and citing sources from search results.
+- [Zero Data Retention across Firecrawl](https://www.firecrawl.dev/blog/zero-data-retention): which endpoints support ZDR, the two search ZDR modes (end-to-end and anonymized), and how to enable it per request.
+
+## Changelog
+
+- [Changelog](https://www.firecrawl.dev/changelog): Latest product updates, new endpoint launches, and engine upgrades. Every entry has its own markdown page; the full list is at https://www.firecrawl.dev/changelog.md.
+- [AI/ML Research Index in ChatGPT & Claude](https://www.firecrawl.dev/changelog/ai-ml-research-index.md): Ask ChatGPT, Claude, or any agent harness with Firecrawl to find the right AI/ML paper, even one posted today, and read its full text. (November 11, 2026)
+- [Introducing job search tools for ChatGPT & Claude](https://www.firecrawl.dev/changelog/job-tools.md): Match your resume to 7M+ open roles, find execs to email from 250M+ people and see what they care about before you reach out. (November 10, 2026)
+- [200K GitHub stars, and 2,000 plushies to say thanks](https://www.firecrawl.dev/changelog/200k-github-stars.md): We hit 200K GitHub stars, so we made 2,000 plushies to say thanks, and you can claim yours with the Firecrawl plugin while supplies last. (November 9, 2026)
+- [Introducing SEC filings for ChatGPT and Claude](https://www.firecrawl.dev/changelog/sec-filings.md): Give your AI agents SEC filings from 8,000+ public companies: 10-Ks, 8-Ks, insider trades and 13F holdings in Alexandria. (November 6, 2026)
+- [Introducing free life sciences research for ChatGPT and Claude](https://www.firecrawl.dev/changelog/life-sciences-research.md): Ask ChatGPT or Claude about a drug, disease or gene and get answers drawn from 41M+ life sciences research papers in one step. (November 5, 2026)
+- [Legal Retrieval Benchmark: three search APIs on 581 official-document requests](https://www.firecrawl.dev/changelog/legal-retrieval-benchmark.md): Three search APIs on 581 legal research requests, scored against the official document. The Government & Legal Index leads on gold@1 and gold@10. (November 4, 2026)
+- [Introducing free Election Records in Alexandria](https://www.firecrawl.dev/changelog/election-records-launch.md): Ask your AI agents about all 470 House and Senate races: results as each state reports, who funds each campaign and how incumbents voted. (November 3, 2026)
+- [Introducing headless Clay for agents](https://www.firecrawl.dev/changelog/headless-clay.md): Build and run all of your enrichment flows in ChatGPT and Claude. Search 250M+ people and 26M+ companies, with 1,000 free credits a month. (November 2, 2026)
+
+## Legal
+
+- [Terms of Service](https://www.firecrawl.dev/terms-of-service): Firecrawl's terms of service.
+- [Privacy Policy](https://www.firecrawl.dev/privacy-policy): Data collection and usage policy.
+- [Contributor License Agreement](https://www.firecrawl.dev/cla): CLA for open-source contributors.
+
+## Optional
+
+- [Glossary](https://www.firecrawl.dev/glossary): Definitions of web data API concepts — scraping, crawling, search, extraction, and browser automation.
+- [Tools](https://www.firecrawl.dev/tools): Free web extraction tools — URL extractor, URL-to-JSON converter, article summarizer, website-to-markdown, and website-to-text.

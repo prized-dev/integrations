@@ -1,0 +1,18 @@
+GET https://app.koyeb.com/v1/apps
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:49.058Z
+final-url: https://app.koyeb.com/v1/apps
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:37:44 GMT
+content-type: application/json
+content-length: 88
+connection: close
+x-ratelimit-limit: 400, 400;w=60
+x-ratelimit-remaining: 399
+x-ratelimit-reset: 16
+strict-transport-security: max-age=31536000; includeSubDomains
+cache-control: no-cache, no-store
+pragma: no-cache
+
+{"status":401,"code":"authentication_error","message":"Route needs to be authenticated"}

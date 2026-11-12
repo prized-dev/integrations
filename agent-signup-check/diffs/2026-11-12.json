@@ -1,0 +1,263 @@
+{
+ "from": "2026-11-07",
+ "to": "2026-11-12",
+ "checkerFrom": "agent-signup-check/0.2.2",
+ "checkerTo": "agent-signup-check/0.2.5",
+ "improved": [
+  {
+   "name": "Polar",
+   "site": "polar.sh",
+   "from": "4/7",
+   "to": "5/7",
+   "rankFrom": 5,
+   "rankTo": 2,
+   "cells": [
+    {
+     "check": "markdown",
+     "name": "Docs in Markdown",
+     "from": "fail",
+     "to": "pass",
+     "reason": "llms.txt found"
+    }
+   ]
+  },
+  {
+   "name": "Railway",
+   "site": "railway.com",
+   "from": "1/6",
+   "to": "2/6",
+   "rankFrom": 32,
+   "rankTo": 17,
+   "cells": [
+    {
+     "check": "prm",
+     "name": "Protected resource metadata",
+     "from": "fail",
+     "to": "pass",
+     "reason": "Names 1 authorization server"
+    }
+   ]
+  }
+ ],
+ "regressed": [],
+ "changed": [
+  {
+   "name": "Blaxel",
+   "site": "blaxel.ai",
+   "from": "1/7",
+   "to": "1/7",
+   "rankFrom": 32,
+   "rankTo": 33,
+   "cells": [
+    {
+     "check": "authmd",
+     "name": "auth.md",
+     "from": "fail",
+     "to": "partial",
+     "reason": "auth.md is published, and says agents cannot register here yet"
+    }
+   ]
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "from": "0/7",
+   "to": "0/7",
+   "rankFrom": 93,
+   "rankTo": 93,
+   "cells": [
+    {
+     "check": "authmd",
+     "name": "auth.md",
+     "from": "fail",
+     "to": "unread",
+     "reason": "Not read on 2026-11-12: https://codesandbox.io/auth.md answered with a Cloudflare bot challenge"
+    },
+    {
+     "check": "prm",
+     "name": "Protected resource metadata",
+     "from": "fail",
+     "to": "unread",
+     "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-protected-resource answered with a Cloudflare bot challenge"
+    },
+    {
+     "check": "register",
+     "name": "Sign-up by API",
+     "from": "fail",
+     "to": "unread",
+     "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge"
+    },
+    {
+     "check": "limits",
+     "name": "Spend limits",
+     "from": "fail",
+     "to": "unread",
+     "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge"
+    },
+    {
+     "check": "payment",
+     "name": "Payment handoff",
+     "from": "fail",
+     "to": "unread",
+     "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/x402 answered with a Cloudflare bot challenge"
+    },
+    {
+     "check": "markdown",
+     "name": "Docs in Markdown",
+     "from": "fail",
+     "to": "unread",
+     "reason": "Not read on 2026-11-12: https://codesandbox.io/llms.txt answered with a Cloudflare bot challenge"
+    }
+   ]
+  },
+  {
+   "name": "Deno Deploy",
+   "site": "deno.com",
+   "from": "0/7",
+   "to": "0/7",
+   "rankFrom": 93,
+   "rankTo": 93,
+   "cells": [
+    {
+     "check": "markdown",
+     "name": "Docs in Markdown",
+     "from": "fail",
+     "to": "unread",
+     "reason": "Not read on 2026-11-12: https://docs.deno.com/llms.txt answered with HTTP 500"
+    }
+   ]
+  },
+  {
+   "name": "Orthogonal",
+   "site": "orthogonal.com",
+   "from": "1/7",
+   "to": "1/7",
+   "rankFrom": 32,
+   "rankTo": 33,
+   "cells": [
+    {
+     "check": "prm",
+     "name": "Protected resource metadata",
+     "from": "partial",
+     "to": "fail",
+     "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://www.orthogonal.com/.well-known/oauth-protected-resource)"
+    }
+   ]
+  },
+  {
+   "name": "Perplexity",
+   "site": "perplexity.ai",
+   "from": "2/7",
+   "to": "2/7",
+   "rankFrom": 17,
+   "rankTo": 17,
+   "cells": [
+    {
+     "check": "authmd",
+     "name": "auth.md",
+     "from": "fail",
+     "to": "unread",
+     "reason": "Not read on 2026-11-12: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge"
+    }
+   ]
+  },
+  {
+   "name": "Tavily",
+   "site": "tavily.com",
+   "from": "1/7",
+   "to": "1/7",
+   "rankFrom": 32,
+   "rankTo": 33,
+   "cells": [
+    {
+     "check": "limits",
+     "name": "Spend limits",
+     "from": "partial",
+     "to": "fail",
+     "reason": "No spend cap in metadata, auth.md or llms.txt"
+    }
+   ]
+  }
+ ],
+ "added": [],
+ "removed": [],
+ "stale": [],
+ "mismatches": [],
+ "retried": [
+  {
+   "name": "Perplexity",
+   "site": "perplexity.ai",
+   "kept": "kept the first check (the second was no better). First: auth.md 403, llms.txt 403. Second: auth.md 403, llms.txt 403"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "kept": "kept the first check (the second was no better). First: auth.md 403, llms.txt 403, llms.txt (docs) 403, prm 403, as-metadata 403, x402 discovery 403. Second: auth.md 403, llms.txt 403, llms.txt (docs) 403, prm 403, as-metadata 403, x402 discovery 403"
+  },
+  {
+   "name": "Deno Deploy",
+   "site": "deno.com",
+   "kept": "kept the first check (the second was no better). First: llms.txt (docs) 500. Second: llms.txt (docs) 500"
+  }
+ ],
+ "errors": [],
+ "unread": [
+  {
+   "name": "Perplexity",
+   "site": "perplexity.ai",
+   "check": "auth.md",
+   "reason": "Not read on 2026-11-12: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "check": "auth.md",
+   "reason": "Not read on 2026-11-12: https://codesandbox.io/auth.md answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "check": "Protected resource metadata",
+   "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-protected-resource answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "check": "Sign-up by API",
+   "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "check": "Spend limits",
+   "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "check": "Payment handoff",
+   "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/x402 answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "check": "Docs in Markdown",
+   "reason": "Not read on 2026-11-12: https://codesandbox.io/llms.txt answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "Deno Deploy",
+   "site": "deno.com",
+   "check": "Docs in Markdown",
+   "reason": "Not read on 2026-11-12: https://docs.deno.com/llms.txt answered with HTTP 500",
+   "was": "fail"
+  }
+ ],
+ "notChecked": []
+}

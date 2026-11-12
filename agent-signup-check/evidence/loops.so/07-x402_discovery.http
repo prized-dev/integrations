@@ -1,0 +1,22 @@
+GET https://loops.so/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:17.324Z
+final-url: https://loops.so/.well-known/x402
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:38:17 GMT
+content-type: text/html; charset=utf-8
+content-length: 10
+connection: close
+cache-control: public, max-age=0, must-revalidate
+content-security-policy: frame-ancestors 'none'
+permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()
+referrer-policy: strict-origin-when-cross-origin
+server: cloudflare
+strict-transport-security: max-age=31536000
+x-content-type-options: nosniff
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+cf-ray: a59228dc1f6b88dc-PDX
+
+Not found

@@ -1,0 +1,29 @@
+GET https://huggingface.co/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:25.228Z
+final-url: https://huggingface.co/.well-known/oauth-protected-resource
+
+HTTP 200
+content-type: application/json; charset=utf-8
+content-length: 236
+connection: close
+date: Thu, 12 Nov 2026 02:37:24 GMT
+etag: W/"ec-P86f86b17VhYQiJ1sIDmoDRJcpg"
+x-powered-by: huggingface-moon
+x-request-id: Root=1-6af52664-33dce3f3215b23bc171828f6
+ratelimit: "media";r=9999;t=119
+ratelimit-policy: "fixed window";"media";q=10000;w=300
+cross-origin-opener-policy: same-origin
+referrer-policy: strict-origin-when-cross-origin
+access-control-max-age: 86400
+access-control-allow-origin: https://huggingface.co
+vary: Origin
+access-control-expose-headers: X-Repo-Commit,X-HF-Warning,X-Request-Id,X-Error-Code,X-Error-Message,X-Total-Count,ETag,Link,Accept-Ranges,Content-Range,X-Linked-Size,X-Linked-ETag,X-Xet-Hash,RateLimit,RateLimit-Policy
+x-cache: Miss from cloudfront
+via: 1.1 3bbe2b9a1067c049fd5ff2d57048d36a.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P5
+alt-svc: h3=":443"; ma=86400
+x-amz-cf-id: hSjep6c4K7N1clDC3IabYqK5_UO5gaIbm7eNBgyVrCTSibv02CZitA==
+strict-transport-security: max-age=31536000
+
+{"resource":"https://huggingface.co/mcp","authorization_servers":["https://huggingface.co"],"bearer_methods_supported":["header"],"scopes_supported":["openid","profile","read-mcp","read-repos","jobs","contribute-repos","inference-api"]}

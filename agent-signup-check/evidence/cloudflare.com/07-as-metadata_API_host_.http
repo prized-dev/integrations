@@ -1,0 +1,19 @@
+GET https://api.cloudflare.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:42.269Z
+final-url: https://api.cloudflare.com/.well-known/oauth-authorization-server
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:37:40 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+cf-ray: a59227fa7eb5ef2c-PDX
+cf-cache-status: DYNAMIC
+cache-control: no-store
+server: cloudflare
+cf-auditlog-id: 01a1cd9e-3893-7fdd-80e7-2f6cca9f28c1
+api-version: 2026-10-01.epoch
+content-encoding: gzip
+
+{"success":false,"errors":[{"code":10404,"message":"No route for that URI"}],"messages":[],"result":null}

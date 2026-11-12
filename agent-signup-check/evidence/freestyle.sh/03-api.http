@@ -1,0 +1,18 @@
+GET https://api.freestyle.sh/web/v1/deployments
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:50.138Z
+final-url: https://api.freestyle.sh/web/v1/deployments
+
+HTTP 401
+server: openresty
+date: Thu, 12 Nov 2026 02:37:47 GMT
+content-type: application/json
+vary: origin, access-control-request-method, access-control-request-headers
+access-control-allow-origin: *
+x-freestyle-trace-id: c7365e28-c8a4-4a73-a619-9a66cf7cdd39
+x-request-id: 3b4bcb38-d4fe-45fc-a1a5-1bd2b6798210
+strict-transport-security: max-age=63072000
+content-length: 177
+connection: close
+
+{"code":"UNAUTHORIZED_ERROR","message":"Unauthorized request to /web/v1/deployments","route":"/web/v1/deployments","reason":"No Authorization or Identity token header provided"}

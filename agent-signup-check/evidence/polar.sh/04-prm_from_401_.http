@@ -1,0 +1,25 @@
+GET https://api.polar.sh/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:41.822Z
+final-url: https://api.polar.sh/.well-known/oauth-protected-resource
+
+HTTP 200
+date: Thu, 12 Nov 2026 02:38:40 GMT
+content-type: application/json
+content-length: 417
+connection: close
+cache-control: private, no-store
+content-encoding: br
+polar-version: 2026-10
+rndr-id: 8c247462-dbf1-4fd8
+server: cloudflare
+strict-transport-security: max-age=63072000; includeSubDomains
+vary: Accept-Encoding
+x-render-origin-server: uvicorn
+cf-cache-status: DYNAMIC
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=WeguYgJlhPLfzL6yl%2BnLMxwyZs6%2Bm1Fyok7fXklOaYoAICUd%2F2OjY7qPCe%2BZ0LYtnqIHgMx%2B9L0vJLCDIpT4BHjeY%2F0fnhSU8CvMn9e4411B0Ep5kT2daPufOwKY9w%3D%3D"}]}
+cf-ray: a592296e7823dd76-PDX
+alt-svc: h3=":443"; ma=86400
+
+{"resource":"https://api.polar.sh","authorization_servers":["https://api.polar.sh"],"scopes_supported":["openid","profile","email","user:read","user:write","organizations:read","organizations:write","custom_fields:read","custom_fields:write","discounts:read","discounts:write","checkout_links:read","checkout_links:write","checkouts:read","checkouts:write","transactions:read","transactions:write","payouts:read","payouts:write","products:read","products:write","benefits:read","benefits:write","events:read","events:write","meters:read","meters:write","files:read","files:write","subscriptions:read","subscriptions:write","customers:read","customers:write","members:read","members:write","wallets:read","wallets:write","disputes:read","disputes:write","customer_meters:read","customer_sessions:write","member_sessions:write","customer_seats:read","customer_seats:write","orders:read","orders:write","refunds:read","refunds:write","payments:read","metrics:read","metrics:write","webhooks:read","webhooks:write","license_keys:read","license_keys:write","customer_portal:read","customer_portal:write","notifications:read","notifications:write","notification_recipients:read","notification_recipients:write"],"bearer_methods_supported":["header"],"resource_name":"Polar","resource_documentation":"https://polar.sh/docs"}

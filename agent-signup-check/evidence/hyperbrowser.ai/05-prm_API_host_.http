@@ -1,0 +1,32 @@
+GET https://api.hyperbrowser.ai/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:26.489Z
+final-url: https://api.hyperbrowser.ai/.well-known/oauth-protected-resource
+
+HTTP 404
+content-security-policy: default-src 'none'
+x-frame-options: DENY
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+permissions-policy: camera=(), microphone=(), geolocation=()
+vary: Origin
+access-control-allow-credentials: true
+content-type: text/html; charset=utf-8
+x-cloud-trace-context: 4c7ef9638fbc1f151459471d56050cc1
+date: Thu, 12 Nov 2026 02:38:24 GMT
+server: Google Frontend
+content-length: 175
+via: 1.1 google
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+connection: close
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /.well-known/oauth-protected-resource</pre>
+</body>
+</html>

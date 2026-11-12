@@ -1,0 +1,153 @@
+{
+ "site": "planetscale.com",
+ "checkedAt": "2026-11-12T02:38:06.223Z",
+ "checker": "agent-signup-check/0.2.5",
+ "passed": 2,
+ "partial": 1,
+ "unread": 0,
+ "total": 7,
+ "whoActs": null,
+ "checks": [
+  {
+   "id": "authmd",
+   "name": "auth.md",
+   "url": "https://planetscale.com/docs/api/reference/getting-started-with-planetscale-api.md",
+   "heading": "# Getting started with PlanetScale API",
+   "registrationEndpoints": [],
+   "mentions": [],
+   "status": "fail",
+   "reason": "A Markdown page is served at /auth.md, but it is not about agent sign-in (it never mentions auth.md, agent_auth, or how an agent gets a credential)"
+  },
+  {
+   "id": "prm",
+   "name": "Protected resource metadata",
+   "url": "https://api.planetscale.com/.well-known/oauth-protected-resource",
+   "via": "api-well-known",
+   "resource": "https://api.planetscale.com",
+   "authorization_servers": [
+    "https://api.planetscale.com"
+   ],
+   "status": "pass",
+   "reason": "Names 1 authorization server"
+  },
+  {
+   "id": "register",
+   "name": "Sign-up by API",
+   "url": "https://api.planetscale.com/.well-known/oauth-authorization-server",
+   "status": "fail",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
+  },
+  {
+   "id": "challenge",
+   "name": "Key works without a browser",
+   "url": "https://api.planetscale.com/v1/organizations",
+   "httpStatus": 401,
+   "www_authenticate": null,
+   "status": "partial",
+   "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+  },
+  {
+   "id": "limits",
+   "name": "Spend limits",
+   "status": "fail",
+   "reason": "No spend cap in metadata, auth.md or llms.txt"
+  },
+  {
+   "id": "payment",
+   "name": "Payment handoff",
+   "status": "fail",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+  },
+  {
+   "id": "markdown",
+   "name": "Docs in Markdown",
+   "url": "https://planetscale.com/docs/llms.txt",
+   "heading": "# PlanetScale",
+   "bytes": 27212,
+   "status": "pass",
+   "reason": "llms.txt found"
+  }
+ ],
+ "requests": [
+  {
+   "label": "auth.md",
+   "url": "https://planetscale.com/auth.md",
+   "finalUrl": "https://planetscale.com/docs/api/reference/getting-started-with-planetscale-api.md",
+   "status": 200,
+   "error": null,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 222,
+   "redirects": 1
+  },
+  {
+   "label": "llms.txt",
+   "url": "https://planetscale.com/llms.txt",
+   "finalUrl": "https://planetscale.com/docs/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 148,
+   "redirects": 1
+  },
+  {
+   "label": "api",
+   "url": "https://api.planetscale.com/v1/organizations",
+   "finalUrl": "https://api.planetscale.com/v1/organizations",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 214,
+   "redirects": 0
+  },
+  {
+   "label": "prm",
+   "url": "https://planetscale.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://planetscale.com/.well-known/oauth-protected-resource",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 111,
+   "redirects": 0
+  },
+  {
+   "label": "prm (API host)",
+   "url": "https://api.planetscale.com/.well-known/oauth-protected-resource",
+   "finalUrl": "https://api.planetscale.com/.well-known/oauth-protected-resource",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 210,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata",
+   "url": "https://api.planetscale.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.planetscale.com/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 215,
+   "redirects": 0
+  },
+  {
+   "label": "catch-all probe",
+   "url": "https://planetscale.com/agent-signup-check-no-such-page.md",
+   "finalUrl": "https://planetscale.com/agent-signup-check-no-such-page.md",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 97,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery",
+   "url": "https://planetscale.com/.well-known/x402",
+   "finalUrl": "https://planetscale.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 97,
+   "redirects": 0
+  }
+ ]
+}

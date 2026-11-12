@@ -1,0 +1,26 @@
+GET https://api.planetscale.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:06.223Z
+final-url: https://api.planetscale.com/.well-known/oauth-protected-resource
+
+HTTP 200
+date: Thu, 12 Nov 2026 02:38:04 GMT
+content-type: application/json; charset=utf-8
+transfer-encoding: chunked
+connection: close
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-download-options: noopen
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+vary: Accept,X-Requested-With,Origin,Accept-Encoding
+etag: W/"216110fc10258d730e2ea38fd589cff2"
+cache-control: max-age=0, private, must-revalidate
+content-security-policy: default-src 'none'; font-src 'self'; connect-src 'self'; img-src 'self'; manifest-src 'self'; object-src 'none'; script-src 'self' 'nonce-DEAlen+dNLCVppjNdmZqvzHlfc9vG4GeWw7kDsYWdL8='; style-src 'self'; style-src-elem 'self' 'sha256-WAyOw4V+FqDc35lQPyRADLBWbuNK8ahvYEaQIYF1+Ps='
+x-request-id: dcaad65a-5914-4f0a-92d2-efb34c041b13
+x-runtime: 0.004797
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+content-encoding: gzip
+
+{"resource":"https://api.planetscale.com","authorization_servers":["https://api.planetscale.com"],"bearer_methods_supported":["header"],"resource_name":"PlanetScale API","resource_documentation":"https://planetscale.com/docs/api/reference/getting-started-with-planetscale-api"}

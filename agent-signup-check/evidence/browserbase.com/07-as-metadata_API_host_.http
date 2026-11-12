@@ -1,0 +1,12 @@
+GET https://api.browserbase.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:24.269Z
+final-url: https://api.browserbase.com/.well-known/oauth-authorization-server
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:38:23 GMT
+content-type: application/json; charset=utf-8
+content-length: 110
+connection: close
+
+{"message":"Route GET:/.well-known/oauth-authorization-server not found","error":"Not Found","statusCode":404}

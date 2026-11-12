@@ -1,0 +1,109 @@
+{
+ "from": "2026-10-28",
+ "to": "2026-10-30",
+ "checkerFrom": "agent-signup-check/0.2.0",
+ "checkerTo": "agent-signup-check/0.2.2",
+ "improved": [
+  {
+   "name": "Deno Deploy",
+   "site": "deno.com",
+   "from": "0/7",
+   "to": "1/7",
+   "rankFrom": 93,
+   "rankTo": 30,
+   "cells": [
+    {
+     "check": "markdown",
+     "name": "Docs in Markdown",
+     "from": "fail",
+     "to": "pass",
+     "reason": "llms.txt found at a docs path"
+    }
+   ]
+  },
+  {
+   "name": "Exa",
+   "site": "exa.ai",
+   "from": "1/7",
+   "to": "2/7",
+   "rankFrom": 29,
+   "rankTo": 16,
+   "cells": [
+    {
+     "check": "authmd",
+     "name": "auth.md",
+     "from": "fail",
+     "to": "partial",
+     "reason": "auth.md is published, and says agents cannot register here yet"
+    },
+    {
+     "check": "prm",
+     "name": "Protected resource metadata",
+     "from": "fail",
+     "to": "pass",
+     "reason": "Names 1 authorization server"
+    },
+    {
+     "check": "payment",
+     "name": "Payment handoff",
+     "from": "fail",
+     "to": "partial",
+     "reason": "auth.md mentions a payment path (`402`) in prose; nothing machine-readable"
+    }
+   ]
+  }
+ ],
+ "regressed": [],
+ "changed": [
+  {
+   "name": "AgentPhone",
+   "site": "agentphone.to",
+   "from": "1/7",
+   "to": "1/7",
+   "rankFrom": 29,
+   "rankTo": 30,
+   "cells": [
+    {
+     "check": "challenge",
+     "name": "Key works without a browser",
+     "from": "partial",
+     "to": "fail",
+     "reason": "API: timeout"
+    }
+   ]
+  }
+ ],
+ "added": [],
+ "removed": [],
+ "stale": [],
+ "mismatches": [],
+ "retried": [
+  {
+   "name": "Google Cloud",
+   "site": "cloud.google.com",
+   "kept": "kept the second check"
+  },
+  {
+   "name": "AgentPhone",
+   "site": "agentphone.to",
+   "kept": "kept the first check (the second was no better)"
+  }
+ ],
+ "errors": [
+  {
+   "name": "AgentPhone",
+   "site": "agentphone.to",
+   "label": "api",
+   "url": "https://api.agentphone.ai/v1/numbers",
+   "error": "timeout"
+  },
+  {
+   "name": "AgentPhone",
+   "site": "agentphone.to",
+   "label": "prm (API host)",
+   "url": "https://api.agentphone.ai/.well-known/oauth-protected-resource",
+   "error": "timeout"
+  }
+ ],
+ "notChecked": []
+}

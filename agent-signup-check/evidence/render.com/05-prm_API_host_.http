@@ -1,0 +1,23 @@
+GET https://api.render.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:38.215Z
+final-url: https://api.render.com/.well-known/oauth-protected-resource
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:37:36 GMT
+content-type: text/plain; charset=utf-8
+content-length: 19
+connection: close
+referrer-policy: same-origin
+render-request-id: api-7576b45ff8-4wcl9/SVEppW9sz1-5688379
+strict-transport-security: max-age=315360000; includeSubDomains; preload
+vary: Origin
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-xss-protection: 1; mode=block
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a59227e0eb192792-SEA
+alt-svc: h3=":443"; ma=86400
+
+404 page not found

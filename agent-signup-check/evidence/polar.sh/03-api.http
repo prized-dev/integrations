@@ -1,0 +1,26 @@
+GET https://api.polar.sh/v1/products/
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:41.822Z
+final-url: https://api.polar.sh/v1/products/
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:38:40 GMT
+content-type: application/json
+content-length: 41
+connection: close
+cache-control: private, no-store
+content-encoding: br
+polar-version: 2026-10
+rndr-id: 8eea4777-65cf-4580
+server: cloudflare
+strict-transport-security: max-age=63072000; includeSubDomains
+vary: Accept-Encoding
+www-authenticate: Bearer realm="polar", resource_metadata="https://api.polar.sh/.well-known/oauth-protected-resource"
+x-render-origin-server: uvicorn
+cf-cache-status: DYNAMIC
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2F8K1ey9XDr0Vq%2BvsI2Nu7oI5Zdciv7q6FFY1P48B2I%2FPnH3LgcXhdzF8d3SGHXSVl7NjLgXwbY6gEBN%2FgYrHWjnCLD7AutUyQGUEt97EYSYQMxZ84NO6J4pDB%2BWPxw%3D%3D"}]}
+cf-ray: a592296bdfca6e10-PDX
+alt-svc: h3=":443"; ma=86400
+
+{"error":"Unauthorized","detail":"Unauthorized"}

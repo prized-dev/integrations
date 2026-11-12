@@ -1,0 +1,466 @@
+GET https://docs.cdp.coinbase.com/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:46.509Z
+final-url: https://docs.cdp.coinbase.com/llms.txt
+
+HTTP 200
+age: 2407
+cache-control: public
+cf-cache-status: HIT
+cf-ray: a592297d1bf26289-PDX
+content-encoding: br
+content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
+content-type: text/plain; charset=utf-8
+date: Thu, 12 Nov 2026 02:38:42 GMT
+etag: "7uzt8koIVOI97v7SPNPKxj0t7ODv8hAXRUMVQ92qsC8"
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: accept-encoding
+x-frame-options: DENY
+x-mintlify-client-version: 0.0.4111
+x-vercel-cache: MISS
+x-vercel-id: pdx1:lhr1:iad1::iad1::zv6w4-1794451122706-7fa530205cef
+x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
+x-version: dpl_DqYu5MPb49gWBBbUGgpHQUmCHY3P
+connection: close
+transfer-encoding: chunked
+
+# Coinbase Developer Documentation
+
+- [Docs (527 pages)](https://docs.cdp.coinbase.com/_llms/docs.txt): GET STARTED, AI AGENTS, WALLETS, PAYMENTS, STABLECOINS, TRADING, ONCHAIN TOOLS, CUSTOMERS, WEBHOOKS, CONSUMER APIS, BUSINESS APIS, INSTITUTIONAL APIS.
+- [API Reference (918 pages)](https://docs.cdp.coinbase.com/_llms/api-reference.txt): CDP API, Coinbase Advanced Trade API, Coinbase Business API, Coinbase Exchange API, Coinbase International Exchange API, Coinbase Prime API, CDE: Futures API, CDE: Predictions API, CBC: Clearing API, CDP API V1.
+- [SDKs (1523 pages)](https://docs.cdp.coinbase.com/_llms/sdks.txt): SDKs, CRYPTO INFRASTRUCTURE, COINBASE APIs, INSTITUTIONAL APIs, COINBASE WALLET.
+
+## Recipes
+
+### Integration guides
+
+- [Settle customer stablecoins as USD](https://docs.cdp.coinbase.com/recipes/settle-customer-stablecoins-as-usd.md): Accept customer USDC, auto-convert it to USD, and collect it in your treasury, with the CDP CLI or SDK.
+- [Pay out USDC from a USD balance](https://docs.cdp.coinbase.com/recipes/pay-out-usdc-from-usd.md): Fund a USD treasury and pay out USDC onchain to any wallet, with the CDP CLI or SDK.
+
+### Recipes
+
+- [Learn by building](https://docs.cdp.coinbase.com/get-started/demo-apps/learn.md): Browse tutorials, demo apps, and projects from the onchain community.
+- [Explore](https://docs.cdp.coinbase.com/get-started/demo-apps/explore.md): Jumpstart your building journey with ready-to-use demo apps.
+- [CDP YouTube](https://docs.cdp.coinbase.com/get-started/demo-apps/resources/cdp-youtube.md)
+
+#### App examples
+
+##### Wallets
+
+- [Demo App Tutorial](https://docs.cdp.coinbase.com/wallets/demos/demo-app-tutorial.md)
+- [Aave Lending](https://docs.cdp.coinbase.com/get-started/demo-apps/app-examples/aave-lending.md): Enable users to earn yield by depositing into Aave from your onchain app.
+- [Morpho Integration](https://docs.cdp.coinbase.com/get-started/demo-apps/app-examples/morpho-integration.md): Enable users to earn yield by depositing into a Morpho vault from your onchain app.
+- [Mass Payments](https://docs.cdp.coinbase.com/get-started/demo-apps/app-examples/automated-mass-payouts.md): Build a scalable mass payments application using CDP non-custodial wallets
+- [Tempo Integration](https://docs.cdp.coinbase.com/wallets/demos/tempo.md)
+- [Gelato Integration](https://docs.cdp.coinbase.com/wallets/demos/gelato-integration.md)
+
+##### Onramp
+
+- [Onramp mobile and web demo apps](https://docs.cdp.coinbase.com/get-started/demo-apps/starter/onramp-demo-app.md)
+
+##### Data & Analytics
+
+- [Transaction History Downloader](https://docs.cdp.coinbase.com/get-started/demo-apps/app-examples/transaction-history-downloader.md): A Python tool that downloads complete transaction history for any wallet address, including native transfers and token movements (ERC20/ERC721/ERC1155).
+- [Wallet History](https://docs.cdp.coinbase.com/get-started/demo-apps/app-examples/wallet-history.md): A wallet history tool, ready to be deployed to Vercel.
+
+##### Staking API
+
+- [Staking Demo App](https://docs.cdp.coinbase.com/get-started/demo-apps/app-examples/partial-and-full-staking-app.md): A partial and full ETH staking app powered by our fully self-serviceable Staking API with no gated onboarding.
+- [Using Go SDK](https://docs.cdp.coinbase.com/get-started/demo-apps/starter/staking-demo-app.md)
+
+## Changelogs
+
+### Changelogs
+
+- [Changelog](https://docs.cdp.coinbase.com/get-started/changelog.md): Product updates and announcements for Coinbase Developer Platform (CDP)
+- [Coinbase App Changelog](https://docs.cdp.coinbase.com/coinbase-app/introduction/changelog.md)
+- [Coinbase Business Changelog](https://docs.cdp.coinbase.com/coinbase-business/introduction/changelog.md)
+- [Coinbase Prime Changelog](https://docs.cdp.coinbase.com/prime/changes/changelog.md)
+- [Exchange Changelog](https://docs.cdp.coinbase.com/exchange/changes/changelog.md)
+- [INTX Changelog](https://docs.cdp.coinbase.com/international-exchange/changes/changelog.md)
+- [Derivatives Changelog](https://docs.cdp.coinbase.com/derivatives/changes/changelog.md)
+
+## Other
+
+- [Quickstart](https://docs.cdp.coinbase.com/agentic-wallet/cli/quickstart.md)
+- [Authenticate Wallet](https://docs.cdp.coinbase.com/agentic-wallet/cli/skills/authenticate.md)
+- [Fund Wallet](https://docs.cdp.coinbase.com/agentic-wallet/cli/skills/fund.md)
+- [Monetize Service](https://docs.cdp.coinbase.com/agentic-wallet/cli/skills/monetize-service.md)
+- [Agentic Wallet CLI Skills](https://docs.cdp.coinbase.com/agentic-wallet/cli/skills/overview.md): Pre-built agent skills for common wallet operations like sending, trading, and paying for services via the awal CLI.
+- [Pay for Service](https://docs.cdp.coinbase.com/agentic-wallet/cli/skills/pay-for-service.md)
+- [Search for Service](https://docs.cdp.coinbase.com/agentic-wallet/cli/skills/search-for-service.md)
+- [Send USDC](https://docs.cdp.coinbase.com/agentic-wallet/cli/skills/send.md)
+- [Trade Tokens](https://docs.cdp.coinbase.com/agentic-wallet/cli/skills/trade.md)
+- [Agentic Wallet CLI](https://docs.cdp.coinbase.com/agentic-wallet/cli/welcome.md)
+- [Example Workflows](https://docs.cdp.coinbase.com/agentic-wallet/mcp/examples.md)
+- [FAQ](https://docs.cdp.coinbase.com/agentic-wallet/mcp/faq.md)
+- [Check Payment Requirements](https://docs.cdp.coinbase.com/agentic-wallet/mcp/mcp-tools/check-payment-requirements.md)
+- [Check Sign-In Status](https://docs.cdp.coinbase.com/agentic-wallet/mcp/mcp-tools/check-sign-in-status.md)
+- [Get Resource Details](https://docs.cdp.coinbase.com/agentic-wallet/mcp/mcp-tools/get-resource-details.md)
+- [Get Wallet Address](https://docs.cdp.coinbase.com/agentic-wallet/mcp/mcp-tools/get-wallet-address.md)
+- [Get Wallet Balance](https://docs.cdp.coinbase.com/agentic-wallet/mcp/mcp-tools/get-wallet-balance.md)
+- [List Bazaar Resources](https://docs.cdp.coinbase.com/agentic-wallet/mcp/mcp-tools/list-bazaar-resources.md)
+- [Make an x402 Request](https://docs.cdp.coinbase.com/agentic-wallet/mcp/mcp-tools/make-x402-request.md)
+- [Agentic Wallet MCP Tools](https://docs.cdp.coinbase.com/agentic-wallet/mcp/mcp-tools/overview.md): MCP tools for managing wallets, checking balances, and making payments from an AI agent.
+- [Show Wallet App](https://docs.cdp.coinbase.com/agentic-wallet/mcp/mcp-tools/show-wallet-app.md)
+- [Quickstart](https://docs.cdp.coinbase.com/agentic-wallet/mcp/quickstart.md)
+- [Overview](https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome.md)
+- [Overview](https://docs.cdp.coinbase.com/agentic-wallet/welcome.md)
+- [AGENTS](https://docs.cdp.coinbase.com/AGENTS.md)
+- [AI-Optimized Documentation](https://docs.cdp.coinbase.com/ai-agents/cdp-for-agents/ai-optimized-documentation.md): Access AI-optimized content and quick integrations from the context menu on any CDP docs page.
+- [LLM Context](https://docs.cdp.coinbase.com/ai-context/further-context.md): Additional context for CDP Non-custodial Wallets, [ETC...]
+- [API Reference](https://docs.cdp.coinbase.com/api-reference.md)
+- [Get Portfolio Allocations](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/allocations/get-portfolio-allocations.md): List historical allocations for a given portfolio.
+- [Get conversion fees beta](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/financing/get-conversion-fees-beta.md)
+- [Get Exchange Cross Margin Overview](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/financing/get-cross-margin-overview.md): Gets live data for Cross Margin (XM) for a specific XM customer
+- [Get Cross Margin Risk Parameters](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/financing/get-cross-margin-risk-parameters-beta.md): Gets the current Cross Margin (XM) risk parameters for an entity.
+- [Get Market Data](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/financing/get-market-data-beta.md): Retrieves market data including volatility and average daily volume for an entity.
+- [Get Prime Cross Margin Overview](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/financing/get-prime-cross-margin-overview-beta.md): Returns real time risk data from the cross margin model.
+- [Update Funding Settings](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/financing/update-funding-settings-beta.md): Sets FCM funding configuration for the entity and submits the desired configuration to Prime API for approval.
+- [Cancel Entity Futures Sweep](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/futures/create-entity-futures-sweep.md): Cancel the pending sweep for a given entity. A user will only be able to have one pending sweep at a time. If the sweep is not found, a 404 will be returned. Note: Exchange clients accessing this endpoint as a Cross-Margin customer, must pass their designated Exchange UUID as the *entity_id* path pa…
+- [Edit Order (Beta)](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/orders/edit-order-beta.md): Edit an open order.
+- [Get Portfolio Counterparty ID](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/portfolios/get-portfolio-counterparty-id.md): Retrieve the counterparty ID for a given portfolio.
+- [Request to stake or delegate a wallet](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/staking/request-stake-or-delegate.md): Creates an execution request to stake or delegate funds to a validator
+- [Request to claim rewards for a staked wallet](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/staking/request-to-claim-rewards-for-a-staked-wallet.md): Request to claim staking rewards. This feature is only for ETH Pectra (0x02) validators.
+- [Request to stake currency in a portfolio](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/staking/request-to-stake-currency-portfolio.md): Creates an execution request to stake funds across a portfolio.  This will stake funds in one or more wallets in the portfolio, with a total bondable balance up to the requested stake amount. This feature is gated. Please contact your account manager or primeops@coinbase.com to enable.
+- [Request to unstake currency across a portfolio](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/staking/request-to-unstake-currency-portfolio.md): Creates an execution request to unstake funds across a portfolio.  This will unstake funds in one or more wallets in the portfolio, with a total bonded balance up to the requested unstake amount. This feature is gated. Please contact your account manager or primeops@coinbase.com to enable.
+- [Get address balance history for asset](https://docs.cdp.coinbase.com/api-reference/rest-api/addresses/get-address-balance-history-for-asset.md): List the historical balance of an asset in a specific external address.
+- [Get address transaction history](https://docs.cdp.coinbase.com/api-reference/rest-api/addresses/get-address-transaction-history.md): List of all transactions that have interacted with a given external address. Interaction types: native, ERC20 and ERC721 transfer activities. The transactions are returned in reverse chronological order based on their block height.
+- [List address balances](https://docs.cdp.coinbase.com/api-reference/rest-api/addresses/list-address-balances.md): List all of the balances of an external address.
+- [List smart contract events](https://docs.cdp.coinbase.com/api-reference/rest-api/smart-contracts/list-smart-contract-events.md)
+- [List smart contracts](https://docs.cdp.coinbase.com/api-reference/rest-api/smart-contracts/list-smart-contracts.md)
+- [Register a smart contract](https://docs.cdp.coinbase.com/api-reference/rest-api/smart-contracts/register-a-smart-contract.md)
+- [Update a smart contract](https://docs.cdp.coinbase.com/api-reference/rest-api/smart-contracts/update-a-smart-contract.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/api-reference/support/join-cdp-discord.md)
+- [Status](https://docs.cdp.coinbase.com/api-reference/support/service-status.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/api-reference/v2/support/join-cdp-discord.md)
+- [Service Status](https://docs.cdp.coinbase.com/api-reference/v2/support/service-status.md)
+- [Skill](https://docs.cdp.coinbase.com/cdp-cli/skill.md): Installs the CDP CLI and configures API key + wallet secret from the Coinbase Developer Portal. Verifies connectivity.
+- [Coinbase App OAuth2 Permissions](https://docs.cdp.coinbase.com/coinbase-app/oauth2-integration/oauth2-permissions.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/coinbase-app/support/join-cdp-discord.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/coinbase-business/support/join-cdp-discord.md)
+- [Skill](https://docs.cdp.coinbase.com/coinbase-for-agents/skill.md): Connect to Coinbase to trade crypto, US derivatives (futures), and US equities, pay for premium data via x402, manage portfolios, check prices, and convert currencies. Use when the user wants to place or preview orders, manage portfolios, transfer funds between portfolios, pay for market data or res…
+- [Aerodrome Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/aerodrome.md): Swap, provide liquidity, stake, and claim rewards on Aerodrome.
+- [Avantis Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/avantis.md): Open and manage leveraged perpetual-futures positions on Avantis.
+- [Balancer Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/balancer.md): Swaps and liquidity on Balancer through a shell: read pools/quotes from the Balancer API, build calldata with the Balancer SDK, submit via send_calls. CLI-only — requires terminal access; unsupported on chat-only surfaces.
+- [Bankr Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/bankr.md): Discover and buy newly launched tokens on Bankr.
+- [Bitrefill Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/bitrefill.md): Shop 1,500+ brands in 180+ countries — Amazon, Steam, Netflix, mobile top-ups, and travel eSIMs — paid with USDC on Base. Your agent searches, checks out, and delivers gift-card codes and eSIM details in chat. No Bitrefill account required.
+- [Brickken Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/brickken.md): ERC-8004 identity, reputation, and agent-token operations through Brickken with Wallet MCP x402 approval.
+- [Clawnch Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/clawnch.md): Token-launch discovery (recent + top-by-volume) and non-custodial token launches on Clawnch via HTTP API → swap / send_calls on Base.
+- [Flaunch Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/flaunch.md): Prepare Flaunch launches through mcp.flaunch.gg and submit them with Wallet MCP send_calls; discover and swap deployed tokens through Wallet MCP.
+- [GMGN Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/gmgn.md): Token swap quotes and on-chain market intelligence for Base via GMGN API. Requires shell to generate auth parameters; returns unsigned calldata for send_calls execution.
+- [Hydrex Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/hydrex.md): Swapping and concentrated-liquidity on Hydrex via local prepare server → send_calls on Base.
+- [KyberSwap Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/kyberswap.md): DEX aggregation on KyberSwap via HTTP API → send_calls across 7 chains, best-rate routing through 50+ liquidity sources.
+- [Moonwell Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/moonwell.md): Lend, borrow, and manage positions on Moonwell.
+- [Morpho Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/morpho.md): Lend, borrow, and manage vault or market positions on Morpho.
+- [o1.exchange Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/o1-exchange.md): Token trading on o1.exchange via HTTP API → send_calls on Base, and BSC.
+- [OpenSea Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/opensea.md): NFT marketplace trading, token swaps, and drops/minting via OpenSea REST API + CLI → send_calls on Ethereum, Base, Polygon, Arbitrum, Optimism, and Avalanche.
+- [Printr Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/printr.md): Launch cross-chain tokens on Printr via its public HTTP API → submit the unsigned creation calldata through Wallet MCP send_calls.
+- [Uniswap Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/uniswap.md): Swap tokens and manage liquidity positions on Uniswap.
+- [Venice AI Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/venice.md): Private AI inference through the Venice API, with optional Base x402 wallet funding via Wallet MCP.
+- [Virtuals Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/virtuals.md): Create and manage Virtuals AI agents, cards, and email.
+- [YO Protocol Plugin](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/plugins/yo.md): View YO vaults, check positions, deposit, and request redeem on YO's ERC-4626 yield vaults — fully on-chain reads via chain_rpc_request and unsigned calldata to send_calls on Base, Ethereum, and Arbitrum.
+- [Approval Mode](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/approval-mode.md): Skill reference for how Wallet MCP returns approval URLs and request IDs for every write call.
+- [Batched Contract Calls](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/batch-calls.md): Skill reference for Wallet MCP's EIP-5792 batched contract calls.
+- [Custom Plugins and the web_request Allowlist](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/custom-plugins.md): Skill reference for how Wallet MCP routes plugin HTTP calls and which surfaces are allowlisted.
+- [Installing Wallet MCP](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/install.md): Skill reference for installing the Wallet MCP server in Claude, ChatGPT, Cursor, Codex, and other surfaces.
+- [Wallet MCP Plugin Specification](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/plugin-spec.md): Authoring spec for native Wallet MCP plugins — frontmatter schema, required body sections, integration types, and step-by-step instructions for writing or adapting a plugin to the spec.
+- [Tone](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/tone.md): Skill reference for the language and tone rules an agent should follow when using Wallet MCP.
+- [Wallet MCP Skill](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/skill.md): Wallet MCP — gives your AI assistant access to a Coinbase Wallet via the Wallet MCP server (wallet-mcp.coinbase.com). Wallet, portfolio, sending, swapping, signing, x402 payments, batched contract calls, and transaction history across supported chains.
+- [Guides](https://docs.cdp.coinbase.com/coinbase-wallet/base-mcp/guides/index.md): Step-by-step guides for common things to do with Coinbase Wallet MCP
+- [Join CDP Discord](https://docs.cdp.coinbase.com/data/node/support/join-cdp-discord.md)
+- [REST API Reference](https://docs.cdp.coinbase.com/data/rest-api.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/derivatives/support/join-cdp-discord.md)
+- [Exchange Rate Limits Overview](https://docs.cdp.coinbase.com/exchange/introduction/rate-limits-overview.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/exchange/support/join-cdp-discord.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/faucets/support/join-cdp-discord.md)
+- [Coinbase Wallet MCP](https://docs.cdp.coinbase.com/get-started/build-with-ai/base-mcp.md): Give your AI assistant a wallet. Coinbase Wallet MCP connects any AI to your Coinbase Wallet. Check balances, send funds, swap tokens, sign messages, and pay with x402.
+- [Onchain commerce shop](https://docs.cdp.coinbase.com/get-started/demo-apps/app-examples/onchain-commerce-shop.md): An Onchain Commerce Template built with OnchainKit, and ready to be deployed to Vercel.
+- [Join CDP Discord](https://docs.cdp.coinbase.com/get-started/demo-apps/resources/join-cdp-discord.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/get-started/support/join-cdp-discord.md)
+- [Status](https://docs.cdp.coinbase.com/get-started/support/status.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/international-exchange/support/join-cdp-discord.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/onramp/developer-guidance/join-cdp-discord.md)
+- [Offramp Integration Guide](https://docs.cdp.coinbase.com/onramp/offramp/offramp-integration-guide.md)
+- [Sending Transactions](https://docs.cdp.coinbase.com/payments/send-and-receive.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/prime/support/join-cdp-discord.md)
+- [com.coinbase.cdp.auth.exceptions](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/auth/exceptions/index.md): Types in the com.coinbase.cdp.auth.exceptions package.
+- [com.coinbase.cdp.auth](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/auth/index.md): Types in the com.coinbase.cdp.auth package.
+- [CdpAuthenticationInterceptor](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/CdpAuthenticationInterceptor.md): Adds CDP request-bound credentials to generated Java SDK requests.
+- [CdpClientApiException](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/CdpClientApiException.md): This exception type will be thrown for any non-2XX API responses.
+- [CdpClientException](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/CdpClientException.md): This class serves as the base exception for all errors in the SDK.
+- [CdpClientHttpResponse<T>](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/CdpClientHttpResponse.md): CdpClientHttpResponse<T> API reference.
+- [ConsoleLogger](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/ConsoleLogger.md): Default logger implementation that writes to the console using Logger.
+- [EndpointMetadata](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/EndpointMetadata.md): Metadata about an endpoint, including its security requirements.
+- [FileStream](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/FileStream.md): Represents a file stream with associated metadata for file uploads.
+- [ILogger](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/ILogger.md): Interface for custom logger implementations.
+- [com.coinbase.cdp.core](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/index.md): Types in the com.coinbase.cdp.core package.
+- [InputStreamRequestBody](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/InputStreamRequestBody.md): A custom implementation of OkHttp's RequestBody that wraps an InputStream.
+- [LogConfig](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/LogConfig.md): Configuration for SDK logging.
+- [Logger](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/Logger.md): SDK logger that filters messages based on level and silent mode.
+- [LoggingInterceptor](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/LoggingInterceptor.md): OkHttp interceptor that logs HTTP requests and responses.
+- [LogLevel](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/LogLevel.md): Log levels for SDK logging configuration.
+- [MediaTypes](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/MediaTypes.md): MediaTypes API reference.
+- [Nullable<T>](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/Nullable.md): Nullable<T> API reference.
+- [NullableNonemptyFilter](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/NullableNonemptyFilter.md): NullableNonemptyFilter API reference.
+- [ObjectMappers](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/ObjectMappers.md): ObjectMappers API reference.
+- [QueryStringMapper](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/QueryStringMapper.md): QueryStringMapper API reference.
+- [ResponseBodyInputStream](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/ResponseBodyInputStream.md): A custom InputStream that wraps the InputStream from the OkHttp Response and ensures that the OkHttp Response object is properly closed when the stream is closed.
+- [ResponseBodyReader](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/ResponseBodyReader.md): A custom Reader that wraps the Reader from the OkHttp Response and ensures that the OkHttp Response object is properly closed when the reader is closed.
+- [RetryInterceptor](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/RetryInterceptor.md): RetryInterceptor API reference.
+- [Rfc2822DateTimeDeserializer](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/Rfc2822DateTimeDeserializer.md): Custom deserializer that handles converting RFC 2822 (RFC 1123) dates into OffsetDateTime objects.
+- [SseEvent<T>](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/SseEvent.md): Represents a Server-Sent Event with all standard fields.
+- [SseEventParser](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/SseEventParser.md): Utility class for parsing Server-Sent Events with support for discriminated unions.
+- [Stream<T>](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/Stream.md): The Stream class implements Iterable to provide a simple mechanism for reading and parsing objects of a given type from data streamed via a Reader using a specified delimiter.
+- [Suppliers](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/Suppliers.md): Suppliers API reference.
+- [WrappedAlias](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/core/WrappedAlias.md): WrappedAlias API reference.
+- [com.coinbase.cdp.errors](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/errors/index.md): Types in the com.coinbase.cdp.errors package.
+- [com.coinbase.cdp](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/index.md): Types in the com.coinbase.cdp package.
+- [com.coinbase.cdp.resources.accounts](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/accounts/index.md): Types in the com.coinbase.cdp.resources.accounts package.
+- [com.coinbase.cdp.resources.accounts.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/accounts/requests/index.md): Types in the com.coinbase.cdp.resources.accounts.requests package.
+- [com.coinbase.cdp.resources.accounts.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/accounts/types/index.md): Types in the com.coinbase.cdp.resources.accounts.types package.
+- [com.coinbase.cdp.resources.depositdestinations](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/depositdestinations/index.md): Types in the com.coinbase.cdp.resources.depositdestinations package.
+- [com.coinbase.cdp.resources.depositdestinations.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/depositdestinations/requests/index.md): Types in the com.coinbase.cdp.resources.depositdestinations.requests package.
+- [com.coinbase.cdp.resources.depositdestinations.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/depositdestinations/types/index.md): Types in the com.coinbase.cdp.resources.depositdestinations.types package.
+- [com.coinbase.cdp.resources.enduseraccountmanagement](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/enduseraccountmanagement/index.md): Types in the com.coinbase.cdp.resources.enduseraccountmanagement package.
+- [com.coinbase.cdp.resources.enduseraccountmanagement.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/enduseraccountmanagement/requests/index.md): Types in the com.coinbase.cdp.resources.enduseraccountmanagement.requests package.
+- [com.coinbase.cdp.resources.enduseraccountmanagement.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/enduseraccountmanagement/types/index.md): Types in the com.coinbase.cdp.resources.enduseraccountmanagement.types package.
+- [com.coinbase.cdp.resources.enduseraccounts](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/enduseraccounts/index.md): Types in the com.coinbase.cdp.resources.enduseraccounts package.
+- [com.coinbase.cdp.resources.enduseraccounts.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/enduseraccounts/requests/index.md): Types in the com.coinbase.cdp.resources.enduseraccounts.requests package.
+- [com.coinbase.cdp.resources.enduseraccounts.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/enduseraccounts/types/index.md): Types in the com.coinbase.cdp.resources.enduseraccounts.types package.
+- [com.coinbase.cdp.resources.evmaccounts](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/evmaccounts/index.md): Types in the com.coinbase.cdp.resources.evmaccounts package.
+- [com.coinbase.cdp.resources.evmaccounts.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/evmaccounts/requests/index.md): Types in the com.coinbase.cdp.resources.evmaccounts.requests package.
+- [com.coinbase.cdp.resources.evmaccounts.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/evmaccounts/types/index.md): Types in the com.coinbase.cdp.resources.evmaccounts.types package.
+- [com.coinbase.cdp.resources.evmsmartaccounts](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/evmsmartaccounts/index.md): Types in the com.coinbase.cdp.resources.evmsmartaccounts package.
+- [com.coinbase.cdp.resources.evmsmartaccounts.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/evmsmartaccounts/requests/index.md): Types in the com.coinbase.cdp.resources.evmsmartaccounts.requests package.
+- [com.coinbase.cdp.resources.evmsmartaccounts.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/evmsmartaccounts/types/index.md): Types in the com.coinbase.cdp.resources.evmsmartaccounts.types package.
+- [com.coinbase.cdp.resources.evmswaps](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/evmswaps/index.md): Types in the com.coinbase.cdp.resources.evmswaps package.
+- [com.coinbase.cdp.resources.evmswaps.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/evmswaps/requests/index.md): Types in the com.coinbase.cdp.resources.evmswaps.requests package.
+- [com.coinbase.cdp.resources.evmtokenbalances](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/evmtokenbalances/index.md): Types in the com.coinbase.cdp.resources.evmtokenbalances package.
+- [com.coinbase.cdp.resources.evmtokenbalances.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/evmtokenbalances/requests/index.md): Types in the com.coinbase.cdp.resources.evmtokenbalances.requests package.
+- [com.coinbase.cdp.resources.evmtokenbalances.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/evmtokenbalances/types/index.md): Types in the com.coinbase.cdp.resources.evmtokenbalances.types package.
+- [com.coinbase.cdp.resources.faucets](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/faucets/index.md): Types in the com.coinbase.cdp.resources.faucets package.
+- [com.coinbase.cdp.resources.faucets.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/faucets/requests/index.md): Types in the com.coinbase.cdp.resources.faucets.requests package.
+- [com.coinbase.cdp.resources.faucets.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/faucets/types/index.md): Types in the com.coinbase.cdp.resources.faucets.types package.
+- [com.coinbase.cdp.resources.paymentmethods](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/paymentmethods/index.md): Types in the com.coinbase.cdp.resources.paymentmethods package.
+- [com.coinbase.cdp.resources.paymentmethods.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/paymentmethods/requests/index.md): Types in the com.coinbase.cdp.resources.paymentmethods.requests package.
+- [com.coinbase.cdp.resources.paymentmethods.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/paymentmethods/types/index.md): Types in the com.coinbase.cdp.resources.paymentmethods.types package.
+- [com.coinbase.cdp.resources.policyengine](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/policyengine/index.md): Types in the com.coinbase.cdp.resources.policyengine package.
+- [com.coinbase.cdp.resources.policyengine.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/policyengine/requests/index.md): Types in the com.coinbase.cdp.resources.policyengine.requests package.
+- [com.coinbase.cdp.resources.policyengine.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/policyengine/types/index.md): Types in the com.coinbase.cdp.resources.policyengine.types package.
+- [com.coinbase.cdp.resources.solanaaccounts](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/solanaaccounts/index.md): Types in the com.coinbase.cdp.resources.solanaaccounts package.
+- [com.coinbase.cdp.resources.solanaaccounts.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/solanaaccounts/requests/index.md): Types in the com.coinbase.cdp.resources.solanaaccounts.requests package.
+- [com.coinbase.cdp.resources.solanaaccounts.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/solanaaccounts/types/index.md): Types in the com.coinbase.cdp.resources.solanaaccounts.types package.
+- [com.coinbase.cdp.resources.solanatokenbalances](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/solanatokenbalances/index.md): Types in the com.coinbase.cdp.resources.solanatokenbalances package.
+- [com.coinbase.cdp.resources.solanatokenbalances.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/solanatokenbalances/requests/index.md): Types in the com.coinbase.cdp.resources.solanatokenbalances.requests package.
+- [com.coinbase.cdp.resources.solanatokenbalances.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/solanatokenbalances/types/index.md): Types in the com.coinbase.cdp.resources.solanatokenbalances.types package.
+- [com.coinbase.cdp.resources.transfers](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/transfers/index.md): Types in the com.coinbase.cdp.resources.transfers package.
+- [com.coinbase.cdp.resources.transfers.requests](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/transfers/requests/index.md): Types in the com.coinbase.cdp.resources.transfers.requests package.
+- [com.coinbase.cdp.resources.transfers.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/resources/transfers/types/index.md): Types in the com.coinbase.cdp.resources.transfers.types package.
+- [com.coinbase.cdp.types](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/java/com/coinbase/cdp/types/index.md): Types in the com.coinbase.cdp.types package.
+- [AccountId](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Accounts/AccountId.md)
+- [AccountName](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Accounts/AccountName.md)
+- [Options](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Accounts/AccountsClient/Options.md)
+- [AccountType](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Accounts/AccountType.md)
+- [AccountType](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Accounts/AccountType-1.md)
+- [Asset](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Accounts/Asset.md)
+- [AssetType](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Accounts/AssetType.md)
+- [AssetType](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Accounts/AssetType-1.md)
+- [AccountsClient](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Accounts/namespaces/AccountsClient/index.md)
+- [Owner](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Accounts/Owner.md)
+- [withAuth](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/auth/Axios/withAuth.md)
+- [InvalidAPIKeyFormatError](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/auth/Errors/InvalidAPIKeyFormatError.md)
+- [InvalidWalletSecretFormatError](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/auth/Errors/InvalidWalletSecretFormatError.md)
+- [UndefinedWalletSecretError](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/auth/Errors/UndefinedWalletSecretError.md)
+- [authHash](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/auth/Hash/authHash.md)
+- [getAuthHeaders](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/auth/HTTP/getAuthHeaders.md)
+- [getCorrelationData](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/auth/HTTP/getCorrelationData.md)
+- [generateJwt](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/auth/JWT/generateJwt.md)
+- [generateWalletJwt](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/auth/JWT/generateWalletJwt.md)
+- [getWebSocketAuthHeaders](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/auth/WebSocket/getWebSocketAuthHeaders.md)
+- [CreateDepositDestinationBody](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/CreateDepositDestinationBody.md)
+- [CreateDepositDestinationRequest](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/CreateDepositDestinationRequest.md)
+- [DepositDestination](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/DepositDestination.md)
+- [DepositDestinationId](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/DepositDestinationId.md)
+- [Options](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/DepositDestinationsClient/Options.md)
+- [DepositDestinationStatus](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/DepositDestinationStatus.md)
+- [DepositDestinationStatus](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/DepositDestinationStatus-1.md)
+- [DepositDestinationTarget](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/DepositDestinationTarget.md)
+- [DepositDestinationType](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/DepositDestinationType.md)
+- [WalletType](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/DepositTravelRuleOriginator/WalletType.md)
+- [WalletType](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/DepositTravelRuleOriginator/WalletType-1.md)
+- [CreateDepositDestinationRequest](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/namespaces/CreateDepositDestinationRequest/index.md)
+- [DepositDestination](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/namespaces/DepositDestination/index.md)
+- [DepositDestinationsClient](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/namespaces/DepositDestinationsClient/index.md)
+- [DepositTravelRuleOriginator](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/DepositDestinations/namespaces/DepositTravelRuleOriginator/index.md)
+- [Accounts](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/evm/Accounts/index.md)
+- [Actions](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/evm/Actions/index.md)
+- [Client](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/evm/Client/index.md)
+- [CreateEvmEip7702DelegationResult](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/evm/Types/CreateEvmEip7702DelegationResult.md)
+- [CreateSwapOptions](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/evm/Types/CreateSwapOptions.md)
+- [CreateSwapResult](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/evm/Types/CreateSwapResult.md)
+- [EvmClientInterface](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/evm/Types/EvmClientInterface.md)
+- [GetSwapQuoteOptions](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/evm/Types/GetSwapQuoteOptions.md)
+- [GetSwapQuoteResult](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/evm/Types/GetSwapQuoteResult.md)
+- [SwapPriceUnavailableResult](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/evm/Types/SwapPriceUnavailableResult.md)
+- [SwapQuoteUnavailableResult](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/evm/Types/SwapQuoteUnavailableResult.md)
+- [Email](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/PaymentMethods/Email.md)
+- [PaymentMethodsClient](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/PaymentMethods/namespaces/PaymentMethodsClient/index.md)
+- [PaymentMethodsPaymentMethod](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/PaymentMethods/namespaces/PaymentMethodsPaymentMethod/index.md)
+- [PaymentMethodId](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/PaymentMethods/PaymentMethodId.md)
+- [Options](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/PaymentMethods/PaymentMethodsClient/Options.md)
+- [PaymentMethodsPaymentMethod](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/PaymentMethods/PaymentMethodsPaymentMethod.md)
+- [Client](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/policies/Client/index.md)
+- [PoliciesClientInterface](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/policies/Types/PoliciesClientInterface.md)
+- [Accounts](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/solana/Accounts/index.md)
+- [Actions](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/solana/Actions/index.md)
+- [Client](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/solana/Client/index.md)
+- [SolanaClientInterface](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/solana/Types/SolanaClientInterface.md)
+- [BlockchainAddress](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/BlockchainAddress.md)
+- [CreateTransferSource](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/CreateTransferSource.md)
+- [Metadata](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/Metadata.md)
+- [TransferDetails](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/namespaces/TransferDetails/index.md)
+- [OnchainTransactions](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/namespaces/TransferDetails/namespaces/OnchainTransactions/index.md)
+- [TransferFee](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/namespaces/TransferFee/index.md)
+- [TransferRequest](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/namespaces/TransferRequest/index.md)
+- [TransfersClient](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/namespaces/TransfersClient/index.md)
+- [TravelRuleBeneficiary](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/namespaces/TravelRuleBeneficiary/index.md)
+- [TravelRuleOriginator](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/namespaces/TravelRuleOriginator/index.md)
+- [Network](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/Network.md)
+- [Network](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/Network-1.md)
+- [OnchainTransactions](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TransferDetails/OnchainTransactions.md)
+- [Type](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TransferFee/Type.md)
+- [Type](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TransferFee/Type-1.md)
+- [TransferFees](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TransferFees.md)
+- [AmountType](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TransferRequest/AmountType.md)
+- [AmountType](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TransferRequest/AmountType-1.md)
+- [Options](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TransfersClient/Options.md)
+- [TransferSource](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TransferSource.md)
+- [TransferStatus](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TransferStatus.md)
+- [TransferStatus](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TransferStatus-1.md)
+- [TransferTarget](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TransferTarget.md)
+- [WalletType](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TravelRuleBeneficiary/WalletType.md)
+- [WalletType](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TravelRuleBeneficiary/WalletType-1.md)
+- [TravelRuleStatus](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TravelRuleStatus.md)
+- [TravelRuleStatus](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/Transfers/TravelRuleStatus-1.md)
+- [ media](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/_media/index.md)
+- [CdpX402Client](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/classes/CdpX402Client.md)
+- [SpendControlError](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/classes/SpendControlError.md)
+- [SpendTracker](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/classes/SpendTracker.md)
+- [X402Server](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/classes/X402Server.md)
+- [applySpendControls](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/applySpendControls.md)
+- [buildBazaarDeclaration](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/buildBazaarDeclaration.md)
+- [cdpSolanaAccountToSvmSigner](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/cdpSolanaAccountToSvmSigner.md)
+- [createCdpFacilitatorClient](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/createCdpFacilitatorClient.md)
+- [createX402Server](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/createX402Server.md)
+- [fromCdpEvmAccount](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/fromCdpEvmAccount.md)
+- [fromCdpSmartWallet](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/fromCdpSmartWallet.md)
+- [getCdpBatchSettlementScheme](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/getCdpBatchSettlementScheme.md)
+- [getCdpDefaultSchemes](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/getCdpDefaultSchemes.md)
+- [getCdpExtensionRegistrations](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/getCdpExtensionRegistrations.md)
+- [getDefaultEvmRpcUrls](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/getDefaultEvmRpcUrls.md)
+- [getSpendControlsRegistry](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/getSpendControlsRegistry.md)
+- [normalizeAsset](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/normalizeAsset.md)
+- [normalizeNetwork](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/normalizeNetwork.md)
+- [normalizePayee](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/normalizePayee.md)
+- [parseAmount](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/parseAmount.md)
+- [parseDuration](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/functions/parseDuration.md)
+- [index](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/index.md)
+- [Address](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/type-aliases/Address.md)
+- [Amount](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/type-aliases/Amount.md)
+- [Asset](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/type-aliases/Asset.md)
+- [CdpEvmAccount](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/type-aliases/CdpEvmAccount.md)
+- [CdpPaymentScheme](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/type-aliases/CdpPaymentScheme.md)
+- [Duration](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/type-aliases/Duration.md)
+- [PayToConfig](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/type-aliases/PayToConfig.md)
+- [ResolvedSpendControls](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/type-aliases/ResolvedSpendControls.md)
+- [SpendControlErrorCode](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/type-aliases/SpendControlErrorCode.md)
+- [SpendControlErrorDetails](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/type-aliases/SpendControlErrorDetails.md)
+- [SpendControls](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/type-aliases/SpendControls.md)
+- [SpendLedgerEntry](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/type-aliases/SpendLedgerEntry.md)
+- [WalletConfig](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/type-aliases/WalletConfig.md)
+- [CDP_EXTENSION_BAZAAR](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/variables/CDP_EXTENSION_BAZAAR.md)
+- [CDP_EXTENSION_GAS_SPONSORING_EIP2612](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/variables/CDP_EXTENSION_GAS_SPONSORING_EIP2612.md)
+- [CDP_EXTENSION_GAS_SPONSORING_ERC20_APPROVAL](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/variables/CDP_EXTENSION_GAS_SPONSORING_ERC20_APPROVAL.md)
+- [CDP_FACILITATOR_URL](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/variables/CDP_FACILITATOR_URL.md)
+- [CDP_SERVER_DEFAULT_EVM_NETWORKS](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/variables/CDP_SERVER_DEFAULT_EVM_NETWORKS.md)
+- [CDP_SERVER_DEFAULT_NETWORKS](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/variables/CDP_SERVER_DEFAULT_NETWORKS.md)
+- [CDP_SERVER_DEFAULT_SVM_NETWORKS](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/variables/CDP_SERVER_DEFAULT_SVM_NETWORKS.md)
+- [CDP_SERVER_DEVELOPMENT_EVM_NETWORKS](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/variables/CDP_SERVER_DEVELOPMENT_EVM_NETWORKS.md)
+- [CDP_SERVER_DEVELOPMENT_NETWORKS](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/variables/CDP_SERVER_DEVELOPMENT_NETWORKS.md)
+- [CDP_SERVER_DEVELOPMENT_SVM_NETWORKS](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/variables/CDP_SERVER_DEVELOPMENT_SVM_NETWORKS.md)
+- [CDP_SUPPORTED_EXTENSIONS](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/variables/CDP_SUPPORTED_EXTENSIONS.md)
+- [SpendControlErrorCodes](https://docs.cdp.coinbase.com/sdks/cdp-sdks-v2/typescript/x402/variables/SpendControlErrorCodes.md)
+- [TypeScript](https://docs.cdp.coinbase.com/sdks/coinbase-wallet-sdk/typescript.md)
+- [SECURITY](https://docs.cdp.coinbase.com/SECURITY.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/staking/staking-api/support/join-cdp-discord.md)
+- [Delegation Flow](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/polygon/delegation-flow.md)
+- [Polygon Delegation Guide](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/polygon/polygon-delegation-guide.md)
+- [Restaking Flow](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/polygon/restaking-flow.md)
+- [Unbonding Flow](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/polygon/unbonding-flow.md)
+- [Withdrawal Flow](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/polygon/withdrawal-flow.md)
+- [Solana Delegation Guide](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/solana/delegation-guide/solana-delegation-guide.md)
+- [Wallet choices for Solana](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/solana/delegation-guide/wallet-choices-for-solana.md)
+- [1. Set Up and Fund Phantom Wallet](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/solana/phantom/set-up-and-fund-phantom-wallet.md)
+- [2. Stake to with Phantom](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/solana/phantom/stake-with-phantom.md)
+- [Staking SOL with Phantom Wallet](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/solana/phantom/staking-with-phantom.md)
+- [Solana FAQ](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/solana/solana-faq.md)
+- [1. Set Up and Fund SolFlare Wallet](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/solana/solflare/setup-and-fund-solafare.md)
+- [2. Stake to Coinbase with SolFlare](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/solana/solflare/stake-solflare.md)
+- [Staking SOL with SolFlare on Ledger](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/solana/solflare/staking-with-solflare.md)
+- [Staking SOL with Keystore File on SolFlare](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/solana/stake-sol-with-keystone.md)
+- [Staking SOL with Solana CLI Tools](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/solana/stake-sol-with-solana.md)
+- [Staking with Ethos Sui Wallet](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/sui/staking-with-ethos-sui-wallet.md)
+- [Staking with Sui Wallet](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/sui/staking-with-sui-wallet.md)
+- [Staking with Suiet Wallet](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/sui/staking-with-suiet-wallet.md)
+- [Sui Delegation Guide](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/sui/sui-delegation-guide.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/staking/staking-delegation-guides/support/join-cdp-discord.md)
+- [Join CDP Discord](https://docs.cdp.coinbase.com/support/join-cdp-discord.md)
+- [Status](https://docs.cdp.coinbase.com/support/status.md)
+- [Security & Policies](https://docs.cdp.coinbase.com/wallets/security-and-policies/overview.md): Tools to secure non-custodial wallets including policy rules, domain allowlisting, and mobile app attestation.
+- [Delegated Signing](https://docs.cdp.coinbase.com/wallets/using-wallets/delegated-signing.md)
+- [Upgrading to Webhooks v2](https://docs.cdp.coinbase.com/webhooks/v2-upgrade.md)
+- [Settlement Pending and Reconciliation](https://docs.cdp.coinbase.com/x402/seller/settlement-pending.md)
+
+## OpenAPI Specs
+
+- [adv-starbase-openapi](/api-reference/coinbase-deribit-app-api/adv-starbase-openapi.json)
+- [cde-spec](/api-reference/derivatives-api/rest-api/cde-spec.json)
+- [cpm-spec](/api-reference/derivatives-predictions-api/rest-api/cpm-spec.json)
+- [cbc-spec](/api-reference/clearing-api/rest-api/cbc-spec.json)
+- [advanced-trade-spec](/api-reference/advanced-trade-api/rest-api/advanced-trade-spec.yaml)
+- [checkouts-spec](/api-reference/business-api/rest-api/checkouts-spec.yaml)
+- [invoicing-spec](/api-reference/business-api/rest-api/invoicing-spec.yaml)
+- [cdp-service-apis-spec](/api-reference/cdp-service-apis-spec.yaml)
+- [exchange-spec](/api-reference/exchange-api/rest-api/exchange-spec.yaml)
+- [intx-spec](/api-reference/international-exchange-api/rest-api/intx-spec.yaml)
+- [onramp-service-apis-spec](/api-reference/onramp-service-apis-spec.json)
+- [prime-public-spec](/api-reference/prime-api/rest-api/prime-public-spec.yaml)
+- [cdp-api-v2](/api-reference/v2/cdp-api-v2.yaml)
+- [cde-public-api-spec](/derivatives/downloads/cde-public-api-spec.json)
+
+## AsyncAPI Specs
+
+- [advanced-trade-asyncapi](/api-reference/advanced-trade-api/advanced-trade-asyncapi.json)
+- [adv-starbase-asyncapi](/api-reference/coinbase-deribit-app-api/adv-starbase-asyncapi.json)
+
+> The links below point to documentation indexes. Follow each `/_llms/` index recursively until you reach documentation pages.
+
+## Indexes
+
+- [Docs (527 pages)](https://docs.cdp.coinbase.com/_llms/docs.txt): GET STARTED, AI AGENTS, WALLETS, PAYMENTS, STABLECOINS, TRADING, ONCHAIN TOOLS, CUSTOMERS, WEBHOOKS, CONSUMER APIS, BUSINESS APIS, INSTITUTIONAL APIS.
+- [API Reference (918 pages)](https://docs.cdp.coinbase.com/_llms/api-reference.txt): CDP API, Coinbase Advanced Trade API, Coinbase Business API, Coinbase Exchange API, Coinbase International Exchange API, Coinbase Prime API, CDE: Futures API, CDE: Predictions API, CBC: Clearing API, CDP API V1.
+- [API Reference / CDP API (295 pages)](https://docs.cdp.coinbase.com/_llms/api-reference/cdp-api.txt): CDP API, REST API.
+- [API Reference / Coinbase Advanced Trade API (206 pages)](https://docs.cdp.coinbase.com/_llms/api-reference/coinbase-advanced-trade-api.txt): Get Started, Spot & US Derivatives - REST, Spot & US Derivatives - WS Streams, Global Derivatives - REST / WS, Global Derivatives - WS Streams.
+- [API Reference / Coinbase Exchange API (110 pages)](https://docs.cdp.coinbase.com/_llms/api-reference/coinbase-exchange-api.txt): REST API, FIX API, Websocket Feed.
+- [API Reference / Coinbase Prime API (137 pages)](https://docs.cdp.coinbase.com/_llms/api-reference/coinbase-prime-api.txt): REST API, Websocket Feed, FIX 4.2 API, FIX 5.0 API.
+- [SDKs (1523 pages)](https://docs.cdp.coinbase.com/_llms/sdks.txt): SDKs, CRYPTO INFRASTRUCTURE, COINBASE APIs, INSTITUTIONAL APIs, COINBASE WALLET.
+- [SDKs / CRYPTO INFRASTRUCTURE (1429 pages)](https://docs.cdp.coinbase.com/_llms/sdks/crypto-infrastructure.txt): CDP SDKs, CDP SDKs v1.
+- [SDKs / CRYPTO INFRASTRUCTURE / CDP SDKs (1427 pages)](https://docs.cdp.coinbase.com/_llms/sdks/crypto-infrastructure/cdp-sdks.txt): Backend, Frontend.
+- [SDKs / CRYPTO INFRASTRUCTURE / CDP SDKs / Backend (632 pages)](https://docs.cdp.coinbase.com/_llms/sdks/crypto-infrastructure/cdp-sdks/backend.txt): TypeScript, Java.
+- [SDKs / CRYPTO INFRASTRUCTURE / CDP SDKs / Backend / Java (599 pages)](https://docs.cdp.coinbase.com/_llms/sdks/crypto-infrastructure/cdp-sdks/backend/java.txt): Client, Authentication, Errors, Accounts, Deposit Destinations, End User Account Management, End User Accounts, EVM Accounts, EVM Smart Accounts, EVM Swaps, EVM Token Balances, Faucets, Payment Methods, Policy Engine, Solana Accounts, Solana Token Balances, Transfers, Shared types.
+- [SDKs / CRYPTO INFRASTRUCTURE / CDP SDKs / Backend / Java / Policy Engine (163 pages)](https://docs.cdp.coinbase.com/_llms/sdks/crypto-infrastructure/cdp-sdks/backend/java/policy-engine.txt): Models.
+- [SDKs / CRYPTO INFRASTRUCTURE / CDP SDKs / Frontend (795 pages)](https://docs.cdp.coinbase.com/_llms/sdks/crypto-infrastructure/cdp-sdks/frontend.txt): Typescript, Swift.
+- [SDKs / CRYPTO INFRASTRUCTURE / CDP SDKs / Frontend / Typescript (793 pages)](https://docs.cdp.coinbase.com/_llms/sdks/crypto-infrastructure/cdp-sdks/frontend/typescript.txt): @coinbase/cdp-core, @coinbase/cdp-hooks, @coinbase/cdp-react, @coinbase/cdp-solana-standard-wallet, @coinbase/cdp-wagmi.
+- [SDKs / CRYPTO INFRASTRUCTURE / CDP SDKs / Frontend / Typescript / @coinbase/cdp-core (312 pages)](https://docs.cdp.coinbase.com/_llms/sdks/crypto-infrastructure/cdp-sdks/frontend/typescript/coinbase-cdp-core.txt): Classes, Functions, Interfaces, Type Aliases, Variables.

@@ -1,0 +1,24 @@
+GET https://api.heroku.com/account
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:47.176Z
+final-url: https://api.heroku.com/account
+
+HTTP 401
+content-type: application/json
+content-length: 172
+connection: close
+cache-control: private, no-cache
+content-encoding: gzip
+content-security-policy: default-src 'none'; frame-ancestors 'none'
+date: Thu, 12 Nov 2026 02:37:41 GMT
+request-id: 3848a1f5-8063-43f3-8067-0f20f53c1375,084e4c0e-cab2-6416-f402-7b5353639e83,04998163-637c-5776-94f3-daf8cc98101a,893c0d0b-c30f-17d9-95c9-91089d1473dd
+strict-transport-security: max-age=31536000; includeSubDomains, max-age=31536000; includeSubDomains
+vary: Authorization,Accept-Encoding
+via: 1.1 spaces-router (0b8a9a9e03f1), 1.1 spaces-router (0b8a9a9e03f1), 1.1 d4998a91f031605ae65d0bc2f0798e54.cloudfront.net (CloudFront)
+x-content-type-options: nosniff
+x-runtime: 0.007375409
+x-cache: Error from cloudfront
+x-amz-cf-pop: HIO52-P5
+x-amz-cf-id: myCignWSDA6ZmuLHqZuo3KGLmzxUf-L_6a_zuiUJSJIh5xzn4b2Blg==
+
+{"id":"unauthorized","message":"There were no credentials in your `Authorization` header. Try `Authorization: Bearer <OAuth access token>` or `Authorization: Basic <base64-encoded email + \":\" + password>`."}

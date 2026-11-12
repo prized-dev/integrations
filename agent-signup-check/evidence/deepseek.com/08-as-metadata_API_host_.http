@@ -1,0 +1,23 @@
+GET https://api.deepseek.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:23.005Z
+final-url: https://api.deepseek.com/.well-known/oauth-authorization-server
+
+HTTP 401
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+date: Thu, 12 Nov 2026 02:37:21 GMT
+x-content-type-options: nosniff
+server: elb
+vary: accept-encoding,origin, access-control-request-method, access-control-request-headers
+content-encoding: br
+access-control-allow-credentials: true
+x-ds-trace-id: ceb163a31ef734e08aa97b0c641d61c0
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-cache: Error from cloudfront
+via: 1.1 fd441d5d42c4e243bf0b88902034e302.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P2
+x-amz-cf-id: jq4bkHMp6Z5TOR9wxbPj-_xn2pk3z1Y8E4Vd08-6BI5MdlLz0OorzA==
+
+{"error":{"message":"Authentication Fails (missing key) (request_id: 36b1e62e-74dd-4ca2-abee-d409e14b9570)","type":"authentication_error","param":null,"code":"invalid_request_error"}}

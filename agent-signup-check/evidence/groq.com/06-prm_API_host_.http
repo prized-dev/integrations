@@ -1,0 +1,23 @@
+GET https://api.groq.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:17.744Z
+final-url: https://api.groq.com/.well-known/oauth-protected-resource
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:37:16 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+cache-control: private, max-age=0, no-store, no-cache, must-revalidate
+server: cloudflare
+vary: Origin
+x-groq-region: dls
+x-request-id: req_01m76svnvsez5t02g7tza6g5fe
+via: 1.1 google
+alt-svc: h3=":443"; ma=86400
+cf-cache-status: DYNAMIC
+strict-transport-security: max-age=15552000
+content-encoding: br
+cf-ray: a592275f08e86289-PDX
+
+{"error":{"message":"Unknown request URL: GET /.well-known/oauth-protected-resource. Please check the URL for typos, or see the docs at https://console.groq.com/docs/","type":"invalid_request_error","code":"unknown_url"}}

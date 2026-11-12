@@ -1,0 +1,25 @@
+GET https://api.planetscale.com/v1/organizations
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:06.223Z
+final-url: https://api.planetscale.com/v1/organizations
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:38:03 GMT
+content-type: application/json; charset=utf-8
+transfer-encoding: chunked
+connection: close
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-download-options: noopen
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+cache-control: no-cache
+content-security-policy: default-src 'none'; font-src 'self'; connect-src 'self'; img-src 'self'; manifest-src 'self'; object-src 'none'; script-src 'self' 'nonce-ReEow+d9jtNgFphahs6bt/DBQsWoMPS1WTyDDL9tccA='; style-src 'self'; style-src-elem 'self' 'sha256-WAyOw4V+FqDc35lQPyRADLBWbuNK8ahvYEaQIYF1+Ps='
+x-request-id: a4acc529-461e-442f-8b05-5f1e66279d57
+x-runtime: 0.003618
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+vary: Origin,Accept-Encoding
+content-encoding: gzip
+
+{"code":"unauthorized","message":"Requires authentication"}

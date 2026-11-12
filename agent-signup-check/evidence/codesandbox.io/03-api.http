@@ -1,0 +1,19 @@
+GET https://api.codesandbox.io/sandbox
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:49.564Z
+final-url: https://api.codesandbox.io/sandbox
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:37:46 GMT
+content-type: application/json; charset=utf-8
+content-length: 71
+connection: close
+cache-control: max-age=0, private, must-revalidate
+server: cloudflare
+x-request-id: GOcrvOeoUhXvB_jL97Ij
+via: 1.1 google
+alt-svc: h3=":443"; ma=86400
+cf-cache-status: DYNAMIC
+cf-ray: a592281f6f65ff09-PDX
+
+{"data":null,"success":false,"errors":["Unauthorized (invalid token)"]}

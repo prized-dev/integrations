@@ -1,0 +1,25 @@
+GET https://api.cloudflare.com/client/v4/user
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:42.269Z
+final-url: https://api.cloudflare.com/client/v4/user
+
+HTTP 403
+date: Thu, 12 Nov 2026 02:37:38 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+cf-ray: a59227ee5c2b5eea-PDX
+cf-cache-status: DYNAMIC
+cache-control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+content-encoding: gzip
+expires: Sun, 25 Jan 1981 05:00:00 GMT
+server: cloudflare
+cf-auditlog-id: 01a1cd9e-3109-7ce7-a8d5-9a7c5ed56383
+strict-transport-security: max-age=31536000
+vary: Accept-Encoding
+pragma: no-cache
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+api-version: 2026-10-01.epoch
+
+{"success":false,"errors":[{"code":9106,"message":"Missing X-Auth-Email header"},{"code":9107,"message":"Missing X-Auth-Key header"}],"messages":[],"result":null}

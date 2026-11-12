@@ -27,6 +27,8 @@ Each folder is its own package with its own README, tests and release. You need 
 
 A Python package that isn't on PyPI yet installs from this repo: its README gives the line. The Prized SDKs they use are published (`prized` on PyPI, `@prized/sdk` on npm).
 
+Also in this repo: [`agent-signup-check`](agent-signup-check), seven checks for whether an AI agent can sign up for, pay for and use a developer platform, read from public files with GET requests only. One Node file to run on your own domain, and dated results for 100 platforms with every response they came from.
+
 Also from Prized, outside this repo: the SDKs themselves (`prized` on PyPI, `@prized/sdk` on npm), `langchain-prized` (LangChain Python, on PyPI), the Claude Code and Codex plugin in [prized-dev/skills](https://github.com/prized-dev/skills), and the Orca plugin in [prized-dev/orca-prized-plugin](https://github.com/prized-dev/orca-prized-plugin) (each Orca workspace in its own sandbox; listed in [Orca's plugin catalog](https://www.onorca.dev/plugins/prized-dev/orca-prized-plugin)).
 
 ## Tests

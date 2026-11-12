@@ -1,0 +1,176 @@
+{
+ "from": "2026-10-30",
+ "to": "2026-11-07",
+ "checkerFrom": "agent-signup-check/0.2.2",
+ "checkerTo": "agent-signup-check/0.2.2",
+ "improved": [
+  {
+   "name": "AgentMail",
+   "site": "agentmail.to",
+   "from": "1/7",
+   "to": "3/7",
+   "rankFrom": 30,
+   "rankTo": 9,
+   "cells": [
+    {
+     "check": "authmd",
+     "name": "auth.md",
+     "from": "fail",
+     "to": "pass",
+     "reason": "auth.md documents agent registration (https://api.agentmail.to/v0/agent/sign-up)"
+    },
+    {
+     "check": "prm",
+     "name": "Protected resource metadata",
+     "from": "fail",
+     "to": "partial",
+     "reason": "Metadata names no authorization_servers, so an agent cannot find where to register"
+    },
+    {
+     "check": "challenge",
+     "name": "Key works without a browser",
+     "from": "partial",
+     "to": "pass",
+     "reason": "401 with a Bearer challenge that points to resource metadata (RFC 9728 section 5.1)"
+    }
+   ]
+  },
+  {
+   "name": "PlanetScale",
+   "site": "planetscale.com",
+   "from": "1/7",
+   "to": "2/7",
+   "rankFrom": 30,
+   "rankTo": 17,
+   "cells": [
+    {
+     "check": "prm",
+     "name": "Protected resource metadata",
+     "from": "fail",
+     "to": "pass",
+     "reason": "Names 1 authorization server"
+    }
+   ]
+  }
+ ],
+ "regressed": [
+  {
+   "name": "Deno Deploy",
+   "site": "deno.com",
+   "from": "1/7",
+   "to": "0/7",
+   "rankFrom": 30,
+   "rankTo": 93,
+   "cells": [
+    {
+     "check": "markdown",
+     "name": "Docs in Markdown",
+     "from": "pass",
+     "to": "fail",
+     "reason": "https://deno.com/llms.txt answers with an HTML page; https://docs.deno.com/llms.txt answers HTTP 500"
+    }
+   ]
+  },
+  {
+   "name": "Polar",
+   "site": "polar.sh",
+   "from": "5/7",
+   "to": "4/7",
+   "rankFrom": 2,
+   "rankTo": 5,
+   "cells": [
+    {
+     "check": "markdown",
+     "name": "Docs in Markdown",
+     "from": "pass",
+     "to": "fail",
+     "reason": "https://polar.sh/llms.txt not found (HTTP 404) (after a redirect to https://polar.sh/docs/llms.txt); https://docs.polar.sh/llms.txt not found (HTTP 404) (after a redirect to https://polar.sh/docs/llms.txt)"
+    }
+   ]
+  }
+ ],
+ "changed": [
+  {
+   "name": "AgentPhone",
+   "site": "agentphone.to",
+   "from": "1/7",
+   "to": "1/7",
+   "rankFrom": 30,
+   "rankTo": 32,
+   "cells": [
+    {
+     "check": "challenge",
+     "name": "Key works without a browser",
+     "from": "fail",
+     "to": "partial",
+     "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+    }
+   ]
+  },
+  {
+   "name": "Fireworks AI",
+   "site": "fireworks.ai",
+   "from": "1/7",
+   "to": "1/7",
+   "rankFrom": 30,
+   "rankTo": 32,
+   "cells": [
+    {
+     "check": "limits",
+     "name": "Spend limits",
+     "from": "partial",
+     "to": "fail",
+     "reason": "No spend cap in metadata, auth.md or llms.txt"
+    },
+    {
+     "check": "payment",
+     "name": "Payment handoff",
+     "from": "partial",
+     "to": "fail",
+     "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+    }
+   ]
+  },
+  {
+   "name": "Fly.io",
+   "site": "fly.io",
+   "from": "2/7",
+   "to": "2/7",
+   "rankFrom": 16,
+   "rankTo": 17,
+   "cells": [
+    {
+     "check": "prm",
+     "name": "Protected resource metadata",
+     "from": "fail",
+     "to": "partial",
+     "reason": "resource (https://mcp.fly.io) does not match the URL the metadata came from; RFC 9728 section 3.3 says a client MUST NOT use it"
+    }
+   ]
+  },
+  {
+   "name": "Tavily",
+   "site": "tavily.com",
+   "from": "1/7",
+   "to": "1/7",
+   "rankFrom": 30,
+   "rankTo": 32,
+   "cells": [
+    {
+     "check": "limits",
+     "name": "Spend limits",
+     "from": "fail",
+     "to": "partial",
+     "reason": "llms.txt mentions credit limit in prose; no machine-readable cap"
+    }
+   ]
+  }
+ ],
+ "added": [],
+ "removed": [],
+ "stale": [],
+ "mismatches": [],
+ "retried": [],
+ "errors": [],
+ "notChecked": []
+}

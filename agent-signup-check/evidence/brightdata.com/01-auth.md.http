@@ -1,0 +1,460 @@
+GET https://brightdata.com/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:27.808Z
+final-url: https://brightdata.com/auth.md
+
+HTTP 200
+date: Thu, 12 Nov 2026 02:38:24 GMT
+content-type: text/markdown; charset=utf-8
+transfer-encoding: chunked
+connection: close
+server: cloudflare
+vary: Origin, Accept-Encoding
+content-security-policy: object-src 'none';frame-ancestors 'self';upgrade-insecure-requests;block-all-mixed-content
+cross-origin-opener-policy: same-origin-allow-popups
+origin-agent-cluster: ?1
+strict-transport-security: max-age=31536000; preload
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-download-options: noopen
+x-frame-options: DENY
+x-permitted-cross-domain-policies: none
+x-xss-protection: 0
+content-encoding: gzip
+cf-cache-status: DYNAMIC
+cf-ray: a592290aaa98ac0d-PDX
+alt-svc: h3=":443"; ma=86400
+
+# auth.md — Bright Data agent registration
+
+You are an agent. Bright Data is a web data platform: web search (SERP API), anti-bot scraping (Web Unlocker API), structured data from popular sites (Web Scraper API, including the Fetch API for any URL), custom scrapers built by AI (Scraper Studio), and the Browser API — managed cloud browsers you drive with Playwright, Puppeteer, or Selenium, with proxy rotation, fingerprinting, and CAPTCHA solving handled for you. This file tells you how to get a Bright Data API token for your user. Follow the steps in order; do not skip ahead.
+
+Bright Data's registration endpoints are proprietary. They are not the WorkOS ID-JAG protocol.
+
+**Canonical URL:** `https://brightdata.com/auth.md`
+
+## Step 0 — Pick a path
+
+1. **The GitHub CLI is authenticated on the user's machine** (`gh auth status` succeeds) — use **GitHub registration** (Step 3b). It needs no code from the user. It works for a new user, and for an account that was registered this way before (you get a new token for that same account).
+2. **The user already has a Bright Data account that was not registered with GitHub here** — do not use email registration: it never sends a code to an email that already has an account. Use one of these instead:
+    - **MCP client with a user at a browser:** connect to `https://mcp.brightdata.com/mcp` and complete OAuth in the browser.
+    - **Terminal with a user present:** `npx @brightdata/cli login` (browser or device flow), or `brightdata login --github`.
+    - **Anything else:** ask the user for an API token from `https://brightdata.com/cp/setting/users` and send it as `Authorization: Bearer <API_TOKEN>`.
+3. **A new user, and you know their real email address** — use **email registration** (Step 3a). The user reads you a code from their inbox.
+
+If you are not sure whether the user has an account, ask: **"Do you already have a Bright Data account?"**
+
+## Step 1 — Discover (optional)
+
+```
+GET https://brightdata.com/.well-known/oauth-authorization-server
+```
+
+The response includes an `agent_auth` block:
+
+```json
+{
+    "agent_auth": {
+        "skill": "https://brightdata.com/auth.md",
+        "register_uri": "https://brightdata.com/users/auth/agent_registration/auth",
+        "claim_uri": "https://brightdata.com/users/auth/agent_registration/claim",
+        "identity_types_supported": ["identity_assertion"],
+        "identity_assertion": {
+            "assertion_types_supported": ["verified_email", "github_id"],
+            "credential_types_supported": ["api_key"]
+        }
+    }
+}
+```
+
+`verified_email` is Step 3a; `github_id` is Step 3b. Do not send any other assertion type. Registration issues an API key, not an OAuth access token, so OAuth scopes do not apply to it.
+
+`GET https://brightdata.com/users/auth/agent_registration` returns a Markdown copy of the endpoint contracts.
+
+## Step 2 — Get consent
+
+Before you send the user's identity to Bright Data, tell the user:
+
+- the service: **Bright Data**
+- what the account can do: call the SERP API, Web Unlocker API, Web Scraper API, Scraper Studio, and Browser API, and read its usage balance
+- the identity you will register: their email address, or their GitHub account (confirm which one with `gh api user --jq .login` — the GitHub CLI can hold several accounts)
+- for GitHub registration: that you will create a secret gist on their GitHub account and delete it afterwards
+- that registering accepts the Bright Data License Agreement (`https://brightdata.com/license`) and Acceptable Use Policy (`https://brightdata.com/acceptable-use-policy`) on their behalf
+
+Continue only after the user agrees.
+
+## Step 3a — Email registration
+
+Use the user's real mailbox address. Disposable addresses and plus-aliased addresses (`user+tag@...`) are rejected with `email_not_accepted`.
+
+### Register
+
+```
+POST https://brightdata.com/users/auth/agent_registration/auth
+Content-Type: application/json
+
+{
+    "type": "identity_assertion",
+    "assertion_type": "verified_email",
+    "assertion": "user@example.com",
+    "client": "claude-code"
+}
+```
+
+`client` is optional but recommended: your agent's name, max 100 characters.
+
+Response — **no credential yet**:
+
+```json
+{
+    "claim_token": "<uuid-v4>",
+    "state": "pending",
+    "otp_expires_at": "<ISO 8601, 10 minutes from now>",
+    "claim_token_expires_at": "<ISO 8601, 24 hours from now>"
+}
+```
+
+Keep `claim_token` in memory only; you need it to verify. Bright Data emails the user a code.
+
+Sending the same request again while the registration is pending returns the same `claim_token` and the same expiry times. To get a fresh code, use the resend call below, not this one.
+
+This exact response is also returned when no code will be sent: when the email already belongs to a Bright Data account, or when a controlled-rollout allow-list excludes it. That is intentional. If the email has an account, its owner gets a separate "registration attempt for your account" email instead.
+
+Registration is rate-limited per email, source IP, network range, and email domain. On `rate_limited` (429), back off.
+
+### Verify the code
+
+Tell the user:
+
+> Bright Data emailed a 6-character code to `<email>` (subject: "Bright Data: Your agent registration verification code"). Paste it here exactly as shown — it is case-sensitive.
+
+The code is 6 alphanumeric characters, mixed case, and valid for 10 minutes. Pass it exactly as the user gives it: do not change its case or add characters. After 5 wrong attempts the registration is invalidated.
+
+**If no code arrives** within a few minutes, ask the user to check spam, then ask whether they already have a Bright Data account. If they do, go to Step 0, option 2. Restart registration at most once.
+
+To resend the code (invalidates the previous one; up to 3 resends, at least 60 seconds apart):
+
+```
+POST https://brightdata.com/users/auth/agent_registration/claim
+Content-Type: application/json
+
+{
+    "claim_token": "<uuid-v4>"
+}
+```
+
+It returns the registration response shape with a new `otp_expires_at`.
+
+Submit the code:
+
+```
+POST https://brightdata.com/users/auth/agent_registration/claim/complete
+Content-Type: application/json
+
+{
+    "claim_token": "<uuid-v4>",
+    "otp": "<code exactly as the user typed it>"
+}
+```
+
+Response — **credential issued here**:
+
+```json
+{
+    "claim_token": "<uuid-v4>",
+    "credential": {"token": "<api_token>", "id": "<token_id>"},
+    "zones": {
+        "serp": {"zone_id": "agent_serp", "status": "success"},
+        "unlocker": {"zone_id": "agent_unlocker", "status": "success"},
+        "browser_api": {"zone_id": "agent_browser_api", "status": "success"}
+    },
+    "entitlements": {
+        "monthly_credits": 5000,
+        "trial_credit_usd": 2,
+        "trial_days": 7
+    }
+}
+```
+
+Use `credential.token` as your bearer API token. The response does not include the token's expiry.
+
+This call is safe to retry with the same `claim_token` and `otp` after a timeout: it returns the same credential and does not create a second account. If an earlier request for the same `claim_token` is still being completed, you get `claim_processing` (409) with a `Retry-After` header; wait, then retry the exact same request.
+
+## Step 3b — GitHub registration
+
+Bright Data verifies GitHub ownership with a secret gist. The user does nothing beyond giving consent (Step 2).
+
+### Register
+
+Get the user's numeric GitHub ID: `gh api user --jq .id`.
+
+```
+POST https://brightdata.com/users/auth/agent_registration/auth
+Content-Type: application/json
+
+{
+    "type": "identity_assertion",
+    "assertion_type": "github_id",
+    "assertion": "<numeric GitHub user ID, as a string>",
+    "client": "claude-code"
+}
+```
+
+Response:
+
+```json
+{
+    "claim_token": "<uuid-v4>",
+    "state": "pending",
+    "verification": {
+        "method": "github_gist",
+        "gist_content": "bd-verify:<challenge>",
+        "expires_at": "<ISO 8601, 10 minutes from now>"
+    },
+    "claim_token_expires_at": "<ISO 8601, 24 hours from now>"
+}
+```
+
+Keep `claim_token` in memory only.
+
+### Prove ownership with a gist
+
+Create a **secret** gist on that GitHub account whose file content is exactly `gist_content`:
+
+```
+gh api gists -X POST -F public=false -f "files[brightdata-verify.txt][content]=<gist_content>" --jq .id
+```
+
+The command prints the gist ID.
+
+### Submit the gist
+
+```
+POST https://brightdata.com/users/auth/agent_registration/claim/complete
+Content-Type: application/json
+
+{
+    "claim_token": "<uuid-v4>",
+    "gist_id": "<gist ID>"
+}
+```
+
+Response — **credential issued here**:
+
+```json
+{
+    "claim_token": "<uuid-v4>",
+    "credential": {"token": "<api_token>", "id": "<token_id>"},
+    "account": {"matched": false},
+    "zones": {
+        "serp": {"zone_id": "agent_serp", "status": "success"},
+        "unlocker": {"zone_id": "agent_unlocker", "status": "success"},
+        "browser_api": {"zone_id": "agent_browser_api", "status": "success"}
+    },
+    "entitlements": {
+        "monthly_credits": 5000,
+        "trial_credit_usd": 2,
+        "trial_days": 7
+    }
+}
+```
+
+- `"account": {"matched": false}` — a new account was created.
+- `"account": {"matched": true}` — this GitHub ID already has an account. You get a new token for that same account, and the response has no `zones` or `entitlements`. Earlier tokens keep working.
+
+This call is safe to retry with the same `claim_token` and `gist_id`: it returns the same credential, even after the gist is deleted.
+
+### Clean up
+
+Delete the gist after the credential is issued: `gh api -X DELETE gists/<gist ID>`.
+
+If the challenge expires (10 minutes) before you submit, register again for a new one. Do not use the resend endpoint (`/claim`) for GitHub registrations; it is for email codes only.
+
+## Step 4 — Check the result
+
+### Check `zones`
+
+Each zone is provisioned separately and can fail on its own (`"status": "failed"`) while the others succeed. The token cannot re-create a failed `agent_*` zone, and repeating the final registration call does not re-provision it. Instead:
+
+- **Any zone failed and the Bright Data CLI is available:** run `brightdata login --api-key "$BRIGHTDATA_API_KEY"` with the token in an environment variable. It creates `cli_unlocker` and `cli_browser` zones; use them in place of the failed `agent_*` zones (for example `"zone": "cli_unlocker"` in Web Unlocker requests).
+
+### Handle the credential like a secret
+
+Never print, log, or echo `credential.token` in chat output, transcripts, command-line arguments, URLs, or any file an unintended party could read. Store it only in a secret manager or an OS-level credential store (for example the platform keychain, or a `.env` file excluded from version control with restrictive permissions) — never in plaintext source, shell history, or logs.
+
+## Step 5 — Use the credential
+
+All examples send the token in the `Authorization` header. What the token can call:
+
+| Product | What it does | First call |
+| :---- | :---- | :---- |
+| SERP API | Search results as JSON | `POST /request` with zone `agent_serp` |
+| Web Unlocker API | Any page as Markdown, past anti-bot protection | `POST /request` with zone `agent_unlocker` |
+| Web Scraper API | Structured records from supported sites | `POST /datasets/v3/scrape?dataset_id=<id>` |
+| Fetch API | Any URL as Markdown, HTML and title | `POST /datasets/v3/scrape?dataset_id=gd_m6gjtfmeh43we6cqc` |
+| Scraper Studio | A custom scraper built by AI from a description | `brightdata scraper create`, then `POST /dca/trigger_immediate` |
+| Browser API | A cloud browser over CDP | `wss://…` with zone `agent_browser_api` |
+
+All calls go to `https://api.brightdata.com`. Examples for each follow.
+
+If a call in the first minutes after registration returns `400 Customer is not active`, wait a minute and retry.
+
+**Web search (SERP API)** — parsed results as JSON:
+
+```
+POST https://api.brightdata.com/request
+Authorization: Bearer <api_token>
+Content-Type: application/json
+
+{
+    "zone": "agent_serp",
+    "url": "https://www.google.com/search?q=web+scraping+tools",
+    "format": "raw",
+    "data_format": "parsed_light"
+}
+```
+
+The response is JSON with an `organic` array of `link`, `title`, `description`, and `global_rank`. Without `data_format`, the body is the full Google results page HTML (about 1 MB).
+
+**Scrape any page (Web Unlocker API)** — page content as Markdown:
+
+```
+POST https://api.brightdata.com/request
+Authorization: Bearer <api_token>
+Content-Type: application/json
+
+{
+    "zone": "agent_unlocker",
+    "url": "https://example.com",
+    "format": "raw",
+    "data_format": "markdown"
+}
+```
+
+**Structured data (Web Scraper API)** — no zone needed. Pick a scraper (`dataset_id`) from `https://docs.brightdata.com/products/scrapers/overview`. Synchronous, for a few URLs:
+
+```
+POST https://api.brightdata.com/datasets/v3/scrape?dataset_id=gd_l7q7dkf244hwjntr0&format=json&include_errors=true
+Authorization: Bearer <api_token>
+Content-Type: application/json
+
+[{"url": "https://www.amazon.com/dp/B09SWW583J"}]
+```
+
+For larger jobs, `POST /datasets/v3/trigger?dataset_id=<id>&format=json` with the same body returns a `snapshot_id`. Poll `GET /datasets/v3/progress/<snapshot_id>` until `status` is `ready`, then fetch `GET /datasets/v3/snapshot/<snapshot_id>?format=json`.
+
+**Any URL as Markdown (Fetch API)** — a Web Scraper API scraper, so no zone is needed:
+
+```
+POST https://api.brightdata.com/datasets/v3/scrape?dataset_id=gd_m6gjtfmeh43we6cqc&format=json
+Authorization: Bearer <api_token>
+Content-Type: application/json
+
+[{"url": "https://example.com"}]
+```
+
+Each record has `markdown`, `page_html`, `page_title`, and `final_url`.
+
+**Custom scraper (Scraper Studio)** — build one from a description with the CLI (about 2 minutes):
+
+```
+brightdata scraper create "<page URL>" "<what to extract>" -o create.json
+```
+
+`create.json` holds the scraper's `collector_id`. Run it on any page of the same kind:
+
+```
+POST https://api.brightdata.com/dca/trigger_immediate?collector=<collector_id>
+Authorization: Bearer <api_token>
+Content-Type: application/json
+
+{"url": "<page URL>"}
+```
+
+It returns a `response_id`. Poll `GET https://api.brightdata.com/dca/get_result?response_id=<response_id>` every few seconds until it returns the records.
+
+**Cloud browser (Browser API)** — connect Playwright, Puppeteer, or Selenium over CDP. Build the endpoint from two read calls:
+
+```
+GET https://api.brightdata.com/status
+Authorization: Bearer <api_token>
+→ {"customer": "<customer_id>", ...}
+
+GET https://api.brightdata.com/zone/passwords?zone=agent_browser_api
+Authorization: Bearer <api_token>
+→ {"passwords": ["<zone_password>"]}
+```
+
+```
+wss://brd-customer-<customer_id>-zone-agent_browser_api:<zone_password>@brd.superproxy.io:9222
+```
+
+Treat the zone password like the token. Example (Playwright for Python):
+
+```python
+browser = await playwright.chromium.connect_over_cdp(ws_endpoint)
+page = await browser.new_page()
+await page.goto("https://example.com")
+```
+
+More: `https://docs.brightdata.com/products/scraping-browser/quickstart`.
+
+**MCP (hosted, full tool set)** — connect your MCP client to `https://mcp.brightdata.com/mcp` with the header `Authorization: Bearer <api_token>`.
+
+**Check your balance:** `GET https://api.brightdata.com/customer/balance`.
+
+Useful starting points:
+
+- Documentation index: `https://docs.brightdata.com/llms.txt`
+- API reference: `https://docs.brightdata.com`
+- CLI: `npm install -g @brightdata/cli`
+- SDKs: `npm install @brightdata/sdk` / `pip install brightdata-sdk`
+
+## What you get
+
+- **5,000 free credits per month**, renewed on the 1st, shared across the Web Unlocker API, SERP API, Web Scraper API, Scraper Studio, and Browser API. One credit per request or record; the Browser API uses 5 credits per MB of traffic. See `https://docs.brightdata.com/general/account/billing-and-pricing/free-tier`.
+- **A one-time $2 trial credit, valid 7 days.** Adding a payment method in the Control Panel grants an extra $5, valid 30 days.
+- **Three pre-created zones:** `agent_serp`, `agent_unlocker`, `agent_browser_api`. The Web Scraper API needs no zone.
+- **Read-only usage:** you can read the balance. The token cannot manage payment methods or invoices.
+- **Not included:** proxy networks and account administration. Residential proxies require a KYC-verified account through the Control Panel.
+
+The human can add funds and lift restrictions in the Control Panel at any time.
+
+## Errors
+
+Error responses from `/auth`, `/claim`, and `/claim/complete` use `{"error": "<code>", "error_description": "<next step>"}`. A request body that is not valid JSON can return a non-JSON `400`; fix the body.
+
+| Code | HTTP | Where | What to do |
+| :---- | :---- | :---- | :---- |
+| `invalid_request` | 400 | `/auth` | Fix the JSON body. Also returned for a `verified_email` assertion that is not an email address. |
+| `email_not_accepted` | 400 | `/auth` | Disposable, aliased, or invalid address. Ask the user for their real mailbox address. |
+| `registration_denied` | 403 | `/auth`, `/claim/complete` | Registration refused. Do not retry. Go to Step 0, option 2. |
+| `browser_signup_required` | 403 | `/auth` | Do not retry. Tell the user to sign up in the Control Panel with the same email. |
+| `fraud_check_unavailable` | 503 | `/auth` | Wait the `Retry-After` seconds, retry the same request, double the wait each time, up to 3 attempts. Then go to Step 0, option 2. |
+| `rate_limited` | 429 | any | Back off and retry later. |
+| `invalid_claim_token` | 400 | `/claim`, `/claim/complete` | The registration is unknown, expired, or used up (5 wrong codes or 3 resends). Restart registration at most once; then go to Step 0, option 2. |
+| `otp_invalid` | 400 | `/claim/complete` | Ask the user to re-read the code, exactly as shown. |
+| `otp_expired` | 400 | `/claim/complete` | Resend via `/claim`. |
+| `claim_expired` | 400 | `/claim/complete` | The registration is over 24 hours old. Restart registration. |
+| `github_verification_failed` | 403 | `/claim/complete` | The gist proof did not pass, or the 10-minute challenge expired. If the challenge expired, register again (Step 3b) for a new one. Otherwise re-create the secret gist with the exact `gist_content` on the same GitHub account and retry. |
+| `claim_processing` | 409 | `/claim/complete` | Wait the `Retry-After` seconds, then retry the exact same request. |
+| `registration_disabled` | 503 | `/auth` | Registration is temporarily off. Go to Step 0, option 2. |
+| `instructions_disabled` | 404 | `GET /users/auth/agent_registration` | The self-documenting endpoint is off. Use this file. |
+
+Retry 5xx responses with exponential backoff. Do not retry the same 4xx payload unless the table says to.
+
+## Not supported yet
+
+- `github_token` registration (sending a GitHub token instead of the gist proof). Use `github_id` (Step 3b).
+- Anonymous registration.
+- An agent-callable revocation endpoint.
+
+## Claiming the account later
+
+For an account registered by email, the human can take full control of the same account by completing standard signup (password, GitHub, or Google) with the same email address, or by using "forgot password" at `https://brightdata.com`. This does not create a duplicate account or invalidate the issued token.
+
+## Revocation
+
+Agents do not revoke tokens. The human manages and revokes tokens at `https://brightdata.com/cp/setting/users`.
+
+If a previously working token returns `401`, discard it. **Do not register by email again** — the account already exists, so no code would arrive. If the account was registered with GitHub, ask the user before running Step 3b again for a new token — they may have revoked the old one on purpose. Otherwise go to Step 0, option 2.

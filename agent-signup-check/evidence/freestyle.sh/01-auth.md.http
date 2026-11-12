@@ -1,0 +1,30 @@
+GET https://freestyle.sh/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:50.138Z
+redirect: 301 from https://freestyle.sh/auth.md
+final-url: https://www.freestyle.sh/auth.md
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:37:47 GMT
+content-type: text/markdown; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cache-control: no-store
+vary: Accept
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2BHjJKA7GJ7PvfuzNsPl4NNb08B6LlsDM1FbHcVwJ8ARlYU7YONPw2o14X9FfZzIOd8jjLW5NEOvDPvd1UKDoX6Lob%2BSHOk73%2BgK6Zx78GywLRQBci53POnDY9RqjvP6ETJc%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+content-encoding: br
+server: cloudflare
+cf-ray: a5922820fafdb248-PDX
+
+# 404 Not Found
+
+`/auth.md` is not a page on www.freestyle.sh.
+
+## Where to look next
+
+- [/llms.txt](https://www.freestyle.sh/llms.txt) — every page on this site, with descriptions
+- [/index.md](https://www.freestyle.sh/index.md) — what Freestyle is and when to use it
+- [/pricing.md](https://www.freestyle.sh/pricing.md) — pricing, plans, and limits
+- [/docs](https://www.freestyle.sh/docs) — documentation, indexed at /docs/llms.txt
+- [/sitemap.xml](https://www.freestyle.sh/sitemap.xml) — every indexed URL

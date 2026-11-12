@@ -1,0 +1,24 @@
+GET https://us.posthog.com/api/projects/
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:50.841Z
+final-url: https://us.posthog.com/api/projects/
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:38:47 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+www-authenticate: Bearer resource_metadata="https://us.posthog.com/.well-known/oauth-protected-resource"
+allow: GET, POST, HEAD, OPTIONS
+x-frame-options: SAMEORIGIN
+content-security-policy: default-src 'none'
+vary: origin, Cookie, Accept-Encoding
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+cross-origin-opener-policy: same-origin
+server: envoy
+x-envoy-upstream-service-time: 4
+content-encoding: gzip
+strict-transport-security: max-age=31536000; includeSubDomains
+
+{"type":"authentication_error","code":"not_authenticated","detail":"Authentication credentials were not provided.","attr":null}

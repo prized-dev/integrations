@@ -1,0 +1,20 @@
+GET https://api.vercel.com/v2/user
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:35.200Z
+final-url: https://api.vercel.com/v2/user
+
+HTTP 403
+access-control-allow-headers: Authorization, Accept, Content-Type, DPoP
+access-control-allow-methods: OPTIONS, GET, POST, PUT, PATCH, DELETE
+access-control-allow-origin: *
+access-control-expose-headers: WWW-Authenticate, DPoP-Nonce
+cache-control: private, max-age=0
+content-length: 109
+content-type: application/json; charset=utf-8
+date: Thu, 12 Nov 2026 02:37:33 GMT
+server: Vercel
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+x-vercel-id: pdx1:pdx1:sfo1::nxd57-1794451053262-2ff72f6f51fa
+connection: close
+
+{"error":{"code":"forbidden","message":"The request is missing an authentication token","missingToken":true}}

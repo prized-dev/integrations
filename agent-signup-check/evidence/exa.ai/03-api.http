@@ -1,0 +1,36 @@
+GET https://api.exa.ai/websets/v0/websets
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.664Z
+final-url: https://api.exa.ai/websets/v0/websets
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:38:28 GMT
+content-type: application/json; charset=utf-8
+content-length: 235
+connection: close
+content-security-policy: frame-ancestors 'self'
+cross-origin-opener-policy: same-origin
+cross-origin-resource-policy: same-origin
+origin-agent-cluster: ?1
+referrer-policy: no-referrer
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-download-options: noopen
+x-frame-options: DENY
+x-permitted-cross-domain-policies: none
+x-xss-protection: 0
+x-request-id: a810577699a2500ab883dd12f89033b3
+x-exa-region: us-west-2
+x-exa-processing-region: us
+vary: Origin
+access-control-allow-credentials: true
+access-control-expose-headers: PAYMENT-REQUIRED,PAYMENT-RESPONSE,payment-required,payment-response,WWW-Authenticate,Payment-Receipt,x-request-id,x-exa-queued,x-exa-queue-ms,x-exa-region,x-exa-processing-region,Deprecation,Sunset,Retry-After,X-RateLimit-Scope
+cache-control: private, no-store
+cdn-cache-control: no-store
+etag: W/"eb-HuuSf1X+oGFdFzIZYkq+R+ZyeyE"
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a5922925be929b30-PDX
+
+{"requestId":"a810577699a2500ab883dd12f89033b3","error":"Authentication required. Provide an API key using 'Authorization: Bearer <key>' or 'x-api-key: <key>'. Create a key at https://dashboard.exa.ai/api-keys","tag":"INVALID_API_KEY"}

@@ -1,0 +1,13 @@
+GET https://api.search.brave.com/res/v1/web/search?q=agent
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:33.999Z
+final-url: https://api.search.brave.com/res/v1/web/search?q=agent
+
+HTTP 422
+server: awselb/2.0
+date: Thu, 12 Nov 2026 02:38:31 GMT
+content-length: 233
+connection: close
+content-type: application/json
+
+{"error":{"code":"VALIDATION","detail":"Unable to validate request parameter(s)","meta":{"errors":[{"input":null,"loc":["header","x-subscription-token"],"msg":"Field required","type":"missing"}]},"status":422},"type":"ErrorResponse"}

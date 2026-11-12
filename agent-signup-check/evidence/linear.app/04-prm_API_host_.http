@@ -1,0 +1,32 @@
+GET https://api.linear.app/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:51.119Z
+final-url: https://api.linear.app/.well-known/oauth-protected-resource
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:38:49 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a59229a5dccd1bed-PDX
+cf-cache-status: DYNAMIC
+cache-control: private, no-cache, no-store, must-revalidate
+server: cloudflare
+vary: Accept-Encoding
+via: 1.1 google
+alt-svc: h3=":443"; ma=86400
+content-security-policy: default-src 'none'
+x-content-type-options: nosniff
+x-request-id: a59229a678a3613d-PDX
+content-encoding: br
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /.well-known/oauth-protected-resource</pre>
+</body>
+</html>

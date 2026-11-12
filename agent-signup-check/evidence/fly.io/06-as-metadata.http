@@ -1,0 +1,19 @@
+GET https://fly.io/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:37.689Z
+final-url: https://fly.io/.well-known/oauth-authorization-server
+
+HTTP 404
+cache-control: max-age=0, private, must-revalidate
+content-encoding: br
+content-type: application/json; charset=utf-8
+date: Thu, 12 Nov 2026 02:37:36 GMT
+server: Fly/366e4bf88 (2026-10-27)
+vary: Accept
+x-request-id: GOcrumUmIG3j1jcAARDC
+transfer-encoding: chunked
+via: 1.1 fly.io
+fly-request-id: 01M76SW9ER86ERTNAD8ZXM7EBR-lax
+connection: close
+
+{"errors":{"detail":"not found"}}

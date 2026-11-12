@@ -1,0 +1,30 @@
+GET https://freestyle.sh/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:50.138Z
+redirect: 301 from https://freestyle.sh/.well-known/oauth-authorization-server
+final-url: https://www.freestyle.sh/.well-known/oauth-authorization-server
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:37:49 GMT
+content-type: text/markdown; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cache-control: no-store
+vary: Accept
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=5mvEjZgUcGLletz9Lm5N9zgfsvHcfmEp3KRfKS%2FHWChrardYB7RON309mY4JTWAHP5RP46fGPjUJa1x%2F63faSWA0eZ6IX2KCpsu7kmjnBvgJcyyPwhvVT6%2FmfSho1%2FVb07Y%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+content-encoding: br
+server: cloudflare
+cf-ray: a592282d3986a11a-PDX
+
+# 404 Not Found
+
+`/.well-known/oauth-authorization-server` is not a page on www.freestyle.sh.
+
+## Where to look next
+
+- [/llms.txt](https://www.freestyle.sh/llms.txt) — every page on this site, with descriptions
+- [/index.md](https://www.freestyle.sh/index.md) — what Freestyle is and when to use it
+- [/pricing.md](https://www.freestyle.sh/pricing.md) — pricing, plans, and limits
+- [/docs](https://www.freestyle.sh/docs) — documentation, indexed at /docs/llms.txt
+- [/sitemap.xml](https://www.freestyle.sh/sitemap.xml) — every indexed URL

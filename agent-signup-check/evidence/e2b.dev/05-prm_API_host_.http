@@ -1,0 +1,18 @@
+GET https://api.e2b.dev/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:33.920Z
+final-url: https://api.e2b.dev/.well-known/oauth-protected-resource
+
+HTTP 404
+content-type: application/json; charset=utf-8
+vary: Origin
+date: Thu, 12 Nov 2026 02:37:32 GMT
+content-length: 74
+x-ratelimit-limit: 60000
+x-ratelimit-remaining: 60000
+x-ratelimit-reset: 0
+via: 1.1 google
+alt-svc: h3=":443"; ma=2592000
+connection: close
+
+{"code":404,"message":"validation error: no matching operation was found"}

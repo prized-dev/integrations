@@ -1,0 +1,33 @@
+GET https://exa.ai/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.664Z
+redirect: 308 from https://exa.ai/.well-known/oauth-protected-resource
+final-url: https://mcp.exa.ai/.well-known/oauth-protected-resource/mcp
+
+HTTP 200
+date: Thu, 12 Nov 2026 02:38:29 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+access-control-allow-headers: Content-Type, Authorization
+access-control-allow-methods: GET, OPTIONS
+access-control-allow-origin: *
+cache-control: public, max-age=3600
+strict-transport-security: max-age=63072000
+cf-cache-status: DYNAMIC
+content-encoding: gzip
+server: cloudflare
+cf-ray: a592292829b5dcdd-PDX
+
+{
+  "resource": "https://mcp.exa.ai/mcp",
+  "authorization_servers": [
+    "https://auth.exa.ai"
+  ],
+  "scopes_supported": [
+    "mcp:tools"
+  ],
+  "bearer_methods_supported": [
+    "header"
+  ]
+}

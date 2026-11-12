@@ -1,0 +1,26 @@
+GET https://serpapi.com/account.json
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:33.220Z
+final-url: https://serpapi.com/account.json
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:38:31 GMT
+content-type: application/json; charset=utf-8
+transfer-encoding: chunked
+connection: close
+x-frame-options: SAMEORIGIN
+x-xss-protection: 1; mode=block
+x-content-type-options: nosniff
+x-download-options: noopen
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+cache-control: no-cache
+x-request-id: 835d9257-2987-4e8d-bbed-f4e3f8661a88
+x-runtime: 0.000960
+vary: accept-encoding
+cf-cache-status: BYPASS
+server: cloudflare
+cf-ray: a59229374b14a096-PDX
+alt-svc: h3=":443"; ma=86400
+
+{"error":"Invalid API key. Your API key should be here: https://serpapi.com/manage-api-key"}

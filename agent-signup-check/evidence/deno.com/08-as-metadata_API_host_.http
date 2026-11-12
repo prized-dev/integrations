@@ -1,0 +1,14 @@
+GET https://api.deno.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:03.187Z
+final-url: https://api.deno.com/.well-known/oauth-authorization-server
+
+HTTP 404
+content-type: text/plain;charset=UTF-8
+x-deno-trace-id: a0e746ededb1f5aa839b7de537b6b4f7
+content-security-policy: frame-ancestors 'none';
+content-length: 9
+date: Thu, 12 Nov 2026 02:38:02 GMT
+connection: close
+
+Not Found

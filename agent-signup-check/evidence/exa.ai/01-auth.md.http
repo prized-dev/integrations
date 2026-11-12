@@ -1,0 +1,120 @@
+GET https://exa.ai/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.664Z
+final-url: https://exa.ai/auth.md
+
+HTTP 200
+access-control-allow-origin: *
+age: 1119
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-encoding: br
+content-security-policy: frame-ancestors 'none'
+content-type: text/markdown; charset=utf-8
+date: Thu, 12 Nov 2026 02:38:27 GMT
+etag: W/"3b324cb1b85dfe5ae4378433b2d4dd57"
+referrer-policy: strict-origin-when-cross-origin
+server: Vercel
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-matched-path: /auth.md
+x-vercel-cache: HIT
+x-vercel-id: pdx1::84x5v-1794451107849-cf39ffe075fa
+connection: close
+transfer-encoding: chunked
+
+# Exa authentication for agents
+
+This page explains how an agent can authenticate to Exa today. It is an authentication guide, not an auth.md agent-registration document: Exa does not support agent registration. It publishes no `agent_auth` metadata and offers no agent registration or claim flow. An agent can get an API key from the user, or provision one through Stripe Projects with a Stripe CLI the user has signed in to.
+
+Exa runs these hosts:
+
+- `https://api.exa.ai`: the Exa API (`/search`, `/contents`, `/answer`, `/agent/runs` and the rest).
+- `https://mcp.exa.ai/mcp`: the hosted MCP server.
+- `https://auth.exa.ai`: the OAuth authorization server for the hosted MCP server.
+
+## OAuth metadata
+
+The Exa API authenticates with API keys and does not publish OAuth metadata. The hosted MCP server is an OAuth protected resource:
+
+```http
+GET https://mcp.exa.ai/.well-known/oauth-protected-resource/mcp
+```
+
+```json
+{
+  "resource": "https://mcp.exa.ai/mcp",
+  "authorization_servers": ["https://auth.exa.ai"],
+  "scopes_supported": ["mcp:tools"],
+  "bearer_methods_supported": ["header"]
+}
+```
+
+Read the authorization server's endpoints from its metadata. If anything in this file conflicts with the metadata, the metadata wins.
+
+```http
+GET https://auth.exa.ai/.well-known/oauth-authorization-server
+```
+
+## Choose a method
+
+| You have | Use | Works on |
+| --- | --- | --- |
+| An Exa API key from the user | An API key | Every Exa API endpoint and the MCP server |
+| An MCP client that supports OAuth | OAuth on the MCP server | The hosted MCP server only |
+| Nothing | The MCP server without credentials, or ask the user for an API key | Rate-limited MCP search and fetch tools |
+| A wallet that can pay USDC with x402 | An x402 payment, if no API key is available | `/search` and `/contents` |
+| The Stripe CLI, signed in to the user's Stripe account | Stripe Projects, to provision an API key | Every Exa API endpoint and the MCP server |
+
+To get an API key, ask the user to create one at https://dashboard.exa.ai/api-keys and give it to you. Keep it in the `EXA_API_KEY` environment variable. The Python (`exa-py`) and JavaScript (`exa-js`) SDKs read it from there.
+
+## Call the Exa API
+
+Send the key in the `x-api-key` header. `Authorization: Bearer <EXA_API_KEY>` also works.
+
+```http
+POST https://api.exa.ai/search
+x-api-key: <EXA_API_KEY>
+Content-Type: application/json
+
+{"query": "PostgreSQL transaction isolation levels", "contents": {"highlights": true}}
+```
+
+## Connect to the hosted MCP server
+
+| Mode | Connect to | Tools |
+| --- | --- | --- |
+| OAuth | `https://mcp.exa.ai/mcp?login` | Default tools, including `agent_run`, billed to the user's Exa team |
+| API key | `https://mcp.exa.ai/mcp` with the `x-api-key` header | Default tools, including `agent_run`, billed to the key's team |
+| No credentials | `https://mcp.exa.ai/mcp` | Rate-limited web search and fetch, without `agent_run` |
+
+For OAuth, register a client at the authorization server's `registration_endpoint` or with a client ID metadata document, run the authorization code flow with PKCE (`S256`) and the `mcp:tools` scope, and send the access token as `Authorization: Bearer <access_token>` to `https://mcp.exa.ai/mcp`. The user signs in to Exa in the browser during this flow. For the Exa API, use an API key. Setup guide: https://exa.ai/docs/get-started/exa-mcp
+
+## Pay per request with x402
+
+A request to `/search` or `/contents` with no API key returns `402` with tag `X402_PAYMENT_REQUIRED` and a `PAYMENT-REQUIRED` header that lists the price and the accepted USDC networks. Sign a payment and retry the same request with it. Guide: https://exa.ai/docs/integrations/payments/x402/quickstart
+
+## Provision an API key with Stripe Projects
+
+Stripe Projects creates an Exa account owned by the user, or uses the Exa team they linked, and writes an API key to the project's `.env` as `EXA_API_KEY`. It needs the Stripe CLI with the Projects plugin, signed in to the user's Stripe account. From the project directory:
+
+```bash
+stripe projects init
+stripe projects add exa/api
+stripe projects env --pull
+```
+
+To provision the key under an existing Exa team, run `stripe projects link exa` before `add`; the user authenticates to Exa in the browser. Guide: https://exa.ai/docs/integrations/marketplaces/stripe-projects
+
+## Errors
+
+| Status | Tag | Returned by | What to do |
+| --- | --- | --- | --- |
+| `401` | `INVALID_API_KEY` | `https://api.exa.ai` | The API key is missing, wrong or revoked. Ask the user for a valid key. Do not retry with the same key. |
+| `402` | `X402_PAYMENT_REQUIRED` | `/search`, `/contents` | The request carried no API key. Ask the user for an API key, or pay with x402. |
+
+## Revoking access
+
+The user revokes API keys at https://dashboard.exa.ai/api-keys. A key that worked before and now returns `401` has been revoked or rotated: drop it and ask the user for a new one. OAuth refresh tokens can be revoked at the authorization server's `revocation_endpoint`.

@@ -1,0 +1,97 @@
+GET https://fireworks.ai/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:19.324Z
+final-url: https://fireworks.ai/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 2233
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
+content-encoding: br
+content-security-policy: frame-ancestors 'self' https://fireworks-ai-studio.vercel.app https://fireworks-ai-studio-ten.vercel.app http://localhost:3333 http://localhost:3000
+content-type: text/plain; charset=utf-8
+date: Thu, 12 Nov 2026 02:37:16 GMT
+etag: W/"ecda8fd55182a8fc68bdaf3cac4382ff"
+server: Vercel
+strict-transport-security: max-age=63072000
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+x-frame-options: SAMEORIGIN
+x-matched-path: /llms.txt
+x-vercel-cache: STALE
+x-vercel-id: pdx1::2sr6l-1794451035877-a37e2c8ff451
+connection: close
+transfer-encoding: chunked
+
+# Fireworks AI
+
+> Fireworks is a training and inference platform for open AI models. Teams use it to serve frontier open models (or their own post-trained versions) on a disaggregated inference engine, and to post-train models with SFT, DPO, and reinforcement learning, then deploy checkpoints in one click.
+
+Key facts:
+- Inference options: Serverless (per-token pricing), On-Demand deployments, and Reserved Capacity.
+- Training options: Training API, Managed Training, and Fireworks Lab (SFT, DPO, RL).
+- Nexus lets teams run open models in coding agents such as Claude Code, Codex, and OpenCode, with FireRouter routing, per-user budgets, and spend tracking by model.
+- Developer documentation lives at https://docs.fireworks.ai, with its own index at https://docs.fireworks.ai/llms.txt.
+
+## Product
+- [Inference](https://fireworks.ai/product/inference): Serve open models or your post-trained versions on a disaggregated engine with Serverless, On-Demand, or Reserved Capacity
+- [Training](https://fireworks.ai/product/training): Post-train open models with SFT, DPO, or RL, then deploy checkpoints in one click
+- [RL Rollouts](https://fireworks.ai/product/rl-rollouts): Standalone service for large-scale reinforcement learning rollouts
+- [Nexus](https://fireworks.ai/product/nexus): Control AI coding spend with open models in Claude Code, Codex, and OpenCode
+- [Pricing](https://fireworks.ai/pricing): Plans and pricing
+- [Fireworks Specialized Intelligence Index](https://fireworks.ai/specialized-intelligence-index/): How open, closed, and specialized models perform on the evaluations practitioners use
+
+## Solutions
+- [Fireworks for enterprise](https://fireworks.ai/solutions/for-enterprise)
+- [Fireworks for startups](https://fireworks.ai/solutions/for-startups)
+- [Agentic Systems](https://fireworks.ai/solutions/agentic-systems): Real-time, reliable execution of multi-agent workflows across systems and APIs
+- [Code Assistance](https://fireworks.ai/solutions/code-assistance): Context-aware code generation, inline fixes, and real-time autocomplete
+- [Enterprise RAG](https://fireworks.ai/solutions/enterprise-rag): Retrieval-augmented generation over enterprise documents, code, and data
+- [Voice Agent Platform](https://fireworks.ai/solutions/voice-agent-platform): Build fast, configurable voice agents
+- [Reinforcement Fine-Tuning](https://fireworks.ai/solutions/reinforcement-fine-tuning)
+- [Multimodal](https://fireworks.ai/solutions/multimodal): Extract, classify, and summarize documents, images, and audio
+- [Search](https://fireworks.ai/solutions/search): Context-aware search and multi-source summarization
+- [Conversational AI](https://fireworks.ai/solutions/conversational-ai): Domain-specific conversational AI for enterprise workflows
+
+## Models
+- [Models](https://fireworks.ai/models): Serve frontier open models, or your own post-trained versions, on an engine optimized at every layer
+- [Kimi on Fireworks](https://fireworks.ai/models/kimi): Moonshot AI's Kimi models via serverless API or dedicated GPUs
+- [DeepSeek on Fireworks](https://fireworks.ai/models/deepseek): DeepSeek models for inference and fine-tuning
+- [Which model should I use?](https://docs.fireworks.ai/guides/recommended-models.md): Pick the best open-weight model for chat, coding, vision, embeddings, and agents
+
+## Docs
+- [Fireworks AI Docs index](https://docs.fireworks.ai/llms.txt): Full documentation index
+- [Build with Fireworks AI](https://docs.fireworks.ai/getting-started/introduction.md)
+- [Serverless Quickstart](https://docs.fireworks.ai/getting-started/quickstart.md)
+- [Serverless Pricing](https://docs.fireworks.ai/serverless/pricing.md): Per-token serverless pricing
+
+## Customers and resources
+- [Customers](https://fireworks.ai/customers): Case studies from companies building on Fireworks
+- [Blog](https://fireworks.ai/blog): Announcements, model releases, perspectives, and tutorials
+- [Research](https://fireworks.ai/research): Research on training, inference, and model performance
+- [Newsroom](https://fireworks.ai/news): Latest news from Fireworks
+- [AI Tokenomics Whitepaper](https://fireworks.ai/tokenomics): Why AI economics are set at the model layer, and what to rent vs. own
+- [Own your AI whitepaper](https://fireworks.ai/own-your-ai)
+
+## Events
+- [Events](https://fireworks.ai/events): Upcoming events and conferences
+- [Webinars](https://fireworks.ai/webinar)
+- [Community](https://fireworks.ai/community): Meetups, nerd nights, hackathons, and workshops
+
+## Partners
+- [Partners](https://fireworks.ai/partners)
+- [NVIDIA](https://fireworks.ai/partners/nvidia)
+- [AMD](https://fireworks.ai/partners/amd)
+- [AWS](https://fireworks.ai/partners/aws)
+- [Microsoft Foundry](https://fireworks.ai/partners/microsoft)
+
+## Company
+- [About](https://fireworks.ai/about)
+- [Careers](https://fireworks.ai/careers)
+- [Contact](https://fireworks.ai/contact): Talk to sales
+- [Security bulletins](https://fireworks.ai/security/bulletins)
+- [Trust Center](https://trust.fireworks.ai/)
+
+## Optional
+- [Privacy Policy](https://fireworks.ai/privacy-policy)
+- [Full documentation text](https://docs.fireworks.ai/llms-full.txt)

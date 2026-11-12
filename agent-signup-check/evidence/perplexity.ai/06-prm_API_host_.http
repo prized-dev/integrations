@@ -1,0 +1,21 @@
+GET https://api.perplexity.ai/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:22.899Z
+final-url: https://api.perplexity.ai/.well-known/oauth-protected-resource
+
+HTTP 200
+date: Thu, 12 Nov 2026 02:37:21 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+server: cloudflare
+cache-control: public, max-age=3600
+access-control-allow-origin: *
+last-modified: Thu, 12 Nov 2026 02:37:21 GMT
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+cf-cache-status: HIT
+content-encoding: gzip
+cf-ray: a59227823a943416-PDX
+alt-svc: h3=":443"; ma=86400
+
+{"resource":"https://api.perplexity.ai","authorization_servers":["https://api.perplexity.ai"],"scopes_supported":["perplexity_api"],"bearer_methods_supported":["header"]}

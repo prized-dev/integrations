@@ -1,0 +1,19 @@
+GET https://api.cdp.coinbase.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:46.509Z
+final-url: https://api.cdp.coinbase.com/.well-known/oauth-protected-resource
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:38:44 GMT
+content-type: text/plain; charset=utf-8
+content-length: 19
+connection: close
+nel: {"report_to":"cf-nel","success_fraction":0.01,"max_age":604800}
+x-content-type-options: nosniff
+server: cloudflare
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=qzm4w0ZXi1q9pt1IttiURTyP%2BxRndLQUrhPftT40umxrUxG3%2BTYzVTCUGrqDjqleOcfqntEAIL5IcsdmYfU3AqCTrVNmQ%2BlDKAmNEwIHHyt%2BKR6m%2Bc7IdgblHm5FeJ8VXsQR9ATI"}]}
+cf-cache-status: DYNAMIC
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+cf-ray: a59229847b0c5f03-PDX
+
+404 page not found

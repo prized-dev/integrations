@@ -1,0 +1,24 @@
+GET https://api.context.dev/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:36.960Z
+final-url: https://api.context.dev/.well-known/oauth-protected-resource
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:38:35 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+cache-control: private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+expires: Thu, 01 Jan 1970 00:00:01 GMT
+referrer-policy: same-origin
+x-frame-options: SAMEORIGIN
+speculation-rules: "/cdn-cgi/speculation"
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Mk4RtRA6Hgvi6EZmHQAoVGcP7E22PaCZ2oi%2BPLfR5qADkUH0P1YgP09KlAAPXwIk2oxRdPHjGMXzJebsFKCtbXdrHq7k3U2g0KeNx%2BAm31SDVXRUd8cC3tWmtGIlALC4yw%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+content-encoding: br
+server: cloudflare
+cf-ray: a5922951dfff5012-PDX
+alt-svc: h3=":443"; ma=86400
+
+{"message":"The API endpoint you have tried to access does not exist. Review the documentation at https://docs.context.dev or the OpenAPI spec at https://www.context.dev/openapi.json to fix your request. If you have any questions please reach out to hello@context.dev","error_code":"ENDPOINT_NOT_FOUND","docs":"https://docs.context.dev","openapi":"https://www.context.dev/openapi.json"}

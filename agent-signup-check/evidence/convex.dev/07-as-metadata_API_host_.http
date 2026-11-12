@@ -1,0 +1,14 @@
+GET https://api.convex.dev/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:07.430Z
+final-url: https://api.convex.dev/.well-known/oauth-authorization-server
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:38:06 GMT
+content-length: 0
+connection: close
+via: 1.1 Caddy
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a592289b6f306e09-PDX
+

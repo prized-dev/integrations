@@ -1,0 +1,59 @@
+GET https://beam.cloud/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:50.948Z
+redirect: 307 from https://beam.cloud/llms.txt
+final-url: https://www.beam.cloud/llms.txt
+
+HTTP 200
+age: 0
+cache-control: public, max-age=0, must-revalidate
+content-encoding: br
+content-type: text/plain; charset=utf-8
+date: Thu, 12 Nov 2026 02:37:47 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-matched-path: /llms.txt
+x-vercel-cache: MISS
+x-vercel-id: pdx1::iad1::p5lz6-1794451067757-eb7c98ebe793
+connection: close
+transfer-encoding: chunked
+
+# Beam
+
+> Beam sources bare-metal servers around the world and turns them into VMs, sandboxes, task queues, GitHub runners, functions and endpoints. Cheap machines for background jobs, big ones for CI builds, GPUs when you need them, and only pay while your code is running.
+
+## Products
+
+- [Sandboxes](https://www.beam.cloud/sandbox): Isolated cloud sandboxes for agent and LLM-generated code. Start in about half a second, fork from memory snapshots, attach GPUs, and control network access. Billed by the millisecond.
+- [Virtual machines](https://www.beam.cloud/virtual-machines): Persistent Linux microVMs for coding agents and developers, with SSH, a browser desktop, Docker, pause with memory intact, and fork. Billed per second.
+- [Serverless GPUs](https://www.beam.cloud/serverless-gpu): Serverless GPUs for AI inference and batch jobs that scale to zero and bill by the millisecond.
+- [Task queues](https://www.beam.cloud/task-queues): Offload resource-intensive functions to a managed task queue with GPUs built in.
+- [Inference](https://www.beam.cloud/inference): Deploy a Python function as a GPU inference endpoint. Containers boot in seconds, autoscale with traffic, and billing stops once the endpoint scales to zero.
+
+## Pricing
+
+- [Pricing](https://www.beam.cloud/pricing.md): Rates for VMs, sandboxes, serverless and on-demand GPUs, clusters, storage and bring-your-own-cloud, plus plans and the pricing FAQ, in Markdown.
+
+## Get started
+
+- [Quickstart](https://www.beam.cloud/quickstart): Get started with Beam using the CLI and SDK. Configure your account, develop in a remote runtime, and deploy an API.
+- [Beam for AI agents](https://www.beam.cloud/agents.md): Setup briefing for AI coding agents arriving at beam.cloud: identify the platform, configure CLI or MCP access, and operate Beam on behalf of a user.
+- [VM templates](https://www.beam.cloud/templates.md): Ready-to-run VMs (OpenClaw, Hermes Agent, an agent devbox, a computer-use desktop, Blender and more) with each template's ID, start commands and MCP `create_vm` arguments, in Markdown. Also as JSON at /templates.json.
+- [Benchmarks](https://www.beam.cloud/benchmarks.md): How long Beam takes to start a sandbox or a VM, mount a container image and read a file, measured on Beam's own clusters, with the parts of the platform behind each number. In Markdown.
+- [Docs](https://docs.beam.cloud): Guides, plus reference for the CLI, the Python and TypeScript SDKs, and the REST API.
+- [Docs index for agents](https://docs.beam.cloud/llms.txt): The docs as an llms.txt index.
+- [Python SDK](https://docs.beam.cloud/v2/reference/py-sdk): `beam-client`, the CLI and Python SDK.
+- [TypeScript SDK](https://docs.beam.cloud/v2/reference/ts-sdk): `@beamcloud/beam-js`.
+- [beta9 on GitHub](https://github.com/beam-cloud/beta9/): Beam's runtime, open source under AGPL-3.0, so you can run it on your own cluster.
+
+## Company
+
+- [Customers](https://www.beam.cloud/customers): See how teams use Beam to scale AI workloads, reduce cold starts, and ship production applications without managing infrastructure.
+- [Blog](https://www.beam.cloud/blog): Technical guides and product updates from Beam on AI infrastructure, serverless GPUs, sandboxes, model inference, and developer workflows.
+- [About](https://www.beam.cloud/about): Beam is the cloud platform we wanted for ourselves: infrastructure that helps developers ship AI products without managing servers, Dockerfiles, or security groups.
+
+## Optional
+
+- [Use cases](https://www.beam.cloud/use-cases)
+- [Changelog](https://docs.beam.cloud/v2/releases/)
+- [Status](https://status.beam.cloud)

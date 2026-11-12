@@ -1,0 +1,21 @@
+GET https://api.netlify.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:42.898Z
+final-url: https://api.netlify.com/.well-known/oauth-authorization-server
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:37:41 GMT
+content-type: application/json; charset=utf-8
+content-length: 34
+connection: close
+cache-control: no-cache
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+timing-allow-origin: https://app.netlify.com, https://www.netlify.com
+vary: Accept
+x-content-type-options: nosniff
+x-frame-options: ALLOWALL
+x-nf-srv-version: 4270fb9
+x-request-id: e46525bd-549d-4296-98c6-dcaf0d6f5943
+x-runtime: 0.002189
+
+{"code":404,"message":"Not Found"}

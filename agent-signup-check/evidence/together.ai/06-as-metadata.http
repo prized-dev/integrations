@@ -1,0 +1,27 @@
+GET https://together.ai/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:18.575Z
+final-url: https://together.ai/.well-known/oauth-authorization-server
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:37:17 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a59227679ccdb0ad-SEA
+cf-cache-status: EXPIRED
+cache-control: no-transform
+content-encoding: gzip
+etag: W/"6af3fd62-58"
+server: cloudflare
+vary: accept-encoding
+x-content-type-options: nosniff
+x-wf-region: us-east-1
+alt-svc: h3=":443"; ma=86400
+
+<!DOCTYPE html>
+<html>
+  <body>
+    <p>Invalid .well-known request</p>
+  </body>
+</html>

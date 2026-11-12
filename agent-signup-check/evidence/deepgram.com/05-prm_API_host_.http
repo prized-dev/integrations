@@ -1,0 +1,14 @@
+GET https://api.deepgram.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:32.031Z
+final-url: https://api.deepgram.com/.well-known/oauth-protected-resource
+
+HTTP 404
+vary: origin, access-control-request-method, access-control-request-headers
+access-control-allow-credentials: true
+access-control-expose-headers: dg-model-name,dg-model-uuid,dg-additional-model-uuids,dg-char-count,dg-request-id,dg-project-id,dg-error,dg-breaks-applied,dg-pronunciations-applied,dg-pronunciation-warnings
+dg-request-id: 01a1cd9e-0f8d-7393-9ef0-b5c3d7cca4c4
+content-length: 0
+date: Thu, 12 Nov 2026 02:37:30 GMT
+connection: close
+

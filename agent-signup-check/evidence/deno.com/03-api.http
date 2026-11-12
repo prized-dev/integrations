@@ -1,0 +1,15 @@
+GET https://api.deno.com/v2/apps
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:03.187Z
+final-url: https://api.deno.com/v2/apps
+
+HTTP 401
+x-deno-trace-id: db40b77d48eeb16fb8aa800deb134506
+content-type: application/json
+vary: Accept-Encoding
+content-encoding: br
+transfer-encoding: chunked
+date: Thu, 12 Nov 2026 02:37:59 GMT
+connection: close
+
+{"code":"INVALID_TOKEN","message":"The provided access token is malformed, invalid, or expired."}

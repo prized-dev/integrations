@@ -1,0 +1,18 @@
+GET https://api.convex.dev/v1/token_details
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:07.430Z
+final-url: https://api.convex.dev/v1/token_details
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:38:05 GMT
+content-type: application/json
+content-length: 87
+connection: close
+access-control-allow-credentials: true
+vary: origin, access-control-request-method, access-control-request-headers
+via: 1.1 Caddy
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a5922891bcc99790-PDX
+
+{"code":"MissingAccessToken","message":"An access token is required for this command."}

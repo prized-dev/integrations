@@ -222,6 +222,11 @@ case $DIR in
     npm run typecheck
     npm run build
     offline npm test ;;
+  agent-signup-check)
+    # One dependency-free Node file and its tools: no install. Syntax-check each, then the offline
+    # tests (a stub in place of the network, and a replay of the published evidence).
+    for f in *.mjs; do node --check "$f"; done
+    offline node --test test/*.test.mjs ;;
   herdr)
     # A herdr plugin with no dependencies: node --test against stand-ins for prized, herdr and ssh
     # (test/fakes). The fake sandbox runs the plugin's remote scripts with the real bash, tar and git.

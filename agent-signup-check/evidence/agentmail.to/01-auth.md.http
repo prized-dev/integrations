@@ -1,0 +1,62 @@
+GET https://agentmail.to/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:10.820Z
+redirect: 307 from https://agentmail.to/auth.md
+final-url: https://www.agentmail.to/auth.md
+
+HTTP 200
+access-control-allow-origin: *
+age: 2836
+cache-control: public, max-age=3600
+content-disposition: inline; filename="auth.md"
+content-encoding: br
+content-type: text/markdown; charset=utf-8
+date: Thu, 12 Nov 2026 02:38:07 GMT
+etag: W/"d8e9024dc1b66d10dfc1218a019ea55e"
+last-modified: Thu, 12 Nov 2026 01:50:50 GMT
+link: </openapi.json>; rel="service-desc", </docs>; rel="service-doc", </llms.txt>; rel="https://llmstxt.org", </.well-known/api-catalog>; rel="api-catalog"
+server: Vercel
+strict-transport-security: max-age=63072000
+x-matched-path: /auth.md
+x-vercel-cache: HIT
+x-vercel-id: pdx1::zcf9v-1794451087534-9db6591fdcb2
+connection: close
+transfer-encoding: chunked
+
+# auth.md
+
+You are an agent that wants to use AgentMail on a user's behalf. This file explains how to get credentials and use them safely.
+
+Hosts:
+- API (resource server): https://api.agentmail.to (EU: https://api.agentmail.eu)
+- MCP server: https://mcp.agentmail.to/mcp (OAuth 2.1 with PKCE, discovery at https://mcp.agentmail.to/.well-known/oauth-protected-resource)
+- Console (where users manage keys): https://console.agentmail.to
+- Docs: https://docs.agentmail.to (index: https://docs.agentmail.to/llms.txt)
+
+## Use existing tooling first
+1. MCP: if you are an MCP client, connect to https://mcp.agentmail.to/mcp. In clients that support MCP OAuth, it signs the user in with OAuth, so you never handle a key.
+2. CLI: if you run shell commands, use the `agentmail` CLI. See https://docs.agentmail.to/integrations/cli
+3. SDKs: Python (`pip install agentmail`) and TypeScript (`npm install agentmail`) both read AGENTMAIL_API_KEY from the environment.
+
+## API key
+The API takes a bearer key: `Authorization: Bearer $AGENTMAIL_API_KEY`. Keys start with `am_`.
+Look for it in this order: CLI flag, AGENTMAIL_API_KEY env var, a .env file the user pointed you to, the MCP server's environment.
+If none is set, do not ask the user to paste it into chat. Ask them to create a key at https://console.agentmail.to with the narrowest permissions that fit (see https://docs.agentmail.to/permissions), put it in AGENTMAIL_API_KEY, and resume.
+A 401 on a key that used to work means it was revoked. Drop it and ask the user to refresh it.
+
+## Agent sign-up (no human needed to start)
+An agent can create its own account and get an API key in one call:
+
+POST https://api.agentmail.to/v0/agent/sign-up
+{"username": "my-agent", "human_email": "owner@example.com"}
+
+The response returns the API key once. Store it right away.
+Until the owner verifies, the agent can send only to its owner's email address (10 sends a day). The owner gets a 6 digit code. Submit it with POST /v0/agent/verify {"otp_code": "123456"} to lift the limit and send to anyone.
+Leaving out human_email gives a receive-only inbox. Add the owner later with POST /v0/agent/human.
+Details: https://www.agentmail.to/docs/api-reference/agent/sign-up and https://www.agentmail.to/docs/knowledge-base/agent-sign-up-limits
+
+## Testing
+No sandbox address needed. An agent that signs up with its owner's email can email that owner right away, so you test against a real inbox you control, with real delivery, from the first minute. Once the owner verifies, you can email other recipients too; new accounts ramp up how many distinct recipients they can reach.
+
+## Full guide
+https://www.agentmail.to/docs/agent-onboarding

@@ -1,0 +1,31 @@
+GET https://supabase.com/agent-signup-check-no-such-page.md
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:02.698Z
+final-url: https://supabase.com/agent-signup-check-no-such-page.md
+
+HTTP 404
+age: 0
+cache-control: no-store
+content-encoding: br
+content-type: text/markdown; charset=utf-8
+date: Thu, 12 Nov 2026 02:38:01 GMT
+server: Vercel
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Accept
+x-content-type-options: nosniff
+x-matched-path: /api-v2/md-404/[[...path]]
+x-nextjs-rewritten-path: /agent-signup-check-no-such-page.md
+x-vercel-cache: MISS
+x-vercel-id: pdx1::iad1::dpgkm-1794451081811-60bd6cb92e44
+connection: close
+transfer-encoding: chunked
+
+# 404 Not Found
+
+`/agent-signup-check-no-such-page.md` does not exist on supabase.com.
+
+Explore instead:
+
+- [Documentation](https://supabase.com/docs)
+- [Sitemap](https://supabase.com/sitemap.xml)
+- [llms.txt](https://supabase.com/llms.txt)
