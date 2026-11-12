@@ -1,14 +1,14 @@
 GET https://api.clerk.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:41.681Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:51.251Z
 final-url: https://api.clerk.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Sat, 07 Nov 2026 00:19:40 GMT
+date: Thu, 12 Nov 2026 02:38:49 GMT
 content-type: text/plain; charset=utf-8
 content-length: 19
 connection: close
-cf-ray: a5682af27bbb9811-PDX
+cf-ray: a59229a8bd4caee3-PDX
 cf-cache-status: DYNAMIC
 server: cloudflare
 via: 1.1 google
@@ -16,8 +16,8 @@ x-cfworker: 1
 content-security-policy: default-src 'none'; frame-ancestors 'none'
 permissions-policy: camera=(), microphone=(), geolocation=(), usb=()
 referrer-policy: strict-origin-when-cross-origin
-x-clerk-trace-id: 44eb3a452fb87929caa4f0922434d2dc
-x-cloud-trace-context: 44eb3a452fb87929caa4f0922434d2dc
+x-clerk-trace-id: 0879d0e4ec74718a5432375ddee68a9f
+x-cloud-trace-context: 0879d0e4ec74718a5432375ddee68a9f
 x-content-type-options: nosniff
 x-frame-options: DENY
 

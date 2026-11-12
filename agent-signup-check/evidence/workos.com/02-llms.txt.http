@@ -1,16 +1,16 @@
 GET https://workos.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:41.948Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:52.887Z
 final-url: https://workos.com/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:39 GMT
+date: Thu, 12 Nov 2026 02:38:50 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 content-encoding: gzip
 server: cloudflare
-cf-ray: a5682aea3907efce-PDX
+cf-ray: a59229ad1beb1c37-PDX
 
 # WorkOS
 
@@ -41,6 +41,7 @@ cf-ray: a5682aea3907efce-PDX
 - [Documentation pages](https://workos.com/docs/sso.md): Every page under https://workos.com/docs is available as Markdown with `.md` appended to its URL, as in this example.
 - [Guides](https://workos.com/guide/llms.txt): Each guide at https://workos.com/guide/<slug> is available as Markdown with `.md` appended or with an `Accept: text/markdown` header.
 - [Blog posts](https://workos.com/blog/llms.txt): Each post at https://workos.com/blog/<slug> is available as Markdown with `.md` appended or with an `Accept: text/markdown` header.
+- [Changelog entries](https://workos.com/changelog/llms.txt): Each entry at https://workos.com/changelog/<slug> is available as Markdown with `.md` appended or with an `Accept: text/markdown` header.
 - [Homepage](https://workos.com/): Served as Markdown for requests with an `Accept: text/markdown` header.
 - [Pricing](https://workos.com/pricing.md): Pricing as Markdown, also served at https://workos.com/pricing for requests with an `Accept: text/markdown` header.
 
@@ -51,6 +52,7 @@ cf-ray: a5682aea3907efce-PDX
 - [Guide index](https://workos.com/guide/llms.txt): Every WorkOS guide, linked as Markdown.
 - [Blog index](https://workos.com/blog/llms.txt): The blog's tutorials, guides, comparisons, glossary entries, engineering posts and product announcements, linked as Markdown; dated news is left out.
 - [Comparisons index](https://workos.com/compare/llms.txt): WorkOS comparison pages.
+- [Changelog index](https://workos.com/changelog/llms.txt): Recent new features, improvements, and fixes to the WorkOS platform, grouped by month and linked as Markdown; also available as an RSS feed at https://workos.com/changelog/rss.xml.
 - [API reference](https://workos.com/docs/reference.md): The REST API reference as Markdown.
 - [OpenAPI specification](https://workos.com/openapi.json): OpenAPI document for the WorkOS REST API.
 - [Sitemap](https://workos.com/sitemap.xml): Sitemap index covering the website, documentation, and other pages.

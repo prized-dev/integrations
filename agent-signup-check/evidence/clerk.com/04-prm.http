@@ -1,18 +1,18 @@
 GET https://clerk.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:41.681Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:51.251Z
 final-url: https://clerk.com/.well-known/oauth-protected-resource
 
 HTTP 200
 accept-ranges: bytes
 access-control-allow-origin: *
-age: 0
+age: 43075
 cache-control: public, max-age=3600
 content-disposition: inline
 content-length: 136
 content-type: application/json
-date: Sat, 07 Nov 2026 00:19:39 GMT
-etag: "d9cdf08591b9843b48ee09f25ee92b8c"
+date: Thu, 12 Nov 2026 02:38:49 GMT
+etag: "b35c12a9ef027dc4c86fe55f7491655c"
 referrer-policy: same-origin
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -22,10 +22,10 @@ x-clerk-auth-status: signed-out
 x-content-type-options: nosniff
 x-download-options: noopen
 x-frame-options: deny
-x-generated-visitor-id: 58fcf457-58ac-4b28-b20d-e5c70df63345
+x-generated-visitor-id: 88413e59-66a5-4cd8-9819-1d5352340288
 x-matched-path: /.well-known/oauth-protected-resource
-x-vercel-cache: PRERENDER
-x-vercel-id: pdx1::56pd9-1794010779952-24867cbfcc83
+x-vercel-cache: HIT
+x-vercel-id: pdx1::2sr6l-1794451129346-1b6eac0a126c
 x-xss-protection: 1
 connection: close
 

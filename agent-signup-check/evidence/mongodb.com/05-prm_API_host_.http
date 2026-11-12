@@ -1,10 +1,10 @@
 GET https://cloud.mongodb.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:01.448Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:13.848Z
 final-url: https://cloud.mongodb.com/.well-known/oauth-protected-resource
 
 HTTP 401
-date: Sat, 07 Nov 2026 00:18:59 GMT
+date: Thu, 12 Nov 2026 02:38:10 GMT
 server: mdbws
 connection: close
 content-length: 0

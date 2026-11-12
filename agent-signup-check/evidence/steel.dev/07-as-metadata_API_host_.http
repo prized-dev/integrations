@@ -1,0 +1,18 @@
+GET https://api.steel.dev/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:24.400Z
+final-url: https://api.steel.dev/.well-known/oauth-authorization-server
+
+HTTP 421
+date: Thu, 12 Nov 2026 02:38:23 GMT
+content-type: text/plain
+transfer-encoding: chunked
+connection: close
+x-trace-id: 183bff1d9992aa5f14de432a608f93db
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=zDtHbRUIlxIwVY7b%2FtHPEHiUTh8z%2BzCMAPhY8xR4xRMFmffM1%2F7T7pvjAczrSzTS6olfaTzfPPA%2B%2B1sNzaKPMZg87iXMLt0rUhZ%2FVmQZuh0NEBwAk9N4TBaHzn%2BaIJs%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a5922905cc62d106-PDX
+
+No route defined for GET /.well-known/oauth-authorization-server

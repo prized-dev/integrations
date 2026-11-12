@@ -1,9 +1,10 @@
 {
  "site": "runpod.io",
- "checkedAt": "2026-11-07T00:18:46.396Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:37:58.222Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -67,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 313,
+   "ms": 285,
    "redirects": 1
   },
   {
@@ -77,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 58,
+   "ms": 54,
    "redirects": 1
   },
   {
@@ -87,7 +88,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 263,
+   "ms": 266,
    "redirects": 0
   },
   {
@@ -97,7 +98,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 196,
+   "ms": 174,
    "redirects": 0
   },
   {
@@ -107,7 +108,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 117,
+   "ms": 97,
    "redirects": 3
   },
   {
@@ -117,8 +118,18 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 215,
+   "ms": 182,
    "redirects": 0
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://rest.runpod.io/.well-known/oauth-authorization-server",
+   "finalUrl": "https://docs.runpod.io/api-reference/overview",
+   "status": 200,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 102,
+   "redirects": 3
   },
   {
    "label": "x402 discovery",

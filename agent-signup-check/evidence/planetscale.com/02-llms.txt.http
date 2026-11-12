@@ -1,31 +1,31 @@
 GET https://planetscale.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:55.137Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:06.223Z
 redirect: 307 from https://planetscale.com/llms.txt
 final-url: https://planetscale.com/docs/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:18:52 GMT
+date: Thu, 12 Nov 2026 02:38:03 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a56829bf0dafc3af-PDX
+cf-ray: a59228850c835eec-PDX
 cf-cache-status: DYNAMIC
-age: 1057
+age: 6485
 cache-control: public
 content-encoding: br
-etag: "0KwkQU-qhHY1_TsboaXNvWlGWdSpLqC5VudxRkEbgQU"
+etag: W/"JwFH9LVV84ANd39oPP55BXRbGKu7aBerJ9uSjZ5zgNw"
 server: cloudflare
 strict-transport-security: max-age=63072000
 vary: accept-encoding
-cf-placement: remote-EWR
+cf-placement: remote-SJC
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4076
-x-vercel-cache: STALE
-x-vercel-id: iad1:iad1:iad1::iad1::l876n-1794010731453-36a579b4717a
+x-mintlify-client-version: 0.0.4111
+x-vercel-cache: MISS
+x-vercel-id: sfo1:iad1:iad1::iad1::brnfw-1794451083094-fcaf80a89334
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
-x-version: dpl_ATnXPMW25DMPUr9VBw6kL6MfBt6T
+x-version: dpl_6PxPD4Fj1JDU9BJxEHvfdUmxKThw
 alt-svc: h3=":443"; ma=86400
 
 # PlanetScale
@@ -141,7 +141,7 @@ alt-svc: h3=":443"; ma=86400
 - [Deletion protection](https://planetscale.com/docs/security/deletion-protection.md): Block database and branch deletion until protection is turned off
 - [Require multiple administrators for deletion](https://planetscale.com/docs/security/multiple-admins-required-for-deletion.md): Require two administrators to approve database deletion
 
-- [Vitess (188 pages)](https://planetscale.com/docs/_llms/vitess.txt): Documentation for Vitess.
+- [Vitess (188 pages)](https://planetscale.com/docs/_llms/vitess.txt):  , Pricing, Platform, Integrations, Guides.
 
 ## Neki
 
@@ -253,8 +253,8 @@ alt-svc: h3=":443"; ma=86400
 - [Connect a Bun application to Neki](https://planetscale.com/docs/neki/guides/bun.md): Bun SQL connections and replica routing
 - [Connect Cloudflare Workers to Neki](https://planetscale.com/docs/neki/guides/cloudflare-workers.md): Cloudflare Workers connection pooling through Hyperdrive
 
-- [Postgres (109 pages)](https://planetscale.com/docs/_llms/postgres.txt): Documentation for Postgres.
-- [API Reference (269 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Documentation for API Reference.
+- [Postgres (109 pages)](https://planetscale.com/docs/_llms/postgres.txt): Onboarding, Platform, Guides.
+- [API Reference (269 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Introduction, Webhooks in PlanetScale, Authentication, General API endpoints, Postgres API endpoints, Neki API endpoints, Vitess API endpoints.
 
 ## CLI Reference
 
@@ -328,9 +328,9 @@ alt-svc: h3=":443"; ma=86400
 
 ## Indexes
 
-- [Vitess (188 pages)](https://planetscale.com/docs/_llms/vitess.txt): Documentation for Vitess.
-- [Postgres (109 pages)](https://planetscale.com/docs/_llms/postgres.txt): Documentation for Postgres.
-- [API Reference (269 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Documentation for API Reference.
+- [Vitess (188 pages)](https://planetscale.com/docs/_llms/vitess.txt):  , Pricing, Platform, Integrations, Guides.
+- [Postgres (109 pages)](https://planetscale.com/docs/_llms/postgres.txt): Onboarding, Platform, Guides.
+- [API Reference (269 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Introduction, Webhooks in PlanetScale, Authentication, General API endpoints, Postgres API endpoints, Neki API endpoints, Vitess API endpoints.
 
 
 This documentation is built and hosted on [Mintlify](https://mintlify.com), a developer documentation platform.

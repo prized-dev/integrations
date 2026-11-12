@@ -1,22 +1,22 @@
 GET https://api.perplexity.ai/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:13.650Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:22.899Z
 final-url: https://api.perplexity.ai/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:18:12 GMT
+date: Thu, 12 Nov 2026 02:37:22 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
 server: cloudflare
 cache-control: public, max-age=3600
 access-control-allow-origin: *
-last-modified: Sat, 07 Nov 2026 00:17:38 GMT
+last-modified: Thu, 12 Nov 2026 01:50:02 GMT
 strict-transport-security: max-age=31536000; includeSubDomains; preload
-age: 34
+age: 2926
 cf-cache-status: HIT
 content-encoding: gzip
-cf-ray: a56828cceb6520eb-PDX
+cf-ray: a5922784e877962a-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"issuer":"https://api.perplexity.ai","authorization_endpoint":"https://api.perplexity.ai/oauth/authorize","token_endpoint":"https://api.perplexity.ai/oauth/token","registration_endpoint":"https://api.perplexity.ai/oauth/register","revocation_endpoint":"https://api.perplexity.ai/oauth/revoke","scopes_supported":["perplexity_api","offline_access"],"response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["none","client_secret_basic"],"revocation_endpoint_auth_methods_supported":["none","client_secret_basic"],"client_id_metadata_document_supported":true}

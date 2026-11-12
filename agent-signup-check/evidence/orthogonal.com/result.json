@@ -1,9 +1,10 @@
 {
  "site": "orthogonal.com",
- "checkedAt": "2026-11-07T00:19:31.513Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:40.722Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 1,
- "partial": 4,
+ "partial": 3,
+ "unread": 0,
  "total": 7,
  "whoActs": "the person confirms an email code (from llms.txt prose)",
  "checks": [
@@ -17,25 +18,20 @@
   {
    "id": "prm",
    "name": "Protected resource metadata",
-   "url": "https://api.orthogonal.com/.well-known/oauth-protected-resource",
-   "via": "api-well-known",
-   "resource": "https://api.orth.sh/mcp",
-   "authorization_servers": [
-    "https://clerk.orthogonal.com"
-   ],
-   "status": "partial",
-   "reason": "resource (https://api.orth.sh/mcp) does not match the URL the metadata came from; RFC 9728 section 3.3 says a client MUST NOT use it"
+   "url": "https://orthogonal.com/.well-known/oauth-protected-resource",
+   "status": "fail",
+   "reason": "Protected resource metadata not found (HTTP 404) (after a redirect to https://www.orthogonal.com/.well-known/oauth-protected-resource)"
   },
   {
    "id": "register",
    "name": "Sign-up by API",
    "where": "llms.txt",
    "url": "https://www.orthogonal.com/llms.txt",
-   "endpoint": "https://orthogonal.com/agent-signup.md",
+   "endpoint": "https://www.orthogonal.com/agent-signup.md",
    "link": true,
-   "quote": "connection or use the browser sign-in handoff at https://orthogonal.com/agent-signup.md: start a connection with POST https://api.orthogonal.com/api/agent-auth",
+   "quote": "connection or use the browser sign-in handoff at https://www.orthogonal.com/agent-signup.md: start a connection with POST https://www.orthogonal.com/api/agent-",
    "status": "partial",
-   "reason": "llms.txt links an agent sign-up guide (https://orthogonal.com/agent-signup.md), but there is no agent_auth metadata for tools to find it"
+   "reason": "llms.txt links an agent sign-up guide (https://www.orthogonal.com/agent-signup.md), but there is no agent_auth metadata for tools to find it"
   },
   {
    "id": "challenge",
@@ -57,17 +53,17 @@
    "name": "Payment handoff",
    "where": "llms.txt",
    "url": "https://www.orthogonal.com/llms.txt",
-   "match": "HTTP 402",
-   "snippet": "on Tempo. Choose the currency from the endpoint's HTTP 402 payment offers; no provider configuration change is needed. OUSD is Open USD issued by Bridge. On Ba",
+   "match": "x402",
+   "snippet": "y default; payable catalog endpoints also support x402 with USDC on Base and MPP with USDC.e on Tempo. Do not blindly repeat a paid call after an ambiguous tim",
    "status": "partial",
-   "reason": "llms.txt mentions a payment path (HTTP 402) in prose; nothing machine-readable"
+   "reason": "llms.txt mentions a payment path (x402) in prose; nothing machine-readable"
   },
   {
    "id": "markdown",
    "name": "Docs in Markdown",
    "url": "https://www.orthogonal.com/llms.txt",
    "heading": "# Orthogonal",
-   "bytes": 23800,
+   "bytes": 29560,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -80,7 +76,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 289,
+   "ms": 113,
    "redirects": 1
   },
   {
@@ -90,7 +86,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 1512,
+   "ms": 182,
    "redirects": 1
   },
   {
@@ -99,8 +95,8 @@
    "finalUrl": "https://api.orthogonal.com/v1/list-endpoints",
    "status": 401,
    "error": null,
-   "contentType": "application/json; charset=utf-8",
-   "ms": 172,
+   "contentType": "application/json",
+   "ms": 254,
    "redirects": 0
   },
   {
@@ -109,18 +105,18 @@
    "finalUrl": "https://www.orthogonal.com/.well-known/oauth-protected-resource",
    "status": 404,
    "error": null,
-   "contentType": "text/html; charset=utf-8",
-   "ms": 85,
+   "contentType": null,
+   "ms": 154,
    "redirects": 1
   },
   {
    "label": "prm (API host)",
    "url": "https://api.orthogonal.com/.well-known/oauth-protected-resource",
    "finalUrl": "https://api.orthogonal.com/.well-known/oauth-protected-resource",
-   "status": 200,
+   "status": 404,
    "error": null,
-   "contentType": "application/json; charset=utf-8",
-   "ms": 146,
+   "contentType": null,
+   "ms": 139,
    "redirects": 0
   },
   {
@@ -130,8 +126,18 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 79,
+   "ms": 74,
    "redirects": 1
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.orthogonal.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.orthogonal.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 77,
+   "redirects": 0
   },
   {
    "label": "x402 discovery",
@@ -140,7 +146,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 97,
+   "ms": 74,
    "redirects": 1
   }
  ]

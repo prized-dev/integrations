@@ -1,32 +1,28 @@
 GET https://loops.so/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:04.448Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:17.324Z
 final-url: https://loops.so/auth.md
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:01 GMT
-content-type: text/plain;charset=utf-8
-content-length: 979
+date: Thu, 12 Nov 2026 02:38:13 GMT
+content-type: text/markdown; charset=utf-8
+transfer-encoding: chunked
 connection: close
-age: 3920785
 cache-control: public, max-age=0, must-revalidate
-content-disposition: inline
-content-encoding: br
 content-security-policy: frame-ancestors 'none'
-etag: W/"257f9feabfa53c0e7157dab2a4aded6e"
-last-modified: Sun, 23 Aug 2026 21:01:53 GMT
 permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()
 referrer-policy: strict-origin-when-cross-origin
 server: cloudflare
-server-timing: rewrite;desc="static", region;desc="us-west-2", version;desc="4207944"
+server-timing: rewrite;desc="markdown", region;desc="us-west-2", version;desc="0882c07"
 strict-transport-security: max-age=31536000
 vary: Accept-Encoding, Accept
 x-content-type-options: nosniff
 x-frame-options: DENY
 cf-cache-status: DYNAMIC
-cf-ray: a56829fcdabdf8cb-PDX
+content-encoding: br
+cf-ray: a59228c7aff5503f-PDX
 
-# Loops authentication
+# Loops auth.md
 
 Loops exposes a REST API and a hosted MCP server. They use different authentication methods.
 
@@ -62,7 +58,7 @@ Start with the protected-resource metadata:
 https://mcp.loops.so/.well-known/oauth-protected-resource
 ```
 
-It identifies the resource as `https://mcp.loops.so/`, the authorization server as `https://app.loops.so`, and the supported scope as `mcp`.
+It identifies the resource as `https://mcp.loops.so`, the authorization server as `https://app.loops.so`, and the supported scope as `mcp`.
 
 Then read the authorization-server metadata:
 

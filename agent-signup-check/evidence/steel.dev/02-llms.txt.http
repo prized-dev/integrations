@@ -1,23 +1,23 @@
 GET https://steel.dev/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:14.091Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:24.400Z
 final-url: https://steel.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 126928
+age: 34411
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Sat, 07 Nov 2026 00:19:11 GMT
-etag: W/"127df627c1e11f6aecfd015add62d781"
+date: Thu, 12 Nov 2026 02:38:21 GMT
+etag: W/"c1e6d8eba0fc21d681be23370be3823e"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::nk7vl-1794010751428-8b3f55410f15
+x-vercel-id: pdx1::6wlxb-1794451101482-bfdb4a0d4abb
 connection: close
 transfer-encoding: chunked
 
@@ -35,7 +35,8 @@ transfer-encoding: chunked
 ## Quick reference
 
 - Install: `npm install steel-sdk` (Node.js) or `pip install steel-sdk` (Python)
-- CLI: `curl -sSf https://setup.steel.dev | sh`
+- Agent CLI setup: https://setup.steel.dev/install.md
+- Human-terminal CLI install: `curl -fsS https://setup.steel.dev | sh`
 - Auth header: `steel-api-key: <your-key>`
 - Auth env var: `STEEL_API_KEY`
 - API base URL: `https://api.steel.dev`
@@ -43,8 +44,8 @@ transfer-encoding: chunked
 
 ## For coding agents
 
-- [Install guide](https://setup.steel.dev/install.md): Install the Steel CLI, add the `steel-browser` skill, authenticate, and verify with `steel scrape`.
-- [Agent setup prompt](https://steel.dev/agent-prompt): The full instructions for setting Steel up in a project, as plain text.
+- [Install guide](https://setup.steel.dev/install.md): Set up stable Steel CLI for OpenCode, Codex, Pi, or Claude Code; approve device authorization, resume setup, and load the installed `steel-browser` skill before continuing the user's task.
+- [Agent setup prompt](https://steel.dev/agent-prompt): The same short kickoff prompt used by the copy button, pointing to the canonical install guide.
 - [Steel CLI](https://docs.steel.dev/overview/steel-cli): The terminal workflow, `steel browser` commands, and agent skill setup.
 - [Steel Skills](https://docs.steel.dev/overview/skills/available-skills): Choose the skill that matches your agent's workflow.
 - [Steel Browser skill](https://docs.steel.dev/overview/skills/available-skills/steel-browser): The skill for agents that operate a live Steel browser.
@@ -182,7 +183,7 @@ Plans and a full comparison: [Pricing](https://steel.dev/pricing).
 - [What is a CAPTCHA solver](https://steel.dev/blog/what-is-a-captcha-solver.md): Learn what a CAPTCHA solver is, how Steel handles CAPTCHAs, supported services, setup patterns, and production limits before automating verification reliably.
 - [How to Run Headless Browsers in the Cloud for Web Scraping](https://steel.dev/blog/headless-browsers-cloud-scraping.md): How to run headless browsers in the cloud for web scraping, what the options are, where they differ, and why Steel.dev is built for this workload.
 - [Ship Your AI Web Agent Faster: A Guide to Self-Hosting Steel Browser](https://steel.dev/blog/self-hosting-steel-browser.md): Learn to self-host Steel Browser for AI web agents. Complete guide with 1-click deploy, Docker setup, and bare metal installation options.
-- [Beginner's Guide to Steel.dev Browser Automation](https://steel.dev/blog/beginner-s-guide-to-steel.md): Steel.dev: AI-first browser automation with anti-bot protection, session persistence, and seamless integration. Free tier: 100 hours/month.
+- [Beginner's Guide to Steel.dev Browser Automation](https://steel.dev/blog/beginner-s-guide-to-steel.md): Steel.dev: AI-first browser automation with anti-bot protection, session persistence, and seamless integration. Start free with $30 in credits.
 
 ## Blog: Comparisons
 
@@ -218,7 +219,7 @@ Plans and a full comparison: [Pricing](https://steel.dev/pricing).
 - [Mobile Mode: Simpler Interfaces for AI Agents](https://steel.dev/blog/mobile-mode.md): Run sessions with mobile UA and viewport for simpler DOMs, faster vision agents, and mobile-only auth paths. Keep separate profiles for clean context.
 - [Profiles: Your Agent's Persistent Identity](https://steel.dev/blog/profiles.md): Persistent browser identities to keep auth, cookies, cache across sessions.
 - [Launch Week v2: 5 Features That Make AI Agents Actually Work](https://steel.dev/blog/launch-week-v2.md): Next week we're shipping five upgrades that eliminate the infrastructure headaches keeping your AI agents from production.
-- [Steel Node SDK: Because Your Puppeteer Scripts Deserve Better Than localhost](https://steel.dev/blog/steel-node-sdk.md): Steel Node SDK: Cloud browsers in 3 lines of code. Works with Puppeteer, Playwright. No Docker hell. TypeScript-first. Free 100hrs/mo.
+- [Steel Node SDK: Because Your Puppeteer Scripts Deserve Better Than localhost](https://steel.dev/blog/steel-node-sdk.md): Steel Node SDK: Cloud browsers in 3 lines of code. Works with Puppeteer, Playwright. No Docker hell. TypeScript-first. Start free with $30 in credits.
 - [Steel Python SDK: Browser Automation That Actually Works](https://steel.dev/blog/steel-python-sdk.md): Tired of wrestling with Selenium and Playwright infrastructure? Steel's Python SDK gives you cloud browsers in 3 lines of code. No Docker, no proxies, no pain.
 
 ## Blog: Company

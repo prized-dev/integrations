@@ -1,18 +1,18 @@
 GET https://together.ai/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:08.953Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:18.575Z
 final-url: https://together.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Sat, 07 Nov 2026 00:18:07 GMT
+date: Thu, 12 Nov 2026 02:37:16 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a56828aaa935c415-SEA
+cf-ray: a59227624b139236-SEA
 cf-cache-status: EXPIRED
 cache-control: no-transform
 content-encoding: gzip
-etag: W/"6aee0229-58"
+etag: W/"6af3fd62-58"
 server: cloudflare
 vary: accept-encoding
 x-content-type-options: nosniff

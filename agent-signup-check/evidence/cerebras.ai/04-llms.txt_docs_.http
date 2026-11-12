@@ -1,26 +1,27 @@
 GET https://inference-docs.cerebras.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:18.697Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:28.672Z
 final-url: https://inference-docs.cerebras.ai/llms.txt
 
 HTTP 200
+age: 3049
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a56828db3cf0efa4-PDX
+cf-ray: a59227948f151687-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Sat, 07 Nov 2026 00:18:14 GMT
-etag: "iMllQCDBdrxrLGrj_QiC5CDkQPG6LRgZXn0UsIro1z4"
+date: Thu, 12 Nov 2026 02:37:24 GMT
+etag: "v3d1ruMKx3HzBnWrsBCZ0WgzO7F50CJ4FHXEfq0FvI8"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4076
+x-mintlify-client-version: 0.0.4111
 x-vercel-cache: MISS
-x-vercel-id: pdx1:fra1:iad1::iad1::f4wzc-1794010694883-fea661d76b49
+x-vercel-id: pdx1:fra1:iad1::iad1::4lc9r-1794451044519-cecb9303b0e5
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_8LJbrAiZvr1K98WQNZXCyY5AvT34
+x-version: dpl_DqYu5MPb49gWBBbUGgpHQUmCHY3P
 connection: close
 transfer-encoding: chunked
 
@@ -33,7 +34,7 @@ transfer-encoding: chunked
 - [Qwen 3.8 27B](https://inference-docs.cerebras.ai/models/qwen-3.8-27b.md): Alibaba's 27B dense multimodal model for agentic coding, tool use, research, and long-running workflows. It accepts text and image inputs and supports configurable reasoning.
 - [OpenAI GPT OSS](https://inference-docs.cerebras.ai/models/openai-oss.md): This model excels at efficient reasoning across science, math, and coding applications. It's ideal for real-time coding assistance, processing large documents for Q&A and summarization, agentic research workflows, and regulated on-premises workloads.
 - [Choose a Model](https://inference-docs.cerebras.ai/models/choose-a-model.md): Find the right open-source model for your workload on Cerebras, including alternatives for Claude, GPT, and Gemini.
-- [Reasoning](https://inference-docs.cerebras.ai/capabilities/reasoning.md): Control reasoning effort, response format, and multi-turn reasoning behavior.
+- [Reasoning](https://inference-docs.cerebras.ai/capabilities/reasoning.md): Set reasoning effort, choose a response format, and manage reasoning across conversation turns.
 - [Streaming Responses](https://inference-docs.cerebras.ai/capabilities/streaming.md): Learn how to enable streaming responses in the Cerebras API.
 - [Structured Outputs](https://inference-docs.cerebras.ai/capabilities/structured-outputs.md): Generate structured data with the Cerebras Inference API.
 - [Tool Calling](https://inference-docs.cerebras.ai/capabilities/tool-use.md): Learn how to connect models to external tools with tool calling.

@@ -1,13 +1,13 @@
 GET https://neon.com/agent-signup-check-no-such-page.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:53.299Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:04.021Z
 final-url: https://neon.com/agent-signup-check-no-such-page.md
 
 HTTP 404
 cache-control: public, max-age=60, s-maxage=300
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Sat, 07 Nov 2026 00:18:52 GMT
+date: Thu, 12 Nov 2026 02:38:03 GMT
 link: </docs/llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt"
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -15,7 +15,7 @@ vary: Accept
 x-content-source: agent-404
 x-llms-txt: /docs/llms.txt
 x-robots-tag: noindex
-x-vercel-id: pdx1::t5dkx-1794010732372-6ea6a4eed692
+x-vercel-id: pdx1::z7brv-1794451083308-08dfd7225085
 connection: close
 transfer-encoding: chunked
 
@@ -26,5 +26,6 @@ transfer-encoding: chunked
 Try the docs index to locate the correct URL, or use one of these references:
 
 - [Neon docs index](/docs/llms.txt): full table of contents, start here to find the right page
+- [Neon docs sitemap](/docs/sitemap.md): every docs page, grouped by the docs navigation
 - [Neon REST API](/docs/reference/api.md): all REST endpoints grouped by resource
 - [Neon CLI](/docs/cli.md): neon commands, options, and usage

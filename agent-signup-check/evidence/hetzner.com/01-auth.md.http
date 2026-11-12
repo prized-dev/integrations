@@ -1,11 +1,11 @@
 GET https://hetzner.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:50.803Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:02.418Z
 redirect: 301 from https://hetzner.com/auth.md
 final-url: https://www.hetzner.com/auth.md
 
 HTTP 404
-date: Sat, 07 Nov 2026 00:18:40 GMT
+date: Thu, 12 Nov 2026 02:37:50 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -99,7 +99,7 @@ content-encoding: br
 <!-- Matomo -->
 
     <script
-        src="/_resources/themes/hetzner/dist/matomo.js?m=1793707488"
+        src="/_resources/themes/hetzner/dist/matomo.js?m=1794292637"
         data-site-id="8"
         data-cookie-domain="*.hetzner.com"
     ></script>
@@ -109,19 +109,19 @@ content-encoding: br
 <!-- Matomo Tag Manager -->
 
     <script
-        src="/_resources/themes/hetzner/dist/matomoTagManager.js?m=1793707488"
+        src="/_resources/themes/hetzner/dist/matomoTagManager.js?m=1794292637"
         data-container-url="https://use.hetzner.com/js/container_IGdNOkAE.js"
     ></script>
 
 <!-- End Matomo Tag Manager -->
 
 
-<link rel="stylesheet" type="text/css" href="/_resources/themes/general/dist/vendors.css?m=1793707482">
-<link rel="stylesheet" type="text/css" href="/_resources/themes/general/dist/fonts.css?m=1793707482">
-<link rel="stylesheet" type="text/css" href="/_resources/themes/hetzner/dist/bootstrap.css?m=1793707488">
-<link rel="stylesheet" type="text/css" href="/_resources/themes/hetzner/dist/vendors.css?m=1793707488">
-<link rel="stylesheet" type="text/css" href="/_resources/themes/hetzner/dist/app.css?m=1793707488">
-<script src="/_resources/themes/static/dist/webcomponents.js?m=1793707481"></script>
+<link rel="stylesheet" type="text/css" href="/_resources/themes/general/dist/vendors.css?m=1794292633">
+<link rel="stylesheet" type="text/css" href="/_resources/themes/general/dist/fonts.css?m=1794292633">
+<link rel="stylesheet" type="text/css" href="/_resources/themes/hetzner/dist/bootstrap.css?m=1794292637">
+<link rel="stylesheet" type="text/css" href="/_resources/themes/hetzner/dist/vendors.css?m=1794292637">
+<link rel="stylesheet" type="text/css" href="/_resources/themes/hetzner/dist/app.css?m=1794292637">
+<script src="/_resources/themes/static/dist/webcomponents.js?m=1794292632"></script>
 </head>
 <body>
 
@@ -160,7 +160,7 @@ content-encoding: br
 </div>
 
     
-    <script async src="/_resources/themes/hetzner/dist/aichat.js?m=1793707488"></script>
+    <script async src="/_resources/themes/hetzner/dist/aichat.js?m=1794292637"></script>
     <chatbot-widget
         
         data-language="en_default"
@@ -583,13 +583,13 @@ content-encoding: br
     <div class="flex">
     <div class=" ">
         <div class="drefp-obrut-go" style="display: none;"
-             data-src="/_resources/themes/hetzner/images/logo/drefp-obrut-go.png?m=1793707430"></div>
+             data-src="/_resources/themes/hetzner/images/logo/drefp-obrut-go.png?m=1794292585"></div>
     </div>
 </div>
     <div class="header-wrapper">
         <a class="navbar-brand" href="https://www.hetzner.com/">
             <img
-                src="/_resources/themes/hetzner/images/logo/hetzner-logo.svg?m=1793707430"
+                src="/_resources/themes/hetzner/images/logo/hetzner-logo.svg?m=1794292585"
                 class="navbar-logo" alt="Logo Hetzner Online"
                 height="20"
                 width="163"
@@ -659,4 +659,4 @@ content-encoding: br
                                     </a>
              
 
-[body trimmed for publication: kept 16384 of 92261 characters; sha256 of the published body d6b4c13eb0c0bc5256c583f2859791d685ddbd99a349cbc543a5d89ab0b557c9]
+[body trimmed for publication: kept 16384 of 92261 characters; sha256 of the published body da0d91054a48007ac1d43a6a4a4229b2ab695d0186eff4b3b9dab15b52362483]

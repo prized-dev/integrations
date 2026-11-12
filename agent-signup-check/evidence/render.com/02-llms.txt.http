@@ -1,10 +1,10 @@
 GET https://render.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:28.143Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:38.215Z
 final-url: https://render.com/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:18:26 GMT
+date: Thu, 12 Nov 2026 02:37:35 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -13,7 +13,7 @@ x-xss-protection: 1; mode=block
 content-encoding: br
 content-security-policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://assets.calendly.com https://scout-cdn.salesloft.com https://snap.licdn.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://www.googletagmanager.com https://www.gstatic.com ; connect-src 'self' https://*.algolia.net https://*.algolianet.com https://*.google-analytics.com https://*.google.com https://*.googletagmanager.com https://*.doubleclick.net https://www.googleadservices.com https://*.hsforms.com https://*.inkeep.com https://*.linkedin.com https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://*.segment.com https://*.segment.io https://api.unifyintent.com https://api.ashbyhq.com https://cdn.growthbook.io https://cdn.sanity.io https://hubspot-forms-static-embed.s3.amazonaws.com https://pagead2.googlesyndication.com https://scout.salesloft.com https://translate.googleapis.com ; worker-src 'self' blob: https://*.osano.com; report-uri https://render.report-uri.com/r/t/csp/reportOnly; report-to wizard;
 referrer-policy: same-origin
-rndr-id: 7eec59b8-d0fd-4a23
+rndr-id: 3aa6a7fe-0d6d-4413
 server: cloudflare
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
@@ -22,7 +22,7 @@ x-frame-options: SAMEORIGIN
 x-nextjs-cache: HIT
 x-render-origin-server: Render
 cf-cache-status: DYNAMIC
-cf-ray: a56829203f3034d4-SEA
+cf-ray: a59227da0dd7f570-SEA
 alt-svc: h3=":443"; ma=86400
 
 # Render
@@ -67,7 +67,12 @@ Use the guide that matches this agent environment and follow it in order:
 
 For the complete documentation corpus, use https://render.com/llms-full.txt only when the task requires broad access to the full Render documentation set.
 
-Do not fetch it for single-topic lookups (it is over 900 KB). Instead, fetch individual .md pages or use the search endpoint.
+For complete documentation on a single topic, use a topic bundle:
+
+- [Render Sandboxes — all articles](https://render.com/docs/sandboxes/all)
+- [Render Workflows — all articles](https://render.com/docs/workflows/all)
+
+For narrower lookups, fetch individual .md pages or use the search endpoint.
 
 ### Core Platform
 
@@ -431,6 +436,8 @@ https://render.com/changelog.md
 
 Most recent 10 entries:
 
+- [Render Sandboxes now available in beta](https://render.com/changelog/render-sandboxes-now-available-in-beta.md)
+- [Reduced median first-build time for Docker-based previews by 45%](https://render.com/changelog/reduced-median-first-build-time-for-docker-based-previews-by-45.md)
 - [Upcoming service preview and preview environment support for GitHub stacked PRs](https://render.com/changelog/upcoming-service-preview-and-preview-environment-support-for-github-stacked-prs.md)
 - [Updated default versions of Node.js and Bun](https://render.com/changelog/updated-default-versions-of-node-js-and-bun.md)
 - [Added support for Bun canary builds](https://render.com/changelog/added-support-for-bun-canary-builds.md)
@@ -439,8 +446,6 @@ Most recent 10 entries:
 - [See your service's deploys on a new page](https://render.com/changelog/see-your-service-s-deploys-on-a-new-page.md)
 - [Introduced the Flex compute plan for Render Workflows](https://render.com/changelog/introduced-the-flex-compute-plan-for-render-workflows.md)
 - [Added usage telemetry to the Render CLI](https://render.com/changelog/added-usage-telemetry-to-the-render-cli.md)
-- [New compute plans, and new IDs for existing plans](https://render.com/changelog/new-compute-plans-and-new-ids-for-existing-plans.md)
-- [Reduced median service build time by 40% (all runtimes)](https://render.com/changelog/reduced-median-service-build-time-by-40-all-runtimes.md)
 
 ## Blog
 
@@ -463,6 +468,10 @@ Most recent 10 posts:
 
 https://render.com/articles
 
+- [Render Hobby vs Pro vs Scale: Which Plan Do You Need?](https://render.com/articles/render-hobby-vs-pro-vs-scale.md)
+- [Deploy Directus on Render: A Practical Guide](https://render.com/articles/deploy-directus-render.md)
+- [How Much Does It Cost to Host a SaaS Application?](https://render.com/articles/saas-hosting-cost.md)
+- [How Much Does It Cost to Host a FastAPI App?](https://render.com/articles/fastapi-hosting-cost.md)
 - [How to migrate a production app to a new hosting platform](https://render.com/articles/how-to-migrate-a-production-app-to-a-new-hosting-platform.md)
 - [Render Sandboxes vs Vercel Sandboxes](https://render.com/articles/render-sandboxes-vs-vercel-sandboxes.md)
 - [Set up self-hosted GitHub Actions runners on Render](https://render.com/articles/set-up-self-hosted-github-actions-runners-on-render.md)
@@ -629,7 +638,7 @@ https://render.com/articles
 
 site: https://render.com
 owner: Render Services, Inc.
-last-generated: "2026-11-07"
+last-generated: "2026-11-12"
 
 ### Permissions
 

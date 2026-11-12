@@ -1,6 +1,6 @@
 GET https://fly.io/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:26.930Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:37.689Z
 final-url: https://fly.io/auth.md
 
 HTTP 200
@@ -8,11 +8,11 @@ access-control-allow-origin: *
 cache-control: max-age=0, private, must-revalidate
 content-length: 9951
 content-type: text/markdown; charset=utf-8
-date: Sat, 07 Nov 2026 00:18:23 GMT
+date: Thu, 12 Nov 2026 02:37:33 GMT
 server: Fly/366e4bf88 (2026-10-27)
-x-request-id: GOWbOtlf-lMcwgUAAa1x
+x-request-id: GOcruej7Uy8OHiYAARCS
 via: 1.1 fly.io
-fly-request-id: 01M6SNXSRG6KY9CE83M3JNFBH2-sjc
+fly-request-id: 01M76SW7DPWWK8KNM4YTDY6Y9P-lax
 connection: close
 
 # Authenticating to Fly.io

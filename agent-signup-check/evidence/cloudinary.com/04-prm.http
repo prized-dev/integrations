@@ -1,20 +1,20 @@
 GET https://cloudinary.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:42.817Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:54.845Z
 final-url: https://cloudinary.com/.well-known/oauth-protected-resource
 
 HTTP 403
-date: Sat, 07 Nov 2026 00:19:40 GMT
+date: Thu, 12 Nov 2026 02:38:52 GMT
 content-type: application/xml
 transfer-encoding: chunked
 connection: close
+x-amz-request-id: 3HJWCG1K0KFHH5WV
+x-amz-id-2: +itZVA97Vg7SyRQaCzT5tqtl0KXRnpFZmR8PSL+MLCNggxA/+ZIixjs9nuPlNme7oHV9qu9oids=
 server: cloudflare
-x-amz-request-id: FCDC5J19TK3JFM73
-x-amz-id-2: /dhN8oMzdhrri6Z0tpgAVauZGk4NLfe6F7qM7JsZhLAn9lzwYpuNvdWGZunLgyVfosNlClG6J38=
 cf-cache-status: DYNAMIC
 content-encoding: br
-cf-ray: a5682af3e8db0c31-PDX
+cf-ray: a59229b87ba28736-PDX
 alt-svc: h3=":443"; ma=86400
 
 <?xml version="1.0" encoding="UTF-8"?>
-<Error><Code>AccessDenied</Code><Message>Access Denied</Message><RequestId>FCDC5J19TK3JFM73</RequestId><HostId>/dhN8oMzdhrri6Z0tpgAVauZGk4NLfe6F7qM7JsZhLAn9lzwYpuNvdWGZunLgyVfosNlClG6J38=</HostId></Error>
+<Error><Code>AccessDenied</Code><Message>Access Denied</Message><RequestId>3HJWCG1K0KFHH5WV</RequestId><HostId>+itZVA97Vg7SyRQaCzT5tqtl0KXRnpFZmR8PSL+MLCNggxA/+ZIixjs9nuPlNme7oHV9qu9oids=</HostId></Error>

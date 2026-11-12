@@ -1,6 +1,6 @@
 GET https://twilio.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:07.984Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:20.738Z
 redirect: 301 from https://twilio.com/.well-known/oauth-authorization-server
 final-url: https://www.twilio.com/.well-known/oauth-authorization-server
 
@@ -8,10 +8,10 @@ HTTP 404
 content-type: text/html; charset=utf-8
 content-length: 236
 connection: close
-date: Sat, 07 Nov 2026 00:19:06 GMT
+date: Thu, 12 Nov 2026 02:38:18 GMT
 content-security-policy-report-only: frame-ancestors 'self' https://console.twilio.com;report-uri https://www.twilio.com/console/api/cspr
 cache-control: max-age=60,public
-t-request-id: RQ0caf1053422f4059a4c6f0c822212683
+t-request-id: RQ9161e5d7cd2c434da088778ffb278a19
 x-content-type-options: nosniff
 strict-transport-security: max-age=63072000; includeSubDomains; preload
 access-control-allow-origin: https://console.twilio.com
@@ -21,9 +21,9 @@ access-control-allow-methods: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TR
 access-control-expose-headers: console-name
 content-security-policy: frame-ancestors 'self' https://*.twilio.com https://www.twilio.com;report-uri https://www.twilio.com/console/api/cspr
 x-cache: Error from cloudfront
-via: 1.1 cadda06365c5592c0d0a272a3fe5825e.cloudfront.net (CloudFront)
+via: 1.1 26c9d43b9089eee93b9e4ad4293d02c0.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: BoIkAJR_2r2xbyRsFu0sxuC3_FZA3HZxtyFK2qgbrUloWVHRN77tHA==
+x-amz-cf-id: BxgF-Jk8altkBA1A7jD3MUgGm0xyo-4hDFcOWa7g001Udf0RblmRyQ==
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html><head>

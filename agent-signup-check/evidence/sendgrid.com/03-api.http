@@ -1,10 +1,10 @@
 GET https://api.sendgrid.com/v3/user/profile
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:03.805Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:15.065Z
 final-url: https://api.sendgrid.com/v3/user/profile
 
 HTTP 401
-date: Sat, 07 Nov 2026 00:19:01 GMT
+date: Thu, 12 Nov 2026 02:38:12 GMT
 content-type: application/json
 content-length: 62
 connection: close
@@ -14,6 +14,6 @@ content-security-policy: frame-ancestors 'none'
 cache-control: no-store
 referrer-policy: strict-origin-when-cross-origin
 x-content-type-options: nosniff
-x-envoy-upstream-service-time: 58
+x-envoy-upstream-service-time: 2
 
 {"errors":[{"field":null,"message":"authorization required"}]}

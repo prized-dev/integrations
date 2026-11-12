@@ -1,10 +1,10 @@
 GET https://boat.dev/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:46.373Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:58.363Z
 final-url: https://boat.dev/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:18:45 GMT
+date: Thu, 12 Nov 2026 02:37:57 GMT
 content-type: application/json;charset=utf-8
 content-length: 365
 connection: close
@@ -16,11 +16,11 @@ access-control-expose-headers: ETag, RateLimit-Policy, RateLimit, Retry-After
 access-control-max-age: 86400
 cf-cache-status: DYNAMIC
 content-encoding: gzip
-ratelimit: "ip";r=9996;t=60
+ratelimit: "ip";r=9997;t=60
 ratelimit-policy: "ip";q=10000;w=60
 server: cloudflare
 vary: Accept-Encoding
 via: 1.1 Caddy, 1.1 Caddy
-cf-ray: a56829976fd37b78-PDX
+cf-ray: a592285f0a8de6e0-PDX
 
 {"resource":"https://boat.dev/api/box/v1/","resource_name":"Boat","resource_logo_uri":"https://boat.dev/logo/full_logo.json","authorization_servers":["https://boat.dev/"],"scopes_supported":["box.me","box.limits","box.write","box.billing"],"bearer_methods_supported":["header"],"issuer":"https://boat.dev","token_endpoint":"https://boat.dev/api/box/oauth2/token","revocation_endpoint":"https://boat.dev/api/box/oauth2/revoke","grant_types_supported":["urn:ietf:params:oauth:grant-type:jwt-bearer","urn:workos:agent-auth:grant-type:claim"],"agent_auth":{"skill":"https://boat.dev/auth.md","identity_endpoint":"https://boat.dev/api/box/agent/identity","claim_endpoint":"https://boat.dev/api/box/agent/identity/claim","events_endpoint":"https://boat.dev/api/box/agent/event/notify","identity_types_supported":["anonymous","service_auth"],"identity_assertion":{"assertion_types_supported":[]},"events_supported":[]}}

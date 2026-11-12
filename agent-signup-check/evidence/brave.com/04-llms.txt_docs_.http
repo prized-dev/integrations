@@ -1,10 +1,10 @@
 GET https://api-dashboard.search.brave.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:23.794Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:33.999Z
 final-url: https://api-dashboard.search.brave.com/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:21 GMT
+date: Thu, 12 Nov 2026 02:38:31 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -54,6 +54,7 @@ Every link below points at the markdown form of a page. Drop the trailing `/inde
 - [Authentication](https://api-dashboard.search.brave.com/documentation/guides/authentication/index.html.md): Learn how to authenticate your requests to the Brave Search API using API keys
 - [Versioning](https://api-dashboard.search.brave.com/documentation/guides/versioning/index.html.md): How API versioning works and what changes to expect between versions
 - [Rate limiting](https://api-dashboard.search.brave.com/documentation/guides/rate-limiting/index.html.md): Understand how rate limiting works and best practices for staying within your quota
+- [Agent payments](https://api-dashboard.search.brave.com/documentation/guides/agent-payments/index.html.md): Let AI agents pay for searches with stablecoin micropayments instead of an API key
 
 ## Resources
 

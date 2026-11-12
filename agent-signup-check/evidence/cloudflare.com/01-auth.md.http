@@ -1,11 +1,11 @@
 GET https://cloudflare.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:32.292Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:42.269Z
 redirect: 301 from https://cloudflare.com/auth.md
 final-url: https://www.cloudflare.com/auth.md
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:18:28 GMT
+date: Thu, 12 Nov 2026 02:37:38 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -24,11 +24,11 @@ x-content-type-options: nosniff
 x-frame-options: SAMEORIGIN
 x-xss-protection: 1; mode=block
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=nqEMBeOsSwXnI4fjqPHWNl3Sd9fh%2FvaSfQSOIb%2FztxVEzyXqfzV%2FhR89glbjddgDyCU8%2FzNpgQy6d4d7LPCQ6PsPUst%2FSP3UKZDjy1BgMYQhJm9al%2Fu%2FHoQbgZz4n4vgZfsnVQ%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=SzLGsjpVj2ii8Ea9MJtvZCbFWYlu6Rtcz1CLTARjD6KX5YepqVu5rvEvL0J1lni3iZzbhAXa2E4geqK1KbrsAxTv4oOGHtf%2BrdXfQAZOBApTbxZVLwRO3i6OEqSw7g1vTmoQRg%3D%3D"}]}
 etag: W/"81e5f5c5b665a50eb1ff96eea549f59a"
 content-encoding: br
 server: cloudflare
-cf-ray: a568292dadd3302c-PDX
+cf-ray: a59227e9ef7fc54c-PDX
 alt-svc: h3=":443"; ma=86400
 
 # auth.md

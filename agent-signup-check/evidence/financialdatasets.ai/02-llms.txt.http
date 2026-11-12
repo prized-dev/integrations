@@ -1,31 +1,31 @@
 GET https://financialdatasets.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:26.654Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:37.910Z
 redirect: 308 from https://financialdatasets.ai/llms.txt
 final-url: https://www.financialdatasets.ai/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:24 GMT
+date: Thu, 12 Nov 2026 02:38:35 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 access-control-allow-origin: *
-age: 140977
+age: 16044
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
-etag: W/"4af05d03f6f803e48b62541fbea5bc5d"
-last-modified: Thu, 05 Nov 2026 09:09:46 GMT
+etag: W/"e256ad9ffee7e24f0368d036eff42a0f"
+last-modified: Wed, 11 Nov 2026 22:11:10 GMT
 server: cloudflare
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::jcmqw-1794010764107-216a5381d47d
+x-vercel-id: pdx1::69pzr-1794451115082-2652f6ba4b3c
 cf-cache-status: DYNAMIC
 vary: accept-encoding
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Pxl%2Fc81SY3UUxq70%2BGezhjWRVviF0eT%2BNsUDSyefV5SEZ4qGr3w%2Bb93RonIV%2BbYTDbEfZc0AZZpEJOjadDtGXqvHgospaKfaqsFbWjt5EQIDIcEJBLqBeSfn%2BtjXdLcr5W7KHk2Mnw2PYfk%3D"}]}
-cf-ray: a5682a8b8c77148b-PDX
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=ygXYKqzpCYqjLDozUeAdhIXEoL17x4ADUsv5tQyLqyQc5RBqd3luT2VQ901p4TnhA2O%2BDbURE1dzudYUj1lmjFRJCTXl1EEJEoNaUNEgLhMOfEm0JdYugJ9But0jkb3nMMaujTr7TszZIPM%3D"}]}
+cf-ray: a592294cfd348e12-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Financial Datasets
@@ -46,7 +46,7 @@ No API key yet? An AI agent can create one right now: POST /agent/signup with `{
 
 Or create a key in the dashboard: https://www.financialdatasets.ai
 
-No key and no account: pay with x402. Send a request with no X-API-KEY header to a supported endpoint and the 402 response carries the payment terms in the PAYMENT-REQUIRED header (amount in USDC on Base, network eip155:8453). Sign the payment with your own wallet and retry with the PAYMENT-SIGNATURE header; the x402 client libraries do this for you. x402 endpoints: every documented GET data endpoint (36): prices, financial statements and segments, financial metrics, earnings, company facts, filings, news, insider trades and ownership, beneficial, activist and institutional holdings, index funds, macro series (interest rates, yield curve, inflation, labor, GPU prices), IPOs and KPIs. Not covered: /filings/items, /prices/snapshot/market, POST endpoints, and the free helper lists such as /prices/tickers. x402 requests cover the last 365 days of data. Guide: https://docs.financialdatasets.ai/x402. Announcement: https://www.financialdatasets.ai/news/x402
+No key and no account: pay with x402. Send a request with no X-API-KEY header to a supported endpoint and the 402 response carries the payment terms in the PAYMENT-REQUIRED header (amount in USDC on Base, network eip155:8453). Sign the payment with your own wallet and retry with the PAYMENT-SIGNATURE header; the x402 client libraries do this for you. x402 endpoints: every documented GET data endpoint (36): prices, financial statements and segments, financial metrics, earnings, company facts, filings, news, insider trades and ownership, beneficial, activist and institutional holdings, index funds, macro series (interest rates, yield curve, inflation, labor, GPU prices), IPOs and KPIs. Not covered: /filings/items, /prices/snapshot/market, POST endpoints, and the free helper lists such as /prices/tickers. Guide: https://docs.financialdatasets.ai/x402. Announcement: https://www.financialdatasets.ai/news/x402
 
 ## API Endpoints
 

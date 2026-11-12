@@ -1,6 +1,6 @@
 GET https://sendgrid.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:03.805Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:15.065Z
 redirect: 301 from https://sendgrid.com/auth.md
 final-url: https://www.twilio.com/en-us/sendgrid
 
@@ -15,13 +15,13 @@ x-amz-meta-aem-last-modified: Mon, 12 Oct 2026 22:14:56 GMT
 x-amz-meta-aem-etag: W/"9a325-65dac07271f03"
 x-amz-version-id: BkngWf7mN8ReTF31VCkvevqQPeiDEQT6
 accept-ranges: bytes
-date: Sat, 07 Nov 2026 00:19:01 GMT
+date: Thu, 12 Nov 2026 02:38:10 GMT
 cache-control: no-cache
 etag: "e98c87f9f796b2683ebe1a8fe012a3d8"
-x-cache: RefreshHit from cloudfront
-via: 1.1 4894bef31db1c311602a51393339af0a.cloudfront.net (CloudFront)
+x-cache: Hit from cloudfront
+via: 1.1 44c9323c8e1b3ab3824760718cef5d00.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: M54txA0mmfaq_kTBIdFw99WdQTZyp4PNtK0nVvfks9xfi2gf1kpd6A==
+x-amz-cf-id: Buz1tIqnqkJN1eq0kQfwMZ643c1tfEQQi6hl9RcyvKgFBTYr-AHaAQ==
 
 
 <!DOCTYPE HTML>

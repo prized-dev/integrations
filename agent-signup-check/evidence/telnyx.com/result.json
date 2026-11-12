@@ -1,9 +1,10 @@
 {
  "site": "telnyx.com",
- "checkedAt": "2026-11-07T00:19:06.710Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:17.646Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 6,
  "partial": 0,
+ "unread": 0,
  "total": 7,
  "whoActs": "the person confirms an email code; nobody (anonymous)",
  "checks": [
@@ -77,7 +78,7 @@
    "name": "Docs in Markdown",
    "url": "https://telnyx.com/llms.txt",
    "heading": "# Telnyx",
-   "bytes": 18486,
+   "bytes": 18645,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -90,7 +91,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 216,
+   "ms": 151,
    "redirects": 0
   },
   {
@@ -100,7 +101,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 361,
+   "ms": 177,
    "redirects": 0
   },
   {
@@ -110,7 +111,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 100,
+   "ms": 96,
    "redirects": 0
   },
   {
@@ -120,7 +121,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 110,
+   "ms": 71,
    "redirects": 0
   },
   {
@@ -130,7 +131,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 96,
+   "ms": 67,
    "redirects": 0
   },
   {
@@ -140,7 +141,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 220,
+   "ms": 213,
    "redirects": 0
   }
  ]

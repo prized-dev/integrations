@@ -1,10 +1,10 @@
 GET https://api.perplexity.ai/async/chat/completions
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:13.650Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:22.899Z
 final-url: https://api.perplexity.ai/async/chat/completions
 
 HTTP 401
-date: Sat, 07 Nov 2026 00:18:10 GMT
+date: Thu, 12 Nov 2026 02:37:20 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
@@ -12,7 +12,7 @@ server: cloudflare
 access-control-allow-origin: *
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 cf-cache-status: BYPASS
-cf-ray: a56828c15aa0b338-PDX
+cf-ray: a59227787dc78d3a-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"error":{"message":"Invalid API key provided. Ensure your API key is correct and active.","type":"invalid_api_key","code":401}}

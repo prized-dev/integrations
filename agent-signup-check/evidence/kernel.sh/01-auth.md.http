@@ -1,24 +1,24 @@
 GET https://kernel.sh/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:12.211Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:23.615Z
 redirect: 301 from https://kernel.sh/auth.md
 final-url: https://www.kernel.sh/auth.md
 
 HTTP 200
 access-control-allow-origin: *
-age: 53038
+age: 2836
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="auth.md"
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Sat, 07 Nov 2026 00:19:09 GMT
+date: Thu, 12 Nov 2026 02:38:20 GMT
 etag: W/"e9108ff37e77633006247d96e19e9c42"
-last-modified: Fri, 06 Nov 2026 09:35:11 GMT
+last-modified: Thu, 12 Nov 2026 01:51:04 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /auth.md
 x-vercel-cache: HIT
-x-vercel-id: pdx1::sh7z2-1794010749536-097616aab5d6
+x-vercel-id: pdx1::h5w5x-1794451100847-cf1d03bce6e1
 connection: close
 transfer-encoding: chunked
 

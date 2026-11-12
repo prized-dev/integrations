@@ -1,14 +1,14 @@
 GET https://data.browserless.io/.well-known/oauth-authorization-server/auth/v1
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:20.755Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.789Z
 final-url: https://data.browserless.io/.well-known/oauth-authorization-server/auth/v1
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:19 GMT
+date: Thu, 12 Nov 2026 02:38:29 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
-cf-ray: a5682a701d0ddcdd-PDX
+cf-ray: a592292c4d951509-PDX
 cf-cache-status: DYNAMIC
 cache-control: public, max-age=600
 content-encoding: gzip
@@ -17,7 +17,7 @@ strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: Origin, Accept-Encoding
 sb-gateway-version: 1
 sb-project-ref: ccdeigzwdtsdubztckwm
-sb-request-id: 01a1b35f-c22c-734e-a5a3-61118e091ea4
+sb-request-id: 01a1cd9e-f7b3-7c7d-9952-74145a666041
 x-envoy-attempt-count: 1
 x-envoy-upstream-service-time: 0
 alt-svc: h3=":443"; ma=86400

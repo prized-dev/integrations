@@ -1,14 +1,14 @@
 GET https://telnyx.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:06.710Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:17.646Z
 final-url: https://telnyx.com/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:04 GMT
+date: Thu, 12 Nov 2026 02:38:15 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5682a102c72f820-PDX
+cf-ray: a59228d31a6b6e09-PDX
 cf-cache-status: BYPASS
 cache-control: public, max-age=3600
 server: cloudflare
@@ -31,7 +31,7 @@ content-encoding: gzip
 - **Email API (beta)**: transactional and marketing email, including inbound. [Product](https://telnyx.com/products/email-api). [Pricing](https://telnyx.com/pricing/email-api).
 - **SIP Trunking** — outbound from $0.005/min, STIR/SHAKEN A-level
 - **Phone Numbers** — local, toll-free, mobile in 40+ countries
-- **AI Inference + Audio (x402)** — pay-per-call USDC on Base, no signup; 17 chat models plus TTS/STT
+- **AI Inference + Audio (x402)** — pay-per-call USDC on Base, no signup; open-weight chat models plus TTS/STT (live list: https://x402.telnyx.com/v1/models)
 
 ## Pricing
 Headline rates. Full table at [/pricing.md](https://telnyx.com/pricing.md), machine-readable at [/ai/pricing.json](https://telnyx.com/ai/pricing.json).
@@ -42,12 +42,12 @@ Headline rates. Full table at [/pricing.md](https://telnyx.com/pricing.md), mach
 - TTS from $0.000006/char; HD voices $0.000048/char
 - STT $0.015/min (Telnyx, Deepgram); $0.017/min (Google, Azure)
 - US local numbers from $0.79/month
-- x402 inference from $0.002 USDC per call (17 models, up to $0.15); x402 TTS $0.000006/char; x402 STT $0.003/min
+- x402 inference from $0.002 USDC per call (priced per model; live prices at https://x402.telnyx.com/v1/models); x402 TTS $0.000006/char; x402 STT $0.003/min
 
 ## Use cases
 Production workloads agents and teams ship on Telnyx. Drill into [/solutions/llms.txt](https://telnyx.com/solutions/llms.txt) for industry playbooks.
 - **Voice AI agents** — bundled SIP + STT + LLM + TTS at $0.05/min for healthcare reminders, financial alerts, retail returns, travel bookings.
-- **Pay-per-call AI inference + audio** — agents POST to `https://x402.telnyx.com/v1/chat/completions` (17 open-weight models from $0.002/call; docs at [x402.telnyx.com](https://x402.telnyx.com/)) or the audio endpoints (/v1/audio/speech, /v1/audio/transcriptions) with no signup; USDC settles on Base mainnet.
+- **Pay-per-call AI inference + audio** — agents POST to `https://x402.telnyx.com/v1/chat/completions` (open-weight models from $0.002/call; live list at [/v1/models](https://x402.telnyx.com/v1/models), docs at [x402.telnyx.com](https://x402.telnyx.com/)) or the audio endpoints (/v1/audio/speech, /v1/audio/transcriptions) with no signup; USDC settles on Base mainnet.
 - **Programmatic SMS/MMS at scale** — 10DLC, toll-free, short codes, A2P messaging in 100+ countries with delivery receipts.
 - **Carrier-grade SIP trunking** — outbound voice termination with STIR/SHAKEN A-attestation and per-second billing, no per-channel fees.
 - **Number provisioning + porting** — search, buy, port local / toll-free / mobile / short-code numbers across 40+ countries via REST API.

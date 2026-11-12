@@ -1,12 +1,12 @@
 GET https://us.posthog.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:40.523Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:50.841Z
 final-url: https://us.posthog.com/auth.md
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:39 GMT
+date: Thu, 12 Nov 2026 02:38:49 GMT
 content-type: text/markdown; charset=utf-8
-content-length: 15379
+content-length: 15371
 connection: close
 allow: GET, HEAD, OPTIONS
 x-frame-options: SAMEORIGIN
@@ -56,6 +56,8 @@ The user-claimed device flow (`service_auth`, `anonymous`) is not supported yet.
 - `access_control:write`: Write access to access_control
 - `account:read`: Read access to account
 - `account:write`: Write access to account
+- `account_note:read`: Read access to account_note
+- `account_note:write`: Write access to account_note
 - `activity_log:read`: Read access to activity_log
 - `activity_log:write`: Write access to activity_log
 - `alert:read`: Read access to alert
@@ -262,8 +264,6 @@ The user-claimed device flow (`service_auth`, `anonymous`) is not supported yet.
 - `usage_metric:write`: Write access to usage_metric
 - `user:read`: Read access to user
 - `user:write`: Write access to user
-- `user_interview:read`: Read access to user_interview
-- `user_interview:write`: Write access to user_interview
 - `vision_action:read`: Read access to vision_action
 - `vision_action:write`: Write access to vision_action
 - `vision_alert:read`: Read access to vision_alert

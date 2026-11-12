@@ -1,10 +1,10 @@
 GET https://mistral.ai/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:06.140Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:15.191Z
 final-url: https://mistral.ai/auth.md
 
 HTTP 404
-date: Sat, 07 Nov 2026 00:18:01 GMT
+date: Thu, 12 Nov 2026 02:37:09 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -15,13 +15,13 @@ server: cloudflare
 strict-transport-security: max-age=15552000; includeSubDomains; preload
 vary: Accept-Encoding
 x-content-type-options: nosniff
-x-nf-request-id: 01M6SNX3PT82TS9GRDN2TVZ4W0
+x-nf-request-id: 01M76SVFJ5PW4RBYCZMG34MCMM
 cf-cache-status: EXPIRED
 content-encoding: br
-cf-ray: a56828841a483016-PDX
+cf-ray: a59227365ba6ad66-PDX
 alt-svc: h3=":443"; ma=86400
 
-<!DOCTYPE html><html data-astro-transition-scope="astro-v2o6jcai-1" lang="en" class><head><meta charset="UTF-8"><title>Frontier AI LLMs, assistants, agents, services | Mistral AI</title><meta name="description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex-swap.min.css" integrity="sha384-/YlNbK67U4WeyjZpwGJd2C4H3Lm8gq0m47PFlrmuKj9TDQzW6HbfSbWI6gpHx2ol" crossorigin="anonymous"><link rel="canonical" href="https://mistral.ai/404/"><meta property="og:title" content="Frontier AI LLMs, assistants, agents, services | Mistral AI"><meta property="og:description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><meta property="og:type" content="website"><meta property="og:url" content="https://mistral.ai/404/"><meta property="og:site_name" content="Mistral"><meta property="og:image" content="https://mistral.ai/cms-media/api/media/file/cover-mistral-sovereign%20copie.webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Frontier AI LLMs, assistants, agents, services | Mistral AI"><meta name="twitter:description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><meta name="twitter:image" content="https://mistral.ai/cms-media/api/media/file/cover-mistral-sovereign%20copie.webp"><meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0"><link rel="sitemap" href="/sitemap-index.xml"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.Bhesp8YC.js?dpl=6aee0a780db43cb5574b1948"></script><script>
+<!DOCTYPE html><html data-astro-transition-scope="astro-v2o6jcai-1" lang="en" class><head><meta charset="UTF-8"><title>Frontier AI LLMs, assistants, agents, services | Mistral AI</title><meta name="description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex-swap.min.css" integrity="sha384-/YlNbK67U4WeyjZpwGJd2C4H3Lm8gq0m47PFlrmuKj9TDQzW6HbfSbWI6gpHx2ol" crossorigin="anonymous"><link rel="canonical" href="https://mistral.ai/404/"><meta property="og:title" content="Frontier AI LLMs, assistants, agents, services | Mistral AI"><meta property="og:description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><meta property="og:type" content="website"><meta property="og:url" content="https://mistral.ai/404/"><meta property="og:site_name" content="Mistral"><meta property="og:image" content="https://mistral.ai/cms-media/api/media/file/cover-mistral-sovereign%20copie.webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Frontier AI LLMs, assistants, agents, services | Mistral AI"><meta name="twitter:description" content="The most powerful AI platform for enterprises. Customize, fine-tune, and deploy AI assistants, autonomous agents, and multimodal AI with open models."><meta name="twitter:image" content="https://mistral.ai/cms-media/api/media/file/cover-mistral-sovereign%20copie.webp"><meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0"><link rel="sitemap" href="/sitemap-index.xml"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.DuyhEJUj.js?dpl=6af4f825b2fab4b19835a5e8"></script><script>
       ;(function () {
         function applyTheme(doc) {
           try {
@@ -154,10 +154,10 @@ alt-svc: h3=":443"; ma=86400
           observeTarget(document.body)
         })
       })()
-    </script><link rel="alternate" type="application/rss+xml" title="Mistral" href="https://mistral.ai/news/rss"><link rel="stylesheet" href="/_astro/astro.DoQnj-bQ.css"><style>html.lenis,html.lenis body{height:auto}.lenis:not(.lenis-autoToggle).lenis-stopped{overflow:clip}.lenis [data-lenis-prevent],.lenis [data-lenis-prevent-wheel],.lenis [data-lenis-prevent-touch],.lenis [data-lenis-prevent-vertical],.lenis [data-lenis-prevent-horizontal]{overscroll-behavior:contain}.lenis.lenis-smooth iframe{pointer-events:none}.lenis.lenis-autoToggle{transition-behavior:allow-discrete;transition-property:overflow;transition-duration:1ms}
+    </script><link rel="alternate" type="application/rss+xml" title="Mistral" href="https://mistral.ai/news/rss"><link rel="stylesheet" href="/_astro/astro.8BuPf-VH.css"><style>html.lenis,html.lenis body{height:auto}.lenis:not(.lenis-autoToggle).lenis-stopped{overflow:clip}.lenis [data-lenis-prevent],.lenis [data-lenis-prevent-wheel],.lenis [data-lenis-prevent-touch],.lenis [data-lenis-prevent-vertical],.lenis [data-lenis-prevent-horizontal]{overscroll-behavior:contain}.lenis.lenis-smooth iframe{pointer-events:none}.lenis.lenis-autoToggle{transition-behavior:allow-discrete;transition-property:overflow;transition-duration:1ms}
 </style><style>[data-astro-transition-scope="astro-v2o6jcai-1"] { view-transition-name: root; }@layer astro { ::view-transition-old(root) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(root) { animation: none; mix-blend-mode: normal; }::view-transition-group(root) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-v2o6jcai-1"],
 			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-v2o6jcai-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-v2o6jcai-1"],
-			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-v2o6jcai-1"] { animation: none; mix-blend-mode: normal; }</style></head><body><!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TX82W9W8" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><!-- End Google Tag Manager (noscript) --><global-navigation><header class="fixed z-50 flex items-center justify-between dark:text-white transition-colors top-0 w-full left-0 border-b border-border-primary divide-x divide-border-primary bg-surface-brand-secondary" data-header><div class="max-w-432 mx-auto relative h-auto flex items-center justify-between w-full divide-x divide-border-primary"><a href="/" rel="home" aria-label="Go to homepage" class="w-12 h-12 md:w-30 nav-item-home shrink-0 grid place-content-center overflow-hidden hover:bg-surface-brand-primary 2xl:border-l border-border-primary" data-interactive data-mobile-logo><span class="relative w-24 hidden md:block"><svg  viewBox="0 0 98 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-v2o6jcai-1"] { animation: none; mix-blend-mode: normal; }</style></head><body><!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TX82W9W8" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><!-- End Google Tag Manager (noscript) --><a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-100 focus:px-4 focus:py-2 focus:rounded-md focus:bg-surface-brand-primary focus:text-text-primary focus:shadow-box">Skip to content</a><global-navigation><header class="fixed z-50 flex items-center justify-between dark:text-white transition-colors top-0 w-full left-0 border-b border-border-primary divide-x divide-border-primary bg-surface-brand-secondary" data-header><div class="max-w-432 mx-auto relative h-auto flex items-center justify-between w-full divide-x divide-border-primary"><a href="/" rel="home" aria-label="Go to homepage" class="w-12 h-12 md:w-30 nav-item-home shrink-0 grid place-content-center overflow-hidden hover:bg-surface-brand-primary 2xl:border-l border-border-primary" data-interactive data-mobile-logo><span class="relative w-24 hidden md:block" aria-hidden="true"><svg  viewBox="0 0 98 22" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect x="6.28577" y="3.14307" width="3.14286" height="3.14286" fill="#FFAF01"/>
 <rect x="6.28577" y="6.28564" width="6.28571" height="3.14286" fill="#FF8204"/>
 <rect x="6.28577" y="9.42871" width="15.7143" height="3.14286" fill="#FA500F"/>
@@ -177,7 +177,7 @@ alt-svc: h3=":443"; ma=86400
 <path d="M88.4501 7.89074C87.5373 7.33428 86.4655 7.05469 85.2484 7.05469C84.0313 7.05469 82.9458 7.32606 81.9672 7.85784C80.9804 8.39511 80.3664 9.34081 80.1416 10.6675L80.1279 10.747H82.584L82.595 10.6922C82.7238 10.0837 83.0253 9.64782 83.4996 9.40111C83.982 9.14893 84.5467 9.02283 85.1799 9.02283C85.7555 9.02283 86.2791 9.13796 86.7396 9.36822C87.1891 9.59299 87.4084 9.94934 87.4084 10.4565C87.4084 10.7772 87.3125 11.0157 87.1124 11.1883C86.9068 11.3665 86.6409 11.5008 86.3202 11.594C85.994 11.6872 85.517 11.7887 84.903 11.8901L84.4178 11.9778C83.4886 12.1395 82.7019 12.3314 82.0769 12.5425C81.4437 12.759 80.8845 13.1263 80.413 13.6335C79.9388 14.146 79.7003 14.8587 79.7003 15.7578C79.7003 16.805 80.0868 17.6492 80.8516 18.2633C81.6109 18.8745 82.5785 19.1843 83.7216 19.1843C84.5686 19.1843 85.3252 19.0061 85.9748 18.658C86.6135 18.3126 87.1124 17.7616 87.455 17.0215H87.4742V18.8553H89.8426V10.832C89.8426 9.44223 89.3738 8.45267 88.4501 7.89074ZM84.0587 17.3285C83.5599 17.3285 83.1185 17.1805 82.743 16.8899C82.3675 16.5994 82.1838 16.2019 82.1838 15.6729C82.1838 15.1054 82.4004 14.697 82.8472 14.4284C83.3022 14.1543 83.9299 13.9268 84.7139 13.7513L85.3115 13.6417C85.8432 13.5375 86.2709 13.4333 86.5888 13.3292C86.9041 13.2278 87.17 13.0715 87.381 12.8687H87.4167V13.6609C87.4167 14.4558 87.2549 15.1356 86.9397 15.6811C86.6245 16.2266 86.2051 16.6432 85.6952 16.9146C85.1854 17.1887 84.6344 17.3258 84.0587 17.3258V17.3285Z" fill="currentColor"/>
 <path d="M94.1987 3.14307H91.7645V18.8574H94.1987V3.14307Z" fill="currentColor"/>
 </svg>
-</span><span class="relative inline-block md:hidden w-7 mt-px col-start-1 row-start-1" data-mobile-logo-icon="true"><svg viewBox="0 0 21 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+</span><span class="relative inline-block md:hidden w-7 mt-px col-start-1 row-start-1" aria-hidden="true" data-mobile-logo-icon="true"><svg viewBox="0 0 21 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M6 0H3V3H6V0Z" fill="#FFAF01"/>
 <path d="M6 9H3V12H6V9Z" fill="#E61300"/>
 <path d="M9 12H0V15H9V12Z" fill="#C4001D"/>
@@ -189,13 +189,8 @@ alt-svc: h3=":443"; ma=86400
 <path d="M18 9H15V12H18V9Z" fill="#E61300"/>
 <path d="M21 12H12V15H21V12Z" fill="#C4001D"/>
 </svg>
-</span><span class="relative inline-block md:hidden w-6 col-start-1 row-start-1" style="transform:translateX(48px)" data-mobile-back-icon="true"><svg  viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+</span><span class="relative inline-block md:hidden w-6 col-start-1 row-start-1" style="transform:translateX(48px)" aria-hidden="true" data-mobile-back-icon="true"><svg  viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M16.9995 5L20.9995 5V9L16.9995 9L16.9995 5Z" fill="currentColor"/>
-<path d="M12.9995 9L16.9995 9V13L12.9995 13L12.9995 9Z" fill="currentColor"/>
-<path d="M8.99951 13H12.9995L12.9995 17L8.99951 17L8.99951 13Z" fill="currentColor"/>
-<path d="M12.9995 17H16.9995L16.9995 21H12.9995L12.9995 17Z" fill="currentColor"/>
-<path d="M16.9995 21H20.9995L20.9995 25H16.9995V21Z" fill="currentColor"/>
-</svg>
-</span></a><div class="flex lg:hi
+<path d="M12.9995 9L16.9995 9V13L12.9995 13L12.9995 9Z" fill="currentColor"/
 
-[body trimmed for publication: kept 16384 of 163554 characters; sha256 of the published body ebef42b02bb40cf26ddc9eab5907464ace6b106a552c9ea4c3c1af2f8e9635a8]
+[body trimmed for publication: kept 16384 of 167123 characters; sha256 of the published body d6e1fc9042a43ea477d9f14faba25cc549a5e3c3cf00e3a3248d4f2c40fcfd2a]

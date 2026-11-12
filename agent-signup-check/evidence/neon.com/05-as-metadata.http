@@ -1,24 +1,24 @@
 GET https://neon.com/.well-known/oauth-authorization-server/claimable
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:53.299Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:04.021Z
 final-url: https://neon.com/.well-known/oauth-authorization-server/claimable
 
 HTTP 200
 accept-ranges: bytes
 access-control-allow-origin: *
-age: 0
+age: 16856
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-length: 615
 content-type: application/json
-date: Sat, 07 Nov 2026 00:18:52 GMT
-etag: "9eb7c007239c38ad060f1d4d3de4bbe8"
+date: Thu, 12 Nov 2026 02:38:02 GMT
+etag: "a716bb8ba8adb7fffda67d88ac3fc394"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /.well-known/oauth-authorization-server/claimable
-x-vercel-cache: PRERENDER
-x-vercel-id: pdx1::7n7j4-1794010731759-9938641f3d6a
+x-vercel-cache: HIT
+x-vercel-id: pdx1::l7945-1794451082958-ddb1e7b2344a
 connection: close
 
 {"issuer":"https://neon.com/claimable","token_endpoint":"https://claimable.neon.tech/v1/oauth2/token","revocation_endpoint":"https://claimable.neon.tech/v1/oauth2/revoke","jwks_uri":"https://claimable.neon.tech/.well-known/jwks.json","grant_types_supported":["urn:ietf:params:oauth:grant-type:jwt-bearer"],"token_endpoint_auth_methods_supported":["none"],"response_types_supported":[],"agent_auth":{"skill":"https://neon.com/auth.md","identity_endpoint":"https://claimable.neon.tech/v1/agent/identity","claim_endpoint":"https://claimable.neon.tech/v1/agent/identity/claim","identity_types_supported":["anonymous"]}}

@@ -1,0 +1,21 @@
+GET https://api.vapi.ai/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:20.426Z
+final-url: https://api.vapi.ai/.well-known/oauth-authorization-server
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:38:19 GMT
+content-type: application/json; charset=utf-8
+transfer-encoding: chunked
+connection: close
+x-powered-by: Express
+access-control-allow-origin: *
+content-security-policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; form-action 'self'; frame-ancestors 'self'; connect-src 'self' https:; worker-src 'self' blob:
+etag: W/"65-i0XFnW89/dgO8b7omJQxyARFQEI"
+cf-cache-status: DYNAMIC
+content-encoding: br
+server: cloudflare
+cf-ray: a59228ed8bd0ff15-PDX
+alt-svc: h3=":443"; ma=86400
+
+{"message":"Cannot GET /.well-known/oauth-authorization-server","error":"Not Found","statusCode":404}

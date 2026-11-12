@@ -1,0 +1,26 @@
+GET https://api.beam.cloud/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:50.948Z
+final-url: https://api.beam.cloud/.well-known/oauth-authorization-server
+
+HTTP 200
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+date: Thu, 12 Nov 2026 02:37:50 GMT
+strict-transport-security: max-age=31536000; includeSubDomains
+content-encoding: br
+vary: Accept-Encoding, origin
+allow: GET, HEAD, OPTIONS
+cache-control: no-store
+pragma: no-cache
+x-content-type-options: nosniff
+referrer-policy: same-origin
+cross-origin-opener-policy: same-origin
+x-cache: Miss from cloudfront
+via: 1.1 a149f4f5bbee293b9be1b5cd1f06e872.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P3
+alt-svc: h3=":443"; ma=86400
+x-amz-cf-id: WwoUshR3HKPy6yAB9QKyMGUlSKm27dchFI1FBgxxapL-QLg3a5o4Vw==
+
+{"issuer":"https://api.beam.cloud/v2/oauth","authorization_endpoint":"https://api.beam.cloud/v2/oauth/authorize","token_endpoint":"https://api.beam.cloud/v2/oauth/token","registration_endpoint":"https://api.beam.cloud/v2/oauth/register","revocation_endpoint":"https://api.beam.cloud/v2/oauth/revoke","introspection_endpoint":"https://api.beam.cloud/v2/oauth/introspect","response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["none","client_secret_post"],"scopes_supported":["beam:read","beam:write","beam:exec","beam:credentials"],"client_id_metadata_document_supported":true,"authorization_response_iss_parameter_supported":true}

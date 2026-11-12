@@ -1,6 +1,6 @@
 GET https://brave.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:23.794Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:33.999Z
 redirect: 302 from https://brave.com/llms.txt
 final-url: https://brave.com/llms.txt/
 
@@ -8,28 +8,28 @@ HTTP 404
 content-type: text/html
 transfer-encoding: chunked
 connection: close
-content-encoding: br
-date: Sat, 07 Nov 2026 00:19:20 GMT
+date: Thu, 12 Nov 2026 01:51:14 GMT
 server: AmazonS3
-last-modified: Sat, 24 Oct 2026 00:15:23 GMT
-strict-transport-security: max-age=31536000; includeSubdomains; preload
-x-amz-meta-md5chksum: 74f997272f34c2dbc0f8cdb00ef7016b
-x-amz-version-id: 019r0t6OGApDcKU.fmgqLpx._JLO7GSb
+last-modified: Wed, 11 Nov 2026 17:02:39 GMT
+etag: W/"bfa28905b76209c093d4355ab6f727e9"
+x-amz-meta-md5chksum: bfa28905b76209c093d4355ab6f727e9
+x-amz-version-id: MbzgHHyhvCoyO4T1g2oLRFcxPc3MdlhB
 x-amz-server-side-encryption: AES256
 content-security-policy: connect-src 'self' https://search.brave.com https://newsletter.brave.app https://analytics.brave.com https://api2.blocksurvey.io; default-src 'none'; media-src 'self'; font-src 'self'; frame-ancestors 'self' https://ads.brave.com https://ads.bravesoftware.com; frame-src 'self' https://blocksurvey.io https://survey.brave.app https://contact.ads.brave.com https://html5-player.libsyn.com https://player.vimeo.com https://boards.greenhouse.io https://job-boards.greenhouse.io https://www.youtube-nocookie.com https://app.boostr.com/; img-src 'self' data: https://imgs.search.brave.com https://analytics.brave.com https://boards.greenhouse.io https://job-boards.greenhouse.io; script-src 'self' https://boards.greenhouse.io https://job-boards.greenhouse.io; style-src 'self' 'unsafe-inline'; object-src 'self'; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests;
-referrer-policy: strict-origin-when-cross-origin
-onion-location: https://brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion/404.html
-x-frame-options: SAMEORIGIN
-cross-origin-opener-policy: same-origin
+strict-transport-security: max-age=31536000; includeSubdomains; preload
 x-content-type-options: nosniff
-etag: W/"74f997272f34c2dbc0f8cdb00ef7016b"
+x-frame-options: SAMEORIGIN
+referrer-policy: strict-origin-when-cross-origin
+cross-origin-opener-policy: same-origin
+onion-location: https://brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion/404.html
+content-encoding: br
 vary: Accept-Encoding
 x-cache: Error from cloudfront
-via: 1.1 94d1167faad8c4981cbe31298f27eeb8.cloudfront.net (CloudFront)
-x-amz-cf-pop: SEA73-P3
+via: 1.1 743dabf2fdbfd64c0bd7adf3cea9dbec.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P4
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: sfxkefofg-VLRq_KqNLt1eIf1Z3hBKjm2AccLidd2RjpHyMruAdCWg==
-age: 1
+x-amz-cf-id: zHUJzsetwlj4l9RBYVunw8kBSQRxlsKaayizJKBipAfeFlSXNvOknw==
+age: 2837
 
 <!DOCTYPE html>
 <html lang="en">
@@ -81,7 +81,7 @@ age: 1
 
     
 
-    <link rel="stylesheet" href="/static-assets/css-old/main.min.9bb812636c8d1596b5a235a369dd824a6878e1d766b116cb3fe70c0cebfb30d9.css" integrity="sha256-m7gSY2yNFZa1ojWjad2CSmh44ddmsRbLP+cMDOv7MNk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/static-assets/css-old/main.min.86766feb47a05549645f37306b9db680e0de997f9ffe10e4183eef0ab46e4f3e.css" integrity="sha256-hnZv60egVUlkXzcwa522gODemX+f/hDkGD7vCrRuTz4=" crossorigin="anonymous" />
 
     
 
@@ -206,4 +206,4 @@ age: 1
                               <li class=""><ul class="p-0 list-none"><li class=""><a href="https://search.brave.com/"
                                             target="_bla
 
-[body trimmed for publication: kept 16384 of 54543 characters; sha256 of the published body ec1d9d6dd7b0a6372d725da61d77217e2e231935a5a7d8c8efff05ba25478c7a]
+[body trimmed for publication: kept 16384 of 54543 characters; sha256 of the published body cc602c31d0f2f0ee001ee00f580a50179b4651d100befbda44c0c25cb43b2d5c]

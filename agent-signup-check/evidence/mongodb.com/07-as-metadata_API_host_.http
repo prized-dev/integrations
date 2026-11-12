@@ -1,0 +1,11 @@
+GET https://cloud.mongodb.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:13.848Z
+final-url: https://cloud.mongodb.com/.well-known/oauth-authorization-server
+
+HTTP 401
+date: Thu, 12 Nov 2026 02:38:12 GMT
+server: mdbws
+connection: close
+content-length: 0
+

@@ -1,20 +1,20 @@
 GET https://heroku.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:38.947Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:47.176Z
 final-url: https://heroku.com/llms.txt
 
 HTTP 200
 server: nginx
-date: Sat, 07 Nov 2026 00:18:32 GMT
+date: Thu, 12 Nov 2026 02:37:41 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 vary: Accept-Encoding
 content-encoding: br
-x-rq: sea3 0 40 9980
 cache-control: max-age=300, must-revalidate
 accept-ranges: bytes
 x-cache: STALE
+x-rq: sea3 0 40 9980
 strict-transport-security: max-age=31536000
 x-remembering: Eric Binnion <https://friendsofericbinnion.wordpress.com/>
 

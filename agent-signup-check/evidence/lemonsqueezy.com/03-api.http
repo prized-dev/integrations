@@ -1,19 +1,19 @@
 GET https://api.lemonsqueezy.com/v1/users/me
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:33.606Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:44.772Z
 final-url: https://api.lemonsqueezy.com/v1/users/me
 
 HTTP 401
-date: Sat, 07 Nov 2026 00:19:30 GMT
+date: Thu, 12 Nov 2026 02:38:40 GMT
 content-type: application/vnd.api+json
 content-length: 108
 connection: close
 cache-control: no-cache, private
 vary: Origin
 x-powered-by: PHP/8.4.27
-apigw-requestid: GcY28jk6CYcEP-w=
+apigw-requestid: GtL7ti2ZiYcEM5A=
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a5682ab25bcb121f-PDX
+cf-ray: a59229714e88613d-PDX
 
 {"jsonapi":{"version":"1.0"},"errors":[{"detail":"Unauthenticated.","status":"401","title":"Unauthorized"}]}

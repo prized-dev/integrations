@@ -1,9 +1,10 @@
 {
  "site": "cdp.coinbase.com",
- "checkedAt": "2026-11-07T00:19:36.173Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:46.509Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 1,
- "partial": 1,
+ "partial": 2,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -49,17 +50,21 @@
   {
    "id": "payment",
    "name": "Payment handoff",
-   "status": "fail",
-   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt (the request budget ran out before /.well-known/x402)"
+   "where": "llms.txt",
+   "url": "https://docs.cdp.coinbase.com/llms.txt",
+   "match": "x402",
+   "snippet": "cp/mcp-tools/list-bazaar-resources.md) - [Make an x402 Request](https://docs.cdp.coinbase.com/agentic-wallet/mcp/mcp-tools/make-x402-request.md) - [Agentic Wall",
+   "status": "partial",
+   "reason": "llms.txt mentions a payment path (x402) in prose; nothing machine-readable"
   },
   {
    "id": "markdown",
    "name": "Docs in Markdown",
-   "url": "https://www.coinbase.com/developer-platform",
-   "heading": "# Trusted crypto infra­struc­ture to power your business",
-   "bytes": 7754,
+   "url": "https://docs.cdp.coinbase.com/llms.txt",
+   "heading": "# Coinbase Developer Documentation",
+   "bytes": 60273,
    "status": "pass",
-   "reason": "llms.txt found"
+   "reason": "llms.txt found at a docs path"
   }
  ],
  "requests": [
@@ -70,7 +75,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 232,
+   "ms": 141,
    "redirects": 2
   },
   {
@@ -80,7 +85,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 417,
+   "ms": 316,
    "redirects": 2
   },
   {
@@ -90,7 +95,17 @@
    "status": 401,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 111,
+   "ms": 118,
+   "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs)",
+   "url": "https://docs.cdp.coinbase.com/llms.txt",
+   "finalUrl": "https://docs.cdp.coinbase.com/llms.txt",
+   "status": 200,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 98,
    "redirects": 0
   },
   {
@@ -100,7 +115,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 124,
+   "ms": 302,
    "redirects": 2
   },
   {
@@ -110,7 +125,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 112,
+   "ms": 109,
    "redirects": 0
   },
   {
@@ -120,8 +135,18 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 117,
+   "ms": 137,
    "redirects": 2
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.cdp.coinbase.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.cdp.coinbase.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 107,
+   "redirects": 0
   },
   {
    "label": "catch-all probe",
@@ -130,18 +155,18 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 132,
+   "ms": 148,
    "redirects": 0
   },
   {
    "label": "x402 discovery",
    "url": "https://cdp.coinbase.com/.well-known/x402",
-   "finalUrl": "https://coinbase.com/developer-platform",
-   "status": null,
-   "error": "request budget spent",
-   "contentType": null,
-   "ms": null,
-   "redirects": 1
+   "finalUrl": "https://www.coinbase.com/developer-platform",
+   "status": 200,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 168,
+   "redirects": 2
   }
  ]
 }

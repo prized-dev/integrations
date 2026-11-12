@@ -1,22 +1,22 @@
 GET https://sentry.io/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:39.327Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:49.945Z
 redirect: 301 from https://sentry.io/.well-known/x402
 redirect: 302 from https://sentry.io/.well-known/x402/
 final-url: https://sentry.io/auth/login/.well-known/
 
 HTTP 200
 server: nginx
-date: Sat, 07 Nov 2026 00:19:38 GMT
+date: Thu, 12 Nov 2026 02:38:49 GMT
 content-type: text/html
 vary: Accept-Encoding,Accept-Language, Cookie
 document-policy: js-profiling
-expires: Sat, 07 Nov 2026 00:19:38 GMT
+expires: Thu, 12 Nov 2026 02:38:49 GMT
 cache-control: max-age=0, no-cache, no-store, must-revalidate, private
 link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/oauth-protected-resource>; rel="oauth-protected-resource"; type="application/json", </.well-known/oauth-authorization-server>; rel="oauth-authorization-server"; type="application/json", </.well-known/mcp/server-card.json>; rel="https://modelcontextprotocol.io/rel/server-card"; type="application/json", </.well-known/agent-skills/index.json>; rel="https://agentskills.io/rel/skills-index"; type="application/json", <https://docs.sentry.io/api/>; rel="service-doc"; type="text/html"
 x-sentry-rate-limit-remaining: 19
 x-sentry-rate-limit-limit: 20
-x-sentry-rate-limit-reset: 1794010779
+x-sentry-rate-limit-reset: 1794451130
 x-sentry-rate-limit-concurrentremaining: 24
 x-sentry-rate-limit-concurrentlimit: 25
 content-language: en
@@ -25,7 +25,7 @@ x-content-type-options: nosniff
 x-xss-protection: 1; mode=block
 cross-origin-opener-policy-report-only: same-origin; report-to="coop-endpoint"
 report-to: {"group":"coop-endpoint","max_age":86400,"endpoints":[{"url":"https://sentry-coop-302178938983.us-central1.run.app/coop"}]}, {"group":"browser-reports","max_age":86400,"endpoints":[{"url":"https://o1.ingest.us.sentry.io/api/4511643338670080/integration/browser/reporting/?sentry_key=00e06516e17f2077b4ee5e7206630df5"}]}
-content-security-policy: img-src * blob: data:; base-uri 'none'; object-src 'none'; font-src * data:; media-src *; style-src * 'unsafe-inline'; worker-src 'self' blob:; connect-src 'self' *.algolia.net *.algolianet.com *.algolia.io browser.sentry-cdn.com sentry.io *.sentry.io s1.sentry-cdn.com o1.ingest.sentry.io api2.amplitude.com app.pendo.io data.pendo.io reload.getsentry.net t687h3m0nh65.statuspage.io maps.googleapis.com plausible.io api.github.com *.intercom.io wss://*.intercom.io *.intercom-messenger.com wss://*.intercom-messenger.com uploads.intercomcdn.com uploads.intercomusercontent.com; frame-src app.pendo.io demo.arcade.software js.stripe.com sentry.io 'self' intercom-sheets.com www.intercom-reporting.com; frame-ancestors 'self' *.sentry.io; script-src 'self' 'unsafe-inline' 'report-sample' s1.sentry-cdn.com js.sentry-cdn.com browser.sentry-cdn.com statuspage-production.s3.amazonaws.com aui-cdn.atlassian.com connect-cdn.atl-paas.net js.stripe.com 'strict-dynamic' cdn.pendo.io data.pendo.io pendo-io-static.storage.googleapis.com pendo-static-5634074999128064.storage.googleapis.com plausible.io app.intercom.io widget.intercom.io js.intercomcdn.com 'nonce-gZv2gN1UBoA9yWp3J1NoZQ=='; default-src 'none'; report-uri https://o1.ingest.sentry.io/api/54785/security/?sentry_key=f724a8a027db45f5b21507e7142ff78e&sentry_release=d3296907681afa2038b7d2fefd8def45a5588d73
+content-security-policy: media-src *; default-src 'none'; frame-ancestors 'self' *.sentry.io; style-src * 'unsafe-inline'; img-src * blob: data:; script-src 'self' 'unsafe-inline' 'report-sample' s1.sentry-cdn.com js.sentry-cdn.com browser.sentry-cdn.com statuspage-production.s3.amazonaws.com aui-cdn.atlassian.com connect-cdn.atl-paas.net js.stripe.com 'strict-dynamic' cdn.pendo.io data.pendo.io pendo-io-static.storage.googleapis.com pendo-static-5634074999128064.storage.googleapis.com plausible.io app.intercom.io widget.intercom.io js.intercomcdn.com 'nonce-7EEiktlwgzCNSsX0XJeQtA=='; base-uri 'none'; object-src 'none'; frame-src app.pendo.io demo.arcade.software js.stripe.com sentry.io 'self' intercom-sheets.com www.intercom-reporting.com; font-src * data:; worker-src 'self' blob:; connect-src 'self' *.algolia.net *.algolianet.com *.algolia.io browser.sentry-cdn.com sentry.io *.sentry.io s1.sentry-cdn.com o1.ingest.sentry.io api2.amplitude.com app.pendo.io data.pendo.io reload.getsentry.net t687h3m0nh65.statuspage.io maps.googleapis.com plausible.io api.github.com *.intercom.io wss://*.intercom.io *.intercom-messenger.com wss://*.intercom-messenger.com uploads.intercomcdn.com uploads.intercomusercontent.com; report-uri https://o1.ingest.sentry.io/api/54785/security/?sentry_key=f724a8a027db45f5b21507e7142ff78e&sentry_release=6d0881e459bde44e14590f6a95caab4c0475b09b
 nel: {"report_to":"browser-reports","max_age":86400,"success_fraction":0.01,"failure_fraction":0.10}
 reporting-endpoints: browser-reports="https://o1.ingest.us.sentry.io/api/4511643338670080/integration/browser/reporting/?sentry_key=00e06516e17f2077b4ee5e7206630df5"
 content-encoding: br
@@ -49,38 +49,38 @@ transfer-encoding: chunked
   <meta name="robots" content="none, noarchive">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="icon" type="image/png" href="https://s1.sentry-cdn.com/_static/aa13380595d11dbd6c302695bfa4650d/sentry/images/favicon.png">
+  <link rel="icon" type="image/png" href="https://s1.sentry-cdn.com/_static/9e5e7a45c2b3152d4257848213e1c0b9/sentry/images/favicon.png">
 
-  <link rel="apple-touch-icon" href="https://s1.sentry-cdn.com/_static/aa13380595d11dbd6c302695bfa4650d/sentry/images/logos/apple-touch-icon.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="https://s1.sentry-cdn.com/_static/aa13380595d11dbd6c302695bfa4650d/sentry/images/logos/apple-touch-icon-76x76.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="https://s1.sentry-cdn.com/_static/aa13380595d11dbd6c302695bfa4650d/sentry/images/logos/apple-touch-icon-120x120.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="https://s1.sentry-cdn.com/_static/aa13380595d11dbd6c302695bfa4650d/sentry/images/logos/apple-touch-icon-152x152.png">
+  <link rel="apple-touch-icon" href="https://s1.sentry-cdn.com/_static/9e5e7a45c2b3152d4257848213e1c0b9/sentry/images/logos/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://s1.sentry-cdn.com/_static/9e5e7a45c2b3152d4257848213e1c0b9/sentry/images/logos/apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://s1.sentry-cdn.com/_static/9e5e7a45c2b3152d4257848213e1c0b9/sentry/images/logos/apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://s1.sentry-cdn.com/_static/9e5e7a45c2b3152d4257848213e1c0b9/sentry/images/logos/apple-touch-icon-152x152.png">
   
 
-  
-  <link rel="dns-prefetch" href="https://us.sentry.io" />
   
   <link rel="dns-prefetch" href="https://de.sentry.io" />
+  
+  <link rel="dns-prefetch" href="https://us.sentry.io" />
   
 
   
   <link rel="preconnect" href="https://s1.sentry-cdn.com" />
   
 
-  <link rel="mask-icon" sizes="any" href="https://s1.sentry-cdn.com/_static/aa13380595d11dbd6c302695bfa4650d/sentry/images/logos/logo-sentry.svg" color="#FB4226">
+  <link rel="mask-icon" sizes="any" href="https://s1.sentry-cdn.com/_static/9e5e7a45c2b3152d4257848213e1c0b9/sentry/images/logos/logo-sentry.svg" color="#FB4226">
 
-  <link rel="preload" href="https://s1.sentry-cdn.com/_static/dist/sentry/entrypoints-hashed/app-Oi_z-NzQU-CGit5OAdDIUibXE_EEdrJYenRc-tT7Z1Y.js" as="script" crossorigin="anonymous" nonce="gZv2gN1UBoA9yWp3J1NoZQ==" />
+  <link rel="preload" href="https://s1.sentry-cdn.com/_static/dist/sentry/entrypoints-hashed/app-nLlDC63NBrRtxTBf7vOOwXWgxSvTE9BXyUozDni4aY8.js" as="script" crossorigin="anonymous" nonce="7EEiktlwgzCNSsX0XJeQtA==" />
 
-  <link href="https://s1.sentry-cdn.com/_static/dist/sentry/entrypoints-hashed/sentry-Hfah3_6203uKIIfbz6dGfX7vrGJzofv9jWI_CWFbpw8.css" rel="stylesheet"/>
+  <link href="https://s1.sentry-cdn.com/_static/dist/sentry/entrypoints-hashed/sentry-Ovs3ibQtb8WB70uyToPWViU5-Vrp7trGCwz1ztnWUL0.css" rel="stylesheet"/>
 
   <title>Sentry</title>
 
   
-  <script nonce="gZv2gN1UBoA9yWp3J1NoZQ==">window.__initialData = {"initialTrace":{"sentry_trace":"35afb27cb622454cae7ec1115d7fe259-bdf29ec910d63619-0","baggage":"sentry-trace_id=35afb27cb622454cae7ec1115d7fe259,sentry-sample_rand=0.015510,sentry-environment=control,sentry-release=backend%40d3296907681afa2038b7d2fefd8def45a5588d73,sentry-public_key=ff3a066a612e42778d1790e6b780c2fa,sentry-transaction=/auth/login/%7Borganization_slug%7D/,sentry-sample_rate=0.00075,sentry-sampled=false"},"customerDomain":null,"singleOrganization":false,"supportEmail":"support@sentry.io","urlPrefix":"https://sentry.io","version":{"current":"26.11.0.dev0","latest":"26.11.0.dev0","build":"26.11.0.dev0","upgradeAvailable":false},"features":["organizations:create","relocation:enabled","system:multi-region"],"distPrefix":"https://s1.sentry-cdn.com/_static/dist/sentry/","needsUpgrade":false,"dsn":"https://34bc296f61e2b3f3254b6bea3f7122f3@o1.ingest.sentry.io/11276","statuspage":{"id":"t687h3m0nh65","api_host":"statuspage.io"},"messages":[],"apmSampling":0.2,"isOnPremise":false,"isSelfHosted":false,"isSelfHostedErrorsOnly":false,"sentryMode":"SAAS","shouldPreloadData":false,"shouldShowBeaconConsentPrompt":false,"invitesEnabled":true,"gravatarBaseUrl":"https://gravatar.com","termsUrl":"https://sentry.io/terms/","privacyUrl":"https://sentry.io/privacy/","lastOrganization":null,"languageCode":"en","cells":[],"localities":[{"name":"us","url":"https://us.sentry.io"},{"name":"de","url":"https://de.sentry.io"}],"signupLocalities":["us","de"],"userIdentity":{"ip_address":"[client-ip]"},"csrfCookieName":"[redacted]","superUserCookieName":"sentry-su","superUserCookieDomain":".sentry.io","sentryConfig":{"dsn":"https://34bc296f61e2b3f3254b6bea3f7122f3@o1.ingest.sentry.io/11276","release":"frontend@d3296907681afa2038b7d2fefd8def45a5588d73","environment":"control","whitelistUrls":["sentry.io","s1.sentry-cdn.com","\u003canonymous\u003e"],"allowUrls":["sentry.io","s1.sentry-cdn.com","\u003canonymous\u003e"],"tracePropagationTargets":["sentry.io"]},"demoMode":false,"enableAnalytics":true,"validateSUForm":true,"disableU2FForSUForm":false,"links":{"organizationUrl":null,"regionUrl":null,"sentryUrl":"https://sentry.io"},"user":null,"isAuthenticated":false,"getsentry.stripePublishKey":"pk_live_dPeBWKT7PTCCF0zEOMk4NDYe","getsentry.googleMapsApiKey":"AIzaSyDBUGmWp7crZCpF5OxI_6YwNj2WTJ7Xy-8","getsentry.amplitudeApiKey":null,"intercomAppId":"onh0p2wm"};
+  <script nonce="7EEiktlwgzCNSsX0XJeQtA==">window.__initialData = {"initialTrace":{"sentry_trace":"3e8c7d45580b4179bf7cbf5918bc4dbc-bd208891575347d9-0","baggage":"sentry-trace_id=3e8c7d45580b4179bf7cbf5918bc4dbc,sentry-sample_rand=0.880377,sentry-environment=control,sentry-release=backend%406d0881e459bde44e14590f6a95caab4c0475b09b,sentry-public_key=ff3a066a612e42778d1790e6b780c2fa,sentry-transaction=/auth/login/%7Borganization_slug%7D/,sentry-sample_rate=0.00075,sentry-sampled=false"},"customerDomain":null,"singleOrganization":false,"supportEmail":"support@sentry.io","urlPrefix":"https://sentry.io","version":{"current":"26.11.0.dev0","latest":"26.11.0.dev0","build":"26.11.0.dev0","upgradeAvailable":false},"features":["organizations:create","relocation:enabled","system:multi-region"],"distPrefix":"https://s1.sentry-cdn.com/_static/dist/sentry/","needsUpgrade":false,"dsn":"https://34bc296f61e2b3f3254b6bea3f7122f3@o1.ingest.sentry.io/11276","statuspage":{"id":"t687h3m0nh65","api_host":"statuspage.io"},"messages":[],"apmSampling":0.2,"isOnPremise":false,"isSelfHosted":false,"isSelfHostedErrorsOnly":false,"sentryMode":"SAAS","shouldPreloadData":false,"shouldShowBeaconConsentPrompt":false,"invitesEnabled":true,"gravatarBaseUrl":"https://gravatar.com","termsUrl":"https://sentry.io/terms/","privacyUrl":"https://sentry.io/privacy/","lastOrganization":null,"languageCode":"en","cells":[],"localities":[{"name":"us","url":"https://us.sentry.io"},{"name":"de","url":"https://de.sentry.io"}],"signupLocalities":["de","us"],"userIdentity":{"ip_address":"[client-ip]"},"csrfCookieName":"[redacted]","superUserCookieName":"sentry-su","superUserCookieDomain":".sentry.io","sentryConfig":{"dsn":"https://34bc296f61e2b3f3254b6bea3f7122f3@o1.ingest.sentry.io/11276","release":"frontend@6d0881e459bde44e14590f6a95caab4c0475b09b","environment":"control","whitelistUrls":["sentry.io","s1.sentry-cdn.com","\u003canonymous\u003e"],"allowUrls":["sentry.io","s1.sentry-cdn.com","\u003canonymous\u003e"],"tracePropagationTargets":["sentry.io"]},"demoMode":false,"enableAnalytics":true,"validateSUForm":true,"disableU2FForSUForm":false,"links":{"organizationUrl":null,"regionUrl":null,"sentryUrl":"https://sentry.io"},"user":null,"isAuthenticated":false,"getsentry.stripePublishKey":"pk_live_dPeBWKT7PTCCF0zEOMk4NDYe","getsentry.googleMapsApiKey":"AIzaSyDBUGmWp7crZCpF5OxI_6YwNj2WTJ7Xy-8","getsentry.amplitudeApiKey":null,"intercomAppId":"onh0p2wm"};
     window.__SENTRY__VERSION = '26.11.0.dev0';</script>
 
 
-  <script nonce="gZv2gN1UBoA9yWp3J1NoZQ==">// if the ads.js file loads below it will mark this variable as false
+  <script nonce="7EEiktlwgzCNSsX0XJeQtA==">// if the ads.js file loads below it will mark this variable as false
     window.adblockSuspected = true;
     // Initialize this so that we can queue up tasks when Sentry SPA is initialized
     window.__onSentryInit = window.__onSentryInit || [];</script>
@@ -89,10 +89,10 @@ transfer-encoding: chunked
     
 
 
-<meta name="sentry-trace" content="35afb27cb622454cae7ec1115d7fe259-bdf29ec910d63619-0">
-<meta name="baggage" content="sentry-trace_id=35afb27cb622454cae7ec1115d7fe259,sentry-sample_rand=0.015510,sentry-environment=control,sentry-release=backend%40d3296907681afa2038b7d2fefd8def45a5588d73,sentry-public_key=ff3a066a612e42778d1790e6b780c2fa,sentry-transaction=/auth/login/%7Borganization_slug%7D/,sentry-sample_rate=0.00075,sentry-sampled=false">
+<meta name="sentry-trace" content="3e8c7d45580b4179bf7cbf5918bc4dbc-bd208891575347d9-0">
+<meta name="baggage" content="sentry-trace_id=3e8c7d45580b4179bf7cbf5918bc4dbc,sentry-sample_rand=0.880377,sentry-environment=control,sentry-release=backend%406d0881e459bde44e14590f6a95caab4c0475b09b,sentry-public_key=ff3a066a612e42778d1790e6b780c2fa,sentry-transaction=/auth/login/%7Borganization_slug%7D/,sentry-sample_rate=0.00075,sentry-sampled=false">
 
-<script nonce="gZv2gN1UBoA9yWp3J1NoZQ==">function __preloadData() {
+<script nonce="7EEiktlwgzCNSsX0XJeQtA==">function __preloadData() {
     if (!window.__initialData.shouldPreloadData) {
       return;
     }
@@ -196,7 +196,7 @@ transfer-encoding: chunked
   
 
   
-  <script nonce="gZv2gN1UBoA9yWp3J1NoZQ==">function __sentryMark(name) {
+  <script nonce="7EEiktlwgzCNSsX0XJeQtA==">function __sentryMark(name) {
       if (!window.performance || typeof window.performance.mark !== 'function') { return; }
       window.performance.mark(name);
     }
@@ -205,22 +205,22 @@ transfer-encoding: chunked
   
   
     
-    <script crossorigin="anonymous" nonce="gZv2gN1UBoA9yWp3J1NoZQ==" src="https://s1.sentry-cdn.com/_static/dist/sentry/entrypoints-hashed/app-Oi_z-NzQU-CGit5OAdDIUibXE_EEdrJYenRc-tT7Z1Y.js"></script>
+    <script crossorigin="anonymous" nonce="7EEiktlwgzCNSsX0XJeQtA==" src="https://s1.sentry-cdn.com/_static/dist/sentry/entrypoints-hashed/app-nLlDC63NBrRtxTBf7vOOwXWgxSvTE9BXyUozDni4aY8.js"></script>
   
 
   
   
 
   
-  <script crossorigin="anonymous" nonce="gZv2gN1UBoA9yWp3J1NoZQ==" src="https://s1.sentry-cdn.com/_static/aa13380595d11dbd6c302695bfa4650d/sentry/js/ads.js"></script>
+  <script crossorigin="anonymous" nonce="7EEiktlwgzCNSsX0XJeQtA==" src="https://s1.sentry-cdn.com/_static/9e5e7a45c2b3152d4257848213e1c0b9/sentry/js/ads.js"></script>
   
-  <script async nonce="gZv2gN1UBoA9yWp3J1NoZQ==" src="https://js.stripe.com/v3/"></script>
+  <script async nonce="7EEiktlwgzCNSsX0XJeQtA==" src="https://js.stripe.com/v3/"></script>
 
   
     
 
 
-<script nonce="gZv2gN1UBoA9yWp3J1NoZQ==" type="text/javascript">!function(e){function n(r){if(t[r])return t[r].exports;var o=t[r]={exports:{},id:r,loaded:!1};return e[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var t={};return n.m=e,n.c=t,n.p="",n(0)}([function(e,n,t){"use strict";var r=t(1),o="",i=2e3,c=Object.assign||function(e){if(void 0===e||null===e)throw new TypeError("Cannot convert undefined or null to object");for(var n=Object(e),t=1;t<arguments.length;t++){var r=arguments[t];if(void 0!==r&&null!==r)for(var o in r)r.hasOwnProperty(o)&&(n[o]=r[o])}return n},a=function(){if(["127.0.0.1","0.0.0.0","localhost"].indexOf(location.hostname)>=0)return location.host;var e=location.hostname.split(".");e.length>2&&e.shift();var n=e.join(".");return n},u=function(){return console.warn("getAnonId is deprecated"),""},f=function(){try{var e=new URLSearchParams(window.location.search),n=e.get("original_referrer");return n||document.referrer}catch(e){console.error(e)}return document.referrer},s=function(){var e={url:window.location.href,path:window.location.pathname,referrer:f(),document_referrer:document.referrer,title:document.title,sent_at:Date.now().toString()};for(var n in e)e[n]=e[n].slice(0,i);return e},d=function(e,n){var t=new XMLHttpRequest;t.open("POST",e),t.send(JSON.stringify(n))},l=null,p=function(){l||(l=setTimeout(function(){for(var e in v){if(!v.hasOwnProperty(e))return;d(e,v[e]),v[e]=[]}l=null},1e3))},v={},m=function(e,n){v[e]||(v[e]=[]),v[e].push(n),p()},w=function(e,n,t){var o=(0,r.get)("gsID"),i={user_id:o};c(i,s(),n);var a=t?m:d;a(window.ra.endpoint+e,i)},g=function(e,n){var t={event_name:e};c(t,n),w("/event/",t)},h=function(e){w("/page/",e)},x=function(e){(0,r.set)("gsID",e,{domain:a()})},C=function(e,n,t){w("/metric/",{metric_name:e,value:n,tags:t},!0)};window.ra={page:h,event:g,endpoint:o,identify:x,getAnonId:u,metric:C}},function(e,n,t){var r,o;!function(i){var c;if(r=i,o="function"==typeof r?r.call(n,t,n,e):r,!(void 0!==o&&(e.exports=o)),c=!0,e.exports=i(),c=!0,!c){var a=window.Cookies,u=window.Cookies=i();u.noConflict=function(){return window.Cookies=a,u}}}(function(){function e(){for(var e=0,n={};e<arguments.length;e++){var t=arguments[e];for(var r in t)n[r]=t[r]}return n}function n(e){return e.replace(/(%[0-9A-Z]{2})+/g,decodeURIComponent)}function t(r){function o(){}function i(n,t,i){if("undefined"!=typeof document){i=e({path:"/"},o.defaults,i),"number"==typeof i.expires&&(i.expires=new Date(1*new Date+864e5*i.expires)),i.expires=i.expires?i.expires.toUTCString():"";try{var c=JSON.stringify(t);/^[\{\[]/.test(c)&&(t=c)}catch(e){}t=r.write?r.write(t,n):encodeURIComponent(String(t)).replace(/%(23|24|26|2B|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g,decodeURIComponent),n=encodeURIComponent(String(n)).replace(/%(23|24|26|2B|5E|60|7C)/g,decodeURIComponent).replace(/[\(\)]/g,escape);var a="";for(var u in i)i[u]&&(a+="; "+u,i[u]!==!0&&(a+="="+i[u].split(";")[0]));return document.cookie=n+"="+t+a}}function c(e,t){if("undefined"!=typeof document){for(var o={},i=document.cookie?document.cookie.split("; "):[],c=0;c<i.length;c++){var a=i[c].split("="),u=a.slice(1).join("=");t||'"'!==u.charAt(0)||(u=u.slice(1,-1));try{var f=n(a[0]);if(u=(r.read||r)(u,f)||n(u),t)try{u=JSON.parse(u)}catch(e){}if(o[f]=u,e===f)break}catch(e){}}return e?o[e]:o}}return o.set=i,o.get=function(e){return c(e,!1)},o.getJSON=function(e){return c(e,!0)},o.remove=function(n,t){i(n,"",e(t,{expires:-1}))},o.defaults={},o.withConverter=t,o}return t(function(){})})}]);
+<script nonce="7EEiktlwgzCNSsX0XJeQtA==" type="text/javascript">!function(e){function n(r){if(t[r])return t[r].exports;var o=t[r]={exports:{},id:r,loaded:!1};return e[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var t={};return n.m=e,n.c=t,n.p="",n(0)}([function(e,n,t){"use strict";var r=t(1),o="",i=2e3,c=Object.assign||function(e){if(void 0===e||null===e)throw new TypeError("Cannot convert undefined or null to object");for(var n=Object(e),t=1;t<arguments.length;t++){var r=arguments[t];if(void 0!==r&&null!==r)for(var o in r)r.hasOwnProperty(o)&&(n[o]=r[o])}return n},a=function(){if(["127.0.0.1","0.0.0.0","localhost"].indexOf(location.hostname)>=0)return location.host;var e=location.hostname.split(".");e.length>2&&e.shift();var n=e.join(".");return n},u=function(){return console.warn("getAnonId is deprecated"),""},f=function(){try{var e=new URLSearchParams(window.location.search),n=e.get("original_referrer");return n||document.referrer}catch(e){console.error(e)}return document.referrer},s=function(){var e={url:window.location.href,path:window.location.pathname,referrer:f(),document_referrer:document.referrer,title:document.title,sent_at:Date.now().toString()};for(var n in e)e[n]=e[n].slice(0,i);return e},d=function(e,n){var t=new XMLHttpRequest;t.open("POST",e),t.send(JSON.stringify(n))},l=null,p=function(){l||(l=setTimeout(function(){for(var e in v){if(!v.hasOwnProperty(e))return;d(e,v[e]),v[e]=[]}l=null},1e3))},v={},m=function(e,n){v[e]||(v[e]=[]),v[e].push(n),p()},w=function(e,n,t){var o=(0,r.get)("gsID"),i={user_id:o};c(i,s(),n);var a=t?m:d;a(window.ra.endpoint+e,i)},g=function(e,n){var t={event_name:e};c(t,n),w("/event/",t)},h=function(e){w("/page/",e)},x=function(e){(0,r.set)("gsID",e,{domain:a()})},C=function(e,n,t){w("/metric/",{metric_name:e,value:n,tags:t},!0)};window.ra={page:h,event:g,endpoint:o,identify:x,getAnonId:u,metric:C}},function(e,n,t){var r,o;!function(i){var c;if(r=i,o="function"==typeof r?r.call(n,t,n,e):r,!(void 0!==o&&(e.exports=o)),c=!0,e.exports=i(),c=!0,!c){var a=window.Cookies,u=window.Cookies=i();u.noConflict=function(){return window.Cookies=a,u}}}(function(){function e(){for(var e=0,n={};e<arguments.length;e++){var t=arguments[e];for(var r in t)n[r]=t[r]}return n}function n(e){return e.replace(/(%[0-9A-Z]{2})+/g,decodeURIComponent)}function t(r){function o(){}function i(n,t,i){if("undefined"!=typeof document){i=e({path:"/"},o.defaults,i),"number"==typeof i.expires&&(i.expires=new Date(1*new Date+864e5*i.expires)),i.expires=i.expires?i.expires.toUTCString():"";try{var c=JSON.stringify(t);/^[\{\[]/.test(c)&&(t=c)}catch(e){}t=r.write?r.write(t,n):encodeURIComponent(String(t)).replace(/%(23|24|26|2B|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g,decodeURIComponent),n=encodeURIComponent(String(n)).replace(/%(23|24|26|2B|5E|60|7C)/g,decodeURIComponent).replace(/[\(\)]/g,escape);var a="";for(var u in i)i[u]&&(a+="; "+u,i[u]!==!0&&(a+="="+i[u].split(";")[0]));return document.cookie=n+"="+t+a}}function c(e,t){if("undefined"!=typeof document){for(var o={},i=document.cookie?document.cookie.split("; "):[],c=0;c<i.length;c++){var a=i[c].split("="),u=a.slice(1).join("=");t||'"'!==u.charAt(0)||(u=u.slice(1,-1));try{var f=n(a[0]);if(u=(r.read||r)(u,f)||n(u),t)try{u=JSON.parse(u)}catch(e){}if(o[f]=u,e===f)break}catch(e){}}return e?o[e]:o}}return o.set=i,o.get=function(e){return c(e,!1)},o.getJSON=function(e){return c(e,!0)},o.remove=function(n,t){i(n,"",e(t,{expires:-1}))},o.defaults={},o.withConverter=t,o}return t(function(){})})}]);
   window.ra.endpoint='https://reload.getsentry.net'
 
   
@@ -237,7 +237,7 @@ transfer-encoding: chunked
 
   
   
-      <script nonce="gZv2gN1UBoA9yWp3J1NoZQ==" type="text/javascript">(function (apiKey) {
+      <script nonce="7EEiktlwgzCNSsX0XJeQtA==" type="text/javascript">(function (apiKey) {
     (function (p, e, n, d, o) {
       var v, w, x, y, z;
       o = p[d] = p[d] || {};
@@ -263,7 +263,7 @@ transfer-encoding: chunked
 
   
 
-  <script nonce="gZv2gN1UBoA9yWp3J1NoZQ==">__sentryMark('head-end');</script>
+  <script nonce="7EEiktlwgzCNSsX0XJeQtA==">__sentryMark('head-end');</script>
 
 </head>
 
@@ -360,4 +360,4 @@ transfer-encoding: chunked
         */
         @ke
 
-[body trimmed for publication: kept 16384 of 27392 characters; sha256 of the published body dbeed8e5dffcc8812b05a2238bbff635df8b4454e905b48333d030d77dab3170]
+[body trimmed for publication: kept 16384 of 27392 characters; sha256 of the published body dd4449faf7183ce1a891bbe81c9bfaf7f19a956f39ae75496c25e830a72d9f5d]

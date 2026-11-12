@@ -1,6 +1,6 @@
 GET https://agentmail.to/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:59.822Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:10.820Z
 redirect: 307 from https://agentmail.to/.well-known/oauth-protected-resource
 final-url: https://www.agentmail.to/.well-known/oauth-protected-resource
 
@@ -10,13 +10,13 @@ age: 0
 cache-control: public, max-age=3600
 content-encoding: br
 content-type: application/json; charset=utf-8
-date: Sat, 07 Nov 2026 00:18:58 GMT
+date: Thu, 12 Nov 2026 02:38:09 GMT
 link: </openapi.json>; rel="service-desc", </docs>; rel="service-doc", </llms.txt>; rel="https://llmstxt.org", </.well-known/api-catalog>; rel="api-catalog"
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /.well-known/oauth-protected-resource
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::pn6kn-1794010738335-f124b40ce73c
+x-vercel-id: pdx1::iad1::p5d4c-1794451089334-24080da0c9bd
 connection: close
 transfer-encoding: chunked
 

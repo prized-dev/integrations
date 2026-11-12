@@ -1,12 +1,12 @@
 GET https://api.elevenlabs.io/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:20.565Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:30.466Z
 final-url: https://api.elevenlabs.io/.well-known/oauth-protected-resource
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:18:18 GMT
+date: Thu, 12 Nov 2026 02:37:28 GMT
 server: uvicorn
-content-length: 294
+content-length: 306
 content-type: application/json
 vary: Accept-Language
 access-control-allow-origin: *
@@ -14,10 +14,10 @@ access-control-allow-headers: *
 access-control-allow-methods: POST, PATCH, OPTIONS, DELETE, GET, PUT
 access-control-max-age: 600
 strict-transport-security: max-age=1800;
-x-trace-id: 6774320472dbdf91957e7add8e65d2cc
+x-trace-id: bacc813b808e2d39821efaa1afa5ee7f
 x-region: us-central1
 via: 1.1 google
 alt-svc: h3=":443"; ma=2592000
 connection: close
 
-{"resource":"https://api.elevenlabs.io/v1/mcp","authorization_servers":["https://api.us.elevenlabs.io"],"scopes_supported":["convai_read","convai_write","text_to_speech","speech_history_read","flows","image_video_generation","voice_generation","ads_read"],"bearer_methods_supported":["header"]}
+{"resource":"https://api.elevenlabs.io/v1/mcp","authorization_servers":["https://api.us.elevenlabs.io"],"scopes_supported":["convai_read","convai_write","text_to_speech","speech_history_read","flows","image_video_generation","voice_generation","ads_read","ads_write"],"bearer_methods_supported":["header"]}

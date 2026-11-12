@@ -1,6 +1,6 @@
 GET https://exa.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:20.254Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.664Z
 final-url: https://exa.ai/llms.txt
 
 HTTP 200
@@ -11,9 +11,9 @@ content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/plain; charset=utf-8
-date: Sat, 07 Nov 2026 00:19:18 GMT
-etag: W/"6c40afae7e2bd8e473c9f3a007ebc9c5"
-last-modified: Sat, 07 Nov 2026 00:19:18 GMT
+date: Thu, 12 Nov 2026 02:38:28 GMT
+etag: W/"1b8a28a6d240948c3ee2960b6854880d"
+last-modified: Thu, 12 Nov 2026 02:38:28 GMT
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
@@ -21,7 +21,7 @@ x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /llms.txt
 x-vercel-cache: MISS
-x-vercel-id: pdx1::pr872-1794010757992-1a75511cf5b0
+x-vercel-id: pdx1::9557b-1794451108247-ab3cbcc3253b
 connection: close
 transfer-encoding: chunked
 
@@ -98,6 +98,13 @@ Extract clean, LLM-ready web content from any URL, including JavaScript-rendered
 
 - [Contents API](https://exa.ai/products/contents)
 - [Contents API documentation](https://exa.ai/docs/contents/quickstart.md)
+
+### Exa Snapshot
+
+Search and read the web as it was on a past date. Set a cutoff and Exa returns only page versions stored on or before it, for RL environments, evals and backtests.
+
+- [Exa Snapshot](https://exa.ai/products/snapshot)
+- [Snapshot documentation](https://exa.ai/docs/search/snapshot.md)
 
 ### Agent
 

@@ -1,6 +1,6 @@
 GET https://www.firecrawl.dev/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:17.504Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:27.611Z
 final-url: https://www.firecrawl.dev/.well-known/oauth-authorization-server
 
 HTTP 200
@@ -8,12 +8,12 @@ access-control-allow-headers: Content-Type, Authorization, Accept
 access-control-allow-methods: GET, POST, PUT, OPTIONS
 access-control-allow-origin: *
 access-control-max-age: 86400
-age: 1125
+age: 2410
 cache-control: public, max-age=3600
 content-encoding: br
-content-security-policy: default-src 'self' https://docs.firecrawl.dev; script-src 'nonce-f25403c4-f58b-492c-8fef-39520d19844c' 'strict-dynamic' 'wasm-unsafe-eval' 'report-sample' 'self' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://googleads.g.doubleclick.net https://static.ads-twitter.com https://www.clarity.ms https://scripts.clarity.ms https://us-assets.i.posthog.com https://www.dubcdn.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.chatbase.co https://assets.calendly.com https://platform.twitter.com https://bugcrowd.com https://assets.bugcrowdusercontent.com https://*.quarterzip.ai; script-src-elem 'nonce-f25403c4-f58b-492c-8fef-39520d19844c' 'strict-dynamic' 'wasm-unsafe-eval' 'report-sample' 'self' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://googleads.g.doubleclick.net https://static.ads-twitter.com https://www.clarity.ms https://scripts.clarity.ms https://us-assets.i.posthog.com https://www.dubcdn.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.chatbase.co https://assets.calendly.com https://platform.twitter.com https://bugcrowd.com https://assets.bugcrowdusercontent.com https://*.quarterzip.ai; style-src 'self' 'unsafe-inline' 'report-sample' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' 'report-sample' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob:; font-src 'self' data: https:; connect-src 'self' https: wss: data: blob: https://www.google.com/recaptcha/; frame-src 'self' https://docs.firecrawl.dev https://www.youtube.com https://www.youtube-nocookie.com https://platform.twitter.com https://www.linkedin.com https://www.google.com https://accounts.google.com https://recaptcha.google.com https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://js.stripe.com https://verify.didit.me https://www.googletagmanager.com https://vercel.live https://liveview.firecrawl.dev https://hangar.firecrawl.dev https://bugcrowd.com https://assets.bugcrowdusercontent.com https://renderer.gist.build https://code.gist.build https://www.chatbase.co https://calendly.com https://*.quarterzip.ai https://www.g2.com; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; object-src 'none'; upgrade-insecure-requests; report-uri /api/csp-report; report-to csp-endpoint
+content-security-policy: default-src 'self' https://docs.firecrawl.dev; script-src 'nonce-b5ad9e3b-770e-4b62-86e0-44dbf563a4b5' 'strict-dynamic' 'wasm-unsafe-eval' 'report-sample' 'self' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://googleads.g.doubleclick.net https://static.ads-twitter.com https://www.clarity.ms https://scripts.clarity.ms https://us-assets.i.posthog.com https://www.dubcdn.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.chatbase.co https://assets.calendly.com https://platform.twitter.com https://bugcrowd.com https://assets.bugcrowdusercontent.com https://*.quarterzip.ai; script-src-elem 'nonce-b5ad9e3b-770e-4b62-86e0-44dbf563a4b5' 'strict-dynamic' 'wasm-unsafe-eval' 'report-sample' 'self' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://googleads.g.doubleclick.net https://static.ads-twitter.com https://www.clarity.ms https://scripts.clarity.ms https://us-assets.i.posthog.com https://www.dubcdn.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.chatbase.co https://assets.calendly.com https://platform.twitter.com https://bugcrowd.com https://assets.bugcrowdusercontent.com https://*.quarterzip.ai; style-src 'self' 'unsafe-inline' 'report-sample' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' 'report-sample' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob:; font-src 'self' data: https:; connect-src 'self' https: wss: data: blob: https://www.google.com/recaptcha/; frame-src 'self' https://docs.firecrawl.dev https://www.youtube.com https://www.youtube-nocookie.com https://platform.twitter.com https://www.linkedin.com https://www.google.com https://accounts.google.com https://recaptcha.google.com https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/ https://js.stripe.com https://verify.didit.me https://www.googletagmanager.com https://vercel.live https://liveview.firecrawl.dev https://hangar.firecrawl.dev https://bugcrowd.com https://assets.bugcrowdusercontent.com https://renderer.gist.build https://code.gist.build https://www.chatbase.co https://calendly.com https://*.quarterzip.ai https://www.g2.com; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; object-src 'none'; upgrade-insecure-requests; report-uri /api/csp-report; report-to csp-endpoint
 content-type: application/json
-date: Sat, 07 Nov 2026 00:00:30 GMT
+date: Thu, 12 Nov 2026 01:58:16 GMT
 permissions-policy: geolocation=(self), microphone=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), display-capture=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), autoplay=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), speaker-selection=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), storage-access=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai")
 referrer-policy: strict-origin-when-cross-origin
 report-to: {"group":"csp-endpoint","max_age":10886400,"endpoints":[{"url":"/api/csp-report"}]}
@@ -21,13 +21,13 @@ reporting-endpoints: csp-endpoint="/api/csp-report"
 server: Vercel
 strict-transport-security: max-age=63072000
 x-content-type-options: nosniff
-x-csp-nonce: f25403c4-f58b-492c-8fef-39520d19844c
+x-csp-nonce: b5ad9e3b-770e-4b62-86e0-44dbf563a4b5
 x-frame-options: DENY
 x-matched-path: /api/oauth/metadata
 x-nextjs-rewritten-path: /api/oauth/metadata
-x-nonce: f25403c4-f58b-492c-8fef-39520d19844c
+x-nonce: b5ad9e3b-770e-4b62-86e0-44dbf563a4b5
 x-vercel-cache: HIT
-x-vercel-id: pdx1::iad1::sh7z2-1794010756616-cef50014f88b
+x-vercel-id: pdx1::iad1::bvxz2-1794451106729-a0e53deacb7e
 connection: close
 transfer-encoding: chunked
 

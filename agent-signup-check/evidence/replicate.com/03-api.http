@@ -1,22 +1,22 @@
 GET https://api.replicate.com/v1/account
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:17.296Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:27.132Z
 final-url: https://api.replicate.com/v1/account
 
 HTTP 401
-date: Sat, 07 Nov 2026 00:18:14 GMT
+date: Thu, 12 Nov 2026 02:37:24 GMT
 content-type: application/problem+json
 content-length: 93
 connection: close
-cf-cache-status: DYNAMIC
 x-xss-protection: 1; mode=block
+cf-cache-status: DYNAMIC
+x-frame-options: SAMEORIGIN
 strict-transport-security: max-age=15552000
 expect-ct: max-age=86400, enforce
 referrer-policy: same-origin
 x-content-type-options: nosniff
-x-frame-options: SAMEORIGIN
 server: cloudflare
-cf-ray: a56828dabc9aad66-PDX
+cf-ray: a592279339858d3a-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"title":"Unauthenticated","detail":"You did not pass an authentication token","status":401}

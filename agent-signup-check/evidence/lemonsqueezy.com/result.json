@@ -1,9 +1,10 @@
 {
  "site": "lemonsqueezy.com",
- "checkedAt": "2026-11-07T00:19:33.606Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:44.772Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 0,
  "partial": 1,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -69,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 277,
+   "ms": 261,
    "redirects": 1
   },
   {
@@ -79,7 +80,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 226,
+   "ms": 241,
    "redirects": 1
   },
   {
@@ -89,7 +90,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/vnd.api+json",
-   "ms": 164,
+   "ms": 150,
    "redirects": 0
   },
   {
@@ -99,7 +100,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 276,
+   "ms": 224,
    "redirects": 2
   },
   {
@@ -109,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 185,
+   "ms": 203,
    "redirects": 1
   },
   {
@@ -119,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 255,
+   "ms": 250,
    "redirects": 0
   },
   {
@@ -129,8 +130,18 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 180,
+   "ms": 248,
    "redirects": 1
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.lemonsqueezy.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.lemonsqueezy.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 283,
+   "redirects": 0
   },
   {
    "label": "x402 discovery",
@@ -139,7 +150,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 176,
+   "ms": 177,
    "redirects": 1
   }
  ]

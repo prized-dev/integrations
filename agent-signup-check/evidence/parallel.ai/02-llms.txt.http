@@ -1,24 +1,24 @@
 GET https://parallel.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:27.328Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:38.165Z
 final-url: https://parallel.ai/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 67
+age: 5911
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'self' https://parallel-v2.sanity.studio https://sanity.io https://www.sanity.io
 content-type: text/plain; charset=utf-8
-date: Sat, 07 Nov 2026 00:19:21 GMT
-etag: W/"22585c072d60f12e4fdcbd8a0753a811"
+date: Thu, 12 Nov 2026 02:38:33 GMT
+etag: W/"65b5963b05aefa15d213aa9f16f9040b"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::p57gt-1794010761844-136e8465c6d8
+x-vercel-id: pdx1::hd5n5-1794451113778-522b092cf90c
 connection: close
 transfer-encoding: chunked
 

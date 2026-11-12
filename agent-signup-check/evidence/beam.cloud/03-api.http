@@ -1,13 +1,13 @@
 GET https://api.beam.cloud/v2/deployment/
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:40.330Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:50.948Z
 final-url: https://api.beam.cloud/v2/deployment/
 
 HTTP 401
 content-type: application/json
 content-length: 132
 connection: close
-date: Sat, 07 Nov 2026 00:18:38 GMT
+date: Thu, 12 Nov 2026 02:37:48 GMT
 strict-transport-security: max-age=31536000; includeSubDomains
 www-authenticate: Bearer
 allow: GET, HEAD, OPTIONS
@@ -16,9 +16,9 @@ referrer-policy: same-origin
 cross-origin-opener-policy: same-origin
 vary: origin
 x-cache: Error from cloudfront
-via: 1.1 bd8c16c206acee72e6a2b3f5e3d960cc.cloudfront.net (CloudFront)
+via: 1.1 218e0df2fda307ee1ddfafa0b539d28a.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P3
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: PfCLF89ZyHUX12p7lZp8_FPWCr2c_xvoAXTXnlyDMkeo2m0Be6A08g==
+x-amz-cf-id: az8aJ45MeedbmDdlixKQ1PvLObBnrRpK6Jr7KktQJ7UJ1CU9En-_6A==
 
 {"type":"client_error","errors":[{"code":"not_authenticated","detail":"Authentication credentials were not provided.","attr":null}]}

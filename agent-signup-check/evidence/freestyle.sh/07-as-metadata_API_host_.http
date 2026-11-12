@@ -1,0 +1,18 @@
+GET https://api.freestyle.sh/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:50.138Z
+final-url: https://api.freestyle.sh/.well-known/oauth-authorization-server
+
+HTTP 401
+server: openresty
+date: Thu, 12 Nov 2026 02:37:49 GMT
+content-type: application/json
+vary: origin, access-control-request-method, access-control-request-headers
+access-control-allow-origin: *
+x-freestyle-trace-id: fd42a17b-41da-417a-bfcf-3e29e7168426
+x-request-id: ea7a2088-bbe1-4e28-9312-c77c3557532f
+strict-transport-security: max-age=63072000
+content-length: 217
+connection: close
+
+{"code":"UNAUTHORIZED_ERROR","message":"Unauthorized request to /.well-known/oauth-authorization-server","route":"/.well-known/oauth-authorization-server","reason":"No Authorization or Identity token header provided"}

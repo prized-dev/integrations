@@ -1,9 +1,10 @@
 {
  "site": "twilio.com",
- "checkedAt": "2026-11-07T00:19:07.984Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:20.738Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 2,
  "partial": 0,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -54,7 +55,7 @@
    "name": "Docs in Markdown",
    "url": "https://www.twilio.com/docs/llms.txt",
    "heading": "# Twilio Documentation",
-   "bytes": 386113,
+   "bytes": 386340,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -67,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 1021,
+   "ms": 486,
    "redirects": 1
   },
   {
@@ -77,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 738,
+   "ms": 709,
    "redirects": 1
   },
   {
@@ -87,7 +88,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 96,
+   "ms": 111,
    "redirects": 0
   },
   {
@@ -97,7 +98,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=UTF-8",
-   "ms": 273,
+   "ms": 46,
    "redirects": 0
   },
   {
@@ -107,7 +108,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 189,
+   "ms": 150,
    "redirects": 1
   },
   {
@@ -117,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/problem+json",
-   "ms": 274,
+   "ms": 349,
    "redirects": 0
   },
   {
@@ -127,8 +128,18 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 148,
+   "ms": 321,
    "redirects": 1
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.twilio.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.twilio.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "application/problem+json",
+   "ms": 381,
+   "redirects": 0
   },
   {
    "label": "x402 discovery",
@@ -137,7 +148,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 158,
+   "ms": 320,
    "redirects": 1
   }
  ]

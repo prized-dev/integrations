@@ -1,10 +1,10 @@
 GET https://docs.gitlab.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:38.610Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:48.074Z
 final-url: https://docs.gitlab.com/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:37 GMT
+date: Thu, 12 Nov 2026 02:38:46 GMT
 content-type: text/plain
 transfer-encoding: chunked
 connection: close
@@ -14,7 +14,7 @@ x-docs-origin: cloudflare-worker
 etag: W/"222422bef41a0d1706f2980f48a83fe4"
 content-encoding: gzip
 server: cloudflare
-cf-ray: a5682adcef729976-PDX
+cf-ray: a59229951e376c17-PDX
 
 # GitLab Documentation
 Learn how to use and administer GitLab, the most scalable Git-based integrated platform for software development.

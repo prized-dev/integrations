@@ -1,9 +1,10 @@
 {
  "site": "parallel.ai",
- "checkedAt": "2026-11-07T00:19:27.328Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:38.165Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 4,
+ "unread": 0,
  "total": 7,
  "whoActs": "the person confirms an email code (from auth.md prose)",
  "checks": [
@@ -84,7 +85,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 220,
+   "ms": 224,
    "redirects": 0
   },
   {
@@ -94,7 +95,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 299,
+   "ms": 76,
    "redirects": 0
   },
   {
@@ -104,7 +105,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 1081,
+   "ms": 1085,
    "redirects": 0
   },
   {
@@ -114,7 +115,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 592,
+   "ms": 231,
    "redirects": 0
   },
   {
@@ -124,7 +125,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 77,
+   "ms": 79,
    "redirects": 0
   },
   {
@@ -134,7 +135,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 502,
+   "ms": 64,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.parallel.ai/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.parallel.ai/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 72,
    "redirects": 0
   },
   {
@@ -144,7 +155,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 679,
+   "ms": 343,
    "redirects": 0
   },
   {
@@ -154,7 +165,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 187,
+   "ms": 70,
    "redirects": 0
   }
  ]

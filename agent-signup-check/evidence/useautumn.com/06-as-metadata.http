@@ -1,10 +1,10 @@
 GET https://api.useautumn.com/.well-known/oauth-authorization-server/api/auth
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:35.421Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:44.908Z
 final-url: https://api.useautumn.com/.well-known/oauth-authorization-server/api/auth
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:34 GMT
+date: Thu, 12 Nov 2026 02:38:44 GMT
 content-type: application/json
 content-length: 701
 connection: close

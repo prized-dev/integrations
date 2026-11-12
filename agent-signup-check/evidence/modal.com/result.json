@@ -1,9 +1,10 @@
 {
  "site": "modal.com",
- "checkedAt": "2026-11-07T00:18:25.326Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:37:35.398Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
+ "unread": 0,
  "total": 6,
  "whoActs": null,
  "checks": [
@@ -68,7 +69,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 376,
+   "ms": 372,
    "redirects": 0
   },
   {
@@ -78,7 +79,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 303,
+   "ms": 344,
    "redirects": 0
   },
   {
@@ -88,7 +89,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 170,
+   "ms": 383,
    "redirects": 0
   },
   {
@@ -98,7 +99,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 353,
+   "ms": 374,
    "redirects": 0
   },
   {
@@ -108,7 +109,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 322,
+   "ms": 392,
    "redirects": 0
   }
  ]

@@ -1,9 +1,10 @@
 {
  "site": "deno.com",
- "checkedAt": "2026-11-07T00:18:50.732Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:03.187Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 0,
  "partial": 1,
+ "unread": 1,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -26,7 +27,8 @@
    "name": "Sign-up by API",
    "url": "https://deno.com/.well-known/oauth-authorization-server",
    "status": "fail",
-   "reason": "Authorization server metadata is not usable; no sign-up API is documented in auth.md or llms.txt"
+   "reason": "Authorization server metadata is not usable; no sign-up API is documented in auth.md or llms.txt (not read on 2026-11-12: https://docs.deno.com/llms.txt answered with HTTP 500)",
+   "notRead": "https://docs.deno.com/llms.txt"
   },
   {
    "id": "challenge",
@@ -41,24 +43,25 @@
    "id": "limits",
    "name": "Spend limits",
    "status": "fail",
-   "reason": "No spend cap in metadata, auth.md or llms.txt"
+   "reason": "No spend cap in metadata, auth.md or llms.txt (not read on 2026-11-12: https://docs.deno.com/llms.txt answered with HTTP 500)",
+   "notRead": "https://docs.deno.com/llms.txt"
   },
   {
    "id": "payment",
    "name": "Payment handoff",
    "status": "fail",
-   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt (not read on 2026-11-12: https://docs.deno.com/llms.txt answered with HTTP 500)",
+   "notRead": "https://docs.deno.com/llms.txt"
   },
   {
    "id": "markdown",
    "name": "Docs in Markdown",
    "url": "https://docs.deno.com/llms.txt",
-   "tried": [
-    "https://deno.com/llms.txt",
-    "https://docs.deno.com/llms.txt"
-   ],
-   "status": "fail",
-   "reason": "https://deno.com/llms.txt answers with an HTML page; https://docs.deno.com/llms.txt answers HTTP 500"
+   "answered": "HTTP 500",
+   "was": "fail",
+   "wasReason": "https://deno.com/llms.txt answers with an HTML page; https://docs.deno.com/llms.txt answers HTTP 500",
+   "status": "unread",
+   "reason": "Not read on 2026-11-12: https://docs.deno.com/llms.txt answered with HTTP 500"
   }
  ],
  "requests": [
@@ -69,7 +72,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 328,
+   "ms": 305,
    "redirects": 0
   },
   {
@@ -79,7 +82,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 256,
+   "ms": 223,
    "redirects": 0
   },
   {
@@ -89,7 +92,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 252,
+   "ms": 286,
    "redirects": 0
   },
   {
@@ -99,7 +102,7 @@
    "status": 500,
    "error": null,
    "contentType": "text/plain;charset=UTF-8",
-   "ms": 219,
+   "ms": 288,
    "redirects": 0
   },
   {
@@ -109,7 +112,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 223,
+   "ms": 226,
    "redirects": 0
   },
   {
@@ -119,7 +122,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain;charset=UTF-8",
-   "ms": 216,
+   "ms": 290,
    "redirects": 0
   },
   {
@@ -129,7 +132,17 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 206,
+   "ms": 218,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.deno.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.deno.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/plain;charset=UTF-8",
+   "ms": 175,
    "redirects": 0
   },
   {
@@ -139,7 +152,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 258,
+   "ms": 252,
    "redirects": 0
   }
  ]

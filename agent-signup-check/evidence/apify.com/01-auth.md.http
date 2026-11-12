@@ -1,13 +1,13 @@
 GET https://apify.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:18.669Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.180Z
 final-url: https://apify.com/auth.md
 
 HTTP 200
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Sat, 07 Nov 2026 00:19:14 GMT
+date: Thu, 12 Nov 2026 01:51:10 GMT
 content-encoding: gzip
 strict-transport-security: max-age=15768000
 x-permitted-cross-domain-policies: none
@@ -24,14 +24,15 @@ access-control-allow-headers: Content-Type
 access-control-expose-headers: Link
 cache-control: public, max-age=7200
 accept-ranges: bytes
-last-modified: Fri, 06 Nov 2026 16:01:49 GMT
-etag: W/"2041-1a1b19845c8"
+last-modified: Wed, 11 Nov 2026 13:53:12 GMT
+etag: W/"2034-1a1cae25140"
 vary: Accept-Encoding
-x-cache: Miss from cloudfront
-via: 1.1 6daec11ce051cffaa3e440291c9bdce2.cloudfront.net (CloudFront)
+x-cache: Hit from cloudfront
+via: 1.1 06d442c8680c66c3ea5fc3c648c3bc86.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: 4hvTaD4J23VvnwHm1eZ7pZuO6AP9tn6a_RqJDeZPo90ml88_ShPgGQ==
+x-amz-cf-id: e1TiqTYDbz9g-o-OM6dxZ64fLtBp6TLW4wv09so2TDfpP22ra7cbLA==
+age: 2836
 
 # auth.md — how an agent gets an Apify credential
 
@@ -143,7 +144,7 @@ While the user has not finished, this returns `{"error": "authorization_pending"
 
 ## 2. Browser OAuth through an MCP client
 
-If you are inside an MCP client, connect it to `https://mcp.apify.com` over streamable HTTP and let the client run the authorization code flow. The user signs in and approves in a browser, and the client stores the token; you never see it. Per-client setup is at `https://mcp.apify.com` and `https://docs.apify.com/integrations/mcp.md`.
+If you are inside an MCP client, connect it to `https://mcp.apify.com` over streamable HTTP and let the client run the authorization code flow. The user signs in and approves in a browser, and the client stores the token; you never see it. Per-client setup is at `https://mcp.apify.com` and `https://docs.apify.com/mcp.md`.
 
 ## 3. An API token from the user
 

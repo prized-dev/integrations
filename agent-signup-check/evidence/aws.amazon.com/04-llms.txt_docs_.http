@@ -1,13 +1,13 @@
 GET https://docs.aws.amazon.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:42.256Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:53.999Z
 final-url: https://docs.aws.amazon.com/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Sat, 07 Nov 2026 00:09:31 GMT
+date: Thu, 12 Nov 2026 02:34:49 GMT
 content-encoding: gzip
 server: Server
 cache-control: max-age=600
@@ -16,15 +16,15 @@ strict-transport-security: max-age=47304000; includeSubDomains
 x-xss-protection: 1; mode=block
 x-content-type-options: nosniff, nosniff
 content-security-policy: upgrade-insecure-requests;      script-src 'self' 'unsafe-inline' blob:        *.awsstatic.com        *.cdn.uis.awsstatic.com        *.cdn.console.awsstatic.com        d2c.aws.amazon.com        a0.awsstatic.com        *.feedback.console.aws.dev        *.shortbread.aws.dev        *.awswaf.com        *.contentsquare.net        app.contentsquare.com;      object-src 'none';
-last-modified: Fri, 06 Nov 2026 21:56:38 GMT
+last-modified: Thu, 12 Nov 2026 00:10:57 GMT
 accept-ranges: bytes
-etag: "hO6Rw2cq2kMJ8eOgY0W0uzcvyiY=-gzip"
+etag: "00HKD9VR8uZ3VKqB778BmWbFRTY=-gzip"
 vary: Accept-Encoding
 x-cache: Hit from cloudfront
-via: 1.1 11017c4db22106ac70e16ce75190a430.cloudfront.net (CloudFront)
+via: 1.1 8af7e76489ae9222af2304e63d2c0520.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P4
-x-amz-cf-id: wzELPu2_j3DaXWUdDgyctZiP8Ci2HqouHV5M51ki8cKh63IE0PVBfw==
-age: 549
+x-amz-cf-id: jG17vySM0ZfC8yQsZSaQX9OcW3r0xU_tJb-57oUY432zlhCOL1iBeg==
+age: 182
 
 # Amazon Web Services (AWS) Documentation
 > This file provides structured access to AWS service documentation for large language models. Each section represents a service landing page with links to key documentation resources.
@@ -827,6 +827,8 @@ age: 549
 
 - [Amazon EMR Amazon EMR Release Guide](https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-release-components.md): Explains Amazon EMR software components and applications. [llms.txt](https://docs.aws.amazon.com/emr/latest/ReleaseGuide/llms.txt)
 
+- [AWS Emulator User Guide](https://docs.aws.amazon.com/emulator/latest/userguide/what-is-service.md): AWS Emulator is a local emulator of the AWS APIs that you can use to test your software on your own machine, without deploying on AWS. [llms.txt](https://docs.aws.amazon.com/emulator/latest/userguide/llms.txt)
+
 - [AWS Nitro Enclaves User Guide](https://docs.aws.amazon.com/enclaves/latest/user/nitro-enclave.md): Use the AWS Nitro Enclaves feature of Amazon EC2 to create isolated execution environments, called enclaves, from Amazon EC2 instances. [llms.txt](https://docs.aws.amazon.com/enclaves/latest/user/llms.txt)
 
 - [AWS Encryption SDK Developer Guide](https://docs.aws.amazon.com/encryption-sdk/latest/developer-guide/introduction.md): Use the AWS Encryption SDK to build applications that protect data with encryption best practices. [llms.txt](https://docs.aws.amazon.com/encryption-sdk/latest/developer-guide/llms.txt)
@@ -1555,11 +1557,11 @@ age: 549
 
 - [Quick Setup API Reference](https://docs.aws.amazon.com/quick-setup/latest/APIReference/Welcome.md): Quick Setup helps you quickly configure frequently used services and features with recommended best practices. [llms.txt](https://docs.aws.amazon.com/quick-setup/latest/APIReference/llms.txt)
 
-- [Amazon Quick User Guide](https://docs.aws.amazon.com/quick/latest/userguide/what-is.md): Learn about Amazon Quick, an AI-powered service for automating tasks, analyzing data, building web applications, and conducting research. [llms.txt](https://docs.aws.amazon.com/quick/latest/userguide/llms.txt)
+- [AWS Quick User Guide](https://docs.aws.amazon.com/quick/latest/userguide/what-is.md): Learn about AWS Quick, an AI-powered service for automating tasks, analyzing data, building web applications, and conducting research. [llms.txt](https://docs.aws.amazon.com/quick/latest/userguide/llms.txt)
 
-- [Amazon Quick API Reference](https://docs.aws.amazon.com/quicksight/latest/APIReference/Welcome.md): Amazon Quick Sight is a fully managed, serverless business intelligence service for the AWS Cloud that makes it easy to extend data and insights to every user in your organization. [llms.txt](https://docs.aws.amazon.com/quicksight/latest/APIReference/llms.txt)
+- [AWS Quick API Reference](https://docs.aws.amazon.com/quicksight/latest/APIReference/Welcome.md): Amazon Quick Sight is a fully managed, serverless business intelligence service for the AWS Cloud that makes it easy to extend data and insights to every user in your organization. [llms.txt](https://docs.aws.amazon.com/quicksight/latest/APIReference/llms.txt)
 
-- [Amazon Quick Sight Developer Guide](https://docs.aws.amazon.com/quicksight/latest/developerguide/welcome.md): Welcome to the Amazon Quick Sight Developer Guide, which provides usage examples of API operations for Amazon Quick Sight and procedural walkthroughs of common tasks. [llms.txt](https://docs.aws.amazon.com/quicksight/latest/developerguide/llms.txt)
+- [AWS Quick Sight Developer Guide](https://docs.aws.amazon.com/quicksight/latest/developerguide/welcome.md): Welcome to the AWS Quick Sight Developer Guide, which provides usage examples of API operations for AWS Quick Sight and procedural walkthroughs of common tasks. [llms.txt](https://docs.aws.amazon.com/quicksight/latest/developerguide/llms.txt)
 
 - [AWS Quick Start Guide: Back Up Your Files to Amazon Simple Storage Service Quick Start](https://docs.aws.amazon.com/quickstarts/latest/s3backup/welcome.md): Welcome to the AWS Quick Start Guide: Back Up Your Files to Amazon Simple Storage Service. [llms.txt](https://docs.aws.amazon.com/quickstarts/latest/s3backup/llms.txt)
 
@@ -1601,6 +1603,8 @@ age: 549
 
 - [Aerospace Reference Architecture Diagrams Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/aerospace/aws-aerospace-vdi-reference-architecture.md): This architectural diagram shows the process for running computer-aided engineering (CAE) computations and visualizations in the cloud with desktop access. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/aerospace/llms.txt)
 
+- [Agriculture Reference Architecture Diagrams Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/agriculture/edge-inference-agriculture.md): Enable edge inference in rural and remote agricultural environments by using AWS IoT Greengrass and Amazon SageMaker AI Neo. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/agriculture/llms.txt)
+
 - [AI-Enabled Audio Insight Processing Pipeline Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/ai-audio-insight-pipeline/ai-audio-insight-pipeline.md): Shows how to use API-driven AI/ML services to process audio files and create a pipeline for multi-language insights through a serverless architecture.
 
 - [AI/ML Based Intelligent Email Responder Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/ai-ml-intelligent-email-responder/ai-ml-intelligent-email-responder.md): Shows how to improve customer experience and agent productivity by using Amazon Simple Email Service and AWS ML services to comprehend intent and identify next-best-action for email responses.
@@ -1617,7 +1621,7 @@ age: 549
 
 - [Airlines Data Platform Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/airlines-data-platform/airlines-data-platform.md): Build a scalable airline data platform on AWS with purpose-built databases, data lakes, and AI/ML services.
 
-- [Airport Terminal Optimizer Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/airport-terminal-optimizer/airport-terminal-optimizer.md): Optimize airport terminal and gate operations by using AWS Glue, Amazon EMR, Amazon Athena, and Amazon Quick Sight.
+- [Airport Terminal Optimizer Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/airport-terminal-optimizer/airport-terminal-optimizer.md): Optimize airport terminal and gate operations by using AWS Glue, Amazon EMR, Amazon Athena, and AWS Quick Sight.
 
 - [Amazon Alexa Skill for Airlines Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/alexa-skill-airlines/alexa-skill-airlines.md): Build a secure airline Alexa Skill for booking and travel management by using Amazon API Gateway, AWS Lambda, and Amazon Cognito.
 
@@ -1633,21 +1637,17 @@ age: 549
 
 - [Build Your Own Anomaly Detection ML Pipeline Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/anomaly-detection-ml-pipeline/anomaly-detection-ml-pipeline.md): Shows how to build an end-to-end ML pipeline that detects anomalies by ingesting real-time streaming data, performing transformations, and continuously retraining ML models.
 
-- [Architecture for Unified Communications Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/architecture-unified-communications/architecture-unified-communications.md): This reference architecture diagram shows how to deploy the Avaya Aura Unified Communications platform on AWS.
-
 - [Predictive Maintenance on AWS using Aspen Mtell Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/aspen-mtell-predictive-maintenance/aspen-mtell-predictive-maintenance.md): Reference architecture diagram for AI/ML-powered predictive maintenance on AWS using Aspen Mtell for early warnings of equipment failure.
 
 - [Asynchronous Online Gaming Architecture Diagrams Game Tech](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/asynchronous-online-gaming/asynchronous-online-gaming.md): Build a highly available, scalable, and elastic architecture for mobile and online games that supports millions of players by using managed AWS services.
 
 - [Automated Archival for Amazon Redshift Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/automated-archival-redshift/automated-archival-redshift.md): Shows how to automate the periodic data archival process for an Amazon Redshift database with cold data available instantly through Amazon Redshift Spectrum.
 
-- [Automotive Call Center Architecture Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/automotive-call-center-architecture/automotive-call-center-architecture.md): This architecture enables you to build an automotive call center solution as part of connected vehicle platform to enhance customer safety with emergency (eCall) and breakdown (bCall) call services using Connect Customer.
+- [Automotive Reference Architecture Diagrams Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/automotive/automotive-call-center-architecture.md): With this architecture, you can build an automotive call center solution as part of a connected vehicle platform to enhance customer safety with emergency (eCall) and breakdown (bCall) call services using Amazon Connect Customer. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/automotive/llms.txt)
 
 - [Autoscaling Asynchronous Job Queues Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/autoscaling-async-job-queues/autoscaling-async-job-queues.md): Perform background processing jobs such as document generation, ETL tasks, and inference with AWS Fargate and Amazon Simple Queue Service.
 
 - [AVEVA Unified Engineering Deployment on AWS Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/aveva-unified-engineering/aveva-unified-engineering.md): Reference architecture diagram for deploying AVEVA Unified Engineering desktop applications for process simulation and engineering design on AWS.
-
-- [AWS Connected Vehicle Reference Architecture Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/aws-connected-vehicle/aws-connected-vehicle.md): This architecture enables you to use AWS IoT Core to modernize workloads, process vehicle data, and secure your connected vehicles.
 
 - [AWS DevOps Monitoring Dashboard AWS Reference Architecture Diagram](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/aws-devops-monitoring-dashboard/aws-devops-monitoring-dashboard.md): This architecture automates the process of ingesting, analyzing, and visualizing continuous integration/continuous delivery (CI/CD) metrics.
 
@@ -1667,8 +1667,6 @@ age: 549
 
 - [Build a Healthcare Data Pipeline on AWS with IBM Cloud Pak for Data Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/build-healthcare-data-pipeline-on-aws-ibm-cp4d/build-healthcare-data-pipeline-on-aws-ibm-cp4d.md): This architecture helps you build data pipelines and use machine learning (ML) models to predict patient treatment outcome, readmission rate, or disease progression.
 
-- [Camera as a Service Architecture Diagrams Automotive](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/camera-as-a-service/camera-as-a-service.md): Use IoT-enabled cameras to generate live video feed and machine learning inference by using Amazon Kinesis Video Streams, Amazon Rekognition, and Amazon EKS.
-
 - [Central Logging and Analytics in Hybrid Environments Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/central-logging-analytics-hybrid/central-logging-analytics-hybrid.md): Shows how to build a central logging and analytics solution to analyze Amazon CloudWatch logs from a hybrid environment, including VMware Cloud on AWS.
 
 - [Centralized Alarms and Notifications Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/centralized-alarms-notifications/centralized-alarms-notifications.md): Shows how to deploy a serverless monitoring and alarm system configured to send workload-specific notifications.
@@ -1683,8 +1681,6 @@ age: 549
 
 - [Change Data Capture Using AWS Database Migration Service Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/change-data-capture-dms/change-data-capture-dms-migrate.md): Shows how to use AWS Database Migration Service for change data capture to migrate databases using ongoing replication. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/change-data-capture-dms/llms.txt)
 
-- [Cloud-native Contact Center for Multilingual IT Service Desk Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/cloud-native-contact-center-multilingual/cloud-native-contact-center-multilingual.md): This reference architecture diagram shows how to modernize the IT service desk with an intelligent, omnichannel contact center by using Amazon Connect.
-
 - [Cloud Point-of-Sale (POS) System on AWS for CPG Architecture diagrams for retail](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/cloud-pos-cpg/cloud-pos-cpg-chapter.md): A reference architecture diagram for building a cloud-based point-of-sale (POS) system on AWS for consumer packaged goods (CPG) direct-to-consumer store sales.
 
 - [Cold Chain Logistics Powered by Mendix and AWS Architecture diagrams for transportation and logistics](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/cold-chain-logistics-mendix/cold-chain-logistics-mendix-cloud.md): Build low-code cold chain logistics applications on Mendix Cloud (aPaaS) integrated with AWS services for IoT monitoring and quality inspection. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/cold-chain-logistics-mendix/llms.txt)
@@ -1693,17 +1689,11 @@ age: 549
 
 - [Connected Home Command and Control Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/connected-home-command-control/connected-home-command-control.md): This reference architecture diagram shows how to integrate Alexa with your connected home devices by using AWS.
 
-- [Connected Home: Machine Learning at the Edge Architecture diagrams for connected home](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/connected-home-ml-edge/connected-home-ml-edge.md): Run machine learning (ML) inference on IoT home devices by using AWS IoT Greengrass and Amazon SageMaker AI.
-
 - [Connected Home Telemetry Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/connected-home-telemetry/connected-home-telemetry.md): This reference architecture diagram shows how to measure and collect data from smart home devices by using AWS.
 
 - [Connected Lodging Properties Using IoT and AI/ML Architecture diagrams for hospitality](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/connected-lodging-properties-iot/connected-lodging-properties-iot.md): Build smart, connected lodging properties by using AWS IoT Core, AWS IoT Greengrass, and Amazon SageMaker AI for touchless personalization and operational monitoring.
 
 - [Connected Medical Devices with AWS IoT Architecture diagrams for healthcare](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/connected-medical-devices-iot/connected-medical-devices-iot.md): Manage manufacturer medical devices in hospitals, clinics, and homes by using AWS IoT Greengrass and AWS IoT Core.
-
-- [Connected Mobility Data Lake Connected Mobility Data Lake](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/connected-mobility-data-lake/connected-mobility-data-lake.md): This architecture enables you to create connected mobility data products and democratize data access with a serverless data mesh architecture.
-
-- [Connected Mobility Platform Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/connected-mobility-platform-on-aws/connected-mobility-platform-on-aws.md): This architecture addresses three elements of the connected platform: in-vehicle, external infrastructure, and backend services on the cloud.
 
 - [Connected Restaurants using IoT and AI/ML Architecture diagrams for hospitality](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/connected-restaurants-iot-ai-ml/connected-restaurants-iot-ai-ml.md): Build smart, connected restaurants by using AWS IoT Core, AWS IoT Greengrass, and Amazon SageMaker AI to maintain food quality, manage queues, and monitor operations.
 
@@ -1712,6 +1702,8 @@ age: 549
 - [Consumer Review Sentiment Analysis for CPG Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/consumer-review-sentiment-cpg/consumer-review-sentiment-cpg.md): Shows how to gain insights from consumer reviews in near real time by using a serverless event-driven architecture for consumer packaged goods (CPG) companies.
 
 - [Consuming Data from InforOS over SFTP Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/consuming-data-from-inforos/consuming-data-from-inforos.md): Reference architecture diagram for integrating applications with Infor CloudSuite by consuming bulk data over SFTP on AWS.
+
+- [Contact Center Reference Architecture Diagrams Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/contact-center/enable-digital-messaging-amazon-connect.md): This reference architecture diagram shows how to add support for digital messaging channels to your contact center. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/contact-center/llms.txt)
 
 - [Content Moderation and Compliance Using AWS AI Services Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/content-moderation-compliance/content-moderation-compliance.md): Shows how to build customizable serverless workflows for reliable and scalable AI-based content moderation.
 
@@ -1725,7 +1717,7 @@ age: 549
 
 - [Architecture of Crew Management System Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/crew-management-architecture/crew-management-architecture.md): Build crew management Trip Update and Retrieve services by using Amazon Elastic Kubernetes Service, Amazon Aurora, and AWS CloudFormation.
 
-- [Architecture for Airline Crew Management Systems Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/crew-management-systems/crew-management-systems.md): Build airline crew management systems by using Amazon Elastic Kubernetes Service, Amazon Aurora, and Amazon Quick Sight.
+- [Architecture for Airline Crew Management Systems Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/crew-management-systems/crew-management-systems.md): Build airline crew management systems by using Amazon Elastic Kubernetes Service, Amazon Aurora, and AWS Quick Sight.
 
 - [Customer Engagement Using AI/ML for Lodging Architecture diagrams for hospitality](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/customer-engagement-ai-ml-lodging/customer-engagement-ai-ml-lodging.md): Personalize customer interactions and improve response times by using Connect Customer, Amazon Lex, and Amazon Personalize.
 
@@ -1789,13 +1781,7 @@ age: 549
 
 - [DynamoDB Global Replication with Data Localization Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/dynamodb-global-replication/dynamodb-global-replication.md): Shows how to replicate DynamoDB data globally while complying with data localization mandates.
 
-- [Edge Inference for Agriculture Architecture diagrams for agriculture](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/edge-inference-agriculture/edge-inference-agriculture.md): Enable edge inference in rural and remote agricultural environments by using AWS Internet of Things (IoT) Greengrass and Amazon SageMaker AI Neo.
-
 - [Edit in the Cloud on AWS AWS Reference Architecture Diagram](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/edit-in-cloud-on-aws/edit-in-cloud-on-aws.md): This architecture helps you build a virtual, video editing environment on AWS to collaborate with your editors and creative professionals.
-
-- [Electric Vehicle Charging OCPP Handler Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/electric-vehicle-charging-ocpp-handler/electric-vehicle-charging-ocpp-handler.md): This reference architecture demonstrates how to build a highly-scalable, low-latency electric vehicle (EV) charge point operator system based on the EV industry standard, Open Charge Point Protocol (OCPP), using AWS services like AWS IoT Core and AWS Lambda.
-
-- [Electric Vehicle Charging Station Management System Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/electric-vehicle-charging-station-management-software/electric-vehicle-charging-station-management-software.md): Build charging station management software for electric vehicles.
 
 - [Electro-Optical Imagery Reference Architecture Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/electro-optical-imagery-architecture/electro-optical-imagery-architecture.md): This architecture enables you to process electro-optical imagery on AWS.
 
@@ -1807,10 +1793,6 @@ age: 549
 
 - [Emerson Plantweb Optics Data Lake for Health Care and Life Sciences Architecture diagrams for healthcare](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/emerson-plantweb-optics-data-lake-hcls/emerson-plantweb-optics-data-lake-hcls.md): Ingest data from multiple disparate sources into a unified data lake for health care and life sciences (HCLS) use cases by using Emerson Plantweb Optics Data Lake (PWODL).
 
-- [Enable Digital Messaging Channels in Amazon Connect Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/enable-digital-messaging-amazon-connect/enable-digital-messaging-amazon-connect.md): This reference architecture diagram shows how to add support for digital messaging channels to your contact center.
-
-- [Enable Two-Way SMS in Amazon Connect Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/enable-two-way-sms-amazon-connect/enable-two-way-sms-amazon-connect.md): This reference architecture diagram shows how to add SMS support to your contact center.
-
 - [Enhance Existing ML Lifecycles with Amazon SageMaker AI and AWS Fargate Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/enhance-ml-sagemaker-fargate/enhance-ml-sagemaker-fargate.md): Shows how to enhance your existing ML workflow by integrating with SageMaker AI model training while preserving custom serverless endpoints with AWS Fargate.
 
 - [Exploring Real-Time Streaming for Retrieval Augmented Generation in GenerativeAI Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/exploring-real-time-streaming-for-retrieval-augmented-generation/exploring-real-time-streaming-for-retrieval-augmented-generation.md): This architecture demonstrates the integration of streaming data services on AWS with Retrieval Augmented Generation(RAG) in Generative AI applications.
@@ -1820,8 +1802,6 @@ age: 549
 - [Using the Federal Aviation Administration SWIM Data Lake Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/faa-swim-data-lake/faa-swim-data-lake.md): Process and analyze FAA SWIM aeronautical data by using Amazon Kinesis, AWS Lambda, AWS Glue, and Amazon Aurora.
 
 - [Financial Advisor Chat Assistant Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/financial-advisor-chat-assistant/financial-advisor-chat-assistant.md): This architecture enables you to .....
-
-- [Fleet Management Solution for Connected Farm Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/fleet-management-for-connected-farm/fleet-management-for-connected-farm.md): This architecture enables you to to create an intelligent fleet management solution for farming, using data from Internet of Things (IoT) sensors and cameras at strategic locations and in assets such as tractors and combine harvesters.
 
 - [Flight Planning Using Data Lakes and AI/ML Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/flight-planning-data-lakes/flight-planning-data-lakes.md): Improve flight planning with data lakes and AI/ML by using Amazon S3, AWS Glue, Amazon EMR, and Amazon SageMaker AI.
 
@@ -1853,7 +1833,7 @@ age: 549
 
 - [Hosting Adobe Experience Manager on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/hosting-adobe-experience-manager/hosting-adobe-experience-manager.md): Deploy Adobe Experience Manager on AWS by using Amazon Elastic Compute Cloud, Amazon Simple Storage Service, Amazon CloudFront, and AWS Lambda.
 
-- [HPC Simulation Workload for Renewable Energy Data Architecture diagrams for power and utilities](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/hpc-simulation-renewable-energy/hpc-simulation-renewable-energy.md): Architect on-premises renewable energy assets with best practices for IoT ingestion, high performance computing (HPC) simulation, and dashboarding by using AWS IoT Core, AWS ParallelCluster, and Amazon Quick Sight.
+- [HPC Simulation Workload for Renewable Energy Data Architecture diagrams for power and utilities](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/hpc-simulation-renewable-energy/hpc-simulation-renewable-energy.md): Architect on-premises renewable energy assets with best practices for IoT ingestion, high performance computing (HPC) simulation, and dashboarding by using AWS IoT Core, AWS ParallelCluster, and AWS Quick Sight.
 
 - [Hybrid Connectivity to AWS Transit Gateway Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/hybrid-connectivity-transit-gateway/hybrid-vpn.md): Create an AWS Site-to-Site VPN connection directly to AWS Transit Gateway for managed VPN connectivity to multiple VPCs. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/hybrid-connectivity-transit-gateway/llms.txt)
 
@@ -1918,8 +1898,6 @@ age: 549
 - [Last Mile Delivery Architecture diagrams for transportation and logistics](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/last-mile-delivery/last-mile-delivery.md): Optimize last mile delivery with real-time data analysis, IoT vehicle monitoring, and route optimization by using AWS IoT Core, AWS Fargate, and Amazon Neptune.
 
 - [Life Sciences Data Collection, Storage, and Processing Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/life-sciences-data-collection-storage-processing/life-sciences-data-collection-storage-processing.md): This architecture diagram helps you learn how to transfer life sciences data files to the cloud and provide data access using Amazon Web Services (AWS).
-
-- [Livestock Counting at the Edge Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/livestock-counting-at-the-edge/livestock-counting-at-the-edge.md): This architecture enables you to build a near real-time, automated counting application for livestock.
 
 - [Local Clusters for Amazon EKS on AWS Outposts Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/local-clusters-for-amazon-eks-on-aws-outposts/local-clusters-for-amazon-eks-on-aws-outposts.md): This reference architecture diagram helps you deploy a local cluster for Amazon Elastic Kubernetes Service (Amazon EKS) on AWS Outposts.
 
@@ -2041,13 +2019,11 @@ age: 549
 
 - [Predictive Maintenance for Fleets Architecture diagrams for transportation and logistics](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/predictive-maintenance-for-fleets/predictive-maintenance-for-fleets.md): Predict battery failures in your vehicle fleet by using historical telemetry data and live sensor logs with AWS IoT Core, Amazon SageMaker AI, and Amazon Aurora.
 
-- [Predictive Modeling for Automotive Retail Architecture Diagrams Automotive](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/predictive-modeling-automotive-retail/predictive-modeling-automotive-retail.md): Predict fine-grained return on investment (ROI) for automotive sales incentives by using Amazon SageMaker AI, AWS Glue, and AWS Step Functions.
-
 - [Producing Data to InforOS over SFTP Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/producing-data-to-inforos/producing-data-to-inforos.md): Reference architecture diagram for producing data to Infor CloudSuite over SFTP with AWS.
 
 - [Product Recommendations Powered by Neo4j Architecture diagrams for financial services](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/product-recommendations-neo4j/product-recommendations-neo4j.md): Deliver personalized product recommendations in near real time by using Neo4j graph technology, Amazon EMR, Amazon SageMaker AI, and Amazon Kinesis.
 
-- [Property Optimizer for Lodging Architecture diagrams for hospitality](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/property-optimizer-lodging/property-optimizer-lodging.md): Forecast demand and optimize property performance by using diverse data sources with Amazon Forecast, AWS Glue, and Amazon Quick Sight.
+- [Property Optimizer for Lodging Architecture diagrams for hospitality](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/property-optimizer-lodging/property-optimizer-lodging.md): Forecast demand and optimize property performance by using diverse data sources with Amazon Forecast, AWS Glue, and AWS Quick Sight.
 
 - [PROS Revenue Management Platform on AWS Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/pros-revenue-management/pros-revenue-management.md): Host the PROS revenue management platform on AWS with high availability, security, and cost-effective infrastructure.
 
@@ -2070,8 +2046,6 @@ age: 549
 - [Response Planning on AWS using Aera Architecture diagrams for retail](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/response-planning-aera/response-planning-aera.md): Explore options for ingesting data and using AWS services in an Aera Response Planning solution.
 
 - [Retail Customer Service Contact Center Architecture diagrams for retail](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/retail-contact-center/retail-contact-center.md): Build a next-generation customer service contact center for retail by using Amazon Connect Customer.
-
-- [Retail Customer Service Contact Center Using Amazon Connect Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/retail-customer-service-contact-center/retail-customer-service-contact-center.md): This reference architecture diagram shows how retailers can simplify and transform their customer service channel with NLP and automation by using Amazon Connect.
 
 - [Revenue Growth Management System on AWS Architecture diagrams for retail](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/revenue-growth-management-system/revenue-growth-management-system.md): Build a revenue growth management system on AWS for demand shaping, attribution, and marketing mix.
 
@@ -2128,8 +2102,6 @@ age: 549
 - [Siemens Teamcenter Product Lifecycle Management on AWS Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/siemens-teamcenter-plm/siemens-teamcenter-plm.md): Reference architecture diagram for deploying Siemens Teamcenter product lifecycle management on AWS for high availability.
 
 - [Smart Factory on AWS Outposts Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/smart-factory-outposts/smart-factory-outposts.md): Reference architecture diagram for a scalable, secure IoT-backed smart factory by using AWS Outposts and AWS Regions.
-
-- [Smart Farm on AWS Smart Farm on AWS Architecture](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/smart-farm-on-aws/smart-farm-on-aws.md): This Connected Farm reference architecture enables sensors, computer vision, and edge inference in agriculture by focusing on ensuring scalability, elasticity, and a responsiveness for each operation’s growing and changing needs.
 
 - [Smart Grocery with Scan-and-Go, Computer Vision, and IoT Architecture diagrams for retail](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/smart-grocery-scan-and-go/smart-grocery-scan-and-go.md): Build a smart grocery solution with Scan-and-Go shopping, computer vision, and IoT on AWS. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/smart-grocery-scan-and-go/llms.txt)
 
@@ -2385,7 +2357,7 @@ age: 549
 
 - [IAM Identity Center SCIM Implementation Developer Guide](https://docs.aws.amazon.com/singlesignon/latest/developerguide/what-is-scim.md): Learn how the SCIM client is used in AWS IAM Identity Center. [llms.txt](https://docs.aws.amazon.com/singlesignon/latest/developerguide/llms.txt)
 
-- [AWS IAM Identity Center User Guide](https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.md): AWS IAM Identity Center is the AWS solution for connecting your workforce users to AWS managed applications such as Kiro and Amazon Quick, and other AWS resources. [llms.txt](https://docs.aws.amazon.com/singlesignon/latest/userguide/llms.txt)
+- [AWS IAM Identity Center User Guide](https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.md): AWS IAM Identity Center is the AWS solution for connecting your workforce users to AWS managed applications such as Kiro and AWS Quick, and other AWS resources. [llms.txt](https://docs.aws.amazon.com/singlesignon/latest/userguide/llms.txt)
 
 - [AWS Service Management Connector Administrator Guide](https://docs.aws.amazon.com/smc/latest/ag/overview.md): AWS Service Management Connector and its integration connectors enable you to provision, manage, and operate native AWS resources and capabilities in familiar IT Service Management (ITSM) tooling, such as ServiceNow and Atlassian. [llms.txt](https://docs.aws.amazon.com/smc/latest/ag/llms.txt)
 

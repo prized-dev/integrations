@@ -1,16 +1,16 @@
 GET https://cloud.mongodb.com/api/atlas/v2/groups
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:01.448Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:13.848Z
 final-url: https://cloud.mongodb.com/api/atlas/v2/groups
 
 HTTP 401
-date: Sat, 07 Nov 2026 00:18:58 GMT
+date: Thu, 12 Nov 2026 02:38:09 GMT
 vary: Accept-Encoding
-www-authenticate: Digest realm="MMS Public API", domain="", nonce="s7qJAedSuO4gIni1ezCrTsVZNmqQ4CRg", algorithm=MD5, qop="auth", stale=false
+www-authenticate: Digest realm="MMS Public API", domain="", nonce="MXdiDXJ/kA6MIYlad2u+OXRm99cbIotn", algorithm=MD5, qop="auth", stale=false
 content-type: application/json
 content-length: 142
 server: mdbws
-x-envoy-upstream-service-time: 4
+x-envoy-upstream-service-time: 6
 connection: close
 
 {

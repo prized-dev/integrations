@@ -1,6 +1,6 @@
 GET https://supabase.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:52.127Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:02.698Z
 final-url: https://supabase.com/auth.md
 
 HTTP 200
@@ -8,7 +8,7 @@ age: 0
 cache-control: public, max-age=86400
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Sat, 07 Nov 2026 00:18:48 GMT
+date: Thu, 12 Nov 2026 02:37:59 GMT
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: Accept
@@ -16,7 +16,7 @@ x-content-type-options: nosniff
 x-matched-path: /api-v2/md/[...slug]
 x-nextjs-rewritten-path: /api-v2/md/auth
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::jcmqw-1794010728601-722921e1fcf7
+x-vercel-id: pdx1::iad1::4lc9r-1794451079366-793f590ca8b7
 connection: close
 transfer-encoding: chunked
 

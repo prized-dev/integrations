@@ -1,10 +1,10 @@
 GET https://api.netlify.com/api/v1/sites
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:32.225Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:42.898Z
 final-url: https://api.netlify.com/api/v1/sites
 
 HTTP 401
-date: Sat, 07 Nov 2026 00:18:29 GMT
+date: Thu, 12 Nov 2026 02:37:39 GMT
 content-type: application/json; charset=utf-8
 content-length: 38
 connection: close
@@ -14,8 +14,8 @@ timing-allow-origin: https://app.netlify.com, https://www.netlify.com
 vary: Accept, Origin
 x-content-type-options: nosniff
 x-frame-options: ALLOWALL
-x-nf-srv-version: 8ccc87e
-x-request-id: 7d91bb00-b0d1-42c1-bccb-249fd6d2553c
-x-runtime: 0.001800
+x-nf-srv-version: 4270fb9
+x-request-id: 7dd28f22-8af2-4502-a945-fce9111828ab
+x-runtime: 0.001882
 
 {"code":401,"message":"Access Denied"}

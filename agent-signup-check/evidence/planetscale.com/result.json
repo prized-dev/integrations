@@ -1,9 +1,10 @@
 {
  "site": "planetscale.com",
- "checkedAt": "2026-11-07T00:18:55.137Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:06.223Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 2,
  "partial": 1,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -62,7 +63,7 @@
    "name": "Docs in Markdown",
    "url": "https://planetscale.com/docs/llms.txt",
    "heading": "# PlanetScale",
-   "bytes": 26950,
+   "bytes": 27212,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -75,7 +76,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 225,
+   "ms": 222,
    "redirects": 1
   },
   {
@@ -85,7 +86,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 672,
+   "ms": 148,
    "redirects": 1
   },
   {
@@ -95,7 +96,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 220,
+   "ms": 214,
    "redirects": 0
   },
   {
@@ -105,7 +106,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 140,
+   "ms": 111,
    "redirects": 0
   },
   {
@@ -115,7 +116,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 198,
+   "ms": 210,
    "redirects": 0
   },
   {
@@ -125,7 +126,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 180,
+   "ms": 215,
    "redirects": 0
   },
   {
@@ -135,7 +136,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 139,
+   "ms": 97,
    "redirects": 0
   },
   {
@@ -145,7 +146,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 143,
+   "ms": 97,
    "redirects": 0
   }
  ]

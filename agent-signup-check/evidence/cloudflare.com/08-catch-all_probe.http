@@ -1,0 +1,24 @@
+GET https://www.cloudflare.com/agent-signup-check-no-such-page.md
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:42.269Z
+final-url: https://www.cloudflare.com/agent-signup-check-no-such-page.md
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:37:41 GMT
+content-type: text/plain; charset=UTF-8
+content-length: 12
+connection: close
+strict-transport-security: max-age=31536000; includeSubDomains
+permissions-policy: geolocation=(), camera=(), microphone=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-xss-protection: 1; mode=block
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Jc3%2Bo3lb5HPUHK0MN9MbfiVljNHdb%2FTIny99mVdyfm%2F4Ltb%2BW5u2cUC3iZFAJqbGXBslYapC1AnNOruiQB92dWfaEBLxYiCiCIVllYcSc%2BJlMlQvk2gjFVXc%2FA3lHSwnZmkMzQ%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: a59227fcad25fef0-PDX
+alt-svc: h3=":443"; ma=86400
+
+not found :(

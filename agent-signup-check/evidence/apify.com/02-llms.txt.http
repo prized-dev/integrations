@@ -1,13 +1,13 @@
 GET https://apify.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:18.669Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.180Z
 final-url: https://apify.com/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=UTF-8
 transfer-encoding: chunked
 connection: close
-date: Sat, 07 Nov 2026 00:19:15 GMT
+date: Thu, 12 Nov 2026 01:51:10 GMT
 content-encoding: gzip
 strict-transport-security: max-age=15768000
 x-permitted-cross-domain-policies: none
@@ -24,14 +24,15 @@ access-control-allow-headers: Content-Type
 access-control-expose-headers: Link
 cache-control: public, max-age=7200
 accept-ranges: bytes
-last-modified: Fri, 06 Nov 2026 16:01:49 GMT
-etag: W/"44e1-1a1b19845c8"
+last-modified: Wed, 11 Nov 2026 13:53:12 GMT
+etag: W/"44e1-1a1cae25140"
 vary: Accept-Encoding
-x-cache: Miss from cloudfront
-via: 1.1 d4998a91f031605ae65d0bc2f0798e54.cloudfront.net (CloudFront)
+x-cache: Hit from cloudfront
+via: 1.1 27d63b295289835069372e1ce8f9ae9c.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: fNTVteQFbkn06EJjFpPnz3-iqpFeMhOqJD2U0TWw_VWVATg1CPPTSA==
+x-amz-cf-id: wOe4lD0ZBjDRw8QG_HuVocymMlMxfhlFwV2NzFxOyqCeL4DhtmgVZg==
+age: 2836
 
 # Apify
 

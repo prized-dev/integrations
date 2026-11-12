@@ -1,17 +1,17 @@
 GET https://gitlab.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:38.610Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:48.074Z
 final-url: https://gitlab.com/.well-known/oauth-protected-resource
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:37 GMT
+date: Thu, 12 Nov 2026 02:38:46 GMT
 content-type: application/json; charset=utf-8
 content-length: 118
 connection: close
-cf-ray: a5682adf1d998e63-PDX
+cf-ray: a59229973e57ad76-PDX
 cf-cache-status: HIT
 accept-ranges: bytes
-age: 62106
+age: 70230
 cache-control: max-age=86400, public, must-revalidate, no-transform=true
 etag: W/"5cd69ba77ffd9cd5b27ce2079bf30f45"
 server: cloudflare

@@ -1,10 +1,10 @@
 GET https://us.posthog.com/api/projects/
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:40.523Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:50.841Z
 final-url: https://us.posthog.com/api/projects/
 
 HTTP 401
-date: Sat, 07 Nov 2026 00:19:37 GMT
+date: Thu, 12 Nov 2026 02:38:47 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
@@ -17,7 +17,7 @@ x-content-type-options: nosniff
 referrer-policy: strict-origin-when-cross-origin
 cross-origin-opener-policy: same-origin
 server: envoy
-x-envoy-upstream-service-time: 5
+x-envoy-upstream-service-time: 4
 content-encoding: gzip
 strict-transport-security: max-age=31536000; includeSubDomains
 

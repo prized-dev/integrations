@@ -1,9 +1,10 @@
 {
  "site": "financialdatasets.ai",
- "checkedAt": "2026-11-07T00:19:26.654Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:37.910Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 3,
  "partial": 1,
+ "unread": 0,
  "total": 7,
  "whoActs": "not stated",
  "checks": [
@@ -59,7 +60,7 @@
    "name": "Docs in Markdown",
    "url": "https://www.financialdatasets.ai/llms.txt",
    "heading": "# Financial Datasets",
-   "bytes": 9315,
+   "bytes": 9268,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -72,7 +73,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 204,
+   "ms": 104,
    "redirects": 1
   },
   {
@@ -82,7 +83,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 65,
+   "ms": 87,
    "redirects": 1
   },
   {
@@ -92,7 +93,7 @@
    "status": 402,
    "error": null,
    "contentType": "application/json",
-   "ms": 273,
+   "ms": 119,
    "redirects": 0
   },
   {
@@ -102,7 +103,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 65,
+   "ms": 51,
    "redirects": 1
   },
   {
@@ -112,7 +113,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 98,
+   "ms": 124,
    "redirects": 0
   },
   {
@@ -122,8 +123,18 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 82,
+   "ms": 53,
    "redirects": 1
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.financialdatasets.ai/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.financialdatasets.ai/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 114,
+   "redirects": 0
   },
   {
    "label": "x402 discovery",
@@ -132,7 +143,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 50,
+   "ms": 44,
    "redirects": 1
   }
  ]

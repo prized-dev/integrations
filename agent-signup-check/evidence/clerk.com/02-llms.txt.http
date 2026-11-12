@@ -1,17 +1,17 @@
 GET https://clerk.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:41.681Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:51.251Z
 final-url: https://clerk.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 4718
+age: 43085
 cache-control: public, max-age=3600, s-maxage=3600
 content-disposition: inline
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Sat, 07 Nov 2026 00:19:39 GMT
-etag: W/"aeceb1533d723448003e0d37e940f007"
+date: Thu, 12 Nov 2026 02:38:48 GMT
+etag: W/"4670fbb765335a2599d7515a5f7ca083"
 referrer-policy: same-origin
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -23,7 +23,7 @@ x-download-options: noopen
 x-frame-options: deny
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::gvh5l-1794010779197-a96c66b9e4bd
+x-vercel-id: pdx1::28zlc-1794451128561-7b0baf168b8e
 x-xss-protection: 1
 connection: close
 transfer-encoding: chunked

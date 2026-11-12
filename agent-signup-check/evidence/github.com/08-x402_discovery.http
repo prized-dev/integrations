@@ -1,0 +1,24 @@
+GET https://github.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:48.000Z
+final-url: https://github.com/.well-known/x402
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:38:47 GMT
+content-type: application/json; charset=utf-8
+vary: X-PJAX, X-PJAX-Container, Turbo-Visit, Turbo-Frame, X-Requested-With, X-GitHub-Client-Version, Sec-Fetch-Site,Accept-Encoding, Accept, X-Requested-With
+cache-control: no-cache
+strict-transport-security: max-age=31536000; includeSubdomains; preload
+x-frame-options: deny
+x-content-type-options: nosniff
+x-xss-protection: 0
+referrer-policy: origin-when-cross-origin, strict-origin-when-cross-origin
+content-security-policy: default-src 'none'; base-uri 'self'; connect-src 'self'; form-action 'self'; img-src 'self' data:; script-src 'self'; style-src 'unsafe-inline'
+server: github.com
+content-encoding: gzip
+content-length: 52
+x-github-request-id: AFE8:1E5D42:AB96B:173B4C:6AF526B7
+x-github-edge-region: westus2
+connection: close
+
+{"error":"Not Found"}

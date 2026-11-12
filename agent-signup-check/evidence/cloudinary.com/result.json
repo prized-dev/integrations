@@ -1,9 +1,10 @@
 {
  "site": "cloudinary.com",
- "checkedAt": "2026-11-07T00:19:42.817Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:54.845Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 3,
  "partial": 1,
+ "unread": 0,
  "total": 7,
  "whoActs": "nobody (provisioned without an account, claimed later) (from auth.md prose)",
  "checks": [
@@ -79,7 +80,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 231,
+   "ms": 183,
    "redirects": 0
   },
   {
@@ -89,7 +90,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 82,
+   "ms": 76,
    "redirects": 0
   },
   {
@@ -99,7 +100,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 221,
+   "ms": 218,
    "redirects": 0
   },
   {
@@ -109,7 +110,7 @@
    "status": 403,
    "error": null,
    "contentType": "application/xml",
-   "ms": 154,
+   "ms": 131,
    "redirects": 0
   },
   {
@@ -119,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 257,
+   "ms": 282,
    "redirects": 0
   },
   {
@@ -129,7 +130,17 @@
    "status": 403,
    "error": null,
    "contentType": "application/xml",
-   "ms": 108,
+   "ms": 288,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.cloudinary.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.cloudinary.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 294,
    "redirects": 0
   },
   {
@@ -139,7 +150,7 @@
    "status": 403,
    "error": null,
    "contentType": "application/xml",
-   "ms": 333,
+   "ms": 129,
    "redirects": 0
   }
  ]

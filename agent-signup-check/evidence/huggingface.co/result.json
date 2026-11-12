@@ -1,9 +1,10 @@
 {
  "site": "huggingface.co",
- "checkedAt": "2026-11-07T00:18:15.347Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:37:25.228Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 2,
  "partial": 1,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -59,7 +60,7 @@
    "name": "Docs in Markdown",
    "url": "https://huggingface.co/docs/hub/llms.txt",
    "heading": "# Hub",
-   "bytes": 22584,
+   "bytes": 22858,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -72,7 +73,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 108,
+   "ms": 122,
    "redirects": 0
   },
   {
@@ -82,7 +83,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 113,
+   "ms": 118,
    "redirects": 0
   },
   {
@@ -92,7 +93,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 99,
+   "ms": 130,
    "redirects": 0
   },
   {
@@ -102,7 +103,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 223,
+   "ms": 205,
    "redirects": 0
   },
   {
@@ -112,7 +113,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 98,
+   "ms": 109,
    "redirects": 0
   },
   {
@@ -122,7 +123,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 100,
+   "ms": 112,
    "redirects": 0
   },
   {
@@ -132,7 +133,7 @@
    "status": 401,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 101,
+   "ms": 111,
    "redirects": 0
   }
  ]

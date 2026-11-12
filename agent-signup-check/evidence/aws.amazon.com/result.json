@@ -1,9 +1,10 @@
 {
  "site": "aws.amazon.com",
- "checkedAt": "2026-11-07T00:18:42.256Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:37:53.999Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -54,7 +55,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.aws.amazon.com/llms.txt",
    "heading": "# Amazon Web Services (AWS) Documentation",
-   "bytes": 411658,
+   "bytes": 406801,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -67,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html;charset=UTF-8",
-   "ms": 59,
+   "ms": 65,
    "redirects": 1
   },
   {
@@ -77,7 +78,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html;charset=UTF-8",
-   "ms": 63,
+   "ms": 61,
    "redirects": 0
   },
   {
@@ -87,7 +88,7 @@
    "status": 400,
    "error": null,
    "contentType": "text/xml;charset=UTF-8",
-   "ms": 193,
+   "ms": 216,
    "redirects": 0
   },
   {
@@ -97,7 +98,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 57,
+   "ms": 79,
    "redirects": 0
   },
   {
@@ -107,7 +108,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html;charset=UTF-8",
-   "ms": 96,
+   "ms": 94,
    "redirects": 0
   },
   {
@@ -117,7 +118,7 @@
    "status": 400,
    "error": null,
    "contentType": "text/xml;charset=UTF-8",
-   "ms": 190,
+   "ms": 204,
    "redirects": 0
   },
   {
@@ -127,7 +128,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html;charset=UTF-8",
-   "ms": 92,
+   "ms": 87,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://ec2.us-east-1.amazonaws.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://ec2.us-east-1.amazonaws.com/.well-known/oauth-authorization-server",
+   "status": 400,
+   "error": null,
+   "contentType": "text/xml;charset=UTF-8",
+   "ms": 212,
    "redirects": 0
   },
   {
@@ -137,7 +148,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html;charset=UTF-8",
-   "ms": 109,
+   "ms": 97,
    "redirects": 0
   }
  ]

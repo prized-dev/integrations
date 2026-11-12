@@ -1,0 +1,17 @@
+GET https://api.openai.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:13.641Z
+final-url: https://api.openai.com/.well-known/oauth-authorization-server
+
+HTTP 404
+date: Thu, 12 Nov 2026 02:37:12 GMT
+transfer-encoding: chunked
+connection: close
+cf-cache-status: DYNAMIC
+access-control-expose-headers: CF-Ray
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-content-type-options: nosniff
+server: cloudflare
+cf-ray: a592274a6a625ee3-PDX
+alt-svc: h3=":443"; ma=86400
+

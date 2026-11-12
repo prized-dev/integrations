@@ -1,10 +1,10 @@
 GET https://github.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:36.483Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:48.000Z
 final-url: https://github.com/auth.md
 
 HTTP 404
-date: Sat, 07 Nov 2026 00:19:33 GMT
+date: Thu, 12 Nov 2026 02:38:44 GMT
 content-type: text/plain; charset=utf-8
 vary: X-PJAX, X-PJAX-Container, Turbo-Visit, Turbo-Frame, X-Requested-With, X-GitHub-Client-Version,Accept-Encoding, Accept, X-Requested-With
 cache-control: no-cache
@@ -17,7 +17,7 @@ content-security-policy: default-src 'none'; base-uri 'self'; connect-src 'self'
 server: github.com
 content-encoding: gzip
 content-length: 40
-x-github-request-id: 838E:31039E:78961:11C9CF:6AEE6E95
+x-github-request-id: 917C:376A07:AB377:172C29:6AF526B4
 x-github-edge-region: westus2
 connection: close
 

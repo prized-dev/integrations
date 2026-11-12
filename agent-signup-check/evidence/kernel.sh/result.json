@@ -1,9 +1,10 @@
 {
  "site": "kernel.sh",
- "checkedAt": "2026-11-07T00:19:12.211Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:23.615Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 5,
  "partial": 0,
+ "unread": 0,
  "total": 7,
  "whoActs": "the person confirms an email code",
  "checks": [
@@ -87,7 +88,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 69,
+   "ms": 71,
    "redirects": 1
   },
   {
@@ -97,7 +98,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 145,
+   "ms": 154,
    "redirects": 1
   },
   {
@@ -107,7 +108,7 @@
    "status": 401,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 177,
+   "ms": 209,
    "redirects": 0
   },
   {
@@ -117,7 +118,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 169,
+   "ms": 202,
    "redirects": 0
   },
   {
@@ -127,7 +128,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 188,
+   "ms": 208,
    "redirects": 0
   },
   {
@@ -137,7 +138,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 55,
+   "ms": 48,
    "redirects": 1
   }
  ]

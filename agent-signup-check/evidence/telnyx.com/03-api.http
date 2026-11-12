@@ -1,10 +1,10 @@
 GET https://api.telnyx.com/v2/balance
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:06.710Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:17.646Z
 final-url: https://api.telnyx.com/v2/balance
 
 HTTP 401
-date: Sat, 07 Nov 2026 00:19:05 GMT
+date: Thu, 12 Nov 2026 02:38:16 GMT
 content-type: application/json
 content-length: 225
 connection: close
@@ -17,10 +17,10 @@ ratelimit-remaining: 1999
 x-ratelimit-reset: 1
 ratelimit-reset: 1
 server: cloudflare
-x-request-id: 2f219876-22e8-4b60-b51b-31d1aa5a486f
-x-envoy-upstream-service-time: 5
+x-request-id: 242a4788-9c75-4424-8fac-a0903df1114b
+x-envoy-upstream-service-time: 3
 cf-cache-status: DYNAMIC
 strict-transport-security: max-age=31536000
-cf-ray: a5682a1449b5b395-PDX
+cf-ray: a59228d62b7c0d10-PDX
 
 {"errors":[{"code":"10009","meta":{"url":"https://developers.telnyx.com/docs/overview/errors/10009"},"title":"Authentication failed","source":{"pointer":"/"},"detail":"Could not find any usable credentials in the request."}]}

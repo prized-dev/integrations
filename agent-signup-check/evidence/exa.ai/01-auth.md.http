@@ -1,18 +1,18 @@
 GET https://exa.ai/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:20.254Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.664Z
 final-url: https://exa.ai/auth.md
 
 HTTP 200
 access-control-allow-origin: *
-age: 4062
+age: 1119
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/markdown; charset=utf-8
-date: Sat, 07 Nov 2026 00:19:17 GMT
-etag: W/"81a4a52c59be6ca8b3a3c444c7300b60"
+date: Thu, 12 Nov 2026 02:38:27 GMT
+etag: W/"3b324cb1b85dfe5ae4378433b2d4dd57"
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
@@ -21,7 +21,7 @@ x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /auth.md
 x-vercel-cache: HIT
-x-vercel-id: pdx1::ptbqh-1794010757549-eae2d430a4cf
+x-vercel-id: pdx1::84x5v-1794451107849-cf39ffe075fa
 connection: close
 transfer-encoding: chunked
 

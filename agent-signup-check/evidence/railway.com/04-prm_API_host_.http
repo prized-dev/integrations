@@ -1,0 +1,18 @@
+GET https://backboard.railway.com/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:38.172Z
+final-url: https://backboard.railway.com/.well-known/oauth-protected-resource
+
+HTTP 200
+date: Thu, 12 Nov 2026 02:37:36 GMT
+content-type: application/json; charset=utf-8
+transfer-encoding: chunked
+connection: close
+vary: Origin
+via: 1.1 google
+cf-cache-status: DYNAMIC
+content-encoding: gzip
+server: cloudflare
+cf-ray: a59227dedcf22fbe-PDX
+
+{"resource":"https://backboard.railway.com","authorization_servers":["https://backboard.railway.com"],"scopes_supported":["workspace:member"],"bearer_methods_supported":["header"]}

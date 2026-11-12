@@ -1,11 +1,11 @@
 GET https://elevenlabs.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:20.565Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:30.466Z
 final-url: https://elevenlabs.io/llms.txt
 
 HTTP 200
 server: nginx/1.30.6
-date: Sat, 07 Nov 2026 00:18:18 GMT
+date: Thu, 12 Nov 2026 02:37:27 GMT
 content-type: text/plain; charset=utf-8
 vary: Accept-Encoding,rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 content-security-policy: frame-ancestors 'self' https://payload.elevenlabs.io;

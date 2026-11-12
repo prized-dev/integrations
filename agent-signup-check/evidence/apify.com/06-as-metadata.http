@@ -1,19 +1,19 @@
 GET https://apify.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:18.669Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.180Z
 redirect: 307 from https://apify.com/.well-known/oauth-authorization-server
 final-url: https://console-backend.apify.com/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:17 GMT
+date: Thu, 12 Nov 2026 02:38:28 GMT
 content-type: application/json; charset=utf-8
-content-length: 858
+content-length: 1204
 connection: close
 cache-control: no-store
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-frame-options: DENY
 content-security-policy: frame-ancestors 'none'
 vary: Origin, Authorization
-etag: W/"35a-r7E1KXmV4wl3ucv3WH+HSIz05qI"
+etag: W/"4b4-7/0YBBvpsxi2uxjFvNh98cBAPjQ"
 
-{"issuer":"https://console-backend.apify.com","authorization_endpoint":"https://console.apify.com/authorize/oauth","device_authorization_endpoint":"https://console-backend.apify.com/oauth/apps/devices","token_endpoint":"https://console-backend.apify.com/oauth/apps/token","registration_endpoint":"https://console-backend.apify.com/oauth/apps","scopes_supported":["full_api_access"],"grant_types_supported":["authorization_code","refresh_token","urn:ietf:params:oauth:grant-type:device_code"],"response_types_supported":["code"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","none","private_key_jwt"],"token_endpoint_auth_signing_alg_values_supported":["RS256","RS384","RS512"],"client_id_metadata_document_supported":true,"authorization_response_iss_parameter_supported":true}
+{"issuer":"https://console-backend.apify.com","authorization_endpoint":"https://console.apify.com/authorize/oauth","device_authorization_endpoint":"https://console-backend.apify.com/oauth/apps/devices","token_endpoint":"https://console-backend.apify.com/oauth/apps/token","registration_endpoint":"https://console-backend.apify.com/oauth/apps","scopes_supported":["openid","profile","email","full_api_access"],"grant_types_supported":["authorization_code","refresh_token","urn:ietf:params:oauth:grant-type:device_code"],"response_types_supported":["code"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","none","private_key_jwt"],"token_endpoint_auth_signing_alg_values_supported":["RS256","RS384","RS512"],"client_id_metadata_document_supported":true,"authorization_response_iss_parameter_supported":true,"userinfo_endpoint":"https://console-backend.apify.com/oauth/userinfo","jwks_uri":"https://console-backend.apify.com/oauth/jwks","subject_types_supported":["public"],"id_token_signing_alg_values_supported":["RS256"],"claims_supported":["iss","sub","aud","exp","iat","auth_time","nonce","email","email_verified","name"]}

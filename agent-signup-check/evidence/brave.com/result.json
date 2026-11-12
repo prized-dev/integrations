@@ -1,9 +1,10 @@
 {
  "site": "brave.com",
- "checkedAt": "2026-11-07T00:19:23.794Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:33.999Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -54,7 +55,7 @@
    "name": "Docs in Markdown",
    "url": "https://api-dashboard.search.brave.com/llms.txt",
    "heading": "# Brave Search API",
-   "bytes": 7309,
+   "bytes": 7502,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -67,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 171,
+   "ms": 107,
    "redirects": 1
   },
   {
@@ -77,7 +78,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 125,
+   "ms": 94,
    "redirects": 1
   },
   {
@@ -87,7 +88,7 @@
    "status": 422,
    "error": null,
    "contentType": "application/json",
-   "ms": 32,
+   "ms": 33,
    "redirects": 0
   },
   {
@@ -97,7 +98,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 42,
+   "ms": 39,
    "redirects": 0
   },
   {
@@ -107,7 +108,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 164,
+   "ms": 28,
    "redirects": 1
   },
   {
@@ -117,7 +118,7 @@
    "status": 403,
    "error": null,
    "contentType": null,
-   "ms": 40,
+   "ms": 37,
    "redirects": 0
   },
   {
@@ -127,8 +128,18 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 121,
+   "ms": 25,
    "redirects": 1
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.search.brave.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.search.brave.com/.well-known/oauth-authorization-server",
+   "status": 403,
+   "error": null,
+   "contentType": null,
+   "ms": 32,
+   "redirects": 0
   },
   {
    "label": "x402 discovery",
@@ -137,7 +148,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 110,
+   "ms": 94,
    "redirects": 1
   }
  ]

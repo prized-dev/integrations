@@ -1,16 +1,17 @@
 {
  "site": "sentry.io",
- "checkedAt": "2026-11-07T00:19:39.327Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:49.945Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 3,
  "partial": 0,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
   {
    "id": "authmd",
    "name": "auth.md",
-   "url": "https://sentry.io/auth.md",
+   "url": "https://sentry.io/auth.md/",
    "heading": "# Sentry",
    "registrationEndpoints": [],
    "mentions": [],
@@ -62,7 +63,7 @@
    "name": "Docs in Markdown",
    "url": "https://sentry.io/llms.txt",
    "heading": "# Sentry",
-   "bytes": 93154,
+   "bytes": 93211,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -71,12 +72,12 @@
   {
    "label": "auth.md",
    "url": "https://sentry.io/auth.md",
-   "finalUrl": "https://sentry.io/auth.md",
+   "finalUrl": "https://sentry.io/auth.md/",
    "status": 200,
    "error": null,
    "contentType": "text/markdown",
-   "ms": 89,
-   "redirects": 0
+   "ms": 84,
+   "redirects": 1
   },
   {
    "label": "llms.txt",
@@ -85,7 +86,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 307,
+   "ms": 188,
    "redirects": 0
   },
   {
@@ -95,7 +96,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 95,
+   "ms": 99,
    "redirects": 0
   },
   {
@@ -105,7 +106,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 92,
+   "ms": 90,
    "redirects": 0
   },
   {
@@ -121,12 +122,12 @@
   {
    "label": "catch-all probe",
    "url": "https://sentry.io/agent-signup-check-no-such-page.md",
-   "finalUrl": "https://sentry.io/agent-signup-check-no-such-page.md",
+   "finalUrl": "https://sentry.io/agent-signup-check-no-such-page.md/",
    "status": 200,
    "error": null,
    "contentType": "text/markdown",
-   "ms": 86,
-   "redirects": 0
+   "ms": 85,
+   "redirects": 1
   },
   {
    "label": "x402 discovery",
@@ -135,7 +136,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html",
-   "ms": 108,
+   "ms": 103,
    "redirects": 2
   }
  ]

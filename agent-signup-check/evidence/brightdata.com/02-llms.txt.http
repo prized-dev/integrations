@@ -1,10 +1,10 @@
 GET https://brightdata.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:17.511Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:27.808Z
 final-url: https://brightdata.com/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:14 GMT
+date: Thu, 12 Nov 2026 02:38:25 GMT
 content-type: text/plain; charset=UTF-8
 transfer-encoding: chunked
 connection: close
@@ -20,7 +20,7 @@ vary: Accept-Encoding, Accept
 cf-cache-status: DYNAMIC
 strict-transport-security: max-age=31536000; preload
 content-encoding: br
-cf-ray: a5682a50c8f0d82e-PDX
+cf-ray: a592290d5e885ec1-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Bright Data

@@ -1,9 +1,10 @@
 {
  "site": "codesandbox.io",
- "checkedAt": "2026-11-07T00:18:38.030Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:37:49.564Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 0,
  "partial": 1,
+ "unread": 6,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -11,22 +12,31 @@
    "id": "authmd",
    "name": "auth.md",
    "url": "https://codesandbox.io/auth.md",
-   "status": "fail",
-   "reason": "/auth.md answers with a Cloudflare bot challenge"
+   "answered": "a Cloudflare bot challenge",
+   "was": "fail",
+   "wasReason": "/auth.md answers with a Cloudflare bot challenge",
+   "status": "unread",
+   "reason": "Not read on 2026-11-12: https://codesandbox.io/auth.md answered with a Cloudflare bot challenge"
   },
   {
    "id": "prm",
    "name": "Protected resource metadata",
    "url": "https://codesandbox.io/.well-known/oauth-protected-resource",
-   "status": "fail",
-   "reason": "Protected resource metadata answers with a Cloudflare bot challenge"
+   "answered": "a Cloudflare bot challenge",
+   "was": "fail",
+   "wasReason": "Protected resource metadata answers with a Cloudflare bot challenge",
+   "status": "unread",
+   "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-protected-resource answered with a Cloudflare bot challenge"
   },
   {
    "id": "register",
    "name": "Sign-up by API",
    "url": "https://codesandbox.io/.well-known/oauth-authorization-server",
-   "status": "fail",
-   "reason": "Authorization server metadata answers with a Cloudflare bot challenge; no sign-up API is documented in auth.md or llms.txt"
+   "answered": "a Cloudflare bot challenge",
+   "was": "fail",
+   "wasReason": "Authorization server metadata answers with a Cloudflare bot challenge; no sign-up API is documented in auth.md or llms.txt",
+   "status": "unread",
+   "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge"
   },
   {
    "id": "challenge",
@@ -40,25 +50,32 @@
   {
    "id": "limits",
    "name": "Spend limits",
-   "status": "fail",
-   "reason": "No spend cap in metadata, auth.md or llms.txt"
+   "url": "https://codesandbox.io/.well-known/oauth-authorization-server",
+   "answered": "a Cloudflare bot challenge",
+   "was": "fail",
+   "wasReason": "No spend cap in metadata, auth.md or llms.txt",
+   "status": "unread",
+   "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge"
   },
   {
    "id": "payment",
    "name": "Payment handoff",
-   "status": "fail",
-   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+   "url": "https://codesandbox.io/.well-known/x402",
+   "answered": "a Cloudflare bot challenge",
+   "was": "fail",
+   "wasReason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt",
+   "status": "unread",
+   "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/x402 answered with a Cloudflare bot challenge"
   },
   {
    "id": "markdown",
    "name": "Docs in Markdown",
-   "url": "https://codesandbox.io/docs/llms.txt",
-   "tried": [
-    "https://codesandbox.io/llms.txt",
-    "https://codesandbox.io/docs/llms.txt"
-   ],
-   "status": "fail",
-   "reason": "https://codesandbox.io/llms.txt answers with a Cloudflare bot challenge; https://codesandbox.io/docs/llms.txt answers with a Cloudflare bot challenge"
+   "url": "https://codesandbox.io/llms.txt",
+   "answered": "a Cloudflare bot challenge",
+   "was": "fail",
+   "wasReason": "https://codesandbox.io/llms.txt answers with a Cloudflare bot challenge; https://codesandbox.io/docs/llms.txt answers with a Cloudflare bot challenge",
+   "status": "unread",
+   "reason": "Not read on 2026-11-12: https://codesandbox.io/llms.txt answered with a Cloudflare bot challenge"
   }
  ],
  "requests": [
@@ -69,7 +86,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 95,
+   "ms": 47,
    "redirects": 0
   },
   {
@@ -89,7 +106,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 216,
+   "ms": 196,
    "redirects": 0
   },
   {
@@ -99,7 +116,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 30,
+   "ms": 28,
    "redirects": 0
   },
   {
@@ -109,7 +126,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 27,
+   "ms": 33,
    "redirects": 0
   },
   {
@@ -119,7 +136,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 212,
+   "ms": 204,
    "redirects": 0
   },
   {
@@ -129,7 +146,17 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 31,
+   "ms": 28,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.codesandbox.io/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.codesandbox.io/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 191,
    "redirects": 0
   },
   {
@@ -139,7 +166,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 40,
+   "ms": 31,
    "redirects": 0
   }
  ]

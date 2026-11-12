@@ -1,10 +1,10 @@
 GET https://docs.x.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:12.249Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:22.216Z
 final-url: https://docs.x.ai/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:18:10 GMT
+date: Thu, 12 Nov 2026 02:37:19 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -17,7 +17,7 @@ strict-transport-security: max-age=31536000; includeSubDomains
 cf-cache-status: DYNAMIC
 content-encoding: gzip
 server: cloudflare
-cf-ray: a56828be0e558e5d-PDX
+cf-ray: a592277689d89935-PDX
 
 # SpaceXSI API Documentation
 
@@ -142,29 +142,29 @@ Add the programming language you want code examples in to the `Accept-Language` 
 ## Grok Build
 
 - [Get Started](https://docs.x.ai/build/overview.md)
-- [Get Started — Modes and Commands](https://docs.x.ai/build/modes-and-commands.md)
-- [Get Started — Keyboard Shortcuts](https://docs.x.ai/build/keyboard-shortcuts.md)
-- [Features](https://docs.x.ai/build/features/skills-plugins-marketplaces.md)
-- [Features — AGENTS.md](https://docs.x.ai/build/features/project-rules.md)
-- [Features — MCP Servers](https://docs.x.ai/build/features/mcp-servers.md)
-- [Features — Hooks](https://docs.x.ai/build/features/hooks.md)
-- [Features — Sessions](https://docs.x.ai/build/features/sessions.md)
-- [Features — Plan Mode](https://docs.x.ai/build/features/plan-mode.md)
-- [Features — Permissions](https://docs.x.ai/build/features/permissions.md)
-- [Features — Sandbox](https://docs.x.ai/build/features/sandbox.md)
-- [Features — Subagents](https://docs.x.ai/build/features/subagents.md)
-- [Features — Worktrees](https://docs.x.ai/build/features/worktrees.md)
-- [Features — Background Tasks](https://docs.x.ai/build/features/background-tasks.md)
-- [Features — Agent Dashboard](https://docs.x.ai/build/features/dashboard.md)
-- [Features — Status Line](https://docs.x.ai/build/features/status-line.md)
-- [Features — Theming](https://docs.x.ai/build/features/theming.md)
-- [Settings](https://docs.x.ai/build/settings.md)
-- [Settings — Reference](https://docs.x.ai/build/settings/reference.md)
-- [Settings — ZDR Video Storage](https://docs.x.ai/build/settings/zdr-video-storage.md)
-- [CLI](https://docs.x.ai/build/cli/headless-scripting.md)
-- [CLI — Reference](https://docs.x.ai/build/cli/reference.md)
-- [CLI — Terminal Support](https://docs.x.ai/build/cli/terminal-support.md)
+- [Use Grok Build](https://docs.x.ai/build/modes-and-commands.md)
+- [Use Grok Build — Keyboard Shortcuts](https://docs.x.ai/build/keyboard-shortcuts.md)
+- [Use Grok Build — Plan Mode](https://docs.x.ai/build/features/plan-mode.md)
+- [Use Grok Build — Sessions](https://docs.x.ai/build/features/sessions.md)
+- [Use Grok Build — Background Tasks](https://docs.x.ai/build/features/background-tasks.md)
+- [Use Grok Build — Agent Dashboard](https://docs.x.ai/build/features/dashboard.md)
+- [Agents and Automation](https://docs.x.ai/build/features/subagents.md)
+- [Agents and Automation — Worktrees](https://docs.x.ai/build/features/worktrees.md)
+- [Agents and Automation — Headless and Scripting](https://docs.x.ai/build/cli/headless-scripting.md)
+- [Customize](https://docs.x.ai/build/features/project-rules.md)
+- [Customize — Skills, Plugins, and Marketplaces](https://docs.x.ai/build/features/skills-plugins-marketplaces.md)
+- [Customize — MCP Servers](https://docs.x.ai/build/features/mcp-servers.md)
+- [Customize — Hooks](https://docs.x.ai/build/features/hooks.md)
+- [Customize — Status Line](https://docs.x.ai/build/features/status-line.md)
+- [Customize — Theming](https://docs.x.ai/build/features/theming.md)
+- [Security](https://docs.x.ai/build/features/permissions.md)
+- [Security — Sandbox](https://docs.x.ai/build/features/sandbox.md)
+- [Reference](https://docs.x.ai/build/settings.md)
+- [Reference — Settings Reference](https://docs.x.ai/build/settings/reference.md)
+- [Reference — CLI Reference](https://docs.x.ai/build/cli/reference.md)
+- [Reference — Terminal Support](https://docs.x.ai/build/cli/terminal-support.md)
 - [Enterprise](https://docs.x.ai/build/enterprise.md)
+- [Enterprise — ZDR Video Storage](https://docs.x.ai/build/settings/zdr-video-storage.md)
 
 ## Grok Bot
 
@@ -179,8 +179,11 @@ Add the programming language you want code examples in to the `Accept-Language` 
 - [Use Grok Bot — Skills and routines](https://docs.x.ai/grok-bot/skills-routines-and-automations.md)
 - [Use Grok Bot — Approvals and privacy](https://docs.x.ai/grok-bot/approvals-security-and-privacy.md)
 - [Use Grok Bot — Vault and secure sign-in](https://docs.x.ai/grok-bot/vault.md)
-- [Use Grok Bot — Shared Bots](https://docs.x.ai/grok-bot/shared-bots.md)
+- [Use Grok Bot — Team Bots](https://docs.x.ai/grok-bot/team-bots.md)
 - [Use Grok Bot — Grok Bot for Mobile](https://docs.x.ai/grok-bot/mobile.md)
+- [Use Grok Bot — Use Grok Bot in Microsoft Teams](https://docs.x.ai/grok-bot/microsoft-teams.md)
+- [Use Grok Bot — Add a Bot to your meetings](https://docs.x.ai/grok-bot/meetings.md)
+- [Use Grok Bot — When your Bot takes initiative](https://docs.x.ai/grok-bot/initiative.md)
 - [Use Grok Bot — Tag @bot on X](https://docs.x.ai/grok-bot/tag-on-x.md)
 - [Teams and enterprises](https://docs.x.ai/grok-bot/teams-and-enterprises.md)
 - [Teams and enterprises — Deploy to your organization](https://docs.x.ai/grok-bot/deployment.md)

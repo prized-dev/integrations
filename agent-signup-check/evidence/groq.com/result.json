@@ -1,9 +1,10 @@
 {
  "site": "groq.com",
- "checkedAt": "2026-11-07T00:18:08.222Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:37:17.744Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 2,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -71,7 +72,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 236,
+   "ms": 212,
    "redirects": 0
   },
   {
@@ -81,7 +82,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 68,
+   "ms": 197,
    "redirects": 0
   },
   {
@@ -91,7 +92,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 46,
+   "ms": 42,
    "redirects": 0
   },
   {
@@ -101,7 +102,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 86,
+   "ms": 91,
    "redirects": 0
   },
   {
@@ -111,7 +112,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 221,
+   "ms": 306,
    "redirects": 0
   },
   {
@@ -121,7 +122,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 43,
+   "ms": 47,
    "redirects": 0
   },
   {
@@ -131,7 +132,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 234,
+   "ms": 255,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.groq.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.groq.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 44,
    "redirects": 0
   },
   {
@@ -141,7 +152,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 219,
+   "ms": 207,
    "redirects": 0
   }
  ]

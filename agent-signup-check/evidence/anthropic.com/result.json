@@ -1,9 +1,10 @@
 {
  "site": "anthropic.com",
- "checkedAt": "2026-11-07T00:18:06.048Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:37:14.850Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 2,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -58,7 +59,7 @@
    "name": "Docs in Markdown",
    "url": "https://platform.claude.com/llms.txt",
    "heading": "# Anthropic Developer Documentation",
-   "bytes": 97938,
+   "bytes": 99989,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -71,7 +72,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 239,
+   "ms": 296,
    "redirects": 1
   },
   {
@@ -81,7 +82,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 521,
+   "ms": 379,
    "redirects": 1
   },
   {
@@ -101,7 +102,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 121,
+   "ms": 134,
    "redirects": 2
   },
   {
@@ -111,7 +112,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 551,
+   "ms": 345,
    "redirects": 1
   },
   {
@@ -121,7 +122,7 @@
    "status": 404,
    "error": null,
    "contentType": null,
-   "ms": 88,
+   "ms": 87,
    "redirects": 0
   },
   {
@@ -131,8 +132,18 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 409,
+   "ms": 559,
    "redirects": 1
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.anthropic.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.anthropic.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": null,
+   "ms": 85,
+   "redirects": 0
   },
   {
    "label": "x402 discovery",
@@ -141,7 +152,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 300,
+   "ms": 320,
    "redirects": 1
   }
  ]

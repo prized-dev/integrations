@@ -1,14 +1,14 @@
 GET https://linear.app/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:38.765Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:51.119Z
 final-url: https://linear.app/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:36 GMT
+date: Thu, 12 Nov 2026 02:38:48 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5682adb4dbfff03-PDX
+cf-ray: a59229a0383bb332-PDX
 cf-cache-status: DYNAMIC
 cache-control: private, no-cache, no-store, max-age=0, must-revalidate
 content-encoding: gzip
@@ -71,6 +71,7 @@ Each page on linear.app is also available as Markdown. Add `.md` to the URL (use
 - [/readme](https://linear.app/readme.md)
 - [/plan](https://linear.app/plan.md)
 - [/build](https://linear.app/build.md)
+- [/reviews](https://linear.app/reviews.md)
 - [/mobile](https://linear.app/mobile.md)
 - [/quality](https://linear.app/quality.md)
 - [/switch](https://linear.app/switch.md)
@@ -212,11 +213,11 @@ Get an overview of Linear's features, integrations, and how to use them.
 ### Importers
 
 - [Import Guide](https://linear.app/docs/import-issues.md)
-  - [Jira](https://linear.app/docs/jira-to-linear.md)
-  - [GitHub Issues](https://linear.app/docs/github-to-linear.md)
-  - [Asana](https://linear.app/docs/asana-to-linear.md)
-  - [Shortcut](https://linear.app/docs/shortcut-to-linear.md)
-  - [Linear](https://linear.app/docs/linear-to-linear.md)
+  - [Jira importer](https://linear.app/docs/jira-to-linear.md)
+  - [GitHub Issues importer](https://linear.app/docs/github-to-linear.md)
+  - [Asana importer](https://linear.app/docs/asana-to-linear.md)
+  - [Shortcut importer](https://linear.app/docs/shortcut-to-linear.md)
+  - [Linear to Linear importer](https://linear.app/docs/linear-to-linear.md)
   - [CLI Importer](https://linear.app/docs/cli-importer.md)
 
 ## Developers

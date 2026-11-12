@@ -1,15 +1,15 @@
 GET https://production-sfo.browserless.io/sessions
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:20.755Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.789Z
 final-url: https://production-sfo.browserless.io/sessions
 
 HTTP 401
-date: Sat, 07 Nov 2026 00:19:18 GMT
+date: Thu, 12 Nov 2026 02:38:28 GMT
 content-type: text/html
 content-length: 176
 connection: close
 x-content-type-options: nosniff
-x-browserless-deployment: .browserless-deploy.xbWJIL
+x-browserless-deployment: .browserless-deploy.DdwduG
 server: browserless
 strict-transport-security: max-age=31536000; includeSubDomains
 

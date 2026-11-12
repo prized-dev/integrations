@@ -1,6 +1,6 @@
 GET https://api.cohere.com/v1/models
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:12.401Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:22.048Z
 final-url: https://api.cohere.com/v1/models
 
 HTTP 401
@@ -11,12 +11,12 @@ expires: Thu, 01 Jan 1970 00:00:00 GMT
 pragma: no-cache
 vary: Origin,Accept-Encoding
 x-accel-expires: 0
-date: Sat, 07 Nov 2026 00:18:09 GMT
-x-envoy-upstream-service-time: 1
+date: Thu, 12 Nov 2026 02:37:19 GMT
+x-envoy-upstream-service-time: 2
 server: envoy
 via: 1.1 google
-alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+alt-svc: h3=":443"; ma=2592000
 connection: close
 transfer-encoding: chunked
 
-{"id":"e1781466-bb98-4a44-9b02-6193dbd0edc2","message":"no api key supplied"}
+{"id":"d66548af-750f-4345-9f99-7c1d496a06bb","message":"no api key supplied"}

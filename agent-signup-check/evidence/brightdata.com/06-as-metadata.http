@@ -1,10 +1,10 @@
 GET https://brightdata.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:17.511Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:27.808Z
 final-url: https://brightdata.com/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:16 GMT
+date: Thu, 12 Nov 2026 02:38:27 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -22,7 +22,7 @@ x-permitted-cross-domain-policies: none
 x-xss-protection: 0
 content-encoding: gzip
 cf-cache-status: DYNAMIC
-cf-ray: a5682a5d69a253d9-PDX
+cf-ray: a592291a7b9e6e09-PDX
 alt-svc: h3=":443"; ma=86400
 
-{"issuer":"https://brightdata.com","authorization_endpoint":"https://brightdata.com/users/auth/mcp/authorize","token_endpoint":"https://brightdata.com/users/auth/mcp/token","registration_endpoint":"https://brightdata.com/users/auth/mcp/register","jwks_uri":"https://brightdata.com/users/auth/mcp/jwks","introspection_endpoint":"https://brightdata.com/users/auth/mcp/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post"],"response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["none"],"scopes_supported":["mcp","brightdata","offline_access"],"resource_parameter_supported":true,"agent_auth":{"skill":"https://brightdata.com/auth.md","register_uri":"https://brightdata.com/users/auth/agent_registration/auth","claim_uri":"https://brightdata.com/users/auth/agent_registration/claim","identity_types_supported":["identity_assertion"],"identity_assertion":{"assertion_types_supported":["verified_email"],"credential_types_supported":["api_key"]}}}
+{"issuer":"https://brightdata.com","authorization_endpoint":"https://brightdata.com/users/auth/mcp/authorize","token_endpoint":"https://brightdata.com/users/auth/mcp/token","registration_endpoint":"https://brightdata.com/users/auth/mcp/register","jwks_uri":"https://brightdata.com/users/auth/mcp/jwks","introspection_endpoint":"https://brightdata.com/users/auth/mcp/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post"],"response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["none"],"scopes_supported":["mcp","brightdata","offline_access"],"resource_parameter_supported":true,"agent_auth":{"skill":"https://brightdata.com/auth.md","register_uri":"https://brightdata.com/users/auth/agent_registration/auth","claim_uri":"https://brightdata.com/users/auth/agent_registration/claim","identity_types_supported":["identity_assertion"],"identity_assertion":{"assertion_types_supported":["verified_email","github_id"],"credential_types_supported":["api_key"]}}}

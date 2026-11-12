@@ -1,20 +1,24 @@
 GET https://pinecone.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:57.405Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:09.291Z
 redirect: 308 from https://pinecone.io/llms.txt
 final-url: https://www.pinecone.io/llms.txt
 
 HTTP 200
-age: 32295
-cache-control: public, max-age=0
+access-control-allow-origin: *
+age: 8582
+cache-control: public, max-age=0, s-maxage=43200
+content-disposition: inline
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Fri, 06 Nov 2026 15:20:39 GMT
+date: Thu, 12 Nov 2026 02:38:06 GMT
+etag: W/"b410aa4bb34652dae6d18528810771fc"
 server: Vercel
 strict-transport-security: max-age=63072000
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::iad1::pr872-1794010734950-1aba4d376a0e
+x-vercel-id: pdx1::dpgkm-1794451086622-57d71f403710
 connection: close
 transfer-encoding: chunked
 
@@ -219,6 +223,7 @@ The Pinecone Database API enforces per-project rate limits on read and write req
 
 ## Blog
 
+- [Pinecone integrated embedding now supports OpenAI's text-embedding-3 models](https://www.pinecone.io/blog/integrated-embedding-openai/md/) (2026-11-10)
 - [Webinar Recap: From Data to Vectors to Context](https://www.pinecone.io/blog/webinar-recap-data-to-vectors-to-context/md/) (2026-11-06)
 - [Introducing pg_pinecone: Open-Source Search for Your Postgres Data](https://www.pinecone.io/blog/introducing-pg-pinecone/md/) (2026-10-27)
 - [How to Migrate from Chroma Cloud to Pinecone](https://www.pinecone.io/blog/migrate-chroma-cloud-to-pinecone/md/) (2026-10-26)
@@ -230,6 +235,7 @@ The Pinecone Database API enforces per-project rate limits on read and write req
 - [Full-Text Search is Now Generally Available In Pinecone Database](https://www.pinecone.io/blog/full-text-search-generally-available/md/) (2026-09-09)
 - [With Pinecone Nexus, our support agent now solves most tickets without a human](https://www.pinecone.io/blog/support-agent-nexus/md/) (2026-09-01)
 - [One Year In, and Just Getting Started](https://www.pinecone.io/blog/one-year-in-just-getting-started/md/) (2026-08-26)
+- [Self-Hosted Vector Search: What You Run Before You Ship](https://www.pinecone.io/blog/self-hosted-vector-search/md/) (2026-08-20)
 - [Designing Agent-Friendly APIs](https://www.pinecone.io/blog/designing-agent-friendly-apis/md/) (2026-08-12)
 - [Nexus GA: It's the Knowledge, Not the Models](https://www.pinecone.io/blog/pinecone-nexus-generally-available/md/) (2026-08-06)
 - [The Ceiling Was Never the Model](https://www.pinecone.io/blog/the-ceiling-was-never-the-model/md/) (2026-08-06)
@@ -238,14 +244,12 @@ The Pinecone Database API enforces per-project rate limits on read and write req
 - [Sparse V3: how Pinecone's sparse index learned to skip](https://www.pinecone.io/blog/sparse-v3/md/) (2026-07-09)
 - [Pinecone Nexus Is Now in Public Preview](https://www.pinecone.io/blog/pinecone-nexus-public-preview/md/) (2026-07-01)
 - [Generating Test Data for Pinecone](https://www.pinecone.io/blog/generating-test-data-for-pinecone/md/) (2026-06-29)
+- [Real-Time Recommendations: How ZoomInfo Reached 50x Peak Throughput](https://www.pinecone.io/blog/zoominfo-real-time-recommendations/md/) (2026-06-24)
 - [Full Observability for Pinecone: Introducing an Open-Source Monitoring Stack for SaaS and BYOC](https://www.pinecone.io/blog/open-source-monitoring-stack/md/) (2026-06-09)
 - [Nexus in the Wild: Real Results from Our Early Access Customers](https://www.pinecone.io/blog/nexus-ea-benchmarks/md/) (2026-06-05)
 - [Inside AskData: How We Slashed Token Consumption by Over 90%](https://www.pinecone.io/blog/inside-askdata/md/) (2026-06-02)
 - [The Import Tax Is Gone](https://www.pinecone.io/blog/bulk-import-promo/md/) (2026-06-01)
 - [Turn Azure Data into an AI-Ready Knowledge Base](https://www.pinecone.io/blog/turn-azure-data-into-an-ai-ready-knowledge-base/md/) (2026-05-27)
-- [Full Text Search in Pinecone, Now in Public Preview](https://www.pinecone.io/blog/full-text-search/md/) (2026-05-07)
-- [Full Text Search: Architecture and Design](https://www.pinecone.io/blog/full-text-search-architecture/md/) (2026-05-07)
-- [Builder Plan: for the stage between prototype and scale](https://www.pinecone.io/blog/builder-plan/md/) (2026-05-06)
 
 ## Case Studies
 

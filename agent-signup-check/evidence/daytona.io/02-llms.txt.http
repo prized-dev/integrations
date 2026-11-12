@@ -1,6 +1,6 @@
 GET https://daytona.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:26.096Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:35.263Z
 redirect: 301 from https://daytona.io/llms.txt
 redirect: 308 from https://www.daytona.io/llms.txt
 final-url: https://www.daytona.io/docs/llms.txt
@@ -9,18 +9,19 @@ HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Sat, 07 Nov 2026 00:18:23 GMT
+date: Thu, 12 Nov 2026 02:36:51 GMT
 content-encoding: br
 x-powered-by: Express
 x-frame-options: SAMEORIGIN
 cache-control: public, max-age=0
-last-modified: Tue, 03 Nov 2026 15:22:26 GMT
-etag: W/"3717f-1a1a2012350"
+last-modified: Wed, 11 Nov 2026 19:48:25 GMT
+etag: W/"37636-1a1cc278728"
 vary: Accept-Encoding
-x-cache: Miss from cloudfront
-via: 1.1 05cf67c96e96cd376921ba5b65795a56.cloudfront.net (CloudFront)
+x-cache: Hit from cloudfront
+via: 1.1 f36cc119cb86b2f70c315ca53fd1b4ee.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: XuDAXSZ6kF3Pgn_B-kOv62O1aRKoVcO-9gNr8nVbOSAkGFr8KsTaEA==
+x-amz-cf-id: 4HUDIrsCJKyapOPsu6HIF5a8UZpBUpDu7OPZ4V5qhuvOHulIHDXyHg==
+age: 40
 
 # Daytona
 
@@ -426,6 +427,9 @@ Full documentation: https://www.daytona.io/docs/llms-full.txt
 - [Netbird](https://www.daytona.io/docs/en/vpn-connections.md#netbird)
 - [Netbird setup key](https://www.daytona.io/docs/en/vpn-connections.md#netbird-setup-key)
 - [Netbird browser login](https://www.daytona.io/docs/en/vpn-connections.md#netbird-browser-login)
+- [Twingate](https://www.daytona.io/docs/en/vpn-connections.md#twingate)
+- [Twingate service key](https://www.daytona.io/docs/en/vpn-connections.md#twingate-service-key)
+- [Twingate web terminal](https://www.daytona.io/docs/en/vpn-connections.md#twingate-web-terminal)
 - [Preview](https://www.daytona.io/docs/en/preview.md)
 - [Authentication](https://www.daytona.io/docs/en/preview.md#authentication)
 - [Standard preview URL](https://www.daytona.io/docs/en/preview.md#standard-preview-url)
@@ -627,11 +631,20 @@ Full documentation: https://www.daytona.io/docs/llms-full.txt
 - [2. Project Setup](https://www.daytona.io/docs/en/guides/brainbase/universal-harness-api.md#2-project-setup)
 - [3. Example Usage](https://www.daytona.io/docs/en/guides/brainbase/universal-harness-api.md#3-example-usage)
 - [4. Understanding the Script](https://www.daytona.io/docs/en/guides/brainbase/universal-harness-api.md#4-understanding-the-script)
+- [Gemini Guides](https://www.daytona.io/docs/en/guides/gemini.md)
 - [Run Gemini CLI Headlessly in Daytona and Stream Its Output](https://www.daytona.io/docs/en/guides/gemini/gemini-cli-run-tasks-stream-logs-sandbox.md)
 - [1. Workflow Overview](https://www.daytona.io/docs/en/guides/gemini/gemini-cli-run-tasks-stream-logs-sandbox.md#1-workflow-overview)
 - [2. Project Setup](https://www.daytona.io/docs/en/guides/gemini/gemini-cli-run-tasks-stream-logs-sandbox.md#2-project-setup)
 - [3. Example Usage](https://www.daytona.io/docs/en/guides/gemini/gemini-cli-run-tasks-stream-logs-sandbox.md#3-example-usage)
 - [4. Understanding the Script](https://www.daytona.io/docs/en/guides/gemini/gemini-cli-run-tasks-stream-logs-sandbox.md#4-understanding-the-script)
+- [Run Gemini Managed Agents on Daytona](https://www.daytona.io/docs/en/guides/gemini/gemini-managed-agents.md)
+- [Introduction](https://www.daytona.io/docs/en/guides/gemini/gemini-managed-agents.md#introduction)
+- [How the pieces fit together](https://www.daytona.io/docs/en/guides/gemini/gemini-managed-agents.md#how-the-pieces-fit-together)
+- [What you set up](https://www.daytona.io/docs/en/guides/gemini/gemini-managed-agents.md#what-you-set-up)
+- [Running a worker](https://www.daytona.io/docs/en/guides/gemini/gemini-managed-agents.md#running-a-worker)
+- [Running applications](https://www.daytona.io/docs/en/guides/gemini/gemini-managed-agents.md#running-applications)
+- [What you get](https://www.daytona.io/docs/en/guides/gemini/gemini-managed-agents.md#what-you-get)
+- [See also](https://www.daytona.io/docs/en/guides/gemini/gemini-managed-agents.md#see-also)
 - [Devin Guides](https://www.daytona.io/docs/en/guides/devin.md)
 - [Run the Devin CLI in a Daytona Sandbox](https://www.daytona.io/docs/en/guides/devin/devin-cli-run-tasks-stream-logs-sandbox.md)
 - [1. Workflow Overview](https://www.daytona.io/docs/en/guides/devin/devin-cli-run-tasks-stream-logs-sandbox.md#1-workflow-overview)

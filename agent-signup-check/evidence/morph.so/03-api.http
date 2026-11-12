@@ -1,12 +1,12 @@
 GET https://cloud.morph.so/api/instance
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:30.173Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:41.412Z
 final-url: https://cloud.morph.so/api/instance
 
 HTTP 401
 content-length: 13
 content-type: text/plain; charset=utf-8
-date: Sat, 07 Nov 2026 00:18:27 GMT
+date: Thu, 12 Nov 2026 02:37:38 GMT
 server: Caddy
 vary: Origin
 x-content-type-options: nosniff

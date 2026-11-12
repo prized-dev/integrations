@@ -1,0 +1,17 @@
+GET https://cloud.morph.so/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:41.412Z
+final-url: https://cloud.morph.so/.well-known/oauth-authorization-server
+
+HTTP 404
+content-length: 19
+content-type: text/plain; charset=utf-8
+date: Thu, 12 Nov 2026 02:37:40 GMT
+server: Caddy
+vary: Origin
+x-content-type-options: nosniff
+via: 1.1 google
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+connection: close
+
+404 page not found

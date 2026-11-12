@@ -1,11 +1,11 @@
 GET https://browser-use.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:16.484Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:27.550Z
 redirect: 307 from https://browser-use.com/.well-known/oauth-protected-resource
 final-url: https://api.browser-use.com/.well-known/oauth-protected-resource
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:13 GMT
+date: Thu, 12 Nov 2026 02:38:25 GMT
 content-type: application/json
 content-length: 167
 connection: close

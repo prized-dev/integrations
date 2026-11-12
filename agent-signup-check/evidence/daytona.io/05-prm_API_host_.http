@@ -1,23 +1,23 @@
 GET https://app.daytona.io/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:26.096Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:35.263Z
 final-url: https://app.daytona.io/.well-known/oauth-protected-resource
 
 HTTP 200
 content-type: text/html
 content-length: 819
 connection: close
+accept-ranges: bytes
+date: Wed, 11 Nov 2026 08:46:28 GMT
 server: AmazonS3
-date: Fri, 06 Nov 2026 14:04:10 GMT
 last-modified: Fri, 06 Nov 2026 14:03:50 GMT
 etag: "89532e5952d5f41aeb1af2e2c0d6bc1a"
 x-amz-server-side-encryption: AES256
-accept-ranges: bytes
 x-cache: Hit from cloudfront
-via: 1.1 6eef5cc48e8050472c6d6d9862d365dc.cloudfront.net (CloudFront)
-x-amz-cf-pop: HIO52-P3
-x-amz-cf-id: vc6EY_no2VwNlsgJ989oN_re8bLZvBQtySE1-qu_xSSQSH0t3CsSAA==
-age: 36855
+via: 1.1 fc36d22b58a363b02ecdd852a2e51610.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P2
+x-amz-cf-id: RT8dBPTVDJRCkx9duv81_5xsN9WNt8vGS0td1TJQYM7EF_oMdtChMQ==
+age: 64265
 x-frame-options: DENY
 referrer-policy: strict-origin-when-cross-origin
 content-security-policy: frame-ancestors 'none'

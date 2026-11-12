@@ -1,18 +1,18 @@
 GET https://api.parallel.ai/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:27.328Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:38.165Z
 final-url: https://api.parallel.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Sat, 07 Nov 2026 00:19:24 GMT
+date: Thu, 12 Nov 2026 02:38:36 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
 server: cloudflare
-x-request-id: ffcd32fa7bec6765f350a67f419422df
-via: 1.1 google, 1.1 google
+x-request-id: aab0746447cdb179afa068947d9d2b86
+via: 1.1 google
 cf-cache-status: DYNAMIC
 content-encoding: gzip
-cf-ray: a5682a8f598787cd-PDX
+cf-ray: a59229535f05b298-PDX
 
 {"detail":"Not Found"}

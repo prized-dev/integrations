@@ -1,9 +1,10 @@
 {
  "site": "elevenlabs.io",
- "checkedAt": "2026-11-07T00:18:20.565Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:37:30.466Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 2,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -29,9 +30,9 @@
   {
    "id": "register",
    "name": "Sign-up by API",
-   "url": "https://elevenlabs.io/.well-known/oauth-authorization-server",
+   "url": "https://api.elevenlabs.io/.well-known/oauth-authorization-server",
    "status": "fail",
-   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt"
   },
   {
    "id": "challenge",
@@ -72,7 +73,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 478,
+   "ms": 262,
    "redirects": 0
   },
   {
@@ -82,7 +83,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 100,
+   "ms": 91,
    "redirects": 0
   },
   {
@@ -92,7 +93,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 104,
+   "ms": 84,
    "redirects": 0
   },
   {
@@ -102,7 +103,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 112,
+   "ms": 114,
    "redirects": 0
   },
   {
@@ -112,7 +113,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 85,
+   "ms": 87,
    "redirects": 0
   },
   {
@@ -122,7 +123,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 124,
+   "ms": 103,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.elevenlabs.io/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.elevenlabs.io/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 81,
    "redirects": 0
   },
   {
@@ -132,7 +143,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 162,
+   "ms": 110,
    "redirects": 0
   }
  ]

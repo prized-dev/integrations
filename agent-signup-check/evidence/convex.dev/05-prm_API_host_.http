@@ -1,14 +1,14 @@
 GET https://api.convex.dev/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:56.385Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:07.430Z
 final-url: https://api.convex.dev/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Sat, 07 Nov 2026 00:18:55 GMT
+date: Thu, 12 Nov 2026 02:38:05 GMT
 content-length: 0
 connection: close
 via: 1.1 Caddy
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a56829d73ad6ccd1-PDX
+cf-ray: a59228968e30b395-PDX
 

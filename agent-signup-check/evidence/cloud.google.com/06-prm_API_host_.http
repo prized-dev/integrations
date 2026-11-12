@@ -1,10 +1,10 @@
 GET https://cloudresourcemanager.googleapis.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:44.608Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:55.260Z
 final-url: https://cloudresourcemanager.googleapis.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Sat, 07 Nov 2026 00:18:43 GMT
+date: Thu, 12 Nov 2026 02:37:53 GMT
 content-type: text/html; charset=UTF-8
 server: ESF
 content-length: 1597

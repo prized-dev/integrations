@@ -1,34 +1,34 @@
 GET https://inkbox.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:10.758Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:23.259Z
 final-url: https://inkbox.ai/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Sat, 07 Nov 2026 00:19:08 GMT
+date: Wed, 11 Nov 2026 04:26:28 GMT
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
-x-version: dpl_ATnXPMW25DMPUr9VBw6kL6MfBt6T
-cf-ray: a5682a28f89a96ba-PDX
+x-version: dpl_2AK98Hxhwu4fUXpx9atbv41cC328
+cf-ray: a58a89f70a94c12a-PDX
 cf-cache-status: HIT
 cache-control: public
 content-encoding: br
-etag: "XbeVGLlqi7Yj11KBK28dN-0MB0gVOH5rZ9AwPY9_AcQ"
+etag: "eXraPfTlacu-3k-RAqd6LiGqbAvVmxDq1b6Pm6YPE28"
 server: cloudflare
 strict-transport-security: max-age=63072000
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4076
+x-mintlify-client-version: 0.0.4102
 x-vercel-cache: MISS
-x-vercel-id: iad1::iad1::5whsc-1793999030698-5aae7d01c1e2
+x-vercel-id: iad1::iad1::gs5zr-1794346915735-4faf81362c43
 vary: accept-encoding
-x-cache: Miss from cloudfront
-via: 1.1 049ca50de603d43d8c9d0f7716efb414.cloudfront.net (CloudFront)
+x-cache: Hit from cloudfront
+via: 1.1 49798ef4b8dd64fece36e067d09f69ec.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: BLvFgxxzkzkQGvgZR9FuOChkKzFs0EpG81025x8isduLlw2WDr_Ojg==
-age: 3066
+x-amz-cf-id: 23V5bIrGiCbqME9rj_JH5EZtZ0KNZYHDT0ybaSJoeVCR7FxtbsgfKw==
+age: 81025
 
 # Inkbox
 
@@ -37,6 +37,7 @@ age: 3066
 - [Agent signup](https://inkbox.ai/docs/get-started/agent-signup.md): Let your AI agent register itself with Inkbox, no account or API key needed
 - [Support agent](https://inkbox.ai/docs/get-started/support-agent.md): Your agent can open an A2A task with @support to get help setting up Inkbox and debugging what its own identity is doing
 - [Identities](https://inkbox.ai/docs/capabilities/identities.md): Create, manage, and provision agent identities using the Inkbox SDK and CLI
+- [Hosted agents](https://inkbox.ai/docs/capabilities/hosted-agents.md): Run a Hermes or Codex agent for an Inkbox identity on its own computer.
 - [Companion mode](https://inkbox.ai/docs/capabilities/companion-mode.md): Let explicitly allowed senders invite your agent into a specific email or group-message conversation
 - [Agent-to-Agent (A2A)](https://inkbox.ai/docs/capabilities/a2a.md): Make an Inkbox identity reachable by other agents over the A2A 1.0 protocol
 - [Verified domains](https://inkbox.ai/docs/capabilities/verified-domains.md): Connect an agent's identity to a domain your organization controls
@@ -82,6 +83,8 @@ age: 3066
 - [Approve](https://inkbox.ai/docs/api/agent-signup/approve.md): How humans approve or reject pending agent signups
 - [Agent identity API](https://inkbox.ai/docs/api/identities.md): Unified identity layer for AI agents — group mailboxes and phone numbers under a single handle
 - [Manage Identities](https://inkbox.ai/docs/api/identities/manage.md): Create, list, get, update, and delete agent identities, each owning one mailbox and tunnel with optional phone number and vault access.
+- [Agent hosting](https://inkbox.ai/docs/api/identities/hosting.md): Read and configure hosting for an identity, set idle shutdown, list computer templates, and inspect or retry incoming event deliveries.
+- [Hosted chat and workspace](https://inkbox.ai/docs/api/identities/chat.md): Conversations, approvals, files, and workspace controls for a hosted agent.
 - [Companion configuration](https://inkbox.ai/docs/api/identities/companion.md): Read and update the Companion enabled preference and inspect channel readiness
 - [Companion conversation state](https://inkbox.ai/docs/api/identities/companion-conversations.md): List visible Companion scopes and distinguish read access from reply readiness
 - [Companion activation history](https://inkbox.ai/docs/api/identities/companion-history.md): Paginate the authorized initialization snapshot before submitting one combined agent input
@@ -132,18 +135,20 @@ age: 3066
 - [Tapbacks](https://inkbox.ai/docs/api/imessage/reactions.md): Send tapback reactions to iMessages and read the live reactions on every message
 - [iMessage Contact Rules](https://inkbox.ai/docs/api/imessage/contact-rules.md): Manage allow and block rules on an identity's shared phone list covering incoming and outgoing iMessage, SMS, calls, and WhatsApp, matched on exact numbers.
 - [Webhooks](https://inkbox.ai/docs/api/imessage/webhooks.md): Receive real-time HTTP POST callbacks for inbound iMessages, tapbacks, and outbound delivery status
-- [WhatsApp API](https://inkbox.ai/docs/api/whatsapp.md): Identity-scoped WhatsApp direct messaging, quoted replies, and reactions
-- [Messages](https://inkbox.ai/docs/api/whatsapp/messages.md): Send WhatsApp direct messages and quoted replies with explicit delivery state
+- [WhatsApp API](https://inkbox.ai/docs/api/whatsapp.md): Identity-scoped WhatsApp messages, existing groups, quoted replies, and reactions
+- [WhatsApp onboarding](https://inkbox.ai/docs/api/whatsapp/onboarding.md): Get a WhatsApp message link and QR code that open a chat with your agent's approved number, check channel readiness, and receive the first message
+- [Messages](https://inkbox.ai/docs/api/whatsapp/messages.md): Send WhatsApp messages and quoted replies with explicit delivery state
 - [Media](https://inkbox.ai/docs/api/whatsapp/media.md): Upload one owned WhatsApp attachment and refresh its temporary download access
-- [Conversations](https://inkbox.ai/docs/api/whatsapp/conversations.md): Browse WhatsApp direct conversations and update local unread history
+- [Conversations](https://inkbox.ai/docs/api/whatsapp/conversations.md): Browse WhatsApp direct and existing group conversations and update local unread history
+- [Existing groups](https://inkbox.ai/docs/api/whatsapp/groups.md): Receive group messages and reply with text, media, reactions, or quoted replies
 - [Threads and quoted replies](https://inkbox.ai/docs/api/whatsapp/threads.md): Send native quoted replies and read authorized chronological WhatsApp quote chains
 - [Reactions](https://inkbox.ai/docs/api/whatsapp/reactions.md): Add or remove whole-message WhatsApp reactions without confusing acceptance with application
 - [Webhooks](https://inkbox.ai/docs/api/whatsapp/webhooks.md): Receive incoming WhatsApp messages and track outbound send and delivery outcomes
-- [Limits and usage](https://inkbox.ai/docs/api/whatsapp/limits.md): Read effective WhatsApp safeguards and channel-specific usage
+- [Limits and usage](https://inkbox.ai/docs/api/whatsapp/limits.md): Read effective WhatsApp limits and usage counters for an agent, including daily message, first-contact, unanswered, and pre-reply safeguards
 - [Slack API](https://inkbox.ai/docs/api/slack.md): Manage Slack connections, live and retained history, search, files, and durable message and workspace operations
 - [Connections and installation](https://inkbox.ai/docs/api/slack/connections.md): Save workspace configuration credentials, prepare an identity app, and manage its Slack connection
 - [Conversations](https://inkbox.ai/docs/api/slack/conversations.md): Discover accessible Slack conversations, open direct messages, and read conversation details
-- [Messages and actions](https://inkbox.ai/docs/api/slack/messages.md): Read live Slack history and threads, send idempotent messages, and inspect sent, failed, or unknown outcomes
+- [Messages and actions](https://inkbox.ai/docs/api/slack/messages.md): Read Slack messages and threads, send idempotent messages, and inspect sent, failed, or unknown outcomes
 - [Files](https://inkbox.ai/docs/api/slack/files.md): Read accessible file metadata, download bytes, and upload files with durable operation status
 - [Slack operations](https://inkbox.ai/docs/api/slack/operations.md): Edit messages, manage reactions and pins, join or leave channels, and inspect durable operation outcomes
 - [Slack task streams](https://inkbox.ai/docs/api/slack/task-streams.md): Show native task progress in an existing Slack thread and close the stream when work finishes

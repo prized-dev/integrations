@@ -1,10 +1,10 @@
 GET https://api.resend.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:59.690Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:10.740Z
 final-url: https://api.resend.com/.well-known/oauth-protected-resource
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:18:57 GMT
+date: Thu, 12 Nov 2026 02:38:09 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -19,6 +19,6 @@ etag: W/"ef-UQ+Z2gnk4KvjJu40kZY3jeHnP/Q"
 cf-cache-status: DYNAMIC
 content-encoding: br
 server: cloudflare
-cf-ray: a56829e5ef81ef24-PDX
+cf-ray: a59228a9dd929d6b-PDX
 
 {"resource":"https://api.resend.com","authorization_servers":["https://api.resend.com"],"bearer_methods_supported":["header"],"scopes_supported":["full_access","emails:send"],"resourceDocumentation":"https://resend.com/docs/api-reference"}

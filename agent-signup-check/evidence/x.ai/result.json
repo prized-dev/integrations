@@ -1,9 +1,10 @@
 {
  "site": "x.ai",
- "checkedAt": "2026-11-07T00:18:12.249Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:37:22.216Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 2,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -58,7 +59,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.x.ai/llms.txt",
    "heading": "# SpaceXSI API Documentation",
-   "bytes": 25824,
+   "bytes": 26207,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -71,7 +72,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 123,
+   "ms": 103,
    "redirects": 0
   },
   {
@@ -81,7 +82,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 115,
+   "ms": 120,
    "redirects": 0
   },
   {
@@ -91,7 +92,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 119,
+   "ms": 63,
    "redirects": 0
   },
   {
@@ -101,7 +102,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 119,
+   "ms": 122,
    "redirects": 0
   },
   {
@@ -111,7 +112,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 104,
+   "ms": 106,
    "redirects": 0
   },
   {
@@ -121,7 +122,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 102,
+   "ms": 103,
    "redirects": 0
   },
   {
@@ -131,7 +132,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 108,
+   "ms": 102,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.x.ai/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.x.ai/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 110,
    "redirects": 0
   },
   {
@@ -141,7 +152,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 102,
+   "ms": 136,
    "redirects": 0
   }
  ]

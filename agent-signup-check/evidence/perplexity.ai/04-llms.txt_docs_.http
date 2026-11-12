@@ -1,27 +1,27 @@
 GET https://docs.perplexity.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:13.650Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:22.899Z
 final-url: https://docs.perplexity.ai/llms.txt
 
 HTTP 200
-age: 2042
+age: 4191
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a56828c45cf39694-PDX
+cf-ray: a592277b79390d87-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Sat, 07 Nov 2026 00:18:11 GMT
-etag: "H1KPgv6zjfjgCGdkLCKN1RMuCgBYJnfcqmbf0ZJhi44"
+date: Thu, 12 Nov 2026 02:37:20 GMT
+etag: "dXcja1jluLLBCBZZuJ7wWot-jToisYQUThLc_j8RAwA"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4076
-x-vercel-cache: STALE
-x-vercel-id: pdx1:fra1:iad1::iad1::zx7sr-1794010691212-c2bc616dca49
+x-mintlify-client-version: 0.0.4111
+x-vercel-cache: REVALIDATED
+x-vercel-id: pdx1:cdg1:iad1::iad1::zcf9v-1794451040526-7f48c3f9b95d
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_8LJbrAiZvr1K98WQNZXCyY5AvT34
+x-version: dpl_DqYu5MPb49gWBBbUGgpHQUmCHY3P
 connection: close
 transfer-encoding: chunked
 
@@ -35,9 +35,9 @@ transfer-encoding: chunked
 - [Perplexity API MCP Server](https://docs.perplexity.ai/docs/getting-started/integrations/mcp-server.md): Connect AI assistants to Perplexity's search and reasoning capabilities using the Model Context Protocol (MCP).
 - [Perplexity Computer MCP Server](https://docs.perplexity.ai/docs/getting-started/integrations/computer-mcp-server.md): Give AI assistants the ability to complete real-world tasks using Perplexity Computer through the Model Context Protocol (MCP).
 - [Perplexity CLI](https://docs.perplexity.ai/docs/cli/overview.md): Install and use Perplexity's pplx command-line interface for web search and query-relevant page snippets from your terminal or coding agent.
-- [Perplexity Orchestrator API](https://docs.perplexity.ai/docs/router/quickstart.md): Unified access to open-weight models through OpenAI Chat Completions, OpenAI Responses, and Anthropic Messages APIs, with your Perplexity API key.
-- [Orchestrator Models & Pricing](https://docs.perplexity.ai/docs/router/models.md): The model catalog for the Perplexity Orchestrator API, with per-token pricing for Perplexity-hosted and third-party models.
-- [Routing & Reliability](https://docs.perplexity.ai/docs/router/routing-and-reliability.md): How the Perplexity Orchestrator API routes requests across model deployments, and what happens automatically when a provider degrades or fails.
+- [Perplexity Orchestrator API](https://docs.perplexity.ai/docs/orchestrator/quickstart.md): Unified access to open-weight models through OpenAI Chat Completions, OpenAI Responses, and Anthropic Messages APIs, with your Perplexity API key.
+- [Orchestrator Models & Pricing](https://docs.perplexity.ai/docs/orchestrator/models.md): The model catalog for the Perplexity Orchestrator API, with per-token pricing for Perplexity-hosted and third-party models.
+- [Routing & Reliability](https://docs.perplexity.ai/docs/orchestrator/routing-and-reliability.md): How the Perplexity Orchestrator API routes requests across model deployments, and what happens automatically when a provider degrades or fails.
 - [Agent API](https://docs.perplexity.ai/docs/agent-api/quickstart.md): The Agent API is a multi-provider, interoperable API specification for building LLM applications. Access models from multiple providers with integrated real-time web search, tool configuration, reasoning control, and token budgets—all through one unified interface.
 - [Define the run](https://docs.perplexity.ai/docs/agent-api/building-agents/define-the-run.md): Configure the agent run: start from an effort level, then customize the system prompt, the loop bound, and the model.
 - [Prompt the agent](https://docs.perplexity.ai/docs/agent-api/building-agents/prompt-the-agent.md): Split the standing rules (the system prompt) from the question (input), and ground the run so the agent searches and answers on the right thing.

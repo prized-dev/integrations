@@ -1,14 +1,14 @@
 GET https://apify.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:18.669Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.180Z
 final-url: https://apify.com/.well-known/x402
 
 HTTP 404
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Sat, 07 Nov 2026 00:19:18 GMT
-etag: "l377vvvpe93qxu"
+date: Thu, 12 Nov 2026 02:38:29 GMT
+etag: "gn95ac61a33tfo"
 content-encoding: gzip
 strict-transport-security: max-age=15768000
 x-permitted-cross-domain-policies: none
@@ -26,47 +26,47 @@ x-nextjs-cache: MISS
 x-nextjs-prerender: 1
 x-nextjs-stale-time: 180
 cache-control: s-maxage=1800
-vary: Accept-Encoding
+vary: rsc,Accept-Encoding
 x-cache: Error from cloudfront
-via: 1.1 a73c4443f00fb366a3a7226697ad0b6c.cloudfront.net (CloudFront)
+via: 1.1 26c05953458c39f3149d18defede0790.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: kIEJBpUq89KuM5hPpc3nNwvRAtJ70F7aoiv13AlaE3qDA3QOaimiIg==
+x-amz-cf-id: l7aY_hZik4BABlEri4NxP5nCoIpg6H9FmAy1z12TtUsz7yIIjNKhOg==
 
-<!DOCTYPE html><html data-dpl-id="34710a5456" id="__next_error__"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/243g7v6wqs2fp.js?dpl=34710a5456"/><script src="/_next/static/chunks/08vrf3i7dpwjc.js?dpl=34710a5456" async=""></script><script src="/_next/static/chunks/3e4_6la97j7ov.js?dpl=34710a5456" async=""></script><script src="/_next/static/chunks/3g4fu9qvy6i-7.js?dpl=34710a5456" async=""></script><script src="/_next/static/chunks/1g41-0fn9--84.js?dpl=34710a5456" async=""></script><script src="/_next/static/chunks/turbopack-3yv6cmuran_d1.js?dpl=34710a5456" async=""></script><meta name="robots" content="noindex"/><meta name="theme-color" content="#020202"/><meta name="color-scheme" content="dark"/><title>Page not found · Apify</title><meta name="keywords" content="tools for AI,AI agents,web scraper,web crawler,scraping,data extraction,API"/><meta name="robots" content="noindex,follow"/><meta property="og:title" content="Page not found · Apify"/><meta property="og:site_name" content="Apify"/><meta property="og:locale" content="en_US"/><meta property="og:image" content="https://apify.com/og-image?title=Page+not+found"/><meta property="og:image:type" content="image/png"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image:alt" content="Page not found"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:creator" content="@apify"/><meta name="twitter:title" content="Page not found · Apify"/><meta name="twitter:image" content="https://apify.com/og-image?title=Page+not+found"/><meta name="twitter:image:alt" content="Page not found"/><meta name="twitter:image:type" content="image/png"/><meta name="twitter:image:width" content="1200"/><meta name="twitter:image:height" content="630"/><link rel="icon" href="/favicon.ico?favicon.2653ilt32bing.ico?dpl=34710a5456" sizes="48x48" type="image/x-icon"/><link rel="icon" href="/icon0.svg?icon0.0z-sy_vfu_0k9.svg?dpl=34710a5456" sizes="any" type="image/svg+xml"/><link rel="icon" href="/icon1.png?icon1.19tweubz5gs58.png?dpl=34710a5456" sizes="16x16" type="image/png"/><link rel="icon" href="/icon2.png?icon2.3r85axuruieku.png?dpl=34710a5456" sizes="32x32" type="image/png"/><link rel="icon" href="/icon3.png?icon3.3s3w1xl08imk-.png?dpl=34710a5456" sizes="48x48" type="image/png"/><link rel="icon" href="/icon4.png?icon4.3t89wfk26t8a4.png?dpl=34710a5456" sizes="64x64" type="image/png"/><link rel="icon" href="/icon5.png?icon5.1e86kt5dlrw_l.png?dpl=34710a5456" sizes="96x96" type="image/png"/><link rel="icon" href="/icon6.png?icon6.1r9xiq457m6rl.png?dpl=34710a5456" sizes="128x128" type="image/png"/><link rel="apple-touch-icon" href="/apple-icon.png?apple-icon.1qabm0kj8blk6.png?dpl=34710a5456" sizes="180x180" type="image/png"/><script src="/_next/static/chunks/0cz1d0mv5g_q7.js?dpl=34710a5456" noModule=""></script><style data-styled="" data-styled-version="6.6.0">.gypbvy{margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;}/*!sc*/
-data-styled.g1[id="box__StyledBox-sc-90c57dd0-0"]{content:"gypbvy,krOxet,"}/*!sc*/
-.kvVHtE{color:var(--color-neutral-text-on-primary);}/*!sc*/
-.ikonzd{color:var(--color-neutral-text);}/*!sc*/
-.cgqjOx{color:var(--color-neutral-text-muted);}/*!sc*/
-data-styled.g2[id="text_base__StyledText-sc-426fd845-0"]{content:"kvVHtE,ikonzd,dGEqoY,cgqjOx,"}/*!sc*/
-.ca-DYEk{font-size:1.6rem;line-height:2.4rem;font-weight:500;font-family:Inter,sans-serif;}/*!sc*/
-@media ((min-width: 768px)){.ca-DYEk{font-size:1.6rem;line-height:2.4rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
-@media ((min-width: 1024px)){.ca-DYEk{font-size:1.6rem;line-height:2.4rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
-.eWtDn{font-size:1.8rem;line-height:2.8rem;font-weight:400;font-family:Inter,sans-serif;}/*!sc*/
-@media ((min-width: 768px)){.eWtDn{font-size:1.8rem;line-height:2.8rem;font-weight:400;font-family:Inter,sans-serif;}}/*!sc*/
-@media ((min-width: 1024px)){.eWtDn{font-size:1.8rem;line-height:2.8rem;font-weight:400;font-family:Inter,sans-serif;}}/*!sc*/
-.dyLmWa{font-size:1.6rem;line-height:2.4rem;font-weight:700;font-family:Inter,sans-serif;}/*!sc*/
-@media ((min-width: 768px)){.dyLmWa{font-size:1.6rem;line-height:2.4rem;font-weight:700;font-family:Inter,sans-serif;}}/*!sc*/
-@media ((min-width: 1024px)){.dyLmWa{font-size:1.6rem;line-height:2.4rem;font-weight:700;font-family:Inter,sans-serif;}}/*!sc*/
-.kA-dtIJ{font-size:1.4rem;line-height:2rem;font-weight:400;font-family:Inter,sans-serif;}/*!sc*/
-@media ((min-width: 768px)){.kA-dtIJ{font-size:1.4rem;line-height:2rem;font-weight:400;font-family:Inter,sans-serif;}}/*!sc*/
-@media ((min-width: 1024px)){.kA-dtIJ{font-size:1.4rem;line-height:2rem;font-weight:400;font-family:Inter,sans-serif;}}/*!sc*/
-.jeqkBP{font-size:1.2rem;line-height:1.6rem;font-weight:700;font-family:Inter,sans-serif;}/*!sc*/
-@media ((min-width: 768px)){.jeqkBP{font-size:1.2rem;line-height:1.6rem;font-weight:700;font-family:Inter,sans-serif;}}/*!sc*/
-@media ((min-width: 1024px)){.jeqkBP{font-size:1.2rem;line-height:1.6rem;font-weight:700;font-family:Inter,sans-serif;}}/*!sc*/
-.hrBVBS{font-size:1.4rem;line-height:2rem;font-weight:700;font-family:Inter,sans-serif;}/*!sc*/
-@media ((min-width: 768px)){.hrBVBS{font-size:1.4rem;line-height:2rem;font-weight:700;font-family:Inter,sans-serif;}}/*!sc*/
-@media ((min-width: 1024px)){.hrBVBS{font-size:1.4rem;line-height:2rem;font-weight:700;font-family:Inter,sans-serif;}}/*!sc*/
-.feVGzZ{font-size:1.2rem;line-height:1.6rem;font-weight:500;font-family:Inter,sans-serif;}/*!sc*/
-@media ((min-width: 768px)){.feVGzZ{font-size:1.2rem;line-height:1.6rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
-@media ((min-width: 1024px)){.feVGzZ{font-size:1.2rem;line-height:1.6rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
-.dhsxiw{font-size:1.2rem;line-height:1.6rem;font-weight:400;font-family:Inter,sans-serif;}/*!sc*/
-@media ((min-width: 768px)){.dhsxiw{font-size:1.2rem;line-height:1.6rem;font-weight:400;font-family:Inter,sans-serif;}}/*!sc*/
-@media ((min-width: 1024px)){.dhsxiw{font-size:1.2rem;line-height:1.6rem;font-weight:400;font-family:Inter,sans-serif;}}/*!sc*/
-.DkHUY{font-size:1.4rem;line-height:2rem;font-weight:500;font-family:Inter,sans-serif;}/*!sc*/
-@media ((min-width: 768px)){.DkHUY{font-size:1.4rem;line-height:2rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
-@media ((min-width: 1024px)){.DkHUY{font-size:1.4rem;line-height:2rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
-data-styled.g4[id="text_marketing__StyledTextMarketing-sc-cd9a5db-0"]{content:"ca-DYEk,eWtDn,dyLmWa,kA-dtIJ,jeqkBP,hrBVBS,feVGzZ,dhsxiw,DkHUY,"}/*!sc*/
+<!DOCTYPE html><html data-dpl-id="a1e47c974b" id="__next_error__"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/29smlmc2wvzx1.js?dpl=a1e47c974b"/><script src="/_next/static/chunks/18gjusszlcuyd.js?dpl=a1e47c974b" async=""></script><script src="/_next/static/chunks/3h8ueojhtxns6.js?dpl=a1e47c974b" async=""></script><script src="/_next/static/chunks/3fcxo9fuybrlu.js?dpl=a1e47c974b" async=""></script><script src="/_next/static/chunks/1vpq63h7uj-k0.js?dpl=a1e47c974b" async=""></script><script src="/_next/static/chunks/turbopack-0rw29v8dsd-kr.js?dpl=a1e47c974b" async=""></script><meta name="robots" content="noindex"/><meta name="theme-color" content="#020202"/><meta name="color-scheme" content="dark"/><title>Page not found · Apify</title><meta name="keywords" content="tools for AI,AI agents,web scraper,web crawler,scraping,data extraction,API"/><meta name="robots" content="noindex,follow"/><meta property="og:title" content="Page not found · Apify"/><meta property="og:site_name" content="Apify"/><meta property="og:locale" content="en_US"/><meta property="og:image" content="https://apify.com/og-image?title=Page+not+found"/><meta property="og:image:type" content="image/png"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image:alt" content="Page not found"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:creator" content="@apify"/><meta name="twitter:title" content="Page not found · Apify"/><meta name="twitter:image" content="https://apify.com/og-image?title=Page+not+found"/><meta name="twitter:image:alt" content="Page not found"/><meta name="twitter:image:type" content="image/png"/><meta name="twitter:image:width" content="1200"/><meta name="twitter:image:height" content="630"/><link rel="icon" href="/favicon.ico?favicon.2653ilt32bing.ico?dpl=a1e47c974b" sizes="48x48" type="image/x-icon"/><link rel="icon" href="/icon0.svg?icon0.0z-sy_vfu_0k9.svg?dpl=a1e47c974b" sizes="any" type="image/svg+xml"/><link rel="icon" href="/icon1.png?icon1.19tweubz5gs58.png?dpl=a1e47c974b" sizes="16x16" type="image/png"/><link rel="icon" href="/icon2.png?icon2.3r85axuruieku.png?dpl=a1e47c974b" sizes="32x32" type="image/png"/><link rel="icon" href="/icon3.png?icon3.3s3w1xl08imk-.png?dpl=a1e47c974b" sizes="48x48" type="image/png"/><link rel="icon" href="/icon4.png?icon4.3t89wfk26t8a4.png?dpl=a1e47c974b" sizes="64x64" type="image/png"/><link rel="icon" href="/icon5.png?icon5.1e86kt5dlrw_l.png?dpl=a1e47c974b" sizes="96x96" type="image/png"/><link rel="icon" href="/icon6.png?icon6.1r9xiq457m6rl.png?dpl=a1e47c974b" sizes="128x128" type="image/png"/><link rel="apple-touch-icon" href="/apple-icon.png?apple-icon.1qabm0kj8blk6.png?dpl=a1e47c974b" sizes="180x180" type="image/png"/><script src="/_next/static/chunks/0cz1d0mv5g_q7.js?dpl=a1e47c974b" noModule=""></script><style data-styled="" data-styled-version="6.6.0">.eHgDEr{margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;}/*!sc*/
+data-styled.g1[id="box__StyledBox-sc-5aca48d3-0"]{content:"eHgDEr,hzpDOw,"}/*!sc*/
+.gVpuPg{color:var(--color-neutral-text-on-primary);}/*!sc*/
+.llrAXJ{color:var(--color-neutral-text);}/*!sc*/
+.flcZOh{color:var(--color-neutral-text-muted);}/*!sc*/
+data-styled.g2[id="text_base__StyledText-sc-7f08bf53-0"]{content:"gVpuPg,llrAXJ,fAErrw,flcZOh,"}/*!sc*/
+.cvrRGS{font-size:1.6rem;line-height:2.4rem;font-weight:500;font-family:Inter,sans-serif;}/*!sc*/
+@media ((min-width: 768px)){.cvrRGS{font-size:1.6rem;line-height:2.4rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
+@media ((min-width: 1024px)){.cvrRGS{font-size:1.6rem;line-height:2.4rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
+.kEVxap{font-size:1.8rem;line-height:2.8rem;font-weight:400;font-family:Inter,sans-serif;}/*!sc*/
+@media ((min-width: 768px)){.kEVxap{font-size:1.8rem;line-height:2.8rem;font-weight:400;font-family:Inter,sans-serif;}}/*!sc*/
+@media ((min-width: 1024px)){.kEVxap{font-size:1.8rem;line-height:2.8rem;font-weight:400;font-family:Inter,sans-serif;}}/*!sc*/
+.jRrExs{font-size:1.6rem;line-height:2.4rem;font-weight:700;font-family:Inter,sans-serif;}/*!sc*/
+@media ((min-width: 768px)){.jRrExs{font-size:1.6rem;line-height:2.4rem;font-weight:700;font-family:Inter,sans-serif;}}/*!sc*/
+@media ((min-width: 1024px)){.jRrExs{font-size:1.6rem;line-height:2.4rem;font-weight:700;font-family:Inter,sans-serif;}}/*!sc*/
+.cGGEhz{font-size:1.4rem;line-height:2rem;font-weight:400;font-family:Inter,sans-serif;}/*!sc*/
+@media ((min-width: 768px)){.cGGEhz{font-size:1.4rem;line-height:2rem;font-weight:400;font-family:Inter,sans-serif;}}/*!sc*/
+@media ((min-width: 1024px)){.cGGEhz{font-size:1.4rem;line-height:2rem;font-weight:400;font-family:Inter,sans-serif;}}/*!sc*/
+.eCgbJV{font-size:1.2rem;line-height:1.6rem;font-weight:700;font-family:Inter,sans-serif;}/*!sc*/
+@media ((min-width: 768px)){.eCgbJV{font-size:1.2rem;line-height:1.6rem;font-weight:700;font-family:Inter,sans-serif;}}/*!sc*/
+@media ((min-width: 1024px)){.eCgbJV{font-size:1.2rem;line-height:1.6rem;font-weight:700;font-family:Inter,sans-serif;}}/*!sc*/
+.hEyHCg{font-size:1.4rem;line-height:2rem;font-weight:700;font-family:Inter,sans-serif;}/*!sc*/
+@media ((min-width: 768px)){.hEyHCg{font-size:1.4rem;line-height:2rem;font-weight:700;font-family:Inter,sans-serif;}}/*!sc*/
+@media ((min-width: 1024px)){.hEyHCg{font-size:1.4rem;line-height:2rem;font-weight:700;font-family:Inter,sans-serif;}}/*!sc*/
+.dhOdor{font-size:1.2rem;line-height:1.6rem;font-weight:500;font-family:Inter,sans-serif;}/*!sc*/
+@media ((min-width: 768px)){.dhOdor{font-size:1.2rem;line-height:1.6rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
+@media ((min-width: 1024px)){.dhOdor{font-size:1.2rem;line-height:1.6rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
+.dXWyuO{font-size:1.2rem;line-height:1.6rem;font-weight:400;font-family:Inter,sans-serif;}/*!sc*/
+@media ((min-width: 768px)){.dXWyuO{font-size:1.2rem;line-height:1.6rem;font-weight:400;font-family:Inter,sans-serif;}}/*!sc*/
+@media ((min-width: 1024px)){.dXWyuO{font-size:1.2rem;line-height:1.6rem;font-weight:400;font-family:Inter,sans-serif;}}/*!sc*/
+.iLdCDG{font-size:1.4rem;line-height:2rem;font-weight:500;font-family:Inter,sans-serif;}/*!sc*/
+@media ((min-width: 768px)){.iLdCDG{font-size:1.4rem;line-height:2rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
+@media ((min-width: 1024px)){.iLdCDG{font-size:1.4rem;line-height:2rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
+data-styled.g4[id="text_marketing__StyledTextMarketing-sc-f9263497-0"]{content:"cvrRGS,kEVxap,jRrExs,cGGEhz,eCgbJV,hEyHCg,dhOdor,dXWyuO,iLdCDG,"}/*!sc*/
 .isvkfb{position:relative;width:fit-content;font-size:1.6rem;line-height:2.4rem;font-weight:500;font-family:Inter,sans-serif;text-decoration:none;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:0.8rem;margin-left:0;margin-right:0;padding:0.8rem 1.6rem;background:transparent;border-radius:8px;border:none;cursor:pointer;pointer-events:auto;transition:all 0.12s ease-out;background:var(--color-primary-black-action);color:var(--color-neutral-text-on-primary);box-shadow:var(--shadow-1);}/*!sc*/
 @media (min-width: 768px){.isvkfb{font-size:1.6rem;line-height:2.4rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
 @media (min-width: 1024px){.isvkfb{font-size:1.6rem;line-height:2.4rem;font-weight:500;font-family:Inter,sans-serif;}}/*!sc*/
@@ -103,14 +103,14 @@ data-styled.g6[id="Link__StyledNextLink-sc-ca37d6e9-0"]{content:"jWUFfH,iWiHDa,l
 .eiYnKt{cursor:pointer;text-decoration:none;text-underline-position:under;display:inline;align-items:center;}/*!sc*/
 .eiYnKt .Link__external-icon{vertical-align:middle;}/*!sc*/
 data-styled.g7[id="Link__StyledLink-sc-ca37d6e9-1"]{content:"eiYnKt,"}/*!sc*/
-.iZtpGX{font-size:1.2rem;line-height:1.6rem;font-weight:400;font-family:Inter,sans-serif;}/*!sc*/
-data-styled.g14[id="text_shared__StyledTextShared-sc-6e751df7-0"]{content:"iZtpGX,"}/*!sc*/
+.iwGvVm{font-size:1.2rem;line-height:1.6rem;font-weight:400;font-family:Inter,sans-serif;}/*!sc*/
+data-styled.g14[id="text_shared__StyledTextShared-sc-2f664fc9-0"]{content:"iwGvVm,"}/*!sc*/
 .TlebH{width:100%;height:auto;}/*!sc*/
 data-styled.g24[id="Image__StyledImage-sc-cb6241f0-0"]{content:"eaGcTt,TlebH,"}/*!sc*/
-.kddnUl{display:inline-flex;align-items:center;gap:0.4rem;text-decoration:none;transition:color 0.12s ease-in-out;}/*!sc*/
-.kddnUl:hover{text-decoration:none;color:var(--color-primary-action-hover);}/*!sc*/
-.kddnUl:active{color:var(--color-primary-action-active);}/*!sc*/
-data-styled.g30[id="link__StyledAsLink-sc-d7dd974b-0"]{content:"kddnUl,"}/*!sc*/
+.eqvCom{display:inline-flex;align-items:center;gap:0.4rem;text-decoration:none;transition:color 0.12s ease-in-out;}/*!sc*/
+.eqvCom:hover{text-decoration:none;color:var(--color-primary-action-hover);}/*!sc*/
+.eqvCom:active{color:var(--color-primary-action-active);}/*!sc*/
+data-styled.g30[id="link__StyledAsLink-sc-29e373da-0"]{content:"eqvCom,"}/*!sc*/
 .iGURuP{cursor:pointer;padding:1.6rem;}/*!sc*/
 .iGURuP .bars{width:1.4rem;height:1rem;position:relative;display:block;}/*!sc*/
 .iGURuP .bar1,.iGURuP .bar2,.iGURuP .bar3{position:absolute;width:100%;height:2px;background-color:var(--color-neutral-icon);transition:0.4s;}/*!sc*/
@@ -147,6 +147,6 @@ data-styled.g76[id="sc-global-hzIynF"]{content:"sc-global-hzIynF1,"}/*!sc*/
 @media (min-width: 768px){.dteshy .Navigation-mobile-buttons{display:none;}}/*!sc*/
 @media (min-width: 1200px){.dteshy .Navigation-menu{display:flex;align-items:center;flex-direction:row;padding:0;}.dteshy .WebHeader-navigation{overflow-y:visible;overflow-x:visible;display:block;padding:0;margin:0;margin-left:2.4rem;position:unset;background-color:transparent;}}/*!sc*/
 data-styled.g78[id="StyledHeader__StyledHeaderContainer-sc-e75a8e7c-0"]{content:"dteshy,"}/*!sc*/
-.iTbqNO .nav-item{padding:0;marg
+.iTbqNO .nav-item{padding:0;mar
 
-[body trimmed for publication: kept 16384 of 174882 characters; sha256 of the published body e2595a543e84efcfd2a50a886a97544a7e27404479c36e0c7a4ebb2ded19e6ae]
+[body trimmed for publication: kept 16384 of 178116 characters; sha256 of the published body 67e00221b9e23f7311870e68e80b6d3c25bfbf7b295601db49ab9e345c8b693c]

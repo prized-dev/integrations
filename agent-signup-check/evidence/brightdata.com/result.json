@@ -1,9 +1,10 @@
 {
  "site": "brightdata.com",
- "checkedAt": "2026-11-07T00:19:17.511Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:27.808Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 4,
  "partial": 1,
+ "unread": 0,
  "total": 7,
  "whoActs": "the person confirms an email code",
  "checks": [
@@ -88,7 +89,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 109,
+   "ms": 135,
    "redirects": 0
   },
   {
@@ -98,7 +99,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=UTF-8",
-   "ms": 331,
+   "ms": 361,
    "redirects": 0
   },
   {
@@ -108,7 +109,7 @@
    "status": 401,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 186,
+   "ms": 211,
    "redirects": 0
   },
   {
@@ -118,7 +119,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 137,
+   "ms": 131,
    "redirects": 0
   },
   {
@@ -128,7 +129,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 171,
+   "ms": 200,
    "redirects": 0
   },
   {
@@ -138,7 +139,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 102,
+   "ms": 116,
    "redirects": 0
   },
   {
@@ -148,7 +149,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 120,
+   "ms": 151,
    "redirects": 0
   }
  ]

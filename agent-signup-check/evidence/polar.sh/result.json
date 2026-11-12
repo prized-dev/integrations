@@ -1,9 +1,10 @@
 {
  "site": "polar.sh",
- "checkedAt": "2026-11-07T00:19:31.631Z",
- "checker": "agent-signup-check/0.2.2",
- "passed": 4,
+ "checkedAt": "2026-11-12T02:38:41.822Z",
+ "checker": "agent-signup-check/0.2.5",
+ "passed": 5,
  "partial": 0,
+ "unread": 0,
  "total": 7,
  "whoActs": "nobody (anonymous)",
  "checks": [
@@ -71,13 +72,11 @@
   {
    "id": "markdown",
    "name": "Docs in Markdown",
-   "url": "https://docs.polar.sh/llms.txt",
-   "tried": [
-    "https://polar.sh/llms.txt",
-    "https://docs.polar.sh/llms.txt"
-   ],
-   "status": "fail",
-   "reason": "https://polar.sh/llms.txt not found (HTTP 404) (after a redirect to https://polar.sh/docs/llms.txt); https://docs.polar.sh/llms.txt not found (HTTP 404) (after a redirect to https://polar.sh/docs/llms.txt)"
+   "url": "https://polar.sh/docs/llms.txt",
+   "heading": "# Polar",
+   "bytes": 86809,
+   "status": "pass",
+   "reason": "llms.txt found"
   }
  ],
  "requests": [
@@ -88,17 +87,17 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 209,
+   "ms": 125,
    "redirects": 1
   },
   {
    "label": "llms.txt",
    "url": "https://polar.sh/llms.txt",
    "finalUrl": "https://polar.sh/docs/llms.txt",
-   "status": 404,
+   "status": 200,
    "error": null,
-   "contentType": "text/plain; charset=UTF-8",
-   "ms": 321,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 162,
    "redirects": 1
   },
   {
@@ -108,18 +107,8 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 127,
+   "ms": 118,
    "redirects": 0
-  },
-  {
-   "label": "llms.txt (docs)",
-   "url": "https://docs.polar.sh/llms.txt",
-   "finalUrl": "https://polar.sh/docs/llms.txt",
-   "status": 404,
-   "error": null,
-   "contentType": "text/plain; charset=UTF-8",
-   "ms": 250,
-   "redirects": 1
   },
   {
    "label": "prm (from 401)",
@@ -128,7 +117,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 224,
+   "ms": 129,
    "redirects": 0
   },
   {
@@ -138,7 +127,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 121,
+   "ms": 240,
    "redirects": 0
   },
   {
@@ -148,7 +137,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 162,
+   "ms": 177,
    "redirects": 0
   }
  ]

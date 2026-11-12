@@ -1,14 +1,14 @@
 GET https://api.supabase.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:52.127Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:02.698Z
 final-url: https://api.supabase.com/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:18:50 GMT
+date: Thu, 12 Nov 2026 02:38:01 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a56829bbdeb3c54c-PDX
+cf-ray: a592287afa8aef98-PDX
 cf-cache-status: DYNAMIC
 cache-control: max-age=3600,public
 etag: W/"3c3-UOJfhwpbEDdkhuHI/ssZRbIABdU"

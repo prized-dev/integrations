@@ -1,6 +1,6 @@
 GET https://browserless.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:20.755Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.789Z
 redirect: 301 from https://browserless.io/llms.txt
 final-url: https://www.browserless.io/llms.txt
 
@@ -10,19 +10,19 @@ age: 0
 cache-control: public,max-age=0,must-revalidate
 cache-status: "Netlify Edge"; fwd=miss; fwd-status=200; stored
 content-encoding: br
+content-length: 1247
 content-security-policy: frame-ancestors 'self'; object-src 'none'; base-uri 'self'
 content-security-policy-report-only: script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://www.googletagmanager.com https://js.hs-scripts.com https://js.hsforms.com https://js.hs-analytics.net https://js.hs-banner.com https://js.hsadspixel.net https://js.hscollectedforms.net https://js.hsforms.net https://js.usemessages.com https://static.reo.dev https://cdn.jsdelivr.net https://bzrcdn.openai.com https://sweet-heart-af5f.zach-7be.workers.dev https://widget.kapa.ai https://widget.usepylon.com https://challenges.cloudflare.com https://www.youtube.com https://www.google-analytics.com https://ssl.google-analytics.com https://www.gstatic.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'
 content-type: text/plain; charset=UTF-8
-date: Sat, 07 Nov 2026 00:19:18 GMT
-etag: W/"5d11c899199cf938c1369f8ef134a535-ssl"
+date: Thu, 12 Nov 2026 02:38:28 GMT
+etag: W/"6010be4217375e2659357d60e6711d94-ssl"
 server: Netlify
 strict-transport-security: max-age=31536000
 vary: Accept-Encoding
 x-frame-options: SAMEORIGIN
-x-nf-request-id: 01M6SNZF4B4MZX58Q6S4ZCJXGN
+x-nf-request-id: 01M76SXWF5DZ3FX5AJ9D8QN1WF
 x-robots-tag: index, follow
 connection: close
-transfer-encoding: chunked
 
 # Browserless
 

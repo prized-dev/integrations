@@ -1,0 +1,20 @@
+GET https://cloudinary.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:54.845Z
+final-url: https://cloudinary.com/.well-known/x402
+
+HTTP 403
+date: Thu, 12 Nov 2026 02:38:54 GMT
+content-type: application/xml
+transfer-encoding: chunked
+connection: close
+server: cloudflare
+x-amz-request-id: AN28RQ78V08DBSPK
+x-amz-id-2: zLh4FfFidiK8yn90sdMHjhlu139uQ0+tZpQw4bvfs1iOmRosNqzk4Qs+4oHXO9WtAvUKQ8EGwEY=
+cf-cache-status: DYNAMIC
+content-encoding: br
+cf-ray: a59229c63adbb57f-PDX
+alt-svc: h3=":443"; ma=86400
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>AccessDenied</Code><Message>Access Denied</Message><RequestId>AN28RQ78V08DBSPK</RequestId><HostId>zLh4FfFidiK8yn90sdMHjhlu139uQ0+tZpQw4bvfs1iOmRosNqzk4Qs+4oHXO9WtAvUKQ8EGwEY=</HostId></Error>

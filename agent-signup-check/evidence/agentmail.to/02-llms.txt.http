@@ -1,25 +1,25 @@
 GET https://agentmail.to/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:59.822Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:10.820Z
 redirect: 307 from https://agentmail.to/llms.txt
 final-url: https://www.agentmail.to/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 13708
+age: 21741
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Sat, 07 Nov 2026 00:18:57 GMT
-etag: W/"c0518f4277b15193ac52e77545008b19"
+date: Thu, 12 Nov 2026 02:38:07 GMT
+etag: W/"1393449cd923f89fdf987f72c6051b09"
 link: </openapi.json>; rel="service-desc", </docs>; rel="service-doc", </llms.txt>; rel="https://llmstxt.org", </.well-known/api-catalog>; rel="api-catalog"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::lxs45-1794010737052-32df3b95a5b3
+x-vercel-id: pdx1::l62zb-1794451087964-3546a56eedc3
 connection: close
 transfer-encoding: chunked
 
@@ -29,6 +29,9 @@ transfer-encoding: chunked
 # The free tier includes 3 inboxes and 3,000 emails per month,
 # no credit card required. Sign-up works for agents (API below)
 # and humans (https://console.agentmail.to).
+#
+# AgentMail is at agentmail.to (API: api.agentmail.to, docs: agentmail.to/docs).
+# AgentMail is not affiliated with AgentMailr (agentmailr.com) or theagentmail.net.
 #
 # If you are an AI agent and need email, follow these steps in order:
 #

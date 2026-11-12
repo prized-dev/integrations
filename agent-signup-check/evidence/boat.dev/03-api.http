@@ -1,10 +1,10 @@
 GET https://boat.dev/api/v1/me
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:46.373Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:58.363Z
 final-url: https://boat.dev/api/v1/me
 
 HTTP 401
-date: Sat, 07 Nov 2026 00:18:43 GMT
+date: Thu, 12 Nov 2026 02:37:55 GMT
 content-type: application/json;charset=utf-8
 content-length: 251
 connection: close
@@ -20,6 +20,6 @@ via: 1.1 Caddy
 www-authenticate: Bearer resource_metadata="https://boat.dev/api/box/.well-known/oauth-protected-resource"
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a568298e1da9afe8-PDX
+cf-ray: a5922855883a503f-PDX
 
-{"ok":false,"type":"sandbox.error","status":401,"code":"unauthorized","message":"unauthorized","error":{"code":"unauthorized","message":"unauthorized","status":401,"details":{"error":"unauthorized"}},"requestId":"req_bff657f6e3304d9f92847e9acc23ca58"}
+{"ok":false,"type":"sandbox.error","status":401,"code":"unauthorized","message":"unauthorized","error":{"code":"unauthorized","message":"unauthorized","status":401,"details":{"error":"unauthorized"}},"requestId":"req_36c9bb7a27c1406bba7bb1074a2b0cce"}

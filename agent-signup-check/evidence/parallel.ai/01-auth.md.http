@@ -1,6 +1,6 @@
 GET https://parallel.ai/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:27.328Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:38.165Z
 final-url: https://parallel.ai/auth.md
 
 HTTP 200
@@ -13,13 +13,13 @@ cache-control: no-store
 content-encoding: br
 content-security-policy: frame-ancestors 'self' https://parallel-v2.sanity.studio https://sanity.io https://www.sanity.io
 content-type: text/markdown; charset=utf-8
-date: Sat, 07 Nov 2026 00:19:21 GMT
+date: Thu, 12 Nov 2026 02:38:33 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: Origin, Access-Control-Request-Headers
 x-matched-path: /auth.md
 x-vercel-cache: MISS
-x-vercel-id: pdx1:pdx1:pdx1::iad1::66ptt-1794010761326-232b260d9207
+x-vercel-id: pdx1:pdx1:pdx1::iad1::xzsqw-1794451113259-1f6ef9360391
 connection: close
 transfer-encoding: chunked
 
@@ -176,10 +176,14 @@ Response: `{ "apps": [ { app_id, app_name, org_id, org_name } ] }`.
 Body: `{ "app_name": "<name>" }`. Response: `{ "app_id": "<uuid>" }`.
 
 ### POST /service/v1/apps/{app_id}/keys  (scope: keys:create)
-Body: `{ "api_key_name": "<name>" }`.
+Body: `{ "api_key_name": "<name>", "is_service_scoped": false }`.
+`is_service_scoped` defaults to `false`: the key is revoked when the user who
+authorized you leaves the org. With `true`, the key belongs to the org and keeps
+working; only org admins can create one.
 Response: `{ api_key_id, api_key_name, app_id, app_name, created_by_user_id,
-created_by_user_email, display_value, created_at }`.
-The raw key (`display_value`) is returned once — store it; it's your
+created_by_user_email, display_value, raw_api_key, created_at,
+is_service_scoped }`.
+The raw key (`raw_api_key`) is returned once — store it; it's your
 `x-api-key` for the product API.
 
 ## Example: run a search
@@ -201,7 +205,7 @@ curl -X POST https://api.parallel.ai/account/service/v1/apps/<app_id>/keys \
   -H "Authorization: Bearer <access_token>" \
   -H "Content-Type: application/json" \
   -d '{"api_key_name": "search-key"}'
-# -> { ..., "display_value": "<x-api-key>" }   # raw key, shown once
+# -> { ..., "raw_api_key": "<x-api-key>" }   # raw key, shown once
 
 # 3. Run a search on the product API with that key (x-api-key, NOT the bearer)
 curl -X POST https://api.parallel.ai/v1/search \

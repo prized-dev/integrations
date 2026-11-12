@@ -1,20 +1,20 @@
 GET https://sentry.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:39.327Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:49.945Z
 final-url: https://sentry.io/llms.txt
 
 HTTP 200
 server: nginx
-date: Sat, 07 Nov 2026 00:19:36 GMT
+date: Thu, 12 Nov 2026 02:38:47 GMT
 content-type: text/plain; charset=utf-8
 vary: Accept-Encoding,Accept, User-Agent
 access-control-allow-origin: *
-age: 6940
+age: 17873
 cache-control: public, max-age=3600, s-maxage=3600
 content-disposition: inline; filename="llms.txt"
 x-vercel-cache: HIT
-x-vercel-id: cle1::5vnd7-1794010776679-45d30ae4222b
-content-security-policy: upgrade-insecure-requests; default-src 'none'; script-src 'strict-dynamic' 'nonce-QSSM8qnaPU1RN8gCWcXvyoYXjVhQvMHK' 'report-sample' 'self' 'unsafe-inline' 'unsafe-eval' *.sentry.dev www.googletagmanager.com plausible.io player.vimeo.com prod-assets.sequelvideo.com; connect-src 'self' sentry.io *.sentry.io *.sentry.dev reload.getsentry.net www.google.com unpkg.com vimeo.com plausible.io *.sequelvideo.com *.sequel.io; img-src 'self' sentry.io *.sentry.io data: *.sentry.dev storage.googleapis.com sentry-blog.storage.googleapis.com www.googletagmanager.com i.vimeocdn.com images.ctfassets.net images.lumacdn.com *.sequelvideo.com *.cloudinary.com; style-src 'self' 'unsafe-inline' *.sentry.dev; media-src 'self' videos.ctfassets.net; font-src 'self' *.sentry.dev data: fonts.gstatic.com; frame-src player.vimeo.com demo.arcade.software recaptcha.google.com www.google.com *.sequel.io *.sequelvideo.com; manifest-src 'self' *.sentry.dev; base-uri 'none'; frame-ancestors *.sentry.io; report-uri https://o1.ingest.sentry.io/api/1297627/security/?sentry_key=e811b9077ef64dcf8a279ec18a61b222
+x-vercel-id: cle1::5hlh4-1794451127088-99bcbad888c1
+content-security-policy: upgrade-insecure-requests; default-src 'none'; script-src 'strict-dynamic' 'nonce-LUnQLVh7VqsK9L2bQpd3eMjgCBtyk2i2' 'report-sample' 'self' 'unsafe-inline' 'unsafe-eval' *.sentry.dev www.googletagmanager.com plausible.io player.vimeo.com prod-assets.sequelvideo.com; connect-src 'self' sentry.io *.sentry.io *.sentry.dev reload.getsentry.net www.google.com unpkg.com vimeo.com plausible.io *.sequelvideo.com *.sequel.io; img-src 'self' sentry.io *.sentry.io data: *.sentry.dev storage.googleapis.com sentry-blog.storage.googleapis.com www.googletagmanager.com i.vimeocdn.com images.ctfassets.net images.lumacdn.com *.sequelvideo.com *.cloudinary.com; style-src 'self' 'unsafe-inline' *.sentry.dev; media-src 'self' videos.ctfassets.net; font-src 'self' *.sentry.dev data: fonts.gstatic.com; frame-src player.vimeo.com demo.arcade.software recaptcha.google.com www.google.com *.sequel.io *.sequelvideo.com; manifest-src 'self' *.sentry.dev; base-uri 'none'; frame-ancestors *.sentry.io; report-uri https://o1.ingest.sentry.io/api/1297627/security/?sentry_key=e811b9077ef64dcf8a279ec18a61b222
 content-encoding: br
 via: 1.1 google
 alt-svc: h3=":443"; ma=2592000
@@ -109,12 +109,11 @@ _Source: https://docs.sentry.io/llms.txt_
 - [Session Replay: See What Users See, Fix What Broke](https://sentry.io/product/session-replay/): Watch video-like replays of real user sessions tied to stack traces, errors, and network calls. Spot rage clicks, UI jan
 - [Continuous Profiling for Backend and Mobile Application Performance Issues](https://sentry.io/product/profiling/): See code-level insights from your backend & mobile app performance, including what's causing a slowdown with Profiling. 
 - [Application Metrics — Trace-Connected and High-Cardinality](https://sentry.io/product/metrics/): Sentry's application metrics are trace-connected and high-cardinality. Tag any measurement with customer_id, route, or r
-- [Seer: Debug faster at every stage of development](https://sentry.io/product/seer/): Seer is the AI debugger that uses Sentry context to flag breaking changes, automatically root cause issues in production
+- [Seer: Debug faster at every stage of development](https://sentry.io/product/seer/): Seer is the AI debugger that uses Sentry context to find root causes, investigate production issues, and generate fixes.
 - [Seer Agent](https://sentry.io/product/seer/agent/): No context-gathering, no copy-pasting stack traces. Just ask Seer Agent what's wrong and get an answer from your actual 
-- [AI Code Review Tool - Analyze PRs Before Shipping](https://sentry.io/product/seer/ai-code-review/): Ship code that breaks less with Sentry AI code review. It finds and fixes coding errors in your GitHub PRs, and generate
 - [Seer Autofix](https://sentry.io/product/seer/autofix/): Seer Autofix reads the stack trace, traces the root cause through your codebase, and drafts a fix — before you've finish
 - [Uptime monitoring for developers](https://sentry.io/product/uptime-monitoring/): Know when your site goes down before your users do. Sentry monitors your URLs every minute and links outages to traces s
-- [Cron Monitoring](https://sentry.io/product/cron-monitoring/): Know why your scheduled jobs fail & where to fix the problem in your code with Cron error monitoring. Get started here f
+- [Cron Job Monitoring: Catch Silent Failures in Your Code | Sentry](https://sentry.io/product/cron-monitoring/): Monitor cron jobs and scheduled tasks. Get alerted when a job fails, runs late, or never starts, then jump straight to t
 - [Developer first Code Coverage platform](https://sentry.io/product/code-coverage/): Discover what untested code is causing errors & how to avoid similar errors in the future with Sentry's Codecov integrat
 - [Size Analysis](https://sentry.io/product/size-analysis/): Size Analysis helps you monitor and reduce your mobile app size. Get specific recommendations on how to make your mobile
 
@@ -262,6 +261,7 @@ _Source: https://docs.sentry.io/llms.txt_
 - [Protecting releases, fixing bugs with Sentry & LaunchDarkly](https://sentry.io/resources/launchdarkly-workshop/): In this livestream, Peter McCarron, Staff Product Marketing at Sentry, is joined by Tom Totenberg, Head of Release Autom
 - [Writing Useful Logs For Production](https://sentry.io/resources/logs-workshop/): A hands-on workshop on structured logging: what to capture, how to structure it, and how to stay informed so your next i
 - [MCP Observability: Monitor and Trace MCP Servers](https://sentry.io/resources/mcp-observability/): What MCP observability is, the signals worth capturing on a Model Context Protocol server, and how to trace tool calls, 
+- [Sentry Application Metrics: Best Practices and Use Cases](https://sentry.io/resources/metrics-workshop/): Learn how to instrument Sentry Application Metrics alongside traces, logs, and errors, go from a spike on a chart to the
 - [[On Demand] How-to migrate to Sentry SaaS](https://sentry.io/resources/migrate-to-sentry-saas-workshop/): Join Alex Zaslavsky - the engineer behind Sentry’s migration tooling (aka “relocation”) - as he guides you through expor
 - [Mobile App Monitoring Platforms Don’t Have To Be Noisy](https://sentry.io/resources/mobile-app-monitoring-workshop/): Learn how to use Sentry for Mobile featuring error monitoring, mobile replay, tracing, and more.
 - [Phases of Mobile Monitoring Maturity - Assessment & Checklist](https://sentry.io/resources/mobile-maturity-phases-checklist/): In this easy-to-use guide, you’ll find tools to identify what phase of mobile monitoring maturity your team is in and an
@@ -420,9 +420,9 @@ _Source: https://docs.sentry.io/llms.txt_
 - [Build AI agent evals from production conversations](https://sentry.io/cookbook/agent-conversations-to-evals/): Export real AI agent conversations from Sentry with the Sentry CLI and turn them into eval datasets in Braintrust, Langf
 - [Automate AI agent error triage with Claude Routines](https://sentry.io/cookbook/automate-ai-agent-triage-claude-routines/): Set up a Claude Routine that uses Sentry Agent Tracing via MCP to automatically triage your AI agent's overnight errors,
 - [Connect Your Source Code with the Sentry GitLab Integration](https://sentry.io/cookbook/connect-sentry-to-gitlab/): Connect code stored in GitLab to Sentry. Create the OAuth app in GitLab, link groups, and add repositories to unlock cod
+- [Control Session Replay Sampling per Page with a React Hook](https://sentry.io/cookbook/control-session-replay-sampling-per-page/): Set Session Replay sampling per page in Next.js or React with a custom hook: record, buffer until an error, or skip each
 - [Create Sentry Dashboards with Your AI Coding Agent](https://sentry.io/cookbook/create-dashboards-with-ai-agent/): Use the Sentry CLI and your AI coding agent's repo context to automatically create meaningful dashboards (errors, perfor
 - [Build a dashboard and alert from Next.js custom metrics](https://sentry.io/cookbook/custom-metrics-dashboard-alerts-nextjs/): Emit a custom metric from your Next.js app, build a dashboard around it, and add a threshold or anomaly-detection alert 
-- [Customize Session Replay Sampling with a Custom React Hook](https://sentry.io/cookbook/customize-session-replay-sampling-hook/): Build a custom React hook to control Session Replay sampling rates by page, element, or action in your React or Next.js 
 - [Debug silent checkout failures in Next.js with Sentry](https://sentry.io/cookbook/debug-silent-checkout-failures-nextjs/): Find out why your Next.js checkout fails silently. Catch swallowed errors, trace failed payments, watch the session, and
 - [Debug 'Undefined Is Not an Object' in React Native](https://sentry.io/cookbook/debug-undefined-react-native/): Use Sentry Logs in React Native and your backend to debug undefined properties, pinpoint timing bugs vs data issues, and
 - [Debug and fix issues with Sentry MCP in Claude Code](https://sentry.io/cookbook/debug-with-sentry-mcp-claude-code/): Connect Sentry to Claude Code via MCP so your AI agent can pull issues, read traces and logs, run Seer analysis, and app

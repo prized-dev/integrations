@@ -1,17 +1,17 @@
 GET https://workos.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:41.948Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:52.887Z
 final-url: https://workos.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Sat, 07 Nov 2026 00:19:40 GMT
+date: Thu, 12 Nov 2026 02:38:51 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
 vary: Accept, accept-encoding
 content-encoding: gzip
 server: cloudflare
-cf-ray: a5682aeeed13ef2c-PDX
+cf-ray: a59229b1c8994598-PDX
 
 # 404 — page not found
 

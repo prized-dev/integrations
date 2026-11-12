@@ -1,31 +1,37 @@
 GET https://blaxel.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:34.946Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:46.937Z
 final-url: https://blaxel.ai/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:18:32 GMT
+date: Thu, 12 Nov 2026 02:37:43 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 x-content-type-options: nosniff
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=de2bGbwpEwziW7tA3HI8VkO1zn0v7eFGMmbOFPMRQg8pjWH%2FzixDbMccEv4e8UO5w5UVbGDVx9CGcAjhYw2t%2BTNgc%2FjJ5wbrNhS0WFHgLfzbrhNDDZh%2BK8ROuAY%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=RseNdBHdspuj7PFzQt1CD6bb4Il0i%2BxVjmkVCM2XWKR%2FxZa%2FiWkt28ShcDVGQZ27IsxPIUxbwunwX50ZSfO28iN12jv4AIL8JvvIUDroOOVClxnqTJvjT3lzr8E%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 access-control-allow-origin: *
 cache-control: public, max-age=0, must-revalidate
 referrer-policy: strict-origin-when-cross-origin
-etag: W/"d585256459003c4d18d1594d61f72beb"
+strict-transport-security: max-age=63072000; includeSubDomains
+etag: W/"3b2932a472ab68d51f57775caa0df1b6"
 content-encoding: br
 server: cloudflare
 cf-cache-status: DYNAMIC
 vary: accept-encoding
 speculation-rules: "/cdn-cgi/speculation"
-cf-ray: a568294a8f2b1561-PDX
+cf-ray: a592280a389d8969-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Blaxel
 
 > Blaxel is the infrastructure foundation for autonomous agents: hardware-isolated microVM sandboxes that boot in milliseconds, suspend to zero when idle and resume in about 25 milliseconds with memory and filesystem intact; persistent storage (in-memory snapshots, durable Volumes, shared Agent Drive); and programmable networking (outbound allow-lists, static IPs, secret-injecting egress proxy, model gateway).
+
+## Documentation for agents
+- [Docs index](https://docs.blaxel.ai/llms.txt): every docs page as Markdown with a one-line description, starting with the most-used recipes
+- [Full docs text](https://docs.blaxel.ai/llms-full.txt): the full text of the docs, split into one file per product
+- [Authentication for agents](https://docs.blaxel.ai/auth.md): how an agent signs in to Blaxel for a user, with an OAuth access token or an API key
 
 ## Platform
 - [Compute](https://blaxel.ai/platform/compute): Sandboxes, Agent Runtime, Batch Jobs, MCP Servers

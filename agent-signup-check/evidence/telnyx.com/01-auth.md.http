@@ -1,14 +1,14 @@
 GET https://telnyx.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:06.710Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:17.646Z
 final-url: https://telnyx.com/auth.md
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:04 GMT
+date: Thu, 12 Nov 2026 02:38:15 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5682a0cfabec153-PDX
+cf-ray: a59228d05d733416-PDX
 cf-cache-status: BYPASS
 access-control-allow-origin: *
 cache-control: public, max-age=3600
@@ -85,12 +85,12 @@ Supported grants: `authorization_code`, `client_credentials`, `refresh_token`. T
 
 ### Method 3 — x402 (no registration)
 
-x402 has no registration step — the agent calls an inference endpoint directly and the server responds with a payment quote.
+x402 has no registration step — the agent calls an inference endpoint directly and the server responds with a payment quote. Pick `model` from the live list at `GET https://x402.telnyx.com/v1/models`.
 
 ```bash
 # 1. POST without auth — receive HTTP 402 with the payment-required header
 curl -sS -X POST -H 'content-type: application/json' \
-  -d '{"model":"meta-llama/Llama-3-70b-instruct","messages":[{"role":"user","content":"hi"}]}' \
+  -d '{"model":"meta-llama/Llama-3.3-70B-Instruct","messages":[{"role":"user","content":"hi"}]}' \
   https://x402.telnyx.com/v1/chat/completions
 ```
 

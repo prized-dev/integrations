@@ -1,24 +1,24 @@
 GET https://hyperbrowser.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:14.841Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:26.489Z
 redirect: 307 from https://hyperbrowser.ai/llms.txt
 final-url: https://www.hyperbrowser.ai/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 55425
+age: 93543
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Sat, 07 Nov 2026 00:19:12 GMT
-etag: W/"aeff50f6f7ae94329364ddd11d269de1"
-last-modified: Fri, 06 Nov 2026 08:55:27 GMT
+date: Thu, 12 Nov 2026 02:38:23 GMT
+etag: W/"252ef1d73a45b950fe912b523620de32"
+last-modified: Wed, 11 Nov 2026 00:39:20 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::92vjc-1794010752392-b9427babbae7
+x-vercel-id: pdx1::m6888-1794451103798-d33dc77e4c35
 connection: close
 transfer-encoding: chunked
 
@@ -61,10 +61,10 @@ Hyperbrowser is built by S2 Labs Inc. Documentation lives at `/docs` (Mintlify).
 
 ## Web Scraping
 
-- [Scrape pages](https://hyperbrowser.ai/docs/web-scraping/scrape.md): Scrape to HTML, markdown, or structured data
-- [Extract structured data](https://hyperbrowser.ai/docs/web-scraping/extract.md): AI-powered extraction with schemas
-- [Crawl websites](https://hyperbrowser.ai/docs/web-scraping/crawl.md): Multi-page crawling jobs
-- [Advanced scraping guide](https://hyperbrowser.ai/docs/web-scraping/advanced-guide.md): Patterns and best practices
+- [Web APIs overview](https://hyperbrowser.ai/docs/web/overview.md): Overview of Fetch, Crawl, Search, and Extract APIs
+- [Fetch pages](https://hyperbrowser.ai/docs/web/fetch.md): Fetch web pages as HTML, markdown, links, or screenshots
+- [Crawl websites](https://hyperbrowser.ai/docs/web/crawl.md): Multi-page crawling jobs
+- [Web search](https://hyperbrowser.ai/docs/web/search.md): Search the web with structured results
 
 ## AI Agents
 
@@ -93,6 +93,7 @@ Hyperbrowser is built by S2 Labs Inc. Documentation lives at `/docs` (Mintlify).
 - [AI Agents product page](https://hyperbrowser.ai/ai-agents): Marketing overview of agent capabilities
 - [Browser Sessions product page](https://hyperbrowser.ai/browser-sessions): Marketing overview of cloud sessions
 - [Web API product page](https://hyperbrowser.ai/web-apis): Marketing overview of fetch, crawl, search, and extract
+- [Sandboxes product page](https://hyperbrowser.ai/sandboxes): Marketing overview of cloud sandboxes
 - [Templates gallery](https://hyperbrowser.ai/templates): Ready-to-run automation templates
 - [Site pricing page](https://hyperbrowser.ai/pricing): Public pricing tiers
 - [Examples (GitHub)](https://github.com/hyperbrowserai/examples): Task templates and sample code

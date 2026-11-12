@@ -1,6 +1,6 @@
 GET https://fly.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:26.930Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:37.689Z
 final-url: https://fly.io/llms.txt
 
 HTTP 200
@@ -8,10 +8,10 @@ accept-ranges: bytes
 cache-control: max-age=0, private, must-revalidate
 content-encoding: br
 content-type: text/plain
-date: Sat, 07 Nov 2026 00:18:24 GMT
-etag: "6aee250f-15d6"
-fly-request-id: 01M6SNXT46JS2EMEMF4CJXM9CK-sjc
-last-modified: Fri, 06 Nov 2026 19:05:51 GMT
+date: Thu, 12 Nov 2026 02:37:34 GMT
+etag: "6af51500-15e5"
+fly-request-id: 01M76SW7T99V5JF94XGR53XKNX-lax
+last-modified: Thu, 12 Nov 2026 01:23:12 GMT
 server: Fly/366e4bf88 (2026-10-27)
 transfer-encoding: chunked
 via: 1.1 fly.io, 1.1 fly.io, 1.1 fly.io
@@ -76,17 +76,17 @@ Tooling:
 
 ## Pages
 
-Each section's index lists every page in it, newest first, as Markdown.
+Each section has its own llms.txt listing every page in it, newest first, as Markdown.
 
-- [The Fly Blog](https://fly.io/blog/index.md): 216 pages
-- [Customer Stories](https://fly.io/customer-stories/index.md): 16 pages
-- [Django Beats](https://fly.io/django-beats/index.md): 16 pages
-- [Infra Log](https://fly.io/infra-log/index.md): 147 pages
-- [The JavaScript Journal](https://fly.io/javascript-journal/index.md): 12 pages
-- [Fly Jobs](https://fly.io/jobs/index.md): 4 pages
-- [Laravel Bytes](https://fly.io/laravel-bytes/index.md): 64 pages
-- [Guides to microVMs, Sandboxes, and Cloud Hosting](https://fly.io/learn/index.md): 43 pages
-- [Legal](https://fly.io/legal/index.md): 8 pages
-- [The Phoenix Files](https://fly.io/phoenix-files/index.md): 97 pages
-- [The Ruby Dispatch](https://fly.io/ruby-dispatch/index.md): 35 pages
-- [AI Toolbox Turnout](https://fly.io/toolbox-turnout/index.md): 2 pages
+- [The Fly Blog](https://fly.io/blog/llms.txt): 216 pages
+- [Customer Stories](https://fly.io/customer-stories/llms.txt): 16 pages
+- [Django Beats](https://fly.io/django-beats/llms.txt): 16 pages
+- [Infra Log](https://fly.io/infra-log/llms.txt): 147 pages
+- [The JavaScript Journal](https://fly.io/javascript-journal/llms.txt): 12 pages
+- [Fly Jobs](https://fly.io/jobs/llms.txt): 4 pages
+- [Laravel Bytes](https://fly.io/laravel-bytes/llms.txt): 64 pages
+- [Guides to microVMs, Sandboxes, and Cloud Hosting](https://fly.io/learn/llms.txt): 45 pages
+- [Legal](https://fly.io/legal/llms.txt): 8 pages
+- [The Phoenix Files](https://fly.io/phoenix-files/llms.txt): 97 pages
+- [The Ruby Dispatch](https://fly.io/ruby-dispatch/llms.txt): 35 pages
+- [AI Toolbox Turnout](https://fly.io/toolbox-turnout/llms.txt): 2 pages

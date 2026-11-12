@@ -1,25 +1,25 @@
 GET https://fireworks.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:10.015Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:19.324Z
 final-url: https://fireworks.ai/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 0
+age: 2233
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'self' https://fireworks-ai-studio.vercel.app https://fireworks-ai-studio-ten.vercel.app http://localhost:3333 http://localhost:3000
 content-type: text/plain; charset=utf-8
-date: Sat, 07 Nov 2026 00:18:07 GMT
-etag: W/"aeaae87a33ab9aeeac4ae73ea295521c"
+date: Thu, 12 Nov 2026 02:37:16 GMT
+etag: W/"ecda8fd55182a8fc68bdaf3cac4382ff"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-frame-options: SAMEORIGIN
 x-matched-path: /llms.txt
-x-vercel-cache: PRERENDER
-x-vercel-id: pdx1::lrp88-1794010686885-f36a46fdb786
+x-vercel-cache: STALE
+x-vercel-id: pdx1::2sr6l-1794451035877-a37e2c8ff451
 connection: close
 transfer-encoding: chunked
 

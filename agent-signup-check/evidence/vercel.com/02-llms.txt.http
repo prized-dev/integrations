@@ -1,18 +1,18 @@
 GET https://vercel.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:25.520Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:35.200Z
 final-url: https://vercel.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 440
+age: 1006
 cache-control: public, max-age=0, s-maxage=3600, stale-while-revalidate=86400
 content-disposition: inline
 content-encoding: br
-content-security-policy: default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live localhost:*;script-src 'self' 'unsafe-eval' 'unsafe-inline' https://news.google.com https://*.fides-cdn.ethyca.com va.vercel-scripts.com https://app.cal.com blob: vercel.com *.vercel.com *.vercel.sh vercel.live localhost:* chrome-extension://*;child-src https://www.youtube-nocookie.com https://news.google.com https://vercel.cal.com https://*.codesandbox.io vercel.com *.vercel.com *.vercel.sh vercel.live localhost:*;style-src 'self' 'unsafe-inline' vercel.com *.vercel.com *.vercel.sh vercel.live localhost:*;img-src 'self' blob: data: vercel.com *.vercel.com *.vercel.sh vercel.live https://images.ctfassets.net https://7nyt0uhk7sse4zvn.public.blob.vercel-storage.com https://avatars.githubusercontent.com https://i.ytimg.com https://image.mux.com https://pbs.twimg.com https://www.gstatic.com/images/branding/;media-src 'self' 7nyt0uhk7sse4zvn.public.blob.vercel-storage.com videos.ctfassets.net https://*.mux.com blob: data: vercel.com *.vercel.com *.vercel.sh vercel.live localhost:*;connect-src 'self' data: vercel.com *.vercel.com *.vercel.sh vercel.live wss://*.vercel.com www.vercel-status.com cdp.vercel.com https://news.google.com https://*.fides-cdn.ethyca.com https://*.contentful.com *.ingest.sentry.io *.ingest.us.sentry.io https://*.mux.com *.codesandbox.io https://react-tweet.vercel.app;font-src 'self' *.vercel.com vercel.live *.vercel.sh;worker-src 'self' blob:;frame-ancestors  'self'  https://vercel.com  https://app.contentful.com  https://*.contentful.com  https://*.vercel.sh  https://*.vercel.com
+content-security-policy: default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live;script-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live va.vercel-scripts.com 'unsafe-eval' 'unsafe-inline' https://vercel.live chrome-extension://* blob: cdp.vercel.com https://news.google.com https://*.fides-cdn.ethyca.com https://app.cal.com;style-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live 'unsafe-inline' https://vercel.live;img-src 'self' blob: data: vercel.com *.vercel.sh vercel.live https://vercel.live https://vercel.com https://assets.vercel.com https://image.mux.com *.vercel.com https://images.ctfassets.net https://7nyt0uhk7sse4zvn.public.blob.vercel-storage.com https://avatars.githubusercontent.com https://i.ytimg.com https://pbs.twimg.com https://www.gstatic.com/images/branding/;media-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live blob: data: https://*.mux.com 7nyt0uhk7sse4zvn.public.blob.vercel-storage.com videos.ctfassets.net;connect-src data: 'self' vercel.com *.vercel.com *.vercel.sh vercel.live https://vercel.live wss://ws-us3.pusher.com https://*.mux.com cdp.vercel.com wss://*.vercel.com www.vercel-status.com https://news.google.com https://*.fides-cdn.ethyca.com https://*.contentful.com *.ingest.sentry.io *.ingest.us.sentry.io *.codesandbox.io https://react-tweet.vercel.app;font-src 'self' vercel.live https://vercel.live https://assets.vercel.com *.vercel.sh *.vercel.com;child-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live https://www.youtube-nocookie.com https://news.google.com https://vercel.cal.com https://*.codesandbox.io;worker-src 'self' blob:;frame-ancestors 'self' https://vercel.com https://app.contentful.com https://*.contentful.com https://*.vercel.sh https://*.vercel.com https://claude.ai https://37a30e4bfcf9dbabb336cfdd75e343b1.claudemcpcontent.com https://ac6127567836815e3d8be55c5ee20681.claudemcpcontent.com;
 content-type: text/plain; charset=utf-8
-date: Sat, 07 Nov 2026 00:18:23 GMT
-etag: W/"2940e254612cdb484a7cbe07e2a835c9"
+date: Thu, 12 Nov 2026 02:37:32 GMT
+etag: W/"f2871de66ad3299ee506277304f75e1f"
 feature-policy: fullscreen 'self'; camera 'none'
 referrer-policy: origin-when-cross-origin
 server: Vercel
@@ -21,9 +21,10 @@ vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-pre
 x-content-type-options: nosniff
 x-dns-prefetch-control: on
 x-download-options: noopen
-x-matched-path: /flg~eyJhbGciOiJIUzI1NiJ9._v79_v3-_f7-_f7-_v7-_f3-_f7-_f7-_v79_v7-_f3-_v79_v79_v7-_g.CSJ3_Tf7rtCmbYb7xYh-7rTGzlCbi3qNjrC9mkHIgus/llms.txt
+x-frame-options: DENY
+x-matched-path: /flg~eyJhbGciOiJIUzI1NiJ9._v79_v3-_f7-_v7-_v7-_v39_v3-_v3-_v7-_f7-_v39_f7-_f7-_f7-_v7_ImFsbG93ZWQi.R29r_6fS2LVbQDdV5L5rwlIMAm8PvI6rfuM7hjGYJMg/llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::66ptt-1794010703204-0ff6f6b67086
+x-vercel-id: pdx1::l7945-1794451052891-8dd92badece7
 x-xss-protection: 0
 connection: close
 transfer-encoding: chunked
@@ -39,7 +40,7 @@ Use this index to find machine-readable documentation and platform resources. Fo
 - Deploy and scale web applications, APIs, and AI workloads from a Git repository or the Vercel CLI.
 - Automate projects, deployments, domains, and account resources through the Vercel REST API or SDK.
 - Connect an authenticated AI assistant to Vercel projects, deployments, logs, analytics, and documentation through Vercel MCP.
-- Route AI requests across providers through Vercel AI Gateway, with automatic fallbacks, spending controls, usage monitoring, and no markup on token prices.
+- Route AI requests across providers through Vercel AI Gateway from any cloud or language, with automatic fallbacks, prompt caching, spending controls, usage monitoring, and no markup on token prices. Your application does not need to run on Vercel.
 - Run untrusted or agent-generated code in isolated Vercel Sandboxes.
 
 ## How agents should use Vercel
@@ -74,7 +75,7 @@ Use this index to find machine-readable documentation and platform resources. Fo
 - [Find a domain with Vercel CLI or API](https://vercel.com/domains/get-started.md): Search available names, compare registration and renewal prices, and return a verified shortlist. Neither requires authentication.
 - [Vercel Hobby plan](https://vercel.com/docs/plans/hobby.md): Free plan for non-commercial personal projects.
 - [Vercel CLI tokens](https://vercel.com/docs/cli/tokens.md): Create and manage personal access tokens for the Vercel API and CLI.
-- [Vercel AI Gateway](https://vercel.com/docs/ai-gateway.md): One API for AI models, with routing, fallbacks, and usage monitoring.
+- [Vercel AI Gateway](https://vercel.com/docs/ai-gateway.md): One hosted API for AI models from any cloud or language, with routing, fallbacks, prompt caching, and usage monitoring.
 - [AI Gateway models](https://vercel.com/ai-gateway/models.md): Every AI Gateway model with pricing, context window, providers, and capability tags.
 - [AI Gateway model list API](https://ai-gateway.vercel.sh/v1/models): Live JSON list of every model ID with pricing and capabilities. No API key required.
 - [Vercel Sandbox](https://vercel.com/docs/sandbox.md): Isolated compute for running code and agent workloads.

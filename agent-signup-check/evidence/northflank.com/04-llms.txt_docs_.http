@@ -1,23 +1,23 @@
 GET https://northflank.com/docs/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:30.138Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:39.926Z
 final-url: https://northflank.com/docs/llms.txt
 
 HTTP 200
 connection: close
-content-length: 78576
+content-length: 78773
 x-powered-by: Express
 content-type: text/markdown
-x-envoy-upstream-service-time: 534
+x-envoy-upstream-service-time: 502
 server: istio-envoy
 via: 1.1 varnish, 1.1 varnish
 accept-ranges: bytes
-age: 0
-date: Sat, 07 Nov 2026 00:18:27 GMT
-x-served-by: cache-lhr-egll1980087-LHR, cache-bfi-krnt7300059-BFI
-x-cache: HIT, MISS
-x-cache-hits: 8, 0
-x-timer: S1794010708.694345,VS0,VE139
+date: Thu, 12 Nov 2026 02:37:37 GMT
+age: 2837
+x-served-by: cache-lhr-egll1980052-LHR, cache-bfi-krnt7300081-BFI
+x-cache: HIT, HIT
+x-cache-hits: 1, 1
+x-timer: S1794451057.010622,VS0,VE17
 strict-transport-security: max-age=31557600
 
 # Northflank Documentation
@@ -697,6 +697,7 @@ curl -H "Accept: text/markdown" https://northflank.com/docs/v1/application/getti
 - [Get network policy](https://northflank.com/docs/v1/api/team/network-policies/get-network-policy.md)
 - [Update network policy](https://northflank.com/docs/v1/api/team/network-policies/update-network-policy.md)
 - [Delete network policy](https://northflank.com/docs/v1/api/team/network-policies/delete-network-policy.md)
+- [Create an API token](https://northflank.com/docs/v1/api/team/api-tokens/create-an-api-token.md)
 - [List API tokens](https://northflank.com/docs/v1/api/team/api-tokens/list-api-tokens.md)
 - [Rotate a key on an API token](https://northflank.com/docs/v1/api/team/api-tokens/rotate-a-key-on-an-api-token.md)
 - [Delete a key from an API token](https://northflank.com/docs/v1/api/team/api-tokens/delete-a-key-from-an-api-token.md)
@@ -772,6 +773,7 @@ curl -H "Accept: text/markdown" https://northflank.com/docs/v1/application/getti
 - [Update team](https://northflank.com/docs/v1/api/org/teams/update-team.md)
 - [Delete team](https://northflank.com/docs/v1/api/org/teams/delete-team.md)
 - [List audit logs](https://northflank.com/docs/v1/api/org/audit-logs/list-audit-logs.md)
+- [Create an API token](https://northflank.com/docs/v1/api/org/api-tokens/create-an-api-token.md)
 - [List API tokens](https://northflank.com/docs/v1/api/org/api-tokens/list-api-tokens.md)
 - [Rotate a key on an API token](https://northflank.com/docs/v1/api/org/api-tokens/rotate-a-key-on-an-api-token.md)
 - [Delete a key from an API token](https://northflank.com/docs/v1/api/org/api-tokens/delete-a-key-from-an-api-token.md)

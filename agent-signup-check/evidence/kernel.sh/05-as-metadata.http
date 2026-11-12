@@ -1,10 +1,10 @@
 GET https://api.onkernel.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:12.211Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:23.615Z
 final-url: https://api.onkernel.com/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:11 GMT
+date: Thu, 12 Nov 2026 02:38:22 GMT
 content-type: application/json
 content-length: 490
 connection: close

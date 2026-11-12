@@ -1,6 +1,6 @@
 GET https://modal.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:25.326Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:35.398Z
 final-url: https://modal.com/llms.txt
 
 HTTP 200
@@ -14,16 +14,16 @@ referrer-policy: no-referrer
 strict-transport-security: max-age=63072000; includeSubDomains; preload
 cross-origin-opener-policy: same-origin
 cache-control: no-cache
-date: Sat, 07 Nov 2026 00:18:23 GMT
-x-envoy-upstream-service-time: 43
+date: Thu, 12 Nov 2026 02:37:33 GMT
+x-envoy-upstream-service-time: 39
 content-encoding: gzip
 server: envoy
 vary: Accept-Encoding
 x-cache: Miss from cloudfront
-via: 1.1 a73c4443f00fb366a3a7226697ad0b6c.cloudfront.net (CloudFront)
+via: 1.1 eb0793aa61a19aaf4bd31bd6f3628f9a.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: EZHxuw1NPw01E64WGX60d1OawYBfyNt4upRZU3iXfXKo7gibDSAUFQ==
+x-amz-cf-id: 4SQeve6_OvRzhUPI85urYH5gdQEbxvmGrRNlVc3VRfyYootMBt-gQQ==
 
 # Modal Documentation
 

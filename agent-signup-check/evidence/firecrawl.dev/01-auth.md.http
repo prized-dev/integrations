@@ -1,6 +1,6 @@
 GET https://firecrawl.dev/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:17.504Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:27.611Z
 redirect: 308 from https://firecrawl.dev/auth.md
 final-url: https://www.firecrawl.dev/auth.md
 
@@ -11,9 +11,9 @@ cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="auth.md"
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Sat, 07 Nov 2026 00:19:14 GMT
+date: Thu, 12 Nov 2026 02:38:24 GMT
 etag: W/"777a37c9e43464828e35486a80f58416"
-last-modified: Sat, 07 Nov 2026 00:19:14 GMT
+last-modified: Thu, 12 Nov 2026 02:38:24 GMT
 permissions-policy: geolocation=(self), microphone=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), display-capture=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), autoplay=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), speaker-selection=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai"), storage-access=(self "https://app.quarterzip.ai" "https://sdk.quarterzip.ai")
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -22,7 +22,7 @@ x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /auth.md
 x-vercel-cache: MISS
-x-vercel-id: pdx1::ft9r9-1794010754195-2cd1c88c7868
+x-vercel-id: pdx1::28zlc-1794451104493-8b370005088a
 connection: close
 transfer-encoding: chunked
 

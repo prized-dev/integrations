@@ -1,13 +1,13 @@
 GET https://apify.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:18.669Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:30.180Z
 final-url: https://apify.com/.well-known/oauth-protected-resource
 
 HTTP 200
 content-type: application/json; charset=utf-8
 content-length: 308
 connection: close
-date: Sat, 07 Nov 2026 00:19:16 GMT
+date: Thu, 12 Nov 2026 01:51:11 GMT
 strict-transport-security: max-age=15768000
 x-permitted-cross-domain-policies: none
 x-frame-options: SAMEORIGIN
@@ -22,14 +22,15 @@ access-control-allow-origin: *
 access-control-allow-methods: GET, HEAD, OPTIONS
 access-control-allow-headers: Content-Type
 accept-ranges: bytes
-last-modified: Fri, 06 Nov 2026 16:01:49 GMT
-etag: W/"134-1a1b19845c8"
+last-modified: Wed, 11 Nov 2026 13:53:12 GMT
+etag: W/"134-1a1cae25140"
 vary: Accept-Encoding
-x-cache: Miss from cloudfront
-via: 1.1 1060b90484c0f94092a0f1bfc61f7e9e.cloudfront.net (CloudFront)
+x-cache: Hit from cloudfront
+via: 1.1 4b63c15595b60dbcca6db6aeea9d3d72.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: 1JzPA_GNNFhC3e4d8AK_bWzZknVp5cLpzEZ0J-wPEEwzVTtI0ZBjwA==
+x-amz-cf-id: 3VQONGRY55cer4BKkNL-JscJga4t22k5mfqUeKsh2f1xDg7GPhEXZQ==
+age: 2836
 
 {
     "resource": "https://mcp.apify.com",

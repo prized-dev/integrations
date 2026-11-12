@@ -1,16 +1,16 @@
 GET https://api.firecrawl.dev/v1/team/credit-usage
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:17.504Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:27.611Z
 final-url: https://api.firecrawl.dev/v1/team/credit-usage
 
 HTTP 401
 access-control-allow-origin: *
 content-length: 322
 content-type: application/json; charset=utf-8
-date: Sat, 07 Nov 2026 00:19:15 GMT
+date: Thu, 12 Nov 2026 02:38:25 GMT
 etag: W/"142-00SvMmVUSisIc0vjBRGThTsEutg"
 www-authenticate: Bearer resource_metadata="https://www.firecrawl.dev/.well-known/oauth-protected-resource"
-x-response-time: 1.123ms
+x-response-time: 0.820ms
 connection: close
 
 {"success":false,"error":"This endpoint is not supported by the keyless free tier. Sign up for a free API key at https://firecrawl.dev/k/cx97yz0fsha6 for more endpoints, more usage, and higher rate limits.\n\nThen authenticate with:\nAuthorization: Bearer YOUR_API_KEY","signup_url":"https://firecrawl.dev/k/cx97yz0fsha6"}

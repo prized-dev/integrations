@@ -1,24 +1,24 @@
 GET https://twilio.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:07.984Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:20.738Z
 redirect: 301 from https://twilio.com/llms.txt
 final-url: https://www.twilio.com/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
-content-length: 2518088
+content-length: 2520459
 connection: close
 server: AmazonS3
-date: Sat, 07 Nov 2026 00:19:04 GMT
-last-modified: Fri, 06 Nov 2026 21:01:15 GMT
-etag: "15abb735560894f77d548a0cbef6a13f"
+date: Thu, 12 Nov 2026 02:38:16 GMT
+last-modified: Wed, 11 Nov 2026 19:09:02 GMT
+etag: "5fd727884de46369c76d891932681fbb"
 x-amz-server-side-encryption: AES256
-x-amz-version-id: Kovpo9.PSz4mRgCBVY7LWiwm0nlAjzB9
+x-amz-version-id: eTXIQCPkeRN_JNV16pUUlMYGtS1xCiie
 accept-ranges: bytes
 x-cache: Miss from cloudfront
-via: 1.1 5b69cd230a06f482da15abd9c53bb694.cloudfront.net (CloudFront)
+via: 1.1 4e7012bff211fc1604763d0935533d32.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: XCJvpeVM7isJl3HMoT5a1Q3B9NmjeRZf5e-RGEBuT_w9ENdQKWOgEQ==
+x-amz-cf-id: XkGJizl9BIzkAtGkEpPnTEFMnR412jmPG8e9QStPTH06X4ldS3pj0Q==
 
 * [Conversational AI and APIs for SMS, Email, Voice](https://www.twilio.com/en-us.md): Build amazing customer experiences on the Twilio platform with APIs for SMS, RCS, voice, and email, plus conversational AI for smarter engagement, and identity verification for trust.
 
@@ -607,6 +607,7 @@ x-amz-cf-id: XCJvpeVM7isJl3HMoT5a1Q3B9NmjeRZf5e-RGEBuT_w9ENdQKWOgEQ==
 * [Sales and support without the silos](https://www.twilio.com/en-us/lp/apj-sales-and-support.md): When channels, systems and customer data don’t talk with each other, everyone has to work harder. Twilio helps you get around that.
 * [Financial services solutions | Twilio](https://www.twilio.com/en-us/lp/financial-services-apj.md): Compliant text messaging, chat, and customer communications solutions for financial services organizations. Twilio is a trusted partner for digital transformation in banking, insurance, and payments.
 * [Personalisation without the disconnect](https://www.twilio.com/en-us/lp/apj-marketing-and-promotions.md): When your data is fragmented and your channels don’t connect, knowing who to target, what to send, and when to send it gets a whole lot harder.
+* [2026 Customer Data Platform Report | Twilio](https://www.twilio.com/en-us/lp/Customer-Data-Platform-Report-2026.md): 
 
 ## Twilio Super Network
 
@@ -848,7 +849,7 @@ x-amz-cf-id: XCJvpeVM7isJl3HMoT5a1Q3B9NmjeRZf5e-RGEBuT_w9ENdQKWOgEQ==
 * [TwilioFund Backed Sonar Is Named Facebook Platform Partner, Looks To Future of Messaging Bots](https://www.twilio.com/en-us/blog/partners/spotlights/sonar-messaging-facebook-twilio-html.md): Sonar Named Facebook Platform Partner, Uses Twilio To Power Messaging
 * [Holiday email marketing best practices for 2026 (and beyond)](https://www.twilio.com/en-us/blog/insights/planning-ahead-for-your-holiday-email-sending.md): Plan your 2026 holiday email campaigns with best practices for list hygiene, sending volume, testing, subject lines, and post-season churn.
 * [How New Authentication Systems Can be the Key to a Password-Less Future](https://www.twilio.com/en-us/blog/insights/trends/new-authentication-systems-key-password-less-future.md): 
-* [21 Types of Emails Explained (With Tips & Examples)](https://www.twilio.com/en-us/blog/insights/5-email-types-explained-with-examples.md): Learn different types of emails and tips and examples for sending. Find out about product, privacy, event, educational, & promotional emails.
+* [21 types of emails explained (with tips & examples)](https://www.twilio.com/en-us/blog/insights/5-email-types-explained-with-examples.md): 21 types of emails explained, including welcome, transactional, promotional, and newsletter emails, with tips and examples for each.
 * [Introducing Twilio’s Messaging Features for Marketing & Engagement](https://www.twilio.com/en-us/blog/products/messaging-for-marketing.md): Learn about Twilio's messaging features for marketing and engagement.
 * [Customer Intelligence for Advertisers Twilio](https://www.twilio.com/en-us/blog/products/launches/customer-intelligence-for-advertisers.md): Unlock better ad performance with smarter data. Discover how Segment CDP boosts targeting, attribution, and ROI across every channel.
 * [Intelligent Alerts | Messaging Insights](https://www.twilio.com/en-us/blog/products/launches/intelligent-alerts.md): Intelligent Alerts is now Generally Available within Twilio's Messaging Insights. Real-time traffic monitoring and troubleshooting.
@@ -1040,7 +1041,7 @@ x-amz-cf-id: XCJvpeVM7isJl3HMoT5a1Q3B9NmjeRZf5e-RGEBuT_w9ENdQKWOgEQ==
 * [Survey Dynamix Integration Designed for Twilio Flex](https://www.twilio.com/en-us/blog/partners/integrations/flex-integrations-surveydynamix.md): Survey Dynamix built an integration designed for Twilio Flex customers to enable the automation of multi-channel customer surveys.
 * [Diginate Shares Shipping Status Updates with Customers via Twilio SMS](https://www.twilio.com/en-us/blog/partners/spotlights/diginate-shares-shipping-status-updates-with-customers-via-twilio-sms-html.md): Diginate Shares Shipping Status Updates with Customers via Twilio SMS
 * [Modern messaging with RCS: Your webinar recap | Twilio](https://www.twilio.com/en-us/blog/insights/trends/modern-messaging-with-RCS-webinar-recap.md): Learn about the latest advancements with RCS from Twilio product experts, partners, and customers, including an example of an RCS success story.
-* [What is StartTLS?](https://www.twilio.com/en-us/blog/insights/what-is-starttls.md): Learn more about the protocol encryption command, StartTLS, and the process of encrypting email when sending via SMTP.
+* [What is StartTLS?](https://www.twilio.com/en-us/blog/insights/what-is-starttls.md): StartTLS is the SMTP command that upgrades an email connection to encrypted TLS. Learn how it works, which port to use, and how to fix common errors.
 * [Good Call Supports Through the Arrest Process When One Call Must Connect](https://www.twilio.com/en-us/blog/partners/spotlights/good-call-supports-through-the-arrest-process-when-one-call-must-connect-html.md): The free 24/7 Good Call hotline helps people who are arrested alert their loved ones and connect with a free lawyer using Twilio Programmable Voice.
 * [12 Common Causes of Email Delivery Failures & Fixes](https://www.twilio.com/en-us/blog/insights/email-delivery-failure-causes.md): Avoid email delivery failure by learning about the most common causes and easy fixes for getting back into your subscribers' inboxes.
 * [Designing a Console That Matches the Customer Journey](https://www.twilio.com/en-us/blog/products/designing-console-that-matches-customer-journey.md): The Console redesign is a step towards building a better end-to-end experience that supports the journey customers take with Twilio. Check out the user research behind the new Console.
@@ -2041,7 +2042,7 @@ x-amz-cf-id: XCJvpeVM7isJl3HMoT5a1Q3B9NmjeRZf5e-RGEBuT_w9ENdQKWOgEQ==
 * [Respond to Incoming SMS with NodeJS and Google Cloud Functions](https://www.twilio.com/en-us/blog/developers/tutorials/integrations/respond-incoming-sms-nodejs-google-cloud-functions.md): Supercharge your business communication with bidirectional SMS handling. Master incoming SMS with Node.js and Google Cloud Functions to respond, engage and interact efficiently.
 * [Generating music with Python and Neural Networks using Magenta for TensorFlow](https://www.twilio.com/en-us/blog/developers/tutorials/integrations/generate-music-python-neural-networks-magenta-tensorflow.md): 
 * [Welcome to the Builder’s Arcade at SIGNAL Sydney 2025](https://www.twilio.com/en-us/blog/events/twilio-builders-arcade-syd25.md): Learn about the experiences in the Builder’s Arcade at Twilio’s SIGNAL Sydney 2025, and see how we built these activations.
-* [SMTP Relay Service: What Is SMTP Relay & How Does It Work?](https://www.twilio.com/en-us/blog/insights/smtp-relay-service-basics.md): An SMTP relay service delivers outbound emails in bulk. But why is this important, and how does it work? Learn all about SMTP relay servers.
+* [SMTP relay service: What is SMTP relay & how does it work?](https://www.twilio.com/en-us/blog/insights/smtp-relay-service-basics.md): An SMTP relay service sends your email through a provider’s servers. Learn how SMTP relay works, how to choose a service, and how to fix issues.
 * [5 ways to make HTTP requests in Java](https://www.twilio.com/en-us/blog/developers/tutorials/building-blocks/5-ways-to-make-http-requests-in-java.md): 
 * [What is AI observability (and how does it work)?](https://www.twilio.com/en-us/blog/insights/ai-observability.md): AI observability is how you know your AI is working correctly instead of just running. Here's what it is, how it works, and what to look for in 2026.
 * [Create a Smart Voicemail with Twilio, JavaScript and Google Calendar](https://www.twilio.com/en-us/blog/developers/tutorials/integrations/creating-a-simple-voicemail-with-javascript-and-google-calendar.md): Create a Smart Voicemail with Twilio, JavaScript and Google Calendar Free Busy Queries.
@@ -2143,7 +2144,7 @@ x-amz-cf-id: XCJvpeVM7isJl3HMoT5a1Q3B9NmjeRZf5e-RGEBuT_w9ENdQKWOgEQ==
 * [Data you can depend on: why your data architecture should be built around your customer](https://www.twilio.com/en-us/blog/insights/data/data-you-can-depend-on.md): Unlock personalized experiences and real-time insights by building your data architecture around your customers, not your systems. Discover how Twilio Segment unifies data for true customer understanding.
 * [Behind the Builder: Cesar Hernandez](https://www.twilio.com/en-us/blog/company/spotlights/Behind-the-Builder-Cesar-Hernandez-twilio.md): From a timely referral to leading with empathy, Cesar’s Twilio journey is one of growth, purpose, and giving back to his Bogotá community.
 * [What Pride means to Twilions](https://www.twilio.com/en-us/blog/company/inside-twilio/what-pride-means-twilions.md): Pride looks different in 2020. We asked members of Spectrum, Twiliio’s LGBTQ+ Employee Resource Group to share what Pride means to them.
-* [How much does call center outsourcing cost in 2026?](https://www.twilio.com/en-us/blog/insights/cloud-comms/call-center-services-pricing.md): Call center outsourcing costs depend on whether you need inbound or outbound support, agent location, and call volume. Here's the pricing breakdown.
+* [How much does call center outsourcing cost in 2027?](https://www.twilio.com/en-us/blog/insights/cloud-comms/call-center-services-pricing.md): How much does it cost to outsource a call center in 2027? Compare inbound and outbound rates, in-house costs, and AI agents to find the right fit.
 * [Automate Dialogflow CX Virtual Agent Creation with API Calls and Twilio](https://www.twilio.com/en-us/blog/developers/tutorials/integrations/automate-dialogflow-cx-virtual-agent-creation-api-calls.md): Learn to use Twilio API Calls to create Virtual Agent Connectors in bulk or on demand, to use with Dialogflow CX Agents.
 * [Take control of incoming calls with Twilio, Java and Google Sheets](https://www.twilio.com/en-us/blog/developers/tutorials/integrations/take-control-incoming-calls-twilio-java-google-sheets.md): 
 * [Build a Video Chat with React Hooks](https://www.twilio.com/en-us/blog/developers/tutorials/product/video-chat-react-hooks.md): Build a video chat application using Twilio Video and React with only functional components, using the useState, useCallback, useEffect and useRef hooks.
@@ -2665,7 +2666,7 @@ x-amz-cf-id: XCJvpeVM7isJl3HMoT5a1Q3B9NmjeRZf5e-RGEBuT_w9ENdQKWOgEQ==
 * [Loves Me, Loves Me Not: Classify Texts with TensorFlow and Twilio](https://www.twilio.com/en-us/blog/developers/tutorials/integrations/classify-texts-with-tensorflow-and-twilio-to-answer-loves-me-loves-me-not.md): Use TensorFlow and Machine Learning to classify Twilio texts into two categories: "loves me" and "loves me not"
 * [Phone Verification with Twilio For Python Developers](https://www.twilio.com/en-us/blog/phone-verification-with-twilio-for-python-developers.md): 
 * [Book Appointments With Laravel, Twilio and SendGrid](https://www.twilio.com/en-us/blog/developers/tutorials/book-appointments-with-laravel-twilio-sendgrid.md): In this tutorial, you will learn how to build a robust and efficient appointment management and booking system using Laravel, Twilio, and SendGrid.
-* [How to Build an Appointment Reminder App Without Code](https://www.twilio.com/en-us/blog/developers/community/studio-flow-no-code-sms-appointment-reminder-application.md): In this tutorial, discover the power of Twilio Studio to build applications that remind recipients about their appointments without writing a single line of code.
+* [How to Build an Appointment Reminder App Without Code](https://www.twilio.com/en-us/blog/developers/community/studio-flow-no-code-sms-appointment-reminder-application.md): In this tutorial, learn how to build applications in Twilio Studio that remind recipients about their appointments without writing a single line of code.
 * [User Secrets in a .NET Core Console App](https://www.twilio.com/en-us/blog/developers/tutorials/building-blocks/user-secrets-in-a-net-core-console-app-html.md): Ever had that sinking moment of realisation when you push your secrets to GitHub? I have and I doubt I’m the only one.
 * [Candybot: A Socially Distant Talking Halloween Candy Dispenser](https://www.twilio.com/en-us/blog/developers/candybot-social-distance-candy-dispenser.md): One solution for passing out candy during social distancing? A voice-interactive, remote-operated, candy-dispensing robot called “Candybot.”
 * [Build a Translation Bot with WhatsApp and AWS Translate](https://www.twilio.com/en-us/blog/build-translation-bot-twilio-whatsapp-aws-translate.md): In this tutorial, learn how to build a bot in Whatsapp that can translate messages in a foreign language to English in real-time using AWS translate. Learn more with Twilio.
@@ -3751,7 +3752,7 @@ x-amz-cf-id: XCJvpeVM7isJl3HMoT5a1Q3B9NmjeRZf5e-RGEBuT_w9ENdQKWOgEQ==
 * [Your First SMS Campaign in Less than 5 Minutes](https://www.twilio.com/en-us/blog/serverless-sms-marketing-campaigns-csv.md): Send your first SMS or WhatsApp campaigns from data contained in a CSV file, all without writing a line of code.
 * [Add Chat to a Laravel PHP App Using Twilio Chat](https://www.twilio.com/en-us/blog/add-chat-laravel-php-app-twilio-chat.md): Learn how to add chat to a Laravel app with Twilio Chat
 * [How to Apply a Twilio Promo Code](https://www.twilio.com/en-us/blog/apply-promo-code.md): Learn how you can apply a promo code to your Twilio account to receive credits.
-* [Broadcast Text Messaging: What Is It & How to Use It](https://www.twilio.com/en-us/blog/what-is-broadcast-messaging.md): Broadcast messaging sends texts to a bulk list of contacts. Learn more about broadcast text messages and how to leverage them with customers.
+* [Broadcast text messaging: What is it & how to use it](https://www.twilio.com/en-us/blog/what-is-broadcast-messaging.md): Broadcast text messaging sends one SMS to your whole list as private, individual texts. Learn how it works, use cases, examples, and compliance rules.
 * [What Equipment Is Required for VoIP?](https://www.twilio.com/en-us/blog/voip-equipment-requirements.md): VoIP is a type of web-based technology used by contact centers to communicate with customers through voice calls. Find out what equipment and hardware are necessary to use VoIP.
 * [Computer Science lessons from around the world](https://www.twilio.com/en-us/blog/developers/computer-science-lessons-around-world.md): 
 * [Voice and SMS One-Time Passwords with Python and Twilio](https://www.twilio.com/en-us/blog/voice-sms-one-time-passwords-python-twilio.md): Learn how to add one-time passwords delivered via voice call or SMS with Python and Twilio.
@@ -4002,6 +4003,6 @@ x-amz-cf-id: XCJvpeVM7isJl3HMoT5a1Q3B9NmjeRZf5e-RGEBuT_w9ENdQKWOgEQ==
 * [How to Send WhatsApp Messages from Google Sheets with JavaScript and Node.js](https://www.twilio.com/en-us/blog/send-whatsapp-messages-from-google-sheets-javascript-node-js.md): Learn how to quickly send WhatsApp messages with JavaScript and Node.js using data stored in a Google Sheet with this handy programming tutorial.
 * [How to Send WhatsApp Messages from Java Applications with Twilio](https://www.twilio.com/en-us/blog/send-whatsapp-messages-java-applications-twilio-api.md): Programmatically send messages to WhatsApp recipients using the Twilio API.
 * [Get Started with RCS and Twilio](https://www.twilio.com/en-us/blog/get-started-rcs-twilio.md): Learn how to get started with Twilio's RCS Public Beta in this step by step overview of registering, creating a Sender profile, testing, and tracking.
-* [The future of messaging: Twilio's approach to Rich Communications Services (RCS)](https://www.twilio.com/en-us/blog/future-messaging-approach-rcs.md): With RCS mess
+* [The future of mes
 
 [truncated at 1048576 bytes]

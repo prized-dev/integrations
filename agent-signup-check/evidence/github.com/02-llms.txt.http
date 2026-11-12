@@ -1,13 +1,13 @@
 GET https://github.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:36.483Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:48.000Z
 final-url: https://github.com/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:34 GMT
+date: Thu, 12 Nov 2026 02:38:45 GMT
 content-type: text/plain
-last-modified: Fri, 06 Nov 2026 22:47:57 GMT
-etag: W/"6aee591d-6ff2"
+last-modified: Thu, 12 Nov 2026 01:24:22 GMT
+etag: W/"6af51546-6ff2"
 vary: Accept-Encoding, Accept, X-Requested-With
 server: github.com
 x-frame-options: DENY
@@ -15,7 +15,7 @@ strict-transport-security: max-age=31536000; includeSubDomains; preload
 content-encoding: gzip
 accept-ranges: bytes
 content-length: 7944
-x-github-request-id: 839C:195C4C:7783D:11B6A5:6AEE6E96
+x-github-request-id: 918C:36B1D3:ADD22:176402:6AF526B5
 x-github-edge-region: westus2
 connection: close
 

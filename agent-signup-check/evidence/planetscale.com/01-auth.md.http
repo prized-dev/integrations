@@ -1,39 +1,39 @@
 GET https://planetscale.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:55.137Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:06.223Z
 redirect: 307 from https://planetscale.com/auth.md
 final-url: https://planetscale.com/docs/api/reference/getting-started-with-planetscale-api.md
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:18:51 GMT
+date: Thu, 12 Nov 2026 02:38:02 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
 link: </docs/llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt", </docs/.well-known/api-catalog>; rel="api-catalog", </docs/.well-known/mcp/server-card.json>; rel="mcp-server-card", </docs/.well-known/agent-card.json>; rel="agent-card", </docs/.well-known/agent-skills/index.json>; rel="agent-skills"
-cf-ray: a56829bb8da0ef90-PDX
+cf-ray: a59228818d5cccd1-PDX
 cf-cache-status: DYNAMIC
-age: 15577
+age: 6608
 cache-control: no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0
 content-disposition: inline
 content-encoding: br
 expires: 0
-last-modified: Fri, 06 Nov 2026 19:59:13 GMT
+last-modified: Thu, 12 Nov 2026 01:18:56 GMT
 server: cloudflare
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 pragma: no-cache
-cf-placement: remote-EWR
+cf-placement: remote-SJC
 content-security-policy: default-src 'none'
 x-frame-options: DENY
 x-llms-txt: /docs/llms.txt
 x-mint-proxy-version: 1.0.0-prod
-x-mintlify-client-version: 0.0.4076
+x-mintlify-client-version: 0.0.4111
 x-robots-tag: noindex
-x-served-version: dpl_ATnXPMW25DMPUr9VBw6kL6MfBt6T
+x-served-version: dpl_6PxPD4Fj1JDU9BJxEHvfdUmxKThw
 x-vercel-cache: MISS
-x-vercel-id: iad1:cle1:iad1::iad1::5n7r2-1794010730877-56deee6180cf
+x-vercel-id: sfo1:cdg1:iad1::iad1::7bpsf-1794451082566-2a5e4b79ebe2
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
-x-version: dpl_ATnXPMW25DMPUr9VBw6kL6MfBt6T
+x-version: dpl_6PxPD4Fj1JDU9BJxEHvfdUmxKThw
 alt-svc: h3=":443"; ma=86400
 
 > ## Documentation Index

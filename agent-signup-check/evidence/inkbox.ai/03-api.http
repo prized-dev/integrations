@@ -1,22 +1,22 @@
 GET https://inkbox.ai/api/v1/identities
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:10.758Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:23.259Z
 final-url: https://inkbox.ai/api/v1/identities
 
 HTTP 401
 content-type: application/json
 content-length: 758
 connection: close
-date: Sat, 07 Nov 2026 00:19:08 GMT
+date: Thu, 12 Nov 2026 02:38:21 GMT
 x-ratelimit-scope: ip
 server: uvicorn
 x-ratelimit-limit: 1000
 x-ratelimit-remaining: 999
-x-ratelimit-reset: 2026-11-07T00:20:00+00:00
+x-ratelimit-reset: 2026-11-12T02:39:00+00:00
 x-cache: Error from cloudfront
-via: 1.1 89b24af8db05335e68292856e0a53668.cloudfront.net (CloudFront)
+via: 1.1 fd441d5d42c4e243bf0b88902034e302.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: dve-1SNZvSWmEbdxao5Q6yvFVDjp5ZC2efFAhhmj-LE4X7wPNZpegw==
+x-amz-cf-id: jtFUSQscbT01o_x0l5tIpuE00XI0SIBKV2jf_WGuA7386ukkiX_-lA==
 
 {"detail":"Unauthorized","agent_support":"If you cannot resolve this issue from the error detail, contact the Inkbox Support Agent over A2A using its Agent Card: https://inkbox.ai/a2a/support/card. Starting a conversation requires an active agent-scoped API key for a claimed identity with A2A enabled and contact policy that permits @support. If you have trouble connecting, use the same API key and replace {agent_handle} with your agent handle to check A2A settings at GET https://inkbox.ai/api/v1/identities/{agent_handle}/a2a/settings (enabled must be true; review allow_public_egress and filter_mode) and contact rules at GET https://inkbox.ai/api/v1/identities/{agent_handle}/a2a/contact-rules (check for outbound or both rules that block @support)."}

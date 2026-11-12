@@ -1,17 +1,17 @@
 GET https://docs.hetzner.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:50.803Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:02.418Z
 final-url: https://docs.hetzner.com/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:18:43 GMT
+date: Thu, 12 Nov 2026 02:37:54 GMT
 content-type: text/plain; charset=UTF-8
 transfer-encoding: chunked
 connection: close
 access-control-allow-origin: *
 cache-control: public, max-age=0
-etag: W/"15d06-1a1ac3fc474"
-last-modified: Thu, 05 Nov 2026 15:07:02 GMT
+etag: W/"15d06-1a1cac13ce0"
+last-modified: Wed, 11 Nov 2026 13:17:04 GMT
 server: HeRay
 alt-svc: h3=":443"; ma=86400
 heray-cache-status: EXPIRED
@@ -365,7 +365,7 @@ Notes for automated readers:
 - [Blocked User Agents](https://docs.hetzner.com/managed/webserver/blocked-user-agents/): Lists default blocked AI and web crawlers like GPTBot and ClaudeBot, explaining their typical data collection purposes.
 - [Configure HTTPS, Caching, and Security with .htaccess](https://docs.hetzner.com/managed/webserver/https-caching-security-configuration/): Redirect all HTTP requests to HTTPS using .htaccess rewrite rules for permanent 301 redirects.
 - [CORS configuration](https://docs.hetzner.com/managed/webserver/cors/): Guide to configuring CORS headers (.htaccess) including methods, origins, headers and OPTIONS preflight handling.
-- [Enable web server extensions on konsoleH](https://docs.hetzner.com/managed/webserver/activate-extensions/): List of available web server extensions and their purposes (HTTP/2, Deflate, Pagespeed, Brotli).
+- [Enable web server extensions on konsoleH](https://docs.hetzner.com/managed/webserver/activate-extensions/): List of available web server extensions and their purposes (HTTP/2, Deflate, PageSpeed, Brotli).
 - [PHP configuration](https://docs.hetzner.com/managed/webserver/php-configuration/): Set default PHP version and file extension mappings; .htaccess examples for per-directory PHP versions and CLI commands.
 - [Sending SMSs with konsoleH](https://docs.hetzner.com/managed/webserver/sms/): Overview of konsoleH SMS features: send messages, notifications, website integration, and sent/active summaries.
 - [Use CGI Scripts](https://docs.hetzner.com/managed/webserver/cgi-scripts/): Place your CGI script inside public_html, e.g., public_html/cgi-bin/script.cgi; extensions like .pl may apply.

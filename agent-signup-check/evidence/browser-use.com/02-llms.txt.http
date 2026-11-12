@@ -1,23 +1,23 @@
 GET https://browser-use.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:16.484Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:27.550Z
 final-url: https://browser-use.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 0
+age: 2836
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Sat, 07 Nov 2026 00:19:12 GMT
-etag: W/"f41b1aaf90528c0b78ea3d30318898f0"
-last-modified: Sat, 07 Nov 2026 00:19:12 GMT
+date: Thu, 12 Nov 2026 02:38:24 GMT
+etag: W/"c378499a50ab7740583c2e1f2ef22f67"
+last-modified: Thu, 12 Nov 2026 01:51:07 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
-x-vercel-cache: MISS
-x-vercel-id: pdx1::nk7vl-1794010752727-c6ba0423a8c2
+x-vercel-cache: HIT
+x-vercel-id: pdx1::9bgnz-1794451104153-ee00f255a116
 connection: close
 transfer-encoding: chunked
 
@@ -344,7 +344,7 @@ Browser Harness gives coding agents direct browser control through a CLI and ins
 
 - [Browser Harness](https://browser-use.com/browser-harness)
 - [GitHub repository](https://github.com/browser-use/browser-harness)
-- [Site skills](https://browser-use.com/skills): contributor notes on how an agent should scrape or automate specific websites (Amazon, LinkedIn, Zillow, SEC EDGAR and more), one page per site; append `.md` for the raw files
+- [Site skills](https://browser-use.com/skills): contributor notes on how an agent should scrape or automate specific websites (GitHub, Reddit, Costco, SEC EDGAR and more), one page per site; append `.md` for the raw files
 
 ### Cloud SDK and MCP
 

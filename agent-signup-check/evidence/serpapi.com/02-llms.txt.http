@@ -1,10 +1,10 @@
 GET https://serpapi.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:23.244Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:33.220Z
 final-url: https://serpapi.com/llms.txt
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:19:21 GMT
+date: Thu, 12 Nov 2026 02:38:31 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -15,14 +15,15 @@ x-download-options: noopen
 x-permitted-cross-domain-policies: none
 referrer-policy: strict-origin-when-cross-origin
 cache-control: max-age=604800, public
-etag: W/"eac11746b16ecfbc782a04b289f61cc6"
-x-request-id: 2e6d35db-a717-4a27-9de2-a70e57fbea6a
-x-runtime: 0.012095
+etag: W/"52c7e62c1604c705457c9d805ad018f5"
+x-request-id: 0e0c1103-a49c-46b3-b5b8-320c03351a67
+x-runtime: 0.005646
 vary: accept-encoding
+age: 9899
 cf-cache-status: HIT
 content-encoding: br
 server: cloudflare
-cf-ray: a5682a795da511c8-PDX
+cf-ray: a592293538825ee0-PDX
 alt-svc: h3=":443"; ma=86400
 
 # SerpApi
@@ -33,7 +34,7 @@ alt-svc: h3=":443"; ma=86400
 - Sign up: https://serpapi.com/users/sign_up
 - API: https://serpapi.com/search
 - Example: `GET https://serpapi.com/search?api_key=YOUR_API_KEY&engine=google&q=Coffee`
-- Supported engines: Google, Airbnb, Apple App Store, Apple Maps, AutoZone, Baidu, Bing, Booking.com, Brave AI Mode, Brave Videos, Amazon, DoorDash, DuckDuckGo, eBay, Eventbrite, Facebook, Flightradar24, Glassdoor, Instagram, Indeed, Meta Ad Library, Naver, OpenTable, Pinterest, Qwant, Search Index, The Home Depot, Target, TikTok, Trader Joe's, Tripadvisor, Walmart, Yahoo!, Yandex, Yelp, YouTube, Extract, Zillow
+- Supported engines: Google, Airbnb, Apple App Store, Apple Maps, AutoZone, Baidu, Bing, Booking.com, Brave, Brave AI Mode, Brave Images, Brave Videos, Amazon, DoorDash, DuckDuckGo, eBay, Eventbrite, Facebook, Flightradar24, Glassdoor, Instagram, Indeed, Meta Ad Library, NAPA, Naver, OpenTable, Pinterest, Search Index, The Home Depot, Target, TikTok, Trader Joe's, Tripadvisor, Walmart, Yahoo!, Yandex, Yelp, YouTube, Extract, Zillow
 
 ## Pricing
 
@@ -140,7 +141,9 @@ alt-svc: h3=":443"; ma=86400
 - [Bing Copilot API](https://serpapi.com/bing-copilot-api.md): Use SerpApi's Bing Copilot API to scrape Bing Copilot results including text blocks, references, and tables.
 - [Bing Images API](https://serpapi.com/bing-images-api.md): Use SerpApi's Bing Images API to scrape Bing Images results. Links, titles, sources, and thumbnails
 - [Booking.com Search API](https://serpapi.com/booking-search-api.md): Scrape Booking.com search results with SerpApi's Booking.com Search API. Hotels and places to stay, prices for your dates, review scores, deals, locations, and more.
+- [Brave Search API](https://serpapi.com/brave-search-api.md): Scrape Brave Search results with SerpApi's Brave Search API. Organic results, ads, news, videos, discussions, local results, and the knowledge graph, in any of Brave's regions and languages.
 - [Brave AI Mode API](https://serpapi.com/brave-ai-mode-api.md): Use SerpApi's Brave AI Mode API to scrape Brave AI search results including text blocks, references, and more.
+- [Brave Images API](https://serpapi.com/brave-images-api.md): Use SerpApi's Brave Images API to scrape Brave Images results. Titles, links, sources, thumbnails, and original images with their sizes.
 - [Brave Videos API](https://serpapi.com/brave-videos-api.md): Use SerpApi's Brave Videos API to scrape Brave Videos results. Titles, links, channels, durations, dates, views, and thumbnails of videos.
 - [DoorDash Search API](https://serpapi.com/doordash-search-api.md): Scrape DoorDash search results for delivery addresses in the US, Canada, Australia, and New Zealand with SerpApi's DoorDash Search API. Restaurants and stores with their ratings, delivery times, delivery fees, deals, dishes, products, prices, and more.
 - [DuckDuckGo Search API](https://serpapi.com/duckduckgo-search-api.md): Scrape DuckDuckGo search results in JSON format automatically, using custom parameters. Search for keywords by region, date, and more with SerpApi.
@@ -163,13 +166,13 @@ alt-svc: h3=":443"; ma=86400
 - [Indeed Jobs API](https://serpapi.com/indeed-jobs-api.md): Scrape Indeed job search results with SerpApi's Indeed Jobs API. Job titles, companies, locations, salaries, job types, benefits and more.
 - [Instagram Popular API](https://serpapi.com/instagram-popular-api.md): Scrape Instagram Popular posts with SerpApi's Instagram Popular API. Reels, captions, view counts, creators, related keywords, and more.
 - [Meta Ad Library API](https://serpapi.com/meta-ad-library-api.md): Scrape the Meta Ad Library with SerpApi's Meta Ad Library API. Ads shown on Facebook, Instagram, Messenger, Threads, and the Audience Network, by keyword or advertiser, with their Library ID, dates, texts, images, videos, and spend.
+- [NAPA Search API](https://serpapi.com/napa-search-api.md): Scrape NAPA Auto Parts search results with SerpApi's NAPA Search API. Store prices, sales, core deposits, ratings, reviews, store pickup and home delivery availability, and more.
 - [Naver Search API](https://serpapi.com/naver-search-api.md): Scrape Naver search results in JSON format automatically using custom parameters. Search for news, videos, web and knowledge graph.
 - [Naver AI Mode API](https://serpapi.com/naver-ai-mode-api.md): Use SerpApi's Naver AI Mode API to scrape the Naver AI Tab results including text blocks, references, and more.
 - [Naver AI Overview API](https://serpapi.com/naver-ai-overview-api.md): Use SerpApi's Naver AI Overview API to scrape Naver AI Overview results including text blocks, references, and more.
 - [Naver Maps API](https://serpapi.com/naver-maps-api.md): Scrape Naver Maps search results with SerpApi's Naver Maps API. Place name, category, rating, reviews, address, phone number, opening state and more.
 - [OpenTable Reviews API](https://serpapi.com/open-table-reviews-api.md): Scrape OpenTable Reviews with SerpApi's OpenTable Reviews API. User information, rating, date, comment, owner responses and more.
 - [Pinterest Search API](https://serpapi.com/pinterest-search-api.md): Scrape Pinterest search results with SerpApi's Pinterest Search API. Pins with their titles, images, links, reactions, and pinners, plus videos, products, boards, and profiles.
-- [Qwant Search API](https://serpapi.com/qwant-search-api.md): Scrape Qwant search results in JSON format with SerpApi's Qwant Search API. Organic results, ads, knowledge graph, news, weather, and more for any of Qwant's 37 locales.
 - [Search Index](https://serpapi.com/search-index-api.md): SerpApi's own, LLM-first search index of web pages, places, and products. Fast, structured JSON for AI grounding, benchmarking, and search automation. No browser needed. Currently in preview.
 - [The Home Depot Search API](https://serpapi.com/home-depot-search-api.md): Scrape Home Depot product search results with SerpApi's Home Depot Search Engine Results API. Product titles, descriptions, prices and more.
 - [The Home Depot Product API](https://serpapi.com/home-depot-product.md): Scrape full Home Depot Product listing results with SerpApi's Home Depot Product Results API. Title, description, prices, upc, model number and more.

@@ -1,10 +1,10 @@
 GET https://api.elevenlabs.io/v1/user
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:20.565Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:30.466Z
 final-url: https://api.elevenlabs.io/v1/user
 
 HTTP 401
-date: Sat, 07 Nov 2026 00:18:17 GMT
+date: Thu, 12 Nov 2026 02:37:27 GMT
 server: uvicorn
 content-length: 229
 content-type: application/json
@@ -14,10 +14,10 @@ access-control-allow-headers: *
 access-control-allow-methods: POST, PATCH, OPTIONS, DELETE, GET, PUT
 access-control-max-age: 600
 strict-transport-security: max-age=1800;
-x-trace-id: 92690fae3ea48284acf57fdc316b098e
+x-trace-id: aa094dafd50f0b508d1a56bc1fc91400
 x-region: us-central1
 via: 1.1 google
 alt-svc: h3=":443"; ma=2592000
 connection: close
 
-{"detail":{"type":"authentication_error","code":"unauthorized","message":"Neither authorization header nor xi-api-key received, please provide one.","status":"needs_authorization","request_id":"92690fae3ea48284acf57fdc316b098e"}}
+{"detail":{"type":"authentication_error","code":"unauthorized","message":"Neither authorization header nor xi-api-key received, please provide one.","status":"needs_authorization","request_id":"aa094dafd50f0b508d1a56bc1fc91400"}}

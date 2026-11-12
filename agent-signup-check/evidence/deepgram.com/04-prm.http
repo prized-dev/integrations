@@ -1,18 +1,18 @@
 GET https://deepgram.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:22.090Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:32.031Z
 final-url: https://deepgram.com/.well-known/oauth-protected-resource
 
 HTTP 404
 age: 0
 cache-control: public, max-age=0, must-revalidate
 content-length: 0
-date: Sat, 07 Nov 2026 00:18:20 GMT
+date: Thu, 12 Nov 2026 02:37:29 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /api/well-known/[...path]
 x-nextjs-rewritten-path: /api/well-known/oauth-protected-resource
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::xprfb-1794010700362-4747354e276d
+x-vercel-id: pdx1::iad1::p5lz6-1794451049905-0a1cc32696b1
 connection: close
 

@@ -1,10 +1,10 @@
 GET https://loops.so/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:04.448Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:17.324Z
 final-url: https://loops.so/.well-known/x402
 
 HTTP 404
-date: Sat, 07 Nov 2026 00:19:04 GMT
+date: Thu, 12 Nov 2026 02:38:17 GMT
 content-type: text/html; charset=utf-8
 content-length: 10
 connection: close
@@ -17,6 +17,6 @@ strict-transport-security: max-age=31536000
 x-content-type-options: nosniff
 x-frame-options: DENY
 cf-cache-status: DYNAMIC
-cf-ray: a5682a0ecee153d9-PDX
+cf-ray: a59228dc1f6b88dc-PDX
 
 Not found

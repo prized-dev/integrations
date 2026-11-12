@@ -1,9 +1,10 @@
 {
  "site": "northflank.com",
- "checkedAt": "2026-11-07T00:18:30.138Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:37:39.926Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -54,7 +55,7 @@
    "name": "Docs in Markdown",
    "url": "https://northflank.com/docs/llms.txt",
    "heading": "# Northflank Documentation",
-   "bytes": 78570,
+   "bytes": 78767,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -67,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 275,
+   "ms": 261,
    "redirects": 0
   },
   {
@@ -77,7 +78,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 210,
+   "ms": 236,
    "redirects": 0
   },
   {
@@ -87,7 +88,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 187,
+   "ms": 184,
    "redirects": 0
   },
   {
@@ -97,7 +98,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown",
-   "ms": 177,
+   "ms": 60,
    "redirects": 0
   },
   {
@@ -107,7 +108,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 201,
+   "ms": 204,
    "redirects": 0
   },
   {
@@ -117,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 184,
+   "ms": 194,
    "redirects": 0
   },
   {
@@ -127,7 +128,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 204,
+   "ms": 241,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.northflank.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.northflank.com/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 181,
    "redirects": 0
   },
   {
@@ -137,7 +148,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 200,
+   "ms": 264,
    "redirects": 0
   }
  ]

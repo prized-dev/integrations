@@ -1,21 +1,21 @@
 GET https://api.deepseek.com/models
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:18:13.707Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:37:23.005Z
 final-url: https://api.deepseek.com/models
 
 HTTP 401
 content-length: 31
 connection: close
-date: Sat, 07 Nov 2026 00:18:09 GMT
+date: Thu, 12 Nov 2026 02:37:19 GMT
 server: elb
 vary: origin, access-control-request-method, access-control-request-headers
 access-control-allow-credentials: true
-x-ds-trace-id: 26c3137154e89276fdfe8009c7116b92
+x-ds-trace-id: 3d0fdd001a1bc41407dbc5340327dded
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-content-type-options: nosniff
 x-cache: Error from cloudfront
-via: 1.1 5f7d374d92b73172fce43b7879076d1c.cloudfront.net (CloudFront)
+via: 1.1 11017c4db22106ac70e16ce75190a430.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P4
-x-amz-cf-id: vnzH6i-DHdGHALHIck-Hv8MmjwuJ94oGRDUpdIPbAzm-UhKi4eLDpQ==
+x-amz-cf-id: gN1yRRSHLaVoKTf5iAzavyN-6u36QknlAuigHu3I6CN_IsnKBXwcLg==
 
 Authentication Fails (governor)

@@ -1,9 +1,10 @@
 {
  "site": "fly.io",
- "checkedAt": "2026-11-07T00:18:26.930Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:37:37.689Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 2,
  "partial": 2,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -65,7 +66,7 @@
    "name": "Docs in Markdown",
    "url": "https://fly.io/llms.txt",
    "heading": "# Fly.io",
-   "bytes": 5590,
+   "bytes": 5605,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -78,7 +79,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 76,
+   "ms": 109,
    "redirects": 0
   },
   {
@@ -88,7 +89,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 236,
+   "ms": 162,
    "redirects": 0
   },
   {
@@ -98,7 +99,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 166,
+   "ms": 100,
    "redirects": 0
   },
   {
@@ -108,7 +109,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 71,
+   "ms": 106,
    "redirects": 0
   },
   {
@@ -118,7 +119,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 107,
+   "ms": 105,
    "redirects": 0
   },
   {
@@ -128,7 +129,17 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 69,
+   "ms": 99,
+   "redirects": 0
+  },
+  {
+   "label": "as-metadata (API host)",
+   "url": "https://api.machines.dev/.well-known/oauth-authorization-server",
+   "finalUrl": "https://api.machines.dev/.well-known/oauth-authorization-server",
+   "status": 404,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 102,
    "redirects": 0
   },
   {
@@ -138,7 +149,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 158,
+   "ms": 178,
    "redirects": 0
   },
   {
@@ -148,7 +159,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 66,
+   "ms": 101,
    "redirects": 0
   }
  ]

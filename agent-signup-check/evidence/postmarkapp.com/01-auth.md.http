@@ -1,20 +1,20 @@
 GET https://postmarkapp.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:01.225Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:13.673Z
 final-url: https://postmarkapp.com/auth.md
 
 HTTP 200
-date: Sat, 07 Nov 2026 00:18:57 GMT
+date: Thu, 12 Nov 2026 02:38:09 GMT
 content-type: application/octet-stream
 content-length: 7560
 connection: close
 accept-ranges: bytes
-etag: "6ad90d5c-1d88"
-last-modified: Wed, 21 Oct 2026 19:07:08 GMT
+etag: "6af4ec5b-1d88"
+last-modified: Wed, 11 Nov 2026 22:29:47 GMT
 strict-transport-security: max-age=2592000
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a56829e4ecb4ef38-PDX
+cf-ray: a59228ac3b318b90-PDX
 alt-svc: h3=":443"; ma=86400
 
 # auth.md

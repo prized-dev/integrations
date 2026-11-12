@@ -1,18 +1,18 @@
 GET https://api.postmarkapp.com/server
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:01.225Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:13.673Z
 final-url: https://api.postmarkapp.com/server
 
 HTTP 401
-date: Sat, 07 Nov 2026 00:18:58 GMT
+date: Thu, 12 Nov 2026 02:38:10 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
+ratelimit-reset: 1
 x-ratelimit-remaining-second: 49
 x-ratelimit-limit-second: 50
 ratelimit-limit: 50
 ratelimit-remaining: 49
-ratelimit-reset: 1
 content-encoding: br
 vary: Accept-Encoding, Origin
 strict-transport-security: max-age=16000000;

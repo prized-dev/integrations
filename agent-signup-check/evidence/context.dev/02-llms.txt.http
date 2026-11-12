@@ -1,28 +1,28 @@
 GET https://context.dev/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:27.970Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:36.960Z
 redirect: 301 from https://context.dev/llms.txt
 final-url: https://www.context.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 0
+age: 3624
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: frame-ancestors 'self' https://*.context.dev
 content-type: text/plain; charset=utf-8
-date: Sat, 07 Nov 2026 00:19:24 GMT
-etag: W/"088df5159f7378f05b694ec323792102"
-last-modified: Sat, 07 Nov 2026 00:19:24 GMT
+date: Thu, 12 Nov 2026 02:38:34 GMT
+etag: W/"c4d879ccc0c714f048f08b3a4de72a63"
+last-modified: Thu, 12 Nov 2026 01:38:10 GMT
 permissions-policy: camera=(), microphone=(), geolocation=()
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=63072000
 x-content-type-options: nosniff
 x-matched-path: /llms.txt
-x-vercel-cache: MISS
-x-vercel-id: pdx1::92vjc-1794010764344-fa76963eb005
+x-vercel-cache: HIT
+x-vercel-id: pdx1::9x55j-1794451114607-9c907788defd
 connection: close
 transfer-encoding: chunked
 
@@ -67,7 +67,7 @@ Prices are in USD for new subscriptions. Credits renew monthly, including on ann
 | Plan | Monthly price | Annual price | Credits per month | Overage per 1,000 credits |
 | ---- | ------------- | ------------ | ----------------- | ------------------------ |
 | Free | $0 | $0 | 1,000 | None |
-| Developer | $20 | $200 | 10,000 | $3.00 |
+| Developer | $20 | $200 | 5,000 | $3.00 |
 | Pro | $90 | $900 | 100,000 | $2.00 |
 | Growth | $300 | $3,000 | 500,000 | $1.50 |
 | Scale | $500 | $5,000 | 1,000,000 | $1.00 |
@@ -164,30 +164,34 @@ One credit balance covers all APIs. A standard scrape costs 1 credit with JavaSc
 ## Comparisons
 
 - [All comparisons](https://www.context.dev/compare): Context.dev compared with other scraping, crawling, search, proxy, and brand data APIs.
-- [vs. Firecrawl](https://www.context.dev/compare/the-top-firecrawl-alternative): The same 100,000 credits for $90 instead of $99, with 100 concurrent requests instead of 25, and no charge for blocked pages.
+- [vs. Firecrawl](https://www.context.dev/compare/the-top-firecrawl-alternative): First of four on [TRACE](https://trace.context.dev/) at 87.0% useful pages to Firecrawl's 82.3%, and the same 100,000 credits for $90 instead of $99 with 100 concurrent requests instead of 25.
 - [vs. ScraperAPI](https://www.context.dev/compare/the-top-scraperapi-alternative): No credit multipliers for JavaScript rendering or protected domains.
 - [vs. ScrapingBee](https://www.context.dev/compare/the-top-scrapingbee-alternative): One credit per page instead of stacked rendering, premium proxy, and stealth credits.
 - [vs. ZenRows](https://www.context.dev/compare/the-top-zenrows-alternative): One credit for a rendered page on premium proxies instead of 25.
-- [vs. Scrapfly](https://www.context.dev/compare/the-top-scrapfly-alternative): One credit for a rendered, protected page instead of 30 or more.
+- [vs. Scrapfly](https://www.context.dev/compare/the-top-scrapfly-alternative): One credit for a rendered, protected page instead of 30 or more, and 38 of 40 agent scrape tasks finished on [Scrapingbench](https://www.scrapingbench.com/scrape) against 36.
 - [vs. Scrape.do](https://www.context.dev/compare/the-top-scrape-do-alternative): One credit per page instead of 25 for rendering on residential proxies, and no per-domain surcharges.
 - [vs. Scrapingdog](https://www.context.dev/compare/the-top-scrapingdog-alternative): One credit for a rendered page on premium proxies instead of 25.
 - [vs. Zyte](https://www.context.dev/compare/the-top-zyte-alternative): One price on every site instead of per-site difficulty tiers.
 - [vs. Bright Data](https://www.context.dev/compare/the-top-bright-data-alternative): One credit balance and one price per page instead of per-request, per-GB, and per-record products.
 - [vs. Oxylabs](https://www.context.dev/compare/the-top-oxylabs-alternative): JavaScript rendering in the base price for any site.
 - [vs. Decodo](https://www.context.dev/compare/the-top-decodo-alternative): One rate per rendered page instead of four rates per request.
-- [vs. Nimble](https://www.context.dev/compare/the-top-nimble-alternative): Self-serve plans with crawl, batches, monitors, and JSON extraction.
+- [vs. Nimble](https://www.context.dev/compare/the-top-nimble-alternative): Self-serve plans with crawl, batches, monitors, and JSON extraction, and 98.0% accuracy on [Openbenchmarks' factual lookups](https://openbenchmarks.com/web-search) against Nimble's 94.3%.
+- [vs. Parallel](https://www.context.dev/compare/the-top-parallel-alternative): Research answers in your JSON shape from one request instead of a Task run you create and collect, plus up to 100 search results with full pages, crawling, and batches.
 - [vs. Diffbot](https://www.context.dev/compare/the-top-diffbot-alternative): Proxies included in every page and paid plans from $20.
 - [vs. Apify](https://www.context.dev/compare/the-top-apify-alternative): One price per page instead of compute units plus proxy traffic.
-- [vs. Spider](https://www.context.dev/compare/the-top-spider-alternative): Crawl, batch, and monitor from one API.
-- [vs. Crawl4AI](https://www.context.dev/compare/the-top-crawl4ai-alternative): A hosted API instead of a self-run crawler.
+- [vs. Spider](https://www.context.dev/compare/the-top-spider-alternative): Usable content on 92.1% of 806 URLs in [WebCrawlerAPI's benchmark](https://webcrawlerapi.com/benchmarks/scrape-quality) against Spider's 84.0%, and crawl, batch, and monitor from one API.
+- [vs. Crawl4AI](https://www.context.dev/compare/the-top-crawl4ai-alternative): A hosted API instead of a self-run crawler, with usable content on 92.1% of 806 URLs in [WebCrawlerAPI's benchmark](https://webcrawlerapi.com/benchmarks/scrape-quality) against Crawl4AI Cloud's 88.0%.
 - [vs. Browse AI](https://www.context.dev/compare/the-top-browse-ai-alternative): Any URL through one API instead of recorded robots.
-- [vs. Jina AI](https://www.context.dev/compare/the-top-jina-alternative): One price per page instead of per-token billing.
+- [vs. Visualping](https://www.context.dev/compare/the-top-visualping-alternative): Website change monitoring by API at $0.90 per 1,000 page checks on Pro instead of $5 to $14 on Visualping's paid plans, with failed runs free and signed webhooks.
+- [vs. Jina AI](https://www.context.dev/compare/the-top-jina-alternative): One price per page instead of per-token billing, and 38 of 40 agent scrape tasks finished on [Scrapingbench](https://www.scrapingbench.com/scrape) against Jina Reader's 6.
 - [vs. TinyFish](https://www.context.dev/compare/the-top-tinyfish-alternative): More agent scrape tasks finished on [Scrapingbench](https://www.scrapingbench.com/scrape), with crawl and batches on one key.
-- [vs. Browserbase](https://www.context.dev/compare/the-top-browserbase-alternative): Page content through one API instead of running browser sessions.
-- [vs. Tavily](https://www.context.dev/compare/the-top-tavily-alternative): Search with page passages plus anti-bot scraping, crawling, and batches.
-- [vs. Exa](https://www.context.dev/compare/the-top-exa-alternative): Search plus full-page scraping of protected sites.
-- [vs. You.com](https://www.context.dev/compare/the-top-you-com-alternative): Search passages for $1.80 per 1,000 instead of $5, plus anti-bot scraping.
-- [vs. Linkup](https://www.context.dev/compare/the-top-linkup-alternative): Search plus anti-bot scraping, crawling, and batches.
+- [vs. Browserbase](https://www.context.dev/compare/the-top-browserbase-alternative): Page content through one API instead of running browser sessions, and 38 of 40 agent scrape tasks finished on [Scrapingbench](https://www.scrapingbench.com/scrape) against 30.
+- [vs. Tavily](https://www.context.dev/compare/the-top-tavily-alternative): 98.0% accuracy on [Openbenchmarks' factual lookups](https://openbenchmarks.com/web-search) against Tavily's 93.0%, plus anti-bot scraping, crawling, and batches.
+- [vs. Brave Search API](https://www.context.dev/compare/the-top-brave-search-api-alternative): 98.0% accuracy on [Openbenchmarks' factual lookups](https://openbenchmarks.com/web-search) against Brave's 94.0%, search passages for $1.80 per 1,000 instead of $5, and full-page Markdown, scraping, and crawling on one key.
+- [vs. Exa](https://www.context.dev/compare/the-top-exa-alternative): Useful content on 87.0% of fresh pages on [TRACE](https://trace.context.dev/) against Exa's 79.1%, and search plus full-page scraping of protected sites.
+- [vs. You.com](https://www.context.dev/compare/the-top-you-com-alternative): Search passages for $1.80 per 1,000 instead of $5, and 98.0% accuracy on [Openbenchmarks' factual lookups](https://openbenchmarks.com/web-search) against You.com's 92.0%.
+- [vs. Linkup](https://www.context.dev/compare/the-top-linkup-alternative): 98.0% accuracy on [Openbenchmarks' factual lookups](https://openbenchmarks.com/web-search) against Linkup's 96.7%, 38 of 40 [Scrapingbench](https://www.scrapingbench.com/scrape) scrape tasks against 34, plus anti-bot scraping, crawling, and batches.
+- [vs. SerpApi](https://www.context.dev/compare/the-top-serpapi-alternative): Ten search results for $0.90 per 1,000 searches instead of $15, with the relevant passages or full-page Markdown from every result in the same call instead of a second scraping request.
 
 ## Free Tools
 

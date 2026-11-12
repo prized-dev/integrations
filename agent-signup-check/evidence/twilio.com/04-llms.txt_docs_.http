@@ -1,26 +1,27 @@
 GET https://www.twilio.com/docs/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.2 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-07T00:19:07.984Z
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-12T02:38:20.738Z
 final-url: https://www.twilio.com/docs/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=UTF-8
 transfer-encoding: chunked
 connection: close
-date: Sat, 07 Nov 2026 00:19:04 GMT
-server: istio-envoy
-x-envoy-decorator-operation: docs-site.docs-site.svc.cluster.local:3000/*
+date: Thu, 12 Nov 2026 01:02:59 GMT
 cache-control: public, s-maxage=86400, stale-while-revalidate=86400
 accept-ranges: bytes
-last-modified: Fri, 06 Nov 2026 23:29:43 GMT
-etag: W/"5e491-1a1b3325658"
+last-modified: Wed, 11 Nov 2026 20:02:13 GMT
+etag: W/"5e574-1a1cc342988"
 content-encoding: gzip
 x-envoy-upstream-service-time: 3
+server: istio-envoy
+x-envoy-decorator-operation: docs-site.docs-site.svc.cluster.local:3000/*
 vary: Accept-Encoding
-via: 1.1 e2ad8d56b8dbdb69144113ad1c008e02.cloudfront.net (CloudFront)
-x-cache: Miss from cloudfront
+via: 1.1 b7b9fc5331efc8b070db0bf27b36820e.cloudfront.net (CloudFront)
+age: 5717
+x-cache: Hit from cloudfront
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: nT5EtOYGgH0I2fApZ_MiWYUjpK5CBFoy8acsddXeb5j5f6-cGZbwgg==
+x-amz-cf-id: 0qsI6B0mUlQVI-JSTN83g5x2HOoBHVME968RUNQc1RpOICxus_7TeA==
 
 # Twilio Documentation
 
@@ -704,6 +705,7 @@ x-amz-cf-id: nT5EtOYGgH0I2fApZ_MiWYUjpK5CBFoy8acsddXeb5j5f6-cGZbwgg==
 * [Credentials PublicKey Resource](/docs/iam/credentialpublickey-resource.md): Full API reference for the CredentialPublicKey resource in the Twilio API. Learn how to create, fetch (get), read (list), update, and delete Public Keys for your Twilio account.
 * [REST API: Credentials](/docs/iam/credentials/api.md): Learn the basics of the Credentials REST API, which allows you to upload Public Keys to Twilio and manage them.
 * [Identity and Access Management (IAM)](/docs/iam.md): Learn about Identity and Access Management (IAM) in your Twilio applications: securely control access to your Twilio projects, authenticate your applications, and dig into best practices in these docs.
+* [REST API: OAuth App resource](/docs/iam/oauth-apps/account-oauth-apps-resource.md): API reference for the OAuth App resource. Create, fetch, list, update, and delete account-level OAuth apps and rotate their client secrets.
 * [Account-level OAuth apps](/docs/iam/oauth-apps/account-oauth-apps.md): Learn how to create, manage, and rotate secrets for account-level OAuth apps in Twilio. Account OAuth apps use the OAuth 2.0 Client Credentials grant type.
 * [OAuth apps FAQs](/docs/iam/oauth-apps/faqs.md): Frequently asked questions about Twilio OAuth apps, covering supported regions, costs, roles, access token expiration, secret rotation, and subaccount support.
 * [OAuth Token API](/docs/iam/oauth-apps/oauth-access-token.md): Learn how to use the Twilio OAuth Token API endpoint to generate access tokens with an OAuth app's Client ID and Client Secret, then call Twilio APIs with them.

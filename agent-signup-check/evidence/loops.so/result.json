@@ -1,9 +1,10 @@
 {
  "site": "loops.so",
- "checkedAt": "2026-11-07T00:19:04.448Z",
- "checker": "agent-signup-check/0.2.2",
+ "checkedAt": "2026-11-12T02:38:17.324Z",
+ "checker": "agent-signup-check/0.2.5",
  "passed": 2,
  "partial": 2,
+ "unread": 0,
  "total": 7,
  "whoActs": null,
  "checks": [
@@ -11,7 +12,7 @@
    "id": "authmd",
    "name": "auth.md",
    "url": "https://loops.so/auth.md",
-   "heading": "# Loops authentication",
+   "heading": "# Loops auth.md",
    "registrationEndpoints": [],
    "mentions": [],
    "quote": "e which Loops teams the client may access. Loops does not currently advertise an `agent_auth` metadata block or support the agent-driven registration flows def",
@@ -75,8 +76,8 @@
    "finalUrl": "https://loops.so/auth.md",
    "status": 200,
    "error": null,
-   "contentType": "text/plain;charset=utf-8",
-   "ms": 303,
+   "contentType": "text/markdown; charset=utf-8",
+   "ms": 234,
    "redirects": 0
   },
   {
@@ -86,7 +87,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain;charset=utf-8",
-   "ms": 187,
+   "ms": 201,
    "redirects": 0
   },
   {
@@ -96,7 +97,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 134,
+   "ms": 110,
    "redirects": 0
   },
   {
@@ -106,7 +107,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 130,
+   "ms": 316,
    "redirects": 1
   },
   {
@@ -116,7 +117,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 94,
+   "ms": 107,
    "redirects": 0
   },
   {
@@ -126,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 196,
+   "ms": 474,
    "redirects": 0
   },
   {
@@ -136,7 +137,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 40,
+   "ms": 68,
    "redirects": 0
   }
  ]
