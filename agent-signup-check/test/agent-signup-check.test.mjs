@@ -109,6 +109,19 @@ test("the client's own address is replaced everywhere, and only as a whole addre
   assert.match(out, /you are \[client-ip\] and 203\.0\.113\.99 is someone else/);
 });
 
+test('the address is found by plain text, beside backslashes and regex metacharacters, and is never a pattern', () => {
+  const ip = '203.0.113.9';
+  const text = String.raw`\203.0.113.9\ (203.0.113.9)+ [ec2-203-0-113-9.*] ^203.0.113.9$ 203x0x113x9 203.0.113.9.5 1203.0.113.9 ec2-203-0-113-90 .203.0.113.9 203.0.113.9|a`;
+  assert.equal(
+    redactClientIps(text, [ip]),
+    String.raw`\[client-ip]\ ([client-ip])+ [ec2-[client-ip].*] ^[client-ip]$ 203x0x113x9 203.0.113.9.5 1203.0.113.9 ec2-203-0-113-90 .203.0.113.9 [client-ip]|a`,
+  );
+  // Something that is not an address is never used, whatever it holds: no pattern is built from it.
+  for (const bad of ['203.0.113.9\\', '.*', '(', '\\', '[client-ip]', '203.0.113.*']) assert.equal(redactClientIps(text, [bad]), text, bad);
+  // Next to each other, both go; a match is not looked for inside a replacement.
+  assert.equal(redactClientIps('203.0.113.9,203.0.113.9 ip-203-0-113-9', [ip]), '[client-ip],[client-ip] ip-[client-ip]');
+});
+
 test('labelled visitor addresses go from HTML pages, example addresses stay in agent documents', () => {
   const html = scrubEvidence(evidence(['content-type: text/html'], `<script>dataLayer=[{'visitorIP': '8.8.4.4'}]; x={"ip_address":"8.8.4.4"}</script>`));
   assert.doesNotMatch(html, /8\.8\.4\.4/);
@@ -483,7 +496,7 @@ test('a skipped API probe still has its host read for metadata (Railway)', async
   assert.equal(cell(r, 'challenge').reason, RAILWAY_SKIP);
   assert.equal(r.total, 6);
   assert.equal(r.passed, 2);
-  assert.ok(!asked(r).some((u) => u.includes('/graphql')), 'the GraphQL endpoint is not requested');
+  assert.ok(!asked(r).some((u) => new URL(u).pathname.startsWith('/graphql')), 'the GraphQL endpoint is not requested');
 });
 
 test('a skipped probe with no API named reads no API host, and none is guessed', async () => {
@@ -496,7 +509,7 @@ test('a skipped probe with no API named reads no API host, and none is guessed',
 test('a skipped probe on the site\'s own host adds no request', async () => {
   const r = await checkSite('railway.com', { api: 'https://railway.com/graphql', skipApi: RAILWAY_SKIP, get: stub(RAILWAY) });
   assert.ok(!r.requests.some((q) => /API host/.test(q.label)));
-  assert.ok(!asked(r).includes('https://railway.com/graphql'));
+  assert.ok(!asked(r).some((u) => { const { hostname, pathname } = new URL(u); return hostname === 'railway.com' && pathname === '/graphql'; }), asked(r).join(' '));
 });
 
 test('authorization server metadata on the API host is read when the site has none (Render)', async () => {

@@ -68,18 +68,37 @@ function canonical6(s) {
   }
 }
 
+const DIGIT = /^\d$/;
+/**
+ * Replace each whole occurrence of `needle` in `text` with [client-ip], by plain string search
+ * (no pattern is built from the address). Whole means not inside a longer address or number:
+ * the character before is not a digit or a dot, the one after is not a digit, and the two after
+ * are not `joiner` and a digit (1.2.3.4 is not 1.2.3.45, 11.2.3.4 or 1.2.3.4.5).
+ */
+function replaceWhole(text, needle, joiner) {
+  let out = '';
+  let from = 0;
+  for (let i = text.indexOf(needle); i >= 0; i = text.indexOf(needle, i + 1)) {
+    if (i < from) continue;
+    const before = i > 0 ? text[i - 1] : '';
+    const after = text[i + needle.length] ?? '';
+    const next = text[i + needle.length + 1] ?? '';
+    if (DIGIT.test(before) || before === '.' || DIGIT.test(after) || (after === joiner && DIGIT.test(next))) continue;
+    out += `${text.slice(from, i)}[client-ip]`;
+    from = i + needle.length;
+  }
+  return out + text.slice(from);
+}
+
 /** Replace every spelling of the given client addresses with [client-ip]. */
 export function redactClientIps(text, clientIps) {
   let out = text;
   const v6 = new Set();
   for (const ip of clientIps) {
     if (net.isIP(ip) === 4) {
-      const dotted = ip.replace(/\./g, '\\.');
-      const dashed = ip.replace(/\./g, '-');
-      // Not inside a longer address or number: 1.2.3.4 is not 1.2.3.45 or 11.2.3.4.
-      out = out.replace(new RegExp(`(?<![\\d.])${dotted}(?!\\d|\\.\\d)`, 'g'), '[client-ip]');
-      // ec2-54-201-10-20, ip-54-201-10-20: a dash before is fine, a digit or a dot is not.
-      out = out.replace(new RegExp(`(?<![\\d.])${dashed}(?!\\d|-\\d)`, 'g'), '[client-ip]');
+      // 54.201.10.20, and ec2-54-201-10-20 / ip-54-201-10-20 (a dash before is fine).
+      out = replaceWhole(out, ip, '.');
+      out = replaceWhole(out, ip.split('.').join('-'), '-');
     } else if (net.isIP(ip) === 6) {
       v6.add(canonical6(ip));
     }
