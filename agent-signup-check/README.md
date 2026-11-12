@@ -37,9 +37,9 @@ GET requests only: no POST, no sign-up, no form, no credential. At most 24 GET r
 
 ## The seven checks
 
-Each check passes, passes partly, or fails. Partly means the platform says it in prose an agent can read, or publishes it in a shape the spec tells clients not to use, but not in the machine-readable form the spec defines. Ranking counts passes only; partly never breaks a tie.
+Each check passes, passes partly, or fails. Partly means the platform publishes something the check looks for, but short of the spec: it says it only in prose an agent can read, its file departs from the spec's shape (a heading, a field, or a resource clients must not use), or the file stops short, such as an auth.md that says agents cannot register yet or metadata that names no authorization server. For the key check, partly is an API that refuses the signed-out call, usually with a 401, but without the `WWW-Authenticate` header the spec requires. Ranking counts passes only; partly never breaks a tie.
 
-A check is "not read" when it would be a fail and a file it reads got no answer: a server error, HTTP 429, a network failure that could pass, or a bot challenge on the file itself. Not read is not a fail and not a pass; the reason gives the URL, what it answered and the date, and the check still counts in the row's total ("2 of 7, 1 not read"). A 404, a plain 403, an HTML page, a host that does not exist or a redirect to a sign-in page is an answer and is scored. [METHOD.md](METHOD.md) has the full rule.
+A check is "not read" when it would be a fail and one of its own files got no answer: a server error, HTTP 429, a network failure that could pass, or a bot challenge on the file itself. Not read is not a fail and not a pass; the reason gives the URL, what it answered and the date, and the check still counts in the row's total ("2 of 7, 1 not read"). Sign-up by API, spend limits and payment handoff also read auth.md and llms.txt for prose; when only those went unread, the check stays a fail and its reason names the file. A 404, a plain 403, an HTML page, a host that does not exist or a redirect to a sign-in page is an answer and is scored. [METHOD.md](METHOD.md) has the full rule.
 
 | Check | Passes when | Partly when | Spec |
 | --- | --- | --- | --- |
