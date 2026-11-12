@@ -8,8 +8,10 @@
 //  - cookie headers, anti-forgery token headers, and headers that echo the client's address
 //    (True-Client-IP and friends) are dropped;
 //  - the client's own public addresses (given, or learned once per run) are replaced with
-//    [client-ip] wherever they appear, in any spelling: 203.0.113.7, 203.0.113.7:443,
-//    ::ffff:203.0.113.7, ec2-203-0-113-7, and every way of writing an IPv6 address;
+//    [client-ip] wherever they appear: 203.0.113.7, 203.0.113.7:443, host.203.0.113.7,
+//    203.000.113.007, ec2-203-0-113-7, 7.113.0.203.in-addr.arpa, 3405803783, 0xcb007107,
+//    ::ffff:203.0.113.7 and ::ffff:cb00:7107, an IPv6 address in full or shortened, in upper or
+//    lower case and with characters %-encoded (203%2E0%2E113%2E7);
 //  - in HTML pages and headers, any public IPv4 address the page labels as the visitor's
 //    ("visitorIP": "...", "ip_address": "...", "your IP address is ...") is replaced too, and so
 //    are per-visitor tokens (csrf and session ids, Cloudflare challenge tokens): [redacted];
@@ -69,42 +71,200 @@ function canonical6(s) {
 }
 
 const DIGIT = /^\d$/;
+const HEX = /^[0-9a-f]$/;
+const ALNUM = /^[0-9a-z]$/;
+const HEX_PAIR = /^[0-9a-fA-F]{2}$/;
+const UPPER = /[A-Z]+/g;
+
 /**
- * Replace each whole occurrence of `needle` in `text` with [client-ip], by plain string search
- * (no pattern is built from the address). Whole means not inside a longer address or number:
- * the character before is not a digit or a dot, the one after is not a digit, and the two after
- * are not `joiner` and a digit (1.2.3.4 is not 1.2.3.45, 11.2.3.4 or 1.2.3.4.5).
+ * The text with each %XX that encodes a printable ASCII character decoded once (203%2E0%2e113%2E9
+ * reads 203.0.113.9). `at[k]` is where view character k starts in `text`, and `at[view.length]` is
+ * `text.length`.
  */
-function replaceWhole(text, needle, joiner) {
+function decodeOnce(text) {
+  let view = '';
+  const at = [];
+  for (let i = 0; i < text.length; ) {
+    if (text[i] === '%' && HEX_PAIR.test(text.slice(i + 1, i + 3))) {
+      const code = parseInt(text.slice(i + 1, i + 3), 16);
+      if (code >= 0x20 && code <= 0x7e) {
+        view += String.fromCharCode(code);
+        at.push(i);
+        i += 3;
+        continue;
+      }
+    }
+    view += text[i];
+    at.push(i);
+    i += 1;
+  }
+  at.push(text.length);
+  return { view, at };
+}
+
+/**
+ * The ways the text is read when looking for an address, each with ASCII letters lower-cased: as
+ * it is, with %XX decoded once, and decoded twice (%252E). `at` maps a view position back to the
+ * text (null: one to one). The text as it is is always read too, so a literal % before or after an
+ * address (100%203.0.113.9) cannot hide it.
+ */
+function addressViews(text) {
+  const lower = (s) => s.replace(UPPER, (u) => u.toLowerCase());
+  const views = [{ view: lower(text), at: null }];
+  if (!text.includes('%')) return views;
+  const once = decodeOnce(text);
+  views.push({ view: lower(once.view), at: once.at });
+  if (once.view.includes('%')) {
+    const twice = decodeOnce(once.view);
+    if (twice.view !== once.view) views.push({ view: lower(twice.view), at: twice.at.map((k) => once.at[k]) });
+  }
+  return views;
+}
+
+// When a found needle is a whole address, from the characters around it. No digit right before
+// or right after it (11.2.3.4 and 1.2.3.45 are other addresses). A dot on either side of a dotted
+// address is fine: host.1.2.3.4, and 1.2.3.4.443 (an address and a port). A dashed address may
+// have a dot or a dash before it (ec2-1-2-3-4, x.1-2-3-4) but not a dash and a digit after it
+// (the minus signs of SVG path data read that way); one that a replacement leaves whole is found
+// on the next pass. A number is not inside a longer word or number (a hash, an id).
+const WHOLE = {
+  dotted: (before, after) => !DIGIT.test(before) && !DIGIT.test(after),
+  dashed: (before, after, next) => !DIGIT.test(before) && !DIGIT.test(after) && !(after === '-' && DIGIT.test(next)),
+  decimal: (before, after) => !ALNUM.test(before) && !ALNUM.test(after),
+  hex: (before, after) => !ALNUM.test(before) && !HEX.test(after),
+};
+
+/** Where `needle` occurs whole in `view`, by plain string search: [start, end) pairs, in order. */
+function findWhole(view, needle, kind) {
+  const found = [];
+  let from = 0;
+  for (let i = view.indexOf(needle); i >= 0; i = view.indexOf(needle, i + 1)) {
+    if (i < from) continue;
+    const end = i + needle.length;
+    if (!WHOLE[kind](i > 0 ? view[i - 1] : '', view[end] ?? '', view[end + 1] ?? '')) continue;
+    found.push([i, end]);
+    from = end;
+  }
+  return found;
+}
+
+/** Replace the given [start, end) spans of `text` with [client-ip]; spans that overlap become one. */
+function replaceSpans(text, spans) {
+  if (!spans.length) return text;
+  const merged = [];
+  for (const [s, e] of [...spans].sort((x, y) => x[0] - y[0] || y[1] - x[1])) {
+    const last = merged.at(-1);
+    if (last && s < last[1]) last[1] = Math.max(last[1], e);
+    else merged.push([s, e]);
+  }
   let out = '';
   let from = 0;
-  for (let i = text.indexOf(needle); i >= 0; i = text.indexOf(needle, i + 1)) {
-    if (i < from) continue;
-    const before = i > 0 ? text[i - 1] : '';
-    const after = text[i + needle.length] ?? '';
-    const next = text[i + needle.length + 1] ?? '';
-    if (DIGIT.test(before) || before === '.' || DIGIT.test(after) || (after === joiner && DIGIT.test(next))) continue;
-    out += `${text.slice(from, i)}[client-ip]`;
-    from = i + needle.length;
+  for (const [s, e] of merged) {
+    out += `${text.slice(from, s)}[client-ip]`;
+    from = e;
   }
   return out + text.slice(from);
 }
 
-/** Replace every spelling of the given client addresses with [client-ip]. */
-export function redactClientIps(text, clientIps) {
+/** Every way of writing an IPv4 address that is searched for as plain text: [needle, kind]. */
+function ipv4Needles(ip) {
+  const o = ip.split('.').map(Number);
+  const n = o[0] * 2 ** 24 + o[1] * 2 ** 16 + o[2] * 2 ** 8 + o[3];
+  // Each octet as written, and zero-padded to 2 and 3 digits: 203.0.113.9, 203.000.113.009, ...
+  let padded = [[]];
+  for (const x of o) {
+    const forms = [...new Set([String(x), String(x).padStart(2, '0'), String(x).padStart(3, '0')])];
+    padded = padded.flatMap((p) => forms.map((f) => [...p, f]));
+  }
+  const all = [
+    ...padded.map((p) => [p.join('.'), 'dotted']),
+    // ec2-203-0-113-9, ip-203-0-113-9 (a dash before is fine), and zero-padded the same way.
+    ...padded.map((p) => [p.join('-'), 'dashed']),
+    // Reverse DNS: 9.113.0.203, and 9.113.0.203.in-addr.arpa.
+    [[...o].reverse().join('.'), 'dotted'],
+    // One number: 3405803785, 0xcb007109, 0x0a000001. Only for an address whose first octet is not
+    // 0 (every public one): below that the number is short enough to be anything.
+    ...(o[0] > 0
+      ? [
+          [String(n), 'decimal'],
+          [`0x${n.toString(16)}`, 'hex'],
+          [`0x${n.toString(16).padStart(8, '0')}`, 'hex'],
+        ]
+      : []),
+  ];
+  // The same needle twice (0x with eight digits already, an address that reads the same reversed).
+  return [...new Map(all.map((x) => [x.join(' '), x])).values()];
+}
+
+/** IPv6 addresses that carry an IPv4 address, in canonical form: ::ffff:a.b.c.d and friends. Not
+ *  for 0.x.x.x, whose ::a.b.c.d reads :: or ::1. */
+const embedding6 = (ip) => (ip.startsWith('0.') ? [] : [`::ffff:${ip}`, `::${ip}`, `64:ff9b::${ip}`].map(canonical6));
+
+/**
+ * Where an IPv6 candidate is one of the addresses in `v6`, as [start, end) within the candidate,
+ * or null. A candidate can carry a colon that is not part of it (addr:2001:db8::5, or an address
+ * at the end of a sentence with a colon), so one or two leading colons and one trailing colon are
+ * tried off too.
+ */
+function matchV6(m, v6) {
+  for (let lead = 0; lead <= 2; lead++) {
+    if (lead && m[lead - 1] !== ':') break;
+    for (let trail = 0; trail <= 1; trail++) {
+      if (trail && !m.endsWith(':')) break;
+      if (v6.has(canonical6(m.slice(lead, m.length - trail)))) return [lead, m.length - trail];
+    }
+  }
+  return null;
+}
+
+/** One pass of redactClientIps: every needle and IPv6 candidate in every view of the text. */
+function redactOnce(text, needles, v6) {
   let out = text;
+  if (needles.length) {
+    const spans = [];
+    for (const { view, at } of addressViews(out)) {
+      for (const [needle, kind] of needles) for (const [s, e] of findWhole(view, needle, kind)) spans.push(at ? [at[s], at[e]] : [s, e]);
+    }
+    out = replaceSpans(out, spans);
+  }
+  if (v6.size) {
+    const spans = [];
+    for (const { view, at } of addressViews(out)) {
+      for (const m of view.matchAll(IPV6_CANDIDATE)) {
+        const hit = matchV6(m[0], v6);
+        if (hit) spans.push(at ? [at[m.index + hit[0]], at[m.index + hit[1]]] : [m.index + hit[0], m.index + hit[1]]);
+      }
+    }
+    out = replaceSpans(out, spans);
+  }
+  return out;
+}
+
+/**
+ * Replace every spelling of the given client addresses with [client-ip]: for an IPv4 address the
+ * dotted, zero-padded, dashed, reverse-DNS, one-number and IPv4-in-IPv6 (mapped, compatible,
+ * NAT64) forms; an IPv6 address in full or shortened, alone or in brackets. Upper or lower case and characters
+ * %-encoded once or twice read the same. Addresses are found by plain string search and by
+ * comparing canonical forms; no pattern is built from them. A replacement can make a neighbour
+ * whole, so passes repeat until nothing changes (at most 4); the audit flags anything left.
+ */
+export function redactClientIps(text, clientIps) {
+  const needles = [];
   const v6 = new Set();
   for (const ip of clientIps) {
     if (net.isIP(ip) === 4) {
-      // 54.201.10.20, and ec2-54-201-10-20 / ip-54-201-10-20 (a dash before is fine).
-      out = replaceWhole(out, ip, '.');
-      out = replaceWhole(out, ip.split('.').join('-'), '-');
+      needles.push(...ipv4Needles(ip));
+      for (const c of embedding6(ip)) v6.add(c);
     } else if (net.isIP(ip) === 6) {
       v6.add(canonical6(ip));
     }
   }
-  if (v6.size) {
-    out = out.replace(IPV6_CANDIDATE, (m) => (v6.has(canonical6(m)) ? '[client-ip]' : m));
+  v6.delete(null);
+  let out = text;
+  for (let pass = 0; pass < 4; pass++) {
+    const next = redactOnce(out, needles, v6);
+    if (next === out) break;
+    out = next;
   }
   return out;
 }

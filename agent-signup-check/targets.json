@@ -632,7 +632,17 @@
   "category": "Payments and billing",
   "site": "cdp.coinbase.com",
   "api": "https://api.cdp.coinbase.com/platform/v2/evm/accounts",
-  "docs": "https://docs.cdp.coinbase.com/llms.txt"
+  "docs": "https://docs.cdp.coinbase.com/llms.txt",
+  "corrections": [
+   {
+    "check": "payment",
+    "from": "partial",
+    "match": "x402",
+    "url": "https://docs.cdp.coinbase.com/llms.txt",
+    "status": "fail",
+    "note": "the matched prose is about x402 products Coinbase offers (an Agentic Wallet tool that pays for x402 requests, x402 SDKs and a facilitator for sellers), not a way for an agent to pay Coinbase"
+   }
+  ]
  },
  {
   "name": "Autumn",

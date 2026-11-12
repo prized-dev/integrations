@@ -6866,7 +6866,7 @@
    "apiProbed": "https://api.cdp.coinbase.com/platform/v2/evm/accounts",
    "apiNotProbed": null,
    "passed": 1,
-   "partial": 2,
+   "partial": 1,
    "unread": 0,
    "total": 7,
    "whoActs": null,
@@ -6918,8 +6918,10 @@
      "url": "https://docs.cdp.coinbase.com/llms.txt",
      "match": "x402",
      "snippet": "cp/mcp-tools/list-bazaar-resources.md) - [Make an x402 Request](https://docs.cdp.coinbase.com/agentic-wallet/mcp/mcp-tools/make-x402-request.md) - [Agentic Wall",
-     "status": "partial",
-     "reason": "llms.txt mentions a payment path (x402) in prose; nothing machine-readable"
+     "status": "fail",
+     "reason": "Corrected after review: the matched prose is about x402 products Coinbase offers (an Agentic Wallet tool that pays for x402 requests, x402 SDKs and a facilitator for sellers), not a way for an agent to pay Coinbase. The checker said partial: llms.txt mentions a payment path (x402) in prose; nothing machine-readable",
+     "checkerStatus": "partial",
+     "checkerReason": "llms.txt mentions a payment path (x402) in prose; nothing machine-readable"
     },
     {
      "id": "markdown",

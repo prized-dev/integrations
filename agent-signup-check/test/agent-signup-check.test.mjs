@@ -114,12 +114,75 @@ test('the address is found by plain text, beside backslashes and regex metachara
   const text = String.raw`\203.0.113.9\ (203.0.113.9)+ [ec2-203-0-113-9.*] ^203.0.113.9$ 203x0x113x9 203.0.113.9.5 1203.0.113.9 ec2-203-0-113-90 .203.0.113.9 203.0.113.9|a`;
   assert.equal(
     redactClientIps(text, [ip]),
-    String.raw`\[client-ip]\ ([client-ip])+ [ec2-[client-ip].*] ^[client-ip]$ 203x0x113x9 203.0.113.9.5 1203.0.113.9 ec2-203-0-113-90 .203.0.113.9 [client-ip]|a`,
+    String.raw`\[client-ip]\ ([client-ip])+ [ec2-[client-ip].*] ^[client-ip]$ 203x0x113x9 [client-ip].5 1203.0.113.9 ec2-203-0-113-90 .[client-ip] [client-ip]|a`,
   );
-  // Something that is not an address is never used, whatever it holds: no pattern is built from it.
+  // A value that is not an IP address is skipped before any search (net.isIP), so none of these
+  // changes the text.
   for (const bad of ['203.0.113.9\\', '.*', '(', '\\', '[client-ip]', '203.0.113.*']) assert.equal(redactClientIps(text, [bad]), text, bad);
-  // Next to each other, both go; a match is not looked for inside a replacement.
+  // Two dotted copies one comma apart both go, and so does the dashed spelling after them.
   assert.equal(redactClientIps('203.0.113.9,203.0.113.9 ip-203-0-113-9', [ip]), '[client-ip],[client-ip] ip-[client-ip]');
+});
+
+test('an IPv4 client address goes in its other spellings too, and the audit finds each one', () => {
+  const ip = ['198.51.100.23'];
+  // Each spelling, written out by hand (198.51.100.23 = 3325256727 = 0xc6336417 = ::ffff:c633:6417).
+  const spellings = {
+    'after a dot': 'host.198.51.100.23 end',
+    'after a letter': 'ip198.51.100.23 end',
+    'dashed after a dot': 'x.198-51-100-23 end',
+    'zero-padded': 'addr 198.051.100.023 end',
+    'partly zero-padded': 'addr 198.51.100.023:443 end',
+    'dots %-encoded': 'q=198%2E51%2e100%2E23&',
+    'every character %-encoded': 'q=%31%39%38%2E%35%31%2E%31%30%30%2E%32%33&',
+    'reverse DNS': 'ptr 23.100.51.198 end',
+    'reverse DNS name': '23.100.51.198.in-addr.arpa',
+    'one decimal number': 'ip=3325256727;',
+    'one hex number': 'ip=0xC6336417;',
+    'IPv4-mapped IPv6 in hex': 'from ::FFFF:C633:6417 end',
+    'IPv4-mapped IPv6 with 4-digit groups': 'from ::ffff:c633:6417 end',
+    'IPv4-mapped IPv6 written out': 'from 0000:0000:0000:0000:0000:FFFF:c633:6417 end',
+    'IPv4-mapped IPv6 in brackets with a port': 'from [::ffff:c633:6417]:443 end',
+    'IPv4-mapped IPv6 %-encoded': 'q=%3A%3Affff%3Ac633%3A6417&',
+    'NAT64 IPv6': 'from 64:ff9b::c633:6417 end',
+    'with a port after a dot': 'conn 198.51.100.23.443 > x',
+    'zero-padded dashed': 'ip-198-051-100-023 end',
+    'dots %-encoded twice': 'next=198%252E51%252E100%252E23&',
+    'a literal % before it': 'load 100%198.51.100.23 end',
+    'a literal % after it': 'x=198.51.100.23%31 end',
+    'IPv4-mapped IPv6 after a colon': 'ip:::ffff:c633:6417 end',
+  };
+  const dir = tmp();
+  fs.mkdirSync(path.join(dir, 'one.example'));
+  for (const [name, text] of Object.entries(spellings)) {
+    const out = redactClientIps(text, ip);
+    assert.ok(out.includes('[client-ip]'), `${name}: ${out}`);
+    for (const piece of ['198', '51.100', '3325256727', 'c633', 'C633', '%31%39%38']) assert.ok(!out.includes(piece), `${name}: ${out}`);
+    const file = path.join(dir, 'one.example', '01-auth.md.http');
+    fs.writeFileSync(file, evidence(['content-type: text/markdown'], text));
+    assert.deepEqual(auditDir(dir, { clientIps: ip }), ['one.example/01-auth.md.http: client address'], name);
+    fs.writeFileSync(file, scrubEvidence(fs.readFileSync(file, 'utf8'), { clientIps: ip }));
+    assert.deepEqual(auditDir(dir, { clientIps: ip }), [], `${name}, scrubbed`);
+  }
+  // Neighbours stay: other addresses, longer numbers, and text around a replacement as it was.
+  const near = '198.51.100.230 1198.51.100.23 33252567270 a3325256727 3325256727b 0xc63364170 ::ffff:c633:6418 198.51.100.24 %2E%41 l-198-51-100-23-4';
+  assert.equal(redactClientIps(near, ip), near);
+  assert.equal(redactClientIps('A%2Fb 198%2e51%2e100%2e23 C', ip), 'A%2Fb [client-ip] C');
+  // 0.x.x.x is never public; its one-number and IPv6 forms (0, ::) would match anything, so they are not used.
+  assert.equal(redactClientIps('::-webkit-x 0 0x0 ::1 ::', ['0.0.0.0']), '::-webkit-x 0 0x0 ::1 ::');
+  // Copies chained by dots all go, and a second scrub changes nothing more.
+  const chain = 'v=198.51.100.23.198.51.100.23.198.51.100.23 23.100.51.198.51.100.23 ip-198-51-100-23-198-51-100-23';
+  const once = redactClientIps(chain, ip);
+  assert.ok(!once.includes('198'), once);
+  assert.equal(redactClientIps(once, ip), once);
+});
+
+test('an IPv6 client address goes when it is %-encoded too', () => {
+  const ip = ['2001:db8:4:5::17'];
+  for (const spelling of ['2001%3Adb8%3A4%3A5%3A%3A17', '[2001:DB8:4:5:0:0:0:17]', '2001:0db8:0004:0005:0000:0000:0000:0017', 'addr:2001:db8:4:5::17', 'q=ip%3A2001%3Adb8%3A4%3A5%3A%3A17', 'a%2001:db8:4:5::17', '2001:db8:4:5::17%41', 'at 2001:db8:4:5::17: then']) {
+    const out = redactClientIps(`seen ${spelling} here`, ip);
+    assert.ok(!/2001|db8/i.test(out), `${spelling}: ${out}`);
+  }
+  assert.equal(redactClientIps('2001:db8:4:5::18', ip), '2001:db8:4:5::18');
 });
 
 test('labelled visitor addresses go from HTML pages, example addresses stay in agent documents', () => {
@@ -183,7 +246,7 @@ test('per-visitor tokens go from HTML pages: session ids, csrf in JS, Cloudflare
     `<script>window._cf_chl_opt = {cH: 'AbCdEfGhIjKlMnOpQrSt', md: 'SxDVP_nD2Wc95bvBjmO_3Qp2', cUPMDTk:"/auth.md?__cf_chl_tk=AmpDS2SkZGp2mlg_KR9P"};</script>`,
   ].join('\n');
   const out = scrubEvidence(evidence(['content-type: text/html', 'x-csrf-token: Zx9yQwErTy12345678'], page));
-  for (const secret of ['Zx9yQwErTy12345678', '6f1c2b9e', 'AbCdEfGhIjKlMnOp', 'SxDVP_nD2Wc95bvBjmO', 'AmpDS2SkZGp2mlg']) assert.doesNotMatch(out, new RegExp(secret), secret);
+  for (const secret of ['Zx9yQwErTy12345678', '6f1c2b9e', 'AbCdEfGhIjKlMnOp', 'SxDVP_nD2Wc95bvBjmO', 'AmpDS2SkZGp2mlg']) assert.ok(!out.includes(secret), secret);
   assert.match(out, /_cf_chl_opt/, 'the markers a bot-wall check reads stay');
 });
 
@@ -242,6 +305,27 @@ test('a correction goes stale when the verdict or the match changes', () => {
     assert.equal(stale.length, 1);
     assert.notEqual(rows[0].checks[0].status, 'fail');
   }
+});
+
+test('every correction in targets.json applies to the published evidence, none stale', async () => {
+  const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const targets = loadTargets(path.join(root, 'targets.json'));
+  const corrected = targets.filter((t) => t.corrections?.length);
+  assert.deepEqual(corrected.map((t) => t.site).sort(), ['cdp.coinbase.com', 'stripe.com', 'x.ai']);
+  // The checker's own verdicts, from the saved responses.
+  const rows = await replay(corrected, path.join(root, 'evidence'));
+  const before = new Map(rows.map((r) => [r.site, r.passed]));
+  const { applied, stale } = applyCorrections(rows, new Map(targets.map((t) => [t.site, t])));
+  assert.deepEqual(stale, []);
+  assert.deepEqual(applied.map((a) => `${a.site} ${a.check} ${a.from}->${a.to}`).sort(), [
+    'cdp.coinbase.com payment partial->fail',
+    'stripe.com payment partial->fail',
+    'x.ai limits partial->fail',
+  ]);
+  for (const r of rows) assert.equal(r.passed, before.get(r.site), `${r.site}: a correction here changes no score`);
+  const coinbase = rows.find((r) => r.site === 'cdp.coinbase.com').checks.find((c) => c.id === 'payment');
+  assert.equal(coinbase.checkerStatus, 'partial');
+  assert.match(coinbase.reason, /^Corrected after review: .*not a way for an agent to pay Coinbase\. The checker said partial: llms\.txt mentions a payment path \(x402\)/);
 });
 
 // ---------------------------------------------------------------------------------------
@@ -316,7 +400,7 @@ test('weekly writes nothing when most platforms are unreachable', async () => {
 test('weekly refuses to publish without knowing the address to scrub', async () => {
   const root = tmp();
   fs.writeFileSync(path.join(root, 'targets.json'), JSON.stringify(TARGETS));
-  // No --client-ip, and the address lookup itself is offline here: it must stop, not publish.
+  // No --client-ip, and the address lookup is a stand-in that finds none: it must stop, not publish.
   await assert.rejects(weekly({ root, out: root, date: '2026-11-04', log: () => {}, learnClientIps: async () => [] }), /public address/);
   assert.equal(fs.existsSync(path.join(root, 'results.json')), false);
 });
