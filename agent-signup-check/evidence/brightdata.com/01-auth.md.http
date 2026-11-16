@@ -1,10 +1,10 @@
 GET https://brightdata.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:27.808Z
+fetched: 2026-11-16T21:00:04.094Z
 final-url: https://brightdata.com/auth.md
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:38:24 GMT
+date: Mon, 16 Nov 2026 20:59:59 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -22,7 +22,7 @@ x-permitted-cross-domain-policies: none
 x-xss-protection: 0
 content-encoding: gzip
 cf-cache-status: DYNAMIC
-cf-ray: a592290aaa98ac0d-PDX
+cf-ray: a5b96c318aecff01-PDX
 alt-svc: h3=":443"; ma=86400
 
 # auth.md — Bright Data agent registration

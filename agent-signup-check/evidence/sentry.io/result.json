@@ -1,6 +1,6 @@
 {
  "site": "sentry.io",
- "checkedAt": "2026-11-12T02:38:49.945Z",
+ "checkedAt": "2026-11-16T21:00:26.875Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 3,
  "partial": 0,
@@ -63,7 +63,7 @@
    "name": "Docs in Markdown",
    "url": "https://sentry.io/llms.txt",
    "heading": "# Sentry",
-   "bytes": 93211,
+   "bytes": 93479,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -76,7 +76,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown",
-   "ms": 84,
+   "ms": 98,
    "redirects": 1
   },
   {
@@ -86,7 +86,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 188,
+   "ms": 223,
    "redirects": 0
   },
   {
@@ -96,7 +96,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 99,
+   "ms": 108,
    "redirects": 0
   },
   {
@@ -106,7 +106,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 90,
+   "ms": 99,
    "redirects": 0
   },
   {
@@ -116,7 +116,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 87,
+   "ms": 96,
    "redirects": 0
   },
   {
@@ -126,7 +126,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown",
-   "ms": 85,
+   "ms": 84,
    "redirects": 1
   },
   {
@@ -136,7 +136,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html",
-   "ms": 103,
+   "ms": 115,
    "redirects": 2
   }
  ]

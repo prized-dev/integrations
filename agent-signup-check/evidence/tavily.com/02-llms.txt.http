@@ -1,6 +1,6 @@
 GET https://tavily.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:35.441Z
+fetched: 2026-11-16T21:00:10.728Z
 redirect: 302 from https://tavily.com/llms.txt
 redirect: 308 from https://www.tavily.com/llms.txt
 final-url: https://docs.tavily.com/llms.txt
@@ -8,21 +8,21 @@ final-url: https://docs.tavily.com/llms.txt
 HTTP 200
 cache-control: public, max-age=0, must-revalidate
 cf-cache-status: EXPIRED
-cf-ray: a59229372be8b876-PDX
+cf-ray: a5b96c5e8fc45ee5-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:38:31 GMT
-last-modified: Thu, 12 Nov 2026 02:38:31 GMT
+date: Mon, 16 Nov 2026 21:00:06 GMT
+last-modified: Mon, 16 Nov 2026 21:00:07 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4111
+x-mintlify-client-version: 0.0.4149
 x-vercel-cache: MISS
-x-vercel-id: pdx1:pdx1:iad1::iad1::m5c2k-1794451111505-ab4cda161729
+x-vercel-id: pdx1:pdx1:iad1::iad1::qnf5m-1794862806771-1012c37aeb00
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_DqYu5MPb49gWBBbUGgpHQUmCHY3P
+x-version: dpl_4D8r1dHg6bQcRuBgQyL3z9waJJtn
 connection: close
 transfer-encoding: chunked
 
@@ -57,23 +57,22 @@ Connecting the assistant you run in is a different decision from integrating a p
 
 ## Quick Start: CLI (fastest way to get started)
 
-Install the Tavily CLI and log in — two commands:
+Install the Tavily CLI with one command (requires Node.js 20.1+):
 
 ```
-pip install tavily-cli
-tvly login
+npx @tavily/cli init
 ```
 
-`tvly login` opens a browser for authentication. Then search, extract, crawl, and research from the terminal:
+This installs `tvly`, asks how to sign in (browser, API key, or no key), and installs Agent Skills and the MCP server for the coding agents it detects (Claude Code, Cursor, Codex). Add `--yes` to accept the defaults without prompts. Then search, extract, crawl, and research from the terminal:
 
 ```
 tvly search "latest AI news"
 tvly extract "https://example.com"
-tvly crawl "https://docs.example.com" --depth 2
+tvly crawl "https://docs.example.com" --max-depth 2
 tvly research "compare React vs Svelte for production apps"
 ```
 
-Installing the CLI also installs Agent Skills for coding agents like Claude Code, Cursor, and Codex — they remind the agent to use Tavily for search, extract, crawl, and research. Get a free API key at https://app.tavily.com (1,000 credits/month, no credit card required).
+Search and extract work without a key within a fair-use rate limit; crawl, map, and research need one. Get a free API key at https://app.tavily.com (1,000 credits/month, no credit card required).
 
 ## Alternative: Remote MCP Server
 

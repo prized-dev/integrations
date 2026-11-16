@@ -1,17 +1,17 @@
 GET https://clerk.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:51.251Z
+fetched: 2026-11-16T21:00:29.853Z
 final-url: https://clerk.com/auth.md
 
 HTTP 200
 access-control-allow-origin: *
-age: 43085
+age: 0
 cache-control: public, max-age=3600, s-maxage=3600
 content-disposition: inline
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Thu, 12 Nov 2026 02:38:48 GMT
-etag: W/"476575a6c53fb19553b45b05b0da1f3a"
+date: Mon, 16 Nov 2026 21:00:26 GMT
+etag: W/"9765e93b5a3fc59a852a239c9b5a6a25"
 referrer-policy: same-origin
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -22,8 +22,8 @@ x-content-type-options: nosniff
 x-download-options: noopen
 x-frame-options: deny
 x-matched-path: /auth.md
-x-vercel-cache: HIT
-x-vercel-id: pdx1::l7bkw-1794451128175-c10f4fe3cbb1
+x-vercel-cache: PRERENDER
+x-vercel-id: pdx1::mvf75-1794862826226-eab3e5733a82
 x-xss-protection: 1
 connection: close
 transfer-encoding: chunked

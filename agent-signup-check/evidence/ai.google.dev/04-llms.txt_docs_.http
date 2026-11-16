@@ -1,22 +1,22 @@
 GET https://ai.google.dev/gemini-api/docs/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:15.877Z
+fetched: 2026-11-16T20:58:43.818Z
 redirect: 301 from https://ai.google.dev/gemini-api/docs/llms.txt
 final-url: https://aistudio.google.com/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
 vary: Sec-Fetch-Dest, Sec-Fetch-Mode, Sec-Fetch-Site
-expires: Thu, 12 Nov 2026 02:37:12 GMT
-date: Thu, 12 Nov 2026 02:37:12 GMT
+expires: Mon, 16 Nov 2026 20:58:40 GMT
+date: Mon, 16 Nov 2026 20:58:40 GMT
 cache-control: private, max-age=3600
 p3p: CP="This is not a P3P policy! See g.co/p3phelp for more info."
+content-security-policy: script-src 'report-sample' 'nonce-6VY7jL61NjlPYFrw5XzmFQ' 'unsafe-inline' 'unsafe-eval';object-src 'none';base-uri 'self';report-uri /_/MakerSuite/cspreport;worker-src 'self', require-trusted-types-for 'script';report-uri /_/MakerSuite/cspreport
+cross-origin-opener-policy: same-origin-allow-popups
+accept-ch: Sec-CH-UA-Arch, Sec-CH-UA-Bitness, Sec-CH-UA-Full-Version, Sec-CH-UA-Full-Version-List, Sec-CH-UA-Model, Sec-CH-UA-WoW64, Sec-CH-UA-Form-Factors, Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version
 cross-origin-resource-policy: same-site
 permissions-policy: ch-ua-arch=*, ch-ua-bitness=*, ch-ua-full-version=*, ch-ua-full-version-list=*, ch-ua-model=*, ch-ua-wow64=*, ch-ua-form-factors=*, ch-ua-platform=*, ch-ua-platform-version=*
-content-security-policy: require-trusted-types-for 'script';report-uri /_/MakerSuite/cspreport, script-src 'report-sample' 'nonce-hVqjF11vMuc-oaIDLkMdyA' 'unsafe-inline' 'unsafe-eval';object-src 'none';base-uri 'self';report-uri /_/MakerSuite/cspreport;worker-src 'self'
-accept-ch: Sec-CH-UA-Arch, Sec-CH-UA-Bitness, Sec-CH-UA-Full-Version, Sec-CH-UA-Full-Version-List, Sec-CH-UA-Model, Sec-CH-UA-WoW64, Sec-CH-UA-Form-Factors, Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version
-cross-origin-opener-policy: same-origin-allow-popups
-reporting-endpoints: default="/_/MakerSuite/web-reports?context=eJwV0HtQVIcVBnCjfkdkoyCQQOhAAYmvidSFDj4iMUiHFhwksLsIC7sbGK2xUTQaEzLB1LFVm4KjCSipaIWIYnCCQoiP-MCCEVSMRCSSUnzEWqyZu_du7r5MCvbLH785c-abM-fMCaybMiswcsxvZ0SOWR9xE1uo4uIQdlIV1VAtHaAGOkJDlxQoNNKlYFK3gmcvK5j2sx4FyfSbawrM9EGvgnoK6FMQQYZvFPyCbgwo-I5CbiuIo5N3FHTR2QcKeuhHVUGgpiDUpWAqDXoVfE-tIwo66C04sY1eDHJiCQWHOhFDnRFO9FHLAif-QeMznQijhBwnXqJ1BU5spnC7E9MpebUT6fTRRieOUOomJ3KopMKJ9fS4yomJ1U6YDzuxnByfqFhLyU0q0inrUxU2Wtus4o9Uf1xFC8WeUGGk7WdV1NA_21U8otoOFUdp_SUVWyjzmgorZfepcFBavwoTlQ-pqKQyVcVfqNzHnjrHa-ij2ZM0pFByuIZ0aorX8AVdN2q4Q_lzNbxGC1I1ZFLDEg1tFG_R8GtKWachi06Vaeim2Pc1GMlVq-GpfRq-bNfQT-9-q6GCaoY0NNLihxpy6YcpLowNcWE4zgUfHZ7hwglKTXMhh3rTXbhLW1e6sJvGbnAhhB4ecsFPVztdGKSuKB23aHK0jmia_0sdGbQ3VkcT7YrXUUdXZ-oYpM4EHX202ciM7s7VoVHqQh059OzLOqZR7FIdRgq064ikScU6oujW73UM00_v6jCU63jwvg4PndnJHZSzT0cx9Tcwo9ZmHR1kOaVjBU39WkcSfTbAW8j_SEfA9zre9urYTsFBbsTQrTg3f-NGZoIbVrqf4oZOkRluzCI9141xJjdCbG7EUUyrG3Po9Hk3LtPke25EU7vbjetU84wHjTQ5woNo6jR60Eer8jx4h0qLPHiPfrXVg0XUu9eDuzT1Uw-S6O-fe9BMsx97kEK3n_bCSeYoL5bT_PleZJD_JS8CFnlxdo0XPXTzgBf_pidnvAg668XYdi9CKP2BF3k0bsSLUAqI9CGCshN8cNCMdB_m0aESHz6n3kYf7tK52z5co7f-68M2ujrqwyBVz_WjgVrz_eiggFI_IuiTSj9OU_MRP87TmSt-XKW2e35cpB05j7GfkhYbJI0uUC9VpRnkII1mGWTyUoOEZxtkOtmplLaWGmQ3PVxnED9lvGGQAuqkPhooY0YvvGOQhdRD_6KwcoPE05JNBimkE3SJrn1okCG6X2UQnSbUcCf11HOOwj7mHO04aJD9tKsgUuqovCVOKsm7IUvkzSwZr2RLsDdHnqMdpbmyh-q35EoTHdqaK83U_lWudNM3_blyhxa5c-V3VBVuklqKSDRJLH2QZJK9dMFskss0tsQkBpryZ5PEU1etSa7T8FGTaFR90ST76dyoSS5RN31N-cFmKabnLGaJo7-tNMvH9PwqsyTQf_aYRaUjF83SQptCLbKNxkRaZCJdoMs0HGMRjQrWWKSEfjhgkZ9o_HGLTKIYj0VmUuu8PDlDoyvzZMJredI_kCe3qTZnmTSQDC6TIBqnLZOn6ZmN-RJNA0fz5R7ta8uXQ1QzmC91lFpQIJnUXF4gJ6mxrUCOUdtCq5yj2lKrNJC6zSp-8v3VKmMqrPK_Oqug3irbh62yi2Y9skoSBY5YJZSuJBfKDVo7r1DKaEFWoaSRk3xU8YdCqabriUUyQPU7i6SJJrYUSQiFURTFnC-SmdQ0WCSf0Z9esUklHXPY5CQdfc8mbVS52Sa7aaTCJi9-aZMUSntkkyW02M9KE57YJJhOj7NLBzUG2eU4fRhml1o6_Ipdmikl3y6Lqb3YLt00VGaXB_TtMbt8R0u77bKMoq_YZTqVfmWXt8k_YpenRu2y84ldPqK9dJCOhTvkFH1BnZRc6JBFlL7cIdk_W-OQfHp5rUMyKKr5VZlGFV2vSjVN2XNfQul40Y_SRi88fCIL6eSN5yecphBDwEDPzVsS7D_RNDsuvmTtG47i1a8Xr141e03x6yvWb9i46s0VjsQ5iclGo3FOgjHRsc74f-1ntmA"
+reporting-endpoints: default="/_/MakerSuite/web-reports?context=eJwV0HtQ1QUWB3Bf3yNyVRAsiB1ZQPI1yXqhQS3JkIYJHCS49yJc4F5hcs1NwTSTJmwdZ9UtcKTEcEVXURSFCYXIRz4wMEHFJInERXxULq7N7_5-t999WQvud__4zJkz3zlzzhz_ykmz_MNGmGaEjVgb-j02U_mlAVRQJe2matpPh6iOBi4rUGioQ8GETgXPXlEw7f-6FMTTa9cVmOmTbgU15NejIJQMPyj4A93sU_AjBd1VEEWn7inooHMPFXTRb6oCf01BsFPBVOr3KPiFmocUtNF7cGArvRzgwGIKDHYggtpDHeihppcc-JrGpDowmWIyHHiF1uQ4sIlCbA5Mp_hVDiTT7vUOHKXEjQ5kUGGZA2vpyU4HxlU6YD7iwJtkP6aimOLrVSRT2ucq8qm4UcVfqeaEiiaKPKnCSNvOqaiif7WqeEzVbSoaaO1lFZsp9boKK6X3qLBTUq8KE5UOqCinElXF36nUy57ax2joodkTNCRQfIiGZKqP1vAV3TBquEfZczW8RS8lakil2sUaWijaouFFSlijIY1Ol2jopMiPNBjJWa1h5F4N37Rq6KUPbmsoo6oBDXW06JGGTPp1khOjgpwYjHLCS0dmOHGSEpOcyKDuZCfu05YVTuyiUeucCKJHh53w0bV2J_qpY4qOWzQxXEc4zf-jjhTaE6mjniqidRygazN19FN7jI4e2mRkRvfn6tAocYGODHr2VR3TKHKJDiP523SE0YQCHVPo1p91DNLvH-gwlOp4-JEON53dwR2UsVdHAfXWMqPmRh1tZDmtYzlN_U5HHH3Rx1vI91iH3y86Nnh0bKPAABci6FaUi79xITXGBSv9lOCCTmEpLswiPdOF0SYXgvJdiKKIZhfm0JkLLlyhiQ9cCKdWlws3qOoZN-poYqgb4dRudKOHVma58T4V5bnxIf1pixsLqXuPG_dp6uduxNE_v3SjkWY_cSOB7o73wEHmKR68SfPne5BCvlc88FvowbnVHnTR9_s9-JmenvUg4JwHo1o9CKLkhx5k0eghD4LJL8yLUEqP8cJOM5K9mEeHC734krrrvLhP5-96cZ3e-48XW-nasBf9VDnXh1pqzvahjfyKfAilY-U-nKHGoz5coLNXfbhGLQ98uETbM55gH8UtMkgSXaRu2plkkEM0nGaQiUsMEpJukOlkoyLaUmSQXfRojUF8lPKOQXKonXqor4QZvfC-QRZQF92hyaUGiabFGw2SSyfpMl3_1CAD9NNOg-g0too7qauGczT5IOdo-yGD7KOKnDA5QKVNUVJOnnVpIu-mye0NaTJGSZdAT4Y8R9uLMuUzqtmcKfV0eEumNFLrt5nSST_0Zso9WujKlNdpZ4hJqik01iSR9EmcSfbQRbNJrtCoQpMYaNLfTBJNHdUmuUGDDSbRqPKSSfbR-WGTXKZO-o6yA81SQM9ZzBJF_1hhloP0_EqzxNC_PzOLSkcvmaWJNgZbZCuNCLPIOLpIV2gwwiIa5ay2SCH9ut8iv9OYExaZQBFui8yk5nlZcpaGV2TJ2LeypLcvS-5SdcZSqSXpXyoBNFpbKuPpmfXZEk59DdnygPa2ZMthqurPlgOUmJMjqdRYmiOnqK4lR45TywKrnKfqIqvUkrrVKj7yfmyVEWVW-e8Bq6DGKtsGrVJBsx5bJY4OxuVKA12Nz5WbVDwvV0rIkZYrXir_S67sohuxedJHNTvypJ78j-VJMI1rypMgiriQJzOpvj9PvqDj9nw5RQ0f5ksLlW_Kl100VJYvL3-TLwmU9DhfFtMiHyuNfZovgXRmtE3aqC7AJifo08k2qaYjb9ikkRKybbKIWgts0kkDJTZ5SLeP2-RHWtJpk6UUftUm06noW5tsIN-QTUYO22THU5vspj10iI6H2OU0fUXtFJ9rl4WUvtou2fRqsV1SaErjMplGfheWySQq61gmldRTUCB36ETeb9JCLzx6Kgvo1M3nx56hoPF-mwaUWxJYccdxemRUdGHxO_aCVW8XrFo5e3XB28vXrlu_8t3l9tg5sfFGozEuxhhrXzPnf3uts-0"
 document-policy: include-js-call-stacks-in-crash-reports
 content-encoding: gzip
 server: ESF
@@ -44,8 +44,8 @@ transfer-encoding: chunked
 - [Gemini Docs MCP server](https://gemini-api-docs-mcp.dev): Model Context Protocol server providing live documentation search (`npx add-mcp "https://gemini-api-docs-mcp.dev"`).
 
 ## Get started
-- [Overview](https://aistudio.google.com/docs.md): Build apps and agents with Gemini, Nano Banana, Gemini Omni, and Lyria using the Gemini API documentation and reference.
-- [Overview (generateContent)](https://aistudio.google.com/docs.md?generate-content=true): Build apps and agents with Gemini, Nano Banana, Gemini Omni, and Lyria using the Gemini API documentation and reference.
+- [Overview](https://aistudio.google.com/docs.md): Build apps and agents with Gemini, Gemini Decision 1, Nano Banana, Gemini Omni, and Lyria using the Gemini API documentation and reference.
+- [Overview (generateContent)](https://aistudio.google.com/docs.md?generate-content=true): Build apps and agents with Gemini, Gemini Decision 1, Nano Banana, Gemini Omni, and Lyria using the Gemini API documentation and reference.
 - [Get started](https://aistudio.google.com/docs/get-started.md): Get started with the Gemini API for Developers using the Interactions API
 - [Get started (generateContent)](https://aistudio.google.com/docs/get-started.md?generate-content=true): Get started with the Gemini API for Developers using generateContent
 - [API keys](https://aistudio.google.com/docs/api-key.md): Get your Gemini API key and start building in less than 5 minutes using the Interactions API.
@@ -61,6 +61,8 @@ transfer-encoding: chunked
 - [Latest Gemini models — Gemini 4 Carbon - what's new (generateContent)](https://aistudio.google.com/docs/whats-new-gemini-4-carbon.md?generate-content=true): Learn what's new in Gemini 4 Carbon (gemini-4-carbon), Google's latest Gemini 4 model featuring a 1M shared context window, long decode, pricing, and API migration guidance.
 - [Latest Gemini models — Gemini 4 Argon - what's new](https://aistudio.google.com/docs/whats-new-gemini-4-argon.md): Learn what's new in Gemini 4 Argon (gemini-4-argon), our efficient Gemini 4 frontier reasoning model with a 1M shared context window, long decode, pricing, and API migration guidance.
 - [Latest Gemini models — Gemini 4 Argon - what's new (generateContent)](https://aistudio.google.com/docs/whats-new-gemini-4-argon.md?generate-content=true): Learn what's new in Gemini 4 Argon (gemini-4-argon), our efficient Gemini 4 frontier reasoning model with a 1M shared context window, long decode, pricing, and API migration guidance.
+- [Latest Gemini models — Gemini 4 Hydrogen - what's new](https://aistudio.google.com/docs/whats-new-gemini-4-hydrogen.md): Learn what's new in Gemini 4 Hydrogen (gemini-4-hydrogen), bringing cutting-edge intelligence to everyone, with speed and efficiency for everyday coding and agentic workflows.
+- [Latest Gemini models — Gemini 4 Hydrogen - what's new (generateContent)](https://aistudio.google.com/docs/whats-new-gemini-4-hydrogen.md?generate-content=true): Learn what's new in Gemini 4 Hydrogen (gemini-4-hydrogen), bringing cutting-edge intelligence to everyone, with speed and efficiency for everyday coding and agentic workflows.
 - [Latest Gemini models — Gemini 3.8 Flash - what's new](https://aistudio.google.com/docs/whats-new-gemini-3.8.md): Learn about what's new in Gemini 3.8 Flash, including model capabilities, API changes, and migration guidance.
 - [Latest Gemini models — Gemini 3.8 Flash - what's new (generateContent)](https://aistudio.google.com/docs/whats-new-gemini-3.8.md?generate-content=true): Learn about what's new in Gemini 3.8 Flash, including model capabilities, API changes, and migration guidance.
 - [Latest Gemini models — Gemini 3.6 & 3.5 Flash-Lite - what's new](https://aistudio.google.com/docs/whats-new-gemini-3.6.md): Learn about what's new in Gemini 3.6 Flash and Gemini 3.5 Flash-Lite, including model capabilities, API changes, and migration guidance.
@@ -70,6 +72,7 @@ transfer-encoding: chunked
 - [Latest Gemini models — Gemini 3.5 Flash - what's new](https://aistudio.google.com/docs/whats-new-gemini-3.5.md): Learn about the new features and migration guidance for Gemini 3.5 Flash.
 - [Latest Gemini models — Gemini 3.5 Flash - what's new (generateContent)](https://aistudio.google.com/docs/whats-new-gemini-3.5.md?generate-content=true): Learn about the new features and migration guidance for Gemini 3.5 Flash.
 - [All models](https://aistudio.google.com/docs/models.md): Learn about all of Google's most advanced AI models
+- [Gemini 4 Hydrogen](https://aistudio.google.com/docs/models/gemini-4-hydrogen.md): Explore Gemini 4 Hydrogen (gemini-4-hydrogen), bringing cutting-edge intelligence to everyone, with speed and efficiency for everyday coding and agentic workflows.
 - [Gemini 4 Carbon](https://aistudio.google.com/docs/models/gemini-4-carbon.md): Explore Gemini 4 Carbon (gemini-4-carbon), Google's latest Gemini 4 model for coding, reasoning, science, and agents, featuring a 1M context window and long decode.
 - [Gemini 4 Argon](https://aistudio.google.com/docs/models/gemini-4-argon.md): Explore Gemini 4 Argon (gemini-4-argon), our efficient Gemini 4 frontier reasoning model with faster responses and lower token spend per turn compared to Gemini 4 Carbon.
 - [Gemini Nano Banana 2.1](https://aistudio.google.com/docs/models/gemini-nano-banana-2.1.md): Learn about Gemini Nano Banana 2.1 from Google
@@ -114,6 +117,7 @@ transfer-encoding: chunked
 - [Gemini Embedding model](https://aistudio.google.com/docs/models/gemini-embedding-001.md): Learn about the Gemini Embedding model from Google
 - [Gemini Embedding 2 model](https://aistudio.google.com/docs/models/gemini-embedding-2.md): Learn about the Gemini Embedding 2 model from Google
 - [Gemini Embedding 2 preview model](https://aistudio.google.com/docs/models/gemini-embedding-2-preview.md): Learn about the Gemini Embedding 2 model from Google
+- [Gemini Decision 1](https://aistudio.google.com/docs/models/gemini-decision-1.md): Fast, calibrated multimodal yes/no, choice, and score decisions with zero output tokens.
 - [Gemini Robotics ER 2](https://aistudio.google.com/docs/models/gemini-robotics-er-2-preview.md): Learn about Gemini Robotics ER 2 from Google
 - [Gemini Robotics ER 2 streaming](https://aistudio.google.com/docs/models/gemini-robotics-er-2-streaming-preview.md): Learn about Gemini Robotics ER 2 Streaming from Google
 - [Gemini Robotics-ER 1.5](https://aistudio.google.com/docs/models/gemini-robotics-er-1.5-preview.md): Learn about Gemini Robotics Preview model from Google
@@ -149,6 +153,7 @@ transfer-encoding: chunked
 - [Live](https://aistudio.google.com/docs/live-api.md): Enable low-latency, real-time voice and video interactions with the Live API.
 - [Live translate](https://aistudio.google.com/docs/live-api/live-translate.md): Perform low-latency, real-time speech-to-speech translation with Live API.
 - [Embeddings](https://aistudio.google.com/docs/embeddings.md): Generate vector embeddings for semantic search and classification using Gemini.
+- [Decisions](https://aistudio.google.com/docs/decisions-api.md): Answer typed yes/no, choice, and score questions about text, images, audio, video, and PDFs with the Gemini Decisions API.
 - [Robotics — Overview](https://aistudio.google.com/docs/robotics-overview.md): Overview of Gemini Robotics ER models and capabilities for building robotics applications.
 - [Robotics — Overview (generateContent)](https://aistudio.google.com/docs/robotics-overview.md?generate-content=true): Overview of Gemini Robotics ER models and capabilities for building robotics applications.
 - [Robotics — Spatial reasoning](https://aistudio.google.com/docs/robotics-spatial.md): Use Gemini Robotics ER for spatial reasoning tasks including object detection, tracking, and trajectory planning.
@@ -182,8 +187,8 @@ transfer-encoding: chunked
 - [Function calling](https://aistudio.google.com/docs/function-calling.md): Get started using Function Calling with the Gemini API
 - [Function calling (generateContent)](https://aistudio.google.com/docs/function-calling.md?generate-content=true): Get started using Function Calling with the Gemini API
 - [Long context](https://aistudio.google.com/docs/long-context.md): Learn about how to get started building with long context (1 million context window) on Gemini.
-- [Long decode](https://aistudio.google.com/docs/long-decode.md): Use long decode with Gemini 4 models (gemini-4-carbon and gemini-4-argon) on the Interactions API to generate past 64K tokens up to the 1M-token context window with background execution or client-side continuation.
-- [Long decode (generateContent)](https://aistudio.google.com/docs/long-decode.md?generate-content=true): Use long decode with Gemini 4 models (gemini-4-carbon and gemini-4-argon) in generateContent and streamGenerateContent to generate up to the 1M-token unified context window across continuation hops.
+- [Long decode](https://aistudio.google.com/docs/long-decode.md): Use long decode with Gemini 4 models (gemini-4-carbon, gemini-4-argon, and gemini-4-hydrogen) on the Interactions API to generate past 64K tokens up to the 1M-token context window with background execution or client-side continuation.
+- [Long decode (generateContent)](https://aistudio.google.com/docs/long-decode.md?generate-content=true): Use long decode with Gemini 4 models (gemini-4-carbon, gemini-4-argon, and gemini-4-hydrogen) in generateContent and streamGenerateContent to generate up to the 1M-token unified context window across continuation hops.
 
 ## Agents
 - [Overview](https://aistudio.google.com/docs/agents.md): Build agents that reason, write code, manage files, and browse the web with the Gemini API.
@@ -447,6 +452,8 @@ transfer-encoding: chunked
 - [Model API — get (v1)](https://aistudio.google.com/api-reference/models/get-model.md?api-version=v1): Gets information about a specific `Model` such as its version number, token limits, [parameters](/docs/prompting-strategies#model-parameters) and other metadata.
 - [Model API — list](https://aistudio.google.com/api-reference/models/list-models.md): Lists the [`Model`s](/docs/models) available through the Gemini API.
 - [Model API — list (v1)](https://aistudio.google.com/api-reference/models/list-models.md?api-version=v1): Lists the [`Model`s](/docs/models) available through the Gemini API.
+- [Gemini Decisions API — Overview](https://aistudio.google.com/api-reference/decisions.md): The Decisions API evaluates a batch of structured decision questions against a shared input in a single request.
+- [Gemini Decisions API — create](https://aistudio.google.com/api-reference/decisions/create-decision.md): Evaluates a batch of structured decision questions against a shared input.
 - [All methods](https://aistudio.google.com/api-reference/all-methods.md): Every REST method in the Gemini API, grouped by reference page.
 
 ## Optional

@@ -1,6 +1,6 @@
 {
  "site": "codesandbox.io",
- "checkedAt": "2026-11-12T02:37:49.564Z",
+ "checkedAt": "2026-11-16T20:59:18.776Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 0,
  "partial": 1,
@@ -16,7 +16,7 @@
    "was": "fail",
    "wasReason": "/auth.md answers with a Cloudflare bot challenge",
    "status": "unread",
-   "reason": "Not read on 2026-11-12: https://codesandbox.io/auth.md answered with a Cloudflare bot challenge"
+   "reason": "Not read on 2026-11-16: https://codesandbox.io/auth.md answered with a Cloudflare bot challenge"
   },
   {
    "id": "prm",
@@ -26,7 +26,7 @@
    "was": "fail",
    "wasReason": "Protected resource metadata answers with a Cloudflare bot challenge",
    "status": "unread",
-   "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-protected-resource answered with a Cloudflare bot challenge"
+   "reason": "Not read on 2026-11-16: https://codesandbox.io/.well-known/oauth-protected-resource answered with a Cloudflare bot challenge"
   },
   {
    "id": "register",
@@ -36,7 +36,7 @@
    "was": "fail",
    "wasReason": "Authorization server metadata answers with a Cloudflare bot challenge; no sign-up API is documented in auth.md or llms.txt",
    "status": "unread",
-   "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge"
+   "reason": "Not read on 2026-11-16: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge"
   },
   {
    "id": "challenge",
@@ -55,7 +55,7 @@
    "was": "fail",
    "wasReason": "No spend cap in metadata, auth.md or llms.txt",
    "status": "unread",
-   "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge"
+   "reason": "Not read on 2026-11-16: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge"
   },
   {
    "id": "payment",
@@ -65,7 +65,7 @@
    "was": "fail",
    "wasReason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt",
    "status": "unread",
-   "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/x402 answered with a Cloudflare bot challenge"
+   "reason": "Not read on 2026-11-16: https://codesandbox.io/.well-known/x402 answered with a Cloudflare bot challenge"
   },
   {
    "id": "markdown",
@@ -75,7 +75,7 @@
    "was": "fail",
    "wasReason": "https://codesandbox.io/llms.txt answers with a Cloudflare bot challenge; https://codesandbox.io/docs/llms.txt answers with a Cloudflare bot challenge",
    "status": "unread",
-   "reason": "Not read on 2026-11-12: https://codesandbox.io/llms.txt answered with a Cloudflare bot challenge"
+   "reason": "Not read on 2026-11-16: https://codesandbox.io/llms.txt answered with a Cloudflare bot challenge"
   }
  ],
  "requests": [
@@ -86,7 +86,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 47,
+   "ms": 35,
    "redirects": 0
   },
   {
@@ -96,7 +96,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 30,
+   "ms": 32,
    "redirects": 0
   },
   {
@@ -106,7 +106,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 196,
+   "ms": 218,
    "redirects": 0
   },
   {
@@ -116,7 +116,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 28,
+   "ms": 30,
    "redirects": 0
   },
   {
@@ -126,7 +126,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 33,
+   "ms": 34,
    "redirects": 0
   },
   {
@@ -136,7 +136,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 204,
+   "ms": 214,
    "redirects": 0
   },
   {
@@ -156,7 +156,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 191,
+   "ms": 218,
    "redirects": 0
   },
   {
@@ -166,7 +166,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 31,
+   "ms": 32,
    "redirects": 0
   }
  ]

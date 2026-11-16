@@ -1,32 +1,32 @@
 GET https://jina.ai/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:38.968Z
+fetched: 2026-11-16T21:00:15.856Z
 final-url: https://jina.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:38:37 GMT
+date: Mon, 16 Nov 2026 21:00:13 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
 server: cloudflare
 x-origin-cache: HIT
 access-control-allow-origin: *
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=GXAEPT1YUuHVLdVX4Gfi%2FfKEcuu8RjQGJEXp%2FqVuEl7nbNsxfjgzvIOtvubt%2Fy4aTMHDbTlKZjfBWkhvpzWtyoiH%2FiuPWOJqiKFDmj0rPHuVlcNdt4NFHFk%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=NkPofDAzVwhX%2BweOI09Zvql3IlrbDbPyRCI9y2Ss9BCyZGuQo9N%2B7WQDRTnH75EO1bHi7eZ6V7OSGdZdLIRz7ndO5EjiLwhnUPKz50GrSpbDeF1E1Ldb%2FgQ%3D"}]}
 x-proxy-cache: MISS
-x-github-request-id: 91A0:18A948:90E7:1095C:6AF51B99
-x-github-edge-region: westus2
+x-github-request-id: ECCC:3F576E:42CE2:4AAC4:6AFB6EDD
+x-github-edge-region: westus3
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-age: 2836
+age: 0
 via: 1.1 varnish
-x-served-by: cache-pdx12332-PDX
-x-cache: HIT
+x-served-by: cache-lax-kwhp1940029-LAX
+x-cache: MISS
 x-cache-hits: 0
-x-timer: S1794451117.133975,VS0,VE8
+x-timer: S1794862813.314121,VS0,VE111
 vary: Accept-Encoding
-x-fastly-request-id: 9f93ca943e10fb56651528b76e57dc7b254fb144
+x-fastly-request-id: abb5005ab950639f875eb3a393847da229625e50
 cf-cache-status: DYNAMIC
 content-encoding: br
-cf-ray: a5922959fb94121f-PDX
+cf-ray: a5b96c86ffed5121-LAX
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html><html><head><title>Jina AI - Your Search Foundation, Supercharged.</title><meta charset=utf-8><meta name=title content="Jina AI"><meta name=description content="Your Search Foundation, Supercharged."><meta property=og:type content=website><meta property=og:url content=https://jina.ai/ ><meta property=og:title content="Jina AI"><meta property=og:description content="Your Search Foundation, Supercharged."><meta property=og:image content=https://jina.ai/banner.png><meta property=twitter:site content=@JinaAI_><meta name=twitter:creator content=@JinaAI_><meta property=twitter:card content=summary_large_image><meta property=twitter:url content=https://jina.ai/ ><meta property=twitter:title content="Jina AI"><meta property=twitter:description content="Your Search Foundation, Supercharged."><meta property=twitter:image content=https://jina.ai/banner.png><meta name=format-detection content="telephone=no"><meta name=msapplication-tap-highlight content=no><meta name=viewport content="initial-scale=1,width=device-width"><link rel=icon type=image/png sizes=128x128 href=/icons/favicon-128x128.png><link rel=icon type=image/png sizes=96x96 href=/icons/favicon-96x96.png><link rel=icon type=image/png sizes=32x32 href=/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/icons/favicon-16x16.png><link rel=icon type=image/ico id=favicon href=/favicon.ico><link rel=apple-touch-startup-image media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href=/icons/apple-launch-1284x2778.png><link rel=apple-touch-startup-image media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href=/icons/apple-launch-1170x2532.png><link rel=apple-touch-startup-image media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-828x1792.png><link rel=apple-touch-startup-image media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href=/icons/apple-launch-1125x2436.png><link rel=apple-touch-startup-image media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href=/icons/apple-launch-1242x2688.png><link rel=apple-touch-startup-image media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-750x1334.png><link rel=apple-touch-startup-image media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href=/icons/apple-launch-1242x2208.png><link rel=apple-touch-startup-image media="(device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-1620x2160.png><link rel=apple-touch-startup-image media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-1536x2048.png><link rel=apple-touch-startup-image media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-1668x2224.png><link rel=apple-touch-startup-image media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-1668x2388.png><link rel=apple-touch-startup-image media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" href=/icons/apple-launch-2048x2732.png><script prerender-ignore>/*

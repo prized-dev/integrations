@@ -1,6 +1,6 @@
 {
  "site": "cohere.com",
- "checkedAt": "2026-11-12T02:37:22.048Z",
+ "checkedAt": "2026-11-16T20:58:51.058Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
@@ -68,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 233,
+   "ms": 284,
    "redirects": 0
   },
   {
@@ -78,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 47,
+   "ms": 43,
    "redirects": 0
   },
   {
@@ -88,7 +88,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 97,
+   "ms": 108,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 155,
+   "ms": 368,
    "redirects": 0
   },
   {
@@ -108,7 +108,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 89,
+   "ms": 83,
    "redirects": 0
   },
   {
@@ -118,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 207,
+   "ms": 377,
    "redirects": 0
   },
   {
@@ -128,7 +128,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 84,
+   "ms": 85,
    "redirects": 0
   },
   {
@@ -138,7 +138,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 157,
+   "ms": 387,
    "redirects": 0
   }
  ]

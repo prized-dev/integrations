@@ -1,10 +1,10 @@
 GET https://render.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:38.215Z
+fetched: 2026-11-16T20:59:07.397Z
 final-url: https://render.com/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:37:35 GMT
+date: Mon, 16 Nov 2026 20:59:04 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -13,7 +13,7 @@ x-xss-protection: 1; mode=block
 content-encoding: br
 content-security-policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://assets.calendly.com https://scout-cdn.salesloft.com https://snap.licdn.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://www.googletagmanager.com https://www.gstatic.com ; connect-src 'self' https://*.algolia.net https://*.algolianet.com https://*.google-analytics.com https://*.google.com https://*.googletagmanager.com https://*.doubleclick.net https://www.googleadservices.com https://*.hsforms.com https://*.inkeep.com https://*.linkedin.com https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://*.segment.com https://*.segment.io https://api.unifyintent.com https://api.ashbyhq.com https://cdn.growthbook.io https://cdn.sanity.io https://hubspot-forms-static-embed.s3.amazonaws.com https://pagead2.googlesyndication.com https://scout.salesloft.com https://translate.googleapis.com ; worker-src 'self' blob: https://*.osano.com; report-uri https://render.report-uri.com/r/t/csp/reportOnly; report-to wizard;
 referrer-policy: same-origin
-rndr-id: 3aa6a7fe-0d6d-4413
+rndr-id: 4ab3a224-2969-461d
 server: cloudflare
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
@@ -22,7 +22,7 @@ x-frame-options: SAMEORIGIN
 x-nextjs-cache: HIT
 x-render-origin-server: Render
 cf-cache-status: DYNAMIC
-cf-ray: a59227da0dd7f570-SEA
+cf-ray: a5b96adb5acf2763-SEA
 alt-svc: h3=":443"; ma=86400
 
 # Render
@@ -438,6 +438,7 @@ Most recent 10 entries:
 
 - [Render Sandboxes now available in beta](https://render.com/changelog/render-sandboxes-now-available-in-beta.md)
 - [Reduced median first-build time for Docker-based previews by 45%](https://render.com/changelog/reduced-median-first-build-time-for-docker-based-previews-by-45.md)
+- [Reuse a build across multiple services](https://render.com/changelog/reuse-a-build-across-multiple-services.md)
 - [Upcoming service preview and preview environment support for GitHub stacked PRs](https://render.com/changelog/upcoming-service-preview-and-preview-environment-support-for-github-stacked-prs.md)
 - [Updated default versions of Node.js and Bun](https://render.com/changelog/updated-default-versions-of-node-js-and-bun.md)
 - [Added support for Bun canary builds](https://render.com/changelog/added-support-for-bun-canary-builds.md)
@@ -445,7 +446,6 @@ Most recent 10 entries:
 - [Added Blueprint support for Render Workflows](https://render.com/changelog/added-blueprint-support-for-render-workflows.md)
 - [See your service's deploys on a new page](https://render.com/changelog/see-your-service-s-deploys-on-a-new-page.md)
 - [Introduced the Flex compute plan for Render Workflows](https://render.com/changelog/introduced-the-flex-compute-plan-for-render-workflows.md)
-- [Added usage telemetry to the Render CLI](https://render.com/changelog/added-usage-telemetry-to-the-render-cli.md)
 
 ## Blog
 
@@ -453,6 +453,7 @@ https://render.com/blog
 
 Most recent 10 posts:
 
+- [What does "production" mean in the era of agentic development?](https://render.com/blog/what-does-production-mean-in-the-era-of-agentic-development.md)
 - [How we built Render OIDC](https://render.com/blog/how-we-built-render-oidc.md)
 - [Introducing Render Sandboxes: A computer for every agent](https://render.com/blog/introducing-render-sandboxes.md)
 - [Control API access with Scoped API Keys](https://render.com/blog/scoped-api-keys-private-beta.md)
@@ -462,7 +463,6 @@ Most recent 10 posts:
 - [Deploy fast. Know what's live](https://render.com/blog/deploys-page.md)
 - [New compute plans for memory-intensive applications](https://render.com/blog/new-compute-plans-for-memory-intensive-applications.md)
 - [How Render Workflows powers our internal data pipeline](https://render.com/blog/how-render-workflows-powers-our-internal-data-pipeline.md)
-- [Four minutes after midnight, Codex said the page was live](https://render.com/blog/four-minutes-after-midnight-codex-said-the-page-was-live.md)
 
 ## Articles
 
@@ -525,8 +525,8 @@ https://render.com/articles
 - [Track all prompts and outputs in a secure database for compliance](https://render.com/articles/track-all-prompts-and-outputs-in-a-secure-database-for-compliance.md)
 - [5 Best Railway Alternatives in 2026 for Reliability, Pricing, and Production Readiness](https://render.com/articles/best-railway-alternatives.md)
 - [Railway vs GCP: Pricing, Infrastructure, and Production Risk](https://render.com/articles/railway-vs-gcp.md)
-- [Railway vs Vercel: Choosing Between Containers and Serverless in 2026](https://render.com/articles/railway-vs-vercel.md)
 - [Railway vs Fly.io: Pricing, Reliability, and Production Tradeoffs](https://render.com/articles/railway-vs-fly-io.md)
+- [Railway vs Vercel: Choosing Between Containers and Serverless in 2026](https://render.com/articles/railway-vs-vercel.md)
 - [Railway vs Heroku in 2026: Pricing, Reliability, and Production Tradeoffs](https://render.com/articles/railway-vs-heroku.md)
 - [Best practices for implementing git based deployment in production environments](https://render.com/articles/best-practices-for-implementing-git-based-deployment-in-production-environments.md)
 - [Cron jobs vs background workers vs workflows: picking the right async primitive](https://render.com/articles/cron-jobs-vs-background-workers-vs-durable-workflows-picking-the-right-async-pri.md)
@@ -549,8 +549,8 @@ https://render.com/articles
 - [Comparing agent SDKs (LangChain vs. OpenAI Agents vs. Vercel AI vs. a simple while loop)](https://render.com/articles/comparing-agent-sdks-langchain-vs-openai-agents-vs-vercel-ai-vs-a-simple-while-l.md)
 - [How to evaluate a cloud platform for production workloads](https://render.com/articles/how-to-evaluate-a-cloud-platform-for-production-workloads.md)
 - [How to implement authentication and authorization](https://render.com/articles/how-to-implement-authentication-and-authorization.md)
-- [What to look for in managed database hosting](https://render.com/articles/what-to-look-for-in-managed-database-hosting.md)
 - [How much does cloud application hosting cost for small businesses](https://render.com/articles/how-much-does-cloud-application-hosting-cost-for-small-businesses.md)
+- [What to look for in managed database hosting](https://render.com/articles/what-to-look-for-in-managed-database-hosting.md)
 - [Host PocketBase on Render](https://render.com/articles/host-pocketbase-on-render.md)
 - [5 AI apps to deploy on Render](https://render.com/articles/5-ai-apps-to-deploy-on-render.md)
 - [5 JavaScript/TypeScript apps to deploy on Render](https://render.com/articles/5-javascript-apps-to-deploy-on-render.md)
@@ -627,18 +627,18 @@ https://render.com/articles
 - [Stop Fighting Infrastructure, Start Shipping Features](https://render.com/articles/stop-fighting-infrastructure-start-shipping-features.md)
 - [Zero-Ops Backend Hosting for Web Apps](https://render.com/articles/zero-ops-backend-hosting-for-web-apps.md)
 - [Full-Stack Deployment Without DevOps Headaches](https://render.com/articles/full-stack-deployment-without-devops-headaches.md)
-- [Should I Use Render?](https://render.com/articles/should-i-use-render.md)
 - [FastAPI deployment options](https://render.com/articles/fastapi-deployment-options.md)
+- [Self-Hosting n8n: A Production-Ready Architecture on Render](https://render.com/articles/self-hosting-n8n-a-production-ready-architecture-on-render.md)
+- [Should I Use Render?](https://render.com/articles/should-i-use-render.md)
+- [How to deploy full stack applications without DevOps expertise](https://render.com/articles/how-to-deploy-full-stack-applications-without-devops-expertise.md)
 - [Benefits of Using Managed Cloud Services vs In-House IT Management](https://render.com/articles/benefits-of-using-managed-cloud-services-vs-in-house-it-management.md)
 - [Why Render Is the Ideal Cloud Platform for AI Agents: Deploying LangChain, LlamaIndex, and CrewAI to Production](https://render.com/articles/deploy-ai-agents-langchain-llamaindex-crewai.md)
-- [How to deploy full stack applications without DevOps expertise](https://render.com/articles/how-to-deploy-full-stack-applications-without-devops-expertise.md)
-- [Self-Hosting n8n: A Production-Ready Architecture on Render](https://render.com/articles/self-hosting-n8n-a-production-ready-architecture-on-render.md)
 
 ## Metadata
 
 site: https://render.com
 owner: Render Services, Inc.
-last-generated: "2026-11-12"
+last-generated: "2026-11-16"
 
 ### Permissions
 

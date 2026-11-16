@@ -1,10 +1,10 @@
 GET https://api.agentphone.ai/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:21.016Z
+fetched: 2026-11-16T20:59:55.100Z
 final-url: https://api.agentphone.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:38:19 GMT
+date: Mon, 16 Nov 2026 20:59:53 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
@@ -14,14 +14,14 @@ server: cloudflare
 strict-transport-security: max-age=31536000; includeSubDomains
 x-content-type-options: nosniff
 x-frame-options: DENY
-x-railway-request-id: hy2MAMosT2mVw-JkWUN5dQ
-x-request-id: baf6d1b4-6628-45c5-9e9f-89bdc3630ef0
+x-railway-request-id: GJ31CQt5TNa8DLVNnPRhug
+x-request-id: 23bbde95-5555-4218-80f7-eea19481c2f5
 x-xss-protection: 0
-x-hikari-trace: sjc1.mwfn
+x-hikari-trace: sjc1.qeyn
 x-railway-edge: sjc1
 cf-cache-status: DYNAMIC
 speculation-rules: "/cdn-cgi/speculation"
 content-encoding: gzip
-cf-ray: a59228eb2825ca84-PDX
+cf-ray: a5b96c0b5ae258d9-PDX
 
-{"detail":"Not Found","error":{"message":"Not Found","code":"HTTP_404","type":"api_error"},"request_id":"baf6d1b4-6628-45c5-9e9f-89bdc3630ef0"}
+{"detail":"Not Found","error":{"message":"Not Found","code":"HTTP_404","type":"api_error"},"request_id":"23bbde95-5555-4218-80f7-eea19481c2f5"}

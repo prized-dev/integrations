@@ -1,10 +1,10 @@
 GET https://app.loops.so/api/v1/api-key
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:17.324Z
+fetched: 2026-11-16T20:59:48.733Z
 final-url: https://app.loops.so/api/v1/api-key
 
 HTTP 401
-date: Thu, 12 Nov 2026 02:38:14 GMT
+date: Mon, 16 Nov 2026 20:59:45 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
@@ -20,6 +20,6 @@ vary: Accept-Encoding
 content-encoding: gzip
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a59228ce1e7ad74d-PDX
+cf-ray: a5b96bda0928da3a-LAX
 
 {"success":false,"message":"Invalid API key","error":"Invalid API key"}

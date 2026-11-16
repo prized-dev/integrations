@@ -1,6 +1,6 @@
 {
  "site": "context.dev",
- "checkedAt": "2026-11-12T02:38:36.960Z",
+ "checkedAt": "2026-11-16T21:00:13.829Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 3,
  "partial": 2,
@@ -74,7 +74,7 @@
    "name": "Docs in Markdown",
    "url": "https://www.context.dev/llms.txt",
    "heading": "# Context.dev",
-   "bytes": 28114,
+   "bytes": 28115,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -87,7 +87,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 83,
+   "ms": 397,
    "redirects": 1
   },
   {
@@ -97,7 +97,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 60,
+   "ms": 160,
    "redirects": 1
   },
   {
@@ -107,7 +107,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 102,
+   "ms": 274,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 110,
+   "ms": 640,
    "redirects": 1
   },
   {
@@ -127,7 +127,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 37,
+   "ms": 114,
    "redirects": 0
   },
   {
@@ -137,7 +137,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 60,
+   "ms": 249,
    "redirects": 1
   },
   {
@@ -147,7 +147,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 56,
+   "ms": 200,
    "redirects": 1
   }
  ]

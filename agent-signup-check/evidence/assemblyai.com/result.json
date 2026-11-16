@@ -1,6 +1,6 @@
 {
  "site": "assemblyai.com",
- "checkedAt": "2026-11-12T02:37:32.406Z",
+ "checkedAt": "2026-11-16T20:59:02.599Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
@@ -68,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 311,
+   "ms": 308,
    "redirects": 1
   },
   {
@@ -78,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 97,
+   "ms": 189,
    "redirects": 1
   },
   {
@@ -88,7 +88,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=UTF-8",
-   "ms": 11,
+   "ms": 185,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 230,
+   "ms": 468,
    "redirects": 1
   },
   {
@@ -108,7 +108,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 8,
+   "ms": 195,
    "redirects": 0
   },
   {
@@ -118,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 232,
+   "ms": 229,
    "redirects": 1
   },
   {
@@ -128,7 +128,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 7,
+   "ms": 181,
    "redirects": 0
   },
   {
@@ -138,7 +138,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 226,
+   "ms": 228,
    "redirects": 1
   }
  ]

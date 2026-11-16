@@ -1,20 +1,20 @@
 GET https://api.cloudinary.com/.well-known/oauth-authorization-server
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:54.845Z
+fetched: 2026-11-16T21:00:32.176Z
 final-url: https://api.cloudinary.com/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:38:54 GMT
+date: Mon, 16 Nov 2026 21:00:31 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
 vary: Accept-Encoding, Accept, X-Requested-With
 status: 404 Not Found
+x-request-id: d446f7b3c8f0ab909cecea389b159b9e
 cache-control: no-cache
 referrer-policy: strict-origin-when-cross-origin
 x-permitted-cross-domain-policies: none
 x-xss-protection: 1; mode=block
-x-request-id: a9830438f35da9e3754d8fcd924feb99
 link: </stylesheets/g/cloudinary_public.css>; rel=preload; as=style; nopush,</javascripts/g/cloudinary_public.js>; rel=preload; as=script; nopush
 server: cloudinary
 content-encoding: br

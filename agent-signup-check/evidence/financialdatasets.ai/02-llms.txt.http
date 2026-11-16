@@ -1,31 +1,31 @@
 GET https://financialdatasets.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:37.910Z
+fetched: 2026-11-16T21:00:13.862Z
 redirect: 308 from https://financialdatasets.ai/llms.txt
 final-url: https://www.financialdatasets.ai/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:38:35 GMT
+date: Mon, 16 Nov 2026 21:00:10 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 access-control-allow-origin: *
-age: 16044
+age: 148778
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
-etag: W/"e256ad9ffee7e24f0368d036eff42a0f"
-last-modified: Wed, 11 Nov 2026 22:11:10 GMT
+etag: W/"b751c08563b2d5e8e6c5477b1b7be1a7"
+last-modified: Sun, 15 Nov 2026 03:40:31 GMT
 server: cloudflare
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::69pzr-1794451115082-2652f6ba4b3c
+x-vercel-id: pdx1::mr658-1794862810591-c3351b2115d4
 cf-cache-status: DYNAMIC
 vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=T4dr6DttWZuUYlMBSBGyB6us26vq0kZnFVqVlxeOE02c701Gu225Y%2FssWlhcGxcJtSrZ7v2icfOtXOinRmCChvXeFfL9RebQGfKCz7tH02DOtrrz4yzMrnN1SkgM7RY7wpZE1QExJ9xyZjA%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=ygXYKqzpCYqjLDozUeAdhIXEoL17x4ADUsv5tQyLqyQc5RBqd3luT2VQ901p4TnhA2O%2BDbURE1dzudYUj1lmjFRJCTXl1EEJEoNaUNEgLhMOfEm0JdYugJ9But0jkb3nMMaujTr7TszZIPM%3D"}]}
-cf-ray: a592294cfd348e12-PDX
+cf-ray: a5b96c75fd4f96ba-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Financial Datasets
@@ -46,89 +46,210 @@ No API key yet? An AI agent can create one right now: POST /agent/signup with `{
 
 Or create a key in the dashboard: https://www.financialdatasets.ai
 
-No key and no account: pay with x402. Send a request with no X-API-KEY header to a supported endpoint and the 402 response carries the payment terms in the PAYMENT-REQUIRED header (amount in USDC on Base, network eip155:8453). Sign the payment with your own wallet and retry with the PAYMENT-SIGNATURE header; the x402 client libraries do this for you. x402 endpoints: every documented GET data endpoint (36): prices, financial statements and segments, financial metrics, earnings, company facts, filings, news, insider trades and ownership, beneficial, activist and institutional holdings, index funds, macro series (interest rates, yield curve, inflation, labor, GPU prices), IPOs and KPIs. Not covered: /filings/items, /prices/snapshot/market, POST endpoints, and the free helper lists such as /prices/tickers. Guide: https://docs.financialdatasets.ai/x402. Announcement: https://www.financialdatasets.ai/news/x402
+No key and no account: pay with x402. Send a request with no X-API-KEY header to a supported endpoint and the 402 response carries the payment terms in the PAYMENT-REQUIRED header (amount in USDC on Base, network eip155:8453). Sign the payment with your own wallet and retry with the PAYMENT-SIGNATURE header; the x402 client libraries do this for you. x402 endpoints: every documented GET data endpoint (39): prices, financial statements and segments, financial metrics, earnings, company facts, filings, news, insider trades and ownership, politician trades, beneficial, activist and institutional holdings, index funds, macro series (interest rates, yield curve, inflation, labor, GDP, GPU prices), IPOs and KPIs. Not covered: /filings/items, /prices/snapshot/market, POST endpoints, and the free helper lists such as /prices/tickers. Guide: https://docs.financialdatasets.ai/x402. Announcement: https://www.financialdatasets.ai/news/x402
 
 ## API Endpoints
 
+### Company
+- [Company Facts (by CIK)](https://docs.financialdatasets.ai/api/company/facts/cik): GET /company/facts — company details by CIK
+- [Company Facts (by Ticker)](https://docs.financialdatasets.ai/api/company/facts/ticker): GET /company/facts — company details by ticker
+  - Requires `ticker` OR `cik` (mutually exclusive). Returns sector, industry, exchange, employee count, market cap, and more.
+
+### Earnings
+- [Earnings](https://docs.financialdatasets.ai/api/earnings): GET /earnings — quarterly and annual earnings data
+  - `ticker`. Returns both quarterly and annual data in a single response, including revenue, net income, and EPS.
+- [Earnings Feed](https://docs.financialdatasets.ai/api/earnings/feed): GET /earnings — without `ticker`: the newest earnings filings across all covered companies, newest filing first, one row per (ticker, report_period)
+  - `limit` (default: 10, max: 100)
+
+### KPIs
+- [KPI Metrics](https://docs.financialdatasets.ai/api/kpi/metrics): GET /kpi/metrics — operating KPIs from earnings releases that the financial statements leave out (airline load factor, bank CET1 ratio), 600+ US tickers, 3+ years
+- [Forward Guidance](https://docs.financialdatasets.ai/api/kpi/guidance): GET /kpi/guidance — revenue, EPS and margin outlooks from earnings releases, as ranges, point estimates or directional signals
+- [Non-GAAP Metrics](https://docs.financialdatasets.ai/api/kpi/non-gaap): GET /kpi/non-gaap — adjusted EPS, adjusted EBITDA, free cash flow, each with its GAAP equivalent and key adjustments
+  - All three accept: `ticker` (required), `metric_name`, `period` (quarterly|annual, default: quarterly), `report_period_gte` / `report_period_lte`, `limit` (default: 4). Premium data.
+
+### IPOs
+- [IPOs](https://docs.financialdatasets.ai/api/ipos): GET /ipos — every SEC Form S-1, S-1/A, F-1, F-1/A, 424B4 and 424B1 since July 2026, with the proposed ticker, exchange and expected price, plus pre-IPO financial statements for IPO-grade companies
+  - `ticker` or `cik`, `classification` (ipo|shell_company|spac|resale|other), `filing_date` / `filing_date_gte` / `filing_date_lte` / `filing_date_gt` / `filing_date_lt` (YYYY-MM-DD), `limit` (default: 10). Premium data.
+
+### Financial Metrics
+- [Financial Metrics (Historical)](https://docs.financialdatasets.ai/api/financial-metrics/historical): GET /financial-metrics — P/E, EV, margins, growth rates, and 40+ metrics over time
+  - `ticker` or `cik` (required), `period` (annual|quarterly|ttm), `limit` (default: 4), `report_period` filters
+- [Financial Metrics (Snapshot)](https://docs.financialdatasets.ai/api/financial-metrics/snapshot): GET /financial-metrics/snapshot — latest metrics including market cap, P/E, dividend yield
+  - `ticker` or `cik` (required). No period or limit — returns the single most recent snapshot.
+
 ### Financial Statements
-- [Income Statements](https://docs.financialdatasets.ai/api/financials/income-statements): GET /financials/income-statements
-- [Balance Sheets](https://docs.financialdatasets.ai/api/financials/balance-sheets): GET /financials/balance-sheets
-- [Cash Flow Statements](https://docs.financialdatasets.ai/api/financials/cash-flow-statements): GET /financials/cash-flow-statements
-- [All Financial Statements](https://docs.financialdatasets.ai/api/financials/all-financial-statements): GET /financials
-  - `ticker` (required), `period` (annual|quarterly|ttm, default: annual), `limit` (default: 4), `report_period` filters
+- [Income Statements](https://docs.financialdatasets.ai/api/financials/income-statements): GET /financials/income-statements — revenue, expenses, net income
+- [Balance Sheets](https://docs.financialdatasets.ai/api/financials/balance-sheets): GET /financials/balance-sheets — assets, liabilities, equity
+- [Cash Flow Statements](https://docs.financialdatasets.ai/api/financials/cash-flow-statements): GET /financials/cash-flow-statements — operating, investing, financing
+- [All Financial Statements](https://docs.financialdatasets.ai/api/financials/all-financial-statements): GET /financials — all three statement types in one call
+  - All four endpoints accept: `ticker` or `cik` (required), `period` (annual|quarterly|ttm, default: ttm), `limit` (default: 4, max: 100), `report_period` / `report_period_gte` / `report_period_lte` / `report_period_gt` / `report_period_lt`
   - UK companies: add `market=UK` to the ticker (UK tickers keep the exchange's spelling, e.g. `RR.`), or pass `isin` alone; `period=annual`; amounts in the company's reporting currency (`currency` field). List covered UK companies with GET /financials/income-statements/tickers/?market=UK. Guide: https://docs.financialdatasets.ai/guides/get-uk-fundamentals-python. Announcement: https://www.financialdatasets.ai/news/uk-fundamentals
   - French companies: add `market=FR` to the ticker, or pass `isin` alone; `period=annual`; amounts in the company's reporting currency (`currency` field), EUR for most. List covered French companies with GET /financials/income-statements/tickers/?market=FR. Guide: https://docs.financialdatasets.ai/guides/get-france-fundamentals-python. Announcement: https://www.financialdatasets.ai/news/france-fundamentals
 
-### Segmented Financials
-- [Income Statement Segments](https://docs.financialdatasets.ai/api/financials/income-statement-segments): GET /financials/income-statements/segments
-- [Balance Sheet Segments](https://docs.financialdatasets.ai/api/financials/balance-sheet-segments): GET /financials/balance-sheets/segments
-- [Cash Flow Statement Segments](https://docs.financialdatasets.ai/api/financials/cash-flow-statement-segments): GET /financials/cash-flow-statements/segments
-- [All Segmented Financials](https://docs.financialdatasets.ai/api/financials/all-segments): GET /financials/segments
-  - `ticker` (required), `period` (annual|quarterly, no ttm), `limit` (default: 4), `report_period` filters
-
-### As-Reported Financials
-- Income Statement (As-Reported): GET /financials/income-statements/as-reported
-- Balance Sheet (As-Reported): GET /financials/balance-sheets/as-reported
-- Cash Flow Statement (As-Reported): GET /financials/cash-flow-statements/as-reported
-- All Financial Statements (As-Reported): GET /financials/as-reported
-  - `ticker` (required), `period` (annual|quarterly, no ttm), `limit` (default: 4), `report_period` filters. Returns the as-filed line-item tree (`line_items` with recursive `children`). Available from 2010 onward.
-
-### Financial Metrics
-- [Financial Metrics (Historical)](https://docs.financialdatasets.ai/api/financial-metrics/historical): GET /financial-metrics
-  - `ticker` (required), `period` (annual|quarterly|ttm), `limit` (default: 4), `report_period` filters
-- [Financial Metrics (Snapshot)](https://docs.financialdatasets.ai/api/financial-metrics/snapshot): GET /financial-metrics/snapshot
-  - `ticker` (required)
-
-### Stock Prices
-- [Stock Prices (Historical)](https://docs.financialdatasets.ai/api/prices/historical): GET /prices
-  - `ticker` (required), `interval` (day|week|month|year), `start_date`, `end_date` (YYYY-MM-DD)
-- [Stock Price (Snapshot)](https://docs.financialdatasets.ai/api/prices/snapshot): GET /prices/snapshot
-  - `ticker` (required)
-
-### Earnings
-- [Earnings](https://docs.financialdatasets.ai/api/earnings/earnings): GET /earnings
-  - `ticker` (required)
-- [Earnings Press Releases](https://docs.financialdatasets.ai/api/earnings/press-releases): GET /earnings/press-releases
-  - `ticker` (required), `limit` (default: 4)
-
-### Company
-- [Company Facts](https://docs.financialdatasets.ai/api/company/facts/ticker): GET /company/facts
-  - `ticker` or `cik` (required)
-
 ### Insider Trades
-- [Insider Trades](https://docs.financialdatasets.ai/api/insider-trades/insider-trades): GET /insider-trades
-  - `ticker` (required), `limit` (default: 10), `filing_date` filters
+- [Insider Trades](https://docs.financialdatasets.ai/api/insider-trades): GET /insider-trades — Form 4 insider trading activity
+  - `ticker` (required), `limit` (default: 10, max: 5000), `filing_date` / `filing_date_gte` / `filing_date_lte` / `filing_date_gt` / `filing_date_lt` (YYYY-MM-DD)
+- [Insider Ownership](https://docs.financialdatasets.ai/api/insider-ownership): GET /insider-ownership — what officers, directors and 10% owners hold, from SEC Forms 3 and 5, since January 2021
+  - `ticker` (required), `name` (case-insensitive contains), `form_type` (3|3/A|5|5/A), `filing_date` / `filing_date_gte` / `filing_date_lte` / `filing_date_gt` / `filing_date_lt` (YYYY-MM-DD), `limit` (default: 10). Names for a ticker: GET /insider-ownership/names?ticker=AAPL
 
-### Institutional Holdings
-- [By Investor](https://docs.financialdatasets.ai/api/institutional-holdings/investor): GET /institutional-holdings
-- [By Ticker](https://docs.financialdatasets.ai/api/institutional-holdings/ticker): GET /institutional-holdings
-  - `ticker` or `filer_cik` (required), `limit` (default: 10, max: 200), `report_period` filters
+### Politician Trades
+- [Politician Trades](https://docs.financialdatasets.ai/api/politician-trades): GET /politician-trades — stock trades disclosed by members of the US House, since 2014, within minutes after each report goes public
+  - No required parameter (no filter = newest disclosures first). `ticker`, `name` (every word must match, any case), `chamber` (house|senate), `transaction_type` (purchase|sale|exchange), `state` (two letters), `owner` (self|spouse|joint|dependent_child), `amount_gte` (whole dollars; compares `amount_low`), `filing_date` / `transaction_date` with `_gte` / `_lte` / `_gt` / `_lt` (YYYY-MM-DD), `order_by` (filing_date default | transaction_date), `limit` (default: 10, max: 5000). Amounts are the disclosed range (`amount_low`, `amount_high`), never a guess inside it. A member may report up to 45 days after the trade, so `transaction_date` is often weeks before `filing_date`. Senate coming; paper reports not included.
+  - `GET /politician-trades/names` — every member with a trade on record: name, chamber, state (free with a key)
 
 ### News
-- [Company News](https://docs.financialdatasets.ai/api/news/company): GET /news
-  - `ticker` (required), `limit` (default: 5, max: 10)
+- [Company News](https://docs.financialdatasets.ai/api/news/company): GET /news — recent news articles and press releases
+  - `ticker`, `limit` (default: 5, max: 10)
+- [Market News](https://docs.financialdatasets.ai/api/news/market): GET /news — without `ticker`: recent market-moving news (AI, macro, rates, earnings, geopolitics, energy, crypto)
+  - `limit` (default: 5)
 
-### SEC Filings
-- [Filings by Ticker](https://docs.financialdatasets.ai/api/filings/ticker): GET /filings
-  - `ticker` or `cik` (required), `filing_type` (optional), `limit` (default: 10)
-- [Filing Items](https://docs.financialdatasets.ai/api/filings/items): GET /filings/items
-  - `ticker` or `cik` (required), `filing_type` (required: 10-K, 10-Q, or 8-K), `year`, `quarter`
+### Institutional Holdings
+- [Holdings (by investor)](https://docs.financialdatasets.ai/api/institutional-holdings/investor): GET /institutional-holdings?filer_cik=... - the 13F portfolio of a given institutional manager
+  - Requires `filer_cik`. `limit` (default: 10, max: 200), `report_period` / `report_period_gte` / `report_period_lte` / `report_period_gt` / `report_period_lt`. Without `report_period`, returns the filer's most recent 13F. Subsidiary voting-authority splits surface in a `subsidiaries` array on each position.
+- [Owners (by ticker)](https://docs.financialdatasets.ai/api/institutional-holdings/ticker): GET /institutional-holdings?ticker=... - institutional filers who currently own a given ticker
+  - Requires `ticker`. Without `report_period`, returns one row per filer whose most recent 13F currently includes the ticker (strict "current holders"). Pass `report_period` filters to opt into historical rows.
+- Discovery — GET /institutional-holdings/investors?name=PREFIX returns CIK ↔ name pairs (no API key required). GET /institutional-holdings/tickers returns the flat list of held tickers (no API key required).
 
-### Search
-- [Stock Screener](https://docs.financialdatasets.ai/api/financials/search-screener): POST /financials/search/screener
-- [Search Line Items](https://docs.financialdatasets.ai/api/financials/search-line-items): POST /financials/search/line-items
+### Beneficial and Activist Ownership
+- [Beneficial Ownership](https://docs.financialdatasets.ai/api/beneficial-ownership): GET /beneficial-ownership — holders of more than 5% of a company from SEC Schedules 13D and 13G, activist and passive, with amendment history, since January 2025
+  - `ticker` or `filer_cik`, `type` (activist|passive), `history` (default: false = latest stake per holder), `filing_date` / `filing_date_gte` / `filing_date_lte` / `filing_date_gt` / `filing_date_lt` (YYYY-MM-DD), `limit` (default: 10)
+- [Activist Ownership](https://docs.financialdatasets.ai/api/activist-ownership): GET /activist-ownership — activist stakes from SEC Schedule 13D, since January 2025
+  - `ticker` or `filer_cik`, `history` (default: false), `filing_date` / `filing_date_gte` / `filing_date_lte` / `filing_date_gt` / `filing_date_lt` (YYYY-MM-DD), `limit` (default: 10)
+
+### Index Funds
+- [ETF Holdings](https://docs.financialdatasets.ai/api/index-funds/ticker): GET /index-funds?ticker=SPY — an ETF or index fund's holdings and each position's weight, 500+ funds, 5+ years
+- [ETFs Holding a Stock](https://docs.financialdatasets.ai/api/index-funds/holding): GET /index-funds?holding=AAPL — the funds whose latest filing holds a stock, with the fund's weight in it
+  - `ticker` (fund) or `holding` (security), `as_of` (YYYY-MM-DD, default: latest filing), `asset_class` (equity|bond), `limit` (default: 50), `offset`
 
 ### Interest Rates
-- [Interest Rates (Historical)](https://docs.financialdatasets.ai/api/macro/interest-rates/historical): GET /macro/interest-rates
+- [Interest Rates (Historical)](https://docs.financialdatasets.ai/api/macro/interest-rates/historical): GET /macro/interest-rates — daily central bank policy rates, one row per calendar day, 10 per page
   - `bank` (required, e.g. FED, ECB, BOJ), `start_date`, `end_date`
-- [Interest Rates (Snapshot)](https://docs.financialdatasets.ai/api/macro/interest-rates/snapshot): GET /macro/interest-rates/snapshot
+- [Interest Rates (Snapshot)](https://docs.financialdatasets.ai/api/macro/interest-rates/snapshot): GET /macro/interest-rates/snapshot — newest policy rate per central bank
   - `bank` (required)
+
+### Treasury Yields
+- [Treasury Yields (Historical)](https://docs.financialdatasets.ai/api/macro/yield-curve/historical): GET /macro/yield-curve — daily US Treasury par yield curve since 1990, one row per business day, 14 tenors from 1_month to 30_year
+  - `start_date`, `end_date` (optional, inclusive, YYYY-MM-DD; default = trailing year). Newest first, pages of 100 via `next_page_url`. Null tenor = not published that day.
+- [Treasury Yields (Snapshot)](https://docs.financialdatasets.ai/api/macro/yield-curve/snapshot): GET /macro/yield-curve/snapshot — the most recent business day's curve as one object
+  - No parameters.
+
+### GDP
+- [GDP (Historical)](https://docs.financialdatasets.ai/api/macro/gdp/historical): GET /macro/gdp — one US growth or income series (real GDP growth, real and nominal GDP, the four contributions to growth, income-side growth, corporate profits, personal income, the saving rate, real consumer spending), quarterly since 1947 or monthly since 1959, with change_prior, change_year, and change_year_pct
+  - `series` (required; quarterly: real_gdp_growth, real_gdp, nominal_gdp, consumer_spending_contribution, investment_contribution, net_exports_contribution, government_contribution, real_gdi_growth, corporate_profits; monthly: personal_income, saving_rate, real_consumer_spending), `start_date`, `end_date` (optional, inclusive, YYYY-MM-DD; default = trailing 5 years). Newest first, pages of 10 via `next_page_url`. `date` = reference period: first day of the quarter (quarterly) or of the month (monthly). Dollar series = billions at a seasonally adjusted annual rate. Headline GDP growth = real_gdp_growth (quarter over quarter, annual rate); year-over-year growth = change_year_pct of real_gdp. change_year_pct = null for percent and percentage-point series. Values are the latest estimate; each quarter is estimated three times. real_gdi_growth and corporate_profits arrive with a later estimate, so their newest row can be one quarter behind.
+- [GDP (Snapshot)](https://docs.financialdatasets.ai/api/macro/gdp/snapshot): GET /macro/gdp/snapshot — the latest print of all 12 growth and income series
+  - `series` (optional, one row instead of 12)
+
+### GPU Prices
+- [GPU Prices (Historical)](https://docs.financialdatasets.ai/api/macro/gpu-prices/historical): GET /macro/gpu-prices — daily GPU rental price index for one model (h100, h200, b200, b300) in USD per GPU hour since August 2026, with stability_band (provider spread), change_1d, change_1d_pct, change_7d_pct, change_30d_pct
+  - `series` (required: h100, h200, b200, b300), `start_date`, `end_date` (optional, inclusive, YYYY-MM-DD; default = trailing 90 days). Newest first, pages of 10 via `next_page_url`. `date` = UTC day; today's row = newest 15-minute print at the last hourly refresh (`as_of`). Every response carries `attribution` (Computable GPU Index); keep it when displaying the data.
+- [GPU Prices (Snapshot)](https://docs.financialdatasets.ai/api/macro/gpu-prices/snapshot): GET /macro/gpu-prices/snapshot — today's price of all 4 GPU models, refreshed hourly
+
+### Inflation
+- [Inflation (Historical)](https://docs.financialdatasets.ai/api/macro/inflation/historical): GET /macro/inflation — monthly US CPI for one series since 1947, or the PCE price index since 1959, with change_1m_pct and change_12m_pct
+  - `series` (required: cpi_all_sa, cpi_all_nsa, cpi_core_sa, cpi_core_nsa, cpi_food_sa, cpi_food_nsa, cpi_energy_sa, cpi_energy_nsa, cpi_shelter_sa, cpi_shelter_nsa, cpi_services_less_energy_sa, cpi_services_less_energy_nsa, pce_all_sa, pce_core_sa), `start_date`, `end_date` (optional, inclusive, YYYY-MM-DD; default = trailing 5 years). Newest first, pages of 10 via `next_page_url`. `date` = reference month (first day). value = index level (1982-84=100 for CPI, 2017=100 for PCE). Headline inflation rate = change_12m_pct of cpi_all_nsa; the Fed's preferred measure = change_12m_pct of pce_core_sa. Null change = comparison month not published (e.g. October 2025).
+- [Inflation (Snapshot)](https://docs.financialdatasets.ai/api/macro/inflation/snapshot): GET /macro/inflation/snapshot — the latest month of all 14 inflation series (12 CPI, 2 PCE)
+  - `series` (optional, one row instead of fourteen)
+
+### Labor Market
+- [Labor Market (Historical)](https://docs.financialdatasets.ai/api/macro/labor/historical): GET /macro/labor — one US labor market series (the jobs report: nonfarm payrolls, unemployment rate, participation, hourly earnings; JOLTS job openings, hires, quits; weekly jobless claims), monthly since 1939 or weekly since 1967, with change_prior, change_year, and change_year_pct
+  - `series` (required; monthly: payrolls, unemployment_rate, unemployment_rate_u6, participation_rate, hourly_earnings, job_openings, hires, quits; weekly: initial_claims, initial_claims_4_week, continued_claims, continued_claims_4_week, insured_unemployment_rate; each as _sa and, except the 4-week averages, _nsa), `start_date`, `end_date` (optional, inclusive, YYYY-MM-DD; default = trailing 5 years). Newest first, pages of 10 via `next_page_url`. `date` = reference period: first day of the month (monthly) or week-ending Saturday (weekly). change_prior / change_year = value minus the prior period / the period one year back, in the series' units. change_year_pct = null for percent-unit series (rates change in points). Null change = comparison period not published.
+- [Labor Market (Snapshot)](https://docs.financialdatasets.ai/api/macro/labor/snapshot): GET /macro/labor/snapshot — the latest print of all 24 labor market series
+  - `series` (optional, one row instead of 24)
+
+### Search
+
+**Screener** (POST with JSON body):
+- [Search / Screener](https://docs.financialdatasets.ai/api/financials/search-screener): POST /financials/search/screener — filter companies by financial criteria
+
+```json
+{
+  "filters": [
+    {"field": "revenue", "operator": "gt", "value": 1000000000},
+    {"field": "sector", "operator": "eq", "value": "Technology"}
+  ],
+  "limit": 10
+}
+```
+Operators: `gt`, `lt`, `gte`, `lte`, `eq`, `in`. Fields span income statement, balance sheet, cash flow, financial metrics, and company (sector, industry).
+
+**Line Items Search** (POST with JSON body):
+- [Search Line Items](https://docs.financialdatasets.ai/api/financials/search-line-items): POST /financials/search/line-items — retrieve specific financial line items across tickers
+
+```json
+{
+  "tickers": ["AAPL", "MSFT"],
+  "line_items": ["revenue", "net_income", "earnings_per_share"],
+  "period": "ttm",
+  "limit": 5,
+  "start_date": "2023-01-01",
+  "end_date": "2024-12-31"
+}
+```
+`tickers` and `line_items` are required. `period` (default: ttm), `limit` (default: 1), `start_date`/`end_date` are optional.
+
+### SEC Filings
+- [Filings by Ticker](https://docs.financialdatasets.ai/api/filings/ticker): GET /filings — 10-K, 10-Q, 8-K, and more
+  - `ticker` or `cik` (required), `filing_type` (optional, comma-separated, e.g. `10-K,10-Q`), `limit` (default: 10)
+- [Filing Items](https://docs.financialdatasets.ai/api/filings/items): GET /filings/items — extract specific sections from filings (e.g., Risk Factors, MD&A)
+  - `ticker` or `cik` (required), `filing_type` (required: `10-K`, `10-Q`, or `8-K`), `year` (required for 10-K/10-Q), `quarter` (required for 10-Q: 1, 2, or 3), `accession_number` (alternative to year/quarter), `item` (optional, specific sections to extract), `include_exhibits` (8-K only, true/false)
+
+### Segmented Financials
+- [Income Statement Segments](https://docs.financialdatasets.ai/api/financials/income-statement-segments): GET /financials/income-statements/segments — revenue, operating income, and depreciation by product and business segment
+  - `ticker` or `cik` (required), `period` (annual|quarterly — no ttm), `limit` (default: 4), `report_period` filters
+- [Balance Sheet Segments](https://docs.financialdatasets.ai/api/financials/balance-sheet-segments): GET /financials/balance-sheets/segments — assets, goodwill, and long-lived assets by business segment
+  - `ticker` or `cik` (required), `period` (annual|quarterly — no ttm), `limit` (default: 4), `report_period` filters
+- [Cash Flow Statement Segments](https://docs.financialdatasets.ai/api/financials/cash-flow-statement-segments): GET /financials/cash-flow-statements/segments — capital expenditure by business segment
+  - `ticker` or `cik` (required), `period` (annual|quarterly — no ttm), `limit` (default: 4), `report_period` filters
+- [All Segmented Financials](https://docs.financialdatasets.ai/api/financials/all-segments): GET /financials/segments — all segment breakdowns in a single call
+  - `ticker` or `cik` (required), `period` (annual|quarterly — no ttm), `limit` (default: 4), `report_period` filters
+
+### As-Reported Financials
+
+The as-filed line-item hierarchy from SEC filings (10-K / 10-Q). Each row contains a recursive `line_items` tree with `label` (as printed on the filing), `full_label` (canonical taxonomy label), `value`, and `children`. Available for SEC filings from 2010 onward (when XBRL became standard and companies started to report more granular data).
+
+- GET /financials/income-statements/as-reported: income statement line items exactly as filed, with parent-child hierarchy
+- GET /financials/balance-sheets/as-reported: balance sheet line items exactly as filed
+- GET /financials/cash-flow-statements/as-reported: cash flow statement line items exactly as filed
+- [All As-Reported Financials](https://docs.financialdatasets.ai/api/financials/as-reported): GET /financials/as-reported: all three statement trees in a single call, grouped by reporting period (missing statements surface as `null`)
+  - All four endpoints accept: `ticker` or `cik` (required), `period` (annual or quarterly, no ttm), `limit` (default: 4), `report_period` filters
+
+### Stock Prices
+- [Stock Prices (Historical)](https://docs.financialdatasets.ai/api/prices/historical): GET /prices — OHLCV data with configurable intervals
+  - `ticker` (required), `interval` (required: day|week|month|year), `start_date` (required, YYYY-MM-DD), `end_date` (required, YYYY-MM-DD)
+- [Stock Price (Snapshot)](https://docs.financialdatasets.ai/api/prices/snapshot): GET /prices/snapshot — latest price for a ticker
+  - `ticker` (required)
+- [Market Snapshot](https://docs.financialdatasets.ai/api/prices/market-snapshot): GET /prices/snapshot/market — the latest price, day change and day change percent of every actively traded US stock (13,000+) in one request
+  - No parameters.
 
 ### Agent Account (self-signup & funding)
 - [Agent Signup](https://docs.financialdatasets.ai/agents): POST /agent/signup
   - `email` (required, the account owner's real inbox), `agent_name` (required, 1-64 chars) - returns an API key immediately
 - [Agent Checkout Link](https://docs.financialdatasets.ai/agents): POST /agent/checkout-link
   - `X-API-KEY` header (required), `amount_to_add` (optional, dollars, min 20) - returns a Stripe payment link for the account owner
+
+## Free Helper Endpoints
+
+These endpoints require no authentication and return available identifiers:
+
+- `GET /company/facts/tickers` — list tickers with company facts
+- `GET /company/facts/ciks` — list CIKs with company facts
+- `GET /earnings/tickers` — list tickers with earnings data
+- `GET /filings/tickers` — list tickers with SEC filings
+- `GET /filings/ciks` — list CIKs with SEC filings
+- `GET /filings/types` — list valid SEC filing types (10-K, 10-Q, 8-K, etc.)
+- `GET /filings/items/types` — list extractable item sections per filing type (optional `filing_type` param)
+- `GET /prices/tickers` — list tickers with price history
+- `GET /prices/snapshot/tickers` — list tickers with price snapshots
+- `GET /macro/interest-rates/banks` — list available central banks
+- `GET /kpi/metrics/tickers`, `/kpi/guidance/tickers`, `/kpi/non-gaap/tickers` — list tickers with KPI data; `GET /kpi/metrics/sectors` — list sectors
+- `GET /insider-ownership/tickers` — list tickers with insider ownership statements
+- `GET /beneficial-ownership/tickers`, `/activist-ownership/tickers` — list tickers with 5%+ holders
+- `GET /index-funds/tickers` — list the covered ETFs and index funds
+- `GET /macro/gpu-prices/series` — list the GPU price series ids with their first available day
+- `GET /macro/inflation/series` — list the inflation series ids (CPI and PCE) with their first available month
+- `GET /macro/labor/series` — list the labor market series ids with their frequency and first available date
+- `GET /macro/gdp/series` — list the GDP and income series ids with their frequency and first available date
+- `GET /financials/search/screener/filters` — list available filter fields, valid values, and operators for the screener
 
 ## AI Agent Resources
 

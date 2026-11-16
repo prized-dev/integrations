@@ -1,25 +1,25 @@
 GET https://fal.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:28.635Z
+fetched: 2026-11-16T20:58:57.950Z
 final-url: https://fal.ai/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 4180
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:37:25 GMT
+date: Mon, 16 Nov 2026 20:58:54 GMT
 etag: W/"34c4d4698a3cd52b786b73361783efcb"
-last-modified: Thu, 12 Nov 2026 01:27:44 GMT
+last-modified: Mon, 16 Nov 2026 20:58:55 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-fal-request-url: /llms.txt
 x-frame-options: SAMEORIGIN
 x-matched-path: /llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::2429r-1794451045695-00c3b0d4b1f3
+x-vercel-cache: MISS
+x-vercel-id: pdx1::xpfbt-1794862734767-1a680a4c8560
 connection: close
 transfer-encoding: chunked
 

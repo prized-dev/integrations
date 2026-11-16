@@ -1,17 +1,17 @@
 GET https://api.pinecone.io/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:09.291Z
+fetched: 2026-11-16T20:59:39.268Z
 final-url: https://api.pinecone.io/.well-known/oauth-protected-resource
 
 HTTP 401
 content-type: application/json
 x-pinecone-api-version: 2024-04
-x-cloud-trace-context: 37585532e02ac9ec0bdce37ce9cebbda
-date: Thu, 12 Nov 2026 02:38:07 GMT
+x-cloud-trace-context: 6ee4ac38c4cfadfa14893958f9e3a649
+date: Mon, 16 Nov 2026 20:59:37 GMT
 server: Google Frontend
 content-length: 84
 via: 1.1 google
-alt-svc: h3=":443"; ma=2592000
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
 connection: close
 
 {"error":{"code":"UNAUTHENTICATED","message":"Missing api-key header"},"status":401}

@@ -1,19 +1,19 @@
 GET https://api.machines.dev/v1/apps?org_slug=personal
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:37.689Z
+fetched: 2026-11-16T20:59:07.152Z
 final-url: https://api.machines.dev/v1/apps?org_slug=personal
 
 HTTP 401
 content-type: application/json; charset=utf-8
-fly-span-id: c7e0bd91be5e6a30
-fly-trace-id: 973c7cb71a2fbacac2c3ea2e5c861102
+fly-span-id: 8002934d56bd13b0
+fly-trace-id: b804ad91b0a8e9ac2c9b34016529b5b1
 www-authenticate: Basic realm="api.machines.dev"
-date: Thu, 12 Nov 2026 02:37:34 GMT
+date: Mon, 16 Nov 2026 20:59:04 GMT
 content-encoding: br
 transfer-encoding: chunked
-server: Fly/366e4bf88 (2026-10-27)
+server: Fly/781f3a6652 (2026-11-10)
 via: 1.1 fly.io
-fly-request-id: 01M76SW88S93VK7KRYXMNSPZQE-lax
+fly-request-id: 01M7K2G0R913XGBRBY6CHSKYHR-lax
 connection: close
 
 {"error":"Authenticate: token validation error"}

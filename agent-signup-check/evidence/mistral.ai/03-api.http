@@ -1,22 +1,22 @@
 GET https://api.mistral.ai/v1/models
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:15.191Z
+fetched: 2026-11-16T20:58:43.665Z
 final-url: https://api.mistral.ai/v1/models
 
 HTTP 401
-date: Thu, 12 Nov 2026 02:37:11 GMT
+date: Mon, 16 Nov 2026 20:58:39 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
-mistral-correlation-id: 01a1cd9d-c3dc-7eeb-b41d-400c5fb92bed
-x-kong-request-id: 01a1cd9d-c3dc-7eeb-b41d-400c5fb92bed
+mistral-correlation-id: 01a1e627-a294-736e-8785-bbd95dcac917
+x-kong-request-id: 01a1e627-a294-736e-8785-bbd95dcac917
 access-control-allow-origin: *
 x-kong-response-latency: 5
 cf-cache-status: DYNAMIC
 strict-transport-security: max-age=15552000; includeSubDomains; preload
 x-content-type-options: nosniff
 server: cloudflare
-cf-ray: a592273f3945fb74-PDX
+cf-ray: a5b96a3d38fcdabf-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"detail":"Invalid API Key"}

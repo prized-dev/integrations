@@ -1,6 +1,6 @@
 {
  "site": "deepseek.com",
- "checkedAt": "2026-11-12T02:37:23.005Z",
+ "checkedAt": "2026-11-16T20:58:52.806Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 0,
  "partial": 1,
@@ -70,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 177,
+   "ms": 587,
    "redirects": 0
   },
   {
@@ -80,7 +80,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 414,
+   "ms": 401,
    "redirects": 0
   },
   {
@@ -89,8 +89,8 @@
    "finalUrl": "https://api.deepseek.com/models",
    "status": 401,
    "error": null,
-   "contentType": null,
-   "ms": 273,
+   "contentType": "application/json",
+   "ms": 267,
    "redirects": 0
   },
   {
@@ -100,7 +100,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html",
-   "ms": 354,
+   "ms": 989,
    "redirects": 0
   },
   {
@@ -110,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 223,
+   "ms": 404,
    "redirects": 0
   },
   {
@@ -120,7 +120,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 293,
+   "ms": 269,
    "redirects": 0
   },
   {
@@ -130,7 +130,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 161,
+   "ms": 401,
    "redirects": 0
   },
   {
@@ -140,7 +140,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 272,
+   "ms": 263,
    "redirects": 0
   },
   {
@@ -150,7 +150,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 390,
+   "ms": 420,
    "redirects": 0
   }
  ]

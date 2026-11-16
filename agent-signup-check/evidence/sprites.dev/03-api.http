@@ -1,19 +1,19 @@
 GET https://api.sprites.dev/v1/sprites
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:59.325Z
+fetched: 2026-11-16T20:59:30.048Z
 final-url: https://api.sprites.dev/v1/sprites
 
 HTTP 401
-date: Thu, 12 Nov 2026 02:37:55 GMT
+date: Mon, 16 Nov 2026 20:59:26 GMT
 content-length: 53
 content-encoding: gzip
 vary: accept-encoding
 content-type: application/json; charset=utf-8
 cache-control: max-age=0, private, must-revalidate
-x-request-id: GOcrvyhDBrR359gAhOro
-server: Fly/366e4bf88 (2026-10-27)
+x-request-id: GOiiLWIxrjQSUHoAbb-q
+server: Fly/781f3a6652 (2026-11-10)
 via: 1.1 fly.io, 1.1 fly.io
-fly-request-id: 01M76SWXCG8BBYPY2MF6DSEC46-lax
+fly-request-id: 01M7K2GQ560KJ5FT28Z9V5HPFD-lax
 connection: close
 
 {"error":"authentication failed"}

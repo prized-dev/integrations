@@ -1,22 +1,22 @@
 GET https://agentphone.to/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:21.016Z
+fetched: 2026-11-16T20:59:55.100Z
 redirect: 301 from https://agentphone.to/.well-known/oauth-protected-resource
 final-url: https://agentphone.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:38:19 GMT
+date: Mon, 16 Nov 2026 20:59:53 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
 server: cloudflare
 vary: Accept-Encoding
-x-railway-request-id: q7AU1NKgSQq7y6hlyCLmYg
+x-railway-request-id: Ungz5YjFQJqQYq9hc9o55Q
 x-railway-edge: sjc1
-x-hikari-trace: sjc1.mdvq
+x-hikari-trace: sjc1.hqvw
 cf-cache-status: DYNAMIC
 speculation-rules: "/cdn-cgi/speculation"
 content-encoding: gzip
-cf-ray: a59228e88a945ed7-PDX
+cf-ray: a5b96c08a8bf5ebf-PDX
 
 {"error":{"code":"not_found","message":"The requested path could not be found"}}

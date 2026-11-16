@@ -1,18 +1,18 @@
 GET https://runpod.io/.well-known/x402
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:58.222Z
+fetched: 2026-11-16T20:59:27.708Z
 final-url: https://runpod.io/.well-known/x402
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:37:57 GMT
+date: Mon, 16 Nov 2026 20:59:27 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a59228642df15a4c-SEA
+cf-ray: a5b96b67786b0d8d-SEA
 cf-cache-status: EXPIRED
 cache-control: no-transform
 content-encoding: gzip
-etag: W/"6af3fd62-58"
+etag: W/"6afb687b-58"
 server: cloudflare
 vary: accept-encoding
 x-content-type-options: nosniff

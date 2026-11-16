@@ -1,21 +1,21 @@
 GET https://freestyle.sh/.well-known/oauth-authorization-server
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:50.138Z
+fetched: 2026-11-16T20:59:20.194Z
 redirect: 301 from https://freestyle.sh/.well-known/oauth-authorization-server
 final-url: https://www.freestyle.sh/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:37:49 GMT
+date: Mon, 16 Nov 2026 20:59:18 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
 cache-control: no-store
 vary: Accept
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=5mvEjZgUcGLletz9Lm5N9zgfsvHcfmEp3KRfKS%2FHWChrardYB7RON309mY4JTWAHP5RP46fGPjUJa1x%2F63faSWA0eZ6IX2KCpsu7kmjnBvgJcyyPwhvVT6%2FmfSho1%2FVb07Y%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=pVf8ryaMs9W4DOjx5e8rJ8sGZSCVL8Qb4kZzlNbbNAiBqoKrRymk2a9Om0DQn5ye9NMYuVWljMsfjiEkfqKN3%2BGJv27Dd7xp1m%2BklNOQyXPXbCjfPXfPudxkFMluP8qPZ3E%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 content-encoding: br
 server: cloudflare
-cf-ray: a592282d3986a11a-PDX
+cf-ray: a5b96b324f4b2ad8-LAX
 
 # 404 Not Found
 

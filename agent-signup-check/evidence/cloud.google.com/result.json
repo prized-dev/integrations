@@ -1,6 +1,6 @@
 {
  "site": "cloud.google.com",
- "checkedAt": "2026-11-12T02:37:55.260Z",
+ "checkedAt": "2026-11-16T20:59:26.125Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 0,
@@ -70,7 +70,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 260,
+   "ms": 258,
    "redirects": 0
   },
   {
@@ -80,7 +80,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 255,
+   "ms": 257,
    "redirects": 0
   },
   {
@@ -90,7 +90,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=UTF-8",
-   "ms": 56,
+   "ms": 50,
    "redirects": 0
   },
   {
@@ -100,7 +100,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 285,
+   "ms": 349,
    "redirects": 1
   },
   {
@@ -110,7 +110,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 184,
+   "ms": 250,
    "redirects": 0
   },
   {
@@ -120,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 45,
+   "ms": 68,
    "redirects": 0
   },
   {
@@ -130,7 +130,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 152,
+   "ms": 259,
    "redirects": 0
   },
   {
@@ -140,7 +140,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 49,
+   "ms": 72,
    "redirects": 0
   },
   {
@@ -150,7 +150,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 243,
+   "ms": 234,
    "redirects": 0
   }
  ]

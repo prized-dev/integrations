@@ -1,6 +1,6 @@
 {
  "site": "turso.tech",
- "checkedAt": "2026-11-12T02:38:05.754Z",
+ "checkedAt": "2026-11-16T20:59:35.811Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 2,
@@ -73,7 +73,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 182,
+   "ms": 170,
    "redirects": 0
   },
   {
@@ -83,7 +83,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 47,
+   "ms": 241,
    "redirects": 0
   },
   {
@@ -93,7 +93,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 136,
+   "ms": 148,
    "redirects": 0
   },
   {
@@ -103,7 +103,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 163,
+   "ms": 159,
    "redirects": 0
   },
   {
@@ -113,7 +113,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 95,
+   "ms": 92,
    "redirects": 0
   },
   {
@@ -123,7 +123,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 97,
+   "ms": 92,
    "redirects": 1
   },
   {
@@ -133,7 +133,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 191,
+   "ms": 152,
    "redirects": 0
   }
  ]

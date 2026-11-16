@@ -1,13 +1,18 @@
 GET https://api.tavily.com/usage
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:35.441Z
+fetched: 2026-11-16T21:00:10.728Z
 final-url: https://api.tavily.com/usage
 
 HTTP 401
-date: Thu, 12 Nov 2026 02:38:32 GMT
 content-type: application/json
 content-length: 53
 connection: close
+date: Mon, 16 Nov 2026 21:00:07 GMT
 content-security-policy: default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';base-uri 'self';form-action 'self'; require-trusted-types-for 'script'; upgrade-insecure-requests;
+x-cache: Error from cloudfront
+via: 1.1 ba490acb2ea716cd57876286ed686786.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P1
+alt-svc: h3=":443"; ma=86400
+x-amz-cf-id: VJ3x93WAKuhj5HfXYLdxqm53uQLyMxh898XeHcR0kf2pWLNBE8qJUw==
 
 {"detail":{"error":"Unauthorized: missing API key."}}

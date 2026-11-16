@@ -1,6 +1,6 @@
 {
  "site": "financialdatasets.ai",
- "checkedAt": "2026-11-12T02:38:37.910Z",
+ "checkedAt": "2026-11-16T21:00:13.862Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 3,
  "partial": 1,
@@ -60,7 +60,7 @@
    "name": "Docs in Markdown",
    "url": "https://www.financialdatasets.ai/llms.txt",
    "heading": "# Financial Datasets",
-   "bytes": 9268,
+   "bytes": 25719,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -73,7 +73,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 104,
+   "ms": 152,
    "redirects": 1
   },
   {
@@ -83,7 +83,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 87,
+   "ms": 86,
    "redirects": 1
   },
   {
@@ -93,7 +93,7 @@
    "status": 402,
    "error": null,
    "contentType": "application/json",
-   "ms": 119,
+   "ms": 272,
    "redirects": 0
   },
   {
@@ -103,7 +103,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 51,
+   "ms": 241,
    "redirects": 1
   },
   {
@@ -113,7 +113,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 124,
+   "ms": 115,
    "redirects": 0
   },
   {
@@ -123,7 +123,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 53,
+   "ms": 97,
    "redirects": 1
   },
   {
@@ -133,7 +133,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 114,
+   "ms": 120,
    "redirects": 0
   },
   {
@@ -143,7 +143,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 44,
+   "ms": 84,
    "redirects": 1
   }
  ]

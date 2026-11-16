@@ -1,6 +1,6 @@
 GET https://nano-gpt.com/api/v1/batches
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:28.510Z
+fetched: 2026-11-16T20:58:57.964Z
 final-url: https://nano-gpt.com/api/v1/batches
 
 HTTP 401
@@ -12,7 +12,7 @@ access-control-max-age: 86400
 age: 0
 cache-control: public, max-age=0, must-revalidate
 content-type: application/json
-date: Thu, 12 Nov 2026 02:37:25 GMT
+date: Mon, 16 Nov 2026 20:58:54 GMT
 origin-agent-cluster: ?1
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -22,7 +22,7 @@ x-frame-options: DENY
 x-matched-path: /api/v1/batches
 x-robots-tag: noindex, nofollow
 x-vercel-cache: MISS
-x-vercel-id: pdx1::fra1::xzsqw-1794451044456-7c7ad1969eef
+x-vercel-id: pdx1::fra1::mlc8v-1794862734053-0d76e576d0f7
 x-xss-protection: 1; mode=block
 connection: close
 transfer-encoding: chunked

@@ -1,34 +1,34 @@
 GET https://inkbox.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:23.259Z
+fetched: 2026-11-16T20:59:56.032Z
 final-url: https://inkbox.ai/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Wed, 11 Nov 2026 04:26:28 GMT
+date: Mon, 16 Nov 2026 13:27:30 GMT
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
-x-version: dpl_2AK98Hxhwu4fUXpx9atbv41cC328
-cf-ray: a58a89f70a94c12a-PDX
+x-version: dpl_Aw98ji4XvBsgtZwL1VrkUF9ehFqz
+cf-ray: a5b6d55c0dad8e5d-PDX
 cf-cache-status: HIT
 cache-control: public
 content-encoding: br
-etag: "eXraPfTlacu-3k-RAqd6LiGqbAvVmxDq1b6Pm6YPE28"
+etag: "9qRF1xtu6BB4QRNngYdbGKAvm7ZOqCQhjRTtGhEB-4I"
 server: cloudflare
 strict-transport-security: max-age=63072000
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4102
+x-mintlify-client-version: 0.0.4143
 x-vercel-cache: MISS
-x-vercel-id: iad1::iad1::gs5zr-1794346915735-4faf81362c43
+x-vercel-id: iad1::iad1::9745d-1794794701299-2333cfdff290
 vary: accept-encoding
 x-cache: Hit from cloudfront
-via: 1.1 49798ef4b8dd64fece36e067d09f69ec.cloudfront.net (CloudFront)
+via: 1.1 d220e3f3d93439a8c69225156c6ae800.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: 23V5bIrGiCbqME9rj_JH5EZtZ0KNZYHDT0ybaSJoeVCR7FxtbsgfKw==
-age: 81025
+x-amz-cf-id: acm0l-KFyy98_UnnUtGMGQJI5nia6cjHzvrFHRNI-qm7ZBV9aSzhYw==
+age: 28484
 
 # Inkbox
 
@@ -50,7 +50,7 @@ age: 81025
 - [Inkbox Voice AI](https://inkbox.ai/docs/capabilities/phone/hosted-call-agent.md): Let Inkbox Voice AI answer and place your agent's phone calls with zero setup, no WebSocket server or webhook, plus a structured post-call package.
 - [10DLC registration](https://inkbox.ai/docs/capabilities/phone/10dlc.md): Register your brand and campaign so your local US numbers can send SMS at higher throughput under your own identity
 - [iMessage](https://inkbox.ai/docs/capabilities/imessage.md): Reach humans in their native messaging app through shared service or a dedicated line, send tapbacks, and filter who can reach your agent
-- [WhatsApp](https://inkbox.ai/docs/capabilities/whatsapp.md): Send WhatsApp messages, quoted replies, and reactions on an approved dedicated number
+- [WhatsApp](https://inkbox.ai/docs/capabilities/whatsapp.md): Reply to people on WhatsApp through a dedicated or shared number, with quoted replies and reactions
 - [Slack](https://inkbox.ai/docs/capabilities/slack.md): Connect an identity to your Slack workspace, search retained history, act on conversations, and route events to your runtime
 - [Tunnels](https://inkbox.ai/docs/capabilities/tunnels.md): Give your agent a stable public URL that routes inbound HTTP, WebSocket, and raw-TCP traffic over one persistent connection via the Inkbox SDK.
 - [Contacts](https://inkbox.ai/docs/capabilities/contacts.md): Maintain a shared contact directory for your organization using the Inkbox SDK and CLI
@@ -68,10 +68,12 @@ age: 81025
 - [Agent self-signup Skill](https://inkbox.ai/docs/skills/agent-self-signup.md): Teach your coding agent the Inkbox agent self-signup flow — register, verify, resend, check status
 - [Onboarding skill](https://inkbox.ai/docs/skills/onboarding.md): Set up communication channels and inbound handling for an existing Inkbox identity
 - [CLI Skill](https://inkbox.ai/docs/skills/cli.md): Teach your coding agent the Inkbox CLI (@inkbox/cli) for shell-native workflows
-- [Integrations](https://inkbox.ai/docs/integrations/overview.md): Connect Inkbox to ChatGPT, Claude, Cursor, Codex, Claude Code, Hermes Agent, OpenClaw, OpenCode, and DeepSeek Harness
+- [Integrations](https://inkbox.ai/docs/integrations/overview.md): Connect Inkbox to ChatGPT, Claude, Cursor, Codex, Claude Code, Hermes Agent, OpenClaw, OpenCode, DeepSeek Harness, Vercel Eve, and Cloudflare Agents.
 - [ChatGPT plugin](https://inkbox.ai/docs/integrations/chatgpt-plugin.md): Connect ChatGPT to Inkbox email, SMS/MMS, iMessage, calls, contacts, notes, and A2A
 - [Claude connector](https://inkbox.ai/docs/integrations/claude-connector.md): Connect Claude to Inkbox email, SMS/MMS, iMessage, calls, contacts, notes, and A2A
 - [Cursor and Grok Bot](https://inkbox.ai/docs/integrations/cursor-plugin.md): Connect Cursor or Grok Bot to Inkbox and start automations from incoming communication events
+- [Vercel and Eve](https://inkbox.ai/docs/integrations/vercel-eve.md): Connect an Eve agent to Inkbox with a remote MCP connection and an API key or Vercel Connect OAuth.
+- [Cloudflare Agents](https://inkbox.ai/docs/integrations/cloudflare-agents.md): Connect a Cloudflare Agents SDK application to Inkbox over remote MCP with an API key or OAuth.
 - [Codex plugin](https://inkbox.ai/docs/integrations/codex.md): Connect a Codex agent to Inkbox email, phone, iMessage, and tunnel capabilities
 - [Claude Code plugin](https://inkbox.ai/docs/integrations/claude-code.md): Connect a Claude Code agent to Inkbox email, phone, iMessage, and tunnel capabilities
 - [OpenCode plugin](https://inkbox.ai/docs/integrations/opencode-plugin.md): Connect an OpenCode agent to Inkbox email, phone, iMessage, contacts, notes, vault, and inbound gateway capabilities
@@ -135,8 +137,11 @@ age: 81025
 - [Tapbacks](https://inkbox.ai/docs/api/imessage/reactions.md): Send tapback reactions to iMessages and read the live reactions on every message
 - [iMessage Contact Rules](https://inkbox.ai/docs/api/imessage/contact-rules.md): Manage allow and block rules on an identity's shared phone list covering incoming and outgoing iMessage, SMS, calls, and WhatsApp, matched on exact numbers.
 - [Webhooks](https://inkbox.ai/docs/api/imessage/webhooks.md): Receive real-time HTTP POST callbacks for inbound iMessages, tapbacks, and outbound delivery status
-- [WhatsApp API](https://inkbox.ai/docs/api/whatsapp.md): Identity-scoped WhatsApp messages, existing groups, quoted replies, and reactions
-- [WhatsApp onboarding](https://inkbox.ai/docs/api/whatsapp/onboarding.md): Get a WhatsApp message link and QR code that open a chat with your agent's approved number, check channel readiness, and receive the first message
+- [WhatsApp API](https://inkbox.ai/docs/api/whatsapp.md): Identity-scoped WhatsApp messages, shared-number connections, existing groups, quoted replies, and reactions
+- [Onboarding](https://inkbox.ai/docs/api/whatsapp/onboarding.md): Get a connect draft and QR code for an agent
+- [Assignments](https://inkbox.ai/docs/api/whatsapp/connections.md): Connect a recipient to an agent through your organization's shared WhatsApp pool, list assignments, and disconnect
+- [Router](https://inkbox.ai/docs/api/whatsapp/router.md): Get the WhatsApp router number and the commands people text to reach your agents
+- [Manage numbers and routers](https://inkbox.ai/docs/api/whatsapp/management.md): Assign already-owned WhatsApp numbers and manage your organization's dedicated router
 - [Messages](https://inkbox.ai/docs/api/whatsapp/messages.md): Send WhatsApp messages and quoted replies with explicit delivery state
 - [Media](https://inkbox.ai/docs/api/whatsapp/media.md): Upload one owned WhatsApp attachment and refresh its temporary download access
 - [Conversations](https://inkbox.ai/docs/api/whatsapp/conversations.md): Browse WhatsApp direct and existing group conversations and update local unread history

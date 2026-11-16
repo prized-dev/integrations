@@ -1,10 +1,10 @@
 GET https://us.posthog.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:50.841Z
+fetched: 2026-11-16T21:00:27.597Z
 final-url: https://us.posthog.com/auth.md
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:38:49 GMT
+date: Mon, 16 Nov 2026 21:00:26 GMT
 content-type: text/markdown; charset=utf-8
 content-length: 15371
 connection: close
@@ -16,7 +16,7 @@ x-content-type-options: nosniff
 referrer-policy: strict-origin-when-cross-origin
 cross-origin-opener-policy: same-origin
 server: envoy
-x-envoy-upstream-service-time: 9
+x-envoy-upstream-service-time: 8
 strict-transport-security: max-age=31536000; includeSubDomains
 
 # PostHog

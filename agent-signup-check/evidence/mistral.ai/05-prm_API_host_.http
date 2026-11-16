@@ -1,23 +1,23 @@
 GET https://api.mistral.ai/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:15.191Z
+fetched: 2026-11-16T20:58:43.665Z
 final-url: https://api.mistral.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:37:12 GMT
+date: Mon, 16 Nov 2026 20:58:40 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
 x-kong-response-latency: 0
+x-content-type-options: nosniff
 cf-cache-status: DYNAMIC
 strict-transport-security: max-age=15552000; includeSubDomains; preload
-x-content-type-options: nosniff
 content-encoding: br
 server: cloudflare
-cf-ray: a59227483a8cb298-PDX
+cf-ray: a5b96a450bdbef2c-PDX
 alt-svc: h3=":443"; ma=86400
 
 {
   "message":"no Route matched with those values",
-  "request_id":"c6168125f0fb307f0b4b611237d05105"
+  "request_id":"71fd3d1aee83533a498d566e79a1d131"
 }

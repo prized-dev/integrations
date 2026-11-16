@@ -1,6 +1,6 @@
 {
  "site": "mongodb.com",
- "checkedAt": "2026-11-12T02:38:13.848Z",
+ "checkedAt": "2026-11-16T21:00:57.765Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 2,
  "partial": 0,
@@ -34,7 +34,7 @@
    "name": "Key works without a browser",
    "url": "https://cloud.mongodb.com/api/atlas/v2/groups",
    "httpStatus": 401,
-   "www_authenticate": "Digest realm=\"MMS Public API\", domain=\"\", nonce=\"MXdiDXJ/kA6MIYlad2u+OXRm99cbIotn\", algorithm=MD5, qop=\"auth\", stale=false",
+   "www_authenticate": "Digest realm=\"MMS Public API\", domain=\"\", nonce=\"pJf3ZLdJSXQ4M+eHM1BHSTPkeNHQ0D98\", algorithm=MD5, qop=\"auth\", stale=false",
    "status": "pass",
    "reason": "401 with a Digest challenge"
   },
@@ -68,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 448,
+   "ms": 691,
    "redirects": 1
   },
   {
@@ -78,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 2023,
+   "ms": 318,
    "redirects": 1
   },
   {
@@ -88,7 +88,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 215,
+   "ms": 199,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 247,
+   "ms": 364,
    "redirects": 1
   },
   {
@@ -108,7 +108,7 @@
    "status": 401,
    "error": null,
    "contentType": null,
-   "ms": 185,
+   "ms": 215,
    "redirects": 0
   },
   {
@@ -118,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 300,
+   "ms": 492,
    "redirects": 1
   },
   {
@@ -128,7 +128,7 @@
    "status": 401,
    "error": null,
    "contentType": null,
-   "ms": 202,
+   "ms": 214,
    "redirects": 0
   },
   {
@@ -138,7 +138,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 434,
+   "ms": 354,
    "redirects": 1
   }
  ]

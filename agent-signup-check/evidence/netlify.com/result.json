@@ -1,6 +1,6 @@
 {
  "site": "netlify.com",
- "checkedAt": "2026-11-12T02:37:42.898Z",
+ "checkedAt": "2026-11-16T20:59:12.101Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 2,
@@ -73,7 +73,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 278,
+   "ms": 290,
    "redirects": 0
   },
   {
@@ -83,7 +83,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=UTF-8",
-   "ms": 265,
+   "ms": 298,
    "redirects": 0
   },
   {
@@ -93,7 +93,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 236,
+   "ms": 226,
    "redirects": 0
   },
   {
@@ -103,7 +103,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 179,
+   "ms": 175,
    "redirects": 0
   },
   {
@@ -113,7 +113,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 227,
+   "ms": 197,
    "redirects": 0
   },
   {
@@ -123,7 +123,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 184,
+   "ms": 177,
    "redirects": 0
   },
   {
@@ -133,7 +133,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 234,
+   "ms": 196,
    "redirects": 0
   },
   {
@@ -143,7 +143,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 195,
+   "ms": 255,
    "redirects": 0
   },
   {
@@ -153,7 +153,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 180,
+   "ms": 186,
    "redirects": 0
   }
  ]

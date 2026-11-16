@@ -1,14 +1,14 @@
 GET https://api.browserbase.com/v1/sessions
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:24.269Z
+fetched: 2026-11-16T20:59:58.818Z
 final-url: https://api.browserbase.com/v1/sessions
 
 HTTP 401
-date: Thu, 12 Nov 2026 02:38:21 GMT
+date: Mon, 16 Nov 2026 20:59:56 GMT
 content-type: application/json; charset=utf-8
 content-length: 81
 connection: close
-request-id: 1c63ad24-365c-402b-aa4d-4873adb52250
+request-id: 05e54bb8-34e2-45c1-95b2-1f3594c83aef
 vary: Origin
 
 {"statusCode":401,"error":"Unauthorized","message":"Missing x-bb-api-key header"}

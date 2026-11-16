@@ -1,6 +1,6 @@
 {
  "site": "paddle.com",
- "checkedAt": "2026-11-12T02:38:46.718Z",
+ "checkedAt": "2026-11-16T21:00:21.886Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
@@ -67,8 +67,8 @@
    "finalUrl": "https://www.paddle.com/auth.md",
    "status": 404,
    "error": null,
-   "contentType": "text/html; charset=utf-8",
-   "ms": 1311,
+   "contentType": "text/html",
+   "ms": 879,
    "redirects": 1
   },
   {
@@ -77,8 +77,8 @@
    "finalUrl": "https://www.paddle.com/llms.txt",
    "status": 404,
    "error": null,
-   "contentType": "text/html; charset=utf-8",
-   "ms": 134,
+   "contentType": "text/html",
+   "ms": 496,
    "redirects": 1
   },
   {
@@ -88,7 +88,7 @@
    "status": 403,
    "error": null,
    "contentType": "application/json",
-   "ms": 115,
+   "ms": 151,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=UTF-8",
-   "ms": 188,
+   "ms": 296,
    "redirects": 0
   },
   {
@@ -107,8 +107,8 @@
    "finalUrl": "https://www.paddle.com/.well-known/oauth-protected-resource",
    "status": 404,
    "error": null,
-   "contentType": "text/html; charset=utf-8",
-   "ms": 1315,
+   "contentType": "text/html",
+   "ms": 492,
    "redirects": 1
   },
   {
@@ -118,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 107,
+   "ms": 109,
    "redirects": 0
   },
   {
@@ -127,8 +127,8 @@
    "finalUrl": "https://www.paddle.com/.well-known/oauth-authorization-server",
    "status": 404,
    "error": null,
-   "contentType": "text/html; charset=utf-8",
-   "ms": 1052,
+   "contentType": "text/html",
+   "ms": 888,
    "redirects": 1
   },
   {
@@ -138,7 +138,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 105,
+   "ms": 110,
    "redirects": 0
   },
   {
@@ -147,8 +147,8 @@
    "finalUrl": "https://www.paddle.com/.well-known/x402",
    "status": 404,
    "error": null,
-   "contentType": "text/html; charset=utf-8",
-   "ms": 1051,
+   "contentType": "text/html",
+   "ms": 876,
    "redirects": 1
   }
  ]

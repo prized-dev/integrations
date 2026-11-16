@@ -1,6 +1,6 @@
 {
  "site": "browserless.io",
- "checkedAt": "2026-11-12T02:38:30.789Z",
+ "checkedAt": "2026-11-16T21:00:05.972Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 2,
  "partial": 1,
@@ -73,7 +73,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 184,
+   "ms": 169,
    "redirects": 1
   },
   {
@@ -83,7 +83,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=UTF-8",
-   "ms": 130,
+   "ms": 209,
    "redirects": 1
   },
   {
@@ -93,7 +93,7 @@
    "status": 401,
    "error": null,
    "contentType": "text/html",
-   "ms": 101,
+   "ms": 70,
    "redirects": 0
   },
   {
@@ -103,7 +103,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 262,
+   "ms": 242,
    "redirects": 1
   },
   {
@@ -113,7 +113,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 195,
+   "ms": 199,
    "redirects": 0
   },
   {
@@ -123,7 +123,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 153,
+   "ms": 220,
    "redirects": 1
   }
  ]

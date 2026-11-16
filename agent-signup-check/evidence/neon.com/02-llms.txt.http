@@ -1,24 +1,24 @@
 GET https://neon.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:04.021Z
+fetched: 2026-11-16T20:59:35.444Z
 final-url: https://neon.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 14800
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:38:01 GMT
-etag: W/"293a55a204baf4ba8ed619505aa95a1f"
-last-modified: Wed, 11 Nov 2026 22:31:21 GMT
+date: Mon, 16 Nov 2026 20:59:31 GMT
+etag: W/"7e38fbc7b2bf769114e9f0171468d2fd"
+last-modified: Mon, 16 Nov 2026 20:59:31 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /docs/llms.txt
 x-nextjs-rewritten-path: /docs/llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::xzsqw-1794451081384-38d1085b8919
+x-vercel-cache: MISS
+x-vercel-id: pdx1::547s2-1794862771495-0fbf5211a373
 connection: close
 transfer-encoding: chunked
 
@@ -144,7 +144,7 @@ Managed authentication built on Better Auth that branches with your database.
 - [Managed Better Auth](https://neon.com/docs/auth/overview.md): Managed authentication that branches with your database
 - [Use Managed Better Auth with Next.js (API methods)](https://neon.com/docs/auth/quick-start/nextjs-api-only.md): Build your own auth UI using SDK methods
 - [Use Managed Better Auth with React (API methods)](https://neon.com/docs/auth/quick-start/react.md): Build your own auth UI
-- [Set up OAuth](https://neon.com/docs/auth/guides/setup-oauth.md): Add Google, GitHub, Vercel, Microsoft, or Apple sign-in to your application
+- [Set up OAuth](https://neon.com/docs/auth/guides/setup-oauth.md): Add Google, GitHub, Vercel, Microsoft, Apple, or Discord sign-in to your application
 - [Auth production checklist](https://neon.com/docs/auth/production-checklist.md): Required configuration before launching with Managed Better Auth
 
 ## Neon Functions
@@ -240,7 +240,7 @@ Projects, branches, computes, roles, databases, and organization settings.
 
 Step-by-step integration guides for frameworks, ORMs, auth providers, and deployment platforms.
 
-- [All 163 Guides pages](https://neon.com/docs/guides/llms.txt) — key pages below
+- [All 160 Guides pages](https://neon.com/docs/guides/llms.txt) — key pages below
 
 - [Connect a Next.js application to Neon](https://neon.com/docs/guides/nextjs.md): Set up a Neon project in seconds and connect from a Next.js application
 - [Connect from Prisma to Neon](https://neon.com/docs/guides/prisma.md): Learn how to connect to Neon from Prisma
@@ -281,10 +281,11 @@ API reference, SDKs, Terraform provider, Postgres compatibility, and platform-le
 - [Claimable Neon](https://neon.com/docs/reference/claimable-neon.md): CLI, claim, and HTTP reference
 - [Effect bindings for the Neon SDK](https://neon.com/docs/reference/effect-sdk.md): Use the Neon Management SDK with Effect v4 — every call an Effect, every paginated list a Stream, with tagged errors and interruption.
 - [Get started with the Neon API](https://neon.com/docs/reference/api/get-started.md): Create an API key and make your first authenticated request.
-- [Manage Neon with Terraform](https://neon.com/docs/reference/terraform.md): Use Terraform to provision and manage your Neon projects, branches, endpoints, roles, databases, and other resources as code.
+- [Manage Neon with Terraform](https://neon.com/docs/reference/terraform.md): Define Neon projects, branches, computes, and backend resources as code with the official Neon Terraform provider
 - [Managed Better Auth and Data API SDK](https://neon.com/docs/reference/javascript-sdk.md): Reference documentation for @neon/neon-js (authentication and Data API database queries)
 - [Metrics and logs reference](https://neon.com/docs/reference/metrics-logs.md): Complete reference for all metrics and log fields exported by Neon
 - [Migrate from @neondatabase/api-client to @neon/sdk](https://neon.com/docs/reference/migrate-api-client-to-sdk.md): Move Platform API automation from the legacy Axios client to the official fetch-based SDK
+- [Migrate from kislerdm/neon to the Neon Terraform provider](https://neon.com/docs/reference/terraform-migrate.md): Move an existing configuration from the community provider to neondatabase/neon without recreating resources
 - [Neon API](https://neon.com/docs/reference/api.md): Manage Neon projects, branches, and backend services over HTTP.
 - [Neon API key concepts](https://neon.com/docs/reference/api/key-concepts.md): Asynchronous operations, rate limits, and pagination.
 - [Neon Management SDK](https://neon.com/docs/reference/typescript-sdk.md): The official TypeScript SDK for the Neon API. Projects, branches, Postgres, storage, functions, and auth in one typed client.
@@ -321,7 +322,7 @@ Compliance certifications (SOC 2 Type 1 and Type 2, SOC 3, ISO 27001, ISO 27701,
 
 Postgres extensions supported by Neon, with install and usage instructions.
 
-- [All 48 Extensions pages](https://neon.com/docs/extensions/llms.txt) — key pages below
+- [All 46 Extensions pages](https://neon.com/docs/extensions/llms.txt) — key pages below
 
 - [Postgres extensions](https://neon.com/docs/extensions/pg-extensions.md)
 - [The pg_stat_statements extension](https://neon.com/docs/extensions/pg_stat_statements.md): Track planning and execution statistics for all SQL statements

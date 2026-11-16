@@ -1,31 +1,31 @@
 GET https://planetscale.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:06.223Z
+fetched: 2026-11-16T20:59:35.986Z
 redirect: 307 from https://planetscale.com/llms.txt
 final-url: https://planetscale.com/docs/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:38:03 GMT
+date: Mon, 16 Nov 2026 20:59:33 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a59228850c835eec-PDX
+cf-ray: a5b96b8afd5dff15-PDX
 cf-cache-status: DYNAMIC
-age: 6485
+age: 5458
 cache-control: public
 content-encoding: br
-etag: W/"JwFH9LVV84ANd39oPP55BXRbGKu7aBerJ9uSjZ5zgNw"
+etag: W/"Qkhmp4eU0Irv-naqYkFL37uO7seKpT7awwCLdkGxNis"
 server: cloudflare
 strict-transport-security: max-age=63072000
 vary: accept-encoding
-cf-placement: remote-SJC
+cf-placement: local-PDX
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4111
+x-mintlify-client-version: 0.0.4149
 x-vercel-cache: MISS
-x-vercel-id: sfo1:iad1:iad1::iad1::brnfw-1794451083094-fcaf80a89334
+x-vercel-id: pdx1:iad1:iad1::iad1::gszjb-1794862772987-a74fab871308
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
-x-version: dpl_6PxPD4Fj1JDU9BJxEHvfdUmxKThw
+x-version: dpl_D8DZMbLzBJDPJxA2oBvSn4nDSCwT
 alt-svc: h3=":443"; ma=86400
 
 # PlanetScale
@@ -201,6 +201,7 @@ alt-svc: h3=":443"; ma=86400
 
 - [Connect to Neki](https://planetscale.com/docs/neki/connecting.md): Postgres clients, roles, router groups, and replica routing
 - [Roles and credentials](https://planetscale.com/docs/neki/connecting/roles.md): Create and manage branch-scoped Postgres roles for Neki.
+- [Routing defaults for roles](https://planetscale.com/docs/neki/connecting/routing-defaults.md): Stored Neki routing settings for managed roles, roles created with CREATE ROLE, and databases
 - [PlanetScale Terraform provider](https://planetscale.com/docs/terraform.md): A resource model for Vitess, Neki, and Postgres databases, designed for Terraform and OpenTofu.
 - [Web console](https://planetscale.com/docs/neki/web-console.md): Run Postgres queries and DDL from the dashboard.
 
@@ -254,7 +255,7 @@ alt-svc: h3=":443"; ma=86400
 - [Connect Cloudflare Workers to Neki](https://planetscale.com/docs/neki/guides/cloudflare-workers.md): Cloudflare Workers connection pooling through Hyperdrive
 
 - [Postgres (109 pages)](https://planetscale.com/docs/_llms/postgres.txt): Onboarding, Platform, Guides.
-- [API Reference (269 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Introduction, Webhooks in PlanetScale, Authentication, General API endpoints, Postgres API endpoints, Neki API endpoints, Vitess API endpoints.
+- [API Reference (270 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Introduction, Webhooks in PlanetScale, Authentication, General API endpoints, Postgres API endpoints, Neki API endpoints, Vitess API endpoints.
 
 ## CLI Reference
 
@@ -294,6 +295,7 @@ alt-svc: h3=":443"; ma=86400
 - [PlanetScale CLI commands: materialize](https://planetscale.com/docs/cli/materialize.md): Create and manage Vitess Materialize workflows that keep copies, aggregations, or views in sync in near-realtime
 - [PlanetScale CLI commands: metrics](https://planetscale.com/docs/cli/metrics.md)
 - [PlanetScale CLI commands: move-tables](https://planetscale.com/docs/cli/move-tables.md)
+- [PlanetScale CLI commands: oidc-trust](https://planetscale.com/docs/cli/oidc-trust.md)
 - [PlanetScale CLI commands: org](https://planetscale.com/docs/cli/org.md)
 - [PlanetScale CLI commands: password](https://planetscale.com/docs/cli/password.md)
 - [PlanetScale CLI commands: pgbouncer](https://planetscale.com/docs/cli/pgbouncer.md)
@@ -330,7 +332,7 @@ alt-svc: h3=":443"; ma=86400
 
 - [Vitess (188 pages)](https://planetscale.com/docs/_llms/vitess.txt):  , Pricing, Platform, Integrations, Guides.
 - [Postgres (109 pages)](https://planetscale.com/docs/_llms/postgres.txt): Onboarding, Platform, Guides.
-- [API Reference (269 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Introduction, Webhooks in PlanetScale, Authentication, General API endpoints, Postgres API endpoints, Neki API endpoints, Vitess API endpoints.
+- [API Reference (270 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Introduction, Webhooks in PlanetScale, Authentication, General API endpoints, Postgres API endpoints, Neki API endpoints, Vitess API endpoints.
 
 
 This documentation is built and hosted on [Mintlify](https://mintlify.com), a developer documentation platform.

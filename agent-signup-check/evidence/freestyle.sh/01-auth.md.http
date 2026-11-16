@@ -1,21 +1,21 @@
 GET https://freestyle.sh/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:50.138Z
+fetched: 2026-11-16T20:59:20.194Z
 redirect: 301 from https://freestyle.sh/auth.md
 final-url: https://www.freestyle.sh/auth.md
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:37:47 GMT
+date: Mon, 16 Nov 2026 20:59:16 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
 cache-control: no-store
 vary: Accept
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2BHjJKA7GJ7PvfuzNsPl4NNb08B6LlsDM1FbHcVwJ8ARlYU7YONPw2o14X9FfZzIOd8jjLW5NEOvDPvd1UKDoX6Lob%2BSHOk73%2BgK6Zx78GywLRQBci53POnDY9RqjvP6ETJc%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=FYxotH1IKMbd8CdMdx8RYcqyNp1iZLFv4ytxNpt7it%2BYZAcue4qVPT6Nn3J%2F1TK3HpedY79I3qKK3WoxPxSsXhb7IRC%2Fo%2B5TRjUEH%2Fu5NgqiVrpVEFRc9hSSiERxTT6HHog%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 content-encoding: br
 server: cloudflare
-cf-ray: a5922820fafdb248-PDX
+cf-ray: a5b96b221fe7f9ce-LAX
 
 # 404 Not Found
 

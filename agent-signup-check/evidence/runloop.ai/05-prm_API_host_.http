@@ -1,15 +1,15 @@
 GET https://api.runloop.ai/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:46.075Z
+fetched: 2026-11-16T20:59:15.236Z
 final-url: https://api.runloop.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:37:44 GMT
+date: Mon, 16 Nov 2026 20:59:13 GMT
 content-type: application/json
 x-content-type-options: nosniff
 referrer-policy: no-referrer
 strict-transport-security: max-age=31536000; includeSubDomains
-x-runloop-request-id: 65a20d49-3d13-4b9c-a333-7cb38fee2202
+x-runloop-request-id: 03f2bcd6-d37b-4793-9bff-6c95d8da5521
 content-length: 85
 connection: close
 

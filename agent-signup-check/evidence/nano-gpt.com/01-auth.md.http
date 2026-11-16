@@ -1,6 +1,6 @@
 GET https://nano-gpt.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:28.510Z
+fetched: 2026-11-16T20:58:57.964Z
 final-url: https://nano-gpt.com/auth.md
 
 HTTP 200
@@ -12,10 +12,10 @@ access-control-max-age: 86400
 age: 0
 cache-control: public
 content-encoding: br
-content-security-policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/pyodide/v0.26.4/ https://va.vercel-scripts.com https://challenges.cloudflare.com https://platform.twitter.com 'unsafe-inline'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' https://fonts.reown.com data:; connect-src 'self' blob: https://api.nano-gpt.com https://rpc.nano-gpt.com https://cdn.jsdelivr.net/pyodide/v0.26.4/ https://huggingface.co https://*.huggingface.co https://cdn-lfs.hf.co https://*.hf.co https://*.xethub.hf.co https://raw.githubusercontent.com https://challenges.cloudflare.com https://vitals.vercel-insights.com https://*.vercel-insights.com https://vercel.com https://blob.vercel-storage.com https://*.public.blob.vercel-storage.com https://storage.nano-gpt.cloud https://public.nano-gpt.cloud https: https://nano-gpt.com https://nanogpt-22266767r-nano-gpt.vercel.app wss://node.somenano.com wss://rainstorm.city wss://bitrequest.app:8010 wss://nanoslo.0x.no https://1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://nanogpt-public.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://image-generations.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://nanogpt-private.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://nanogpt-sync.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com; media-src 'self' data: blob: https:; object-src 'none'; base-uri 'self'; form-action 'self' https://login.microsoftonline.com; frame-ancestors 'none'; worker-src 'self' blob:; child-src 'self' blob: https://docs.google.com https://drive.google.com https://nanswap.com https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://platform.twitter.com https://syndication.twitter.com; frame-src 'self' https://docs.google.com https://drive.google.com https://www.youtube.com https://www.youtube-nocookie.com https://nanswap.com https://challenges.cloudflare.com https://platform.twitter.com https://syndication.twitter.com; manifest-src 'self'; upgrade-insecure-requests
-content-security-policy-report-only: connect-src 'self' blob: https://api.nano-gpt.com https://rpc.nano-gpt.com https://cdn.jsdelivr.net/pyodide/v0.26.4/ https://huggingface.co https://*.huggingface.co https://cdn-lfs.hf.co https://*.hf.co https://*.xethub.hf.co https://raw.githubusercontent.com https://challenges.cloudflare.com https://vitals.vercel-insights.com https://*.vercel-insights.com https://vercel.com https://blob.vercel-storage.com https://*.public.blob.vercel-storage.com https://storage.nano-gpt.cloud https://public.nano-gpt.cloud https://nano-gpt.com https://nanogpt-22266767r-nano-gpt.vercel.app wss://node.somenano.com wss://rainstorm.city wss://bitrequest.app:8010 wss://nanoslo.0x.no https://1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://nanogpt-public.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://image-generations.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://nanogpt-private.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://nanogpt-sync.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com
+content-security-policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/pyodide/v0.26.4/ https://va.vercel-scripts.com https://challenges.cloudflare.com 'unsafe-inline'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' https://fonts.reown.com data:; connect-src 'self' blob: https://api.nano-gpt.com https://rpc.nano-gpt.com https://cdn.jsdelivr.net/pyodide/v0.26.4/ https://huggingface.co https://*.huggingface.co https://cdn-lfs.hf.co https://*.hf.co https://*.xethub.hf.co https://raw.githubusercontent.com https://challenges.cloudflare.com https://vitals.vercel-insights.com https://*.vercel-insights.com https://vercel.com https://blob.vercel-storage.com https://*.public.blob.vercel-storage.com https://storage.nano-gpt.cloud https://public.nano-gpt.cloud https://media.nano-gpt.cloud https: https://nano-gpt.com https://nanogpt-hkp6jy5ep-nano-gpt.vercel.app wss://node.somenano.com wss://rainstorm.city wss://bitrequest.app:8010 wss://nanoslo.0x.no https://1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://nanogpt-public.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://image-generations.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://nanogpt-private.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://nanogpt-sync.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com; media-src 'self' data: blob: https:; object-src 'none'; base-uri 'self'; form-action 'self' https://login.microsoftonline.com; frame-ancestors 'none'; worker-src 'self' blob:; child-src 'self' blob: https://docs.google.com https://drive.google.com https://nanswap.com https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com; frame-src 'self' https://docs.google.com https://drive.google.com https://www.youtube.com https://www.youtube-nocookie.com https://nanswap.com https://challenges.cloudflare.com; manifest-src 'self'; upgrade-insecure-requests
+content-security-policy-report-only: connect-src 'self' blob: https://api.nano-gpt.com https://rpc.nano-gpt.com https://cdn.jsdelivr.net/pyodide/v0.26.4/ https://huggingface.co https://*.huggingface.co https://cdn-lfs.hf.co https://*.hf.co https://*.xethub.hf.co https://raw.githubusercontent.com https://challenges.cloudflare.com https://vitals.vercel-insights.com https://*.vercel-insights.com https://vercel.com https://blob.vercel-storage.com https://*.public.blob.vercel-storage.com https://storage.nano-gpt.cloud https://public.nano-gpt.cloud https://media.nano-gpt.cloud https://nano-gpt.com https://nanogpt-hkp6jy5ep-nano-gpt.vercel.app wss://node.somenano.com wss://rainstorm.city wss://bitrequest.app:8010 wss://nanoslo.0x.no https://1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://nanogpt-public.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://image-generations.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://nanogpt-private.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com https://nanogpt-sync.1582531d6020f89735962a5d51046adb.r2.cloudflarestorage.com
 content-type: text/markdown; charset=utf-8
-date: Thu, 12 Nov 2026 02:37:23 GMT
+date: Mon, 16 Nov 2026 20:58:53 GMT
 origin-agent-cluster: ?1
 origin-trial: AlSA4o0pCYaHj41JxCCIFZTwDBPpNk+uD0MX5XNhlWce5Y05zm4+bAWgOwJgGJcqNjo0C6ohiiFBMLJ9fPjDAwsAAABMeyJvcmlnaW4iOiJodHRwczovL25hbm8tZ3B0LmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViTUNQIiwiZXhwaXJ5IjoxNzk0ODczNjAwfQ==
 permissions-policy: tools=(self)
@@ -27,7 +27,7 @@ x-frame-options: DENY
 x-matched-path: /auth.md
 x-robots-tag: noindex, nofollow
 x-vercel-cache: MISS
-x-vercel-id: pdx1::fra1::zcf9v-1794451043048-c58d1d15ef81
+x-vercel-id: pdx1::fra1::pw6z7-1794862732854-79847d19444d
 x-xss-protection: 1; mode=block
 connection: close
 transfer-encoding: chunked
@@ -76,12 +76,35 @@ NanoGPT does not currently support anonymous spend-capable credentials. Agent-ve
 
 ## 3. Scopes
 
-- `models.read`: Read public NanoGPT model catalogs and pricing metadata.
-- `api.use`: Use NanoGPT API endpoints with a user-approved API key, bounded by account balance and per-key settings.
+- `models.read`: Read the model catalogs and prices as the account sees them (the public catalogs need no key).
+- `api.use`: Run models and spend the account balance or subscription allowance: chat, responses, messages, completions, images, video, audio, embeddings, rerank, moderation, batches, paid tools (web search, scraping, transcription and similar) and their uploads, status and result endpoints, plus the model catalogs. Bounded by the balance and the key's spending limits. A paid response states its cost and may state the remaining balance. Also the chat handoff (`POST /api/extension/conversation-handoff`): the posted conversation is held for 15 minutes and is saved only when the user opens the returned import link in a browser signed in to the same account. It cannot read or change stored conversations.
+- `balance.read`: Read the account balance, subscription allowance and the calling key's own limits and settings.
+- `usage.read`: Read usage and spending history, including per-request usage records.
+- `payments.write`: Create deposits to the account (deposit addresses, crypto payment requests, payment-required flows) and read their status. Cannot withdraw or move funds out.
+- `providers.read`: List the account's own provider keys (provider, key suffix, status) and route options that depend on them. Cannot add, replace or read a key.
+- `feedback.write`: File private bug, feature and model-quality reports through the feedback API and read the reports this key filed. Cannot read other support tickets.
 
-Scopes are informational (`scope_enforcement: informational` in the discovery metadata). They describe a grant but do not narrow the credential. Every key NanoGPT issues to an app or agent, through OAuth, the key handoff shortcut or device login, is an ordinary NanoGPT API key: it can spend from the approving user's balance and manage the account's provider settings, like a key the user creates in settings. It is bounded only by account balance, subscriptions, per-key spend and token limits, expiration, allowed origins, and allowed model settings. The consent screen tells the user this before they approve.
+Scopes are enforced (`scope_enforcement: enforced` in the discovery metadata). A key issued through OAuth, the key handoff shortcut or `POST /api/v1/auth/keys/code` can do only what its granted scopes allow, and the consent screen lists exactly those permissions. The scopes are read from the grant stored with the key; nothing a client sends can widen them. A wider scope needs a new authorization, which the user approves again and which returns a new key.
 
-OAuth authorization requests must therefore include `api.use`; a request for `models.read` alone is rejected with `invalid_scope`. The model catalogs (`GET /api/v1/models`, `/api/v1/image-models`, `/api/v1/video-models`, `/api/v1/audio-models`) are public, so an agent that only reads them needs no key.
+A request outside the grant gets `403` with `error.code: "insufficient_scope"`, the missing scope in `error.required_scope`, and `WWW-Authenticate: Bearer error="insufficient_scope", scope="..."`. Send the user through authorization again with that scope added.
+
+Some endpoints are never open to a connected app, whatever it was granted: creating, listing or revealing API keys, sign-in and security settings, adding or removing provider keys, account settings, invitations, reading or changing stored conversations and characters, the eval workspace, support tickets, and anything that moves funds out. They answer `403` with `error.code: "owner_session_required"`. An endpoint that is not listed under a scope behaves the same way.
+
+What each scope opens:
+
+- `api.use`: `/api/v1/chat/completions`, `/responses`, `/messages`, `/completions`, `/embeddings`, `/images/*`, `/audio/*`, `/moderations`, `/rerank`, `/batches`, `/files`, `/memory`, video and image generation with their upload, status and result endpoints, the paid tools (web search, scraping, transcription and similar), the model catalogs, and `POST /api/extension/conversation-handoff` (offers the user a conversation to import; it is kept for 15 minutes and saved only when the user opens the returned `import_url` in a browser signed in to the same account).
+- `models.read`: the model catalogs as the account sees them (`/api/v1/models`, `/api/personalized/v1/models`, `/api/models/{id}/providers`).
+- `balance.read`: `/api/check-balance`, `/api/subscription/v1/usage`, `/api/subscription/v1/credit-status`, `/api/v1/api-keys/current`. The Nano deposit address in the balance reply needs `payments.write`.
+- `usage.read`: `/api/v1/usage`, `/api/v1/usage/requests/{id}` and the `/api/usage/*` history of the calling key.
+- `payments.write`: `/api/deposit/*`, `/api/transaction/create/*`, `/api/transaction/status/*`, `/api/check-nano-balance`, `/api/receive-nano`, `/api/check-receivables`.
+- `providers.read`: `GET /api/user/provider-keys`.
+- `feedback.write`: `/api/v1/feedback`.
+
+Running a model spends the user's balance, within the spending limits and expiry the user set for the key on the consent screen. OAuth authorization requests must include `api.use`; a request without it is rejected with `invalid_scope`. The public model catalogs (`GET /api/v1/models`, `/api/v1/image-models`, `/api/v1/video-models`, `/api/v1/audio-models`) need no key.
+
+Transition: keys issued before 2026-11-17 were approved while scopes were informational. Until 2027-01-05 a call outside their grant still works and is recorded; from that date they are held to their scopes too. If your app uses balance, usage, deposit or provider-key endpoints, request those scopes and have your users connect again before then. Both dates are in the discovery metadata under `x-nanogpt-scope-enforcement`.
+
+Device login is different: it hands the user's CLI an ordinary NanoGPT API key with the full access of a key created in settings, and its approval page says so. Scopes do not apply to it, or to keys users create themselves.
 
 ## 4. OAuth Key Handoff Shortcut
 

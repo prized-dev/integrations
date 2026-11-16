@@ -1,23 +1,23 @@
 GET https://prized.dev/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:30.999Z
+fetched: 2026-11-16T20:59:00.124Z
 final-url: https://prized.dev/auth.md
 
 HTTP 200
-age: 0
+age: 29
 cache-control: public, max-age=300
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/markdown; charset=utf-8
-date: Thu, 12 Nov 2026 02:37:28 GMT
+date: Mon, 16 Nov 2026 20:58:29 GMT
 referrer-policy: no-referrer
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: Accept
 x-frame-options: DENY
 x-matched-path: /auth.md
-x-vercel-cache: MISS
-x-vercel-id: pdx1::pdx1::l62zb-1794451048716-48a09996b8fb
+x-vercel-cache: HIT
+x-vercel-id: pdx1::pdx1::jkvv5-1794862738012-dbc9e5b3981b
 connection: close
 transfer-encoding: chunked
 
@@ -30,6 +30,7 @@ You are an agent. Prized supports **agentic registration** ([auth.md](https://gi
 - Only for the person you work for, when they ask, with their own address.
 - Get the code from them. Never ask anyone else for it, never guess it: five tries end it.
 - The claim token is the API key. It is a credential: never print, commit or log it. Keep it where your person says. Never put it in process arguments or shell command strings: from a shell, run the three commands in From a shell below, which keep it out of both and out of your own output.
+- Before you register, tell your person the key will be held to $30 of usage in total unless they change it (Spend cap, below).
 - Never quote a price, credit or runway from memory. Read them (Prices, below).
 - Call https://api.prized.dev exactly as written here. Keep the explicit `--url` when logging in: it is the API that issued this key, not the web origin or a previously configured control plane.
 
@@ -88,6 +89,7 @@ Content-Type: application/json
 
 - `agent_name` (optional): what you are called, letters and spaces only, up to 40. This is a self-reported key label, not a verified identity. The code email never displays it and warns that Prized has not verified which app made the request.
 - `person_name` (optional): your person's name, if you know it. The new account is named after it.
+- `requested_spend_cap` (optional): a lower cap, if your person wants one: `{"amount": {"currency": "USD", "value": "5.00"}, "period": "total"}`, or `"period": "day"` for a cap per UTC day on top of the total. A total above $30 stays $30. Anything else is ignored.
 
 The answer, the same whether or not the address has an account:
 
@@ -96,9 +98,12 @@ The answer, the same whether or not the address has an account:
   "id": "reg_…",
   "type": "service_auth",
   "scopes": {"post_claim": ["boxes:write", "sandboxes:write", "workspace:read"]},
-  "claim": {"token": "dcp_…", "expires_at": "…", "url": "https://api.prized.dev/api/v1/agent/identity/claim", "attempt": {"expires_at": "…"}}
+  "claim": {"token": "dcp_…", "expires_at": "…", "url": "https://api.prized.dev/api/v1/agent/identity/claim", "attempt": {"expires_at": "…"}},
+  "limits": {"spend": {"cap": {"currency": "USD", "value": "30.00"}, "spent": {"currency": "USD", "value": "0.00"}, "period": "total", "resets_at": null}, "spend_caps": […]}
 }
 ```
+
+`limits.spend_caps` lists every cap the key will carry. If you sent `requested_spend_cap`, check it is there, no higher than you asked, and tell your person if it is not.
 
 Prized has emailed the address a 6-digit code (there is no page to send your person to). Tell your person:
 
@@ -129,11 +134,12 @@ The answer:
   "key": {"name": "Agent: Claude Code", "access": {"boxes": "write", "sandboxes": "write", "secrets": "none", "workspace": "read"}, "expires_at": "…"},
   "workspace": {"id": "…", "name": "…"},
   "free_credit": true,
-  "billing_url": "https://prized.dev/dashboard/billing"
+  "billing_url": "https://prized.dev/dashboard/billing",
+  "limits": {"spend": {…}, "spend_caps": […]}
 }
 ```
 
-The account now exists, in a workspace of its own, and the key works. `free_credit` says whether this call granted the free credit (one per inbox, one a day per email domain or mail server, and a daily total for all agent sign-ups). An account made without it does not get it later; a plan funds it. If the address already had an account, the answer is `409 sign_in_required` and no key is made.
+The account now exists, in a workspace of its own, and the key works. `free_credit` says whether this call granted the free credit (one per inbox, at most 3 credited new accounts a day per network, at most one a day per email domain or mail server, for an address at a domain of its own, and at most 5 agent sign-ups in each 24-hour window, counted across all agents). An account made without it does not get it later; a plan funds it. If the address already had an account, the answer is `409 sign_in_required` and no key is made.
 
 ## Step 5. Exchange the assertion (optional)
 
@@ -154,11 +160,21 @@ From a shell, the last command in From a shell saved it. Otherwise, to save the 
 
 Once the key works, if you are not using the Prized skill and have not offered it yet, ask your person if you may install it, with the line at the end of From a shell, above.
 
+## Spend cap
+
+Every key made this way may spend $30 in total (or what `requested_spend_cap` set), for everything it makes, however it is paid for: the free credit, a top-up or a plan. Only your person, signed in at https://prized.dev/dashboard/workspace/api-keys, raises it; paying never does.
+
+- `GET https://api.prized.dev/api/v1/agent/limits` with the key answers `{"limits": {"spend": {"cap", "spent", "period", "resets_at"}, "spend_caps": […]}}`.
+- At the cap, a start answers `402 spend_cap_reached` with `billing.url` (the page where your person raises it), `billing.needed` and `limits`, and what the key made pauses: nothing is deleted. Tell your person and send them `billing.url`; do not retry, and never try to get around it with another key.
+- `403 spend_cap_scope`: a capped key starts and changes only what it made. Ask your person about the rest.
+
 ## Prices
 
 Read them, never recall them: https://prized.dev/pricing.md (every box size and sandbox rate) and https://prized.dev/docs/billing.md for prices; `billing` in `GET /api/v1/me` for the balance and runway. Refusals carry their numbers in micro-dollars (`1000000` is $1).
 
 A refusal money can lift (`insufficient_balance`, `paid_balance_required`, `template_needs_payment`, a sandbox free-tier limit, `tier_unavailable`, `box_limit`, a GPU size's `plan_required`, an empty balance stopping a box) says in its `message` what lifts it and links the Billing page, and carries `billing`: `reason` (`credit_exhausted`: the balance is spent or short; `plan_required`: it needs a plan or paid credit), `fix` (`top_up`, `plan` or `payment_method`), `price` (the smallest purchase that lifts it, `period` `once` or `month`), `needed` (the money short, when known), `limit`, `url` (the Billing page, where your person pays), `docs` and `pricing_uri`. Amounts there are `{"currency": "USD", "value": "10.00"}`. Tell your person what `fix` and `price` say; never pay or pick a plan yourself.
+
+The authorization server metadata (Step 1) says the same for tools in `agent_auth.billing`, which follows the spend limits extension to auth.md (https://github.com/prized-dev/integrations/blob/auth-md-spend-limits/auth-md-spend-limits/README.md, version `0.1`): `pricing_uri`, the price list above, and `trial`: the free credit, no card, once per account. Not every agent sign-up gets it: at most 5 agent sign-ups in each 24-hour window, counted across all agents, and within the other limits in Step 4. `free_credit` in the claim's answer says whether this account did; `default_spend_cap`, the cap every key made this way gets; `limits_endpoint`, where you read your key's limits; and `manage_uri`, where your person changes them (Spend cap, above). Within its cap, your key draws on the workspace's balance, which holds the free credit and whatever your person pays in. Use past the balance bills to your person's card only where they set that up at the Billing page (overage on a plan; on a deal, pay as you go or a plan started in the month after it ends: https://prized.dev/docs/billing.md).
 
 ## Revocation
 
@@ -175,6 +191,8 @@ POST `token=<key>` (form-encoded) to the `revocation_endpoint`, https://api.priz
 | `rate_limit_exceeded` | Wait for `Retry-After`. |
 | `mail_unavailable` | The code was not sent. Try again in a minute. |
 | `verification_required` | Complete the claim first. |
+| `spend_cap_reached` | The key is at its spend cap: send your person `billing.url`. Only they raise it. |
+| `spend_cap_scope` | A capped key starts and changes only what it made: ask your person. |
 | `invalid_user_code` | Ask your person to read the 6 digits again; `tries_left` says what is left. |
 | `too_many_attempts` | The emailed code is still live: ask your person for it. Prized sends one code per claim. |
 | `claim_expired` | Older than 15 minutes, or tried five times: register again for a new code (from a shell, delete `~/.prized-signup.json` first). |

@@ -1,10 +1,10 @@
 GET https://api.postmarkapp.com/.well-known/oauth-authorization-server
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:13.673Z
+fetched: 2026-11-16T20:59:44.058Z
 final-url: https://api.postmarkapp.com/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:38:12 GMT
+date: Mon, 16 Nov 2026 20:59:42 GMT
 content-type: text/html; charset=utf-8
 content-length: 1923
 connection: close

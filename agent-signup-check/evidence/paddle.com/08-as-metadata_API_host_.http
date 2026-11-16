@@ -1,10 +1,10 @@
 GET https://api.paddle.com/.well-known/oauth-authorization-server
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:46.718Z
+fetched: 2026-11-16T21:00:21.886Z
 final-url: https://api.paddle.com/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:38:44 GMT
+date: Mon, 16 Nov 2026 21:00:20 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
@@ -16,7 +16,7 @@ cross-origin-resource-policy: same-site
 permissions-policy: accelerometer=(),ambient-light-sensor=(),autoplay=(),battery=(),camera=(),display-capture=(),document-domain=(),encrypted-media=(),fullscreen=(),gamepad=(),geolocation=(),gyroscope=(),layout-animations=(self),legacy-image-formats=(self),magnetometer=(),microphone=(),midi=(),oversized-images=(self),payment=(),picture-in-picture=(),publickey-credentials-get=(),screen-wake-lock=(),speaker-selection=(),sync-xhr=(self),unoptimized-images=(self),unsized-media=(self),usb=(),web-share=(),xr-spatial-tracking=()
 pragma: no-cache
 referrer-policy: no-referrer
-request-id: f6b74cbd-8ea2-4ff7-b9a5-7664e65a59f5
+request-id: 7095ca62-9fc8-4484-9123-5f78d1927831
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-content-type-options: nosniff
 x-frame-options: deny
@@ -25,6 +25,6 @@ x-robots-tag: noindex, nofollow
 cf-cache-status: DYNAMIC
 content-encoding: br
 server: cloudflare
-cf-ray: a592298a9b7a503f-PDX
+cf-ray: a5b96cb27da40ba9-PDX
 
-{"error":{"type":"request_error","code":"invalid_url","detail":"URL called is invalid.","documentation_url":"https://developer.paddle.com/v1/errors/shared/invalid_url"},"meta":{"request_id":"f6b74cbd-8ea2-4ff7-b9a5-7664e65a59f5"}}
+{"error":{"type":"request_error","code":"invalid_url","detail":"URL called is invalid.","documentation_url":"https://developer.paddle.com/v1/errors/shared/invalid_url"},"meta":{"request_id":"7095ca62-9fc8-4484-9123-5f78d1927831"}}

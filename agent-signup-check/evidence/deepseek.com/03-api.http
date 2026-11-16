@@ -1,21 +1,23 @@
 GET https://api.deepseek.com/models
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:23.005Z
+fetched: 2026-11-16T20:58:52.806Z
 final-url: https://api.deepseek.com/models
 
 HTTP 401
-content-length: 31
+content-type: application/json
+transfer-encoding: chunked
 connection: close
-date: Thu, 12 Nov 2026 02:37:19 GMT
-server: elb
-vary: origin, access-control-request-method, access-control-request-headers
-access-control-allow-credentials: true
-x-ds-trace-id: 3d0fdd001a1bc41407dbc5340327dded
-strict-transport-security: max-age=31536000; includeSubDomains; preload
+date: Mon, 16 Nov 2026 20:58:47 GMT
 x-content-type-options: nosniff
+server: elb
+vary: accept-encoding,origin, access-control-request-method, access-control-request-headers
+content-encoding: br
+access-control-allow-credentials: true
+x-ds-trace-id: d6f1aa470fdab6a10643c45ffca77e59
+strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-cache: Error from cloudfront
-via: 1.1 11017c4db22106ac70e16ce75190a430.cloudfront.net (CloudFront)
-x-amz-cf-pop: HIO52-P4
-x-amz-cf-id: gN1yRRSHLaVoKTf5iAzavyN-6u36QknlAuigHu3I6CN_IsnKBXwcLg==
+via: 1.1 122c3ada56617c24649677d3b2f50200.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P3
+x-amz-cf-id: 2DZOL8Q7iemVp2OtovYUez9HUu2VWGCHJCAgI6QsdGU3-J1hXTQFgg==
 
-Authentication Fails (governor)
+{"error":{"message":"Authentication Fails (governor) (request_id: 2f5b28f9-40cd-43c9-b060-9bfff6bfc70a)","type":"authentication_error","param":null,"code":"invalid_request_error"}}

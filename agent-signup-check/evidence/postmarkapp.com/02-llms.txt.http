@@ -1,21 +1,21 @@
 GET https://postmarkapp.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:13.673Z
+fetched: 2026-11-16T20:59:44.058Z
 final-url: https://postmarkapp.com/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:38:10 GMT
+date: Mon, 16 Nov 2026 20:59:39 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 content-encoding: gzip
-etag: W/"6af4ec5b-7088"
-last-modified: Wed, 11 Nov 2026 22:29:47 GMT
+etag: W/"6af5ffc2-7088"
+last-modified: Thu, 12 Nov 2026 18:04:50 GMT
 strict-transport-security: max-age=2592000
 cf-cache-status: DYNAMIC
 vary: accept-encoding
 server: cloudflare
-cf-ray: a59228affb88c12a-PDX
+cf-ray: a5b96bb64bc7efde-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Postmark

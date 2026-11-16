@@ -1,6 +1,6 @@
 {
  "site": "steel.dev",
- "checkedAt": "2026-11-12T02:38:24.400Z",
+ "checkedAt": "2026-11-16T20:59:59.575Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
@@ -55,7 +55,7 @@
    "name": "Docs in Markdown",
    "url": "https://steel.dev/llms.txt",
    "heading": "# Steel",
-   "bytes": 25597,
+   "bytes": 9427,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -68,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 135,
+   "ms": 134,
    "redirects": 0
   },
   {
@@ -78,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 66,
+   "ms": 96,
    "redirects": 0
   },
   {
@@ -88,7 +88,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 358,
+   "ms": 274,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 50,
+   "ms": 95,
    "redirects": 0
   },
   {
@@ -108,7 +108,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 139,
+   "ms": 210,
    "redirects": 0
   },
   {
@@ -118,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 54,
+   "ms": 59,
    "redirects": 0
   },
   {
@@ -128,7 +128,7 @@
    "status": 421,
    "error": null,
    "contentType": "text/plain",
-   "ms": 132,
+   "ms": 214,
    "redirects": 0
   },
   {
@@ -138,7 +138,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 47,
+   "ms": 58,
    "redirects": 0
   }
  ]

@@ -1,6 +1,6 @@
 GET https://api.northflank.com/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:39.926Z
+fetched: 2026-11-16T20:59:10.102Z
 final-url: https://api.northflank.com/.well-known/oauth-protected-resource
 
 HTTP 404
@@ -17,12 +17,12 @@ content-type: application/json; charset=utf-8
 x-envoy-upstream-service-time: 2
 server: istio-envoy
 accept-ranges: bytes
-date: Thu, 12 Nov 2026 02:37:38 GMT
+date: Mon, 16 Nov 2026 20:59:08 GMT
 via: 1.1 varnish
-x-served-by: cache-bfi-kbfi7400036-BFI
+x-served-by: cache-bfi-kbfi7400069-BFI
 x-cache: MISS
 x-cache-hits: 0
-x-timer: S1794451058.867618,VS0,VE166
+x-timer: S1794862748.091381,VS0,VE148
 vary: Origin, Accept-Encoding
 strict-transport-security: max-age=300
 

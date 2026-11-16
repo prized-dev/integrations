@@ -1,25 +1,25 @@
 GET https://agentmail.to/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:10.820Z
+fetched: 2026-11-16T20:59:42.311Z
 redirect: 307 from https://agentmail.to/llms.txt
 final-url: https://www.agentmail.to/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 21741
+age: 52859
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:38:07 GMT
-etag: W/"1393449cd923f89fdf987f72c6051b09"
+date: Mon, 16 Nov 2026 20:59:39 GMT
+etag: W/"7b38ea07fe8c49413763654732499bbf"
 link: </openapi.json>; rel="service-desc", </docs>; rel="service-doc", </llms.txt>; rel="https://llmstxt.org", </.well-known/api-catalog>; rel="api-catalog"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::l62zb-1794451087964-3546a56eedc3
+x-vercel-id: pdx1::xj6jc-1794862779334-819af9e39f67
 connection: close
 transfer-encoding: chunked
 
@@ -28,7 +28,7 @@ transfer-encoding: chunked
 # AgentMail is the first email provider built for AI agents.
 # The free tier includes 3 inboxes and 3,000 emails per month,
 # no credit card required. Sign-up works for agents (API below)
-# and humans (https://console.agentmail.to).
+# and humans (https://console.agentmail.to/?utm_source=llms_txt&utm_medium=agent_doc).
 #
 # AgentMail is at agentmail.to (API: api.agentmail.to, docs: agentmail.to/docs).
 # AgentMail is not affiliated with AgentMailr (agentmailr.com) or theagentmail.net.
@@ -42,7 +42,7 @@ transfer-encoding: chunked
 #
 #         curl -X POST https://api.agentmail.to/v0/agent/sign-up \
 #           -H "Content-Type: application/json" \
-#           -d '{"human_email": "YOUR_DEVELOPERS_EMAIL", "username": "YOUR_AGENT_NAME"}'
+#           -d '{"human_email": "YOUR_DEVELOPERS_EMAIL", "username": "YOUR_AGENT_NAME", "referrer": "llms_txt"}'
 #
 #         This returns an api_key, inbox_id, and organization_id.
 #         The human_email must NOT already be registered with AgentMail,
@@ -56,7 +56,7 @@ transfer-encoding: chunked
 #           -d '{"otp_code": "CODE_FROM_EMAIL"}'
 #
 # Step 2: If sign-up fails (e.g. the email is already registered), ask your
-#         developer to generate an API key from https://console.agentmail.to
+#         developer to generate an API key from https://console.agentmail.to/?utm_source=llms_txt&utm_medium=agent_doc
 #         and set it as AGENTMAIL_API_KEY in your environment.
 #
 # Step 3 (Connect): You now have two ways to use AgentMail — pick one:
@@ -346,6 +346,8 @@ Idempotency: Pass `client_id` (Python) / `clientId` (TypeScript) to all create o
 
 Vertical and outcome pages for building AI agents with AgentMail:
 
+- AI agents for finance operations: keep AP and AR apart: https://www.agentmail.to/use-case/ai-finance-operations-agents-email
+- AI agents for real estate: https://www.agentmail.to/use-case/ai-agents-for-real-estate
 - Mailboxes for research agents, created at spin-up: https://www.agentmail.to/use-case/research-agents-with-their-own-inbox
 - AI support triage that keeps your support@ address: https://www.agentmail.to/use-case/ai-support-triage-agent
 - Shared company mailbox for one agent: https://www.agentmail.to/use-case/ai-agent-that-reads-a-shared-inbox
@@ -487,7 +489,7 @@ Supported pages: /, /pricing, /enterprise, /careers, /blog, /evals, /evals/repor
 ## Links
 
 - Website: https://www.agentmail.to
-- Console: https://console.agentmail.to
+- Console: https://console.agentmail.to/?utm_source=llms_txt&utm_medium=agent_doc
 - GitHub: https://github.com/agentmail-to
 - Skills: https://github.com/agentmail-to/agentmail-skills
 - OpenClaw plugin (ClawHub): https://clawhub.ai/agentmail

@@ -1,6 +1,6 @@
 GET https://daytona.io/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:35.263Z
+fetched: 2026-11-16T20:59:04.439Z
 redirect: 301 from https://daytona.io/llms.txt
 redirect: 308 from https://www.daytona.io/llms.txt
 final-url: https://www.daytona.io/docs/llms.txt
@@ -9,19 +9,18 @@ HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Thu, 12 Nov 2026 02:36:51 GMT
+date: Mon, 16 Nov 2026 20:59:01 GMT
 content-encoding: br
+etag: W/"3771a-1a1e61f9198"
 x-powered-by: Express
 x-frame-options: SAMEORIGIN
 cache-control: public, max-age=0
-last-modified: Wed, 11 Nov 2026 19:48:25 GMT
-etag: W/"37636-1a1cc278728"
+last-modified: Mon, 16 Nov 2026 20:49:51 GMT
 vary: Accept-Encoding
-x-cache: Hit from cloudfront
-via: 1.1 f36cc119cb86b2f70c315ca53fd1b4ee.cloudfront.net (CloudFront)
+x-cache: Miss from cloudfront
+via: 1.1 7f51caabae8141bdcde4283a42be2a56.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: 4HUDIrsCJKyapOPsu6HIF5a8UZpBUpDu7OPZ4V5qhuvOHulIHDXyHg==
-age: 40
+x-amz-cf-id: 1nP9wtrGxrqVJN0OGAV3VWF5ZR1Swn3-BGlO-Jxq-8OJ38aq1Bb2Sg==
 
 # Daytona
 
@@ -2300,42 +2299,42 @@ Full documentation: https://www.daytona.io/docs/llms-full.txt
 - [Reference](https://www.daytona.io/docs/en/ruby-sdk.md#reference)
 - [CLI](https://www.daytona.io/docs/en/tools/cli.md)
 - [Installation](https://www.daytona.io/docs/en/tools/cli.md#installation)
-- [daytona](https://www.daytona.io/docs/en/tools/cli.md#daytona)
-- [daytona archive](https://www.daytona.io/docs/en/tools/cli.md#daytona-archive)
-- [daytona autocomplete](https://www.daytona.io/docs/en/tools/cli.md#daytona-autocomplete)
-- [daytona create](https://www.daytona.io/docs/en/tools/cli.md#daytona-create)
-- [daytona delete](https://www.daytona.io/docs/en/tools/cli.md#daytona-delete)
-- [daytona docs](https://www.daytona.io/docs/en/tools/cli.md#daytona-docs)
-- [daytona exec](https://www.daytona.io/docs/en/tools/cli.md#daytona-exec)
-- [daytona info](https://www.daytona.io/docs/en/tools/cli.md#daytona-info)
-- [daytona list](https://www.daytona.io/docs/en/tools/cli.md#daytona-list)
-- [daytona login](https://www.daytona.io/docs/en/tools/cli.md#daytona-login)
-- [daytona logout](https://www.daytona.io/docs/en/tools/cli.md#daytona-logout)
-- [daytona mcp](https://www.daytona.io/docs/en/tools/cli.md#daytona-mcp)
-- [daytona mcp config](https://www.daytona.io/docs/en/tools/cli.md#daytona-mcp-config)
-- [daytona mcp init](https://www.daytona.io/docs/en/tools/cli.md#daytona-mcp-init)
-- [daytona mcp start](https://www.daytona.io/docs/en/tools/cli.md#daytona-mcp-start)
-- [daytona organization](https://www.daytona.io/docs/en/tools/cli.md#daytona-organization)
-- [daytona organization create](https://www.daytona.io/docs/en/tools/cli.md#daytona-organization-create)
-- [daytona organization delete](https://www.daytona.io/docs/en/tools/cli.md#daytona-organization-delete)
-- [daytona organization list](https://www.daytona.io/docs/en/tools/cli.md#daytona-organization-list)
-- [daytona organization members](https://www.daytona.io/docs/en/tools/cli.md#daytona-organization-members)
-- [daytona organization use](https://www.daytona.io/docs/en/tools/cli.md#daytona-organization-use)
-- [daytona pause](https://www.daytona.io/docs/en/tools/cli.md#daytona-pause)
-- [daytona preview-url](https://www.daytona.io/docs/en/tools/cli.md#daytona-preview-url)
-- [daytona snapshot](https://www.daytona.io/docs/en/tools/cli.md#daytona-snapshot)
-- [daytona snapshot activate](https://www.daytona.io/docs/en/tools/cli.md#daytona-snapshot-activate)
-- [daytona snapshot create](https://www.daytona.io/docs/en/tools/cli.md#daytona-snapshot-create)
-- [daytona snapshot delete](https://www.daytona.io/docs/en/tools/cli.md#daytona-snapshot-delete)
-- [daytona snapshot list](https://www.daytona.io/docs/en/tools/cli.md#daytona-snapshot-list)
-- [daytona snapshot push](https://www.daytona.io/docs/en/tools/cli.md#daytona-snapshot-push)
-- [daytona ssh](https://www.daytona.io/docs/en/tools/cli.md#daytona-ssh)
-- [daytona start](https://www.daytona.io/docs/en/tools/cli.md#daytona-start)
-- [daytona stop](https://www.daytona.io/docs/en/tools/cli.md#daytona-stop)
-- [daytona version](https://www.daytona.io/docs/en/tools/cli.md#daytona-version)
-- [daytona volume](https://www.daytona.io/docs/en/tools/cli.md#daytona-volume)
-- [daytona volume create](https://www.daytona.io/docs/en/tools/cli.md#daytona-volume-create)
-- [daytona volume delete](https://www.daytona.io/docs/en/tools/cli.md#daytona-volume-delete)
-- [daytona volume get](https://www.daytona.io/docs/en/tools/cli.md#daytona-volume-get)
-- [daytona volume list](https://www.daytona.io/docs/en/tools/cli.md#daytona-volume-list)
+- [daytona-v0](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0)
+- [daytona-v0 archive](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-archive)
+- [daytona-v0 autocomplete](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-autocomplete)
+- [daytona-v0 create](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-create)
+- [daytona-v0 delete](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-delete)
+- [daytona-v0 docs](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-docs)
+- [daytona-v0 exec](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-exec)
+- [daytona-v0 info](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-info)
+- [daytona-v0 list](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-list)
+- [daytona-v0 login](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-login)
+- [daytona-v0 logout](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-logout)
+- [daytona-v0 mcp](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-mcp)
+- [daytona-v0 mcp config](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-mcp-config)
+- [daytona-v0 mcp init](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-mcp-init)
+- [daytona-v0 mcp start](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-mcp-start)
+- [daytona-v0 organization](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-organization)
+- [daytona-v0 organization create](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-organization-create)
+- [daytona-v0 organization delete](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-organization-delete)
+- [daytona-v0 organization list](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-organization-list)
+- [daytona-v0 organization members](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-organization-members)
+- [daytona-v0 organization use](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-organization-use)
+- [daytona-v0 pause](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-pause)
+- [daytona-v0 preview-url](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-preview-url)
+- [daytona-v0 snapshot](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-snapshot)
+- [daytona-v0 snapshot activate](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-snapshot-activate)
+- [daytona-v0 snapshot create](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-snapshot-create)
+- [daytona-v0 snapshot delete](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-snapshot-delete)
+- [daytona-v0 snapshot list](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-snapshot-list)
+- [daytona-v0 snapshot push](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-snapshot-push)
+- [daytona-v0 ssh](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-ssh)
+- [daytona-v0 start](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-start)
+- [daytona-v0 stop](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-stop)
+- [daytona-v0 version](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-version)
+- [daytona-v0 volume](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-volume)
+- [daytona-v0 volume create](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-volume-create)
+- [daytona-v0 volume delete](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-volume-delete)
+- [daytona-v0 volume get](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-volume-get)
+- [daytona-v0 volume list](https://www.daytona.io/docs/en/tools/cli.md#daytona-v0-volume-list)
 - [Daytona API Reference](https://www.daytona.io/docs/en/tools/api.md)

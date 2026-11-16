@@ -1,27 +1,26 @@
 GET https://docs.nano-gpt.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:28.510Z
+fetched: 2026-11-16T20:58:57.964Z
 final-url: https://docs.nano-gpt.com/llms.txt
 
 HTTP 200
-age: 2838
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a592279d7e23c36d-PDX
+cf-ray: a5b96aa09d9b0eda-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:37:25 GMT
-etag: W/"_8uDExuFOciSHVCh0ogEevr7OERuK5gPwY_PTl5ELMU"
+date: Mon, 16 Nov 2026 20:58:55 GMT
+etag: W/"bcPKdvFgvGkHHuGIuwWYhW--MN9iN1HcZ4ks9_pIHSA"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4111
+x-mintlify-client-version: 0.0.4149
 x-vercel-cache: REVALIDATED
-x-vercel-id: pdx1:pdx1:iad1::iad1::dfwb9-1794451045960-b33ebdad4dd1
+x-vercel-id: pdx1:gru1:iad1::iad1::tlwfb-1794862735419-14bd93342fe7
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_DqYu5MPb49gWBBbUGgpHQUmCHY3P
+x-version: dpl_4D8r1dHg6bQcRuBgQyL3z9waJJtn
 connection: close
 transfer-encoding: chunked
 
@@ -111,6 +110,7 @@ transfer-encoding: chunked
 - [Streaming Protocol (SSE)](https://docs.nano-gpt.com/api-reference/miscellaneous/streaming-protocol.md): How NanoGPT streams responses over Server-Sent Events across chat completions, messages, and responses.
 - [Compressed Request Bodies](https://docs.nano-gpt.com/api-reference/miscellaneous/request-compression.md): Send gzip, deflate, or Brotli compressed JSON to the text APIs for faster uploads
 - [Tool Calling Diagnostics](https://docs.nano-gpt.com/api-reference/miscellaneous/tool-calling-diagnostics.md): Opt in to share a failed tool-calling turn with NanoGPT support
+- [Prompt Metadata in Downloaded Images](https://docs.nano-gpt.com/api-reference/miscellaneous/image-prompt-metadata.md): Opt in to write the prompt and settings into images you download from the NanoGPT web app
 - [Hosted tool search](https://docs.nano-gpt.com/api-reference/miscellaneous/hosted-tool-search.md): Let compatible models discover relevant functions from large deferred tool catalogs on demand.
 - [Advisor](https://docs.nano-gpt.com/api-reference/miscellaneous/advisor.md): Let one model consult a different second model before producing its final answer.
 - [Video Input](https://docs.nano-gpt.com/api-reference/miscellaneous/video-input.md): Send videos to compatible text and multimodal models through Chat Completions, Responses, or Messages.

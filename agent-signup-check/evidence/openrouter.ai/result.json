@@ -1,6 +1,6 @@
 {
  "site": "openrouter.ai",
- "checkedAt": "2026-11-12T02:37:18.549Z",
+ "checkedAt": "2026-11-16T20:58:46.921Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 2,
@@ -59,7 +59,7 @@
    "name": "Docs in Markdown",
    "url": "https://openrouter.ai/llms.txt",
    "heading": "# OpenRouter",
-   "bytes": 11728,
+   "bytes": 11593,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -72,7 +72,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 153,
+   "ms": 227,
    "redirects": 0
   },
   {
@@ -82,7 +82,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 111,
+   "ms": 185,
    "redirects": 0
   },
   {
@@ -92,7 +92,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 29,
+   "ms": 30,
    "redirects": 0
   },
   {
@@ -102,7 +102,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 254,
+   "ms": 281,
    "redirects": 0
   },
   {
@@ -112,7 +112,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 264,
+   "ms": 245,
    "redirects": 0
   },
   {
@@ -122,7 +122,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 60,
+   "ms": 331,
    "redirects": 0
   }
  ]

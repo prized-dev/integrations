@@ -1,18 +1,18 @@
 GET https://prized.dev/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:30.999Z
+fetched: 2026-11-16T20:59:00.124Z
 final-url: https://prized.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 2837
+age: 28
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:37:29 GMT
-etag: W/"fba4cf091177514a7414d3f5c3b0740e"
+date: Mon, 16 Nov 2026 20:58:58 GMT
+etag: W/"d949e5020a29893c3bccb9202a9abb0e"
 referrer-policy: no-referrer
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -20,7 +20,7 @@ vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-pre
 x-frame-options: DENY
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::l7945-1794451049253-71cb0d54102d
+x-vercel-id: pdx1::hkzf5-1794862738380-d05a853d3666
 connection: close
 transfer-encoding: chunked
 
@@ -180,8 +180,8 @@ over 1 MB and gets cut short by tools that stop near 100 KB.
 - [Open in Prized](https://prized.dev/docs/open-in-prized.md): A link and README badge that opens a public GitHub repository on a Prized box, cloned into ~/code, with Claude Code or Codex started in it.
 - [Moving from Ona (Gitpod)](https://prized.dev/docs/moving-from-ona.md): Use a Prized box as an Ona or Gitpod alternative now that Ona Cloud closed on October 31, 2026: save what you can still reach, turn .gitpod.yml, devcontainer.json, and .ona/config.yaml into a setup script, and run it on a box.
 - [Moving from Jules](https://prized.dev/docs/moving-from-jules.md): Google's Jules runs sessions until November 11, 2026, then goes read-only, and shuts down on December 31. Export your Jules data, then hand Claude Code or Codex a task on a Prized box from your browser, close the tab, and get a pull request back.
-- [Migrate from Conductor Cloud (read-only Nov 13, shuts down Nov 20)](https://prized.dev/docs/moving-from-conductor-cloud.md): Before Conductor Cloud goes read-only on November 13, 2026, save your cloud workspaces, then run Claude Code or Codex on your own Claude or ChatGPT subscription, a git worktree each, on a Prized box that keeps working with your laptop closed.
-- [Run Conductor-style agent tasks from code](https://prized.dev/docs/conductor-api-agent-tasks.md): Your Slack bot or orchestrator created Conductor Cloud workspaces through its API or CLI. Keep the code and swap the calls: a sandbox per task from the Prized Python SDK, or a run in a git worktree on your box with a signed webhook when it ends.
+- [Migrate from Conductor Cloud](https://prized.dev/docs/moving-from-conductor-cloud.md): Save your Conductor Cloud workspaces, then run Claude Code or Codex on your own Claude or ChatGPT subscription, a git worktree each, on a Prized box that keeps working with your laptop closed.
+- [Run Conductor-style agent tasks from code](https://prized.dev/docs/conductor-api-agent-tasks.md): Your Slack bot or orchestrator creates Conductor Cloud workspaces through its API or CLI. Keep the code and swap the calls: a sandbox per task from the Prized Python SDK, or a run in a git worktree on your box with a signed webhook when it ends.
 - [Moving from Runloop](https://prized.dev/docs/moving-from-runloop.md): Use Prized sandboxes as a Runloop alternative: the Prized command for each Runloop devbox call, a short ported script, and what is not on Prized yet.
 - [Moving from E2B](https://prized.dev/docs/moving-from-e2b.md): Run E2B Python and TypeScript code on Prized sandboxes by changing its imports (code that creates sandboxes, runs commands, moves files, pauses and forks), map each E2B call to the Prized API and CLI, and see what works differently and what is not on Prized yet.
 
@@ -216,7 +216,7 @@ over 1 MB and gets cut short by tools that stop near 100 KB.
 - [GitHub Codespaces alternatives](https://prized.dev/docs/codespaces-alternatives.md): Five GitHub Codespaces alternatives for a cloud dev environment (Prized, Coder, DevPod, Google Cloud Workstations, and a VM of your own) with when each fits better and where Codespaces still wins, each fact from the vendor's own pages, checked November 3, 2026.
 - [Gitpod and Ona Cloud alternatives](https://prized.dev/docs/gitpod-ona-alternatives.md): Where to take your environments now that Ona Cloud, formerly Gitpod, closed on October 31, 2026: Prized, Codex Cloud, GitHub Codespaces, Coder and DevPod, with when each fits better, each fact from the vendor's own pages, checked November 3, 2026.
 - [Google Jules alternatives](https://prized.dev/docs/jules-alternatives.md): Google's Jules runs sessions until November 11, 2026, then goes read-only, and shuts down on December 31. Where Jules users are taking their async coding tasks (Google Antigravity's remote agents, GitHub Copilot's cloud agent, Claude Code on the web, Codex Cloud, Cursor Cloud Agents, Devin, OpenHands or a Prized box), with when each fits, from each vendor's own pages, checked November 5, 2026.
-- [Conductor Cloud alternatives (shuts down Nov 20, 2026)](https://prized.dev/docs/conductor-cloud-alternatives.md): Conductor Cloud goes read-only on November 13, 2026 and shuts down on November 20. Where to run your coding agents next (Cloudroom, AQ, Aether, Claude Code on the web, Codex Cloud, Cursor Cloud Agents, Paradev, Emdash or Orca with a machine of your own, your own VM and tmux, or a Prized box), with when each fits, from each vendor's own pages, checked November 4, 2026.
+- [Conductor Cloud alternatives](https://prized.dev/docs/conductor-cloud-alternatives.md): Where to run your coding agents instead of Conductor Cloud (Cloudroom, AQ, Aether, Claude Code on the web, Codex Cloud, Cursor Cloud Agents, Paradev, Emdash or Orca with a machine of your own, your own VM and tmux, or a Prized box), with when each fits, from each vendor's own pages.
 
 ## Sandboxes
 
@@ -224,6 +224,7 @@ over 1 MB and gets cut short by tools that stop near 100 KB.
 - [Sandbox API](https://prized.dev/docs/sandboxes-api.md): Every sandbox route: create, list, pause, resume, fork, delete, and SSH access on the control plane; run commands, read a background command's output as it grows, and move files on the edge; with the fields, states, and error codes.
 - [Sandbox SDK for Python and TypeScript](https://prized.dev/docs/sandboxes-python-typescript.md): Install the Python SDK (pip install prized) or the TypeScript SDK (npm i @prized/sdk) to create sandboxes from your code, run commands, pause them with their memory, and fork a running or paused sandbox into live copies with its memory and processes, on the same account and balance as your Prized boxes.
 - [Use Prized from your coding agent](https://prized.dev/docs/sandboxes-coding-agents.md): Teach Claude Code, Codex, Cursor, or another coding agent to run code in Prized sandboxes: install the Prized skill, or paste a short section into AGENTS.md.
+- [MCP server](https://prized.dev/docs/sandboxes-mcp.md): Give Claude Code, Codex or Cursor its own Linux sandboxes over MCP. No API key needed; your agent signs you up with your email and a 6-digit code.
 - [Run Vercel AI SDK tool calls in a sandbox](https://prized.dev/docs/sandboxes-vercel-ai-sdk.md): Give a Vercel AI SDK agent a runCommand tool: each session gets its own sandbox, the model's commands run there through the Sandbox API, and the sandbox is deleted at the end.
 - [Run a LangChain Deep Agent in a sandbox](https://prized.dev/docs/sandboxes-langchain.md): The langchain-prized package is a sandbox backend for LangChain Deep Agents: the agent's shell commands and file tools run in a Prized sandbox, which is deleted when the agent is done.
 - [Run an OpenAI Agents SDK agent in a sandbox](https://prized.dev/docs/sandboxes-openai-agents.md): The openai-agents-prized package is a sandbox client for the OpenAI Agents SDK: a SandboxAgent's commands and file edits run in a Prized sandbox, which is deleted when the run ends.
@@ -277,3 +278,4 @@ Comparisons, how-tos and news from the Prized blog, newest first; each is an HTM
 
 - [Everything in one file](https://prized.dev/llms-full.txt): every docs page above, in reading order; over 1 MB.
 - [Search](https://prized.dev/api/search?query=sync): GET with `query=<words>`; JSON hits, each with the page URL and the matching heading or paragraph.
+- [Agent sign-up check](https://prized.dev/agent-signup-check.md): seven checks for whether an agent can sign up for, pay for and use a developer platform, with dated results for 100 platforms; `GET https://prized.dev/api/agent-signup-check?domain=<domain>` checks one.

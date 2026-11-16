@@ -1,6 +1,6 @@
 {
  "site": "stripe.com",
- "checkedAt": "2026-11-12T02:38:39.653Z",
+ "checkedAt": "2026-11-16T21:00:15.846Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
@@ -56,7 +56,7 @@
    "name": "Docs in Markdown",
    "url": "https://stripe.com/llms.txt",
    "heading": "# Stripe",
-   "bytes": 69878,
+   "bytes": 69770,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -69,7 +69,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 47,
+   "ms": 95,
    "redirects": 0
   },
   {
@@ -79,7 +79,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 50,
+   "ms": 87,
    "redirects": 0
   },
   {
@@ -89,7 +89,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 45,
+   "ms": 100,
    "redirects": 0
   },
   {
@@ -99,7 +99,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 43,
+   "ms": 103,
    "redirects": 0
   },
   {
@@ -109,7 +109,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 56,
+   "ms": 98,
    "redirects": 0
   }
  ]
