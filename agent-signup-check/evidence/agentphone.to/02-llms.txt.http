@@ -1,11 +1,11 @@
 GET https://agentphone.to/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:21.016Z
+fetched: 2026-11-16T20:59:55.100Z
 redirect: 301 from https://agentphone.to/llms.txt
 final-url: https://agentphone.ai/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:38:18 GMT
+date: Mon, 16 Nov 2026 20:59:52 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -13,35 +13,38 @@ accept-ranges: bytes
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
-etag: "e1b48d0e5c43ed8f69acc98a1365b5fe0e6ab459"
+etag: "ca4a4749d86d7e0bf4a9807ff78b2e3a37280831"
 referrer-policy: strict-origin-when-cross-origin
 server: cloudflare
 vary: Accept-Encoding
 x-content-type-options: nosniff
 x-frame-options: DENY
-x-railway-request-id: -HPiO1jhTIiq23kYyCLmYg
+x-railway-request-id: eOYi097kTPSYBnfPwoOzXw
 x-railway-edge: sjc1
-x-hikari-trace: sjc1.mdvq
+x-hikari-trace: sjc1.hqvw
 cf-cache-status: DYNAMIC
 speculation-rules: "/cdn-cgi/speculation"
-cf-ray: a59228e29a6e5ee5-PDX
+cf-ray: a5b96c030d5fefb0-PDX
 
-# Agent Phone
+# AgentPhone
 
-> Phone numbers for AI agents. Give your AI a real phone number.
+> Phone numbers for AI agents. Give your AI a real phone number for calls, SMS, iMessage, RCS, WhatsApp and Apple Messages for Business.
 
-Agent Phone is an API platform that gives AI agents phone identities. Developers use Agent Phone to provision real US/Canadian phone numbers and connect them to AI agents for SMS and voice communication.
+AgentPhone is an API platform that gives AI agents real phone identities. Developers provision US, Canadian and UK phone numbers, attach them to agents, and handle voice calls and messaging (SMS, MMS, iMessage, RCS, WhatsApp, Apple Messages for Business) through one API and one webhook. Numbers can also be routed to your own voice stack over SIP trunking.
 
 ## Key Features
 
-- **Instant Phone Numbers**: Provision US and Canadian phone numbers via API in seconds
-- **Two Voice Modes**: Built-in AI (zero infrastructure) or Custom Webhook (full control)
-- **Unified Webhook**: One `agent.message` event for both SMS and voice, with full conversation history
+- **Instant Phone Numbers**: Provision US, Canadian and UK numbers via API in seconds; iMessage lines from a warm pool once enabled on your account
+- **Every Channel, One API**: SMS, MMS, iMessage (dedicated lines, available on request), RCS (beta; rich cards, read receipts), WhatsApp (beta), Apple Messages for Business (early access; the verified business chat in Apple Messages, with rich links, pickers, forms and Apple Pay), and voice from the same number set
+- **Unified Webhook**: One `agent.message` event for every channel, with full conversation history and the channel the message actually delivered on
+- **Two Voice Modes**: Built-in AI (zero infrastructure) or Custom Webhook (full control over every response)
+- **SIP Trunking**: Route a number's calls to your own voice agent (ElevenLabs, Retell, LiveKit, Vapi, any SIP endpoint) with digest auth, TLS and REFER transfers
 - **Per-Agent Webhooks**: Route events to different endpoints per agent (overrides the project default)
 - **Stateful Conversations**: Messages and calls auto-thread into durable conversation history with custom metadata
-- **Voice Abstraction**: Simple JSON transcript-to-response loop — no TwiML or WebSocket management
-- **Production-Grade**: HMAC+timestamp signatures, idempotency headers, exponential backoff retries
-- **MCP Server**: Model Context Protocol support for tool-using AI agents (Cursor, Claude Code, Windsurf)
+- **Compliance Handled**: 10DLC and toll-free registration, STOP/HELP recording, and per-sub-account isolation for platforms onboarding many customers
+- **Sub-Accounts**: Create isolated sub-accounts per end customer via API, each with its own numbers, registration and usage
+- **Production-Grade**: HMAC+timestamp signatures, idempotency headers, exponential backoff retries, 99.9% uptime
+- **MCP Server**: Model Context Protocol support for tool-using AI agents (Claude Code, Cursor, Windsurf, ChatGPT)
 
 ## Voice Modes
 
@@ -118,16 +121,23 @@ Claude Code: `claude plugin add agentphone`
 
 ## Pricing
 
-Pay-as-you-go. No monthly subscriptions or per-month allotments — you pay only for what you use.
+Pay-as-you-go. No monthly subscriptions or per-month allotments; you pay only for what you use. Volume pricing is available for platforms onboarding many customers.
 
 - **Signup bonus**: $5.00 in free credit for new accounts (covers the first month of one number plus some usage)
-- **Phone numbers**: $3.00 per number per month
-- **SMS**: $0.02 per outbound message
+- **Phone numbers (US, Canada)**: $3.00 per number per month
+- **Phone numbers (UK)**: $6.00 per number per month
+- **SMS**: $0.02 per segment, inbound and outbound
+- **MMS**: $0.03 per message
+- **RCS**: $0.013 per segment, $0.031 per media message
+- **iMessage lines**: $150 per month inbound-only, $250 per month dedicated outbound; $75 one-time for a specific area code
 - **Voice, webhook mode**: $0.13 per minute
 - **Voice, hosted mode**: $0.22 per minute
+- **SIP trunking**: $0.00374 per inbound minute, $0.0198 per outbound minute
+- **Phone number lookup**: $0.009 per lookup
 - **Call recording** (optional add-on): $5.00 per month
+- **Apple Messages for Business**: billed per monthly active conversation; contact us for rates
 
-Balance is maintained via auto-recharge through Stripe. Unpaid numbers enter a 30-day grace period before being released. Each account has a self-serve number limit (see `numbers.limit` in GET /v1/usage) — contact us to raise it.
+Balance is maintained via auto-recharge through Stripe. Unpaid numbers enter a 30-day grace period before being released. Each account has a self-serve number limit (see `numbers.limit` in GET /v1/usage); contact us to raise it. Full pricing: https://agentphone.ai/pricing
 
 ## API Base URL
 
@@ -194,12 +204,12 @@ When set, the agent's events go here instead of the project default.
 
 ## Webhook Events
 
-All inbound messages (SMS and voice) are delivered as `agent.message` events:
+All inbound messages (SMS, MMS, iMessage, RCS, WhatsApp, Apple Messages for Business and voice transcripts) are delivered as `agent.message` events:
 
 ```json
 {
   "event": "agent.message",
-  "channel": "sms | voice",
+  "channel": "sms | mms | imessage | rcs | whatsapp | amb | voice",
   "agentId": "agent_123",
   "data": { "conversationId": "...", "from": "+1...", "to": "+1...", "message": "..." },
   "conversationState": { ... },

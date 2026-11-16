@@ -1,13 +1,13 @@
 GET https://neon.com/agent-signup-check-no-such-page.md
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:04.021Z
+fetched: 2026-11-16T20:59:35.444Z
 final-url: https://neon.com/agent-signup-check-no-such-page.md
 
 HTTP 404
 cache-control: public, max-age=60, s-maxage=300
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Thu, 12 Nov 2026 02:38:03 GMT
+date: Mon, 16 Nov 2026 20:59:34 GMT
 link: </docs/llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt"
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -15,7 +15,7 @@ vary: Accept
 x-content-source: agent-404
 x-llms-txt: /docs/llms.txt
 x-robots-tag: noindex
-x-vercel-id: pdx1::z7brv-1794451083308-08dfd7225085
+x-vercel-id: pdx1::v9bv4-1794862774308-b8a7a7b1a87e
 connection: close
 transfer-encoding: chunked
 

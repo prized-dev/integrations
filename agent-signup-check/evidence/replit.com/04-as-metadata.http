@@ -1,14 +1,14 @@
 GET https://replit.com/.well-known/oauth-authorization-server
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:00.917Z
+fetched: 2026-11-16T20:59:30.934Z
 final-url: https://replit.com/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:38:00 GMT
+date: Mon, 16 Nov 2026 20:59:30 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a59228721fb75ee6-PDX
+cf-ray: a5b96b788f67c4ac-PDX
 cf-cache-status: DYNAMIC
 cache-control: no-store, max-age=0
 etag: W/"301-Q10XQyJKNlO0h0UojJxfvvozdsA"

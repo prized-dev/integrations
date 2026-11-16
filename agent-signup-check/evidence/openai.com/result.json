@@ -1,6 +1,6 @@
 {
  "site": "openai.com",
- "checkedAt": "2026-11-12T02:37:13.641Z",
+ "checkedAt": "2026-11-16T20:58:42.092Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 2,
  "partial": 0,
@@ -55,7 +55,7 @@
    "name": "Docs in Markdown",
    "url": "https://developers.openai.com/llms.txt",
    "heading": "# OpenAI Developers",
-   "bytes": 6201,
+   "bytes": 6345,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -68,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 222,
+   "ms": 249,
    "redirects": 0
   },
   {
@@ -78,7 +78,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 215,
+   "ms": 353,
    "redirects": 0
   },
   {
@@ -88,7 +88,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 105,
+   "ms": 75,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 56,
+   "ms": 108,
    "redirects": 0
   },
   {
@@ -108,7 +108,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 292,
+   "ms": 138,
    "redirects": 0
   },
   {
@@ -118,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": null,
-   "ms": 94,
+   "ms": 93,
    "redirects": 0
   },
   {
@@ -128,7 +128,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 143,
+   "ms": 185,
    "redirects": 0
   },
   {
@@ -138,7 +138,7 @@
    "status": 404,
    "error": null,
    "contentType": null,
-   "ms": 86,
+   "ms": 105,
    "redirects": 0
   },
   {
@@ -148,7 +148,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 260,
+   "ms": 294,
    "redirects": 0
   }
  ]

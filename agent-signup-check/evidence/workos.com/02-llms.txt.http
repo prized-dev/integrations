@@ -1,16 +1,16 @@
 GET https://workos.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:52.887Z
+fetched: 2026-11-16T21:00:29.900Z
 final-url: https://workos.com/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:38:50 GMT
+date: Mon, 16 Nov 2026 21:00:27 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 content-encoding: gzip
 server: cloudflare
-cf-ray: a59229ad1beb1c37-PDX
+cf-ray: a5b96cdeb9b00ba9-PDX
 
 # WorkOS
 
@@ -28,7 +28,7 @@ cf-ray: a59229ad1beb1c37-PDX
 ## Set up with a coding agent
 
 - [auth.md](https://workos.com/auth.md): Provisioning a temporary WorkOS environment without an account, by CLI or HTTP API, and claiming it later.
-- [AI Installer & CLI](https://workos.com/docs/authkit/cli-installer.md): The `workos` CLI. `npx workos@latest integrate` signs in to a WorkOS account and adds AuthKit to the current project; the CLI also manages resources and installs coding agent skills.
+- [AI Installer & CLI](https://workos.com/docs/authkit/cli-installer.md): The `workos` CLI. `npx workos@latest integrate` adds AuthKit to the current project, provisioning an unclaimed WorkOS environment when no credentials are set; the CLI also manages resources and installs coding agent skills.
 - [WorkOS setup skill](https://workos.com/SKILL.md): A standalone agent skill for setting up WorkOS in an application.
 - [Agent skills index](https://workos.com/.well-known/agent-skills/index.json): WorkOS agent skills, installable with `npx skills add https://workos.com`.
 - [WorkOS MCP server](https://mcp.workos.com/mcp): Hosted MCP endpoint (streamable HTTP, OAuth sign-in) for managing a WorkOS workspace: organizations, users, SSO connections, and more.
@@ -42,6 +42,7 @@ cf-ray: a59229ad1beb1c37-PDX
 - [Guides](https://workos.com/guide/llms.txt): Each guide at https://workos.com/guide/<slug> is available as Markdown with `.md` appended or with an `Accept: text/markdown` header.
 - [Blog posts](https://workos.com/blog/llms.txt): Each post at https://workos.com/blog/<slug> is available as Markdown with `.md` appended or with an `Accept: text/markdown` header.
 - [Changelog entries](https://workos.com/changelog/llms.txt): Each entry at https://workos.com/changelog/<slug> is available as Markdown with `.md` appended or with an `Accept: text/markdown` header.
+- [Product pages](https://workos.com/authkit.md): Each page under Products below, and each page in the comparisons index, is available as Markdown with `.md` appended or with an `Accept: text/markdown` header.
 - [Homepage](https://workos.com/): Served as Markdown for requests with an `Accept: text/markdown` header.
 - [Pricing](https://workos.com/pricing.md): Pricing as Markdown, also served at https://workos.com/pricing for requests with an `Accept: text/markdown` header.
 
@@ -59,17 +60,17 @@ cf-ray: a59229ad1beb1c37-PDX
 
 ## Products
 
-- [AuthKit](https://workos.com/authkit): User management and authentication: email and password, social login, passkeys, MFA, magic auth, and enterprise SSO.
-- [Single Sign-On](https://workos.com/single-sign-on): Enterprise SSO over SAML and OIDC with identity providers through one API.
-- [Directory Sync](https://workos.com/directory-sync): SCIM user and group provisioning from directory providers such as Okta and Microsoft Entra ID.
-- [Admin Portal](https://workos.com/admin-portal): Hosted UI where customers' IT admins verify domains and configure SSO and Directory Sync connections.
-- [Audit Logs](https://workos.com/audit-logs): Event logs of user actions, with export and streaming to SIEM providers.
-- [Role-Based Access Control](https://workos.com/rbac): Roles and permissions, including organization-scoped roles and role assignment from identity provider groups.
-- [Radar](https://workos.com/radar): Real-time detection and blocking of bots, account abuse, and credential theft.
-- [Vault](https://workos.com/vault): Enterprise key management and encrypted storage for tokens, passwords, certificates, files, and other customer data.
-- [Multi-Factor Authentication](https://workos.com/multi-factor-authentication): Second factors such as authenticator apps and SMS through one API.
-- [Secure auth for MCP servers](https://workos.com/mcp): OAuth 2.1 authorization for MCP servers, with scopes and tool permissions.
-- [Pipes](https://workos.com/pipes): Connections to users' third-party accounts such as GitHub, Slack, Google, and Salesforce, with OAuth, credential storage, and token refresh handled by WorkOS.
+- [AuthKit](https://workos.com/authkit.md): User management and authentication: email and password, social login, passkeys, MFA, magic auth, and enterprise SSO.
+- [Single Sign-On](https://workos.com/single-sign-on.md): Enterprise SSO over SAML and OIDC with identity providers through one API.
+- [Directory Sync](https://workos.com/directory-sync.md): SCIM user and group provisioning from directory providers such as Okta and Microsoft Entra ID.
+- [Admin Portal](https://workos.com/admin-portal.md): Hosted UI where customers' IT admins verify domains and configure SSO and Directory Sync connections.
+- [Audit Logs](https://workos.com/audit-logs.md): Event logs of user actions, with export and streaming to SIEM providers.
+- [Role-Based Access Control](https://workos.com/rbac.md): Roles and permissions, including organization-scoped roles and role assignment from identity provider groups.
+- [Radar](https://workos.com/radar.md): Real-time detection and blocking of bots, account abuse, and credential theft.
+- [Vault](https://workos.com/vault.md): Enterprise key management and encrypted storage for tokens, passwords, certificates, files, and other customer data.
+- [Multi-Factor Authentication](https://workos.com/multi-factor-authentication.md): Second factors such as authenticator apps and SMS through one API.
+- [Secure auth for MCP servers](https://workos.com/mcp.md): OAuth 2.1 authorization for MCP servers, with scopes and tool permissions.
+- [Pipes](https://workos.com/pipes.md): Connections to users' third-party accounts such as GitHub, Slack, Google, and Salesforce, with OAuth, credential storage, and token refresh handled by WorkOS.
 
 ## Pricing
 

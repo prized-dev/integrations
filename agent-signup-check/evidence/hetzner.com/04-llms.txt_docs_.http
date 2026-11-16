@@ -1,17 +1,17 @@
 GET https://docs.hetzner.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:02.418Z
+fetched: 2026-11-16T20:59:32.607Z
 final-url: https://docs.hetzner.com/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:37:54 GMT
+date: Mon, 16 Nov 2026 20:59:24 GMT
 content-type: text/plain; charset=UTF-8
 transfer-encoding: chunked
 connection: close
 access-control-allow-origin: *
 cache-control: public, max-age=0
-etag: W/"15d06-1a1cac13ce0"
-last-modified: Wed, 11 Nov 2026 13:17:04 GMT
+etag: W/"15d06-1a1e4c3eadb"
+last-modified: Mon, 16 Nov 2026 14:30:07 GMT
 server: HeRay
 alt-svc: h3=":443"; ma=86400
 heray-cache-status: EXPIRED

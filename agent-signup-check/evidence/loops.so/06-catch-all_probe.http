@@ -1,33 +1,33 @@
 GET https://loops.so/agent-signup-check-no-such-page.md
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:17.324Z
+fetched: 2026-11-16T20:59:48.733Z
 final-url: https://loops.so/agent-signup-check-no-such-page.md
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:38:16 GMT
+date: Mon, 16 Nov 2026 20:59:47 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
 cache-control: public, max-age=0, must-revalidate
 content-security-policy: frame-ancestors 'none'
 framer-site-id: 75c9a5a69d6aa7bde1f186dfc66c01c37bbc2cccde665a6d27b2a178ade0d170
-last-modified: Thu, 12 Nov 2026 02:33:02 GMT
+last-modified: Mon, 16 Nov 2026 19:10:01 GMT
 permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()
 referrer-policy: strict-origin-when-cross-origin
 server: cloudflare
-server-timing: region;desc="us-west-2", cache;desc="not-cached", ssg-status;desc="optimized", version;desc="0882c07", instance;desc="4cb6c78", route;desc="id=POcSwVRxq&locale=default", country;desc="US", ss-only-routes
+server-timing: region;desc="us-west-2", cache;desc="cached", ssg-status;desc="optimized", version;desc="6d4c3c4", instance;desc="0d79371", route;desc="id=POcSwVRxq&locale=default", country;desc="US", ss-only-routes
 strict-transport-security: max-age=31536000
 vary: Accept-Encoding, Accept
 x-content-type-options: nosniff
 x-frame-options: DENY
 cf-cache-status: DYNAMIC
 content-encoding: br
-cf-ray: a59228d73ad6c12a-PDX
+cf-ray: a5b96be528a12eba-LAX
 
 ---
 title: "Loops | Email for modern software companies"
 description: Loops is the email platform for SaaS. Send beautiful marketing, transactional, and lifecycle emails with a powerful API and a delightful editor.
-published: "Nov 12, 2026, 2:32 AM UTC"
+published: "Nov 16, 2026, 7:09 PM UTC"
 ---
 
 404
@@ -57,7 +57,7 @@ This page got lost in the, uh, mail.
 - [Resources](./resources)
 - [Free tools](./tools)
 - [Agents](./agents)
-- [Email](/cdn-cgi/l/email-protection#93e0e6e3e3fce1e7d3fffcfce3e0bde0fc)
+- [Email](/cdn-cgi/l/email-protection#6d1e181d1d021f192d0102021d1e431e02)
 - [LinkedIn](https://www.linkedin.com/company/sendwithloops/)
 - [𝕏](https://twitter.com/loops)
 - [YouTube](https://www.youtube.com/@sendwithloops)

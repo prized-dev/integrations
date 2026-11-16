@@ -1,14 +1,14 @@
 GET https://linear.app/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:51.119Z
+fetched: 2026-11-16T21:00:28.517Z
 final-url: https://linear.app/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:38:48 GMT
+date: Mon, 16 Nov 2026 21:00:25 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a59229a0383bb332-PDX
+cf-ray: a5b96cd37a8f5ecd-PDX
 cf-cache-status: DYNAMIC
 cache-control: private, no-cache, no-store, max-age=0, must-revalidate
 content-encoding: gzip
@@ -16,7 +16,7 @@ server: cloudflare
 vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch, Next-Url, X-Vinext-Interception-Context, X-Vinext-Interception-Id, X-Vinext-Mounted-Slots, X-Vinext-Rsc-Render-Mode, X-Vinext-Rsc-State-Fingerprint, Accept-Encoding
 via: 1.1 google
 alt-svc: h3=":443"; ma=86400
-content-security-policy: default-src 'self' https://static.linear.app https://static.linear.dev; connect-src https://*.ads.linkedin.com 'self' https://o415358.ingest.sentry.io/api/5337513/ https://o415358.ingest.sentry.io/api/4504277957279744/ wss://ornj730p.api.sanity.io/ https://ornj730p.apicdn.sanity.io/ https://*.linear.app https://9RXBCYQ6DV-dsn.algolia.net https://linearstatus.com/ https://statuspage.incident.io/ https://app.posthog.com https://api.github.com/ https://api.openai.com/v1/realtime/calls https://us.api.openai.com/v1/realtime/calls https://eu.api.openai.com/v1/realtime/calls https://raw.githubusercontent.com/ https://www.githubstatus.com/ https://api.status.io/ https://dns.google/ http://127.0.0.1:44450/ http://127.0.0.1:18450/ http://127.0.0.1:33234/ https://api.linear.app https://client-api.linear.app wss://sync.linear.app/ https://*.sandbox.linear.run wss://*.sandbox.linear.run https://storage.googleapis.com/uploads.linear.app/ https://storage.googleapis.com/linear-uploads-europe-west1/ https://storage.googleapis.com/linear-uploads-us-central1/ https://storage.googleapis.com/linear-uploads-c4-us-east4/ https://storage.googleapis.com/imports.linear.app/ https://storage.googleapis.com/linear-imports-europe-west1/ https://storage.googleapis.com/linear-imports-us-central1/ https://storage.googleapis.com/linear-imports-c4-us-east4/ https://storage.googleapis.com/public.linear.app/ https://ornj730p.api.sanity.io/; script-src https://snap.licdn.com 'unsafe-inline' 'self' blob: https://js.stripe.com/v3 https://jobs.ashbyhq.com/Linear/embed https://e.linear.app https://challenges.cloudflare.com/turnstile/ 'wasm-unsafe-eval' https://static.linear.app https://static.linear.dev; worker-src 'self' blob: https://static.linear.app https://static.linear.dev; style-src 'self' 'unsafe-inline' https://static.linear.app https://static.linear.dev; font-src 'self' data: https://static.linear.app https://static.linear.dev; img-src https://*.ads.linkedin.com https://www.linkedin.com 'self' data: blob: https://*.linear.app https://*.googleusercontent.com https://cdn.sanity.io/images/ornj730p/ https://webassets.linear.app https://linear.app/cdn-cgi/imagedelivery/ https://avatars.githubusercontent.com https://i.ytimg.com/vi/ https://avatars.slack-edge.com https://pbs.twimg.com/profile_images/ https://pbs.twimg.com/ext_tw_video_thumb/ https://secure.gravatar.com; frame-ancestors 'self' https://cms.linear.app; frame-src *; media-src blob: https://uploads.linear.app https://client-api.linear.app https://public.linear.app https://imports.linear.app https://static.linear.app https://webassets.linear.app https://cdn.sanity.io/files/ornj730p/ https://video.twimg.com/ext_tw_video/ https://linear.app/static/; base-uri 'self'; report-uri https://api.linear.app/report-violation
+content-security-policy: default-src 'self' https://static.linear.app https://static.linear.dev; connect-src https://*.ads.linkedin.com 'self' https://o415358.ingest.sentry.io/api/5337513/ https://o415358.ingest.sentry.io/api/4504277957279744/ wss://ornj730p.api.sanity.io/ https://ornj730p.apicdn.sanity.io/ https://*.linear.app https://9RXBCYQ6DV-dsn.algolia.net https://linearstatus.com/ https://statuspage.incident.io/ https://app.posthog.com https://api.github.com/ https://api.openai.com/v1/realtime/calls https://us.api.openai.com/v1/realtime/calls https://eu.api.openai.com/v1/realtime/calls https://raw.githubusercontent.com/ https://www.githubstatus.com/ https://api.status.io/ https://dns.google/ http://127.0.0.1:44450/ http://127.0.0.1:18450/ http://127.0.0.1:33234/ https://api.linear.app https://client-api.linear.app wss://sync.linear.app/ https://*.sandbox.linear.run wss://*.sandbox.linear.run https://storage.googleapis.com/uploads.linear.app/ https://storage.googleapis.com/linear-uploads-europe-west1/ https://storage.googleapis.com/linear-uploads-us-central1/ https://storage.googleapis.com/linear-uploads-c4-us-east4/ https://storage.googleapis.com/imports.linear.app/ https://storage.googleapis.com/linear-imports-europe-west1/ https://storage.googleapis.com/linear-imports-us-central1/ https://storage.googleapis.com/linear-imports-c4-us-east4/ https://storage.googleapis.com/public.linear.app/ https://ornj730p.api.sanity.io/; script-src https://snap.licdn.com 'unsafe-inline' 'self' blob: https://js.stripe.com/v3 https://jobs.ashbyhq.com/Linear/embed https://e.linear.app https://challenges.cloudflare.com/turnstile/ 'wasm-unsafe-eval' https://static.linear.app/client/ https://static.linear.app/web/; worker-src 'self' blob: https://static.linear.app/client/ https://static.linear.app/web/; style-src 'self' 'unsafe-inline' https://static.linear.app https://static.linear.dev; font-src 'self' data: https://static.linear.app https://static.linear.dev; img-src https://*.ads.linkedin.com https://www.linkedin.com 'self' data: blob: https://*.linear.app https://*.googleusercontent.com https://cdn.sanity.io/images/ornj730p/ https://webassets.linear.app https://linear.app/cdn-cgi/imagedelivery/ https://avatars.githubusercontent.com https://i.ytimg.com/vi/ https://avatars.slack-edge.com https://pbs.twimg.com/profile_images/ https://pbs.twimg.com/ext_tw_video_thumb/ https://secure.gravatar.com; frame-ancestors 'self' https://cms.linear.app; frame-src *; media-src blob: https://uploads.linear.app https://client-api.linear.app https://public.linear.app https://imports.linear.app https://static.linear.app https://webassets.linear.app https://cdn.sanity.io/files/ornj730p/ https://video.twimg.com/ext_tw_video/ https://raw.githubusercontent.com/ https://linear.app/static/; base-uri 'self'; report-uri https://api.linear.app/report-violation
 referrer-policy: same-origin
 
 # Linear
@@ -44,6 +44,7 @@ Each page on linear.app is also available as Markdown. Add `.md` to the URL (use
 - [/customers](https://linear.app/customers.md)
 - [/customer-requests](https://linear.app/customer-requests.md)
 - [/data](https://linear.app/data.md)
+- [/data/code-review](https://linear.app/data/code-review.md)
 - [/enterprise](https://linear.app/enterprise.md)
 - [/features](https://linear.app/features.md)
 - [/asks](https://linear.app/asks.md)
@@ -108,9 +109,10 @@ Get an overview of Linear's features, integrations, and how to use them.
   - [Project dependencies](https://linear.app/docs/project-dependencies.md)
   - [Project notifications](https://linear.app/docs/project-notifications.md)
   - [Project templates](https://linear.app/docs/project-templates.md)
+  - [Project graph](https://linear.app/docs/project-graph.md)
 - [Initiatives](https://linear.app/docs/initiatives.md)
   - [Sub-initiatives](https://linear.app/docs/sub-initiatives.md)
-- [Initiative and project updates](https://linear.app/docs/initiative-and-project-updates.md)
+- [Updates](https://linear.app/docs/initiative-and-project-updates.md)
 
 ### Issues and cycles
 
@@ -120,7 +122,6 @@ Get an overview of Linear's features, integrations, and how to use them.
   - [Assign and delegate issues](https://linear.app/docs/assigning-issues.md)
   - [Issue templates](https://linear.app/docs/issue-templates.md)
   - [Comments and reactions](https://linear.app/docs/comment-on-issues.md)
-  - [Select issues](https://linear.app/docs/select-issues.md)
   - [Delete and archive issues](https://linear.app/docs/delete-archive-issues.md)
 - [Cycles](https://linear.app/docs/use-cycles.md)
 - [Releases](https://linear.app/docs/releases.md)
@@ -145,14 +146,13 @@ Get an overview of Linear's features, integrations, and how to use them.
 
 - [Dashboards](https://linear.app/docs/dashboards.md)
 - [Insights](https://linear.app/docs/insights.md)
-- [Project graph](https://linear.app/docs/project-graph.md)
-- [Cycle graph](https://linear.app/docs/cycle-graph.md)
 
 ### Working in Linear
 
 - [Inbox](https://linear.app/docs/inbox.md)
 - [Documents](https://linear.app/docs/documents.md)
 - [Pulse](https://linear.app/docs/pulse.md)
+- [My issues](https://linear.app/docs/my-issues.md)
 - [Custom Views](https://linear.app/docs/custom-views.md)
   - [Board layout](https://linear.app/docs/board-layout.md)
   - [Timeline](https://linear.app/docs/timeline.md)
@@ -160,12 +160,11 @@ Get an overview of Linear's features, integrations, and how to use them.
   - [Display options](https://linear.app/docs/display-options.md)
 - [Editor](https://linear.app/docs/editor.md)
 - [Search](https://linear.app/docs/search.md)
-- [My issues](https://linear.app/docs/my-issues.md)
-- [Favorites](https://linear.app/docs/favorites.md)
-- [Notifications](https://linear.app/docs/notifications.md)
 - [Preferences](https://linear.app/docs/account-preferences.md)
-- [Profile](https://linear.app/docs/profile.md)
-- [Security & Access](https://linear.app/docs/security-and-access.md)
+  - [Notifications](https://linear.app/docs/notifications.md)
+  - [Profile](https://linear.app/docs/profile.md)
+  - [Security & Access](https://linear.app/docs/security-and-access.md)
+  - [Favorites](https://linear.app/docs/favorites.md)
 
 ### Integrations
 
@@ -196,18 +195,17 @@ Get an overview of Linear's features, integrations, and how to use them.
   - [Private teams](https://linear.app/docs/private-teams.md)
   - [Sub-teams](https://linear.app/docs/sub-teams.md)
   - [Team pages](https://linear.app/docs/default-team-pages.md)
-- [Login methods](https://linear.app/docs/login-methods.md)
-- [Invite members](https://linear.app/docs/invite-members.md)
 - [Members and roles](https://linear.app/docs/members-roles.md)
-- [SAML](https://linear.app/docs/saml-and-access-control.md)
-- [SCIM](https://linear.app/docs/scim.md)
+  - [Invite members](https://linear.app/docs/invite-members.md)
 - [API and Webhooks](https://linear.app/docs/api-and-webhooks.md)
-- [Third-Party App Approvals](https://linear.app/docs/third-party-application-approvals.md)
 - [Security](https://linear.app/docs/security.md)
-- [Audit log](https://linear.app/docs/audit-log.md)
+  - [Login methods](https://linear.app/docs/login-methods.md)
+  - [SAML](https://linear.app/docs/saml-and-access-control.md)
+  - [SCIM](https://linear.app/docs/scim.md)
+  - [Third-Party App Approvals](https://linear.app/docs/third-party-application-approvals.md)
+  - [Audit log](https://linear.app/docs/audit-log.md)
 - [Billing and plans](https://linear.app/docs/billing-and-plans.md)
-- [AI Credits](https://linear.app/docs/ai-credits.md)
-  - [Usage & limits](https://linear.app/docs/usage-and-limits.md)
+  - [AI Credits](https://linear.app/docs/ai-credits.md)
 - [Exporting Data](https://linear.app/docs/exporting-data.md)
 
 ### Importers

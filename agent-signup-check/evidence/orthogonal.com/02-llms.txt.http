@@ -1,6 +1,6 @@
 GET https://orthogonal.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:40.722Z
+fetched: 2026-11-16T21:00:17.765Z
 redirect: 307 from https://orthogonal.com/llms.txt
 final-url: https://www.orthogonal.com/llms.txt
 
@@ -10,7 +10,7 @@ cache-control: public
 content-encoding: br
 content-security-policy-report-only: default-src 'self'; script-src 'self' 'unsafe-inline' https://clerk.orthogonal.com https://challenges.cloudflare.com https://*.protect.clerk.com https://connect-js.stripe.com https://js.stripe.com https://www.googletagmanager.com https://app.chatwoot.com https://vercel.live; style-src 'self' 'unsafe-inline' https://vercel.live; img-src 'self' data: blob: https://img.clerk.com https://*.stripe.com https://www.googletagmanager.com https://*.google-analytics.com https://models.dev https://vercel.live https://vercel.com; font-src 'self' https://vercel.live https://assets.vercel.com; connect-src 'self' https://clerk.orthogonal.com https://*.protect.clerk.com:* https://www.googletagmanager.com https://*.google-analytics.com https://*.google.com https://vercel.live wss://ws-us3.pusher.com; frame-src 'self' https://challenges.cloudflare.com https://*.protect.clerk.com https://connect-js.stripe.com https://js.stripe.com https://app.chatwoot.com https://vercel.live https://trytako.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; report-uri /csp-reports
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:38:37 GMT
+date: Mon, 16 Nov 2026 21:00:14 GMT
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -20,44 +20,76 @@ x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /llms.txt
 x-vercel-cache: MISS
-x-vercel-id: pdx1::cle1::cspwr-1794451117548-52dbf8e9fd30
+x-vercel-id: pdx1::cle1::jxmhx-1794862814389-f9322a6e950b
 connection: close
 transfer-encoding: chunked
 
 ---
 name: orthogonal
-version: 1.6.0
 description: >-
   Discover and call verified APIs for web search, scraping, enrichment, data
   retrieval, and other external capabilities through one catalog and one
   balance. Use when a task needs fresh or structured data that the user's
   existing tools do not provide.
-homepage: https://www.orthogonal.com
+metadata:
+  version: "2.1.1"
+  homepage: "https://www.orthogonal.com"
 ---
 
 # Orthogonal
 
-Orthogonal gives agents one interface to discover, call, and pay for a catalog of verified APIs. The same catalog is available through the CLI, MCP server, TypeScript SDK, and REST API.
+Orthogonal gives agents one interface to discover, call, and pay for a catalog of verified APIs: the CLI, the MCP server, the TypeScript SDK, and the REST API all reach the same catalog and the same balance.
 
 ## When to use Orthogonal
 
 Use Orthogonal when a task needs an external capability such as live web search, scraping, contact or company enrichment, financial data, social data, or another structured API.
 
-Before building a custom scraper, using a generic fetch for structured data, or saying data is inaccessible, search the catalog. If the user already has a dedicated tool, API key, or MCP server for the exact service, use that first; Orthogonal fills gaps rather than replacing their existing setup.
+Before building a custom scraper, using a generic fetch for structured data, or saying data is inaccessible, search the catalog. If the user already has a dedicated tool, API key, or MCP server for the exact service, use that first; Orthogonal fills gaps rather than replacing their setup.
+
+## What's in the catalog
+
+60 verified APIs with 1179 endpoints. The most used, by category (API slugs):
+
+- **People Search**: `apollo`, `icypeas`, `leadsforge`, `fiber`
+- **Company Search**: `apollo`, `tomba`, `leadsforge`, `fiber`
+- **Jobs**: `apollo`, `fiber`, `predictleads`, `litescrape`
+- **Email Finder**: `icypeas`, `tomba`, `fiber`, `findymail`
+- **Web Search**: `serper`, `litescrape`, `linkup`, `tavily`
+- **Scrape**: `scrapecreators`, `litescrape`, `tavily`, `context-dev`
+- **AI Search**: `litescrape`, `linkup`, `tavily`, `andi`
+- **Identity Verification**: `abstractapi`, `didit`, `trestle`
+- **Browser Automation**: `litescrape`, `notte`
+- **Search**: `litescrape`, `airscale`
+- **Dataset**: `coresignal`, `tako`
+- **Communication**: `agentphone`, `agentmail`
+
+Search finds endpoints by what they do, so describe the task, not a provider.
+
+## Set up: pick one path
+
+1. **The user has an account.** Reuse an existing connection (a saved `orth login`, `ORTHOGONAL_API_KEY`, or a connected MCP server). Otherwise connect with the browser handoff: `POST https://www.orthogonal.com/api/agent-auth/start`, show the user the returned `verificationUrl` and `userCode`, and poll `https://www.orthogonal.com/api/agent-auth/poll` with the private `deviceCode` until approved. Save the returned `apiKey` securely and check it with `GET https://api.orthogonal.com/v1/me`. Details: https://www.orthogonal.com/agent-signup.md. Never send an existing customer through signup or ask them to copy a dashboard key when the browser handoff is available.
+2. **No account yet.** Follow https://www.orthogonal.com/agent-signup.md to create one without a password: verify the user's email and phone, and signup returns an API key. Eligible accounts receive a one-time $1.00 starter credit; check `starterCredit.amountUsd` (an ineligible account still gets its key, with $0 and a reason). The offer is one account per phone across human and agent signup; never create more accounts to get around it.
+3. **An MCP client.** Add `https://mcp.orthogonal.com` (below); the client's own OAuth sign-in does the rest, with no key to handle. A host connector that takes only an API key needs its own OAuth support: the browser handoff cannot install a key in it.
+
+A person can also create a key at https://www.orthogonal.com/account/keys.
 
 ## Agent workflow
 
-1. **Discover** — Search with a short description of the capability you need.
-2. **Inspect** — Read the endpoint schema, required parameters, and price. Never guess parameter names.
-3. **Quote when needed** — For dynamic pricing or a potentially large call, estimate the cost before execution.
-4. **Run** — Put inputs in the locations shown by the schema: path, query, or JSON body.
-5. **Verify** — Check the returned result and price. Save binary or large output to a file.
+1. **Discover**: search with a short description of the capability you need.
+2. **Inspect**: read the endpoint's parameters and price. Never guess parameter names.
+3. **Quote (free)**: price the exact request before running it. MCP `quote`, CLI `--dry-run`, or REST `"dryRun": true` on `/run`: no call is made and nothing is charged. Do this whenever the price is dynamic, the request is large, or the user set a budget.
+4. **Run**: put inputs where the schema says: path, query, or JSON body.
+5. **Verify**: check the result and what it cost (`priceCents`, in US cents). Save binary or large output to a file.
 
-For work spanning several sources, split it into focused calls and combine the results. Start with conservative result limits, especially when pricing may scale with volume.
+For work spanning several sources, split it into focused calls and combine the results. Start with small result limits, especially when the price scales with volume.
+
+Each API has its own page and agent reference. For an API slug from search:
+
+- `https://www.orthogonal.com/discover/<api-slug>/skill.md`: every endpoint with its price, parameters, a runnable curl, and a link to the endpoint's own page
+- `https://www.orthogonal.com/publisher/<api-slug>`: the API's page, for the user
+- `https://www.orthogonal.com/api/<api-slug>/<endpoint-id>`: one endpoint's page, where the user can try it (for example https://www.orthogonal.com/api/olostep/c1d05935-0878-4b93-8f11-6b88afdd796b)
 
 ## CLI
-
-Install and authenticate:
 
 ```bash
 npm install -g @orth/cli
@@ -65,51 +97,42 @@ orth login
 orth whoami
 ```
 
-Get an API key from https://www.orthogonal.com/account/keys. For non-interactive environments, set `ORTHOGONAL_API_KEY` instead of running `orth login`.
-
-For an existing account, reuse its connection or use the browser sign-in handoff at https://www.orthogonal.com/agent-signup.md: start a connection with POST https://www.orthogonal.com/api/agent-auth/start, show the returned verificationUrl and userCode, and poll /api/agent-auth/poll with the private deviceCode until approved. Save the returned apiKey securely and verify access before continuing. Never send an existing customer through signup or ask them to copy a dashboard key when browser connection is available. MCP clients should use their native OAuth flow for https://mcp.orthogonal.com. An API-key-only host connector needs its own OAuth support; the API handoff cannot install credentials in that connector automatically.
-
-To create a new agent account without a password, follow https://www.orthogonal.com/agent-signup.md. Verify both email and phone ownership; successful signup returns an API key. Eligible accounts receive a one-time $1 starter credit grant. Check `starterCredit.amountUsd`: an ineligible account still receives its key with a $0 grant and a reason. The offer is limited to one account per phone across human and agent signup. Never create more accounts to bypass this limit.
-
-The core workflow:
+In non-interactive environments set `ORTHOGONAL_API_KEY` instead of running `orth login`.
 
 ```bash
-# Discover matching endpoints
-orth search "company enrichment from domain"
+# Discover
+orth search "scrape a web page"
 
-# Inspect one endpoint's schema and price
-orth api show <api-slug> <path>
+# Inspect one endpoint's parameters and price
+orth api show olostep /v1/scrapes
 
-# Estimate cost without executing
-orth run <api-slug> <path> --dry-run -b '{"key":"value"}'
+# Quote it, free: nothing runs
+orth run olostep /v1/scrapes -X POST -b '{"url_to_scrape":"https://example.com"}' --dry-run
 
-# Execute with query parameters
-orth run <api-slug> <path> -q key=value -q limit=5
-
-# Execute with a JSON body and save the response
-orth run <api-slug> <path> -X POST -b '{"key":"value"}' -o result.json
+# Run it and save the response
+orth run olostep /v1/scrapes -X POST -b '{"url_to_scrape":"https://example.com"}' -o result.json
 ```
 
-Useful commands:
+`orth run` sends GET unless `-X` names the endpoint's method. Pass query parameters as repeated `-q key=value`.
 
 | Command | Purpose |
 |---|---|
-| `orth login [--key <key>]` | Sign in through the browser, or save an API key |
+| `orth login [--key <key>]` | Sign in through the browser, or save an API key (`ORTHOGONAL_API_KEY` needs no login) |
 | `orth logout` | Remove the saved key |
-| `orth whoami [--json]` | Who the key in use belongs to (the saved key, or `ORTHOGONAL_API_KEY`) |
-| `orth search "<need>"` | Find relevant APIs with natural language |
-| `orth api list` | Browse all APIs |
-| `orth api show <slug> [path]` | Inspect endpoints or one endpoint's parameters |
-| `orth run <slug> <path>` | Execute an endpoint |
-| `orth code <slug> <path>` | Generate TypeScript integration code |
-| `orth balance [--json]` | Credits of whoever the key bills (a personal key: your account; an organization key: its shared credits), and where to add more |
+| `orth whoami [--json]` | Who the key in use belongs to |
+| `orth search "<need>" [--limit <n>] [--json]` | Find endpoints in plain words |
+| `orth api list [--json]` | Browse every API |
+| `orth api show <slug> [path] [--json]` | An API's endpoints, or one endpoint's parameters and price |
+| `orth run <slug> <path> [-q k=v] [-b <json>] [-X <method>] [--dry-run] [--raw] [-o <file>]` | Run an endpoint: POST with a body, else GET (`--dry-run` quotes it, free) |
+| `orth code <slug> <path> [--lang typescript\|python\|curl]` | Integration code |
+| `orth balance [--json]` | Credits of whoever the key bills |
 | `orth usage [--limit <n>] [--days <n>] [--json]` | Recent paid calls and total spent |
+| `orth team [--json]` | Teams you signed in to; `orth team use` switches |
+| `orth api request <docsUrl>` | Ask Orthogonal to add an API |
 
-Run `orth <command> --help` for the current flags and syntax.
+These are the commands of `@orth/cli` 0.4.0, the version on npm. Run `orth <command> --help` for every flag.
 
 ## MCP
-
-Connect any MCP-compatible client to:
 
 ```json
 {
@@ -121,40 +144,39 @@ Connect any MCP-compatible client to:
 }
 ```
 
-- `https://mcp.orthogonal.com` signs you in as yourself (OAuth), and your account pays for calls. It also takes an API key through mcp-remote with an `x-api-key` header (setup: https://www.orthogonal.com/docs/mcp/setup); then whoever the key bills pays.
+- `https://mcp.orthogonal.com` signs you in as yourself (OAuth), and your account pays. It also takes an API key through mcp-remote with an `x-api-key` header (setup: https://www.orthogonal.com/docs/mcp/setup); then whoever the key bills pays.
 - `https://mcp.orthogonal.com/org` signs you in for an organization (OAuth only), and that organization pays.
 
 | Connection | Tools |
 |---|---|
 | Every connection | `search`, `get_details`, `quote`, `use`, `integrate`, `batch_use`, `batch_get_details` |
 | OAuth sign-in (`/mcp` or `/org`) | Also `account`, `usage`, `payouts`, `onboarding_tools`, `onboarding` |
-| API key (mcp-remote) | Only the seven API tools. For account, usage, payouts and onboarding, sign in with OAuth |
+| API key (mcp-remote) | Only the 7 catalog tools; sign in with OAuth for the rest |
 
-- `account`: who you are, the organization this connection acts for, your organizations and your role in each, who pays for calls, the credit balance, and links to add credits and to the dashboard.
-- `usage`: recent paid calls and total spent. Input `days` (1-365, default 30) and `limit` (1-100, default 20).
-- `payouts`: a seller organization's payout status, amount owed, earnings and payouts made. On a personal sign-in it answers for your seller organization.
-- `onboarding_tools`: the how-to and every onboarding tool's input schema. Read it before `onboarding`.
-- `onboarding`: runs one onboarding tool: `list_organizations`, `list_requests`, `create_request`, `get_request`, `start_onboarding`, `onboarding_status`, `stop_onboarding`, `get_setup`, `set_base_url`, `set_prices`, `leave_out`, `confirm_setup`, `answer_approval`, `run_checks`, `submit_for_review`, `withdraw_submission`, `resubmit_request`, `cancel_request`, `listing_status`, `start_update`, `discard_update`, plus the setup tools Orth (Orthogonal's onboarding agent) uses, for doing the setup with your own agent.
+`search`, `get_details`, `batch_get_details` and `quote` are free; `use` and `batch_use` (up to 20 calls at once) charge each call's price. OAuth integrations (Gmail, Slack, ...) appear in search and run through `use` at no per-call cost; when one is not connected, `use` returns a link the user must open first.
 
-For API calls, follow the same discover → inspect → quote → run workflow.
+- `account`: who you are, the organization this connection acts for, who pays for calls, the credit balance, and links to add credits.
+- `usage`: recent paid calls and the total spent (`days`, `limit`).
+- `payouts`: a seller organization's payout status, amount owed, earnings and payouts made.
+- `onboarding_tools`: the onboarding guide and every onboarding tool's input schema; read it before `onboarding`.
+- `onboarding`: runs one onboarding tool (below).
 
 ## List your own API
 
-API providers list their API in the dashboard at https://www.orthogonal.com/account/listings, or with their own agent over MCP (an OAuth sign-in; the `onboarding_tools` and `onboarding` tools). Guide: https://www.orthogonal.com/docs/list-your-api
+Providers list an API in the dashboard at https://www.orthogonal.com/account/listings, or with their own agent over an MCP OAuth sign-in (`onboarding_tools`, then `onboarding`). Guide: https://www.orthogonal.com/docs/list-your-api
 
-- An API is published by a seller organization, not a personal account, and its earnings and Stripe payouts go to that organization. A team may list several APIs.
-- The person creates the seller organization in the dashboard (Your listings, then Sell APIs or Both as its purpose); agents cannot create one. If the onboarding tools answer that the person is not an admin of an organization that sells APIs, send them to https://www.orthogonal.com/account/listings.
-- Orthogonal's staff approve the request first; nothing is emailed, so check the status. Then Orth, Orthogonal's onboarding agent, reads the docs and drafts the base URL, endpoints and prices, confirms the setup, the checks make one real call to every endpoint, and the provider submits the tested API for Orthogonal's final review. Orth decides every open choice itself and asks nothing; only adding the key and submitting are the provider's.
+- An API is published by a seller organization, which receives its earnings and Stripe payouts; a team may list several APIs. The person creates the seller organization in the dashboard (Your listings, then Sell APIs or Both); agents cannot. If the tools answer that the person administers no organization that sells APIs, send them to https://www.orthogonal.com/account/listings.
+- Orthogonal's staff approve the request first (nothing is emailed; check the status). Then Orth Agent, Orthogonal's onboarding agent, reads the docs, drafts the base URL, endpoints and prices, confirms the setup and checks every endpoint with one real call. The agent decides every open choice itself and asks nothing; only adding the key and submitting are the provider's.
 
-The agent loop over MCP, through the `onboarding` tool:
+The loop, through the `onboarding` tool:
 
-1. Find the request: `list_requests` shows the organization's request and its `requestId`. With none, run `create_request` { apiName, documentationUrl, useCase? } once.
-2. Check the status: `onboarding_status` with the `requestId`. Read `nextStep`.
-3. Run the step: `nextStep.tool` (its tool and input, with the `requestId`). Submit (`submit_for_review`) only once your user read the final report (`get_setup`) and wants it listed.
-4. Repeat from step 2 until `nextStep.action` is `done` (the API is live, declined or cancelled).
-5. To change a live API: `listing_status` shows its versions; `start_update` opens the next version (`sync: true` has Orth check it against the docs, or `message` says what to change). Buyers keep the live version until Orthogonal accepts the new one; loop from step 2 to submit it. `discard_update` closes the open version and drops its changes; the live version stays.
+1. `list_requests` shows the organization's request and its `requestId`; with none, run `create_request` { apiName, documentationUrl, useCase? } once. With several organizations, `list_organizations` lists them: pass `organizationId`.
+2. `onboarding_status` with the `requestId`; read `nextStep`.
+3. Run `nextStep.tool` with its input. Run `submit_for_review` only once the user read the final report (`get_setup`) and wants it listed.
+4. Repeat from step 2 until `nextStep.action` is `done`.
+5. To change a live API: `listing_status` shows its versions, `start_update` opens the next one (`sync: true` has the agent check it against the docs; `message` says what to change), and buyers keep the live version until Orthogonal accepts the new one. `discard_update` drops an open version.
 
-Never ask for, read, accept or pass the API's key. Only the person adds it, in the dashboard (Add credential securely in Your listings). Payouts are set up in the browser at https://www.orthogonal.com/account/payouts; the `payouts` tool reports their status and the earnings.
+Never ask for, read, accept or pass the API's key: only the person adds it, in the dashboard (Add credential securely). Payouts are set up at https://www.orthogonal.com/account/payouts; the `payouts` tool reports them.
 
 ## SDK
 
@@ -170,53 +192,70 @@ const orth = new Orthogonal({
 });
 
 const result = await orth.run({
-  api: "apollo",
-  path: "/v1/people/search",
-  query: { title: "CTO", limit: 5 },
+  api: "olostep",
+  path: "/v1/scrapes",
+  body: {"url_to_scrape":"https://example.com"},
+  idempotencyKey: crypto.randomUUID(), // one per logical call: a retry bills once
 });
 
-console.log(result.data, result.price);
+console.log(result.data, result.priceCents, result.requestId);
 ```
 
 ## REST API
 
-Base URL: `https://www.orthogonal.com`
-
-Authenticate with `Authorization: Bearer $ORTHOGONAL_API_KEY`.
+Base URL: `https://api.orthogonal.com/v1` · Auth: `Authorization: Bearer $ORTHOGONAL_API_KEY`
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| `POST` | `/v1/search` | Discover APIs using natural language |
-| `POST` | `/v1/details` | Get an endpoint's full schema and price |
-| `GET` | `/v1/list-endpoints` | Browse the complete catalog |
-| `POST` | `/v1/run` | Execute an API call |
-| `POST` | `/v1/integrate` | Generate integration code |
+| `POST` | `/search` | Discover endpoints: `{ prompt, limit? }` |
+| `POST` | `/details` | One endpoint's parameters and price: `{ api, path }` |
+| `GET` | `/list-endpoints` | Browse the catalog (`?limit&offset`) |
+| `POST` | `/run` | Run a call: `{ api, path, method?, query?, body?, dryRun? }` |
+| `POST` | `/integrate` | Integration code for one endpoint |
+| `GET` | `/me` | Who the key belongs to |
+| `GET` | `/credits/balance` | Credit balance of whoever the key bills |
+| `GET` | `/credits/usage` | Recent paid calls (`?limit&days`) |
+| `GET` | `/credits/pricing` | Credit packages and the processing fee |
+| `POST` | `/credits/email-payment-link` | Email a Stripe top-up link |
 
-For machine-readable discovery without authentication:
-
-- `https://www.orthogonal.com/discover` returns the catalog as JSON, including endpoint schemas, pricing, and payment URLs.
-- `https://www.orthogonal.com/openapi.json` returns the catalog as an OpenAPI 3.1 document.
-
-Example:
+Quote, then run (this endpoint is listed at $0.01 a call):
 
 ```bash
 curl -X POST 'https://api.orthogonal.com/v1/run' \
   -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
   -H 'Content-Type: application/json' \
+  -d '{"api":"olostep","path":"/v1/scrapes","body":{"url_to_scrape":"https://example.com"},"dryRun":true}'
+
+curl -X POST 'https://api.orthogonal.com/v1/run' \
+  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -H "Idempotency-Key: $(uuidgen)" \
   -d '{"api":"olostep","path":"/v1/scrapes","body":{"url_to_scrape":"https://example.com"}}'
 ```
 
+A successful run answers `{ "success": true, "priceCents": <US cents>, "requestId": "...", "billing": { ... }, "data": { ... } }`; a dry run answers `"dryRun": true` with `price` ("$0.01") and `priceCents`, and no `data`. For a later page, offset, cursor or poll of a successful run, send `"parentRequestId": "<its requestId>"` with every other parameter unchanged: the call is charged $0 (changed filters start a new billed request; an endpoint that bills every page ignores it and says so).
+
+Without a key, for machine-readable discovery:
+
+- `https://www.orthogonal.com/discover`: the catalog as JSON, with endpoint schemas, prices and payment URLs
+- `https://www.orthogonal.com/openapi.json`: the catalog as an OpenAPI 3.1 document
+- `https://www.orthogonal.com/discover/skill.md`: every verified API, each linking its skill.md
+
 ## Pricing and payments
 
-Calls are metered individually with no subscription or per-provider account. Search and details show endpoint pricing, and run responses include the charged price. Use prepaid credits by default; payable catalog endpoints also support x402 with USDC on Base and MPP with USDC.e on Tempo.
+Calls are metered one by one, with no subscription and no per-provider account. Search and details show each endpoint's price; a run's response includes the price charged.
 
-Do not blindly repeat a paid call after an ambiguous timeout or interrupted response. Check usage first, then retry only when the earlier call is known not to have completed.
+Use prepaid credits by default. A wallet can also pay per call, with no account, through a payment door; the first request answers 402 with the price to pay:
 
-On `/v1/run`, send an `Idempotency-Key` header, one per logical call: a retry with the same key is run and billed once. A 409 `IN_PROGRESS` means the call is still running (retry later with the same key); `ALREADY_PROCESSED` means it completed and was billed (its `requestId` is in the body; the response is not replayed); `RESERVATION_CONFLICT` or `RESERVATION_SETTLED` means use a new key.
+- x402: `https://www.orthogonal.com/pay/<api-slug><path>`, paid in USDC on Base or USDC on Monad. Catalog: https://www.orthogonal.com/pay/catalog.md
+- MPP: `https://www.orthogonal.com/mpp/<api-slug><path>`, paid in USDC.e on Tempo. Catalog: https://www.orthogonal.com/mpp/catalog.md
+- Nanopayments: `https://www.orthogonal.com/np/<api-slug><path>`, paid in USDC in Circle Gateway on Base.
+
+https://www.orthogonal.com/discover lists each endpoint's payment URLs.
+
+Never blindly repeat a paid call after an ambiguous timeout or interrupted response: check usage first, and retry only when the earlier call is known not to have completed. On `/v1/run`, send an `Idempotency-Key` header, one per logical call: a retry with the same key runs and bills once. A 409 `IN_PROGRESS` means the call is still running (retry later with the same key); `ALREADY_PROCESSED` means it completed and was billed (its `requestId` is in the body; the response is not replayed); `RESERVATION_CONFLICT` or `RESERVATION_SETTLED` means use a new key.
 
 ### Check balance and email a Stripe top-up link
-
-Use the API key returned by signup. Check balance and available packages:
 
 ```bash
 curl --fail-with-body --silent --show-error 'https://api.orthogonal.com/v1/credits/balance' \
@@ -224,7 +263,7 @@ curl --fail-with-body --silent --show-error 'https://api.orthogonal.com/v1/credi
 curl --fail-with-body --silent --show-error 'https://api.orthogonal.com/v1/credits/pricing'
 ```
 
-Read the current package price, including its processing fee, and ask the user before requesting a payment email. With their approval, request a link (this example adds $25 of credits and currently costs $26.25 including the 5% fee):
+A credit costs $1.00 plus a 5% processing fee; packages run from 25 credits ($26.25). Read the current package prices and ask the user before requesting a payment email. With their approval, request a link (this adds 25 credits for $26.25):
 
 ```bash
 curl --fail-with-body --silent --show-error \
@@ -234,17 +273,18 @@ curl --fail-with-body --silent --show-error \
   -d '{"credits":25}'
 ```
 
-The endpoint sends the Stripe checkout link only to the account's current verified primary email. Do not supply an email, account ID, organization ID, or redirect URL. It requires a personal API key; organization top-ups use the dashboard.
+The link goes only to the account's current verified primary email: do not supply an email, account ID, organization ID, or redirect URL. It needs a personal API key; organizations top up in the dashboard.
 
-Check `emailSent`, `email`, `totalLabel`, and `checkoutUrl` in the response. If `emailSent` is false, give the user the existing checkout link instead of repeatedly requesting more emails. Requests are limited to one per minute and five per account per day; honor HTTP 429 and do not retry in a loop.
+Check `emailSent`, `email`, `totalLabel`, and `checkoutUrl` in the response. If `emailSent` is false, give the user the existing checkout link instead of requesting more emails. Requests are limited to one per minute and five per account per day; honor HTTP 429 and do not retry in a loop.
 
-Creating a link does not charge a card or add credits. The user completes Stripe checkout; never enter payment details or complete payment on their behalf without explicit authorization. After they confirm payment, check `GET /v1/credits/balance` again. Payment processing can take a moment; avoid rapid polling. Keep API keys and checkout URLs out of shared logs.
+Creating a link charges nothing and adds no credits. The user completes Stripe checkout; never enter payment details or complete payment for them without explicit authorization. After they confirm payment, check `GET https://api.orthogonal.com/v1/credits/balance` again, without rapid polling. Keep API keys and checkout URLs out of shared logs.
 
 ## Links
 
 - API catalog: https://www.orthogonal.com/catalog
 - Documentation: https://www.orthogonal.com/docs
 - Dashboard: https://www.orthogonal.com/account/overview
+- Every API's skill file: https://www.orthogonal.com/discover/skill.md
 - List your API: https://www.orthogonal.com/docs/list-your-api
 
 
@@ -287,11 +327,12 @@ Per-API agent references (one markdown file each):
 - [Linkup](https://www.orthogonal.com/discover/linkup/skill.md): Linkup is a web search engine for AI apps. We connect your AI application to the internet. Our API provides grounding data to enrich your AI’s output and increase its precision, accuracy and factuality.
 - [Litescrape](https://www.orthogonal.com/discover/litescrape/skill.md): Litescrape v3: one API for search engines (Google, Bing, DuckDuckGo, Brave, Yahoo, Yandex, Baidu, Naver), maps and reviews, e-commerce, social media, jobs, real estate and general web page fetch and screenshots, returned as structured JSON.
 - [MiniMax](https://www.orthogonal.com/discover/minimax-08853f/skill.md): MiniMax models: MiniMax-M3 and M2.7 LLMs (1M / 205k context, agentic coding and tool use), speech-2.8 text-to-speech with 300+ voices, and image-01 image generation.
+- [Nano Banana](https://www.orthogonal.com/discover/nano-banana/skill.md): Generate and edit images using Google Gemini native image generation models. Supports text-to-image, image editing, multi-image composition. Two models: gemini-2.5-flash-image (fast) and gemini-3-pro-image-preview (2K/4K with thinking/grounding).
+- [Nano Banana 2](https://www.orthogonal.com/discover/nano-banana-2/skill.md): Generate and edit images using Google Gemini 3.1 Flash Image (Nano Banana 2). Combines Pro-level quality with Flash speed. Advanced world knowledge, subject consistency, precise text rendering, and rapid iteration.
 - [Notte](https://www.orthogonal.com/discover/notte/skill.md): Browser automation API for AI agents. Start browser sessions, run AI agents, scrape webpages, and automate browser tasks with headless Chrome/Firefox. Features include CAPTCHA solving, proxy support, and persistent browser profiles.
 - [Nyne.ai](https://www.orthogonal.com/discover/nyne/skill.md): People and company intelligence platform. Find contacts, enrich profiles, get social media activity, and discover event attendees.
 - [Olostep](https://www.orthogonal.com/discover/olostep/skill.md): Olostep offers AI a way to search the web, extract structured data in real time and build custom research agents.
 - [OpenFunnel](https://www.orthogonal.com/discover/openfunnel/skill.md): GTM intelligence platform. Search companies by traits/signals, enrich accounts with firmographic data, find and enrich people, get account timelines and insights, and deploy signal-monitoring agents.
-- [Openmart](https://www.orthogonal.com/discover/openmart/skill.md): Local business search, enrichment, and lead intelligence. Search 30M+ US/CA/AU businesses by query, tags, location, reviews, ownership type, price tier, revenue. Enrich companies, find decision makers with verified emails and phones, detect tech stacks.
 - [People Data Labs](https://www.orthogonal.com/discover/peopledatalabs/skill.md): Access the world's largest people and company dataset. Enrich, search, and clean person, company, school, location, job title, and IP data.
 - [Precip AI - Hyperlocal Weather Data](https://www.orthogonal.com/discover/precip/skill.md): Precip offers highly accurate, site-specific rainfall accumulation data.
 - [PredictLeads](https://www.orthogonal.com/discover/predictleads/skill.md): Company intelligence API providing job openings, news events, financing events, technology detections, connections, products, and more for any company.
@@ -308,6 +349,6 @@ Per-API agent references (one markdown file each):
 - [Tako](https://www.orthogonal.com/discover/tako/skill.md): Tako is a knowledge search engine that visualizes the world's data. Search with natural language to get interactive knowledge cards with charts, tables, and insights powered by sources like S&P Global, World Bank, and more.
 - [Tavily](https://www.orthogonal.com/discover/tavily/skill.md): Real-time search, extraction, and web crawling through a single, secure API.
 - [Tomba](https://www.orthogonal.com/discover/tomba/skill.md): Email finding and verification API
-- [Trestle](https://www.orthogonal.com/discover/trestle/skill.md): Trestle identity data APIs: validate, verify and enrich phone numbers, emails, addresses and IP addresses. Phone validation (carrier, line type, activity score), caller name (CNAM), caller identification, reverse phone and reverse address lookups, address validation, contact grading for lead quality (Real Contact), identity decision signals for fraud prevention, and live-call phone feedback. Trestle data is not a consumer report and must not be used for FCRA-regulated eligibility decisions.
+- [Trestle](https://www.orthogonal.com/discover/trestle/skill.md): Trestle identity data APIs for lead and phone verification. Real Contact grades the contactability and consistency of a lead's name, phone, email, address and IP address, returning contact grades (A–F), activity scores, name-match indicators and IP trust signals. Phone Validation returns a phone number's carrier, line type, prepaid status, country info and a 0–100 activity score indicating whether the number is active. Trestle data is not a consumer report and must not be used for FCRA-regulated eligibility decisions.
 - [Voygr](https://www.orthogonal.com/discover/voygr/skill.md): Validate whether a business exists at a given address and check if it is currently open or closed.
 - [You.com](https://www.orthogonal.com/discover/you/skill.md): Real-time web search, content extraction, and deep research APIs for AI agents.

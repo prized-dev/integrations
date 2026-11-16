@@ -1,10 +1,10 @@
 GET https://openrouter.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:18.549Z
+fetched: 2026-11-16T20:58:46.921Z
 final-url: https://openrouter.ai/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:37:16 GMT
+date: Mon, 16 Nov 2026 20:58:44 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -20,11 +20,11 @@ vary: User-Agent, RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router
 x-frame-options: SAMEORIGIN
 x-matched-path: /llms.txt
 x-vercel-cache: MISS
-x-vercel-id: pdx1::sfo1::xzsqw-1794451036361-4369d2cb4757
+x-vercel-id: pdx1::sfo1::pt5ml-1794862724380-18089c519b9b
 cf-cache-status: DYNAMIC
 permissions-policy: payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com" "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
 referrer-policy: no-referrer, strict-origin-when-cross-origin
-cf-ray: a59227613c71ef5f-PDX
+cf-ray: a5b96a5b4a99ccd1-PDX
 alt-svc: h3=":443"; ma=86400
 
 # OpenRouter
@@ -121,7 +121,6 @@ Getting started:
 - [spawn-ori-eval skill](https://openrouter.ai/skills/spawn-ori-eval): For coding agents. Read it to run a model eval by handing it to Ori, so the eval is authored and graded on a pinned harness and model rather than one you improvised.
 - [install-ori-harness skill](https://openrouter.ai/skills/install-ori-harness): For coding agents. Read it to install Ori, sign in, run an existing agent CLI through Ori, choose an OpenRouter model, and verify the setup.
 - [Install Ori](https://openrouter.ai/labs/ori/install.sh): `curl -fsSL https://openrouter.ai/labs/ori/install.sh | bash`
-- [Ori Eval docs](https://openrouter.ai/docs/guides/ori/eval.md): Writing `*.eval.ts` files, LLM-as-judge grading, and model bakeoffs.
 - [Ori Harness docs](https://openrouter.ai/docs/guides/ori/harness.md): Installing Ori, signing in, and running each supported agent CLI on OpenRouter.
 
 ## Skills

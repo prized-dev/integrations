@@ -1,6 +1,6 @@
 {
  "site": "fal.ai",
- "checkedAt": "2026-11-12T02:37:28.635Z",
+ "checkedAt": "2026-11-16T20:58:57.950Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
@@ -68,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 131,
+   "ms": 418,
    "redirects": 0
   },
   {
@@ -78,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 84,
+   "ms": 309,
    "redirects": 0
   },
   {
@@ -88,7 +88,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 127,
+   "ms": 120,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 129,
+   "ms": 133,
    "redirects": 0
   },
   {
@@ -108,7 +108,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 135,
+   "ms": 115,
    "redirects": 0
   },
   {
@@ -118,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 154,
+   "ms": 123,
    "redirects": 0
   },
   {
@@ -128,7 +128,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 114,
+   "ms": 182,
    "redirects": 0
   },
   {

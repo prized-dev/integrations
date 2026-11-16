@@ -1,10 +1,10 @@
 GET https://api.together.xyz/v1/models
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:18.575Z
+fetched: 2026-11-16T20:58:46.312Z
 final-url: https://api.together.xyz/v1/models
 
 HTTP 401
-date: Thu, 12 Nov 2026 02:37:16 GMT
+date: Mon, 16 Nov 2026 20:58:43 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -14,7 +14,7 @@ access-control-allow-methods: GET,POST,PATCH
 access-control-allow-origin: *
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a59227601f4611c8-PDX
+cf-ray: a5b96a5878441a0b-PDX
 alt-svc: h3=":443"; ma=86400
 
 Missing API key

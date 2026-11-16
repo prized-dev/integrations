@@ -1,24 +1,24 @@
 GET https://pinecone.io/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:09.291Z
+fetched: 2026-11-16T20:59:39.268Z
 redirect: 308 from https://pinecone.io/llms.txt
 final-url: https://www.pinecone.io/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 8582
+age: 35744
 cache-control: public, max-age=0, s-maxage=43200
 content-disposition: inline
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:38:06 GMT
-etag: W/"b410aa4bb34652dae6d18528810771fc"
+date: Mon, 16 Nov 2026 20:59:36 GMT
+etag: W/"97cbade091d170ff28cae3fc08b6daf4"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::dpgkm-1794451086622-57d71f403710
+x-vercel-id: pdx1::g9qgv-1794862776568-a3e379b0974a
 connection: close
 transfer-encoding: chunked
 
@@ -95,6 +95,7 @@ Pinecone's comparisons with the systems teams usually weigh it against, plus gui
 - [API Rate Limits & Quotas](https://docs.pinecone.io/reference/api/database-limits.md)
 - [Customers](https://www.pinecone.io/customers/)
 - [How Pinecone Works](https://www.pinecone.io/how-pinecone-works/md/)
+- [Pinecone Answers](https://www.pinecone.io/pinecone-answers/md/): Direct answers to the questions people ask most about Pinecone, from pricing and open source to full-text search and pgvector
 - [Learn](https://www.pinecone.io/learn/)
 - [Blog](https://www.pinecone.io/blog/)
 - [Research](https://www.pinecone.io/research/)
@@ -223,6 +224,7 @@ The Pinecone Database API enforces per-project rate limits on read and write req
 
 ## Blog
 
+- [Pinecone integrated embedding now supports Google's Gemini Embedding 2](https://www.pinecone.io/blog/integrated-embedding-google/md/) (2026-11-12)
 - [Pinecone integrated embedding now supports OpenAI's text-embedding-3 models](https://www.pinecone.io/blog/integrated-embedding-openai/md/) (2026-11-10)
 - [Webinar Recap: From Data to Vectors to Context](https://www.pinecone.io/blog/webinar-recap-data-to-vectors-to-context/md/) (2026-11-06)
 - [Introducing pg_pinecone: Open-Source Search for Your Postgres Data](https://www.pinecone.io/blog/introducing-pg-pinecone/md/) (2026-10-27)

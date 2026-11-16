@@ -1,10 +1,10 @@
 GET https://api.cloudinary.com/v1_1/demo/resources/image
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:54.845Z
+fetched: 2026-11-16T21:00:32.176Z
 final-url: https://api.cloudinary.com/v1_1/demo/resources/image
 
 HTTP 401
-date: Thu, 12 Nov 2026 02:38:51 GMT
+date: Mon, 16 Nov 2026 21:00:29 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -16,7 +16,7 @@ referrer-policy: strict-origin-when-cross-origin
 x-permitted-cross-domain-policies: none
 x-xss-protection: 0
 www-authenticate: Basic realm="Cloudinary"
-x-request-id: ffcffb8dd5b2e580b6ee5f5a625c59e6
+x-request-id: 35464534791456fbbb54dd16736eae68
 server: cloudinary
 
 {"error":{"message":"Invalid credentials"}}

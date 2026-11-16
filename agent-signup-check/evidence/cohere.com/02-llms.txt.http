@@ -1,25 +1,25 @@
 GET https://cohere.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:22.048Z
+fetched: 2026-11-16T20:58:51.058Z
 final-url: https://cohere.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 34180
+age: 217744
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:37:19 GMT
+date: Mon, 16 Nov 2026 20:58:47 GMT
 etag: W/"5a96f8ea2888f06636a6bb8b14e76b72"
-last-modified: Wed, 11 Nov 2026 17:07:38 GMT
+last-modified: Sat, 14 Nov 2026 08:29:42 GMT
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains;
 x-content-type-options: nosniff
 x-frame-options: ALLOW-FROM https://www.sanity.io
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::mvg9z-1794451039138-e067b5e60e8b
+x-vercel-id: pdx1::vf944-1794862727534-4df09c81bfe9
 connection: close
 transfer-encoding: chunked
 

@@ -1,14 +1,14 @@
 GET https://api.workos.com/organizations
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:52.887Z
+fetched: 2026-11-16T21:00:29.900Z
 final-url: https://api.workos.com/organizations
 
 HTTP 401
-date: Thu, 12 Nov 2026 02:38:50 GMT
+date: Mon, 16 Nov 2026 21:00:27 GMT
 content-type: application/json; charset=utf-8
 content-length: 26
 connection: close
-cf-ray: a59229af293c613d-PDX
+cf-ray: a5b96ce0cfd2c8da-PDX
 cf-cache-status: DYNAMIC
 etag: W/"1a-pljHtlo127JYJR4E/RYOPb6ucbw"
 server: cloudflare
@@ -27,7 +27,7 @@ x-permitted-cross-domain-policies: none
 x-ratelimit-limit: 500, 500;w=1
 x-ratelimit-remaining: 328
 x-ratelimit-reset: 1
-x-request-id: 9025614c-91f3-4be7-bb29-01aaafc15d20
+x-request-id: c6937fce-9dcf-4808-b42f-e97ddb611573
 x-xss-protection: 0
 
 {"message":"Unauthorized"}

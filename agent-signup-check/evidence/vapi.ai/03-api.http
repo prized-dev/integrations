@@ -1,10 +1,10 @@
 GET https://api.vapi.ai/assistant
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:20.426Z
+fetched: 2026-11-16T20:59:55.640Z
 final-url: https://api.vapi.ai/assistant
 
 HTTP 401
-date: Thu, 12 Nov 2026 02:38:18 GMT
+date: Mon, 16 Nov 2026 20:59:53 GMT
 content-type: application/json; charset=utf-8
 content-length: 83
 connection: close
@@ -14,8 +14,11 @@ content-security-policy: default-src 'self'; script-src 'self' 'unsafe-inline'; 
 x-robots-tag: noindex
 etag: W/"53-4bLEfx0Nw5st8KWWSppmn7TQnU4"
 cf-cache-status: DYNAMIC
+report-to: {"group":"cf-csp-endpoint","max_age":86400,"endpoints":[{"url":"https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=SCRwPiuc0vInadVEXE2aG.cIayi.02ym.G4A0AR2K38-1794862793.5889573-1.0.1.1-dJASgCEOIx9ptfJQ5wLipAUP_BzIbMk47RZJN1NkFsDI2FYRgWT90aMt2A0BTB9JaXwSzRSNm3XXyfJOrT.K_ILYFV9CqPEtfoq2oaSY8QJXdPD0Wkwq5r1jemz6xmMGY4s1J7jR1e9UoqdOyPdJ_3XyTBetEpzBN8gQrRA8bCU"}]}
+reporting-endpoints: cf-csp-endpoint="https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=SCRwPiuc0vInadVEXE2aG.cIayi.02ym.G4A0AR2K38-1794862793.5889573-1.0.1.1-dJASgCEOIx9ptfJQ5wLipAUP_BzIbMk47RZJN1NkFsDI2FYRgWT90aMt2A0BTB9JaXwSzRSNm3XXyfJOrT.K_ILYFV9CqPEtfoq2oaSY8QJXdPD0Wkwq5r1jemz6xmMGY4s1J7jR1e9UoqdOyPdJ_3XyTBetEpzBN8gQrRA8bCU"
+content-security-policy-report-only: script-src 'unsafe-inline' 'unsafe-eval'; report-uri https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=SCRwPiuc0vInadVEXE2aG.cIayi.02ym.G4A0AR2K38-1794862793.5889573-1.0.1.1-dJASgCEOIx9ptfJQ5wLipAUP_BzIbMk47RZJN1NkFsDI2FYRgWT90aMt2A0BTB9JaXwSzRSNm3XXyfJOrT.K_ILYFV9CqPEtfoq2oaSY8QJXdPD0Wkwq5r1jemz6xmMGY4s1J7jR1e9UoqdOyPdJ_3XyTBetEpzBN8gQrRA8bCU; report-to cf-csp-endpoint
 server: cloudflare
-cf-ray: a59228e4ec883d49-PDX
+cf-ray: a5b96c0be82b816e-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"message":"Missing Authorization Header.","error":"Unauthorized","statusCode":401}

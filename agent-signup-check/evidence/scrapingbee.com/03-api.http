@@ -1,17 +1,17 @@
 GET https://app.scrapingbee.com/api/v1/usage
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:34.421Z
+fetched: 2026-11-16T21:00:08.269Z
 final-url: https://app.scrapingbee.com/api/v1/usage
 
 HTTP 400
 server: gunicorn
-date: Thu, 12 Nov 2026 02:38:29 GMT
+date: Mon, 16 Nov 2026 21:00:03 GMT
 content-type: application/json
 content-length: 72
 access-control-allow-origin: *
 spb-cost: 0
 access-control-expose-headers: Spb-cost, Spb-auto-cost, Spb-initial-status-code, Spb-resolved-url, Spb-request-id
-spb-request-id: 8c09f1a0-a4af-46ce-954f-d4fb4a49be33
+spb-request-id: 9af3d26b-7654-4696-944b-93668c9db29a
 permissions-policy: browsing-topics=()
 x-frame-options: SAMEORIGIN
 x-content-type-options: nosniff

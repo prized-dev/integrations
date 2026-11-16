@@ -1,6 +1,6 @@
 GET https://beam.cloud/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:50.948Z
+fetched: 2026-11-16T20:59:21.538Z
 redirect: 307 from https://beam.cloud/llms.txt
 final-url: https://www.beam.cloud/llms.txt
 
@@ -9,12 +9,12 @@ age: 0
 cache-control: public, max-age=0, must-revalidate
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:37:47 GMT
+date: Mon, 16 Nov 2026 20:59:18 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::p5lz6-1794451067757-eb7c98ebe793
+x-vercel-id: pdx1::iad1::vf944-1794862758472-cb5b63401015
 connection: close
 transfer-encoding: chunked
 

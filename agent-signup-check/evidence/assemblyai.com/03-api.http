@@ -1,10 +1,10 @@
 GET https://api.assemblyai.com/v2/transcript
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:32.406Z
+fetched: 2026-11-16T20:59:02.599Z
 final-url: https://api.assemblyai.com/v2/transcript
 
 HTTP 401
-date: Thu, 12 Nov 2026 02:37:29 GMT
+date: Mon, 16 Nov 2026 20:58:59 GMT
 content-type: application/json; charset=UTF-8
 content-length: 60
 connection: close

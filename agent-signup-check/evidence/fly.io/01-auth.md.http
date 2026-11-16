@@ -1,18 +1,18 @@
 GET https://fly.io/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:37.689Z
+fetched: 2026-11-16T20:59:07.152Z
 final-url: https://fly.io/auth.md
 
 HTTP 200
 access-control-allow-origin: *
 cache-control: max-age=0, private, must-revalidate
-content-length: 9951
+content-length: 10066
 content-type: text/markdown; charset=utf-8
-date: Thu, 12 Nov 2026 02:37:33 GMT
-server: Fly/366e4bf88 (2026-10-27)
-x-request-id: GOcruej7Uy8OHiYAARCS
+date: Mon, 16 Nov 2026 20:59:02 GMT
+server: Fly/781f3a6652 (2026-11-10)
+x-request-id: GOiiJ8-w3xNLzIsAAIfS
 via: 1.1 fly.io
-fly-request-id: 01M76SW7DPWWK8KNM4YTDY6Y9P-lax
+fly-request-id: 01M7K2FZTGNWBCQQACVH502C6D-lax
 connection: close
 
 # Authenticating to Fly.io
@@ -141,16 +141,17 @@ would rather not run a command.
 For an MCP client with no local install. Nothing to pre-register:
 
 ```bash
-claude mcp add --transport http sprites https://sprites.dev/mcp
+claude mcp add --transport http sprites https://mcp.fly.io
 ```
 
 The first request comes back `401` with
-`WWW-Authenticate: Bearer resource_metadata="https://sprites.dev/.well-known/oauth-protected-resource"`.
+`WWW-Authenticate: Bearer resource_metadata="https://mcp.fly.io/.well-known/oauth-protected-resource"`.
 Your client follows that to the authorization server, registers itself
 dynamically, and runs the browser flow; the human approves in the browser.
-PKCE `S256` is required. Scopes are `sprites:read` and `sprites:write`, and
-the `refresh_token` grant is supported, so the session outlives the first
-token. Nothing is written to disk and no CLI is involved.
+PKCE `S256` is required. Sprites scopes are `sprites:read` and
+`sprites:write`; the same server offers `fly:*` scopes for the rest of
+Fly.io, and the human picks what to grant. The `refresh_token` grant is
+supported, so the session outlives the first token. Nothing is written to disk and no CLI is involved.
 
 Server card: <https://fly.io/.well-known/mcp/server-card.json>. Other
 clients: <https://fly.io/sprites/ecosystem>.
@@ -230,8 +231,8 @@ Revoke a token you created for a one-off job as soon as the job is done.
 - API catalog (RFC 9727): <https://fly.io/.well-known/api-catalog>
 - Machines API OpenAPI: <https://docs.machines.dev/openapi.json>
 - Agent skills index: <https://fly.io/.well-known/agent-skills/index.json>
-- Sprites MCP, protected resource (RFC 9728): <https://sprites.dev/.well-known/oauth-protected-resource>
-- Sprites MCP, authorization server (RFC 8414): <https://sprites.dev/.well-known/oauth-authorization-server>
+- Sprites MCP, protected resource (RFC 9728): <https://mcp.fly.io/.well-known/oauth-protected-resource>
+- Sprites MCP, authorization server (RFC 8414): issuer `https://fly.io/mcp/oauth`, named by the protected-resource document above
 
 ## Read next
 

@@ -1,24 +1,28 @@
 GET https://scrapingbee.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:34.421Z
+fetched: 2026-11-16T21:00:08.269Z
 redirect: 301 from https://scrapingbee.com/llms.txt
 final-url: https://www.scrapingbee.com/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:38:28 GMT
+date: Mon, 16 Nov 2026 21:00:03 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 access-control-allow-origin: *
 cache-control: public, max-age=0, must-revalidate
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+strict-transport-security: max-age=31536000
+content-security-policy-report-only: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://www.googletagmanager.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://accounts.google.com https://static.cloudflareinsights.com https://code.iconify.design https://cdn.jsdelivr.net https://app.termly.io https://cdn.firstpromoter.com https://bat.bing.com https://app.factors.ai https://static.ads-twitter.com https://www.redditstatic.com https://bzrcdn.openai.com https://www.clarity.ms https://scripts.clarity.ms https://client.crisp.chat https://doew6cwnh4rb0.cloudfront.net https://run.pstmn.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://client.crisp.chat https://accounts.google.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com https://client.crisp.chat; connect-src 'self' https://bat.bing.com https://analytics.twitter.com https://t.co https://analytics.scrapingbee.com https://doew6cwnh4rb0.cloudfront.net https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com https://cloudflareinsights.com https://app.termly.io https://api.factors.ai https://alb.reddit.com https://bzr.openai.com https://bzrcdn.openai.com https://*.clarity.ms https://www.google.com https://www.google.ca https://analytics.google.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://ad.doubleclick.net https://stats.g.doubleclick.net https://googleads.g.doubleclick.net https://www.googleadservices.com https://client.crisp.chat wss://client.relay.crisp.chat; frame-src 'self' https://www.googletagmanager.com https://td.doubleclick.net https://accounts.google.com https://app.termly.io https://www.youtube.com https://www.youtube-nocookie.com https://game.crisp.chat; worker-src 'self' blob:; media-src 'self' https://client.crisp.chat; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
+permissions-policy: camera=(), microphone=(), geolocation=(), usb=(), payment=(), browsing-topics=()
 referrer-policy: strict-origin-when-cross-origin
 x-content-type-options: nosniff
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=XL3rd%2BeNcf0oF8aXx5A6brAdfVtZ9u0%2BYjq6L%2BT%2FXyvJsBm%2BkdIh315aR4l1uWlln%2BdKK%2FV6C8Lw1gBbjBJJ%2Fc%2BV6RaTaZbDnAxFI8E4cL2N7b43CZsoSlAz08LsjbwbM5TcHmTQ"}]}
+x-frame-options: SAMEORIGIN
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=LYUQG4EavyATJD3d%2FRfe7rWWA%2FvVYTinymnRdeEAz%2FkPclm0aQ6T%2FapltvCi76gv%2BQHkABUmLXKygopX55ixHsHDH0IK1Chb7%2F76%2Bby2Jc6h5zBf8wWPDaiGt7nMsk6RNzkSwobG"}]}
 etag: W/"52f02b767cfa8de8d53ddd994f4bc617"
 content-encoding: br
 server: cloudflare
-cf-ray: a59229239f00a60a-PDX
+cf-ray: a5b96c476de9ef53-PDX
 alt-svc: h3=":443"; ma=86400
 
 # ScrapingBee Documentation

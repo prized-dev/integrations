@@ -1,24 +1,24 @@
 GET https://twilio.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:20.738Z
+fetched: 2026-11-16T20:59:53.233Z
 redirect: 301 from https://twilio.com/llms.txt
 final-url: https://www.twilio.com/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
-content-length: 2520459
+content-length: 2522502
 connection: close
-server: AmazonS3
-date: Thu, 12 Nov 2026 02:38:16 GMT
-last-modified: Wed, 11 Nov 2026 19:09:02 GMT
-etag: "5fd727884de46369c76d891932681fbb"
-x-amz-server-side-encryption: AES256
-x-amz-version-id: eTXIQCPkeRN_JNV16pUUlMYGtS1xCiie
 accept-ranges: bytes
+date: Mon, 16 Nov 2026 20:59:48 GMT
+server: AmazonS3
+last-modified: Mon, 16 Nov 2026 20:49:00 GMT
+etag: "39c272a0893ead622978af3d0a04b2fb"
+x-amz-version-id: WQhJht9BflE0rz4zvf4gXJ04kPL7sIgD
+x-amz-server-side-encryption: AES256
 x-cache: Miss from cloudfront
-via: 1.1 4e7012bff211fc1604763d0935533d32.cloudfront.net (CloudFront)
+via: 1.1 44c9323c8e1b3ab3824760718cef5d00.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: XkGJizl9BIzkAtGkEpPnTEFMnR412jmPG8e9QStPTH06X4ldS3pj0Q==
+x-amz-cf-id: puBUgqxr1J0qTxcy3tChbw4638HKpH3sM8xj5H-JthHJLHhBG8EApw==
 
 * [Conversational AI and APIs for SMS, Email, Voice](https://www.twilio.com/en-us.md): Build amazing customer experiences on the Twilio platform with APIs for SMS, RCS, voice, and email, plus conversational AI for smarter engagement, and identity verification for trust.
 
@@ -2962,7 +2962,7 @@ x-amz-cf-id: XkGJizl9BIzkAtGkEpPnTEFMnR412jmPG8e9QStPTH06X4ldS3pj0Q==
 * [Sending text messages from your iOS app in Swift using MFMessageComposeViewController](https://www.twilio.com/en-us/blog/developers/tutorials/product/sending-text-messages-from-your-ios-app-in-swift-using-mfmessagecomposeviewcontroller-html.md): Do you ever want to send text messages in your iOS app from your user’s phone number? While you can’t do this directly without your user
 * [Create a Peer-to-Peer Payment App With Laravel and Stripe](https://www.twilio.com/en-us/blog/developers/community/create-peer-to-peer-payment-app-laravel-stripe.md): In this tutorial, you'll learn how to create a P2P payment app using React, Inertia, Laravel, and Tailwind CSS, backed by Stripe.
 * [Change the Background in your Video Calls with the Twilio Video Processors Library](https://www.twilio.com/en-us/blog/developers/tutorials/integrations/change-background-video-calls-twilio-video-processors-library.md): Learn how to apply background blurring and replacement filters to your Twilio Programmable Video applications.
-* [How to Build an Interactive Voice Response System with Java and Gradle](https://www.twilio.com/en-us/blog/developers/community/java-ivr-system-gradle-servlets.md): Build an Interactive Voice Response (IVR) system and learn step-by-step call center creation by using Twilio, Java Servlets, and Gradle.
+* [Build an IVR System with Twilio, Java, and Gradle](https://www.twilio.com/en-us/blog/developers/community/java-ivr-system-gradle-servlets.md): Build an Interactive Voice Response (IVR) system and learn step-by-step call center creation by using Twilio, Java Servlets, and Gradle.
 * [Setting Up a Conference Call Line with Twilio Programmable Voice, Python and Django](https://www.twilio.com/en-us/blog/conference-call-line-twilio-programmable-voice-python-django.md): Create a conference call phone line with Python, Django and Twilio Programmable Voice.
 * [Building Python web apps with Flask](https://www.twilio.com/en-us/blog/building-python-web-apps-with-flask-html.md): When getting started with web development in Python, Flask is a great choice due to its lightweight nature. There is already a solid “Hello World
 * [Play an Audio File in Voice Calls With PHP](https://www.twilio.com/en-us/blog/developers/tutorials/play-audio-file-voice-calls-php.md): In this tutorial, you'll learn how to play an audio file in voice calls using PHP with Twilio.
@@ -3673,7 +3673,7 @@ x-amz-cf-id: XkGJizl9BIzkAtGkEpPnTEFMnR412jmPG8e9QStPTH06X4ldS3pj0Q==
 * [How to Set Environment Variables in Python](https://www.twilio.com/en-us/blog/environment-variables-python.md): In this tutorial, learn how to set environment variables in Python for seamless development. Learn more with Twilio's step-by-step guide.
 * [TwilioCon 2012: Early Bird Tickets and Call for Speakers Open](https://www.twilio.com/en-us/blog/twiliocon-2012-early-bird-tickets-and-call-for-speakers-open-html.md): The second annual TwilioCon 2012 is coming this October, bringing together over 1,000 members of the Twilio community to unlock the big black box of te
 * [Leading in CPaaS, CEP, and CDP: Why the Future of Customer Engagement is Unified](https://www.twilio.com/en-us/blog/omdia-leader-2025.md): Omdia Universe names Twilio a leader across CPaaS, CEP, and CDP.
-* [Authenticating Users with the Twilio Authy App and Verify in Next.js](https://www.twilio.com/en-us/blog/authenticating-users-twilio-authy-app-verify-nextjs.md): Learn how to integrate 2FA in a Next.js application with Twilio Verify and Authy App
+* [Authenticate Users with Twilio and Next.js](https://www.twilio.com/en-us/blog/authenticating-users-twilio-authy-app-verify-nextjs.md): In this tutorial, learn how to integrate 2FA in a Next.js application with Twilio Verify and Authy App.
 * [Analyze Pronunciation with Twilio, OpenAI, and Azure](https://www.twilio.com/en-us/blog/ai-voice-analyze-pronunciation-twilio-programmable-voice-openai-azure-speech.md): In this tutorial, build an application to analyze your Pronunciation with Twilio Voice, OpenAI Realtime API, Azure AI Speech, and WhatsApp integration.
 * [Build an AI-Powered Meeting Summarizer with Twilio](https://www.twilio.com/en-us/blog/build-an-ai-powered-meeting-summarizer-with-twilio-voice--sendgr.md): In this tutorial, learn how to build an automated AI-Powered meeting summarizer using Twilio Programmable Voice, Twilio SendGrid, OpenAI, and Python.
 * [Homeless Resource Hotline Wins $500 Twilio Credit [Developer Contest]](https://www.twilio.com/en-us/blog/developers/homeless-resource-hotline-wins-500-twilio-credit-developer-contest-html.md): Congratulations to Mahmood and his fiancee Desiree, who built The Homeless Resource Hotline over the course of the weekend to address a need that the n
@@ -4003,6 +4003,6 @@ x-amz-cf-id: XkGJizl9BIzkAtGkEpPnTEFMnR412jmPG8e9QStPTH06X4ldS3pj0Q==
 * [How to Send WhatsApp Messages from Google Sheets with JavaScript and Node.js](https://www.twilio.com/en-us/blog/send-whatsapp-messages-from-google-sheets-javascript-node-js.md): Learn how to quickly send WhatsApp messages with JavaScript and Node.js using data stored in a Google Sheet with this handy programming tutorial.
 * [How to Send WhatsApp Messages from Java Applications with Twilio](https://www.twilio.com/en-us/blog/send-whatsapp-messages-java-applications-twilio-api.md): Programmatically send messages to WhatsApp recipients using the Twilio API.
 * [Get Started with RCS and Twilio](https://www.twilio.com/en-us/blog/get-started-rcs-twilio.md): Learn how to get started with Twilio's RCS Public Beta in this step by step overview of registering, creating a Sender profile, testing, and tracking.
-* [The future of mes
+* [The future of messaging: Twilio's approach to
 
 [truncated at 1048576 bytes]

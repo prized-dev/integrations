@@ -1,9 +1,9 @@
 {
  "site": "prized.dev",
- "checkedAt": "2026-11-12T02:37:30.999Z",
+ "checkedAt": "2026-11-16T20:59:00.124Z",
  "checker": "agent-signup-check/0.2.5",
- "passed": 5,
- "partial": 1,
+ "passed": 7,
+ "partial": 0,
  "unread": 0,
  "total": 7,
  "whoActs": "the person confirms an email code",
@@ -63,25 +63,29 @@
   {
    "id": "limits",
    "name": "Spend limits",
-   "status": "fail",
-   "reason": "No spend cap in metadata, auth.md or llms.txt"
+   "url": "https://prized.dev/.well-known/oauth-authorization-server",
+   "default_spend_cap": "{\"amount\":{\"currency\":\"USD\",\"value\":\"30.00\"},\"period\":\"total\"}",
+   "periods": [
+    "total",
+    "day"
+   ],
+   "status": "pass",
+   "reason": "agent_auth.billing declares a default spend cap"
   },
   {
    "id": "payment",
    "name": "Payment handoff",
-   "where": "auth.md",
-   "url": "https://prized.dev/auth.md",
-   "match": "billing_url",
-   "snippet": "id\": \"…\", \"name\": \"…\"}, \"free_credit\": true, \"billing_url\": \"https://prized.dev/dashboard/billing\" } ``` The account now exists, in a workspace of its own,",
-   "status": "partial",
-   "reason": "auth.md mentions a payment path (billing_url) in prose; nothing machine-readable"
+   "url": "https://prized.dev/.well-known/oauth-authorization-server",
+   "pricing_uri": "https://prized.dev/pricing.md",
+   "status": "pass",
+   "reason": "agent_auth.billing declares a pricing_uri for the 402 billing handoff"
   },
   {
    "id": "markdown",
    "name": "Docs in Markdown",
    "url": "https://prized.dev/llms.txt",
    "heading": "# Prized",
-   "bytes": 44956,
+   "bytes": 45230,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -94,7 +98,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 253,
+   "ms": 87,
    "redirects": 0
   },
   {
@@ -104,7 +108,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 47,
+   "ms": 49,
    "redirects": 0
   },
   {
@@ -114,7 +118,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 12,
+   "ms": 16,
    "redirects": 0
   },
   {
@@ -124,7 +128,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 8,
+   "ms": 10,
    "redirects": 0
   },
   {
@@ -134,7 +138,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 152,
+   "ms": 135,
    "redirects": 0
   },
   {
@@ -144,7 +148,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 53,
+   "ms": 59,
    "redirects": 0
   }
  ]

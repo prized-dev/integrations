@@ -1,19 +1,19 @@
 GET https://together.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:18.575Z
+fetched: 2026-11-16T20:58:46.312Z
 redirect: 301 from https://together.ai/llms.txt
 final-url: https://www.together.ai/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:37:15 GMT
+date: Mon, 16 Nov 2026 20:58:43 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a592275deea475b8-SEA
+cf-ray: a5b96a563fbdf500-SEA
 cf-cache-status: HIT
-age: 11519
+age: 34188
 content-encoding: gzip
-last-modified: Thu, 12 Nov 2026 01:40:41 GMT
+last-modified: Mon, 16 Nov 2026 13:29:41 GMT
 server: cloudflare
 vary: accept-encoding
 x-content-type-options: nosniff

@@ -1,38 +1,38 @@
 GET https://blaxel.ai/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:46.937Z
+fetched: 2026-11-16T20:59:15.904Z
 redirect: 301 from https://blaxel.ai/auth.md
 final-url: https://docs.blaxel.ai/auth.md
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:37:43 GMT
+date: Mon, 16 Nov 2026 20:59:12 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a59228080c75150f-PDX
+cf-ray: a5b96b093cc31d57-PDX
 cf-cache-status: HIT
-age: 13085
+age: 758
 cache-control: no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0
 content-disposition: inline
 content-encoding: br
 expires: 0
-last-modified: Thu, 12 Nov 2026 01:50:24 GMT
+last-modified: Mon, 16 Nov 2026 20:59:12 GMT
 link: </llms.txt>; rel="llms-txt", </llms-full.txt>; rel="llms-full-txt", </.well-known/api-catalog>; rel="api-catalog", </.well-known/mcp/server-card.json>; rel="mcp-server-card", </.well-known/agent-card.json>; rel="agent-card", </.well-known/agent-skills/index.json>; rel="agent-skills"
 server: cloudflare
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 pragma: no-cache
 x-mint-proxy-version: 1.0.0-prod
-x-served-version: dpl_DqYu5MPb49gWBBbUGgpHQUmCHY3P
+x-served-version: dpl_4D8r1dHg6bQcRuBgQyL3z9waJJtn
 content-security-policy: default-src 'none'
 x-frame-options: DENY
 x-llms-txt: /llms.txt
-x-mintlify-client-version: 0.0.4111
+x-mintlify-client-version: 0.0.4149
 x-robots-tag: noindex
 x-vercel-cache: MISS
-x-vercel-id: iad1::iad1::t62rw-1794437976876-4e3232c932a6
+x-vercel-id: iad1::iad1::gltql-1794861994093-21a3c4ff11ab
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_DqYu5MPb49gWBBbUGgpHQUmCHY3P
+x-version: dpl_4D8r1dHg6bQcRuBgQyL3z9waJJtn
 alt-svc: h3=":443"; ma=86400
 
 > ## Documentation Index

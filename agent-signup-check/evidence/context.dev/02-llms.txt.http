@@ -1,28 +1,28 @@
 GET https://context.dev/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:36.960Z
+fetched: 2026-11-16T21:00:13.829Z
 redirect: 301 from https://context.dev/llms.txt
 final-url: https://www.context.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 3624
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: frame-ancestors 'self' https://*.context.dev
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:38:34 GMT
-etag: W/"c4d879ccc0c714f048f08b3a4de72a63"
-last-modified: Thu, 12 Nov 2026 01:38:10 GMT
+date: Mon, 16 Nov 2026 21:00:10 GMT
+etag: W/"bb709979872efa880b1b74a06b1bc4fe"
+last-modified: Mon, 16 Nov 2026 21:00:10 GMT
 permissions-policy: camera=(), microphone=(), geolocation=()
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=63072000
 x-content-type-options: nosniff
 x-matched-path: /llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::9x55j-1794451114607-9c907788defd
+x-vercel-cache: MISS
+x-vercel-id: pdx1::mnkm7-1794862810283-828be9ebb573
 connection: close
 transfer-encoding: chunked
 
@@ -67,7 +67,7 @@ Prices are in USD for new subscriptions. Credits renew monthly, including on ann
 | Plan | Monthly price | Annual price | Credits per month | Overage per 1,000 credits |
 | ---- | ------------- | ------------ | ----------------- | ------------------------ |
 | Free | $0 | $0 | 1,000 | None |
-| Developer | $20 | $200 | 5,000 | $3.00 |
+| Developer | $20 | $200 | 10,000 | $3.00 |
 | Pro | $90 | $900 | 100,000 | $2.00 |
 | Growth | $300 | $3,000 | 500,000 | $1.50 |
 | Scale | $500 | $5,000 | 1,000,000 | $1.00 |

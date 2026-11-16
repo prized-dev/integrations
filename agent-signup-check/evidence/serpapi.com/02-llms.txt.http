@@ -1,10 +1,10 @@
 GET https://serpapi.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:33.220Z
+fetched: 2026-11-16T21:00:09.333Z
 final-url: https://serpapi.com/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:38:31 GMT
+date: Mon, 16 Nov 2026 21:00:07 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -14,16 +14,16 @@ x-content-type-options: nosniff
 x-download-options: noopen
 x-permitted-cross-domain-policies: none
 referrer-policy: strict-origin-when-cross-origin
+vary: Accept, accept-encoding
 cache-control: max-age=604800, public
-etag: W/"52c7e62c1604c705457c9d805ad018f5"
-x-request-id: 0e0c1103-a49c-46b3-b5b8-320c03351a67
-x-runtime: 0.005646
-vary: accept-encoding
-age: 9899
+etag: W/"5cc9a20ecc21f7f46b4b8cc551f074f0"
+x-request-id: 46b73291-d7fb-4032-be26-aa87bbb034a0
+x-runtime: 0.009198
+age: 32899
 cf-cache-status: HIT
 content-encoding: br
 server: cloudflare
-cf-ray: a592293538825ee0-PDX
+cf-ray: a5b96c618b88f820-PDX
 alt-svc: h3=":443"; ma=86400
 
 # SerpApi
@@ -151,6 +151,7 @@ alt-svc: h3=":443"; ma=86400
 - [DuckDuckGo Maps API](https://serpapi.com/duckduckgo-maps-api.md): Use SerpApi's DuckDuckGo Maps API to scrape DuckDuckGo Maps results. Position, title, link, thumbnail, rating, address and more are available.
 - [DuckDuckGo News API](https://serpapi.com/duckduckgo-news-api.md): Scrape DuckDuckGo News search results in JSON format automatically, using custom parameters. Search for keywords by region, date, and more with SerpApi.
 - [DuckDuckGo Shopping API](https://serpapi.com/duckduckgo-shopping-api.md): Use SerpApi's DuckDuckGo Shopping API to scrape DuckDuckGo Shopping results. Title, link, store, price, rating, reviews, thumbnail, filters and more are available.
+- [DuckDuckGo Images API](https://serpapi.com/duckduckgo-images-api.md): Use SerpApi's DuckDuckGo Images API to scrape DuckDuckGo Images results. Titles, original images, thumbnails, sizes, sources, shopping ads, and more
 - [DuckDuckGo Light API](https://serpapi.com/duckduckgo-light-api.md): Access the world's fastest DuckDuckGo Search API. Scrape DuckDuckGo search results in JSON format automatically using custom parameters. Search for keywords by location with SerpApi.
 - [eBay Search API](https://serpapi.com/ebay-search-api.md): Scrape eBay search engine seller listings with SerpApi's eBay Search Engine Results API. Product links, prices, condition ratings and more.
 - [eBay Product API](https://serpapi.com/ebay-product-api.md): Scrape full eBay Product results with SerpApi's eBay Product API. Product specs, prices, ratings, reviews and more.

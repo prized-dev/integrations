@@ -1,9 +1,9 @@
 {
  "title": "Agent sign-up check: 100 developer platforms",
- "date": "2026-11-12",
+ "date": "2026-11-16",
  "checker": "agent-signup-check/0.2.5",
  "userAgent": "PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)",
- "generatedAt": "2026-11-12T02:37:09.462Z",
+ "generatedAt": "2026-11-16T20:58:37.783Z",
  "checks": [
   {
    "id": "authmd",
@@ -57,6 +57,164 @@
  ],
  "results": [
   {
+   "name": "Prized",
+   "category": "Sandboxes and compute",
+   "site": "prized.dev",
+   "apiProbed": "https://api.prized.dev/api/v1/me",
+   "apiNotProbed": null,
+   "passed": 7,
+   "partial": 0,
+   "unread": 0,
+   "total": 7,
+   "whoActs": "the person confirms an email code",
+   "checkedAt": "2026-11-16T20:59:00.124Z",
+   "checks": [
+    {
+     "id": "authmd",
+     "name": "auth.md",
+     "url": "https://prized.dev/auth.md",
+     "heading": "# auth.md",
+     "registrationEndpoints": [
+      "https://api.prized.dev/api/v1/agent/identity",
+      "https://api.prized.dev/api/v1/agent/sign-up"
+     ],
+     "mentions": [
+      "anonymous",
+      "identity_assertion",
+      "service_auth"
+     ],
+     "status": "pass",
+     "reason": "auth.md documents agent registration (https://api.prized.dev/api/v1/agent/identity)"
+    },
+    {
+     "id": "prm",
+     "name": "Protected resource metadata",
+     "url": "https://api.prized.dev/.well-known/oauth-protected-resource",
+     "via": "www-authenticate",
+     "resource": "https://api.prized.dev",
+     "authorization_servers": [
+      "https://prized.dev"
+     ],
+     "status": "pass",
+     "reason": "Names 1 authorization server"
+    },
+    {
+     "id": "register",
+     "name": "Sign-up by API",
+     "url": "https://prized.dev/.well-known/oauth-authorization-server",
+     "endpoint": "https://api.prized.dev/api/v1/agent/identity",
+     "identity_types_supported": [
+      "service_auth",
+      "identity_assertion"
+     ],
+     "field": "identity_endpoint and register_uri",
+     "issuer": "https://prized.dev",
+     "status": "pass",
+     "reason": "agent_auth names a registration endpoint (service_auth, identity_assertion)"
+    },
+    {
+     "id": "challenge",
+     "name": "Key works without a browser",
+     "url": "https://api.prized.dev/api/v1/me",
+     "httpStatus": 401,
+     "www_authenticate": "Bearer resource_metadata=\"https://api.prized.dev/.well-known/oauth-protected-resource\"",
+     "status": "pass",
+     "reason": "401 with a Bearer challenge that points to resource metadata (RFC 9728 section 5.1)"
+    },
+    {
+     "id": "limits",
+     "name": "Spend limits",
+     "url": "https://prized.dev/.well-known/oauth-authorization-server",
+     "default_spend_cap": "{\"amount\":{\"currency\":\"USD\",\"value\":\"30.00\"},\"period\":\"total\"}",
+     "periods": [
+      "total",
+      "day"
+     ],
+     "status": "pass",
+     "reason": "agent_auth.billing declares a default spend cap"
+    },
+    {
+     "id": "payment",
+     "name": "Payment handoff",
+     "url": "https://prized.dev/.well-known/oauth-authorization-server",
+     "pricing_uri": "https://prized.dev/pricing.md",
+     "status": "pass",
+     "reason": "agent_auth.billing declares a pricing_uri for the 402 billing handoff"
+    },
+    {
+     "id": "markdown",
+     "name": "Docs in Markdown",
+     "url": "https://prized.dev/llms.txt",
+     "heading": "# Prized",
+     "bytes": 45230,
+     "status": "pass",
+     "reason": "llms.txt found"
+    }
+   ],
+   "requests": [
+    {
+     "label": "auth.md",
+     "url": "https://prized.dev/auth.md",
+     "finalUrl": "https://prized.dev/auth.md",
+     "status": 200,
+     "error": null,
+     "contentType": "text/markdown; charset=utf-8",
+     "ms": 87,
+     "redirects": 0
+    },
+    {
+     "label": "llms.txt",
+     "url": "https://prized.dev/llms.txt",
+     "finalUrl": "https://prized.dev/llms.txt",
+     "status": 200,
+     "error": null,
+     "contentType": "text/plain; charset=utf-8",
+     "ms": 49,
+     "redirects": 0
+    },
+    {
+     "label": "api",
+     "url": "https://api.prized.dev/api/v1/me",
+     "finalUrl": "https://api.prized.dev/api/v1/me",
+     "status": 401,
+     "error": null,
+     "contentType": "application/json",
+     "ms": 16,
+     "redirects": 0
+    },
+    {
+     "label": "prm (from 401)",
+     "url": "https://api.prized.dev/.well-known/oauth-protected-resource",
+     "finalUrl": "https://api.prized.dev/.well-known/oauth-protected-resource",
+     "status": 200,
+     "error": null,
+     "contentType": "application/json",
+     "ms": 10,
+     "redirects": 0
+    },
+    {
+     "label": "as-metadata",
+     "url": "https://prized.dev/.well-known/oauth-authorization-server",
+     "finalUrl": "https://prized.dev/.well-known/oauth-authorization-server",
+     "status": 200,
+     "error": null,
+     "contentType": "application/json",
+     "ms": 135,
+     "redirects": 0
+    },
+    {
+     "label": "x402 discovery",
+     "url": "https://prized.dev/.well-known/x402",
+     "finalUrl": "https://prized.dev/.well-known/x402",
+     "status": 404,
+     "error": null,
+     "contentType": "text/html; charset=utf-8",
+     "ms": 59,
+     "redirects": 0
+    }
+   ]
+  },
+  {
    "name": "Telnyx",
    "category": "Email, phone and messaging",
    "site": "telnyx.com",
@@ -67,7 +225,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "the person confirms an email code; nobody (anonymous)",
-   "checkedAt": "2026-11-12T02:38:17.646Z",
+   "checkedAt": "2026-11-16T20:59:51.514Z",
    "checks": [
     {
      "id": "authmd",
@@ -152,7 +310,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 151,
+     "ms": 221,
      "redirects": 0
     },
     {
@@ -162,7 +320,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 177,
+     "ms": 270,
      "redirects": 0
     },
     {
@@ -172,7 +330,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 96,
+     "ms": 88,
      "redirects": 0
     },
     {
@@ -182,7 +340,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 71,
+     "ms": 68,
      "redirects": 0
     },
     {
@@ -192,7 +350,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 67,
+     "ms": 71,
      "redirects": 0
     },
     {
@@ -202,7 +360,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 213,
+     "ms": 260,
      "redirects": 0
     }
    ]
@@ -218,7 +376,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "the agent's provider vouches (ID-JAG)",
-   "checkedAt": "2026-11-12T02:38:27.611Z",
+   "checkedAt": "2026-11-16T21:00:02.195Z",
    "checks": [
     {
      "id": "authmd",
@@ -287,7 +445,7 @@
      "name": "Docs in Markdown",
      "url": "https://www.firecrawl.dev/llms.txt",
      "heading": "# Firecrawl",
-     "bytes": 25800,
+     "bytes": 29574,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -300,7 +458,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 281,
+     "ms": 88,
      "redirects": 1
     },
     {
@@ -310,7 +468,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 405,
+     "ms": 67,
      "redirects": 1
     },
     {
@@ -320,7 +478,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 197,
+     "ms": 171,
      "redirects": 0
     },
     {
@@ -330,7 +488,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 164,
+     "ms": 160,
      "redirects": 0
     },
     {
@@ -340,7 +498,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 78,
+     "ms": 132,
      "redirects": 0
     },
     {
@@ -350,7 +508,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 159,
+     "ms": 224,
      "redirects": 1
     }
    ]
@@ -366,7 +524,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "the person confirms an email code",
-   "checkedAt": "2026-11-12T02:38:23.615Z",
+   "checkedAt": "2026-11-16T20:59:58.547Z",
    "checks": [
     {
      "id": "authmd",
@@ -448,7 +606,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 71,
+     "ms": 155,
      "redirects": 1
     },
     {
@@ -458,7 +616,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 154,
+     "ms": 152,
      "redirects": 1
     },
     {
@@ -468,7 +626,7 @@
      "status": 401,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 209,
+     "ms": 198,
      "redirects": 0
     },
     {
@@ -478,7 +636,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 202,
+     "ms": 181,
      "redirects": 0
     },
     {
@@ -488,7 +646,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 208,
+     "ms": 181,
      "redirects": 0
     },
     {
@@ -498,7 +656,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 48,
+     "ms": 56,
      "redirects": 1
     }
    ]
@@ -514,7 +672,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "nobody (anonymous)",
-   "checkedAt": "2026-11-12T02:38:41.822Z",
+   "checkedAt": "2026-11-16T21:00:19.939Z",
    "checks": [
     {
      "id": "authmd",
@@ -582,7 +740,7 @@
      "name": "Docs in Markdown",
      "url": "https://polar.sh/docs/llms.txt",
      "heading": "# Polar",
-     "bytes": 86809,
+     "bytes": 16729,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -595,7 +753,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 125,
+     "ms": 641,
      "redirects": 1
     },
     {
@@ -605,7 +763,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 162,
+     "ms": 338,
      "redirects": 1
     },
     {
@@ -615,7 +773,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 118,
+     "ms": 248,
      "redirects": 0
     },
     {
@@ -625,7 +783,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 129,
+     "ms": 204,
      "redirects": 0
     },
     {
@@ -635,7 +793,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 240,
+     "ms": 239,
      "redirects": 0
     },
     {
@@ -645,161 +803,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 177,
-     "redirects": 0
-    }
-   ]
-  },
-  {
-   "name": "Prized",
-   "category": "Sandboxes and compute",
-   "site": "prized.dev",
-   "apiProbed": "https://api.prized.dev/api/v1/me",
-   "apiNotProbed": null,
-   "passed": 5,
-   "partial": 1,
-   "unread": 0,
-   "total": 7,
-   "whoActs": "the person confirms an email code",
-   "checkedAt": "2026-11-12T02:37:30.999Z",
-   "checks": [
-    {
-     "id": "authmd",
-     "name": "auth.md",
-     "url": "https://prized.dev/auth.md",
-     "heading": "# auth.md",
-     "registrationEndpoints": [
-      "https://api.prized.dev/api/v1/agent/identity",
-      "https://api.prized.dev/api/v1/agent/sign-up"
-     ],
-     "mentions": [
-      "anonymous",
-      "identity_assertion",
-      "service_auth"
-     ],
-     "status": "pass",
-     "reason": "auth.md documents agent registration (https://api.prized.dev/api/v1/agent/identity)"
-    },
-    {
-     "id": "prm",
-     "name": "Protected resource metadata",
-     "url": "https://api.prized.dev/.well-known/oauth-protected-resource",
-     "via": "www-authenticate",
-     "resource": "https://api.prized.dev",
-     "authorization_servers": [
-      "https://prized.dev"
-     ],
-     "status": "pass",
-     "reason": "Names 1 authorization server"
-    },
-    {
-     "id": "register",
-     "name": "Sign-up by API",
-     "url": "https://prized.dev/.well-known/oauth-authorization-server",
-     "endpoint": "https://api.prized.dev/api/v1/agent/identity",
-     "identity_types_supported": [
-      "service_auth",
-      "identity_assertion"
-     ],
-     "field": "identity_endpoint and register_uri",
-     "issuer": "https://prized.dev",
-     "status": "pass",
-     "reason": "agent_auth names a registration endpoint (service_auth, identity_assertion)"
-    },
-    {
-     "id": "challenge",
-     "name": "Key works without a browser",
-     "url": "https://api.prized.dev/api/v1/me",
-     "httpStatus": 401,
-     "www_authenticate": "Bearer resource_metadata=\"https://api.prized.dev/.well-known/oauth-protected-resource\"",
-     "status": "pass",
-     "reason": "401 with a Bearer challenge that points to resource metadata (RFC 9728 section 5.1)"
-    },
-    {
-     "id": "limits",
-     "name": "Spend limits",
-     "status": "fail",
-     "reason": "No spend cap in metadata, auth.md or llms.txt"
-    },
-    {
-     "id": "payment",
-     "name": "Payment handoff",
-     "where": "auth.md",
-     "url": "https://prized.dev/auth.md",
-     "match": "billing_url",
-     "snippet": "id\": \"…\", \"name\": \"…\"}, \"free_credit\": true, \"billing_url\": \"https://prized.dev/dashboard/billing\" } ``` The account now exists, in a workspace of its own,",
-     "status": "partial",
-     "reason": "auth.md mentions a payment path (billing_url) in prose; nothing machine-readable"
-    },
-    {
-     "id": "markdown",
-     "name": "Docs in Markdown",
-     "url": "https://prized.dev/llms.txt",
-     "heading": "# Prized",
-     "bytes": 44956,
-     "status": "pass",
-     "reason": "llms.txt found"
-    }
-   ],
-   "requests": [
-    {
-     "label": "auth.md",
-     "url": "https://prized.dev/auth.md",
-     "finalUrl": "https://prized.dev/auth.md",
-     "status": 200,
-     "error": null,
-     "contentType": "text/markdown; charset=utf-8",
-     "ms": 253,
-     "redirects": 0
-    },
-    {
-     "label": "llms.txt",
-     "url": "https://prized.dev/llms.txt",
-     "finalUrl": "https://prized.dev/llms.txt",
-     "status": 200,
-     "error": null,
-     "contentType": "text/plain; charset=utf-8",
-     "ms": 47,
-     "redirects": 0
-    },
-    {
-     "label": "api",
-     "url": "https://api.prized.dev/api/v1/me",
-     "finalUrl": "https://api.prized.dev/api/v1/me",
-     "status": 401,
-     "error": null,
-     "contentType": "application/json",
-     "ms": 12,
-     "redirects": 0
-    },
-    {
-     "label": "prm (from 401)",
-     "url": "https://api.prized.dev/.well-known/oauth-protected-resource",
-     "finalUrl": "https://api.prized.dev/.well-known/oauth-protected-resource",
-     "status": 200,
-     "error": null,
-     "contentType": "application/json",
-     "ms": 8,
-     "redirects": 0
-    },
-    {
-     "label": "as-metadata",
-     "url": "https://prized.dev/.well-known/oauth-authorization-server",
-     "finalUrl": "https://prized.dev/.well-known/oauth-authorization-server",
-     "status": 200,
-     "error": null,
-     "contentType": "application/json",
-     "ms": 152,
-     "redirects": 0
-    },
-    {
-     "label": "x402 discovery",
-     "url": "https://prized.dev/.well-known/x402",
-     "finalUrl": "https://prized.dev/.well-known/x402",
-     "status": 404,
-     "error": null,
-     "contentType": "text/html; charset=utf-8",
-     "ms": 53,
+     "ms": 267,
      "redirects": 0
     }
    ]
@@ -815,7 +819,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "nobody (anonymous); the person confirms an email code",
-   "checkedAt": "2026-11-12T02:37:58.363Z",
+   "checkedAt": "2026-11-16T20:59:28.256Z",
    "checks": [
     {
      "id": "authmd",
@@ -904,7 +908,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 420,
+     "ms": 407,
      "redirects": 0
     },
     {
@@ -914,7 +918,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 411,
+     "ms": 351,
      "redirects": 0
     },
     {
@@ -924,7 +928,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json;charset=utf-8",
-     "ms": 210,
+     "ms": 186,
      "redirects": 0
     },
     {
@@ -934,7 +938,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json;charset=utf-8",
-     "ms": 196,
+     "ms": 194,
      "redirects": 0
     },
     {
@@ -944,7 +948,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json;charset=utf-8",
-     "ms": 213,
+     "ms": 193,
      "redirects": 0
     },
     {
@@ -954,7 +958,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json;charset=utf-8",
-     "ms": 233,
+     "ms": 194,
      "redirects": 0
     },
     {
@@ -964,7 +968,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 579,
+     "ms": 513,
      "redirects": 0
     }
    ]
@@ -980,7 +984,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "the person confirms an email code",
-   "checkedAt": "2026-11-12T02:38:27.808Z",
+   "checkedAt": "2026-11-16T21:00:04.094Z",
    "checks": [
     {
      "id": "authmd",
@@ -1063,7 +1067,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 135,
+     "ms": 134,
      "redirects": 0
     },
     {
@@ -1073,7 +1077,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=UTF-8",
-     "ms": 361,
+     "ms": 395,
      "redirects": 0
     },
     {
@@ -1083,7 +1087,7 @@
      "status": 401,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 211,
+     "ms": 294,
      "redirects": 0
     },
     {
@@ -1093,7 +1097,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 131,
+     "ms": 258,
      "redirects": 0
     },
     {
@@ -1103,7 +1107,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 200,
+     "ms": 1053,
      "redirects": 0
     },
     {
@@ -1113,7 +1117,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 116,
+     "ms": 131,
      "redirects": 0
     },
     {
@@ -1139,7 +1143,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "nobody (anonymous)",
-   "checkedAt": "2026-11-12T02:38:04.021Z",
+   "checkedAt": "2026-11-16T20:59:35.444Z",
    "checks": [
     {
      "id": "authmd",
@@ -1207,7 +1211,7 @@
      "name": "Docs in Markdown",
      "url": "https://neon.com/llms.txt",
      "heading": "# Neon Postgres",
-     "bytes": 29411,
+     "bytes": 29634,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -1220,7 +1224,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 132,
+     "ms": 230,
      "redirects": 0
     },
     {
@@ -1230,7 +1234,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 69,
+     "ms": 292,
      "redirects": 0
     },
     {
@@ -1240,7 +1244,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 359,
+     "ms": 538,
      "redirects": 0
     },
     {
@@ -1250,7 +1254,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 250,
+     "ms": 265,
      "redirects": 0
     },
     {
@@ -1260,7 +1264,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 51,
+     "ms": 517,
      "redirects": 0
     },
     {
@@ -1270,7 +1274,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 69,
+     "ms": 240,
      "redirects": 0
     },
     {
@@ -1280,7 +1284,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 71,
+     "ms": 323,
      "redirects": 0
     }
    ]
@@ -1296,7 +1300,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "not stated",
-   "checkedAt": "2026-11-12T02:38:10.820Z",
+   "checkedAt": "2026-11-16T20:59:42.311Z",
    "checks": [
     {
      "id": "authmd",
@@ -1328,7 +1332,7 @@
      "url": "https://www.agentmail.to/auth.md",
      "endpoint": "https://api.agentmail.to/v0/agent/sign-up",
      "link": false,
-     "quote": "its own account and get an API key in one call: POST https://api.agentmail.to/v0/agent/sign-up {\"username\": \"my-agent\", \"human_email\": \"owner@example.com\"} T",
+     "quote": "its own account and get an API key in one call: POST https://api.agentmail.to/v0/agent/sign-up {\"username\": \"my-agent\", \"human_email\": \"owner@example.com\", \"r",
      "status": "partial",
      "reason": "auth.md documents a sign-up API (https://api.agentmail.to/v0/agent/sign-up), but there is no agent_auth metadata for tools to find it"
     },
@@ -1358,7 +1362,7 @@
      "name": "Docs in Markdown",
      "url": "https://www.agentmail.to/llms.txt",
      "heading": "# AgentMail: Email for AI Agents",
-     "bytes": 28482,
+     "bytes": 28848,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -1371,7 +1375,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 78,
+     "ms": 138,
      "redirects": 1
     },
     {
@@ -1381,7 +1385,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 54,
+     "ms": 195,
      "redirects": 1
     },
     {
@@ -1391,7 +1395,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 64,
+     "ms": 50,
      "redirects": 0
     },
     {
@@ -1401,7 +1405,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 86,
+     "ms": 262,
      "redirects": 0
     },
     {
@@ -1411,7 +1415,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 386,
+     "ms": 180,
      "redirects": 1
     },
     {
@@ -1421,7 +1425,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 65,
+     "ms": 56,
      "redirects": 2
     },
     {
@@ -1431,7 +1435,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 68,
+     "ms": 139,
      "redirects": 1
     }
    ]
@@ -1447,7 +1451,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "not stated",
-   "checkedAt": "2026-11-12T02:38:44.908Z",
+   "checkedAt": "2026-11-16T21:00:23.569Z",
    "checks": [
     {
      "id": "authmd",
@@ -1525,7 +1529,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 64,
+     "ms": 216,
      "redirects": 0
     },
     {
@@ -1535,7 +1539,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 100,
+     "ms": 237,
      "redirects": 0
     },
     {
@@ -1545,7 +1549,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 214,
+     "ms": 195,
      "redirects": 0
     },
     {
@@ -1555,7 +1559,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 138,
+     "ms": 341,
      "redirects": 0
     },
     {
@@ -1565,7 +1569,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 207,
+     "ms": 192,
      "redirects": 0
     },
     {
@@ -1575,7 +1579,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 211,
+     "ms": 194,
      "redirects": 0
     },
     {
@@ -1585,7 +1589,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 49,
+     "ms": 153,
      "redirects": 0
     }
    ]
@@ -1601,7 +1605,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "nobody (provisioned without an account, claimed later) (from auth.md prose)",
-   "checkedAt": "2026-11-12T02:38:54.845Z",
+   "checkedAt": "2026-11-16T21:00:32.176Z",
    "checks": [
     {
      "id": "authmd",
@@ -1662,7 +1666,7 @@
      "name": "Docs in Markdown",
      "url": "https://cloudinary.com/llms.txt",
      "heading": "# Cloudinary",
-     "bytes": 15460,
+     "bytes": 15956,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -1675,7 +1679,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 183,
+     "ms": 382,
      "redirects": 0
     },
     {
@@ -1685,7 +1689,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain",
-     "ms": 76,
+     "ms": 476,
      "redirects": 0
     },
     {
@@ -1695,7 +1699,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 218,
+     "ms": 190,
      "redirects": 0
     },
     {
@@ -1705,7 +1709,7 @@
      "status": 403,
      "error": null,
      "contentType": "application/xml",
-     "ms": 131,
+     "ms": 320,
      "redirects": 0
     },
     {
@@ -1715,7 +1719,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 282,
+     "ms": 271,
      "redirects": 0
     },
     {
@@ -1725,7 +1729,7 @@
      "status": 403,
      "error": null,
      "contentType": "application/xml",
-     "ms": 288,
+     "ms": 131,
      "redirects": 0
     },
     {
@@ -1735,7 +1739,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 294,
+     "ms": 251,
      "redirects": 0
     },
     {
@@ -1745,7 +1749,7 @@
      "status": 403,
      "error": null,
      "contentType": "application/xml",
-     "ms": 129,
+     "ms": 156,
      "redirects": 0
     }
    ]
@@ -1761,7 +1765,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "the person confirms an email code",
-   "checkedAt": "2026-11-12T02:38:36.960Z",
+   "checkedAt": "2026-11-16T21:00:13.829Z",
    "checks": [
     {
      "id": "authmd",
@@ -1829,7 +1833,7 @@
      "name": "Docs in Markdown",
      "url": "https://www.context.dev/llms.txt",
      "heading": "# Context.dev",
-     "bytes": 28114,
+     "bytes": 28115,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -1842,7 +1846,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 83,
+     "ms": 397,
      "redirects": 1
     },
     {
@@ -1852,7 +1856,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 60,
+     "ms": 160,
      "redirects": 1
     },
     {
@@ -1862,7 +1866,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 102,
+     "ms": 274,
      "redirects": 0
     },
     {
@@ -1872,7 +1876,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 110,
+     "ms": 640,
      "redirects": 1
     },
     {
@@ -1882,7 +1886,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 37,
+     "ms": 114,
      "redirects": 0
     },
     {
@@ -1892,7 +1896,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 60,
+     "ms": 249,
      "redirects": 1
     },
     {
@@ -1902,7 +1906,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 56,
+     "ms": 200,
      "redirects": 1
     }
    ]
@@ -1918,7 +1922,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "not stated",
-   "checkedAt": "2026-11-12T02:38:37.910Z",
+   "checkedAt": "2026-11-16T21:00:13.862Z",
    "checks": [
     {
      "id": "authmd",
@@ -1972,7 +1976,7 @@
      "name": "Docs in Markdown",
      "url": "https://www.financialdatasets.ai/llms.txt",
      "heading": "# Financial Datasets",
-     "bytes": 9268,
+     "bytes": 25719,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -1985,7 +1989,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 104,
+     "ms": 152,
      "redirects": 1
     },
     {
@@ -1995,7 +1999,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 87,
+     "ms": 86,
      "redirects": 1
     },
     {
@@ -2005,7 +2009,7 @@
      "status": 402,
      "error": null,
      "contentType": "application/json",
-     "ms": 119,
+     "ms": 272,
      "redirects": 0
     },
     {
@@ -2015,7 +2019,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 51,
+     "ms": 241,
      "redirects": 1
     },
     {
@@ -2025,7 +2029,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 124,
+     "ms": 115,
      "redirects": 0
     },
     {
@@ -2035,7 +2039,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 53,
+     "ms": 97,
      "redirects": 1
     },
     {
@@ -2045,7 +2049,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 114,
+     "ms": 120,
      "redirects": 0
     },
     {
@@ -2055,7 +2059,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 44,
+     "ms": 84,
      "redirects": 1
     }
    ]
@@ -2071,7 +2075,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "the agent's provider vouches (ID-JAG)",
-   "checkedAt": "2026-11-12T02:38:50.841Z",
+   "checkedAt": "2026-11-16T21:00:27.597Z",
    "checks": [
     {
      "id": "authmd",
@@ -2138,7 +2142,7 @@
      "name": "Docs in Markdown",
      "url": "https://posthog.com/llms.txt",
      "heading": "# PostHog",
-     "bytes": 505186,
+     "bytes": 514613,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -2151,7 +2155,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 100,
+     "ms": 111,
      "redirects": 0
     },
     {
@@ -2161,7 +2165,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 274,
+     "ms": 188,
      "redirects": 0
     },
     {
@@ -2181,7 +2185,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 211,
+     "ms": 202,
      "redirects": 0
     },
     {
@@ -2191,7 +2195,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 212,
+     "ms": 206,
      "redirects": 0
     },
     {
@@ -2201,7 +2205,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 283,
+     "ms": 251,
      "redirects": 0
     },
     {
@@ -2211,7 +2215,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 347,
+     "ms": 358,
      "redirects": 0
     },
     {
@@ -2221,7 +2225,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 88,
+     "ms": 95,
      "redirects": 0
     }
    ]
@@ -2237,7 +2241,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:49.945Z",
+   "checkedAt": "2026-11-16T21:00:26.875Z",
    "checks": [
     {
      "id": "authmd",
@@ -2294,7 +2298,7 @@
      "name": "Docs in Markdown",
      "url": "https://sentry.io/llms.txt",
      "heading": "# Sentry",
-     "bytes": 93211,
+     "bytes": 93479,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -2307,7 +2311,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown",
-     "ms": 84,
+     "ms": 98,
      "redirects": 1
     },
     {
@@ -2317,7 +2321,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 188,
+     "ms": 223,
      "redirects": 0
     },
     {
@@ -2327,7 +2331,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 99,
+     "ms": 108,
      "redirects": 0
     },
     {
@@ -2337,7 +2341,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 90,
+     "ms": 99,
      "redirects": 0
     },
     {
@@ -2347,7 +2351,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 87,
+     "ms": 96,
      "redirects": 0
     },
     {
@@ -2357,7 +2361,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown",
-     "ms": 85,
+     "ms": 84,
      "redirects": 1
     },
     {
@@ -2367,7 +2371,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html",
-     "ms": 103,
+     "ms": 115,
      "redirects": 2
     }
    ]
@@ -2383,7 +2387,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "the person confirms an email code",
-   "checkedAt": "2026-11-12T02:38:52.887Z",
+   "checkedAt": "2026-11-16T21:00:29.900Z",
    "checks": [
     {
      "id": "authmd",
@@ -2446,7 +2450,7 @@
      "name": "Docs in Markdown",
      "url": "https://workos.com/llms.txt",
      "heading": "# WorkOS",
-     "bytes": 7346,
+     "bytes": 7630,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -2459,7 +2463,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 150,
+     "ms": 115,
      "redirects": 0
     },
     {
@@ -2469,7 +2473,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 33,
+     "ms": 39,
      "redirects": 0
     },
     {
@@ -2479,7 +2483,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 114,
+     "ms": 117,
      "redirects": 0
     },
     {
@@ -2489,7 +2493,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 166,
+     "ms": 218,
      "redirects": 0
     },
     {
@@ -2499,7 +2503,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 109,
+     "ms": 112,
      "redirects": 0
     },
     {
@@ -2509,7 +2513,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 63,
+     "ms": 76,
      "redirects": 1
     },
     {
@@ -2519,7 +2523,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 174,
+     "ms": 207,
      "redirects": 0
     }
    ]
@@ -2535,7 +2539,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:50.948Z",
+   "checkedAt": "2026-11-16T20:59:21.538Z",
    "checks": [
     {
      "id": "authmd",
@@ -2597,7 +2601,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 111,
+     "ms": 94,
      "redirects": 1
     },
     {
@@ -2607,7 +2611,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 164,
+     "ms": 153,
      "redirects": 1
     },
     {
@@ -2617,7 +2621,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 165,
+     "ms": 145,
      "redirects": 0
     },
     {
@@ -2627,7 +2631,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 87,
+     "ms": 76,
      "redirects": 1
     },
     {
@@ -2637,7 +2641,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 139,
+     "ms": 102,
      "redirects": 0
     },
     {
@@ -2647,7 +2651,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 95,
+     "ms": 128,
      "redirects": 1
     },
     {
@@ -2657,7 +2661,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 126,
+     "ms": 109,
      "redirects": 0
     },
     {
@@ -2667,7 +2671,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 79,
+     "ms": 85,
      "redirects": 1
     }
    ]
@@ -2683,7 +2687,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:30.789Z",
+   "checkedAt": "2026-11-16T21:00:05.972Z",
    "checks": [
     {
      "id": "authmd",
@@ -2750,7 +2754,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 184,
+     "ms": 169,
      "redirects": 1
     },
     {
@@ -2760,7 +2764,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=UTF-8",
-     "ms": 130,
+     "ms": 209,
      "redirects": 1
     },
     {
@@ -2770,7 +2774,7 @@
      "status": 401,
      "error": null,
      "contentType": "text/html",
-     "ms": 101,
+     "ms": 70,
      "redirects": 0
     },
     {
@@ -2780,7 +2784,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 262,
+     "ms": 242,
      "redirects": 1
     },
     {
@@ -2790,7 +2794,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 195,
+     "ms": 199,
      "redirects": 0
     },
     {
@@ -2800,7 +2804,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 153,
+     "ms": 220,
      "redirects": 1
     }
    ]
@@ -2816,7 +2820,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "nobody (provisioned without an account, claimed later) (from auth.md prose)",
-   "checkedAt": "2026-11-12T02:38:51.251Z",
+   "checkedAt": "2026-11-16T21:00:29.853Z",
    "checks": [
     {
      "id": "authmd",
@@ -2892,7 +2896,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 156,
+     "ms": 372,
      "redirects": 0
     },
     {
@@ -2902,7 +2906,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 90,
+     "ms": 83,
      "redirects": 0
     },
     {
@@ -2912,7 +2916,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 96,
+     "ms": 97,
      "redirects": 0
     },
     {
@@ -2922,7 +2926,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 83,
+     "ms": 416,
      "redirects": 0
     },
     {
@@ -2932,7 +2936,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 84,
+     "ms": 90,
      "redirects": 0
     },
     {
@@ -2942,7 +2946,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 73,
+     "ms": 84,
      "redirects": 0
     },
     {
@@ -2952,7 +2956,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 87,
+     "ms": 91,
      "redirects": 0
     },
     {
@@ -2962,7 +2966,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 104,
+     "ms": 71,
      "redirects": 0
     }
    ]
@@ -2978,7 +2982,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:30.664Z",
+   "checkedAt": "2026-11-16T21:00:06.827Z",
    "checks": [
     {
      "id": "authmd",
@@ -3040,7 +3044,7 @@
      "name": "Docs in Markdown",
      "url": "https://exa.ai/llms.txt",
      "heading": "# Exa",
-     "bytes": 10534,
+     "bytes": 10996,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -3053,7 +3057,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 103,
+     "ms": 143,
      "redirects": 0
     },
     {
@@ -3063,7 +3067,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 220,
+     "ms": 55,
      "redirects": 0
     },
     {
@@ -3073,7 +3077,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 43,
+     "ms": 79,
      "redirects": 0
     },
     {
@@ -3083,7 +3087,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 33,
+     "ms": 60,
      "redirects": 1
     },
     {
@@ -3093,7 +3097,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 52,
+     "ms": 68,
      "redirects": 0
     },
     {
@@ -3103,7 +3107,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 97,
+     "ms": 122,
      "redirects": 0
     },
     {
@@ -3113,7 +3117,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 161,
+     "ms": 52,
      "redirects": 0
     }
    ]
@@ -3125,11 +3129,11 @@
    "apiProbed": "https://api.machines.dev/v1/apps?org_slug=personal",
    "apiNotProbed": null,
    "passed": 2,
-   "partial": 2,
+   "partial": 3,
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:37.689Z",
+   "checkedAt": "2026-11-16T20:59:07.152Z",
    "checks": [
     {
      "id": "authmd",
@@ -3181,15 +3185,19 @@
     {
      "id": "payment",
      "name": "Payment handoff",
-     "status": "fail",
-     "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt"
+     "where": "llms.txt",
+     "url": "https://fly.io/llms.txt",
+     "match": "HTTP 402",
+     "snippet": "nts.md): An agent can buy Fly.io credit over MPP (HTTP 402) at `POST https://fly.io/api/v1/mpp/credits`, paying with Link. The endpoint is in the [OpenAPI spec]",
+     "status": "partial",
+     "reason": "llms.txt mentions a payment path (HTTP 402) in prose; nothing machine-readable"
     },
     {
      "id": "markdown",
      "name": "Docs in Markdown",
      "url": "https://fly.io/llms.txt",
      "heading": "# Fly.io",
-     "bytes": 5605,
+     "bytes": 5852,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -3202,7 +3210,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 109,
+     "ms": 111,
      "redirects": 0
     },
     {
@@ -3212,7 +3220,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain",
-     "ms": 162,
+     "ms": 246,
      "redirects": 0
     },
     {
@@ -3222,7 +3230,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 100,
+     "ms": 99,
      "redirects": 0
     },
     {
@@ -3232,7 +3240,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 106,
+     "ms": 102,
      "redirects": 0
     },
     {
@@ -3242,7 +3250,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 105,
+     "ms": 102,
      "redirects": 0
     },
     {
@@ -3252,7 +3260,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 99,
+     "ms": 110,
      "redirects": 0
     },
     {
@@ -3272,7 +3280,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 178,
+     "ms": 186,
      "redirects": 0
     },
     {
@@ -3282,7 +3290,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 101,
+     "ms": 100,
      "redirects": 0
     }
    ]
@@ -3298,7 +3306,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:25.228Z",
+   "checkedAt": "2026-11-16T20:58:54.014Z",
    "checks": [
     {
      "id": "authmd",
@@ -3365,7 +3373,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 122,
+     "ms": 110,
      "redirects": 0
     },
     {
@@ -3375,7 +3383,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 118,
+     "ms": 113,
      "redirects": 0
     },
     {
@@ -3385,7 +3393,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 130,
+     "ms": 105,
      "redirects": 0
     },
     {
@@ -3395,7 +3403,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 205,
+     "ms": 198,
      "redirects": 0
     },
     {
@@ -3405,7 +3413,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 109,
+     "ms": 107,
      "redirects": 0
     },
     {
@@ -3415,7 +3423,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 112,
+     "ms": 102,
      "redirects": 0
     },
     {
@@ -3425,7 +3433,7 @@
      "status": 401,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 111,
+     "ms": 112,
      "redirects": 0
     }
    ]
@@ -3441,7 +3449,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:17.324Z",
+   "checkedAt": "2026-11-16T20:59:48.733Z",
    "checks": [
     {
      "id": "authmd",
@@ -3499,7 +3507,7 @@
      "name": "Docs in Markdown",
      "url": "https://loops.so/llms.txt",
      "heading": "# Loops",
-     "bytes": 30349,
+     "bytes": 30872,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -3512,7 +3520,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 234,
+     "ms": 548,
      "redirects": 0
     },
     {
@@ -3522,7 +3530,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain;charset=utf-8",
-     "ms": 201,
+     "ms": 317,
      "redirects": 0
     },
     {
@@ -3532,7 +3540,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 110,
+     "ms": 174,
      "redirects": 0
     },
     {
@@ -3542,7 +3550,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 316,
+     "ms": 188,
      "redirects": 1
     },
     {
@@ -3552,7 +3560,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 107,
+     "ms": 198,
      "redirects": 0
     },
     {
@@ -3562,7 +3570,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 474,
+     "ms": 696,
      "redirects": 0
     },
     {
@@ -3572,7 +3580,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 68,
+     "ms": 145,
      "redirects": 0
     }
    ]
@@ -3588,7 +3596,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:20.489Z",
+   "checkedAt": "2026-11-16T20:59:52.835Z",
    "checks": [
     {
      "id": "authmd",
@@ -3655,7 +3663,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 1230,
+     "ms": 2004,
      "redirects": 1
     },
     {
@@ -3665,7 +3673,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 1094,
+     "ms": 1125,
      "redirects": 1
     },
     {
@@ -3675,7 +3683,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 54,
+     "ms": 61,
      "redirects": 0
     },
     {
@@ -3685,7 +3693,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 349,
+     "ms": 268,
      "redirects": 0
     },
     {
@@ -3695,7 +3703,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=UTF-8",
-     "ms": 176,
+     "ms": 166,
      "redirects": 1
     },
     {
@@ -3705,7 +3713,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 61,
+     "ms": 56,
      "redirects": 0
     },
     {
@@ -3715,7 +3723,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=UTF-8",
-     "ms": 175,
+     "ms": 212,
      "redirects": 1
     },
     {
@@ -3725,7 +3733,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 1063,
+     "ms": 1306,
      "redirects": 1
     }
    ]
@@ -3741,7 +3749,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:13.848Z",
+   "checkedAt": "2026-11-16T21:00:57.765Z",
    "checks": [
     {
      "id": "authmd",
@@ -3769,7 +3777,7 @@
      "name": "Key works without a browser",
      "url": "https://cloud.mongodb.com/api/atlas/v2/groups",
      "httpStatus": 401,
-     "www_authenticate": "Digest realm=\"MMS Public API\", domain=\"\", nonce=\"MXdiDXJ/kA6MIYlad2u+OXRm99cbIotn\", algorithm=MD5, qop=\"auth\", stale=false",
+     "www_authenticate": "Digest realm=\"MMS Public API\", domain=\"\", nonce=\"pJf3ZLdJSXQ4M+eHM1BHSTPkeNHQ0D98\", algorithm=MD5, qop=\"auth\", stale=false",
      "status": "pass",
      "reason": "401 with a Digest challenge"
     },
@@ -3803,7 +3811,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 448,
+     "ms": 691,
      "redirects": 1
     },
     {
@@ -3813,7 +3821,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 2023,
+     "ms": 318,
      "redirects": 1
     },
     {
@@ -3823,7 +3831,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 215,
+     "ms": 199,
      "redirects": 0
     },
     {
@@ -3833,7 +3841,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 247,
+     "ms": 364,
      "redirects": 1
     },
     {
@@ -3843,7 +3851,7 @@
      "status": 401,
      "error": null,
      "contentType": null,
-     "ms": 185,
+     "ms": 215,
      "redirects": 0
     },
     {
@@ -3853,7 +3861,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 300,
+     "ms": 492,
      "redirects": 1
     },
     {
@@ -3863,7 +3871,7 @@
      "status": 401,
      "error": null,
      "contentType": null,
-     "ms": 202,
+     "ms": 214,
      "redirects": 0
     },
     {
@@ -3873,7 +3881,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 434,
+     "ms": 354,
      "redirects": 1
     }
    ]
@@ -3889,7 +3897,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:13.641Z",
+   "checkedAt": "2026-11-16T20:58:42.092Z",
    "checks": [
     {
      "id": "authmd",
@@ -3938,7 +3946,7 @@
      "name": "Docs in Markdown",
      "url": "https://developers.openai.com/llms.txt",
      "heading": "# OpenAI Developers",
-     "bytes": 6201,
+     "bytes": 6345,
      "status": "pass",
      "reason": "llms.txt found at a docs path"
     }
@@ -3951,7 +3959,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 222,
+     "ms": 249,
      "redirects": 0
     },
     {
@@ -3961,7 +3969,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 215,
+     "ms": 353,
      "redirects": 0
     },
     {
@@ -3971,7 +3979,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 105,
+     "ms": 75,
      "redirects": 0
     },
     {
@@ -3981,7 +3989,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 56,
+     "ms": 108,
      "redirects": 0
     },
     {
@@ -3991,7 +3999,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 292,
+     "ms": 138,
      "redirects": 0
     },
     {
@@ -4001,7 +4009,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 94,
+     "ms": 93,
      "redirects": 0
     },
     {
@@ -4011,7 +4019,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 143,
+     "ms": 185,
      "redirects": 0
     },
     {
@@ -4021,7 +4029,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 86,
+     "ms": 105,
      "redirects": 0
     },
     {
@@ -4031,7 +4039,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 260,
+     "ms": 294,
      "redirects": 0
     }
    ]
@@ -4047,7 +4055,7 @@
    "unread": 1,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:22.899Z",
+   "checkedAt": "2026-11-16T20:58:51.148Z",
    "checks": [
     {
      "id": "authmd",
@@ -4057,7 +4065,7 @@
      "was": "fail",
      "wasReason": "/auth.md answers with a Cloudflare bot challenge (after a redirect to https://www.perplexity.ai/auth.md)",
      "status": "unread",
-     "reason": "Not read on 2026-11-12: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge"
+     "reason": "Not read on 2026-11-16: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge"
     },
     {
      "id": "prm",
@@ -4076,7 +4084,7 @@
      "name": "Sign-up by API",
      "url": "https://api.perplexity.ai/.well-known/oauth-authorization-server",
      "status": "fail",
-     "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt (not read on 2026-11-12: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
+     "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt (not read on 2026-11-16: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
      "notRead": "https://perplexity.ai/auth.md"
     },
     {
@@ -4092,14 +4100,14 @@
      "id": "limits",
      "name": "Spend limits",
      "status": "fail",
-     "reason": "No spend cap in metadata, auth.md or llms.txt (not read on 2026-11-12: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
+     "reason": "No spend cap in metadata, auth.md or llms.txt (not read on 2026-11-16: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
      "notRead": "https://perplexity.ai/auth.md"
     },
     {
      "id": "payment",
      "name": "Payment handoff",
      "status": "fail",
-     "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt (not read on 2026-11-12: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
+     "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt (not read on 2026-11-16: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
      "notRead": "https://perplexity.ai/auth.md"
     },
     {
@@ -4107,7 +4115,7 @@
      "name": "Docs in Markdown",
      "url": "https://docs.perplexity.ai/llms.txt",
      "heading": "# Perplexity",
-     "bytes": 43120,
+     "bytes": 45751,
      "status": "pass",
      "reason": "llms.txt found at a docs path"
     }
@@ -4120,7 +4128,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 34,
+     "ms": 32,
      "redirects": 1
     },
     {
@@ -4130,7 +4138,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 30,
+     "ms": 28,
      "redirects": 1
     },
     {
@@ -4140,7 +4148,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 133,
+     "ms": 146,
      "redirects": 0
     },
     {
@@ -4150,7 +4158,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 97,
+     "ms": 116,
      "redirects": 0
     },
     {
@@ -4160,7 +4168,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 103,
+     "ms": 110,
      "redirects": 1
     },
     {
@@ -4170,7 +4178,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 132,
+     "ms": 127,
      "redirects": 0
     },
     {
@@ -4180,7 +4188,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 32,
+     "ms": 49,
      "redirects": 0
     },
     {
@@ -4190,7 +4198,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 111,
+     "ms": 112,
      "redirects": 1
     }
    ]
@@ -4206,7 +4214,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:06.223Z",
+   "checkedAt": "2026-11-16T20:59:35.986Z",
    "checks": [
     {
      "id": "authmd",
@@ -4263,7 +4271,7 @@
      "name": "Docs in Markdown",
      "url": "https://planetscale.com/docs/llms.txt",
      "heading": "# PlanetScale",
-     "bytes": 27212,
+     "bytes": 27493,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -4276,7 +4284,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 222,
+     "ms": 198,
      "redirects": 1
     },
     {
@@ -4286,7 +4294,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 148,
+     "ms": 136,
      "redirects": 1
     },
     {
@@ -4296,7 +4304,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 214,
+     "ms": 191,
      "redirects": 0
     },
     {
@@ -4306,7 +4314,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 111,
+     "ms": 71,
      "redirects": 0
     },
     {
@@ -4316,7 +4324,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 210,
+     "ms": 204,
      "redirects": 0
     },
     {
@@ -4326,7 +4334,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 215,
+     "ms": 218,
      "redirects": 0
     },
     {
@@ -4336,7 +4344,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 97,
+     "ms": 70,
      "redirects": 0
     },
     {
@@ -4346,7 +4354,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 97,
+     "ms": 61,
      "redirects": 0
     }
    ]
@@ -4362,7 +4370,7 @@
    "unread": 0,
    "total": 6,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:38.172Z",
+   "checkedAt": "2026-11-16T20:59:07.299Z",
    "checks": [
     {
      "id": "authmd",
@@ -4429,7 +4437,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 124,
+     "ms": 105,
      "redirects": 0
     },
     {
@@ -4439,7 +4447,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 110,
+     "ms": 98,
      "redirects": 0
     },
     {
@@ -4449,7 +4457,7 @@
      "status": 406,
      "error": null,
      "contentType": "application/json",
-     "ms": 98,
+     "ms": 99,
      "redirects": 0
     },
     {
@@ -4459,7 +4467,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 49,
+     "ms": 52,
      "redirects": 0
     },
     {
@@ -4469,7 +4477,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 43,
+     "ms": 55,
      "redirects": 0
     },
     {
@@ -4479,7 +4487,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain;charset=UTF-8",
-     "ms": 351,
+     "ms": 402,
      "redirects": 0
     },
     {
@@ -4489,7 +4497,7 @@
      "status": 406,
      "error": null,
      "contentType": "application/json",
-     "ms": 95,
+     "ms": 98,
      "redirects": 0
     }
    ]
@@ -4505,7 +4513,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:10.740Z",
+   "checkedAt": "2026-11-16T20:59:41.130Z",
    "checks": [
     {
      "id": "authmd",
@@ -4576,7 +4584,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 52,
+     "ms": 211,
      "redirects": 0
     },
     {
@@ -4586,7 +4594,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 170,
+     "ms": 56,
      "redirects": 0
     },
     {
@@ -4596,7 +4604,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 102,
+     "ms": 187,
      "redirects": 0
     },
     {
@@ -4606,7 +4614,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 180,
+     "ms": 242,
      "redirects": 0
     },
     {
@@ -4616,7 +4624,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 115,
+     "ms": 175,
      "redirects": 0
     },
     {
@@ -4626,7 +4634,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 126,
+     "ms": 206,
      "redirects": 0
     },
     {
@@ -4636,7 +4644,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 211,
+     "ms": 222,
      "redirects": 0
     },
     {
@@ -4646,7 +4654,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 174,
+     "ms": 235,
      "redirects": 0
     }
    ]
@@ -4662,7 +4670,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:02.698Z",
+   "checkedAt": "2026-11-16T20:59:33.434Z",
    "checks": [
     {
      "id": "authmd",
@@ -4732,7 +4740,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 167,
+     "ms": 218,
      "redirects": 0
     },
     {
@@ -4742,7 +4750,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 74,
+     "ms": 82,
      "redirects": 0
     },
     {
@@ -4752,7 +4760,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 56,
+     "ms": 59,
      "redirects": 0
     },
     {
@@ -4762,7 +4770,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 235,
+     "ms": 153,
      "redirects": 0
     },
     {
@@ -4772,7 +4780,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 55,
+     "ms": 56,
      "redirects": 0
     },
     {
@@ -4782,7 +4790,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 65,
+     "ms": 59,
      "redirects": 0
     },
     {
@@ -4792,7 +4800,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 161,
+     "ms": 193,
      "redirects": 0
     },
     {
@@ -4802,7 +4810,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 158,
+     "ms": 164,
      "redirects": 0
     }
    ]
@@ -4818,7 +4826,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:20.738Z",
+   "checkedAt": "2026-11-16T20:59:53.233Z",
    "checks": [
     {
      "id": "authmd",
@@ -4879,8 +4887,8 @@
      "finalUrl": "https://www.twilio.com/auth.md",
      "status": 404,
      "error": null,
-     "contentType": "text/html; charset=utf-8",
-     "ms": 486,
+     "contentType": "text/html;charset=utf-8",
+     "ms": 545,
      "redirects": 1
     },
     {
@@ -4890,7 +4898,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 709,
+     "ms": 636,
      "redirects": 1
     },
     {
@@ -4910,7 +4918,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=UTF-8",
-     "ms": 46,
+     "ms": 201,
      "redirects": 0
     },
     {
@@ -4919,8 +4927,8 @@
      "finalUrl": "https://www.twilio.com/.well-known/oauth-protected-resource",
      "status": 404,
      "error": null,
-     "contentType": "text/html; charset=utf-8",
-     "ms": 150,
+     "contentType": "text/html; charset=iso-8859-1",
+     "ms": 162,
      "redirects": 1
     },
     {
@@ -4930,7 +4938,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/problem+json",
-     "ms": 349,
+     "ms": 268,
      "redirects": 0
     },
     {
@@ -4939,8 +4947,8 @@
      "finalUrl": "https://www.twilio.com/.well-known/oauth-authorization-server",
      "status": 404,
      "error": null,
-     "contentType": "text/html; charset=utf-8",
-     "ms": 321,
+     "contentType": "text/html; charset=iso-8859-1",
+     "ms": 157,
      "redirects": 1
     },
     {
@@ -4950,7 +4958,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/problem+json",
-     "ms": 381,
+     "ms": 348,
      "redirects": 0
     },
     {
@@ -4959,8 +4967,8 @@
      "finalUrl": "https://www.twilio.com/.well-known/x402",
      "status": 404,
      "error": null,
-     "contentType": "text/html; charset=utf-8",
-     "ms": 320,
+     "contentType": "text/html; charset=iso-8859-1",
+     "ms": 148,
      "redirects": 1
     }
    ]
@@ -4976,7 +4984,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "the person confirms an email code (from llms.txt prose)",
-   "checkedAt": "2026-11-12T02:38:21.016Z",
+   "checkedAt": "2026-11-16T20:59:55.100Z",
    "checks": [
     {
      "id": "authmd",
@@ -5028,8 +5036,8 @@
      "id": "markdown",
      "name": "Docs in Markdown",
      "url": "https://agentphone.ai/llms.txt",
-     "heading": "# Agent Phone",
-     "bytes": 11304,
+     "heading": "# AgentPhone",
+     "bytes": 13062,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -5042,7 +5050,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 259,
+     "ms": 211,
      "redirects": 1
     },
     {
@@ -5052,7 +5060,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 186,
+     "ms": 183,
      "redirects": 1
     },
     {
@@ -5062,7 +5070,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 114,
+     "ms": 71,
      "redirects": 0
     },
     {
@@ -5072,7 +5080,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 129,
+     "ms": 134,
      "redirects": 1
     },
     {
@@ -5082,7 +5090,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 52,
+     "ms": 56,
      "redirects": 0
     },
     {
@@ -5092,7 +5100,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 127,
+     "ms": 118,
      "redirects": 1
     },
     {
@@ -5102,7 +5110,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 61,
+     "ms": 51,
      "redirects": 0
     },
     {
@@ -5112,7 +5120,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 129,
+     "ms": 124,
      "redirects": 1
     }
    ]
@@ -5128,7 +5136,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:14.850Z",
+   "checkedAt": "2026-11-16T20:58:42.772Z",
    "checks": [
     {
      "id": "authmd",
@@ -5181,7 +5189,7 @@
      "name": "Docs in Markdown",
      "url": "https://platform.claude.com/llms.txt",
      "heading": "# Anthropic Developer Documentation",
-     "bytes": 99989,
+     "bytes": 102037,
      "status": "pass",
      "reason": "llms.txt found at a docs path"
     }
@@ -5194,7 +5202,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 296,
+     "ms": 329,
      "redirects": 1
     },
     {
@@ -5204,7 +5212,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 379,
+     "ms": 299,
      "redirects": 1
     },
     {
@@ -5214,7 +5222,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 95,
+     "ms": 97,
      "redirects": 0
     },
     {
@@ -5224,7 +5232,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 134,
+     "ms": 126,
      "redirects": 2
     },
     {
@@ -5234,7 +5242,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 345,
+     "ms": 277,
      "redirects": 1
     },
     {
@@ -5244,7 +5252,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 87,
+     "ms": 91,
      "redirects": 0
     },
     {
@@ -5254,7 +5262,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 559,
+     "ms": 364,
      "redirects": 1
     },
     {
@@ -5264,7 +5272,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 85,
+     "ms": 100,
      "redirects": 0
     },
     {
@@ -5274,7 +5282,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 320,
+     "ms": 255,
      "redirects": 1
     }
    ]
@@ -5290,7 +5298,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:30.180Z",
+   "checkedAt": "2026-11-16T21:00:05.758Z",
    "checks": [
     {
      "id": "authmd",
@@ -5369,7 +5377,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 62,
+     "ms": 117,
      "redirects": 0
     },
     {
@@ -5379,7 +5387,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=UTF-8",
-     "ms": 36,
+     "ms": 182,
      "redirects": 0
     },
     {
@@ -5389,7 +5397,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 196,
+     "ms": 199,
      "redirects": 0
     },
     {
@@ -5399,7 +5407,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 61,
+     "ms": 108,
      "redirects": 0
     },
     {
@@ -5409,7 +5417,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 198,
+     "ms": 182,
      "redirects": 0
     },
     {
@@ -5419,7 +5427,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 247,
+     "ms": 203,
      "redirects": 1
     },
     {
@@ -5429,7 +5437,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 110,
+     "ms": 114,
      "redirects": 0
     },
     {
@@ -5439,7 +5447,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 246,
+     "ms": 367,
      "redirects": 0
     }
    ]
@@ -5455,7 +5463,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:32.406Z",
+   "checkedAt": "2026-11-16T20:59:02.599Z",
    "checks": [
     {
      "id": "authmd",
@@ -5517,7 +5525,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 311,
+     "ms": 308,
      "redirects": 1
     },
     {
@@ -5527,7 +5535,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 97,
+     "ms": 189,
      "redirects": 1
     },
     {
@@ -5537,7 +5545,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=UTF-8",
-     "ms": 11,
+     "ms": 185,
      "redirects": 0
     },
     {
@@ -5547,7 +5555,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 230,
+     "ms": 468,
      "redirects": 1
     },
     {
@@ -5557,7 +5565,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 8,
+     "ms": 195,
      "redirects": 0
     },
     {
@@ -5567,7 +5575,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 232,
+     "ms": 229,
      "redirects": 1
     },
     {
@@ -5577,7 +5585,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 7,
+     "ms": 181,
      "redirects": 0
     },
     {
@@ -5587,7 +5595,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 226,
+     "ms": 228,
      "redirects": 1
     }
    ]
@@ -5603,7 +5611,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:53.999Z",
+   "checkedAt": "2026-11-16T20:59:24.117Z",
    "checks": [
     {
      "id": "authmd",
@@ -5652,7 +5660,7 @@
      "name": "Docs in Markdown",
      "url": "https://docs.aws.amazon.com/llms.txt",
      "heading": "# Amazon Web Services (AWS) Documentation",
-     "bytes": 406801,
+     "bytes": 399557,
      "status": "pass",
      "reason": "llms.txt found at a docs path"
     }
@@ -5665,7 +5673,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html;charset=UTF-8",
-     "ms": 65,
+     "ms": 71,
      "redirects": 1
     },
     {
@@ -5675,7 +5683,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html;charset=UTF-8",
-     "ms": 61,
+     "ms": 63,
      "redirects": 0
     },
     {
@@ -5685,7 +5693,7 @@
      "status": 400,
      "error": null,
      "contentType": "text/xml;charset=UTF-8",
-     "ms": 216,
+     "ms": 198,
      "redirects": 0
     },
     {
@@ -5695,7 +5703,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 79,
+     "ms": 96,
      "redirects": 0
     },
     {
@@ -5705,7 +5713,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html;charset=UTF-8",
-     "ms": 94,
+     "ms": 125,
      "redirects": 0
     },
     {
@@ -5715,7 +5723,7 @@
      "status": 400,
      "error": null,
      "contentType": "text/xml;charset=UTF-8",
-     "ms": 204,
+     "ms": 197,
      "redirects": 0
     },
     {
@@ -5725,7 +5733,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html;charset=UTF-8",
-     "ms": 87,
+     "ms": 114,
      "redirects": 0
     },
     {
@@ -5735,7 +5743,7 @@
      "status": 400,
      "error": null,
      "contentType": "text/xml;charset=UTF-8",
-     "ms": 212,
+     "ms": 198,
      "redirects": 0
     },
     {
@@ -5745,7 +5753,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html;charset=UTF-8",
-     "ms": 97,
+     "ms": 112,
      "redirects": 0
     }
    ]
@@ -5761,7 +5769,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:46.937Z",
+   "checkedAt": "2026-11-16T20:59:15.904Z",
    "checks": [
     {
      "id": "authmd",
@@ -5836,7 +5844,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 88,
+     "ms": 99,
      "redirects": 1
     },
     {
@@ -5846,7 +5854,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 64,
+     "ms": 58,
      "redirects": 0
     },
     {
@@ -5856,7 +5864,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 158,
+     "ms": 159,
      "redirects": 0
     },
     {
@@ -5866,7 +5874,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 69,
+     "ms": 64,
      "redirects": 0
     },
     {
@@ -5876,7 +5884,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 51,
+     "ms": 33,
      "redirects": 0
     },
     {
@@ -5886,7 +5894,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 65,
+     "ms": 72,
      "redirects": 0
     },
     {
@@ -5906,7 +5914,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 649,
+     "ms": 424,
      "redirects": 0
     },
     {
@@ -5916,7 +5924,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 72,
+     "ms": 108,
      "redirects": 0
     }
    ]
@@ -5932,7 +5940,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:33.999Z",
+   "checkedAt": "2026-11-16T21:00:09.762Z",
    "checks": [
     {
      "id": "authmd",
@@ -5994,7 +6002,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 107,
+     "ms": 164,
      "redirects": 1
     },
     {
@@ -6004,7 +6012,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 94,
+     "ms": 109,
      "redirects": 1
     },
     {
@@ -6014,7 +6022,7 @@
      "status": 422,
      "error": null,
      "contentType": "application/json",
-     "ms": 33,
+     "ms": 35,
      "redirects": 0
     },
     {
@@ -6024,7 +6032,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 39,
+     "ms": 40,
      "redirects": 0
     },
     {
@@ -6034,7 +6042,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 28,
+     "ms": 97,
      "redirects": 1
     },
     {
@@ -6044,7 +6052,7 @@
      "status": 403,
      "error": null,
      "contentType": null,
-     "ms": 37,
+     "ms": 33,
      "redirects": 0
     },
     {
@@ -6054,7 +6062,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 25,
+     "ms": 104,
      "redirects": 1
     },
     {
@@ -6064,7 +6072,7 @@
      "status": 403,
      "error": null,
      "contentType": null,
-     "ms": 32,
+     "ms": 30,
      "redirects": 0
     },
     {
@@ -6074,7 +6082,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 94,
+     "ms": 93,
      "redirects": 1
     }
    ]
@@ -6090,7 +6098,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:27.550Z",
+   "checkedAt": "2026-11-16T21:00:02.709Z",
    "checks": [
     {
      "id": "authmd",
@@ -6151,7 +6159,7 @@
      "name": "Docs in Markdown",
      "url": "https://browser-use.com/llms.txt",
      "heading": "# Browser Use",
-     "bytes": 44116,
+     "bytes": 42300,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -6164,7 +6172,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 206,
+     "ms": 207,
      "redirects": 0
     },
     {
@@ -6174,7 +6182,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 61,
+     "ms": 54,
      "redirects": 0
     },
     {
@@ -6184,7 +6192,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 233,
+     "ms": 192,
      "redirects": 0
     },
     {
@@ -6194,7 +6202,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 230,
+     "ms": 212,
      "redirects": 1
     },
     {
@@ -6204,7 +6212,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 219,
+     "ms": 211,
      "redirects": 0
     },
     {
@@ -6214,7 +6222,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 218,
+     "ms": 194,
      "redirects": 1
     },
     {
@@ -6224,7 +6232,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 218,
+     "ms": 248,
      "redirects": 0
     },
     {
@@ -6234,7 +6242,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 71,
+     "ms": 81,
      "redirects": 0
     }
    ]
@@ -6250,7 +6258,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:24.269Z",
+   "checkedAt": "2026-11-16T20:59:58.818Z",
    "checks": [
     {
      "id": "authmd",
@@ -6312,7 +6320,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 139,
+     "ms": 116,
      "redirects": 2
     },
     {
@@ -6322,7 +6330,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 98,
+     "ms": 118,
      "redirects": 1
     },
     {
@@ -6332,7 +6340,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 8,
+     "ms": 10,
      "redirects": 0
     },
     {
@@ -6342,7 +6350,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 118,
+     "ms": 115,
      "redirects": 2
     },
     {
@@ -6352,7 +6360,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 8,
+     "ms": 9,
      "redirects": 0
     },
     {
@@ -6362,7 +6370,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 146,
+     "ms": 115,
      "redirects": 2
     },
     {
@@ -6372,7 +6380,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 8,
+     "ms": 9,
      "redirects": 0
     },
     {
@@ -6382,7 +6390,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 112,
+     "ms": 166,
      "redirects": 2
     }
    ]
@@ -6398,7 +6406,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:28.672Z",
+   "checkedAt": "2026-11-16T20:58:57.247Z",
    "checks": [
     {
      "id": "authmd",
@@ -6460,7 +6468,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 663,
+     "ms": 625,
      "redirects": 1
     },
     {
@@ -6470,7 +6478,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 669,
+     "ms": 287,
      "redirects": 1
     },
     {
@@ -6480,7 +6488,7 @@
      "status": 403,
      "error": null,
      "contentType": "application/json",
-     "ms": 99,
+     "ms": 87,
      "redirects": 0
     },
     {
@@ -6490,7 +6498,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 106,
+     "ms": 213,
      "redirects": 0
     },
     {
@@ -6500,7 +6508,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 594,
+     "ms": 811,
      "redirects": 1
     },
     {
@@ -6510,7 +6518,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 97,
+     "ms": 95,
      "redirects": 0
     },
     {
@@ -6520,7 +6528,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 730,
+     "ms": 626,
      "redirects": 1
     },
     {
@@ -6530,7 +6538,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 96,
+     "ms": 98,
      "redirects": 0
     },
     {
@@ -6540,7 +6548,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 622,
+     "ms": 589,
      "redirects": 1
     }
    ]
@@ -6556,7 +6564,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:42.269Z",
+   "checkedAt": "2026-11-16T20:59:11.442Z",
    "checks": [
     {
      "id": "authmd",
@@ -6626,7 +6634,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 46,
+     "ms": 48,
      "redirects": 1
     },
     {
@@ -6636,7 +6644,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain",
-     "ms": 44,
+     "ms": 45,
      "redirects": 1
     },
     {
@@ -6646,7 +6654,7 @@
      "status": 403,
      "error": null,
      "contentType": "application/json",
-     "ms": 76,
+     "ms": 58,
      "redirects": 0
     },
     {
@@ -6656,7 +6664,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 239,
+     "ms": 274,
      "redirects": 2
     },
     {
@@ -6666,7 +6674,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 45,
+     "ms": 53,
      "redirects": 0
     },
     {
@@ -6676,7 +6684,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 254,
+     "ms": 223,
      "redirects": 2
     },
     {
@@ -6686,7 +6694,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 54,
+     "ms": 49,
      "redirects": 0
     },
     {
@@ -6696,7 +6704,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=UTF-8",
-     "ms": 215,
+     "ms": 226,
      "redirects": 0
     },
     {
@@ -6706,7 +6714,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 186,
+     "ms": 221,
      "redirects": 2
     }
    ]
@@ -6722,7 +6730,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:22.048Z",
+   "checkedAt": "2026-11-16T20:58:51.058Z",
    "checks": [
     {
      "id": "authmd",
@@ -6784,7 +6792,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 233,
+     "ms": 284,
      "redirects": 0
     },
     {
@@ -6794,7 +6802,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 47,
+     "ms": 43,
      "redirects": 0
     },
     {
@@ -6804,7 +6812,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 97,
+     "ms": 108,
      "redirects": 0
     },
     {
@@ -6814,7 +6822,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 155,
+     "ms": 368,
      "redirects": 0
     },
     {
@@ -6824,7 +6832,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 89,
+     "ms": 83,
      "redirects": 0
     },
     {
@@ -6834,7 +6842,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 207,
+     "ms": 377,
      "redirects": 0
     },
     {
@@ -6844,7 +6852,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 84,
+     "ms": 85,
      "redirects": 0
     },
     {
@@ -6854,7 +6862,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 157,
+     "ms": 387,
      "redirects": 0
     }
    ]
@@ -6870,7 +6878,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:46.509Z",
+   "checkedAt": "2026-11-16T21:00:23.573Z",
    "checks": [
     {
      "id": "authmd",
@@ -6917,7 +6925,7 @@
      "where": "llms.txt",
      "url": "https://docs.cdp.coinbase.com/llms.txt",
      "match": "x402",
-     "snippet": "cp/mcp-tools/list-bazaar-resources.md) - [Make an x402 Request](https://docs.cdp.coinbase.com/agentic-wallet/mcp/mcp-tools/make-x402-request.md) - [Agentic Wall",
+     "snippet": "CLI for building with CDP APIs, including backend x402 payments. For agent wallet setup or connecting a Coinbase account, follow https://www.coinbase.com/skill.",
      "status": "fail",
      "reason": "Corrected after review: the matched prose is about x402 products Coinbase offers (an Agentic Wallet tool that pays for x402 requests, x402 SDKs and a facilitator for sellers), not a way for an agent to pay Coinbase. The checker said partial: llms.txt mentions a payment path (x402) in prose; nothing machine-readable",
      "checkerStatus": "partial",
@@ -6928,7 +6936,7 @@
      "name": "Docs in Markdown",
      "url": "https://docs.cdp.coinbase.com/llms.txt",
      "heading": "# Coinbase Developer Documentation",
-     "bytes": 60273,
+     "bytes": 57904,
      "status": "pass",
      "reason": "llms.txt found at a docs path"
     }
@@ -6941,7 +6949,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 141,
+     "ms": 370,
      "redirects": 2
     },
     {
@@ -6951,7 +6959,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 316,
+     "ms": 141,
      "redirects": 2
     },
     {
@@ -6961,7 +6969,7 @@
      "status": 401,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 118,
+     "ms": 124,
      "redirects": 0
     },
     {
@@ -6971,7 +6979,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 98,
+     "ms": 133,
      "redirects": 0
     },
     {
@@ -6981,7 +6989,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 302,
+     "ms": 146,
      "redirects": 2
     },
     {
@@ -6991,7 +6999,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 109,
+     "ms": 110,
      "redirects": 0
     },
     {
@@ -7001,7 +7009,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 137,
+     "ms": 136,
      "redirects": 2
     },
     {
@@ -7011,7 +7019,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 107,
+     "ms": 119,
      "redirects": 0
     },
     {
@@ -7021,7 +7029,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 148,
+     "ms": 135,
      "redirects": 0
     },
     {
@@ -7031,7 +7039,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 168,
+     "ms": 156,
      "redirects": 2
     }
    ]
@@ -7047,7 +7055,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:07.430Z",
+   "checkedAt": "2026-11-16T20:59:38.744Z",
    "checks": [
     {
      "id": "authmd",
@@ -7109,7 +7117,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 178,
+     "ms": 91,
      "redirects": 1
     },
     {
@@ -7119,7 +7127,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 63,
+     "ms": 50,
      "redirects": 1
     },
     {
@@ -7129,7 +7137,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 154,
+     "ms": 108,
      "redirects": 0
     },
     {
@@ -7139,7 +7147,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 41,
+     "ms": 43,
      "redirects": 1
     },
     {
@@ -7149,7 +7157,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 95,
+     "ms": 112,
      "redirects": 0
     },
     {
@@ -7159,7 +7167,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 42,
+     "ms": 43,
      "redirects": 1
     },
     {
@@ -7169,7 +7177,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 121,
+     "ms": 103,
      "redirects": 0
     },
     {
@@ -7179,7 +7187,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 47,
+     "ms": 81,
      "redirects": 1
     }
    ]
@@ -7195,7 +7203,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:35.263Z",
+   "checkedAt": "2026-11-16T20:59:04.439Z",
    "checks": [
     {
      "id": "authmd",
@@ -7244,7 +7252,7 @@
      "name": "Docs in Markdown",
      "url": "https://www.daytona.io/docs/llms.txt",
      "heading": "# Daytona",
-     "bytes": 226865,
+     "bytes": 227093,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -7257,7 +7265,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 340,
+     "ms": 301,
      "redirects": 1
     },
     {
@@ -7267,7 +7275,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 39,
+     "ms": 372,
      "redirects": 2
     },
     {
@@ -7277,7 +7285,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 493,
+     "ms": 100,
      "redirects": 0
     },
     {
@@ -7287,7 +7295,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 146,
+     "ms": 261,
      "redirects": 1
     },
     {
@@ -7297,7 +7305,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html",
-     "ms": 33,
+     "ms": 23,
      "redirects": 0
     },
     {
@@ -7307,7 +7315,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 144,
+     "ms": 236,
      "redirects": 1
     },
     {
@@ -7317,7 +7325,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html",
-     "ms": 23,
+     "ms": 31,
      "redirects": 0
     },
     {
@@ -7327,7 +7335,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 250,
+     "ms": 145,
      "redirects": 1
     }
    ]
@@ -7343,7 +7351,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:32.031Z",
+   "checkedAt": "2026-11-16T20:59:00.996Z",
    "checks": [
     {
      "id": "authmd",
@@ -7405,7 +7413,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 201,
+     "ms": 189,
      "redirects": 0
     },
     {
@@ -7415,7 +7423,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 161,
+     "ms": 176,
      "redirects": 0
     },
     {
@@ -7425,7 +7433,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 99,
+     "ms": 94,
      "redirects": 0
     },
     {
@@ -7435,7 +7443,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 155,
+     "ms": 180,
      "redirects": 0
     },
     {
@@ -7445,7 +7453,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 71,
+     "ms": 189,
      "redirects": 0
     },
     {
@@ -7455,7 +7463,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 177,
+     "ms": 155,
      "redirects": 0
     },
     {
@@ -7465,7 +7473,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 72,
+     "ms": 185,
      "redirects": 0
     },
     {
@@ -7475,7 +7483,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 183,
+     "ms": 176,
      "redirects": 0
     }
    ]
@@ -7491,7 +7499,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:53.574Z",
+   "checkedAt": "2026-11-16T20:59:23.785Z",
    "checks": [
     {
      "id": "authmd",
@@ -7553,7 +7561,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 462,
+     "ms": 501,
      "redirects": 1
     },
     {
@@ -7563,7 +7571,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 396,
+     "ms": 387,
      "redirects": 1
     },
     {
@@ -7583,7 +7591,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 243,
+     "ms": 554,
      "redirects": 1
     },
     {
@@ -7593,7 +7601,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 135,
+     "ms": 133,
      "redirects": 0
     },
     {
@@ -7603,7 +7611,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 217,
+     "ms": 255,
      "redirects": 1
     },
     {
@@ -7613,7 +7621,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 131,
+     "ms": 146,
      "redirects": 0
     },
     {
@@ -7623,7 +7631,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 238,
+     "ms": 307,
      "redirects": 1
     }
    ]
@@ -7639,7 +7647,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:33.920Z",
+   "checkedAt": "2026-11-16T20:59:03.289Z",
    "checks": [
     {
      "id": "authmd",
@@ -7701,7 +7709,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 197,
+     "ms": 106,
      "redirects": 0
     },
     {
@@ -7711,7 +7719,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 158,
+     "ms": 206,
      "redirects": 0
     },
     {
@@ -7721,7 +7729,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 101,
+     "ms": 89,
      "redirects": 0
     },
     {
@@ -7731,7 +7739,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 162,
+     "ms": 303,
      "redirects": 0
     },
     {
@@ -7741,7 +7749,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 51,
+     "ms": 1132,
      "redirects": 0
     },
     {
@@ -7751,7 +7759,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 175,
+     "ms": 176,
      "redirects": 0
     },
     {
@@ -7761,7 +7769,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 45,
+     "ms": 49,
      "redirects": 0
     },
     {
@@ -7771,7 +7779,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 163,
+     "ms": 171,
      "redirects": 0
     }
    ]
@@ -7787,7 +7795,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:30.466Z",
+   "checkedAt": "2026-11-16T20:58:58.654Z",
    "checks": [
     {
      "id": "authmd",
@@ -7854,7 +7862,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 262,
+     "ms": 407,
      "redirects": 0
     },
     {
@@ -7864,7 +7872,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 91,
+     "ms": 88,
      "redirects": 0
     },
     {
@@ -7874,7 +7882,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 84,
+     "ms": 76,
      "redirects": 0
     },
     {
@@ -7884,7 +7892,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 114,
+     "ms": 139,
      "redirects": 0
     },
     {
@@ -7894,7 +7902,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 87,
+     "ms": 86,
      "redirects": 0
     },
     {
@@ -7904,7 +7912,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 103,
+     "ms": 111,
      "redirects": 0
     },
     {
@@ -7914,7 +7922,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 81,
+     "ms": 86,
      "redirects": 0
     },
     {
@@ -7924,7 +7932,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 110,
+     "ms": 112,
      "redirects": 0
     }
    ]
@@ -7940,7 +7948,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:28.635Z",
+   "checkedAt": "2026-11-16T20:58:57.950Z",
    "checks": [
     {
      "id": "authmd",
@@ -8002,7 +8010,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 131,
+     "ms": 418,
      "redirects": 0
     },
     {
@@ -8012,7 +8020,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 84,
+     "ms": 309,
      "redirects": 0
     },
     {
@@ -8022,7 +8030,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 127,
+     "ms": 120,
      "redirects": 0
     },
     {
@@ -8032,7 +8040,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 129,
+     "ms": 133,
      "redirects": 0
     },
     {
@@ -8042,7 +8050,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 135,
+     "ms": 115,
      "redirects": 0
     },
     {
@@ -8052,7 +8060,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 154,
+     "ms": 123,
      "redirects": 0
     },
     {
@@ -8062,7 +8070,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 114,
+     "ms": 182,
      "redirects": 0
     },
     {
@@ -8088,7 +8096,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:19.324Z",
+   "checkedAt": "2026-11-16T20:58:47.543Z",
    "checks": [
     {
      "id": "authmd",
@@ -8137,7 +8145,7 @@
      "name": "Docs in Markdown",
      "url": "https://fireworks.ai/llms.txt",
      "heading": "# Fireworks AI",
-     "bytes": 5145,
+     "bytes": 5250,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -8149,8 +8157,8 @@
      "finalUrl": "https://fireworks.ai/auth.md",
      "status": 404,
      "error": null,
-     "contentType": "text/html; charset=utf-8",
-     "ms": 356,
+     "contentType": "text/plain; charset=utf-8",
+     "ms": 216,
      "redirects": 0
     },
     {
@@ -8160,7 +8168,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 177,
+     "ms": 178,
      "redirects": 0
     },
     {
@@ -8170,7 +8178,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 8,
+     "ms": 9,
      "redirects": 0
     },
     {
@@ -8180,7 +8188,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 495,
+     "ms": 350,
      "redirects": 0
     },
     {
@@ -8190,7 +8198,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 8,
+     "ms": 7,
      "redirects": 0
     },
     {
@@ -8200,7 +8208,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 353,
+     "ms": 344,
      "redirects": 0
     },
     {
@@ -8220,7 +8228,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 324,
+     "ms": 362,
      "redirects": 0
     }
    ]
@@ -8236,7 +8244,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:50.138Z",
+   "checkedAt": "2026-11-16T20:59:20.194Z",
    "checks": [
     {
      "id": "authmd",
@@ -8298,7 +8306,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 104,
+     "ms": 201,
      "redirects": 1
     },
     {
@@ -8308,7 +8316,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain",
-     "ms": 44,
+     "ms": 140,
      "redirects": 1
     },
     {
@@ -8318,7 +8326,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 111,
+     "ms": 113,
      "redirects": 0
     },
     {
@@ -8328,7 +8336,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 47,
+     "ms": 197,
      "redirects": 1
     },
     {
@@ -8338,7 +8346,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 104,
+     "ms": 99,
      "redirects": 0
     },
     {
@@ -8348,7 +8356,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 62,
+     "ms": 157,
      "redirects": 1
     },
     {
@@ -8358,7 +8366,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 98,
+     "ms": 99,
      "redirects": 0
     },
     {
@@ -8368,7 +8376,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 67,
+     "ms": 236,
      "redirects": 1
     }
    ]
@@ -8384,7 +8392,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:48.000Z",
+   "checkedAt": "2026-11-16T21:00:25.126Z",
    "checks": [
     {
      "id": "authmd",
@@ -8446,7 +8454,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 121,
+     "ms": 125,
      "redirects": 0
     },
     {
@@ -8456,7 +8464,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain",
-     "ms": 98,
+     "ms": 93,
      "redirects": 0
     },
     {
@@ -8466,7 +8474,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 82,
+     "ms": 84,
      "redirects": 0
     },
     {
@@ -8476,7 +8484,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 105,
+     "ms": 104,
      "redirects": 0
     },
     {
@@ -8486,7 +8494,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 105,
+     "ms": 104,
      "redirects": 0
     },
     {
@@ -8496,7 +8504,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 126,
+     "ms": 104,
      "redirects": 0
     },
     {
@@ -8506,7 +8514,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 85,
+     "ms": 106,
      "redirects": 0
     },
     {
@@ -8516,7 +8524,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 105,
+     "ms": 116,
      "redirects": 0
     }
    ]
@@ -8532,7 +8540,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:48.074Z",
+   "checkedAt": "2026-11-16T21:00:26.139Z",
    "checks": [
     {
      "id": "authmd",
@@ -8599,7 +8607,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 29,
+     "ms": 28,
      "redirects": 1
     },
     {
@@ -8609,7 +8617,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 26,
+     "ms": 30,
      "redirects": 1
     },
     {
@@ -8619,7 +8627,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 151,
+     "ms": 198,
      "redirects": 0
     },
     {
@@ -8629,7 +8637,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain",
-     "ms": 63,
+     "ms": 75,
      "redirects": 0
     },
     {
@@ -8639,7 +8647,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 37,
+     "ms": 50,
      "redirects": 0
     },
     {
@@ -8649,7 +8657,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 36,
+     "ms": 48,
      "redirects": 0
     },
     {
@@ -8659,7 +8667,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 32,
+     "ms": 31,
      "redirects": 1
     }
    ]
@@ -8675,7 +8683,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:55.260Z",
+   "checkedAt": "2026-11-16T20:59:26.125Z",
    "checks": [
     {
      "id": "authmd",
@@ -8739,7 +8747,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 260,
+     "ms": 258,
      "redirects": 0
     },
     {
@@ -8749,7 +8757,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 255,
+     "ms": 257,
      "redirects": 0
     },
     {
@@ -8759,7 +8767,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=UTF-8",
-     "ms": 56,
+     "ms": 50,
      "redirects": 0
     },
     {
@@ -8769,7 +8777,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 285,
+     "ms": 349,
      "redirects": 1
     },
     {
@@ -8779,7 +8787,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 184,
+     "ms": 250,
      "redirects": 0
     },
     {
@@ -8789,7 +8797,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 45,
+     "ms": 68,
      "redirects": 0
     },
     {
@@ -8799,7 +8807,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 152,
+     "ms": 259,
      "redirects": 0
     },
     {
@@ -8809,7 +8817,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 49,
+     "ms": 72,
      "redirects": 0
     },
     {
@@ -8819,7 +8827,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 243,
+     "ms": 234,
      "redirects": 0
     }
    ]
@@ -8835,7 +8843,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:15.877Z",
+   "checkedAt": "2026-11-16T20:58:43.818Z",
    "checks": [
     {
      "id": "authmd",
@@ -8865,7 +8873,7 @@
      "httpStatus": 403,
      "www_authenticate": null,
      "status": "partial",
-     "reason": "403 instead of 401: the body asks for a key, but there is no WWW-Authenticate challenge"
+     "reason": "403 instead of 401, with no WWW-Authenticate challenge"
     },
     {
      "id": "limits",
@@ -8884,7 +8892,7 @@
      "name": "Docs in Markdown",
      "url": "https://aistudio.google.com/llms.txt",
      "heading": "# Gemini API & AI Studio Documentation",
-     "bytes": 69106,
+     "bytes": 70824,
      "status": "pass",
      "reason": "llms.txt found at a docs path"
     }
@@ -8897,7 +8905,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 840,
+     "ms": 342,
      "redirects": 0
     },
     {
@@ -8907,7 +8915,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 266,
+     "ms": 589,
      "redirects": 0
     },
     {
@@ -8917,7 +8925,7 @@
      "status": 403,
      "error": null,
      "contentType": "application/json; charset=UTF-8",
-     "ms": 88,
+     "ms": 102,
      "redirects": 0
     },
     {
@@ -8927,7 +8935,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 178,
+     "ms": 468,
      "redirects": 1
     },
     {
@@ -8937,7 +8945,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 227,
+     "ms": 450,
      "redirects": 0
     },
     {
@@ -8947,7 +8955,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 237,
+     "ms": 75,
      "redirects": 0
     },
     {
@@ -8957,7 +8965,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 878,
+     "ms": 468,
      "redirects": 0
     },
     {
@@ -8967,7 +8975,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 79,
+     "ms": 74,
      "redirects": 0
     },
     {
@@ -8977,7 +8985,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 475,
+     "ms": 505,
      "redirects": 0
     }
    ]
@@ -8993,7 +9001,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:17.744Z",
+   "checkedAt": "2026-11-16T20:58:46.103Z",
    "checks": [
     {
      "id": "authmd",
@@ -9059,7 +9067,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 212,
+     "ms": 221,
      "redirects": 0
     },
     {
@@ -9079,7 +9087,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 42,
+     "ms": 50,
      "redirects": 0
     },
     {
@@ -9089,7 +9097,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 91,
+     "ms": 116,
      "redirects": 0
     },
     {
@@ -9099,7 +9107,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 306,
+     "ms": 209,
      "redirects": 0
     },
     {
@@ -9109,7 +9117,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 47,
+     "ms": 45,
      "redirects": 0
     },
     {
@@ -9119,7 +9127,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 255,
+     "ms": 203,
      "redirects": 0
     },
     {
@@ -9129,7 +9137,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 44,
+     "ms": 43,
      "redirects": 0
     },
     {
@@ -9139,7 +9147,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 207,
+     "ms": 224,
      "redirects": 0
     }
    ]
@@ -9155,7 +9163,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:47.176Z",
+   "checkedAt": "2026-11-16T20:59:17.921Z",
    "checks": [
     {
      "id": "authmd",
@@ -9217,7 +9225,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 1109,
+     "ms": 1146,
      "redirects": 1
     },
     {
@@ -9227,7 +9235,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 36,
+     "ms": 280,
      "redirects": 0
     },
     {
@@ -9237,7 +9245,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 152,
+     "ms": 192,
      "redirects": 0
     },
     {
@@ -9247,7 +9255,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 1069,
+     "ms": 1056,
      "redirects": 1
     },
     {
@@ -9257,7 +9265,7 @@
      "status": 400,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 112,
+     "ms": 123,
      "redirects": 0
     },
     {
@@ -9267,7 +9275,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 1038,
+     "ms": 660,
      "redirects": 1
     },
     {
@@ -9277,7 +9285,7 @@
      "status": 400,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 126,
+     "ms": 115,
      "redirects": 0
     },
     {
@@ -9287,7 +9295,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 1065,
+     "ms": 556,
      "redirects": 1
     }
    ]
@@ -9303,7 +9311,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:02.418Z",
+   "checkedAt": "2026-11-16T20:59:32.607Z",
    "checks": [
     {
      "id": "authmd",
@@ -9365,7 +9373,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 752,
+     "ms": 909,
      "redirects": 1
     },
     {
@@ -9375,7 +9383,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 629,
+     "ms": 649,
      "redirects": 1
     },
     {
@@ -9385,7 +9393,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 676,
+     "ms": 712,
      "redirects": 0
     },
     {
@@ -9395,7 +9403,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=UTF-8",
-     "ms": 889,
+     "ms": 909,
      "redirects": 0
     },
     {
@@ -9405,7 +9413,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 585,
+     "ms": 637,
      "redirects": 2
     },
     {
@@ -9415,7 +9423,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 490,
+     "ms": 517,
      "redirects": 0
     },
     {
@@ -9425,7 +9433,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 629,
+     "ms": 650,
      "redirects": 2
     },
     {
@@ -9435,7 +9443,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 498,
+     "ms": 516,
      "redirects": 0
     },
     {
@@ -9445,7 +9453,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 710,
+     "ms": 623,
      "redirects": 2
     }
    ]
@@ -9461,7 +9469,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:26.489Z",
+   "checkedAt": "2026-11-16T21:00:01.778Z",
    "checks": [
     {
      "id": "authmd",
@@ -9523,7 +9531,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 58,
+     "ms": 64,
      "redirects": 1
     },
     {
@@ -9533,7 +9541,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 48,
+     "ms": 50,
      "redirects": 1
     },
     {
@@ -9543,7 +9551,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 93,
+     "ms": 103,
      "redirects": 0
     },
     {
@@ -9553,7 +9561,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 52,
+     "ms": 50,
      "redirects": 1
     },
     {
@@ -9563,7 +9571,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 86,
+     "ms": 97,
      "redirects": 0
     },
     {
@@ -9573,7 +9581,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 52,
+     "ms": 48,
      "redirects": 1
     },
     {
@@ -9583,7 +9591,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 89,
+     "ms": 93,
      "redirects": 0
     },
     {
@@ -9593,7 +9601,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 47,
+     "ms": 53,
      "redirects": 1
     }
    ]
@@ -9609,7 +9617,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "not stated",
-   "checkedAt": "2026-11-12T02:38:23.259Z",
+   "checkedAt": "2026-11-16T20:59:56.032Z",
    "checks": [
     {
      "id": "authmd",
@@ -9667,7 +9675,7 @@
      "name": "Docs in Markdown",
      "url": "https://inkbox.ai/llms.txt",
      "heading": "# Inkbox",
-     "bytes": 24832,
+     "bytes": 25635,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -9680,7 +9688,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 277,
+     "ms": 336,
      "redirects": 0
     },
     {
@@ -9690,7 +9698,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 32,
+     "ms": 47,
      "redirects": 0
     },
     {
@@ -9700,7 +9708,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 111,
+     "ms": 106,
      "redirects": 0
     },
     {
@@ -9710,7 +9718,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 102,
+     "ms": 251,
      "redirects": 0
     },
     {
@@ -9720,7 +9728,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 240,
+     "ms": 104,
      "redirects": 0
     },
     {
@@ -9730,7 +9738,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 268,
+     "ms": 151,
      "redirects": 0
     }
    ]
@@ -9746,7 +9754,7 @@
    "unread": 0,
    "total": 6,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:51.119Z",
+   "checkedAt": "2026-11-16T21:00:28.517Z",
    "checks": [
     {
      "id": "authmd",
@@ -9792,7 +9800,7 @@
      "name": "Docs in Markdown",
      "url": "https://linear.app/llms.txt",
      "heading": "# Linear",
-     "bytes": 11793,
+     "bytes": 11672,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -9805,7 +9813,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html",
-     "ms": 42,
+     "ms": 64,
      "redirects": 0
     },
     {
@@ -9815,7 +9823,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 131,
+     "ms": 175,
      "redirects": 0
     },
     {
@@ -9825,7 +9833,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 168,
+     "ms": 224,
      "redirects": 0
     },
     {
@@ -9835,7 +9843,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 207,
+     "ms": 227,
      "redirects": 0
     },
     {
@@ -9845,7 +9853,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 185,
+     "ms": 290,
      "redirects": 0
     },
     {
@@ -9855,7 +9863,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 119,
+     "ms": 148,
      "redirects": 0
     },
     {
@@ -9865,7 +9873,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 167,
+     "ms": 160,
      "redirects": 0
     }
    ]
@@ -9881,7 +9889,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:15.191Z",
+   "checkedAt": "2026-11-16T20:58:43.665Z",
    "checks": [
     {
      "id": "authmd",
@@ -9943,7 +9951,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 518,
+     "ms": 861,
      "redirects": 0
     },
     {
@@ -9953,7 +9961,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=UTF-8",
-     "ms": 306,
+     "ms": 251,
      "redirects": 0
     },
     {
@@ -9963,7 +9971,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 225,
+     "ms": 230,
      "redirects": 0
     },
     {
@@ -9973,7 +9981,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 623,
+     "ms": 451,
      "redirects": 0
     },
     {
@@ -9983,7 +9991,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 201,
+     "ms": 189,
      "redirects": 0
     },
     {
@@ -9993,7 +10001,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 615,
+     "ms": 651,
      "redirects": 0
     },
     {
@@ -10003,7 +10011,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 213,
+     "ms": 184,
      "redirects": 0
     },
     {
@@ -10013,7 +10021,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 622,
+     "ms": 654,
      "redirects": 0
     }
    ]
@@ -10029,7 +10037,7 @@
    "unread": 0,
    "total": 6,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:35.398Z",
+   "checkedAt": "2026-11-16T20:59:04.289Z",
    "checks": [
     {
      "id": "authmd",
@@ -10079,7 +10087,7 @@
      "name": "Docs in Markdown",
      "url": "https://modal.com/llms.txt",
      "heading": "# Modal Documentation",
-     "bytes": 28016,
+     "bytes": 28096,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -10092,7 +10100,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 372,
+     "ms": 382,
      "redirects": 0
     },
     {
@@ -10102,7 +10110,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain",
-     "ms": 344,
+     "ms": 317,
      "redirects": 0
     },
     {
@@ -10122,7 +10130,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 374,
+     "ms": 357,
      "redirects": 0
     },
     {
@@ -10132,7 +10140,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 392,
+     "ms": 351,
      "redirects": 0
     }
    ]
@@ -10148,7 +10156,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:41.412Z",
+   "checkedAt": "2026-11-16T21:00:39.738Z",
    "checks": [
     {
      "id": "authmd",
@@ -10210,7 +10218,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 72,
+     "ms": 82,
      "redirects": 1
     },
     {
@@ -10220,7 +10228,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 42,
+     "ms": 52,
      "redirects": 1
     },
     {
@@ -10230,7 +10238,7 @@
      "status": 401,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 230,
+     "ms": 171,
      "redirects": 0
     },
     {
@@ -10240,7 +10248,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 109,
+     "ms": 102,
      "redirects": 0
     },
     {
@@ -10250,7 +10258,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 56,
+     "ms": 42,
      "redirects": 1
     },
     {
@@ -10260,7 +10268,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 86,
+     "ms": 83,
      "redirects": 0
     },
     {
@@ -10270,7 +10278,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 44,
+     "ms": 52,
      "redirects": 1
     },
     {
@@ -10280,7 +10288,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 84,
+     "ms": 85,
      "redirects": 0
     },
     {
@@ -10290,7 +10298,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 43,
+     "ms": 41,
      "redirects": 1
     }
    ]
@@ -10306,7 +10314,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:28.510Z",
+   "checkedAt": "2026-11-16T20:58:57.964Z",
    "checks": [
     {
      "id": "authmd",
@@ -10354,10 +10362,10 @@
      "name": "Spend limits",
      "where": "auth.md",
      "url": "https://nano-gpt.com/auth.md",
-     "match": "usage_limit_type",
-     "snippet": "code_challenge_method\": \"S256\", \"limit\": 20, \"usage_limit_type\": \"weekly\", \"expires_at\": \"2099-07-01T00:00:00.000Z\", \"key_label\": \"Local coding agent\" }",
+     "match": "spending limits",
+     "snippet": "el catalogs. Bounded by the balance and the key's spending limits. A paid response states its cost and may state the remaining balance. Also the chat handoff (`",
      "status": "partial",
-     "reason": "auth.md mentions usage_limit_type in prose; no machine-readable cap"
+     "reason": "auth.md mentions spending limits in prose; no machine-readable cap"
     },
     {
      "id": "payment",
@@ -10374,7 +10382,7 @@
      "name": "Docs in Markdown",
      "url": "https://docs.nano-gpt.com/llms.txt",
      "heading": "# NanoGPT API Documentation",
-     "bytes": 22056,
+     "bytes": 22268,
      "status": "pass",
      "reason": "llms.txt found at a docs path"
     }
@@ -10387,7 +10395,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 633,
+     "ms": 421,
      "redirects": 0
     },
     {
@@ -10397,7 +10405,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 186,
+     "ms": 191,
      "redirects": 0
     },
     {
@@ -10407,7 +10415,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 1186,
+     "ms": 1059,
      "redirects": 0
     },
     {
@@ -10417,7 +10425,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 119,
+     "ms": 281,
      "redirects": 0
     },
     {
@@ -10427,7 +10435,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 391,
+     "ms": 413,
      "redirects": 0
     },
     {
@@ -10437,7 +10445,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 278,
+     "ms": 229,
      "redirects": 0
     },
     {
@@ -10447,7 +10455,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 224,
+     "ms": 81,
      "redirects": 0
     },
     {
@@ -10457,7 +10465,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 84,
+     "ms": 79,
      "redirects": 0
     }
    ]
@@ -10473,7 +10481,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:42.898Z",
+   "checkedAt": "2026-11-16T20:59:12.101Z",
    "checks": [
     {
      "id": "authmd",
@@ -10540,7 +10548,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 278,
+     "ms": 290,
      "redirects": 0
     },
     {
@@ -10550,7 +10558,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=UTF-8",
-     "ms": 265,
+     "ms": 298,
      "redirects": 0
     },
     {
@@ -10560,7 +10568,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 236,
+     "ms": 226,
      "redirects": 0
     },
     {
@@ -10570,7 +10578,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 179,
+     "ms": 175,
      "redirects": 0
     },
     {
@@ -10580,7 +10588,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 227,
+     "ms": 197,
      "redirects": 0
     },
     {
@@ -10590,7 +10598,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 184,
+     "ms": 177,
      "redirects": 0
     },
     {
@@ -10600,7 +10608,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 234,
+     "ms": 196,
      "redirects": 0
     },
     {
@@ -10610,7 +10618,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 195,
+     "ms": 255,
      "redirects": 0
     },
     {
@@ -10620,7 +10628,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 180,
+     "ms": 186,
      "redirects": 0
     }
    ]
@@ -10636,7 +10644,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:39.926Z",
+   "checkedAt": "2026-11-16T20:59:10.102Z",
    "checks": [
     {
      "id": "authmd",
@@ -10685,7 +10693,7 @@
      "name": "Docs in Markdown",
      "url": "https://northflank.com/docs/llms.txt",
      "heading": "# Northflank Documentation",
-     "bytes": 78767,
+     "bytes": 78937,
      "status": "pass",
      "reason": "llms.txt found at a docs path"
     }
@@ -10698,7 +10706,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 261,
+     "ms": 247,
      "redirects": 0
     },
     {
@@ -10708,7 +10716,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 236,
+     "ms": 202,
      "redirects": 0
     },
     {
@@ -10718,7 +10726,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 184,
+     "ms": 189,
      "redirects": 0
     },
     {
@@ -10728,7 +10736,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown",
-     "ms": 60,
+     "ms": 168,
      "redirects": 0
     },
     {
@@ -10738,7 +10746,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 204,
+     "ms": 203,
      "redirects": 0
     },
     {
@@ -10748,7 +10756,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 194,
+     "ms": 172,
      "redirects": 0
     },
     {
@@ -10758,7 +10766,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 241,
+     "ms": 206,
      "redirects": 0
     },
     {
@@ -10768,7 +10776,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 181,
+     "ms": 236,
      "redirects": 0
     },
     {
@@ -10778,7 +10786,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 264,
+     "ms": 215,
      "redirects": 0
     }
    ]
@@ -10794,7 +10802,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:18.549Z",
+   "checkedAt": "2026-11-16T20:58:46.921Z",
    "checks": [
     {
      "id": "authmd",
@@ -10847,7 +10855,7 @@
      "name": "Docs in Markdown",
      "url": "https://openrouter.ai/llms.txt",
      "heading": "# OpenRouter",
-     "bytes": 11728,
+     "bytes": 11593,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -10860,7 +10868,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 153,
+     "ms": 227,
      "redirects": 0
     },
     {
@@ -10870,7 +10878,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 111,
+     "ms": 185,
      "redirects": 0
     },
     {
@@ -10880,7 +10888,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 29,
+     "ms": 30,
      "redirects": 0
     },
     {
@@ -10890,7 +10898,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 254,
+     "ms": 281,
      "redirects": 0
     },
     {
@@ -10900,7 +10908,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 264,
+     "ms": 245,
      "redirects": 0
     },
     {
@@ -10910,7 +10918,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 60,
+     "ms": 331,
      "redirects": 0
     }
    ]
@@ -10925,8 +10933,8 @@
    "partial": 3,
    "unread": 0,
    "total": 7,
-   "whoActs": "the person confirms an email code (from llms.txt prose)",
-   "checkedAt": "2026-11-12T02:38:40.722Z",
+   "whoActs": "not stated",
+   "checkedAt": "2026-11-16T21:00:17.765Z",
    "checks": [
     {
      "id": "authmd",
@@ -10949,7 +10957,7 @@
      "url": "https://www.orthogonal.com/llms.txt",
      "endpoint": "https://www.orthogonal.com/agent-signup.md",
      "link": true,
-     "quote": "connection or use the browser sign-in handoff at https://www.orthogonal.com/agent-signup.md: start a connection with POST https://www.orthogonal.com/api/agent-",
+     "quote": "`GET https://api.orthogonal.com/v1/me`. Details: https://www.orthogonal.com/agent-signup.md. Never send an existing customer through signup or ask them to copy",
      "status": "partial",
      "reason": "llms.txt links an agent sign-up guide (https://www.orthogonal.com/agent-signup.md), but there is no agent_auth metadata for tools to find it"
     },
@@ -10974,7 +10982,7 @@
      "where": "llms.txt",
      "url": "https://www.orthogonal.com/llms.txt",
      "match": "x402",
-     "snippet": "y default; payable catalog endpoints also support x402 with USDC on Base and MPP with USDC.e on Tempo. Do not blindly repeat a paid call after an ambiguous tim",
+     "snippet": "rst request answers 402 with the price to pay: - x402: `https://www.orthogonal.com/pay/<api-slug><path>`, paid in USDC on Base or USDC on Monad. Catalog: https",
      "status": "partial",
      "reason": "llms.txt mentions a payment path (x402) in prose; nothing machine-readable"
     },
@@ -10983,7 +10991,7 @@
      "name": "Docs in Markdown",
      "url": "https://www.orthogonal.com/llms.txt",
      "heading": "# Orthogonal",
-     "bytes": 29560,
+     "bytes": 32848,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -10996,7 +11004,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 113,
+     "ms": 101,
      "redirects": 1
     },
     {
@@ -11006,7 +11014,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 182,
+     "ms": 231,
      "redirects": 1
     },
     {
@@ -11016,7 +11024,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 254,
+     "ms": 407,
      "redirects": 0
     },
     {
@@ -11026,7 +11034,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 154,
+     "ms": 138,
      "redirects": 1
     },
     {
@@ -11036,7 +11044,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 139,
+     "ms": 128,
      "redirects": 0
     },
     {
@@ -11046,7 +11054,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 74,
+     "ms": 80,
      "redirects": 1
     },
     {
@@ -11056,7 +11064,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 77,
+     "ms": 84,
      "redirects": 0
     },
     {
@@ -11066,7 +11074,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 74,
+     "ms": 83,
      "redirects": 1
     }
    ]
@@ -11082,7 +11090,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:46.718Z",
+   "checkedAt": "2026-11-16T21:00:21.886Z",
    "checks": [
     {
      "id": "authmd",
@@ -11143,8 +11151,8 @@
      "finalUrl": "https://www.paddle.com/auth.md",
      "status": 404,
      "error": null,
-     "contentType": "text/html; charset=utf-8",
-     "ms": 1311,
+     "contentType": "text/html",
+     "ms": 879,
      "redirects": 1
     },
     {
@@ -11153,8 +11161,8 @@
      "finalUrl": "https://www.paddle.com/llms.txt",
      "status": 404,
      "error": null,
-     "contentType": "text/html; charset=utf-8",
-     "ms": 134,
+     "contentType": "text/html",
+     "ms": 496,
      "redirects": 1
     },
     {
@@ -11164,7 +11172,7 @@
      "status": 403,
      "error": null,
      "contentType": "application/json",
-     "ms": 115,
+     "ms": 151,
      "redirects": 0
     },
     {
@@ -11174,7 +11182,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=UTF-8",
-     "ms": 188,
+     "ms": 296,
      "redirects": 0
     },
     {
@@ -11183,8 +11191,8 @@
      "finalUrl": "https://www.paddle.com/.well-known/oauth-protected-resource",
      "status": 404,
      "error": null,
-     "contentType": "text/html; charset=utf-8",
-     "ms": 1315,
+     "contentType": "text/html",
+     "ms": 492,
      "redirects": 1
     },
     {
@@ -11194,7 +11202,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 107,
+     "ms": 109,
      "redirects": 0
     },
     {
@@ -11203,8 +11211,8 @@
      "finalUrl": "https://www.paddle.com/.well-known/oauth-authorization-server",
      "status": 404,
      "error": null,
-     "contentType": "text/html; charset=utf-8",
-     "ms": 1052,
+     "contentType": "text/html",
+     "ms": 888,
      "redirects": 1
     },
     {
@@ -11214,7 +11222,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 105,
+     "ms": 110,
      "redirects": 0
     },
     {
@@ -11223,8 +11231,8 @@
      "finalUrl": "https://www.paddle.com/.well-known/x402",
      "status": 404,
      "error": null,
-     "contentType": "text/html; charset=utf-8",
-     "ms": 1051,
+     "contentType": "text/html",
+     "ms": 876,
      "redirects": 1
     }
    ]
@@ -11240,7 +11248,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": "the person confirms an email code (from auth.md prose)",
-   "checkedAt": "2026-11-12T02:38:38.165Z",
+   "checkedAt": "2026-11-16T21:00:14.428Z",
    "checks": [
     {
      "id": "authmd",
@@ -11319,7 +11327,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 224,
+     "ms": 236,
      "redirects": 0
     },
     {
@@ -11329,7 +11337,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 76,
+     "ms": 81,
      "redirects": 0
     },
     {
@@ -11339,7 +11347,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 1085,
+     "ms": 1091,
      "redirects": 0
     },
     {
@@ -11349,7 +11357,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 231,
+     "ms": 212,
      "redirects": 0
     },
     {
@@ -11359,7 +11367,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 79,
+     "ms": 83,
      "redirects": 0
     },
     {
@@ -11369,7 +11377,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 64,
+     "ms": 329,
      "redirects": 0
     },
     {
@@ -11379,7 +11387,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 72,
+     "ms": 87,
      "redirects": 0
     },
     {
@@ -11389,7 +11397,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 343,
+     "ms": 698,
      "redirects": 0
     },
     {
@@ -11399,7 +11407,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 70,
+     "ms": 640,
      "redirects": 0
     }
    ]
@@ -11415,7 +11423,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:09.291Z",
+   "checkedAt": "2026-11-16T20:59:39.268Z",
    "checks": [
     {
      "id": "authmd",
@@ -11464,7 +11472,7 @@
      "name": "Docs in Markdown",
      "url": "https://www.pinecone.io/llms.txt",
      "heading": "# Pinecone",
-     "bytes": 31656,
+     "bytes": 32000,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -11477,7 +11485,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 398,
+     "ms": 332,
      "redirects": 1
     },
     {
@@ -11487,7 +11495,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 70,
+     "ms": 55,
      "redirects": 1
     },
     {
@@ -11497,7 +11505,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 86,
+     "ms": 94,
      "redirects": 0
     },
     {
@@ -11507,7 +11515,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 51,
+     "ms": 58,
      "redirects": 1
     },
     {
@@ -11527,7 +11535,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 53,
+     "ms": 52,
      "redirects": 1
     },
     {
@@ -11537,7 +11545,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 85,
+     "ms": 93,
      "redirects": 0
     },
     {
@@ -11547,7 +11555,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 42,
+     "ms": 47,
      "redirects": 1
     }
    ]
@@ -11563,7 +11571,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:13.673Z",
+   "checkedAt": "2026-11-16T20:59:44.058Z",
    "checks": [
     {
      "id": "authmd",
@@ -11628,7 +11636,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/octet-stream",
-     "ms": 304,
+     "ms": 297,
      "redirects": 0
     },
     {
@@ -11638,7 +11646,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 270,
+     "ms": 131,
      "redirects": 0
     },
     {
@@ -11648,7 +11656,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 158,
+     "ms": 148,
      "redirects": 0
     },
     {
@@ -11658,7 +11666,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=UTF-8",
-     "ms": 137,
+     "ms": 150,
      "redirects": 0
     },
     {
@@ -11668,7 +11676,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 174,
+     "ms": 165,
      "redirects": 0
     },
     {
@@ -11678,7 +11686,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=UTF-8",
-     "ms": 151,
+     "ms": 312,
      "redirects": 0
     },
     {
@@ -11688,7 +11696,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 170,
+     "ms": 160,
      "redirects": 0
     },
     {
@@ -11698,7 +11706,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 179,
+     "ms": 201,
      "redirects": 0
     },
     {
@@ -11708,7 +11716,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=UTF-8",
-     "ms": 137,
+     "ms": 522,
      "redirects": 0
     }
    ]
@@ -11724,7 +11732,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:38.215Z",
+   "checkedAt": "2026-11-16T20:59:07.397Z",
    "checks": [
     {
      "id": "authmd",
@@ -11773,7 +11781,7 @@
      "name": "Docs in Markdown",
      "url": "https://render.com/llms.txt",
      "heading": "# Render",
-     "bytes": 53191,
+     "bytes": 53197,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -11786,7 +11794,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 94,
+     "ms": 84,
      "redirects": 0
     },
     {
@@ -11796,7 +11804,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 63,
+     "ms": 87,
      "redirects": 0
     },
     {
@@ -11806,7 +11814,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 45,
+     "ms": 44,
      "redirects": 0
     },
     {
@@ -11816,7 +11824,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 92,
+     "ms": 69,
      "redirects": 0
     },
     {
@@ -11826,7 +11834,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 43,
+     "ms": 44,
      "redirects": 0
     },
     {
@@ -11836,7 +11844,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 71,
+     "ms": 92,
      "redirects": 0
     },
     {
@@ -11846,7 +11854,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 50,
+     "ms": 47,
      "redirects": 0
     },
     {
@@ -11856,7 +11864,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 89,
+     "ms": 86,
      "redirects": 0
     }
    ]
@@ -11872,7 +11880,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:27.132Z",
+   "checkedAt": "2026-11-16T20:58:55.146Z",
    "checks": [
     {
      "id": "authmd",
@@ -11934,7 +11942,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 432,
+     "ms": 319,
      "redirects": 0
     },
     {
@@ -11944,7 +11952,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 392,
+     "ms": 221,
      "redirects": 0
     },
     {
@@ -11954,7 +11962,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/problem+json",
-     "ms": 41,
+     "ms": 36,
      "redirects": 0
     },
     {
@@ -11964,7 +11972,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 286,
+     "ms": 334,
      "redirects": 0
     },
     {
@@ -11974,7 +11982,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/problem+json",
-     "ms": 35,
+     "ms": 38,
      "redirects": 0
     },
     {
@@ -11984,7 +11992,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 424,
+     "ms": 324,
      "redirects": 0
     },
     {
@@ -11994,7 +12002,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/problem+json",
-     "ms": 35,
+     "ms": 33,
      "redirects": 0
     },
     {
@@ -12004,7 +12012,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 185,
+     "ms": 289,
      "redirects": 0
     }
    ]
@@ -12020,7 +12028,7 @@
    "unread": 0,
    "total": 6,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:00.917Z",
+   "checkedAt": "2026-11-16T20:59:30.934Z",
    "checks": [
     {
      "id": "authmd",
@@ -12079,7 +12087,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 324,
+     "ms": 290,
      "redirects": 0
     },
     {
@@ -12089,7 +12097,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain",
-     "ms": 152,
+     "ms": 257,
      "redirects": 0
     },
     {
@@ -12099,7 +12107,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 258,
+     "ms": 283,
      "redirects": 0
     },
     {
@@ -12109,7 +12117,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 106,
+     "ms": 130,
      "redirects": 0
     },
     {
@@ -12119,7 +12127,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 211,
+     "ms": 215,
      "redirects": 0
     }
    ]
@@ -12135,7 +12143,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:46.075Z",
+   "checkedAt": "2026-11-16T20:59:15.236Z",
    "checks": [
     {
      "id": "authmd",
@@ -12197,7 +12205,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 249,
+     "ms": 309,
      "redirects": 0
     },
     {
@@ -12207,7 +12215,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 61,
+     "ms": 55,
      "redirects": 0
     },
     {
@@ -12217,7 +12225,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 166,
+     "ms": 146,
      "redirects": 0
     },
     {
@@ -12227,7 +12235,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 177,
+     "ms": 184,
      "redirects": 0
     },
     {
@@ -12237,7 +12245,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 174,
+     "ms": 148,
      "redirects": 0
     },
     {
@@ -12247,7 +12255,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 215,
+     "ms": 201,
      "redirects": 0
     },
     {
@@ -12257,7 +12265,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 173,
+     "ms": 158,
      "redirects": 0
     },
     {
@@ -12267,7 +12275,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 188,
+     "ms": 189,
      "redirects": 0
     }
    ]
@@ -12279,11 +12287,11 @@
    "apiProbed": "https://rest.runpod.io/v1/pods",
    "apiNotProbed": null,
    "passed": 1,
-   "partial": 1,
+   "partial": 0,
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:58.222Z",
+   "checkedAt": "2026-11-16T20:59:27.708Z",
    "checks": [
     {
      "id": "authmd",
@@ -12310,10 +12318,10 @@
      "id": "challenge",
      "name": "Key works without a browser",
      "url": "https://rest.runpod.io/v1/pods",
-     "httpStatus": 401,
+     "httpStatus": null,
      "www_authenticate": null,
-     "status": "partial",
-     "reason": "401, but no WWW-Authenticate header (RFC 9110 section 15.5.2 says the server MUST send one)"
+     "status": "fail",
+     "reason": "API: ENOTFOUND"
     },
     {
      "id": "limits",
@@ -12345,7 +12353,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 285,
+     "ms": 406,
      "redirects": 1
     },
     {
@@ -12355,17 +12363,17 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 54,
+     "ms": 200,
      "redirects": 1
     },
     {
      "label": "api",
      "url": "https://rest.runpod.io/v1/pods",
      "finalUrl": "https://rest.runpod.io/v1/pods",
-     "status": 401,
-     "error": null,
-     "contentType": "application/json",
-     "ms": 266,
+     "status": null,
+     "error": "ENOTFOUND",
+     "contentType": null,
+     "ms": 3,
      "redirects": 0
     },
     {
@@ -12375,18 +12383,18 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 174,
+     "ms": 184,
      "redirects": 0
     },
     {
      "label": "prm (API host)",
      "url": "https://rest.runpod.io/.well-known/oauth-protected-resource",
-     "finalUrl": "https://docs.runpod.io/api-reference/overview",
-     "status": 200,
-     "error": null,
-     "contentType": "text/html; charset=utf-8",
-     "ms": 97,
-     "redirects": 3
+     "finalUrl": "https://rest.runpod.io/.well-known/oauth-protected-resource",
+     "status": null,
+     "error": "ENOTFOUND",
+     "contentType": null,
+     "ms": 1,
+     "redirects": 0
     },
     {
      "label": "as-metadata",
@@ -12395,18 +12403,18 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 182,
+     "ms": 169,
      "redirects": 0
     },
     {
      "label": "as-metadata (API host)",
      "url": "https://rest.runpod.io/.well-known/oauth-authorization-server",
-     "finalUrl": "https://docs.runpod.io/api-reference/overview",
-     "status": 200,
-     "error": null,
-     "contentType": "text/html; charset=utf-8",
-     "ms": 102,
-     "redirects": 3
+     "finalUrl": "https://rest.runpod.io/.well-known/oauth-authorization-server",
+     "status": null,
+     "error": "ENOTFOUND",
+     "contentType": null,
+     "ms": 3,
+     "redirects": 0
     },
     {
      "label": "x402 discovery",
@@ -12415,7 +12423,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 161,
+     "ms": 154,
      "redirects": 0
     }
    ]
@@ -12431,7 +12439,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:34.421Z",
+   "checkedAt": "2026-11-16T21:00:08.269Z",
    "checks": [
     {
      "id": "authmd",
@@ -12493,7 +12501,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 151,
+     "ms": 180,
      "redirects": 1
     },
     {
@@ -12503,7 +12511,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 51,
+     "ms": 70,
      "redirects": 1
     },
     {
@@ -12513,7 +12521,7 @@
      "status": 400,
      "error": null,
      "contentType": "application/json",
-     "ms": 455,
+     "ms": 461,
      "redirects": 0
     },
     {
@@ -12523,7 +12531,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 71,
+     "ms": 70,
      "redirects": 1
     },
     {
@@ -12533,7 +12541,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 1359,
+     "ms": 530,
      "redirects": 1
     },
     {
@@ -12543,7 +12551,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 67,
+     "ms": 64,
      "redirects": 1
     },
     {
@@ -12553,7 +12561,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 456,
+     "ms": 447,
      "redirects": 1
     },
     {
@@ -12563,7 +12571,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 67,
+     "ms": 90,
      "redirects": 1
     }
    ]
@@ -12579,7 +12587,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:33.220Z",
+   "checkedAt": "2026-11-16T21:00:09.333Z",
    "checks": [
     {
      "id": "authmd",
@@ -12628,7 +12636,7 @@
      "name": "Docs in Markdown",
      "url": "https://serpapi.com/llms.txt",
      "heading": "# SerpApi",
-     "bytes": 37419,
+     "bytes": 37641,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -12641,7 +12649,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 119,
+     "ms": 135,
      "redirects": 0
     },
     {
@@ -12651,7 +12659,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 36,
+     "ms": 35,
      "redirects": 0
     },
     {
@@ -12661,7 +12669,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 113,
+     "ms": 130,
      "redirects": 0
     },
     {
@@ -12671,7 +12679,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 112,
+     "ms": 149,
      "redirects": 0
     },
     {
@@ -12681,7 +12689,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 111,
+     "ms": 127,
      "redirects": 0
     },
     {
@@ -12691,7 +12699,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 137,
+     "ms": 126,
      "redirects": 0
     }
    ]
@@ -12707,7 +12715,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:24.400Z",
+   "checkedAt": "2026-11-16T20:59:59.575Z",
    "checks": [
     {
      "id": "authmd",
@@ -12756,7 +12764,7 @@
      "name": "Docs in Markdown",
      "url": "https://steel.dev/llms.txt",
      "heading": "# Steel",
-     "bytes": 25597,
+     "bytes": 9427,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -12769,7 +12777,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 135,
+     "ms": 134,
      "redirects": 0
     },
     {
@@ -12779,7 +12787,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 66,
+     "ms": 96,
      "redirects": 0
     },
     {
@@ -12789,7 +12797,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 358,
+     "ms": 274,
      "redirects": 0
     },
     {
@@ -12799,7 +12807,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 50,
+     "ms": 95,
      "redirects": 0
     },
     {
@@ -12809,7 +12817,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 139,
+     "ms": 210,
      "redirects": 0
     },
     {
@@ -12819,7 +12827,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 54,
+     "ms": 59,
      "redirects": 0
     },
     {
@@ -12829,7 +12837,7 @@
      "status": 421,
      "error": null,
      "contentType": "text/plain",
-     "ms": 132,
+     "ms": 214,
      "redirects": 0
     },
     {
@@ -12839,7 +12847,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 47,
+     "ms": 58,
      "redirects": 0
     }
    ]
@@ -12855,7 +12863,7 @@
    "unread": 0,
    "total": 6,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:39.653Z",
+   "checkedAt": "2026-11-16T21:00:15.846Z",
    "checks": [
     {
      "id": "authmd",
@@ -12907,7 +12915,7 @@
      "name": "Docs in Markdown",
      "url": "https://stripe.com/llms.txt",
      "heading": "# Stripe",
-     "bytes": 69878,
+     "bytes": 69770,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -12920,7 +12928,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 47,
+     "ms": 95,
      "redirects": 0
     },
     {
@@ -12930,7 +12938,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 50,
+     "ms": 87,
      "redirects": 0
     },
     {
@@ -12940,7 +12948,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 45,
+     "ms": 100,
      "redirects": 0
     },
     {
@@ -12950,7 +12958,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 43,
+     "ms": 103,
      "redirects": 0
     },
     {
@@ -12960,7 +12968,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 56,
+     "ms": 98,
      "redirects": 0
     }
    ]
@@ -12976,7 +12984,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:35.441Z",
+   "checkedAt": "2026-11-16T21:00:10.728Z",
    "checks": [
     {
      "id": "authmd",
@@ -13029,7 +13037,7 @@
      "name": "Docs in Markdown",
      "url": "https://docs.tavily.com/llms.txt",
      "heading": "# Tavily Docs",
-     "bytes": 23364,
+     "bytes": 23478,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -13042,7 +13050,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 583,
+     "ms": 270,
      "redirects": 1
     },
     {
@@ -13052,7 +13060,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 351,
+     "ms": 646,
      "redirects": 2
     },
     {
@@ -13062,7 +13070,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 223,
+     "ms": 144,
      "redirects": 0
     },
     {
@@ -13072,7 +13080,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 166,
+     "ms": 192,
      "redirects": 1
     },
     {
@@ -13082,7 +13090,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 194,
+     "ms": 99,
      "redirects": 0
     },
     {
@@ -13092,7 +13100,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 181,
+     "ms": 183,
      "redirects": 1
     },
     {
@@ -13102,7 +13110,7 @@
      "status": 404,
      "error": null,
      "contentType": null,
-     "ms": 201,
+     "ms": 94,
      "redirects": 0
     },
     {
@@ -13112,7 +13120,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 210,
+     "ms": 194,
      "redirects": 1
     }
    ]
@@ -13128,7 +13136,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:18.575Z",
+   "checkedAt": "2026-11-16T20:58:46.312Z",
    "checks": [
     {
      "id": "authmd",
@@ -13190,7 +13198,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 264,
+     "ms": 79,
      "redirects": 1
     },
     {
@@ -13200,7 +13208,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 58,
+     "ms": 64,
      "redirects": 1
     },
     {
@@ -13210,7 +13218,7 @@
      "status": 401,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 37,
+     "ms": 49,
      "redirects": 0
     },
     {
@@ -13220,7 +13228,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 205,
+     "ms": 173,
      "redirects": 0
     },
     {
@@ -13230,7 +13238,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 48,
+     "ms": 51,
      "redirects": 0
     },
     {
@@ -13240,7 +13248,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 134,
+     "ms": 154,
      "redirects": 0
     },
     {
@@ -13250,7 +13258,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 47,
+     "ms": 45,
      "redirects": 0
     },
     {
@@ -13260,7 +13268,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 145,
+     "ms": 144,
      "redirects": 0
     }
    ]
@@ -13276,7 +13284,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:05.754Z",
+   "checkedAt": "2026-11-16T20:59:35.811Z",
    "checks": [
     {
      "id": "authmd",
@@ -13343,7 +13351,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 182,
+     "ms": 170,
      "redirects": 0
     },
     {
@@ -13353,7 +13361,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 47,
+     "ms": 241,
      "redirects": 0
     },
     {
@@ -13363,7 +13371,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 136,
+     "ms": 148,
      "redirects": 0
     },
     {
@@ -13373,7 +13381,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 163,
+     "ms": 159,
      "redirects": 0
     },
     {
@@ -13383,7 +13391,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 95,
+     "ms": 92,
      "redirects": 0
     },
     {
@@ -13393,7 +13401,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 97,
+     "ms": 92,
      "redirects": 1
     },
     {
@@ -13403,7 +13411,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 191,
+     "ms": 152,
      "redirects": 0
     }
    ]
@@ -13419,7 +13427,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:07.207Z",
+   "checkedAt": "2026-11-16T20:59:37.193Z",
    "checks": [
     {
      "id": "authmd",
@@ -13481,7 +13489,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/markdown; charset=utf-8",
-     "ms": 258,
+     "ms": 157,
      "redirects": 0
     },
     {
@@ -13491,7 +13499,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 84,
+     "ms": 66,
      "redirects": 0
     },
     {
@@ -13501,7 +13509,7 @@
      "status": 401,
      "error": null,
      "contentType": null,
-     "ms": 267,
+     "ms": 218,
      "redirects": 0
     },
     {
@@ -13511,7 +13519,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 156,
+     "ms": 226,
      "redirects": 0
     },
     {
@@ -13521,7 +13529,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain",
-     "ms": 258,
+     "ms": 203,
      "redirects": 0
     },
     {
@@ -13531,7 +13539,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 172,
+     "ms": 148,
      "redirects": 0
     },
     {
@@ -13541,7 +13549,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain",
-     "ms": 264,
+     "ms": 191,
      "redirects": 0
     },
     {
@@ -13551,7 +13559,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 161,
+     "ms": 148,
      "redirects": 0
     }
    ]
@@ -13567,7 +13575,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:20.426Z",
+   "checkedAt": "2026-11-16T20:59:55.640Z",
    "checks": [
     {
      "id": "authmd",
@@ -13629,7 +13637,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 68,
+     "ms": 62,
      "redirects": 0
     },
     {
@@ -13639,7 +13647,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 48,
+     "ms": 69,
      "redirects": 0
     },
     {
@@ -13649,7 +13657,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 46,
+     "ms": 47,
      "redirects": 0
     },
     {
@@ -13659,7 +13667,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 50,
+     "ms": 47,
      "redirects": 0
     },
     {
@@ -13669,7 +13677,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 40,
+     "ms": 39,
      "redirects": 0
     },
     {
@@ -13679,7 +13687,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 44,
+     "ms": 52,
      "redirects": 0
     },
     {
@@ -13699,7 +13707,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 43,
+     "ms": 47,
      "redirects": 0
     }
    ]
@@ -13715,7 +13723,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:35.200Z",
+   "checkedAt": "2026-11-16T20:59:05.561Z",
    "checks": [
     {
      "id": "authmd",
@@ -13764,7 +13772,7 @@
      "name": "Docs in Markdown",
      "url": "https://vercel.com/llms.txt",
      "heading": "# Vercel",
-     "bytes": 5539,
+     "bytes": 14887,
      "status": "pass",
      "reason": "llms.txt found"
     }
@@ -13777,7 +13785,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 151,
+     "ms": 85,
      "redirects": 0
     },
     {
@@ -13787,7 +13795,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 77,
+     "ms": 275,
      "redirects": 0
     },
     {
@@ -13797,7 +13805,7 @@
      "status": 403,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 66,
+     "ms": 70,
      "redirects": 0
     },
     {
@@ -13807,7 +13815,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain;charset=UTF-8",
-     "ms": 85,
+     "ms": 106,
      "redirects": 0
     },
     {
@@ -13817,7 +13825,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 113,
+     "ms": 101,
      "redirects": 0
     },
     {
@@ -13827,7 +13835,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json",
-     "ms": 88,
+     "ms": 103,
      "redirects": 0
     },
     {
@@ -13837,7 +13845,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain;charset=UTF-8",
-     "ms": 109,
+     "ms": 116,
      "redirects": 0
     }
    ]
@@ -13853,7 +13861,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:22.216Z",
+   "checkedAt": "2026-11-16T20:58:50.860Z",
    "checks": [
     {
      "id": "authmd",
@@ -13908,7 +13916,7 @@
      "name": "Docs in Markdown",
      "url": "https://docs.x.ai/llms.txt",
      "heading": "# SpaceXSI API Documentation",
-     "bytes": 26207,
+     "bytes": 26469,
      "status": "pass",
      "reason": "llms.txt found at a docs path"
     }
@@ -13921,7 +13929,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 103,
+     "ms": 254,
      "redirects": 0
     },
     {
@@ -13931,7 +13939,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 120,
+     "ms": 441,
      "redirects": 0
     },
     {
@@ -13941,7 +13949,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 63,
+     "ms": 69,
      "redirects": 0
     },
     {
@@ -13951,7 +13959,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 122,
+     "ms": 364,
      "redirects": 0
     },
     {
@@ -13961,7 +13969,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 106,
+     "ms": 248,
      "redirects": 0
     },
     {
@@ -13971,7 +13979,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 103,
+     "ms": 60,
      "redirects": 0
     },
     {
@@ -13981,7 +13989,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 102,
+     "ms": 234,
      "redirects": 0
     },
     {
@@ -13991,7 +13999,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 110,
+     "ms": 64,
      "redirects": 0
     },
     {
@@ -14001,7 +14009,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 136,
+     "ms": 112,
      "redirects": 0
     }
    ]
@@ -14017,7 +14025,7 @@
    "unread": 6,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:49.564Z",
+   "checkedAt": "2026-11-16T20:59:18.776Z",
    "checks": [
     {
      "id": "authmd",
@@ -14027,7 +14035,7 @@
      "was": "fail",
      "wasReason": "/auth.md answers with a Cloudflare bot challenge",
      "status": "unread",
-     "reason": "Not read on 2026-11-12: https://codesandbox.io/auth.md answered with a Cloudflare bot challenge"
+     "reason": "Not read on 2026-11-16: https://codesandbox.io/auth.md answered with a Cloudflare bot challenge"
     },
     {
      "id": "prm",
@@ -14037,7 +14045,7 @@
      "was": "fail",
      "wasReason": "Protected resource metadata answers with a Cloudflare bot challenge",
      "status": "unread",
-     "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-protected-resource answered with a Cloudflare bot challenge"
+     "reason": "Not read on 2026-11-16: https://codesandbox.io/.well-known/oauth-protected-resource answered with a Cloudflare bot challenge"
     },
     {
      "id": "register",
@@ -14047,7 +14055,7 @@
      "was": "fail",
      "wasReason": "Authorization server metadata answers with a Cloudflare bot challenge; no sign-up API is documented in auth.md or llms.txt",
      "status": "unread",
-     "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge"
+     "reason": "Not read on 2026-11-16: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge"
     },
     {
      "id": "challenge",
@@ -14066,7 +14074,7 @@
      "was": "fail",
      "wasReason": "No spend cap in metadata, auth.md or llms.txt",
      "status": "unread",
-     "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge"
+     "reason": "Not read on 2026-11-16: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge"
     },
     {
      "id": "payment",
@@ -14076,7 +14084,7 @@
      "was": "fail",
      "wasReason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt",
      "status": "unread",
-     "reason": "Not read on 2026-11-12: https://codesandbox.io/.well-known/x402 answered with a Cloudflare bot challenge"
+     "reason": "Not read on 2026-11-16: https://codesandbox.io/.well-known/x402 answered with a Cloudflare bot challenge"
     },
     {
      "id": "markdown",
@@ -14086,7 +14094,7 @@
      "was": "fail",
      "wasReason": "https://codesandbox.io/llms.txt answers with a Cloudflare bot challenge; https://codesandbox.io/docs/llms.txt answers with a Cloudflare bot challenge",
      "status": "unread",
-     "reason": "Not read on 2026-11-12: https://codesandbox.io/llms.txt answered with a Cloudflare bot challenge"
+     "reason": "Not read on 2026-11-16: https://codesandbox.io/llms.txt answered with a Cloudflare bot challenge"
     }
    ],
    "requests": [
@@ -14097,7 +14105,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 47,
+     "ms": 35,
      "redirects": 0
     },
     {
@@ -14107,7 +14115,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 30,
+     "ms": 32,
      "redirects": 0
     },
     {
@@ -14117,7 +14125,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 196,
+     "ms": 218,
      "redirects": 0
     },
     {
@@ -14127,7 +14135,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 28,
+     "ms": 30,
      "redirects": 0
     },
     {
@@ -14137,7 +14145,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 33,
+     "ms": 34,
      "redirects": 0
     },
     {
@@ -14147,7 +14155,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 204,
+     "ms": 214,
      "redirects": 0
     },
     {
@@ -14167,7 +14175,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 191,
+     "ms": 218,
      "redirects": 0
     },
     {
@@ -14177,7 +14185,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 31,
+     "ms": 32,
      "redirects": 0
     }
    ]
@@ -14193,7 +14201,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:23.005Z",
+   "checkedAt": "2026-11-16T20:58:52.806Z",
    "checks": [
     {
      "id": "authmd",
@@ -14257,7 +14265,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 177,
+     "ms": 587,
      "redirects": 0
     },
     {
@@ -14267,7 +14275,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 414,
+     "ms": 401,
      "redirects": 0
     },
     {
@@ -14276,8 +14284,8 @@
      "finalUrl": "https://api.deepseek.com/models",
      "status": 401,
      "error": null,
-     "contentType": null,
-     "ms": 273,
+     "contentType": "application/json",
+     "ms": 267,
      "redirects": 0
     },
     {
@@ -14287,7 +14295,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html",
-     "ms": 354,
+     "ms": 989,
      "redirects": 0
     },
     {
@@ -14297,7 +14305,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 223,
+     "ms": 404,
      "redirects": 0
     },
     {
@@ -14307,7 +14315,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 293,
+     "ms": 269,
      "redirects": 0
     },
     {
@@ -14317,7 +14325,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 161,
+     "ms": 401,
      "redirects": 0
     },
     {
@@ -14327,7 +14335,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 272,
+     "ms": 263,
      "redirects": 0
     },
     {
@@ -14337,7 +14345,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html",
-     "ms": 390,
+     "ms": 420,
      "redirects": 0
     }
    ]
@@ -14353,7 +14361,7 @@
    "unread": 1,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:03.187Z",
+   "checkedAt": "2026-11-16T20:59:32.342Z",
    "checks": [
     {
      "id": "authmd",
@@ -14374,7 +14382,7 @@
      "name": "Sign-up by API",
      "url": "https://deno.com/.well-known/oauth-authorization-server",
      "status": "fail",
-     "reason": "Authorization server metadata is not usable; no sign-up API is documented in auth.md or llms.txt (not read on 2026-11-12: https://docs.deno.com/llms.txt answered with HTTP 500)",
+     "reason": "Authorization server metadata is not usable; no sign-up API is documented in auth.md or llms.txt (not read on 2026-11-16: https://docs.deno.com/llms.txt answered with HTTP 500)",
      "notRead": "https://docs.deno.com/llms.txt"
     },
     {
@@ -14390,14 +14398,14 @@
      "id": "limits",
      "name": "Spend limits",
      "status": "fail",
-     "reason": "No spend cap in metadata, auth.md or llms.txt (not read on 2026-11-12: https://docs.deno.com/llms.txt answered with HTTP 500)",
+     "reason": "No spend cap in metadata, auth.md or llms.txt (not read on 2026-11-16: https://docs.deno.com/llms.txt answered with HTTP 500)",
      "notRead": "https://docs.deno.com/llms.txt"
     },
     {
      "id": "payment",
      "name": "Payment handoff",
      "status": "fail",
-     "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt (not read on 2026-11-12: https://docs.deno.com/llms.txt answered with HTTP 500)",
+     "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt (not read on 2026-11-16: https://docs.deno.com/llms.txt answered with HTTP 500)",
      "notRead": "https://docs.deno.com/llms.txt"
     },
     {
@@ -14408,7 +14416,7 @@
      "was": "fail",
      "wasReason": "https://deno.com/llms.txt answers with an HTML page; https://docs.deno.com/llms.txt answers HTTP 500",
      "status": "unread",
-     "reason": "Not read on 2026-11-12: https://docs.deno.com/llms.txt answered with HTTP 500"
+     "reason": "Not read on 2026-11-16: https://docs.deno.com/llms.txt answered with HTTP 500"
     }
    ],
    "requests": [
@@ -14419,7 +14427,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 305,
+     "ms": 229,
      "redirects": 0
     },
     {
@@ -14429,7 +14437,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 223,
+     "ms": 227,
      "redirects": 0
     },
     {
@@ -14439,7 +14447,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 286,
+     "ms": 195,
      "redirects": 0
     },
     {
@@ -14449,7 +14457,7 @@
      "status": 500,
      "error": null,
      "contentType": "text/plain;charset=UTF-8",
-     "ms": 288,
+     "ms": 187,
      "redirects": 0
     },
     {
@@ -14459,7 +14467,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 226,
+     "ms": 276,
      "redirects": 0
     },
     {
@@ -14469,7 +14477,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain;charset=UTF-8",
-     "ms": 290,
+     "ms": 167,
      "redirects": 0
     },
     {
@@ -14479,7 +14487,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 218,
+     "ms": 256,
      "redirects": 0
     },
     {
@@ -14489,7 +14497,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/plain;charset=UTF-8",
-     "ms": 175,
+     "ms": 145,
      "redirects": 0
     },
     {
@@ -14499,7 +14507,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 252,
+     "ms": 250,
      "redirects": 0
     }
    ]
@@ -14515,7 +14523,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:38.968Z",
+   "checkedAt": "2026-11-16T21:00:15.856Z",
    "checks": [
     {
      "id": "authmd",
@@ -14577,7 +14585,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 62,
+     "ms": 282,
      "redirects": 0
     },
     {
@@ -14587,7 +14595,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 39,
+     "ms": 325,
      "redirects": 0
     },
     {
@@ -14597,7 +14605,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 105,
+     "ms": 230,
      "redirects": 0
     },
     {
@@ -14607,7 +14615,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/plain; charset=utf-8",
-     "ms": 247,
+     "ms": 424,
      "redirects": 0
     },
     {
@@ -14617,7 +14625,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 56,
+     "ms": 258,
      "redirects": 0
     },
     {
@@ -14627,7 +14635,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 125,
+     "ms": 222,
      "redirects": 0
     },
     {
@@ -14637,7 +14645,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 37,
+     "ms": 227,
      "redirects": 0
     },
     {
@@ -14647,7 +14655,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 110,
+     "ms": 223,
      "redirects": 0
     },
     {
@@ -14657,7 +14665,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 44,
+     "ms": 231,
      "redirects": 0
     }
    ]
@@ -14673,7 +14681,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:49.058Z",
+   "checkedAt": "2026-11-16T20:59:19.130Z",
    "checks": [
     {
      "id": "authmd",
@@ -14737,7 +14745,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 365,
+     "ms": 404,
      "redirects": 1
     },
     {
@@ -14747,7 +14755,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 136,
+     "ms": 230,
      "redirects": 1
     },
     {
@@ -14757,7 +14765,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 582,
+     "ms": 587,
      "redirects": 0
     },
     {
@@ -14767,7 +14775,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 207,
+     "ms": 443,
      "redirects": 0
     },
     {
@@ -14777,7 +14785,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 130,
+     "ms": 195,
      "redirects": 1
     },
     {
@@ -14787,7 +14795,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html",
-     "ms": 450,
+     "ms": 448,
      "redirects": 0
     },
     {
@@ -14797,7 +14805,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 137,
+     "ms": 254,
      "redirects": 1
     },
     {
@@ -14807,7 +14815,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html",
-     "ms": 455,
+     "ms": 454,
      "redirects": 0
     },
     {
@@ -14817,7 +14825,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 130,
+     "ms": 207,
      "redirects": 1
     }
    ]
@@ -14833,7 +14841,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:44.772Z",
+   "checkedAt": "2026-11-16T21:00:22.781Z",
    "checks": [
     {
      "id": "authmd",
@@ -14897,7 +14905,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 261,
+     "ms": 510,
      "redirects": 1
     },
     {
@@ -14907,7 +14915,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 241,
+     "ms": 375,
      "redirects": 1
     },
     {
@@ -14917,7 +14925,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/vnd.api+json",
-     "ms": 150,
+     "ms": 263,
      "redirects": 0
     },
     {
@@ -14927,7 +14935,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 224,
+     "ms": 377,
      "redirects": 2
     },
     {
@@ -14937,7 +14945,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 203,
+     "ms": 365,
      "redirects": 1
     },
     {
@@ -14947,7 +14955,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 250,
+     "ms": 326,
      "redirects": 0
     },
     {
@@ -14957,7 +14965,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 248,
+     "ms": 293,
      "redirects": 1
     },
     {
@@ -14967,7 +14975,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json",
-     "ms": 283,
+     "ms": 361,
      "redirects": 0
     },
     {
@@ -14977,7 +14985,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 177,
+     "ms": 298,
      "redirects": 1
     }
    ]
@@ -14993,7 +15001,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:38:15.065Z",
+   "checkedAt": "2026-11-16T20:59:46.726Z",
    "checks": [
     {
      "id": "authmd",
@@ -15057,7 +15065,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html",
-     "ms": 81,
+     "ms": 888,
      "redirects": 1
     },
     {
@@ -15067,7 +15075,7 @@
      "status": 200,
      "error": null,
      "contentType": "text/html",
-     "ms": 289,
+     "ms": 290,
      "redirects": 1
     },
     {
@@ -15077,7 +15085,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json",
-     "ms": 13,
+     "ms": 72,
      "redirects": 0
     },
     {
@@ -15087,7 +15095,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=UTF-8",
-     "ms": 593,
+     "ms": 720,
      "redirects": 2
     },
     {
@@ -15097,7 +15105,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html",
-     "ms": 8,
+     "ms": 9,
      "redirects": 0
     },
     {
@@ -15107,7 +15115,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html",
-     "ms": 10,
+     "ms": 7,
      "redirects": 0
     },
     {
@@ -15117,7 +15125,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html",
-     "ms": 10,
+     "ms": 11,
      "redirects": 0
     },
     {
@@ -15127,7 +15135,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html",
-     "ms": 9,
+     "ms": 8,
      "redirects": 0
     },
     {
@@ -15137,7 +15145,7 @@
      "status": 403,
      "error": null,
      "contentType": "text/html",
-     "ms": 10,
+     "ms": 9,
      "redirects": 0
     }
    ]
@@ -15153,7 +15161,7 @@
    "unread": 0,
    "total": 7,
    "whoActs": null,
-   "checkedAt": "2026-11-12T02:37:59.325Z",
+   "checkedAt": "2026-11-16T20:59:30.048Z",
    "checks": [
     {
      "id": "authmd",
@@ -15217,7 +15225,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 242,
+     "ms": 226,
      "redirects": 0
     },
     {
@@ -15227,7 +15235,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 185,
+     "ms": 192,
      "redirects": 0
     },
     {
@@ -15237,7 +15245,7 @@
      "status": 401,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 302,
+     "ms": 210,
      "redirects": 0
     },
     {
@@ -15247,7 +15255,7 @@
      "status": 404,
      "error": null,
      "contentType": "text/html; charset=utf-8",
-     "ms": 187,
+     "ms": 175,
      "redirects": 0
     },
     {
@@ -15257,7 +15265,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 184,
+     "ms": 175,
      "redirects": 0
     },
     {
@@ -15267,7 +15275,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 190,
+     "ms": 181,
      "redirects": 0
     },
     {
@@ -15277,7 +15285,7 @@
      "status": 200,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 186,
+     "ms": 183,
      "redirects": 0
     },
     {
@@ -15287,7 +15295,7 @@
      "status": 404,
      "error": null,
      "contentType": "application/json; charset=utf-8",
-     "ms": 186,
+     "ms": 178,
      "redirects": 0
     }
    ]

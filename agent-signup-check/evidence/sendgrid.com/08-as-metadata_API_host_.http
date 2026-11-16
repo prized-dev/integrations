@@ -1,10 +1,10 @@
 GET https://api.sendgrid.com/.well-known/oauth-authorization-server
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:15.065Z
+fetched: 2026-11-16T20:59:46.726Z
 final-url: https://api.sendgrid.com/.well-known/oauth-authorization-server
 
 HTTP 403
-date: Thu, 12 Nov 2026 02:38:14 GMT
+date: Mon, 16 Nov 2026 20:59:46 GMT
 content-type: text/html
 transfer-encoding: chunked
 connection: close

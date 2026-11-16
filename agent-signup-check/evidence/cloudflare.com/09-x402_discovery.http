@@ -1,12 +1,12 @@
 GET https://cloudflare.com/.well-known/x402
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:42.269Z
+fetched: 2026-11-16T20:59:11.442Z
 redirect: 301 from https://cloudflare.com/.well-known/x402
 redirect: 301 from https://www.cloudflare.com/.well-known/x402
 final-url: https://www.cloudflare.com/.well-known/x402/
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:37:41 GMT
+date: Mon, 16 Nov 2026 20:59:11 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -26,10 +26,10 @@ x-frame-options: SAMEORIGIN
 x-served-by: marketing-site
 x-xss-protection: 1; mode=block
 x-rm: GW
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=VE87LsTwIBQWWwa1%2BQWZ7oRgkaTTJ%2ByZcc9mYGahjtelGUeU4qS1Py7uXMzrRusMdi9suWEy%2FKy0OHQ7%2F09vu%2BiTwKWy8SVyXrsCfcRME3ef4W2676T5iJh%2FLhs%2FRSiJvTWHIg%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2Fr7qsbU62BFZYBt8ndEASUaYsfI%2FwlNh41xLIbwI1qjCIhuy%2FqnKXaIH6Z3n%2BFcPhlWuUj04HTSEWD68ZFhkEE2%2BElz7ZRLEatW1veoFEHhltMo8QMb%2FvIqcwzu3Jr9l0xrkEw%3D%3D"}]}
 content-encoding: br
 server: cloudflare
-cf-ray: a59228003b87ad66-PDX
+cf-ray: a5b96b015fa3ad76-PDX
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html><html lang="en" class="font-stk-bureau-sans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><link rel="preconnect" href="https://imagedelivery.net" crossorigin><link rel="preconnect" href="https://ot.www.cloudflare.com" crossorigin><link rel="preload" href="/icons.svg" as="image" type="image/svg+xml"><link rel="preload" href="/fonts/STKBureauSans-Book.otf" as="font" type="font/otf" crossorigin><link rel="preload" href="/fonts/STKBureauSans-Regular.otf" as="font" type="font/otf" crossorigin><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><script>

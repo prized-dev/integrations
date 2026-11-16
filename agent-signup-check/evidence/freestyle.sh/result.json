@@ -1,6 +1,6 @@
 {
  "site": "freestyle.sh",
- "checkedAt": "2026-11-12T02:37:50.138Z",
+ "checkedAt": "2026-11-16T20:59:20.194Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
@@ -68,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 104,
+   "ms": 201,
    "redirects": 1
   },
   {
@@ -78,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 44,
+   "ms": 140,
    "redirects": 1
   },
   {
@@ -88,7 +88,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 111,
+   "ms": 113,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 47,
+   "ms": 197,
    "redirects": 1
   },
   {
@@ -108,7 +108,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 104,
+   "ms": 99,
    "redirects": 0
   },
   {
@@ -118,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 62,
+   "ms": 157,
    "redirects": 1
   },
   {
@@ -128,7 +128,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 98,
+   "ms": 99,
    "redirects": 0
   },
   {
@@ -138,7 +138,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 67,
+   "ms": 236,
    "redirects": 1
   }
  ]

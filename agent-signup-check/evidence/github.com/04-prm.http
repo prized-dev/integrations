@@ -1,10 +1,10 @@
 GET https://github.com/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:48.000Z
+fetched: 2026-11-16T21:00:25.126Z
 final-url: https://github.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:38:46 GMT
+date: Mon, 16 Nov 2026 21:00:23 GMT
 content-type: application/json; charset=utf-8
 vary: X-PJAX, X-PJAX-Container, Turbo-Visit, Turbo-Frame, X-Requested-With, X-GitHub-Client-Version, Sec-Fetch-Site,Accept-Encoding, Accept, X-Requested-With
 cache-control: no-cache
@@ -17,7 +17,7 @@ content-security-policy: default-src 'none'; base-uri 'self'; connect-src 'self'
 server: github.com
 content-encoding: gzip
 content-length: 52
-x-github-request-id: 9196:892F1:A8CD7:17011F:6AF526B5
+x-github-request-id: C326:DC83E:1379DC:24C3F7:6AFB6EE7
 x-github-edge-region: westus2
 connection: close
 

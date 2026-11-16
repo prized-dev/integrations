@@ -1,18 +1,18 @@
 GET https://vercel.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:35.200Z
+fetched: 2026-11-16T20:59:05.561Z
 final-url: https://vercel.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 1006
+age: 342
 cache-control: public, max-age=0, s-maxage=3600, stale-while-revalidate=86400
 content-disposition: inline
 content-encoding: br
-content-security-policy: default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live;script-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live va.vercel-scripts.com 'unsafe-eval' 'unsafe-inline' https://vercel.live chrome-extension://* blob: cdp.vercel.com https://news.google.com https://*.fides-cdn.ethyca.com https://app.cal.com;style-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live 'unsafe-inline' https://vercel.live;img-src 'self' blob: data: vercel.com *.vercel.sh vercel.live https://vercel.live https://vercel.com https://assets.vercel.com https://image.mux.com *.vercel.com https://images.ctfassets.net https://7nyt0uhk7sse4zvn.public.blob.vercel-storage.com https://avatars.githubusercontent.com https://i.ytimg.com https://pbs.twimg.com https://www.gstatic.com/images/branding/;media-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live blob: data: https://*.mux.com 7nyt0uhk7sse4zvn.public.blob.vercel-storage.com videos.ctfassets.net;connect-src data: 'self' vercel.com *.vercel.com *.vercel.sh vercel.live https://vercel.live wss://ws-us3.pusher.com https://*.mux.com cdp.vercel.com wss://*.vercel.com www.vercel-status.com https://news.google.com https://*.fides-cdn.ethyca.com https://*.contentful.com *.ingest.sentry.io *.ingest.us.sentry.io *.codesandbox.io https://react-tweet.vercel.app;font-src 'self' vercel.live https://vercel.live https://assets.vercel.com *.vercel.sh *.vercel.com;child-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live https://www.youtube-nocookie.com https://news.google.com https://vercel.cal.com https://*.codesandbox.io;worker-src 'self' blob:;frame-ancestors 'self' https://vercel.com https://app.contentful.com https://*.contentful.com https://*.vercel.sh https://*.vercel.com https://claude.ai https://37a30e4bfcf9dbabb336cfdd75e343b1.claudemcpcontent.com https://ac6127567836815e3d8be55c5ee20681.claudemcpcontent.com;
+content-security-policy: default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live;script-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live va.vercel-scripts.com 'unsafe-eval' 'unsafe-inline' https://vercel.live https://*.fides-cdn.ethyca.com chrome-extension://* blob: cdp.vercel.com https://news.google.com https://app.cal.com;style-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live 'unsafe-inline' https://vercel.live;img-src 'self' blob: data: vercel.com *.vercel.sh vercel.live https://vercel.live https://vercel.com https://assets.vercel.com https://image.mux.com *.vercel.com https://images.ctfassets.net https://7nyt0uhk7sse4zvn.public.blob.vercel-storage.com https://avatars.githubusercontent.com https://i.ytimg.com https://pbs.twimg.com https://www.gstatic.com/images/branding/;media-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live blob: data: https://*.mux.com 7nyt0uhk7sse4zvn.public.blob.vercel-storage.com videos.ctfassets.net;connect-src data: 'self' vercel.com *.vercel.com *.vercel.sh vercel.live https://vercel.live wss://ws-us3.pusher.com www.vercel-status.com *.ingest.sentry.io *.ingest.us.sentry.io https://*.fides-cdn.ethyca.com wss://*.vercel.com *.codesandbox.io https://*.mux.com cdp.vercel.com https://news.google.com https://*.contentful.com https://react-tweet.vercel.app;font-src 'self' vercel.live https://vercel.live https://assets.vercel.com *.vercel.sh;child-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live https://www.youtube-nocookie.com https://news.google.com https://vercel.cal.com https://*.codesandbox.io;worker-src 'self' blob:;frame-ancestors 'self' https://vercel.com https://app.contentful.com https://*.contentful.com https://*.vercel.sh https://*.vercel.com https://claude.ai https://37a30e4bfcf9dbabb336cfdd75e343b1.claudemcpcontent.com https://ac6127567836815e3d8be55c5ee20681.claudemcpcontent.com;
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:37:32 GMT
-etag: W/"f2871de66ad3299ee506277304f75e1f"
+date: Mon, 16 Nov 2026 20:59:03 GMT
+etag: W/"5d3e0d7d7db5a66d0c7f29c962ebe49a"
 feature-policy: fullscreen 'self'; camera 'none'
 referrer-policy: origin-when-cross-origin
 server: Vercel
@@ -22,78 +22,161 @@ x-content-type-options: nosniff
 x-dns-prefetch-control: on
 x-download-options: noopen
 x-frame-options: DENY
-x-matched-path: /flg~eyJhbGciOiJIUzI1NiJ9._v79_v3-_f7-_v7-_v7-_v39_v3-_v3-_v7-_f7-_v39_f7-_f7-_f7-_v7_ImFsbG93ZWQi.R29r_6fS2LVbQDdV5L5rwlIMAm8PvI6rfuM7hjGYJMg/llms.txt
+x-matched-path: /flg~eyJhbGciOiJIUzI1NiJ9._f7-_f79_f7-_v7-_v7-_v39_f7-_v7-_v79_v7-_f39_v79_v79_v7-_yJhbGxvd2VkIg.Pm46dzRv_axui8cmyeahci-7WEvcQ5XpVaQeVLwoXmo/llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::l7945-1794451052891-8dd92badece7
+x-vercel-id: pdx1::gnggq-1794862743018-64e9cc2112b6
 x-xss-protection: 0
 connection: close
 transfer-encoding: chunked
 
 # Vercel
 
-> Vercel is a cloud platform for building, deploying, and scaling web applications and AI workloads.
+> Vercel is the agentic infrastructure company. Developers and agents use its cloud platform to build, ship, and run AI agents and applications. Vercel is the team behind Next.js and AI SDK.
 
-Use this index to find machine-readable documentation and platform resources. Follow the linked indexes when you need individual pages.
+This file indexes vercel.com for AI agents. Most vercel.com pages are available as Markdown. Add `.md` to the URL (`https://vercel.com/pricing.md`), or request the usual URL with the HTTP header `Accept: text/markdown`.
 
-## When to use Vercel
+**When to use Vercel:**
 
-- Deploy and scale web applications, APIs, and AI workloads from a Git repository or the Vercel CLI.
+- Deploy and scale websites, web apps, APIs, backends, and AI agents from Git or the Vercel CLI.
+- Run backends, background workers, queues, and durable workflows in the cloud.
 - Automate projects, deployments, domains, and account resources through the Vercel REST API or SDK.
-- Connect an authenticated AI assistant to Vercel projects, deployments, logs, analytics, and documentation through Vercel MCP.
-- Route AI requests across providers through Vercel AI Gateway from any cloud or language, with automatic fallbacks, prompt caching, spending controls, usage monitoring, and no markup on token prices. Your application does not need to run on Vercel.
-- Run untrusted or agent-generated code in isolated Vercel Sandboxes.
+- Connect an AI assistant to Vercel projects, deployments, logs, and documentation through Vercel MCP.
+- Route AI requests to 400+ models through AI Gateway.
+- Run agent code, commands, and evals in isolated Vercel Sandboxes.
 
-## How agents should use Vercel
+**How agents can use this index:**
 
-- For research, fetch the Markdown documentation indexes below and follow their links to individual Markdown pages.
-- For REST API calls, read the OpenAPI description and authentication documentation before choosing an operation. Ask for approval before changing account resources.
+- For REST API calls, read the OpenAPI description and authentication guide first. Ask for approval before changing account resources.
 - For Vercel MCP, use an OAuth-capable MCP client and let the user authorize access to their Vercel account.
 
-## Agent setup
+## Start here
 
-- [Set up Vercel for your coding agent](https://vercel.com/get-started.md): Follow the agent playbook to install the CLI, add Vercel guidance, and connect Vercel MCP.
-- [Getting started with Vercel](https://vercel.com/docs/getting-started-with-vercel.md?from=llms-txt): Install the Vercel CLI, add the Vercel plugin or Vercel Skills, and deploy your first project.
-- [Vercel plugin](https://vercel.com/docs/agent-resources/vercel-plugin.md?from=llms-txt): Install with `npx plugins add vercel/vercel-plugin`, or `opencode plugin add github:vercel/vercel-plugin` in OpenCode, for Vercel skills, commands, and specialist agents.
-- [Vercel Skills](https://vercel.com/docs/agent-resources/skills.md?from=llms-txt): Browse and install individual skills for coding agents that do not support the plugin.
+- [Vercel overview](https://vercel.com/home.md): The homepage as Markdown.
+- [Set up Vercel in a coding agent](https://vercel.com/get-started.md): The agent setup playbook for the CLI, plugin, skills, and MCP.
+- [Documentation](https://vercel.com/docs.md): Product guides and reference.
+- [Pricing](https://vercel.com/pricing.md): Hobby is free for personal, non-commercial projects. Pro is a $20 monthly platform fee with one deploying seat and $20 of usage credit, plus charges for extra seats and usage. Enterprise pricing is custom.
+- [Hobby plan](https://vercel.com/docs/plans/hobby.md): Free plan for personal, non-commercial projects.
+- [Enterprise](https://vercel.com/enterprise.md): The Enterprise plan, with SSO, audit logs, private networking, and 24/7 support.
 
-## Documentation
+## Agent resources
 
-- [Vercel product documentation](https://vercel.com/docs/products.md): Curated product index with links to documentation.
-- [Documentation sitemap](https://vercel.com/docs/sitemap.md): Documentation pages with summaries and prerequisites.
-- [Full documentation content](https://vercel.com/docs/llms-full.txt): Complete documentation and REST API reference in one file.
+- [Getting started with Vercel](https://vercel.com/docs/getting-started-with-vercel.md?from=llms-txt): Install the CLI and deploy a first project.
+- [Vercel Plugin](https://vercel.com/docs/agent-resources/vercel-plugin.md?from=llms-txt): Install with `npx plugins add vercel/vercel-plugin`, or `opencode plugin add github:vercel/vercel-plugin` in OpenCode, for Vercel skills, commands, and specialist agents.
+- [Vercel Skills](https://vercel.com/docs/agent-resources/skills.md?from=llms-txt): Install with `npx skills add vercel-labs/agent-skills` for agents that don't support the plugin. Index: [agent-skills index](https://vercel.com/.well-known/agent-skills/index.json).
+- [Vercel MCP server](https://vercel.com/docs/agent-resources/vercel-mcp.md): OAuth-authenticated tools for docs, projects, deployments, and logs, at `https://mcp.vercel.com`.
+- [Vercel REST API](https://vercel.com/docs/rest-api.md): Endpoint reference for projects, deployments, domains, and other account resources.
+- [OpenAPI description](https://vercel.com/openapi.json): Machine-readable OpenAPI 3.0 spec for the REST API.
+- [API authentication](https://vercel.com/docs/accounts/access-tokens.md#use-a-scoped-token-with-the-api): Create scoped access tokens and send them as Bearer tokens.
+- [CLI tokens](https://vercel.com/docs/cli/tokens.md): Personal access tokens for the API and CLI.
+- [Webhooks](https://vercel.com/docs/webhooks.md): Event subscriptions and payloads.
+- [Claim deployments](https://vercel.com/docs/deployments/claim-deployments.md): An agent deploys an app for a user, then transfers it to the user's own Vercel account.
+- [Find a domain](https://vercel.com/domains/get-started.md): Search domains and compare prices with the CLI or API, without authentication.
+- [AI Gateway models](https://vercel.com/ai-gateway/models.md): Models with pricing, context windows, and providers.
+- [AI Gateway model list API](https://ai-gateway.vercel.sh/v1/models): Live JSON list of every model ID, with pricing. No API key needed.
 
-## REST API and developer resources
+## Build with AI
 
-- [Vercel REST API documentation](https://vercel.com/docs/rest-api.md): Endpoint reference for the public Vercel REST API.
-- [Vercel REST API OpenAPI description](https://vercel.com/openapi.json): Machine-readable OpenAPI 3.0 description for the public REST API.
-- [Vercel REST API authentication](https://vercel.com/docs/accounts/access-tokens.md#use-a-scoped-token-with-the-api): Create scoped access tokens and use them as Bearer tokens in API requests.
-- [Vercel webhook documentation](https://vercel.com/docs/webhooks.md): Event subscriptions, payloads, and delivery behavior.
-- [Vercel MCP server](https://vercel.com/docs/agent-resources/vercel-mcp.md): OAuth-authenticated tools for Vercel documentation and account resources.
+- [AI Gateway](https://vercel.com/docs/ai-gateway.md): Call 400+ models through one endpoint, with budgets, fallbacks, usage monitoring, and no markup on token prices.
+- [AI SDK](https://vercel.com/docs/ai-sdk.md): A TypeScript library for building AI agents and apps, with one API for models, tools, structured output, and streaming.
+- [eve](https://vercel.com/docs/eve.md) (beta): Build durable backend agents with an open-source, filesystem-first framework.
+- [Sandbox](https://vercel.com/docs/sandbox.md): Isolated microVMs for agent code, commands, and evals.
+- [Workflows](https://vercel.com/docs/workflows.md): Run multi-step code that retries failed steps, waits for external events, and resumes after crashes and deployments.
+- [Connect](https://vercel.com/docs/connect.md): Give agents short-lived tokens for Slack, GitHub, Snowflake, or any OAuth or API-key service, without storing provider secrets.
+- [Passport](https://vercel.com/docs/passport.md) (Enterprise): Put your company's identity provider in front of every agent, app, and deployment you ship.
+- [Drives](https://vercel.com/docs/sandbox/concepts/drives.md): Storage you mount into a Sandbox, so an agent keeps its files between runs.
+- [Agent harnesses](https://vercel.com/docs/agent-harnesses.md): Run Claude Code, Codex, OpenCode, eve, and other harnesses on Vercel, so an agent picks up where it stopped after a crash, timeout, or redeploy.
+- [MCP server hosting](https://vercel.com/docs/mcp.md): Deploy your own MCP servers so agents can call your APIs as tools.
+- [Container Registry](https://vercel.com/docs/container-registry.md): Store container images and run them on Functions or Sandbox.
+- [v0](https://v0.app/docs.md): Build web apps and agents from natural language.
 
-## Self-serve onboarding
+## Build your app
 
-- [Find a domain with Vercel CLI or API](https://vercel.com/domains/get-started.md): Search available names, compare registration and renewal prices, and return a verified shortlist. Neither requires authentication.
-- [Vercel Hobby plan](https://vercel.com/docs/plans/hobby.md): Free plan for non-commercial personal projects.
-- [Vercel CLI tokens](https://vercel.com/docs/cli/tokens.md): Create and manage personal access tokens for the Vercel API and CLI.
-- [Vercel AI Gateway](https://vercel.com/docs/ai-gateway.md): One hosted API for AI models from any cloud or language, with routing, fallbacks, prompt caching, and usage monitoring.
-- [AI Gateway models](https://vercel.com/ai-gateway/models.md): Every AI Gateway model with pricing, context window, providers, and capability tags.
-- [AI Gateway model list API](https://ai-gateway.vercel.sh/v1/models): Live JSON list of every model ID with pricing and capabilities. No API key required.
-- [Vercel Sandbox](https://vercel.com/docs/sandbox.md): Isolated compute for running code and agent workloads.
-- [Vercel Templates](https://vercel.com/templates.md): Deployable starter projects for frameworks, AI, storage, and more, each with a one-click deploy link.
+- [Frameworks](https://vercel.com/docs/frameworks.md): Deploy Next.js, Nuxt, SvelteKit, Astro, TanStack Start, and 40+ other frameworks, often with no configuration.
+- [Functions](https://vercel.com/docs/functions.md): Run APIs, webhooks, and agent turns without managing servers. [Fluid compute](https://vercel.com/docs/fluid-compute.md) runs many requests per instance and skips Active CPU billing while code waits on a model or database.
+- [Services](https://vercel.com/docs/services.md) (beta) and [Daemons](https://vercel.com/docs/daemons.md) (public beta): Deploy APIs and always-on background workers in Node.js, Python, or Go with the frontend, including [Express](https://vercel.com/docs/frameworks/backend/express.md) and [FastAPI](https://vercel.com/docs/frameworks/backend/fastapi.md).
+- [WebSockets](https://vercel.com/docs/functions/websockets.md): Keep a two-way connection open for realtime features such as chat and collaboration.
+- [Queues](https://vercel.com/docs/queues.md) (beta): Process agent events and background work reliably.
+- [Cron Jobs](https://vercel.com/docs/cron-jobs.md): Run scheduled jobs to automate recurring tasks.
+- [Storage](https://vercel.com/docs/storage.md): Store files in Vercel Blob, runtime configuration in Global Config, and third-party databases from the Vercel Marketplace.
+- [Integrations](https://vercel.com/docs/integrations.md): Connect databases, AI providers, CMSs, and logging tools from the Vercel Marketplace.
+- [Routing Middleware](https://vercel.com/docs/routing-middleware.md): Run code before a request reaches your app, for example to check a session or assign an A/B test.
+- [Incremental Static Regeneration](https://vercel.com/docs/incremental-static-regeneration.md): Regenerate pages on a schedule or on demand without a full rebuild.
+- [Image Optimization](https://vercel.com/docs/image-optimization.md): Resize and convert images on demand and serve them from the CDN.
+- [Microfrontends](https://vercel.com/docs/microfrontends.md): Serve several apps under one domain.
 
-## Knowledge Base
+## Deploy and operate
 
-- [Knowledge Base](https://vercel.com/kb.md): Featured and recent guides, plus a directory of topics.
-- [Knowledge Base sitemap](https://vercel.com/kb/sitemap.md): Troubleshooting guides, topics, videos, bulletins, and product references.
+- [Deployments](https://vercel.com/docs/deployments.md): Deploy on every Git push. Each deployment gets a unique URL.
+- [Environments](https://vercel.com/docs/deployments/environments.md): Manage local, preview, and production environments and their variables.
+- [Rolling Releases](https://vercel.com/docs/rolling-releases.md) (Pro and Enterprise): Release a new deployment to some users before everyone.
+- [Instant Rollback](https://vercel.com/docs/instant-rollback.md): Revert production to a previous deployment after a bad release.
+- [CDN](https://vercel.com/docs/cdn.md): Caches content near visitors and routes requests for every deployment.
+- [Domains](https://vercel.com/docs/domains.md): Buy and manage domains, with DNS and SSL certificates handled.
+- [Observability](https://vercel.com/docs/observability.md): Monitor traffic, function performance, and errors across apps and AI workloads, with [tracing](https://vercel.com/docs/tracing.md), [alerts](https://vercel.com/docs/alerts.md), and [drains](https://vercel.com/docs/drains.md).
+- [Web Analytics](https://vercel.com/docs/analytics.md) and [Speed Insights](https://vercel.com/docs/speed-insights.md): Measure visitors, page traffic, and production performance.
+- [Vercel Agent](https://vercel.com/docs/agent.md) (public beta, Pro and Enterprise): Investigates production issues, reviews code, and suggests fixes, with human approval.
+- [Feature Flags](https://vercel.com/docs/flags.md): Roll out changes safely with flags defined in code.
+- [Toolbar](https://vercel.com/docs/vercel-toolbar.md): Comment, set feature flags, and check accessibility on preview deployments.
+- [Drop](https://vercel.com/drop.md): Deploy a file, folder, or zip from the browser.
 
-## Learning and updates
+## Secure your app
 
-- [Vercel Academy](https://vercel.com/academy/llms.txt): Courses and learning paths.
-- [Vercel Blog sitemap](https://vercel.com/blog/sitemap.md): Articles, engineering posts, and product announcements.
-- [Vercel Changelog sitemap](https://vercel.com/changelog/sitemap.md): Product updates and release notes.
+- [Web Application Firewall](https://vercel.com/docs/vercel-firewall/vercel-waf.md): Block attacks and unwanted traffic with custom rules, [rate limiting](https://vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting.md), and managed rulesets. [DDoS mitigation](https://vercel.com/docs/vercel-firewall/ddos-mitigation.md) is always on, on every plan.
+- [Bot Management](https://vercel.com/docs/bot-management.md): Decide which bots can reach your app.
+- [BotID](https://vercel.com/docs/botid.md): Protect sensitive routes from sophisticated bots without a CAPTCHA.
+- [Deployment Protection](https://vercel.com/docs/deployment-protection.md): Control who can access preview and production URLs.
+- [Access control](https://vercel.com/docs/rbac.md) (Pro and Enterprise): Assign roles to team members, plus [SAML SSO](https://vercel.com/docs/saml.md) and [Directory Sync](https://vercel.com/docs/directory-sync.md) on Enterprise.
+- [Secure Compute](https://vercel.com/docs/networking/secure-compute.md) (Enterprise add-on): Private network connections between your deployments and your databases or backends.
+- [Organizations](https://vercel.com/docs/organizations.md) (private beta, Enterprise): Group multiple Vercel teams under one bill and central management.
+- [Audit Logs](https://vercel.com/docs/audit-log.md) (Enterprise): Track what team members do on Vercel and stream the log to your security tools.
+- [Compliance](https://vercel.com/docs/security/compliance.md): SOC 2, ISO, HIPAA, and the other standards Vercel complies with.
+- [Bring Your Own Cloud](https://vercel.com/docs/networking/bring-your-own-cloud.md) (Enterprise): Run your project's Vercel Functions in your own AWS account.
+
+## Open source
+
+- [Next.js](https://nextjs.org/docs.md): The React framework for the web.
+- [AI SDK](https://ai-sdk.dev/docs/introduction.md): A TypeScript toolkit for building AI apps and agents.
+- [eve](https://eve.dev/docs/getting-started.md): An open-source framework for durable backend agents.
+- [Workflow SDK](https://workflow-sdk.dev/docs/getting-started.md): Durable functions in TypeScript and Python.
+- [Chat SDK](https://chat-sdk.dev/docs.md): One SDK for bots on Slack, Discord, and other chat platforms.
+- [Turborepo](https://turborepo.dev/docs.md): A build system for JavaScript and TypeScript monorepos.
+- [All open source projects](https://vercel.com/oss.md)
+
+## Vercel use cases
+
+- [Agents](https://vercel.com/agents.md): Production agents, from model calls and tools to sandboxes and durable runs.
+- [AI apps](https://vercel.com/ai.md): Chat, generation, and other AI features in web apps.
+- [Web apps](https://vercel.com/for/web-apps.md): Dynamic web applications with global delivery and built-in security.
+- [Backends](https://vercel.com/backends.md): APIs, services, workers, and queues deployed with the frontend.
+- [Platforms](https://vercel.com/for/platforms.md): Multi-tenant products where each customer gets their own custom domain.
+- [Marketing sites](https://vercel.com/solutions/marketing-sites.md): Fast, personalized sites connected to a CMS.
+- [Commerce](https://vercel.com/for/retail.md): Storefronts that stay fast through peak traffic.
+
+## Documentation and guides
+
+- [Product documentation index](https://vercel.com/docs/products.md): Every product and its docs.
+- [Documentation sitemap](https://vercel.com/docs/sitemap.md): Every docs page, with summaries.
+- [Plans](https://vercel.com/docs/plans.md): What the Hobby, Pro, and Enterprise plans include.
+- [Limits](https://vercel.com/docs/limits.md): Account, rate, and resource limits for every plan.
+- [Knowledge Base](https://vercel.com/kb.md): Technical guides on agents, backends, security, and migrations.
+- [Reference Architecture](https://vercel.com/kb/architecture.md): Architectures for agents, backends, web apps, commerce, and multi-tenant platforms.
+- [Knowledge Base sitemap](https://vercel.com/kb/sitemap.md): Every guide and topic.
+- [Templates](https://vercel.com/templates.md): Starter projects with one-click deploy links.
+- [Vercel Academy](https://vercel.com/academy/llms.txt): Courses on Vercel, Next.js, AI SDK, and more.
+
+## Company and updates
+
+- [Customers](https://vercel.com/customers.md): How customers use Vercel, by industry.
+- [About Vercel](https://vercel.com/about.md): The company and its investors.
+- [Changelog](https://vercel.com/changelog.md): The latest Vercel product releases, newest first.
+- [Blog](https://vercel.com/blog.md): Engineering posts, product news, and customer stories.
 
 ## Optional
 
-- [Agent resource catalog](https://vercel.com/.well-known/ai-catalog.json): Experimental catalog of agent-facing resources.
-- [Product taxonomy](https://vercel.com/docs/taxonomy.json): Canonical product names, aliases, and deprecations.
-- [Documentation graph](https://vercel.com/docs/graph.json): Cross-site links, prerequisites, semantic neighbors, and related pages.
+- [Full documentation in one file](https://vercel.com/docs/llms-full.txt): The complete docs and API reference.
+- [Changelog sitemap](https://vercel.com/changelog/sitemap.md): Every changelog entry, by year.
+- [Blog sitemap](https://vercel.com/blog/sitemap.md): Every blog post, by category.
+- [Agent resource catalog](https://vercel.com/.well-known/ai-catalog.json): Experimental list of agent resources.
+- [Product taxonomy](https://vercel.com/docs/taxonomy.json): Product names, aliases, and deprecations.
+- [Documentation graph](https://vercel.com/docs/graph.json): Links, prerequisites, and related docs.
+- [Brand assets](https://vercel.com/geist/brands.md): Logos and usage guidelines.

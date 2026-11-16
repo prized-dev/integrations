@@ -1,14 +1,14 @@
 GET https://telnyx.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:17.646Z
+fetched: 2026-11-16T20:59:51.514Z
 final-url: https://telnyx.com/auth.md
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:38:15 GMT
+date: Mon, 16 Nov 2026 20:59:48 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a59228d05d733416-PDX
+cf-ray: a5b96bedc8d4fefd-PDX
 cf-cache-status: BYPASS
 access-control-allow-origin: *
 cache-control: public, max-age=3600

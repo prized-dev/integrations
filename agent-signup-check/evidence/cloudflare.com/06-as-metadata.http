@@ -1,12 +1,12 @@
 GET https://cloudflare.com/.well-known/oauth-authorization-server
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:42.269Z
+fetched: 2026-11-16T20:59:11.442Z
 redirect: 301 from https://cloudflare.com/.well-known/oauth-authorization-server
 redirect: 301 from https://www.cloudflare.com/.well-known/oauth-authorization-server
 final-url: https://www.cloudflare.com/.well-known/oauth-authorization-server/
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:37:40 GMT
+date: Mon, 16 Nov 2026 20:59:09 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -26,10 +26,10 @@ x-frame-options: SAMEORIGIN
 x-served-by: marketing-site
 x-xss-protection: 1; mode=block
 x-rm: GW
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=yBqUTAk66cgb0mBNo0eG9pBH7rpwBe7A%2F2hykOv4gpb%2Fd8di4DTWp8ScplrHXbLp%2FPGQdcMsEtKo%2FtcxIV5745uJmDanejpEreMuLo%2FRTpkcXoRIkfteLeLGsRjvMbnoYGmIXg%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=2UbXI5rlCbtzkBlSjuR0kXyH4qpHFdnLuVUhEyqdS%2FSdzlEM70opXzE%2ByCO7u4UHB0KNHK3UPqZAlpeVaHlVXG%2B%2B6EZIQkPQJkM4HG%2FZRVo2o5hbYbFriZunxQ5bOM4IGrEuGw%3D%3D"}]}
 content-encoding: br
 server: cloudflare
-cf-ray: a59227f70cbf8e60-PDX
+cf-ray: a5b96af83a2e1d57-PDX
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html><html lang="en" class="font-stk-bureau-sans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><link rel="preconnect" href="https://imagedelivery.net" crossorigin><link rel="preconnect" href="https://ot.www.cloudflare.com" crossorigin><link rel="preload" href="/icons.svg" as="image" type="image/svg+xml"><link rel="preload" href="/fonts/STKBureauSans-Book.otf" as="font" type="font/otf" crossorigin><link rel="preload" href="/fonts/STKBureauSans-Regular.otf" as="font" type="font/otf" crossorigin><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><script>

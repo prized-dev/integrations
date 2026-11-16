@@ -1,6 +1,6 @@
 {
  "site": "nano-gpt.com",
- "checkedAt": "2026-11-12T02:37:28.510Z",
+ "checkedAt": "2026-11-16T20:58:57.964Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 5,
@@ -54,10 +54,10 @@
    "name": "Spend limits",
    "where": "auth.md",
    "url": "https://nano-gpt.com/auth.md",
-   "match": "usage_limit_type",
-   "snippet": "code_challenge_method\": \"S256\", \"limit\": 20, \"usage_limit_type\": \"weekly\", \"expires_at\": \"2099-07-01T00:00:00.000Z\", \"key_label\": \"Local coding agent\" }",
+   "match": "spending limits",
+   "snippet": "el catalogs. Bounded by the balance and the key's spending limits. A paid response states its cost and may state the remaining balance. Also the chat handoff (`",
    "status": "partial",
-   "reason": "auth.md mentions usage_limit_type in prose; no machine-readable cap"
+   "reason": "auth.md mentions spending limits in prose; no machine-readable cap"
   },
   {
    "id": "payment",
@@ -74,7 +74,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.nano-gpt.com/llms.txt",
    "heading": "# NanoGPT API Documentation",
-   "bytes": 22056,
+   "bytes": 22268,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -87,7 +87,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 633,
+   "ms": 421,
    "redirects": 0
   },
   {
@@ -97,7 +97,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 186,
+   "ms": 191,
    "redirects": 0
   },
   {
@@ -107,7 +107,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 1186,
+   "ms": 1059,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 119,
+   "ms": 281,
    "redirects": 0
   },
   {
@@ -127,7 +127,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 391,
+   "ms": 413,
    "redirects": 0
   },
   {
@@ -137,7 +137,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 278,
+   "ms": 229,
    "redirects": 0
   },
   {
@@ -147,7 +147,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 224,
+   "ms": 81,
    "redirects": 0
   },
   {
@@ -157,7 +157,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 84,
+   "ms": 79,
    "redirects": 0
   }
  ]

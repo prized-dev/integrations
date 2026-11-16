@@ -1,6 +1,6 @@
 GET https://mongodb.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:13.848Z
+fetched: 2026-11-16T21:00:57.765Z
 redirect: 301 from https://mongodb.com/llms.txt
 final-url: https://www.mongodb.com/llms.txt
 
@@ -12,13 +12,13 @@ x-powered-by: Express
 cache-control: public, max-age=0, s-maxage=30, stale-while-revalidate
 document-policy: js-profiling
 x-nextjs-cache: STALE
-date: Thu, 12 Nov 2026 02:38:09 GMT
-x-envoy-upstream-service-time: 1913
+date: Mon, 16 Nov 2026 21:00:53 GMT
+x-envoy-upstream-service-time: 37
 server: istio-envoy
 x-cache: Miss from cloudfront
-via: 1.1 63227cf14d6d2219c6d94e402898004a.cloudfront.net (CloudFront)
-x-amz-cf-pop: HIO52-P5
-x-amz-cf-id: _DMMiKTdu0BcyBfV_c_J0WuUQjUnOFRRTQaxvpBFA21b_VnIzQMAkQ==
+via: 1.1 cb2339b8008ceeabfc2dd9e6cfbc465c.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P4
+x-amz-cf-id: TLNLGrYc-CH68VA5uOWxhstoKgEXbnDtZclPpqVS-Fw_vkCELtHZsA==
 
 # MongoDB
 

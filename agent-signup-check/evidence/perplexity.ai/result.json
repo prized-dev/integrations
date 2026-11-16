@@ -1,6 +1,6 @@
 {
  "site": "perplexity.ai",
- "checkedAt": "2026-11-12T02:37:22.899Z",
+ "checkedAt": "2026-11-16T20:58:51.148Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 2,
  "partial": 1,
@@ -16,7 +16,7 @@
    "was": "fail",
    "wasReason": "/auth.md answers with a Cloudflare bot challenge (after a redirect to https://www.perplexity.ai/auth.md)",
    "status": "unread",
-   "reason": "Not read on 2026-11-12: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge"
+   "reason": "Not read on 2026-11-16: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge"
   },
   {
    "id": "prm",
@@ -35,7 +35,7 @@
    "name": "Sign-up by API",
    "url": "https://api.perplexity.ai/.well-known/oauth-authorization-server",
    "status": "fail",
-   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt (not read on 2026-11-12: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt (not read on 2026-11-16: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
    "notRead": "https://perplexity.ai/auth.md"
   },
   {
@@ -51,14 +51,14 @@
    "id": "limits",
    "name": "Spend limits",
    "status": "fail",
-   "reason": "No spend cap in metadata, auth.md or llms.txt (not read on 2026-11-12: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
+   "reason": "No spend cap in metadata, auth.md or llms.txt (not read on 2026-11-16: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
    "notRead": "https://perplexity.ai/auth.md"
   },
   {
    "id": "payment",
    "name": "Payment handoff",
    "status": "fail",
-   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt (not read on 2026-11-12: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt (not read on 2026-11-16: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
    "notRead": "https://perplexity.ai/auth.md"
   },
   {
@@ -66,7 +66,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.perplexity.ai/llms.txt",
    "heading": "# Perplexity",
-   "bytes": 43120,
+   "bytes": 45751,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -79,7 +79,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 34,
+   "ms": 32,
    "redirects": 1
   },
   {
@@ -89,7 +89,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 30,
+   "ms": 28,
    "redirects": 1
   },
   {
@@ -99,7 +99,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 133,
+   "ms": 146,
    "redirects": 0
   },
   {
@@ -109,7 +109,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 97,
+   "ms": 116,
    "redirects": 0
   },
   {
@@ -119,7 +119,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 103,
+   "ms": 110,
    "redirects": 1
   },
   {
@@ -129,7 +129,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 132,
+   "ms": 127,
    "redirects": 0
   },
   {
@@ -139,7 +139,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 32,
+   "ms": 49,
    "redirects": 0
   },
   {
@@ -149,7 +149,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 111,
+   "ms": 112,
    "redirects": 1
   }
  ]

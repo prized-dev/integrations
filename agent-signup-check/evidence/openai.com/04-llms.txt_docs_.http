@@ -1,22 +1,22 @@
 GET https://developers.openai.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:13.641Z
+fetched: 2026-11-16T20:58:42.092Z
 final-url: https://developers.openai.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 13497
+age: 183
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:37:10 GMT
-etag: W/"e5c733c58c16858e859945cef08fa1c9"
-last-modified: Wed, 11 Nov 2026 22:52:13 GMT
+date: Mon, 16 Nov 2026 20:58:39 GMT
+etag: W/"110e3e97e7d05cf166186b7c682189a5"
+last-modified: Mon, 16 Nov 2026 20:55:36 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-vercel-cache: HIT
-x-vercel-id: pdx1::cfdqz-1794451030940-fa215cc227b1
+x-vercel-id: pdx1::pt5ml-1794862719397-db293dd5fdb7
 connection: close
 transfer-encoding: chunked
 
@@ -34,6 +34,7 @@ Start with the product index that matches your task. Product indexes route to de
 - [Workspace Agents API](https://developers.openai.com/workspace-agents/llms.txt): Authenticate API calls, trigger published workspace agent runs, and inspect run results.
 - [Codex developer tools](https://developers.openai.com/codex/llms.txt): Codex CLI, IDE, cloud, config.toml, authentication, customization, automation, and security.
 - [ChatGPT product documentation](https://learn.chatgpt.com/llms.txt): ChatGPT Work, administration, collaboration, and product guidance.
+- [Agent Access](https://developers.openai.com/commerce/agent-access.md): Allow verified ChatGPT browser visits with CDN and firewall configuration.
 - [Agentic Commerce Protocol](https://developers.openai.com/commerce/llms.txt): Merchant onboarding, product feeds, checkout sessions, delegated payments, and production guidance.
 - [OpenAI developer blog](https://developers.openai.com/blog/llms.txt): Engineering articles, product launches, technical deep dives, and developer announcements.
 - [OpenAI Cookbook examples](https://developers.openai.com/cookbook/llms.txt): Practical code examples and patterns for APIs, agents, evals, multimodal applications, and integrations.
@@ -53,7 +54,7 @@ Start with the product index that matches your task. Product indexes route to de
 - [Plugins and Apps SDK quickstart](https://developers.openai.com/plugins/build/app-quickstart.md): Build an MCP server with tools and an optional ChatGPT interface.
 - [Trigger workspace agent runs](https://developers.openai.com/workspace-agents/trigger-runs.md): Start ChatGPT workspace agents from backend systems and automations.
 - [Ads API quickstart](https://developers.openai.com/ads/api-quickstart.md): Launch your first Ads API workflow.
-- [Agentic checkout specification](https://developers.openai.com/commerce/specs/checkout.md): Implement the Agentic Commerce checkout flow.
+- [Accept payments](https://developers.openai.com/commerce/guides/accept-payments.md): Accept ChatGPT wallet payments on your website.
 - [Codex configuration reference](https://developers.openai.com/codex/config-file/config-reference.md): Look up Codex config.toml and requirements.toml settings.
 - [Codex CLI customization](https://developers.openai.com/codex/cli-customization.md): Customize the terminal interface, editor, completions, and shortcuts.
 

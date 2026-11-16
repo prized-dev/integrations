@@ -1,15 +1,15 @@
 GET https://api.runloop.ai/v1/devboxes
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:46.075Z
+fetched: 2026-11-16T20:59:15.236Z
 final-url: https://api.runloop.ai/v1/devboxes
 
 HTTP 401
-date: Thu, 12 Nov 2026 02:37:43 GMT
+date: Mon, 16 Nov 2026 20:59:12 GMT
 content-type: application/json
 x-content-type-options: nosniff
 referrer-policy: no-referrer
 strict-transport-security: max-age=31536000; includeSubDomains
-x-runloop-request-id: 48fdb17e-9e4c-4596-b57b-331a89c511b3
+x-runloop-request-id: 25792581-4529-4637-b8ee-1190ddf3065b
 x-should-retry: false
 content-length: 42
 connection: close

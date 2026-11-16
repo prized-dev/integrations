@@ -1,6 +1,6 @@
 {
  "site": "digitalocean.com",
- "checkedAt": "2026-11-12T02:37:53.574Z",
+ "checkedAt": "2026-11-16T20:59:23.785Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
@@ -68,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 462,
+   "ms": 501,
    "redirects": 1
   },
   {
@@ -78,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 396,
+   "ms": 387,
    "redirects": 1
   },
   {
@@ -98,7 +98,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 243,
+   "ms": 554,
    "redirects": 1
   },
   {
@@ -108,7 +108,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 135,
+   "ms": 133,
    "redirects": 0
   },
   {
@@ -118,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 217,
+   "ms": 255,
    "redirects": 1
   },
   {
@@ -128,7 +128,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 131,
+   "ms": 146,
    "redirects": 0
   },
   {
@@ -138,7 +138,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 238,
+   "ms": 307,
    "redirects": 1
   }
  ]

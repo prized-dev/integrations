@@ -1,19 +1,19 @@
 GET https://replit.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:00.917Z
+fetched: 2026-11-16T20:59:30.934Z
 final-url: https://replit.com/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:37:59 GMT
+date: Mon, 16 Nov 2026 20:59:29 GMT
 content-type: text/plain
 transfer-encoding: chunked
 connection: close
-cf-ray: a592286bcbd4cf48-PDX
+cf-ray: a5b96b716947706c-PDX
 cf-cache-status: DYNAMIC
 cache-control: public, max-age=3600, s-maxage=3600
 content-encoding: gzip
 server: cloudflare
-x-envoy-upstream-service-time: 49
+x-envoy-upstream-service-time: 148
 strict-transport-security: max-age=31536000; preload
 vary: Accept-Encoding
 content-security-policy-report-only: default-src * 'self' 'unsafe-eval' 'unsafe-inline' data: blob: ws: wss:; report-uri https://o1151714.ingest.us.sentry.io/api/4509640700461056/security/?sentry_key=74a33d973a69190986eba8f4bca540d2; report-to csp-endpoint;

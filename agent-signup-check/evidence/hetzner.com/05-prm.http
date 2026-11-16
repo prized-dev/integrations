@@ -1,12 +1,12 @@
 GET https://hetzner.com/.well-known/oauth-protected-resource
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:02.418Z
+fetched: 2026-11-16T20:59:32.607Z
 redirect: 301 from https://hetzner.com/.well-known/oauth-protected-resource
 redirect: 301 from https://www.hetzner.com/.well-known/oauth-protected-resource
 final-url: https://www.hetzner.com/.well-known/oauth-protected-resource/
 
 HTTP 404
-date: Thu, 12 Nov 2026 02:37:56 GMT
+date: Mon, 16 Nov 2026 20:59:26 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close

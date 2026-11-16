@@ -1,6 +1,6 @@
 GET https://brave.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:33.999Z
+fetched: 2026-11-16T21:00:09.762Z
 redirect: 302 from https://brave.com/llms.txt
 final-url: https://brave.com/llms.txt/
 
@@ -8,28 +8,27 @@ HTTP 404
 content-type: text/html
 transfer-encoding: chunked
 connection: close
-date: Thu, 12 Nov 2026 01:51:14 GMT
+content-encoding: br
+date: Mon, 16 Nov 2026 21:00:06 GMT
 server: AmazonS3
-last-modified: Wed, 11 Nov 2026 17:02:39 GMT
-etag: W/"bfa28905b76209c093d4355ab6f727e9"
-x-amz-meta-md5chksum: bfa28905b76209c093d4355ab6f727e9
-x-amz-version-id: MbzgHHyhvCoyO4T1g2oLRFcxPc3MdlhB
+last-modified: Mon, 16 Nov 2026 03:59:45 GMT
+referrer-policy: strict-origin-when-cross-origin
+x-amz-meta-md5chksum: 5578d2becb2671aca000c9d80c043f3f
+x-amz-version-id: ACuX4PmCk_BgF1MxO_QdQJ0LrIkR6EHj
 x-amz-server-side-encryption: AES256
-content-security-policy: connect-src 'self' https://search.brave.com https://newsletter.brave.app https://analytics.brave.com https://api2.blocksurvey.io; default-src 'none'; media-src 'self'; font-src 'self'; frame-ancestors 'self' https://ads.brave.com https://ads.bravesoftware.com; frame-src 'self' https://blocksurvey.io https://survey.brave.app https://contact.ads.brave.com https://html5-player.libsyn.com https://player.vimeo.com https://boards.greenhouse.io https://job-boards.greenhouse.io https://www.youtube-nocookie.com https://app.boostr.com/; img-src 'self' data: https://imgs.search.brave.com https://analytics.brave.com https://boards.greenhouse.io https://job-boards.greenhouse.io; script-src 'self' https://boards.greenhouse.io https://job-boards.greenhouse.io; style-src 'self' 'unsafe-inline'; object-src 'self'; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests;
+cross-origin-opener-policy: same-origin
 strict-transport-security: max-age=31536000; includeSubdomains; preload
 x-content-type-options: nosniff
-x-frame-options: SAMEORIGIN
-referrer-policy: strict-origin-when-cross-origin
-cross-origin-opener-policy: same-origin
 onion-location: https://brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion/404.html
-content-encoding: br
+x-frame-options: SAMEORIGIN
+content-security-policy: connect-src 'self' https://search.brave.com https://newsletter.brave.app https://analytics.brave.com https://api2.blocksurvey.io; default-src 'none'; media-src 'self'; font-src 'self'; frame-ancestors 'self' https://ads.brave.com https://ads.bravesoftware.com; frame-src 'self' https://blocksurvey.io https://survey.brave.app https://contact.ads.brave.com https://html5-player.libsyn.com https://player.vimeo.com https://boards.greenhouse.io https://job-boards.greenhouse.io https://www.youtube-nocookie.com https://app.boostr.com/; img-src 'self' data: https://imgs.search.brave.com https://analytics.brave.com https://boards.greenhouse.io https://job-boards.greenhouse.io; script-src 'self' https://boards.greenhouse.io https://job-boards.greenhouse.io; style-src 'self' 'unsafe-inline'; object-src 'self'; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests;
+etag: W/"5578d2becb2671aca000c9d80c043f3f"
 vary: Accept-Encoding
 x-cache: Error from cloudfront
-via: 1.1 743dabf2fdbfd64c0bd7adf3cea9dbec.cloudfront.net (CloudFront)
+via: 1.1 ebce609a4052492a033f7a3d502d1e3c.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P4
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: zHUJzsetwlj4l9RBYVunw8kBSQRxlsKaayizJKBipAfeFlSXNvOknw==
-age: 2837
+x-amz-cf-id: Jci9R_xcLGAZAw-LGLH3q1GpvBGyRH86tRPUibL_f5fdq6vX8-9uVQ==
 
 <!DOCTYPE html>
 <html lang="en">
@@ -81,7 +80,7 @@ age: 2837
 
     
 
-    <link rel="stylesheet" href="/static-assets/css-old/main.min.86766feb47a05549645f37306b9db680e0de997f9ffe10e4183eef0ab46e4f3e.css" integrity="sha256-hnZv60egVUlkXzcwa522gODemX+f/hDkGD7vCrRuTz4=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/static-assets/css-old/main.min.ce342889ce6b88b2f1ed813b2c49d52a4f0e9b266651c176fe4783c54cc49c1d.css" integrity="sha256-zjQoic5riLLx7YE7LEnVKk8OmyZmUcF2/keDxUzEnB0=" crossorigin="anonymous" />
 
     
 
@@ -206,4 +205,4 @@ age: 2837
                               <li class=""><ul class="p-0 list-none"><li class=""><a href="https://search.brave.com/"
                                             target="_bla
 
-[body trimmed for publication: kept 16384 of 54543 characters; sha256 of the published body cc602c31d0f2f0ee001ee00f580a50179b4651d100befbda44c0c25cb43b2d5c]
+[body trimmed for publication: kept 16384 of 54543 characters; sha256 of the published body a46005b376f314ec9cb6e63e8adc9dae4bfcb40f20b779cd19713182f48fdba5]

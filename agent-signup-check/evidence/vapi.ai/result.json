@@ -1,6 +1,6 @@
 {
  "site": "vapi.ai",
- "checkedAt": "2026-11-12T02:38:20.426Z",
+ "checkedAt": "2026-11-16T20:59:55.640Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 1,
@@ -68,7 +68,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 68,
+   "ms": 62,
    "redirects": 0
   },
   {
@@ -78,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 48,
+   "ms": 69,
    "redirects": 0
   },
   {
@@ -88,7 +88,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 46,
+   "ms": 47,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 50,
+   "ms": 47,
    "redirects": 0
   },
   {
@@ -108,7 +108,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 40,
+   "ms": 39,
    "redirects": 0
   },
   {
@@ -118,7 +118,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 44,
+   "ms": 52,
    "redirects": 0
   },
   {
@@ -138,7 +138,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 43,
+   "ms": 47,
    "redirects": 0
   }
  ]

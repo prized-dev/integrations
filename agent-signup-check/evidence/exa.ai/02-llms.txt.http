@@ -1,27 +1,27 @@
 GET https://exa.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:30.664Z
+fetched: 2026-11-16T21:00:06.827Z
 final-url: https://exa.ai/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 0
+age: 6041
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:38:28 GMT
-etag: W/"1b8a28a6d240948c3ee2960b6854880d"
-last-modified: Thu, 12 Nov 2026 02:38:28 GMT
+date: Mon, 16 Nov 2026 21:00:04 GMT
+etag: W/"9b8059d1a41788fb4a1a62d89e8d2ecf"
+last-modified: Mon, 16 Nov 2026 19:19:22 GMT
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /llms.txt
-x-vercel-cache: MISS
-x-vercel-id: pdx1::9557b-1794451108247-ab3cbcc3253b
+x-vercel-cache: HIT
+x-vercel-id: pdx1::g2n77-1794862804572-ef8c77625ddd
 connection: close
 transfer-encoding: chunked
 
@@ -122,28 +122,40 @@ Connect your agents to the world's public and private data, including web analyt
 
 ### Exa Library
 
-Structured collections searchable through the standard search call: places, people, companies, job postings, earnings calls, SEC filings, stock pages, market quotes, products, events, podcasts, Wikipedia, research papers, patents, court opinions, indicators and countries.
+Exa Library collections are searchable through the standard search call. They cover people, companies, job postings, places, sports, weather, earnings calls, SEC filings, stock pages, market quotes, products, events, podcasts, legal entities, court opinions, legislation, patents, research papers, Wikipedia, countries, indicators and clinical trials.
 
 - [Exa Library](https://exa.ai/library)
-- [People](https://exa.ai/library/person)
-- [Companies](https://exa.ai/library/organization)
-- [Places](https://exa.ai/library/place)
-- [Research papers](https://exa.ai/library/publication)
-- [Court opinions](https://exa.ai/library/legal/opinion)
-- [Patents](https://exa.ai/library/legal/patent)
-- [Podcasts](https://exa.ai/library/podcast)
-- [Stock pages](https://exa.ai/library/markets/stocks)
-- [Market quotes](https://exa.ai/library/markets)
-- [Sports](https://exa.ai/library/sports)
-- [Weather](https://exa.ai/library/weather)
-- [Indicators](https://exa.ai/library/indicator)
-- [Countries](https://exa.ai/library/geoarea)
-- [Earnings calls](https://exa.ai/library/earnings-call)
-- [Job postings](https://exa.ai/library/job-posting)
-- [Products](https://exa.ai/library/product)
-- [Events](https://exa.ai/library/event)
-- [Wikipedia](https://exa.ai/library/wikipedia-article)
-- [SEC filings](https://exa.ai/library/sec-filing)
+- People & companies
+  - [People](https://exa.ai/library/person)
+  - [Companies](https://exa.ai/library/organization)
+  - [Job postings](https://exa.ai/library/job-posting)
+- Live data
+  - [Places](https://exa.ai/library/place)
+  - [Sports](https://exa.ai/library/sports)
+  - [Weather](https://exa.ai/library/weather)
+- Financial
+  - [Earnings calls](https://exa.ai/library/earnings-call)
+  - [SEC filings](https://exa.ai/library/sec-filing)
+  - [Stock pages](https://exa.ai/library/markets/stocks)
+  - [Market quotes](https://exa.ai/library/markets)
+- Commerce & community
+  - [Products](https://exa.ai/library/product)
+  - [Events](https://exa.ai/library/event)
+  - [Podcasts](https://exa.ai/library/podcast)
+- Legal
+  - [Legal data](https://exa.ai/library/legal)
+  - [Legal entities](https://exa.ai/library/legal/entity)
+  - [Court opinions](https://exa.ai/library/legal/opinion)
+  - [Legislation](https://exa.ai/library/legal/legislation)
+  - [Patents](https://exa.ai/library/legal/patent)
+- Research
+  - [Research papers](https://exa.ai/library/publication)
+  - [Wikipedia](https://exa.ai/library/wikipedia-article)
+- Countries & indicators
+  - [Countries](https://exa.ai/library/geoarea)
+  - [Indicators](https://exa.ai/library/indicator)
+- Health
+  - [Clinical trials](https://exa.ai/library/health/study)
 
 ## Use Cases
 

@@ -1,6 +1,6 @@
 GET https://modal.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:35.398Z
+fetched: 2026-11-16T20:59:04.289Z
 final-url: https://modal.com/llms.txt
 
 HTTP 200
@@ -14,16 +14,16 @@ referrer-policy: no-referrer
 strict-transport-security: max-age=63072000; includeSubDomains; preload
 cross-origin-opener-policy: same-origin
 cache-control: no-cache
-date: Thu, 12 Nov 2026 02:37:33 GMT
-x-envoy-upstream-service-time: 39
+date: Mon, 16 Nov 2026 20:59:01 GMT
+x-envoy-upstream-service-time: 36
 content-encoding: gzip
 server: envoy
 vary: Accept-Encoding
 x-cache: Miss from cloudfront
-via: 1.1 eb0793aa61a19aaf4bd31bd6f3628f9a.cloudfront.net (CloudFront)
+via: 1.1 edfd8a65550b8bda6252072d1cbc2e9c.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: 4SQeve6_OvRzhUPI85urYH5gdQEbxvmGrRNlVc3VRfyYootMBt-gQQ==
+x-amz-cf-id: oP7IsLiAxKE9deOLFIVNKJ3KP2UVtVpCFQUTpCKsWXRHyJwajTsWCw==
 
 # Modal Documentation
 
@@ -103,6 +103,7 @@ The docs are organized into three main sections:
   - [Managing deployments](https://modal.com/docs/guide/managing-deployments.md)
   - [Continuous deployment](https://modal.com/docs/guide/continuous-deployment.md)
   - [Scheduled Functions](https://modal.com/docs/guide/cron.md)
+  - [Observability](https://modal.com/docs/guide/programmatic-observability.md)
 - HTTP Applications
   - [Servers](https://modal.com/docs/guide/servers.md)
   - [Sticky Sessions](https://modal.com/docs/guide/sticky-sessions.md)

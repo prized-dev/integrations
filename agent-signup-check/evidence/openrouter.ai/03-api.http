@@ -1,10 +1,10 @@
 GET https://openrouter.ai/api/v1/key
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:18.549Z
+fetched: 2026-11-16T20:58:46.921Z
 final-url: https://openrouter.ai/api/v1/key
 
 HTTP 401
-date: Thu, 12 Nov 2026 02:37:16 GMT
+date: Mon, 16 Nov 2026 20:58:44 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
@@ -16,7 +16,7 @@ permissions-policy: payment=(self "https://checkout.stripe.com" "https://connect
 referrer-policy: no-referrer, strict-origin-when-cross-origin
 x-content-type-options: nosniff
 server: cloudflare
-cf-ray: a5922763bd809790-PDX
+cf-ray: a5b96a5e493de22a-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"error":{"message":"No cookie auth credentials found","code":401}}

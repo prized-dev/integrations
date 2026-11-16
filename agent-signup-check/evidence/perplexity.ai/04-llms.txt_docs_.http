@@ -1,27 +1,27 @@
 GET https://docs.perplexity.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:22.899Z
+fetched: 2026-11-16T20:58:51.148Z
 final-url: https://docs.perplexity.ai/llms.txt
 
 HTTP 200
-age: 4191
+age: 2662
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a592277b79390d87-PDX
+cf-ray: a5b96a76f8b7b74e-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Thu, 12 Nov 2026 02:37:20 GMT
-etag: "dXcja1jluLLBCBZZuJ7wWot-jToisYQUThLc_j8RAwA"
+date: Mon, 16 Nov 2026 20:58:48 GMT
+etag: W/"yLii27iPIw1xpcyixOJ9pj_ZG6owLkBmZ65hUE6Lhzs"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4111
-x-vercel-cache: REVALIDATED
-x-vercel-id: pdx1:cdg1:iad1::iad1::zcf9v-1794451040526-7f48c3f9b95d
+x-mintlify-client-version: 0.0.4149
+x-vercel-cache: MISS
+x-vercel-id: pdx1:cdg1:iad1::iad1::wxhb9-1794862728769-0aa2149517f5
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_DqYu5MPb49gWBBbUGgpHQUmCHY3P
+x-version: dpl_4D8r1dHg6bQcRuBgQyL3z9waJJtn
 connection: close
 transfer-encoding: chunked
 
@@ -29,7 +29,7 @@ transfer-encoding: chunked
 
 > Perplexity API docs. Search: ranked web results with extracted page text for your own model. Agent: hosted models with web search and tools, returning a cited answer. Decisions: calibrated probabilities. Orchestrator (private preview): OpenAI- and Anthropic-format routing. Embeddings: vectors.
 
-- [Overview](https://docs.perplexity.ai/docs/getting-started/overview.md): Perplexity API Platform - build with the Orchestrator, Agent, Search, Embeddings, and Decisions APIs. Real-time, web-wide research and Q&A capabilities for your products.
+- [Overview](https://docs.perplexity.ai/docs/getting-started/overview.md): Perplexity API Platform - build with the Orchestrator, Agent, Search, Embeddings, Decisions, and Monitor APIs. Real-time, web-wide research and Q&A capabilities for your products.
 - [Quickstart](https://docs.perplexity.ai/docs/getting-started/quickstart.md): Generate an API key and make your first call in < 3 minutes.
 - [Pricing](https://docs.perplexity.ai/docs/getting-started/pricing.md): Understand Perplexity API pricing, model rates, request fees, billing setup, and rate-limit references.
 - [Perplexity API MCP Server](https://docs.perplexity.ai/docs/getting-started/integrations/mcp-server.md): Connect AI assistants to Perplexity's search and reasoning capabilities using the Model Context Protocol (MCP).
@@ -83,6 +83,9 @@ transfer-encoding: chunked
 - [Search Language Filter](https://docs.perplexity.ai/docs/search/filters/language-filter.md)
 - [Search Domain Filter](https://docs.perplexity.ai/docs/search/filters/domain-filter.md)
 - [People Search](https://docs.perplexity.ai/docs/search/filters/people-search.md)
+- [Overview](https://docs.perplexity.ai/docs/monitors/overview.md): Schedule web searches or page checks, read saved results, and manage your monitors.
+- [Search](https://docs.perplexity.ai/docs/monitors/search-monitoring.md): Run a search on a schedule and read new, relevant results through the API.
+- [Page](https://docs.perplexity.ai/docs/monitors/page-monitoring.md): Monitor known pages, establish a baseline, and inspect relevant text changes.
 - [Embeddings API](https://docs.perplexity.ai/docs/embeddings/quickstart.md): Generate high-quality text embeddings for semantic search, RAG, and machine learning applications.
 - [Best Practices](https://docs.perplexity.ai/docs/embeddings/best-practices.md): Optimize your embeddings workflow with batch processing, caching, RAG patterns, and performance tips.
 - [Standard Embeddings](https://docs.perplexity.ai/docs/embeddings/standard-embeddings.md): Generate embeddings for independent texts, search queries, and single sentences.
@@ -101,7 +104,7 @@ transfer-encoding: chunked
 - [Safety Identifiers](https://docs.perplexity.ai/docs/admin/safety-identifiers.md): Identify your end users so a policy violation blocks one user instead of your whole API organization.
 - [Analytics API](https://docs.perplexity.ai/docs/admin/computer-analytics-api.md): Query your organization's Perplexity usage analytics programmatically with a free, org-scoped API key
 - [Audit API](https://docs.perplexity.ai/docs/admin/audit-api.md): Pull your organization's audit events into your SIEM or compliance tooling with a read-only, organization-scoped API key.
-- [Rate Limits & Usage Tiers](https://docs.perplexity.ai/docs/admin/rate-limits-usage-tiers.md)
+- [Rate Limits & Usage Tiers](https://docs.perplexity.ai/docs/admin/rate-limits-usage-tiers.md): Compare API request and token limits by usage tier.
 - [AWS Marketplace](https://docs.perplexity.ai/docs/resources/aws-marketplace.md): Subscribe to the Perplexity API Platform through AWS Marketplace for consolidated billing and enterprise procurement.
 - [Perplexity with AG2](https://docs.perplexity.ai/docs/getting-started/integrations/ag2.md): Understand how AG2's Perplexity tools use the Search API and Sonar Chat Completions during the Agent API migration.
 - [Perplexity with Agno](https://docs.perplexity.ai/docs/getting-started/integrations/agno.md): Use Perplexity's Agent API through Agno's OpenAI Responses integration.
@@ -160,8 +163,8 @@ transfer-encoding: chunked
 - [Check a Chart for Misleading Design with a Decision Model](https://docs.perplexity.ai/docs/cookbook/examples/decisions-api-chart-check/README.md): Send a chart image to the Decisions API with yes/no questions about misleading design and your brand guide, and get a probability for each. Your code gates the checks by chart type, compares them to cutoffs, labels the chart, and prints why.
 - [Enrich a CSV of Companies Overnight with the Batch API](https://docs.perplexity.ai/docs/cookbook/examples/batch-api-company-enrichment/README.md): Write one web-grounded Agent API request per CSV row to a JSONL file, run them asynchronously with the Batch API, and join the output back to your rows by custom_id.
 - [Track What the Web Said Each Week About a Topic, and Build a Report](https://docs.perplexity.ai/docs/cookbook/examples/agent-api-story-timeline/README.md): Search engines tell you what the web says today. This recipe shows what was being reported about a topic during each week of a date range: the Agent API searches each week with publication-date filters, explains how the story changed, and counts the outlets that covered it, while your code writes th…
-- [Use Decisions API grounded web search to fact check claims](https://docs.perplexity.ai/docs/cookbook/examples/decisions-api-web-grounding/README.md): Fact check claims with the Decisions API in web_grounding mode. Put the claim first in each state so the search sees it, read search_results, and let your code turn the probability the model returns into a supported, contradicted, or review verdict.
 - [Search Your Docs Folder with pplx-embed-v2, Dense and Contextual](https://docs.perplexity.ai/docs/cookbook/examples/embeddings-docs-search/README.md): Index a folder of Markdown files with pplx-embed-v2 in dense and contextual mode, and store them as int8 vectors. Score approaches against your own questions. Query the 9b index with the 0.6b model.
+- [Use Decisions API grounded web search to fact check claims](https://docs.perplexity.ai/docs/cookbook/examples/decisions-api-web-grounding/README.md): Fact check claims with the Decisions API in web_grounding mode. Put the claim first in each state so the search sees it, read search_results, and let your code turn the probability the model returns into a supported, contradicted, or review verdict.
 - [Build a Data Analytics Agent Using Custom Connectors](https://docs.perplexity.ai/docs/cookbook/examples/agent-api-data-analyst/README.md): Ask your agent why conversions fell, have it inspect the data, and turn the investigation into a chart for you to review.
 - [Turn Agent Failures into Regression Tests](https://docs.perplexity.ai/docs/cookbook/examples/agent-api-regression-testing/README.md): Build a web-grounded API troubleshooting advisor, then catch unsafe retry advice and unsupported answers before switching models.
 - [RAG with Perplexity Embeddings](https://docs.perplexity.ai/docs/cookbook/articles/embeddings-rag/README.md): Build an end-to-end retrieval-augmented generation pipeline using Perplexity's standard and contextualized embedding models.
@@ -176,7 +179,9 @@ transfer-encoding: chunked
 - [Daily News Digest with LLM Deduplication](https://docs.perplexity.ai/docs/cookbook/articles/news-dedupe-digest/README.md): Build a daily news digest that reports each story once. One Agent API request runs code in the sandbox to fetch the day's news, groups coverage into stories, and delivers the digest and a story registry as files.
 - [Build an incident responder with Profiles, Skills, and Managed Connectors](https://docs.perplexity.ai/docs/cookbook/articles/incident-responder/README.md): Combine a saved Profile, an Incident Response Skill, Sandbox, and Datadog, GitHub, and Slack managed connectors, then launch the custom agent with the Agent API.
 - [Function Calling End-to-End](https://docs.perplexity.ai/docs/cookbook/articles/function-calling-e2e/README.md): Complete multi-turn function calling patterns for the Perplexity Agent API, including orchestration, web search integration, error handling, and parallel calls
+- [Page Monitor: Track changes to web pages](https://docs.perplexity.ai/docs/cookbook/articles/page-monitor-changelog/README.md): Create a daily Page Monitor to track changes to public web pages and read saved findings from run history.
 - [Search as Code for coding agents](https://docs.perplexity.ai/docs/cookbook/articles/search-as-code-coding-agents/README.md): Use the Perplexity Search SDK to build a source-backed dependency migration packet that any coding agent can inspect before it edits code.
+- [Search Monitor: Track web results over time](https://docs.perplexity.ai/docs/cookbook/articles/search-monitor-news/README.md): Create a daily competitor news monitor and read saved findings from run history.
 - [Create Chat Completion](https://docs.perplexity.ai/api-reference/gateway-chat-completions-post.md): Send a conversation to any Orchestrator API model using the OpenAI Chat Completions schema. Set `stream: true` to receive server-sent events; add `stream_options: {"include_usage": true}` to get token usage in the final chunk.
 - [Create Response](https://docs.perplexity.ai/api-reference/gateway-responses-post.md): Generate a model response using the OpenAI Responses schema. Set `stream: true` to receive typed server-sent events followed by `data: [DONE]`.
 - [Create Message](https://docs.perplexity.ai/api-reference/gateway-messages-post.md): Send a conversation to any Orchestrator API model using the Anthropic Messages schema. Set `stream: true` to receive server-sent events. Authenticate with your Perplexity API key — both `Authorization: Bearer` and the Anthropic SDK's default `x-api-key` header are accepted.
@@ -205,9 +210,20 @@ transfer-encoding: chunked
 - [Retrieve a batch](https://docs.perplexity.ai/api-reference/batches-get.md)
 - [Cancel a batch](https://docs.perplexity.ai/api-reference/batches-cancel-post.md): Moves the batch to `cancelling`; it becomes `cancelled` once running items stop. Completed items stay in the output file and are billed. Cancelling a cancelled or cancelling batch returns it unchanged.
 - [Search the Web](https://docs.perplexity.ai/api-reference/search-post.md): Search the web and retrieve relevant web page contents.
+- [Create a monitor](https://docs.perplexity.ai/api-reference/monitors-create-post.md): Create an active Search or Page monitor.
+- [List monitors](https://docs.perplexity.ai/api-reference/monitors-list-get.md): List your API organization's monitors, newest first.
+- [Retrieve a monitor](https://docs.perplexity.ai/api-reference/monitors-get.md): Read a monitor's configuration, status, next scheduled run, and last finished run.
+- [Update a monitor](https://docs.perplexity.ai/api-reference/monitors-update-patch.md): Replace a monitor's name, goal, targets, schedule, webhook, or metadata.
+- [Delete a monitor](https://docs.perplexity.ai/api-reference/monitors-delete.md): Delete a monitor, its run history, and its stored state.
+- [Pause a monitor](https://docs.perplexity.ai/api-reference/monitors-pause-post.md): Stop scheduled runs while preserving the monitor's state.
+- [Resume a monitor](https://docs.perplexity.ai/api-reference/monitors-resume-post.md): Resume a paused monitor and recompute its next run time.
+- [Run a monitor now](https://docs.perplexity.ai/api-reference/monitors-run-post.md): Queue a manual run of an active monitor and return the accepted run.
+- [Test a monitor's webhook](https://docs.perplexity.ai/api-reference/monitors-webhook-test-post.md): Send a signed test event to a monitor's configured webhook and inspect the delivery outcome.
+- [List a monitor's runs](https://docs.perplexity.ai/api-reference/monitors-runs-get.md): List a monitor's runs and changes, newest first.
+- [Get a run](https://docs.perplexity.ai/api-reference/monitors-run-get.md): Retrieve one Monitor run, including its state, counts, changes, and target errors.
 - [Create Embeddings](https://docs.perplexity.ai/api-reference/embeddings-post.md): Generate embeddings for a list of texts. Use these embeddings for semantic search, clustering, and other machine learning applications.
 - [Create Contextualized Embeddings](https://docs.perplexity.ai/api-reference/contextualized-embeddings-post.md): Generate contextualized embeddings for document chunks. Chunks from the same document share context awareness, improving retrieval quality for document-based applications.
-- [Answer questions](https://docs.perplexity.ai/api-reference/decisions-post.md): Evaluate one or more named questions against the content in `state`. Mix `noul`, `choice`, and `score` questions in one request; the response returns one answer per question under the same name, plus the model name and token usage. Set `model` to `pplx-decider-v1.2` or `pplx-decider-flash-v1.2`, or…
+- [Answer questions](https://docs.perplexity.ai/api-reference/decisions-post.md): Evaluate one or more named questions against the content in `state`. Mix `noul`, `choice`, `score`, and `locate` questions in one request; the response returns one answer per question under the same name, plus the model name and token usage. Set `model` to `pplx-decider-v1.3`, `pplx-decider-flash-v1…
 - [Generate Auth Token](https://docs.perplexity.ai/api-reference/generate-auth-token-post.md): Generates a new authentication token for API access.
 - [Revoke Auth Token](https://docs.perplexity.ai/api-reference/revoke-auth-token-post.md): Revokes an existing authentication token.
 - [Usage Analytics](https://docs.perplexity.ai/api-reference/computer-analytics-usage-get.md): Returns your organization's Perplexity usage analytics as a bucketed time series for a single dataset. Requires an organization analytics API key, generated by an org admin from Settings → Organization → Computer in the Perplexity web app. Only complete UTC grid buckets are returned: start_time snap…

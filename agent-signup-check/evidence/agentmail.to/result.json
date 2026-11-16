@@ -1,6 +1,6 @@
 {
  "site": "agentmail.to",
- "checkedAt": "2026-11-12T02:38:10.820Z",
+ "checkedAt": "2026-11-16T20:59:42.311Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 3,
  "partial": 2,
@@ -38,7 +38,7 @@
    "url": "https://www.agentmail.to/auth.md",
    "endpoint": "https://api.agentmail.to/v0/agent/sign-up",
    "link": false,
-   "quote": "its own account and get an API key in one call: POST https://api.agentmail.to/v0/agent/sign-up {\"username\": \"my-agent\", \"human_email\": \"owner@example.com\"} T",
+   "quote": "its own account and get an API key in one call: POST https://api.agentmail.to/v0/agent/sign-up {\"username\": \"my-agent\", \"human_email\": \"owner@example.com\", \"r",
    "status": "partial",
    "reason": "auth.md documents a sign-up API (https://api.agentmail.to/v0/agent/sign-up), but there is no agent_auth metadata for tools to find it"
   },
@@ -68,7 +68,7 @@
    "name": "Docs in Markdown",
    "url": "https://www.agentmail.to/llms.txt",
    "heading": "# AgentMail: Email for AI Agents",
-   "bytes": 28482,
+   "bytes": 28848,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -81,7 +81,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 78,
+   "ms": 138,
    "redirects": 1
   },
   {
@@ -91,7 +91,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 54,
+   "ms": 195,
    "redirects": 1
   },
   {
@@ -101,7 +101,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 64,
+   "ms": 50,
    "redirects": 0
   },
   {
@@ -111,7 +111,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 86,
+   "ms": 262,
    "redirects": 0
   },
   {
@@ -121,7 +121,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 386,
+   "ms": 180,
    "redirects": 1
   },
   {
@@ -131,7 +131,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 65,
+   "ms": 56,
    "redirects": 2
   },
   {
@@ -141,7 +141,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 68,
+   "ms": 139,
    "redirects": 1
   }
  ]

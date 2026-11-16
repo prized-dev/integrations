@@ -1,20 +1,20 @@
 GET https://api.cloudflare.com/client/v4/user
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:42.269Z
+fetched: 2026-11-16T20:59:11.442Z
 final-url: https://api.cloudflare.com/client/v4/user
 
 HTTP 403
-date: Thu, 12 Nov 2026 02:37:38 GMT
+date: Mon, 16 Nov 2026 20:59:08 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
-cf-ray: a59227ee5c2b5eea-PDX
+cf-ray: a5b96aef7c78b338-PDX
 cf-cache-status: DYNAMIC
 cache-control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
 content-encoding: gzip
 expires: Sun, 25 Jan 1981 05:00:00 GMT
 server: cloudflare
-cf-auditlog-id: 01a1cd9e-3109-7ce7-a8d5-9a7c5ed56383
+cf-auditlog-id: 01a1e628-11ac-7fd7-809d-f2201f2ba54a
 strict-transport-security: max-age=31536000
 vary: Accept-Encoding
 pragma: no-cache

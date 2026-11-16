@@ -1,10 +1,10 @@
 GET https://docs.x.ai/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:22.216Z
+fetched: 2026-11-16T20:58:50.860Z
 final-url: https://docs.x.ai/llms.txt
 
 HTTP 200
-date: Thu, 12 Nov 2026 02:37:19 GMT
+date: Mon, 16 Nov 2026 20:58:48 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -17,7 +17,7 @@ strict-transport-security: max-age=31536000; includeSubDomains
 cf-cache-status: DYNAMIC
 content-encoding: gzip
 server: cloudflare
-cf-ray: a592277689d89935-PDX
+cf-ray: a5b96a720f945f03-PDX
 
 # SpaceXSI API Documentation
 
@@ -42,17 +42,17 @@ Add the programming language you want code examples in to the `Accept-Language` 
 - [Text — Image Understanding](https://docs.x.ai/developers/model-capabilities/images/understanding.md)
 - [Text — Multi Agent](https://docs.x.ai/developers/model-capabilities/text/multi-agent.md)
 - [Text — Best Practices Guide](https://docs.x.ai/developers/model-capabilities/text/best-practices.md)
-- [Imagine](https://docs.x.ai/developers/model-capabilities/imagine.md)
-- [Imagine — Image Generation](https://docs.x.ai/developers/model-capabilities/images/generation.md)
-- [Imagine — Image Editing](https://docs.x.ai/developers/model-capabilities/images/editing.md)
-- [Imagine — Multi-Image Editing](https://docs.x.ai/developers/model-capabilities/images/multi-image-editing.md)
-- [Imagine — Image Prompting Guide](https://docs.x.ai/developers/model-capabilities/images/prompting-guide.md)
-- [Imagine — Video Generation](https://docs.x.ai/developers/model-capabilities/video/generation.md)
-- [Imagine — Video Overview](https://docs.x.ai/developers/model-capabilities/video/overview.md)
-- [Imagine — Image-to-Video](https://docs.x.ai/developers/model-capabilities/video/image-to-video.md)
-- [Imagine — Reference-to-Video](https://docs.x.ai/developers/model-capabilities/video/reference-to-video.md)
-- [Imagine — Video Editing](https://docs.x.ai/developers/model-capabilities/video/editing.md)
-- [Imagine — Video Extension](https://docs.x.ai/developers/model-capabilities/video/extension.md)
+- [Image & Video](https://docs.x.ai/developers/model-capabilities/imagine.md)
+- [Image & Video — Image Generation](https://docs.x.ai/developers/model-capabilities/images/generation.md)
+- [Image & Video — Image Editing](https://docs.x.ai/developers/model-capabilities/images/editing.md)
+- [Image & Video — Multi-Image Editing](https://docs.x.ai/developers/model-capabilities/images/multi-image-editing.md)
+- [Image & Video — Image Prompting Guide](https://docs.x.ai/developers/model-capabilities/images/prompting-guide.md)
+- [Image & Video — Video Generation](https://docs.x.ai/developers/model-capabilities/video/generation.md)
+- [Image & Video — Video Overview](https://docs.x.ai/developers/model-capabilities/video/overview.md)
+- [Image & Video — Image-to-Video](https://docs.x.ai/developers/model-capabilities/video/image-to-video.md)
+- [Image & Video — Reference-to-Video](https://docs.x.ai/developers/model-capabilities/video/reference-to-video.md)
+- [Image & Video — Video Editing](https://docs.x.ai/developers/model-capabilities/video/editing.md)
+- [Image & Video — Video Extension](https://docs.x.ai/developers/model-capabilities/video/extension.md)
 - [Voice](https://docs.x.ai/developers/model-capabilities/audio/voice.md)
 - [Voice — Speech to Speech](https://docs.x.ai/developers/model-capabilities/audio/speech-to-speech.md)
 - [Voice — Speech to Speech — SIP Phone Calls](https://docs.x.ai/developers/model-capabilities/audio/speech-to-speech/sip.md)
@@ -188,6 +188,7 @@ Add the programming language you want code examples in to the `Accept-Language` 
 - [Teams and enterprises](https://docs.x.ai/grok-bot/teams-and-enterprises.md)
 - [Teams and enterprises — Deploy to your organization](https://docs.x.ai/grok-bot/deployment.md)
 - [Teams and enterprises — Identity and access](https://docs.x.ai/grok-bot/identity-and-access.md)
+- [Teams and enterprises — Okta Verify and FastPass](https://docs.x.ai/grok-bot/okta-fastpass.md)
 - [Teams and enterprises — Private networks](https://docs.x.ai/grok-bot/private-networks.md)
 - [Teams and enterprises — TLS-inspecting proxies](https://docs.x.ai/grok-bot/proxies.md)
 - [Teams and enterprises — Manage computers](https://docs.x.ai/grok-bot/computers.md)
@@ -195,6 +196,7 @@ Add the programming language you want code examples in to the `Accept-Language` 
 - [Teams and enterprises — Security](https://docs.x.ai/grok-bot/security.md)
 - [Teams and enterprises — Security FAQ](https://docs.x.ai/grok-bot/security-faq.md)
 - [Reference](https://docs.x.ai/grok-bot/settings-and-notifications.md)
+- [Reference — Deep links](https://docs.x.ai/grok-bot/deep-links.md)
 - [Reference — Troubleshooting](https://docs.x.ai/grok-bot/troubleshooting.md)
 - [Reference — FAQ](https://docs.x.ai/grok-bot/faq.md)
 
@@ -250,7 +252,7 @@ Add the programming language you want code examples in to the `Accept-Language` 
 
 - [Article to Read-Along](https://docs.x.ai/cookbook/examples/article-to-read-along.md): Turn any article into audio that highlights each word as it's spoken, using the per-character timestamps from text to speech, and click a word to jump there.
 - [Live Interpreter](https://docs.x.ai/cookbook/examples/live-interpreter.md): Speak one language and hear Grok say it in another a moment later, from a page that connects straight to the realtime voice API with a short-lived token.
-- [Photo to Talking Character](https://docs.x.ai/cookbook/examples/photo-to-talking-character.md): Make a drawing, a mascot, or a pet photo talk in a voice you pick, and have a second character answer, with Grok Imagine reference-to-video.
+- [Photo to Talking Character](https://docs.x.ai/cookbook/examples/photo-to-talking-character.md): Make a drawing, a mascot, or a pet photo talk in a voice you pick, and have a second character answer, using reference-to-video from Grok image & video models.
 - [Podcast from a Link](https://docs.x.ai/cookbook/examples/podcast-from-a-link.md): Turn an article or a PDF into a two-host podcast episode, and watch it being written and recorded live in a small web app.
 - [Screenshot to React Component](https://docs.x.ai/cookbook/examples/screenshot-to-component.md): Turn a screenshot of a UI into a React component styled with Tailwind, then have Grok compare the result with the original and fix what doesn't match.
 - [Company to Call Brief](https://docs.x.ai/cookbook/examples/company-to-call-brief.md): Prep for a sales call with a one-page brief, as Grok searches the web and 𝕏 and looks up the account through CRM functions that run in your app.
@@ -259,14 +261,14 @@ Add the programming language you want code examples in to the `Accept-Language` 
 - [Docs to Cited Answers](https://docs.x.ai/cookbook/examples/docs-to-cited-answers.md): Ask questions about a folder of documents and get answers that cite the passages they came from, with a metadata filter that decides which documents count.
 - [Mobile Voice Apps](https://docs.x.ai/cookbook/examples/voice-agent-mobile.md): Native iOS and Android apps for real-time voice conversations with Grok, plus text-to-speech on iOS.
 - [Phone Voice Agent](https://docs.x.ai/cookbook/examples/voice-agent-phone.md): A voice agent you can call on the phone, using Twilio.
-- [Photo to Time-Lapse](https://docs.x.ai/cookbook/examples/photo-to-time-lapse.md): Turn one photo into a time-lapse, like a street through the four seasons, by editing it for each stage and pinning every edit in one Grok Imagine video.
+- [Photo to Time-Lapse](https://docs.x.ai/cookbook/examples/photo-to-time-lapse.md): Turn one photo into a time-lapse, like a street through the four seasons, by editing it for each stage and pinning every edit in one Grok video.
 - [Product Photo to Video Ad](https://docs.x.ai/cookbook/examples/product-video-ad.md): Turn one product photo into a vertical video ad with a voiceover, as Grok writes the brief, places the product in three scenes, picks one, and animates it.
 - [Prompt Caching](https://docs.x.ai/cookbook/examples/prompt-caching.md): Play one 30-message chat three ways to see what the prompt cache saves, how the time at the top of the system prompt breaks it, and what compaction costs.
 - [Prompt Injection Defenses](https://docs.x.ai/cookbook/examples/prompt-injection-defenses.md): Watch poisoned pages try to make an agent leak private data, see each of four defenses miss an attack another catches, and stop all ten with all four on.
 - [Reasoning Effort Evals](https://docs.x.ai/cookbook/examples/reasoning-effort-evals.md): Run a prompt's test cases at every reasoning effort, grade the answers with code checks and a judge, and find the cheapest effort that's still good enough.
 - [Receipts to Spreadsheet](https://docs.x.ai/cookbook/examples/receipts-to-spreadsheet.md): Turn receipt photos and PDF invoices into a spreadsheet that adds up, with Grok reading each one twice and flagging the cells where the reads disagree.
 - [Reviews to Themes](https://docs.x.ai/cookbook/examples/reviews-to-themes.md): Turn a thousand app reviews into ranked themes with counts, trends, and quotes by labeling every review in one Batch API job.
-- [Storyboard to Short Film](https://docs.x.ai/cookbook/examples/storyboard-to-film.md): Turn a one-line premise into a four-shot short film with Grok Imagine keyframes, image-to-video, and narration, and watch it being made in a small web app.
+- [Storyboard to Short Film](https://docs.x.ai/cookbook/examples/storyboard-to-film.md): Turn a one-line premise into a four-shot short film with keyframes, image-to-video, and narration from Grok image & video models, and watch it being made in a small web app.
 - [Topics to Morning Briefing](https://docs.x.ai/cookbook/examples/topics-to-morning-briefing.md): Turn a few topics into a two-minute spoken briefing from 𝕏 and the web, with Grok skipping the stories it already told you about and a cost cap on every run.
 - [Web Voice Agent](https://docs.x.ai/cookbook/examples/voice-agent-web.md): A React client with swappable Python and Node.js backends that talk to the Voice Agent API over WebSocket.
 - [𝕏 Post to Fact-Check](https://docs.x.ai/cookbook/examples/x-post-fact-check.md): Paste a link to a post on 𝕏, and Grok checks each claim on the web and on 𝕏 at the same time and writes a note where every sentence cites a source.

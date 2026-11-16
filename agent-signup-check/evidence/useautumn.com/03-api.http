@@ -1,10 +1,10 @@
 GET https://api.useautumn.com/v1/customers
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:44.908Z
+fetched: 2026-11-16T21:00:23.569Z
 final-url: https://api.useautumn.com/v1/customers
 
 HTTP 401
-date: Thu, 12 Nov 2026 02:38:42 GMT
+date: Mon, 16 Nov 2026 21:00:21 GMT
 content-type: application/json
 content-length: 97
 connection: close

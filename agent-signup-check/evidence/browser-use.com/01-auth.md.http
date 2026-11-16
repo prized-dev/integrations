@@ -1,6 +1,6 @@
 GET https://browser-use.com/auth.md
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:27.550Z
+fetched: 2026-11-16T21:00:02.709Z
 final-url: https://browser-use.com/auth.md
 
 HTTP 200
@@ -8,7 +8,7 @@ age: 0
 cache-control: public, max-age=0, must-revalidate
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Thu, 12 Nov 2026 02:38:23 GMT
+date: Mon, 16 Nov 2026 20:59:58 GMT
 link: <https://browser-use.com/developers>; rel="canonical"
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -17,7 +17,7 @@ x-content-source: pages-for-llms
 x-matched-path: /api/md/[[...path]]
 x-robots-tag: noindex
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::8qhb4-1794451103656-2389eed16a88
+x-vercel-id: pdx1::iad1::rjl6j-1794862798853-5994e19914d3
 connection: close
 transfer-encoding: chunked
 
@@ -65,7 +65,7 @@ Request the `mcp` scope only when calling the Browser Use MCP resource. Finer-gr
 BROWSER USE
 
 - Browser Use Agents: give Browser Use a task and receive completed work. API V4 is current for new integrations.
-- Browser Infrastructure: connect your agent or automation to managed browsers through SDK, REST, or CDP. Starts at $0.02/browser-hour.
+- Browser Infrastructure: connect your agent or automation to managed browsers through SDK, REST, or CDP. Starts at $0.06/browser-hour.
 - Developer tools: Open Source, Browser Harness, SDK, and MCP support the two products above.
 
 [Developer Index](https://browser-use.com/index.md)

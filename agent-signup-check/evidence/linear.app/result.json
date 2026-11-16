@@ -1,6 +1,6 @@
 {
  "site": "linear.app",
- "checkedAt": "2026-11-12T02:38:51.119Z",
+ "checkedAt": "2026-11-16T21:00:28.517Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 1,
  "partial": 0,
@@ -52,7 +52,7 @@
    "name": "Docs in Markdown",
    "url": "https://linear.app/llms.txt",
    "heading": "# Linear",
-   "bytes": 11793,
+   "bytes": 11672,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -65,7 +65,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html",
-   "ms": 42,
+   "ms": 64,
    "redirects": 0
   },
   {
@@ -75,7 +75,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 131,
+   "ms": 175,
    "redirects": 0
   },
   {
@@ -85,7 +85,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 168,
+   "ms": 224,
    "redirects": 0
   },
   {
@@ -95,7 +95,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 207,
+   "ms": 227,
    "redirects": 0
   },
   {
@@ -105,7 +105,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 185,
+   "ms": 290,
    "redirects": 0
   },
   {
@@ -115,7 +115,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 119,
+   "ms": 148,
    "redirects": 0
   },
   {
@@ -125,7 +125,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 167,
+   "ms": 160,
    "redirects": 0
   }
  ]

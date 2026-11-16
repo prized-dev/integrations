@@ -1,23 +1,23 @@
 GET https://sentry.io/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:38:49.945Z
+fetched: 2026-11-16T21:00:26.875Z
 final-url: https://sentry.io/llms.txt
 
 HTTP 200
 server: nginx
-date: Thu, 12 Nov 2026 02:38:47 GMT
+date: Mon, 16 Nov 2026 21:00:24 GMT
 content-type: text/plain; charset=utf-8
 vary: Accept-Encoding,Accept, User-Agent
 access-control-allow-origin: *
-age: 17873
+age: 3990
 cache-control: public, max-age=3600, s-maxage=3600
 content-disposition: inline; filename="llms.txt"
 x-vercel-cache: HIT
-x-vercel-id: cle1::5hlh4-1794451127088-99bcbad888c1
-content-security-policy: upgrade-insecure-requests; default-src 'none'; script-src 'strict-dynamic' 'nonce-LUnQLVh7VqsK9L2bQpd3eMjgCBtyk2i2' 'report-sample' 'self' 'unsafe-inline' 'unsafe-eval' *.sentry.dev www.googletagmanager.com plausible.io player.vimeo.com prod-assets.sequelvideo.com; connect-src 'self' sentry.io *.sentry.io *.sentry.dev reload.getsentry.net www.google.com unpkg.com vimeo.com plausible.io *.sequelvideo.com *.sequel.io; img-src 'self' sentry.io *.sentry.io data: *.sentry.dev storage.googleapis.com sentry-blog.storage.googleapis.com www.googletagmanager.com i.vimeocdn.com images.ctfassets.net images.lumacdn.com *.sequelvideo.com *.cloudinary.com; style-src 'self' 'unsafe-inline' *.sentry.dev; media-src 'self' videos.ctfassets.net; font-src 'self' *.sentry.dev data: fonts.gstatic.com; frame-src player.vimeo.com demo.arcade.software recaptcha.google.com www.google.com *.sequel.io *.sequelvideo.com; manifest-src 'self' *.sentry.dev; base-uri 'none'; frame-ancestors *.sentry.io; report-uri https://o1.ingest.sentry.io/api/1297627/security/?sentry_key=e811b9077ef64dcf8a279ec18a61b222
+x-vercel-id: cle1::tp5gl-1794862824178-b9f3d0adb70b
+content-security-policy: upgrade-insecure-requests; default-src 'none'; script-src 'strict-dynamic' 'nonce-DDRN3LD2JW3GYwu8BOYlrcij3aa4AbeO' 'report-sample' 'self' 'unsafe-inline' 'unsafe-eval' *.sentry.dev www.googletagmanager.com plausible.io player.vimeo.com prod-assets.sequelvideo.com; connect-src 'self' sentry.io *.sentry.io *.sentry.dev reload.getsentry.net www.google.com unpkg.com vimeo.com plausible.io *.sequelvideo.com *.sequel.io; img-src 'self' sentry.io *.sentry.io data: *.sentry.dev storage.googleapis.com sentry-blog.storage.googleapis.com www.googletagmanager.com i.vimeocdn.com images.ctfassets.net images.lumacdn.com *.sequelvideo.com *.cloudinary.com; style-src 'self' 'unsafe-inline' *.sentry.dev; media-src 'self' videos.ctfassets.net; font-src 'self' *.sentry.dev data: fonts.gstatic.com; frame-src player.vimeo.com demo.arcade.software recaptcha.google.com www.google.com *.sequel.io *.sequelvideo.com; manifest-src 'self' *.sentry.dev; base-uri 'none'; frame-ancestors *.sentry.io; report-uri https://o1.ingest.sentry.io/api/1297627/security/?sentry_key=e811b9077ef64dcf8a279ec18a61b222
 content-encoding: br
 via: 1.1 google
-alt-svc: h3=":443"; ma=2592000
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
 connection: close
 transfer-encoding: chunked
 
@@ -318,6 +318,7 @@ _Source: https://docs.sentry.io/llms.txt_
 - [How DoctorC Scales Healthcare Tech with Sentry](https://sentry.io/customers/doctorc/): A mobile-first healthcare company, DoctorC, uses Sentry to bring medical lab testing to the patient.
 - [Keeping Uptime at 99.999% with Mobile Error Monitoring for Dovetail](https://sentry.io/customers/dovetail/): Keeping Uptime at 99.999% with Mobile Error Monitoring for Dovetail
 - [How Duolingo debugs issues 12x faster while reducing alert fatigue and empowering engineers](https://sentry.io/customers/duolingo/): Learn how Duolingo debugs issues 12x faster, reduces alert fatigue, and empowers engineers with Sentry's error monitorin
+- [How Etsy reduced alert noise and made errors more actionable](https://sentry.io/customers/etsy/): Learn how Etsy moved its buyer mobile app to Sentry, alerting on crash-free rate, routing crashes to owners 70% faster, 
 - [How Eventbrite cuts through the noise to fix what matters with Sentry](https://sentry.io/customers/eventbrite/): How Eventbrite cuts through the noise to fix what matters with Sentry
 - [How Exa keeps search for AI agents working reliably with Sentry](https://sentry.io/customers/exa/): Learn how Exa keeps its AI agent search API reliable with Sentry — routing issue context through Slack and Sentry's MCP 
 - [How Facepunch Studios uses Sentry](https://sentry.io/customers/facepunch-studios/): We got word that the people behind Rust were using Sentry to prioritize their bug fixes. After recovering from hypervent
@@ -344,7 +345,7 @@ _Source: https://docs.sentry.io/llms.txt_
 - [How monday.com Reduces Errors by 60% with Sentry](https://sentry.io/customers/monday-dot-com/): Reducing time to resolution to 10 minutes
 - [How Nextdoor finds the (right) people at the (right) time to fix the (right) issues](https://sentry.io/customers/nextdoor/): About Nextdoor Nextdoor is a trusted and essential community-building tool founded in 2008. With its platform, neighbors
 - [How Optimizely uses Sentry](https://sentry.io/customers/optimizely/): We spoke to Travis Beck, a software engineer at Optimizely. Optimizely enables businesses to deliver continuous experime
-- [How Orb Drives Billing Transparency with Sentry](https://sentry.io/customers/orb/): How Orb Drives Billing Transparency with Sentry
+- [Billing must be correct: How Orb uses Sentry to protect customer trust](https://sentry.io/customers/orb/): Billing must be correct: How Orb uses Sentry to protect customer trust
 - [How Out of Office builds personalized and seamless travel experiences with Sentry](https://sentry.io/customers/out-of-office/): How Out of Office builds personalized and seamless travel experiences with Sentry
 - [How Outfit7 uses Netlify and Sentry for Mobile App Development](https://sentry.io/customers/outfit7/): Hear from the team at gaming entertainment company Outfit7 about how they navigate the challenges of building mobile web
 - [How Panenco Improved API Performance and Reduced Response Time by up to 90%](https://sentry.io/customers/panenco/): Customer success is a critical function of our business' daily operations, and performance gives us a clear idea of how 

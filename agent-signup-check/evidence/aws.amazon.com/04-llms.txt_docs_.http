@@ -1,13 +1,13 @@
 GET https://docs.aws.amazon.com/llms.txt
 user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-12T02:37:53.999Z
+fetched: 2026-11-16T20:59:24.117Z
 final-url: https://docs.aws.amazon.com/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Thu, 12 Nov 2026 02:34:49 GMT
+date: Mon, 16 Nov 2026 20:55:56 GMT
 content-encoding: gzip
 server: Server
 cache-control: max-age=600
@@ -16,15 +16,15 @@ strict-transport-security: max-age=47304000; includeSubDomains
 x-xss-protection: 1; mode=block
 x-content-type-options: nosniff, nosniff
 content-security-policy: upgrade-insecure-requests;      script-src 'self' 'unsafe-inline' blob:        *.awsstatic.com        *.cdn.uis.awsstatic.com        *.cdn.console.awsstatic.com        d2c.aws.amazon.com        a0.awsstatic.com        *.feedback.console.aws.dev        *.shortbread.aws.dev        *.awswaf.com        *.contentsquare.net        app.contentsquare.com;      object-src 'none';
-last-modified: Thu, 12 Nov 2026 00:10:57 GMT
+last-modified: Mon, 16 Nov 2026 18:50:05 GMT
 accept-ranges: bytes
-etag: "00HKD9VR8uZ3VKqB778BmWbFRTY=-gzip"
+etag: "aL/I3UKiCS+i5V2qC6NWKHbW4Ng=-gzip"
 vary: Accept-Encoding
 x-cache: Hit from cloudfront
-via: 1.1 8af7e76489ae9222af2304e63d2c0520.cloudfront.net (CloudFront)
+via: 1.1 08437041a08295a47ee88412dbd8c35a.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P4
-x-amz-cf-id: jG17vySM0ZfC8yQsZSaQX9OcW3r0xU_tJb-57oUY432zlhCOL1iBeg==
-age: 182
+x-amz-cf-id: Wp-bNWQj-avI6QYbn_AYrHbg5hP7L8A9kSAK-9LeonurK2aNvBd_7A==
+age: 205
 
 # Amazon Web Services (AWS) Documentation
 > This file provides structured access to AWS service documentation for large language models. Each section represents a service landing page with links to key documentation resources.
@@ -352,6 +352,8 @@ age: 182
 - [AWS Support API Reference](https://docs.aws.amazon.com/awssupport/latest/APIReference/Welcome.md): The AWS Support API Reference is intended for programmers who need detailed information about the Support operations and data types. [llms.txt](https://docs.aws.amazon.com/awssupport/latest/APIReference/llms.txt)
 
 - [AWS Support User Guide](https://docs.aws.amazon.com/awssupport/latest/user/getting-started.md): Use AWS Support to create and manage cases, troubleshoot issues, and access services such as AWS Trusted Advisor. [llms.txt](https://docs.aws.amazon.com/awssupport/latest/user/llms.txt)
+
+- [AWS Training User Guide](https://docs.aws.amazon.com/awstraining/latest/user-guide/personalized-learning-tracks.md): Tell AWS Skill Builder what you want to learn, and it builds a personalized learning track around your goal, experience level, and the time you have. [llms.txt](https://docs.aws.amazon.com/awstraining/latest/user-guide/llms.txt)
 
 - [AWS B2B Data Interchange API Reference](https://docs.aws.amazon.com/b2bi/latest/APIReference/Welcome.md): AWS B2B Data Interchange automates the transformation between Electronic Data Interchange (EDI) documents and JSON or XML formats, to simplify your downstream data integrations. [llms.txt](https://docs.aws.amazon.com/b2bi/latest/APIReference/llms.txt)
 
@@ -1625,8 +1627,6 @@ age: 182
 
 - [Amazon Alexa Skill for Airlines Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/alexa-skill-airlines/alexa-skill-airlines.md): Build a secure airline Alexa Skill for booking and travel management by using Amazon API Gateway, AWS Lambda, and Amazon Cognito.
 
-- [Alfresco Digital Business Platform on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/alfresco-digital-business-platform/alfresco-digital-business-platform.md): Deploy a highly available Alfresco Digital Business Platform on AWS with content services, process services, and search components.
-
 - [Algorithmic Trading on AWS Architecture diagrams for financial services](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/algorithmic-trading-on-aws/algorithmic-trading-on-aws.md): Backtest and host machine learning-based algorithmic trading strategies by using AWS Fargate, Amazon Elastic Container Service, and Amazon SageMaker AI.
 
 - [Amazon EKS on AWS Outposts Rack Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/amazon-eks-on-aws-outposts-rack/amazon-eks-on-aws-outposts-rack.md): This reference architecture diagram shows how to deploy Amazon Elastic Kubernetes Service (Amazon EKS) on an AWS Outposts rack.
@@ -1640,8 +1640,6 @@ age: 182
 - [Predictive Maintenance on AWS using Aspen Mtell Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/aspen-mtell-predictive-maintenance/aspen-mtell-predictive-maintenance.md): Reference architecture diagram for AI/ML-powered predictive maintenance on AWS using Aspen Mtell for early warnings of equipment failure.
 
 - [Asynchronous Online Gaming Architecture Diagrams Game Tech](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/asynchronous-online-gaming/asynchronous-online-gaming.md): Build a highly available, scalable, and elastic architecture for mobile and online games that supports millions of players by using managed AWS services.
-
-- [Automated Archival for Amazon Redshift Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/automated-archival-redshift/automated-archival-redshift.md): Shows how to automate the periodic data archival process for an Amazon Redshift database with cold data available instantly through Amazon Redshift Spectrum.
 
 - [Automotive Reference Architecture Diagrams Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/automotive/automotive-call-center-architecture.md): With this architecture, you can build an automotive call center solution as part of a connected vehicle platform to enhance customer safety with emergency (eCall) and breakdown (bCall) call services using Amazon Connect Customer. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/automotive/llms.txt)
 
@@ -1678,8 +1676,6 @@ age: 182
 - [Centralized Log Analytics Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/centralized-log-analytics/centralized-log-analytics.md): Shows how to search, analyze, and visualize machine data by using for operational insights.
 
 - [Centralizing Amazon VPC Endpoints with AWS Transit Gateway Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/centralizing-vpc-endpoints-tgw/centralizing-vpc-endpoint-access.md): Use AWS Transit Gateway to centralize Amazon VPC endpoint access from multiple spoke VPCs through a shared services VPC. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/centralizing-vpc-endpoints-tgw/llms.txt)
-
-- [Change Data Capture Using AWS Database Migration Service Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/change-data-capture-dms/change-data-capture-dms-migrate.md): Shows how to use AWS Database Migration Service for change data capture to migrate databases using ongoing replication. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/change-data-capture-dms/llms.txt)
 
 - [Cloud Point-of-Sale (POS) System on AWS for CPG Architecture diagrams for retail](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/cloud-pos-cpg/cloud-pos-cpg-chapter.md): A reference architecture diagram for building a cloud-based point-of-sale (POS) system on AWS for consumer packaged goods (CPG) direct-to-consumer store sales.
 
@@ -1725,23 +1721,15 @@ age: 182
 
 - [Customer Engagement Using AI/ML for Airlines Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/customer-engagement-airlines/customer-engagement-airlines.md): Improve airline customer engagement by using Amazon Connect Customer, Amazon Lex, Amazon Transcribe, and Amazon Comprehend.
 
+- [Data and Analytics Reference Architecture Diagrams Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/data-analytics/alfresco-digital-business-platform.md): Deploy a highly available Alfresco Digital Business Platform on AWS with content services, process services, and search components. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/data-analytics/llms.txt)
+
 - [Data Escrow Environment Reference Architecture Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/data-escrow-environment/data-escrow-environment.md): Shows how to build a data escrow environment for securely storing, sharing, and accessing data between publishers and advertisers.
 
 - [Data Lake Architecture for Renewable Energy Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/data-lake-architecture-for-renewable-energy/data-lake-architecture-for-renewable-energy.md): This architecture enables you to build a renewable energy data lake that includes telemetry data from IoT devices, and business application data for near real-time monitoring.
 
-- [Expose Your Data Lake as a GraphQL API Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/data-lake-graphql-api/data-lake-graphql-api.md): Shows how to build a data lake using AWS Lake Formation and share it as a self-documented GraphQL API with a reactive CI/CD pipeline.
-
-- [Data Mesh Reference Architecture with Amazon DataZone Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/data-mesh-datazone/data-mesh-datazone.md): Shows how to build a data mesh architecture using Amazon DataZone.
-
-- [Modern Data Platform Using AWS and Snowflake Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/data-platform-aws-snowflake/data-platform-aws-snowflake.md): Shows how to build an end-to-end modern data analytics platform using AWS and Snowflake.
-
-- [Modern Data Platform Using AWS and Teradata Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/data-platform-aws-teradata/data-platform-aws-teradata.md): Shows how to build a modern data platform using AWS and Teradata VantageCloud.
-
 - [Data Platform for Ports and Inland Logistics Facilities Architecture diagrams for transportation and logistics](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/data-platform-for-ports/data-platform-for-ports.md): Build a scalable data platform for port terminals and inland logistics facilities.
 
 - [Data Protection Reference Architectures with AWS Backup Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/data-protection-aws-backup/data-protection-cloud-native.md): Shows how AWS Backup is implemented in a single AWS account to protect multiple services in an automated way. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/data-protection-aws-backup/llms.txt)
-
-- [Database DevOps on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/database-devops/database-devops-development.md): Shows how to automate database changes in the development workflow as part of DevOps practice. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/database-devops/llms.txt)
 
 - [Datavant Switchboard with AWS Clean Rooms Connect and collaborate to accelerate clinical and patient insights on AWS](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/datavant-switchboard-with-aws-clean-rooms/datavant-switchboard-with-aws-clean-rooms.md): Datavant’s data de-identification and tokenization tools enable healthcare and life sciences companies to replace their private patient information with an encrypted “token” that can’t be reverse-engineered to reveal sensitive information.
 
@@ -1779,11 +1767,7 @@ age: 182
 
 - [Dynamic Media Content for Games Architecture Diagrams Game Tech](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/dynamic-media-content-games/dynamic-media-content-games.md): Build a serverless solution for customized in-game media content by using request parameters and edge computing to serve dynamic content in loading screens or other parts of the game.
 
-- [DynamoDB Global Replication with Data Localization Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/dynamodb-global-replication/dynamodb-global-replication.md): Shows how to replicate DynamoDB data globally while complying with data localization mandates.
-
 - [Edit in the Cloud on AWS AWS Reference Architecture Diagram](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/edit-in-cloud-on-aws/edit-in-cloud-on-aws.md): This architecture helps you build a virtual, video editing environment on AWS to collaborate with your editors and creative professionals.
-
-- [Electro-Optical Imagery Reference Architecture Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/electro-optical-imagery-architecture/electro-optical-imagery-architecture.md): This architecture enables you to process electro-optical imagery on AWS.
 
 - [Electronics, EDA, and HPC Reference Architecture Diagrams Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/electronics-hpc/active-active-and-active-passive-configurations-in-aws-direct-connect.md): This architecture enables you to build configuration with Virtual Interfaces (VIFs) for maximum resiliency. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/electronics-hpc/llms.txt)
 
@@ -1925,8 +1909,6 @@ age: 182
 
 - [Meter Data Analytics for Utilities Architecture diagrams for power and utilities](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/meter-data-analytics-utilities/meter-data-analytics-utilities.md): Build modern meter data analytics solutions to improve meter data availability for operational and customer insights by using Amazon Kinesis, AWS Glue, Amazon SageMaker AI, and Amazon Timestream.
 
-- [Migration from MongoDB to Amazon DocumentDB Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/migration-mongodb-documentdb/migration-mongodb-documentdb-offline.md): Shows how to migrate from MongoDB to Amazon DocumentDB using the simplest offline approach with MongoDB utilities. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/migration-mongodb-documentdb/llms.txt)
-
 - [Machine Learning Enabled Predictive Maintenance on AWS Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/ml-predictive-maintenance/ml-predictive-maintenance.md): Reference architecture diagram for machine learning enabled predictive maintenance of sucker rod pumping systems on AWS.
 
 - [Run Machine Learning Algorithms with Satellite Data Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/ml-satellite-data/ml-satellite-data.md): Shows how to use AWS Ground Station to ingest satellite imagery, and SageMaker AI to label image data, train an ML model, and deploy inferences.
@@ -1955,8 +1937,6 @@ age: 182
 
 - [Multi-Region CQRS for On-Premises Monoliths Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/multi-region-cqrs-monoliths/multi-region-cqrs-monoliths.md): Expand your on-premises transactional monolith to the cloud using the AWS global network with the CQRS and read-local write-global patterns.
 
-- [Multi-Region GraphQL API with CloudFront Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/multi-region-graphql-cloudfront/multi-region-graphql-cloudfront.md): Shows how to reduce latency for end users while increasing application availability by providing GraphQL API endpoints in multiple AWS Regions.
-
 - [Multicast Reference Architectures with AWS Transit Gateway Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/multicast-transit-gateway/multicast-single-vpc.md): Use AWS Transit Gateway to enable multicast communication in a single Amazon VPC with multicast domains and groups. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/multicast-transit-gateway/llms.txt)
 
 - [Multiplayer Session-based Game Hosting on AWS Architecture Diagrams Game Tech](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/multiplayer-session-based-game-hosting-on-aws/multiplayer-session-based-game-hosting-on-aws.md): This architecture enables you to use Amazon GameLift Servers multi-Region fleets and a serverless backend solution to host a session-based multiplayer game.
@@ -1975,23 +1955,15 @@ age: 182
 
 - [Open edX on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/open-edx-for-high-availability-on-aws/open-edx-for-high-availability-on-aws.md): Open edX is an open-source, distributed learning platform that, when implemented on AWS, can scale flexibly to optimize cost and maximize availability.
 
-- [Amazon OpenSearch Trending Queries with AWS Glue and Amazon Bedrock Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/opensearch-trending-queries/opensearch-trending-queries.md): Shows how to identify trending search queries using Amazon OpenSearch Service, AWS Glue, and Amazon Bedrock.
-
 - [OpenText InfoArchive Architecture Using Amazon EKS and Amazon RDS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/opentext-infoarchive-architecture-using-amazon-eks/opentext-infoarchive-architecture-using-amazon-eks.md): This architecture enables you to run OpenText InfoArchive on Amazon Elastic Kubernetes Service (Amazon EKS) and Amazon Relational Database Service (Amazon RDS).
 
-- [Operational Analytics Pipeline on AWS Batch and real-time operational analytics on a modern data architecture](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/operational-analytics-pipeline/operational-analytics-pipeline.md): Perform operational analytics in batch and real time using log data from operational sources on AWS.
-
 - [Oracle Commerce Lift-and-Shift to AWS Architecture diagrams for retail](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/oracle-commerce-lift-shift/oracle-commerce-lift-shift-chapter.md): A reference architecture diagram for migrating Oracle Commerce to AWS by using a lift-and-shift approach with multiple Availability Zones for high availability.
-
-- [Oracle Data Workload Migration to AWS Cloud Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/oracle-data-workload-migration/oracle-data-workload-migration.md): Migrate Oracle and non-Oracle workloads to Amazon Aurora and Snowflake Data Warehouse on AWS.
 
 - [Oracle E-Business Suite on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/oracle-e-business-suite-on-aws/oracle-e-business-suite-on-aws.md): This reference architecture can be used to deploy Oracle E-Business Suite on AWS by showing how to configure high availability for the database and application tier.
 
 - [Oracle PeopleSoft on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/oracle-peoplesoft-on-aws/oracle-peoplesoft-on-aws.md): This architecture shows how to deploy a highly available and resilient Oracle PeopleSoft production environment on AWS.
 
 - [AWS Outposts Networking Reference Architecture Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/outposts-networking/outposts-networking.md): Shows an architectural overview of AWS Outposts Rack connectivity for LAN, WAN, and Amazon VPC.
-
-- [Paginated Search with Purpose-Built Databases Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/paginated-search-databases/paginated-search-databases.md): Shows how to create a searchable, paginated list on domain aggregates from purpose-built databases with a step transformation and SQL queries.
 
 - [Parallel API Composition in AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/parallel-api-composition/parallel-api-composition.md): Call multiple downstream API endpoints in parallel to compose a single aggregated response using AWS Step Functions Express Workflows and circuit breakers.
 
@@ -2055,8 +2027,6 @@ age: 182
 
 - [Robotic Processing: Automation and VDI on AWS Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/robotic-processing-automation-vdi/robotic-processing-automation-vdi.md): Reference architecture diagram for integrating UiPath robotics automation with VMware Cloud on AWS for virtual desktop infrastructure (VDI).
 
-- [Running SAS Grid on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/sas-grid-on-aws/sas-grid-on-aws.md): Deploy SAS Grid with FSx for Lustre storage and Amazon EC2 compute on AWS.
-
 - [Scale Geospatial Data Lakes on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/scale-geospatial-data-lakes/template-ref-arch.md): This reference architecture shows you how to build scalable geospatial data repositories on AWS.
 
 - [Scaling PHP Applications on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/scaling-php-applications/scaling-php-applications.md): Run highly available, performant, and secure PHP applications using Amazon Elastic Compute Cloud, Amazon Aurora, and Amazon CloudFront.
@@ -2064,8 +2034,6 @@ age: 182
 - [Secure Cloud Computing Architecture (SCCA) on AWS GovCloud Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/scca-govcloud/scca-govcloud.md): Shows how to build a Defense Information Systems Agency (DISA) compliant landing zone on AWS GovCloud (US) for running Department of Defense workloads.
 
 - [Reference Architectures for Implementing SD-WAN Solutions on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/sd-wan-solutions/sdwan-tgw-connect.md): Use AWS Transit Gateway Connect attachments to connect your SD-WAN to Transit Gateway and simplify route management across hybrid cloud environments. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/sd-wan-solutions/llms.txt)
-
-- [Search-Backed Applications Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/search-backed-applications/search-backed-applications.md): Shows how to add or improve search for an existing application using Amazon OpenSearch Service.
 
 - [Search and Booking Metrics in Travel and Hospitality Architecture diagrams for hospitality](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/search-booking-metrics/search-booking-metrics.md): Build a platform to gather traffic data in real time by using Amazon CloudFront, Amazon Kinesis, and Amazon OpenSearch Service.
 
@@ -2078,8 +2046,6 @@ age: 182
 - [Security-rich API Management Using IBM API Connect on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/security-rich-api-management-using-ibm-api-connect/security-rich-api-management-using-ibm-api-connect.md): Take advantage of agility, security, and elasticity to create, manage, secure, and socialize all of your APIs across the cloud in order to power digital applications with a market-leading and scalable API management solution.
 
 - [Server-Side Rendering Micro-Frontends in AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/server-side-rendering-micro-frontends/server-side-rendering-micro-frontends.md): Implement server-side rendering micro-frontends using a serverless approach where a UI composer stitches independent HTML fragments into a seamless experience.
-
-- [Managing Inserts and Upserts in a Serverless Data Lake Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/serverless-data-lake-inserts-upserts/serverless-data-lake-inserts-upserts.md): Shows how to use Apache Hudi on Amazon EMR to process inserts and updates to datasets in Amazon S3 to build a cost-effective and scalable data lake.
 
 - [Serverless Strategy for Dynamic Pricing Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/serverless-dynamic-pricing/serverless-dynamic-pricing.md): Build dynamic prices in parallel and calculate them based on factors such as date, duration, and number of people with sub-second response times.
 
@@ -2117,8 +2083,6 @@ age: 182
 
 - [Supply Chain Data Lake Solution Architecture diagrams for transportation and logistics](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/supply-chain-data-lake/supply-chain-data-lake.md): Ingest data from supply chain planning, execution, and shipment status systems to build a data lake solution for analysts and planners.
 
-- [Synchronous Data Mesh for GraphQL Queries Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/synchronous-data-mesh-graphql/synchronous-data-mesh-graphql.md): Shows how to use an API composition pattern to build a modern, distributed, and decentralized data architecture for GraphQL queries.
-
 - [Telecom Charging (OCS/CHF) on AWS Outposts Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/telecom-charging-ocs-chf-on-aws-outposts/telecom-charging-ocs-chf-on-aws-outposts.md): This architecture enables you to deploy a fully automated, resilient, low latency, and highly available Telecom Online Charging System (OCS) / Charging Function (CHF) on AWS Outposts to run in the country of (or close to) the operator core network in cases of country data residency regulations or low latency requirements.
 
 - [Temenos Payments Hub Architecture diagrams for financial services](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/temenos-payments-hub/temenos-payments-hub-service.md): Deploy the Temenos universal payment initiation and distribution platform by using Amazon Elastic Container Service, AWS Fargate, and Amazon API Gateway. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/temenos-payments-hub/llms.txt)
@@ -2126,10 +2090,6 @@ age: 182
 - [Temenos T24 Transact Architecture diagrams for financial services](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/temenos-t24-transact/temenos-t24-service.md): Deploy the Temenos T24 core banking solution by using Amazon Elastic Container Service, Amazon API Gateway, AWS Lambda, and Amazon DynamoDB for security and elasticity. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/temenos-t24-transact/llms.txt)
 
 - [Temenos WealthSuite Front Office on AWS Architecture diagrams for financial services](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/temenos-wealthsuite-front-office/temenos-wealthsuite-overview.md): Deploy the Temenos integrated portfolio management and securities trading platform by using Amazon Elastic Kubernetes Service, Amazon API Gateway, and Amazon RDS. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/temenos-wealthsuite-front-office/llms.txt)
-
-- [Fast Backup and Restore of TiDB on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/tidb-backup-restore/tidb-backup-restore.md): Shows how to perform fast backup and restore of TiDB on AWS using Amazon EBS snapshots.
-
-- [Securely Access TiDB Using AWS PrivateLink Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/tidb-privatelink/tidb-privatelink.md): Shows how to securely access TiDB Cloud using AWS PrivateLink.
 
 - [Totogi Charging-as-a-Service for On-Premises 4G/5G Architecture diagrams for telecommunications](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/totogi-charging-as-a-service/totogi-charging-as-a-service.md): Connect your on-premises 4G/5G network to the Totogi multi-tenant charging engine on AWS for real-time subscriber charging and monetization.
 
@@ -2139,17 +2099,11 @@ age: 182
 
 - [Traffic Encryption Options in AWS Direct Connect Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/traffic-encryption-direct-connect/encryption-vpn-to-vpc.md): Encrypt traffic over AWS Direct Connect by combining an IPSec VPN connection with the low latency and consistent network experience of a direct connection to an Amazon VPC. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/traffic-encryption-direct-connect/llms.txt)
 
-- [Transportation and Logistics Data Lake Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/transportation-logistics-data-lake/transportation-logistics-data-lake.md): Shows how to break data silos and create a single repository for transportation and logistics data from multiple sources using a fully managed, scalable architecture.
-
 - [Implementing Travel and Hospitality Data Mesh Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/travel-hospitality-data-mesh/travel-hospitality-data-mesh.md): Build a data mesh platform for travel and hospitality on AWS with domain-owned data products and purpose-built databases.
 
 - [Traveler 360 Data Platform for Airlines Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/traveler-360-airlines/traveler-360-airlines.md): Identify known and unknown travelers across channels by using a data platform with MDM and customer data platform (CDP) capabilities.
 
 - [Tulip Next-Gen MES on AWS Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/tulip-next-gen-mes/tulip-next-gen-mes.md): Reference architecture diagram for building end-to-end data flows between Tulip's Frontline Operations Platform and your AWS VPC.
-
-- [Building a Unified Catalog with Amazon DataZone Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/unified-catalog-datazone/unified-catalog-datazone.md): Shows how to build a unified data catalog with Amazon DataZone to break down data silos.
-
-- [Unified Data Access Governance in a Data Mesh Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/unified-data-access-governance/unified-data-access-governance.md): Shows how to use PrivaceraCloud on AWS for unified data access governance in a data mesh.
 
 - [Unity Build Pipeline: iOS Games on AWS Cloud Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/unity-build-pipeline-ios/unity-build-pipeline-ios.md): Shows how to build Unity-based games for iOS in the AWS Cloud with Jenkins by using a two-stage pipeline on Amazon Elastic Compute Cloud Spot Instances and Amazon Elastic Compute Cloud Mac Instances.
 

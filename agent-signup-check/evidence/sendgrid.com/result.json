@@ -1,6 +1,6 @@
 {
  "site": "sendgrid.com",
- "checkedAt": "2026-11-12T02:38:15.065Z",
+ "checkedAt": "2026-11-16T20:59:46.726Z",
  "checker": "agent-signup-check/0.2.5",
  "passed": 0,
  "partial": 1,
@@ -70,7 +70,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html",
-   "ms": 81,
+   "ms": 888,
    "redirects": 1
   },
   {
@@ -80,7 +80,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html",
-   "ms": 289,
+   "ms": 290,
    "redirects": 1
   },
   {
@@ -90,7 +90,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 13,
+   "ms": 72,
    "redirects": 0
   },
   {
@@ -100,7 +100,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 593,
+   "ms": 720,
    "redirects": 2
   },
   {
@@ -110,7 +110,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html",
-   "ms": 8,
+   "ms": 9,
    "redirects": 0
   },
   {
@@ -120,7 +120,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html",
-   "ms": 10,
+   "ms": 7,
    "redirects": 0
   },
   {
@@ -130,7 +130,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html",
-   "ms": 10,
+   "ms": 11,
    "redirects": 0
   },
   {
@@ -140,7 +140,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html",
-   "ms": 9,
+   "ms": 8,
    "redirects": 0
   },
   {
@@ -150,7 +150,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html",
-   "ms": 10,
+   "ms": 9,
    "redirects": 0
   }
  ]
