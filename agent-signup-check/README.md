@@ -13,7 +13,7 @@ curl -fsSLO https://raw.githubusercontent.com/prized-dev/integrations/main/agent
 node agent-signup-check.mjs example.com --api https://api.example.com/v1/me
 ```
 
-The same file is served at `https://prized.dev/agent-signup-check.mjs`. `--api` is one endpoint of your API that needs a key. The checker calls it without one, to see how a signed-out agent is turned away. Without `--api` it looks for your API the way an agent would: endpoints your llms.txt or auth.md calls, the OpenAPI description it links, and, if those name none, the `resource` in your protected resource metadata, all on your own domain, and only then `https://api.<your domain>/`. It tries up to three, stops at the first that asks for a key, and says in the result where the URL came from (`apiSource`).
+The same file is served at `https://prized.dev/agent-signup-check.mjs`. `--api` is one endpoint of your API that needs a key. The checker calls it without one, to see how a signed-out agent is turned away. Without `--api` it looks for your API the way an agent would: endpoints your llms.txt or auth.md calls, the OpenAPI description it links, your llms-full.txt, and the `resource` in your protected resource metadata, all on your own domain, and only then `https://api.<your domain>/`. It tries up to three of those, then the `resource` in your protected resource metadata and `/v1/models` on an API host whose root is not an API answer (five at most), stops at the first that asks for a key, and says in the result where the URL came from (`apiSource`).
 
 From a run on 2026-10-30:
 

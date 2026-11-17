@@ -1180,8 +1180,12 @@ test('which prose URLs are an API to call', () => {
     'curl https://api.someone-else.example/v1/me',
     'Base URL: https://api-docs.one.example/',
   ].join('\n');
-  // Reads first, then any line about calling the API (a write is asked with GET, never sent).
-  assert.deepEqual(documentedApiUrls(text, 'one.example').map((d) => d.url), ['https://api.one.example/v1/me', 'https://www.one.example/api/v1/health', 'https://api.one.example/v1/things', 'https://rest.one.example/']);
+  // Reads first, then any line about calling the API (a write is asked with GET, never sent);
+  // a URL with a placeholder is called at its fixed part. At most four.
+  assert.deepEqual(documentedApiUrls(text, 'one.example').map((d) => d.url), ['https://api.one.example/v1/me', 'https://api.one.example/v1/users', 'https://www.one.example/api/v1/health', 'https://api.one.example/v1/things']);
+  // A curl split over lines with --request and --url, and a fetch() in a code sample.
+  assert.deepEqual(documentedApiUrls('curl \\\n  --request GET \\\n  --url https://api.one.example/v1/projects \\\n  --header "Authorization: Bearer $K"\ncurl \\\n  --request POST \\\n  --url https://api.one.example/v1/jobs', 'one.example'), [{ url: 'https://api.one.example/v1/projects', read: true }, { url: 'https://api.one.example/v1/jobs', read: false }]);
+  assert.deepEqual(documentedApiUrls('const r = await fetch("https://api.one.example/v1/me", { headers })', 'one.example'), [{ url: 'https://api.one.example/v1/me', read: true }]);
   // A host on a shared name speaks only for itself.
   assert.deepEqual(documentedApiUrls('curl https://other.host.example/api/v1/me\ncurl https://foo.host.example/api/v1/me', 'foo.host.example').map((d) => d.url), ['https://foo.host.example/api/v1/me']);
   // A curl continued onto a write is a write.
@@ -1237,7 +1241,30 @@ test('probes that all miss keep the first as the scored one, labelled api, even 
     ['api', 'https://api.one.example/v1/a'],
     ['api tried (llms.txt)', 'https://api.one.example/v1/b'],
     ['api tried (guess)', 'https://api.one.example/'],
+    // An API host whose root is a 404 gets one probe of its conventional list endpoint.
+    ['api tried (common endpoint)', 'https://api.one.example/v1/models'],
   ]);
+});
+
+test('a short llms.txt with no API in it leads to its llms-full.txt (Anthropic, Mistral, Fireworks docs)', async () => {
+  const pages = {
+    'https://one.example/llms.txt': md('# One\n\n- [Messages](https://one.example/docs/messages.md)\n'),
+    'https://one.example/llms-full.txt': md('# One\n\n\`\`\`bash\ncurl https://api.one.example/v1/messages \\\n  -H "x-api-key: $KEY" \\\n  -d "{}"\n\`\`\`\n\nList models: GET https://api.one.example/v1/models\n'),
+    'https://api.one.example/v1/models': CHALLENGED,
+  };
+  const r = await checkSite('one.example', { get: stub(pages) });
+  assert.equal(r.apiSource, 'llms-full.txt');
+  assert.equal(cell(r, 'challenge').url, 'https://api.one.example/v1/models');
+  assert.equal(cell(r, 'challenge').status, 'pass');
+});
+
+test('the api.<domain> guess whose root is a page is asked once more at /v1/models', async () => {
+  const r = await checkSite('one.example', { get: stub({ 'https://api.one.example/': HTML_200, 'https://api.one.example/v1/models': CHALLENGED }) });
+  assert.equal(r.apiSource, 'common endpoint');
+  assert.equal(cell(r, 'challenge').status, 'pass');
+  // A guessed host that does not exist is not asked again.
+  const r2 = await checkSite('one.example', { get: stub({ 'https://api.one.example/': { error: 'ENOTFOUND' } }) });
+  assert.ok(!r2.requests.some((q) => q.url.endsWith('/v1/models')));
 });
 
 test('the docs host and the API host add no request that the x402 discovery on the site needs', async () => {
@@ -1276,4 +1303,43 @@ test('when nothing the prose names answers like an API, the resource in the site
   assert.equal(r.apiSource, 'resource metadata');
   assert.equal(cell(r, 'challenge').status, 'pass');
   assert.equal(r.requests.filter((q) => q.url === 'https://one.example/.well-known/oauth-protected-resource').length, 1);
+});
+
+test('placeholders: in the path the URL is cut there, in the query the query goes', () => {
+  const urls = (t) => documentedApiUrls(t, 'one.example').map((d) => d.url);
+  assert.deepEqual(urls('curl "https://api.one.example/v1/me?api_key=$KEY"'), ['https://api.one.example/v1/me']);
+  assert.deepEqual(urls('GET https://api.one.example/v1/users/:id'), ['https://api.one.example/v1/users']);
+  assert.deepEqual(urls('curl https://api.one.example/v1/search?q=a&id={id}'), ['https://api.one.example/v1/search']);
+});
+
+test('a write written as a fetch over several lines, a lowercase method or --request=POST is a write', () => {
+  const kinds = (t) => documentedApiUrls(t, 'one.example').map((d) => d.read);
+  assert.deepEqual(kinds('await fetch("https://api.one.example/v1/jobs", {\n  method: "POST",\n})'), [false]);
+  assert.deepEqual(kinds('fetch("https://api.one.example/v1/jobs", { method: "post" })'), [false]);
+  assert.deepEqual(kinds('curl --request=POST https://api.one.example/v1/jobs'), [false]);
+});
+
+test('the metadata\'s resource is asked before the /v1/models guess, and a bot wall gets no second request', async () => {
+  const prm = { status: 200, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ resource: 'https://mcp.one.example/mcp', authorization_servers: ['https://one.example'] }) };
+  const pages = {
+    'https://one.example/llms.txt': md('# One\n\nBase URL: https://api.one.example/\n'),
+    'https://one.example/.well-known/oauth-protected-resource': prm,
+    'https://mcp.one.example/mcp': CHALLENGED,
+    'https://api.one.example/v1/models': CHALLENGED,
+  };
+  const r = await checkSite('one.example', { get: stub(pages) });
+  assert.equal(r.apiSource, 'resource metadata');
+  assert.ok(!r.requests.some((q) => q.url.endsWith('/v1/models')));
+  const walled = await checkSite('one.example', { get: stub({ 'https://api.one.example/': CF_CHALLENGE }) });
+  assert.ok(!walled.requests.some((q) => q.url.endsWith('/v1/models')));
+});
+
+test('a short llms.txt that names only a bare API host still leads to llms-full.txt', async () => {
+  const pages = {
+    'https://one.example/llms.txt': md('# One\n\nBase URL: https://api.one.example/\n'),
+    'https://one.example/llms-full.txt': md('# One\n\n    curl https://api.one.example/v1/messages\n'),
+    'https://api.one.example/v1/messages': CHALLENGED,
+  };
+  const r = await checkSite('one.example', { get: stub(pages) });
+  assert.equal(r.apiSource, 'llms-full.txt');
 });

@@ -765,9 +765,40 @@ export function ownHost(host, site) {
 // calls it at all or names it: a write, a base URL, the key it takes. The checker only ever
 // sends a GET, to either: a write endpoint asked with GET and no key still says whether the
 // API wants one.
-const READ_LINE = /\bcurl\b|\bGET\s{1,10}`?https:\/\//i;
-const WRITE_LINE = /-X\s{0,3}(?:POST|PUT|PATCH|DELETE)\b|\s(?:-d|--data(?:-raw|-binary|-urlencode)?|-F|--form)[\s=]/;
-const API_LINE = /\b(?:POST|PUT|PATCH|DELETE)\s{1,10}`?https:\/\/|\bcurl\b|\bbase[ _-]?url\b|\bapi[ _-]?base\b|\bapi[ _-]?(?:host|endpoint|url|origin)\b|\bapi[ _-]?keys?\b|\bbearer\b|\bauthenticat\w*|\brest api\b/i;
+const READ_LINE = /\bcurl\b|\bGET\s{1,10}`?https:\/\/|\bfetch\(\s{0,4}['"`]https:|\brequests\.get\(|\bhttpx\.get\(|\baxios\.get\(|\bhttp\.get\(/i;
+const WRITE_LINE = /(?:-X|--request)(?:\s{0,3}|=)['"]?(?:POST|PUT|PATCH|DELETE)\b|\s(?:-d|--data(?:-raw|-binary|-urlencode)?|-F|--form)[\s=]|\bmethod['"]?\s{0,4}[:=]\s{0,4}['"](?:POST|PUT|PATCH|DELETE)\b/i;
+const API_LINE = /\b(?:POST|PUT|PATCH|DELETE)\s{1,10}`?https:\/\/|\bcurl\b|\bfetch\(|\brequests\.\w{3,6}\(|\bhttpx\.|\baxios\b|\bbase[ _-]?url\b|\bapi[ _-]?base\b|\bapi[ _-]?(?:host|endpoint|url|origin)\b|\bapi[ _-]?keys?\b|\bbearer\b|\bauthenticat\w*|\brest api\b/i;
+
+/** Lines with a command continued by a trailing backslash joined into one ("curl \\" then
+ *  "  --request GET \\" then "  --url https://..."), at most eight lines each. */
+function logicalLines(text) {
+  const out = [];
+  const lines = linesOf(text);
+  for (let i = 0; i < lines.length; i++) {
+    let s = lines[i][0];
+    let j = i;
+    while (j < lines.length - 1 && j - i < 7 && /\\\s*$/.test(lines[j][0])) { j++; s = `${s.replace(/\\\s*$/, '')} ${lines[j][0].trim()}`; }
+    out.push(s.slice(0, MAX_LINE));
+    i = j;
+  }
+  return out;
+}
+
+/** A URL cut back to the part of its path before the first placeholder segment
+ *  (/accounts/${ID}/usage, /users/{id}, /users/:id, /users/<id> are /accounts and /users),
+ *  without its query (where a placeholder is usually the key: ?api_key=$KEY); null when nothing
+ *  past the host is left. */
+function beforePlaceholder(url) {
+  let u;
+  try { u = new URL(url.replace(/[?#].*$/, '')); } catch { return null; }
+  const kept = [];
+  for (const seg of u.pathname.split('/').slice(1)) {
+    if (/[{}<>$]|%7B|%7D|%3C|%3E|%24|^:/i.test(seg)) break;
+    kept.push(seg);
+  }
+  const path = trimSlash(`/${kept.join('/')}`);
+  return path ? `${u.origin}${path}` : null;
+}
 // Files, pages and sign-in flows, not an API.
 const NOT_API_PATH = /\.(?:md|txt|html?|png|jpe?g|svg|gif|webp|pdf|zip|tgz|gz|js|css|ya?ml)$|(?:openapi|swagger)[\w.-]{0,40}$|\/\.well-known\/|\/(?:docs?|blog|guides?|login|log-in|signin|sign-in|signup|sign-up|register|oauth2?|authorize|pricing|dashboard)(?:\/|$)/i;
 // Hosts that serve people pages: an API there sits under /api or a version path.
@@ -780,23 +811,21 @@ const API_PATH = /^\/(?:api|v\d{1,2}(?:\.\d{1,2})?|rest|graphql)(?:\/|$)/i;
 export function documentedApiUrls(text, site) {
   const out = [];
   if (!text) return out;
-  const lines = linesOf(text);
-  // A line and the lines that continue it ("curl https://... \\" then "  -X POST"), at most six.
-  const command = (i) => {
-    let s = lines[i][0];
-    for (let j = i; j < Math.min(lines.length - 1, i + 5) && /\\\s*$/.test(lines[j][0]); j++) s += ` ${lines[j + 1][0]}`;
-    return s;
-  };
   const reads = [];
   const others = [];
-  lines.forEach(([line], i) => {
-    if (READ_LINE.test(line) && !WRITE_LINE.test(command(i))) reads.push(line);
+  const logical = logicalLines(text);
+  logical.forEach((line, i) => {
+    // A call's options can follow on the next lines with no backslash (fetch(url, {\n method: 'POST'):
+    // a write there makes the call a write.
+    const call = /\b(?:fetch|axios|request)\s{0,2}\(|\{\s*$/.test(line) ? logical.slice(i, i + 4).join(' ') : line;
+    if (READ_LINE.test(line) && !WRITE_LINE.test(call)) reads.push(line);
     else if (API_LINE.test(line)) others.push(line);
   });
   for (const [line, read] of [...reads.map((l) => [l, true]), ...others.map((l) => [l, false])]) {
-    for (const { url } of urlsInLine(line)) {
-      // A template (/users/{id}, <ID>, ${TOKEN}) is not a URL to call.
-      if (/[{}<>$]|%7B|%3C/i.test(url)) continue;
+    for (const { url: found } of urlsInLine(line)) {
+      // A template (/users/{id}, <ID>, ${TOKEN}) is called at its fixed part.
+      const url = beforePlaceholder(found);
+      if (!url) continue;
       let u;
       try { u = new URL(url); } catch { continue; }
       const host = u.hostname.toLowerCase();
@@ -1039,6 +1068,30 @@ export async function checkSite(input, opts = {}) {
       if (ok(r) && !isHtml(r)) openapi = openApiCalls(r.body, r.finalUrl || specUrl);
     }
     let candidates = apiCandidates(site, { prose: proseNow, openapi });
+    const isEndpoint = (c) => c.source !== 'guess' && trimSlash(new URL(c.url).pathname) !== '';
+    // The full docs (llms-full.txt, beside the llms.txt that was read, or where it links one)
+    // carry the API reference that a short llms.txt only links to: read when nothing found so
+    // far is an endpoint (a bare API host or the guess does not count).
+    if (!candidates.some(isEndpoint) && llmsOk(llmsSource) && budget.left >= 16) {
+      const linked = linesOf(stripBom(llmsSource.body)).map(([l]) => urlsInLine(l).find((x) => /\/llms-full\.txt$/.test(x.url))).find(Boolean);
+      let fullUrl = linked ? linked.url : null;
+      if (!fullUrl) { try { fullUrl = new URL('llms-full.txt', llmsSource.finalUrl || llmsSource.url).toString(); } catch { fullUrl = null; } }
+      if (fullUrl && !urlProblem(fullUrl) && ownHost(new URL(fullUrl).hostname, site)) {
+        const r = await fetchOne('llms-full.txt', fullUrl, MD);
+        if (ok(r) && !isHtml(r)) {
+          proseNow.push(['llms-full.txt', stripBom(r.body)]);
+          candidates = apiCandidates(site, { prose: proseNow, openapi });
+        }
+      }
+    }
+    const tried = [];
+    const probe = async (url, source) => {
+      const slot = { label: `api (${source})` };
+      const r = await fetchOne(slot.label, url, opts.apiAccept || JSONA, slot);
+      tried.push({ url, source, r, slot, rank: apiVerdict(r).rank });
+    };
+    const found = () => tried.some((t) => t.rank >= 2);
+    const triedUrl = (url) => tried.some((t) => trimSlash(t.url) === trimSlash(url));
     // Only when nothing the site wrote names its API: the resource its protected resource
     // metadata names (read here, and reused for the prm check below). Even one that does not
     // match the URL it came from is a hint (the prm check scores that); only the site's hosts.
@@ -1047,27 +1100,28 @@ export async function checkSite(input, opts = {}) {
       prefetched.set(sitePrm, r);
       candidates = apiCandidates(site, { prm: parseJson(r), prose: proseNow, openapi });
     }
-    const tried = [];
     for (const c of candidates.slice(0, MAX_API_PROBES)) {
       // Keep room for the metadata, x402 and catch-all requests that follow.
       if (tried.length && budget.left < 12) break;
-      const slot = { label: `api (${c.source})` };
-      const r = await fetchOne(slot.label, c.url, opts.apiAccept || JSONA, slot);
-      tried.push({ ...c, r, slot, rank: apiVerdict(r).rank });
-      if (tried.at(-1).rank >= 2) break;
+      await probe(c.url, c.source);
+      if (found()) break;
     }
     // Nothing the prose names answered like an API: the resource the site's protected resource
-    // metadata names gets one more probe (fly.io's llms.txt names an endpoint that is a 404, its
+    // metadata names gets one probe (fly.io's llms.txt names an endpoint that is a 404, its
     // metadata names its MCP server).
-    if (!tried.some((t) => t.rank >= 2) && !prefetched.has(sitePrm) && budget.left >= 14) {
+    if (!found() && !prefetched.has(sitePrm) && budget.left >= 14) {
       const r = await fetchOne('prm', sitePrm, JSONA);
       prefetched.set(sitePrm, r);
       const res = apiCandidates(site, { prm: parseJson(r) }).find((c) => c.source === 'resource metadata');
-      if (res && !tried.some((t) => trimSlash(t.url) === trimSlash(res.url))) {
-        const slot = { label: 'api (resource metadata)' };
-        const pr = await fetchOne(slot.label, res.url, opts.apiAccept || JSONA, slot);
-        tried.push({ ...res, r: pr, slot, rank: apiVerdict(pr).rank });
-      }
+      if (res && !triedUrl(res.url)) await probe(res.url, res.source);
+    }
+    // Last, a guess: an API host whose root answered, but not like an API (a page, a 404; not a
+    // bot wall, which the same path behind it would meet), often answers on its conventional
+    // list endpoint. One probe of /v1/models there; its source says `common endpoint`.
+    const bareMiss = tried.find((t) => t.rank === 0 && trimSlash(new URL(t.url).pathname) === '' && t.r && typeof t.r.status === 'number' && !blockedReason(t.r));
+    if (!found() && bareMiss && budget.left >= 12) {
+      const conv = `${new URL(bareMiss.url).origin}/v1/models`;
+      if (!triedUrl(conv)) await probe(conv, 'common endpoint');
     }
     if (tried.length) {
       // The best answer; on a tie (none of them an API's), the first, the most authoritative.
