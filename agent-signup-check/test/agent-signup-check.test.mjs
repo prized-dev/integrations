@@ -1126,7 +1126,7 @@ test('with no API URL named, the API an llms.txt calls is probed before the api.
 
 test('a documented API that does not answer like one moves on, and the best answer is scored', async () => {
   const pages = {
-    'https://one.example/auth.md': md('# auth.md\n\nAgents call GET https://api.one.example/v1/status first.\n\nPOST https://api.one.example/agent/sign-up\n'),
+    'https://one.example/auth.md': md('# auth.md\n\nAgents call GET https://api.one.example/v1/projects first.\n\nPOST https://api.one.example/agent/sign-up\n'),
     'https://api.one.example/': CHALLENGED,
   };
   const r = await checkSite('one.example', { get: stub(pages) });
@@ -1134,7 +1134,7 @@ test('a documented API that does not answer like one moves on, and the best answ
   assert.equal(r.apiSource, 'guess');
   const api = r.requests.filter((q) => q.label.startsWith('api'));
   assert.deepEqual(api.map((q) => [q.label, q.url]), [
-    ['api tried (auth.md)', 'https://api.one.example/v1/status'],
+    ['api tried (auth.md)', 'https://api.one.example/v1/projects'],
     ['api', 'https://api.one.example/'],
   ]);
 });
@@ -1174,7 +1174,7 @@ test('which prose URLs are an API to call', () => {
     'curl https://api.one.example/v1/users/{id}',
     'curl https://docs.one.example/guide.md',
     'curl https://www.one.example/pricing',
-    'curl https://www.one.example/api/v1/health',
+    'curl https://www.one.example/api/v1/me',
     'Base URL: https://rest.one.example',
     'See https://api.one.example/v9/other for more.',
     'curl https://api.someone-else.example/v1/me',
@@ -1182,7 +1182,7 @@ test('which prose URLs are an API to call', () => {
   ].join('\n');
   // Reads first, then any line about calling the API (a write is asked with GET, never sent);
   // a URL with a placeholder is called at its fixed part. At most four.
-  assert.deepEqual(documentedApiUrls(text, 'one.example').map((d) => d.url), ['https://api.one.example/v1/me', 'https://api.one.example/v1/users', 'https://www.one.example/api/v1/health', 'https://api.one.example/v1/things']);
+  assert.deepEqual(documentedApiUrls(text, 'one.example').map((d) => d.url), ['https://api.one.example/v1/me', 'https://api.one.example/v1/users', 'https://www.one.example/api/v1/me', 'https://api.one.example/v1/things']);
   // A curl split over lines with --request and --url, and a fetch() in a code sample.
   assert.deepEqual(documentedApiUrls('curl \\\n  --request GET \\\n  --url https://api.one.example/v1/projects \\\n  --header "Authorization: Bearer $K"\ncurl \\\n  --request POST \\\n  --url https://api.one.example/v1/jobs', 'one.example'), [{ url: 'https://api.one.example/v1/projects', read: true }, { url: 'https://api.one.example/v1/jobs', read: false }]);
   assert.deepEqual(documentedApiUrls('const r = await fetch("https://api.one.example/v1/me", { headers })', 'one.example'), [{ url: 'https://api.one.example/v1/me', read: true }]);
@@ -1342,4 +1342,44 @@ test('a short llms.txt that names only a bare API host still leads to llms-full.
   };
   const r = await checkSite('one.example', { get: stub(pages) });
   assert.equal(r.apiSource, 'llms-full.txt');
+});
+
+test('an OpenAPI description that marks which GETs need a key: those are probed, not its public ones', () => {
+  const spec = JSON.stringify({ openapi: '3.1.0', servers: [{ url: 'https://api.one.example' }], security: [{ bearer: [] }], paths: { '/status': { get: { security: [] } }, '/cite': { get: { security: [] } }, '/projects': { get: {} } } });
+  assert.deepEqual(openApiCalls(spec, 'https://one.example/openapi.json'), ['https://api.one.example/projects']);
+  // Swagger 2 names its server as host and basePath.
+  assert.deepEqual(openApiCalls(JSON.stringify({ swagger: '2.0', host: 'api.one.example', basePath: '/v2', paths: { '/me': { get: {} } } }), 'https://one.example/swagger.json'), ['https://api.one.example/v2/me']);
+  // Health and status endpoints in prose are not where a key is asked for.
+  assert.deepEqual(documentedApiUrls('curl https://api.one.example/health\ncurl https://api.one.example/v1/me', 'one.example').map((d) => d.url), ['https://api.one.example/v1/me']);
+});
+
+test('a docs host that resets the connection does not make a read llms.txt fail "not read"', async () => {
+  const r = await checkSite('one.example', { api: 'https://api.one.example/v1/me', get: stub({ ...SITE_V1, 'https://docs.one.example/llms.txt': { error: 'EPROTO' } }) });
+  assert.equal(cell(r, 'markdown').status, 'fail');
+});
+
+test('an OpenAPI server that is the site\'s home page is not probed as its API', () => {
+  const spec = JSON.stringify({ openapi: '3.1.0', servers: [{ url: 'https://one.example' }], paths: { '/status': { get: {} } } });
+  const calls = openApiCalls(spec, 'https://one.example/openapi.json');
+  assert.deepEqual(calls, ['https://one.example/']);
+  assert.deepEqual(apiCandidates('one.example', { openapi: calls }).map((c) => c.source), ['guess']);
+});
+
+test('OpenAPI details: [{}] allows no key, a secured health path is kept, no servers means the document\'s origin', () => {
+  const spec = JSON.stringify({ openapi: '3.1.0', servers: [{ url: 'https://api.one.example' }], paths: { '/cite': { get: { security: [{}] } }, '/projects': { get: { security: [{ bearer: [] }] } } } });
+  assert.deepEqual(openApiCalls(spec, 'https://one.example/openapi.json'), ['https://api.one.example/projects']);
+  const metrics = JSON.stringify({ openapi: '3.1.0', servers: [{ url: 'https://api.one.example' }], security: [{ key: [] }], paths: { '/status': { get: {} } } });
+  assert.deepEqual(openApiCalls(metrics, 'https://one.example/openapi.json'), ['https://api.one.example/status']);
+  const noServers = JSON.stringify({ openapi: '3.1.0', paths: { '/me': { get: { security: [{ key: [] }] } } } });
+  assert.deepEqual(openApiCalls(noServers, 'https://api.one.example/openapi.json'), ['https://api.one.example/me']);
+});
+
+test('an endpoint on the site\'s own host from a description is probed; its bare home page is not; the guess stays for api.<domain> itself', () => {
+  assert.deepEqual(apiCandidates('one.example', { openapi: ['https://one.example/projects'] }).map((c) => c.url), ['https://one.example/projects', 'https://api.one.example/']);
+  assert.deepEqual(apiCandidates('api.one.example').map((c) => c.url), ['https://api.one.example/']);
+});
+
+test('a docs host that answers 503 still leaves llms.txt not read', async () => {
+  const r = await checkSite('one.example', { api: 'https://api.one.example/v1/me', get: stub({ ...SITE_V1, 'https://docs.one.example/llms.txt': { status: 503, headers: {}, body: '' } }) });
+  assert.equal(cell(r, 'markdown').status, 'unread');
 });

@@ -800,7 +800,9 @@ function beforePlaceholder(url) {
   return path ? `${u.origin}${path}` : null;
 }
 // Files, pages and sign-in flows, not an API.
-const NOT_API_PATH = /\.(?:md|txt|html?|png|jpe?g|svg|gif|webp|pdf|zip|tgz|gz|js|css|ya?ml)$|(?:openapi|swagger)[\w.-]{0,40}$|\/\.well-known\/|\/(?:docs?|blog|guides?|login|log-in|signin|sign-in|signup|sign-up|register|oauth2?|authorize|pricing|dashboard)(?:\/|$)/i;
+// Health and status endpoints answer anyone: they say nothing about how a key is asked for.
+const PUBLIC_PATH = /\/(?:health|healthz|healthcheck|livez|readyz|status|ping)\/?$/i;
+const NOT_API_PATH = new RegExp(String.raw`\.(?:md|txt|html?|png|jpe?g|svg|gif|webp|pdf|zip|tgz|gz|js|css|ya?ml)$|(?:openapi|swagger)[\w.-]{0,40}$|${PUBLIC_PATH.source}|\/\.well-known\/|\/(?:docs?|blog|guides?|login|log-in|signin|sign-in|signup|sign-up|register|oauth2?|authorize|pricing|dashboard)(?:\/|$)`, 'i');
 // Hosts that serve people pages: an API there sits under /api or a version path.
 const PAGE_HOST = /^(?:www|docs|api-?docs|devdocs|reference|developers?|dev|blog|help|support|status|app|dashboard|console|platform|portal|learn|community)\./i;
 const API_PATH = /^\/(?:api|v\d{1,2}(?:\.\d{1,2})?|rest|graphql)(?:\/|$)/i;
@@ -858,6 +860,33 @@ export function openApiLink(text, site) {
  *  parameter in the path, else the server alone. */
 export function openApiCalls(text, specUrl) {
   const t = str(text).slice(0, MAX_SCAN);
+  // A whole JSON description: use its structure, and prefer the GET operations it says need a
+  // key (an operation's own security, else the document's), as a client generator would.
+  let doc = null;
+  if (/^\s*\{/.test(t) && t.length < MAX_SCAN) { try { doc = JSON.parse(stripBom(t)); } catch { doc = null; } }
+  if (doc && typeof doc === 'object' && doc.paths && typeof doc.paths === 'object') {
+    let server = Array.isArray(doc.servers) && doc.servers[0] && typeof doc.servers[0].url === 'string' ? doc.servers[0].url : null;
+    if (!server && typeof doc.host === 'string') server = `https://${doc.host}${typeof doc.basePath === 'string' ? doc.basePath : ''}`;
+    // OpenAPI 3: no servers means "/", relative to where the description was read.
+    if (!server && !doc.swagger) server = '/';
+    let base = null;
+    if (server && !/[{}]/.test(server)) { try { base = new URL(server, specUrl).toString(); } catch { base = null; } }
+    if (!base || !/^https:/.test(base)) return [];
+    // A security list needs a key when every alternative names a scheme: an empty object in it
+    // ([{}]) means a call with none is allowed too.
+    const needsKey = (s) => Array.isArray(s) && s.length > 0 && s.every((x) => x && typeof x === 'object' && Object.keys(x).length > 0);
+    const rootSecured = needsKey(doc.security);
+    const ops = Object.entries(doc.paths)
+      .slice(0, 2000)
+      .filter(([p, item]) => /^\/[^{}\s]*$/.test(p) && item && typeof item === 'object' && item.get && typeof item.get === 'object')
+      .map(([p, item]) => ({ p, secured: Array.isArray(item.get.security) ? needsKey(item.get.security) : rootSecured }))
+      // A health or status path is skipped unless the description says it needs a key.
+      .filter((o) => o.secured || !PUBLIC_PATH.test(o.p));
+    const root = base.replace(/\/+$/, '');
+    // Only operations that need a key, when the description says which; else the first ones.
+    const picked = ops.some((o) => o.secured) ? ops.filter((o) => o.secured) : ops;
+    return picked.length ? picked.slice(0, 3).map((o) => `${root}${o.p}`) : [base];
+  }
   const server =
     (/"servers"\s{0,20}:\s{0,20}\[\s{0,20}\{[^}]{0,400}?"url"\s{0,20}:\s{0,20}"([^"\s]{1,300})"/.exec(t) || [])[1] ||
     (/(?:^|\n)servers:\s{0,20}\n\s{0,12}-\s{1,4}url:\s{1,4}['"]?([^'"\s]{1,300})/.exec(t) || [])[1] ||
@@ -871,12 +900,12 @@ export function openApiCalls(text, specUrl) {
   // JSON: "/path": { "get": ...; YAML: two-space "  /path:" then a "get:" within a few lines.
   const jsonPath = /"(\/[^"{}\s]{0,120})"\s{0,20}:\s{0,20}\{\s{0,20}"get"/g;
   let m;
-  while (paths.length < 3 && (m = jsonPath.exec(t))) paths.push(m[1]);
+  while (paths.length < 3 && (m = jsonPath.exec(t))) if (!PUBLIC_PATH.test(m[1])) paths.push(m[1]);
   if (!paths.length) {
     const lines = linesOf(t);
     for (let i = 0; i < lines.length && paths.length < 3; i++) {
       const p = /^ {2}(\/[^{}\s:]{0,120}):\s*$/.exec(lines[i][0]);
-      if (!p) continue;
+      if (!p || PUBLIC_PATH.test(p[1])) continue;
       // Its operations, up to the next path (or anything less indented).
       for (let j = i + 1; j < lines.length && j < i + 200; j++) {
         const l = lines[j][0];
@@ -899,7 +928,14 @@ export function apiCandidates(site, { prm = null, prose = [], openapi = [] } = {
   const seen = (url) => found.some((c) => trimSlash(c.url) === trimSlash(url));
   const add = (url, source) => {
     if (!url || urlProblem(url) || seen(url)) return;
-    try { if (!ownHost(new URL(url).hostname, site)) return; } catch { return; }
+    try {
+      const u = new URL(url);
+      if (!ownHost(u.hostname, site)) return;
+      // The root of the site or of a docs or app host is a page people read, not the API,
+      // whoever names it (a description whose server is the home page). The guess is kept.
+      const home = (u.hostname === site || u.hostname === registrable(site) || PAGE_HOST.test(u.hostname)) && trimSlash(u.pathname) === '';
+      if (home && source !== 'guess') return;
+    } catch { return; }
     found.push({ url, source, bare: trimSlash(new URL(url).pathname) === '' });
   };
   const documented = prose.flatMap(([where, text]) => documentedApiUrls(text, site).map((d) => ({ ...d, where })));
@@ -907,12 +943,7 @@ export function apiCandidates(site, { prm = null, prose = [], openapi = [] } = {
   for (const url of openapi) add(url, 'OpenAPI');
   for (const d of documented.filter((x) => !x.read)) add(d.url, d.where);
   const resource = prm && httpsUrl(prm.resource);
-  if (resource) {
-    const u = new URL(resource);
-    // The site's own home page is where people read about the API, not the API.
-    const home = (u.hostname === site || PAGE_HOST.test(u.hostname)) && !API_PATH.test(u.pathname);
-    if (!home) add(resource, 'resource metadata');
-  }
+  if (resource) add(resource, 'resource metadata');
   add(`https://api.${registrable(site)}/`, 'guess');
   // An endpoint before a bare host: an API's root is often a page or a 404, its endpoints ask for a key.
   return [...found.filter((c) => !c.bare), ...found.filter((c) => c.bare)].map(({ url, source }) => ({ url, source }));
@@ -1462,7 +1493,10 @@ export async function checkSite(input, opts = {}) {
       // The API's answer, x402 discovery (x402R itself: the budget may have stopped it before
       // it was sent) and agent_auth.billing.
       payment: [...api, x402Tried[0], ...as],
-      markdown: by('llms.txt'),
+      // The docs host (docs.<domain>) is a guess at where docs may live: a name there that cannot
+      // be reached (a reset, a TLS failure, a timeout) says nothing about the site's llms.txt. One
+      // that answers (a 5xx, a 429, a bot wall) is a docs host, and its non-answer counts.
+      markdown: by('llms.txt').filter((q) => q.label !== 'llms.txt (docs host)' || typeof q.status === 'number'),
     };
     // Prose (auth.md, llms.txt) is not one of these three checks' own files: it can lift
     // sign-up by API and spend limits to "partly", and can name a second x402 URL for payment
