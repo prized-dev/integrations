@@ -924,10 +924,10 @@ test('a request the budget stopped is not read, whether or not it was started', 
   assert.equal(cell(r, 'payment').status, 'unread');
   assert.match(cell(r, 'payment').reason, /^Not read on \d{4}-\d\d-\d\d: https:\/\/one\.example\/\.well-known\/.* answered with nothing: the request budget ran out first$/);
   // The request that was never started is listed with the rest, so evidence and a replay show it.
-  const x402 = r.requests.find((q) => q.label === 'x402 discovery');
-  assert.equal(x402.error, 'request budget spent');
-  assert.equal(r.requests.at(-1).label, 'x402 discovery (API host)');
+  assert.equal(r.requests.at(-1).label, 'x402 discovery');
   assert.equal(r.requests.at(-1).error, 'request budget spent');
+  // With nothing left, the API host's x402 discovery, an extra place to look, is not listed.
+  assert.ok(!r.requests.some((q) => q.label === 'x402 discovery (API host)'));
 });
 
 test('what counts as no answer: network failures, 5xx, 429, a challenge on the file itself, the budget; nothing else', () => {
@@ -1382,4 +1382,68 @@ test('an endpoint on the site\'s own host from a description is probed; its bare
 test('a docs host that answers 503 still leaves llms.txt not read', async () => {
   const r = await checkSite('one.example', { api: 'https://api.one.example/v1/me', get: stub({ ...SITE_V1, 'https://docs.one.example/llms.txt': { status: 503, headers: {}, body: '' } }) });
   assert.equal(cell(r, 'markdown').status, 'unread');
+});
+
+test('a site on a subdomain still has the api.<registrable domain> guess probed, as 0.2.5 did', async () => {
+  const r = await checkSite('video.one.example', { get: stub({ 'https://api.one.example/': CHALLENGED }) });
+  assert.equal(r.apiSource, 'guess');
+  assert.equal(cell(r, 'challenge').status, 'pass');
+});
+
+test('agent_auth in the site\'s own metadata counts when the server its resource metadata names has none (a Clerk-hosted sign-in)', async () => {
+  const json = (o) => ({ status: 200, headers: { 'content-type': 'application/json' }, body: JSON.stringify(o) });
+  const pages = {
+    'https://api.one.example/v1/me': { status: 401, headers: { 'www-authenticate': 'Bearer resource_metadata="https://api.one.example/.well-known/oauth-protected-resource/v1/me"' }, body: '' },
+    'https://api.one.example/.well-known/oauth-protected-resource/v1/me': json({ resource: 'https://api.one.example/v1/me', authorization_servers: ['https://clerk.one.example'] }),
+    'https://clerk.one.example/.well-known/oauth-authorization-server': json({ issuer: 'https://clerk.one.example' }),
+    'https://one.example/.well-known/oauth-authorization-server': json({ issuer: 'https://one.example', agent_auth: { identity_endpoint: 'https://one.example/agent/identity', identity_types_supported: ['service_auth'] } }),
+  };
+  const r = await checkSite('one.example', { api: 'https://api.one.example/v1/me', get: stub(pages) });
+  assert.equal(cell(r, 'register').status, 'pass');
+  // And a site one that does not answer leaves the read fail a fail.
+  const r2 = await checkSite('one.example', { api: 'https://api.one.example/v1/me', get: stub({ ...pages, 'https://one.example/.well-known/oauth-authorization-server': { status: 503, headers: {}, body: '' } }) });
+  assert.equal(cell(r2, 'register').status, 'fail');
+});
+
+test('metadata on another API host that answered while finding the API is still read', async () => {
+  const json = (o) => ({ status: 200, headers: { 'content-type': 'application/json' }, body: JSON.stringify(o) });
+  const pages = {
+    'https://one.example/llms.txt': md('# One\n\n    curl https://one.example/api/v1/orders\n'),
+    'https://api.one.example/.well-known/oauth-protected-resource': json({ resource: 'https://api.one.example/mcp', authorization_servers: ['https://one.example'] }),
+  };
+  const r = await checkSite('one.example', { get: stub(pages) });
+  assert.ok(r.requests.some((q) => q.url === 'https://api.one.example/.well-known/oauth-protected-resource'));
+  assert.equal(cell(r, 'prm').status, 'partial');
+});
+
+test('extra places to look do not make a read fail "not read": another API host\'s metadata, and a discarded sign-in provider\'s', async () => {
+  const json = (o) => ({ status: 200, headers: { 'content-type': 'application/json' }, body: JSON.stringify(o) });
+  const pages = {
+    'https://one.example/llms.txt': md('# One\n\n    curl https://one.example/api/v1/orders\n'),
+    'https://api.one.example/.well-known/oauth-protected-resource': { status: 503, headers: {}, body: '' },
+  };
+  const r = await checkSite('one.example', { get: stub(pages) });
+  assert.equal(cell(r, 'prm').status, 'fail');
+  // The site's metadata is kept; the provider's that answered 503 is not the check's file.
+  const api = 'https://api.one.example/v1/me';
+  const kept = {
+    [api]: { status: 401, headers: { 'www-authenticate': 'Bearer resource_metadata="https://api.one.example/.well-known/oauth-protected-resource/v1/me"' }, body: '' },
+    'https://api.one.example/.well-known/oauth-protected-resource/v1/me': json({ resource: api, authorization_servers: ['https://clerk.one.example'] }),
+    'https://clerk.one.example/.well-known/oauth-authorization-server': { status: 503, headers: {}, body: '' },
+    'https://one.example/.well-known/oauth-authorization-server': json({ issuer: 'https://one.example', agent_auth: { identity_endpoint: 'https://one.example/agent/identity', identity_types_supported: ['service_auth'] } }),
+  };
+  const r2 = await checkSite('one.example', { api, get: stub(kept) });
+  assert.equal(cell(r2, 'register').status, 'pass');
+  assert.equal(cell(r2, 'limits').status, 'fail');
+});
+
+test('noGuess: a site on a shared host has its own API found, and api.<shared name> is never guessed', async () => {
+  const pages = { 'https://foo.host.example/llms.txt': md('# Foo\n\n    curl https://foo.host.example/api/v1/me\n'), 'https://foo.host.example/api/v1/me': CHALLENGED };
+  const r = await checkSite('foo.host.example', { noGuess: 'shared host', get: stub(pages) });
+  assert.equal(cell(r, 'challenge').status, 'pass');
+  assert.ok(!r.requests.some((q) => q.url.startsWith('https://api.host.example')));
+  const none = await checkSite('foo.host.example', { noGuess: 'foo.host.example is on a shared host', get: stub({}) });
+  assert.equal(cell(none, 'challenge').status, 'skipped');
+  assert.equal(none.total, 6);
+  assert.ok(!none.requests.some((q) => q.url.startsWith('https://api.host.example')));
 });

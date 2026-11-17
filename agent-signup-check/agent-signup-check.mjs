@@ -923,14 +923,16 @@ export function openApiCalls(text, specUrl) {
  *  resource its protected resource metadata names, bare API hosts the prose names, and last
  *  the guess https://api.<registrable domain>/. Only the site's own hosts: a site cannot have
  *  another company's API answer for it. */
-export function apiCandidates(site, { prm = null, prose = [], openapi = [] } = {}) {
+export function apiCandidates(site, { prm = null, prose = [], openapi = [], guess = true } = {}) {
   const found = [];
   const seen = (url) => found.some((c) => trimSlash(c.url) === trimSlash(url));
   const add = (url, source) => {
     if (!url || urlProblem(url) || seen(url)) return;
     try {
       const u = new URL(url);
-      if (!ownHost(u.hostname, site)) return;
+      // The guess is api.<registrable domain>, as in 0.2.5, even for a site on a subdomain
+      // (video.example.com). Everything else must be on the site's own hosts.
+      if (source !== 'guess' && !ownHost(u.hostname, site)) return;
       // The root of the site or of a docs or app host is a page people read, not the API,
       // whoever names it (a description whose server is the home page). The guess is kept.
       const home = (u.hostname === site || u.hostname === registrable(site) || PAGE_HOST.test(u.hostname)) && trimSlash(u.pathname) === '';
@@ -944,7 +946,7 @@ export function apiCandidates(site, { prm = null, prose = [], openapi = [] } = {
   for (const d of documented.filter((x) => !x.read)) add(d.url, d.where);
   const resource = prm && httpsUrl(prm.resource);
   if (resource) add(resource, 'resource metadata');
-  add(`https://api.${registrable(site)}/`, 'guess');
+  if (guess) add(`https://api.${registrable(site)}/`, 'guess');
   // An endpoint before a bare host: an API's root is often a page or a 404, its endpoints ask for a key.
   return [...found.filter((c) => !c.bare), ...found.filter((c) => c.bare)].map(({ url, source }) => ({ url, source }));
 }
@@ -1007,6 +1009,9 @@ export function normalizeSite(input) {
  *   parallel: fetch the independent documents at once (default false)
  *   apiAccept: the Accept header the API needs (default application/json)
  *   skipApi:  a reason the API probe is not run (the API URL itself is then never requested)
+ *   noGuess:  a reason not to guess https://api.<registrable domain>/ (a site on a shared host,
+ *             foo.vercel.app, has no api. host of its own): the API is still found from what the
+ *             site publishes, and when nothing is, the key check is skipped with this reason
  *   signal:   an AbortSignal that stops every request at once
  *   date:     the YYYY-MM-DD a "not read" reason carries (default today, UTC; a replay passes
  *             the date the saved responses were fetched)
@@ -1042,6 +1047,9 @@ export async function checkSite(input, opts = {}) {
   let apiUrl = null;
   let apiSource = null;
   const findApi = !opts.skipApi && !opts.api;
+  // Hosts probed while finding the API that answered, other than the one kept: their metadata
+  // is still read (0.2.5 read the api.<domain> host's whenever it was probed).
+  let otherApiHosts = [];
   if (!opts.skipApi && opts.api && !urlProblem(opts.api)) { apiUrl = opts.api; apiSource = 'named'; }
   const prefetched = new Map();
 
@@ -1098,7 +1106,7 @@ export async function checkSite(input, opts = {}) {
       const r = await fetchOne('openapi', specUrl, 'application/json, application/yaml;q=0.9, */*;q=0.1');
       if (ok(r) && !isHtml(r)) openapi = openApiCalls(r.body, r.finalUrl || specUrl);
     }
-    let candidates = apiCandidates(site, { prose: proseNow, openapi });
+    let candidates = apiCandidates(site, { prose: proseNow, openapi, guess: !opts.noGuess });
     const isEndpoint = (c) => c.source !== 'guess' && trimSlash(new URL(c.url).pathname) !== '';
     // The full docs (llms-full.txt, beside the llms.txt that was read, or where it links one)
     // carry the API reference that a short llms.txt only links to: read when nothing found so
@@ -1111,7 +1119,7 @@ export async function checkSite(input, opts = {}) {
         const r = await fetchOne('llms-full.txt', fullUrl, MD);
         if (ok(r) && !isHtml(r)) {
           proseNow.push(['llms-full.txt', stripBom(r.body)]);
-          candidates = apiCandidates(site, { prose: proseNow, openapi });
+          candidates = apiCandidates(site, { prose: proseNow, openapi, guess: !opts.noGuess });
         }
       }
     }
@@ -1127,9 +1135,10 @@ export async function checkSite(input, opts = {}) {
     // metadata names (read here, and reused for the prm check below). Even one that does not
     // match the URL it came from is a hint (the prm check scores that); only the site's hosts.
     if (candidates.every((c) => c.source === 'guess')) {
+      // (With noGuess, an empty list: the same case.)
       const r = await fetchOne('prm', sitePrm, JSONA);
       prefetched.set(sitePrm, r);
-      candidates = apiCandidates(site, { prm: parseJson(r), prose: proseNow, openapi });
+      candidates = apiCandidates(site, { prm: parseJson(r), prose: proseNow, openapi, guess: !opts.noGuess });
     }
     for (const c of candidates.slice(0, MAX_API_PROBES)) {
       // Keep room for the metadata, x402 and catch-all requests that follow.
@@ -1161,6 +1170,8 @@ export async function checkSite(input, opts = {}) {
       apiUrl = best.url;
       apiSource = best.source;
       for (const t of tried) t.slot.label = t === best ? 'api' : `api tried (${t.source})`;
+      otherApiHosts = [...new Set(tried.filter((t) => t !== best && t.r && typeof t.r.status === 'number' && !blockedReason(t.r)).map((t) => new URL(t.url).origin))]
+        .sort((a, b) => Number(new URL(b).hostname.startsWith('api.')) - Number(new URL(a).hostname.startsWith('api.')));
     }
   }
 
@@ -1185,14 +1196,19 @@ export async function checkSite(input, opts = {}) {
   // well-known path, then the API host's (auth.md Step 1: "the conventional path on the
   // resource server").
   const apiPrm = apiHost ? `${apiHost}/.well-known/oauth-protected-resource` : null;
+  // One more API host's, when finding the API probed another host that answered.
+  const extraHost = otherApiHosts.find((o) => o !== apiHost && o !== `https://${site}`);
+  // An extra place to look, not the check's own file (filtered out of "not read" below), and
+  // only with room left for the requests that follow.
+  const extraPrm = extraHost && budget.left >= 14 ? `${extraHost}/.well-known/oauth-protected-resource` : null;
   let prmR = null;
   let prm = null;
   let prmVia = null;
   let prmOk = false;
   const PRM_LABEL = { 'www-authenticate': 'prm (from 401)', 'well-known': 'prm', 'api-well-known': 'prm (API host)' };
-  for (const [via, url] of [['www-authenticate', rmUrl], ['well-known', sitePrm], ['api-well-known', apiPrm]]) {
+  for (const [via, url, label] of [['www-authenticate', rmUrl], ['well-known', sitePrm], ['api-well-known', apiPrm], ['api-well-known', extraPrm, 'prm (other API host)']]) {
     if (!url || (prmR && prmR.url === url)) continue;
-    const r = prefetched.get(url) || (await fetchOne(PRM_LABEL[via], url, JSONA));
+    const r = prefetched.get(url) || (await fetchOne(label || PRM_LABEL[via], url, JSONA));
     const j = parseJson(r);
     if (!prmR) prmR = r;
     if (j && !prm) { prmR = r; prm = j; prmVia = via; }
@@ -1219,6 +1235,23 @@ export async function checkSite(input, opts = {}) {
     const r = await fetchOne('as-metadata (API host)', `${apiHost}/.well-known/oauth-authorization-server`, JSONA);
     const j = parseJson(r);
     if (j && typeof j.issuer === 'string' && j.issuer) { asR = r; asMeta = j; asIssuerExpected = apiHost; }
+  }
+  // The server the resource metadata names may be a sign-in provider's with no agent_auth
+  // (Clerk's, Auth0's), while the site publishes agent_auth in its own metadata, where
+  // auth.md says to look: read that too, and keep it only when it has agent_auth.
+  const asSiteUrl = `https://${site}/.well-known/oauth-authorization-server`;
+  let asSiteKept = false;
+  if (asVia === 'prm' && !(asMeta && asMeta.agent_auth && typeof asMeta.agent_auth === 'object') && asUrl !== asSiteUrl && budget.left >= 8) {
+    const r = await fetchOne('as-metadata (site)', asSiteUrl, JSONA);
+    const j = parseJson(r);
+    if (j && typeof j.issuer === 'string' && j.issuer && j.agent_auth && typeof j.agent_auth === 'object') {
+      asR = r;
+      asMeta = j;
+      asSiteKept = true;
+      // The site, or the apex of a www site (one metadata document served on both).
+      const apex = `https://${registrable(site)}`;
+      asIssuerExpected = trimSlash(j.issuer) === apex && site === `www.${registrable(site)}` ? apex : `https://${site}`;
+    }
   }
   const agentAuth = asMeta && asMeta.agent_auth && typeof asMeta.agent_auth === 'object' ? asMeta.agent_auth : null;
 
@@ -1268,7 +1301,7 @@ export async function checkSite(input, opts = {}) {
   // The paid resources are the API's, so x402 discovery can sit on the API's own host: asked
   // only when the API's host answered at all (a guessed name that does not exist is skipped).
   const apiHostAnswered = !apiR || !apiR.error || !HOST_FACT(String(apiR.error));
-  if (!x402Ok && apiHost && apiHostAnswered && new URL(x402Url).origin !== apiHost) {
+  if (!x402Ok && apiHost && apiHostAnswered && budget.left > 0 && new URL(x402Url).origin !== apiHost) {
     const r = await fetchOne('x402 discovery (API host)', `${apiHost}/.well-known/x402`, JSONA);
     x402Tried.push(r);
     if (isX402(parseJson(r))) { x402R = r; x402Ok = true; }
@@ -1384,6 +1417,7 @@ export async function checkSite(input, opts = {}) {
   // --- challenge ----------------------------------------------------------------------
   {
     if (opts.skipApi) set('challenge', 'skipped', opts.skipApi);
+    else if (!apiR && findApi && opts.noGuess) set('challenge', 'skipped', String(opts.noGuess));
     else if (!apiR) set('challenge', 'fail', 'No API URL to probe');
     else {
       const ev = { url: apiR.url, source: apiSource, httpStatus: apiR.status ?? null, www_authenticate: (apiR.headers && apiR.headers['www-authenticate']) || null };
@@ -1477,19 +1511,23 @@ export async function checkSite(input, opts = {}) {
     // The API probe the check scored (a probe tried while finding the API and not kept is not
     // this check's answer).
     const api = requests.filter((q) => q.label === 'api' && !blockedReason(q));
-    const as = by('as-metadata');
+    // The site's own authorization server metadata, read only as a second place for agent_auth,
+    // is the check's file only when it was the one kept.
+    // When it was kept, it is the only one: the server the resource metadata named was set aside.
+    const as = asSiteKept ? by('as-metadata (site)') : by('as-metadata').filter((q) => q.label !== 'as-metadata (site)');
     // Prose that went unread: /auth.md when no auth.md was read, llms.txt when no candidate was.
     const prose = [...(authmdText ? [] : by('auth.md')), ...(llmsText ? [] : by('llms.txt'))];
     // The files each check reads for itself (the README's "Passes when" column).
     const feeds = {
       authmd: authmdText ? [] : by('auth.md'),
-      prm: by('prm'),
+      // The other API host's metadata is an extra place to look, not the check's own file.
+      prm: by('prm').filter((q) => q.label !== 'prm (other API host)'),
       // The authorization server's metadata; and, when none of it was read, the resource
       // metadata that would have named the server.
-      register: asMeta ? as : [...as, ...by('prm')],
+      register: asMeta ? as : [...as, ...by('prm').filter((q) => q.label !== 'prm (other API host)')],
       challenge: api,
       // A cap can be in either metadata document (agent_auth.billing, or AAuth budgets).
-      limits: [...as, ...(prm ? [] : by('prm'))],
+      limits: [...as, ...(prm ? [] : by('prm').filter((q) => q.label !== 'prm (other API host)'))],
       // The API's answer, x402 discovery (x402R itself: the budget may have stopped it before
       // it was sent) and agent_auth.billing.
       payment: [...api, x402Tried[0], ...as],
