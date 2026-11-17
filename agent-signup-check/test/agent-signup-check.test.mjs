@@ -1150,7 +1150,7 @@ test('the resource in the site\'s resource metadata is probed first, when it is 
   // Another company's host is never probed as this site's API.
   const elsewhere = { ...prm, body: JSON.stringify({ resource: 'https://api.other.example/', authorization_servers: ['https://one.example'] }) };
   const r2 = await checkSite('one.example', { get: stub({ 'https://one.example/.well-known/oauth-protected-resource': elsewhere }) });
-  assert.ok(!r2.requests.some((q) => q.url.startsWith('https://api.other.example')));
+  assert.ok(!r2.requests.some((q) => new URL(q.url).host === 'api.other.example'));
   assert.equal(r2.apiSource, 'guess');
 });
 
@@ -1441,9 +1441,9 @@ test('noGuess: a site on a shared host has its own API found, and api.<shared na
   const pages = { 'https://foo.host.example/llms.txt': md('# Foo\n\n    curl https://foo.host.example/api/v1/me\n'), 'https://foo.host.example/api/v1/me': CHALLENGED };
   const r = await checkSite('foo.host.example', { noGuess: 'shared host', get: stub(pages) });
   assert.equal(cell(r, 'challenge').status, 'pass');
-  assert.ok(!r.requests.some((q) => q.url.startsWith('https://api.host.example')));
+  assert.ok(!r.requests.some((q) => new URL(q.url).host === 'api.host.example'));
   const none = await checkSite('foo.host.example', { noGuess: 'foo.host.example is on a shared host', get: stub({}) });
   assert.equal(cell(none, 'challenge').status, 'skipped');
   assert.equal(none.total, 6);
-  assert.ok(!none.requests.some((q) => q.url.startsWith('https://api.host.example')));
+  assert.ok(!none.requests.some((q) => new URL(q.url).host === 'api.host.example'));
 });
