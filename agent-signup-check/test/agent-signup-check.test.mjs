@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { checkSite, isPublicAddress, MAX_REQUESTS, normalizeSite, notAnswered, saveEvidence, urlProblem } from '../agent-signup-check.mjs';
+import { apiCandidates, checkSite, documentedApiUrls, openApiCalls, openApiLink, isPublicAddress, MAX_REQUESTS, normalizeSite, notAnswered, saveEvidence, urlProblem } from '../agent-signup-check.mjs';
 import { applyCorrections, loadTargets, md as mdText } from '../build-index.mjs';
 import { loadSite, replay } from '../replay.mjs';
 import { auditDir, bodyOf, HTML_KEEP, redactClientIps, scrubEvidence } from '../scrub.mjs';
@@ -681,11 +681,14 @@ test('a site that redirects every path twice still has its last request, x402 di
   };
   const r = await checkSite('one.example', { api: 'https://api.one.example/v1/me', docs: 'https://docs.one.example/llms.txt', get: twoHops });
   // auth.md 3, llms.txt 3, the API 1, the docs llms.txt 1, metadata on the site 3 + 3 and on the
-  // API host 1 + 1, the catch-all probe 3, x402 3: 22 GETs in 10 requests.
+  // API host 1 + 1, the catch-all probe 3, x402 3 and on the API host 1 (0.2.6): 23 GETs in 11
+  // requests.
   assert.equal(MAX_REQUESTS, 24);
-  assert.equal(sent.length, 10);
+  assert.equal(sent.length, 11);
   assert.ok(sent.includes('https://one.example/.well-known/x402'), sent.join(' '));
-  assert.equal(r.requests.at(-1).label, 'x402 discovery');
+  assert.equal(r.requests.at(-2).label, 'x402 discovery');
+  assert.equal(r.requests.at(-2).status, 404);
+  assert.equal(r.requests.at(-1).label, 'x402 discovery (API host)');
   assert.equal(r.requests.at(-1).status, 404);
   assert.equal(cell(r, 'payment').status, 'fail');
   assert.doesNotMatch(cell(r, 'payment').reason, /request budget/);
@@ -921,7 +924,9 @@ test('a request the budget stopped is not read, whether or not it was started', 
   assert.equal(cell(r, 'payment').status, 'unread');
   assert.match(cell(r, 'payment').reason, /^Not read on \d{4}-\d\d-\d\d: https:\/\/one\.example\/\.well-known\/.* answered with nothing: the request budget ran out first$/);
   // The request that was never started is listed with the rest, so evidence and a replay show it.
-  assert.equal(r.requests.at(-1).label, 'x402 discovery');
+  const x402 = r.requests.find((q) => q.label === 'x402 discovery');
+  assert.equal(x402.error, 'request budget spent');
+  assert.equal(r.requests.at(-1).label, 'x402 discovery (API host)');
   assert.equal(r.requests.at(-1).error, 'request budget spent');
 });
 
@@ -1100,3 +1105,175 @@ test('a weekly run tries a platform once more when a request got no answer, and 
   assert.equal(viaWeekly.doc.results[0].checks.find((c) => c.id === 'markdown').reason, 'Not read on 2026-11-07: https://one.example/llms.txt answered with HTTP 503');
 });
 
+// ---------------------------------------------------------------------------------------
+// 0.2.6: the API found the way an agent finds it, llms.txt on a docs host, x402 on the API host.
+
+const CHALLENGED = SITE_V1['https://api.one.example/v1/me'];
+
+test('with no API URL named, the API an llms.txt calls is probed before the api.<domain> guess', async () => {
+  const pages = {
+    'https://one.example/llms.txt': md('# One\n\n## Quickstart\n\n    curl https://api.one.example/v2/projects -H "Authorization: Bearer $ONE_KEY"\n'),
+    'https://api.one.example/v2/projects': CHALLENGED,
+  };
+  const r = await checkSite('one.example', { get: stub(pages) });
+  assert.equal(cell(r, 'challenge').status, 'pass');
+  assert.equal(cell(r, 'challenge').url, 'https://api.one.example/v2/projects');
+  assert.equal(cell(r, 'challenge').source, 'llms.txt');
+  assert.equal(r.apiSource, 'llms.txt');
+  // An API that asks for a key ends the search: the guess is never sent.
+  assert.ok(!r.requests.some((q) => q.url === 'https://api.one.example/'), r.requests.map((q) => q.url).join(' '));
+});
+
+test('a documented API that does not answer like one moves on, and the best answer is scored', async () => {
+  const pages = {
+    'https://one.example/auth.md': md('# auth.md\n\nAgents call GET https://api.one.example/v1/status first.\n\nPOST https://api.one.example/agent/sign-up\n'),
+    'https://api.one.example/': CHALLENGED,
+  };
+  const r = await checkSite('one.example', { get: stub(pages) });
+  assert.equal(cell(r, 'challenge').status, 'pass');
+  assert.equal(r.apiSource, 'guess');
+  const api = r.requests.filter((q) => q.label.startsWith('api'));
+  assert.deepEqual(api.map((q) => [q.label, q.url]), [
+    ['api tried (auth.md)', 'https://api.one.example/v1/status'],
+    ['api', 'https://api.one.example/'],
+  ]);
+});
+
+test('the resource in the site\'s resource metadata is probed first, when it is on the site\'s own hosts', async () => {
+  const prm = { status: 200, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ resource: 'https://rest.one.example/v3', authorization_servers: ['https://one.example'] }) };
+  const pages = { 'https://one.example/.well-known/oauth-protected-resource': prm, 'https://rest.one.example/v3': CHALLENGED };
+  const r = await checkSite('one.example', { get: stub(pages) });
+  assert.equal(r.apiSource, 'resource metadata');
+  assert.equal(cell(r, 'challenge').status, 'pass');
+  // Read once, for finding the API and for the prm check both.
+  assert.equal(r.requests.filter((q) => q.url === 'https://one.example/.well-known/oauth-protected-resource').length, 1);
+  // Another company's host is never probed as this site's API.
+  const elsewhere = { ...prm, body: JSON.stringify({ resource: 'https://api.other.example/', authorization_servers: ['https://one.example'] }) };
+  const r2 = await checkSite('one.example', { get: stub({ 'https://one.example/.well-known/oauth-protected-resource': elsewhere }) });
+  assert.ok(!r2.requests.some((q) => q.url.startsWith('https://api.other.example')));
+  assert.equal(r2.apiSource, 'guess');
+});
+
+test('a guessed API host that does not exist is a fail, and says where the URL came from', async () => {
+  const r = await checkSite('one.example', { get: stub({ 'https://api.one.example/': { error: 'ENOTFOUND' } }) });
+  assert.equal(cell(r, 'challenge').status, 'fail');
+  assert.equal(cell(r, 'challenge').source, 'guess');
+  assert.equal(r.requests.filter((q) => q.label.startsWith('api')).length, 1);
+});
+
+test('a named API URL is probed as named, with nothing found or guessed around it', async () => {
+  const r = await checkSite('one.example', { api: 'https://api.one.example/v1/me', get: stub(SITE_V1) });
+  assert.equal(r.apiSource, 'named');
+  assert.deepEqual(r.requests.filter((q) => q.label.startsWith('api')).map((q) => q.url), ['https://api.one.example/v1/me']);
+});
+
+test('which prose URLs are an API to call', () => {
+  const text = [
+    'curl https://api.one.example/v1/me -H "Authorization: Bearer $KEY"',
+    'curl -X POST https://api.one.example/v1/things -d "{}"',
+    'curl https://api.one.example/v1/users/{id}',
+    'curl https://docs.one.example/guide.md',
+    'curl https://www.one.example/pricing',
+    'curl https://www.one.example/api/v1/health',
+    'Base URL: https://rest.one.example',
+    'See https://api.one.example/v9/other for more.',
+    'curl https://api.someone-else.example/v1/me',
+    'Base URL: https://api-docs.one.example/',
+  ].join('\n');
+  // Reads first, then any line about calling the API (a write is asked with GET, never sent).
+  assert.deepEqual(documentedApiUrls(text, 'one.example').map((d) => d.url), ['https://api.one.example/v1/me', 'https://www.one.example/api/v1/health', 'https://api.one.example/v1/things', 'https://rest.one.example/']);
+  // A host on a shared name speaks only for itself.
+  assert.deepEqual(documentedApiUrls('curl https://other.host.example/api/v1/me\ncurl https://foo.host.example/api/v1/me', 'foo.host.example').map((d) => d.url), ['https://foo.host.example/api/v1/me']);
+  // A curl continued onto a write is a write.
+  assert.deepEqual(documentedApiUrls('curl https://api.one.example/v1/things \\\n  -X POST -d "{}"', 'one.example'), [{ url: 'https://api.one.example/v1/things', read: false }]);
+  assert.deepEqual(apiCandidates('one.example').map((c) => c.source), ['guess']);
+});
+
+test('llms.txt is also read from the docs host, when the site and its /docs have none', async () => {
+  const r = await checkSite('one.example', { get: stub({ 'https://docs.one.example/llms.txt': md('# One docs\n') }) });
+  assert.equal(cell(r, 'markdown').status, 'pass');
+  assert.equal(cell(r, 'markdown').url, 'https://docs.one.example/llms.txt');
+  // A docs URL the caller names replaces it.
+  const named = await checkSite('one.example', { docs: 'https://one.example/developer/llms.txt', get: stub({}) });
+  assert.ok(!named.requests.some((q) => q.url === 'https://docs.one.example/llms.txt'));
+});
+
+test('x402 discovery is also read on the API host', async () => {
+  const x402 = { status: 200, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ x402Version: 2, resources: ['https://api.one.example/v1/search'] }) };
+  const r = await checkSite('one.example', { api: 'https://api.one.example/v1/me', get: stub({ ...SITE_V1, 'https://api.one.example/.well-known/x402': x402 }) });
+  assert.equal(cell(r, 'payment').status, 'pass');
+  assert.equal(cell(r, 'payment').url, 'https://api.one.example/.well-known/x402');
+});
+
+test('an OpenAPI description the llms.txt links names the API to probe (JSON or YAML)', async () => {
+  const yaml = { status: 200, headers: { 'content-type': 'application/yaml' }, body: 'openapi: 3.0.0\nservers:\n  - url: https://api.one.example\npaths:\n  /emails/{id}:\n    get:\n      summary: x\n  /domains:\n    get:\n      summary: y\n' };
+  const pages = {
+    'https://one.example/llms.txt': md('# One\n\n## OpenAPI spec\n\n- [OpenAPI spec (YAML)](https://one.example/openapi.yaml)\n'),
+    'https://one.example/openapi.yaml': yaml,
+    'https://api.one.example/domains': CHALLENGED,
+  };
+  const r = await checkSite('one.example', { get: stub(pages) });
+  assert.equal(r.apiSource, 'OpenAPI');
+  assert.equal(cell(r, 'challenge').url, 'https://api.one.example/domains');
+  assert.equal(cell(r, 'challenge').status, 'pass');
+  // A path with no GET is not one to probe, even when the next path has one.
+  assert.deepEqual(openApiCalls('openapi: 3.0.0\nservers:\n  - url: https://api.one.example\npaths:\n  /emails:\n    post:\n      summary: x\n  /domains:\n    get:\n      summary: y\n', 'https://one.example/openapi.yaml'), ['https://api.one.example/domains']);
+  assert.deepEqual(openApiCalls('{"openapi":"3.1.0","servers":[{"url":"https://api.one.example/v1"}],"paths":{"/users/{id}":{"get":{}},"/models":{"get":{}}}}', 'https://one.example/openapi.json'), ['https://api.one.example/v1/models']);
+  // Another company's spec, or a server template, gives nothing.
+  assert.equal(openApiLink('[spec](https://other.example/openapi.json)', 'one.example'), null);
+  assert.deepEqual(openApiCalls('{"servers":[{"url":"https://{region}.one.example"}]}', 'https://one.example/openapi.json'), []);
+});
+
+test('an endpoint the prose calls is probed before a bare API host it names', () => {
+  const prose = [['llms.txt', 'Authenticate with a Bearer key against `https://api.one.example`.\n- Send email: `POST https://api.one.example/emails`\n']];
+  assert.deepEqual(apiCandidates('one.example', { prose }).map((c) => c.url), ['https://api.one.example/emails', 'https://api.one.example/']);
+});
+
+test('probes that all miss keep the first as the scored one, labelled api, even from a fetcher that reuses one response', async () => {
+  const shared = { status: 404, headers: {}, body: '' };
+  const pages = { 'https://one.example/llms.txt': md('# One\n\n    curl https://api.one.example/v1/a\n    curl https://api.one.example/v1/b\n') };
+  const r = await checkSite('one.example', { get: async (url) => ({ url, finalUrl: url, hops: [], ...(pages[url] ?? shared) }) });
+  assert.deepEqual(r.requests.filter((q) => q.label.startsWith('api')).map((q) => [q.label, q.url]), [
+    ['api', 'https://api.one.example/v1/a'],
+    ['api tried (llms.txt)', 'https://api.one.example/v1/b'],
+    ['api tried (guess)', 'https://api.one.example/'],
+  ]);
+});
+
+test('the docs host and the API host add no request that the x402 discovery on the site needs', async () => {
+  // The widest shape again, with no docs URL named: every site path costs three GETs.
+  const landing = md('# Welcome\n\nBuild with us.\n');
+  const twoHops = async (url, { budget }) => {
+    const cost = new URL(url).hostname === 'one.example' ? 3 : 1;
+    if (budget.left < cost) { budget.left = 0; return { url, finalUrl: url, hops: [], error: 'request budget spent' }; }
+    budget.left -= cost;
+    const page = url === 'https://api.one.example/v1/me' ? CHALLENGED : url === 'https://one.example/auth.md' ? landing : notFound;
+    return { url, finalUrl: url, hops: [], ...structuredClone(page) };
+  };
+  const r = await checkSite('one.example', { api: 'https://api.one.example/v1/me', get: twoHops });
+  const x402 = r.requests.find((q) => q.label === 'x402 discovery');
+  assert.equal(x402.status, 404, JSON.stringify(r.requests.map((q) => [q.label, q.status ?? q.error])));
+  assert.equal(cell(r, 'payment').status, 'fail');
+});
+
+test('an x402 discovery on the API host that gets no answer leaves a read fail a fail', async () => {
+  const r = await checkSite('one.example', { api: 'https://api.one.example/v1/me', get: stub({ ...SITE_V1, 'https://api.one.example/.well-known/x402': { status: 503, headers: {}, body: '' } }) });
+  assert.equal(cell(r, 'payment').status, 'fail');
+  assert.match(cell(r, 'payment').reason, /not read on .*api\.one\.example\/\.well-known\/x402/);
+  // A guessed API host that does not exist gets no x402 request.
+  const r2 = await checkSite('one.example', { get: stub({ 'https://api.one.example/': { error: 'ENOTFOUND' } }) });
+  assert.ok(!r2.requests.some((q) => q.label === 'x402 discovery (API host)'));
+});
+
+test('when nothing the prose names answers like an API, the resource in the site\'s metadata gets one probe (Fly.io)', async () => {
+  const prm = { status: 200, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ resource: 'https://mcp.one.example/', authorization_servers: ['https://one.example'] }) };
+  const pages = {
+    'https://one.example/llms.txt': md('# One\n\n    curl https://one.example/api/v1/credits\n'),
+    'https://one.example/.well-known/oauth-protected-resource': prm,
+    'https://mcp.one.example/': CHALLENGED,
+  };
+  const r = await checkSite('one.example', { get: stub(pages) });
+  assert.equal(r.apiSource, 'resource metadata');
+  assert.equal(cell(r, 'challenge').status, 'pass');
+  assert.equal(r.requests.filter((q) => q.url === 'https://one.example/.well-known/oauth-protected-resource').length, 1);
+});
