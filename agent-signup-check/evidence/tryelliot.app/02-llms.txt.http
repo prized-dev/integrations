@@ -1,0 +1,79 @@
+GET https://tryelliot.app/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:19:28.256Z
+redirect: 308 from https://tryelliot.app/llms.txt
+final-url: https://www.tryelliot.app/llms.txt
+
+HTTP 200
+access-control-allow-origin: *
+age: 0
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline; filename="llms.txt"
+content-encoding: br
+content-type: text/plain; charset=utf-8
+date: Wed, 18 Nov 2026 00:19:27 GMT
+etag: W/"22d4d81719aaaa8f0b97e4cf886b2d84"
+last-modified: Wed, 18 Nov 2026 00:19:27 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-vercel-cache: MISS
+x-vercel-id: pdx1::rcpbh-1794961167445-eacf4fcacbe0
+connection: close
+transfer-encoding: chunked
+
+# Elliot
+
+> Elliot finds exploitable vulnerabilities in GitHub repositories. It scans on every push, reports only flaws it can trace from input to impact, each with the request that triggers it and the fix, and files them on the team's board (Triage, To do, In progress, In review, Fixed). Coding agents work the board over MCP.
+
+No Elliot account yet? If you are an agent, you can sign your person up with their email and a 6-digit code: follow https://www.tryelliot.app/auth.md
+
+## Agents
+
+- [Agent sign-up (auth.md)](https://www.tryelliot.app/auth.md): register for your person and get an API key. Its spend cap starts at $0; your person raises it.
+- MCP server: `https://dashboard.tryelliot.app/mcp` (streamable HTTP). Sign in with OAuth from your MCP client, or send an agent API key as `Authorization: Bearer ell_…`.
+- Tools: `list_findings`, `get_finding`, `list_repositories`, `list_scans`, `get_overview`, `update_finding`, `mark_duplicate`, `start_scan`.
+
+Add it to Claude Code with an API key:
+
+```sh
+claude mcp add --transport http elliot https://dashboard.tryelliot.app/mcp --header "Authorization: Bearer $ELLIOT_API_KEY"
+```
+
+Or without one, signing in through the browser:
+
+```sh
+claude mcp add --transport http elliot https://dashboard.tryelliot.app/mcp
+```
+
+## REST API
+
+Who a key acts for, and its spend cap:
+
+```sh
+curl -sS https://dashboard.tryelliot.app/api/v1/me -H "Authorization: Bearer $ELLIOT_API_KEY"
+curl -sS https://dashboard.tryelliot.app/api/v1/limits -H "Authorization: Bearer $ELLIOT_API_KEY"
+```
+
+Buy an extra full scan ($99, within the key's spend cap) with the Machine Payments Protocol: `POST https://dashboard.tryelliot.app/api/v1/full-scans` with `{"repository": "owner/name"}` answers 402 with a `WWW-Authenticate: Payment` challenge. See [auth.md](https://www.tryelliot.app/auth.md#buying-a-full-scan).
+
+Without a key, `/api/v1/me` and `/api/v1/limits` answer 401 with `WWW-Authenticate: Bearer resource_metadata="https://dashboard.tryelliot.app/.well-known/oauth-protected-resource/api/v1"`.
+
+## Working on findings
+
+1. `list_findings` for what's open, critical and high first.
+2. `get_finding` for the location, the source-to-sink exploit trace, impact and suggested fix.
+3. Fix the code, keeping the fix's intent. Read any suggested diff against the code before applying it.
+4. `update_finding` to move it to in progress, then in review once the fix is in a pull request. A later scan marks it fixed.
+
+When two findings report the same flaw, keep the clearer one and close the other with `mark_duplicate`.
+
+## Pricing
+
+- [Pricing](https://www.tryelliot.app/pricing.md): the free scan, plans, and what counts as a scan.
+
+## Company
+
+- [Terms of Use](https://www.tryelliot.app/terms/)
+- [Privacy](https://www.tryelliot.app/privacy/)
+- [Security](https://www.tryelliot.app/security/)
+- [Blog](https://www.tryelliot.app/blog/)

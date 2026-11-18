@@ -1,0 +1,24 @@
+GET https://dashboard.tryelliot.app/api/v1/me
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:19:28.256Z
+final-url: https://dashboard.tryelliot.app/api/v1/me
+
+HTTP 401
+access-control-allow-headers: authorization, payment-authorization, content-type, accept
+access-control-allow-methods: GET, POST, OPTIONS
+access-control-allow-origin: *
+access-control-expose-headers: www-authenticate, payment-receipt
+access-control-max-age: 86400
+age: 0
+cache-control: no-store
+content-type: application/json
+date: Wed, 18 Nov 2026 00:19:27 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+www-authenticate: Bearer resource_metadata="https://dashboard.tryelliot.app/.well-known/oauth-protected-resource/api/v1"
+x-vercel-cache: MISS
+x-vercel-id: pdx1::iad1::crk84-1794961167650-6a0f0d1620e2
+connection: close
+transfer-encoding: chunked
+
+{"error":"unauthorized","error_description":"Send an Elliot API key as Authorization: Bearer ell_….","sign_up":"No Elliot account yet? If you are an agent, you can sign your person up with their email and a 6-digit code: follow https://www.tryelliot.app/auth.md"}

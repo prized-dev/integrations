@@ -1,0 +1,225 @@
+GET https://tryelliot.app/auth.md
+user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:19:28.256Z
+redirect: 308 from https://tryelliot.app/auth.md
+final-url: https://www.tryelliot.app/auth.md
+
+HTTP 200
+access-control-allow-origin: *
+age: 0
+cache-control: public, max-age=0, must-revalidate
+content-disposition: inline; filename="auth.md"
+content-encoding: br
+content-type: text/markdown; charset=utf-8
+date: Wed, 18 Nov 2026 00:19:27 GMT
+etag: W/"0d952e76f542836c1e8bff31830968d0"
+last-modified: Wed, 18 Nov 2026 00:19:27 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-vercel-cache: MISS
+x-vercel-id: pdx1::w9qhp-1794961167244-7af87492dd24
+connection: close
+transfer-encoding: chunked
+
+# auth.md
+
+You are an agent. Elliot supports **agentic registration** ([auth.md](https://github.com/workos/auth.md)) with one method, `service_auth`: register with your person's email, they sign in to Elliot and type a 6-digit code you give them, then you collect an API key. The key acts as your person in one Elliot workspace, on the MCP server and the REST API.
+
+Elliot finds exploitable vulnerabilities in GitHub repositories and files each one as a finding on the team's board. People read about it at https://www.tryelliot.app.
+
+## Rules
+
+- Register only for the person you work for, when they ask, with their own email address.
+- The code goes from you to your person. They type it into the Elliot page they open; they give it to nobody else.
+- The API key is a credential. Keep it where your person says, out of repositories, logs and command arguments.
+- Before you register, tell your person the key starts with a $0 spend cap, which only they can raise (Spend cap, below).
+- Read prices from https://www.tryelliot.app/pricing.md. Quote none from memory.
+
+## Step 1: Discover
+
+The API answers a call with no key with a 401 that points at its resource metadata:
+
+```http
+GET https://dashboard.tryelliot.app/api/v1/me
+
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Bearer resource_metadata="https://dashboard.tryelliot.app/.well-known/oauth-protected-resource/api/v1"
+```
+
+- Protected resource metadata: https://dashboard.tryelliot.app/.well-known/oauth-protected-resource/api/v1
+- Authorization server metadata, with the `agent_auth` block: https://dashboard.tryelliot.app/.well-known/oauth-authorization-server
+
+In `agent_auth`: `identity_endpoint` is https://dashboard.tryelliot.app/api/agent/identity, `claim_endpoint` is https://dashboard.tryelliot.app/api/agent/identity/claim, and `identity_types_supported` is `["service_auth"]`. The `token_endpoint` at the top level answers the claim grant.
+
+## Step 2: Register
+
+```sh
+curl -sS -X POST https://dashboard.tryelliot.app/api/agent/identity \
+  -H 'Content-Type: application/json' \
+  -d '{"type": "service_auth", "login_hint": "maya@yourcompany.com", "agent_name": "Claude Code"}'
+```
+
+`agent_name` is how Elliot labels you on the claim page and the Agents page. `scope` is optional, space-separated, from `findings:read findings:write scans:run` (all three by default; `findings:read` always).
+
+Response (200):
+
+```json
+{
+  "registration_id": "reg_…",
+  "registration_type": "service_auth",
+  "claim_url": "https://dashboard.tryelliot.app/api/agent/identity/claim",
+  "claim_token": "clm_…",
+  "claim_token_expires": "2026-11-18T19:00:00.000Z",
+  "post_claim_scopes": ["findings:read", "findings:write", "scans:run"],
+  "claim": {
+    "user_code": "123456",
+    "expires_in": 600,
+    "verification_uri": "https://dashboard.tryelliot.app/agent/claim?t=cla_…",
+    "interval": 5
+  },
+  "limits": {"spend": {"cap": {"currency": "USD", "value": "0.00"}, "spent": {"currency": "USD", "value": "0.00"}, "period": "total", "resets_at": null}}
+}
+```
+
+The answer is the same whether or not the address already has an Elliot account. Hold `claim_token` in memory until Step 4.
+
+## Step 3: Hand off to your person
+
+Send them the link and the code in one message:
+
+> Open this link, sign in to Elliot (or create an account) as maya@yourcompany.com, and enter this code: **123456**
+> https://dashboard.tryelliot.app/agent/claim?t=cla_…
+
+On that page they sign in with the address you registered, confirm their email if the account is new, pick or create a workspace, choose what you may do, and type the code. Five wrong codes, or ten minutes, end the code. Ask for a fresh one:
+
+```sh
+curl -sS -X POST https://dashboard.tryelliot.app/api/agent/identity/claim \
+  -H 'Content-Type: application/json' \
+  -d '{"claim_token": "clm_…", "email": "maya@yourcompany.com"}'
+```
+
+It answers with a new `claim_attempt` block (`user_code`, `verification_uri`). The registration itself lasts 24 hours; after that, `claim_expired` (410) means register again.
+
+## Step 4: Poll for the key
+
+Every `interval` seconds:
+
+```sh
+curl -sS -X POST https://dashboard.tryelliot.app/api/auth/oauth2/token \
+  -d grant_type=urn:workos:agent-auth:grant-type:claim \
+  -d claim_token=clm_…
+```
+
+- `{"error": "authorization_pending"}`: your person hasn't entered the code yet. Keep polling.
+- `{"error": "slow_down"}`: wait 5 seconds more between polls.
+- `{"error": "expired_token"}`: the code expired. Get a fresh one (Step 3).
+- `{"error": "invalid_grant"}`: the key was already collected, the registration was revoked, or it expired. Register again.
+
+Once they confirm:
+
+```json
+{
+  "access_token": "ell_…",
+  "token_type": "Bearer",
+  "scope": "findings:read findings:write scans:run",
+  "limits": {"spend": {"cap": {"currency": "USD", "value": "0.00"}, "spent": {"currency": "USD", "value": "0.00"}, "period": "total", "resets_at": null}}
+}
+```
+
+`access_token` is an API key. It is returned once and lasts until it is revoked. There is no refresh step.
+
+## Step 5: Use the key
+
+The MCP server is where the work happens: list findings, read the exploit trace and fix, move findings along the board, start scans.
+
+```sh
+claude mcp add --transport http elliot https://dashboard.tryelliot.app/mcp --header "Authorization: Bearer $ELLIOT_API_KEY"
+```
+
+Any MCP client works the same way: streamable HTTP at https://dashboard.tryelliot.app/mcp with the key as a bearer token.
+
+The REST API:
+
+```sh
+curl -sS https://dashboard.tryelliot.app/api/v1/me -H "Authorization: Bearer $ELLIOT_API_KEY"
+curl -sS https://dashboard.tryelliot.app/api/v1/limits -H "Authorization: Bearer $ELLIOT_API_KEY"
+```
+
+`/api/v1/me` names your person, the workspace, your scopes and the MCP URL.
+
+A new workspace has no repositories yet. Your person connects GitHub once, in the browser: https://dashboard.tryelliot.app/onboarding. Elliot then runs the workspace's free scan.
+
+## Spend cap
+
+Every key has a spend cap for its whole life (`period: total`). It starts at $0. Your person sets it on the Agents page, https://dashboard.tryelliot.app/agents. A payment never raises it.
+
+- At any cap, the key reads and updates findings and starts the scans the workspace already has: its free scan, or the scans its plan includes each month.
+- Within the cap, it also starts scans past the plan's monthly scans ($1 each, billed on the workspace's invoice; `start_scan` says when a scan is billed; it counts against the cap from when it starts, and one that fails is given back) and buys extra full scans ($99 each, paid by you, below).
+- Choosing or changing a plan is for a person, from Billing in the dashboard.
+
+`GET /api/v1/limits` returns the cap and what the key has spent:
+
+```json
+{"limits": {"spend": {"cap": {"currency": "USD", "value": "25.00"}, "spent": {"currency": "USD", "value": "3.00"}, "period": "total", "resets_at": null}}}
+```
+
+Past the cap, the API refuses with HTTP 402 and a `billing` object, and no payment challenge:
+
+```json
+{
+  "error": "spend_cap_reached",
+  "error_description": "A full scan is $99.00 and this key has $22.00 left under its spend cap. …",
+  "billing": {"reason": "spend_cap_reached", "url": "https://dashboard.tryelliot.app/agents", "pricing_uri": "https://www.tryelliot.app/pricing.md"},
+  "limits": {"spend": {"cap": {"currency": "USD", "value": "25.00"}, "spent": {"currency": "USD", "value": "3.00"}, "period": "total", "resets_at": null}}
+}
+```
+
+On a 402 with `billing`, stop that action, tell your person the reason, and give them `billing.url` as it is. `spend_cap_reached` means they raise the cap there, or do it themselves. `plan_required` means the workspace needs a plan; `billing.url` is its Billing page. Signing up again gives a key with a $0 cap.
+
+## Buying a full scan
+
+An extra full scan reviews a whole repository again, outside the plan's monthly scans. It needs a paid plan, a key from a workspace owner or admin with `scans:run`, and $99 left under the cap. You pay with the [Machine Payments Protocol](https://mpp.dev), by card through Stripe (a Shared Payment Token).
+
+```sh
+curl -sS -X POST https://dashboard.tryelliot.app/api/v1/full-scans \
+  -H "Authorization: Bearer $ELLIOT_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"repository": "acme/api"}'
+```
+
+1. Without a payment, it answers 402 with `WWW-Authenticate: Payment …`: method `stripe`, intent `charge`, $99.00 USD, bound to this repository and key.
+2. Pay it with your MPP client and send the same request again, with the credential in `Payment-Authorization` (the challenge's `header` parameter says so). Your key stays in `Authorization`.
+3. It answers 201 with the queued scan, a `Payment-Receipt` header and your new `limits`. The receipt's `reference` is the Stripe PaymentIntent.
+
+`repository` is the full name (`owner/name`), the name, or the id from `list_repositories`. Tell your person what you bought.
+
+## Revocation
+
+- Your person revokes the key on the Agents page: https://dashboard.tryelliot.app/agents. The next call with it gets a 401.
+- You revoke it yourself (RFC 7009):
+
+```sh
+curl -sS -X POST https://dashboard.tryelliot.app/api/auth/oauth2/revoke -d token=ell_…
+```
+
+A key also stops working when your person leaves the workspace.
+
+## Errors
+
+| Code | Where | What to do |
+| --- | --- | --- |
+| `anonymous_not_enabled` | `/api/agent/identity` | Elliot registers agents for a person. Use `service_auth`. |
+| `issuer_not_enabled` | `/api/agent/identity` | `identity_assertion` isn't accepted. Use `service_auth`. |
+| `invalid_request` | `/api/agent/identity` | Fix the body: `type` and a valid `login_hint`. |
+| `rate_limited` (429) | `/api/agent/identity` | Too many open sign-ups for this address. Finish one first. |
+| `invalid_claim_token` | `/api/agent/identity/claim` | Register again. |
+| `claimed_or_in_flight` | `/api/agent/identity/claim` | Already confirmed. Poll the token endpoint. |
+| `claim_expired` (410) | `/api/agent/identity/claim` | Register again. |
+| `authorization_pending`, `slow_down`, `expired_token`, `invalid_grant` | token endpoint | See Step 4. |
+| `invalid_token` (401) | `/mcp`, `/api/v1` | The key was revoked. Ask your person, then register again if they want. |
+| `spend_cap_reached` (402) | `/mcp`, `/api/v1` | See Spend cap. Give your person `billing.url`. |
+| `plan_required` (402) | `/mcp`, `/api/v1` | The workspace needs a plan. Give your person `billing.url`. |
+| `forbidden` (403) | `/api/v1/full-scans` | Only a workspace owner or admin's key buys full scans. |
+| `payments_unavailable` (503) | `/api/v1/full-scans` | Ask your person to buy it from Billing in the dashboard. |
+
+Docs for agents: https://www.tryelliot.app/llms.txt
