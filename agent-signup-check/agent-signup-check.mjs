@@ -40,7 +40,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import zlib from 'node:zlib';
 
-export const VERSION = '0.2.6';
+export const VERSION = '0.2.7';
 export const USER_AGENT = `PrizedAgentSignupCheck/${VERSION} (+https://prized.dev/agent-signup-check; read-only GET)`;
 export const MAX_BYTES = 1024 * 1024;
 export const TIMEOUT_MS = 8000;
@@ -768,6 +768,16 @@ export function ownHost(host, site) {
 const READ_LINE = /\bcurl\b|\bGET\s{1,10}`?https:\/\/|\bfetch\(\s{0,4}['"`]https:|\brequests\.get\(|\bhttpx\.get\(|\baxios\.get\(|\bhttp\.get\(/i;
 const WRITE_LINE = /(?:-X|--request)(?:\s{0,3}|=)['"]?(?:POST|PUT|PATCH|DELETE)\b|\s(?:-d|--data(?:-raw|-binary|-urlencode)?|-F|--form)[\s=]|\bmethod['"]?\s{0,4}[:=]\s{0,4}['"](?:POST|PUT|PATCH|DELETE)\b/i;
 const API_LINE = /\b(?:POST|PUT|PATCH|DELETE)\s{1,10}`?https:\/\/|\bcurl\b|\bfetch\(|\brequests\.\w{3,6}\(|\bhttpx\.|\baxios\b|\bbase[ _-]?url\b|\bapi[ _-]?base\b|\bapi[ _-]?(?:host|endpoint|url|origin)\b|\bapi[ _-]?keys?\b|\bbearer\b|\bauthenticat\w*|\brest api\b/i;
+// A read line that reads with a call (curl, fetch, requests.get): every URL on it is read. One
+// that reads only by naming GET reads the URL right after the GET, not the others it mentions.
+// A URL right after POST, PUT, PATCH or DELETE is a write wherever it is (telnyx.com's auth.md:
+// "`GET https://.../.well-known/oauth-authorization-server` ... `identity_endpoint`
+// (`POST https://api.telnyx.com/v2/bot_signup`)" reads the metadata, it does not read the sign-up).
+const READ_CALL = /\bcurl\b|\bfetch\(\s{0,4}['"`]https:|\brequests\.get\(|\bhttpx\.get\(|\baxios\.get\(|\bhttp\.get\(/i;
+const AFTER_GET = /\bGET\s{1,10}`?$/i;
+// Upper case only: an English "post" or "delete" before a link is not a method. Also `POST`,
+// **POST** and "POST:" before the URL.
+const AFTER_WRITE = /\b(?:POST|PUT|PATCH|DELETE)[`*]{0,2}:?\s{1,10}[`*]{0,2}$/;
 
 /** Lines with a command continued by a trailing backslash joined into one ("curl \\" then
  *  "  --request GET \\" then "  --url https://..."), at most eight lines each. */
@@ -787,15 +797,18 @@ function logicalLines(text) {
 /** A URL cut back to the part of its path before the first placeholder segment
  *  (/accounts/${ID}/usage, /users/{id}, /users/:id, /users/<id> are /accounts and /users),
  *  without its query (where a placeholder is usually the key: ?api_key=$KEY); null when nothing
- *  past the host is left. */
-function beforePlaceholder(url) {
+ *  past the host is left. A path with no placeholder is kept as written, its trailing slash
+ *  too (sentry.io's /api/0/projects/ is a 404 without it). */
+function beforePlaceholder(url, cut = false) {
   let u;
   try { u = new URL(url.replace(/[?#].*$/, '')); } catch { return null; }
+  const segs = u.pathname.split('/').slice(1);
   const kept = [];
-  for (const seg of u.pathname.split('/').slice(1)) {
+  for (const seg of segs) {
     if (/[{}<>$]|%7B|%7D|%3C|%3E|%24|^:/i.test(seg)) break;
     kept.push(seg);
   }
+  if (!cut && kept.length === segs.length) return u.pathname === '/' ? null : `${u.origin}${u.pathname}`;
   const path = trimSlash(`/${kept.join('/')}`);
   return path ? `${u.origin}${path}` : null;
 }
@@ -807,35 +820,44 @@ const NOT_API_PATH = new RegExp(String.raw`\.(?:md|txt|html?|png|jpe?g|svg|gif|w
 const PAGE_HOST = /^(?:www|docs|api-?docs|devdocs|reference|developers?|dev|blog|help|support|status|app|dashboard|console|platform|portal|learn|community)\./i;
 const API_PATH = /^\/(?:api|v\d{1,2}(?:\.\d{1,2})?|rest|graphql)(?:\/|$)/i;
 
-/** API URLs prose calls, on the site's own hosts, as {url, read}: those on lines that read (a
- *  curl with no write, a GET) first, then those on any line about calling the API. A command
- *  continued with a backslash is read whole, so a write on a later line counts. At most four. */
+/** API URLs prose calls, on the site's own hosts, as {url, read}: those a line reads (a curl
+ *  with no write, the URL right after a GET) first, then the others on those lines, then those
+ *  on any line about calling the API. A command continued with a backslash is read whole, so a
+ *  write on a later line counts. At most four. */
 export function documentedApiUrls(text, site) {
-  const out = [];
-  if (!text) return out;
+  if (!text) return [];
   const reads = [];
+  const onReadLines = [];
   const others = [];
   const logical = logicalLines(text);
   logical.forEach((line, i) => {
     // A call's options can follow on the next lines with no backslash (fetch(url, {\n method: 'POST'):
     // a write there makes the call a write.
     const call = /\b(?:fetch|axios|request)\s{0,2}\(|\{\s*$/.test(line) ? logical.slice(i, i + 4).join(' ') : line;
-    if (READ_LINE.test(line) && !WRITE_LINE.test(call)) reads.push(line);
-    else if (API_LINE.test(line)) others.push(line);
-  });
-  for (const [line, read] of [...reads.map((l) => [l, true]), ...others.map((l) => [l, false])]) {
-    for (const { url: found } of urlsInLine(line)) {
-      // A template (/users/{id}, <ID>, ${TOKEN}) is called at its fixed part.
-      const url = beforePlaceholder(found);
+    const readLine = READ_LINE.test(line) && !WRITE_LINE.test(call);
+    if (!readLine && !API_LINE.test(line)) return;
+    const byCall = readLine && READ_CALL.test(line);
+    for (const { url: found, index } of urlsInLine(line)) {
+      // A template (/users/{id}, <ID>, ${TOKEN}) is called at its fixed part. A URL that ends
+      // where a <placeholder> starts was cut there too (/v1_1/<cloud_name>/resources).
+      const url = beforePlaceholder(found, line[index + found.length] === '<');
       if (!url) continue;
       let u;
       try { u = new URL(url); } catch { continue; }
       const host = u.hostname.toLowerCase();
-      if (!ownHost(host, site) || NOT_API_PATH.test(u.pathname)) continue;
+      if (!ownHost(host, site) || NOT_API_PATH.test(trimSlash(u.pathname))) continue;
       if ((host === site || host === registrable(site) || PAGE_HOST.test(host)) && !API_PATH.test(u.pathname)) continue;
       const clean = `${u.origin}${u.pathname}${u.search}`;
-      if (!out.some((d) => d.url === clean)) out.push({ url: clean, read });
+      const before = line.slice(Math.max(0, index - 16), index);
+      const read = readLine && !AFTER_WRITE.test(before) && (byCall || AFTER_GET.test(before));
+      (read ? reads : readLine ? onReadLines : others).push(clean);
+    }
+  });
+  const out = [];
+  for (const [list, read] of [[reads, true], [onReadLines, false], [others, false]]) {
+    for (const url of list) {
       if (out.length >= 4) return out;
+      if (!out.some((d) => trimSlash(d.url) === trimSlash(url))) out.push({ url, read });
     }
   }
   return out;
@@ -1050,6 +1072,8 @@ export async function checkSite(input, opts = {}) {
   // Hosts probed while finding the API that answered, other than the one kept: their metadata
   // is still read (0.2.5 read the api.<domain> host's whenever it was probed).
   let otherApiHosts = [];
+  // The probes, when finding the API reached none that answered like one (see below).
+  let apiNotFound = null;
   if (!opts.skipApi && opts.api && !urlProblem(opts.api)) { apiUrl = opts.api; apiSource = 'named'; }
   const prefetched = new Map();
 
@@ -1164,14 +1188,22 @@ export async function checkSite(input, opts = {}) {
       if (!triedUrl(conv)) await probe(conv, 'common endpoint');
     }
     if (tried.length) {
-      // The best answer; on a tie (none of them an API's), the first, the most authoritative.
-      const best = tried.reduce((a, b) => (b.rank > a.rank ? b : a));
+      // The best answer; on a tie (none of them an API's), the first, the most authoritative,
+      // unless one met a bot wall: a wall is an answer about the API, a 404 elsewhere is not.
+      let best = tried.reduce((a, b) => (b.rank > a.rank ? b : a));
+      if (best.rank === 0) best = tried.find((t) => blockedReason(t.r)) || best;
       apiR = best.r;
       apiUrl = best.url;
       apiSource = best.source;
       for (const t of tried) t.slot.label = t === best ? 'api' : `api tried (${t.source})`;
       otherApiHosts = [...new Set(tried.filter((t) => t !== best && t.r && typeof t.r.status === 'number' && !blockedReason(t.r)).map((t) => new URL(t.url).origin))]
         .sort((a, b) => Number(new URL(b).hostname.startsWith('api.')) - Number(new URL(a).hostname.startsWith('api.')));
+      // Nothing found answered like an API turning away a client with no key: a 404 or a 405 (a
+      // URL the docs POST to, asked with GET), a page, a public 200, a name that does not resolve.
+      // The check did not find the API, which says nothing about how the API answers. A bot wall
+      // is an answer (the check's question names one); no answer at all (a 5xx, a 429, a network
+      // failure) is left to the "not read" rule below.
+      if (best.rank === 0 && !blockedReason(best.r) && !notAnswered(best.r)) apiNotFound = tried;
     }
   }
 
@@ -1422,7 +1454,14 @@ export async function checkSite(input, opts = {}) {
     else {
       const ev = { url: apiR.url, source: apiSource, httpStatus: apiR.status ?? null, www_authenticate: (apiR.headers && apiR.headers['www-authenticate']) || null };
       const v = apiVerdict(apiR);
-      set('challenge', v.status, v.reason, ev);
+      if (apiNotFound) {
+        // Not read, not a fail: counted in the total like any check not read, with the verdict
+        // the scored probe would have had kept beside it.
+        const said = (r) => (r && r.error ? r.error : r && typeof r.status === 'number' ? `HTTP ${r.status}` : 'no answer');
+        const what = (t) => `${clipText(t.url, 100)} (${said(t.r)})`;
+        const more = apiNotFound.length > 4 ? ` and ${apiNotFound.length - 4} more` : '';
+        set('challenge', 'unread', `No API that asks for a key was found on this site's hosts; name an API URL that needs a key (--api) to check it. Tried ${apiNotFound.slice(0, 4).map(what).join(', ')}${more}`, { ...ev, answered: 'no API that asks for a key', was: v.status, wasReason: v.reason });
+      } else set('challenge', v.status, v.reason, ev);
     }
   }
 
@@ -1547,7 +1586,8 @@ export async function checkSite(input, opts = {}) {
     proseOnly.challenge = requests.filter((q) => q.label.startsWith('api tried'));
     for (const c of CHECKS) {
       const cell = results[c.id];
-      if (!cell || cell.status === 'pass' || cell.status === 'skipped') continue;
+      // A key check that found no API is already not read, with its own reason.
+      if (!cell || cell.status === 'pass' || cell.status === 'skipped' || cell.status === 'unread') continue;
       const miss = unanswered(feeds[c.id])[0];
       if (miss && cell.status === 'fail') {
         results[c.id] = {
