@@ -1,0 +1,25 @@
+GET https://api.twilio.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:03.546Z
+final-url: https://api.twilio.com/.well-known/x402
+
+HTTP 404
+content-type: application/problem+json
+content-length: 198
+connection: close
+date: Wed, 18 Nov 2026 00:47:03 GMT
+x-twilio-error-code: 20404
+twilio-request-id: RQ2ff79bf4a6ddfef2b3ace94e5a3ef98d
+twilio-request-duration: 0.000
+x-home-region: us1
+x-api-domain: api.twilio.com
+strict-transport-security: max-age=31536000
+x-cache: Error from cloudfront
+via: 1.1 4b63c15595b60dbcca6db6aeea9d3d72.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P5
+x-amz-cf-id: YcP14_xyihJnCaIzm5p-DL7hvwypS42pSlG61qye5JB5eQgt_-4JNA==
+x-powered-by: AT-5000
+x-shenanigans: none
+vary: Origin
+
+{"code":20404,"detail":"The requested resource /.well-known/x402 was not found","instance":"/.well-known/x402","status":404,"title":"Not Found","type":"https://www.twilio.com/docs/api/errors/20404"}

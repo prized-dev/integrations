@@ -1,10 +1,10 @@
 GET https://api.x.ai/v1/models
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:50.860Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:57.662Z
 final-url: https://api.x.ai/v1/models
 
 HTTP 401
-date: Mon, 16 Nov 2026 20:58:47 GMT
+date: Wed, 18 Nov 2026 00:45:54 GMT
 content-type: application/json
 content-length: 77
 connection: close
@@ -14,6 +14,6 @@ access-control-allow-origin: *
 access-control-expose-headers: *
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a5b96a6fbd7e4b01-PDX
+cf-ray: a5c2f47f2bae121f-PDX
 
 {"code":"unauthenticated:no-credentials","error":"No credentials presented."}

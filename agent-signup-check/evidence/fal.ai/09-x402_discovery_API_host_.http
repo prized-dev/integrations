@@ -1,0 +1,19 @@
+GET https://api.fal.ai/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:05.766Z
+final-url: https://api.fal.ai/.well-known/x402
+
+HTTP 404
+age: 0
+cache-control: public, max-age=0, must-revalidate
+content-encoding: br
+content-type: application/json
+date: Wed, 18 Nov 2026 00:46:05 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-vercel-cache: MISS
+x-vercel-id: pdx1::iad1::2ztn8-1794962765378-23548e36451a
+connection: close
+transfer-encoding: chunked
+
+{"error":{"type":"not_found","message":"Route not found"}}

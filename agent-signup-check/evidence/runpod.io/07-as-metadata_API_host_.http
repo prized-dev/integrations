@@ -1,6 +1,6 @@
 GET https://rest.runpod.io/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:27.708Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:37.745Z
 final-url: https://rest.runpod.io/.well-known/oauth-authorization-server
 
 error: ENOTFOUND

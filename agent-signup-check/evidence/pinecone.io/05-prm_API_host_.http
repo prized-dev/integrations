@@ -1,15 +1,16 @@
 GET https://api.pinecone.io/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:39.268Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:51.223Z
 final-url: https://api.pinecone.io/.well-known/oauth-protected-resource
 
 HTTP 401
 content-type: application/json
-x-pinecone-api-version: 2024-04
-x-cloud-trace-context: 6ee4ac38c4cfadfa14893958f9e3a649
-date: Mon, 16 Nov 2026 20:59:37 GMT
-server: Google Frontend
 content-length: 84
+x-pinecone-api-version: 2024-04
+date: Wed, 18 Nov 2026 00:46:49 GMT
+server: Google Frontend
+traceparent: 00-6e6d8c9b143c8704ce6e4b324163e350-eac68752ec9212d7-00
+x-cloud-trace-context: 6e6d8c9b143c8704ce6e4b324163e350/16917357840489910999
 via: 1.1 google
 alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
 connection: close

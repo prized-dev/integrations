@@ -1,0 +1,27 @@
+GET https://resend.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:55.555Z
+final-url: https://resend.com/.well-known/oauth-authorization-server
+
+HTTP 200
+cache-control: public, max-age=300
+cf-cache-status: DYNAMIC
+cf-ray: a5c2f5f1da99bffc-SJC
+content-encoding: br
+content-security-policy: default-src 'self';    connect-src 'self' data: https://api.liveblocks.io wss://api.liveblocks.io/ https://react-tweet.vercel.app https://js.hs-scripts.com https://unpkg.com https://app.posthog.com https://fonts.gstatic.com https://us.i.posthog.com https://browser-intake-us5-datadoghq.com https://*.mintlify.com https://*.mintlifytrieve.com https://hcaptcha.com https://*.hcaptcha.com https://resend-status.com https://*.resend.com https://resend.com https://resend-attachments.s3.amazonaws.com https://resend-attachments.s3.us-east-1.amazonaws.com https://cdn.resend.app https://*.resend.app https://vercel.live https://fpjs.io https://*.fpjs.io https://maps.googleapis.com https://img.logo.dev https://rsnd-contact-uploads-961341540729.s3.us-east-1.amazonaws.com https://rsnd-suppression-uploads-961341540729.s3.us-east-1.amazonaws.com https://rsnd-inbox-draft-attachments-961341540729.s3.us-east-1.amazonaws.com;    script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.hs-scripts.com https://js.stripe.com https://cdn.lr-in-prod.com https://*.mintlify.com https://hcaptcha.com https://*.hcaptcha.com https://vercel.live https://js.hs-analytics.net https://va.vercel-scripts.com https://us-assets.i.posthog.com https://*.resend.com https://resend.com https://fpjs.io https://*.fpjs.io https://fpnpmcdn.net https://maps.googleapis.com;    worker-src 'self' blob:;    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://*.cloudfront.net https://hcaptcha.com https://*.hcaptcha.com;    img-src 'self' blob: data: https://www.gravatar.com https://i2.wp.com https://mintlify.b-cdn.net https://mintlify.s3.us-west-1.amazonaws.com https://*;    font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com https://fonts.cdnfonts.com https://use.typekit.net https://*.cloudfront.net data:;    frame-src 'self' https://www.youtube.com https://js.stripe.com https://vercel.live https://hcaptcha.com https://*.hcaptcha.com;    media-src 'self' https://mintlify.s3.us-west-1.amazonaws.com https://mintcdn.com https://cdn.resend.com;    object-src 'none';    base-uri 'self';    form-action 'self' https://github.com https://accounts.google.com https://sb.resend.com;    frame-ancestors 'self';    block-all-mixed-content;    upgrade-insecure-requests;
+content-type: application/json; charset=utf-8
+date: Wed, 18 Nov 2026 00:46:53 GMT
+document-policy: js-profiling
+etag: W/"419-lL8nMOYVCD7uglKC2LfnlNbpi7E"
+permissions-policy: autoplay=(self "https://www.youtube.com"), geolocation=(), microphone=(), camera=()
+referrer-policy: origin-when-cross-origin
+server: Vercel
+strict-transport-security: max-age=63072000; includeSubDomains
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-vercel-cache: MISS
+x-vercel-id: pdx1::tgbzb-1794962813641-78412b28c485
+connection: close
+transfer-encoding: chunked
+
+{"issuer":"https://api.resend.com","authorization_endpoint":"https://api.resend.com/oauth/authorize","token_endpoint":"https://api.resend.com/oauth/token","jwks_uri":"https://api.resend.com/.well-known/jwks.json","registration_endpoint":"https://api.resend.com/oauth/register","revocation_endpoint":"https://api.resend.com/oauth/revoke","scopes_supported":["full_access","emails:send"],"response_types_supported":["code"],"response_modes_supported":["query"],"grant_types_supported":["authorization_code","refresh_token"],"token_endpoint_auth_methods_supported":["none","client_secret_basic","client_secret_post","private_key_jwt"],"token_endpoint_auth_signing_alg_values_supported":["RS256","PS256","ES256"],"revocation_endpoint_auth_methods_supported":["none","client_secret_basic","client_secret_post","private_key_jwt"],"revocation_endpoint_auth_signing_alg_values_supported":["RS256","PS256","ES256"],"code_challenge_methods_supported":["S256"],"client_id_metadata_document_supported":true,"authorization_response_iss_parameter_supported":true}

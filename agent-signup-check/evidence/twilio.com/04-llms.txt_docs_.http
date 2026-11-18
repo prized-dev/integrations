@@ -1,26 +1,26 @@
 GET https://www.twilio.com/docs/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:53.233Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:03.546Z
 final-url: https://www.twilio.com/docs/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=UTF-8
 transfer-encoding: chunked
 connection: close
-date: Mon, 16 Nov 2026 20:59:49 GMT
+date: Wed, 18 Nov 2026 00:46:58 GMT
 server: istio-envoy
 x-envoy-decorator-operation: docs-site.docs-site.svc.cluster.local:3000/*
 cache-control: public, s-maxage=86400, stale-while-revalidate=86400
 accept-ranges: bytes
-last-modified: Mon, 16 Nov 2026 19:44:37 GMT
-etag: W/"5e574-1a1e5e3d888"
+last-modified: Wed, 18 Nov 2026 00:04:38 GMT
+etag: W/"5e574-1a1ebf841f0"
 content-encoding: gzip
-x-envoy-upstream-service-time: 4
+x-envoy-upstream-service-time: 3
 vary: Accept-Encoding
-via: 1.1 8502ceae0080b3523f89d1a518a99726.cloudfront.net (CloudFront)
+via: 1.1 1f941fcf288b6d0259a0f708c955afae.cloudfront.net (CloudFront)
 x-cache: Miss from cloudfront
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: u2q2Ew6r3oNRlmdLs0BUGP2wns21bH4fTGT4FPMZ_5YvftRiynFcAg==
+x-amz-cf-id: okPvukkSG2TQ3Nd6ajPurlLw7NWeS39eaXW74UevejmZBdOQPhuAeA==
 
 # Twilio Documentation
 

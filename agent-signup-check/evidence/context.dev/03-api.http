@@ -1,23 +1,23 @@
 GET https://api.context.dev/v1/brand/search?query=prized
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:13.829Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:25.434Z
 final-url: https://api.context.dev/v1/brand/search?query=prized
 
 HTTP 401
-date: Mon, 16 Nov 2026 21:00:10 GMT
+date: Wed, 18 Nov 2026 00:47:22 GMT
 content-type: application/json; charset=utf-8
 content-length: 293
 connection: close
-cf-ray: a5b96c779f168e5e-LAX
+cf-ray: a5c2f6a78cb6d82e-PDX
 cf-cache-status: DYNAMIC
 server: cloudflare
 strict-transport-security: max-age=31536000; includeSubDomains
 vary: Origin, Accept-Encoding
 access-control-expose-headers: X-Context-ZDR,X-Request-Id
-x-request-id: 7578c517-db9b-4589-b3ce-adc064fcea34
+x-request-id: 3cec6f51-28ea-4886-b92d-521ef8dbda29
 speculation-rules: "/cdn-cgi/speculation"
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=c8cr3v0PTmX1RyazhSJBl6NjSd04O4G%2FIFJu4qz0O%2ByvH3T7YO2tkUQzc8bI7GNURkigx5NdAXkIQ8tdGa6LnskRDl%2F5fhjt2UgBoGkwQSRiHYXYt7Dioqc1OsSg9JjzEA%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=0Kj97slTDpXoBaBCoKYWaKrmfT6%2FDyWibHTgw%2FPl30Fqr07JKE%2FyawmKAvhgXTfcFPcN%2BZttYhxf1ZY%2FTbryQq44nYUS%2FuU386IAhFezdr0FtuphhjJZ8VUVygWhYxcklQ%3D%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 alt-svc: h3=":443"; ma=86400
 
-{"message":"Unauthorized: No API key provided, please create one at context.dev and include it in the request header under [Authorization: Bearer <your-api-key>] (no brackets). You can read more at docs.context.dev","error_code":"NOT_FOUND","request_id":"7578c517-db9b-4589-b3ce-adc064fcea34"}
+{"message":"Unauthorized: No API key provided, please create one at context.dev and include it in the request header under [Authorization: Bearer <your-api-key>] (no brackets). You can read more at docs.context.dev","error_code":"NOT_FOUND","request_id":"3cec6f51-28ea-4886-b92d-521ef8dbda29"}

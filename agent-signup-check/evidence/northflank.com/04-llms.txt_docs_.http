@@ -1,6 +1,6 @@
 GET https://northflank.com/docs/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:10.102Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:18.843Z
 final-url: https://northflank.com/docs/llms.txt
 
 HTTP 200
@@ -8,16 +8,16 @@ connection: close
 content-length: 78943
 x-powered-by: Express
 content-type: text/markdown
-x-envoy-upstream-service-time: 425
+x-envoy-upstream-service-time: 462
 server: istio-envoy
 via: 1.1 varnish, 1.1 varnish
 accept-ranges: bytes
 age: 0
-date: Mon, 16 Nov 2026 20:59:07 GMT
-x-served-by: cache-lhr-egll1980052-LHR, cache-bfi-kbfi7400073-BFI
+date: Wed, 18 Nov 2026 00:46:15 GMT
+x-served-by: cache-lhr-egll1980095-LHR, cache-bfi-krnt7300032-BFI
 x-cache: HIT, MISS
 x-cache-hits: 2, 0
-x-timer: S1794862747.125503,VS0,VE130
+x-timer: S1794962775.155913,VS0,VE132
 strict-transport-security: max-age=31557600
 
 # Northflank Documentation

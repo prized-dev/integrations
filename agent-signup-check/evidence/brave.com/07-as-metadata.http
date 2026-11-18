@@ -1,6 +1,6 @@
 GET https://brave.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:09.762Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:22.187Z
 redirect: 301 from https://brave.com/.well-known/oauth-authorization-server
 final-url: https://brave.com/.well-known/oauth-authorization-server/
 
@@ -8,7 +8,7 @@ HTTP 404
 content-type: text/html
 transfer-encoding: chunked
 connection: close
-date: Mon, 16 Nov 2026 17:30:14 GMT
+date: Wed, 18 Nov 2026 00:30:09 GMT
 server: AmazonS3
 last-modified: Mon, 16 Nov 2026 03:59:45 GMT
 etag: W/"5578d2becb2671aca000c9d80c043f3f"
@@ -25,11 +25,11 @@ onion-location: https://brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd
 content-encoding: br
 vary: Accept-Encoding
 x-cache: Error from cloudfront
-via: 1.1 474071c4c0fe7769ce8d0b73ccd104b0.cloudfront.net (CloudFront)
-x-amz-cf-pop: HIO52-P4
+via: 1.1 d6d79c6ce458e6a5e742324f60eb7482.cloudfront.net (CloudFront)
+x-amz-cf-pop: SEA73-P3
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: tHJqew4XRhnSwujc51E1xJOLTo0IiqgSiGPMUJzUg3v2y79N0qcgcQ==
-age: 12594
+x-amz-cf-id: GjsnSuKq275rO9j9i5LxuXFwUEUc-2EAG1emt9RCaurFHZyr2_Lg0Q==
+age: 1031
 
 <!DOCTYPE html>
 <html lang="en">

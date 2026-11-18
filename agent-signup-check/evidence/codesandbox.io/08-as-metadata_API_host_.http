@@ -1,20 +1,20 @@
 GET https://api.codesandbox.io/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:18.776Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:28.466Z
 final-url: https://api.codesandbox.io/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:59:18 GMT
+date: Wed, 18 Nov 2026 00:46:27 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
 cache-control: max-age=0, private, must-revalidate
 server: cloudflare
-x-request-id: GOiiKzr2Tzc9Evzv7X8C
+x-request-id: GOj9JRcusy3SxUABDmJh
 via: 1.1 google
 alt-svc: h3=":443"; ma=86400
 cf-cache-status: DYNAMIC
 content-encoding: br
-cf-ray: a5b96b2d3e89efd6-PDX
+cf-ray: a5c2f54bbc88ca84-PDX
 
 {"data":null,"success":false,"errors":["Route not found"]}

@@ -1,23 +1,23 @@
 GET https://browser-use.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:02.709Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:14.617Z
 final-url: https://browser-use.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 12753
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:59:59 GMT
+date: Wed, 18 Nov 2026 00:47:10 GMT
 etag: W/"ec7aa9f665d827bba349d5aa69402108"
-last-modified: Mon, 16 Nov 2026 17:27:26 GMT
+last-modified: Wed, 18 Nov 2026 00:47:10 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::l5fxw-1794862799354-2f74d10ff9e8
+x-vercel-cache: MISS
+x-vercel-id: pdx1::rghwk-1794962830250-7feaf95a4c5d
 connection: close
 transfer-encoding: chunked
 

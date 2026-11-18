@@ -1,24 +1,24 @@
 GET https://paddle.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:21.886Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:34.391Z
 redirect: 301 from https://paddle.com/.well-known/oauth-protected-resource
 final-url: https://www.paddle.com/.well-known/oauth-protected-resource
 
 HTTP 404
-age: 2
+age: 1
 cache-control: public,max-age=0,must-revalidate
-cache-status: "Netlify Durable"; fwd=stale; ttl=-6978; stored, "Netlify Edge"; fwd=miss; fwd-status=404; stored
+cache-status: "Netlify Durable"; fwd=stale; ttl=-26847; stored, "Netlify Edge"; fwd=miss; fwd-status=404; stored
 content-encoding: br
 content-security-policy: base-uri 'self'; default-src 'self' blob: data: https:; worker-src 'self' blob:; frame-ancestors 'self' *.paddle.com https://app.storyblok.com https://app-eu.storyblok.com https://www.profitwell.com https://paddle.enablix.com https://paddle.letter.ai; media-src 'self' blob: data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.contentsquare.net app.contentsquare.com d-code.liadm.com *.vector.co *.usbrowserspeed.com *.visualwebsiteoptimizer.com app.vwo.com tag.unifyintent.com unifyintent.com *.stackadapt.com *.twitter.com *.iubenda.com connect.facebook.net *.cloudfront.net *.hsforms.com googleads.g.doubleclick.net *.hs-analytics.net *.hs-banner.com *.hs-scripts.com *.hsforms.net *.hsleadflows.net *.licdn.com *.ads-twitter.com *.doubleclick.net *.google-analytics.com *.google.com *.googleadservices.com *.googletagmanager.com *.gstatic.com *.redditstatic.com *.youtube.com dnf20ypvrc856.cloudfront.net dta8euw1l8gvs.cloudfront.net prod-assets.sequelvideo.com cdn.dreamdata.cloud cdn.drda.io bzrcdn.openai.com https:; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' *.contentsquare.net app.contentsquare.com *.mdb.tools d-code.liadm.com *.vector.co *.usbrowserspeed.com *.visualwebsiteoptimizer.com app.vwo.com tag.unifyintent.com unifyintent.com *.youtube.com *.wistia.net *.wistia.com *.licdn.com *.ads-twitter.com *.doubleclick.net *.redditstatic.com *.profitwell.com *.bing.com js.hubspot.com *.hs-analytics.net *.hs-banner.com *.hsadspixel.net *.clarity.ms *.hs-scripts.com connect.facebook.net *.rudderlabs.com *.influ2.com *.stackadapt.com *.metadata.io *.clearbitscripts.com *.clearbitjs.com *.kustomerapp.com *.qualified.com *.iubenda.com *.netlify.app *.hsforms.net *.googletagmanager.com *.googleapis.com *.mplat-ppcprotect.com status.io dnf20ypvrc856.cloudfront.net dta8euw1l8gvs.cloudfront.net tracking.g2crowd.com cdn.jsdelivr.net/npm/hockeystack@latest/hockeystack.min.js cdn.jsdelivr.net/npm/hockeystack@latest/hockeystack-qualified.min.js cdn.jsdelivr.net/gh/trysurface/ js.stripe.com/v3/ cdnjs.cloudflare.com/polyfill/ prod-assets.sequelvideo.com cdn.dreamdata.cloud cdn.drda.io bzrcdn.openai.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' *.visualwebsiteoptimizer.com app.vwo.com *.cloudfront.net *.youtube.com dnf20ypvrc856.cloudfront.net dta8euw1l8gvs.cloudfront.net s3.amazonaws.com https: blob:; object-src 'none'; font-src 'self' *.cloudfront.net *.gstatic.com data: https:; connect-src 'self' *.contentsquare.net *.contentsquare.com api.vector.co *.visualwebsiteoptimizer.com app.vwo.com dnf20ypvrc856.cloudfront.net dta8euw1l8gvs.cloudfront.net *.qualified.com cdn.dreamdata.cloud bzr.openai.com bzrcdn.openai.com ws: wss: https: data:; img-src 'self' *.contentsquare.net *.visualwebsiteoptimizer.com app.vwo.com useruploads.vwo.io *.googletagmanager.com *.ctfassets.net *.reddit.com *.cloudfront.net *.ytimg.com *.adsymptotic.com *.ads.linkedin.com t.co *.hubspot.com *.facebook.com *.google.com *.youtube.com *.ggpht.com dnf20ypvrc856.cloudfront.net dta8euw1l8gvs.cloudfront.net chart.googleapis.com wingify-assets.s3.amazonaws.com bzr.openai.com data: https:; frame-src 'self' csxd.paddle.com csxd.www.paddle.com i.liadm.com paddle.chilipiper.com *.visualwebsiteoptimizer.com app.vwo.com www.googletagmanager.com *.youtube.com www.youtube-nocookie.com *.wistia.net *.wistia.com *.hsforms.com paddle.kustomer.help *.kustomerapp.com *.qualified.com app.netlify.com *.doubleclick.net www.slideshare.net dnf20ypvrc856.cloudfront.net dta8euw1l8gvs.cloudfront.net js.stripe.com *.sequel.io *.withsurface.com www.google.com recaptcha.google.com www.recaptcha.net; upgrade-insecure-requests
 content-type: text/html
-date: Mon, 16 Nov 2026 21:00:18 GMT
+date: Wed, 18 Nov 2026 00:47:30 GMT
 netlify-vary: query=q|form|status|_storyblok|_storyblok_release
 referrer-policy: strict-origin-when-cross-origin
 server: Netlify
 strict-transport-security: max-age=31536000; includeSubDomains
 vary: Accept-Encoding
 x-content-type-options: nosniff
-x-nf-request-id: 01M7K2J8GKEVZ9TGJV8C1X7AJF
+x-nf-request-id: 01M7P1YZV27YEG8Q35D5DSNH9B
 x-xss-protection: 1; mode=block
 connection: close
 transfer-encoding: chunked

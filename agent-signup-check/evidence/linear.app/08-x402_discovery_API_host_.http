@@ -1,0 +1,32 @@
+GET https://api.linear.app/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:41.666Z
+final-url: https://api.linear.app/.well-known/x402
+
+HTTP 404
+date: Wed, 18 Nov 2026 00:47:41 GMT
+content-type: text/html; charset=utf-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a5c2f71a5c9128b9-PDX
+cf-cache-status: DYNAMIC
+cache-control: private, no-cache, no-store, must-revalidate
+server: cloudflare
+vary: Accept-Encoding
+via: 1.1 google
+alt-svc: h3=":443"; ma=86400
+content-security-policy: default-src 'none'
+x-content-type-options: nosniff
+x-request-id: a5c2f71afb03cb73-PDX
+content-encoding: br
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /.well-known/x402</pre>
+</body>
+</html>

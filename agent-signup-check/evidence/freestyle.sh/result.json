@@ -1,12 +1,13 @@
 {
  "site": "freestyle.sh",
- "checkedAt": "2026-11-16T20:59:20.194Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:46:31.748Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 1,
  "partial": 1,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -33,6 +34,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://api.freestyle.sh/web/v1/deployments",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -68,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 201,
+   "ms": 217,
    "redirects": 1
   },
   {
@@ -78,7 +80,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 140,
+   "ms": 239,
    "redirects": 1
   },
   {
@@ -88,7 +90,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 113,
+   "ms": 103,
    "redirects": 0
   },
   {
@@ -98,7 +100,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 197,
+   "ms": 191,
    "redirects": 1
   },
   {
@@ -118,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 157,
+   "ms": 141,
    "redirects": 1
   },
   {
@@ -128,7 +130,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 99,
+   "ms": 104,
    "redirects": 0
   },
   {
@@ -138,8 +140,18 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 236,
+   "ms": 137,
    "redirects": 1
+  },
+  {
+   "label": "x402 discovery (API host)",
+   "url": "https://api.freestyle.sh/.well-known/x402",
+   "finalUrl": "https://api.freestyle.sh/.well-known/x402",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 99,
+   "redirects": 0
   }
  ]
 }

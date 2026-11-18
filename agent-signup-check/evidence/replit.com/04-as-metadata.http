@@ -1,14 +1,14 @@
 GET https://replit.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:30.934Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:42.960Z
 final-url: https://replit.com/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Mon, 16 Nov 2026 20:59:30 GMT
+date: Wed, 18 Nov 2026 00:46:42 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5b96b788f67c4ac-PDX
+cf-ray: a5c2f5a86afa6289-PDX
 cf-cache-status: DYNAMIC
 cache-control: no-store, max-age=0
 etag: W/"301-Q10XQyJKNlO0h0UojJxfvvozdsA"
@@ -17,7 +17,7 @@ x-powered-by: Express
 strict-transport-security: max-age=31536000; preload
 vary: Accept-Encoding
 x-edge-backend: istio-prod
-x-envoy-upstream-service-time: 3
+x-envoy-upstream-service-time: 4
 x-frame-options: DENY
 content-encoding: br
 alt-svc: h3=":443"; ma=86400

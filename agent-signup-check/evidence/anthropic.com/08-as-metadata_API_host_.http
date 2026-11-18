@@ -1,15 +1,15 @@
 GET https://api.anthropic.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:42.772Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:49.316Z
 final-url: https://api.anthropic.com/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:58:41 GMT
+date: Wed, 18 Nov 2026 00:45:47 GMT
 transfer-encoding: chunked
 connection: close
 server: cloudflare
 x-robots-tag: none
 content-security-policy: default-src 'none'; frame-ancestors 'none'
 cf-cache-status: DYNAMIC
-cf-ray: a5b96a4b4e51dab7-PDX
+cf-ray: a5c2f4569f1cb8b9-PDX
 

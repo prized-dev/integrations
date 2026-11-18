@@ -1,28 +1,28 @@
 GET https://app.daytona.io/api/sandbox
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:04.439Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:13.612Z
 final-url: https://app.daytona.io/api/sandbox
 
 HTTP 401
 content-type: application/json; charset=utf-8
 content-length: 134
 connection: close
-date: Mon, 16 Nov 2026 20:59:01 GMT
-etag: W/"86-2O1VR1WBiYLzq431G24t2yB57Q8"
+date: Wed, 18 Nov 2026 00:46:10 GMT
+etag: W/"86-5/l3ZMasCR7GGmWBxi2DcIPEpGE"
 x-powered-by: Express
 vary: Origin
-x-daytona-api-version: v0.232.1
+x-daytona-api-version: v0.233.1
 x-ratelimit-limit-failed-auth: 20
 x-ratelimit-remaining-failed-auth: 19
 x-ratelimit-reset-failed-auth: 10
 x-cache: Error from cloudfront
-via: 1.1 eaf1511e9ff939c81556fcd5535328f6.cloudfront.net (CloudFront)
+via: 1.1 c72ffb889138b44aea59adaf65f8164e.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P3
-x-amz-cf-id: E5890OcOp3scLbzAm3gIYPlwRuzCYXF0FhY8Bg7K1gvfOF4NH3QqlQ==
+x-amz-cf-id: ba3DDLaTEvlVAgDvWQYtUfo4bz4RNXFvezG8cY9Yna1NDuIiFSGamg==
 x-frame-options: DENY
 referrer-policy: strict-origin-when-cross-origin
 content-security-policy: frame-ancestors 'none'
 x-content-type-options: nosniff
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 
-{"path":"/api/sandbox","timestamp":"2026-11-16T20:59:01.777Z","statusCode":401,"error":"Unauthorized","message":"Invalid credentials"}
+{"path":"/api/sandbox","timestamp":"2026-11-18T00:46:10.728Z","statusCode":401,"error":"Unauthorized","message":"Invalid credentials"}

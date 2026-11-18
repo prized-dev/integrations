@@ -1,17 +1,17 @@
 GET https://api.turso.tech/v1/organizations
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:35.811Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:47.231Z
 final-url: https://api.turso.tech/v1/organizations
 
 HTTP 401
 content-type: application/json; charset=utf-8
 content-length: 56
 connection: close
-date: Mon, 16 Nov 2026 20:59:33 GMT
+date: Wed, 18 Nov 2026 00:46:44 GMT
 x-cache: Error from cloudfront
-via: 1.1 26c05953458c39f3149d18defede0790.cloudfront.net (CloudFront)
+via: 1.1 d4998a91f031605ae65d0bc2f0798e54.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: vvdxvMti2KnA6b556vVYS4zA0k-BsvwvAJdptlryr-pGWbEAyfuDYw==
+x-amz-cf-id: YW8PgRTb7VAoPMd1pfbt0apxDIvQwSucOd4xilOMeGrpcnyWiHUd1A==
 
 {"error":"token contains an invalid number of segments"}

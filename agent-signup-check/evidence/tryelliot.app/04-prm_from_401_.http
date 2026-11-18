@@ -1,0 +1,20 @@
+GET https://dashboard.tryelliot.app/.well-known/oauth-protected-resource/api/v1
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:46.997Z
+final-url: https://dashboard.tryelliot.app/.well-known/oauth-protected-resource/api/v1
+
+HTTP 200
+access-control-allow-origin: *
+age: 0
+cache-control: public, max-age=300
+content-encoding: br
+content-type: application/json
+date: Wed, 18 Nov 2026 00:47:44 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-vercel-cache: MISS
+x-vercel-id: pdx1::iad1::sfd54-1794962864783-47bc45d0bb00
+connection: close
+transfer-encoding: chunked
+
+{"resource":"https://dashboard.tryelliot.app/api/v1","resource_name":"Elliot","resource_logo_uri":"https://www.tryelliot.app/favicon.svg","resource_documentation":"https://www.tryelliot.app/llms.txt","authorization_servers":["https://dashboard.tryelliot.app"],"scopes_supported":["findings:read","findings:write","scans:run"],"bearer_methods_supported":["header"]}

@@ -1,0 +1,25 @@
+GET https://api.polar.sh/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:30.357Z
+final-url: https://api.polar.sh/.well-known/x402
+
+HTTP 404
+date: Wed, 18 Nov 2026 00:47:30 GMT
+content-type: application/json
+content-length: 26
+connection: close
+cache-control: private, no-store
+content-encoding: br
+polar-version: 2026-10
+rndr-id: db6295ea-d3ff-4dc2
+server: cloudflare
+strict-transport-security: max-age=63072000; includeSubDomains
+vary: Accept-Encoding
+x-render-origin-server: uvicorn
+cf-cache-status: DYNAMIC
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=G4JCUMpdWzdc4kf8I%2FuTfLfw9jSeRo4uE17WE4cW%2BHwebU%2FdARI5lq%2FC188eRNdw3EmOzMBMjOlivXEDdPMiBv1rnWXJ0jgYrlivgn5EJXG8DzUxEfJDpTiVvs%2FR5A%3D%3D"}]}
+cf-ray: a5c2f6d44a10ad76-PDX
+alt-svc: h3=":443"; ma=86400
+
+{"detail":"Not Found"}

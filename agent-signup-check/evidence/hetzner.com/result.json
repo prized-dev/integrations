@@ -1,12 +1,13 @@
 {
  "site": "hetzner.com",
- "checkedAt": "2026-11-16T20:59:32.607Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:46:43.516Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 1,
  "partial": 1,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -33,6 +34,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://api.hetzner.cloud/v1/servers",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -55,7 +57,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.hetzner.com/llms.txt",
    "heading": "# Hetzner Docs",
-   "bytes": 89293,
+   "bytes": 89279,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -68,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 909,
+   "ms": 959,
    "redirects": 1
   },
   {
@@ -78,7 +80,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 649,
+   "ms": 664,
    "redirects": 1
   },
   {
@@ -88,7 +90,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 712,
+   "ms": 715,
    "redirects": 0
   },
   {
@@ -98,7 +100,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=UTF-8",
-   "ms": 909,
+   "ms": 957,
    "redirects": 0
   },
   {
@@ -108,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 637,
+   "ms": 654,
    "redirects": 2
   },
   {
@@ -118,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 517,
+   "ms": 525,
    "redirects": 0
   },
   {
@@ -128,7 +130,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 650,
+   "ms": 664,
    "redirects": 2
   },
   {
@@ -138,7 +140,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 516,
+   "ms": 521,
    "redirects": 0
   },
   {
@@ -148,8 +150,18 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 623,
+   "ms": 658,
    "redirects": 2
+  },
+  {
+   "label": "x402 discovery (API host)",
+   "url": "https://api.hetzner.cloud/.well-known/x402",
+   "finalUrl": "https://api.hetzner.cloud/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 525,
+   "redirects": 0
   }
  ]
 }

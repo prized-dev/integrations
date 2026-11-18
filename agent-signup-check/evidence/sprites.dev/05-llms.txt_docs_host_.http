@@ -1,0 +1,27 @@
+GET https://docs.sprites.dev/llms.txt
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:42.110Z
+redirect: 301 from https://docs.sprites.dev/llms.txt
+final-url: https://docs.fly.io/sprites/llms.txt
+
+HTTP 404
+date: Wed, 18 Nov 2026 00:46:39 GMT
+content-type: text/plain; charset=UTF-8
+transfer-encoding: chunked
+connection: close
+cf-ray: a5c2f5952af6b298-PDX
+cf-cache-status: EXPIRED
+cache-control: public, max-age=0, must-revalidate
+content-encoding: br
+server: cloudflare
+strict-transport-security: max-age=63072000
+vary: accept-encoding
+content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
+x-frame-options: DENY
+x-mintlify-client-version: 0.0.4177
+x-vercel-cache: MISS
+x-vercel-id: iad1::iad1::m9jnl-1794962799006-8fd7d040570f
+x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
+x-version: dpl_HhUetB7eHHDAmK9T1Teip38TgFx9
+alt-svc: h3=":443"; ma=86400
+

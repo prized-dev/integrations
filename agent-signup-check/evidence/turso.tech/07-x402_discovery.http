@@ -1,6 +1,6 @@
 GET https://turso.tech/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:35.811Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:47.231Z
 final-url: https://turso.tech/.well-known/x402
 
 HTTP 404
@@ -9,7 +9,7 @@ cache-control: private, no-cache, no-store, max-age=0, must-revalidate
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/html; charset=utf-8
-date: Mon, 16 Nov 2026 20:59:35 GMT
+date: Wed, 18 Nov 2026 00:46:46 GMT
 link: </_next/static/media/723e11e5093b8e80.p.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2"
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -18,7 +18,7 @@ x-frame-options: DENY
 x-matched-path: /[...not-found]
 x-powered-by: Next.js
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::5c5k7-1794862775386-d47642266d1b
+x-vercel-id: pdx1::iad1::gkklb-1794962806397-5bcd794b17ee
 connection: close
 transfer-encoding: chunked
 

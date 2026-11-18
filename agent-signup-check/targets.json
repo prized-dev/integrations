@@ -702,5 +702,11 @@
   "category": "Dev tools",
   "site": "cloudinary.com",
   "api": "https://api.cloudinary.com/v1_1/demo/resources/image"
+ },
+ {
+  "name": "Elliot",
+  "category": "Dev tools",
+  "site": "tryelliot.app",
+  "api": "https://dashboard.tryelliot.app/api/v1/me"
  }
 ]

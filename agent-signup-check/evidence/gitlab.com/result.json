@@ -1,12 +1,13 @@
 {
  "site": "gitlab.com",
- "checkedAt": "2026-11-16T21:00:26.139Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:47:37.874Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 1,
  "partial": 2,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -38,6 +39,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://gitlab.com/api/v4/user",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -60,7 +62,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.gitlab.com/llms.txt",
    "heading": "# GitLab Documentation",
-   "bytes": 87620,
+   "bytes": 87804,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -73,7 +75,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 28,
+   "ms": 32,
    "redirects": 1
   },
   {
@@ -83,7 +85,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 30,
+   "ms": 25,
    "redirects": 1
   },
   {
@@ -93,7 +95,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 198,
+   "ms": 168,
    "redirects": 0
   },
   {
@@ -103,7 +105,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 75,
+   "ms": 53,
    "redirects": 0
   },
   {
@@ -113,7 +115,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 50,
+   "ms": 43,
    "redirects": 0
   },
   {
@@ -123,7 +125,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 48,
+   "ms": 32,
    "redirects": 0
   },
   {
@@ -133,7 +135,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 31,
+   "ms": 26,
    "redirects": 1
   }
  ]

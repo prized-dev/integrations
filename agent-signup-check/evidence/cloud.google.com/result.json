@@ -1,12 +1,13 @@
 {
  "site": "cloud.google.com",
- "checkedAt": "2026-11-16T20:59:26.125Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:46:36.703Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 1,
  "partial": 0,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -33,6 +34,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://cloudresourcemanager.googleapis.com/v1/projects",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": "Bearer realm=\"https://accounts.google.com/\"",
    "status": "pass",
@@ -70,7 +72,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 258,
+   "ms": 234,
    "redirects": 0
   },
   {
@@ -80,7 +82,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 257,
+   "ms": 221,
    "redirects": 0
   },
   {
@@ -90,7 +92,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=UTF-8",
-   "ms": 50,
+   "ms": 51,
    "redirects": 0
   },
   {
@@ -100,7 +102,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 349,
+   "ms": 309,
    "redirects": 1
   },
   {
@@ -110,7 +112,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 250,
+   "ms": 289,
    "redirects": 0
   },
   {
@@ -120,7 +122,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 68,
+   "ms": 50,
    "redirects": 0
   },
   {
@@ -130,7 +132,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 259,
+   "ms": 225,
    "redirects": 0
   },
   {
@@ -140,7 +142,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 72,
+   "ms": 48,
    "redirects": 0
   },
   {
@@ -150,7 +152,17 @@
    "status": 200,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 234,
+   "ms": 231,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery (API host)",
+   "url": "https://cloudresourcemanager.googleapis.com/.well-known/x402",
+   "finalUrl": "https://cloudresourcemanager.googleapis.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=UTF-8",
+   "ms": 49,
    "redirects": 0
   }
  ]

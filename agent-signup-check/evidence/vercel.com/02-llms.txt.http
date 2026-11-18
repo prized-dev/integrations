@@ -1,18 +1,18 @@
 GET https://vercel.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:05.561Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:13.361Z
 final-url: https://vercel.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 342
+age: 1827
 cache-control: public, max-age=0, s-maxage=3600, stale-while-revalidate=86400
 content-disposition: inline
 content-encoding: br
-content-security-policy: default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live;script-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live va.vercel-scripts.com 'unsafe-eval' 'unsafe-inline' https://vercel.live https://*.fides-cdn.ethyca.com chrome-extension://* blob: cdp.vercel.com https://news.google.com https://app.cal.com;style-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live 'unsafe-inline' https://vercel.live;img-src 'self' blob: data: vercel.com *.vercel.sh vercel.live https://vercel.live https://vercel.com https://assets.vercel.com https://image.mux.com *.vercel.com https://images.ctfassets.net https://7nyt0uhk7sse4zvn.public.blob.vercel-storage.com https://avatars.githubusercontent.com https://i.ytimg.com https://pbs.twimg.com https://www.gstatic.com/images/branding/;media-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live blob: data: https://*.mux.com 7nyt0uhk7sse4zvn.public.blob.vercel-storage.com videos.ctfassets.net;connect-src data: 'self' vercel.com *.vercel.com *.vercel.sh vercel.live https://vercel.live wss://ws-us3.pusher.com www.vercel-status.com *.ingest.sentry.io *.ingest.us.sentry.io https://*.fides-cdn.ethyca.com wss://*.vercel.com *.codesandbox.io https://*.mux.com cdp.vercel.com https://news.google.com https://*.contentful.com https://react-tweet.vercel.app;font-src 'self' vercel.live https://vercel.live https://assets.vercel.com *.vercel.sh;child-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live https://www.youtube-nocookie.com https://news.google.com https://vercel.cal.com https://*.codesandbox.io;worker-src 'self' blob:;frame-ancestors 'self' https://vercel.com https://app.contentful.com https://*.contentful.com https://*.vercel.sh https://*.vercel.com https://claude.ai https://37a30e4bfcf9dbabb336cfdd75e343b1.claudemcpcontent.com https://ac6127567836815e3d8be55c5ee20681.claudemcpcontent.com;
+content-security-policy: default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live;script-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live va.vercel-scripts.com 'unsafe-eval' 'unsafe-inline' https://vercel.live https://*.fides-cdn.ethyca.com chrome-extension://* blob: cdp.vercel.com https://news.google.com;style-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live 'unsafe-inline' https://vercel.live;img-src 'self' blob: data: vercel.com *.vercel.sh vercel.live https://vercel.live https://vercel.com https://assets.vercel.com https://image.mux.com *.vercel.com https://images.ctfassets.net https://7nyt0uhk7sse4zvn.public.blob.vercel-storage.com https://avatars.githubusercontent.com https://i.ytimg.com https://pbs.twimg.com https://www.gstatic.com/images/branding/;media-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live blob: data: https://*.mux.com 7nyt0uhk7sse4zvn.public.blob.vercel-storage.com videos.ctfassets.net;connect-src data: 'self' vercel.com *.vercel.com *.vercel.sh vercel.live https://vercel.live wss://ws-us3.pusher.com www.vercel-status.com *.ingest.sentry.io *.ingest.us.sentry.io https://*.fides-cdn.ethyca.com wss://*.vercel.com *.codesandbox.io https://*.mux.com cdp.vercel.com https://news.google.com https://*.contentful.com https://react-tweet.vercel.app;font-src 'self' vercel.live https://vercel.live https://assets.vercel.com *.vercel.sh;child-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live https://www.youtube-nocookie.com https://news.google.com https://*.codesandbox.io;worker-src 'self' blob:;frame-ancestors 'self' https://vercel.com https://app.contentful.com https://*.contentful.com https://*.vercel.sh https://*.vercel.com https://claude.ai https://37a30e4bfcf9dbabb336cfdd75e343b1.claudemcpcontent.com https://ac6127567836815e3d8be55c5ee20681.claudemcpcontent.com;
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:59:03 GMT
-etag: W/"5d3e0d7d7db5a66d0c7f29c962ebe49a"
+date: Wed, 18 Nov 2026 00:46:10 GMT
+etag: W/"4f20d58a025fa3f1d5b4027c1b6035fe"
 feature-policy: fullscreen 'self'; camera 'none'
 referrer-policy: origin-when-cross-origin
 server: Vercel
@@ -22,16 +22,16 @@ x-content-type-options: nosniff
 x-dns-prefetch-control: on
 x-download-options: noopen
 x-frame-options: DENY
-x-matched-path: /flg~eyJhbGciOiJIUzI1NiJ9._f7-_f79_f7-_v7-_v7-_v39_f7-_v7-_v79_v7-_f39_v79_v79_v7-_yJhbGxvd2VkIg.Pm46dzRv_axui8cmyeahci-7WEvcQ5XpVaQeVLwoXmo/llms.txt
+x-matched-path: /flg~eyJhbGciOiJIUzI1NiJ9._f7-_f79_v7-_v79_v7-_v79_f3-_v7-_v7-_v7-_f79_v79_v79_v7-_yJhbGxvd2VkIg.ZfwOra5hSH1gl6Os_3I2-Bhf9mz3zzx2nm46LHYOncQ/llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::gnggq-1794862743018-64e9cc2112b6
+x-vercel-id: pdx1::kkrh2-1794962770476-de0447c8b662
 x-xss-protection: 0
 connection: close
 transfer-encoding: chunked
 
 # Vercel
 
-> Vercel is the agentic infrastructure company. Developers and agents use its cloud platform to build, ship, and run AI agents and applications. Vercel is the team behind Next.js and AI SDK.
+> Vercel is the agentic infrastructure company. As the team behind Next.js, AI SDK and eve, Vercel is the platform where humans and AI agents build, deploy and run software together. Vercel is trusted by Meta, OpenAI, Ramp, and millions of developers worldwide to ship what’s next.
 
 This file indexes vercel.com for AI agents. Most vercel.com pages are available as Markdown. Add `.md` to the URL (`https://vercel.com/pricing.md`), or request the usual URL with the HTTP header `Accept: text/markdown`.
 

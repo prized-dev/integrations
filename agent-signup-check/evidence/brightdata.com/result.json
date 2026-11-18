@@ -1,12 +1,13 @@
 {
  "site": "brightdata.com",
- "checkedAt": "2026-11-16T21:00:04.094Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:47:14.709Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 4,
  "partial": 1,
  "unread": 0,
  "total": 7,
  "whoActs": "the person confirms an email code",
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -54,6 +55,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://api.brightdata.com/zone/get_active_zones",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -89,7 +91,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 134,
+   "ms": 145,
    "redirects": 0
   },
   {
@@ -99,7 +101,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=UTF-8",
-   "ms": 395,
+   "ms": 388,
    "redirects": 0
   },
   {
@@ -109,7 +111,7 @@
    "status": 401,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 294,
+   "ms": 221,
    "redirects": 0
   },
   {
@@ -119,7 +121,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 258,
+   "ms": 132,
    "redirects": 0
   },
   {
@@ -129,7 +131,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 1053,
+   "ms": 209,
    "redirects": 0
   },
   {
@@ -139,7 +141,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 131,
+   "ms": 102,
    "redirects": 0
   },
   {
@@ -149,7 +151,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 151,
+   "ms": 147,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery (API host)",
+   "url": "https://api.brightdata.com/.well-known/x402",
+   "finalUrl": "https://api.brightdata.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 181,
    "redirects": 0
   }
  ]

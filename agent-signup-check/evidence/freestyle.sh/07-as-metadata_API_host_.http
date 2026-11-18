@@ -1,16 +1,16 @@
 GET https://api.freestyle.sh/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:20.194Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:31.748Z
 final-url: https://api.freestyle.sh/.well-known/oauth-authorization-server
 
 HTTP 401
 server: openresty
-date: Mon, 16 Nov 2026 20:59:19 GMT
+date: Wed, 18 Nov 2026 00:46:30 GMT
 content-type: application/json
 vary: origin, access-control-request-method, access-control-request-headers
 access-control-allow-origin: *
-x-freestyle-trace-id: 5d8d9bc1-4e1e-497c-903b-55f32dfe45ca
-x-request-id: 4978e6d0-dc4f-4857-86ab-3c7dc82a9f77
+x-freestyle-trace-id: 262bbbcf-3c4c-4f41-84a1-52c205a3c8e9
+x-request-id: 783207d4-63b7-4c4d-bdab-cb1429d7e20e
 strict-transport-security: max-age=63072000
 content-length: 217
 connection: close

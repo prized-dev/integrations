@@ -1,12 +1,13 @@
 {
  "site": "together.ai",
- "checkedAt": "2026-11-16T20:58:46.312Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:45:53.575Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 1,
  "partial": 1,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -33,6 +34,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://api.together.xyz/v1/models",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -68,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 79,
+   "ms": 268,
    "redirects": 1
   },
   {
@@ -78,7 +80,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 64,
+   "ms": 118,
    "redirects": 1
   },
   {
@@ -88,7 +90,7 @@
    "status": 401,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 49,
+   "ms": 38,
    "redirects": 0
   },
   {
@@ -108,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 51,
+   "ms": 48,
    "redirects": 0
   },
   {
@@ -118,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 154,
+   "ms": 166,
    "redirects": 0
   },
   {
@@ -128,7 +130,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 45,
+   "ms": 49,
    "redirects": 0
   },
   {
@@ -138,7 +140,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 144,
+   "ms": 165,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery (API host)",
+   "url": "https://api.together.xyz/.well-known/x402",
+   "finalUrl": "https://api.together.xyz/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html; charset=utf-8",
+   "ms": 48,
    "redirects": 0
   }
  ]

@@ -1,12 +1,12 @@
 GET https://us.posthog.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:27.597Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:41.950Z
 final-url: https://us.posthog.com/auth.md
 
 HTTP 200
-date: Mon, 16 Nov 2026 21:00:26 GMT
+date: Wed, 18 Nov 2026 00:47:39 GMT
 content-type: text/markdown; charset=utf-8
-content-length: 15371
+content-length: 15423
 connection: close
 allow: GET, HEAD, OPTIONS
 x-frame-options: SAMEORIGIN
@@ -16,7 +16,7 @@ x-content-type-options: nosniff
 referrer-policy: strict-origin-when-cross-origin
 cross-origin-opener-policy: same-origin
 server: envoy
-x-envoy-upstream-service-time: 8
+x-envoy-upstream-service-time: 7
 strict-transport-security: max-age=31536000; includeSubDomains
 
 # PostHog
@@ -78,6 +78,10 @@ The user-claimed device flow (`service_auth`, `anonymous`) is not supported yet.
 - `business_knowledge:write`: Write access to business_knowledge
 - `canvas:read`: Read access to canvas
 - `canvas:write`: Write access to canvas
+- `code_review:read`: Read access to code_review
+- `code_review:write`: Write access to code_review
+- `code_review_approval:read`: Read access to code_review_approval
+- `code_review_approval:write`: Write access to code_review_approval
 - `cohort:read`: Read access to cohort
 - `cohort:write`: Write access to cohort
 - `comment:read`: Read access to comment
@@ -218,8 +222,6 @@ The user-claimed device flow (`service_auth`, `anonymous`) is not supported yet.
 - `query:write`: Write access to query
 - `replay_scanner:read`: Read access to replay_scanner
 - `replay_scanner:write`: Write access to replay_scanner
-- `review_hog:read`: Read access to review_hog
-- `review_hog:write`: Write access to review_hog
 - `revenue_analytics:read`: Read access to revenue_analytics
 - `revenue_analytics:write`: Write access to revenue_analytics
 - `session_recording:read`: Read access to session_recording
@@ -232,8 +234,6 @@ The user-claimed device flow (`service_auth`, `anonymous`) is not supported yet.
 - `signal_scout:write`: Write access to signal_scout
 - `signal_usage:read`: Read access to signal_usage
 - `signal_usage:write`: Write access to signal_usage
-- `stamphog:read`: Read access to stamphog
-- `stamphog:write`: Write access to stamphog
 - `streamlit_app:read`: Read access to streamlit_app
 - `streamlit_app:write`: Write access to streamlit_app
 - `subscription:read`: Read access to subscription

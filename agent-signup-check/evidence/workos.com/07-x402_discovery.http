@@ -1,17 +1,17 @@
 GET https://workos.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:29.900Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:42.535Z
 final-url: https://workos.com/.well-known/x402
 
 HTTP 404
-date: Mon, 16 Nov 2026 21:00:29 GMT
+date: Wed, 18 Nov 2026 00:47:41 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
 vary: Accept, accept-encoding
 content-encoding: gzip
 server: cloudflare
-cf-ray: a5b96cebd80e1ef3-PDX
+cf-ray: a5c2f71b99b7fdb1-PDX
 
 # 404 — page not found
 

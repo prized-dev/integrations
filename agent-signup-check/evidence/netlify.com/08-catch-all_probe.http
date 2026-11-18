@@ -1,17 +1,17 @@
 GET https://netlify.com/agent-signup-check-no-such-page.md
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:12.101Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:21.770Z
 final-url: https://netlify.com/agent-signup-check-no-such-page.md
 
 HTTP 404
 cache-control: public, max-age=0, must-revalidate
 content-encoding: gzip
 content-type: text/markdown; charset=utf-8
-date: Mon, 16 Nov 2026 20:59:11 GMT
+date: Wed, 18 Nov 2026 00:46:20 GMT
 server: Netlify
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: Accept-Encoding, Accept
-x-nf-request-id: 01M7K2G7E0GY94Q7QFG7KEYK38
+x-nf-request-id: 01M7P1WW63AQ1QPAM0VR2VQXP9
 connection: close
 transfer-encoding: chunked
 

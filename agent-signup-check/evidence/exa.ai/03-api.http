@@ -1,10 +1,10 @@
 GET https://api.exa.ai/websets/v0/websets
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:06.827Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:18.093Z
 final-url: https://api.exa.ai/websets/v0/websets
 
 HTTP 401
-date: Mon, 16 Nov 2026 21:00:04 GMT
+date: Wed, 18 Nov 2026 00:47:15 GMT
 content-type: application/json; charset=utf-8
 content-length: 235
 connection: close
@@ -20,7 +20,7 @@ x-download-options: noopen
 x-frame-options: DENY
 x-permitted-cross-domain-policies: none
 x-xss-protection: 0
-x-request-id: 9f1af7713193ef15b293e63841b47585
+x-request-id: c9bc98145f894a4c7a1407d872e0f0ae
 x-exa-region: us-west-2
 x-exa-processing-region: us
 vary: Origin
@@ -28,9 +28,9 @@ access-control-allow-credentials: true
 access-control-expose-headers: PAYMENT-REQUIRED,PAYMENT-RESPONSE,payment-required,payment-response,WWW-Authenticate,Payment-Receipt,x-request-id,x-exa-queued,x-exa-queue-ms,x-exa-region,x-exa-processing-region,Deprecation,Sunset,Retry-After,X-RateLimit-Scope
 cache-control: private, no-store
 cdn-cache-control: no-store
-etag: W/"eb-w2Hy0Ud6gvm912gIpEBdrvhkDI8"
+etag: W/"eb-KSq+nPBnScFdKR6hkLh+1IGpJ00"
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a5b96c52cfa0495f-PDX
+cf-ray: a5c2f679fdfa2320-SJC
 
-{"requestId":"9f1af7713193ef15b293e63841b47585","error":"Authentication required. Provide an API key using 'Authorization: Bearer <key>' or 'x-api-key: <key>'. Create a key at https://dashboard.exa.ai/api-keys","tag":"INVALID_API_KEY"}
+{"requestId":"c9bc98145f894a4c7a1407d872e0f0ae","error":"Authentication required. Provide an API key using 'Authorization: Bearer <key>' or 'x-api-key: <key>'. Create a key at https://dashboard.exa.ai/api-keys","tag":"INVALID_API_KEY"}

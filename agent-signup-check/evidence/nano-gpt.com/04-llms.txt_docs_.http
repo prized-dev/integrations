@@ -1,26 +1,26 @@
 GET https://docs.nano-gpt.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:57.964Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:04.498Z
 final-url: https://docs.nano-gpt.com/llms.txt
 
 HTTP 200
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a5b96aa09d9b0eda-PDX
+cf-ray: a5c2f4addf03c8da-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:58:55 GMT
-etag: W/"bcPKdvFgvGkHHuGIuwWYhW--MN9iN1HcZ4ks9_pIHSA"
+date: Wed, 18 Nov 2026 00:46:01 GMT
+etag: "bcPKdvFgvGkHHuGIuwWYhW--MN9iN1HcZ4ks9_pIHSA"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4149
-x-vercel-cache: REVALIDATED
-x-vercel-id: pdx1:gru1:iad1::iad1::tlwfb-1794862735419-14bd93342fe7
+x-mintlify-client-version: 0.0.4177
+x-vercel-cache: MISS
+x-vercel-id: pdx1:iad1:iad1::iad1::5wf98-1794962761855-b2bdb2d33265
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_4D8r1dHg6bQcRuBgQyL3z9waJJtn
+x-version: dpl_HhUetB7eHHDAmK9T1Teip38TgFx9
 connection: close
 transfer-encoding: chunked
 

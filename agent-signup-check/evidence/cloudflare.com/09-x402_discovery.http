@@ -1,12 +1,12 @@
 GET https://cloudflare.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:11.442Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:21.045Z
 redirect: 301 from https://cloudflare.com/.well-known/x402
 redirect: 301 from https://www.cloudflare.com/.well-known/x402
 final-url: https://www.cloudflare.com/.well-known/x402/
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:59:11 GMT
+date: Wed, 18 Nov 2026 00:46:20 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -26,10 +26,10 @@ x-frame-options: SAMEORIGIN
 x-served-by: marketing-site
 x-xss-protection: 1; mode=block
 x-rm: GW
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2Fr7qsbU62BFZYBt8ndEASUaYsfI%2FwlNh41xLIbwI1qjCIhuy%2FqnKXaIH6Z3n%2BFcPhlWuUj04HTSEWD68ZFhkEE2%2BElz7ZRLEatW1veoFEHhltMo8QMb%2FvIqcwzu3Jr9l0xrkEw%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=W1QwlkjiBHRYunlq4FzDB%2FOzpPuu6U7mK6yeqKD1sWORNQKmjPb5G%2B%2B9YLUNd%2FfDKuKHiko6O3Oc6AFUV%2Bn9icnldqkh6t5LPF8RHNMaSQN6c4YvbEAAvgVTG2FkZ9XjdX%2FIdg%3D%3D"}]}
 content-encoding: br
 server: cloudflare
-cf-ray: a5b96b015fa3ad76-PDX
+cf-ray: a5c2f5205a565913-PDX
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html><html lang="en" class="font-stk-bureau-sans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><link rel="preconnect" href="https://imagedelivery.net" crossorigin><link rel="preconnect" href="https://ot.www.cloudflare.com" crossorigin><link rel="preload" href="/icons.svg" as="image" type="image/svg+xml"><link rel="preload" href="/fonts/STKBureauSans-Book.otf" as="font" type="font/otf" crossorigin><link rel="preload" href="/fonts/STKBureauSans-Regular.otf" as="font" type="font/otf" crossorigin><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><script>
@@ -375,4 +375,4 @@ const gtmContainerSrc = "https://www.googletagmanager.com/gtm.js?id=GTM-NDGPDFZ"
       })();
     })();</script><script type="module">globalThi
 
-[body trimmed for publication: kept 16384 of 176432 characters; sha256 of the published body b84596224aebc459e2dae07b0212caf790a7450177cc4541cf9e4f6bbf3f5498]
+[body trimmed for publication: kept 16384 of 176432 characters; sha256 of the published body bdcfddbef72f2bb1a777195fb022da22210ccc82ed561ffc515e0263c46da282]

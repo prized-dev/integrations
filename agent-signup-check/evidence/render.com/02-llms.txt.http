@@ -1,10 +1,10 @@
 GET https://render.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:07.397Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:16.648Z
 final-url: https://render.com/llms.txt
 
 HTTP 200
-date: Mon, 16 Nov 2026 20:59:04 GMT
+date: Wed, 18 Nov 2026 00:46:13 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -13,7 +13,7 @@ x-xss-protection: 1; mode=block
 content-encoding: br
 content-security-policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://assets.calendly.com https://scout-cdn.salesloft.com https://snap.licdn.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://www.googletagmanager.com https://www.gstatic.com ; connect-src 'self' https://*.algolia.net https://*.algolianet.com https://*.google-analytics.com https://*.google.com https://*.googletagmanager.com https://*.doubleclick.net https://www.googleadservices.com https://*.hsforms.com https://*.inkeep.com https://*.linkedin.com https://*.osano.com https://*.posthog.com https://*.i.posthog.com https://*.segment.com https://*.segment.io https://api.unifyintent.com https://api.ashbyhq.com https://cdn.growthbook.io https://cdn.sanity.io https://hubspot-forms-static-embed.s3.amazonaws.com https://pagead2.googlesyndication.com https://scout.salesloft.com https://translate.googleapis.com ; worker-src 'self' blob: https://*.osano.com; report-uri https://render.report-uri.com/r/t/csp/reportOnly; report-to wizard;
 referrer-policy: same-origin
-rndr-id: 4ab3a224-2969-461d
+rndr-id: 7139b246-3ab2-4063
 server: cloudflare
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
@@ -22,7 +22,7 @@ x-frame-options: SAMEORIGIN
 x-nextjs-cache: HIT
 x-render-origin-server: Render
 cf-cache-status: DYNAMIC
-cf-ray: a5b96adb5acf2763-SEA
+cf-ray: a5c2f4f81970201d-SEA
 alt-svc: h3=":443"; ma=86400
 
 # Render
@@ -325,6 +325,7 @@ For narrower lookups, fetch individual .md pages or use the search endpoint.
 
 #### Additional docs
 
+- [Scoped API Keys](https://render.com/docs/api-keys.md): Grant fine-grained access to a workspace's resources.
 - [Back Up Render Postgres to Amazon S3](https://render.com/docs/backup-postgresql-to-s3.md)
 - [Setting your Bun Version](https://render.com/docs/bun-version.md)
 - [Render Community Migration](https://render.com/docs/community.md): Join the Render community on Discord.
@@ -638,7 +639,7 @@ https://render.com/articles
 
 site: https://render.com
 owner: Render Services, Inc.
-last-generated: "2026-11-16"
+last-generated: "2026-11-18"
 
 ### Permissions
 

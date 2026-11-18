@@ -1,26 +1,26 @@
 GET https://prized.dev/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:00.124Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:09.631Z
 final-url: https://prized.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 28
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:58:58 GMT
-etag: W/"d949e5020a29893c3bccb9202a9abb0e"
+date: Wed, 18 Nov 2026 00:46:07 GMT
+etag: W/"5a334958f82507046bea14611c7857a4"
 referrer-policy: no-referrer
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-frame-options: DENY
 x-matched-path: /llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::hkzf5-1794862738380-d05a853d3666
+x-vercel-cache: PRERENDER
+x-vercel-id: pdx1::tgbzb-1794962767189-8ea084838940
 connection: close
 transfer-encoding: chunked
 
@@ -201,6 +201,7 @@ over 1 MB and gets cut short by tools that stop near 100 KB.
 - [Prompt an agent remotely](https://prized.dev/docs/remote-agents.md): Prompt Claude Code, Codex, OpenCode or pi on your box from your machine or any script, on the model and backend you pick, follow the run as it happens, and interrupt it; the run lives on the box, so nothing depends on your laptop staying open.
 - [Codex remote](https://prized.dev/docs/codex.md): Run Codex on your box from the ChatGPT desktop app, with every edit syncing back to your Mac.
 - [Claude Desktop remote](https://prized.dev/docs/claude-desktop.md): Run Claude Code on your box from the Claude desktop app's Code tab over SSH, with nothing to install on the box first, and what to know about sign-in, ports and long tasks.
+- [MCP server](https://prized.dev/docs/mcp.md): Give Claude Code, Codex or Cursor your Prized boxes, and sandboxes of its own, over MCP. No API key needed; your agent signs you up with your email and a 6-digit code.
 
 ## Boxes
 
@@ -224,7 +225,6 @@ over 1 MB and gets cut short by tools that stop near 100 KB.
 - [Sandbox API](https://prized.dev/docs/sandboxes-api.md): Every sandbox route: create, list, pause, resume, fork, delete, and SSH access on the control plane; run commands, read a background command's output as it grows, and move files on the edge; with the fields, states, and error codes.
 - [Sandbox SDK for Python and TypeScript](https://prized.dev/docs/sandboxes-python-typescript.md): Install the Python SDK (pip install prized) or the TypeScript SDK (npm i @prized/sdk) to create sandboxes from your code, run commands, pause them with their memory, and fork a running or paused sandbox into live copies with its memory and processes, on the same account and balance as your Prized boxes.
 - [Use Prized from your coding agent](https://prized.dev/docs/sandboxes-coding-agents.md): Teach Claude Code, Codex, Cursor, or another coding agent to run code in Prized sandboxes: install the Prized skill, or paste a short section into AGENTS.md.
-- [MCP server](https://prized.dev/docs/sandboxes-mcp.md): Give Claude Code, Codex or Cursor its own Linux sandboxes over MCP. No API key needed; your agent signs you up with your email and a 6-digit code.
 - [Run Vercel AI SDK tool calls in a sandbox](https://prized.dev/docs/sandboxes-vercel-ai-sdk.md): Give a Vercel AI SDK agent a runCommand tool: each session gets its own sandbox, the model's commands run there through the Sandbox API, and the sandbox is deleted at the end.
 - [Run a LangChain Deep Agent in a sandbox](https://prized.dev/docs/sandboxes-langchain.md): The langchain-prized package is a sandbox backend for LangChain Deep Agents: the agent's shell commands and file tools run in a Prized sandbox, which is deleted when the agent is done.
 - [Run an OpenAI Agents SDK agent in a sandbox](https://prized.dev/docs/sandboxes-openai-agents.md): The openai-agents-prized package is a sandbox client for the OpenAI Agents SDK: a SandboxAgent's commands and file edits run in a Prized sandbox, which is deleted when the run ends.

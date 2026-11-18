@@ -1,6 +1,6 @@
 GET https://api.fal.ai/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:57.950Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:05.766Z
 final-url: https://api.fal.ai/.well-known/oauth-protected-resource
 
 HTTP 404
@@ -8,11 +8,11 @@ age: 0
 cache-control: public, max-age=0, must-revalidate
 content-encoding: br
 content-type: application/json
-date: Mon, 16 Nov 2026 20:58:56 GMT
+date: Wed, 18 Nov 2026 00:46:03 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::kdf8p-1794862736223-081f70dec9c8
+x-vercel-id: pdx1::iad1::kk7b2-1794962763697-0f7d1722ee7f
 connection: close
 transfer-encoding: chunked
 

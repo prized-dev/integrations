@@ -1,20 +1,17 @@
 GET https://inkbox.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:56.032Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:06.269Z
 final-url: https://inkbox.ai/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Mon, 16 Nov 2026 13:27:30 GMT
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
 x-version: dpl_Aw98ji4XvBsgtZwL1VrkUF9ehFqz
 cf-ray: a5b6d55c0dad8e5d-PDX
 cf-cache-status: HIT
-cache-control: public
 content-encoding: br
-etag: "9qRF1xtu6BB4QRNngYdbGKAvm7ZOqCQhjRTtGhEB-4I"
 server: cloudflare
 strict-transport-security: max-age=63072000
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
@@ -22,13 +19,16 @@ x-frame-options: DENY
 x-mintlify-client-version: 0.0.4143
 x-vercel-cache: MISS
 x-vercel-id: iad1::iad1::9745d-1794794701299-2333cfdff290
+date: Tue, 17 Nov 2026 14:52:18 GMT
+cache-control: public
+etag: "9qRF1xtu6BB4QRNngYdbGKAvm7ZOqCQhjRTtGhEB-4I"
 vary: accept-encoding
 x-cache: Hit from cloudfront
-via: 1.1 d220e3f3d93439a8c69225156c6ae800.cloudfront.net (CloudFront)
+via: 1.1 8502ceae0080b3523f89d1a518a99726.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: acm0l-KFyy98_UnnUtGMGQJI5nia6cjHzvrFHRNI-qm7ZBV9aSzhYw==
-age: 28484
+x-amz-cf-id: nRJ_jFryfW1bsjXISkFGmFN23gd07j2SAqzzHKai_Uu_zqilHyunRg==
+age: 42785
 
 # Inkbox
 

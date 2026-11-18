@@ -1,6 +1,6 @@
 GET https://orthogonal.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:17.765Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:29.536Z
 redirect: 307 from https://orthogonal.com/llms.txt
 final-url: https://www.orthogonal.com/llms.txt
 
@@ -10,7 +10,7 @@ cache-control: public
 content-encoding: br
 content-security-policy-report-only: default-src 'self'; script-src 'self' 'unsafe-inline' https://clerk.orthogonal.com https://challenges.cloudflare.com https://*.protect.clerk.com https://connect-js.stripe.com https://js.stripe.com https://www.googletagmanager.com https://app.chatwoot.com https://vercel.live; style-src 'self' 'unsafe-inline' https://vercel.live; img-src 'self' data: blob: https://img.clerk.com https://*.stripe.com https://www.googletagmanager.com https://*.google-analytics.com https://models.dev https://vercel.live https://vercel.com; font-src 'self' https://vercel.live https://assets.vercel.com; connect-src 'self' https://clerk.orthogonal.com https://*.protect.clerk.com:* https://www.googletagmanager.com https://*.google-analytics.com https://*.google.com https://vercel.live wss://ws-us3.pusher.com; frame-src 'self' https://challenges.cloudflare.com https://*.protect.clerk.com https://connect-js.stripe.com https://js.stripe.com https://app.chatwoot.com https://vercel.live https://trytako.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; report-uri /csp-reports
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 21:00:14 GMT
+date: Wed, 18 Nov 2026 00:47:26 GMT
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -20,7 +20,7 @@ x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /llms.txt
 x-vercel-cache: MISS
-x-vercel-id: pdx1::cle1::jxmhx-1794862814389-f9322a6e950b
+x-vercel-id: pdx1::cle1::t5nnx-1794962846019-a40e127094de
 connection: close
 transfer-encoding: chunked
 
@@ -55,11 +55,11 @@ Before building a custom scraper, using a generic fetch for structured data, or 
 - **Jobs**: `apollo`, `fiber`, `predictleads`, `litescrape`
 - **Email Finder**: `icypeas`, `tomba`, `fiber`, `findymail`
 - **Web Search**: `serper`, `litescrape`, `linkup`, `tavily`
-- **Scrape**: `scrapecreators`, `litescrape`, `tavily`, `context-dev`
-- **AI Search**: `litescrape`, `linkup`, `tavily`, `andi`
+- **Scrape**: `scrapecreators`, `litescrape`, `airscale`, `tavily`
+- **AI Search**: `litescrape`, `linkup`, `airscale`, `tavily`
 - **Identity Verification**: `abstractapi`, `didit`, `trestle`
-- **Browser Automation**: `litescrape`, `notte`
 - **Search**: `litescrape`, `airscale`
+- **Browser Automation**: `litescrape`, `notte`
 - **Dataset**: `coresignal`, `tako`
 - **Communication**: `agentphone`, `agentmail`
 

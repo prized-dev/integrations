@@ -1,6 +1,6 @@
 GET https://e2b.dev/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:03.289Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:10.669Z
 final-url: https://e2b.dev/.well-known/oauth-protected-resource
 
 HTTP 404
@@ -9,7 +9,7 @@ cache-control: private, no-cache, no-store, max-age=0, must-revalidate
 content-encoding: br
 content-security-policy: frame-ancestors 'self';
 content-type: text/html; charset=utf-8
-date: Mon, 16 Nov 2026 20:59:00 GMT
+date: Wed, 18 Nov 2026 00:46:08 GMT
 link: </_next/static/immutable/media/CommitMono_400_Regular.p.0povok87bf7is.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/immutable/media/CommitMono_700_Bold.p.2h5-oqxcqu5mu.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/immutable/media/InterVariable.p.2v4uvb3i5caxn.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/immutable/media/PPSupplySans_Light.p.34m_zkghv-15u.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/immutable/media/PPSupplySans_Semibold.p.29i1f6kp215sp.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/immutable/chunks/3z08dk449g-6z.css>; rel=preload; as="style", </_next/static/immutable/chunks/1xj_xn9l_em6y.css>; rel=preload; as="style", </_next/static/immutable/chunks/40q5pltgjn2ne.css>; rel=preload; as="style"
 permissions-policy: camera=(), microphone=(), geolocation=()
 server: Vercel
@@ -21,7 +21,7 @@ x-frame-options: SAMEORIGIN
 x-matched-path: /[locale]/[...not-found]
 x-powered-by: Next.js
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::cznrx-1794862739989-cc45f4df60ea
+x-vercel-id: pdx1::iad1::bzhv2-1794962768311-d005b8180dbc
 x-xss-protection: 1; mode=block
 connection: close
 transfer-encoding: chunked

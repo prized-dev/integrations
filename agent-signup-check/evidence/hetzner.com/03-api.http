@@ -1,13 +1,13 @@
 GET https://api.hetzner.cloud/v1/servers
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:32.607Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:43.516Z
 final-url: https://api.hetzner.cloud/v1/servers
 
 HTTP 401
 content-type: application/json
 content-encoding: gzip
 vary: Accept-Encoding
-date: Mon, 16 Nov 2026 20:59:22 GMT
+date: Wed, 18 Nov 2026 00:46:32 GMT
 connection: close
 transfer-encoding: chunked
 

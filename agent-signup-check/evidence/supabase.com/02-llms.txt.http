@@ -1,19 +1,19 @@
 GET https://supabase.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:33.434Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:46.441Z
 final-url: https://supabase.com/llms.txt
 
 HTTP 200
-age: 3337
+age: 0
 cache-control: public
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:03:53 GMT
+date: Wed, 18 Nov 2026 00:46:42 GMT
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-matched-path: /llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::iad1::qnf5m-1794862770599-b7d9c5e14f2d
+x-vercel-cache: MISS
+x-vercel-id: pdx1::iad1::bqpnc-1794962802616-08e18eb55cc4
 connection: close
 transfer-encoding: chunked
 
@@ -54,6 +54,7 @@ For the complete documentation in a single file, see [Full Documentation](https:
 - [Supabase Management API Reference](https://supabase.com/llms/api.txt)
 
 - [Knowledge Base](https://supabase.com/kb/sitemap.md)
+- [Customer Stories](https://supabase.com/customers.md)
 
 ## Pricing
 

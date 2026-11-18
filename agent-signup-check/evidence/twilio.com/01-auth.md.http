@@ -1,6 +1,6 @@
 GET https://twilio.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:53.233Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:03.546Z
 redirect: 301 from https://twilio.com/auth.md
 final-url: https://www.twilio.com/auth.md
 
@@ -8,10 +8,10 @@ HTTP 404
 content-type: text/html;charset=utf-8
 content-length: 619949
 connection: close
-date: Mon, 16 Nov 2026 20:59:47 GMT
+date: Wed, 18 Nov 2026 00:46:56 GMT
 content-security-policy-report-only: frame-ancestors 'self' https://console.twilio.com;report-uri https://www.twilio.com/console/api/cspr
 cache-control: max-age=60,public
-t-request-id: RQ84399c9082c14a2382a9901306852997
+t-request-id: RQe0b4f6a2980c41469cf7aeca348ecc95
 x-content-type-options: nosniff
 strict-transport-security: max-age=63072000; includeSubDomains; preload
 access-control-allow-origin: https://console.twilio.com
@@ -21,9 +21,9 @@ access-control-allow-methods: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TR
 access-control-expose-headers: console-name
 content-security-policy: frame-ancestors 'self' https://*.twilio.com https://www.twilio.com;report-uri https://www.twilio.com/console/api/cspr
 x-cache: Error from cloudfront
-via: 1.1 2e87eef03ab555daefa684d946e111b4.cloudfront.net (CloudFront)
+via: 1.1 f9cbfbc3568832d017c09dbd4649932c.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: UEWZQfxBG7tlBAq-WKdG4szPRRqGJxhXVXBZYhIHvu3tf54kVpH5Iw==
+x-amz-cf-id: b0YWyxRTmCluRzj-9HmYDb9UdQzgGPoyRAA3uL-SJ3X0HEK30WWYUw==
 
 <!DOCTYPE HTML>
 <html lang="en" class="full-width-dark">
@@ -283,9 +283,9 @@ x-amz-cf-id: UEWZQfxBG7tlBAq-WKdG4szPRRqGJxhXVXBZYhIHvu3tf54kVpH5Iw==
   
     
 <link rel="stylesheet" href="/etc.clientlibs/twilio-foundation/clientlibs/clientlib-dependencies.lc-d41d8cd98f00b204e9800998ecf8427e-lc.min.css" type="text/css">
-<link rel="stylesheet" href="/etc.clientlibs/twilio-foundation/clientlibs/clientlib-site.lc-d60efe0684ec299677044819b722f409-lc.min.css" type="text/css">
+<link rel="stylesheet" href="/etc.clientlibs/twilio-foundation/clientlibs/clientlib-site.lc-6eaf9e3688c09736654181b9f694f4bc-lc.min.css" type="text/css">
 <link rel="stylesheet" href="/etc.clientlibs/twilio-com/clientlibs/clientlib-dependencies.lc-d41d8cd98f00b204e9800998ecf8427e-lc.min.css" type="text/css">
-<link rel="stylesheet" href="/etc.clientlibs/twilio-com/clientlibs/clientlib-site.lc-ec6802fc2a42325a71261508f710b908-lc.min.css" type="text/css">
+<link rel="stylesheet" href="/etc.clientlibs/twilio-com/clientlibs/clientlib-site.lc-634202a031bafc37087cee3f9e1e96d2-lc.min.css" type="text/css">
 
 
 
@@ -405,4 +405,4 @@ x-amz-cf-id: UEWZQfxBG7tlBAq-WKdG4szPRRqGJxhXVXBZYhIHvu3tf54kVpH5Iw==
     <div class="navigation-v2__topnav">
         <div c
 
-[body trimmed for publication: kept 16384 of 619604 characters; sha256 of the published body 463ca7cefc0e545cd8b83acacb709a1458cf378f5fa5121f156ccc6c7977b646]
+[body trimmed for publication: kept 16384 of 619604 characters; sha256 of the published body 3e81c73f3f1c83e98c802886de19081b3d1a56e2439c39e06163daff2dd5c266]

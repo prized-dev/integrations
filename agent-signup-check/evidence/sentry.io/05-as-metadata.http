@@ -1,11 +1,11 @@
 GET https://sentry.io/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:26.875Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:38.856Z
 final-url: https://sentry.io/.well-known/oauth-authorization-server
 
 HTTP 200
 server: nginx
-date: Mon, 16 Nov 2026 21:00:25 GMT
+date: Wed, 18 Nov 2026 00:47:37 GMT
 content-type: application/json
 content-length: 873
 access-control-allow-origin: *
@@ -17,11 +17,11 @@ x-content-type-options: nosniff
 x-xss-protection: 1; mode=block
 cross-origin-opener-policy-report-only: same-origin; report-to="coop-endpoint"
 report-to: {"group":"coop-endpoint","max_age":86400,"endpoints":[{"url":"https://sentry-coop-302178938983.us-central1.run.app/coop"}]}, {"group":"browser-reports","max_age":86400,"endpoints":[{"url":"https://o1.ingest.us.sentry.io/api/4511643338670080/integration/browser/reporting/?sentry_key=00e06516e17f2077b4ee5e7206630df5"}]}
-content-security-policy: font-src * data:; default-src 'none'; script-src 'self' 'unsafe-inline' 'report-sample' s1.sentry-cdn.com js.sentry-cdn.com browser.sentry-cdn.com statuspage-production.s3.amazonaws.com aui-cdn.atlassian.com connect-cdn.atl-paas.net js.stripe.com 'strict-dynamic' cdn.pendo.io data.pendo.io pendo-io-static.storage.googleapis.com pendo-static-5634074999128064.storage.googleapis.com plausible.io app.intercom.io widget.intercom.io js.intercomcdn.com; frame-ancestors 'self' *.sentry.io; worker-src 'self' blob:; base-uri 'none'; img-src * blob: data:; object-src 'none'; connect-src 'self' *.algolia.net *.algolianet.com *.algolia.io browser.sentry-cdn.com sentry.io *.sentry.io s1.sentry-cdn.com o1.ingest.sentry.io api2.amplitude.com app.pendo.io data.pendo.io reload.getsentry.net t687h3m0nh65.statuspage.io maps.googleapis.com plausible.io api.github.com *.intercom.io wss://*.intercom.io *.intercom-messenger.com wss://*.intercom-messenger.com uploads.intercomcdn.com uploads.intercomusercontent.com; frame-src app.pendo.io demo.arcade.software js.stripe.com sentry.io 'self' intercom-sheets.com www.intercom-reporting.com; media-src *; style-src * 'unsafe-inline'; report-uri https://o1.ingest.sentry.io/api/54785/security/?sentry_key=f724a8a027db45f5b21507e7142ff78e&sentry_release=e687366ad96532f8ad27f2857c06097b57eb99a1
+content-security-policy: script-src 'self' 'unsafe-inline' 'report-sample' s1.sentry-cdn.com js.sentry-cdn.com browser.sentry-cdn.com statuspage-production.s3.amazonaws.com aui-cdn.atlassian.com connect-cdn.atl-paas.net js.stripe.com 'strict-dynamic' cdn.pendo.io data.pendo.io pendo-io-static.storage.googleapis.com pendo-static-5634074999128064.storage.googleapis.com plausible.io app.intercom.io widget.intercom.io js.intercomcdn.com; frame-src app.pendo.io demo.arcade.software js.stripe.com sentry.io 'self' intercom-sheets.com www.intercom-reporting.com; worker-src 'self' blob:; style-src * 'unsafe-inline'; connect-src 'self' *.algolia.net *.algolianet.com *.algolia.io browser.sentry-cdn.com sentry.io *.sentry.io s1.sentry-cdn.com o1.ingest.sentry.io api2.amplitude.com app.pendo.io data.pendo.io reload.getsentry.net t687h3m0nh65.statuspage.io maps.googleapis.com plausible.io api.github.com *.intercom.io wss://*.intercom.io *.intercom-messenger.com wss://*.intercom-messenger.com uploads.intercomcdn.com uploads.intercomusercontent.com; base-uri 'none'; media-src *; font-src * data:; img-src * blob: data:; frame-ancestors 'self' *.sentry.io; default-src 'none'; object-src 'none'; report-uri https://o1.ingest.sentry.io/api/54785/security/?sentry_key=f724a8a027db45f5b21507e7142ff78e&sentry_release=918e5fb21312e04dcb931ff07effd1914f9f0a92
 nel: {"report_to":"browser-reports","max_age":86400,"success_fraction":0.01,"failure_fraction":0.10}
 reporting-endpoints: browser-reports="https://o1.ingest.us.sentry.io/api/4511643338670080/integration/browser/reporting/?sentry_key=00e06516e17f2077b4ee5e7206630df5"
 via: 1.1 google
-alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+alt-svc: h3=":443"; ma=2592000
 connection: close
 
 {"issuer":"https://sentry.io","authorization_endpoint":"https://sentry.io/oauth/authorize/","token_endpoint":"https://sentry.io/oauth/token/","response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token"],"code_challenge_methods_supported":["S256"],"scopes_supported":["alerts:read","alerts:write","dashboard:read","dashboard:write","email","event:admin","event:read","event:write","member:admin","member:invite","member:read","member:write","openid","org:admin","org:billing","org:ci","org:integrations","org:read","org:tokens","org:write","profile","project:admin","project:distribution","project:read","project:releases","project:write","saved_query:read","saved_query:write","seer:read","seer:write","service_account:read","service_account:write","team:admin","team:read","team:write","user_preference:read","user_preference:write"]}

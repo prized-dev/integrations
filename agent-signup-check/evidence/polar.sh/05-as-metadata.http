@@ -1,25 +1,25 @@
 GET https://api.polar.sh/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:19.939Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:30.357Z
 final-url: https://api.polar.sh/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Mon, 16 Nov 2026 21:00:19 GMT
+date: Wed, 18 Nov 2026 00:47:29 GMT
 content-type: application/json
-content-length: 780
+content-length: 776
 connection: close
 cache-control: private, no-store
 content-encoding: br
 polar-version: 2026-10
-rndr-id: bfcadc2b-d321-462f
+rndr-id: 5cbd4da8-685a-4f20
 server: cloudflare
 strict-transport-security: max-age=63072000; includeSubDomains
 vary: Accept-Encoding
 x-render-origin-server: uvicorn
 cf-cache-status: DYNAMIC
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=oGRQhKsM9Ig6cy7XSuRkKowCdiAFTuEatnUJI41ftqwOwhZNS8MFR50ZWz7BfZM%2BfbPZXtf7%2FqKWfsWOUvMMQKCSaHG7TjlkJFLWHUbFRTPLS7nW1eIhtd8dGf3CIw%3D%3D"}]}
-cf-ray: a5b96caa3abd2b7b-LAX
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=98nORFk9CqXRnpqllpCd2xDa6YQxDFENuS%2B1n21xKzbQuVxy2Q35TvOU69VeAMLktxeaRixpdNBZQr2GnU6YIFmK81LQ%2BWYWkus6UgdeRPkxE9h%2B7CTg1vH1CRvzuw%3D%3D"}]}
+cf-ray: a5c2f6cea9c568f1-PDX
 alt-svc: h3=":443"; ma=86400
 
-{"issuer":"https://api.polar.sh","authorization_endpoint":"https://polar.sh/oauth2/authorize","token_endpoint":"https://api.polar.sh/v1/oauth2/token","jwks_uri":"https://api.polar.sh/.well-known/jwks.json","registration_endpoint":"https://api.polar.sh/v1/oauth2/register","scopes_supported":["openid","profile","email","user:read","user:write","organizations:read","organizations:write","custom_fields:read","custom_fields:write","discounts:read","discounts:write","checkout_links:read","checkout_links:write","checkouts:read","checkouts:write","transactions:read","transactions:write","payouts:read","payouts:write","products:read","products:write","benefits:read","benefits:write","events:read","events:write","meters:read","meters:write","files:read","files:write","subscriptions:read","subscriptions:write","customers:read","customers:write","members:read","members:write","wallets:read","wallets:write","disputes:read","disputes:write","customer_meters:read","customer_sessions:write","member_sessions:write","customer_seats:read","customer_seats:write","orders:read","orders:write","refunds:read","refunds:write","payments:read","metrics:read","metrics:write","webhooks:read","webhooks:write","license_keys:read","license_keys:write","customer_portal:read","customer_portal:write","notifications:read","notifications:write","notification_recipients:read","notification_recipients:write"],"response_types_supported":["code"],"response_modes_supported":["query"],"grant_types_supported":["urn:ietf:params:oauth:grant-type:jwt-bearer","authorization_code","refresh_token","urn:workos:agent-auth:grant-type:claim","web"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","none"],"service_documentation":"https://polar.sh/docs","revocation_endpoint":"https://api.polar.sh/v1/oauth2/revoke","revocation_endpoint_auth_methods_supported":["client_secret_post","client_secret_basic"],"introspection_endpoint":"https://api.polar.sh/v1/oauth2/introspect","introspection_endpoint_auth_methods_supported":["client_secret_post","client_secret_basic"],"code_challenge_methods_supported":["plain","S256"],"authorization_response_iss_parameter_supported":true,"agent_auth":{"skill":"https://api.polar.sh/auth.md","identity_endpoint":"https://api.polar.sh/v1/agent/identity","claim_endpoint":"https://api.polar.sh/v1/agent/identity/claim","identity_types_supported":["anonymous"]},"userinfo_endpoint":"https://api.polar.sh/v1/oauth2/userinfo","subject_types_supported":["public"],"id_token_signing_alg_values_supported":["RS256"],"claims_supported":["sub","name","email","email_verified"]}
+{"issuer":"https://api.polar.sh","authorization_endpoint":"https://polar.sh/oauth2/authorize","token_endpoint":"https://api.polar.sh/v1/oauth2/token","jwks_uri":"https://api.polar.sh/.well-known/jwks.json","registration_endpoint":"https://api.polar.sh/v1/oauth2/register","scopes_supported":["openid","profile","email","user:read","user:write","organizations:read","organizations:write","custom_fields:read","custom_fields:write","discounts:read","discounts:write","checkout_links:read","checkout_links:write","checkouts:read","checkouts:write","transactions:read","transactions:write","payouts:read","payouts:write","products:read","products:write","benefits:read","benefits:write","events:read","events:write","meters:read","meters:write","files:read","files:write","subscriptions:read","subscriptions:write","customers:read","customers:write","members:read","members:write","wallets:read","wallets:write","disputes:read","disputes:write","customer_meters:read","customer_sessions:write","member_sessions:write","customer_seats:read","customer_seats:write","orders:read","orders:write","refunds:read","refunds:write","payments:read","metrics:read","metrics:write","webhooks:read","webhooks:write","license_keys:read","license_keys:write","customer_portal:read","customer_portal:write","notifications:read","notifications:write","notification_recipients:read","notification_recipients:write"],"response_types_supported":["code"],"response_modes_supported":["query"],"grant_types_supported":["refresh_token","web","urn:ietf:params:oauth:grant-type:jwt-bearer","authorization_code","urn:workos:agent-auth:grant-type:claim"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","none"],"service_documentation":"https://polar.sh/docs","revocation_endpoint":"https://api.polar.sh/v1/oauth2/revoke","revocation_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post"],"introspection_endpoint":"https://api.polar.sh/v1/oauth2/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post"],"code_challenge_methods_supported":["S256","plain"],"authorization_response_iss_parameter_supported":true,"agent_auth":{"skill":"https://api.polar.sh/auth.md","identity_endpoint":"https://api.polar.sh/v1/agent/identity","claim_endpoint":"https://api.polar.sh/v1/agent/identity/claim","identity_types_supported":["anonymous"]},"userinfo_endpoint":"https://api.polar.sh/v1/oauth2/userinfo","subject_types_supported":["public"],"id_token_signing_alg_values_supported":["RS256"],"claims_supported":["sub","name","email","email_verified"]}

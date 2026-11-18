@@ -1,0 +1,19 @@
+GET https://sprites.dev/.well-known/oauth-protected-resource
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:42.110Z
+final-url: https://sprites.dev/.well-known/oauth-protected-resource
+
+HTTP 404
+date: Wed, 18 Nov 2026 00:46:39 GMT
+content-length: 53
+content-encoding: gzip
+vary: accept-encoding
+content-type: application/json; charset=utf-8
+cache-control: max-age=0, private, must-revalidate
+x-request-id: GOj9KAgA8q2Xg-oBvZFH
+server: Fly/781f3a6652 (2026-11-10)
+via: 1.1 fly.io, 1.1 fly.io
+fly-request-id: 01M7P1XF702BQ68WZDCQVCF31F-lax
+connection: close
+
+{"errors":{"detail":"Not Found"}}

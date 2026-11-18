@@ -1,10 +1,10 @@
 GET https://serpapi.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:09.333Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:21.509Z
 final-url: https://serpapi.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Mon, 16 Nov 2026 21:00:08 GMT
+date: Wed, 18 Nov 2026 00:47:20 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -17,12 +17,12 @@ referrer-policy: strict-origin-when-cross-origin
 link: </assets/fontawesome-175d2a6f50e90c8369a071e18dcdd26e8318fb8262cd5344f8b936908a2e1f59.css>; rel=preload; as=style; nopush,</assets/fontawesome-all-859dacb17de7ff576e0239fab418e6f00052400387b1b4c37d77ba57c8b6453a.css>; rel=preload; as=style; nopush,</assets/error-d451a8c727930d20ca57183449f1afae1cb3c79f416a311f42f56e0248f65544.css>; rel=preload; as=style; nopush
 vary: Accept, accept-encoding
 cache-control: no-cache
-x-request-id: d0fa069b-bb54-4492-b0af-efd052522d5f
-x-runtime: 0.001401
+x-request-id: faeda642-5256-474a-837f-0ee9730db8df
+x-runtime: 0.001137
 cf-cache-status: BYPASS
 content-encoding: br
 server: cloudflare
-cf-ray: a5b96c667abb8e63-PDX
+cf-ray: a5c2f697cbe35ec6-PDX
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html>

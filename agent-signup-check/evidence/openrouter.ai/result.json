@@ -1,12 +1,13 @@
 {
  "site": "openrouter.ai",
- "checkedAt": "2026-11-16T20:58:46.921Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:45:53.672Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 1,
  "partial": 2,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -33,6 +34,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://openrouter.ai/api/v1/key",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -72,7 +74,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 227,
+   "ms": 340,
    "redirects": 0
   },
   {
@@ -82,7 +84,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 185,
+   "ms": 117,
    "redirects": 0
   },
   {
@@ -92,7 +94,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 30,
+   "ms": 28,
    "redirects": 0
   },
   {
@@ -102,7 +104,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 281,
+   "ms": 188,
    "redirects": 0
   },
   {
@@ -112,7 +114,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 245,
+   "ms": 199,
    "redirects": 0
   },
   {
@@ -122,7 +124,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 331,
+   "ms": 262,
    "redirects": 0
   }
  ]

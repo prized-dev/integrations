@@ -1,33 +1,33 @@
 GET https://polar.sh/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:19.939Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:30.357Z
 redirect: 308 from https://polar.sh/llms.txt
 final-url: https://polar.sh/docs/llms.txt
 
 HTTP 200
-date: Mon, 16 Nov 2026 21:00:17 GMT
+date: Wed, 18 Nov 2026 00:47:27 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-age: 4860
+age: 3556
 cache-control: public
 cf-cache-status: DYNAMIC
-x-version: dpl_D8DZMbLzBJDPJxA2oBvSn4nDSCwT
+x-version: dpl_81ettUQ5G7NASN425B6JKU3FX1Rg
 content-encoding: br
-content-security-policy: default-src 'self';  script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net www.googletagmanager.com cdn.segment.com plausible.io  us.posthog.com tag.clearbitscripts.com cdn.heapanalytics.com chat.cdn-plain.com chat-assets.frontapp.com  browser.sentry-cdn.com js.sentry-cdn.com;  style-src 'self' 'unsafe-inline' d4tuoctqmanu0.cloudfront.net fonts.googleapis.com;  font-src 'self' d4tuoctqmanu0.cloudfront.net fonts.googleapis.com;  img-src 'self' data: blob: d3gk2c5xim1je2.cloudfront.net mintcdn.com *.mintcdn.com cdn.jsdelivr.net mintlify.s3.us-west-1.amazonaws.com;  connect-src 'self' *.mintlify.dev *.mintlify.com d1ctpt7j8wusba.cloudfront.net mintcdn.com *.mintcdn.com  api.mintlifytrieve.com www.googletagmanager.com cdn.segment.com plausible.io us.posthog.com browser.sentry-cdn.com;  frame-src 'self' *.mintlify.dev https://polar-public-assets.s3.us-east-2.amazonaws.com;
-etag: W/"e0kYlmKFsgpq27Vvc6ZN52r4D20-KTt4IuWx9MvSwu0"
+content-security-policy: default-src 'self';  script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net www.googletagmanager.com cdn.segment.com plausible.io  us.posthog.com tag.clearbitscripts.com cdn.heapanalytics.com chat.cdn-plain.com chat-assets.frontapp.com  browser.sentry-cdn.com js.sentry-cdn.com;  style-src 'self' 'unsafe-inline' d4tuoctqmanu0.cloudfront.net fonts.googleapis.com;  font-src 'self' d4tuoctqmanu0.cloudfront.net fonts.googleapis.com;  img-src 'self' data: blob: d3gk2c5xim1je2.cloudfront.net mintcdn.com *.mintcdn.com cdn.jsdelivr.net mintlify.s3.us-west-1.amazonaws.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com;  connect-src 'self' *.mintlify.dev *.mintlify.com d1ctpt7j8wusba.cloudfront.net mintcdn.com *.mintcdn.com  api.mintlifytrieve.com www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com cdn.segment.com plausible.io us.posthog.com browser.sentry-cdn.com;  frame-src 'self' *.mintlify.dev https://polar-public-assets.s3.us-east-2.amazonaws.com;
+etag: "e0kYlmKFsgpq27Vvc6ZN52r4D20-KTt4IuWx9MvSwu0"
 permissions-policy: payment=(), publickey-credentials-get=(), camera=(), microphone=(), geolocation=()
 server: cloudflare
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4149
-x-vercel-cache: REVALIDATED
-x-vercel-id: sfo1:fra1:iad1::iad1::69cx8-1794862817303-13db83efe71c
+x-mintlify-client-version: 0.0.4177
+x-vercel-cache: MISS
+x-vercel-id: pdx1:fra1:iad1::iad1::5djzz-1794962847776-bd472383b974
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=fHsXd1ilE8Vm%2FSKwdPwCD1mmmQy3u20%2B1KURe5X37WWwsYWe5ca0cJ7yy20sJ1sfEUtpRoOACvuHT60BEnl%2FwE4fPqz2q0HFXencK4O6UzjMkwPFxVDqAxYs"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=81xN0U03XaBEQMJjCbqXdtW75tmRYl6J7VeRT7u1gOBtxM14kf17owEnxHCKXidHUHuZnpua%2BxiMPPf4a8NBfWSPe1Gnqd7Mw1rBR3oVuZXbkKRZOtgRIzsE"}]}
-cf-ray: a5b96c9fbb3007b3-LAX
+cf-ray: a5c2f6c65e7d87ab-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Polar

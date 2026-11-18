@@ -1,17 +1,20 @@
 GET https://workos.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:29.900Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:42.535Z
 final-url: https://workos.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Mon, 16 Nov 2026 21:00:28 GMT
+date: Wed, 18 Nov 2026 00:47:40 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
 vary: Accept, accept-encoding
+report-to: {"group":"cf-csp-endpoint","max_age":86400,"endpoints":[{"url":"https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=W4WSQcj3splt3BiaDejwDD7DFFPNkwDxeymeqvmvjm0-1794962860.1169724-1.0.1.1-2TOcUeY2PYum6Be48w5mBcTxpcF8OP526SWUrDZvde1lGDjItbYIp6L1Cx5PLwNWw5lSkA_n4cSBqDFvB9xUFWTWMn3wFNYtwvKsvM5h1SFtiLaOntYWwxpPNOV_.7OjVWJD6bWcSeTn5PSsAuEQeGYR5LzDw6D0lH_ESzqxfN0"}]}
+reporting-endpoints: cf-csp-endpoint="https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=W4WSQcj3splt3BiaDejwDD7DFFPNkwDxeymeqvmvjm0-1794962860.1169724-1.0.1.1-2TOcUeY2PYum6Be48w5mBcTxpcF8OP526SWUrDZvde1lGDjItbYIp6L1Cx5PLwNWw5lSkA_n4cSBqDFvB9xUFWTWMn3wFNYtwvKsvM5h1SFtiLaOntYWwxpPNOV_.7OjVWJD6bWcSeTn5PSsAuEQeGYR5LzDw6D0lH_ESzqxfN0"
+content-security-policy-report-only: script-src 'unsafe-inline' 'unsafe-eval'; report-uri https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=W4WSQcj3splt3BiaDejwDD7DFFPNkwDxeymeqvmvjm0-1794962860.1169724-1.0.1.1-2TOcUeY2PYum6Be48w5mBcTxpcF8OP526SWUrDZvde1lGDjItbYIp6L1Cx5PLwNWw5lSkA_n4cSBqDFvB9xUFWTWMn3wFNYtwvKsvM5h1SFtiLaOntYWwxpPNOV_.7OjVWJD6bWcSeTn5PSsAuEQeGYR5LzDw6D0lH_ESzqxfN0; report-to cf-csp-endpoint
 content-encoding: gzip
 server: cloudflare
-cf-ray: a5b96ce36f11debd-PDX
+cf-ray: a5c2f713bc06147f-PDX
 
 # 404 — page not found
 

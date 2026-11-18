@@ -1,0 +1,20 @@
+GET https://perplexity.ai/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:58.897Z
+redirect: 301 from https://perplexity.ai/.well-known/oauth-authorization-server
+final-url: https://www.perplexity.ai/.well-known/oauth-authorization-server
+
+HTTP 200
+date: Wed, 18 Nov 2026 00:45:57 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+server: cloudflare
+cache-control: public, max-age=3600
+cf-cache-status: DYNAMIC
+content-encoding: gzip
+cf-ray: a5c2f492bde69935-PDX
+alt-svc: h3=":443"; ma=86400
+
+{"issuer":"https://www.perplexity.ai/rest/computer/mcp","authorization_endpoint":"https://www.perplexity.ai/rest/computer/mcp/authorize","token_endpoint":"https://www.perplexity.ai/rest/computer/mcp/token","registration_endpoint":"https://www.perplexity.ai/rest/computer/mcp/register","scopes_supported":["asi:query"],"response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token"],"token_endpoint_auth_methods_supported":["none"],"code_challenge_methods_supported":["S256"],"authorization_response_iss_parameter_supported":true}

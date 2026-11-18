@@ -1,17 +1,17 @@
 GET https://e2b.dev/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:03.289Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:10.669Z
 final-url: https://e2b.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 325682
+age: 425710
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'self';
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:58:59 GMT
+date: Wed, 18 Nov 2026 00:46:07 GMT
 etag: W/"06dd7ad68ab8713f63445b067904043e"
 permissions-policy: camera=(), microphone=(), geolocation=()
 server: Vercel
@@ -22,7 +22,7 @@ x-dns-prefetch-control: on
 x-frame-options: SAMEORIGIN
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::84ngg-1794862739094-d40609309a56
+x-vercel-id: pdx1::tww9h-1794962767561-2ee2a718c4f5
 x-xss-protection: 1; mode=block
 connection: close
 transfer-encoding: chunked

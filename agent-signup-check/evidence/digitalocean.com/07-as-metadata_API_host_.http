@@ -1,19 +1,19 @@
 GET https://api.digitalocean.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:23.785Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:33.840Z
 final-url: https://api.digitalocean.com/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:59:22 GMT
+date: Wed, 18 Nov 2026 00:46:32 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
 x-gateway: Edge-Gateway
 x-response-from: Edge-Gateway
-do-upstream-service-time: 93
+do-upstream-service-time: 78
 cf-cache-status: DYNAMIC
 content-encoding: gzip
 server: cloudflare
-cf-ray: a5b96b4b0f0aefb0-PDX
+cf-ray: a5c2f56aac52e8e9-PDX
 
 {"id":"not_found","message":"Your request could not be routed."}

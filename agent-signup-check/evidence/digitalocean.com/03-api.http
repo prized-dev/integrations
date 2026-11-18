@@ -1,19 +1,19 @@
 GET https://api.digitalocean.com/v2/account
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:23.785Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:33.840Z
 final-url: https://api.digitalocean.com/v2/account
 
 HTTP 401
-date: Mon, 16 Nov 2026 20:59:20 GMT
+date: Wed, 18 Nov 2026 00:46:30 GMT
 content-type: application/json
 content-length: 64
 connection: close
 x-gateway: Edge-Gateway
-x-request-id: e83ecfec-bff8-4df2-85ac-0706d1447be2
+x-request-id: 9dc1181e-c08d-4db1-b851-3de908d67e18
 x-response-from: Edge-Gateway
-do-upstream-service-time: 73
+do-upstream-service-time: 82
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a5b96b3c68716e10-PDX
+cf-ray: a5c2f55d29bcef83-PDX
 
 {"id": "Unauthorized", "message": "Unable to authenticate you" }

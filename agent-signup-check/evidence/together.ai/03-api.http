@@ -1,20 +1,21 @@
 GET https://api.together.xyz/v1/models
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:46.312Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:53.575Z
 final-url: https://api.together.xyz/v1/models
 
 HTTP 401
-date: Mon, 16 Nov 2026 20:58:43 GMT
+date: Wed, 18 Nov 2026 00:45:50 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 strict-transport-security: max-age=15552000; includeSubDomains
-vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
 access-control-allow-methods: GET,POST,PATCH
 access-control-allow-origin: *
+content-encoding: gzip
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a5b96a5878441a0b-PDX
+cf-ray: a5c2f46889bccb73-PDX
 alt-svc: h3=":443"; ma=86400
 
 Missing API key

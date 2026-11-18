@@ -1,24 +1,24 @@
 GET https://parallel.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:14.428Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:27.144Z
 final-url: https://parallel.ai/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 97825
+age: 7849
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'self' https://parallel-v2.sanity.studio https://sanity.io https://www.sanity.io
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 21:00:08 GMT
-etag: W/"5a2eb7e293be2c08633c8ba456505cac"
+date: Wed, 18 Nov 2026 00:47:21 GMT
+etag: W/"ad42534510a44e7d9f4d4987c8f88716"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::9shnx-1794862808841-814a9ae2a55e
+x-vercel-id: pdx1::d5bn9-1794962841347-f04d506370d6
 connection: close
 transfer-encoding: chunked
 
@@ -32,7 +32,7 @@ Use the product pages to choose a starting point and the documentation index for
 
 - [Search MCP](https://parallel.ai/mcp.md): Free web search MCP server for AI agents. One agent prompt that installs it into the agent's own MCP client, one-click links for Claude, ChatGPT, Cursor, and VS Code, and the 26 clients with setup steps.
 - [MCP setup](https://docs.parallel.ai/integrations/mcp/installation.md): Free anonymous search and extraction at lower limits through `https://mcp.parallel.ai/mcp` (Streamable HTTP), with no account, API key, or OAuth required. For higher limits and the `web_research` tool, use a Parallel API key as `Authorization: Bearer <key>`. For OAuth or enforced authentication, use `https://mcp.parallel.ai/mcp?login`. The guide includes client setup commands.
-- [CLI and agent setup](https://parallel.ai/agents.md): Install the CLI, authenticate, and install agent skills.
+- [Agent setup](https://parallel.ai/agents.md): Setup steps for an agent to follow: add Parallel's search and research tools to the agent, add the Parallel API to an app, or evaluate Parallel.
 - [CLI reference](https://docs.parallel.ai/integrations/cli.md): Installation options, `parallel-cli login`, API key configuration, and command examples.
 - [Agent authentication](https://parallel.ai/auth.md): Account setup and API key creation. Account access tokens manage the account; product API calls use an API key.
 - [Developer platform](https://platform.parallel.ai/): Create an account and API keys for paid API use. Anonymous Search MCP access does not provide anonymous API access.
@@ -49,6 +49,7 @@ Use the product pages to choose a starting point and the documentation index for
 
 - [Pricing](https://parallel.ai/pricing): Product pricing and calculators.
 - [Pricing and billing guide](https://docs.parallel.ai/getting-started/pricing.md): Billable units, usage rules, and current rates.
+- [Search API cost calculator](https://parallel.ai/products/search/calculator.md): Published list prices for common search APIs compared with Parallel Search.
 - [Search API](https://parallel.ai/products/search.md)
 - [Extract API](https://parallel.ai/products/extract.md)
 - [Decisions API](https://parallel.ai/products/decisions.md)

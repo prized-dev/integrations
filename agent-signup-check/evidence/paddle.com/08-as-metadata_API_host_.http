@@ -1,10 +1,10 @@
 GET https://api.paddle.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:21.886Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:34.391Z
 final-url: https://api.paddle.com/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Mon, 16 Nov 2026 21:00:20 GMT
+date: Wed, 18 Nov 2026 00:47:32 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
@@ -16,7 +16,7 @@ cross-origin-resource-policy: same-site
 permissions-policy: accelerometer=(),ambient-light-sensor=(),autoplay=(),battery=(),camera=(),display-capture=(),document-domain=(),encrypted-media=(),fullscreen=(),gamepad=(),geolocation=(),gyroscope=(),layout-animations=(self),legacy-image-formats=(self),magnetometer=(),microphone=(),midi=(),oversized-images=(self),payment=(),picture-in-picture=(),publickey-credentials-get=(),screen-wake-lock=(),speaker-selection=(),sync-xhr=(self),unoptimized-images=(self),unsized-media=(self),usb=(),web-share=(),xr-spatial-tracking=()
 pragma: no-cache
 referrer-policy: no-referrer
-request-id: 7095ca62-9fc8-4484-9123-5f78d1927831
+request-id: d71763df-47d3-45df-aed6-37004c4ed739
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-content-type-options: nosniff
 x-frame-options: deny
@@ -25,6 +25,6 @@ x-robots-tag: noindex, nofollow
 cf-cache-status: DYNAMIC
 content-encoding: br
 server: cloudflare
-cf-ray: a5b96cb27da40ba9-PDX
+cf-ray: a5c2f6e2b9d6b74e-PDX
 
-{"error":{"type":"request_error","code":"invalid_url","detail":"URL called is invalid.","documentation_url":"https://developer.paddle.com/v1/errors/shared/invalid_url"},"meta":{"request_id":"7095ca62-9fc8-4484-9123-5f78d1927831"}}
+{"error":{"type":"request_error","code":"invalid_url","detail":"URL called is invalid.","documentation_url":"https://developer.paddle.com/v1/errors/shared/invalid_url"},"meta":{"request_id":"d71763df-47d3-45df-aed6-37004c4ed739"}}

@@ -1,11 +1,11 @@
 GET https://agentphone.to/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:55.100Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:05.644Z
 redirect: 301 from https://agentphone.to/llms.txt
 final-url: https://agentphone.ai/llms.txt
 
 HTTP 200
-date: Mon, 16 Nov 2026 20:59:52 GMT
+date: Wed, 18 Nov 2026 00:47:01 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -19,12 +19,12 @@ server: cloudflare
 vary: Accept-Encoding
 x-content-type-options: nosniff
 x-frame-options: DENY
-x-railway-request-id: eOYi097kTPSYBnfPwoOzXw
+x-railway-request-id: a91-puTfST6yez_7yCLmYg
 x-railway-edge: sjc1
-x-hikari-trace: sjc1.hqvw
+x-hikari-trace: sjc1.qeyn
 cf-cache-status: DYNAMIC
 speculation-rules: "/cdn-cgi/speculation"
-cf-ray: a5b96c030d5fefb0-PDX
+cf-ray: a5c2f6237eeb8b10-PDX
 
 # AgentPhone
 

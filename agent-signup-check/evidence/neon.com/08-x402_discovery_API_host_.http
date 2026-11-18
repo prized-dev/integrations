@@ -1,0 +1,20 @@
+GET https://claimable.neon.tech/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:47.107Z
+final-url: https://claimable.neon.tech/.well-known/x402
+
+HTTP 404
+age: 0
+cache-control: public, max-age=0, must-revalidate
+content-encoding: br
+content-type: application/json
+date: Wed, 18 Nov 2026 00:46:46 GMT
+server: Vercel
+strict-transport-security: max-age=63072000
+x-request-id: cd1c29c9-8aca-450f-b62a-79b65b5bcb75
+x-vercel-cache: MISS
+x-vercel-id: pdx1::iad1::q46cp-1794962806589-bebd0df06d6e
+connection: close
+transfer-encoding: chunked
+
+{"error":{"code":"not_found","origin":"proxy","message":"No route exists at this path.","retryable":false,"request_id":"cd1c29c9-8aca-450f-b62a-79b65b5bcb75"}}

@@ -1,24 +1,24 @@
 GET https://twilio.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:53.233Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:03.546Z
 redirect: 301 from https://twilio.com/llms.txt
 final-url: https://www.twilio.com/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
-content-length: 2522502
+content-length: 2525741
 connection: close
-accept-ranges: bytes
-date: Mon, 16 Nov 2026 20:59:48 GMT
 server: AmazonS3
-last-modified: Mon, 16 Nov 2026 20:49:00 GMT
-etag: "39c272a0893ead622978af3d0a04b2fb"
-x-amz-version-id: WQhJht9BflE0rz4zvf4gXJ04kPL7sIgD
+date: Wed, 18 Nov 2026 00:46:58 GMT
+last-modified: Wed, 18 Nov 2026 00:09:53 GMT
+etag: "8df357c85ac9322a0cfaf60d49fa1787"
 x-amz-server-side-encryption: AES256
+x-amz-version-id: d8scfnjeLfq7EhWww_O32zHdPPfM2HVU
+accept-ranges: bytes
 x-cache: Miss from cloudfront
-via: 1.1 44c9323c8e1b3ab3824760718cef5d00.cloudfront.net (CloudFront)
+via: 1.1 f9cbfbc3568832d017c09dbd4649932c.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: puBUgqxr1J0qTxcy3tChbw4638HKpH3sM8xj5H-JthHJLHhBG8EApw==
+x-amz-cf-id: JamfX6jJy0S7IqL9UQ2S-nxNwwDrLx5fLPfQRuslux2LBf8lDTjneA==
 
 * [Conversational AI and APIs for SMS, Email, Voice](https://www.twilio.com/en-us.md): Build amazing customer experiences on the Twilio platform with APIs for SMS, RCS, voice, and email, plus conversational AI for smarter engagement, and identity verification for trust.
 
@@ -749,7 +749,7 @@ x-amz-cf-id: puBUgqxr1J0qTxcy3tChbw4638HKpH3sM8xj5H-JthHJLHhBG8EApw==
 * [From Analog to APIs: WESA and WYEP Power Membership Drives with Twilio](https://www.twilio.com/en-us/blog/partners/spotlights/wesa-and-wyep-power-membership-drives-with-twilio-html.md): WESA and WYEP Power Membership Drives with Twilio
 * [Twilio Health Score for Messaging and Personalized Recommendations GA in Console](https://www.twilio.com/en-us/blog/products/launches/health-score-recommendations-generally-available.md): Twilio's advanced monitoring, data, and engagement tools Twilio Health Score for Messaging and Personalized Recommendations are now generally available
 * [The Tech Behind A Tow: The City Of Boston Reunites Cars With Owners Using Twilio Voice](https://www.twilio.com/en-us/blog/partners/spotlights/city-of-boston-twilio-voice-nt-html.md): The Tech Behind A Tow: The City Of Boston Reunites Cars and Owners With Twilio Voice
-* [Email Marketing: What is Click to Open Rate (CTOR)?](https://www.twilio.com/en-us/blog/insights/click-to-open-rate-how-relevant-is-my-email.md): Learn how to calculate click-to-open rate (CTOR) with our formula, definition, and examples. Discover the key difference between CTR vs CTOR.
+* [What is click-to-open rate (CTOR) in email marketing?](https://www.twilio.com/en-us/blog/insights/click-to-open-rate-how-relevant-is-my-email.md): Click-to-open rate (CTOR) is the percentage of email openers who click. Learn the formula, what a good CTOR is, and how to improve yours.
 * [Introducing the twiml-i18n Library](https://www.twilio.com/en-us/blog/products/launches/introducing-twiml-i18n-npm-package.md): Twilio posts cloud communications trends, customer stories, and tips for building scalable voice and SMS applications with Twilio's APIs.
 * [2010 Mozilla Summit Recap: July 7 – 9, Whistler, Canada](https://www.twilio.com/en-us/blog/events/2010-mozilla-summit-recap-july-7-9-whistler-canada-html.md): The Mozilla Summit far surpassed my expectations. The event was personal, technical, creative and inspiring all at once. The Mozilla Summit is an invit
 * [Tabs Coming to Apple Mail | Twilio](https://www.twilio.com/en-us/blog/insights/apple-mail-tabs.md): Discover how Apple Mail’s new tabs in iOS 18 affect email engagement and get tips to prepare your email strategy.
@@ -759,7 +759,7 @@ x-amz-cf-id: puBUgqxr1J0qTxcy3tChbw4638HKpH3sM8xj5H-JthHJLHhBG8EApw==
 * [Interconnect is Now Global – New Exchanges in Europe and Asia](https://www.twilio.com/en-us/blog/products/launches/interconnect-is-now-global-new-exchanges-in-europe-and-asia-html.md): Today, we’re excited to announce the launch of two new Interconnect Exchanges – Europe (London) and Asia (Singapore) – making private conne
 * [What you Missed from Messaging at SIGNAL 2021](https://www.twilio.com/en-us/blog/products/what-you-missed-from-messaging-at-signal-2021.md): Learn about what Twilio introduced at SIGNAL 2021 for the next generation of messaging.
 * [The National Association Of Guide Dog Users Chooses Twilio To Power Their Hotline, Track Down Illegal Denial Of Service Issues](https://www.twilio.com/en-us/blog/partners/spotlights/the-national-association-of-guide-dog-users-chooses-twilio-to-power-their-hotline-track-down-illegal-denial-of-service-issues-html.md): There’s a good reason guide dogs have “don’t pet me, I’m working” printed on their harnesses. They may be adorable, but they’re working dogs first and foremost. Guide dogs offer blind men and women tremendously valuable services from navigation, to security, to companionship. The National Association of Guide Dog Users, a division of the National Federation of the Blind, gives blind people the access, training and
-* [What is a No-Reply Email? Key Reasons to Avoid Them | Twilio](https://www.twilio.com/en-us/blog/insights/why-you-should-not-use-noreplydomain-com-in-your-emails.md): Do not reply emails can make users frustrated and confused. Learn what a no-reply email is & best practices to improve email deliverability.
+* [What is a no-reply email (and why you should never use them)](https://www.twilio.com/en-us/blog/insights/why-you-should-not-use-noreplydomain-com-in-your-emails.md): A no-reply email comes from an address that can’t receive replies. Learn why they hurt engagement and deliverability, and what to use instead.
 * [Interview with Salesmsg CEO Chris Brisson](https://www.twilio.com/en-us/blog/partners/spotlights/no-code-text-solution-with-salesmsg.md): Salesmsg has built a best-in-class, no-code texting solution for businesses looking to engage their customers at scale.
 * [Introducing Voice for AI Assistants, now in Developer Preview](https://www.twilio.com/en-us/blog/products/launches/introducing-voice-ai-assistants-developer-preview.md): Explore Twilio's new Voice for AI Assistants in Developer Preview, enabling smart voice apps for seamless, human-like customer interactions
 * [A New Era of Contact Center Software is Here: Twilio Flex Now Generally Available 🎉](https://www.twilio.com/en-us/blog/products/launches/flex-contact-center-platform-generally-available.md): A new era of contact center software has arrived. Get started free with the only contact center platform that’s Instantly deployable and programmable at every layer of the stack.
@@ -1145,7 +1145,7 @@ x-amz-cf-id: puBUgqxr1J0qTxcy3tChbw4638HKpH3sM8xj5H-JthHJLHhBG8EApw==
 * [Unlock Facebook Conversions API with Twilio Segment](https://www.twilio.com/en-us/blog/partners/spotlights/unlocking-the-power-of-facebooks-conversion-api-with-segment.md): Discover how Facebook's Conversions API and Twilio Segment help navigate privacy regulations, optimize ad targeting, and streamline first-party data for impactful retargeting. Boost your ad ROI today!
 * [Understanding Dynamic Linking in PSD2](https://www.twilio.com/en-us/blog/insights/compliance/dynamic-linking-psd2.md): Remove the uncertainty about Strong Customer Authentication (SCA) and explain in simple terms what you need to know to comply with the new regulations, specifically the important topic of “dynamic linking,” one of PSD2’s core components.
 * [6 reasons why leading marketing platforms use Twilio | Twilio](https://www.twilio.com/en-us/blog/insights/why-marketing-platforms-use-twilio.md): Discover why top marketing platforms choose Twilio. Learn about channel flexibility, high messaging throughput, compliance ease, and more.
-* [SMTP Port 587 vs 465: Which Port Should You Use?](https://www.twilio.com/en-us/blog/insights/whats-the-difference-between-ports-465-and-587.md): SMTP port 587 vs 465: which should you use? Port 587 with StartTLS is the current standard. Quick guide to SMTP ports, configuration, and troubleshooting.
+* [SMTP port 587 vs. 465: Which port should you use?](https://www.twilio.com/en-us/blog/insights/whats-the-difference-between-ports-465-and-587.md): Port 587 or 465? Compare SMTP ports, how StartTLS and implicit TLS differ, and which port to use for Gmail, Outlook, and Twilio SendGrid.
 * [Introducing Developer Evangelist Michelle (Mish) Duke](https://www.twilio.com/en-us/blog/company/spotlights/introducing-developer-evangelist-michelle-mish-duke.md): Meet Michelle Duke (AKA MishManners), community builder, Hackathon Queen, and ex-GitHub Developer Advocate, now setting sail as a Twilio Developer Evangelist.
 * [Guide to Email Marketing for Hotels and Hospitality](https://www.twilio.com/en-us/blog/insights/email-marketing-for-hotels.md): Learn how to draw new customers and improve loyalty using modern email marketing strategies for hotels and hospitality.
 * [How to Champion SMS Marketing to Internal Stakeholders](https://www.twilio.com/en-us/blog/insights/cloud-comms/champion-sms-marketing-to-internal-stakeholders.md): Use SMS marketing to help your company build loyalty and growth while providing measurable ROI
@@ -4003,6 +4003,6 @@ x-amz-cf-id: puBUgqxr1J0qTxcy3tChbw4638HKpH3sM8xj5H-JthHJLHhBG8EApw==
 * [How to Send WhatsApp Messages from Google Sheets with JavaScript and Node.js](https://www.twilio.com/en-us/blog/send-whatsapp-messages-from-google-sheets-javascript-node-js.md): Learn how to quickly send WhatsApp messages with JavaScript and Node.js using data stored in a Google Sheet with this handy programming tutorial.
 * [How to Send WhatsApp Messages from Java Applications with Twilio](https://www.twilio.com/en-us/blog/send-whatsapp-messages-java-applications-twilio-api.md): Programmatically send messages to WhatsApp recipients using the Twilio API.
 * [Get Started with RCS and Twilio](https://www.twilio.com/en-us/blog/get-started-rcs-twilio.md): Learn how to get started with Twilio's RCS Public Beta in this step by step overview of registering, creating a Sender profile, testing, and tracking.
-* [The future of messaging: Twilio's approach to
+* [The future of messaging: Twilio's approach to Rich Communic
 
 [truncated at 1048576 bytes]

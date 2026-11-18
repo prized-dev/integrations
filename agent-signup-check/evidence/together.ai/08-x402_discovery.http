@@ -1,18 +1,18 @@
 GET https://together.ai/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:46.312Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:53.575Z
 final-url: https://together.ai/.well-known/x402
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:58:46 GMT
+date: Wed, 18 Nov 2026 00:45:52 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5b96a64da0fc415-SEA
-cf-cache-status: MISS
+cf-ray: a5c2f474e93bebea-SEA
+cf-cache-status: EXPIRED
 cache-control: no-transform
 content-encoding: gzip
-etag: W/"6afb687b-58"
+etag: W/"6afca0d1-58"
 server: cloudflare
 vary: accept-encoding
 x-content-type-options: nosniff

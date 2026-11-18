@@ -1,22 +1,22 @@
 GET https://developers.openai.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:42.092Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:48.352Z
 final-url: https://developers.openai.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 183
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:58:39 GMT
+date: Wed, 18 Nov 2026 00:45:45 GMT
 etag: W/"110e3e97e7d05cf166186b7c682189a5"
-last-modified: Mon, 16 Nov 2026 20:55:36 GMT
+last-modified: Wed, 18 Nov 2026 00:45:45 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
-x-vercel-cache: HIT
-x-vercel-id: pdx1::pt5ml-1794862719397-db293dd5fdb7
+x-vercel-cache: MISS
+x-vercel-id: pdx1::rghwk-1794962745325-da1d4223ddb3
 connection: close
 transfer-encoding: chunked
 

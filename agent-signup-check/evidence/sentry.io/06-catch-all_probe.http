@@ -1,12 +1,12 @@
 GET https://sentry.io/agent-signup-check-no-such-page.md
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:26.875Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:38.856Z
 redirect: 301 from https://sentry.io/agent-signup-check-no-such-page.md
 final-url: https://sentry.io/agent-signup-check-no-such-page.md/
 
 HTTP 200
 server: nginx
-date: Mon, 16 Nov 2026 21:00:25 GMT
+date: Wed, 18 Nov 2026 00:47:37 GMT
 content-type: text/markdown
 content-length: 976
 vary: Accept-Language, Cookie
@@ -16,7 +16,7 @@ x-content-type-options: nosniff
 x-xss-protection: 1; mode=block
 cross-origin-opener-policy-report-only: same-origin; report-to="coop-endpoint"
 report-to: {"group":"coop-endpoint","max_age":86400,"endpoints":[{"url":"https://sentry-coop-302178938983.us-central1.run.app/coop"}]}, {"group":"browser-reports","max_age":86400,"endpoints":[{"url":"https://o1.ingest.us.sentry.io/api/4511643338670080/integration/browser/reporting/?sentry_key=00e06516e17f2077b4ee5e7206630df5"}]}
-content-security-policy: script-src 'self' 'unsafe-inline' 'report-sample' s1.sentry-cdn.com js.sentry-cdn.com browser.sentry-cdn.com statuspage-production.s3.amazonaws.com aui-cdn.atlassian.com connect-cdn.atl-paas.net js.stripe.com 'strict-dynamic' cdn.pendo.io data.pendo.io pendo-io-static.storage.googleapis.com pendo-static-5634074999128064.storage.googleapis.com plausible.io app.intercom.io widget.intercom.io js.intercomcdn.com; style-src * 'unsafe-inline'; base-uri 'none'; frame-src app.pendo.io demo.arcade.software js.stripe.com sentry.io 'self' intercom-sheets.com www.intercom-reporting.com; frame-ancestors 'self' *.sentry.io; img-src * blob: data:; connect-src 'self' *.algolia.net *.algolianet.com *.algolia.io browser.sentry-cdn.com sentry.io *.sentry.io s1.sentry-cdn.com o1.ingest.sentry.io api2.amplitude.com app.pendo.io data.pendo.io reload.getsentry.net t687h3m0nh65.statuspage.io maps.googleapis.com plausible.io api.github.com *.intercom.io wss://*.intercom.io *.intercom-messenger.com wss://*.intercom-messenger.com uploads.intercomcdn.com uploads.intercomusercontent.com; media-src *; worker-src 'self' blob:; font-src * data:; object-src 'none'; default-src 'none'; report-uri https://o1.ingest.sentry.io/api/54785/security/?sentry_key=f724a8a027db45f5b21507e7142ff78e&sentry_release=e687366ad96532f8ad27f2857c06097b57eb99a1
+content-security-policy: img-src * blob: data:; media-src *; worker-src 'self' blob:; frame-src app.pendo.io demo.arcade.software js.stripe.com sentry.io 'self' intercom-sheets.com www.intercom-reporting.com; frame-ancestors 'self' *.sentry.io; script-src 'self' 'unsafe-inline' 'report-sample' s1.sentry-cdn.com js.sentry-cdn.com browser.sentry-cdn.com statuspage-production.s3.amazonaws.com aui-cdn.atlassian.com connect-cdn.atl-paas.net js.stripe.com 'strict-dynamic' cdn.pendo.io data.pendo.io pendo-io-static.storage.googleapis.com pendo-static-5634074999128064.storage.googleapis.com plausible.io app.intercom.io widget.intercom.io js.intercomcdn.com; style-src * 'unsafe-inline'; font-src * data:; object-src 'none'; default-src 'none'; base-uri 'none'; connect-src 'self' *.algolia.net *.algolianet.com *.algolia.io browser.sentry-cdn.com sentry.io *.sentry.io s1.sentry-cdn.com o1.ingest.sentry.io api2.amplitude.com app.pendo.io data.pendo.io reload.getsentry.net t687h3m0nh65.statuspage.io maps.googleapis.com plausible.io api.github.com *.intercom.io wss://*.intercom.io *.intercom-messenger.com wss://*.intercom-messenger.com uploads.intercomcdn.com uploads.intercomusercontent.com; report-uri https://o1.ingest.sentry.io/api/54785/security/?sentry_key=f724a8a027db45f5b21507e7142ff78e&sentry_release=918e5fb21312e04dcb931ff07effd1914f9f0a92
 nel: {"report_to":"browser-reports","max_age":86400,"success_fraction":0.01,"failure_fraction":0.10}
 reporting-endpoints: browser-reports="https://o1.ingest.us.sentry.io/api/4511643338670080/integration/browser/reporting/?sentry_key=00e06516e17f2077b4ee5e7206630df5"
 via: 1.1 google

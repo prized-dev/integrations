@@ -1,26 +1,26 @@
 GET https://vapi.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:55.640Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:06.568Z
 final-url: https://vapi.ai/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 295173
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: frame-ancestors 'none';
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:59:53 GMT
+date: Wed, 18 Nov 2026 00:47:03 GMT
 etag: W/"d6f5ec439e84cef91fad68c66d344471"
-last-modified: Fri, 13 Nov 2026 11:00:19 GMT
+last-modified: Wed, 18 Nov 2026 00:47:03 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: Accept
 x-frame-options: SAMEORIGIN
 x-matched-path: /llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::mvf75-1794862793241-1bd36a1d4d35
+x-vercel-cache: MISS
+x-vercel-id: pdx1::5djzz-1794962823673-52fc3530d20b
 connection: close
 transfer-encoding: chunked
 
