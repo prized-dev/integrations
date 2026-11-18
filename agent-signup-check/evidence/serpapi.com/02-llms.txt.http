@@ -1,10 +1,10 @@
 GET https://serpapi.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:09.333Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:21.509Z
 final-url: https://serpapi.com/llms.txt
 
 HTTP 200
-date: Mon, 16 Nov 2026 21:00:07 GMT
+date: Wed, 18 Nov 2026 00:47:19 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -14,16 +14,15 @@ x-content-type-options: nosniff
 x-download-options: noopen
 x-permitted-cross-domain-policies: none
 referrer-policy: strict-origin-when-cross-origin
-vary: Accept, accept-encoding
 cache-control: max-age=604800, public
 etag: W/"5cc9a20ecc21f7f46b4b8cc551f074f0"
-x-request-id: 46b73291-d7fb-4032-be26-aa87bbb034a0
-x-runtime: 0.009198
-age: 32899
+x-request-id: 042a3a3a-90b1-4142-a89a-b45668440669
+x-runtime: 0.010598
+vary: accept-encoding
 cf-cache-status: HIT
 content-encoding: br
 server: cloudflare
-cf-ray: a5b96c618b88f820-PDX
+cf-ray: a5c2f6928b4a8ce4-PDX
 alt-svc: h3=":443"; ma=86400
 
 # SerpApi

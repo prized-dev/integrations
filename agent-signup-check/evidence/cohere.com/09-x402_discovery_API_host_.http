@@ -1,0 +1,23 @@
+GET https://api.cohere.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:58.647Z
+final-url: https://api.cohere.com/.well-known/x402
+
+HTTP 401
+cache-control: no-cache, no-store, no-transform, must-revalidate, private, max-age=0
+content-encoding: gzip
+content-type: application/json
+expires: Thu, 01 Jan 1970 00:00:00 GMT
+pragma: no-cache
+vary: Origin,Accept-Encoding
+x-accel-expires: 0
+x-api-warning: Please set an API version, for more information please refer to https://docs.cohere.com/reference/about
+date: Wed, 18 Nov 2026 00:45:58 GMT
+x-envoy-upstream-service-time: 1
+server: envoy
+via: 1.1 google
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+connection: close
+transfer-encoding: chunked
+
+{"id":"392daa12-2312-4d30-9b66-d5567f6b5e05","message":"no api key supplied"}

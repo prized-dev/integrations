@@ -1,6 +1,6 @@
 GET https://tavily.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:10.728Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:21.713Z
 redirect: 302 from https://tavily.com/llms.txt
 redirect: 308 from https://www.tavily.com/llms.txt
 final-url: https://docs.tavily.com/llms.txt
@@ -8,21 +8,21 @@ final-url: https://docs.tavily.com/llms.txt
 HTTP 200
 cache-control: public, max-age=0, must-revalidate
 cf-cache-status: EXPIRED
-cf-ray: a5b96c5e8fc45ee5-PDX
+cf-ray: a5c2f683def6efac-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 21:00:06 GMT
-last-modified: Mon, 16 Nov 2026 21:00:07 GMT
+date: Wed, 18 Nov 2026 00:47:17 GMT
+last-modified: Wed, 18 Nov 2026 00:47:17 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4149
+x-mintlify-client-version: 0.0.4177
 x-vercel-cache: MISS
-x-vercel-id: pdx1:pdx1:iad1::iad1::qnf5m-1794862806771-1012c37aeb00
+x-vercel-id: pdx1:pdx1:iad1::iad1::n24cf-1794962837048-1c963fcdf4aa
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_4D8r1dHg6bQcRuBgQyL3z9waJJtn
+x-version: dpl_HhUetB7eHHDAmK9T1Teip38TgFx9
 connection: close
 transfer-encoding: chunked
 
@@ -199,6 +199,7 @@ Recommended defaults for agents: prefer `search_depth="advanced"`, add `chunks_p
 - [Mastra](https://docs.tavily.com/documentation/integrations/mastra.md): First-class Mastra tools for search, extract, crawl, and map.
 - [Merge Gateway](https://docs.tavily.com/documentation/integrations/merge-gateway.md): Use Tavily as the search engine behind Merge Gateway's web search tool.
 - [Microsoft 365 Copilot](https://docs.tavily.com/documentation/integrations/microsoft.md): Use Tavily as a declarative agent in Microsoft 365 Copilot or as a Copilot Cowork plugin.
+- [Mistral Studio](https://docs.tavily.com/documentation/integrations/mistral.md): Give Mistral models and agents live web search through the Tavily connector in Mistral Studio.
 - [n8n](https://docs.tavily.com/documentation/integrations/n8n.md): No-code workflow automation with Tavily.
 - [Nebius Token Factory](https://docs.tokenfactory.nebius.com/integrations/overview.md): Use Tavily results with open-source models served through Token Factory's OpenAI-compatible API.
 - [OpenAI](https://docs.tavily.com/documentation/integrations/openai.md): Grounded web search for OpenAI function-calling agents.

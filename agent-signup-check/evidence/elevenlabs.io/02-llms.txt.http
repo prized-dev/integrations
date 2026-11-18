@@ -1,11 +1,11 @@
 GET https://elevenlabs.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:58.654Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:07.109Z
 final-url: https://elevenlabs.io/llms.txt
 
 HTTP 200
 server: nginx/1.30.6
-date: Mon, 16 Nov 2026 20:58:55 GMT
+date: Wed, 18 Nov 2026 00:46:03 GMT
 content-type: text/plain; charset=utf-8
 vary: Accept-Encoding,rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 content-security-policy: frame-ancestors 'self' https://payload.elevenlabs.io;
@@ -14,7 +14,7 @@ x-robots-tag: none
 content-encoding: br
 via: 1.1 google
 strict-transport-security: max-age=1800;
-alt-svc: h3=":443"; ma=2592000
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
 connection: close
 transfer-encoding: chunked
 
@@ -67,7 +67,7 @@ Where Markdown responses are available, the server will reply with `Content-Type
 - [Voice Cloning](https://elevenlabs.io/voice-cloning): Create a high-fidelity replica of a voice from audio samples. Requires consent verification for cloning public figures.
 - [Music](https://elevenlabs.io/music): Studio-quality music from natural language prompts in any genre or style, trained on licensed data and cleared for commercial use.
 - [Sound Effects](https://elevenlabs.io/sound-effects): Custom sound effects and ambient audio from text prompts.
-- [Productions](https://elevenlabs.io/productions): Translate and re-voice video and audio content across languages while preserving original speaker characteristics.
+- [Productions](https://elevenlabs.io/productions): Human-edited audio services on the ElevenLabs platform. Vetted linguists and audio professionals deliver dubbing, subtitles, captions and transcripts (including SDH), and single or multicast audiobooks. Localization in 11+ languages, delivered in hours or days.
 - [Projects / Studio](https://elevenlabs.io/studio): Create and edit audiobooks, podcasts, and voiceovers in an editor built on all of ElevenLabs' audio research.
 - [Video](https://elevenlabs.io/video): Turn ideas into videos using leading models including Veo, Sora, Wan, Kling, and Seedance.
 - [Image](https://elevenlabs.io/image): Generate and edit images with leading AI image models.
@@ -95,6 +95,31 @@ Where Markdown responses are available, the server will reply with `Content-Type
 - [Dubbing](https://elevenlabs.io/docs/api-reference/dubbing): Translate and re-voice audio and video content across languages.
 - [Webhooks](https://elevenlabs.io/docs/api-reference/webhooks): Event-driven integration for platform events.
 - [API servers](https://api.elevenlabs.io): Global (`api.elevenlabs.io`), US residency (`api.us.elevenlabs.io`), EU residency (`api.eu.residency.elevenlabs.io`), India residency (`api.in.residency.elevenlabs.io`).
+
+### ElevenAI
+- [ElevenAI](https://elevenlabs.io/elevenai): Desktop app for Mac with dictation into any app and meeting notes with no bot in the call. Transcribes, labels speakers, summarizes with action items, and drafts follow-ups in 90+ languages, powered by our most accurate Speech to Text model and ElevenAgents. Notes and transcripts are available in other AI tools through MCP.
+
+### ElevenReader
+- [ElevenReader overview](https://elevenreader.io/): Listening app that reads PDFs, eBooks, documents, and articles aloud in lifelike ElevenLabs voices, with narrators in 90+ languages. For personal listening only, with no audio export.
+- [Upload and listen](https://elevenreader.io/text-reader-app): Turn your own PDF, DOCX, EPUB, Markdown, and TXT files into narrated audio. Choose from 1,000+ voices or design a narrator from a text prompt.
+- [Audiobook library](https://elevenreader.io/explore): 200,000+ audiobooks included, across genres.
+- [Mobile apps](https://elevenreader.io/download-mobile-app?placement=devices_promo&platform=ios): iOS and Android apps with offline listening, up to 4.0x speed, a sleep timer, and bookmarks, synced across devices.
+- [Chrome extension](https://chromewebstore.google.com/detail/mahgnmmldchnmmdfkfcoindpgkadhhhc): Listen to web pages and articles in the browser.
+
+### ElevenMusic
+- [ElevenMusic overview](https://elevenmusic.io/): Music app for web and iPhone to create, edit, and stream songs from text prompts, remixes, or loops in any genre and language, powered by Music v2.
+- [Studio](https://elevenmusic.io/studio): Generate songs and beats, regenerate individual bars instead of the whole song, split stems, and keep a consistent voice with your own vocals or the curated Vocal Library.
+- [Sounds](https://elevenmusic.io/sounds): Original loops and one-shots to build tracks from.
+- [Explore](https://elevenmusic.io/explore): Browse and stream tracks, charts, artists, and genres made on ElevenMusic.
+- [Pricing](https://elevenmusic.io/pricing): Free plan allows commercial use with a "Made with ElevenMusic" credit. Pro adds release to Spotify and Apple Music and royalties from streams.
+- [iPhone app](https://apps.apple.com/us/app/elevenmusic-by-elevenlabs/id6755965224): Create on mobile and pick up where you left off on the web.
+
+### Reception
+- [Reception overview](https://www.reception.ai/): AI receptionist for small businesses, built on ElevenAgents. Answers calls 24/7 in 70+ languages, books appointments, answers questions, and transfers callers. Live in five minutes.
+- [Industries](https://www.reception.ai/industries): Built for home services, legal, clinics, real estate and property management, automotive, professional and IT services, and personal care and wellness.
+- [Pricing](https://www.reception.ai/pricing): Monthly plans by included call minutes, with a free trial.
+- [Partners](https://www.reception.ai/partners): Partner program for agencies and resellers.
+- [Docs](https://elevenlabs.io/docs/reception-ai/overview): Setup and configuration documentation.
 
 ## Documentation
 

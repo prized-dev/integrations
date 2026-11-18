@@ -1,0 +1,17 @@
+GET https://railway.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:16.490Z
+final-url: https://railway.com/.well-known/oauth-authorization-server
+
+HTTP 406
+content-type: application/json
+date: Wed, 18 Nov 2026 00:46:14 GMT
+server: railway-hikari
+x-railway-request-id: NaKnV7XpRruqMwmN2prcFg
+x-cache: DYNAMIC
+transfer-encoding: chunked
+x-hikari-trace: lax1.ez9k,lax1.z1hw
+x-railway-edge: lax1
+connection: close
+
+{"error":"Only HTML requests are supported here"}

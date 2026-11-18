@@ -1,11 +1,11 @@
 GET https://agentphone.to/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:55.100Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:05.644Z
 redirect: 301 from https://agentphone.to/auth.md
 final-url: https://agentphone.ai/auth.md
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:59:51 GMT
+date: Wed, 18 Nov 2026 00:47:01 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -17,12 +17,12 @@ server: cloudflare
 vary: Accept-Encoding
 x-content-type-options: nosniff
 x-frame-options: DENY
-x-railway-request-id: 2z53-pWUT4K_HB6cU79b0g
+x-railway-request-id: MgEJJTVySeet6_Ka8u2xcg
 x-railway-edge: sjc1
-x-hikari-trace: sjc1.mwfn
+x-hikari-trace: sjc1.qeyn
 cf-cache-status: DYNAMIC
 content-encoding: gzip
-cf-ray: a5b96bffb8b51319-PDX
+cf-ray: a5c2f6207efcb84b-PDX
 
 <!doctype html>
 <html lang="en">
@@ -109,8 +109,8 @@ cf-ray: a5b96bffb8b51319-PDX
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <!--seo-head-->
-    <script type="module" crossorigin src="/assets/index-BIFdftDK.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-De6noxeN.css">
+    <script type="module" crossorigin src="/assets/index-DxI9BHnE.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DxF4LJ4j.css">
       <meta name="robots" content="noindex, nofollow" />
   </head>
   <body>

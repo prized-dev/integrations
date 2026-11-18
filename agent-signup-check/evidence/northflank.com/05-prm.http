@@ -1,24 +1,24 @@
 GET https://northflank.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:10.102Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:18.843Z
 final-url: https://northflank.com/.well-known/oauth-protected-resource
 
 HTTP 404
 connection: close
 x-powered-by: Express
 x-frame-options: SAMEORIGIN
-content-security-policy: default-src 'self'; frame-ancestors none; frame-src 'self' https://www.google.com https://jobs.ashbyhq.com https://app.cal.com; connect-src 'self' https://status.northflank.com https://ph.northflank.com https://jobs.ashbyhq.com https://api.cr-relay.com; script-src 'self' 'nonce-fohttaii0s7' https://www.google.com https://www.gstatic.com https://ph.northflank.com https://jobs.ashbyhq.com https://app.cal.com https://cdn.cr-relay.com; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com; upgrade-insecure-requests
+content-security-policy: default-src 'self'; frame-ancestors none; frame-src 'self' https://www.google.com https://jobs.ashbyhq.com https://app.cal.com https://www.youtube.com https://open.spotify.com; connect-src 'self' https://status.northflank.com https://ph.northflank.com https://jobs.ashbyhq.com https://api.cr-relay.com; script-src 'self' 'nonce-2hze9rhwyrs' https://www.google.com https://www.gstatic.com https://ph.northflank.com https://jobs.ashbyhq.com https://app.cal.com https://cdn.cr-relay.com; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com; upgrade-insecure-requests
 content-type: text/html; charset=utf-8
 cache-control: public, max-age=0, must-revalidate
-x-envoy-upstream-service-time: 32
+x-envoy-upstream-service-time: 102
 server: istio-envoy
 accept-ranges: bytes
 via: 1.1 varnish, 1.1 varnish
-date: Mon, 16 Nov 2026 20:59:07 GMT
-x-served-by: cache-lhr-egll1980049-LHR, cache-bfi-kbfi7400039-BFI
+date: Wed, 18 Nov 2026 00:46:15 GMT
+x-served-by: cache-lhr-egwu1540041-LHR, cache-bfi-krnt7300053-BFI
 x-cache: MISS, MISS
 x-cache-hits: 0, 0
-x-timer: S1794862748.590752,VS0,VE170
+x-timer: S1794962776.627164,VS0,VE235
 vary: Accept-Encoding
 strict-transport-security: max-age=31557600
 transfer-encoding: chunked
@@ -33,14 +33,14 @@ transfer-encoding: chunked
     <link rel="preload" href="/dist/index-GENO2OG2.css" as="style" />
     <title data-rh="true">Not found — Northflank</title> <meta data-rh="true" property="og:title" content="Not found — Northflank"/><meta data-rh="true" name="description" content="Northflank is the comprehensive developer platform designed for scale. Seamlessly deploy and release any project on our cloud or in yours."/><meta data-rh="true" property="og:description" content="Northflank is the comprehensive developer platform designed for scale. Seamlessly deploy and release any project on our cloud or in yours."/><meta data-rh="true" property="og:type" content="website"/><meta data-rh="true" property="og:url" content="https://northflank.com/.well-known/oauth-protected-resource"/><meta data-rh="true" property="og:image" content="http://assets.northflank.com/marketing/image/meta-1200.png"/><meta data-rh="true" property="twitter:image" content="http://assets.northflank.com/marketing/image/meta-1200.png"/> <link data-rh="true" rel="canonical" href="https://northflank.com/.well-known/oauth-protected-resource"/>  <meta data-rh="true" property="og:site_name" content="Northflank — Deploy any project in seconds, in our cloud or yours."/><meta data-rh="true" name="twitter:card" content="summary_large_image"/><meta data-rh="true" name="twitter:site" content="@northflank"/><meta data-rh="true" name="twitter:creator" content="@northflank"/>  
     <link rel="stylesheet" href="/dist/index-GENO2OG2.css" />
-     <script data-ssr nonce="fohttaii0s7">
+     <script data-ssr nonce="2hze9rhwyrs">
           window._SSR_DATA="^^^$]";
           window._CLIENT_ENVS="NODE_ENV|production|IS_PRODUCTION|POSTHOG_KEY|phc_qva94SErTefmWqneqHZv4y69itJsuyNxx23eRGWf7EPJ|POSTHOG_HOST|https://ph.northflank.com|POSTHOG_UI_HOST|https://eu.posthog.com^^^$0|1|2|-1|3|4|5|6|7|8]";
           window._SSR_ERROR="";
         </script> 
 
     <!-- commonroom.io -->
-    <script nonce="fohttaii0s7">
+    <script nonce="2hze9rhwyrs">
       (function () {
         if (typeof window === 'undefined') return;
         if (typeof window.signals !== 'undefined') return;
@@ -157,4 +157,4 @@ data-styled.g5[id="sc-fqkvVR"]{content:"btPwhD,eQMzFF,clcavn,"}/*!sc*/
 .btuAkN{width:100%;font-size:20px;font-size:20px;font-weight:400;}/*!sc*/
 @media s
 
-[body trimmed for publication: kept 16384 of 73192 characters; sha256 of the published body f77c311d3d877129e1ab5559305f99b7e761b4e3c520641d9b646925c594e688]
+[body trimmed for publication: kept 16384 of 73192 characters; sha256 of the published body 7d13d8a944fcb62fbd05071936b9e70e09fc6b3cd8420cdeb93020f9878ea5f8]

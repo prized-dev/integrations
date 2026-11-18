@@ -1,12 +1,13 @@
 {
  "site": "sentry.io",
- "checkedAt": "2026-11-16T21:00:26.875Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:47:38.856Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 3,
  "partial": 0,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -41,6 +42,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://sentry.io/api/0/organizations/",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": "Bearer realm=\"api\"",
    "status": "pass",
@@ -76,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown",
-   "ms": 98,
+   "ms": 95,
    "redirects": 1
   },
   {
@@ -86,7 +88,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 223,
+   "ms": 208,
    "redirects": 0
   },
   {
@@ -96,7 +98,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 108,
+   "ms": 100,
    "redirects": 0
   },
   {
@@ -106,7 +108,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 99,
+   "ms": 86,
    "redirects": 0
   },
   {
@@ -116,7 +118,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 96,
+   "ms": 94,
    "redirects": 0
   },
   {
@@ -126,7 +128,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown",
-   "ms": 84,
+   "ms": 91,
    "redirects": 1
   },
   {
@@ -136,7 +138,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html",
-   "ms": 115,
+   "ms": 107,
    "redirects": 2
   }
  ]

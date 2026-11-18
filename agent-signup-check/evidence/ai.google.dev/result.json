@@ -1,12 +1,13 @@
 {
  "site": "ai.google.dev",
- "checkedAt": "2026-11-16T20:58:43.818Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:45:50.041Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 1,
  "partial": 1,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -33,6 +34,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://generativelanguage.googleapis.com/v1beta/models",
+   "source": "named",
    "httpStatus": 403,
    "www_authenticate": null,
    "status": "partial",
@@ -68,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 342,
+   "ms": 299,
    "redirects": 0
   },
   {
@@ -78,7 +80,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 589,
+   "ms": 462,
    "redirects": 0
   },
   {
@@ -88,7 +90,7 @@
    "status": 403,
    "error": null,
    "contentType": "application/json; charset=UTF-8",
-   "ms": 102,
+   "ms": 84,
    "redirects": 0
   },
   {
@@ -98,7 +100,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 468,
+   "ms": 527,
    "redirects": 1
   },
   {
@@ -108,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 450,
+   "ms": 531,
    "redirects": 0
   },
   {
@@ -118,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 75,
+   "ms": 77,
    "redirects": 0
   },
   {
@@ -128,7 +130,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 468,
+   "ms": 321,
    "redirects": 0
   },
   {
@@ -138,7 +140,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 74,
+   "ms": 94,
    "redirects": 0
   },
   {
@@ -148,7 +150,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 505,
+   "ms": 204,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery (API host)",
+   "url": "https://generativelanguage.googleapis.com/.well-known/x402",
+   "finalUrl": "https://generativelanguage.googleapis.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 80,
    "redirects": 0
   }
  ]

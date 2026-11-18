@@ -1,6 +1,6 @@
 GET https://tryelliot.app/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:19:28.256Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:46.997Z
 redirect: 308 from https://tryelliot.app/.well-known/x402
 final-url: https://www.tryelliot.app/.well-known/x402
 
@@ -8,11 +8,11 @@ HTTP 404
 cache-control: public, max-age=0, must-revalidate
 content-length: 68
 content-type: application/json
-date: Wed, 18 Nov 2026 00:19:28 GMT
+date: Wed, 18 Nov 2026 00:47:46 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-vercel-error: NOT_FOUND
-x-vercel-id: pdx1::z5czn-1794961168119-d770e8683169
+x-vercel-id: pdx1::qbbx7-1794962866261-34fa5290d21c
 connection: close
 
 {"error": {"code": "404", "message": "The page could not be found"}}

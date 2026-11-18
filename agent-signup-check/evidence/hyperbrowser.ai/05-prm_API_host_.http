@@ -1,6 +1,6 @@
 GET https://api.hyperbrowser.ai/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:01.778Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:11.633Z
 final-url: https://api.hyperbrowser.ai/.well-known/oauth-protected-resource
 
 HTTP 404
@@ -12,12 +12,13 @@ permissions-policy: camera=(), microphone=(), geolocation=()
 vary: Origin
 access-control-allow-credentials: true
 content-type: text/html; charset=utf-8
-x-cloud-trace-context: 26918968fa18147ce7fe472308f5676f
-date: Mon, 16 Nov 2026 21:00:00 GMT
-server: Google Frontend
 content-length: 175
+date: Wed, 18 Nov 2026 00:47:09 GMT
+server: Google Frontend
+x-cloud-trace-context: f69ed9990ea218840e54873f90c76fdb/419766550939234465
+traceparent: 00-f69ed9990ea218840e54873f90c76fdb-05d34f743d52f0a1-00
 via: 1.1 google
-alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+alt-svc: h3=":443"; ma=2592000
 connection: close
 
 <!DOCTYPE html>

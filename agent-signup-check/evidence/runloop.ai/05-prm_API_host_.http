@@ -1,16 +1,7 @@
 GET https://api.runloop.ai/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:15.236Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:24.476Z
 final-url: https://api.runloop.ai/.well-known/oauth-protected-resource
 
-HTTP 404
-date: Mon, 16 Nov 2026 20:59:13 GMT
-content-type: application/json
-x-content-type-options: nosniff
-referrer-policy: no-referrer
-strict-transport-security: max-age=31536000; includeSubDomains
-x-runloop-request-id: 03f2bcd6-d37b-4793-9bff-6c95d8da5521
-content-length: 85
-connection: close
+error: ENOTFOUND
 
-{"title":"Endpoint GET /.well-known/oauth-protected-resource not found","status":404}

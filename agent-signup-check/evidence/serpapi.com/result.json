@@ -1,12 +1,13 @@
 {
  "site": "serpapi.com",
- "checkedAt": "2026-11-16T21:00:09.333Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:47:21.509Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 1,
  "partial": 1,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -33,6 +34,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://serpapi.com/account.json",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -68,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 135,
+   "ms": 128,
    "redirects": 0
   },
   {
@@ -78,7 +80,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 35,
+   "ms": 116,
    "redirects": 0
   },
   {
@@ -88,7 +90,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 130,
+   "ms": 117,
    "redirects": 0
   },
   {
@@ -98,7 +100,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 149,
+   "ms": 114,
    "redirects": 0
   },
   {
@@ -108,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 127,
+   "ms": 115,
    "redirects": 0
   },
   {
@@ -118,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 126,
+   "ms": 117,
    "redirects": 0
   }
  ]

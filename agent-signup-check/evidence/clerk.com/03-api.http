@@ -1,14 +1,14 @@
 GET https://api.clerk.com/v1/users
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:29.853Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:42.158Z
 final-url: https://api.clerk.com/v1/users
 
 HTTP 401
-date: Mon, 16 Nov 2026 21:00:27 GMT
+date: Wed, 18 Nov 2026 00:47:39 GMT
 content-type: application/json
 content-length: 255
 connection: close
-cf-ray: a5b96cde1b201a0b-PDX
+cf-ray: a5c2f70f0d475ed8-PDX
 cf-cache-status: DYNAMIC
 server: cloudflare
 via: 1.1 google
@@ -16,9 +16,10 @@ x-cfworker: 1
 content-security-policy: default-src 'none'; frame-ancestors 'none'
 permissions-policy: camera=(), microphone=(), geolocation=(), usb=()
 referrer-policy: strict-origin-when-cross-origin
-x-clerk-trace-id: daf095a6b6a44a20a038da665a0804a0
-x-cloud-trace-context: daf095a6b6a44a20a038da665a0804a0
+traceparent: 00-8e14093af31427d0a6c1bccbe3d66c2d-3e49fb4e99314f3a-00
+x-clerk-trace-id: 8e14093af31427d0a6c1bccbe3d66c2d
+x-cloud-trace-context: 8e14093af31427d0a6c1bccbe3d66c2d/4488394818647576378
 x-content-type-options: nosniff
 x-frame-options: DENY
 
-{"errors":[{"message":"Invalid Authorization header format","long_message":"Invalid Authorization header format. Must be 'Bearer \u003cYOUR_API_KEY\u003e'","code":"authorization_header_format_invalid"}],"clerk_trace_id":"daf095a6b6a44a20a038da665a0804a0"}
+{"errors":[{"message":"Invalid Authorization header format","long_message":"Invalid Authorization header format. Must be 'Bearer \u003cYOUR_API_KEY\u003e'","code":"authorization_header_format_invalid"}],"clerk_trace_id":"8e14093af31427d0a6c1bccbe3d66c2d"}

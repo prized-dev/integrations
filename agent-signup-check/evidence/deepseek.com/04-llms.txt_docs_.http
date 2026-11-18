@@ -1,6 +1,6 @@
 GET https://api-docs.deepseek.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:52.806Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:59.423Z
 final-url: https://api-docs.deepseek.com/llms.txt
 
 HTTP 200
@@ -10,14 +10,14 @@ etag: "9c110f12f80a4374e3a913fc0f03d75a"
 content-type: text/html
 server: tencent-cos
 x-amz-hash-crc64ecma: 339058949865385968
-x-amz-request-id: NmFmYWQwNzBfZWIwMjQwOV9hYjE2XzEzZTNlZTk5
+x-amz-request-id: NmFmYWNmNzNfMTZhNzI0MDlfNWU3MV8xM2FjMmE0Mg==
 x-amz-storage-class: MAZ_STANDARD
 x-amz-trace-id: OGVmYzZiMmQzYjA2OWNhODk0NTRkMTBiOWVmMDAxODc0OWRkZjk0ZDM1NmI1M2E2MTRlY2MzZDhmNmI5MWI1OTQ5YWUxMjNkYTk3NzdjZmZlMDQzOTgxOThkOTNlOWFkNjU0MDk4ZDk2ZDdiMWQyNDJlMTk4NGQ3ZjE4MjFkOGE=
 content-length: 8580
 accept-ranges: bytes
 connection: close
-date: Mon, 16 Nov 2026 20:58:48 GMT
-eo-log-uuid: 11542501022821822527
+date: Wed, 18 Nov 2026 00:45:55 GMT
+eo-log-uuid: 1971049872143729801
 eo-cache-status: RefreshHit
 
 <!doctype html>

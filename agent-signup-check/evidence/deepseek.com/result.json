@@ -1,12 +1,13 @@
 {
  "site": "deepseek.com",
- "checkedAt": "2026-11-16T20:58:52.806Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:45:59.423Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 0,
  "partial": 1,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -33,6 +34,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://api.deepseek.com/models",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -70,7 +72,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 587,
+   "ms": 534,
    "redirects": 0
   },
   {
@@ -80,7 +82,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 401,
+   "ms": 259,
    "redirects": 0
   },
   {
@@ -90,7 +92,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 267,
+   "ms": 287,
    "redirects": 0
   },
   {
@@ -100,7 +102,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html",
-   "ms": 989,
+   "ms": 463,
    "redirects": 0
   },
   {
@@ -110,7 +112,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 404,
+   "ms": 200,
    "redirects": 0
   },
   {
@@ -130,7 +132,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 401,
+   "ms": 408,
    "redirects": 0
   },
   {
@@ -140,7 +142,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 263,
+   "ms": 274,
    "redirects": 0
   },
   {
@@ -150,7 +152,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 420,
+   "ms": 410,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery (API host)",
+   "url": "https://api.deepseek.com/.well-known/x402",
+   "finalUrl": "https://api.deepseek.com/.well-known/x402",
+   "status": 401,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 274,
    "redirects": 0
   }
  ]

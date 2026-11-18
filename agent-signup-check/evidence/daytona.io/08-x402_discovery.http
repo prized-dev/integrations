@@ -1,6 +1,6 @@
 GET https://daytona.io/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:04.439Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:13.612Z
 redirect: 301 from https://daytona.io/.well-known/x402
 final-url: https://www.daytona.io/.well-known/x402
 
@@ -8,14 +8,14 @@ HTTP 404
 content-type: text/html; charset=utf-8
 content-length: 10
 connection: close
-date: Mon, 16 Nov 2026 20:59:04 GMT
+date: Wed, 18 Nov 2026 00:46:12 GMT
 strict-transport-security: max-age=31536000
 server: nginx/1.29.0
 x-content-type-options: nosniff
 cache-control: public, max-age=0, must-revalidate
 x-cache: Error from cloudfront
-via: 1.1 89b24af8db05335e68292856e0a53668.cloudfront.net (CloudFront)
+via: 1.1 13367f2265e830e1595737bd8f2eab92.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: ffE444fYLKM3iBNb7gkgeYavCC7gcnNnjKvW4qUATTeDmaJ_e-KIqA==
+x-amz-cf-id: Bz2CXNEck6R6K9bnjiyK399ej3Bbeisa6mVUsdaWaeWEc26odD4Lwg==
 
 Not found

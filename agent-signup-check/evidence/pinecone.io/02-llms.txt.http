@@ -1,24 +1,20 @@
 GET https://pinecone.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:39.268Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:51.223Z
 redirect: 308 from https://pinecone.io/llms.txt
 final-url: https://www.pinecone.io/llms.txt
 
 HTTP 200
-access-control-allow-origin: *
-age: 35744
-cache-control: public, max-age=0, s-maxage=43200
-content-disposition: inline
+age: 5750
+cache-control: public, max-age=0
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:59:36 GMT
-etag: W/"97cbade091d170ff28cae3fc08b6daf4"
+date: Tue, 17 Nov 2026 23:10:57 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
-vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::g9qgv-1794862776568-a3e379b0974a
+x-vercel-id: pdx1::iad1::z5czn-1794962808012-ebf293b57d76
 connection: close
 transfer-encoding: chunked
 
@@ -224,6 +220,7 @@ The Pinecone Database API enforces per-project rate limits on read and write req
 
 ## Blog
 
+- [Vector-to-document index conversion is now available](https://www.pinecone.io/blog/index-conversion/md/) (2026-11-17)
 - [Pinecone integrated embedding now supports Google's Gemini Embedding 2](https://www.pinecone.io/blog/integrated-embedding-google/md/) (2026-11-12)
 - [Pinecone integrated embedding now supports OpenAI's text-embedding-3 models](https://www.pinecone.io/blog/integrated-embedding-openai/md/) (2026-11-10)
 - [Webinar Recap: From Data to Vectors to Context](https://www.pinecone.io/blog/webinar-recap-data-to-vectors-to-context/md/) (2026-11-06)

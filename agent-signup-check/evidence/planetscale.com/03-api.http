@@ -1,10 +1,10 @@
 GET https://api.planetscale.com/v1/organizations
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:35.986Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:48.135Z
 final-url: https://api.planetscale.com/v1/organizations
 
 HTTP 401
-date: Mon, 16 Nov 2026 20:59:33 GMT
+date: Wed, 18 Nov 2026 00:46:44 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -15,9 +15,9 @@ x-download-options: noopen
 x-permitted-cross-domain-policies: none
 referrer-policy: strict-origin-when-cross-origin
 cache-control: no-cache
-content-security-policy: default-src 'none'; font-src 'self'; connect-src 'self'; img-src 'self'; manifest-src 'self'; object-src 'none'; script-src 'self' 'nonce-BSL6HDsGid8t5oR8ojkwK45vz0ZerJuPoVNlyOrOaP4='; style-src 'self'; style-src-elem 'self' 'sha256-WAyOw4V+FqDc35lQPyRADLBWbuNK8ahvYEaQIYF1+Ps='
-x-request-id: 38820709-e77d-4bde-bd99-e4eb291784b8
-x-runtime: 0.003160
+content-security-policy: default-src 'none'; font-src 'self'; connect-src 'self'; img-src 'self'; manifest-src 'self'; object-src 'none'; script-src 'self' 'nonce-6JWU+b1ACR7oI7FVMnmG0+QnV+wNBJxHANIOkbwNbc4='; style-src 'self'; style-src-elem 'self' 'sha256-WAyOw4V+FqDc35lQPyRADLBWbuNK8ahvYEaQIYF1+Ps='
+x-request-id: dc81f7e6-74f3-4b96-a2b1-03d65018dc93
+x-runtime: 0.003696
 strict-transport-security: max-age=63072000; includeSubDomains; preload
 vary: Origin,Accept-Encoding
 content-encoding: gzip

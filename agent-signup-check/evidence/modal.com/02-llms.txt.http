@@ -1,6 +1,6 @@
 GET https://modal.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:04.289Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:12.697Z
 final-url: https://modal.com/llms.txt
 
 HTTP 200
@@ -14,16 +14,16 @@ referrer-policy: no-referrer
 strict-transport-security: max-age=63072000; includeSubDomains; preload
 cross-origin-opener-policy: same-origin
 cache-control: no-cache
-date: Mon, 16 Nov 2026 20:59:01 GMT
-x-envoy-upstream-service-time: 36
+date: Wed, 18 Nov 2026 00:46:10 GMT
+x-envoy-upstream-service-time: 37
 content-encoding: gzip
 server: envoy
 vary: Accept-Encoding
 x-cache: Miss from cloudfront
-via: 1.1 edfd8a65550b8bda6252072d1cbc2e9c.cloudfront.net (CloudFront)
+via: 1.1 3bbe2b9a1067c049fd5ff2d57048d36a.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: oP7IsLiAxKE9deOLFIVNKJ3KP2UVtVpCFQUTpCKsWXRHyJwajTsWCw==
+x-amz-cf-id: xtgajp1OLzUE3pC5d3Hf-am60yDfKbhN149jItSCiQe16TRswVXTUA==
 
 # Modal Documentation
 
@@ -314,6 +314,17 @@ The docs are organized into three main sections:
   - [`AppInfo`](https://modal.com/docs/sdk/js/latest/AppInfo.md)
   - [`AppLifecycle`](https://modal.com/docs/sdk/js/latest/AppLifecycle.md)
   - [`AppState`](https://modal.com/docs/sdk/js/latest/AppState.md)
+  - [`AppStats`](https://modal.com/docs/sdk/js/latest/AppStats.md)
+  - [`AppStatsCallCounts`](https://modal.com/docs/sdk/js/latest/AppStatsCallCounts.md)
+  - [`AppStatsContainerCounts`](https://modal.com/docs/sdk/js/latest/AppStatsContainerCounts.md)
+  - [`AppStatsFunctionCounts`](https://modal.com/docs/sdk/js/latest/AppStatsFunctionCounts.md)
+  - [`AppStatsFunctionStats`](https://modal.com/docs/sdk/js/latest/AppStatsFunctionStats.md)
+  - [`AppStatsFunctionStatsGroup`](https://modal.com/docs/sdk/js/latest/AppStatsFunctionStatsGroup.md)
+  - [`AppStatsRequestCounts`](https://modal.com/docs/sdk/js/latest/AppStatsRequestCounts.md)
+  - [`AppStatsSandboxCounts`](https://modal.com/docs/sdk/js/latest/AppStatsSandboxCounts.md)
+  - [`AppStatsServerCounts`](https://modal.com/docs/sdk/js/latest/AppStatsServerCounts.md)
+  - [`AppStatsServerStats`](https://modal.com/docs/sdk/js/latest/AppStatsServerStats.md)
+  - [`AppStatsServerStatsGroup`](https://modal.com/docs/sdk/js/latest/AppStatsServerStatsGroup.md)
   - [`CloudBucketMount`](https://modal.com/docs/sdk/js/latest/CloudBucketMount.md)
   - [`Cls`](https://modal.com/docs/sdk/js/latest/Cls.md)
   - [`ClsInstance`](https://modal.com/docs/sdk/js/latest/ClsInstance.md)
@@ -329,6 +340,7 @@ The docs are organized into three main sections:
   - [`FunctionAutoscalerSettings`](https://modal.com/docs/sdk/js/latest/FunctionAutoscalerSettings.md)
   - [`FunctionCall`](https://modal.com/docs/sdk/js/latest/FunctionCall.md)
   - [`FunctionCurrentStats`](https://modal.com/docs/sdk/js/latest/FunctionCurrentStats.md)
+  - [`FunctionInfo`](https://modal.com/docs/sdk/js/latest/FunctionInfo.md)
   - [`FunctionStats`](https://modal.com/docs/sdk/js/latest/FunctionStats.md)
   - [`Image`](https://modal.com/docs/sdk/js/latest/Image.md)
   - [`LogEntry`](https://modal.com/docs/sdk/js/latest/LogEntry.md)
@@ -349,6 +361,7 @@ The docs are organized into three main sections:
   - [`Retries`](https://modal.com/docs/sdk/js/latest/Retries.md)
   - [`Sandbox`](https://modal.com/docs/sdk/js/latest/Sandbox.md)
   - [`SandboxCreateConnectCredentials`](https://modal.com/docs/sdk/js/latest/SandboxCreateConnectCredentials.md)
+  - [`SandboxGroupStats`](https://modal.com/docs/sdk/js/latest/SandboxGroupStats.md)
   - [`SandboxRuntime`](https://modal.com/docs/sdk/js/latest/SandboxRuntime.md)
   - [`SandboxSnapshot`](https://modal.com/docs/sdk/js/latest/SandboxSnapshot.md)
   - [`Secret`](https://modal.com/docs/sdk/js/latest/Secret.md)
@@ -367,6 +380,17 @@ The docs are organized into three main sections:
   - [`AppInfo`](https://modal.com/docs/sdk/go/latest/AppInfo.md)
   - [`AppLifecycle`](https://modal.com/docs/sdk/go/latest/AppLifecycle.md)
   - [`AppState`](https://modal.com/docs/sdk/go/latest/AppState.md)
+  - [`AppStats`](https://modal.com/docs/sdk/go/latest/AppStats.md)
+  - [`AppStatsCallCounts`](https://modal.com/docs/sdk/go/latest/AppStatsCallCounts.md)
+  - [`AppStatsContainerCounts`](https://modal.com/docs/sdk/go/latest/AppStatsContainerCounts.md)
+  - [`AppStatsFunctionCounts`](https://modal.com/docs/sdk/go/latest/AppStatsFunctionCounts.md)
+  - [`AppStatsFunctionStats`](https://modal.com/docs/sdk/go/latest/AppStatsFunctionStats.md)
+  - [`AppStatsFunctionStatsGroup`](https://modal.com/docs/sdk/go/latest/AppStatsFunctionStatsGroup.md)
+  - [`AppStatsRequestCounts`](https://modal.com/docs/sdk/go/latest/AppStatsRequestCounts.md)
+  - [`AppStatsSandboxCounts`](https://modal.com/docs/sdk/go/latest/AppStatsSandboxCounts.md)
+  - [`AppStatsServerCounts`](https://modal.com/docs/sdk/go/latest/AppStatsServerCounts.md)
+  - [`AppStatsServerStats`](https://modal.com/docs/sdk/go/latest/AppStatsServerStats.md)
+  - [`AppStatsServerStatsGroup`](https://modal.com/docs/sdk/go/latest/AppStatsServerStatsGroup.md)
   - [`Client`](https://modal.com/docs/sdk/go/latest/Client.md)
   - [`CloudBucketMount`](https://modal.com/docs/sdk/go/latest/CloudBucketMount.md)
   - [`Cls`](https://modal.com/docs/sdk/go/latest/Cls.md)
@@ -384,6 +408,7 @@ The docs are organized into three main sections:
   - [`FunctionAutoscalerSettings`](https://modal.com/docs/sdk/go/latest/FunctionAutoscalerSettings.md)
   - [`FunctionCall`](https://modal.com/docs/sdk/go/latest/FunctionCall.md)
   - [`FunctionCurrentStats`](https://modal.com/docs/sdk/go/latest/FunctionCurrentStats.md)
+  - [`FunctionInfo`](https://modal.com/docs/sdk/go/latest/FunctionInfo.md)
   - [`FunctionStats`](https://modal.com/docs/sdk/go/latest/FunctionStats.md)
   - [`Image`](https://modal.com/docs/sdk/go/latest/Image.md)
   - [`LogEntry`](https://modal.com/docs/sdk/go/latest/LogEntry.md)
@@ -399,6 +424,7 @@ The docs are organized into three main sections:
   - [`Retries`](https://modal.com/docs/sdk/go/latest/Retries.md)
   - [`Sandbox`](https://modal.com/docs/sdk/go/latest/Sandbox.md)
   - [`SandboxCreateConnectCredentials`](https://modal.com/docs/sdk/go/latest/SandboxCreateConnectCredentials.md)
+  - [`SandboxGroupStats`](https://modal.com/docs/sdk/go/latest/SandboxGroupStats.md)
   - [`SandboxRuntime`](https://modal.com/docs/sdk/go/latest/SandboxRuntime.md)
   - [`SandboxSnapshot`](https://modal.com/docs/sdk/go/latest/SandboxSnapshot.md)
   - [`Secret`](https://modal.com/docs/sdk/go/latest/Secret.md)

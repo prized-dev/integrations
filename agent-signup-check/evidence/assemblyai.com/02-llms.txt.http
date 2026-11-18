@@ -1,6 +1,6 @@
 GET https://assemblyai.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:02.599Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:09.391Z
 redirect: 308 from https://assemblyai.com/llms.txt
 final-url: https://www.assemblyai.com/llms.txt
 
@@ -12,9 +12,9 @@ content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: default-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://*.assemblyai.com cdn.cookielaw.org https://rs-cdn.assemblyai.com https://cdn.rudderlabs.com https://www.datadoghq-browser-agent.com https://www.googletagmanager.com/gtag/ https://widget.usepylon.com https://*.google.com https://*.google-analytics.com https://*.gstatic.com https://*.googleadservices.com https://snap.licdn.com https://www.redditstatic.com/ads/pixel https://px.ads.linkedin.com https://googleads.g.doubleclick.net https://assets.apollo.io https://vercel.live https://polyfill-fastly.io; style-src 'self' 'unsafe-inline' https://*.assemblyai.com https://widget.usepylon.com/fonts.css https://vercel.live; img-src 'self' data: blob: https://vercel.live https://vercel.com https://*.assemblyai.com cdn.cookielaw.org https://*.google-analytics.com https://*.googletagmanager.com https://*.google.com https://*.google.co.uk https://*.google.com.sg https://*.google.com.au https://*.google.co.jp https://*.google.de https://*.google.fr https://*.google.ca https://*.google.co.in https://*.doubleclick.net https://*.googleadservices.com https://*.reddit.com https://*.ytimg.com https://www.linkedin.com/px https://*.ads.linkedin.com https://*.usepylon.com https://*.gstatic.com/faviconV2 https://pylon-avatars.s3.us-west-1.amazonaws.com https://cdn.prod.website-files.com; font-src 'self' data: https://*.assemblyai.com cdn.cookielaw.org https://widget.usepylon.com/fonts/ https://fonts.gstatic.com https://vercel.live https://assets.vercel.com; connect-src 'self' https://vercel.live https://*.vercel.app https://webflow.com https://*.assemblyai.com wss://*.assemblyai.com https://rs-dp.assemblyai.com https://rs-api.assemblyai.com https://rs-cdn.assemblyai.com https://*.dataplane.rudderstack.com https://*.browser-intake-datadoghq.com https://browser-intake-datadoghq.com https://*.google.com https://*.analytics.google.com https://*.google-analytics.com https://*.doubleclick.net https://*.googleadservices.com cdn.cookielaw.org https://*.onetrust.com https://*.usepylon.com wss://*.pusher.com https://*.ads.linkedin.com https://aplo-evnt.com https://vitals.vercel-insights.com https://track.customer.io https://api.rudderstack.com https://*.livekit.cloud wss://*.livekit.cloud; frame-src 'self' https://*.assemblyai.com https://td.doubleclick.net https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://vercel.live; media-src 'self' https://*.assemblyai.com https://assemblyaiassets.com https://cdn.prod.website-files.com
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:58:58 GMT
-etag: W/"5dc297a7b4adcc4bdacb63f4017ac38e"
-last-modified: Mon, 16 Nov 2026 20:58:58 GMT
+date: Wed, 18 Nov 2026 00:46:05 GMT
+etag: W/"1e672fca9110650177bae143a2eae4c9"
+last-modified: Wed, 18 Nov 2026 00:46:05 GMT
 permissions-policy: autoplay=(self), geolocation=(self), clipboard-read=(self), clipboard-write=(self)
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -24,7 +24,7 @@ x-dns-prefetch-control: off
 x-frame-options: SAMEORIGIN
 x-robots-tag: index, follow
 x-vercel-cache: MISS
-x-vercel-id: pdx1:pdx1:pdx1::bgqmm-1794862738707-6124fc20fb6f
+x-vercel-id: pdx1:pdx1:pdx1::7rlvv-1794962765749-a63cae5d9656
 x-xss-protection: 1; mode=block
 connection: close
 transfer-encoding: chunked
@@ -59,7 +59,8 @@ AssemblyAI runs two MCP servers. They do different jobs.
 - [All documentation in one file](https://www.assemblyai.com/docs/llms-full.txt)
 - [Build with AI coding agents](https://www.assemblyai.com/docs/agent-instructions.md): integration guidance for Cursor, Claude Code, Copilot, and other AI coding assistants.
 - [Models overview](https://www.assemblyai.com/docs/getting-started/models.md): how to choose a speech model.
-- [Universal-3.5 Pro](https://www.assemblyai.com/docs/pre-recorded-audio/universal-3-5-pro.md): the flagship pre-recorded speech-to-text model.
+- [AssemblyAI-STT-3.7 launch](https://www.assemblyai.com/blog/introducing-assemblyai-stt-3-7): the current model family. AssemblyAI-STT-3.7 (pre-recorded, `assemblyai-stt-3-7`), AssemblyAI-STT-3.7-Realtime (live conversation, `assemblyai-stt-3-7-realtime`) and AssemblyAI-STT-3.7-Realtime-Agent (voice agents, `assemblyai-stt-3-7-realtime-agent`), 32 languages each.
+- [Universal-3.5 Pro](https://www.assemblyai.com/docs/pre-recorded-audio/universal-3-5-pro.md): the previous pre-recorded model, deprecated in favour of AssemblyAI-STT-3.7.
 - [Transcribe a file — pre-recorded quickstart](https://www.assemblyai.com/docs/pre-recorded-audio/getting-started/transcribe-an-audio-file.md)
 - [Transcribe streaming audio — streaming quickstart](https://www.assemblyai.com/docs/streaming/getting-started/transcribe-streaming-audio.md)
 - [Dictation API quickstart](https://www.assemblyai.com/docs/dictation.md): send-ready text from a spoken utterance in one call, with the verbatim transcript alongside.

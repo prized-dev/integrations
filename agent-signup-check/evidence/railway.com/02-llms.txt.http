@@ -1,22 +1,22 @@
 GET https://railway.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:07.299Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:16.490Z
 final-url: https://railway.com/llms.txt
 
 HTTP 200
 content-security-policy: frame-ancestors 'self' https://railway.com
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:59:04 GMT
+date: Wed, 18 Nov 2026 00:46:13 GMT
 etag: W/"1b75-LVQPi7X8K2wiEZpm41FQgNs0G3M"
-last-modified: Mon, 16 Nov 2026 19:31:41 GMT
+last-modified: Wed, 18 Nov 2026 00:37:00 GMT
 server: railway-hikari
 vary: Accept-Encoding
 x-frame-options: SAMEORIGIN
 x-permitted-cross-domain-policies: none
-x-railway-request-id: Z9jmDN5jSyykpKLL9I3ezw
+x-railway-request-id: 4zuGXTn2RJ65UDCc2h0iww
 content-encoding: gzip
 x-cache: DYNAMIC
-x-hikari-trace: lax1.e74w,lax1.z1hw
+x-hikari-trace: lax1.v9kt,lax1.z1hw
 x-railway-edge: lax1
 transfer-encoding: chunked
 connection: close

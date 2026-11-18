@@ -1,12 +1,13 @@
 {
  "site": "render.com",
- "checkedAt": "2026-11-16T20:59:07.397Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:46:16.648Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 1,
  "partial": 1,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -33,6 +34,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://api.render.com/v1/services",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -55,7 +57,7 @@
    "name": "Docs in Markdown",
    "url": "https://render.com/llms.txt",
    "heading": "# Render",
-   "bytes": 53197,
+   "bytes": 53309,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -68,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 84,
+   "ms": 90,
    "redirects": 0
   },
   {
@@ -78,7 +80,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 87,
+   "ms": 73,
    "redirects": 0
   },
   {
@@ -88,7 +90,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 44,
+   "ms": 49,
    "redirects": 0
   },
   {
@@ -98,7 +100,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 69,
+   "ms": 64,
    "redirects": 0
   },
   {
@@ -108,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 44,
+   "ms": 49,
    "redirects": 0
   },
   {
@@ -118,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 92,
+   "ms": 75,
    "redirects": 0
   },
   {
@@ -128,7 +130,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 47,
+   "ms": 57,
    "redirects": 0
   },
   {
@@ -138,7 +140,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 86,
+   "ms": 82,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery (API host)",
+   "url": "https://api.render.com/.well-known/x402",
+   "finalUrl": "https://api.render.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "text/plain; charset=utf-8",
+   "ms": 47,
    "redirects": 0
   }
  ]

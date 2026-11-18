@@ -1,0 +1,30 @@
+GET https://exa.ai/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:18.093Z
+redirect: 308 from https://exa.ai/.well-known/oauth-authorization-server
+final-url: https://auth.exa.ai/.well-known/oauth-authorization-server
+
+HTTP 200
+date: Wed, 18 Nov 2026 00:47:16 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+access-control-allow-origin: *
+age: 647
+cache-control: public, max-age=3600
+content-encoding: br
+content-security-policy: frame-ancestors 'none'
+referrer-policy: strict-origin-when-cross-origin
+server: cloudflare
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-matched-path: /api/oauth/metadata
+x-nextjs-rewritten-path: /api/oauth/metadata
+x-vercel-cache: HIT
+x-vercel-id: pdx1::iad1::q72wg-1794962836673-4616c2b3a667
+cf-cache-status: DYNAMIC
+vary: accept-encoding
+cf-ray: a5c2f6812b4270b9-PDX
+
+{"issuer":"https://auth.exa.ai","authorization_endpoint":"https://auth.exa.ai/oauth/authorize","token_endpoint":"https://auth.exa.ai/api/oauth/token","registration_endpoint":"https://auth.exa.ai/api/oauth/register","revocation_endpoint":"https://auth.exa.ai/api/oauth/revoke","jwks_uri":"https://auth.exa.ai/api/oauth/jwks","response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token","urn:ietf:params:oauth:grant-type:jwt-bearer"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["none"],"scopes_supported":["mcp:tools"],"client_id_metadata_document_supported":true}

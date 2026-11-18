@@ -1,6 +1,6 @@
 GET https://sendgrid.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:46.726Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:01.055Z
 redirect: 301 from https://sendgrid.com/llms.txt
 final-url: https://www.twilio.com/en-us/sendgrid
 
@@ -15,13 +15,13 @@ x-amz-meta-aem-last-modified: Mon, 12 Oct 2026 22:14:56 GMT
 x-amz-meta-aem-etag: W/"9a325-65dac07271f03"
 x-amz-version-id: BkngWf7mN8ReTF31VCkvevqQPeiDEQT6
 accept-ranges: bytes
-date: Mon, 16 Nov 2026 20:59:43 GMT
+date: Wed, 18 Nov 2026 00:46:56 GMT
 cache-control: no-cache
 etag: "e98c87f9f796b2683ebe1a8fe012a3d8"
-x-cache: RefreshHit from cloudfront
-via: 1.1 8502ceae0080b3523f89d1a518a99726.cloudfront.net (CloudFront)
+x-cache: Hit from cloudfront
+via: 1.1 a235f5b7b15b9c8025af96fb0081dd58.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: VT1ZUN2C8QSMLdPL1AC2oZc8tPXD9JFUu6lpgRPCXilmRRxgnfE-oQ==
+x-amz-cf-id: qsrSaigXGXWgNpfMMFLND0eYUdfIU8W9SAitdjNhGwkn75aQ_zpWog==
 
 
 <!DOCTYPE HTML>

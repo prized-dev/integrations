@@ -1,0 +1,12 @@
+GET https://api.browserbase.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:09.739Z
+final-url: https://api.browserbase.com/.well-known/x402
+
+HTTP 404
+date: Wed, 18 Nov 2026 00:47:09 GMT
+content-type: application/json; charset=utf-8
+content-length: 88
+connection: close
+
+{"message":"Route GET:/.well-known/x402 not found","error":"Not Found","statusCode":404}

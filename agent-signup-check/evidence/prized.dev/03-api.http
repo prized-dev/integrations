@@ -1,10 +1,10 @@
 GET https://api.prized.dev/api/v1/me
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:00.124Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:09.631Z
 final-url: https://api.prized.dev/api/v1/me
 
 HTTP 401
-date: Mon, 16 Nov 2026 20:58:58 GMT
+date: Wed, 18 Nov 2026 00:46:07 GMT
 content-type: application/json
 content-length: 178
 connection: close

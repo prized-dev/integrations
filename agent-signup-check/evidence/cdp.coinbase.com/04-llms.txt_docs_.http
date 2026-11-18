@@ -1,34 +1,34 @@
 GET https://docs.cdp.coinbase.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:23.573Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:36.057Z
 final-url: https://docs.cdp.coinbase.com/llms.txt
 
 HTTP 200
-age: 3556
+age: 2207
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a5b96cb05eea5ee3-PDX
+cf-ray: a5c2f6e08c17efac-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 21:00:19 GMT
-etag: W/"UjsFlGy1IkqrrrweMJGms8WlMRomAMcBsY7PX3POKVI"
+date: Wed, 18 Nov 2026 00:47:31 GMT
+etag: W/"0Q7AyzaebbC1filhdBU45tj9y9TS_QDjyqG6kMwwUtM"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4149
+x-mintlify-client-version: 0.0.4177
 x-vercel-cache: MISS
-x-vercel-id: pdx1:sfo1:iad1::iad1::2t5j8-1794862819851-9607ffa21d10
+x-vercel-id: pdx1:sfo1:iad1::iad1::pfgf4-1794962851890-276325132d3b
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_4D8r1dHg6bQcRuBgQyL3z9waJJtn
+x-version: dpl_HhUetB7eHHDAmK9T1Teip38TgFx9
 connection: close
 transfer-encoding: chunked
 
 # Coinbase Developer Documentation
 
-- [Docs (526 pages)](https://docs.cdp.coinbase.com/_llms/docs.txt): GET STARTED, AI AGENTS, WALLETS, PAYMENTS, STABLECOINS, TRADING, ONCHAIN TOOLS, CUSTOMERS, WEBHOOKS, CONSUMER APIS, BUSINESS APIS, INSTITUTIONAL APIS.
-- [API Reference (916 pages)](https://docs.cdp.coinbase.com/_llms/api-reference.txt): CDP API, Coinbase Advanced Trade API, Coinbase Business API, Coinbase Exchange API, Coinbase International Exchange API, Coinbase Prime API, CDE: Futures API, CDE: Predictions API, CBC: Clearing API, CDP API V1.
+- [Docs (527 pages)](https://docs.cdp.coinbase.com/_llms/docs.txt): GET STARTED, AI AGENTS, WALLETS, PAYMENTS, STABLECOINS, TRADING, ONCHAIN TOOLS, CUSTOMERS, WEBHOOKS, CONSUMER APIS, BUSINESS APIS, INSTITUTIONAL APIS.
+- [API Reference (902 pages)](https://docs.cdp.coinbase.com/_llms/api-reference.txt): CDP API, Coinbase Advanced Trade API, Coinbase Business API, Coinbase Exchange API, Coinbase International Exchange API, Coinbase Prime API, CDE: Futures API, CDE: Predictions API, CBC: Clearing API, CDP API V1.
 - [SDKs (1523 pages)](https://docs.cdp.coinbase.com/_llms/sdks.txt): SDKs, CRYPTO INFRASTRUCTURE, COINBASE APIs, INSTITUTIONAL APIs, COINBASE WALLET.
 
 ## Recipes
@@ -85,6 +85,8 @@ transfer-encoding: chunked
 
 - [AGENTS](https://docs.cdp.coinbase.com/AGENTS.md)
 - [AI-Optimized Documentation](https://docs.cdp.coinbase.com/ai-agents/cdp-for-agents/ai-optimized-documentation.md): Access AI-optimized content and quick integrations from the context menu on any CDP docs page.
+- [Build a Custom Wallet Plugin](https://docs.cdp.coinbase.com/ai-agents/coinbase-for-agents/wallet-mcp/custom-plugins.md): Prepare supported wallet actions through an API, CLI, SDK, or MCP.
+- [Use Native Wallet Plugins](https://docs.cdp.coinbase.com/ai-agents/coinbase-for-agents/wallet-mcp/plugins.md): Use 20 protocol plugins with the right client and execution mode.
 - [LLM Context](https://docs.cdp.coinbase.com/ai-context/further-context.md): Additional context for CDP Non-custodial Wallets, [ETC...]
 - [API Reference](https://docs.cdp.coinbase.com/api-reference.md)
 - [Get Portfolio Allocations](https://docs.cdp.coinbase.com/api-reference/prime-api/rest-api/allocations/get-portfolio-allocations.md): List historical allocations for a given portfolio.
@@ -140,6 +142,7 @@ transfer-encoding: chunked
 - [Approval Mode](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/approval-mode.md): Skill reference for how Wallet MCP returns approval URLs and request IDs for every write call.
 - [Batched Contract Calls](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/batch-calls.md): Skill reference for Wallet MCP's EIP-5792 batched contract calls.
 - [Custom Plugins and the web_request Allowlist](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/custom-plugins.md): Skill reference for how Wallet MCP routes plugin HTTP calls and which surfaces are allowlisted.
+- [Wallet Execution Modes](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/execution-modes.md): Mode-aware wallet execution, spending controls, and safe retries.
 - [Installing Wallet MCP](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/install.md): Skill reference for installing the Wallet MCP server in Claude, ChatGPT, Cursor, Codex, and other surfaces.
 - [Wallet MCP Plugin Specification](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/plugin-spec.md): Authoring spec for native Wallet MCP plugins — frontmatter schema, required body sections, integration types, and step-by-step instructions for writing or adapting a plugin to the spec.
 - [Tone](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/tone.md): Skill reference for the language and tone rules an agent should follow when using Wallet MCP.
@@ -151,7 +154,7 @@ transfer-encoding: chunked
 - [Exchange Rate Limits Overview](https://docs.cdp.coinbase.com/exchange/introduction/rate-limits-overview.md)
 - [Join CDP Discord](https://docs.cdp.coinbase.com/exchange/support/join-cdp-discord.md)
 - [Join CDP Discord](https://docs.cdp.coinbase.com/faucets/support/join-cdp-discord.md)
-- [Coinbase Wallet MCP](https://docs.cdp.coinbase.com/get-started/build-with-ai/base-mcp.md): Give your AI assistant a wallet. Coinbase Wallet MCP connects any AI to your Coinbase Wallet. Check balances, send funds, swap tokens, sign messages, and pay with x402.
+- [Wallet MCP](https://docs.cdp.coinbase.com/get-started/build-with-ai/base-mcp.md): Wallet MCP documentation has moved.
 - [Onchain commerce shop](https://docs.cdp.coinbase.com/get-started/demo-apps/app-examples/onchain-commerce-shop.md): An Onchain Commerce Template built with OnchainKit, and ready to be deployed to Vercel.
 - [Join CDP Discord](https://docs.cdp.coinbase.com/get-started/demo-apps/resources/join-cdp-discord.md)
 - [Join CDP Discord](https://docs.cdp.coinbase.com/get-started/support/join-cdp-discord.md)
@@ -425,12 +428,12 @@ transfer-encoding: chunked
 
 ## Indexes
 
-- [Docs (526 pages)](https://docs.cdp.coinbase.com/_llms/docs.txt): GET STARTED, AI AGENTS, WALLETS, PAYMENTS, STABLECOINS, TRADING, ONCHAIN TOOLS, CUSTOMERS, WEBHOOKS, CONSUMER APIS, BUSINESS APIS, INSTITUTIONAL APIS.
-- [API Reference (916 pages)](https://docs.cdp.coinbase.com/_llms/api-reference.txt): CDP API, Coinbase Advanced Trade API, Coinbase Business API, Coinbase Exchange API, Coinbase International Exchange API, Coinbase Prime API, CDE: Futures API, CDE: Predictions API, CBC: Clearing API, CDP API V1.
+- [Docs (527 pages)](https://docs.cdp.coinbase.com/_llms/docs.txt): GET STARTED, AI AGENTS, WALLETS, PAYMENTS, STABLECOINS, TRADING, ONCHAIN TOOLS, CUSTOMERS, WEBHOOKS, CONSUMER APIS, BUSINESS APIS, INSTITUTIONAL APIS.
+- [API Reference (902 pages)](https://docs.cdp.coinbase.com/_llms/api-reference.txt): CDP API, Coinbase Advanced Trade API, Coinbase Business API, Coinbase Exchange API, Coinbase International Exchange API, Coinbase Prime API, CDE: Futures API, CDE: Predictions API, CBC: Clearing API, CDP API V1.
 - [API Reference / CDP API (293 pages)](https://docs.cdp.coinbase.com/_llms/api-reference/cdp-api.txt): CDP API, REST API.
 - [API Reference / Coinbase Advanced Trade API (206 pages)](https://docs.cdp.coinbase.com/_llms/api-reference/coinbase-advanced-trade-api.txt): Get Started, Spot & US Derivatives - REST, Spot & US Derivatives - WS Streams, Global Derivatives - REST / WS, Global Derivatives - WS Streams.
 - [API Reference / Coinbase Exchange API (110 pages)](https://docs.cdp.coinbase.com/_llms/api-reference/coinbase-exchange-api.txt): REST API, FIX API, Websocket Feed.
-- [API Reference / Coinbase Prime API (137 pages)](https://docs.cdp.coinbase.com/_llms/api-reference/coinbase-prime-api.txt): REST API, Websocket Feed, FIX 4.2 API, FIX 5.0 API.
+- [API Reference / Coinbase Prime API (136 pages)](https://docs.cdp.coinbase.com/_llms/api-reference/coinbase-prime-api.txt): REST API, Websocket Feed, FIX 4.2 API, FIX 5.0 API.
 - [SDKs (1523 pages)](https://docs.cdp.coinbase.com/_llms/sdks.txt): SDKs, CRYPTO INFRASTRUCTURE, COINBASE APIs, INSTITUTIONAL APIs, COINBASE WALLET.
 - [SDKs / CRYPTO INFRASTRUCTURE (1429 pages)](https://docs.cdp.coinbase.com/_llms/sdks/crypto-infrastructure.txt): CDP SDKs, CDP SDKs v1.
 - [SDKs / CRYPTO INFRASTRUCTURE / CDP SDKs (1427 pages)](https://docs.cdp.coinbase.com/_llms/sdks/crypto-infrastructure/cdp-sdks.txt): Backend, Frontend.

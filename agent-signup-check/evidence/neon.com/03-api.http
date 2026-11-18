@@ -1,20 +1,20 @@
 GET https://claimable.neon.tech/v1/projects/agent-signup-check/credentials
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:35.444Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:47.107Z
 final-url: https://claimable.neon.tech/v1/projects/agent-signup-check/credentials
 
 HTTP 401
 age: 0
 cache-control: public, max-age=0, must-revalidate
 content-type: application/json
-date: Mon, 16 Nov 2026 20:59:32 GMT
+date: Wed, 18 Nov 2026 00:46:44 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 www-authenticate: Bearer resource_metadata="https://claimable.neon.tech/.well-known/oauth-protected-resource"
-x-request-id: f4b48cab-a667-4893-a710-ff785f3846fe
+x-request-id: 4aeafcdb-7edc-4676-90e1-2a4e013de665
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::mnkm7-1794862772107-bd5976cb4d33
+x-vercel-id: pdx1::iad1::5djzz-1794962803763-dd3167282efe
 connection: close
 transfer-encoding: chunked
 
-{"error":{"code":"unauthorized","origin":"proxy","message":"Present an access token as `Authorization: Bearer <token>`.","retryable":false,"request_id":"f4b48cab-a667-4893-a710-ff785f3846fe"}}
+{"error":{"code":"unauthorized","origin":"proxy","message":"Present an access token as `Authorization: Bearer <token>`.","retryable":false,"request_id":"4aeafcdb-7edc-4676-90e1-2a4e013de665"}}

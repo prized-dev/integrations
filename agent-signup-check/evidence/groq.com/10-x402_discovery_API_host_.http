@@ -1,0 +1,23 @@
+GET https://api.groq.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:53.043Z
+final-url: https://api.groq.com/.well-known/x402
+
+HTTP 404
+date: Wed, 18 Nov 2026 00:45:52 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+cache-control: private, max-age=0, no-store, no-cache, must-revalidate
+server: cloudflare
+vary: Origin
+x-groq-region: dls
+x-request-id: req_01m7p1w16ve6qv8hfrs0gvzr18
+via: 1.1 google
+alt-svc: h3=":443"; ma=86400
+cf-cache-status: DYNAMIC
+strict-transport-security: max-age=15552000
+content-encoding: br
+cf-ray: a5c2f474780e8e12-PDX
+
+{"error":{"message":"Unknown request URL: GET /.well-known/x402. Please check the URL for typos, or see the docs at https://console.groq.com/docs/","type":"invalid_request_error","code":"unknown_url"}}

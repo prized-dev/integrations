@@ -1,24 +1,24 @@
 GET https://api.blaxel.ai/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:15.904Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:27.105Z
 final-url: https://api.blaxel.ai/.well-known/oauth-authorization-server
 
 HTTP 200
 content-type: application/json; charset=utf-8
 content-length: 850
 connection: close
-date: Mon, 16 Nov 2026 20:59:14 GMT
-x-cf-request-id: idKCYukXew5oL78lQYx6mDdtcew0A4gY-pkPc7-5kEIsrTcKDPF5xA==
+date: Wed, 18 Nov 2026 00:46:24 GMT
+x-cf-request-id: IAClY9CWFUn7MHUSKqlb-QCPio3Bf_wzQSBNXqDrbOoQ5f7c-d2TMg==
 access-control-allow-headers: Content-Type,Authorization,Content-Length,X-Requested-With,Accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers,X-Blaxel-Authorization,X-Blaxel-Workspace,mcp-protocol-version,mcp-session-id,Blaxel-Version,X-Team-Id
 access-control-allow-methods: GET, POST, OPTIONS
 access-control-allow-origin: *
 access-control-expose-headers: WWW-Authenticate, X-Blaxel-Error-Code
 blaxel-version: 2026-04-16
 x-cache: Miss from cloudfront
-via: 1.1 eb0793aa61a19aaf4bd31bd6f3628f9a.cloudfront.net (CloudFront)
+via: 1.1 b023cfb0f6ff8e2669cab3ce8c9f51f0.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: idKCYukXew5oL78lQYx6mDdtcew0A4gY-pkPc7-5kEIsrTcKDPF5xA==
+x-amz-cf-id: IAClY9CWFUn7MHUSKqlb-QCPio3Bf_wzQSBNXqDrbOoQ5f7c-d2TMg==
 x-frame-options: DENY
 referrer-policy: strict-origin-when-cross-origin
 content-security-policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'

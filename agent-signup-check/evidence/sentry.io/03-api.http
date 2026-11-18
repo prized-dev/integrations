@@ -1,11 +1,11 @@
 GET https://sentry.io/api/0/organizations/
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:26.875Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:38.856Z
 final-url: https://sentry.io/api/0/organizations/
 
 HTTP 401
 server: nginx
-date: Mon, 16 Nov 2026 21:00:24 GMT
+date: Wed, 18 Nov 2026 00:47:36 GMT
 content-type: application/json
 content-length: 58
 www-authenticate: Bearer realm="api"
@@ -16,7 +16,7 @@ access-control-expose-headers: X-Sentry-Error, X-Sentry-Direct-Hit, X-Hits, X-Ma
 access-control-allow-origin: *
 x-sentry-rate-limit-remaining: 39
 x-sentry-rate-limit-limit: 40
-x-sentry-rate-limit-reset: 1794862825
+x-sentry-rate-limit-reset: 1794962857
 x-sentry-rate-limit-concurrentremaining: 24
 x-sentry-rate-limit-concurrentlimit: 25
 vary: Accept-Language, Cookie
@@ -26,7 +26,7 @@ x-content-type-options: nosniff
 x-xss-protection: 1; mode=block
 cross-origin-opener-policy-report-only: same-origin; report-to="coop-endpoint"
 report-to: {"group":"coop-endpoint","max_age":86400,"endpoints":[{"url":"https://sentry-coop-302178938983.us-central1.run.app/coop"}]}
-content-security-policy: frame-ancestors 'self' *.sentry.io; base-uri 'none'; style-src * 'unsafe-inline'; object-src 'none'; worker-src 'self' blob:; connect-src 'self' *.algolia.net *.algolianet.com *.algolia.io browser.sentry-cdn.com sentry.io *.sentry.io s1.sentry-cdn.com o1.ingest.sentry.io api2.amplitude.com app.pendo.io data.pendo.io reload.getsentry.net t687h3m0nh65.statuspage.io maps.googleapis.com plausible.io api.github.com *.intercom.io wss://*.intercom.io *.intercom-messenger.com wss://*.intercom-messenger.com uploads.intercomcdn.com uploads.intercomusercontent.com; font-src * data:; img-src * blob: data:; frame-src app.pendo.io demo.arcade.software js.stripe.com sentry.io 'self' intercom-sheets.com www.intercom-reporting.com; media-src *; script-src 'self' 'unsafe-inline' 'report-sample' s1.sentry-cdn.com js.sentry-cdn.com browser.sentry-cdn.com statuspage-production.s3.amazonaws.com aui-cdn.atlassian.com connect-cdn.atl-paas.net js.stripe.com 'strict-dynamic' cdn.pendo.io data.pendo.io pendo-io-static.storage.googleapis.com pendo-static-5634074999128064.storage.googleapis.com plausible.io app.intercom.io widget.intercom.io js.intercomcdn.com; default-src 'none'; report-uri https://o1.ingest.sentry.io/api/54785/security/?sentry_key=f724a8a027db45f5b21507e7142ff78e&sentry_release=e687366ad96532f8ad27f2857c06097b57eb99a1
+content-security-policy: style-src * 'unsafe-inline'; object-src 'none'; connect-src 'self' *.algolia.net *.algolianet.com *.algolia.io browser.sentry-cdn.com sentry.io *.sentry.io s1.sentry-cdn.com o1.ingest.sentry.io api2.amplitude.com app.pendo.io data.pendo.io reload.getsentry.net t687h3m0nh65.statuspage.io maps.googleapis.com plausible.io api.github.com *.intercom.io wss://*.intercom.io *.intercom-messenger.com wss://*.intercom-messenger.com uploads.intercomcdn.com uploads.intercomusercontent.com; default-src 'none'; img-src * blob: data:; media-src *; frame-ancestors 'self' *.sentry.io; font-src * data:; script-src 'self' 'unsafe-inline' 'report-sample' s1.sentry-cdn.com js.sentry-cdn.com browser.sentry-cdn.com statuspage-production.s3.amazonaws.com aui-cdn.atlassian.com connect-cdn.atl-paas.net js.stripe.com 'strict-dynamic' cdn.pendo.io data.pendo.io pendo-io-static.storage.googleapis.com pendo-static-5634074999128064.storage.googleapis.com plausible.io app.intercom.io widget.intercom.io js.intercomcdn.com; base-uri 'none'; frame-src app.pendo.io demo.arcade.software js.stripe.com sentry.io 'self' intercom-sheets.com www.intercom-reporting.com; worker-src 'self' blob:; report-uri https://o1.ingest.sentry.io/api/54785/security/?sentry_key=f724a8a027db45f5b21507e7142ff78e&sentry_release=918e5fb21312e04dcb931ff07effd1914f9f0a92
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 via: 1.1 google
 alt-svc: h3=":443"; ma=2592000

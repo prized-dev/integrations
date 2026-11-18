@@ -1,23 +1,23 @@
 GET https://docs.x.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:50.860Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:57.662Z
 final-url: https://docs.x.ai/llms.txt
 
 HTTP 200
-date: Mon, 16 Nov 2026 20:58:48 GMT
+date: Wed, 18 Nov 2026 00:45:54 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-vary: Accept, rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+vary: Accept, rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
 content-security-policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://*.cloudflareinsights.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' blob: data: https://assets.x.ai https://cdn.jsdelivr.net https://upload.wikimedia.org http://docs.x.ai https://media.x.ai; font-src https://use.typekit.net 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; frame-src 'self'; block-all-mixed-content; media-src 'self' blob: data: https://data.x.ai https://media.x.ai; upgrade-insecure-requests; connect-src 'self' https://api.stripe.com https://featureassets.org https://cloudflare-dns.com;
 referrer-policy: origin-when-cross-origin
 x-nextjs-cache: HIT
 cache-control: public, max-age=3600, stale-while-revalidate=86400
+content-encoding: gzip
 strict-transport-security: max-age=31536000; includeSubDomains
 cf-cache-status: DYNAMIC
-content-encoding: gzip
 server: cloudflare
-cf-ray: a5b96a720f945f03-PDX
+cf-ray: a5c2f48178b90d10-PDX
 
 # SpaceXSI API Documentation
 
@@ -180,6 +180,7 @@ Add the programming language you want code examples in to the `Accept-Language` 
 - [Use Grok Bot — Approvals and privacy](https://docs.x.ai/grok-bot/approvals-security-and-privacy.md)
 - [Use Grok Bot — Vault and secure sign-in](https://docs.x.ai/grok-bot/vault.md)
 - [Use Grok Bot — Team Bots](https://docs.x.ai/grok-bot/team-bots.md)
+- [Use Grok Bot — Create and share a Team Bot](https://docs.x.ai/grok-bot/create-a-team-bot.md)
 - [Use Grok Bot — Grok Bot for Mobile](https://docs.x.ai/grok-bot/mobile.md)
 - [Use Grok Bot — Use Grok Bot in Microsoft Teams](https://docs.x.ai/grok-bot/microsoft-teams.md)
 - [Use Grok Bot — Add a Bot to your meetings](https://docs.x.ai/grok-bot/meetings.md)

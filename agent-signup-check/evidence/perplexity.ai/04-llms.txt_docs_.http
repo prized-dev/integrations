@@ -1,33 +1,33 @@
 GET https://docs.perplexity.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:51.148Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:58.897Z
 final-url: https://docs.perplexity.ai/llms.txt
 
 HTTP 200
-age: 2662
+age: 4126
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a5b96a76f8b7b74e-PDX
+cf-ray: a5c2f4865bb48639-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:58:48 GMT
-etag: W/"yLii27iPIw1xpcyixOJ9pj_ZG6owLkBmZ65hUE6Lhzs"
+date: Wed, 18 Nov 2026 00:45:55 GMT
+etag: W/"fG8qENGT3_2fkFYf_M6afNjmHkwnkP_2Ok_EzWnFG9g"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4149
+x-mintlify-client-version: 0.0.4177
 x-vercel-cache: MISS
-x-vercel-id: pdx1:cdg1:iad1::iad1::wxhb9-1794862728769-0aa2149517f5
+x-vercel-id: pdx1:iad1:iad1::iad1::nlvlt-1794962755544-c4c6f53c7201
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_4D8r1dHg6bQcRuBgQyL3z9waJJtn
+x-version: dpl_HhUetB7eHHDAmK9T1Teip38TgFx9
 connection: close
 transfer-encoding: chunked
 
 # Perplexity
 
-> Perplexity API docs. Search: ranked web results with extracted page text for your own model. Agent: hosted models with web search and tools, returning a cited answer. Decisions: calibrated probabilities. Orchestrator (private preview): OpenAI- and Anthropic-format routing. Embeddings: vectors.
+> Perplexity API docs. Search: ranked web results with extracted page text for your own model. Agent: hosted models with web search and tools, returning a cited answer. Decisions: calibrated probabilities. Orchestrator: OpenAI- and Anthropic-format routing. Embeddings: vectors.
 
 - [Overview](https://docs.perplexity.ai/docs/getting-started/overview.md): Perplexity API Platform - build with the Orchestrator, Agent, Search, Embeddings, Decisions, and Monitor APIs. Real-time, web-wide research and Q&A capabilities for your products.
 - [Quickstart](https://docs.perplexity.ai/docs/getting-started/quickstart.md): Generate an API key and make your first call in < 3 minutes.
@@ -35,9 +35,10 @@ transfer-encoding: chunked
 - [Perplexity API MCP Server](https://docs.perplexity.ai/docs/getting-started/integrations/mcp-server.md): Connect AI assistants to Perplexity's search and reasoning capabilities using the Model Context Protocol (MCP).
 - [Perplexity Computer MCP Server](https://docs.perplexity.ai/docs/getting-started/integrations/computer-mcp-server.md): Give AI assistants the ability to complete real-world tasks using Perplexity Computer through the Model Context Protocol (MCP).
 - [Perplexity CLI](https://docs.perplexity.ai/docs/cli/overview.md): Install and use Perplexity's pplx command-line interface for web search and query-relevant page snippets from your terminal or coding agent.
-- [Perplexity Orchestrator API](https://docs.perplexity.ai/docs/orchestrator/quickstart.md): Unified access to open-weight models through OpenAI Chat Completions, OpenAI Responses, and Anthropic Messages APIs, with your Perplexity API key.
-- [Orchestrator Models & Pricing](https://docs.perplexity.ai/docs/orchestrator/models.md): The model catalog for the Perplexity Orchestrator API, with per-token pricing for Perplexity-hosted and third-party models.
-- [Routing & Reliability](https://docs.perplexity.ai/docs/orchestrator/routing-and-reliability.md): How the Perplexity Orchestrator API routes requests across model deployments, and what happens automatically when a provider degrades or fails.
+- [Perplexity Orchestrator API](https://docs.perplexity.ai/docs/orchestrator/quickstart.md): Access proprietary and open-weight models with one API key and consolidated billing.
+- [Orchestrator Models & Pricing](https://docs.perplexity.ai/docs/orchestrator/models.md): Orchestrator API models with context windows, output limits, per-token pricing, and usage tier requirements.
+- [Routing & Reliability](https://docs.perplexity.ai/docs/orchestrator/routing-and-reliability.md): How the Orchestrator API picks a model for each request with perplexity/auto, how it picks a deployment for that model, and what happens when a deployment fails.
+- [Orchestrator API FAQ](https://docs.perplexity.ai/docs/orchestrator/faq.md): Answers to common questions about Orchestrator API access, billing, reasoning, caching, routing, and errors.
 - [Agent API](https://docs.perplexity.ai/docs/agent-api/quickstart.md): The Agent API is a multi-provider, interoperable API specification for building LLM applications. Access models from multiple providers with integrated real-time web search, tool configuration, reasoning control, and token budgets—all through one unified interface.
 - [Define the run](https://docs.perplexity.ai/docs/agent-api/building-agents/define-the-run.md): Configure the agent run: start from an effort level, then customize the system prompt, the loop bound, and the model.
 - [Prompt the agent](https://docs.perplexity.ai/docs/agent-api/building-agents/prompt-the-agent.md): Split the standing rules (the system prompt) from the question (input), and ground the run so the agent searches and answers on the right thing.
@@ -49,6 +50,7 @@ transfer-encoding: chunked
 - [Effort](https://docs.perplexity.ai/docs/agent-api/effort.md): Explore Perplexity's Agent API effort levels - pre-configured setups optimized for different use cases with specific models, search configs, and tool access.
 - [Profiles](https://docs.perplexity.ai/docs/agent-api/profiles.md): Run an Agent API request with a reusable, versioned configuration that you save and manage.
 - [Model Fallback](https://docs.perplexity.ai/docs/agent-api/model-fallback.md): Specify multiple models in a fallback chain for higher availability and automatic failover.
+- [Prompt Caching](https://docs.perplexity.ai/docs/agent-api/prompt-caching.md): Reuse long prompt prefixes across Agent API requests, understand cache read and cache write billing, and control which prefixes are cached.
 - [Tools overview](https://docs.perplexity.ai/docs/agent-api/tools/overview.md): The tools an Agent API run can call - Perplexity-hosted built-in tools, remote MCP servers, and your own custom functions - and where to go for each.
 - [Web Search](https://docs.perplexity.ai/docs/agent-api/tools/web-search.md): Search the web from the Agent API with filters, search configurations, pricing, parameters, and response fields.
 - [Image Search](https://docs.perplexity.ai/docs/agent-api/tools/image-search.md): Search for web images from the Agent API with result limits, domain and format filters, typed results, streaming events, and per-invocation pricing.

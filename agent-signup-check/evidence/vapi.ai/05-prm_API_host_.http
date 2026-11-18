@@ -1,10 +1,10 @@
 GET https://api.vapi.ai/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:55.640Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:06.568Z
 final-url: https://api.vapi.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:59:54 GMT
+date: Wed, 18 Nov 2026 00:47:04 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -15,7 +15,7 @@ etag: W/"63-jdmNbLwxZ9ekOeSe8iYQqYUgRTw"
 cf-cache-status: DYNAMIC
 content-encoding: br
 server: cloudflare
-cf-ray: a5b96c103dc93741-PDX
+cf-ray: a5c2f63769230384-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"message":"Cannot GET /.well-known/oauth-protected-resource","error":"Not Found","statusCode":404}

@@ -1,6 +1,6 @@
 GET https://brave.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:09.762Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:22.187Z
 redirect: 301 from https://brave.com/.well-known/x402
 final-url: https://brave.com/.well-known/x402/
 
@@ -8,7 +8,7 @@ HTTP 404
 content-type: text/html
 transfer-encoding: chunked
 connection: close
-date: Mon, 16 Nov 2026 17:30:14 GMT
+date: Wed, 18 Nov 2026 00:30:09 GMT
 server: AmazonS3
 last-modified: Mon, 16 Nov 2026 03:59:45 GMT
 etag: W/"5578d2becb2671aca000c9d80c043f3f"
@@ -25,11 +25,11 @@ onion-location: https://brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd
 content-encoding: br
 vary: Accept-Encoding
 x-cache: Error from cloudfront
-via: 1.1 8af7e76489ae9222af2304e63d2c0520.cloudfront.net (CloudFront)
-x-amz-cf-pop: HIO52-P4
+via: 1.1 460acc1f45378318570dee9fef15e250.cloudfront.net (CloudFront)
+x-amz-cf-pop: SEA73-P3
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: NRtF0GjwqaY6KZlmw8CA7eWup9RLNxsY-H9UNesVN1Bt3SAD58Vhnw==
-age: 12595
+x-amz-cf-id: YIn4ZMrkfM1Xg1GCX3rAv2JKQhWWrxsWSJV8RrWvbdU4nJfZeUJJAA==
+age: 1032
 
 <!DOCTYPE html>
 <html lang="en">

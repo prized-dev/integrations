@@ -1,16 +1,16 @@
 GET https://api.onkernel.com/browsers
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:58.547Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:09.720Z
 final-url: https://api.onkernel.com/browsers
 
 HTTP 401
-date: Mon, 16 Nov 2026 20:59:56 GMT
+date: Wed, 18 Nov 2026 00:47:07 GMT
 content-type: text/plain; charset=utf-8
 content-length: 30
 connection: close
 cache-control: private, no-store
 www-authenticate: Bearer resource_metadata="https://api.onkernel.com/.well-known/oauth-protected-resource"
 x-content-type-options: nosniff
-x-request-id: xqtltmuswgtw14nu1lbx6pqk
+x-request-id: pr7lhjmdag31k1k8ij1bucsp
 
 Authentication token required

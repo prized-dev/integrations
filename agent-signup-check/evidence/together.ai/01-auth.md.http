@@ -1,17 +1,16 @@
 GET https://together.ai/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:46.312Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:53.575Z
 redirect: 301 from https://together.ai/auth.md
 final-url: https://www.together.ai/auth.md
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:58:43 GMT
+date: Wed, 18 Nov 2026 00:45:49 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5b96a52c990b999-SEA
-cf-cache-status: HIT
-age: 1548
+cf-ray: a5c2f460cad2769a-SEA
+cf-cache-status: MISS
 cache-control: max-age=43200
 content-encoding: gzip
 etag: W/"fe0b00401d7593b18add8842e165d94c"

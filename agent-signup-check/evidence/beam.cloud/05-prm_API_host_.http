@@ -1,22 +1,22 @@
 GET https://api.beam.cloud/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:21.538Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:31.938Z
 final-url: https://api.beam.cloud/.well-known/oauth-protected-resource
 
 HTTP 404
 content-type: application/json
 content-length: 2
 connection: close
-date: Mon, 16 Nov 2026 20:59:19 GMT
+date: Wed, 18 Nov 2026 00:46:29 GMT
 strict-transport-security: max-age=31536000; includeSubDomains
 x-content-type-options: nosniff
 referrer-policy: same-origin
 cross-origin-opener-policy: same-origin
 vary: origin
 x-cache: Error from cloudfront
-via: 1.1 e46509f22800a7c13e2737ab1c5f5990.cloudfront.net (CloudFront)
+via: 1.1 310bb70e39faa84466a9bb82361f976c.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P3
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: Qo-CGijNewYiKjXJNqCx2djJfx_4VlHXuAjexw5KO5xJLvOdYHTLFw==
+x-amz-cf-id: h2PFmlbWL5Fzsr4HlCqZVYNtZvnwR1S31qDFGzLmoZ4Ewo285BY2sA==
 
 {}

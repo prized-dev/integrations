@@ -1,17 +1,17 @@
 GET https://api.x.ai/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:50.860Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:57.662Z
 final-url: https://api.x.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:58:49 GMT
+date: Wed, 18 Nov 2026 00:45:55 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
-cf-cache-status: DYNAMIC
 strict-transport-security: max-age=31536000
+cf-cache-status: DYNAMIC
 content-encoding: gzip
 server: cloudflare
-cf-ray: a5b96a798ae3ff0f-PDX
+cf-ray: a5c2f4868bf4c12a-PDX
 
 {"error":{"code":404,"message":"The requested resource was not found. Please check the URL and try again. Documentation is available at https://docs.x.ai/"}}

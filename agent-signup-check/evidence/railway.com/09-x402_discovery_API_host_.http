@@ -1,0 +1,21 @@
+GET https://backboard.railway.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:16.490Z
+final-url: https://backboard.railway.com/.well-known/x402
+
+HTTP 404
+date: Wed, 18 Nov 2026 00:46:16 GMT
+content-type: application/json; charset=utf-8
+transfer-encoding: chunked
+connection: close
+vary: Origin, Accept-Encoding
+access-control-allow-origin: https://railway.com
+access-control-allow-credentials: true
+access-control-expose-headers: RateLimit-Policy,X-RateLimit-Limit,X-RateLimit-Remaining,X-RateLimit-Reset,Retry-After
+via: 1.1 google
+cf-cache-status: DYNAMIC
+content-encoding: gzip
+server: cloudflare
+cf-ray: a5c2f506dfabde03-SJC
+
+{"message":"Not Found","requestId":"c3b5be82-5c70-408c-b1ef-2474f15fc825"}

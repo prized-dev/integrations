@@ -1,15 +1,15 @@
 GET https://mistral.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:43.665Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:50.735Z
 final-url: https://mistral.ai/llms.txt
 
 HTTP 200
-date: Mon, 16 Nov 2026 20:58:39 GMT
+date: Wed, 18 Nov 2026 00:45:44 GMT
 content-type: text/plain; charset=UTF-8
 transfer-encoding: chunked
 connection: close
 accept-ranges: bytes
-x-nf-request-id: 01M7K2F829YPK058NXGER57DZ8
+x-nf-request-id: 01M7P1VSER040B3P3GBQ0CF30E
 cache-control: public,max-age=0,must-revalidate
 cache-status: "Netlify Edge"; fwd=miss; fwd-status=200; stored
 content-encoding: br
@@ -23,7 +23,7 @@ vary: Accept-Encoding
 x-content-type-options: nosniff
 x-frame-options: SAMEORIGIN
 cf-cache-status: BYPASS
-cf-ray: a5b96a398d8823a3-PDX
+cf-ray: a5c2f4427a625edd-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Mistral

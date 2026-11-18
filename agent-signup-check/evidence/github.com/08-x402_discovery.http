@@ -1,10 +1,10 @@
 GET https://github.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:25.126Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:38.228Z
 final-url: https://github.com/.well-known/x402
 
 HTTP 404
-date: Mon, 16 Nov 2026 21:00:24 GMT
+date: Wed, 18 Nov 2026 00:47:37 GMT
 content-type: application/json; charset=utf-8
 vary: X-PJAX, X-PJAX-Container, Turbo-Visit, Turbo-Frame, X-Requested-With, X-GitHub-Client-Version, Sec-Fetch-Site,Accept-Encoding, Accept, X-Requested-With
 cache-control: no-cache
@@ -17,7 +17,7 @@ content-security-policy: default-src 'none'; base-uri 'self'; connect-src 'self'
 server: github.com
 content-encoding: gzip
 content-length: 52
-x-github-request-id: C338:9E17:132921:2468B4:6AFB6EE8
+x-github-request-id: 92B4:255A7C:253CF4:464836:6AFCF5A9
 x-github-edge-region: westus2
 connection: close
 

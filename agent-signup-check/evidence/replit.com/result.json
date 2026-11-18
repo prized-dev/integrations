@@ -1,12 +1,13 @@
 {
  "site": "replit.com",
- "checkedAt": "2026-11-16T20:59:30.934Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:46:42.960Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 1,
  "partial": 0,
  "unread": 0,
  "total": 6,
  "whoActs": null,
+ "apiSource": null,
  "checks": [
   {
    "id": "authmd",
@@ -65,7 +66,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 290,
+   "ms": 304,
    "redirects": 0
   },
   {
@@ -75,7 +76,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 257,
+   "ms": 156,
    "redirects": 0
   },
   {
@@ -85,7 +86,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 283,
+   "ms": 284,
    "redirects": 0
   },
   {
@@ -95,7 +96,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 130,
+   "ms": 117,
    "redirects": 0
   },
   {
@@ -105,7 +106,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 215,
+   "ms": 272,
    "redirects": 0
   }
  ]

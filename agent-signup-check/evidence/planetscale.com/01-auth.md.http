@@ -1,23 +1,23 @@
 GET https://planetscale.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:35.986Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:48.135Z
 redirect: 307 from https://planetscale.com/auth.md
 final-url: https://planetscale.com/docs/api/reference/getting-started-with-planetscale-api.md
 
 HTTP 200
-date: Mon, 16 Nov 2026 20:59:32 GMT
+date: Wed, 18 Nov 2026 00:46:43 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
 link: </docs/llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt", </docs/.well-known/api-catalog>; rel="api-catalog", </docs/.well-known/mcp/server-card.json>; rel="mcp-server-card", </docs/.well-known/agent-card.json>; rel="agent-card", </docs/.well-known/agent-skills/index.json>; rel="agent-skills"
-cf-ray: a5b96b879870ff03-PDX
+cf-ray: a5c2f5aeecee8864-PDX
 cf-cache-status: DYNAMIC
-age: 5209
+age: 7107
 cache-control: no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0
 content-disposition: inline
 content-encoding: br
 expires: 0
-last-modified: Mon, 16 Nov 2026 19:38:55 GMT
+last-modified: Tue, 17 Nov 2026 22:55:16 GMT
 server: cloudflare
 strict-transport-security: max-age=63072000
 vary: accept-encoding
@@ -27,13 +27,13 @@ content-security-policy: default-src 'none'
 x-frame-options: DENY
 x-llms-txt: /docs/llms.txt
 x-mint-proxy-version: 1.0.0-prod
-x-mintlify-client-version: 0.0.4149
+x-mintlify-client-version: 0.0.4177
 x-robots-tag: noindex
-x-served-version: dpl_D8DZMbLzBJDPJxA2oBvSn4nDSCwT
+x-served-version: dpl_81ettUQ5G7NASN425B6JKU3FX1Rg
 x-vercel-cache: MISS
-x-vercel-id: pdx1:cle1:iad1::iad1::rzkkj-1794862772499-256c00600584
+x-vercel-id: pdx1:sfo1:iad1::iad1::mlv8t-1794962803074-664a2ad326a3
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
-x-version: dpl_D8DZMbLzBJDPJxA2oBvSn4nDSCwT
+x-version: dpl_81ettUQ5G7NASN425B6JKU3FX1Rg
 alt-svc: h3=":443"; ma=86400
 
 > ## Documentation Index

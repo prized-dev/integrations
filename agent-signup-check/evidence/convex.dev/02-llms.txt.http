@@ -1,28 +1,28 @@
 GET https://convex.dev/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:38.744Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:50.932Z
 redirect: 308 from https://convex.dev/llms.txt
 final-url: https://www.convex.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 59296
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: frame-ancestors 'self';
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:59:36 GMT
+date: Wed, 18 Nov 2026 00:46:47 GMT
 etag: W/"164756d5d3b5870a23ae21e55031f2b7"
-last-modified: Mon, 16 Nov 2026 04:31:19 GMT
+last-modified: Wed, 18 Nov 2026 00:46:47 GMT
 referrer-policy: origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=63072000; includeSubDomains; preload
 x-dns-prefetch-control: on
 x-frame-options: SAMEORIGIN
 x-matched-path: /llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::gszjb-1794862776001-a306509cf1c9
+x-vercel-cache: MISS
+x-vercel-id: pdx1::mx8zg-1794962807667-6efeaf240912
 connection: close
 transfer-encoding: chunked
 

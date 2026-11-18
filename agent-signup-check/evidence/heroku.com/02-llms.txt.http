@@ -1,20 +1,20 @@
 GET https://heroku.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:17.921Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:28.880Z
 final-url: https://heroku.com/llms.txt
 
 HTTP 200
 server: nginx
-date: Mon, 16 Nov 2026 20:59:12 GMT
+date: Wed, 18 Nov 2026 00:46:21 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 vary: Accept-Encoding
 content-encoding: br
 x-rq: sea3 0 40 9980
-cache-control: max-age=300, must-revalidate
-x-cache: EXPIRED
 accept-ranges: bytes
+x-cache: STALE
+cache-control: max-age=300, must-revalidate
 strict-transport-security: max-age=31536000
 
 ﻿# Heroku: Cloud Application Platform

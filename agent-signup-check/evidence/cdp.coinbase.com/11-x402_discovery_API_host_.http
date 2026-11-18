@@ -1,0 +1,21 @@
+GET https://api.cdp.coinbase.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:36.057Z
+final-url: https://api.cdp.coinbase.com/.well-known/x402
+
+HTTP 404
+date: Wed, 18 Nov 2026 00:47:35 GMT
+content-type: text/plain; charset=utf-8
+content-length: 19
+connection: close
+content-security-policy-report-only: script-src 'unsafe-inline' 'unsafe-eval'; connect-src 'none'; report-uri https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=cClCoA_ifdALbw7FxXIuGnhcQ1IeWb1UM02r3mJ7xME-1794962855.6749327-1.0.1.1-B5IqitUcTE7vchNzatpaE6CHAX9eL5z3ad.Y53kR.tpsp_JYlR..ahmP6uI95F9Gko3TaWV7Us7JZ31ITINDnRMX7s7SJESaON.FxdecgUIwklJdnmoLp4zrcspLfwCtwYQsAOI4YoqPo35lZY2aJ4jaDpfVhmej3_qA6A45nomBnApaZtxI9v2sZHsg_QqG; report-to cf-csp-endpoint
+x-content-type-options: nosniff
+server: cloudflare
+reporting-endpoints: cf-csp-endpoint="https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=cClCoA_ifdALbw7FxXIuGnhcQ1IeWb1UM02r3mJ7xME-1794962855.6749327-1.0.1.1-B5IqitUcTE7vchNzatpaE6CHAX9eL5z3ad.Y53kR.tpsp_JYlR..ahmP6uI95F9Gko3TaWV7Us7JZ31ITINDnRMX7s7SJESaON.FxdecgUIwklJdnmoLp4zrcspLfwCtwYQsAOI4YoqPo35lZY2aJ4jaDpfVhmej3_qA6A45nomBnApaZtxI9v2sZHsg_QqG"
+cf-cache-status: DYNAMIC
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=1D7B2uQB0j8QHwdtjYjhhCvZcZQ3kJPR4f1tGrhGDh1wa1pg03AQgKfEpBy2Y4pODnOanqqs6fu4PuJGh1YOOuQg6OFFy5zIaUGCWmMk1lR2QclivubtjUve7i%2B%2FS2LO3LA4eGbn"}]}, {"group":"cf-csp-endpoint","max_age":86400,"endpoints":[{"url":"https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=cClCoA_ifdALbw7FxXIuGnhcQ1IeWb1UM02r3mJ7xME-1794962855.6749327-1.0.1.1-B5IqitUcTE7vchNzatpaE6CHAX9eL5z3ad.Y53kR.tpsp_JYlR..ahmP6uI95F9Gko3TaWV7Us7JZ31ITINDnRMX7s7SJESaON.FxdecgUIwklJdnmoLp4zrcspLfwCtwYQsAOI4YoqPo35lZY2aJ4jaDpfVhmej3_qA6A45nomBnApaZtxI9v2sZHsg_QqG"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.01,"max_age":604800}
+cf-ray: a5c2f6f7fea9ff17-PDX
+
+404 page not found

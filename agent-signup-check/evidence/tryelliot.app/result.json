@@ -1,12 +1,13 @@
 {
  "site": "tryelliot.app",
- "checkedAt": "2026-11-18T00:19:28.256Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:47:46.997Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 7,
  "partial": 0,
  "unread": 0,
  "total": 7,
  "whoActs": "the person confirms an email code",
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -52,6 +53,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://dashboard.tryelliot.app/api/v1/me",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": "Bearer resource_metadata=\"https://dashboard.tryelliot.app/.well-known/oauth-protected-resource/api/v1\"",
    "status": "pass",
@@ -81,7 +83,7 @@
    "name": "Docs in Markdown",
    "url": "https://www.tryelliot.app/llms.txt",
    "heading": "# Elliot",
-   "bytes": 2868,
+   "bytes": 3383,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -94,7 +96,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 154,
+   "ms": 308,
    "redirects": 1
   },
   {
@@ -104,7 +106,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 169,
+   "ms": 304,
    "redirects": 1
   },
   {
@@ -114,7 +116,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 176,
+   "ms": 846,
    "redirects": 0
   },
   {
@@ -124,7 +126,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 52,
+   "ms": 196,
    "redirects": 0
   },
   {
@@ -134,7 +136,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 46,
+   "ms": 520,
    "redirects": 0
   },
   {
@@ -144,8 +146,18 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 220,
+   "ms": 47,
    "redirects": 1
+  },
+  {
+   "label": "x402 discovery (API host)",
+   "url": "https://dashboard.tryelliot.app/.well-known/x402",
+   "finalUrl": "https://dashboard.tryelliot.app/.well-known/x402",
+   "status": 406,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 126,
+   "redirects": 0
   }
  ]
 }

@@ -1,23 +1,23 @@
 GET https://agentmail.to/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:42.311Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:55.067Z
 redirect: 307 from https://agentmail.to/.well-known/oauth-authorization-server
 redirect: 302 from https://www.agentmail.to/.well-known/oauth-authorization-server
 final-url: https://clerk.console.agentmail.to/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Mon, 16 Nov 2026 20:59:41 GMT
+date: Wed, 18 Nov 2026 00:46:53 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
-cf-ray: a5b96bc0686999d0-SEA
+cf-ray: a5c2f5f32ea1f8d9-SEA
 cf-cache-status: HIT
 nel: {"report_to":"cf-nel","success_fraction":0.01,"max_age":604800}
 access-control-allow-origin: *
-age: 3131
+age: 3393
 cache-control: public, max-age=14400
-expires: Tue, 17 Nov 2026 00:59:41 GMT
-last-modified: Mon, 16 Nov 2026 20:07:30 GMT
+expires: Wed, 18 Nov 2026 04:46:53 GMT
+last-modified: Tue, 17 Nov 2026 23:50:20 GMT
 server: cloudflare
 x-robots-tag: noindex, nofollow
 strict-transport-security: max-age=63072000;
@@ -27,14 +27,15 @@ clerk-api-version: 2025-04-10
 content-security-policy: default-src 'none'; frame-ancestors 'none'
 permissions-policy: camera=(), microphone=(), geolocation=(), usb=()
 referrer-policy: strict-origin-when-cross-origin
+traceparent: 00-fb16b7895d52bcaf7f5b3effe6894f23-dabf242ddc3fe939-00
 x-cfworker: 1
 x-clerk-instance-id: ins_33DX8hHsoOU1yHzSeOe0jWJB63C
-x-clerk-trace-id: b9dac923d88a1b30425c6acc47b9d8be
-x-cloud-trace-context: 5c12f22159f2ae9a482e750a78220b75
+x-clerk-trace-id: 18b93184b645cbafcabd91351a7e5c24
+x-cloud-trace-context: fb16b7895d52bcaf7f5b3effe6894f23/15762357000207329593
 x-content-type-options: nosniff
 x-country: US
 x-frame-options: DENY
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Z6o2XkAlouESDj0Fc4bFSJ%2BLxBoxI4JO1dZ1FXfTq8p0SPbHa8JkJQ2Fg4Bg9Vu%2FyeuemDC7XiZUxLYFeBo8ntaRdxqTdld5jV5JFJL5HvRJbabwOBlqObwjpJWTZVFD73fHlrW5PAqTMASQ"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=2Tr%2Futrtg7Y%2BozxeRZ5Qw3JYOilM8CgPJXxrvSGB7BgYXaG3WUnHJ9B6CPDrIE%2FuOVHDQyKJJ4F9pGSALdWBOdUFGAcXpAloCN2gaGH7OFCtSDqkZ5Oafah8nPEYhfiCN%2BZrqcS8PArRxMPo"}]}
 content-encoding: br
 
 {"issuer":"https://clerk.console.agentmail.to","authorization_endpoint":"https://clerk.console.agentmail.to/oauth/authorize","token_endpoint":"https://clerk.console.agentmail.to/oauth/token","revocation_endpoint":"https://clerk.console.agentmail.to/oauth/token/revoke","device_authorization_endpoint":"https://clerk.console.agentmail.to/oauth/device_authorization","jwks_uri":"https://clerk.console.agentmail.to/.well-known/jwks.json","registration_endpoint":"https://clerk.console.agentmail.to/oauth/register","response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token","urn:ietf:params:oauth:grant-type:device_code"],"token_endpoint_auth_methods_supported":["client_secret_basic","none","client_secret_post"],"scopes_supported":["openid","profile","email","public_metadata","private_metadata","offline_access","user:org:read"],"subject_types_supported":["public"],"id_token_signing_alg_values_supported":["RS256"],"claims_supported":["aud","email","email_verified","exp","family_name","given_name","iat","iss","name","picture","preferred_username","sub","org_id"],"service_documentation":"https://clerk.com/docs/oauth/scoped-access","ui_locales_supported":["en"],"op_tos_uri":"https://clerk.com/legal/standard-terms","code_challenge_methods_supported":["S256"],"authorization_response_iss_parameter_supported":true}

@@ -1,23 +1,23 @@
 GET https://api.jina.ai/v1/embeddings
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:15.856Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:26.687Z
 final-url: https://api.jina.ai/v1/embeddings
 
 HTTP 401
-date: Mon, 16 Nov 2026 21:00:12 GMT
+date: Wed, 18 Nov 2026 00:47:23 GMT
 content-type: application/json
-content-length: 225
+content-length: 222
 connection: close
-cf-ray: a5b96c7f5e2f60c4-LAX
+cf-ray: a5c2f6aa1f40ac0d-PDX
 cf-cache-status: DYNAMIC
 content-encoding: gzip
 server: cloudflare
 vary: Accept-Encoding
 x-served-by: cf-worker-gcp-direct
 alt-svc: h3=":443"; ma=86400
-x-cloud-trace-context: 1632fc31aaf5413390aa544870bb492d
-x-request-id: 1632fc31aaf5413390aa544870bb492d
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=w6lTYTzraqm%2BdIfvpug9Bb7O9KxZOnJLnJ%2Bt4dDcU7H1itzHPCT%2FPj6owdhPX46eA%2Bl%2BRoktrQ8gf04WRYa3bDUL%2Bl8UgW8yhVFRsPaWt0Z8pUWzXVT1oJ%2BKmrsx"}]}
+x-cloud-trace-context: 6bc0ac4648ae2f6d0ada70f48d9b95dc
+x-request-id: 6bc0ac4648ae2f6d0ada70f48d9b95dc
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=ZE2Ipc4hKpS7PpJt%2FRpRA%2Bqo6fvHUoTL4UObySPVn2jArTq58OZpBJ1waFR%2FEnBoKmzAAkTMs6%2BsSMtJalryAjebf7NFONdQ9iWN6fuoPAx5QGQfRbVIe%2Frl0%2BAQ"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 
-{"detail":"Authentication required. Provide your API key via the Authorization header: 'Authorization: Bearer <api-key>'. Get your API key at https://jina.ai/api-dashboard/key-manager.","request_id":"1632fc31aaf5413390aa544870bb492d","code":"AUTH_MISSING_API_KEY"}
+{"detail":"Authentication required. Provide your API key via the Authorization header: 'Authorization: Bearer <api-key>'. Get your API key at https://jina.ai/api-dashboard/key-manager.","request_id":"6bc0ac4648ae2f6d0ada70f48d9b95dc","code":"AUTH_MISSING_API_KEY"}

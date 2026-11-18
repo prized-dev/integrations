@@ -1,0 +1,17 @@
+GET https://api.planetscale.com/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:48.135Z
+final-url: https://api.planetscale.com/.well-known/x402
+
+HTTP 404
+date: Wed, 18 Nov 2026 00:46:47 GMT
+content-type: application/json; charset=UTF-8
+transfer-encoding: chunked
+connection: close
+x-request-id: 5e7c6500-4500-46a6-a1d5-340f56b70147
+x-runtime: 0.005759
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+vary: Origin,Accept-Encoding
+content-encoding: gzip
+
+{"status":404,"error":"Not Found"}

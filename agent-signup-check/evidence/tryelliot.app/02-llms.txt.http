@@ -1,6 +1,6 @@
 GET https://tryelliot.app/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:19:28.256Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:46.997Z
 redirect: 308 from https://tryelliot.app/llms.txt
 final-url: https://www.tryelliot.app/llms.txt
 
@@ -11,13 +11,13 @@ cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:19:27 GMT
-etag: W/"22d4d81719aaaa8f0b97e4cf886b2d84"
-last-modified: Wed, 18 Nov 2026 00:19:27 GMT
+date: Wed, 18 Nov 2026 00:47:43 GMT
+etag: W/"e717589f9f9069b6a5c7ce21f721856e"
+last-modified: Wed, 18 Nov 2026 00:47:43 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-vercel-cache: MISS
-x-vercel-id: pdx1::rcpbh-1794961167445-eacf4fcacbe0
+x-vercel-id: pdx1::j2l79-1794962863036-85687c391394
 connection: close
 transfer-encoding: chunked
 
@@ -70,6 +70,11 @@ When two findings report the same flaw, keep the clearer one and close the other
 ## Pricing
 
 - [Pricing](https://www.tryelliot.app/pricing.md): the free scan, plans, and what counts as a scan.
+
+## Blog
+
+- [Java4Shell (CVE-2026-114938): how it works and how to fix it](https://www.tryelliot.app/blog/cve-2026-114938-java-base64-heap-overflow.md): Java4Shell lets one malformed Base64 string overflow the heap in Java 17, 21, 25 and 27 on AVX-512 servers. Learn who is at risk and how to fix it.
+- [Launching Elliot-1 – a model for offensive cyber tasks](https://www.tryelliot.app/blog/launching-elliot.md): The first of a family of machine learning models that make cyber intelligence accessible to everyone.
 
 ## Company
 

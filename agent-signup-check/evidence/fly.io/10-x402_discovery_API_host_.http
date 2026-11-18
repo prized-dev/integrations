@@ -1,0 +1,17 @@
+GET https://api.machines.dev/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:14.889Z
+final-url: https://api.machines.dev/.well-known/x402
+
+HTTP 404
+content-type: text/plain; charset=utf-8
+x-content-type-options: nosniff
+date: Wed, 18 Nov 2026 00:46:14 GMT
+content-encoding: br
+transfer-encoding: chunked
+server: Fly/781f3a6652 (2026-11-10)
+via: 1.1 fly.io
+fly-request-id: 01M7P1WPHBZCBSCZ86SYHP5N1Z-lax
+connection: close
+
+404 page not found

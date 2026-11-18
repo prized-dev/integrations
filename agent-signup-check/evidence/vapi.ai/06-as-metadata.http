@@ -1,26 +1,26 @@
 GET https://vapi.ai/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:55.640Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:06.568Z
 final-url: https://vapi.ai/.well-known/oauth-authorization-server
 
 HTTP 404
 access-control-allow-origin: *
-age: 324838
+age: 2857
 cache-control: public, max-age=3600
 content-disposition: inline; filename="404"
 content-encoding: br
 content-security-policy: frame-ancestors 'none';
 content-type: text/html; charset=utf-8
-date: Mon, 16 Nov 2026 20:59:54 GMT
+date: Wed, 18 Nov 2026 00:47:05 GMT
 etag: W/"bf3119df3c47f98d1ab999e9a83d8bfa"
-last-modified: Fri, 13 Nov 2026 02:45:55 GMT
+last-modified: Tue, 17 Nov 2026 23:59:27 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: Accept
 x-frame-options: SAMEORIGIN
 x-matched-path: /404
 x-vercel-cache: HIT
-x-vercel-id: pdx1::gnggq-1794862794634-25662c5547ed
+x-vercel-id: pdx1::7fqdq-1794962825213-585ef699c00e
 connection: close
 transfer-encoding: chunked
 

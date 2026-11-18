@@ -1,6 +1,6 @@
 GET https://browserless.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:05.972Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:19.000Z
 redirect: 301 from https://browserless.io/llms.txt
 final-url: https://www.browserless.io/llms.txt
 
@@ -13,13 +13,13 @@ content-encoding: br
 content-security-policy: frame-ancestors 'self'; object-src 'none'; base-uri 'self'
 content-security-policy-report-only: script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://www.googletagmanager.com https://js.hs-scripts.com https://js.hsforms.com https://js.hs-analytics.net https://js.hs-banner.com https://js.hsadspixel.net https://js.hscollectedforms.net https://js.hsforms.net https://js.usemessages.com https://static.reo.dev https://cdn.jsdelivr.net https://bzrcdn.openai.com https://sweet-heart-af5f.zach-7be.workers.dev https://widget.kapa.ai https://widget.usepylon.com https://challenges.cloudflare.com https://www.youtube.com https://www.google-analytics.com https://ssl.google-analytics.com https://www.gstatic.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'
 content-type: text/plain; charset=UTF-8
-date: Mon, 16 Nov 2026 21:00:03 GMT
+date: Wed, 18 Nov 2026 00:47:15 GMT
 etag: W/"6010be4217375e2659357d60e6711d94-ssl"
 server: Netlify
 strict-transport-security: max-age=31536000
 vary: Accept-Encoding
 x-frame-options: SAMEORIGIN
-x-nf-request-id: 01M7K2HTEGXHW0YAWYJZABYF9J
+x-nf-request-id: 01M7P1YJ00FX9HKG81NNQ6BE8V
 x-robots-tag: index, follow
 connection: close
 transfer-encoding: chunked

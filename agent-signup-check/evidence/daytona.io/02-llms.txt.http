@@ -1,6 +1,6 @@
 GET https://daytona.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:04.439Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:13.612Z
 redirect: 301 from https://daytona.io/llms.txt
 redirect: 308 from https://www.daytona.io/llms.txt
 final-url: https://www.daytona.io/docs/llms.txt
@@ -9,18 +9,18 @@ HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Mon, 16 Nov 2026 20:59:01 GMT
+date: Wed, 18 Nov 2026 00:46:10 GMT
 content-encoding: br
-etag: W/"3771a-1a1e61f9198"
 x-powered-by: Express
 x-frame-options: SAMEORIGIN
 cache-control: public, max-age=0
-last-modified: Mon, 16 Nov 2026 20:49:51 GMT
+last-modified: Tue, 17 Nov 2026 13:26:49 GMT
+etag: W/"3771a-1a1e9b051a8"
 vary: Accept-Encoding
 x-cache: Miss from cloudfront
-via: 1.1 7f51caabae8141bdcde4283a42be2a56.cloudfront.net (CloudFront)
+via: 1.1 cadda06365c5592c0d0a272a3fe5825e.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: 1nP9wtrGxrqVJN0OGAV3VWF5ZR1Swn3-BGlO-Jxq-8OJ38aq1Bb2Sg==
+x-amz-cf-id: Vur3qPxyuUIRSmz6kVHJKbuTtX60TNiqg-kICSu9Q4wEvRTmYocUXw==
 
 # Daytona
 

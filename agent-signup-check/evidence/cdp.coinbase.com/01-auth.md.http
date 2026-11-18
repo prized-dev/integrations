@@ -1,12 +1,12 @@
 GET https://cdp.coinbase.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:23.573Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:36.057Z
 redirect: 302 from https://cdp.coinbase.com/auth.md
 redirect: 302 from https://coinbase.com/developer-platform
 final-url: https://www.coinbase.com/developer-platform
 
 HTTP 200
-date: Mon, 16 Nov 2026 21:00:18 GMT
+date: Wed, 18 Nov 2026 00:47:30 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -18,19 +18,19 @@ expires: 0
 referrer-policy: strict-origin-when-cross-origin
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 surrogate-control: no-store
-trace-id: 2323140809365934054
+trace-id: 7898556238913506691
 x-content-type-options: nosniff
 x-dns-prefetch-control: off
 x-download-options: noopen
 x-frame-options: SAMEORIGIN
 x-xss-protection: 0
 server: cloudflare
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=DZdmiP1KoVUwizsIG8I8R8Od50vliRZ5VYAETrF7RzIDw1CrelxQV%2BhkRRz0DME%2BkGJ40ApAnWF9OkD3Cf7zZ6wlL9g3cMeyGcYHMChNKtqDkUK5aMWiT9waVl3%2FlC2dzpc%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=g6EiHBiN4CbY4998NrO0H%2FoBVUW16qzky7JMqVBtnSdAFhNR8%2B5IkQhhZZ9zMbsWNXwTj6tyzhn%2B36WscAMkiX7WEQxX4s%2FKK5iHKL%2FOfl1v9gnYRN9Mz%2Bba%2BvvzGkDQDW4%3D"}]}
 cf-cache-status: DYNAMIC
 vary: accept
 content-signal: ai-train=yes, search=yes, ai-input=yes
 content-encoding: gzip
-cf-ray: a5b96ca4db1931df-PDX
+cf-ray: a5c2f6d42fb95ec1-PDX
 
 ---
 title: Coinbase Developer Platform (CDP)

@@ -1,14 +1,14 @@
 GET https://api.fireworks.ai/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:47.543Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:54.357Z
 final-url: https://api.fireworks.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:58:45 GMT
+date: Wed, 18 Nov 2026 00:45:52 GMT
 content-type: application/json
 content-length: 176
 connection: close
 vary: Origin
-x-request-id: 77a8f3d6-a5b7-4942-92aa-388e0cea129a
+x-request-id: ad0ce035-f742-4e8b-a3d6-0aec73046367
 
-{"error":{"message":"Path not found: /.well-known/oauth-protected-resource","param":null,"code":"NOT_FOUND","type":"error"},"request_id":"77a8f3d6-a5b7-4942-92aa-388e0cea129a"}
+{"error":{"message":"Path not found: /.well-known/oauth-protected-resource","param":null,"code":"NOT_FOUND","type":"error"},"request_id":"ad0ce035-f742-4e8b-a3d6-0aec73046367"}

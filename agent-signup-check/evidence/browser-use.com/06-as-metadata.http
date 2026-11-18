@@ -1,11 +1,11 @@
 GET https://browser-use.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:02.709Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:14.617Z
 redirect: 307 from https://browser-use.com/.well-known/oauth-authorization-server
 final-url: https://api.browser-use.com/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Mon, 16 Nov 2026 21:00:01 GMT
+date: Wed, 18 Nov 2026 00:47:12 GMT
 content-type: application/json
 content-length: 608
 connection: close

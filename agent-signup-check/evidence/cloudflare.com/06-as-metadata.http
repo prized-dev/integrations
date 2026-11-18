@@ -1,18 +1,18 @@
 GET https://cloudflare.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:11.442Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:21.045Z
 redirect: 301 from https://cloudflare.com/.well-known/oauth-authorization-server
 redirect: 301 from https://www.cloudflare.com/.well-known/oauth-authorization-server
 final-url: https://www.cloudflare.com/.well-known/oauth-authorization-server/
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:59:09 GMT
+date: Wed, 18 Nov 2026 00:46:18 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
 link: <https://www.cloudflare.com/.well-known/api-catalog>; rel="api-catalog", <https://www.cloudflare.com/.well-known/agents.json>; rel="service-desc", <https://www.cloudflare.com/.well-known/webmcp.json>; rel="service-desc", <https://www.cloudflare.com/openapi.json>; rel="service-desc", <https://www.cloudflare.com/llms.txt>; rel="service-doc", <https://www.cloudflare.com/sitemap.xml>; rel="sitemap", </fonts/Kunst%20Grotesk%20Regular.woff2>; rel=preload; as=font; type="font/woff2"; crossorigin, </fonts/Kunst%20Grotesk%20Medium.woff2>; rel=preload; as=font; type="font/woff2"; crossorigin, <https://ot.www.cloudflare.com>; rel=preconnect; crossorigin, <https://imagedelivery.net>; rel=preconnect; crossorigin
 cf-cache-status: MISS
-nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+content-security-policy-report-only: script-src 'unsafe-inline' 'unsafe-eval'; connect-src 'none'; report-uri https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=Y97H62NvWCkTB1bE2o3eKk9dsi1ksaptbW0BMTlgZuY-1794962778.644958-1.0.1.1-abmn_jbiQb6yaJ9d6iCIDMVp4mRKHyi8czRZKoraif4Ajqhs80nZfXrtoqzIk0L7baMunXcdB6m1KOZofsMtNXfaREnCOqvdIVp7lPCHlGvsEqrrCQQ_sdjCs5KL03xSQTvg.ZH2apXqJcBrTmb9seL1FOM_4K.qsFLjVE7QSc_UWb2kkzSJnYw4YEq4vrsP; report-to cf-csp-endpoint
 cache-control: public, max-age=10, s-maxage=10
 vary: accept-encoding
 strict-transport-security: max-age=31536000; includeSubDomains
@@ -26,10 +26,12 @@ x-frame-options: SAMEORIGIN
 x-served-by: marketing-site
 x-xss-protection: 1; mode=block
 x-rm: GW
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=2UbXI5rlCbtzkBlSjuR0kXyH4qpHFdnLuVUhEyqdS%2FSdzlEM70opXzE%2ByCO7u4UHB0KNHK3UPqZAlpeVaHlVXG%2B%2B6EZIQkPQJkM4HG%2FZRVo2o5hbYbFriZunxQ5bOM4IGrEuGw%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Gz6CZzVJgbbfyV6Xz6zkTsm6K9QG0PN1DSsLqskBxYYK7wfKZMudScm%2FeWYKzF2qN0p%2BgJb9kBj4OyIFmiH7tjx6%2FOyhR5tvw8ZxT24yQ%2FXFu3jXvB2NCrVf%2F%2Bpr%2BfV3UJ3TUg%3D%3D"}]}, {"group":"cf-csp-endpoint","max_age":86400,"endpoints":[{"url":"https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=Y97H62NvWCkTB1bE2o3eKk9dsi1ksaptbW0BMTlgZuY-1794962778.644958-1.0.1.1-abmn_jbiQb6yaJ9d6iCIDMVp4mRKHyi8czRZKoraif4Ajqhs80nZfXrtoqzIk0L7baMunXcdB6m1KOZofsMtNXfaREnCOqvdIVp7lPCHlGvsEqrrCQQ_sdjCs5KL03xSQTvg.ZH2apXqJcBrTmb9seL1FOM_4K.qsFLjVE7QSc_UWb2kkzSJnYw4YEq4vrsP"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+reporting-endpoints: cf-csp-endpoint="https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=Y97H62NvWCkTB1bE2o3eKk9dsi1ksaptbW0BMTlgZuY-1794962778.644958-1.0.1.1-abmn_jbiQb6yaJ9d6iCIDMVp4mRKHyi8czRZKoraif4Ajqhs80nZfXrtoqzIk0L7baMunXcdB6m1KOZofsMtNXfaREnCOqvdIVp7lPCHlGvsEqrrCQQ_sdjCs5KL03xSQTvg.ZH2apXqJcBrTmb9seL1FOM_4K.qsFLjVE7QSc_UWb2kkzSJnYw4YEq4vrsP"
 content-encoding: br
 server: cloudflare
-cf-ray: a5b96af83a2e1d57-PDX
+cf-ray: a5c2f51689a1ff09-PDX
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html><html lang="en" class="font-stk-bureau-sans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><link rel="preconnect" href="https://imagedelivery.net" crossorigin><link rel="preconnect" href="https://ot.www.cloudflare.com" crossorigin><link rel="preload" href="/icons.svg" as="image" type="image/svg+xml"><link rel="preload" href="/fonts/STKBureauSans-Book.otf" as="font" type="font/otf" crossorigin><link rel="preload" href="/fonts/STKBureauSans-Regular.otf" as="font" type="font/otf" crossorigin><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><script>
@@ -375,4 +377,4 @@ const gtmContainerSrc = "https://www.googletagmanager.com/gtm.js?id=GTM-NDGPDFZ"
       })();
     })();</script><script type="module">globalThi
 
-[body trimmed for publication: kept 16384 of 176432 characters; sha256 of the published body b84596224aebc459e2dae07b0212caf790a7450177cc4541cf9e4f6bbf3f5498]
+[body trimmed for publication: kept 16384 of 176432 characters; sha256 of the published body bdcfddbef72f2bb1a777195fb022da22210ccc82ed561ffc515e0263c46da282]

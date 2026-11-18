@@ -1,12 +1,12 @@
 GET https://api.postmarkapp.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:44.058Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:56.055Z
 final-url: https://api.postmarkapp.com/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:59:42 GMT
+date: Wed, 18 Nov 2026 00:46:54 GMT
 content-type: text/html; charset=utf-8
-content-length: 1923
+content-length: 1949
 connection: close
 cache-control: private
 strict-transport-security: max-age=16000000;
@@ -27,7 +27,7 @@ vary: Origin
          .marker {font-weight: bold; color: black;text-decoration: none;}
          .version {color: gray;}
          .error {margin-bottom: 10px;}
-         .expandable { text-decoration:underline; font-weight:bold; color:navy; cursor:hand; }
+         .expandable { text-decoration:underline; font-weight:bold; color:navy; cursor:pointer; }
          @media screen and (max-width: 639px) {
           pre { width: 440px; overflow: auto; white-space: pre-wrap; word-wrap: break-word; }
          }
@@ -49,6 +49,8 @@ vary: Origin
             <br><br>
 
             <b> Requested URL: </b>/.well-known/oauth-authorization-server<br><br>
+
+            </font>
 
     </body>
 </html>

@@ -1,24 +1,24 @@
 GET https://api.openai.com/v1/models
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:42.092Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:48.352Z
 final-url: https://api.openai.com/v1/models
 
 HTTP 401
-date: Mon, 16 Nov 2026 20:58:39 GMT
+date: Wed, 18 Nov 2026 00:45:44 GMT
 content-type: application/json
 content-length: 151
 connection: close
-cf-ray: a5b96a39cbc29811-PDX
+cf-ray: a5c2f443ec840b65-PDX
 cf-cache-status: DYNAMIC
 server: cloudflare
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 www-authenticate: Bearer realm="OpenAI API"
 x-content-type-options: nosniff
 access-control-expose-headers: X-Request-ID, CF-Ray, CF-Ray
-openai-processing-ms: 8
+openai-processing-ms: 2
 openai-version: 2020-10-01
 x-openai-proxy-wasm: v0.1
-x-request-id: 5a4f290e-0011-4482-b099-7f543acf2569
+x-request-id: c7bc9495-610e-469f-9e54-ac190242deb8
 alt-svc: h3=":443"; ma=86400
 
 {

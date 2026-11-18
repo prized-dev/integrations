@@ -1,0 +1,35 @@
+GET https://api.exa.ai/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:18.093Z
+final-url: https://api.exa.ai/.well-known/x402
+
+HTTP 404
+date: Wed, 18 Nov 2026 00:47:17 GMT
+content-type: application/json; charset=utf-8
+transfer-encoding: chunked
+connection: close
+content-security-policy: frame-ancestors 'self'
+cross-origin-opener-policy: same-origin
+cross-origin-resource-policy: same-origin
+origin-agent-cluster: ?1
+referrer-policy: no-referrer
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-download-options: noopen
+x-frame-options: DENY
+x-permitted-cross-domain-policies: none
+x-xss-protection: 0
+x-request-id: 45817f842770cc64abbccade23d2db5e
+x-exa-region: us-west-2
+x-exa-processing-region: us
+vary: Origin
+access-control-allow-credentials: true
+access-control-expose-headers: PAYMENT-REQUIRED,PAYMENT-RESPONSE,payment-required,payment-response,WWW-Authenticate,Payment-Receipt,x-request-id,x-exa-queued,x-exa-queue-ms,x-exa-region,x-exa-processing-region,Deprecation,Sunset,Retry-After,X-RateLimit-Scope
+etag: W/"56-ZP1zv6M0+mBbbee/OVWcZCWSbNI"
+cf-cache-status: DYNAMIC
+content-encoding: gzip
+server: cloudflare
+cf-ray: a5c2f6881842fb74-PDX
+
+{"requestId":"45817f842770cc64abbccade23d2db5e","error":"Not found","tag":"NOT_FOUND"}

@@ -1,6 +1,6 @@
 GET https://e2b.dev/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:03.289Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:10.669Z
 final-url: https://e2b.dev/auth.md
 
 HTTP 404
@@ -8,7 +8,7 @@ cache-control: public, max-age=0, must-revalidate
 content-encoding: br
 content-security-policy: frame-ancestors 'self';
 content-type: text/markdown; charset=utf-8
-date: Mon, 16 Nov 2026 20:58:58 GMT
+date: Wed, 18 Nov 2026 00:46:07 GMT
 permissions-policy: camera=(), microphone=(), geolocation=()
 server: Vercel
 strict-transport-security: max-age=63072000; includeSubDomains; preload
@@ -17,7 +17,7 @@ x-content-type-options: nosniff
 x-dns-prefetch-control: on
 x-frame-options: SAMEORIGIN
 x-robots-tag: noindex
-x-vercel-id: pdx1::rzkkj-1794862738726-3fe0e4aea534
+x-vercel-id: pdx1::v4hh2-1794962767186-c31bdd256b67
 x-xss-protection: 1; mode=block
 connection: close
 transfer-encoding: chunked

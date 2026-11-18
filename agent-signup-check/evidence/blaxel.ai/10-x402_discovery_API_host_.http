@@ -1,0 +1,25 @@
+GET https://api.blaxel.ai/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:27.105Z
+final-url: https://api.blaxel.ai/.well-known/x402
+
+HTTP 404
+content-type: application/json; charset=utf-8
+content-length: 38
+connection: close
+date: Wed, 18 Nov 2026 00:46:26 GMT
+x-cf-request-id: KOlkPMjkWMMjU1qNdhXpO_n4wclv_0l3MZP4XimMveYMaxzIXv587Q==
+blaxel-version: 2026-04-16
+vary: Origin
+x-cache: Error from cloudfront
+via: 1.1 4b63c15595b60dbcca6db6aeea9d3d72.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P5
+alt-svc: h3=":443"; ma=86400
+x-amz-cf-id: KOlkPMjkWMMjU1qNdhXpO_n4wclv_0l3MZP4XimMveYMaxzIXv587Q==
+x-frame-options: DENY
+referrer-policy: strict-origin-when-cross-origin
+content-security-policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'
+x-content-type-options: nosniff
+strict-transport-security: max-age=63072000; includeSubDomains
+
+{"code":404,"error":"Route not found"}

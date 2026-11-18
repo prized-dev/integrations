@@ -1,6 +1,6 @@
 GET https://deno.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:32.342Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:42.728Z
 final-url: https://deno.com/.well-known/oauth-authorization-server
 
 HTTP 200
@@ -9,11 +9,11 @@ link: </_fresh/js/2c7be834343e725c25fa21f2d98d4350fa3b3f96/fresh-runtime.js>; re
 vary: Accept-Encoding
 content-encoding: br
 transfer-encoding: chunked
-date: Mon, 16 Nov 2026 20:59:30 GMT
+date: Wed, 18 Nov 2026 00:46:40 GMT
 connection: close
 age: 0
 cache-status: deno; fwd=bypass; detail=zero-ttl
-x-deno-trace-id: e85c5396a2441a82b99661c22ac1c4ae
+x-deno-trace-id: 6f451ccd188d99ec2352201625f96ea2
 via: HTTP/1.1 ord.vultr.prod.deno-cluster.net
 server: deployd
 
@@ -38,4 +38,4 @@ server: deployd
           
           lg:bg-neutral-50 lg:dark:bg-gray-900 lg:rounded-md lg:overflow-hidden lg:shadow-lg"><div data-component="
 
-[body trimmed for publication: kept 16384 of 58379 characters; sha256 of the published body 7c409ecf2ee35b96c9896e1bfbb0ccb449266c9f2cacc29978c5552757777e7f]
+[body trimmed for publication: kept 16384 of 58379 characters; sha256 of the published body 75645c97a036edb25a91e94f9d908a7ff2033fec14b1df380da035ea761a1f96]

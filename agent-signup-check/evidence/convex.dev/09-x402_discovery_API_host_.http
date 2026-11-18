@@ -1,0 +1,14 @@
+GET https://api.convex.dev/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:50.932Z
+final-url: https://api.convex.dev/.well-known/x402
+
+HTTP 404
+date: Wed, 18 Nov 2026 00:46:50 GMT
+content-length: 0
+connection: close
+via: 1.1 Caddy
+cf-cache-status: DYNAMIC
+server: cloudflare
+cf-ray: a5c2f5ddfe297b78-PDX
+

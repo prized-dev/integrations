@@ -1,20 +1,20 @@
 GET https://workos.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:29.900Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:42.535Z
 redirect: 302 from https://workos.com/.well-known/oauth-authorization-server
 final-url: https://signin.workos.com/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Mon, 16 Nov 2026 21:00:29 GMT
+date: Wed, 18 Nov 2026 00:47:41 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5b96ce98c27d82e-PDX
+cf-ray: a5c2f7197cd18d3a-PDX
 cf-cache-status: HIT
-age: 25
+age: 10
 cache-control: public, max-age=300
 etag: W/"64d-Sl+LIU0vQhT4MnnqyfutWFQ4pOc"
-expires: Mon, 16 Nov 2026 21:05:29 GMT
+expires: Wed, 18 Nov 2026 00:52:41 GMT
 server: cloudflare
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch,Origin, Accept-Encoding
@@ -34,7 +34,7 @@ x-permitted-cross-domain-policies: none
 x-ratelimit-limit: 1000, 24000;w=60, 1000;w=1
 x-ratelimit-remaining: 989
 x-ratelimit-reset: 1
-x-request-id: b51783d4-b599-4e8f-a3f4-e5a9c47287a3
+x-request-id: 31f608c5-3f73-40ac-84b3-6e577ac9ab21
 x-workos-app: authkit
 x-xss-protection: 0
 content-encoding: gzip

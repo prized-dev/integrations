@@ -1,31 +1,31 @@
 GET https://financialdatasets.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:13.862Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:26.143Z
 redirect: 308 from https://financialdatasets.ai/llms.txt
 final-url: https://www.financialdatasets.ai/llms.txt
 
 HTTP 200
-date: Mon, 16 Nov 2026 21:00:10 GMT
+date: Wed, 18 Nov 2026 00:47:22 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 access-control-allow-origin: *
-age: 148778
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
-etag: W/"b751c08563b2d5e8e6c5477b1b7be1a7"
-last-modified: Sun, 15 Nov 2026 03:40:31 GMT
+etag: W/"9f1c05a53f8472f31475cc72283602db"
+last-modified: Wed, 18 Nov 2026 00:47:22 GMT
 server: cloudflare
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::mr658-1794862810591-c3351b2115d4
+x-vercel-cache: MISS
+x-vercel-id: pdx1::45mll-1794962842416-d37559182748
 cf-cache-status: DYNAMIC
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=T4dr6DttWZuUYlMBSBGyB6us26vq0kZnFVqVlxeOE02c701Gu225Y%2FssWlhcGxcJtSrZ7v2icfOtXOinRmCChvXeFfL9RebQGfKCz7tH02DOtrrz4yzMrnN1SkgM7RY7wpZE1QExJ9xyZjA%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=00iXJJjK7CYn5bb4e3hAggvfYYCIP4713z8J31RaOoUZ%2BrqiBa5oID%2FoGywFxrUf62oxsYre1xGcdm1XdgyqvrU2zpu2P4C1iZ9uXkCvA1oCIWNdUTFlj6XiPKxVJJga%2F2JCICeoYb04NHg%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-cf-ray: a5b96c75fd4f96ba-PDX
+cf-ray: a5c2f6a4d914b57f-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Financial Datasets
@@ -46,7 +46,7 @@ No API key yet? An AI agent can create one right now: POST /agent/signup with `{
 
 Or create a key in the dashboard: https://www.financialdatasets.ai
 
-No key and no account: pay with x402. Send a request with no X-API-KEY header to a supported endpoint and the 402 response carries the payment terms in the PAYMENT-REQUIRED header (amount in USDC on Base, network eip155:8453). Sign the payment with your own wallet and retry with the PAYMENT-SIGNATURE header; the x402 client libraries do this for you. x402 endpoints: every documented GET data endpoint (39): prices, financial statements and segments, financial metrics, earnings, company facts, filings, news, insider trades and ownership, politician trades, beneficial, activist and institutional holdings, index funds, macro series (interest rates, yield curve, inflation, labor, GDP, GPU prices), IPOs and KPIs. Not covered: /filings/items, /prices/snapshot/market, POST endpoints, and the free helper lists such as /prices/tickers. Guide: https://docs.financialdatasets.ai/x402. Announcement: https://www.financialdatasets.ai/news/x402
+No key and no account: pay with x402. Send a request with no X-API-KEY header to a supported endpoint and the 402 response carries the payment terms in the PAYMENT-REQUIRED header (amount in USDC on Base, network eip155:8453). Sign the payment with your own wallet and retry with the PAYMENT-SIGNATURE header; the x402 client libraries do this for you. x402 endpoints: every documented GET data endpoint (39): prices, financial statements and segments, financial metrics, earnings, company facts, filings, news, insider trades and ownership, politician trades, beneficial, activist and institutional holdings, index funds, macro series (interest rates, yield curve, inflation, labor, GDP, GPU prices), IPOs and KPIs; plus the stock screener, POST /financials/search/screener (JSON body; GET /financials/search/screener/filters lists the valid filter fields, free). Not covered: /filings/items, /prices/snapshot/market, the other POST endpoints, and the free helper lists such as /prices/tickers. Guide: https://docs.financialdatasets.ai/x402. Announcement: https://www.financialdatasets.ai/news/x402
 
 ## API Endpoints
 
@@ -227,6 +227,10 @@ The as-filed line-item hierarchy from SEC filings (10-K / 10-Q). Each row contai
 - [Agent Checkout Link](https://docs.financialdatasets.ai/agents): POST /agent/checkout-link
   - `X-API-KEY` header (required), `amount_to_add` (optional, dollars, min 20) - returns a Stripe payment link for the account owner
 
+### Agent Feedback
+- [Agent Feedback](https://docs.financialdatasets.ai/feedback): POST /feedback
+  - `note` (required, 1-2,000 chars: what you called, what you got, what you expected), `endpoint` (optional, the API path or MCP tool the note is about). Free, one-way, 6 notes per account or wallet in 24 hours. Send it with the `X-API-KEY` header (any valid key, funded or not), or with no key and `feedback_code`: the one-time code in the `X-Feedback-Code` header and the JSON body of every x402 response to a valid payment. Use it when a field is missing, a number looks wrong, or an error is unclear; we read every note. Error responses from the data endpoints to a request with a key include a `feedback` field that names this endpoint.
+
 ## Free Helper Endpoints
 
 These endpoints require no authentication and return available identifiers:
@@ -255,6 +259,7 @@ These endpoints require no authentication and return available identifiers:
 
 - **Agent onboarding**: https://www.financialdatasets.ai/agents.md — playbook the homepage "Copy onboarding prompt" button tells an agent to read
 - **Agent self-signup skill**: https://www.financialdatasets.ai/skill.md - open your own funded account fully autonomously (signup -> mint a Stripe link -> owner pays); also at /.well-known/skills/default/skill.md
+- **Agent feedback**: https://docs.financialdatasets.ai/feedback - tell us what is missing, wrong, or unclear with one free call, POST /feedback
 - **OpenAPI Spec**: https://www.financialdatasets.ai/openapi.json
 - **MCP Server**: https://mcp.financialdatasets.ai/ — use with Claude, Cursor, and other MCP clients
 - **Full LLM context**: https://www.financialdatasets.ai/llms-full.txt

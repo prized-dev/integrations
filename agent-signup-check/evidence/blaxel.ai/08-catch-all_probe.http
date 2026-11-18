@@ -1,14 +1,14 @@
 GET https://docs.blaxel.ai/agent-signup-check-no-such-page.md
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:15.904Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:27.105Z
 final-url: https://docs.blaxel.ai/agent-signup-check-no-such-page.md
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:59:15 GMT
+date: Wed, 18 Nov 2026 00:46:26 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5b96b197cca3abd-PDX
+cf-ray: a5c2f53c7bebf7ed-PDX
 cf-cache-status: MISS
 cache-control: no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0
 content-disposition: inline
@@ -19,16 +19,16 @@ strict-transport-security: max-age=63072000
 vary: accept-encoding
 pragma: no-cache
 x-mint-proxy-version: 1.0.0-prod
-x-served-version: dpl_4D8r1dHg6bQcRuBgQyL3z9waJJtn
+x-served-version: dpl_HhUetB7eHHDAmK9T1Teip38TgFx9
 content-security-policy: default-src 'none'
 x-frame-options: DENY
 x-llms-txt: /llms.txt
-x-mintlify-client-version: 0.0.4149
+x-mintlify-client-version: 0.0.4177
 x-robots-tag: noindex
 x-vercel-cache: MISS
-x-vercel-id: iad1::iad1::kpvvg-1794862754871-bdf18a2cbda8
+x-vercel-id: iad1::iad1::g8tdn-1794962784798-c65f65d74eb3
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_4D8r1dHg6bQcRuBgQyL3z9waJJtn
+x-version: dpl_HhUetB7eHHDAmK9T1Teip38TgFx9
 content-encoding: gzip
 alt-svc: h3=":443"; ma=86400
 

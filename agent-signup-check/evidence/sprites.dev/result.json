@@ -1,12 +1,13 @@
 {
  "site": "sprites.dev",
- "checkedAt": "2026-11-16T20:59:30.048Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:46:42.110Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 0,
  "partial": 1,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -33,6 +34,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://api.sprites.dev/v1/sprites",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -53,13 +55,14 @@
   {
    "id": "markdown",
    "name": "Docs in Markdown",
-   "url": "https://sprites.dev/docs/llms.txt",
+   "url": "https://docs.sprites.dev/llms.txt",
    "tried": [
     "https://sprites.dev/llms.txt",
-    "https://sprites.dev/docs/llms.txt"
+    "https://sprites.dev/docs/llms.txt",
+    "https://docs.sprites.dev/llms.txt"
    ],
    "status": "fail",
-   "reason": "https://sprites.dev/llms.txt not found (HTTP 404); https://sprites.dev/docs/llms.txt not found (HTTP 404)"
+   "reason": "https://sprites.dev/llms.txt not found (HTTP 404); https://sprites.dev/docs/llms.txt not found (HTTP 404); https://docs.sprites.dev/llms.txt not found (HTTP 404) (after a redirect to https://docs.fly.io/sprites/llms.txt)"
   }
  ],
  "requests": [
@@ -70,7 +73,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 226,
+   "ms": 201,
    "redirects": 0
   },
   {
@@ -80,7 +83,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 192,
+   "ms": 189,
    "redirects": 0
   },
   {
@@ -90,7 +93,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 210,
+   "ms": 213,
    "redirects": 0
   },
   {
@@ -100,8 +103,18 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 175,
+   "ms": 176,
    "redirects": 0
+  },
+  {
+   "label": "llms.txt (docs host)",
+   "url": "https://docs.sprites.dev/llms.txt",
+   "finalUrl": "https://docs.fly.io/sprites/llms.txt",
+   "status": 404,
+   "error": null,
+   "contentType": "text/plain; charset=UTF-8",
+   "ms": 583,
+   "redirects": 1
   },
   {
    "label": "prm",
@@ -110,7 +123,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 175,
+   "ms": 176,
    "redirects": 0
   },
   {
@@ -120,7 +133,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 181,
+   "ms": 167,
    "redirects": 0
   },
   {
@@ -130,7 +143,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 183,
+   "ms": 166,
    "redirects": 0
   },
   {
@@ -140,7 +153,17 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 178,
+   "ms": 165,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery (API host)",
+   "url": "https://api.sprites.dev/.well-known/x402",
+   "finalUrl": "https://api.sprites.dev/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 181,
    "redirects": 0
   }
  ]

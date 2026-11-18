@@ -1,16 +1,16 @@
 GET https://app.scrapingbee.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:08.269Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:20.817Z
 redirect: 301 from https://app.scrapingbee.com/.well-known/oauth-authorization-server
 final-url: https://dashboard.scrapingbee.com/.well-known/oauth-authorization-server
 
 HTTP 404
 server: gunicorn
-date: Mon, 16 Nov 2026 21:00:07 GMT
+date: Wed, 18 Nov 2026 00:47:18 GMT
 content-type: text/html; charset=utf-8
 content-length: 7031
 access-control-allow-origin: *
-spb-request-id: d25347ff-9754-418f-8e0f-55e5ca7235ac
+spb-request-id: 625f3e45-b6e4-43b3-bb7d-42ed77d4c798
 cache-control: private
 permissions-policy: browsing-topics=()
 x-frame-options: SAMEORIGIN

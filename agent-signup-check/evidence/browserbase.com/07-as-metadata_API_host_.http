@@ -1,10 +1,10 @@
 GET https://api.browserbase.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:58.818Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:09.739Z
 final-url: https://api.browserbase.com/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:59:57 GMT
+date: Wed, 18 Nov 2026 00:47:08 GMT
 content-type: application/json; charset=utf-8
 content-length: 110
 connection: close

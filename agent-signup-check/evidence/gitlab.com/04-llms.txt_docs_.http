@@ -1,20 +1,20 @@
 GET https://docs.gitlab.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:26.139Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:37.874Z
 final-url: https://docs.gitlab.com/llms.txt
 
 HTTP 200
-date: Mon, 16 Nov 2026 21:00:24 GMT
+date: Wed, 18 Nov 2026 00:47:36 GMT
 content-type: text/plain
 transfer-encoding: chunked
 connection: close
 cf-cache-status: HIT
 cache-control: public, max-age=0, must-revalidate
 x-docs-origin: cloudflare-worker
-etag: W/"222422bef41a0d1706f2980f48a83fe4"
+etag: W/"eb73d8c569baba76f635dc2fcb7bdf1c"
 content-encoding: gzip
 server: cloudflare
-cf-ray: a5b96ccd9a4d9314-PDX
+cf-ray: a5c2f6fc4aefcb90-PDX
 
 # GitLab Documentation
 Learn how to use and administer GitLab, the most scalable Git-based integrated platform for software development.
@@ -79,7 +79,7 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 
 ### Plan and track work
 
-[Plan and track work](https://docs.gitlab.com/topics/plan_and_track): Epics, issues, milestones, and labels.
+[Plan and track work](https://docs.gitlab.com/topics/plan_and_track): Work items, labels, iterations, and milestones.
 [Getting started](https://docs.gitlab.com/user/get_started/get_started_planning_work): Plan and execute on work.
 [Tutorials](https://docs.gitlab.com/tutorials/plan_and_track): Planning, agile, issue boards.
 [Tutorial: Use GitLab for Scrum](https://docs.gitlab.com/tutorials/scrum_events): Sprints, backlog, user stories, and scrum lifecycle.
@@ -89,6 +89,7 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 [Iterations](https://docs.gitlab.com/user/group/iterations): Time-boxed workflow, program increments, cadence, and sprints.
 [Milestones](https://docs.gitlab.com/user/project/milestones): Burndown charts, goals, progress tracking, and releases.
 [Comments and threads](https://docs.gitlab.com/user/discussions): Use comments and threads to discuss and manage work item conversations.
+[Emoji reactions](https://docs.gitlab.com/user/emoji_reactions): React with emoji on issues, comments, and other items to give feedback without writing a long comment thread.
 [Requirements](https://docs.gitlab.com/user/project/requirements): Acceptance criteria, requirements test reports, and CSV import.
 [Time tracking](https://docs.gitlab.com/user/project/time_tracking): Estimates, time spent, and reporting.
 [Customer relations (CRM)](https://docs.gitlab.com/user/crm): Customer management, organizations, contacts, and permissions.

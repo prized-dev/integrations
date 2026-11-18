@@ -1,25 +1,25 @@
 GET https://agentmail.to/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:42.311Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:55.067Z
 redirect: 307 from https://agentmail.to/auth.md
 final-url: https://www.agentmail.to/auth.md
 
 HTTP 200
 access-control-allow-origin: *
-age: 44095
+age: 0
 cache-control: public, max-age=3600
 content-disposition: inline; filename="auth.md"
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Mon, 16 Nov 2026 20:59:38 GMT
+date: Wed, 18 Nov 2026 00:46:51 GMT
 etag: W/"8fe16d407a5f31b146d2fd5b77fe6517"
-last-modified: Mon, 16 Nov 2026 08:44:43 GMT
+last-modified: Wed, 18 Nov 2026 00:46:51 GMT
 link: </openapi.json>; rel="service-desc", </docs>; rel="service-doc", </llms.txt>; rel="https://llmstxt.org", </.well-known/api-catalog>; rel="api-catalog"
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /auth.md
-x-vercel-cache: HIT
-x-vercel-id: pdx1::jkvv5-1794862778839-c40710491354
+x-vercel-cache: MISS
+x-vercel-id: pdx1::nlvlt-1794962811042-850b50d70b1a
 connection: close
 transfer-encoding: chunked
 

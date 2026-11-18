@@ -1,19 +1,19 @@
 GET https://exa.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:06.827Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:18.093Z
 final-url: https://exa.ai/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 6041
+age: 2044
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 21:00:04 GMT
-etag: W/"9b8059d1a41788fb4a1a62d89e8d2ecf"
-last-modified: Mon, 16 Nov 2026 19:19:22 GMT
+date: Wed, 18 Nov 2026 00:47:15 GMT
+etag: W/"729f6df34a0725abe0697006c87ded2f"
+last-modified: Wed, 18 Nov 2026 00:13:10 GMT
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
@@ -21,7 +21,7 @@ x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::g2n77-1794862804572-ef8c77625ddd
+x-vercel-id: pdx1::9pgl7-1794962835138-e3d62a9b9977
 connection: close
 transfer-encoding: chunked
 
@@ -112,6 +112,13 @@ Run multi-step web research, list-building, and enrichment workflows with natura
 
 - [Agent](https://exa.ai/products/agent)
 - [Agent documentation](https://exa.ai/docs/agent/quickstart.md)
+
+### Websets
+
+Build lists of companies and people from plain-English criteria. Each result is checked against the criteria, with reasoning and sources, and enriched with columns you describe.
+
+- [Websets](https://exa.ai/products/websets)
+- [Websets documentation](https://exa.ai/docs/websets/quickstart.md)
 
 ### Exa Connect
 

@@ -1,19 +1,19 @@
 GET https://runpod.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:27.708Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:37.745Z
 redirect: 301 from https://runpod.io/llms.txt
 final-url: https://www.runpod.io/llms.txt
 
 HTTP 200
-date: Mon, 16 Nov 2026 20:59:25 GMT
+date: Wed, 18 Nov 2026 00:46:35 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5b96b591aed470f-LAX
+cf-ray: a5c2f57c8c4e49fc-SJC
 cf-cache-status: DYNAMIC
-age: 9933
+age: 18308
 content-encoding: gzip
-last-modified: Mon, 16 Nov 2026 19:29:46 GMT
+last-modified: Tue, 17 Nov 2026 20:29:17 GMT
 server: cloudflare
 strict-transport-security: max-age=31536000
 vary: accept-encoding

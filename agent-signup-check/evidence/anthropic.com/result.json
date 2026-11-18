@@ -1,12 +1,13 @@
 {
  "site": "anthropic.com",
- "checkedAt": "2026-11-16T20:58:42.772Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:45:49.316Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 1,
  "partial": 2,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -33,6 +34,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://api.anthropic.com/v1/models",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -59,7 +61,7 @@
    "name": "Docs in Markdown",
    "url": "https://platform.claude.com/llms.txt",
    "heading": "# Anthropic Developer Documentation",
-   "bytes": 102037,
+   "bytes": 102794,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -72,7 +74,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 329,
+   "ms": 269,
    "redirects": 1
   },
   {
@@ -82,7 +84,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 299,
+   "ms": 431,
    "redirects": 1
   },
   {
@@ -92,7 +94,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 97,
+   "ms": 96,
    "redirects": 0
   },
   {
@@ -102,7 +104,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 126,
+   "ms": 115,
    "redirects": 2
   },
   {
@@ -112,7 +114,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 277,
+   "ms": 324,
    "redirects": 1
   },
   {
@@ -122,7 +124,7 @@
    "status": 404,
    "error": null,
    "contentType": null,
-   "ms": 91,
+   "ms": 85,
    "redirects": 0
   },
   {
@@ -132,7 +134,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 364,
+   "ms": 255,
    "redirects": 1
   },
   {
@@ -142,7 +144,7 @@
    "status": 404,
    "error": null,
    "contentType": null,
-   "ms": 100,
+   "ms": 86,
    "redirects": 0
   },
   {
@@ -152,8 +154,18 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 255,
+   "ms": 292,
    "redirects": 1
+  },
+  {
+   "label": "x402 discovery (API host)",
+   "url": "https://api.anthropic.com/.well-known/x402",
+   "finalUrl": "https://api.anthropic.com/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": null,
+   "ms": 87,
+   "redirects": 0
   }
  ]
 }

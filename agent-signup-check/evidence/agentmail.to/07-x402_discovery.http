@@ -1,25 +1,25 @@
 GET https://agentmail.to/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:42.311Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:55.067Z
 redirect: 307 from https://agentmail.to/.well-known/x402
 final-url: https://www.agentmail.to/.well-known/x402
 
 HTTP 404
 access-control-allow-origin: *
-age: 52873
+age: 6064
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="404"
 content-encoding: br
 content-type: text/html; charset=utf-8
-date: Mon, 16 Nov 2026 20:59:41 GMT
+date: Wed, 18 Nov 2026 00:46:54 GMT
 etag: W/"c4762b3ed232fcb19a977b740b3759ce"
-last-modified: Mon, 16 Nov 2026 06:18:28 GMT
+last-modified: Tue, 17 Nov 2026 23:05:50 GMT
 link: </openapi.json>; rel="service-desc", </docs>; rel="service-doc", </llms.txt>; rel="https://llmstxt.org", </.well-known/api-catalog>; rel="api-catalog"
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /404
 x-vercel-cache: HIT
-x-vercel-id: pdx1::5c5k7-1794862781904-3a71717b1c41
+x-vercel-id: pdx1::g9jm7-1794962814339-a983226dd5ac
 connection: close
 transfer-encoding: chunked
 

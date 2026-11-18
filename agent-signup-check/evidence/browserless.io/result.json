@@ -1,12 +1,13 @@
 {
  "site": "browserless.io",
- "checkedAt": "2026-11-16T21:00:05.972Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:47:19.000Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 2,
  "partial": 1,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -38,6 +39,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://production-sfo.browserless.io/sessions",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -73,7 +75,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 169,
+   "ms": 182,
    "redirects": 1
   },
   {
@@ -83,7 +85,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=UTF-8",
-   "ms": 209,
+   "ms": 265,
    "redirects": 1
   },
   {
@@ -93,7 +95,7 @@
    "status": 401,
    "error": null,
    "contentType": "text/html",
-   "ms": 70,
+   "ms": 68,
    "redirects": 0
   },
   {
@@ -103,7 +105,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 242,
+   "ms": 224,
    "redirects": 1
   },
   {
@@ -113,8 +115,18 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 199,
+   "ms": 201,
    "redirects": 0
+  },
+  {
+   "label": "as-metadata (site)",
+   "url": "https://browserless.io/.well-known/oauth-authorization-server",
+   "finalUrl": "https://www.browserless.io/.well-known/oauth-authorization-server",
+   "status": 200,
+   "error": null,
+   "contentType": "application/json; charset=utf-8",
+   "ms": 322,
+   "redirects": 1
   },
   {
    "label": "x402 discovery",
@@ -123,8 +135,18 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 220,
+   "ms": 147,
    "redirects": 1
+  },
+  {
+   "label": "x402 discovery (API host)",
+   "url": "https://production-sfo.browserless.io/.well-known/x402",
+   "finalUrl": "https://production-sfo.browserless.io/.well-known/x402",
+   "status": 401,
+   "error": null,
+   "contentType": "text/html",
+   "ms": 71,
+   "redirects": 0
   }
  ]
 }

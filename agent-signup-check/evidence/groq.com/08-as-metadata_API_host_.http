@@ -1,10 +1,10 @@
 GET https://api.groq.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:46.103Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:53.043Z
 final-url: https://api.groq.com/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Mon, 16 Nov 2026 20:58:45 GMT
+date: Wed, 18 Nov 2026 00:45:51 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
@@ -12,12 +12,12 @@ cache-control: private, max-age=0, no-store, no-cache, must-revalidate
 server: cloudflare
 vary: Origin
 x-groq-region: dls
-x-request-id: req_01m7k2fe4je2dv39dqsrma966x
+x-request-id: req_01m7p1w0ace919ttccqptk9hgx
 via: 1.1 google
 alt-svc: h3=":443"; ma=86400
 cf-cache-status: DYNAMIC
 strict-transport-security: max-age=15552000
 content-encoding: br
-cf-ray: a5b96a60d903b1c2-PDX
+cf-ray: a5c2f46ecb809b30-PDX
 
 {"error":{"message":"Unknown request URL: GET /.well-known/oauth-authorization-server. Please check the URL for typos, or see the docs at https://console.groq.com/docs/","type":"invalid_request_error","code":"unknown_url"}}

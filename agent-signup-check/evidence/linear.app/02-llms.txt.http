@@ -1,14 +1,14 @@
 GET https://linear.app/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T21:00:28.517Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:41.666Z
 final-url: https://linear.app/llms.txt
 
 HTTP 200
-date: Mon, 16 Nov 2026 21:00:25 GMT
+date: Wed, 18 Nov 2026 00:47:38 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5b96cd37a8f5ecd-PDX
+cf-ray: a5c2f7080b44afe8-PDX
 cf-cache-status: DYNAMIC
 cache-control: private, no-cache, no-store, max-age=0, must-revalidate
 content-encoding: gzip

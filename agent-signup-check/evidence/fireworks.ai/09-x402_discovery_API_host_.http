@@ -1,0 +1,14 @@
+GET https://api.fireworks.ai/.well-known/x402
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:54.357Z
+final-url: https://api.fireworks.ai/.well-known/x402
+
+HTTP 404
+date: Wed, 18 Nov 2026 00:45:54 GMT
+content-type: application/json
+content-length: 156
+connection: close
+vary: Origin
+x-request-id: 78b8848c-cdf2-452f-a10a-c8514f449749
+
+{"error":{"message":"Path not found: /.well-known/x402","param":null,"code":"NOT_FOUND","type":"error"},"request_id":"78b8848c-cdf2-452f-a10a-c8514f449749"}

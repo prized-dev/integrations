@@ -1,10 +1,10 @@
 GET https://app.koyeb.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:19.130Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:27.836Z
 final-url: https://app.koyeb.com/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Mon, 16 Nov 2026 20:59:17 GMT
+date: Wed, 18 Nov 2026 00:46:25 GMT
 content-type: text/html
 transfer-encoding: chunked
 connection: close
@@ -14,7 +14,7 @@ etag: W/"6a54b280-80d8"
 content-security-policy: frame-ancestors none
 x-ratelimit-limit: 400, 400;w=60
 x-ratelimit-remaining: 399
-x-ratelimit-reset: 43
+x-ratelimit-reset: 35
 strict-transport-security: max-age=31536000; includeSubDomains
 cache-control: no-cache, no-store
 pragma: no-cache

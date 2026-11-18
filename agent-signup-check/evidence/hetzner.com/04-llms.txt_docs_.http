@@ -1,17 +1,17 @@
 GET https://docs.hetzner.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:32.607Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:43.516Z
 final-url: https://docs.hetzner.com/llms.txt
 
 HTTP 200
-date: Mon, 16 Nov 2026 20:59:24 GMT
+date: Wed, 18 Nov 2026 00:46:34 GMT
 content-type: text/plain; charset=UTF-8
 transfer-encoding: chunked
 connection: close
 access-control-allow-origin: *
 cache-control: public, max-age=0
-etag: W/"15d06-1a1e4c3eadb"
-last-modified: Mon, 16 Nov 2026 14:30:07 GMT
+etag: W/"15cf8-1a1ea0138c1"
+last-modified: Tue, 17 Nov 2026 14:55:11 GMT
 server: HeRay
 alt-svc: h3=":443"; ma=86400
 heray-cache-status: EXPIRED
@@ -195,7 +195,7 @@ Notes for automated readers:
 - [Deactivate GRUB2 recordfail feature](https://docs.hetzner.com/robot/dedicated-server/operating-systems/deactivate-grub2-recordfail/): Disable GRUB2 recordfail feature and configure boot timeout via config files.
 - [EFI system partition](https://docs.hetzner.com/robot/dedicated-server/operating-systems/efi-system-partition/): Guide to creating and configuring an EFI System Partition for UEFI boot on Linux and Windows.
 - [Hang Up with Realtek r8169-r8168 NIC](https://docs.hetzner.com/robot/dedicated-server/operating-systems/realtek-r8169-r8168-nic/): Fix network hangs by disabling TCP segmentation offload via ethtool and installing the r8168-dkms driver for Realtek NICs.
-- [Hetzner Debian/Ubuntu Package Mirror](https://docs.hetzner.com/robot/dedicated-server/operating-systems/hetzner-package-mirror/): Configure Hetzner's local Debian and Ubuntu package mirror to save bandwidth and speed up installations, with full IPv6 support.
+- [Hetzner Debian/Ubuntu Package Mirror](https://docs.hetzner.com/robot/dedicated-server/operating-systems/hetzner-package-mirror/): Introduction to Hetzner's local Debian/Ubuntu package mirror, preconfigured in standard images, with IPv6 support.
 - [Installimage](https://docs.hetzner.com/robot/dedicated-server/operating-systems/installimage/): Hetzner's installimage script enables fast Linux installation via Rescue System with customizable partitioning, RAID, and LVM configuration.
 - [Installing custom images](https://docs.hetzner.com/robot/dedicated-server/operating-systems/installing-custom-images/): Covers three methods for installing custom or older operating systems on Hetzner servers using Installimage and KVM console.
 - [Plesk](https://docs.hetzner.com/robot/dedicated-server/operating-systems/plesk/): Instructions for manual Plesk installation and link to Plesk documentation.

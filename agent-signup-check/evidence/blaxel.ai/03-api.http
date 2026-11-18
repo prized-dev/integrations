@@ -1,6 +1,6 @@
 GET https://api.blaxel.ai/v0/sandboxes
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:59:15.904Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:27.105Z
 final-url: https://api.blaxel.ai/v0/sandboxes
 
 HTTP 401
@@ -8,16 +8,16 @@ content-type: application/json; charset=utf-8
 content-length: 35
 connection: close
 server: awselb/2.0
-date: Mon, 16 Nov 2026 20:59:13 GMT
+date: Wed, 18 Nov 2026 00:46:22 GMT
 blaxel-version: 2026-04-16
-x-cf-request-id: LtrdFWO_DKpSEgFgnIsCqQYpr83-2IuyU6OfaSOxHf3XPjwKc1UfOw==
+x-cf-request-id: hZagsBLEyN7UQSSTIRZjOgf1jhYHFSzvjkccJu23aZvtirHGbP6_Ww==
 vary: Origin
 cache-control: no-store, private
 x-cache: Error from cloudfront
-via: 1.1 6daec11ce051cffaa3e440291c9bdce2.cloudfront.net (CloudFront)
+via: 1.1 4b63c15595b60dbcca6db6aeea9d3d72.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: LtrdFWO_DKpSEgFgnIsCqQYpr83-2IuyU6OfaSOxHf3XPjwKc1UfOw==
+x-amz-cf-id: hZagsBLEyN7UQSSTIRZjOgf1jhYHFSzvjkccJu23aZvtirHGbP6_Ww==
 x-frame-options: DENY
 referrer-policy: strict-origin-when-cross-origin
 content-security-policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'

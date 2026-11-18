@@ -1,19 +1,19 @@
 GET https://dashboard.tryelliot.app/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:19:28.256Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:47:46.997Z
 final-url: https://dashboard.tryelliot.app/.well-known/oauth-authorization-server
 
 HTTP 200
 access-control-allow-origin: *
-age: 14
+age: 0
 cache-control: public, max-age=15
 content-encoding: br
 content-type: application/json
-date: Wed, 18 Nov 2026 00:19:13 GMT
+date: Wed, 18 Nov 2026 00:47:45 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
-x-vercel-cache: HIT
-x-vercel-id: pdx1::iad1::5djzz-1794961167839-4c8862e96124
+x-vercel-cache: MISS
+x-vercel-id: pdx1::iad1::9kjgs-1794962865275-b27e51639d77
 connection: close
 transfer-encoding: chunked
 

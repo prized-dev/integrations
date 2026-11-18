@@ -1,12 +1,13 @@
 {
  "site": "fireworks.ai",
- "checkedAt": "2026-11-16T20:58:47.543Z",
- "checker": "agent-signup-check/0.2.5",
+ "checkedAt": "2026-11-18T00:45:54.357Z",
+ "checker": "agent-signup-check/0.2.6",
  "passed": 1,
  "partial": 1,
  "unread": 0,
  "total": 7,
  "whoActs": null,
+ "apiSource": "named",
  "checks": [
   {
    "id": "authmd",
@@ -33,6 +34,7 @@
    "id": "challenge",
    "name": "Key works without a browser",
    "url": "https://api.fireworks.ai/inference/v1/models",
+   "source": "named",
    "httpStatus": 401,
    "www_authenticate": null,
    "status": "partial",
@@ -68,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 216,
+   "ms": 245,
    "redirects": 0
   },
   {
@@ -78,7 +80,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 178,
+   "ms": 265,
    "redirects": 0
   },
   {
@@ -88,7 +90,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 9,
+   "ms": 17,
    "redirects": 0
   },
   {
@@ -98,7 +100,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 350,
+   "ms": 359,
    "redirects": 0
   },
   {
@@ -108,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 7,
+   "ms": 10,
    "redirects": 0
   },
   {
@@ -128,7 +130,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 8,
+   "ms": 9,
    "redirects": 0
   },
   {
@@ -138,7 +140,17 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 362,
+   "ms": 361,
+   "redirects": 0
+  },
+  {
+   "label": "x402 discovery (API host)",
+   "url": "https://api.fireworks.ai/.well-known/x402",
+   "finalUrl": "https://api.fireworks.ai/.well-known/x402",
+   "status": 404,
+   "error": null,
+   "contentType": "application/json",
+   "ms": 6,
    "redirects": 0
   }
  ]

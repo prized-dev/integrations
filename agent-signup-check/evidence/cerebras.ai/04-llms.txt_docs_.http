@@ -1,26 +1,27 @@
 GET https://inference-docs.cerebras.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:57.247Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:46:04.878Z
 final-url: https://inference-docs.cerebras.ai/llms.txt
 
 HTTP 200
+age: 3791
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a5b96a90da791d89-PDX
+cf-ray: a5c2f4a2e9ec4b01-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Mon, 16 Nov 2026 20:58:52 GMT
-etag: W/"v3d1ruMKx3HzBnWrsBCZ0WgzO7F50CJ4FHXEfq0FvI8"
+date: Wed, 18 Nov 2026 00:46:00 GMT
+etag: "sWyI_J3hvkdE_Gjl6wQHMRdMNi1T87V6q2Vk1b2GifE"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4149
+x-mintlify-client-version: 0.0.4177
 x-vercel-cache: MISS
-x-vercel-id: pdx1:iad1:iad1::iad1::qnf5m-1794862732897-d88688759212
+x-vercel-id: pdx1:sin1:iad1::iad1::7dm84-1794962760106-08363a077f64
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_4D8r1dHg6bQcRuBgQyL3z9waJJtn
+x-version: dpl_HhUetB7eHHDAmK9T1Teip38TgFx9
 connection: close
 transfer-encoding: chunked
 
@@ -134,11 +135,9 @@ transfer-encoding: chunked
 - [Get Started with Dify](https://inference-docs.cerebras.ai/integrations/dify.md): Learn how to build and deploy AI applications using Cerebras models in Dify's no-code/low-code platform for ultra-fast inference.
 - [Get Started with FlutterFlow](https://inference-docs.cerebras.ai/integrations/flutterflow.md): Learn how to build fast, cross-platform AI-powered apps using Cerebras Inference with FlutterFlow's visual development platform.
 - [Inference Cookbook](https://inference-docs.cerebras.ai/cookbook.md)
-- [Inference Cookbook](https://inference-docs.cerebras.ai/cookbook.md)
 - [Realtime Voice Translation Agent](https://inference-docs.cerebras.ai/cookbook/agents/realtime-voice-translation.md): Translate spoken conversations to any language with sub-second latency by building a realtime voice translation agent powered by Cerebras and LiveKit.
 - [Build a Real-Time AI Sales Agent with LiveKit](https://inference-docs.cerebras.ai/cookbook/agents/sales-agent-cerebras-livekit.md): Build a sophisticated real-time voice sales agent that can have natural conversations with potential customers. The resulting AI agent will be able to process audio input and generate spoken replies by drawing information directly from your company's sales materials.
 - [Interviewer Voice Agent with LiveKit](https://inference-docs.cerebras.ai/cookbook/agents/livekit.md): Learn how to integrate LiveKit's voice capabilities with Cerebras's fast inference to build a real-time voice interview agent that analyzes your resume and job descriptions to conduct personalized mock interviews.
-- [Inference Cookbook](https://inference-docs.cerebras.ai/cookbook.md)
 - [Academic Research Agent](https://inference-docs.cerebras.ai/cookbook/agents/academic-research-agent.md): Generate arXiv search queries, analyze academic papers, download and process PDFs, and synthesize research insights with a conversational AI research assistant powered by PydanticAI + Cerebras + Unstructured.
 - [Build Your Own Perplexity with Exa](https://inference-docs.cerebras.ai/cookbook/agents/build-your-own-perplexity.md): Build a Perplexity-style deep research assistant that can automatically search the web, analyze multiple sources, and provide structured insights in under 60 seconds.
 - [Build a Grounded Research Agent with Exa](https://inference-docs.cerebras.ai/cookbook/agents/exa-grounded-research.md): Use Exa search with Cerebras tool calling to build an agent that searches the web and produces cited answers.
@@ -147,7 +146,6 @@ transfer-encoding: chunked
 - [Implementing Gist Memory: Summarizing and Searching Long Documents with a ReadAgent](https://inference-docs.cerebras.ai/cookbook/agents/gist-memory.md): Build an AI agent that reads, summarizes, and answers questions about long documents using Gist Memory and the Cerebras Inference SDK.
 - [Build Your Own Content Fact Checker with gpt-oss-120B, Cerebras, and Parallel](https://inference-docs.cerebras.ai/cookbook/agents/docs-checker.md)
 - [Build Your Own Docs Checker with Cerebras & Browserbase](https://inference-docs.cerebras.ai/cookbook/agents/build-a-docs-checker.md): Build a docs checker that can crawl your documentation site and analyze each page for quality issues.
-- [Inference Cookbook](https://inference-docs.cerebras.ai/cookbook.md)
 - [Hyper-Personalized Web Pages](https://inference-docs.cerebras.ai/cookbook/agents/hyper-personalization.md): Build hyper-personalized web pages using Cerebras AI with Pydantic structured outputs and Jinja2 templating—pages that adapt to each visitor's preferred colors, tone, and products in real-time.
 
 ## OpenAPI Specs

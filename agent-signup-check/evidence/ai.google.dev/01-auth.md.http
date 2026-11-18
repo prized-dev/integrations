@@ -1,12 +1,12 @@
 GET https://ai.google.dev/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.5 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-16T20:58:43.818Z
+user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-18T00:45:50.041Z
 final-url: https://ai.google.dev/auth.md
 
 HTTP 404
 content-type: text/html; charset=utf-8
 vary: Cookie, Accept-Encoding
-content-security-policy: base-uri 'self'; object-src 'none'; script-src 'strict-dynamic' 'unsafe-inline' https: http: 'nonce-vKc+kauROyve9J23VwL1ADZzoDUt9w' 'unsafe-eval'; frame-ancestors 'self' https://developers.google.com/_d/analytics-iframe https://aistudio.google.com; report-uri https://csp.withgoogle.com/csp/devsite/v2
+content-security-policy: base-uri 'self'; object-src 'none'; script-src 'strict-dynamic' 'unsafe-inline' https: http: 'nonce-9mNc+Jxtp/9VkL9ywnEZvqrbXG10vb' 'unsafe-eval'; frame-ancestors 'self' https://developers.google.com/_d/analytics-iframe https://aistudio.google.com; report-uri https://csp.withgoogle.com/csp/devsite/v2
 strict-transport-security: max-age=63072000; includeSubdomains; preload
 x-xss-protection: 0
 x-content-type-options: nosniff
@@ -14,8 +14,8 @@ cache-control: no-cache, must-revalidate
 expires: 0
 pragma: no-cache
 content-encoding: gzip
-x-cloud-trace-context: d9a2d38807a209763b70a96c50b031a9
-date: Mon, 16 Nov 2026 20:58:38 GMT
+x-cloud-trace-context: dc77888ae2a265134d7a4fce0063ccf9
+date: Wed, 18 Nov 2026 00:45:44 GMT
 server: Google Frontend
 alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
 connection: close
@@ -48,11 +48,11 @@ transfer-encoding: chunked
     <link rel="preconnect" href="//fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="//www.google-analytics.com" crossorigin><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Google+Sans:400,500|Roboto:400,400italic,500,500italic,700,700italic|Roboto+Mono:400,500,700|Inter:400,500|Inter+Tight:300,500,600&display=swap">
       <link rel="stylesheet"
-            href="//fonts.googleapis.com/css2?family=Material+Icons&family=Material+Symbols+Outlined&display=block"><link rel="stylesheet" href="https://www.gstatic.com/devrel-devsite/prod/v579d635a54d6e1f40caad46ce407560c5106c8915e5ff7e6341f5b13eb245c5a/googledevai/css/app.css">
+            href="//fonts.googleapis.com/css2?family=Material+Icons&family=Material+Symbols+Outlined&display=block"><link rel="stylesheet" href="https://www.gstatic.com/devrel-devsite/prod/vc11e4c9d4c060345ba98585d538d4546e842f4a6ee5c5f9e85be4bd345767217/googledevai/css/app.css">
       
-        <link rel="stylesheet" href="https://www.gstatic.com/devrel-devsite/prod/v579d635a54d6e1f40caad46ce407560c5106c8915e5ff7e6341f5b13eb245c5a/googledevai/css/dark-theme.css" disabled>
-      <link rel="shortcut icon" href="https://www.gstatic.com/devrel-devsite/prod/v579d635a54d6e1f40caad46ce407560c5106c8915e5ff7e6341f5b13eb245c5a/googledevai/images/favicon-new.png">
-    <link rel="apple-touch-icon" href="https://www.gstatic.com/devrel-devsite/prod/v579d635a54d6e1f40caad46ce407560c5106c8915e5ff7e6341f5b13eb245c5a/googledevai/images/touchicon-180-new.png"><link rel="canonical" href="https://ai.google.dev/auth"><link rel="search" type="application/opensearchdescription+xml"
+        <link rel="stylesheet" href="https://www.gstatic.com/devrel-devsite/prod/vc11e4c9d4c060345ba98585d538d4546e842f4a6ee5c5f9e85be4bd345767217/googledevai/css/dark-theme.css" disabled>
+      <link rel="shortcut icon" href="https://www.gstatic.com/devrel-devsite/prod/vc11e4c9d4c060345ba98585d538d4546e842f4a6ee5c5f9e85be4bd345767217/googledevai/images/favicon-new.png">
+    <link rel="apple-touch-icon" href="https://www.gstatic.com/devrel-devsite/prod/vc11e4c9d4c060345ba98585d538d4546e842f4a6ee5c5f9e85be4bd345767217/googledevai/images/touchicon-180-new.png"><link rel="canonical" href="https://ai.google.dev/auth"><link rel="search" type="application/opensearchdescription+xml"
             title="Google AI for Developers" href="https://ai.google.dev/s/opensearch.xml">
       <title>404 &nbsp;|&nbsp; Page Not Found &nbsp;|&nbsp; Google AI for Developers</title>
 
@@ -130,11 +130,11 @@ transfer-encoding: chunked
   
   <picture>
     
-    <source srcset="https://www.gstatic.com/devrel-devsite/prod/v579d635a54d6e1f40caad46ce407560c5106c8915e5ff7e6341f5b13eb245c5a/googledevai/images/lockup-dark-theme-new.svg"
+    <source srcset="https://www.gstatic.com/devrel-devsite/prod/vc11e4c9d4c060345ba98585d538d4546e842f4a6ee5c5f9e85be4bd345767217/googledevai/images/lockup-dark-theme-new.svg"
             media="(prefers-color-scheme: dark)"
             class="devsite-dark-theme">
     
-    <img src="https://www.gstatic.com/devrel-devsite/prod/v579d635a54d6e1f40caad46ce407560c5106c8915e5ff7e6341f5b13eb245c5a/googledevai/images/lockup-new.svg" class="devsite-site-logo" alt="Google AI for Developers">
+    <img src="https://www.gstatic.com/devrel-devsite/prod/vc11e4c9d4c060345ba98585d538d4546e842f4a6ee5c5f9e85be4bd345767217/googledevai/images/lockup-new.svg" class="devsite-site-logo" alt="Google AI for Developers">
   </picture>
   
 </a>
@@ -500,4 +500,4 @@ transfer-encoding: chunked
             <ul class="devsite-tabs-dropdown-section
                      
 
-[body trimmed for publication: kept 16384 of 72395 characters; sha256 of the published body b1e912677301ab4102c5eb108ba858e30a45f3a6e516966aa2fb41498486e9bf]
+[body trimmed for publication: kept 16384 of 72399 characters; sha256 of the published body b45fbe3e77adde453bb24cb9b6192f21e6b22e4f123487c20dc915881be0c8d6]
