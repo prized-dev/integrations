@@ -775,7 +775,9 @@ const API_LINE = /\b(?:POST|PUT|PATCH|DELETE)\s{1,10}`?https:\/\/|\bcurl\b|\bfet
 // (`POST https://api.telnyx.com/v2/bot_signup`)" reads the metadata, it does not read the sign-up).
 const READ_CALL = /\bcurl\b|\bfetch\(\s{0,4}['"`]https:|\brequests\.get\(|\bhttpx\.get\(|\baxios\.get\(|\bhttp\.get\(/i;
 const AFTER_GET = /\bGET\s{1,10}`?$/i;
-const AFTER_WRITE = /\b(?:POST|PUT|PATCH|DELETE)\s{1,10}`?$/i;
+// Upper case only: an English "post" or "delete" before a link is not a method. Also `POST`,
+// **POST** and "POST:" before the URL.
+const AFTER_WRITE = /\b(?:POST|PUT|PATCH|DELETE)[`*]{0,2}:?\s{1,10}[`*]{0,2}$/;
 
 /** Lines with a command continued by a trailing backslash joined into one ("curl \\" then
  *  "  --request GET \\" then "  --url https://..."), at most eight lines each. */
@@ -843,7 +845,7 @@ export function documentedApiUrls(text, site) {
       let u;
       try { u = new URL(url); } catch { continue; }
       const host = u.hostname.toLowerCase();
-      if (!ownHost(host, site) || NOT_API_PATH.test(u.pathname)) continue;
+      if (!ownHost(host, site) || NOT_API_PATH.test(trimSlash(u.pathname))) continue;
       if ((host === site || host === registrable(site) || PAGE_HOST.test(host)) && !API_PATH.test(u.pathname)) continue;
       const clean = `${u.origin}${u.pathname}${u.search}`;
       const before = line.slice(Math.max(0, index - 16), index);
@@ -855,7 +857,7 @@ export function documentedApiUrls(text, site) {
   for (const [list, read] of [[reads, true], [onReadLines, false], [others, false]]) {
     for (const url of list) {
       if (out.length >= 4) return out;
-      if (!out.some((d) => d.url === url)) out.push({ url, read });
+      if (!out.some((d) => trimSlash(d.url) === trimSlash(url))) out.push({ url, read });
     }
   }
   return out;
@@ -1186,8 +1188,10 @@ export async function checkSite(input, opts = {}) {
       if (!triedUrl(conv)) await probe(conv, 'common endpoint');
     }
     if (tried.length) {
-      // The best answer; on a tie (none of them an API's), the first, the most authoritative.
-      const best = tried.reduce((a, b) => (b.rank > a.rank ? b : a));
+      // The best answer; on a tie (none of them an API's), the first, the most authoritative,
+      // unless one met a bot wall: a wall is an answer about the API, a 404 elsewhere is not.
+      let best = tried.reduce((a, b) => (b.rank > a.rank ? b : a));
+      if (best.rank === 0) best = tried.find((t) => blockedReason(t.r)) || best;
       apiR = best.r;
       apiUrl = best.url;
       apiSource = best.source;
@@ -1453,8 +1457,10 @@ export async function checkSite(input, opts = {}) {
       if (apiNotFound) {
         // Not read, not a fail: counted in the total like any check not read, with the verdict
         // the scored probe would have had kept beside it.
-        const what = (t) => `${t.url} (${t.r && t.r.error ? t.r.error : `HTTP ${t.r && t.r.status}`})`;
-        set('challenge', 'unread', `No API that asks for a key was found on this site's hosts; name an API URL that needs a key (--api) to check it. Tried ${apiNotFound.slice(0, 4).map(what).join(', ')}`, { ...ev, was: v.status, wasReason: v.reason });
+        const said = (r) => (r && r.error ? r.error : r && typeof r.status === 'number' ? `HTTP ${r.status}` : 'no answer');
+        const what = (t) => `${clipText(t.url, 100)} (${said(t.r)})`;
+        const more = apiNotFound.length > 4 ? ` and ${apiNotFound.length - 4} more` : '';
+        set('challenge', 'unread', `No API that asks for a key was found on this site's hosts; name an API URL that needs a key (--api) to check it. Tried ${apiNotFound.slice(0, 4).map(what).join(', ')}${more}`, { ...ev, answered: 'no API that asks for a key', was: v.status, wasReason: v.reason });
       } else set('challenge', v.status, v.reason, ev);
     }
   }

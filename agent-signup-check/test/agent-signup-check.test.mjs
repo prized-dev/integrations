@@ -1159,6 +1159,8 @@ test('a guessed API host that does not exist is not a fail: the check found no A
   const c = cell(r, 'challenge');
   assert.equal(c.status, 'unread');
   assert.equal(c.was, 'fail');
+  assert.equal(c.wasReason, 'API: ENOTFOUND');
+  assert.equal(c.answered, 'no API that asks for a key');
   assert.equal(c.source, 'guess');
   assert.equal(c.reason, "No API that asks for a key was found on this site's hosts; name an API URL that needs a key (--api) to check it. Tried https://api.one.example/ (ENOTFOUND)");
   assert.equal(r.unread, 1);
@@ -1182,6 +1184,13 @@ test('probes that find no API (a 405 where the docs POST, a page, a public 200) 
   const walled = await checkSite('one.example', { get: stub({ ...pages, 'https://api.one.example/v1/models': CF_CHALLENGE, 'https://api.one.example/v1/chat': CF_CHALLENGE, 'https://api.one.example/': CF_CHALLENGE }) });
   assert.equal(cell(walled, 'challenge').status, 'fail');
   assert.match(cell(walled, 'challenge').reason, /bot challenge/);
+  // A wall on any probe is the answer, whichever order the misses came in.
+  for (const at of ['https://api.one.example/v1/models', 'https://api.one.example/v1/chat', 'https://api.one.example/']) {
+    const one = await checkSite('one.example', { get: stub({ ...pages, [at]: CF_CHALLENGE }) });
+    assert.equal(cell(one, 'challenge').status, 'fail', at);
+    assert.equal(cell(one, 'challenge').url, at);
+    assert.match(cell(one, 'challenge').reason, /bot challenge/, at);
+  }
   const plain401 = await checkSite('one.example', { get: stub({ ...pages, 'https://api.one.example/v1/chat': { status: 401, headers: {}, body: '' } }) });
   assert.equal(cell(plain401, 'challenge').status, 'partial');
   // A named API is scored as named: a 404 there is the site's answer.
@@ -1204,10 +1213,27 @@ test('a URL the docs POST to is not read as the API, nor one a GET line only men
     { url: 'https://api.one.example/v2/bot_signup', read: false },
     { url: 'https://api.one.example/v2/mcp', read: false },
   ]);
-  // A curl reads every URL on its line; a write method before one still makes it a write.
+  // A curl reads every URL on its line; a write method before one still makes it a write, also
+  // in backticks, in bold or with a colon. An English "post" is not a method.
   assert.deepEqual(documentedApiUrls('curl https://api.one.example/v1/me  # then POST https://api.one.example/v1/bot_signup', 'one.example'), [
     { url: 'https://api.one.example/v1/me', read: true },
     { url: 'https://api.one.example/v1/bot_signup', read: false },
+  ]);
+  for (const write of ['`POST` https://api.one.example/v1/accounts', '**POST** https://api.one.example/v1/accounts', 'POST: https://api.one.example/v1/accounts']) {
+    assert.deepEqual(documentedApiUrls(`curl https://api.one.example/v1/me; ${write}`, 'one.example').map((d) => d.read), [true, false], write);
+  }
+  assert.deepEqual(documentedApiUrls('curl https://api.one.example/v1/me  # see the post https://api.one.example/v1/posts', 'one.example').map((d) => d.read), [true, true]);
+  // Reads come first even past the cap of four, and one endpoint with and without a slash takes one slot.
+  assert.deepEqual(documentedApiUrls([
+    'Base URL https://api.one.example/v1/a/ and https://api.one.example/v1/a',
+    'POST https://api.one.example/v1/b',
+    'Bearer https://api.one.example/v1/c https://api.one.example/v1/e',
+    'curl https://api.one.example/v1/d',
+  ].join('\n'), 'one.example'), [
+    { url: 'https://api.one.example/v1/d', read: true },
+    { url: 'https://api.one.example/v1/a/', read: false },
+    { url: 'https://api.one.example/v1/b', read: false },
+    { url: 'https://api.one.example/v1/c', read: false },
   ]);
   const pages = {
     'https://one.example/auth.md': authmd,
@@ -1224,6 +1250,8 @@ test('a documented URL with no placeholder is probed as written, its trailing sl
   assert.deepEqual(documentedApiUrls('curl https://sentry.example/api/0/projects/ \\\n  -H "Authorization: Bearer $TOKEN"', 'sentry.example'), [{ url: 'https://sentry.example/api/0/projects/', read: true }]);
   // Cut at a placeholder, the fixed part has no trailing slash, as before.
   assert.deepEqual(documentedApiUrls('curl https://sentry.example/api/0/projects/{org}/{project}/', 'sentry.example'), [{ url: 'https://sentry.example/api/0/projects', read: true }]);
+  // A description or docs path with a trailing slash is still not an API.
+  assert.deepEqual(documentedApiUrls('curl https://api.sentry.example/swagger/\ncurl https://api.sentry.example/v1/openapi/\ncurl https://api.sentry.example/docs/', 'sentry.example'), []);
   // So is a URL that stops where a <placeholder> starts (Cloudinary's /v1_1/<cloud_name>/...).
   assert.deepEqual(documentedApiUrls('GET  https://api.cloudinary.example/v1_1/<cloud_name>/resources/image', 'cloudinary.example'), [{ url: 'https://api.cloudinary.example/v1_1', read: true }]);
 });
