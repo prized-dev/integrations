@@ -2,7 +2,7 @@
 
 One command puts a [Conductor](https://www.conductor.build) repo on a [Prized box](https://prized.dev/docs/boxes?via=conductor) and sets it up the way Conductor set up each workspace: a git worktree per branch, the repo's setup script run in each with Conductor's variables, and Claude Code or Codex started in each in tmux, so the agents keep working with your laptop closed.
 
-Conductor Cloud goes read-only on November 13, 2026 and shuts down on November 20. The full guide is [Moving from Conductor Cloud](https://prized.dev/docs/moving-from-conductor-cloud?via=conductor).
+Conductor's November 4, 2026 [changelog](https://www.conductor.build/changelog) says "Conductor Cloud goes read-only on November 13 and shuts down on November 20". As of November 13, 2026, [its announcement](https://www.conductor.build/announcement) no longer lists those dates and says "Plans have changed! We'll still be developing Conductor." The full guide is [Moving from Conductor Cloud](https://prized.dev/docs/moving-from-conductor-cloud?via=conductor).
 
 ## Run it
 
