@@ -2,6 +2,7 @@
 in a temp dir that stands in for /home/prized, so the package's own shell helpers run for real."""
 
 import os
+import shutil
 import subprocess
 
 import prized
@@ -65,6 +66,7 @@ def _output_read_error(exit_code, reason):
 class FakeSandbox:
     made: list = []
     reason = None  # truncated_reason of a cut result (prized 0.1.1)
+    fork_error = None  # raised by fork()
     error = None  # raised by the next exec
     cut = 10**9  # what one blocking call keeps per stream (4 MiB on Prized)
     full_cut = 10**9  # what one with full_output=True keeps per stream (100 MiB on Prized)
@@ -91,7 +93,8 @@ class FakeSandbox:
         if FakeSandbox.error is not None:
             raise FakeSandbox.error
         argv = [self.local(a) for a in cmd]
-        full_env = {"PATH": os.environ["PATH"], "HOME": self.root, **(env or {})}
+        sandbox_env = {k: self.local(v) for k, v in self.options.get("env_vars", {}).items()}
+        full_env = {"PATH": os.environ["PATH"], "HOME": self.root, **sandbox_env, **(env or {})}
         try:
             p = subprocess.run(
                 argv,
@@ -120,6 +123,18 @@ class FakeSandbox:
             duration_ms=1,
         )
 
+    async def fork(self, count=1, labels=None):
+        if FakeSandbox.fork_error is not None:
+            raise FakeSandbox.fork_error
+        copies = []
+        for _ in range(count):
+            root = f"{self.root}-fork{len(FakeSandbox.made)}"
+            shutil.copytree(self.root, root, symlinks=True)
+            copy = FakeSandbox(root, {**self.options, "labels": dict(labels or self.labels)})
+            copy.forked_from = self.id
+            copies.append(copy)
+        return copies
+
     async def delete(self, wait=False):
         self.deleted = True
         self.delete_waited = wait
@@ -136,6 +151,7 @@ def fake(monkeypatch, tmp_path):
     FakeSandbox.made.clear()
     monkeypatch.setattr(FakeSandbox, "reason", None)
     monkeypatch.setattr(FakeSandbox, "error", None)
+    monkeypatch.setattr(FakeSandbox, "fork_error", None)
     PrizedSandboxEnvironment._live.clear()
     n = {"i": 0}
 
@@ -163,7 +179,8 @@ async def test_create_options_and_labels():
     env, _, _ = await _env(template="prized-agent-v1", vcpu=2, memory_gb=4, env={"A": "1"}, labels={"team": "x"})
     o = FakeSandbox.made[0].options
     assert o["template"] == "prized-agent-v1" and o["vcpu"] == 2 and o["memory_gb"] == 4
-    assert o["env_vars"] == {"A": "1"} and o["auto_pause_min"] == 0 and o["max_runtime_min"] == 60
+    assert o["env_vars"]["A"] == "1" and o["auto_pause_min"] == 0 and o["max_runtime_min"] == 60
+    assert o["env_vars"]["PATH"].startswith("/home/prized/.local/bin:")
     assert o["labels"] == {"team": "x", "created-by": "inspect-prized", "inspect-task": "unit-task"}
     assert "disk_gb" not in o
 
@@ -275,6 +292,12 @@ async def test_users():
     with pytest.raises(SandboxUserUnsupportedError):
         await env.exec(["whoami"], user="root")
     assert (await env.exec(["true"], user="prized")).success
+    await env.write_file("u.txt", "x", user="prized")
+    assert await env.read_file("u.txt", user="prized") == "x"
+    with pytest.raises(SandboxUserUnsupportedError):
+        await env.read_file("u.txt", user="root")
+    with pytest.raises(SandboxUserUnsupportedError):
+        await env.write_file("u.txt", "y", user="root")
 
 
 async def test_cwd_relative_and_default():
@@ -355,3 +378,415 @@ def test_config_hash_and_deserialize():
     assert b == c and hash(b) == hash(c) and {b: 1}[c] == 1
     assert PrizedSandboxEnvironment.config_deserialize({"vcpu": 2}) == PrizedSandboxConfig(vcpu=2)
     assert env_mod._label_value("a b/c" * 30).startswith("a-b-c") and len(env_mod._label_value("x" * 99)) == 63
+
+
+async def test_task_cleanup_at_shutdown_deletes_by_the_eval_label(monkeypatch):
+    # In an eval Inspect calls task_init("startup") and task_cleanup("shutdown"), never with the
+    # task name the samples ran under (inspect_ai/_eval/run.py).
+    swept = []
+
+    async def delete_by_labels(labels, **_):
+        swept.append(labels)
+        hit = [sb for sb in FakeSandbox.made if all(sb.labels.get(k) == v for k, v in labels.items())]
+        for sb in hit:
+            sb.deleted = True
+        return [sb.id for sb in hit]
+
+    monkeypatch.setattr(env_mod.AsyncSandbox, "delete_by_labels", staticmethod(delete_by_labels))
+    token = env_mod._fallback.set(None)
+    try:
+        cfg = PrizedSandboxConfig()
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        run = env_mod._fallback.get().run_id
+        await PrizedSandboxEnvironment.sample_init("my task", cfg, {})  # its sample cleanup never runs
+        kept_cfg = PrizedSandboxConfig(keep=True)
+        await PrizedSandboxEnvironment.sample_init("my task", kept_cfg, {})
+        assert FakeSandbox.made[0].labels["inspect-run"] == run
+        assert "inspect-run" not in FakeSandbox.made[1].labels  # kept sandboxes outlive the eval
+        await PrizedSandboxEnvironment.task_cleanup("shutdown", cfg, True)
+        assert swept == [{"inspect-run": run}]
+        assert FakeSandbox.made[0].deleted and not FakeSandbox.made[1].deleted
+        assert PrizedSandboxEnvironment._live["my task"] == {FakeSandbox.made[1].id}
+        # The next eval's task_init starts a fresh state (a new run label).
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        assert env_mod._fallback.get().run_id != run
+    finally:
+        env_mod._fallback.reset(token)
+
+
+async def test_no_sandbox_cleanup_keeps_samples(monkeypatch):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    swept = _sweeper(monkeypatch)
+    with sandbox_lifecycle_scope():
+        cfg = PrizedSandboxConfig()
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        await PrizedSandboxEnvironment.task_cleanup("shutdown", cfg, False)  # --no-sandbox-cleanup
+        assert swept == [] and not FakeSandbox.made[0].deleted
+
+
+async def test_python_runs_python3():
+    env, _, _ = await _env()
+    link = os.path.join(FakeSandbox.made[0].root, ".local", "bin", "python")
+    assert os.path.realpath(link) == os.path.realpath("/usr/bin/python3")
+    await _env(python_alias=False, env={"PATH": "/usr/bin:/bin"})
+    assert not os.path.exists(os.path.join(FakeSandbox.made[1].root, ".local", "bin", "python"))
+    assert FakeSandbox.made[1].options["env_vars"] == {"PATH": "/usr/bin:/bin"}
+
+
+async def test_setup_runs_once_and_samples_fork_the_paused_template(monkeypatch):
+    _sweeper(monkeypatch)
+    token = env_mod._fallback.set(None)
+    try:
+        cfg = PrizedSandboxConfig(setup=["echo installed > ~/marker", "touch ~/second"], labels={"t": "1"})
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        assert FakeSandbox.made == []  # no template until a second sample needs one
+        first = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"].as_type(PrizedSandboxEnvironment)
+        assert [c[0][-1] for c in first.sandbox.calls] == [env_mod._ALIAS, *cfg.setup]  # its own setup
+        a = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"].as_type(PrizedSandboxEnvironment)
+        template = FakeSandbox.made[1]
+        assert template.paused and template.labels["inspect-role"] == "template"
+        assert [c[0][-1] for c in template.calls] == [env_mod._ALIAS, *cfg.setup]
+        b = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"].as_type(PrizedSandboxEnvironment)
+        assert len(FakeSandbox.made) == 4 and template.calls[-1][0][-1] == "touch ~/second"  # setup ran once more
+        assert a.sandbox.forked_from == template.id and a.sandbox.labels["t"] == "1"
+        assert a.sandbox.labels["inspect-task"] == "t" and "inspect-role" not in a.sandbox.labels
+        assert (await a.exec(["cat", "/home/prized/marker"])).stdout == "installed\n"
+        assert (await b.exec(["python", "-c", "print(6 * 7)"])).stdout == "42\n"
+        # A fork that does not fit falls back to a fresh sandbox with the setup run in it.
+        FakeSandbox.fork_error = PrizedError("fork_capacity", "full", status=409)
+        c = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"].as_type(PrizedSandboxEnvironment)
+        assert not hasattr(c.sandbox, "forked_from") and (await c.exec(["cat", "/home/prized/marker"])).success
+        FakeSandbox.fork_error = None  # a full machine is no reason to give the template up
+        d = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"].as_type(PrizedSandboxEnvironment)
+        assert d.sandbox.forked_from == template.id
+        # A copy that ended up deleted says nothing about the template: keep forking it.
+        FakeSandbox.fork_error = PrizedError("sandbox_deleted", "copy gone", status=410, sandbox_id="sbx_copy")
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        FakeSandbox.fork_error = None
+        d2 = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"].as_type(PrizedSandboxEnvironment)
+        assert d2.sandbox.forked_from == template.id
+        # A template that is gone (deleted from outside) is not tried again.
+        FakeSandbox.fork_error = PrizedError("not_found", "gone", status=404)
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        FakeSandbox.fork_error = None
+        e = (await PrizedSandboxEnvironment.sample_init("t", cfg, {}))["default"].as_type(PrizedSandboxEnvironment)
+        assert not hasattr(e.sandbox, "forked_from")
+        await PrizedSandboxEnvironment.task_cleanup("shutdown", cfg, True)
+        assert template.deleted and template.closed and env_mod._fallback.get().templates == {}
+    finally:
+        env_mod._fallback.reset(token)
+
+
+async def test_setup_failure_deletes_the_sandbox(monkeypatch):
+    import asyncio
+
+    cfg = PrizedSandboxConfig(setup=["exit 3"])
+    with pytest.raises(RuntimeError, match="setup command failed"):
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+    [sb] = FakeSandbox.made
+    assert sb.deleted and sb.closed and sb.delete_waited  # gone before the next sample's create
+    # Cancelled mid-setup: deleted without waiting, so the shutdown isn't held up.
+    monkeypatch.setattr(FakeSandbox, "error", asyncio.CancelledError())
+    with pytest.raises(asyncio.CancelledError):
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+    assert FakeSandbox.made[1].deleted and not FakeSandbox.made[1].delete_waited
+
+
+async def test_fork_copies_go_with_the_sample():
+    env, cfg, envs = await _env()
+    await env.write_file("state.txt", "step 1")
+    [copy] = await env.fork()
+    assert await copy.read_file("state.txt") == "step 1"
+    await copy.write_file("state.txt", "branch")
+    assert await env.read_file("state.txt") == "step 1"
+    await PrizedSandboxEnvironment.sample_cleanup("unit task", cfg, envs, False)
+    assert env.sandbox.deleted and copy.sandbox.deleted
+
+
+async def test_state_lives_on_inspects_lifecycle_scope(monkeypatch):
+    # task_init may run in another task than the samples (a SampleSource feeder): the run label and
+    # the templates must still reach the samples and task_cleanup, through Inspect's lifecycle scope.
+    import asyncio
+
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    async def delete_by_labels(labels, **_):
+        hit = [sb for sb in FakeSandbox.made if all(sb.labels.get(k) == v for k, v in labels.items())]
+        for sb in hit:
+            sb.deleted = True
+        return [sb.id for sb in hit]
+
+    monkeypatch.setattr(env_mod.AsyncSandbox, "delete_by_labels", staticmethod(delete_by_labels))
+    cfg = PrizedSandboxConfig(setup=["touch ~/ready"])
+    with sandbox_lifecycle_scope():
+        await asyncio.create_task(PrizedSandboxEnvironment.task_init("startup", cfg))  # its own context
+        run = env_mod._state().run_id
+        await asyncio.create_task(PrizedSandboxEnvironment.sample_init("t", cfg, {}))  # first: own setup
+        envs = await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        template = FakeSandbox.made[1]
+        sample = envs["default"].as_type(PrizedSandboxEnvironment).sandbox
+        assert sample.forked_from == template.id and sample.labels["inspect-run"] == run
+        await PrizedSandboxEnvironment.task_cleanup("shutdown", cfg, False)  # --no-sandbox-cleanup
+        assert template.deleted and not sample.deleted  # templates hold no sample state
+    assert env_mod._fallback.get() is None
+
+
+async def test_setup_without_task_init_runs_in_the_sample():
+    envs = await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(setup=["touch ~/ready"]), {})
+    sb = envs["default"].as_type(PrizedSandboxEnvironment).sandbox
+    assert len(FakeSandbox.made) == 1 and not hasattr(sb, "forked_from")  # no untracked template
+    assert os.path.exists(os.path.join(sb.root, "ready"))
+
+
+def _sweeper(monkeypatch):
+    swept = []
+
+    async def delete_by_labels(labels, **_):
+        swept.append(labels)
+        hit = [sb for sb in FakeSandbox.made if all(sb.labels.get(k) == v for k, v in labels.items())]
+        for sb in hit:
+            sb.deleted = True
+        return [sb.id for sb in hit]
+
+    monkeypatch.setattr(env_mod.AsyncSandbox, "delete_by_labels", staticmethod(delete_by_labels))
+    return swept
+
+
+async def test_templates_are_shared_by_content_capped_and_expire(monkeypatch):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    swept = _sweeper(monkeypatch)
+
+    async def two(cfg):
+        for _ in range(2):
+            envs = await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        return envs["default"].as_type(PrizedSandboxEnvironment).sandbox
+
+    with sandbox_lifecycle_scope():
+        # Labels and keep don't split a template; it always carries the run label and a paused TTL.
+        a = PrizedSandboxConfig(setup=["touch ~/a"], labels={"team": "x"}, keep=True)
+        await PrizedSandboxEnvironment.task_init("startup", a)
+        kept = await two(a)  # the template is built for a keep config, yet carries the run label
+        forked = await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(setup=["touch ~/a"]), {})
+        forked = forked["default"].as_type(PrizedSandboxEnvironment).sandbox
+        templates = [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
+        assert len(templates) == 1 and forked.forked_from == kept.forked_from == templates[0].id
+        assert "inspect-run" not in kept.labels and "inspect-run" in forked.labels
+        assert templates[0].options["auto_delete_min"] == 7 * 24 * 60 and "inspect-run" in templates[0].labels
+        # A setup only one sample uses never builds a template; past MAX_TEMPLATES configs, none either.
+        for i in range(env_mod.MAX_TEMPLATES + 1):
+            await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(setup=[f"touch ~/once{i}"]), {})
+        for i in range(env_mod.MAX_TEMPLATES):
+            last = await two(PrizedSandboxConfig(setup=[f"touch ~/s{i}"]))
+        templates = [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
+        assert len(templates) == env_mod.MAX_TEMPLATES
+        assert not hasattr(last, "forked_from") and os.path.exists(os.path.join(last.root, f"s{i}"))
+        # One run-label sweep however many configs Inspect cleans up, and templates go first.
+        await PrizedSandboxEnvironment.task_cleanup("shutdown", a, True)  # keep: no sweep of samples
+        await PrizedSandboxEnvironment.task_cleanup("shutdown", PrizedSandboxConfig(), True)
+        await PrizedSandboxEnvironment.task_cleanup("shutdown", PrizedSandboxConfig(env={"X": "1"}), True)
+        runs = [lb for lb in swept if "inspect-role" not in lb]
+        assert len(runs) == 1 and last.deleted and all(t.deleted for t in templates)
+        assert "inspect-role" in swept[0]  # templates are swept first, even for the keep config
+
+
+async def test_at_a_disk_quota_the_template_makes_room(monkeypatch):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    _sweeper(monkeypatch)
+
+    def templates():
+        return [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
+
+    with sandbox_lifecycle_scope():
+        cfg = PrizedSandboxConfig(setup=["touch ~/ready"])
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        [template] = templates()
+        # A paused template doesn't count toward the number of sandboxes: keep it.
+        FakeSandbox.fork_error = PrizedError("sandbox_quota_exceeded", "n", status=429, reason="sandbox_limit")
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        assert not template.deleted
+        # It counts toward disk: deleted (waiting until it is gone) to make room.
+        FakeSandbox.fork_error = PrizedError("sandbox_quota_exceeded", "disk", status=429, reason="retained_disk")
+        envs = await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        sb = envs["default"].as_type(PrizedSandboxEnvironment).sandbox
+        assert template.deleted and template.delete_waited
+        assert not hasattr(sb, "forked_from") and os.path.exists(os.path.join(sb.root, "ready"))
+        FakeSandbox.fork_error = None
+        envs = await PrizedSandboxEnvironment.sample_init("t", cfg, {})  # no template from here on
+        assert not hasattr(envs["default"].as_type(PrizedSandboxEnvironment).sandbox, "forked_from")
+        assert len(templates()) == 1
+
+
+async def test_a_create_at_a_disk_quota_deletes_a_template_and_retries(monkeypatch):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    _sweeper(monkeypatch)
+    real_create = env_mod.AsyncSandbox.create
+    refusals = []
+
+    async def create(**options):
+        live = [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template" and not sb.deleted]
+        if "inspect-role" not in options["labels"] and live and not refusals:
+            refusals.append(options)
+            raise PrizedError("sandbox_quota_exceeded", "disk", status=429, reason="retained_disk")
+        return await real_create(**options)
+
+    with sandbox_lifecycle_scope():
+        cfg = PrizedSandboxConfig(setup=["touch ~/ready"])
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        [template] = [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
+        monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(create))
+        envs = await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(), {})  # no setup, no room
+        assert len(refusals) == 1 and template.deleted and template.delete_waited
+        assert envs["default"].as_type(PrizedSandboxEnvironment).sandbox.id
+        # With no template left to give up, a quota refusal raises.
+
+        async def always(**options):
+            raise PrizedError("sandbox_quota_exceeded", "disk", status=429, reason="retained_disk")
+
+        monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(always))
+        with pytest.raises(PrizedError):
+            await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(), {})
+
+
+async def test_concurrent_samples_build_one_template(monkeypatch):
+    import anyio
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    _sweeper(monkeypatch)
+    real_create = env_mod.AsyncSandbox.create
+
+    async def slow_create(**options):
+        await anyio.sleep(0.01)  # let the other samples run while this one is being made
+        return await real_create(**options)
+
+    monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(slow_create))
+    cfg = PrizedSandboxConfig(setup=["touch ~/ready"])
+    with sandbox_lifecycle_scope():
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        async with anyio.create_task_group() as tg:
+            for _ in range(6):
+                tg.start_soon(PrizedSandboxEnvironment.sample_init, "t", cfg, {})
+    templates = [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
+    forks = [sb for sb in FakeSandbox.made if getattr(sb, "forked_from", None)]
+    assert len(templates) == 1 and len(forks) == 5
+
+
+async def test_a_failed_template_build_leaves_setup_to_the_samples(monkeypatch):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    _sweeper(monkeypatch)
+    with sandbox_lifecycle_scope():
+        cfg = PrizedSandboxConfig(setup=["exit 3"])
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        for _ in range(3):
+            with pytest.raises(RuntimeError, match="setup command failed"):
+                await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        assert len([s for s in FakeSandbox.made if s.labels.get("inspect-role") == "template"]) == 1
+        assert len(FakeSandbox.made) == 3  # the builder didn't run the failing setup a second time
+        assert all(s.deleted for s in FakeSandbox.made)
+
+
+async def _two_templates(monkeypatch):
+    _sweeper(monkeypatch)
+    for name in ("x", "y"):
+        cfg = PrizedSandboxConfig(setup=[f"touch ~/{name}"])
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        for _ in range(2):
+            await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+    return [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
+
+
+async def test_two_refused_creates_each_free_a_template(monkeypatch):
+    import anyio
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    with sandbox_lifecycle_scope():
+        templates = await _two_templates(monkeypatch)
+        assert len(templates) == 2
+        limit = len([sb for sb in FakeSandbox.made if not sb.deleted])  # the workspace is full
+        real_create = env_mod.AsyncSandbox.create
+
+        async def create(**options):
+            await anyio.sleep(0)
+            if len([sb for sb in FakeSandbox.made if not sb.deleted]) >= limit:
+                raise PrizedError("sandbox_quota_exceeded", "disk", status=429, reason="retained_disk")
+            return await real_create(**options)
+
+        async def slow_delete(self, wait=False):
+            await anyio.sleep(0.02)
+            self.deleted, self.delete_waited = True, wait
+
+        monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(create))
+        monkeypatch.setattr(FakeSandbox, "delete", slow_delete)
+        made = []
+
+        async def sample():
+            envs = await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(), {})
+            made.append(envs["default"])
+
+        async with anyio.create_task_group() as tg:
+            tg.start_soon(sample)
+            tg.start_soon(sample)
+        assert len(made) == 2 and all(t.deleted for t in templates)
+
+
+async def test_a_template_waits_for_its_copies_and_a_cancelled_drop_is_redone(monkeypatch):
+    import anyio
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    with sandbox_lifecycle_scope():
+        template = (await _two_templates(monkeypatch))[0]
+        entry = next(e for e in env_mod._state().templates.values() if e.sandbox is template)
+        entry.forking = 1  # a copy is still starting
+        with anyio.move_on_after(0.1):
+            await env_mod._drop_template(entry)
+        assert not template.deleted and entry.sandbox is template and entry.gone is None
+        entry.forking = 0
+        await env_mod._drop_template(entry)
+        assert template.deleted and template.delete_waited and entry.sandbox is None
+
+
+async def test_a_create_frees_as_many_templates_as_it_needs(monkeypatch):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    with sandbox_lifecycle_scope():
+        templates = await _two_templates(monkeypatch)
+        limit = len([sb for sb in FakeSandbox.made if not sb.deleted]) - 1  # one more than full
+        real_create = env_mod.AsyncSandbox.create
+
+        async def create(**options):
+            if len([sb for sb in FakeSandbox.made if not sb.deleted]) >= limit:
+                raise PrizedError("sandbox_quota_exceeded", "disk", status=429, reason="retained_disk")
+            return await real_create(**options)
+
+        monkeypatch.setattr(env_mod.AsyncSandbox, "create", staticmethod(create))
+        envs = await PrizedSandboxEnvironment.sample_init("t", PrizedSandboxConfig(), {})
+        assert envs["default"] and all(t.deleted for t in templates)
+
+
+async def test_a_template_build_that_fails_waits_for_its_delete(monkeypatch):
+    from inspect_ai.util._sandbox.lifecycle import sandbox_lifecycle_scope
+
+    _sweeper(monkeypatch)
+
+    async def pause_fails(self, wait=True):
+        raise PrizedError("sandbox_not_running", "could not pause", status=409)
+
+    with sandbox_lifecycle_scope():
+        cfg = PrizedSandboxConfig(setup=["touch ~/ready"])
+        await PrizedSandboxEnvironment.task_init("startup", cfg)
+        await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        monkeypatch.setattr(FakeSandbox, "pause", pause_fails)
+        envs = await PrizedSandboxEnvironment.sample_init("t", cfg, {})
+        [template] = [sb for sb in FakeSandbox.made if sb.labels.get("inspect-role") == "template"]
+        assert template.deleted and template.delete_waited  # gone before the sample's own create
+        sb = envs["default"].as_type(PrizedSandboxEnvironment).sandbox
+        assert not hasattr(sb, "forked_from") and os.path.exists(os.path.join(sb.root, "ready"))
