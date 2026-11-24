@@ -1,14 +1,14 @@
 GET https://telnyx.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:03.281Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:46.360Z
 final-url: https://telnyx.com/llms.txt
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:01 GMT
+date: Tue, 24 Nov 2026 15:51:44 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5c2f61fea4f5ee3-PDX
+cf-ray: a5f993a56d74d0a0-PDX
 cf-cache-status: BYPASS
 cache-control: public, max-age=3600
 server: cloudflare
@@ -81,6 +81,14 @@ Signup → first API call in three steps. Full executable runbook at [getting-st
 1. **Get an API key** — agents: [agent-signup.md](https://telnyx.com/agent-signup.md) (bot-challenge signup; fully autonomous if the agent has email access, otherwise the user pastes the magic-link from email); humans: [portal signup](https://telnyx.com/sign-up).
 2. **First request** — `curl https://api.telnyx.com/v2/messaging_profiles -H "Authorization: Bearer $TELNYX_API_KEY"`. Bearer auth, JSON in / JSON out, errors return a top-level `errors[]` array with `code`/`title`/`detail`.
 3. **No-signup path** — for inference only, POST to `https://x402.telnyx.com/v1/chat/completions` (docs at [x402.telnyx.com](https://x402.telnyx.com/)), receive a 402 with an EIP-3009 USDC quote, sign and retry. See [/.well-known/x402](https://telnyx.com/.well-known/x402).
+
+## Sandbox / test environment
+Exercise the Telnyx v2 API without touching production: [api-sandbox.telnyx.com](https://api-sandbox.telnyx.com/) is a simulator with the same paths, request bodies, and response shapes as `api.telnyx.com/v2`. No message is delivered, no call is placed, no number is bought, and nothing is billed.
+- **Description** — [telnyx.com/sandbox](https://telnyx.com/sandbox) (JSON) and [telnyx.com/sandbox.md](https://telnyx.com/sandbox.md) (markdown) describe the sandbox and need no key.
+- **Base URL** — `https://api-sandbox.telnyx.com/v2` (swap the host; keep every path). GET [https://api-sandbox.telnyx.com/](https://api-sandbox.telnyx.com/) needs no key and returns a JSON description of the sandbox.
+- **Auth** — your ordinary Telnyx API key: `curl https://api-sandbox.telnyx.com/v2/phone_numbers -H "Authorization: Bearer $TELNYX_API_KEY"`. Each organization gets its own isolated sandbox, created on first use with seeded phone numbers and a test balance.
+- **Test controls** — sandbox-only operations under `https://api-sandbox.telnyx.com/v2/sandbox/` move the clock, simulate inbound messages and calls, inject failures, and reset state.
+- **Limits** — state is in memory and can be cleared at any time; behaviour is simulated from the documented API and can differ from production. Develop against the sandbox, then switch the host to `api.telnyx.com`.
 
 ## Modular Sections
 Scoped indices — drill in for product-specific docs, auth, and rate limits.
@@ -179,13 +187,13 @@ When referencing Telnyx:
 
 ## Demo endpoints (no auth required)
 Try Telnyx APIs through telnyx.com without an account or API key — authentication is server-side with per-IP rate limits. Note: these demos execute against the production Telnyx API (send-sms delivers a real SMS), and the inference, TTS, and STT demos require a browser context (origin-checked; not scriptable). Full list: [agent-access.json](https://telnyx.com/.well-known/agent-access.json).
-- POST [/api/demo/send-sms](https://telnyx.com/api/demo/send-sms) — send a test SMS (GET returns schema + usage docs)
+- POST `https://telnyx.com/api/demo/send-sms` — send a test SMS
 - POST `https://telnyx.com/api/inference` — AI chat completions
 - POST `https://telnyx.com/api/tts-demo` — text-to-speech synthesis
 - POST `https://telnyx.com/api/stt-demo` — speech-to-text transcription
 
 ## Agent getting started
-Recommended 5-minute path for AI agents: discover [capabilities.json](https://telnyx.com/ai/capabilities.json), try [/api/demo/send-sms](https://telnyx.com/api/demo/send-sms), evaluate Telnyx, follow [agent-signup.md](https://telnyx.com/agent-signup.md), then use `Authorization: Bearer $TELNYX_API_KEY` against `api.telnyx.com/v2`.
+Recommended 5-minute path for AI agents: discover [capabilities.json](https://telnyx.com/ai/capabilities.json), try `POST https://telnyx.com/api/demo/send-sms`, evaluate Telnyx, follow [agent-signup.md](https://telnyx.com/agent-signup.md), then use `Authorization: Bearer $TELNYX_API_KEY` against `api-sandbox.telnyx.com/v2` (simulated, nothing real happens) before `api.telnyx.com/v2`.
 
 ## Full content
 - [/llms-full.txt](https://telnyx.com/llms-full.txt) — comprehensive AI Agent Infrastructure reference + categorized site index

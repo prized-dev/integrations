@@ -1,16 +1,16 @@
 GET https://app.scrapingbee.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:20.817Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:06.568Z
 redirect: 301 from https://app.scrapingbee.com/.well-known/x402
 final-url: https://dashboard.scrapingbee.com/.well-known/x402
 
 HTTP 404
 server: gunicorn
-date: Wed, 18 Nov 2026 00:47:20 GMT
+date: Tue, 24 Nov 2026 15:52:06 GMT
 content-type: text/html; charset=utf-8
 content-length: 7031
 access-control-allow-origin: *
-spb-request-id: acc192be-4689-44d0-b036-56575bed22ed
+spb-request-id: 39e02248-88ed-4411-93ec-bb335af246f6
 cache-control: private
 permissions-policy: browsing-topics=()
 x-frame-options: SAMEORIGIN

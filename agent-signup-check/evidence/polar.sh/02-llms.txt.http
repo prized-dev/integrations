@@ -1,33 +1,34 @@
 GET https://polar.sh/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:30.357Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:16.897Z
 redirect: 308 from https://polar.sh/llms.txt
 final-url: https://polar.sh/docs/llms.txt
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:27 GMT
+date: Tue, 24 Nov 2026 15:52:14 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-age: 3556
+age: 5493
 cache-control: public
 cf-cache-status: DYNAMIC
-x-version: dpl_81ettUQ5G7NASN425B6JKU3FX1Rg
+x-version: dpl_3DZuqjnfdjREuPshghHhyiLeMG3U
 content-encoding: br
 content-security-policy: default-src 'self';  script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net www.googletagmanager.com cdn.segment.com plausible.io  us.posthog.com tag.clearbitscripts.com cdn.heapanalytics.com chat.cdn-plain.com chat-assets.frontapp.com  browser.sentry-cdn.com js.sentry-cdn.com;  style-src 'self' 'unsafe-inline' d4tuoctqmanu0.cloudfront.net fonts.googleapis.com;  font-src 'self' d4tuoctqmanu0.cloudfront.net fonts.googleapis.com;  img-src 'self' data: blob: d3gk2c5xim1je2.cloudfront.net mintcdn.com *.mintcdn.com cdn.jsdelivr.net mintlify.s3.us-west-1.amazonaws.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com;  connect-src 'self' *.mintlify.dev *.mintlify.com d1ctpt7j8wusba.cloudfront.net mintcdn.com *.mintcdn.com  api.mintlifytrieve.com www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com cdn.segment.com plausible.io us.posthog.com browser.sentry-cdn.com;  frame-src 'self' *.mintlify.dev https://polar-public-assets.s3.us-east-2.amazonaws.com;
-etag: "e0kYlmKFsgpq27Vvc6ZN52r4D20-KTt4IuWx9MvSwu0"
+etag: W/"K5yOy_HSjFbTC_FqFuUWBd02FkdL1_ZSBOZA-B04Pck"
 permissions-policy: payment=(), publickey-credentials-get=(), camera=(), microphone=(), geolocation=()
 server: cloudflare
 strict-transport-security: max-age=63072000
 vary: accept-encoding
+x-content-type-options: nosniff
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4177
+x-mintlify-client-version: 0.0.4286
 x-vercel-cache: MISS
-x-vercel-id: pdx1:fra1:iad1::iad1::5djzz-1794962847776-bd472383b974
+x-vercel-id: pdx1:fra1:iad1::iad1::px889-1795535534182-748431532986
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=fHsXd1ilE8Vm%2FSKwdPwCD1mmmQy3u20%2B1KURe5X37WWwsYWe5ca0cJ7yy20sJ1sfEUtpRoOACvuHT60BEnl%2FwE4fPqz2q0HFXencK4O6UzjMkwPFxVDqAxYs"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=NWekRMPXlpjusBax71l5k14QhY2%2BBwfA4UoB4ViuevC%2F7NEcU4mstqtH3lM4Chax80fFbuLVwFJmeW1aDlVq6%2FopZg5kr8PnfCk%2BzvInkMCukdQqr%2BixyJNK"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-cf-ray: a5c2f6c65e7d87ab-PDX
+cf-ray: a5f994608bb2ef83-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Polar
@@ -39,156 +40,15 @@ alt-svc: h3=":443"; ma=86400
 ### Get Started
 
 - [Polar: Turn Your Software into a Business](https://polar.sh/docs/introduction.md): The next generation unicorns will be built by smaller teams. Polar makes that dream possible.
+- [Merchant of Record](https://polar.sh/docs/merchant-of-record/introduction.md): An open source and transparent Merchant of Record
+- [Polar Pricing](https://polar.sh/docs/merchant-of-record/fees.md): Transparent, public pricing — pick the plan that fits
+
+#### Migrating to Polar
+
 - [Migrate from Stripe](https://polar.sh/docs/migrate.md): Move customers, products, subscriptions, and payment data from Stripe to Polar.
 - [Migrate from Lemon Squeezy](https://polar.sh/docs/migrate-lemon-squeezy.md): What moving from Lemon Squeezy to Polar looks like today, and what we're still working on.
 
-### Products & Pricing
-
-- [Products](https://polar.sh/docs/features/products.md): Start selling digital products on Polar in minutes.
-- [Unit-Based Pricing](https://polar.sh/docs/features/unit-based-pricing.md): Sell a quantity of anything, paid up front, with tiered rates
-- [Seat-Based Pricing](https://polar.sh/docs/features/seat-based-pricing.md): Sell team products with assignable seats and tiered pricing
-- [Usage-Based Pricing](https://polar.sh/docs/features/usage-based-billing/billing.md): Charge customers for their metered usage
-- [Tax Inclusive Pricing](https://polar.sh/docs/features/tax-inclusive-pricing.md): Control whether your product prices include or exclude tax at checkout
-- [Discounts](https://polar.sh/docs/features/discounts.md): Create discounts on products and subscriptions
-
-#### Benefits
-
-- [Automated Benefits](https://polar.sh/docs/features/benefits/introduction.md)
-- [Credits Benefit](https://polar.sh/docs/features/benefits/credits.md): Create your own Credits benefit
-- [Custom Benefit](https://polar.sh/docs/features/benefits/custom.md): Create your own Custom benefit
-- [Automate Discord Invites & Roles](https://polar.sh/docs/features/benefits/discord-access.md): Sell Discord access & roles with ease
-- [Feature Flag Benefit](https://polar.sh/docs/features/benefits/feature-flags.md): Gate access to features using simple, API-driven feature flags
-- [Automate Customer File Downloads](https://polar.sh/docs/features/benefits/file-downloads.md): Offer digital file downloads with ease
-- [Automate Private GitHub Repo(s) Access](https://polar.sh/docs/features/benefits/github-access.md): Sell premium GitHub repository access with ease
-- [Automate Customer License Key Management](https://polar.sh/docs/features/benefits/license-keys.md): Sell license key access to your service, software or APIs with ease
-- [Shared Slack Channel](https://polar.sh/docs/features/benefits/slack-shared-channel.md): Give customers a shared Slack channel via Slack Connect
-
-### Checkout
-
-- [Checkout Links](https://polar.sh/docs/features/checkout/links.md): Persistent URLs that create a Checkout Session on visit
-- [Checkout API](https://polar.sh/docs/features/checkout/session.md): Create checkout sessions programmatically for complete control
-- [Payment Methods](https://polar.sh/docs/features/checkout/payment-methods.md): Payment methods supported by Polar Checkout
-- [Checkout Localization](https://polar.sh/docs/features/checkout/localization.md): Serve checkout in your customer's preferred language
-- [Custom Fields](https://polar.sh/docs/features/custom-fields.md): Learn how to add custom input fields to your checkout with Polar
-
-#### Embeds
-
-- [Embedded Checkout](https://polar.sh/docs/features/checkout/embed.md): Embed our checkout directly on your site
-- [Embedded Payment Method](https://polar.sh/docs/features/checkout/embed-payment-method.md): Embed our payment method flow on your site
-
-### Subscriptions
-
-- [Subscriptions](https://polar.sh/docs/features/subscriptions/introduction.md): Recurring revenue on top of your products.
-- [Managing subscriptions](https://polar.sh/docs/features/subscriptions/manage.md): Everything you can do to a subscription after it's been created.
-- [Proration](https://polar.sh/docs/features/subscriptions/proration.md): Control how the price difference is billed when a subscription is upgraded or downgraded.
-- [Trials](https://polar.sh/docs/features/subscriptions/trials.md): Offer free trials on your subscriptions
-- [Recovering failed payments](https://polar.sh/docs/features/subscriptions/failed-payments.md): How Polar retries failed renewals before revoking a subscription.
-
-### Metering
-
-- [Metering](https://polar.sh/docs/features/usage-based-billing/introduction.md): Track customer usage with ingested events and meters
-- [Event Ingestion](https://polar.sh/docs/features/usage-based-billing/event-ingestion.md): Ingest events from your application
-- [Meters](https://polar.sh/docs/features/usage-based-billing/meters.md): Creating and managing meters
-- [Credits](https://polar.sh/docs/features/usage-based-billing/credits.md): Crediting customers for metered usage
-
-#### Ingestion Strategies
-
-- [Strategy Introduction](https://polar.sh/docs/features/usage-based-billing/ingestion-strategies/ingestion-strategy.md): Ingestion strategies for Metering
-- [LLM Strategy](https://polar.sh/docs/features/usage-based-billing/ingestion-strategies/llm-strategy.md): Ingestion strategy for LLM Usage
-- [S3 Strategy](https://polar.sh/docs/features/usage-based-billing/ingestion-strategies/s3-strategy.md): Ingestion strategy for S3 Operations
-- [Stream Strategy](https://polar.sh/docs/features/usage-based-billing/ingestion-strategies/stream-strategy.md): Ingestion strategy for Readable & Writable Streams
-- [Delta Time Strategy](https://polar.sh/docs/features/usage-based-billing/ingestion-strategies/delta-time-strategy.md): Ingest delta time of arbitrary execution
-
-### Customer Management
-
-- [Customer Management](https://polar.sh/docs/features/customer-management.md): Get insights on your customers and sales
-
-#### Customer Portal
-
-- [Customer Portal](https://polar.sh/docs/features/customer-portal/introduction.md): The self-service destination for your customers
-- [Navigate Customers to the Portal](https://polar.sh/docs/features/customer-portal/navigate-customers.md): Three ways your customers can reach their Customer Portal
-- [Customer Portal Settings](https://polar.sh/docs/features/customer-portal/settings.md): Configure what customers can do from the Customer Portal
-
-### Analytics
-
-- [Analytics](https://polar.sh/docs/features/analytics.md): Understand how every metric in your dashboard is calculated.
-
-#### Cost Insights
-
-- [Introduction to Cost Insights](https://polar.sh/docs/features/cost-insights/introduction.md): Track costs, profits, and customer lifetime value with event-based cost tracking
-- [Cost Events](https://polar.sh/docs/features/cost-insights/cost-events.md): Track costs by adding cost metadata to your ingested events
-- [Cost Traces](https://polar.sh/docs/features/cost-insights/cost-traces.md): Aggregate events by user sessions to calculate costs
-
-### Payments
-
-- [Orders](https://polar.sh/docs/features/orders.md): Every paid transaction on Polar is an order.
-- [Manage Refunds](https://polar.sh/docs/features/refunds.md): You can easily refund orders on Polar — both in full or in parts.
-
-### Payouts
-
-- [Payout Accounts](https://polar.sh/docs/features/finance/accounts.md): Connect a Stripe Connect Express account to receive your earnings
-- [Account Balance & Transparent Fees](https://polar.sh/docs/features/finance/balance.md): Monitor your Polar balance without hidden fees
-- [Payouts](https://polar.sh/docs/features/finance/payouts.md): Withdraw money from your Polar account
-
-### Account Management
-
-- [Team Management](https://polar.sh/docs/features/team-management.md): Invite teammates to your organization, manage their roles, and control what they can access in the Polar dashboard.
-- [Single Sign-On](https://polar.sh/docs/features/sso.md): Let your team sign in to Polar through your own identity provider, and become members automatically.
-
-### Third-party Integrations
-
-- [Affonso Affiliates with Polar](https://polar.sh/docs/features/integrations/affonso.md)
-- [Polar Integration in Fernand](https://polar.sh/docs/features/integrations/fernand.md): Learn how to sync customer and payment data from Polar to Fernand.
-- [Polar for Framer](https://polar.sh/docs/features/integrations/framer.md): The fastest way to sell digital products on your Framer site
-- [Purchase Power Parity with ParityDeals](https://polar.sh/docs/features/integrations/paritydeals.md): Offer products with different price across the globe
-- [Polar for Raycast](https://polar.sh/docs/features/integrations/raycast.md): The fastest way to access Polar from your keyboard
-- [Polar for Zapier](https://polar.sh/docs/features/integrations/zapier.md): Connect Polar to hundreds of other apps with Zapier
-
-### Merchant of Record (MoR)
-
-- [Merchant of Record](https://polar.sh/docs/merchant-of-record/introduction.md): An open source and transparent Merchant of Record
-- [Fees](https://polar.sh/docs/merchant-of-record/fees.md): Transparent, public pricing — pick the plan that fits
-- [Supported countries](https://polar.sh/docs/merchant-of-record/supported-countries.md)
-- [Acceptable Use](https://polar.sh/docs/merchant-of-record/acceptable-use/introduction.md): What you can sell with Polar, and why we have a policy for it
-- [Account reviews](https://polar.sh/docs/merchant-of-record/account-reviews.md)
-
-## Developer Resources
-
-### API
-
-- [Authentication](https://polar.sh/docs/integrate/authentication.md)
-- [Organization Access Tokens](https://polar.sh/docs/integrate/oat.md)
-- [Sandbox Environment](https://polar.sh/docs/integrate/sandbox.md)
-- [Customer State](https://polar.sh/docs/integrate/customer-state.md): The quickest way to integrate billing in your application
-
-#### Webhooks
-
-- [Setup Webhooks](https://polar.sh/docs/integrate/webhooks/endpoints.md): Get notifications asynchronously when events occur instead of having to poll for updates
-- [Handle & monitor webhook deliveries](https://polar.sh/docs/integrate/webhooks/delivery.md): How to parse, validate and handle webhooks and monitor their deliveries on Polar
-- [Webhook Events](https://polar.sh/docs/integrate/webhooks/events.md): Our webhook events and in which context they are useful
-
-### SDKs & Frameworks
-
-- [SDKs](https://polar.sh/docs/integrate/sdk/introduction.md): Official, fully typed clients for the Polar API
-- [Python SDK](https://polar.sh/docs/integrate/sdk/python.md): Fully typed Python client for the Polar API
-- [TypeScript SDK](https://polar.sh/docs/integrate/sdk/typescript.md): SDK for JavaScript runtimes (Node.js and Browser)
-
-#### Framework Adapters
-
-- [Framework Adapters](https://polar.sh/docs/integrate/sdk/adapters/introduction.md): Drop-in adapters that wire Polar checkouts and webhooks into your framework
-- [BetterAuth](https://polar.sh/docs/integrate/sdk/adapters/better-auth.md): Payments and Checkouts made dead simple with BetterAuth
-- [Laravel](https://polar.sh/docs/integrate/sdk/adapters/laravel.md): Payments and Checkouts made dead simple with Laravel
-- [Next.js](https://polar.sh/docs/integrate/sdk/adapters/nextjs.md): Payments and Checkouts made dead simple with Next.js
-- [Nuxt](https://polar.sh/docs/integrate/sdk/adapters/nuxt.md): Payments and Checkouts made dead simple with Nuxt
-- [TanStack Start](https://polar.sh/docs/integrate/sdk/adapters/tanstack-start.md): Payments and Checkouts made dead simple with TanStack Start
-
-#### Framework Guides
-
-- [Integrate Polar with Encore](https://polar.sh/docs/guides/encore.md): In this guide, we'll show you how to integrate Polar with Encore.
-- [Integrate Polar with Laravel](https://polar.sh/docs/guides/laravel.md): In this guide, we'll show you how to integrate Polar with Laravel.
-- [Integrate Polar with Next.js](https://polar.sh/docs/guides/nextjs.md): In this guide, we'll show you how to integrate Polar with Next.js.
-
-### Tools
+### Agent Toolkit
 
 - [Model Context Protocol (MCP)](https://polar.sh/docs/integrate/mcp.md): Connect AI agents to Polar to manage products, customers, subscriptions, orders, and more.
 
@@ -231,23 +91,125 @@ alt-svc: h3=":443"; ma=86400
 - [polar subscriptions](https://polar.sh/docs/integrate/cli/reference/subscriptions.md)
 - [polar webhooks](https://polar.sh/docs/integrate/cli/reference/webhooks.md)
 
-### Extend Polar
+### Customers & Usage
 
-- [Introduction](https://polar.sh/docs/integrate/oauth2/introduction.md): For partners building services and extensions for Polar customers
-- [Create an OAuth 2.0 Client](https://polar.sh/docs/integrate/oauth2/setup.md)
-- [OAuth 2.0 Connect](https://polar.sh/docs/integrate/oauth2/connect.md)
+#### Customers
 
-- [API Reference (652 pages)](https://polar.sh/docs/_llms/api-reference.txt): 2026-04, 2026-10, 2027-01.
+- [Customer Management](https://polar.sh/docs/features/customer-management.md): Get insights on your customers and sales
+- [Customer State](https://polar.sh/docs/integrate/customer-state.md): The quickest way to integrate billing in your application
+
+#### Events & Meters
+
+- [Metering](https://polar.sh/docs/features/usage-based-billing/introduction.md): Track customer usage with ingested events and meters
+- [Event Ingestion](https://polar.sh/docs/features/usage-based-billing/event-ingestion.md): Ingest events from your application
+- [Meters](https://polar.sh/docs/features/usage-based-billing/meters.md): Creating and managing meters
+
+##### Ingestion Strategies
+
+- [Strategy Introduction](https://polar.sh/docs/features/usage-based-billing/ingestion-strategies/ingestion-strategy.md): Ingestion strategies for Metering
+- [LLM Strategy](https://polar.sh/docs/features/usage-based-billing/ingestion-strategies/llm-strategy.md): Ingestion strategy for LLM Usage
+- [S3 Strategy](https://polar.sh/docs/features/usage-based-billing/ingestion-strategies/s3-strategy.md): Ingestion strategy for S3 Operations
+- [Stream Strategy](https://polar.sh/docs/features/usage-based-billing/ingestion-strategies/stream-strategy.md): Ingestion strategy for Readable & Writable Streams
+- [Delta Time Strategy](https://polar.sh/docs/features/usage-based-billing/ingestion-strategies/delta-time-strategy.md): Ingest delta time of arbitrary execution
+
+#### Entitlements
+
+- [Entitlements (Benefits)](https://polar.sh/docs/features/benefits/introduction.md)
+- [Credits Benefit](https://polar.sh/docs/features/benefits/credits.md): Create your own Credits benefit
+- [Custom Benefit](https://polar.sh/docs/features/benefits/custom.md): Create your own Custom benefit
+- [Automate Discord Invites & Roles](https://polar.sh/docs/features/benefits/discord-access.md): Sell Discord access & roles with ease
+- [Feature Flag Benefit](https://polar.sh/docs/features/benefits/feature-flags.md): Gate access to features using simple, API-driven feature flags
+- [Automate Customer File Downloads](https://polar.sh/docs/features/benefits/file-downloads.md): Offer digital file downloads with ease
+- [Automate Private GitHub Repo(s) Access](https://polar.sh/docs/features/benefits/github-access.md): Sell premium GitHub repository access with ease
+- [Automate Customer License Key Management](https://polar.sh/docs/features/benefits/license-keys.md): Sell license key access to your service, software or APIs with ease
+- [Shared Slack Channel](https://polar.sh/docs/features/benefits/slack-shared-channel.md): Give customers a shared Slack channel via Slack Connect
+
+#### Customer Cost Insights
+
+- [Introduction to Cost Insights](https://polar.sh/docs/features/cost-insights/introduction.md): Track costs, profits, and customer lifetime value with event-based cost tracking
+- [Cost Events](https://polar.sh/docs/features/cost-insights/cost-events.md): Track costs by adding cost metadata to your ingested events
+- [Cost Traces](https://polar.sh/docs/features/cost-insights/cost-traces.md): Aggregate events by user sessions to calculate costs
+
+### Billing
+
+- [Products](https://polar.sh/docs/features/products.md): Start selling digital products on Polar in minutes.
+- [Discounts](https://polar.sh/docs/features/discounts.md): Create discounts on products and subscriptions
+- [Orders](https://polar.sh/docs/features/orders.md): Every paid transaction on Polar is an order.
+- [Manage Refunds](https://polar.sh/docs/features/refunds.md): You can easily refund orders on Polar — both in full or in parts.
+- [Billing Metrics](https://polar.sh/docs/features/analytics.md): Understand how every metric in your dashboard is calculated.
+
+#### Pricing Models
+
+- [Unit-Based Pricing](https://polar.sh/docs/features/unit-based-pricing.md): Sell a quantity of anything, paid up front, with tiered rates
+- [Seat-Based Pricing](https://polar.sh/docs/features/seat-based-pricing.md): Sell team products with assignable seats and tiered pricing
+- [Usage-Based Pricing](https://polar.sh/docs/features/usage-based-billing/billing.md): Charge customers for their metered usage
+- [Credits](https://polar.sh/docs/features/usage-based-billing/credits.md): Crediting customers for metered usage
+- [Tax Inclusive Pricing](https://polar.sh/docs/features/tax-inclusive-pricing.md): Control whether your product prices include or exclude tax at checkout
+
+#### Subscriptions
+
+- [Subscriptions](https://polar.sh/docs/features/subscriptions/introduction.md): Recurring revenue on top of your products.
+- [Managing subscriptions](https://polar.sh/docs/features/subscriptions/manage.md): Everything you can do to a subscription after it's been created.
+- [Proration](https://polar.sh/docs/features/subscriptions/proration.md): Control how the price difference is billed when a subscription is upgraded or downgraded.
+- [Trials](https://polar.sh/docs/features/subscriptions/trials.md): Offer free trials on your subscriptions
+- [Recovering failed payments](https://polar.sh/docs/features/subscriptions/failed-payments.md): How Polar retries failed renewals before revoking a subscription.
+
+#### Checkout
+
+- [Checkout Links](https://polar.sh/docs/features/checkout/links.md): Persistent URLs that create a Checkout Session on visit
+- [Checkout API](https://polar.sh/docs/features/checkout/session.md): Create checkout sessions programmatically for complete control
+- [Payment Methods](https://polar.sh/docs/features/checkout/payment-methods.md): Payment methods supported by Polar Checkout
+- [Checkout Localization](https://polar.sh/docs/features/checkout/localization.md): Serve checkout in your customer's preferred language
+- [Custom Fields](https://polar.sh/docs/features/custom-fields.md): Learn how to add custom input fields to your checkout with Polar
+
+##### Embedded UI
+
+- [Embedded Checkout](https://polar.sh/docs/features/checkout/embed.md): Embed our checkout directly on your site
+- [Embedded Payment Method](https://polar.sh/docs/features/checkout/embed-payment-method.md): Embed our payment method flow on your site
+
+#### Customer Portal
+
+- [Customer Portal](https://polar.sh/docs/features/customer-portal/introduction.md): The self-service destination for your customers
+- [Navigate Customers to the Portal](https://polar.sh/docs/features/customer-portal/navigate-customers.md): Three ways your customers can reach their Customer Portal
+- [Customer Portal Settings](https://polar.sh/docs/features/customer-portal/settings.md): Configure what customers can do from the Customer Portal
+
+### Finance & Payouts
+
+- [Account Balance & Transparent Fees](https://polar.sh/docs/features/finance/balance.md): Monitor your Polar balance without hidden fees
+- [Payouts](https://polar.sh/docs/features/finance/payouts.md): Withdraw money from your Polar account
+- [Payout Accounts](https://polar.sh/docs/features/finance/accounts.md): Connect a Stripe Connect Express account to receive your earnings
+
+### Account
+
+- [Team Management](https://polar.sh/docs/features/team-management.md): Invite teammates to your organization, manage their roles, and control what they can access in the Polar dashboard.
+- [Single Sign-On](https://polar.sh/docs/features/sso.md): Let your team sign in to Polar through your own identity provider, and become members automatically.
+
+#### Integrations
+
+- [Affonso Affiliates with Polar](https://polar.sh/docs/features/integrations/affonso.md)
+- [Polar Integration in Fernand](https://polar.sh/docs/features/integrations/fernand.md): Learn how to sync customer and payment data from Polar to Fernand.
+- [Polar for Framer](https://polar.sh/docs/features/integrations/framer.md): The fastest way to sell digital products on your Framer site
+- [Purchase Power Parity with ParityDeals](https://polar.sh/docs/features/integrations/paritydeals.md): Offer products with different price across the globe
+- [Polar for Raycast](https://polar.sh/docs/features/integrations/raycast.md): The fastest way to access Polar from your keyboard
+- [Polar for Zapier](https://polar.sh/docs/features/integrations/zapier.md): Connect Polar to hundreds of other apps with Zapier
+
+### Compliance & Security
+
+- [Supported countries](https://polar.sh/docs/merchant-of-record/supported-countries.md)
+- [Acceptable Use](https://polar.sh/docs/merchant-of-record/acceptable-use/introduction.md): What you can sell with Polar, and why we have a policy for it
+- [Security and Vulnerability Reporting](https://polar.sh/docs/security.md)
+
+#### Account Reviews
+
+- [Account Reviews](https://polar.sh/docs/merchant-of-record/account-reviews.md)
+- [Review Checklist](https://polar.sh/docs/merchant-of-record/review-checklist.md): Everything you need to complete before you can submit your account for review and start accepting payments
+
+- [API (673 pages)](https://polar.sh/docs/_llms/api.txt): 2026-04, 2026-10, 2027-01.
 
 ## Changelog
 
 - [Product Updates](https://polar.sh/docs/changelog/recent.md): Stay up to date with the latest changes and improvements to Polar.
 - [API Changelog](https://polar.sh/docs/changelog/api.md): Stay up to date with the latest changes introduced in our API
-
-## Support
-
-- [Support](https://polar.sh/docs/support.md)
-- [Security and Vulnerability Reporting](https://polar.sh/docs/security.md)
 
 ## OpenAPI Specs
 
@@ -261,10 +223,10 @@ alt-svc: h3=":443"; ma=86400
 
 ## Indexes
 
-- [API Reference (652 pages)](https://polar.sh/docs/_llms/api-reference.txt): 2026-04, 2026-10, 2027-01.
-- [API Reference / 2026-04 (215 pages)](https://polar.sh/docs/_llms/api-reference/2026-04.txt): General, Core API, Customer Portal API, Webhook Events, Integrations.
-- [API Reference / 2026-10 (215 pages)](https://polar.sh/docs/_llms/api-reference/2026-10.txt): General, Core API, Customer Portal API, Webhook Events, Integrations.
-- [API Reference / 2027-01 (222 pages)](https://polar.sh/docs/_llms/api-reference/2027-01.txt): General, Core API, Customer Portal API, Webhook Events, Integrations.
+- [API (673 pages)](https://polar.sh/docs/_llms/api.txt): 2026-04, 2026-10, 2027-01.
+- [API / 2026-04 (236 pages)](https://polar.sh/docs/_llms/api/2026-04.txt): Get Started, SDKs & Frameworks, Core API, Customer Portal API, Webhooks, OAuth 2.0.
+- [API / 2026-10 (215 pages)](https://polar.sh/docs/_llms/api/2026-10.txt): Get Started, Core API, Customer Portal API, Webhooks, OAuth 2.0.
+- [API / 2027-01 (222 pages)](https://polar.sh/docs/_llms/api/2027-01.txt): Get Started, Core API, Customer Portal API, Webhooks, OAuth 2.0.
 
 
 This documentation is built and hosted on [Mintlify](https://mintlify.com), a developer documentation platform.

@@ -1,20 +1,20 @@
 GET https://cloudinary.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:46.477Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:31.612Z
 final-url: https://cloudinary.com/.well-known/oauth-authorization-server
 
 HTTP 403
-date: Wed, 18 Nov 2026 00:47:44 GMT
+date: Tue, 24 Nov 2026 15:52:29 GMT
 content-type: application/xml
 transfer-encoding: chunked
 connection: close
-x-amz-request-id: 66M2XEVTGNKTNBNK
-x-amz-id-2: rQkEsnu1qOD1SI6OAXoyeqZ9b94HCECucY5fILndyRbGOL7Wn7CK10ewKK3STCuHNQN0Nj+7xn0=
+x-amz-request-id: 3HGVHKQQHKANJKMK
+x-amz-id-2: nEkFP0INwrUgflGYew+2xZaqaW5NTSRaaH7xpSIqswnYPT0k5WmPOaCLXlEOYUNe3Pn7mwHDTDA=
 server: cloudflare
 cf-cache-status: DYNAMIC
 content-encoding: br
-cf-ray: a5c2f72f2914ef24-PDX
+cf-ray: a5f994c19e9423a3-PDX
 alt-svc: h3=":443"; ma=86400
 
 <?xml version="1.0" encoding="UTF-8"?>
-<Error><Code>AccessDenied</Code><Message>Access Denied</Message><RequestId>66M2XEVTGNKTNBNK</RequestId><HostId>rQkEsnu1qOD1SI6OAXoyeqZ9b94HCECucY5fILndyRbGOL7Wn7CK10ewKK3STCuHNQN0Nj+7xn0=</HostId></Error>
+<Error><Code>AccessDenied</Code><Message>Access Denied</Message><RequestId>3HGVHKQQHKANJKMK</RequestId><HostId>nEkFP0INwrUgflGYew+2xZaqaW5NTSRaaH7xpSIqswnYPT0k5WmPOaCLXlEOYUNe3Pn7mwHDTDA=</HostId></Error>

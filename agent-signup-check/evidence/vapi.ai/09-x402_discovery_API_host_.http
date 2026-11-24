@@ -1,10 +1,10 @@
 GET https://api.vapi.ai/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:06.568Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:52.892Z
 final-url: https://api.vapi.ai/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:06 GMT
+date: Tue, 24 Nov 2026 15:51:52 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -15,7 +15,7 @@ etag: W/"4f-AN3GCOp4gV+jc93dLtd0t+uAEA0"
 cf-cache-status: DYNAMIC
 content-encoding: br
 server: cloudflare
-cf-ray: a5c2f6400fd3c4ac-PDX
+cf-ray: a5f993d98d7b8969-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"message":"Cannot GET /.well-known/x402","error":"Not Found","statusCode":404}

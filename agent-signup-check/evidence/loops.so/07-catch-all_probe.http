@@ -1,34 +1,36 @@
 GET https://loops.so/agent-signup-check-no-such-page.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:00.576Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:43.852Z
 final-url: https://loops.so/agent-signup-check-no-such-page.md
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:46:59 GMT
+date: Tue, 24 Nov 2026 15:51:42 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
 cache-control: public, max-age=0, must-revalidate
 content-security-policy: frame-ancestors 'none'
 framer-site-id: 75c9a5a69d6aa7bde1f186dfc66c01c37bbc2cccde665a6d27b2a178ade0d170
-last-modified: Tue, 17 Nov 2026 21:47:32 GMT
+last-modified: Tue, 24 Nov 2026 01:25:23 GMT
 permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()
 referrer-policy: strict-origin-when-cross-origin
 server: cloudflare
-server-timing: region;desc="us-west-2", cache;desc="cached", ssg-status;desc="optimized", version;desc="3824ea1", instance;desc="e1d0934", route;desc="id=POcSwVRxq&locale=default", country;desc="US", ss-only-routes
+server-timing: region;desc="us-west-2", cache;desc="cached", ssg-status;desc="optimized", version;desc="010e668", instance;desc="eea1f8a", route;desc="id=POcSwVRxq&locale=default", country;desc="US", ss-only-routes
 strict-transport-security: max-age=31536000
 vary: Accept-Encoding, Accept
 x-content-type-options: nosniff
 x-frame-options: DENY
 cf-cache-status: DYNAMIC
 content-encoding: br
-cf-ray: a5c2f613af87c236-SJC
+cf-ray: a5f99399b97b3416-PDX
 
 ---
 title: "Loops | Email for modern software companies"
 description: Loops is the email platform for SaaS. Send beautiful marketing, transactional, and lifecycle emails with a powerful API and a delightful editor.
-published: "Nov 17, 2026, 9:47 PM UTC"
+published: "Nov 24, 2026, 1:25 AM UTC"
 ---
+
+[Skip to content](#main)
 
 404
 
@@ -45,11 +47,11 @@ This page got lost in the, uh, mail.
 ## Navigation
 
 - [Customers](./customers)
+- [Pricing](./pricing)
+- [Docs](https://loops.so/docs)
 - [About](./about)
 - [Careers](./careers)
 - [Credits](./credits)
-- [Pricing](./pricing)
-- [Docs](https://loops.so/docs)
 - [Templates](./templates/category/all)
 - [Examples](./examples)
 - [Changelog](./changelog)
@@ -57,7 +59,7 @@ This page got lost in the, uh, mail.
 - [Resources](./resources)
 - [Free tools](./tools)
 - [Agents](./agents)
-- [Email](/cdn-cgi/l/email-protection#c3b0b6b3b3acb1b783afacacb3b0edb0ac)
+- [Email](/cdn-cgi/l/email-protection#0675737676697472466a69697675287569)
 - [LinkedIn](https://www.linkedin.com/company/sendwithloops/)
 - [𝕏](https://twitter.com/loops)
 - [YouTube](https://www.youtube.com/@sendwithloops)

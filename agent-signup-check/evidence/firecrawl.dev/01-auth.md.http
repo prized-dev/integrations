@@ -1,6 +1,6 @@
 GET https://firecrawl.dev/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:13.569Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:58.942Z
 redirect: 308 from https://firecrawl.dev/auth.md
 final-url: https://www.firecrawl.dev/auth.md
 
@@ -11,9 +11,9 @@ cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="auth.md"
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:09 GMT
+date: Tue, 24 Nov 2026 15:51:55 GMT
 etag: W/"777a37c9e43464828e35486a80f58416"
-last-modified: Wed, 18 Nov 2026 00:47:09 GMT
+last-modified: Tue, 24 Nov 2026 15:51:55 GMT
 permissions-policy: geolocation=(self)
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -22,7 +22,7 @@ x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /auth.md
 x-vercel-cache: MISS
-x-vercel-id: pdx1::94xqf-1794962829851-a2e8c542d453
+x-vercel-id: pdx1::2mz7b-1795535515549-1997d6371259
 connection: close
 transfer-encoding: chunked
 

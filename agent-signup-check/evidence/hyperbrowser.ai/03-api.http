@@ -1,6 +1,6 @@
 GET https://api.hyperbrowser.ai/api/sessions
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:11.633Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:57.356Z
 final-url: https://api.hyperbrowser.ai/api/sessions
 
 HTTP 401
@@ -13,8 +13,8 @@ vary: Origin
 access-control-allow-credentials: true
 content-type: application/json; charset=utf-8
 etag: W/"1d-y4BLd46Vr+fVW8eM/OcQaOIBheU"
-x-cloud-trace-context: 008530f07da116e21d49c10e1500e0d2
-date: Wed, 18 Nov 2026 00:47:08 GMT
+x-cloud-trace-context: 060f6967f2ba22b557fe2cbd4c17b717
+date: Tue, 24 Nov 2026 15:51:54 GMT
 server: Google Frontend
 content-length: 29
 via: 1.1 google

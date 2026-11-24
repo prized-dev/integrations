@@ -1,19 +1,19 @@
 GET https://ec2.us-east-1.amazonaws.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:36.241Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:16.997Z
 final-url: https://ec2.us-east-1.amazonaws.com/.well-known/oauth-protected-resource
 
 HTTP 400
-x-amzn-requestid: 244d5487-b3a9-4735-9fe2-99626cb0bee3
+x-amzn-requestid: 69e4014c-747f-4117-bd99-0a927f21f63b
 cache-control: no-cache, no-store
 strict-transport-security: max-age=31536000; includeSubDomains
 vary: accept-encoding
 content-encoding: gzip
 content-type: text/xml;charset=UTF-8
 transfer-encoding: chunked
-date: Wed, 18 Nov 2026 00:46:34 GMT
+date: Tue, 24 Nov 2026 15:51:14 GMT
 connection: close
 server: AmazonEC2
 
 <?xml version="1.0" encoding="UTF-8"?>
-<Response><Errors><Error><Code>InvalidURI</Code><Message>The URI http://ec2.us-east-1.amazonaws.com/.well-known/oauth-protected-resource is  not valid</Message></Error></Errors><RequestID>244d5487-b3a9-4735-9fe2-99626cb0bee3</RequestID></Response>
+<Response><Errors><Error><Code>InvalidURI</Code><Message>The URI http://ec2.us-east-1.amazonaws.com/.well-known/oauth-protected-resource is  not valid</Message></Error></Errors><RequestID>69e4014c-747f-4117-bd99-0a927f21f63b</RequestID></Response>

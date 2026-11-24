@@ -1,11 +1,11 @@
 GET https://digitalocean.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:33.840Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:17.163Z
 redirect: 301 from https://digitalocean.com/auth.md
 final-url: https://www.digitalocean.com/auth.md
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:46:29 GMT
+date: Tue, 24 Nov 2026 15:51:12 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -16,15 +16,15 @@ x-nextjs-prerender: 1
 x-nextjs-stale-time: 300
 x-powered-by: Next.js
 cache-control: private, no-cache, no-store, max-age=0, must-revalidate
-etag: "to2oleuyp612up"
+etag: "z9fn2lh6ye13wk"
 content-encoding: gzip
-x-envoy-upstream-service-time: 183
+x-envoy-upstream-service-time: 85
 server: cloudflare
-do-upstream-service-time: 257
+do-upstream-service-time: 160
 cf-cache-status: BYPASS
-cf-ray: a5c2f5557f528d3a-PDX
+cf-ray: a5f992dc2f073741-PDX
 
-<!DOCTYPE html><html data-dpl-id="0f0bba3a" id="__next_error__"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"/><link rel="preload" as="script" fetchPriority="low" href="/_do-www-marketing/0f0bba3a/_next/static/chunks/webpack-29891cc8ad551fed.js?dpl=0f0bba3a"/><script src="/_do-www-marketing/0f0bba3a/_next/static/chunks/67097676-e20bfbe9c7787fdb.js?dpl=0f0bba3a" async=""></script><script src="/_do-www-marketing/0f0bba3a/_next/static/chunks/66546-3f6854d5eacf2e13.js?dpl=0f0bba3a" async=""></script><script src="/_do-www-marketing/0f0bba3a/_next/static/chunks/main-app-e85b7f62b20f5df9.js?dpl=0f0bba3a" async=""></script><meta name="robots" content="noindex"/><meta name="theme-color" content="#000000"/><title>404 - Page not found</title><meta name="description" content="The page you requested could not be found."/><meta property="og:title" content="DigitalOcean"/><meta property="og:description" content="Helping millions of developers easily build, test, manage, and scale applications of any size - faster than ever before."/><meta property="og:image" content="https://www.digitalocean.com/_do-www-marketing/0f0bba3a/_next/static/media/social-share-default.e8530e9e.jpeg"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary"/><meta name="twitter:title" content="DigitalOcean"/><meta name="twitter:description" content="Helping millions of developers easily build, test, manage, and scale applications of any size - faster than ever before."/><meta name="twitter:image" content="https://www.digitalocean.com/_do-www-marketing/0f0bba3a/_next/static/media/social-share-default.e8530e9e.jpeg"/><link rel="icon" href="/_do-www-marketing/0f0bba3a/_next/static/media/favicon.91372345.svg" type="image/svg+xml"/><link rel="icon" href="/_do-www-marketing/0f0bba3a/_next/static/media/favicon.00b9c167.ico" type="image/x-icon" sizes="32x32"/><link rel="apple-touch-icon" href="/_do-www-marketing/0f0bba3a/_next/static/media/apple-touch-icon.9537f22a.png" sizes="180x180"/><script src="/_do-www-marketing/0f0bba3a/_next/static/chunks/polyfills-42372ed130431b0a.js?dpl=0f0bba3a" noModule=""></script><style data-styled="" data-styled-version="6.4.2">@keyframes ckkqjM{0%{transform:translateY(110vh);}100%{transform:translateY(0);}}/*!sc*/
+<!DOCTYPE html><html data-dpl-id="416e2371" id="__next_error__"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"/><link rel="preload" as="script" fetchPriority="low" href="/_do-www-marketing/416e2371/_next/static/chunks/webpack-a140931b76967cd0.js?dpl=416e2371"/><script src="/_do-www-marketing/416e2371/_next/static/chunks/67097676-e20bfbe9c7787fdb.js?dpl=416e2371" async=""></script><script src="/_do-www-marketing/416e2371/_next/static/chunks/66546-085e1c6ab2c6320a.js?dpl=416e2371" async=""></script><script src="/_do-www-marketing/416e2371/_next/static/chunks/main-app-e85b7f62b20f5df9.js?dpl=416e2371" async=""></script><meta name="robots" content="noindex"/><meta name="theme-color" content="#000000"/><title>404 - Page not found</title><meta name="description" content="The page you requested could not be found."/><meta property="og:title" content="DigitalOcean"/><meta property="og:description" content="Helping millions of developers easily build, test, manage, and scale applications of any size - faster than ever before."/><meta property="og:image" content="https://www.digitalocean.com/_do-www-marketing/416e2371/_next/static/media/social-share-default.e8530e9e.jpeg"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary"/><meta name="twitter:title" content="DigitalOcean"/><meta name="twitter:description" content="Helping millions of developers easily build, test, manage, and scale applications of any size - faster than ever before."/><meta name="twitter:image" content="https://www.digitalocean.com/_do-www-marketing/416e2371/_next/static/media/social-share-default.e8530e9e.jpeg"/><link rel="icon" href="/_do-www-marketing/416e2371/_next/static/media/favicon.91372345.svg" type="image/svg+xml"/><link rel="icon" href="/_do-www-marketing/416e2371/_next/static/media/favicon.00b9c167.ico" type="image/x-icon" sizes="32x32"/><link rel="apple-touch-icon" href="/_do-www-marketing/416e2371/_next/static/media/apple-touch-icon.9537f22a.png" sizes="180x180"/><script src="/_do-www-marketing/416e2371/_next/static/chunks/polyfills-42372ed130431b0a.js?dpl=416e2371" noModule=""></script><style data-styled="" data-styled-version="6.4.2">@keyframes ckkqjM{0%{transform:translateY(110vh);}100%{transform:translateY(0);}}/*!sc*/
 data-styled.g1[id="sc-keyframes-ckkqjM"]{content:"ckkqjM,"}/*!sc*/
 @keyframes kVaHQg{0%{opacity:0;}100%{opacity:0.4;}}/*!sc*/
 data-styled.g2[id="sc-keyframes-kVaHQg"]{content:"kVaHQg,"}/*!sc*/
@@ -146,4 +146,4 @@ data-styled.g198[id="Headerstyles__StyledHeaderContent-sc-9ucsot-4"]{content:"gI
 .Headerstyles__StyledHeaderUtilities-sc-9ucsot-5~.cLiNrn{display:block;}/*!sc*/
 @media (min-width: 1024px){.Headerstyles__StyledHeaderUtilities-sc-9
 
-[body trimmed for publication: kept 16384 of 50353 characters; sha256 of the published body df90d7d01533ff0e1e1c5b17d10b688e1a2992ca41d7eeb1566c90711b97a623]
+[body trimmed for publication: kept 16384 of 51716 characters; sha256 of the published body 4ef7b8f9e9b44194e144f83ef14851dae73caaee265baa8a6ea1f03abd825ce9]

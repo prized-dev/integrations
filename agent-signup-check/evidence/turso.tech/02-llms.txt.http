@@ -1,25 +1,25 @@
 GET https://turso.tech/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:47.231Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:30.693Z
 final-url: https://turso.tech/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 0
+age: 284545
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:44 GMT
+date: Tue, 24 Nov 2026 15:51:27 GMT
 etag: W/"036ef80eca7ff884d34665871b493d7e"
-last-modified: Wed, 18 Nov 2026 00:46:44 GMT
+last-modified: Sat, 21 Nov 2026 08:49:02 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-frame-options: DENY
 x-matched-path: /llms.txt
-x-vercel-cache: MISS
-x-vercel-id: pdx1::pfgf4-1794962804040-ff28301d5ad0
+x-vercel-cache: HIT
+x-vercel-id: pdx1::drv9c-1795535487831-4b4c5c7e8412
 connection: close
 transfer-encoding: chunked
 

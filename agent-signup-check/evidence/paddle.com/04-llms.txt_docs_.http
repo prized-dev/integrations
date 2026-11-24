@@ -1,6 +1,6 @@
 GET https://developer.paddle.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:34.391Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:19.843Z
 final-url: https://developer.paddle.com/llms.txt
 
 HTTP 200
@@ -10,12 +10,12 @@ cache-control: public,max-age=0,must-revalidate
 cache-status: "Netlify Edge"; fwd=miss; fwd-status=200; stored
 content-encoding: br
 content-type: text/plain; charset=UTF-8
-date: Wed, 18 Nov 2026 00:47:29 GMT
+date: Tue, 24 Nov 2026 15:52:15 GMT
 etag: W/"5e14327552b7e60a211003b1bef153a8-ssl"
 server: Netlify
 strict-transport-security: max-age=31536000
 vary: Accept-Encoding
-x-nf-request-id: 01M7P1YZ7MXPWRBHNGN0XGHJQX
+x-nf-request-id: 01M8743YXYBY6WY4PF7F95CMQJ
 connection: close
 transfer-encoding: chunked
 

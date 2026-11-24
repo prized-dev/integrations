@@ -1,19 +1,19 @@
 GET https://lemonsqueezy.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:35.603Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:20.150Z
 redirect: 301 from https://lemonsqueezy.com/.well-known/oauth-authorization-server
 final-url: https://www.lemonsqueezy.com/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:33 GMT
+date: Tue, 24 Nov 2026 15:52:18 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5c2f6e88ed9cf19-SJC
+cf-ray: a5f994786cb6d0a0-PDX
 cf-cache-status: DYNAMIC
 cache-control: no-transform
 content-encoding: gzip
-etag: W/"6afca0d1-58"
+etag: W/"6b0063fd-58"
 server: cloudflare
 strict-transport-security: max-age=31536000; includeSubDomains
 vary: accept-encoding

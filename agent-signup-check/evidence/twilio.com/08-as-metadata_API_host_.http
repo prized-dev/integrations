@@ -1,23 +1,23 @@
 GET https://api.twilio.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:03.546Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:49.283Z
 final-url: https://api.twilio.com/.well-known/oauth-authorization-server
 
 HTTP 404
 content-type: application/problem+json
 content-length: 242
 connection: close
-date: Wed, 18 Nov 2026 00:47:01 GMT
+date: Tue, 24 Nov 2026 15:51:47 GMT
 x-twilio-error-code: 20404
-twilio-request-id: RQ1776f4cbeddc73926eff1626f848bbf3
+twilio-request-id: RQa096c108dbd71c6f0e002b7413b76070
 twilio-request-duration: 0.000
 x-home-region: us1
 x-api-domain: api.twilio.com
 strict-transport-security: max-age=31536000
 x-cache: Error from cloudfront
-via: 1.1 eb0793aa61a19aaf4bd31bd6f3628f9a.cloudfront.net (CloudFront)
-x-amz-cf-pop: HIO52-P5
-x-amz-cf-id: CNcdg64hP6v_t85-WLlYd-g5VuaTgS--Tcwmw2yHtJc5ZqBGrzDWag==
+via: 1.1 0917da16ef445f191a68e78a9846ed78.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P3
+x-amz-cf-id: zFlw9ugtJB9gogqIVs7NT2EUd2wPQoxWcKXpX-arTswADN0pC7jJcg==
 x-powered-by: AT-5000
 x-shenanigans: none
 vary: Origin

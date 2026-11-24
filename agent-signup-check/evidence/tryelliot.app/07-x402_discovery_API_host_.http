@@ -1,17 +1,17 @@
 GET https://dashboard.tryelliot.app/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:46.997Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:31.644Z
 final-url: https://dashboard.tryelliot.app/.well-known/x402
 
 HTTP 406
 age: 0
 cache-control: public, max-age=0, must-revalidate
 content-type: application/json
-date: Wed, 18 Nov 2026 00:47:46 GMT
+date: Tue, 24 Nov 2026 15:52:31 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::9pbn4-1794962866603-48d5cedce2ef
+x-vercel-id: pdx1::iad1::dcvdq-1795535551252-a9178046c030
 connection: close
 transfer-encoding: chunked
 

@@ -1,19 +1,19 @@
 GET https://api.agentmail.to/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:55.067Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:36.518Z
 final-url: https://api.agentmail.to/.well-known/oauth-protected-resource
 
 HTTP 200
 content-type: application/json
 content-length: 137
 connection: close
-date: Wed, 18 Nov 2026 00:46:52 GMT
-apigw-requestid: HAtLkjQOyK4EJQA=
+date: Tue, 24 Nov 2026 15:51:34 GMT
+apigw-requestid: HWjVDhZ3yK4EM4g=
 cache-control: public, max-age=3600
 x-cache: Miss from cloudfront
-via: 1.1 e3d057b3e6efdd15e49b433f7704a6c8.cloudfront.net (CloudFront)
+via: 1.1 e765e4220a4552156eaeff06c1304e0c.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P4
-x-amz-cf-id: gYn8FkeaLlmwIUrVCyEpd6O4XkRbBySgAG3cADlWnxzSmUTJmXsmLQ==
+x-amz-cf-id: RBPrmcH8moNLmMM5lkJ13zjDMZoIYHcS0X6CRXe7iSM76qtMklCWtQ==
 strict-transport-security: max-age=31536000; includeSubDomains
 www-authenticate: Bearer resource_metadata="https://api.agentmail.to/.well-known/oauth-protected-resource"
 

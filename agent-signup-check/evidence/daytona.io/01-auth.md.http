@@ -1,6 +1,6 @@
 GET https://daytona.io/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:13.612Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:52.467Z
 redirect: 301 from https://daytona.io/auth.md
 final-url: https://www.daytona.io/auth.md
 
@@ -8,24 +8,24 @@ HTTP 404
 content-type: text/markdown; charset=utf-8
 content-length: 2619
 connection: close
-date: Wed, 18 Nov 2026 00:46:09 GMT
+date: Tue, 24 Nov 2026 15:50:48 GMT
 server: nginx/1.29.0
 x-content-type-options: nosniff
 cache-control: public, max-age=0, must-revalidate
 framer-site-id: c913edbf9fe925c1e688b580a21cb71930183ad1b0576ba092a88ef209378c4f
-last-modified: Tue, 17 Nov 2026 17:25:16 GMT
-server-timing: region;desc="us-east-1", cache;desc="cached", ssg-status;desc="optimized", version;desc="3824ea1", instance;desc="7415a64", route;desc="id=Ovp8sCFkO&locale=default", country;desc="US", ss-only-routes
+last-modified: Fri, 20 Nov 2026 20:36:15 GMT
+server-timing: region;desc="us-east-1", cache;desc="cached", ssg-status;desc="optimized", version;desc="010e668", instance;desc="39f64a1", route;desc="id=Ovp8sCFkO&locale=default", country;desc="US", ss-only-routes
 strict-transport-security: max-age=31536000
 vary: Accept-Encoding,Accept
 x-cache: Error from cloudfront
-via: 1.1 26c9d43b9089eee93b9e4ad4293d02c0.cloudfront.net (CloudFront)
+via: 1.1 8bf233dd8a97bd754666b427b6d19d34.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: cY2F29HwteqkZuxgB1tz2BaRm0gQRhA7ayWI_LPFojI9JPp1T-DzKw==
+x-amz-cf-id: lbq3jUUKJNJaGglce8tGcaYAmoeR5bGvVVu6-7WpZUK4MYnTLKzD-g==
 
 ---
 title: Daytona - Secure Infrastructure for Running AI-Generated Code
 description: Fast, Scalable, Stateful Infrastructure for AI Agents. Lightning-Fast Infrastructure for AI Development. Sub 90ms sandbox creation from code to execution.
-published: "Nov 17, 2026, 5:25 PM UTC"
+published: "Nov 20, 2026, 8:36 PM UTC"
 ---
 
 The page your looking for doesn't exist or has been moved. Please go back to the homepage.

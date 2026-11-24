@@ -1,14 +1,14 @@
 GET https://api.deepgram.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:08.993Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:48.178Z
 final-url: https://api.deepgram.com/.well-known/x402
 
 HTTP 404
 vary: origin, access-control-request-method, access-control-request-headers
 access-control-allow-credentials: true
 access-control-expose-headers: dg-model-name,dg-model-uuid,dg-additional-model-uuids,dg-char-count,dg-request-id,dg-project-id,dg-error,dg-breaks-applied,dg-pronunciations-applied,dg-pronunciation-warnings,dg-engine-instance
-dg-request-id: 01a1ec1e-4316-70bb-9f8b-8cbda822c958
+dg-request-id: 01a20e40-a73c-71c9-9c88-ab79e3cab598
 content-length: 0
-date: Wed, 18 Nov 2026 00:46:08 GMT
+date: Tue, 24 Nov 2026 15:50:47 GMT
 connection: close
 

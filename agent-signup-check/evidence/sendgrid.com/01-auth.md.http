@@ -1,6 +1,6 @@
 GET https://sendgrid.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:01.055Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:42.078Z
 redirect: 301 from https://sendgrid.com/auth.md
 final-url: https://www.twilio.com/en-us/sendgrid
 
@@ -8,20 +8,20 @@ HTTP 200
 content-type: text/html
 content-length: 631818
 connection: close
+accept-ranges: bytes
 server: AmazonS3
 last-modified: Mon, 12 Oct 2026 22:16:09 GMT
-x-amz-server-side-encryption: AES256
-x-amz-meta-aem-last-modified: Mon, 12 Oct 2026 22:14:56 GMT
 x-amz-meta-aem-etag: W/"9a325-65dac07271f03"
+x-amz-meta-aem-last-modified: Mon, 12 Oct 2026 22:14:56 GMT
 x-amz-version-id: BkngWf7mN8ReTF31VCkvevqQPeiDEQT6
-accept-ranges: bytes
-date: Wed, 18 Nov 2026 00:46:56 GMT
+x-amz-server-side-encryption: AES256
+date: Tue, 24 Nov 2026 15:51:37 GMT
 cache-control: no-cache
 etag: "e98c87f9f796b2683ebe1a8fe012a3d8"
 x-cache: RefreshHit from cloudfront
-via: 1.1 7f51caabae8141bdcde4283a42be2a56.cloudfront.net (CloudFront)
+via: 1.1 1f941fcf288b6d0259a0f708c955afae.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: JzGEuiwreQYuO28N154ZycywsKa2NvaIXj_T0du7WAvS1fNgS2wxiQ==
+x-amz-cf-id: E7KB6dHr6CodxODQIOn1-TSGnPTWGbXO6XuNiOsvmed1hi198HFQyw==
 
 
 <!DOCTYPE HTML>

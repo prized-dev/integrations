@@ -1,10 +1,10 @@
 GET https://api.replicate.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:03.148Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:42.519Z
 final-url: https://api.replicate.com/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:46:01 GMT
+date: Tue, 24 Nov 2026 15:50:40 GMT
 content-type: application/problem+json
 content-length: 69
 connection: close
@@ -16,7 +16,7 @@ expect-ct: max-age=86400, enforce
 referrer-policy: same-origin
 x-content-type-options: nosniff
 server: cloudflare
-cf-ray: a5c2f4a8ea0288dc-PDX
+cf-ray: a5f992164ef0fff0-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"detail":"The requested resource could not be found.","status":404}

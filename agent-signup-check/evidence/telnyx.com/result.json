@@ -1,8 +1,8 @@
 {
  "site": "telnyx.com",
- "checkedAt": "2026-11-18T00:47:03.281Z",
- "checker": "agent-signup-check/0.2.6",
- "passed": 6,
+ "checkedAt": "2026-11-24T15:51:46.360Z",
+ "checker": "agent-signup-check/0.2.7",
+ "passed": 7,
  "partial": 0,
  "unread": 0,
  "total": 7,
@@ -65,8 +65,11 @@
   {
    "id": "limits",
    "name": "Spend limits",
-   "status": "fail",
-   "reason": "No spend cap in metadata, auth.md or llms.txt"
+   "url": "https://api.telnyx.com/.well-known/oauth-authorization-server",
+   "default_spend_cap": "{\"period\":\"month\",\"amount\":{\"value\":\"1000000.00\",\"currency\":\"USD\"}}",
+   "periods": null,
+   "status": "pass",
+   "reason": "agent_auth.billing declares a default spend cap"
   },
   {
    "id": "payment",
@@ -80,7 +83,7 @@
    "name": "Docs in Markdown",
    "url": "https://telnyx.com/llms.txt",
    "heading": "# Telnyx",
-   "bytes": 18645,
+   "bytes": 20034,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -93,7 +96,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 205,
+   "ms": 54,
    "redirects": 0
   },
   {
@@ -103,7 +106,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 256,
+   "ms": 255,
    "redirects": 0
   },
   {
@@ -113,7 +116,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 55,
+   "ms": 58,
    "redirects": 0
   },
   {
@@ -123,7 +126,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 56,
+   "ms": 60,
    "redirects": 0
   },
   {
@@ -143,7 +146,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 279,
+   "ms": 226,
    "redirects": 0
   }
  ]

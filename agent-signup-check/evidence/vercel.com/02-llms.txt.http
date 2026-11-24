@@ -1,18 +1,18 @@
 GET https://vercel.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:13.361Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:53.881Z
 final-url: https://vercel.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 1827
+age: 123
 cache-control: public, max-age=0, s-maxage=3600, stale-while-revalidate=86400
 content-disposition: inline
 content-encoding: br
 content-security-policy: default-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live;script-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live va.vercel-scripts.com 'unsafe-eval' 'unsafe-inline' https://vercel.live https://*.fides-cdn.ethyca.com chrome-extension://* blob: cdp.vercel.com https://news.google.com;style-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live 'unsafe-inline' https://vercel.live;img-src 'self' blob: data: vercel.com *.vercel.sh vercel.live https://vercel.live https://vercel.com https://assets.vercel.com https://image.mux.com *.vercel.com https://images.ctfassets.net https://7nyt0uhk7sse4zvn.public.blob.vercel-storage.com https://avatars.githubusercontent.com https://i.ytimg.com https://pbs.twimg.com https://www.gstatic.com/images/branding/;media-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live blob: data: https://*.mux.com 7nyt0uhk7sse4zvn.public.blob.vercel-storage.com videos.ctfassets.net;connect-src data: 'self' vercel.com *.vercel.com *.vercel.sh vercel.live https://vercel.live wss://ws-us3.pusher.com www.vercel-status.com *.ingest.sentry.io *.ingest.us.sentry.io https://*.fides-cdn.ethyca.com wss://*.vercel.com *.codesandbox.io https://*.mux.com cdp.vercel.com https://news.google.com https://*.contentful.com https://react-tweet.vercel.app;font-src 'self' vercel.live https://vercel.live https://assets.vercel.com *.vercel.sh;child-src 'self' vercel.com *.vercel.com *.vercel.sh vercel.live https://www.youtube-nocookie.com https://news.google.com https://*.codesandbox.io;worker-src 'self' blob:;frame-ancestors 'self' https://vercel.com https://app.contentful.com https://*.contentful.com https://*.vercel.sh https://*.vercel.com https://claude.ai https://37a30e4bfcf9dbabb336cfdd75e343b1.claudemcpcontent.com https://ac6127567836815e3d8be55c5ee20681.claudemcpcontent.com;
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:10 GMT
-etag: W/"4f20d58a025fa3f1d5b4027c1b6035fe"
+date: Tue, 24 Nov 2026 15:50:51 GMT
+etag: W/"6f4b41dda804b066454f583a308a7e43"
 feature-policy: fullscreen 'self'; camera 'none'
 referrer-policy: origin-when-cross-origin
 server: Vercel
@@ -22,9 +22,9 @@ x-content-type-options: nosniff
 x-dns-prefetch-control: on
 x-download-options: noopen
 x-frame-options: DENY
-x-matched-path: /flg~eyJhbGciOiJIUzI1NiJ9._f7-_f79_v7-_v79_v7-_v79_f3-_v7-_v7-_v7-_f79_v79_v79_v7-_yJhbGxvd2VkIg.ZfwOra5hSH1gl6Os_3I2-Bhf9mz3zzx2nm46LHYOncQ/llms.txt
+x-matched-path: /flg~eyJhbGciOiJIUzI1NiJ9._f79_v7-_v7-_v7-_v39_v7-_v79_v3-_v79_f3-_v3-_v7_ImFsbG93ZWQi.F-4oVdJc93lUzqzjgoJ6o3B-wwK7zJlOos4qnfumxZI/llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::kkrh2-1794962770476-de0447c8b662
+x-vercel-id: pdx1::6fcx4-1795535451031-eff530a95569
 x-xss-protection: 0
 connection: close
 transfer-encoding: chunked
@@ -83,7 +83,7 @@ This file indexes vercel.com for AI agents. Most vercel.com pages are available 
 - [Workflows](https://vercel.com/docs/workflows.md): Run multi-step code that retries failed steps, waits for external events, and resumes after crashes and deployments.
 - [Connect](https://vercel.com/docs/connect.md): Give agents short-lived tokens for Slack, GitHub, Snowflake, or any OAuth or API-key service, without storing provider secrets.
 - [Passport](https://vercel.com/docs/passport.md) (Enterprise): Put your company's identity provider in front of every agent, app, and deployment you ship.
-- [Drives](https://vercel.com/docs/sandbox/concepts/drives.md): Storage you mount into a Sandbox, so an agent keeps its files between runs.
+- [Drives](https://vercel.com/docs/drives.md): Storage you mount into a Sandbox, so an agent keeps its files between runs.
 - [Agent harnesses](https://vercel.com/docs/agent-harnesses.md): Run Claude Code, Codex, OpenCode, eve, and other harnesses on Vercel, so an agent picks up where it stopped after a crash, timeout, or redeploy.
 - [MCP server hosting](https://vercel.com/docs/mcp.md): Deploy your own MCP servers so agents can call your APIs as tools.
 - [Container Registry](https://vercel.com/docs/container-registry.md): Store container images and run them on Functions or Sandbox.

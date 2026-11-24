@@ -1,18 +1,18 @@
 GET https://api.steel.dev/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:10.780Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:56.835Z
 final-url: https://api.steel.dev/.well-known/oauth-authorization-server
 
 HTTP 421
-date: Wed, 18 Nov 2026 00:47:09 GMT
+date: Tue, 24 Nov 2026 15:51:55 GMT
 content-type: text/plain
 transfer-encoding: chunked
 connection: close
-x-trace-id: 65b65d26210f219509daa69a440f70d9
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=JLDBmPrptOTQ3kKF%2F81KaR9MC7Dx4hC%2FbkzKOnxGrCkAc%2Bz1CcrWA9bp6JE0%2FlnTERLUEhjlqCbt0uV0DcZdn8yy8AA4m7kjiYsTZ%2BTWuTHrZ%2B4weBNM4wKwPK%2BDoV8%3D"}]}
+x-trace-id: 9170f74f2d48fd786fcdc9a71f4170bb
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=RCyfItezP%2B0ZNh4CVYSEhmAbaC%2Fv4j2kn05aJOdpfGINNEFiTifmo3N5RjSnFSJQTQ3ClLBYyGxZ%2F0Ua%2BH29v2Pr0ua%2BpYu28CXAs8h1iTUoiw32nPe2YBl1%2BTq7sT8%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a5c2f654eedfb248-PDX
+cf-ray: a5f993ecc9c568f1-PDX
 
 No route defined for GET /.well-known/oauth-authorization-server

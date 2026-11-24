@@ -1,23 +1,23 @@
 GET https://api.deepseek.com/models
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:45:59.423Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:39.031Z
 final-url: https://api.deepseek.com/models
 
 HTTP 401
 content-type: application/json
 transfer-encoding: chunked
 connection: close
-date: Wed, 18 Nov 2026 00:45:54 GMT
+date: Tue, 24 Nov 2026 15:50:34 GMT
 x-content-type-options: nosniff
 server: elb
 vary: accept-encoding,origin, access-control-request-method, access-control-request-headers
 content-encoding: br
 access-control-allow-credentials: true
-x-ds-trace-id: 09c7926249bdcbc8dd84b34d84048ab6
+x-ds-trace-id: 6795e4fc10869c8049749f7a361d0e77
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-cache: Error from cloudfront
-via: 1.1 9a4713706b0c5d2719c0ce83795d8ec2.cloudfront.net (CloudFront)
-x-amz-cf-pop: HIO52-P4
-x-amz-cf-id: L2qN6hUlqVKaCy3W6VknnZHezFy5bpd5cfR6fW0e9OzyKoaW_L3nNw==
+via: 1.1 6eef5cc48e8050472c6d6d9862d365dc.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P3
+x-amz-cf-id: LD8rLw_Zgm43PRmMvZ5Tr8WHkPAUFpPE5HI2LE78xk0eSpjYfAssZQ==
 
-{"error":{"message":"Authentication Fails (governor) (request_id: a7a61122-ad2d-4233-b601-cf9f7edf712c)","type":"authentication_error","param":null,"code":"invalid_request_error"}}
+{"error":{"message":"Authentication Fails (governor) (request_id: 275958bf-a137-4ad8-988b-abae7d8d2195)","type":"authentication_error","param":null,"code":"invalid_request_error"}}

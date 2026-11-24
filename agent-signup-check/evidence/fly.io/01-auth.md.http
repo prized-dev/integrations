@@ -1,18 +1,18 @@
 GET https://fly.io/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:14.889Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:40.393Z
 final-url: https://fly.io/auth.md
 
 HTTP 200
 access-control-allow-origin: *
 cache-control: max-age=0, private, must-revalidate
-content-length: 10066
+content-length: 16068
 content-type: text/markdown; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:10 GMT
-server: Fly/781f3a6652 (2026-11-10)
-x-request-id: GOj9IUAAzcb3jdwAASki
+date: Tue, 24 Nov 2026 15:52:36 GMT
+server: Fly/9bb2ac9a88 (2026-11-23)
+x-request-id: GOsGE1MXinWyJ-UAAAay
 via: 1.1 fly.io
-fly-request-id: 01M7P1WJT3NDTSMFYT1PKCPP2G-lax
+fly-request-id: 01M8744KWJCNEDMR299Z3T6BV4-lax
 connection: close
 
 # Authenticating to Fly.io
@@ -22,11 +22,13 @@ Machines API, or work inside a Sprite. This file tells you which credential
 that takes, how to get it without putting it at risk, and how to give it
 back.
 
-Fly.io does not support agentic registration. There is no anonymous
-identity endpoint, no claim ceremony, and no `agent_auth` block in any
-metadata document. Every credential below begins with a human who has
-signed in to Fly.io. If you arrived here from the auth.md spec looking for
-those, stop looking; the paths that exist are shorter.
+Fly.io supports agentic registration (the auth.md spec, `service_auth`
+only): you register with the user's email address, the user confirms a code
+on fly.io, and you get your own 24-hour credentials for Fly.io and Sprites.
+If the user has no account, claiming creates one. Use it when the user has
+no Fly.io account, or no credential and no flyctl session to give you; the
+steps are under **Agentic registration** below. First check for a
+credential you already have.
 
 ## First, look for a credential you already have
 
@@ -171,6 +173,150 @@ with `sprite auth setup --token <token>`. The Sprites REST API takes the
 same token: `Authorization: Bearer $SPRITES_TOKEN` against
 `https://api.sprites.dev/v1`. Once you are in, the working brief is
 <https://fly.io/sprites/agent-ready.md>.
+
+## Agentic registration
+
+For a user with no Fly.io account, or with no credential and no flyctl
+session to give you. You register with their email address, they confirm a
+code on fly.io, and you get your own credentials. Follow the steps in order.
+
+### Step 1: Discover
+
+The authorization server for agentic registration is the site that served
+this document. Fetch its metadata from the same origin:
+
+```http
+GET /.well-known/oauth-authorization-server
+```
+
+(`/.well-known/oauth-protected-resource` here describes Fly.io's MCP server,
+whose authorization server is a different one.)
+
+Read `token_endpoint`, `revocation_endpoint` and the `agent_auth` block. If
+there is no `agent_auth` block, agentic registration is switched off: use
+one of the other methods in this file.
+
+### Step 2: Pick a method
+
+Fly.io accepts one method: `service_auth`, with the user's email.
+`anonymous` returns `anonymous_not_enabled`; `identity_assertion` returns
+`issuer_not_enabled`.
+
+### Step 3: Register
+
+Ask the user which email address to use, and confirm before sending it.
+
+```http
+POST /agent/identity
+Content-Type: application/json
+
+{ "type": "service_auth", "login_hint": "user@example.com" }
+```
+
+The response carries `claim_token` and a `claim` block with `user_code`,
+`verification_uri`, `expires_in` and `interval`. Keep `claim_token` until you
+have saved the credentials, then discard it.
+
+`400 service_auth_not_enabled` means registration isn't open for that
+address yet: use one of the other methods in this file. `429 rate_limited`
+means wait and try later.
+
+### Step 4: Claim
+
+Show the user, in one message:
+
+> Open this link to claim your Fly.io account (user@example.com), then enter
+> this code: **123456**
+> <verification_uri>
+
+Tell the user what you will get: control of the apps, Machines, volumes,
+secrets and deploys in their personal Fly.io organization, and of their
+Sprites, with 24-hour credentials you renew. You can't change the
+organization's members or billing. New
+accounts may start on the **Free plan** with $1 of starter credit, no card
+required. Starter credit is available for up to 7 days.
+The claim page confirms the address (with GitHub, Google or an emailed link),
+which also verifies it, so the starter credit is available right away. If no account exists
+yet, the user names it and creates it there, in one step.
+
+When the starter credit is used up or expires, add a card to keep going. Without a card, we may
+stop or delete Machines, Volumes, Postgres clusters and Sprites after a
+short grace period. App shells remain so the user can re-launch after
+adding a card.
+
+Then poll every `interval` seconds, and keep polling: once the user has typed
+your code, you have 10 minutes to collect your credentials, or the claim is
+ended and the claim token gets `expired_token`.
+
+```http
+POST /oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:workos:agent-auth:grant-type:claim&claim_token=<clm_...>
+```
+
+`authorization_pending`: keep waiting. `slow_down`: add 5 seconds.
+`expired_token`: the code expired; call `POST /agent/identity/claim` with
+`{"claim_token": ..., "email": ...}` for a new code and link, and restart at
+Step 3 if that returns `410 claim_expired` or `401 invalid_claim_token`.
+`invalid_grant`: the `claim_token` is unknown, or the user revoked you.
+`503 temporarily_unavailable`: wait and poll again.
+
+Save the response before anything else. If it's lost, poll again with the
+same `claim_token` (once you have collected credentials, it works until the
+registration expires): you get
+another set of credentials. It contains:
+
+- `access_token`: a full `FlyV1 fm2_...` string, valid 24 hours. Use it as
+  `FLY_API_TOKEN` for `flyctl`, or as `Authorization: Bearer <access_token>`
+  against `https://api.machines.dev/v1`.
+- `sprites_token` and `sprites_api`: a Sprites token valid 24 hours, used as
+  `Authorization: Bearer <sprites_token>`. `sprites_api` already ends in
+  `/v1`, so list Sprites with `GET {sprites_api}/sprites`. If you get
+  `sprites_error` instead, Sprites is unavailable; the Fly token still works.
+- `identity_assertion` and `assertion_expires`: keep these to refresh.
+
+Your shell commands don't share memory, so store `access_token`,
+`sprites_token` and `identity_assertion` in a file only you can read
+(`chmod 600`), outside any repository, and read them from there. Losing them
+means asking the user to claim again.
+
+### Step 5: Refresh
+
+Before 24 hours pass, or on a 401:
+
+```http
+POST /oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=<identity_assertion>
+```
+
+You get another `access_token` and `sprites_token`. Earlier ones keep
+working until they expire, so parallel workers can each hold their own. You
+can hold five at once: a sixth retires the oldest. `429 rate_limited` means
+you are asking too often: wait and try later. On `invalid_grant` the
+user revoked you, their account was closed or restricted, or the assertion
+expired: restart at Step 3.
+
+### Revocation
+
+`POST /oauth2/revoke` with `token=<access_token>` revokes that one access
+token, and answers 200. A `503 temporarily_unavailable` means it wasn't
+revoked: try again. While you hold another token, your `identity_assertion`
+still works.
+
+Revoking your last token signs you out: your registration ends, Step 5
+returns `invalid_grant`, and the user has to claim again. To replace a
+token, run Step 5 first, then revoke the old one.
+
+The user can revoke you entirely by revoking any of your tokens, on their
+organization's or personal tokens page, where you appear as
+"Agent (auth.md)". Fly.io access then stops at once, Step 5
+returns `invalid_grant`, and Sprites access stops within 24 hours.
+
+Never print, log or commit `access_token`, `sprites_token`, `claim_token` or
+`identity_assertion`, and never put them in a message to the user.
 
 ## Use a Fly.io token
 

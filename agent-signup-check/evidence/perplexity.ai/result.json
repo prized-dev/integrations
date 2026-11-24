@@ -1,7 +1,7 @@
 {
  "site": "perplexity.ai",
- "checkedAt": "2026-11-18T00:45:58.897Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:50:38.342Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 2,
  "partial": 1,
  "unread": 1,
@@ -17,7 +17,7 @@
    "was": "fail",
    "wasReason": "/auth.md answers with a Cloudflare bot challenge (after a redirect to https://www.perplexity.ai/auth.md)",
    "status": "unread",
-   "reason": "Not read on 2026-11-18: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge"
+   "reason": "Not read on 2026-11-24: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge"
   },
   {
    "id": "prm",
@@ -36,7 +36,7 @@
    "name": "Sign-up by API",
    "url": "https://api.perplexity.ai/.well-known/oauth-authorization-server",
    "status": "fail",
-   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt (not read on 2026-11-18: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
+   "reason": "Authorization server metadata has no agent_auth block, and no sign-up API is documented in auth.md or llms.txt (not read on 2026-11-24: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
    "notRead": "https://perplexity.ai/auth.md"
   },
   {
@@ -53,14 +53,14 @@
    "id": "limits",
    "name": "Spend limits",
    "status": "fail",
-   "reason": "No spend cap in metadata, auth.md or llms.txt (not read on 2026-11-18: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
+   "reason": "No spend cap in metadata, auth.md or llms.txt (not read on 2026-11-24: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
    "notRead": "https://perplexity.ai/auth.md"
   },
   {
    "id": "payment",
    "name": "Payment handoff",
    "status": "fail",
-   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt (not read on 2026-11-18: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
+   "reason": "No 402, payment challenge or billing metadata, and no payment path the checker recognizes in auth.md or llms.txt (not read on 2026-11-24: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge)",
    "notRead": "https://perplexity.ai/auth.md"
   },
   {
@@ -68,7 +68,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.perplexity.ai/llms.txt",
    "heading": "# Perplexity",
-   "bytes": 46083,
+   "bytes": 48387,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -81,7 +81,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 36,
+   "ms": 28,
    "redirects": 1
   },
   {
@@ -91,7 +91,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 29,
+   "ms": 28,
    "redirects": 1
   },
   {
@@ -101,7 +101,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 126,
+   "ms": 154,
    "redirects": 0
   },
   {
@@ -111,7 +111,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 93,
+   "ms": 116,
    "redirects": 0
   },
   {
@@ -121,7 +121,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 102,
+   "ms": 114,
    "redirects": 1
   },
   {
@@ -131,7 +131,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 32,
+   "ms": 157,
    "redirects": 0
   },
   {
@@ -141,7 +141,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 31,
+   "ms": 41,
    "redirects": 0
   },
   {
@@ -151,7 +151,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 103,
+   "ms": 121,
    "redirects": 1
   },
   {
@@ -161,7 +161,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 100,
+   "ms": 113,
    "redirects": 1
   },
   {
@@ -171,7 +171,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 147,
+   "ms": 315,
    "redirects": 0
   }
  ]

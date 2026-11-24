@@ -1,6 +1,6 @@
 GET https://neon.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:47.107Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:28.724Z
 final-url: https://neon.com/auth.md
 
 HTTP 200
@@ -10,9 +10,9 @@ cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:42 GMT
+date: Tue, 24 Nov 2026 15:51:24 GMT
 etag: W/"1e4b569b6610a95d71ee6a2b899b99d6"
-last-modified: Wed, 18 Nov 2026 00:46:42 GMT
+last-modified: Tue, 24 Nov 2026 15:51:24 GMT
 link: </docs/llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt"
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -21,7 +21,7 @@ x-llms-txt: /docs/llms.txt
 x-matched-path: /auth.md
 x-robots-tag: noindex
 x-vercel-cache: MISS
-x-vercel-id: pdx1::d8mcx-1794962802763-b26b5bb332f7
+x-vercel-id: pdx1::slkq4-1795535484397-4bf6c050ea63
 connection: close
 transfer-encoding: chunked
 

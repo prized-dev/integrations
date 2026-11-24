@@ -1,30 +1,28 @@
 GET https://agentphone.to/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:05.644Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:50.872Z
 redirect: 301 from https://agentphone.to/llms.txt
 final-url: https://agentphone.ai/llms.txt
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:01 GMT
+date: Tue, 24 Nov 2026 15:51:47 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-accept-ranges: bytes
 content-disposition: inline; filename="llms.txt"
-content-encoding: br
-content-security-policy: frame-ancestors 'none'
-etag: "ca4a4749d86d7e0bf4a9807ff78b2e3a37280831"
-referrer-policy: strict-origin-when-cross-origin
-server: cloudflare
-vary: Accept-Encoding
-x-content-type-options: nosniff
+accept-ranges: bytes
+etag: "897c408109a51da291b3ac8a27f1fdff1850295e"
 x-frame-options: DENY
-x-railway-request-id: a91-puTfST6yez_7yCLmYg
-x-railway-edge: sjc1
-x-hikari-trace: sjc1.qeyn
+content-security-policy: frame-ancestors 'none'
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+vary: Accept-Encoding
+content-encoding: br
+strict-transport-security: max-age=31536000; includeSubDomains
 cf-cache-status: DYNAMIC
 speculation-rules: "/cdn-cgi/speculation"
-cf-ray: a5c2f6237eeb8b10-PDX
+server: cloudflare
+cf-ray: a5f993b7ced69d6b-PDX
 
 # AgentPhone
 
@@ -255,6 +253,12 @@ Predictable URLs for agent-discoverable resources. Each resource is named so tha
 - AgentPhone TypeScript SDK (Docs): https://docs.agentphone.ai/documentation/sdks/typescript
 - AgentPhone TypeScript SDK (npm): https://www.npmjs.com/package/agentphone
 - AgentPhone GitHub: https://github.com/AgentPhone-AI
+
+## Guides by Audience
+
+- Comparisons with Twilio, Telnyx, Bandwidth, Plivo, Vonage, Sinch, Sendblue, Linq, Vapi, Retell, Bland, Dial and AgentCall, with dated prices from each vendor's own pages: https://agentphone.ai/compare
+- Use cases (appointment reminders, lead follow-up, AI receptionist, order updates, verification codes, real estate, home services and more), each with the API calls and registration needed: https://agentphone.ai/use-cases
+- Build guides for Claude Code, Cursor, Codex, OpenClaw, Hermes, Replit, Vercel AI SDK, Lovable, n8n, Muse Code, Grok and OpenAI dots: https://agentphone.ai/build
 
 ## Links
 

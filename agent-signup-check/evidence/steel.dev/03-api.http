@@ -1,14 +1,14 @@
 GET https://api.steel.dev/v1/sessions
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:10.780Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:56.835Z
 final-url: https://api.steel.dev/v1/sessions
 
 HTTP 401
-date: Wed, 18 Nov 2026 00:47:07 GMT
+date: Tue, 24 Nov 2026 15:51:53 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
-x-trace-id: cffefbbf7900c3a2c78174e2b5700417
+x-trace-id: 767a73fb6b2a9ba207ff4e35982af9e9
 strict-transport-security: max-age=63072000; includeSubDomains
 x-content-type-options: nosniff
 referrer-policy: no-referrer
@@ -17,11 +17,11 @@ access-control-allow-origin: *
 access-control-expose-headers: Next-Cursor, ETag, Location, WWW-Authenticate, x-trace-id
 x-should-retry: false
 content-encoding: br
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=QxZv4PaB%2Bdy0%2BnRQj2yfaCpB3UNkLww6o8hIYrUdmeJIh%2Bo7uTTFnHo4%2Fp0a8NwD4HiiK06GWQdAz1srjgr2VEzsX80mqlGLqpbTIQYiXlYNHXLaZowET9eGhGF%2BVW8%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=y%2FThI1H8dhi%2BDI8GNx7vRYfDi5T7cNc7f9rG021gccFe9rdrygUvhMu6wbzXA%2FMnkIuWD5%2BnKgTIjAncdpxU9r9GNONIKwFDB0CLQItwyO9%2BDewihPUJWqIR0ajL0Bs%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 cf-cache-status: DYNAMIC
 vary: accept-encoding
 server: cloudflare
-cf-ray: a5c2f647af71dfd2-PDX
+cf-ray: a5f993e1aa14c654-PDX
 
-{"error":"Unauthorized","code":"missing_api_key","message":"Missing API key. Send your Steel API key in the 'steel-api-key' header. Create or rotate a key at https://app.steel.dev/settings/api-keys.","retryable":false,"linkToDocs":"https://docs.steel.dev/overview/authentication"}
+{"error":"Unauthorized","code":"missing_api_key","message":"Missing API key. Send your Steel API key in the 'steel-api-key' header. Create or rotate a key at https://app.steel.dev/settings/api-keys.","retryable":false,"linkToDocs":"https://steel.dev/docs/account/api-keys"}

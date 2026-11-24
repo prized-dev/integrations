@@ -1,16 +1,16 @@
 GET https://api.firecrawl.dev/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:13.569Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:58.942Z
 final-url: https://api.firecrawl.dev/.well-known/x402
 
 HTTP 404
 access-control-allow-origin: *
 content-length: 177
 content-type: application/json; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:13 GMT
+date: Tue, 24 Nov 2026 15:51:58 GMT
 etag: W/"b1-82PPgxbHxSlztFKlZVQzswptKcA"
 x-content-type-options: nosniff
-x-response-time: 0.545ms
+x-response-time: 0.471ms
 connection: close
 
 {"success":false,"code":"NOT_FOUND","error":"GET /.well-known/x402 is not a Firecrawl API endpoint.","documentation_url":"https://docs.firecrawl.dev/api-reference/introduction"}

@@ -1,14 +1,14 @@
 GET https://api.linear.app/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:41.666Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:27.605Z
 final-url: https://api.linear.app/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:39 GMT
+date: Tue, 24 Nov 2026 15:52:25 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5c2f70e1d613d49-PDX
+cf-ray: a5f994a4ffdce22a-PDX
 cf-cache-status: DYNAMIC
 cache-control: private, no-cache, no-store, must-revalidate
 server: cloudflare
@@ -17,7 +17,7 @@ via: 1.1 google
 alt-svc: h3=":443"; ma=86400
 content-security-policy: default-src 'none'
 x-content-type-options: nosniff
-x-request-id: a5c2f70ebf685509-PDX
+x-request-id: a5f994a5aef9ff0f-PDX
 content-encoding: br
 
 <!DOCTYPE html>

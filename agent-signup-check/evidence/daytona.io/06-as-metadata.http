@@ -1,6 +1,6 @@
 GET https://daytona.io/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:13.612Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:52.467Z
 redirect: 301 from https://daytona.io/.well-known/oauth-authorization-server
 final-url: https://www.daytona.io/.well-known/oauth-authorization-server
 
@@ -8,14 +8,14 @@ HTTP 404
 content-type: text/html; charset=utf-8
 content-length: 10
 connection: close
-date: Wed, 18 Nov 2026 00:46:12 GMT
+date: Tue, 24 Nov 2026 15:50:51 GMT
 strict-transport-security: max-age=31536000
 server: nginx/1.29.0
 x-content-type-options: nosniff
 cache-control: public, max-age=0, must-revalidate
 x-cache: Error from cloudfront
-via: 1.1 7f51caabae8141bdcde4283a42be2a56.cloudfront.net (CloudFront)
+via: 1.1 a235f5b7b15b9c8025af96fb0081dd58.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: ZQvfFh--PNGUXm9yfVO5mebMfsvp59wM2h2KTZ1wan-nDBFD41haJw==
+x-amz-cf-id: 6_CL3ArbLA8JBjIwzfJ1XUM-Lz4SSjWP8WT3crFJf7NN2fzpkCQbVA==
 
 Not found

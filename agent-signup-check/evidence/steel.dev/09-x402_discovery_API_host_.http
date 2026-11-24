@@ -1,18 +1,18 @@
 GET https://api.steel.dev/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:10.780Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:56.835Z
 final-url: https://api.steel.dev/.well-known/x402
 
 HTTP 421
-date: Wed, 18 Nov 2026 00:47:10 GMT
+date: Tue, 24 Nov 2026 15:51:56 GMT
 content-type: text/plain
 transfer-encoding: chunked
 connection: close
-x-trace-id: d7a37ef3d0fb0a3a92071f2a5825fa35
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=n1czvFvUcCx5iCSgCmYIhAtxrziUF4YEX9YRfz4uNJUvQXT95uKG7lZTcdA1IVbqCojtvsowaD8bxlQoEoqsAkJXHxAsm0Jnvgckj9u2LI%2F9v3Rxkl%2BSiyvfUjvIvlo%3D"}]}
+x-trace-id: 28e295692b9f819c6f875ad91ac4a2bd
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=EDFECiCgA5RN2qEnk27%2FCUJAHyPG6Bhk9aA5ESvZOLULn0slgTicot4PNjAA8rgCTAn9NowQ%2FC2iYLlVx%2BKmlX0jjMkQCVoTARUvls%2F%2F7OIYNPlqSAqq4cUC5eZ7TzM%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a5c2f659ca88dcdd-PDX
+cf-ray: a5f993f1ac99dabf-PDX
 
 No route defined for GET /.well-known/x402

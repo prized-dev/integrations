@@ -1,18 +1,18 @@
 GET https://runloop.ai/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:24.476Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:07.859Z
 final-url: https://runloop.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:46:22 GMT
+date: Tue, 24 Nov 2026 15:51:05 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5c2f52dfb0ea3b9-SEA
+cf-ray: a5f992b56c4cdc9f-SEA
 cf-cache-status: EXPIRED
 cache-control: no-transform
 content-encoding: gzip
-etag: W/"6afca0d1-58"
+etag: W/"6b0063fd-58"
 server: cloudflare
 vary: accept-encoding
 x-content-type-options: nosniff

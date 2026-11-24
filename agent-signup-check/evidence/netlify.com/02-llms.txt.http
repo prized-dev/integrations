@@ -1,6 +1,6 @@
 GET https://netlify.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:21.770Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:04.528Z
 final-url: https://netlify.com/llms.txt
 
 HTTP 200
@@ -10,15 +10,15 @@ cache-control: public,max-age=0,must-revalidate
 cache-status: "Netlify Edge"; fwd=miss; fwd-status=200; stored
 content-encoding: gzip
 content-type: text/plain; charset=UTF-8
-date: Wed, 18 Nov 2026 00:46:17 GMT
-etag: W/"3434c26a871de47d3a389db1decdf025-ssl"
+date: Tue, 24 Nov 2026 15:51:00 GMT
+etag: W/"cdf5a0c79e02f6ba07b378fa38aceb4c-ssl"
 link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/ard.json>; rel="ard"; type="application/ai-catalog+json"
 netlify-vary: header=x-forwarded-proto
 permissions-policy: browsing-topics=()
 server: Netlify
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: Accept-Encoding
-x-nf-request-id: 01M7P1WS6787BZM0XQRX1H1BHR
+x-nf-request-id: 01M8741NQZEKPS6MV6NR7ATW21
 connection: close
 transfer-encoding: chunked
 
@@ -34,7 +34,6 @@ transfer-encoding: chunked
 - [Agent Runners](https://www.netlify.com/platform/agent-runners.md): Run AI coding agents against your repo on Netlify.
 - [AI Gateway](https://www.netlify.com/platform/ai-gateway.md): A managed proxy to OpenAI, Anthropic, and Gemini without provider API keys.
 - [Database](https://www.netlify.com/platform/database.md): Managed Postgres built into Netlify.
-- [Storage](https://www.netlify.com/platform/storage.md): Blobs and object storage.
 - [Primitives](https://www.netlify.com/platform/primitives.md): Functions, edge functions, forms, and more.
 
 ## Solutions

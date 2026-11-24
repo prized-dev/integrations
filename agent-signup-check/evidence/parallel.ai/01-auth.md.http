@@ -1,6 +1,6 @@
 GET https://parallel.ai/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:27.144Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:13.684Z
 final-url: https://parallel.ai/auth.md
 
 HTTP 200
@@ -13,13 +13,13 @@ cache-control: no-store
 content-encoding: br
 content-security-policy: frame-ancestors 'self' https://parallel-v2.sanity.studio https://sanity.io https://www.sanity.io
 content-type: text/markdown; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:20 GMT
+date: Tue, 24 Nov 2026 15:52:06 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: Origin, Access-Control-Request-Headers
 x-matched-path: /auth.md
 x-vercel-cache: MISS
-x-vercel-id: pdx1:pdx1:pdx1::iad1::mmsq7-1794962840856-93ade924713b
+x-vercel-id: pdx1:pdx1:pdx1::iad1::rr4v7-1795535526562-23bf08ede856
 connection: close
 transfer-encoding: chunked
 
@@ -47,8 +47,8 @@ sees and approves them during the claim. Supported scopes:
 - `apps:create` — Create an app — `POST /service/v1/apps`.
 - `apps:delete` — Delete an app — `DELETE /service/v1/apps/{app_id}`.
 - `keys:read` — List API keys.
-- `keys:create` — Mint an API key under an app — `POST /service/v1/apps/{app_id}/keys`. This key (x-api-key) is what calls the product API (Search, Task, etc.).
-- `keys:delete` — Delete an API key — `DELETE /service/v1/apps/{app_id}/keys/{api_key_id}`.
+- `keys:create` — Mint an API key under an app — `POST /service/v1/apps/{app_id}/keys`. This key (x-api-key) is what calls the product API (Search, Task, etc.). Also creates a product API OAuth refresh token — `POST /service/v1/apps/{app_id}/oauth-credentials`.
+- `keys:delete` — Delete an API key — `DELETE /service/v1/apps/{app_id}/keys/{api_key_id}`. Also revokes a product API OAuth credential — `DELETE /service/v1/apps/{app_id}/oauth-credentials/{credential_id}`.
 - `balance:read` — Read the org's prepaid credit balance — `GET /service/v1/balance`.
 - `balance:add` — Charge the org's default card and top up balance — `POST /service/v1/balance/add`.
 - `usage:read` — Read the org's daily usage and cost line items — `GET /service/v1/usage`.
@@ -185,6 +185,23 @@ created_by_user_email, display_value, raw_api_key, created_at,
 is_service_scoped }`.
 The raw key (`raw_api_key`) is returned once — store it; it's your
 `x-api-key` for the product API.
+
+### POST /service/v1/apps/{app_id}/oauth-credentials  (scope: keys:create)
+Creates a rotating OAuth refresh token for the product API, as an alternative
+to an API key.
+Body: `{ "client_id": "<your client name>", "audience": "https://api.parallel.ai",
+"scopes": ["*"], "is_service_scoped": false }`. `audience` is the product API
+origin; `is_service_scoped` works as for keys.
+Response (201): `{ credential_id, client_id, app_id, app_name, created_by_user_id,
+is_service_scoped, audience, scopes, token_endpoint, refresh_token,
+refresh_token_expires_at, created_at }`. The refresh token is returned once.
+Exchange it at `token_endpoint` (`grant_type=refresh_token`) for an access
+token, and store the new refresh token each exchange returns. Send the access
+token as `Authorization: Bearer` to `audience`.
+
+### DELETE /service/v1/apps/{app_id}/oauth-credentials/{credential_id}  (scope: keys:delete)
+Revokes the credential. Returns 204, also when it is already revoked. Access
+tokens already minted stay valid until they expire (≤10 minutes).
 
 ## Example: run a search
 

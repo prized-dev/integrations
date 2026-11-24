@@ -1,6 +1,6 @@
 GET https://assemblyai.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:09.391Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:49.256Z
 redirect: 308 from https://assemblyai.com/llms.txt
 final-url: https://www.assemblyai.com/llms.txt
 
@@ -10,11 +10,11 @@ age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
-content-security-policy: default-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://*.assemblyai.com cdn.cookielaw.org https://rs-cdn.assemblyai.com https://cdn.rudderlabs.com https://www.datadoghq-browser-agent.com https://www.googletagmanager.com/gtag/ https://widget.usepylon.com https://*.google.com https://*.google-analytics.com https://*.gstatic.com https://*.googleadservices.com https://snap.licdn.com https://www.redditstatic.com/ads/pixel https://px.ads.linkedin.com https://googleads.g.doubleclick.net https://assets.apollo.io https://vercel.live https://polyfill-fastly.io; style-src 'self' 'unsafe-inline' https://*.assemblyai.com https://widget.usepylon.com/fonts.css https://vercel.live; img-src 'self' data: blob: https://vercel.live https://vercel.com https://*.assemblyai.com cdn.cookielaw.org https://*.google-analytics.com https://*.googletagmanager.com https://*.google.com https://*.google.co.uk https://*.google.com.sg https://*.google.com.au https://*.google.co.jp https://*.google.de https://*.google.fr https://*.google.ca https://*.google.co.in https://*.doubleclick.net https://*.googleadservices.com https://*.reddit.com https://*.ytimg.com https://www.linkedin.com/px https://*.ads.linkedin.com https://*.usepylon.com https://*.gstatic.com/faviconV2 https://pylon-avatars.s3.us-west-1.amazonaws.com https://cdn.prod.website-files.com; font-src 'self' data: https://*.assemblyai.com cdn.cookielaw.org https://widget.usepylon.com/fonts/ https://fonts.gstatic.com https://vercel.live https://assets.vercel.com; connect-src 'self' https://vercel.live https://*.vercel.app https://webflow.com https://*.assemblyai.com wss://*.assemblyai.com https://rs-dp.assemblyai.com https://rs-api.assemblyai.com https://rs-cdn.assemblyai.com https://*.dataplane.rudderstack.com https://*.browser-intake-datadoghq.com https://browser-intake-datadoghq.com https://*.google.com https://*.analytics.google.com https://*.google-analytics.com https://*.doubleclick.net https://*.googleadservices.com cdn.cookielaw.org https://*.onetrust.com https://*.usepylon.com wss://*.pusher.com https://*.ads.linkedin.com https://aplo-evnt.com https://vitals.vercel-insights.com https://track.customer.io https://api.rudderstack.com https://*.livekit.cloud wss://*.livekit.cloud; frame-src 'self' https://*.assemblyai.com https://td.doubleclick.net https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://vercel.live; media-src 'self' https://*.assemblyai.com https://assemblyaiassets.com https://cdn.prod.website-files.com
+content-security-policy: default-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://*.assemblyai.com https://global.ketchcdn.com https://cdn.ketchjs.com https://rs-cdn.assemblyai.com https://cdn.rudderlabs.com https://www.datadoghq-browser-agent.com https://www.googletagmanager.com/gtag/ https://widget.usepylon.com https://*.google.com https://*.google-analytics.com https://*.gstatic.com https://*.googleadservices.com https://snap.licdn.com https://www.redditstatic.com/ads/pixel https://px.ads.linkedin.com https://googleads.g.doubleclick.net https://assets.apollo.io https://vercel.live https://polyfill-fastly.io; style-src 'self' 'unsafe-inline' https://*.assemblyai.com https://widget.usepylon.com/fonts.css https://vercel.live; img-src 'self' data: blob: https://vercel.live https://vercel.com https://*.assemblyai.com https://global.ketchcdn.com https://cdn.ketchjs.com https://*.google-analytics.com https://*.googletagmanager.com https://*.google.com https://*.google.co.uk https://*.google.com.sg https://*.google.com.au https://*.google.co.jp https://*.google.de https://*.google.fr https://*.google.ca https://*.google.co.in https://*.doubleclick.net https://*.googleadservices.com https://*.reddit.com https://*.ytimg.com https://www.linkedin.com/px https://*.ads.linkedin.com https://*.usepylon.com https://*.gstatic.com/faviconV2 https://pylon-avatars.s3.us-west-1.amazonaws.com https://cdn.prod.website-files.com; font-src 'self' data: https://*.assemblyai.com https://widget.usepylon.com/fonts/ https://fonts.gstatic.com https://vercel.live https://assets.vercel.com; connect-src 'self' https://vercel.live https://*.vercel.app https://webflow.com https://*.assemblyai.com wss://*.assemblyai.com https://rs-dp.assemblyai.com https://rs-api.assemblyai.com https://rs-cdn.assemblyai.com https://*.dataplane.rudderstack.com https://*.browser-intake-datadoghq.com https://browser-intake-datadoghq.com https://*.google.com https://*.analytics.google.com https://*.google-analytics.com https://*.doubleclick.net https://*.googleadservices.com https://global.ketchcdn.com https://cdn.ketchjs.com https://*.usepylon.com wss://*.pusher.com https://*.ads.linkedin.com https://aplo-evnt.com https://vitals.vercel-insights.com https://track.customer.io https://api.rudderstack.com https://*.livekit.cloud wss://*.livekit.cloud; frame-src 'self' https://*.assemblyai.com https://td.doubleclick.net https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://vercel.live; media-src 'self' https://*.assemblyai.com https://assemblyaiassets.com https://cdn.prod.website-files.com
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:05 GMT
-etag: W/"1e672fca9110650177bae143a2eae4c9"
-last-modified: Wed, 18 Nov 2026 00:46:05 GMT
+date: Tue, 24 Nov 2026 15:50:45 GMT
+etag: W/"3554ad02b5fdc2549138a0093c85e92e"
+last-modified: Tue, 24 Nov 2026 15:50:45 GMT
 permissions-policy: autoplay=(self), geolocation=(self), clipboard-read=(self), clipboard-write=(self)
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -24,7 +24,7 @@ x-dns-prefetch-control: off
 x-frame-options: SAMEORIGIN
 x-robots-tag: index, follow
 x-vercel-cache: MISS
-x-vercel-id: pdx1:pdx1:pdx1::7rlvv-1794962765749-a63cae5d9656
+x-vercel-id: pdx1:pdx1:pdx1::kxhqd-1795535445077-f41c7a913915
 x-xss-protection: 1; mode=block
 connection: close
 transfer-encoding: chunked
@@ -33,13 +33,16 @@ transfer-encoding: chunked
 
 > AssemblyAI provides production-ready Voice AI models for speech-to-text, real-time streaming transcription, dictation (the Dictation API), speaker diarization, Speech Understanding, Guardrails, Text-to-Speech, and the LLM Gateway. This file indexes the Markdown sources agents should prefer over crawling the HTML marketing site.
 
+Get an API key: https://www.assemblyai.com/dashboard/signup?utm_source=llms_txt&utm_medium=ai_agent&utm_campaign=agent_docs&utm_content=root
+
 ## Agent Instructions
 
 - Prefer the Markdown sources linked in this file over crawling HTML pages.
 - For documentation pages, append `.md` to the page URL to get the Markdown version (e.g. `https://www.assemblyai.com/docs/getting-started/models.md`).
 - For the complete documentation index, use https://www.assemblyai.com/docs/llms.txt.
 - For all documentation in a single file, use https://www.assemblyai.com/docs/llms-full.txt.
-- For coding assistants and agentic IDEs, start with [Build with AI coding agents](https://www.assemblyai.com/docs/agent-instructions.md) and the docs MCP server at https://www.assemblyai.com/docs/mcp.
+- For coding assistants and agentic IDEs, start with [Build with AI coding agents](https://www.assemblyai.com/docs/coding-agent-prompts.md) and the docs MCP server at https://www.assemblyai.com/docs/mcp.
+- For Claude Code, Cursor, Codex and other skills-compatible agents, install the [AssemblyAI skill](https://github.com/AssemblyAI/assemblyai-skill): `npx skills add AssemblyAI/assemblyai-skill`.
 
 ## MCP Servers
 
@@ -57,7 +60,7 @@ AssemblyAI runs two MCP servers. They do different jobs.
 
 - [Documentation index — all pages](https://www.assemblyai.com/docs/llms.txt): the docs team's complete, authoritative index.
 - [All documentation in one file](https://www.assemblyai.com/docs/llms-full.txt)
-- [Build with AI coding agents](https://www.assemblyai.com/docs/agent-instructions.md): integration guidance for Cursor, Claude Code, Copilot, and other AI coding assistants.
+- [Build with AI coding agents](https://www.assemblyai.com/docs/coding-agent-prompts.md): integration guidance for Cursor, Claude Code, Copilot, and other AI coding assistants.
 - [Models overview](https://www.assemblyai.com/docs/getting-started/models.md): how to choose a speech model.
 - [AssemblyAI-STT-3.7 launch](https://www.assemblyai.com/blog/introducing-assemblyai-stt-3-7): the current model family. AssemblyAI-STT-3.7 (pre-recorded, `assemblyai-stt-3-7`), AssemblyAI-STT-3.7-Realtime (live conversation, `assemblyai-stt-3-7-realtime`) and AssemblyAI-STT-3.7-Realtime-Agent (voice agents, `assemblyai-stt-3-7-realtime-agent`), 32 languages each.
 - [Universal-3.5 Pro](https://www.assemblyai.com/docs/pre-recorded-audio/universal-3-5-pro.md): the previous pre-recorded model, deprecated in favour of AssemblyAI-STT-3.7.
@@ -67,6 +70,7 @@ AssemblyAI runs two MCP servers. They do different jobs.
 - [Speech Understanding](https://www.assemblyai.com/docs/speech-understanding/getting-started.md): LLM-powered analysis over transcripts.
 - [LLM Gateway](https://www.assemblyai.com/docs/llm-gateway/quickstart.md): apply leading LLMs to audio through one API.
 - [API reference](https://www.assemblyai.com/docs/api-reference/overview.md)
+- [API reference — OpenAPI spec](https://www.assemblyai.com/docs/openapi.json)
 - [End-to-end examples](https://www.assemblyai.com/docs/getting-started/end-to-end-examples.md)
 - [FAQ](https://www.assemblyai.com/docs/faq.md)
 

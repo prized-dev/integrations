@@ -1,6 +1,6 @@
 GET https://tryelliot.app/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:46.997Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:31.644Z
 redirect: 308 from https://tryelliot.app/auth.md
 final-url: https://www.tryelliot.app/auth.md
 
@@ -11,13 +11,13 @@ cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="auth.md"
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:42 GMT
+date: Tue, 24 Nov 2026 15:52:27 GMT
 etag: W/"0d952e76f542836c1e8bff31830968d0"
-last-modified: Wed, 18 Nov 2026 00:47:42 GMT
+last-modified: Tue, 24 Nov 2026 15:52:27 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-vercel-cache: MISS
-x-vercel-id: pdx1::tww9h-1794962862314-026dabf8507b
+x-vercel-id: pdx1::kshvw-1795535547335-72b39f54385a
 connection: close
 transfer-encoding: chunked
 

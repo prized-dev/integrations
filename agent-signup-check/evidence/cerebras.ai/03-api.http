@@ -1,10 +1,10 @@
 GET https://api.cerebras.ai/v1/models
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:04.878Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:44.151Z
 final-url: https://api.cerebras.ai/v1/models
 
 HTTP 403
-date: Wed, 18 Nov 2026 00:45:59 GMT
+date: Tue, 24 Nov 2026 15:50:39 GMT
 content-type: application/json
 content-length: 30
 connection: close
@@ -13,7 +13,7 @@ referrer-policy: strict-origin-when-cross-origin
 x-content-type-options: nosniff
 strict-transport-security: max-age=15552000; includeSubDomains; preload
 cf-cache-status: DYNAMIC
-cf-ray: a5c2f4a01ca45f03-PDX
+cf-ray: a5f9920e38738736-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"detail":"Not authenticated"}

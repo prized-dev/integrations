@@ -1,7 +1,7 @@
 {
  "site": "openai.com",
- "checkedAt": "2026-11-18T00:45:48.352Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:50:27.969Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 2,
  "partial": 0,
  "unread": 0,
@@ -70,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 254,
+   "ms": 244,
    "redirects": 0
   },
   {
@@ -80,7 +80,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 168,
+   "ms": 130,
    "redirects": 0
   },
   {
@@ -90,7 +90,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 63,
+   "ms": 79,
    "redirects": 0
   },
   {
@@ -100,7 +100,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 171,
+   "ms": 91,
    "redirects": 0
   },
   {
@@ -110,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 180,
+   "ms": 121,
    "redirects": 0
   },
   {
@@ -120,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": null,
-   "ms": 97,
+   "ms": 99,
    "redirects": 0
   },
   {
@@ -130,7 +130,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 142,
+   "ms": 131,
    "redirects": 0
   },
   {
@@ -140,7 +140,7 @@
    "status": 404,
    "error": null,
    "contentType": null,
-   "ms": 95,
+   "ms": 92,
    "redirects": 0
   },
   {
@@ -150,7 +150,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 168,
+   "ms": 119,
    "redirects": 0
   },
   {
@@ -160,7 +160,7 @@
    "status": 404,
    "error": null,
    "contentType": null,
-   "ms": 101,
+   "ms": 106,
    "redirects": 0
   }
  ]

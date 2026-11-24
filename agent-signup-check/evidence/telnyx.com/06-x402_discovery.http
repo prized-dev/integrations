@@ -1,14 +1,14 @@
 GET https://telnyx.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:03.281Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:46.360Z
 final-url: https://telnyx.com/.well-known/x402
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:02 GMT
+date: Tue, 24 Nov 2026 15:51:46 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5c2f629fd333741-PDX
+cf-ray: a5f993af9a89ff0a-PDX
 cf-cache-status: BYPASS
 access-control-allow-origin: *
 cache-control: public, max-age=900, stale-while-revalidate=86400, must-revalidate

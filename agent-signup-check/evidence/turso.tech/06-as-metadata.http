@@ -1,6 +1,6 @@
 GET https://turso.tech/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:47.231Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:30.693Z
 redirect: 307 from https://turso.tech/.well-known/oauth-authorization-server
 final-url: https://api.turso.tech/.well-known/oauth-authorization-server
 
@@ -11,11 +11,11 @@ connection: close
 access-control-allow-headers: *
 access-control-allow-methods: GET, OPTIONS
 access-control-allow-origin: *
-date: Wed, 18 Nov 2026 00:46:46 GMT
+date: Tue, 24 Nov 2026 15:51:29 GMT
 x-cache: Miss from cloudfront
-via: 1.1 63227cf14d6d2219c6d94e402898004a.cloudfront.net (CloudFront)
+via: 1.1 e27e33d2ef7d91c8ffc1afbdd6d85df0.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: gOAu9DaVjV5NVpWAaWCeSeziG1JMU62uT4zyoO_bCGTUoWWoiGX-4A==
+x-amz-cf-id: U-wsqsDXxiH-tdX_2fddbSutJ5ex0loPOwxdrXwrX86QKMgEqgqGxw==
 
 {"authorization_endpoint":"https://app.turso.tech/oauth/mcp/authorize","client_id_metadata_document_supported":true,"code_challenge_methods_supported":["S256"],"grant_types_supported":["authorization_code"],"issuer":"https://api.turso.tech","registration_endpoint":"https://api.turso.tech/v1/oauth/register","response_types_supported":["code"],"token_endpoint":"https://api.turso.tech/v1/oauth/token","token_endpoint_auth_methods_supported":["none"]}

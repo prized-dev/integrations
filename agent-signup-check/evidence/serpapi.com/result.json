@@ -1,7 +1,7 @@
 {
  "site": "serpapi.com",
- "checkedAt": "2026-11-18T00:47:21.509Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:52:06.522Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 1,
  "partial": 1,
  "unread": 0,
@@ -57,7 +57,7 @@
    "name": "Docs in Markdown",
    "url": "https://serpapi.com/llms.txt",
    "heading": "# SerpApi",
-   "bytes": 37641,
+   "bytes": 39872,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -70,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 128,
+   "ms": 131,
    "redirects": 0
   },
   {
@@ -80,7 +80,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 116,
+   "ms": 33,
    "redirects": 0
   },
   {
@@ -100,7 +100,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 114,
+   "ms": 128,
    "redirects": 0
   },
   {
@@ -110,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 115,
+   "ms": 130,
    "redirects": 0
   },
   {
@@ -120,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 117,
+   "ms": 122,
    "redirects": 0
   }
  ]

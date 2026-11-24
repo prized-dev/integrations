@@ -1,7 +1,7 @@
 {
  "site": "assemblyai.com",
- "checkedAt": "2026-11-18T00:46:09.391Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:50:49.256Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 1,
  "partial": 1,
  "unread": 0,
@@ -57,7 +57,7 @@
    "name": "Docs in Markdown",
    "url": "https://www.assemblyai.com/llms.txt",
    "heading": "# AssemblyAI",
-   "bytes": 5059,
+   "bytes": 5479,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -70,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 433,
+   "ms": 372,
    "redirects": 1
   },
   {
@@ -80,7 +80,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 192,
+   "ms": 228,
    "redirects": 1
   },
   {
@@ -90,7 +90,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=UTF-8",
-   "ms": 12,
+   "ms": 174,
    "redirects": 0
   },
   {
@@ -100,7 +100,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 303,
+   "ms": 250,
    "redirects": 1
   },
   {
@@ -110,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 7,
+   "ms": 175,
    "redirects": 0
   },
   {
@@ -120,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 328,
+   "ms": 242,
    "redirects": 1
   },
   {
@@ -130,7 +130,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 7,
+   "ms": 191,
    "redirects": 0
   },
   {
@@ -140,7 +140,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 274,
+   "ms": 227,
    "redirects": 1
   },
   {
@@ -150,7 +150,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 7,
+   "ms": 176,
    "redirects": 0
   }
  ]

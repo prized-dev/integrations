@@ -1,10 +1,10 @@
 GET https://us.posthog.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:41.950Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:26.706Z
 final-url: https://us.posthog.com/.well-known/oauth-protected-resource
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:38 GMT
+date: Tue, 24 Nov 2026 15:52:23 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close

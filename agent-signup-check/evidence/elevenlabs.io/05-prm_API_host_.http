@@ -1,12 +1,12 @@
 GET https://api.elevenlabs.io/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:07.109Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:46.416Z
 final-url: https://api.elevenlabs.io/.well-known/oauth-protected-resource
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:46:05 GMT
+date: Tue, 24 Nov 2026 15:50:43 GMT
 server: uvicorn
-content-length: 352
+content-length: 387
 content-type: application/json
 vary: Accept-Language
 access-control-allow-origin: *
@@ -14,10 +14,10 @@ access-control-allow-headers: *
 access-control-allow-methods: POST, PATCH, OPTIONS, DELETE, GET, PUT
 access-control-max-age: 600
 strict-transport-security: max-age=1800;
-x-trace-id: 6c58220dc9924307b934468272bc774b
+x-trace-id: 0c7cfa2e36c37fe5ef36b6326c368fa9
 x-region: us-central1
 via: 1.1 google
-alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+alt-svc: h3=":443"; ma=2592000
 connection: close
 
-{"resource":"https://api.elevenlabs.io/v1/mcp","authorization_servers":["https://api.us.elevenlabs.io"],"scopes_supported":["convai_read","convai_write","text_to_speech","speech_history_read","flows","image_video_generation","voice_generation","ads_read","ads_write","user_read","pronunciation_dictionaries_read"],"bearer_methods_supported":["header"]}
+{"resource":"https://api.elevenlabs.io/v1/mcp","authorization_servers":["https://api.us.elevenlabs.io"],"scopes_supported":["convai_read","convai_write","text_to_speech","speech_history_read","flows","image_video_generation","voice_generation","ads_read","ads_write","user_read","pronunciation_dictionaries_read","pronunciation_dictionaries_write"],"bearer_methods_supported":["header"]}

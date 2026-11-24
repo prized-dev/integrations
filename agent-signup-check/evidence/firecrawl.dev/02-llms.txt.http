@@ -1,6 +1,6 @@
 GET https://firecrawl.dev/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:13.569Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:58.942Z
 redirect: 308 from https://firecrawl.dev/llms.txt
 final-url: https://www.firecrawl.dev/llms.txt
 
@@ -11,9 +11,9 @@ cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:10 GMT
-etag: W/"813f9d844d1160759c740e0a8b10867f"
-last-modified: Wed, 18 Nov 2026 00:47:10 GMT
+date: Tue, 24 Nov 2026 15:51:56 GMT
+etag: W/"d94b834ce2663a6e119b6b1ec6d4df19"
+last-modified: Tue, 24 Nov 2026 15:51:56 GMT
 permissions-policy: geolocation=(self)
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -22,7 +22,7 @@ x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /llms.txt
 x-vercel-cache: MISS
-x-vercel-id: pdx1::gw4vg-1794962830397-706299b3a07b
+x-vercel-id: pdx1::jwmpg-1795535516079-b4fb0c5b2882
 connection: close
 transfer-encoding: chunked
 
@@ -49,11 +49,12 @@ Firecrawl is the same set of tools everywhere: ChatGPT calls it a plugin, Claude
 - **From a ChatGPT or Codex chat:** add the [official Firecrawl plugin](https://chatgpt.com/plugins/plugin_asdk_app_6a314a73f8ac819195b0d55e36b9c609?q=firecrawl), sign in, and ask it to search, scrape, crawl, or research. Setup: [Firecrawl in ChatGPT](https://www.firecrawl.dev/integrations/chatgpt)
 - **From a Claude chat:** turn on the [Firecrawl connector](https://claude.ai/directory/connectors/firecrawl) from the + menu. Setup: [Firecrawl in Claude](https://www.firecrawl.dev/integrations/claude)
 - **From Grok Bot:** add the [Firecrawl plugin for Grok Bot](https://x.ai/bot/plugin/789), then type @ in a chat to attach Firecrawl. Setup: [Firecrawl in Grok Bot](https://www.firecrawl.dev/integrations/grok-bot)
-- **From Muse:** the install link is on [Plugins](https://www.firecrawl.dev/plugins).
+- **From Muse:** open the [Muse setup chat](https://muse.ai/?prompt=Please%20install%20the%20Firecrawl%20MCP%20using%20https%3A%2F%2Fwww.firecrawl.dev%2Fagent-onboarding%2FSKILL.md) and send it, then sign in when Muse asks. In Muse Code, add `https://mcp.firecrawl.dev/v2/mcp-oauth` under `mcp_servers` and run `muse mcp login firecrawl`. Setup: [Firecrawl in Muse](https://www.firecrawl.dev/integrations/muse)
 - **In Cursor:** [add the Firecrawl MCP server in one click](cursor://anysphere.cursor-deeplink/mcp/install?name=firecrawl&config=eyJ1cmwiOiJodHRwczovL21jcC5maXJlY3Jhd2wuZGV2L3YyL21jcC1vYXV0aCJ9), signed in to your Firecrawl account. Setup: [Firecrawl in Cursor](https://www.firecrawl.dev/integrations/cursor)
 - **In another coding agent (Claude Code, Codex, Gemini CLI):** run `npx -y firecrawl-cli@latest init --all --browser` for the CLI and skills, or use the installs on [Plugins](https://www.firecrawl.dev/plugins).
 - **In any other MCP client:** add `https://mcp.firecrawl.dev/v2/mcp` (see MCP Server below).
 - **In your own app or pipeline:** call the REST API or an SDK (see API Reference below).
+- **In a Vercel AI SDK app:** run `npm install firecrawl-aisdk ai`, then call `const { systemPrompt, ...tools } = FirecrawlTools()` and pass `system: systemPrompt` and `tools` to `generateText` or `streamText`. Setup: [Firecrawl + Vercel AI SDK](https://www.firecrawl.dev/integrations/vercel-ai-sdk)
 - **For data a provider already publishes:** use [Alexandria](https://alexandria.firecrawl.dev) from a signed-in Firecrawl connection or with an API key on an Alexandria-enabled team; keyless access does not include Alexandria.
 - **In a no-code workflow:** use the Firecrawl nodes for n8n, Make, Zapier, or Dify ([Integrations](https://www.firecrawl.dev/integrations)).
 - **To try it before writing code:** the [Playground](https://www.firecrawl.dev/playground).
@@ -77,10 +78,6 @@ Search the web, scrape pages, crawl and map sites, interact with pages, and call
 
 - [CLI documentation (Markdown)](https://docs.firecrawl.dev/sdks/cli.md)
 - [CLI documentation (HTML)](https://docs.firecrawl.dev/sdks/cli)
-
-## Hosted bash
-
-- [Firecrawl Bash](https://api.firecrawl.dev/v2/bash): A hosted shell for agents with `firecrawl search` and `firecrawl scrape` from the Firecrawl CLI built in, and the Firecrawl docs mounted at `/docs`. Search the web, scrape pages and grep the docs with one HTTP request: no API key, MCP server or install. Try `curl https://api.firecrawl.dev/v2/bash --data-binary 'firecrawl search "web scraping api" --limit 3'`, and `firecrawl --help` for every command.
 
 ## Agent Skills
 

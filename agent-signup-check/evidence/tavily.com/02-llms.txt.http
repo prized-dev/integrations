@@ -1,6 +1,6 @@
 GET https://tavily.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:21.713Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:06.833Z
 redirect: 302 from https://tavily.com/llms.txt
 redirect: 308 from https://www.tavily.com/llms.txt
 final-url: https://docs.tavily.com/llms.txt
@@ -8,21 +8,22 @@ final-url: https://docs.tavily.com/llms.txt
 HTTP 200
 cache-control: public, max-age=0, must-revalidate
 cf-cache-status: EXPIRED
-cf-ray: a5c2f683def6efac-PDX
+cf-ray: a5f994180ed9c153-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:17 GMT
-last-modified: Wed, 18 Nov 2026 00:47:17 GMT
+date: Tue, 24 Nov 2026 15:52:02 GMT
+last-modified: Tue, 24 Nov 2026 15:52:03 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
+x-content-type-options: nosniff
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4177
+x-mintlify-client-version: 0.0.4286
 x-vercel-cache: MISS
-x-vercel-id: pdx1:pdx1:iad1::iad1::n24cf-1794962837048-1c963fcdf4aa
+x-vercel-id: pdx1:pdx1:iad1::iad1::7zpht-1795535522526-a61fbf6adea8
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_HhUetB7eHHDAmK9T1Teip38TgFx9
+x-version: dpl_G6E2ur2Zjq51xGTVZPSFXsWoTxCu
 connection: close
 transfer-encoding: chunked
 
@@ -171,6 +172,7 @@ Recommended defaults for agents: prefer `search_depth="advanced"`, add `chunks_p
 - [OpenAI Agent Builder](https://docs.tavily.com/documentation/integrations/agent-builder.md): Empower OpenAI's Agent Builder with real-time web access via Tavily MCP.
 - [Agno](https://docs.tavily.com/documentation/integrations/agno.md): Use Tavily with the Agno agent framework.
 - [Anthropic](https://docs.tavily.com/documentation/integrations/anthropic.md): Add real-time web search to Claude tool-calling agents.
+- [Google Antigravity](https://docs.tavily.com/documentation/integrations/antigravity.md): Web search, extraction, crawling, and research in Google Antigravity through the Tavily plugin.
 - [Arcade.dev](https://docs.tavily.com/documentation/integrations/arcade-dev.md): Governed Tavily access via the Arcade.dev MCP Gateway.
 - [Cartesia](https://docs.tavily.com/documentation/integrations/cartesia.md): Build real-time voice agents that search and extract with the Cartesia Line SDK.
 - [Claude](https://docs.tavily.com/documentation/integrations/claude.md): Use Tavily in Claude Code (official plugin) and in claude.ai, Claude Desktop, and Cowork (connector), including organization-wide setup.

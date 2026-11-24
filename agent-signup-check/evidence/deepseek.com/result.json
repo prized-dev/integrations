@@ -1,7 +1,7 @@
 {
  "site": "deepseek.com",
- "checkedAt": "2026-11-18T00:45:59.423Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:50:39.031Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 0,
  "partial": 1,
  "unread": 0,
@@ -61,7 +61,7 @@
     "https://api-docs.deepseek.com/llms.txt"
    ],
    "status": "fail",
-   "reason": "https://deepseek.com/llms.txt not found (HTTP 404); https://api-docs.deepseek.com/llms.txt answers with an HTML page"
+   "reason": "https://deepseek.com/llms.txt not found (HTTP 404); https://api-docs.deepseek.com/llms.txt not found (HTTP 404)"
   }
  ],
  "requests": [
@@ -72,7 +72,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 534,
+   "ms": 579,
    "redirects": 0
   },
   {
@@ -82,7 +82,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 259,
+   "ms": 152,
    "redirects": 0
   },
   {
@@ -92,17 +92,17 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 287,
+   "ms": 288,
    "redirects": 0
   },
   {
    "label": "llms.txt (docs)",
    "url": "https://api-docs.deepseek.com/llms.txt",
    "finalUrl": "https://api-docs.deepseek.com/llms.txt",
-   "status": 200,
+   "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 463,
+   "ms": 593,
    "redirects": 0
   },
   {
@@ -112,7 +112,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 200,
+   "ms": 415,
    "redirects": 0
   },
   {
@@ -122,7 +122,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 269,
+   "ms": 270,
    "redirects": 0
   },
   {
@@ -132,7 +132,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 408,
+   "ms": 339,
    "redirects": 0
   },
   {
@@ -142,7 +142,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 274,
+   "ms": 266,
    "redirects": 0
   },
   {
@@ -152,7 +152,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 410,
+   "ms": 392,
    "redirects": 0
   },
   {
@@ -162,7 +162,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 274,
+   "ms": 269,
    "redirects": 0
   }
  ]

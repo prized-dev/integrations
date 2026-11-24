@@ -1,10 +1,10 @@
 GET https://postmarkapp.com/agent-signup-check-no-such-page.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:56.055Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:39.547Z
 final-url: https://postmarkapp.com/agent-signup-check-no-such-page.md
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:46:54 GMT
+date: Tue, 24 Nov 2026 15:51:38 GMT
 content-type: text/html; charset=UTF-8
 transfer-encoding: chunked
 connection: close
@@ -16,7 +16,7 @@ x-content-type-options: nosniff
 cf-cache-status: DYNAMIC
 vary: accept-encoding
 server: cloudflare
-cf-ray: a5c2f5f7aad2efb0-PDX
+cf-ray: a5f9937f6dc0cf48-PDX
 alt-svc: h3=":443"; ma=86400
 
 

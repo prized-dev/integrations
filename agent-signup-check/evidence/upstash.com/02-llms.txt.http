@@ -1,25 +1,25 @@
 GET https://upstash.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:50.713Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:32.809Z
 final-url: https://upstash.com/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 1091
+age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: default-src 'self';  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://cdn.segment.com https://va.vercel-scripts.com https://vercel.live;  style-src 'self' 'unsafe-inline' https://vercel.live;  img-src 'self' blob: data: https://cdn.contentport.io https://cdn.bydefault.so https://js.intercomcdn.com https://static.intercomassets.com https://downloads.intercomcdn.com https://downloads.intercomcdn.eu https://downloads.au.intercomcdn.com https://uploads.intercomusercontent.com https://gifs.intercomcdn.com https://video-messages.intercomcdn.com https://messenger-apps.intercom.io https://messenger-apps.eu.intercom.io https://messenger-apps.au.intercom.io https://*.intercom-attachments.com https://static.intercomassets.eu https://static.au.intercomassets.com https://www.google-analytics.com https://www.googletagmanager.com https://*.google.com https://*.doubleclick.net https://www.google.com.tr https://www.googleadservices.com https://*.mux.com;  font-src 'self' https://js.intercomcdn.com https://fonts.intercomcdn.com https://vercel.live https://assets.vercel.com;  connect-src 'self' https://api-iam.intercom.io https://api-iam.eu.intercom.io https://api-iam.au.intercom.io https://api-ping.intercom.io https://nexus-websocket-a.intercom.io wss://nexus-websocket-a.intercom.io https://nexus-websocket-b.intercom.io wss://nexus-websocket-b.intercom.io https://nexus-europe-websocket.intercom.io wss://nexus-europe-websocket.intercom.io https://nexus-australia-websocket.intercom.io wss://nexus-australia-websocket.intercom.io https://uploads.intercomcdn.com https://uploads.intercomcdn.eu https://uploads.au.intercomcdn.com https://uploads.eu.intercomcdn.com https://uploads.intercomusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://cdn.segment.com https://api.segment.io https://vitals.vercel-insights.com https://*.doubleclick.net https://analytics.google.com https://stats.g.doubleclick.net https://kg2nsnegmd.execute-api.us-west-1.amazonaws.com https://xsdlzzdyji.execute-api.us-west-2.amazonaws.com https://effbmlt2n4.execute-api.us-east-1.amazonaws.com https://fvj3rll99i.execute-api.eu-west-1.amazonaws.com https://bszkhcn2m7.execute-api.eu-central-1.amazonaws.com https://czphf8wj9b.execute-api.ap-southeast-1.amazonaws.com https://gu1zu8xx11.execute-api.ap-east-1.amazonaws.com https://kuhry6kp4h.execute-api.sa-east-1.amazonaws.com https://um7c15bqnl.execute-api.me-south-1.amazonaws.com https://www.google.com https://www.google.com.tr https://www.googleadservices.com https://vercel.live wss://*.pusher.com https://*.mux.com https://*.litix.io;  object-src 'none';  base-uri 'self';  form-action 'self' https://intercom.help https://api-iam.intercom.io https://api-iam.eu.intercom.io https://api-iam.au.intercom.io;  frame-src https://vercel.live https://www.googletagmanager.com https://intercom-sheets.com https://www.intercom-reporting.com https://www.youtube.com https://player.vimeo.com https://fast.wistia.net https://*.doubleclick.net;  worker-src 'self' https://intercom-sheets.com https://www.intercom-reporting.com https://www.youtube.com https://player.vimeo.com https://fast.wistia.net;  media-src 'self' blob: https://js.intercomcdn.com https://downloads.intercomcdn.com https://downloads.intercomcdn.eu https://downloads.au.intercomcdn.com https://*.mux.com;  frame-ancestors 'none';  manifest-src 'self' https://upstash.com;
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:47 GMT
-etag: W/"ad83dc67dca178fcbe5947aafd7c7eca"
-last-modified: Wed, 18 Nov 2026 00:28:35 GMT
-link: <https://upstash.com/llms.txt>; rel="alternate"; type="text/plain"; title="LLM-friendly content index", <https://context7.com/api/v2/ask?siteKey=ask_4cf2adc7846aa874f833b068>; rel="search"; type="text/plain"; title="Search upstash.com", <https://upstash.com/docs/devops/developer-api/openapi.yaml>; rel="service-desc"; type="application/openapi+yaml"; title="Upstash Developer API (OpenAPI)", <https://upstash.com/docs/qstash/openapi.yaml>; rel="service-desc"; type="application/openapi+yaml"; title="QStash REST API (OpenAPI)", <https://upstash.com/docs/workflow/openapi.yaml>; rel="service-desc"; type="application/openapi+yaml"; title="Upstash Workflow REST API (OpenAPI)"
+date: Tue, 24 Nov 2026 15:51:28 GMT
+etag: W/"d1b746f49f6013a93cf6e14ea52df876"
+last-modified: Tue, 24 Nov 2026 15:51:29 GMT
+link: <https://upstash.com/llms.txt>; rel="alternate"; type="text/plain"; title="LLM-friendly content index", <https://upstash.com/.well-known/ai-catalog.json>; rel="ai-catalog"; type="application/ai-catalog+json", <https://context7.com/api/v2/ask?siteKey=ask_4cf2adc7846aa874f833b068>; rel="search"; type="text/plain"; title="Search upstash.com", <https://upstash.com/docs/devops/developer-api/openapi.yaml>; rel="service-desc"; type="application/openapi+yaml"; title="Upstash Developer API (OpenAPI)", <https://upstash.com/docs/qstash/openapi.yaml>; rel="service-desc"; type="application/openapi+yaml"; title="QStash REST API (OpenAPI)", <https://upstash.com/docs/workflow/openapi.yaml>; rel="service-desc"; type="application/openapi+yaml"; title="Upstash Workflow REST API (OpenAPI)"
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
-x-vercel-cache: HIT
-x-vercel-id: pdx1::qbbx7-1794962806990-9138681d23d6
+x-vercel-cache: MISS
+x-vercel-id: pdx1::jwmpg-1795535488911-e6190ffbce81
 connection: close
 transfer-encoding: chunked
 
@@ -45,7 +45,6 @@ This site has a search endpoint: https://context7.com/api/v2/ask?siteKey=ask_4cf
 
 ## How agents should call Upstash
 
-- Need a Redis database to use or experiment with? `POST https://upstash.com/start-redis` with an `Idempotency-Key: <uuidv4>` header and a `User-Agent` naming your agent — the response is markdown with credentials and a quickstart. Free, no signup, temporary database (expires in 3 days unless claimed). `GET` the same URL for full instructions. Docs: https://upstash.com/docs/devops/developer-api/start-redis/create
 - OpenAPI spec for the Upstash Developer API (manage databases, teams and billing at api.upstash.com, authenticated): https://upstash.com/docs/devops/developer-api/openapi.yaml — also at https://upstash.com/openapi.json and listed in https://upstash.com/.well-known/api-catalog
 - OpenAPI specs for the product REST APIs: QStash https://upstash.com/docs/qstash/openapi.yaml · Workflow https://upstash.com/docs/workflow/openapi.yaml
 - The homepage, product pages, pricing pages, blog pages and knowledge base articles can be fetched as markdown by sending `Accept: text/markdown`; product pages, pricing pages, blog posts and knowledge base articles also have `.md` URLs (e.g. https://upstash.com/qstash.md, https://upstash.com/pricing/redis.md, https://upstash.com/blog.md, https://upstash.com/kb.md). Unknown paths return a 404 with a markdown body.
@@ -71,8 +70,15 @@ Vendor-neutral guides, comparisons and how-tos from the Upstash team (caching, R
 - [Box Pricing](https://upstash.com/pricing/box): Free, Pay-as-you-go ($0.10–$0.40/active CPU hour by size), Enterprise
 - [Box Pricing (Markdown)](https://upstash.com/pricing/box.md): Machine-readable Box pricing
 
+Every product has a free tier and bills per use on Pay-as-you-go, so a project can start free and move to a paid plan when it outgrows the limits. Two optional steps above that, for production needs:
+
+- Prod Pack, an add-on for paid Redis, QStash and Workflow plans: +$200/month per Redis database, or per QStash region (which also covers Workflow there). It adds a 99.99% uptime SLA, a SOC 2 Type 2 report, encryption at rest and Prometheus/Datadog monitoring, plus multi-zone high availability and Insights on Redis. It is worth it when a contract or security review asks for those, or when production traffic must survive a zone failure; development and low-stakes workloads run the same without it. Details are in each pricing page's "Prod Pack Add-on" section.
+- Enterprise, for custom contracts and limits: everything in Prod Pack plus HIPAA, VPC peering, SAML SSO and dedicated support.
+
 ## Enterprise & Compliance
 
+- [Uptime SLA](https://upstash.com/docs/common/help/sla): 99.99% monthly uptime for resources with Prod Pack or an Enterprise plan
+- [Compliance](https://upstash.com/docs/common/help/compliance): SOC 2 Type 2, HIPAA and GDPR status, and where to request reports
 - [Enterprise](https://upstash.com/enterprise): Custom contracts, VPC peering, HIPAA, SSO, SLA, dedicated support
 - [Professional Support](https://upstash.com/docs/common/help/prosupport): Dedicated service desk and Slack/Discord SLA
 

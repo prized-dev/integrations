@@ -1,24 +1,24 @@
 GET https://hyperbrowser.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:11.633Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:57.356Z
 redirect: 307 from https://hyperbrowser.ai/llms.txt
 final-url: https://www.hyperbrowser.ai/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 0
+age: 287117
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:08 GMT
+date: Tue, 24 Nov 2026 15:51:54 GMT
 etag: W/"252ef1d73a45b950fe912b523620de32"
-last-modified: Wed, 18 Nov 2026 00:47:08 GMT
+last-modified: Sat, 21 Nov 2026 08:06:37 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
-x-vercel-cache: MISS
-x-vercel-id: pdx1::h5nkc-1794962828397-d072e118a2a1
+x-vercel-cache: HIT
+x-vercel-id: pdx1::t6rk4-1795535513993-d1881963a541
 connection: close
 transfer-encoding: chunked
 

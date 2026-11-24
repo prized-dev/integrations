@@ -1,10 +1,10 @@
 GET https://api.onkernel.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:09.720Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:55.440Z
 final-url: https://api.onkernel.com/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:09 GMT
+date: Tue, 24 Nov 2026 15:51:55 GMT
 content-type: text/plain; charset=utf-8
 content-length: 19
 connection: close

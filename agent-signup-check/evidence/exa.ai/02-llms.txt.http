@@ -1,19 +1,19 @@
 GET https://exa.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:18.093Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:04.059Z
 final-url: https://exa.ai/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 2044
+age: 18371
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-security-policy: frame-ancestors 'none'
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:15 GMT
-etag: W/"729f6df34a0725abe0697006c87ded2f"
-last-modified: Wed, 18 Nov 2026 00:13:10 GMT
+date: Tue, 24 Nov 2026 15:52:01 GMT
+etag: W/"2b68cf8ee2086b0d9c1feee196826df3"
+last-modified: Tue, 24 Nov 2026 10:45:49 GMT
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
@@ -21,7 +21,7 @@ x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::9pgl7-1794962835138-e3d62a9b9977
+x-vercel-id: pdx1::wc8c8-1795535521103-adb4709ee3b0
 connection: close
 transfer-encoding: chunked
 
@@ -29,7 +29,7 @@ transfer-encoding: chunked
 
 > Exa is a real-time knowledge index and retrieval platform built for AI agents. Exa builds and maintains its own index and search models, and continuously indexes the live web alongside structured data about companies, people, financial markets, code, documents, and other sources. Developers use Exa’s APIs to search, retrieve, and research public and private data.
 
-**Start for free:** New accounts receive $10 in free credits every month, plus a one-time $10 bonus for completing onboarding. No payment method is required, and the free tier includes access to all API endpoints.
+**Start for free:** New accounts receive $10 in free credits every month, plus a one-time $10 bonus for completing onboarding. No payment method is required, and the Starter plan (free) includes access to all API endpoints.
 
 For AI agents and automation, start with the agent-native interfaces below. For complete technical documentation, use the Exa documentation index.
 
@@ -83,6 +83,8 @@ Markdown endpoint references, each with the endpoint's full OpenAPI request and 
 
 ## Products
 
+Product pages are also available as Markdown by appending `.md` to the page URL (`https://exa.ai/products/search.md`), or by requesting the page URL with `Accept: text/markdown`.
+
 ### Search API
 
 Search the web and extract contents from the results. Built for AI applications and agents. Use Deep Search for multi-step web search with reasoning and structured outputs for complex research tasks.
@@ -120,6 +122,13 @@ Build lists of companies and people from plain-English criteria. Each result is 
 - [Websets](https://exa.ai/products/websets)
 - [Websets documentation](https://exa.ai/docs/websets/quickstart.md)
 
+### Monitors API
+
+Run a search on a schedule and receive only new results, with a cited answer, delivered to your webhook. Track company news, RFPs, competitors, and other changes on the web.
+
+- [Monitors API](https://exa.ai/products/monitors)
+- [Monitors documentation](https://exa.ai/docs/monitors/quickstart.md)
+
 ### Exa Connect
 
 Connect your agents to the world's public and private data, including web analytics, private markets, company and contact data, financial data, healthcare intelligence, compliance data, and other specialized datasets from leading providers.
@@ -129,7 +138,7 @@ Connect your agents to the world's public and private data, including web analyt
 
 ### Exa Library
 
-Exa Library collections are searchable through the standard search call. They cover people, companies, job postings, places, sports, weather, earnings calls, SEC filings, stock pages, market quotes, products, events, podcasts, legal entities, court opinions, legislation, patents, research papers, Wikipedia, countries, indicators and clinical trials.
+Exa Library collections are searchable through the standard search call. They cover people, companies, job postings, places, sports, weather, earnings calls, SEC filings, stock pages, market quotes, products, events, podcasts, legal entities, court opinions, legislation, patents, research papers, Wikipedia, countries, indicators, clinical trials, drugs, drug authorizations, diseases, molecules and genes.
 
 - [Exa Library](https://exa.ai/library)
 - People & companies
@@ -137,6 +146,7 @@ Exa Library collections are searchable through the standard search call. They co
   - [Companies](https://exa.ai/library/organization)
   - [Job postings](https://exa.ai/library/job-posting)
 - Live data
+  - [Flights](https://exa.ai/library/flights): Flight status, airport departure and arrival boards, and itineraries between places.
   - [Places](https://exa.ai/library/place)
   - [Sports](https://exa.ai/library/sports)
   - [Weather](https://exa.ai/library/weather)
@@ -162,7 +172,15 @@ Exa Library collections are searchable through the standard search call. They co
   - [Countries](https://exa.ai/library/geoarea)
   - [Indicators](https://exa.ai/library/indicator)
 - Health
+  - [Health data](https://exa.ai/library/health)
   - [Clinical trials](https://exa.ai/library/health/study)
+  - [Drugs](https://exa.ai/library/health/drug)
+  - [Drug authorizations](https://exa.ai/library/health/authorization)
+  - [Diseases](https://exa.ai/library/health/disease)
+- Science
+  - [Science data](https://exa.ai/library/science)
+  - [Molecules](https://exa.ai/library/science/molecule)
+  - [Genes](https://exa.ai/library/science/gene)
 
 ## Use Cases
 
@@ -206,11 +224,12 @@ Machine-readable API specifications. Use the OpenAPI specification as the source
 
 ## Pricing
 
-Exa can be started for free. New accounts receive $10 in free credits every month, plus a one-time $10 bonus for completing onboarding, with no payment method required. The free tier includes access to all endpoints.
+Exa can be started for free. New accounts receive $10 in free credits every month, plus a one-time $10 bonus for completing onboarding, with no payment method required. The Starter plan (free) includes access to all endpoints.
 
-Paid API usage is pay-as-you-go, with enterprise plans available for higher limits, custom infrastructure, security requirements, and support.
+Paid API usage is pay-as-you-go. An annual Growth plan adds zero data retention and 50 QPS, and Enterprise plans are available for custom limits, infrastructure, security requirements, and support.
 
 - [Pricing](https://exa.ai/pricing)
+- [Exa for Startups](https://exa.ai/startups)
 - [Pricing documentation](https://exa.ai/docs/admin/pricing.md)
 - [Billing](https://exa.ai/docs/admin/billing.md)
 - [Rate limits](https://exa.ai/docs/admin/billing.md)
@@ -221,6 +240,10 @@ Exa publishes evaluations of search quality, latency, vertical retrieval, coding
 
 - [Evals](https://exa.ai/evals)
 - [Open-source benchmarks](https://github.com/exa-labs/benchmarks)
+- [Introducing Exa 3.0](https://exa.ai/blog/exa-3)
+- [Exa ranks #1 on the Artificial Analysis Search Index](https://exa.ai/blog/artificial-analysis-exa-3-best-search-api)
+- [People search benchmarks](https://exa.ai/blog/people-search-benchmark)
+- [Company search benchmarks](https://exa.ai/blog/company-search-benchmarks)
 
 ## Comparisons
 
@@ -236,6 +259,20 @@ Detailed comparisons of Exa with other search, retrieval, and research APIs incl
 - [Exa vs Serper](https://exa.ai/versus/serper)
 - [Exa vs You.com](https://exa.ai/versus/you)
 
+## Alternatives
+
+Guides to the alternatives for each search, retrieval, and research API, compared on features, pricing, latency, and retrieval accuracy.
+
+- [Tavily alternatives](https://exa.ai/alternatives/tavily)
+- [Parallel Search alternatives](https://exa.ai/alternatives/parallel-ai)
+- [Perplexity Sonar alternatives](https://exa.ai/alternatives/perplexity-api)
+- [Firecrawl alternatives](https://exa.ai/alternatives/firecrawl)
+- [Brave Search API alternatives](https://exa.ai/alternatives/brave-search-api)
+- [SerpAPI alternatives](https://exa.ai/alternatives/serpapi)
+- [Serper alternatives](https://exa.ai/alternatives/serper)
+- [You.com API alternatives](https://exa.ai/alternatives/you-com-api)
+- [Exa alternatives](https://exa.ai/alternatives/exa)
+
 ## Customers
 
 See how production AI products and agents use Exa for web search, research, coding, company and people data, and enrichment.
@@ -244,7 +281,7 @@ See how production AI products and agents use Exa for web search, research, codi
 
 ## Research
 
-Technical research and engineering work from Exa on web-scale retrieval, search models, evaluation, search infrastructure, and agentic search.
+Technical research and engineering work from Exa on web-scale retrieval, search models, evaluation, search infrastructure, and agentic search. Blog posts and the blog index are also available as Markdown by appending `.md` to the URL, or with `Accept: text/markdown`.
 
 - [Research](https://exa.ai/research)
 - [Blog](https://exa.ai/blog)
@@ -255,7 +292,9 @@ Technical research and engineering work from Exa on web-scale retrieval, search 
 Exa is an applied AI research lab building search infrastructure for AI systems.
 
 - [About Exa](https://exa.ai/about)
+- [Enterprise](https://exa.ai/enterprise)
 - [Security](https://exa.ai/security)
+- [EU data residency](https://exa.ai/eu-data-residency)
 - [Trust Center](https://trust.exa.ai)
 - [GitHub](https://github.com/exa-labs)
 - [Changelog](https://exa.ai/docs/changelog.md)

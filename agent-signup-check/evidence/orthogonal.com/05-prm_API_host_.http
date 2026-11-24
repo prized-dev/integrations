@@ -1,6 +1,6 @@
 GET https://api.orthogonal.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:29.536Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:14.932Z
 final-url: https://api.orthogonal.com/.well-known/oauth-protected-resource
 
 HTTP 404
@@ -8,7 +8,7 @@ age: 0
 cache-control: public, max-age=0, must-revalidate
 content-length: 0
 content-security-policy-report-only: default-src 'self'; script-src 'self' 'unsafe-inline' https://clerk.orthogonal.com https://challenges.cloudflare.com https://*.protect.clerk.com https://connect-js.stripe.com https://js.stripe.com https://www.googletagmanager.com https://app.chatwoot.com https://vercel.live; style-src 'self' 'unsafe-inline' https://vercel.live; img-src 'self' data: blob: https://img.clerk.com https://*.stripe.com https://www.googletagmanager.com https://*.google-analytics.com https://models.dev https://vercel.live https://vercel.com; font-src 'self' https://vercel.live https://assets.vercel.com; connect-src 'self' https://clerk.orthogonal.com https://*.protect.clerk.com:* https://www.googletagmanager.com https://*.google-analytics.com https://*.google.com https://vercel.live wss://ws-us3.pusher.com; frame-src 'self' https://challenges.cloudflare.com https://*.protect.clerk.com https://connect-js.stripe.com https://js.stripe.com https://app.chatwoot.com https://vercel.live https://trytako.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; report-uri /csp-reports
-date: Wed, 18 Nov 2026 00:47:27 GMT
+date: Tue, 24 Nov 2026 15:52:12 GMT
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -18,6 +18,6 @@ x-content-type-options: nosniff
 x-frame-options: DENY
 x-matched-path: /.well-known/oauth-protected-resource
 x-vercel-cache: MISS
-x-vercel-id: pdx1::cle1::j4hj8-1794962847529-a09f2f1bed99
+x-vercel-id: pdx1::cle1::2h6tj-1795535532839-f69af4d2c9f7
 connection: close
 

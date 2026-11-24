@@ -1,6 +1,6 @@
 GET https://kernel.sh/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:09.720Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:55.440Z
 redirect: 301 from https://kernel.sh/llms.txt
 final-url: https://www.kernel.sh/llms.txt
 
@@ -9,12 +9,12 @@ age: 0
 cache-control: public, max-age=3600
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:06 GMT
+date: Tue, 24 Nov 2026 15:51:52 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::k4r8z-1794962826920-562a2fc96903
+x-vercel-id: pdx1::iad1::dxl47-1795535512607-75a8c62b522b
 connection: close
 transfer-encoding: chunked
 
@@ -28,12 +28,12 @@ use KERNEL when an agent needs to interact with a website rather than a purpose-
 
 for direct http integrations, start with the openapi specification and authenticate with a KERNEL api key. for tool-calling agents, connect the hosted mcp server over streamable http. for scripts and terminal workflows, install the official cli. all browser sessions should be deleted when work is complete unless a documented lifecycle requires otherwise.
 
-## pricing (as of September 2026)
+## pricing (as of November 2026)
 
-usage is billed at $0.0000166667 per GB-second of browser memory, with no charge for idle (standby) time or proxy traffic. every plan adds a monthly platform price:
+usage is billed at $0.0000166667 per GB-second of browser memory, with no charge for idle (standby) time. every plan adds a monthly platform price:
 
 - free: $0/month plus usage. $5 / month free credits, 5 concurrent browsers, live view, stealth mode (captcha solver & proxy), managed auth (3 connections), session replays (1 day), file uploads & downloads, vaults & payments (3 vaults).
-- hobbyist: $30/month plus usage. everything in free, plus $10 / month free credits, 10 concurrent browsers, unlimited proxy usage, session replays (7 days), unlimited managed auth connections, unlimited vaults & payments.
+- hobbyist: $30/month plus usage. everything in free, plus $10 / month free credits, 10 concurrent browsers, session replays (7 days), unlimited managed auth connections, unlimited vaults & payments.
 - start-up: $200/month plus usage. everything in hobbyist, plus $50 / month free credits, 150 concurrent browsers, custom (byo) proxies, gpu acceleration, regional browsers, session replays (30 days), unlimited custom extensions.
 - enterprise: custom pricing for high-volume concurrency, with a 99.9% sla, sso, 24/7 slack support, soc2 and hipaa compliance, white-labeling, and zero data retention.
 

@@ -1,12 +1,12 @@
 GET https://cloudflare.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:21.045Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:00.507Z
 redirect: 301 from https://cloudflare.com/.well-known/oauth-protected-resource
 redirect: 301 from https://www.cloudflare.com/.well-known/oauth-protected-resource
 final-url: https://www.cloudflare.com/.well-known/oauth-protected-resource/
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:46:17 GMT
+date: Tue, 24 Nov 2026 15:50:57 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -26,10 +26,10 @@ x-frame-options: SAMEORIGIN
 x-served-by: marketing-site
 x-xss-protection: 1; mode=block
 x-rm: GW
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=s2m%2Fb%2BOjhrT2p81nFe6DVGn7pOAuXu5BQNBa0FcmzdIEes4ZXqEbjGzp%2B9dpRndvRJfs5RuUPkGSF7pSg4obTnCj9It2DvNEH3A3wbv%2FVsIlk3W9p2b1%2Fj08qn4Ps5p8f66%2BCg%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=TXlSN3Ten4WAJzHw80WoyccEGVdxbd6HZDJnSVUS4NPG2VPeFcJkXTHDz1WNwC3yWrJmeUu1g5h5cbRI%2FDTk9CORVmx4r1tj6cfq98nN1QidLYuzLIipJ8Bv2L0wP3%2BXqq31ng%3D%3D"}]}
 content-encoding: br
 server: cloudflare
-cf-ray: a5c2f510fe26f8cb-PDX
+cf-ray: a5f9927fdf7efc1e-PDX
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html><html lang="en" class="font-stk-bureau-sans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><link rel="preconnect" href="https://imagedelivery.net" crossorigin><link rel="preconnect" href="https://ot.www.cloudflare.com" crossorigin><link rel="preload" href="/icons.svg" as="image" type="image/svg+xml"><link rel="preload" href="/fonts/STKBureauSans-Book.otf" as="font" type="font/otf" crossorigin><link rel="preload" href="/fonts/STKBureauSans-Regular.otf" as="font" type="font/otf" crossorigin><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><script>
@@ -339,10 +339,14 @@ const gtmContainerSrc = "https://www.googletagmanager.com/gtm.js?id=GTM-NDGPDFZ"
 
         if (!window.__cfConsentEventAttached) {
           window.__cfConsentEventAttached = true;
-          // HEAD request only — sync above already covers Zaraz/Google.
+          // Bypass cached GET responses so saved consent reaches the gateway.
           window.addEventListener('consent.onetrust', function () {
             setTimeout(function () {
-              fetch(window.location.pathname, { method: 'HEAD' }).catch(function () {});
+              fetch(window.location.pathname, {
+                method: 'HEAD',
+                credentials: 'same-origin',
+                cache: 'no-store',
+              }).catch(function () {});
             }, 500);
           });
         }
@@ -370,9 +374,6 @@ const gtmContainerSrc = "https://www.googletagmanager.com/gtm.js?id=GTM-NDGPDFZ"
         if (typeof window.requestIdleCallback === 'function') {
           window.requestIdleCallback(loadZaraz, { timeout: 3000 });
         } else {
-          window.setTimeout(loadZaraz, 1500);
-        }
-      })();
-    })();</script><script type="module">globalThi
+ 
 
-[body trimmed for publication: kept 16384 of 176432 characters; sha256 of the published body 714bc986ec6daece35325fc254b14d9690ab29bab6150a794aec9b7777b9fa46]
+[body trimmed for publication: kept 16384 of 176570 characters; sha256 of the published body f0c266f4b4eba069b10ebf27ac6208c46b5a576f2b0a0ab05700d88dc3c845cf]

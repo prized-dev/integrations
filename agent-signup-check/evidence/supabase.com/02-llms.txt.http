@@ -1,19 +1,23 @@
 GET https://supabase.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:46.441Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:28.390Z
 final-url: https://supabase.com/llms.txt
 
 HTTP 200
 age: 0
 cache-control: public
 content-encoding: br
+content-security-policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ss.supabase.com https://ph.supabase.com https://*.usercentrics.eu https://platform.twitter.com https://cdn.syndication.twimg.com https://js.hsforms.net https://*.hsforms.net https://static.hsappstatic.net https://js.hcaptcha.com https://*.hcaptcha.com https://import-cdn.default.com https://bwa.marketplace.awsstatic.com https://cdn.jsdelivr.net/gh/hiunicornstudio/; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:42 GMT
+date: Tue, 24 Nov 2026 15:51:24 GMT
+referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
 x-matched-path: /llms.txt
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::bqpnc-1794962802616-08e18eb55cc4
+x-vercel-id: pdx1::iad1::kshvw-1795535484613-90454c1f539c
 connection: close
 transfer-encoding: chunked
 

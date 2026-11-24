@@ -1,22 +1,22 @@
 GET https://freestyle.sh/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:31.748Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:12.688Z
 redirect: 301 from https://freestyle.sh/llms.txt
 final-url: https://www.freestyle.sh/llms.txt
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:46:28 GMT
+date: Tue, 24 Nov 2026 15:51:09 GMT
 content-type: text/plain
 transfer-encoding: chunked
 connection: close
 cf-cache-status: HIT
 cache-control: public, max-age=0, must-revalidate
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=xIgdEDN%2FnA5QI6kVsjQYOSIqdGc95EjJ38Yj7UG5UU%2FrJKEf%2FHcIengHM2xoBlvyMGzSQ6dkvnr3c%2FAvstyJnS9GXOx5xWwudHaAiCSjz%2BgJIMbI%2B%2F3%2BOZYdtIvenqGWPjM%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=8o1sVYScWTkXfsE3mmQVWTXon803YgYnDGe9Ugic8rdb%2FO97PGHVgb91a3n674tRZiIPYq2vN0UIZuJRwULch1a4A6ZYqjWELiK78RP9ArSwie%2BzphBHDCqmfzghb3itsuo%3D"}]}
 etag: W/"f28e27418099881eda2d3a78491ded4c"
 content-encoding: br
 server: cloudflare
-cf-ray: a5c2f5505901ed3d-SJC
+cf-ray: a5f992cc8a8d0384-PDX
 
 # Freestyle
 

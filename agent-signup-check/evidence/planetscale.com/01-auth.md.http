@@ -1,39 +1,40 @@
 GET https://planetscale.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:48.135Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:31.870Z
 redirect: 307 from https://planetscale.com/auth.md
 final-url: https://planetscale.com/docs/api/reference/getting-started-with-planetscale-api.md
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:46:43 GMT
+date: Tue, 24 Nov 2026 15:51:26 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
 link: </docs/llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt", </docs/.well-known/api-catalog>; rel="api-catalog", </docs/.well-known/mcp/server-card.json>; rel="mcp-server-card", </docs/.well-known/agent-card.json>; rel="agent-card", </docs/.well-known/agent-skills/index.json>; rel="agent-skills"
-cf-ray: a5c2f5aeecee8864-PDX
+cf-ray: a5f993329bd9afe8-PDX
 cf-cache-status: DYNAMIC
-age: 7107
+age: 32542
 cache-control: no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0
 content-disposition: inline
 content-encoding: br
 expires: 0
-last-modified: Tue, 17 Nov 2026 22:55:16 GMT
+last-modified: Tue, 24 Nov 2026 08:10:34 GMT
 server: cloudflare
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 pragma: no-cache
 cf-placement: local-PDX
 content-security-policy: default-src 'none'
+x-content-type-options: nosniff
 x-frame-options: DENY
 x-llms-txt: /docs/llms.txt
 x-mint-proxy-version: 1.0.0-prod
-x-mintlify-client-version: 0.0.4177
+x-mintlify-client-version: 0.0.4286
 x-robots-tag: noindex
-x-served-version: dpl_81ettUQ5G7NASN425B6JKU3FX1Rg
+x-served-version: dpl_3DZuqjnfdjREuPshghHhyiLeMG3U
 x-vercel-cache: MISS
-x-vercel-id: pdx1:sfo1:iad1::iad1::mlv8t-1794962803074-664a2ad326a3
+x-vercel-id: pdx1:cle1:iad1::iad1::bkbpr-1795535486338-c3321bf67463
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
-x-version: dpl_81ettUQ5G7NASN425B6JKU3FX1Rg
+x-version: dpl_3DZuqjnfdjREuPshghHhyiLeMG3U
 alt-svc: h3=":443"; ma=86400
 
 > ## Documentation Index

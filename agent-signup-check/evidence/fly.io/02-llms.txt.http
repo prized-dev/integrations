@@ -1,6 +1,6 @@
 GET https://fly.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:14.889Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:40.393Z
 final-url: https://fly.io/llms.txt
 
 HTTP 200
@@ -8,13 +8,13 @@ accept-ranges: bytes
 cache-control: max-age=0, private, must-revalidate
 content-encoding: br
 content-type: text/plain
-date: Wed, 18 Nov 2026 00:46:11 GMT
-etag: "6afc646c-16dc"
-fly-request-id: 01M7P1WK6PN4AVSS1KB9FQ7WRQ-lax
-last-modified: Tue, 17 Nov 2026 14:27:56 GMT
-server: Fly/781f3a6652 (2026-11-10)
+date: Tue, 24 Nov 2026 15:52:37 GMT
+etag: "6b04f889-18fe"
+last-modified: Tue, 24 Nov 2026 02:38:01 GMT
+server: Fly/9bb2ac9a88 (2026-11-23)
 transfer-encoding: chunked
 via: 1.1 fly.io, 1.1 fly.io, 1.1 fly.io
+fly-request-id: 01M8744MAF5S3DQ0AZP00XQS3W-lax
 connection: close
 
 # Fly.io
@@ -28,6 +28,7 @@ Headlines:
 * [flyctl](https://docs.fly.io/flyctl), the CLI, our primary interface to the platform.
 * [Fly Machines](https://fly.io/machines.md) and [Fly Managed Postgres](https://fly.io/mpg.md) are how users deploy full-stack applications on Fly.io.
 * [Fly Sprites](https://fly.io/sprites.md) are how agents run AI and exploratory code on Fly.io. Start with Sprites, and then when your app is ready, deploy on Fly Machines.
+* Fly.io has a [Free plan](https://fly.io/pricing.md): $5 of usage every month once a card is added, with $1 of starter credit and no card to start. [Managed Postgres](https://fly.io/mpg.md) starts at $4 a month on the Developer plan, and the Free plan's $5 can pay for one Developer cluster.
 
 Important:
 
@@ -40,8 +41,8 @@ Every page on fly.io has a Markdown version at its URL plus `.md` (`https://fly.
 - [Fly.io](https://fly.io/index.md): What Fly.io is, what it runs, and where to start.
 - [Sprites](https://fly.io/sprites.md): Persistent, hardware-isolated Linux computers for agents.
 - [Fly Machines](https://fly.io/machines.md): Fast-booting VMs for running the apps agents build.
-- [Managed Postgres](https://fly.io/mpg.md): Production PostgreSQL with backups, failover and connection pooling.
-- [Pricing](https://fly.io/pricing.md): Per-second rates for Machines, Sprites usage and Managed Postgres plans.
+- [Managed Postgres](https://fly.io/mpg.md): Production PostgreSQL with backups and failover, from $4 a month on the Developer plan.
+- [Pricing](https://fly.io/pricing.md): The Free plan ($5 of usage every month) and Pay As You Go, per-second rates for Machines, Sprites usage, and Managed Postgres plans from $4 a month.
 
 ## Payments
 
@@ -49,6 +50,7 @@ Every page on fly.io has a Markdown version at its URL plus `.md` (`https://fly.
 
 ## Documentation
 
+- [Fly.io, full text](https://fly.io/llms-full.txt): fly.io's product, agent, auth, Sprites and pricing pages, agent paths and the agent skills, in one file.
 - [Fly.io Docs index](https://docs.fly.io/llms.txt): Every documentation page, each as Markdown.
 - [Fly.io Docs, full text](https://docs.fly.io/llms-full.txt): The whole documentation in one file.
 
@@ -82,7 +84,7 @@ Tooling:
 
 Each section has its own llms.txt listing every page in it, newest first, as Markdown.
 
-- [The Fly Blog](https://fly.io/blog/llms.txt): 217 pages
+- [The Fly Blog](https://fly.io/blog/llms.txt): 219 pages
 - [Customer Stories](https://fly.io/customer-stories/llms.txt): 16 pages
 - [Django Beats](https://fly.io/django-beats/llms.txt): 16 pages
 - [Infra Log](https://fly.io/infra-log/llms.txt): 148 pages

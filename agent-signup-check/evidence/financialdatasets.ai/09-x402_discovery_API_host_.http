@@ -1,22 +1,22 @@
 GET https://api.financialdatasets.ai/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:26.143Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:11.545Z
 final-url: https://api.financialdatasets.ai/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:25 GMT
+date: Tue, 24 Nov 2026 15:52:11 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
 nel: {"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}
-report-to: {"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=LmEmkIqvszpGXfdUx8rJWKj9jMXvefIPGShMXerQreM%3D\u0026sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add\u0026ts=1794962845"}],"max_age":3600}
-reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=LmEmkIqvszpGXfdUx8rJWKj9jMXvefIPGShMXerQreM%3D&sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add&ts=1794962845"
+report-to: {"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=vK34%2F559Z6CRaQyxpdccTAgK3Pj2bpNUbr1LnrtTSVE%3D\u0026sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add\u0026ts=1795535531"}],"max_age":3600}
+reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=vK34%2F559Z6CRaQyxpdccTAgK3Pj2bpNUbr1LnrtTSVE%3D&sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add&ts=1795535531"
 server: cloudflare
 vary: Origin
 via: 2.0 heroku-router
 cf-cache-status: DYNAMIC
 content-encoding: br
-cf-ray: a5c2f6b9e9055eec-PDX
+cf-ray: a5f9944dbe8efc1e-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"error": "The endpoint /.well-known/x402 does not exist."}

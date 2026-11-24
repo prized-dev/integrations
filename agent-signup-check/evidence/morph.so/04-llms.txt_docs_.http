@@ -1,6 +1,6 @@
 GET https://cloud.morph.so/docs/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:19.308Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:00.055Z
 final-url: https://cloud.morph.so/docs/llms.txt
 
 HTTP 200
@@ -8,11 +8,10 @@ accept-ranges: bytes
 content-disposition: inline; filename="llms.txt"
 content-length: 12510
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:16 GMT
+date: Tue, 24 Nov 2026 15:50:57 GMT
 last-modified: Wed, 21 Oct 2026 22:05:02 GMT
 server: Caddy
-traceparent: 00-403d42b2438012abd0fb3ee8f468b900-6663c11573b951a5-01
-x-cloud-trace-context: 403d42b2438012abd0fb3ee8f468b900/7377952912443003301;o=1
+x-cloud-trace-context: 3e026a63f6dfc3585cfc7b0dbd9a170a;o=1
 via: 1.1 google
 alt-svc: h3=":443"; ma=2592000
 connection: close

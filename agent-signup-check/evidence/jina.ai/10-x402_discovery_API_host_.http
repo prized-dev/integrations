@@ -1,24 +1,23 @@
 GET https://api.jina.ai/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:26.687Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:12.407Z
 final-url: https://api.jina.ai/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:26 GMT
+date: Tue, 24 Nov 2026 15:52:12 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
-cf-ray: a5c2f6bd7da55ed4-PDX
+cf-ray: a5f994530bcff8cb-PDX
 cf-cache-status: DYNAMIC
 server: cloudflare
 x-served-by: cf-worker-gcp-direct
 alt-svc: h3=":443"; ma=86400
-traceparent: 00-0f33e001c02bfe8f7ac2a172668d4a21-80eb54748290622f-00
-x-cloud-trace-context: 0f33e001c02bfe8f7ac2a172668d4a21/9289611515765219887
-x-request-id: 0f33e001c02bfe8f7ac2a172668d4a21
+x-cloud-trace-context: ed8ba05b7c149523533e334b9f6dd884
+x-request-id: ed8ba05b7c149523533e334b9f6dd884
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=ztUizsbXjRi5Tuu2SP0pDBL%2FxhrQRpLz8%2FPCw017XmtY%2Bucf3Li72QqZafKpvL7HLPsyVkmZS3wKEJD3A8nguWs6PQFQyuRwikabuSddjrJR7Z7v7bfZivLCD%2Ft2"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=EABe%2BCNoLGDH2gH7bFW%2BIZ76GdD5AkP1vNC7tycxl4gTxjfBD%2FWTtTCnciVrvMm4U85GqB5zhW%2FjzPFWLmTiYBdAndxTHkdpD2uIssKI9nv5en6wZO%2BQnXchYQyE"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 content-encoding: br
 
-{"detail":"Invalid endpoint","request_id":"0f33e001c02bfe8f7ac2a172668d4a21"}
+{"detail":"Invalid endpoint","request_id":"ed8ba05b7c149523533e334b9f6dd884"}

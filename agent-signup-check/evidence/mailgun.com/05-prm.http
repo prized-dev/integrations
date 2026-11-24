@@ -1,11 +1,11 @@
 GET https://mailgun.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:07.841Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:51.713Z
 redirect: 301 from https://mailgun.com/.well-known/oauth-protected-resource
 final-url: https://www.mailgun.com/.well-known/oauth-protected-resource/
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:02 GMT
+date: Tue, 24 Nov 2026 15:51:45 GMT
 content-type: application/json; charset=UTF-8
 transfer-encoding: chunked
 connection: close
@@ -28,9 +28,9 @@ cache-control: max-age=600, stale-if-error=86400
 cf-cache-status: EXPIRED
 x-cache: MISS
 x-cache-group: normal
-last-modified: Wed, 18 Nov 2026 00:47:02 GMT
+last-modified: Tue, 24 Nov 2026 15:51:45 GMT
 content-encoding: br
-cf-ray: a5c2f622e89c2c7a-SEA
+cf-ray: a5f993aa2d7fdf21-SEA
 alt-svc: h3=":443"; ma=86400
 
 {"resource":"https:\/\/www.mailgun.com\/wp-json\/mcp\/mcp-oauth-server","authorization_servers":["https:\/\/www.mailgun.com"],"bearer_methods_supported":["header"],"scopes_supported":["mcp"]}

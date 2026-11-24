@@ -1,10 +1,15 @@
 GET https://api.tavily.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:21.713Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:06.833Z
 final-url: https://api.tavily.com/.well-known/oauth-authorization-server
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:20 GMT
 content-length: 0
 connection: close
+date: Tue, 24 Nov 2026 15:52:05 GMT
+x-cache: Error from cloudfront
+via: 1.1 c28e01aa413e9ea602538ccda1511062.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P1
+alt-svc: h3=":443"; ma=86400
+x-amz-cf-id: 0bp31cicKW17VFK8mWqnu5tbqn8PDlcwLptWSJrU1sx7mLHtqBHxwA==
 

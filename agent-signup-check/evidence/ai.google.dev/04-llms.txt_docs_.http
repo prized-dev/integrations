@@ -1,22 +1,22 @@
 GET https://ai.google.dev/gemini-api/docs/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:45:50.041Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:28.832Z
 redirect: 301 from https://ai.google.dev/gemini-api/docs/llms.txt
 final-url: https://aistudio.google.com/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
 vary: Sec-Fetch-Dest, Sec-Fetch-Mode, Sec-Fetch-Site
-expires: Wed, 18 Nov 2026 00:45:46 GMT
-date: Wed, 18 Nov 2026 00:45:46 GMT
+expires: Tue, 24 Nov 2026 15:50:25 GMT
+date: Tue, 24 Nov 2026 15:50:25 GMT
 cache-control: private, max-age=3600
 p3p: CP="This is not a P3P policy! See g.co/p3phelp for more info."
-content-security-policy: require-trusted-types-for 'script';report-uri /_/MakerSuite/cspreport, script-src 'report-sample' 'nonce-J3rQiytFwpAn1TCxnaj7Pg' 'unsafe-inline' 'unsafe-eval';object-src 'none';base-uri 'self';report-uri /_/MakerSuite/cspreport;worker-src 'self'
 cross-origin-opener-policy: same-origin-allow-popups
+content-security-policy: require-trusted-types-for 'script';report-uri /_/MakerSuite/cspreport, script-src 'report-sample' 'nonce-Z8y7fdkMh9vfoTgJtexL_A' 'unsafe-inline' 'unsafe-eval';object-src 'none';base-uri 'self';report-uri /_/MakerSuite/cspreport;worker-src 'self'
 accept-ch: Sec-CH-UA-Arch, Sec-CH-UA-Bitness, Sec-CH-UA-Full-Version, Sec-CH-UA-Full-Version-List, Sec-CH-UA-Model, Sec-CH-UA-WoW64, Sec-CH-UA-Form-Factors, Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version
 permissions-policy: ch-ua-arch=*, ch-ua-bitness=*, ch-ua-full-version=*, ch-ua-full-version-list=*, ch-ua-model=*, ch-ua-wow64=*, ch-ua-form-factors=*, ch-ua-platform=*, ch-ua-platform-version=*
 cross-origin-resource-policy: same-site
-reporting-endpoints: default="/_/MakerSuite/web-reports?context=eJwV0HtQ1QUWB3BDv0fkqiBYEDuygORrkhXYwUeSITvMgoME916EC9zrdXLTTcE0iyZsHWd9FLpqYriiKQmiMIEQ-VZcMEHFJMmkJXzUurA0v_v73X73ZS243_3jM2fOfOfMOXMCdkyaFRA-KmtG-Kj1Yd9gC5Vd7cduKqcDVElH6BjVUv81BQoNdyiY0KnguesKpv1fl4JE-sMtBSba262givx7FISR4VsFv6E7vQp-oOD7CqLpzAMFHXTxsYIu-kVVEKApCHEqmEp9HgU_UfOwgjZ6Gw5so5cCHVhCQSEORFJ7mAM91LTAgX_QmHQHJlNslgMv07o8BzZTqNWB6ZS4xoFUOrDRgROUvMmBLFpR5sB6erLPgXHlDpiOO_Aa2U6qKKbEOhWplPGZikIqblDxF6o6paKJok6riKPtF1VU0D9bVQxRZZuKelp_TcUWSr-lwkKZPSpslHJXhZFK-1XspBJVxQ4q9bKn9jEaemj2BA1JlBiqIZXqYjScp9txGh5Q7lwNq2hBsoZ0ql6ioYVizBp-T0nrNGTQ2RINnRT1gYY4clZqeOaQhi9bNdyl977TUEYV_RpqafGghmz6eZITfsFODEQ74aXjM5w4TckpTmRRd6oTD2nr607sJ78NTgTTYI0TPrrZ7kQfdUzRcY8mRuiIoPm_1ZFGB6N01NGeGB1H6eZMHX3UHqujhzbHMaOHc3VolLxQRxY994qOaRS1VEccBVh1hNMEu44pdO9POgbo1_d0GEp1PP5Ah5su7OYOyjqkw053q5lRc4OONjKf1bGSpn6tI4E-7-Ut5BvS4f-Tjnc8OrZTUKALkXQv2sXfuJAe64KFfkxyQafwNBdmkZ7twmijC8GFLkRTZLMLc-jcZReu08RHLkRQq8uF21TxrBu1NDHMjQhqj3Ojh1bnuPEuFRW48T79bqsbi6j7oBsPaepnbiTQJ1-40UCzn7iRRPfHe-Ag0xQPXqP58z1II9_LHvgv8uDiWg-66JsjHvyLnl7wIPCiB36tHgRT6mMPcmj0sAch5B_uRRhlxnphoxmpXsyjmhVefEHdtV48pEv3vbhFb__Hi210c8SLPiqf60M1Nef60Eb-RT6E0cmdPpyjhhM-XKYLN3y4SS2PfLhKu7Ke4DAlLDZICl2hbtqXYpBjNJJhkIlLDRKaaZDpZKUi2lpkkP00uM4gPkp70yB51E491FvCjF581yALqYu-p8mlBomhJZsMkk-n6Rrd-sgg_fTjPoPoNLaCO6mrinM0-VPO0a5jBjlMe_LC5SiVNkXLTvJsyBB5K0PGKJkS5MmS52lXUbZ8TFVbsqWOarZmSwO1fpUtnfTt3Wx5QItc2fJH2hdqlEoKizdKFO1NMMpBumIyynXyW2EUA036q1FiqKPSKLdpoN4oGpVfNcphujRilGvUSV9TbpBJ7PS82STR9MJqk8TSvz82iUonrpqkiTaFmGUbjQo3yzi6QtdpINIsGv18xCy_0phTZplAkW6zzKTmeTlygUZez5Gxq3KkMmuZVJP0LZNAGq0tk_H07MZciaDe-lx5RIdacqWGKvpy5Sgl5-VJOtW25EkjtSy0yCWqLLJINanbLOIj74cWGVVmkf8etQiqLLJ9wCJ7aNaQRRLo04R8qacbiflyh4rn5UsJLcjIlxRykJfK_pwv5XQ7vkB6qWp3gdRRwMkCCaFxTQUSTJGXC2Qm1fUVyOfUaCuUM1T_fqG00M7NhbKfhssK5aUvCyWJUoYKZQkt9rHS2KeFEkTnRluljWoDrXKKPppslUo6_qpVGigp1yqLqdVulU7qL7HKY_qu0So_0NJOqyyjiBtWmU5FX1nlHfINW-WZEavsfmqVA3SQjlFjqE3O0nlqp8R8myyizLU2yaVXim2SRjVHlksDTWlYLtPI__JymURlHculnHrsdvme9q6yy9_pVMEv0kIvDj6VhXTmzgtjz1HweP_zQ_o9CdrROPg3v-iYFcVv2uxr3rCvWT17rf2Nles3bFz91kpb_Jz4xLi4uLmxc-Jt6-b8DzfSreQ"
+reporting-endpoints: default="/_/MakerSuite/web-reports?context=eJwN0ntQVIcVBnCrfEfCFUV8YHC0gNiKE6mAgyHGKthxggYp7C5vFpdpqlRFxZjYCc60aUhqqMUERhgxVSJIxBGFUB8VRYsIPiGoiLFgDLVQM3fv3dx9qQX7_fGbOefMfOf8c_xaAxb6BY9LWhA8rmjWXXxEpVcGUEblVEnVdIiOUD0NXFWh02inioAuFTOvqYign91UEUe_uqUinT7rUVFLvndUzCalT8Vc6u1X8YQCB1XMpzOPVFyn1icquum5psJfVzHNwZ300K3CTs2jKjroPdixh5ZNsWMdBUyzYx61z7Kjj5resOMK-ayxI4giU-yIp22ZdvyJgqx2LKTYzXYkUtVOO45T_G47zJRfasdOelZux6QKzo7asYHyjmkootgGDYmUdELDetraqOFDqjmloYVCT2tYQp-0ajhA37ZpUKn6nxoaqeiqhhJac0tDLiXf0ZBPq-5pSKPiAQ1ltEvTUErFHvbU7qOjjxb561hJsUE6EqkhXMcF6o7S8T1lLNWxid6I15FEtWt1nKFwi46ltHybjl_T2V06blDoHh1LyFGtw-egjo42Hf30wQMdf6XKAd6ghBEdFvpxqgMIdGA4zIHndHSBA-cofpUDZupZ7cAQlWxwoIrG73BgBo3UOfCCbrQ7MEidcwx8S5PnGgiluJ8aeJsOhBo4QfvCDRyhGxEGBqk90kAf_SHKQDl9t9SAQfFvGjDTzJUGIih0nYEl5Gc1MIf8bQZC6P5vDTylFx_wZrGBJ3sMeOl8mYHblHLQwG_oXq2BEWpuNNBBlrMGNtK8bwzE0tf9Bq6S96kB5QcD77sNfEoBU5yYR_fDnHhKayKdyKWh5U64KTjRiUVkpDohJicCc52YTyHNTsTQuYtO3KTJj50IpTanE71UOcOFBpo8y4VQao9yoY8K0lwopsIcF_5IvyhxIYF6DrgwRPNOuBBLf_u7C0206JkLK2lwkhsOMs9xYwPFxbnxNnl_6Yaywo3WLW50091DbgzTy_NuBLa6Mb7NjRm0-okbmTRh1I2Z5BvswWxKjvQgnxas9mAZ1eV7cJZ66j0YoguDrOm9_3qwh26MeTBIFUu9qKfmDC86yLfQi9l07C9etFLjV15cpvPXvbhNLY-96KS9Kc9wmGISFFlNl-gOla9S5CiNJSkydZ0iQcmKLCQrbaeSQkWqaGSbIi8ocbsiOdROfdS_S5Ef6LXfK7KCbtIjml6syM9p7W7uotN0jW59rsh3NFSuiJsmVioSTDdrmKPpXzJHe48ocpj2ZQbLESpuCpMycu9IEt93k-T--0nioyZLgDtFXqW9hamyn2o-TJUGqitJlUZqu50qXdR3L1Ue0QpnqrxF5UEmqaZZ0SYJpc9iTHKALplNco3G55tEoakfmSScOqtN0k3Dx02iU8UVk3xBF8ZMcpW66BvKCDCLjV61mCWM5heYJZL-s98sGn11xSxNtHuaRT6mccEWeYUu0TUaDrGITj8essgL8jllEX8KcVkkgppfT5PzNLYhTSZuTJPqlHSpJXmYLlNogp4uk2jGzgyZS_3HM-QxHWzJkDqqfJghhyk-M1PWUH1Lppykljez5AJVF2ZJLWkfZ4mXPJ9mybjSLPnf4SxBTZZ8Mpwl-2jh0yyJoS9jsuU4XY_Nll7a-nq27CJ7UrZ4qPR32VJB3dE50k81ZTnSQH7HcmQavdKUI4EUcjFHIqjhYY58TaOlubKsI1eWU4I3V9ZS_RSrnKLPp1ulmpZnWCWB2mxW6aITu638M6s8OGmV72ldl1XSyTtqlZ-MWaXspVWq6GRQnpylf1A7JW_Jkww63ZsnbVR3aL00Umnneqkgfz-bzKQ7Npv8i_ZttEkV9SzOlwd0Ny5fBqggL1-K6FTOc2mh10Zeygo60zt_4jkKnOR7-d_7-yXgz5cvVk4IC8_fuj3PtnmTbXPBoi22Te8U7dhZ8O47edGLo2OjoqJjIhfH5W1b_H8BMZVm"
 document-policy: include-js-call-stacks-in-crash-reports
 content-encoding: gzip
 server: ESF
@@ -61,6 +61,8 @@ transfer-encoding: chunked
 - [Latest Gemini models — Gemini 4 Carbon - what's new (generateContent)](https://aistudio.google.com/docs/whats-new-gemini-4-carbon.md?generate-content=true): Learn what's new in Gemini 4 Carbon (gemini-4-carbon), Google's latest Gemini 4 model featuring a 1M shared context window, long decode, pricing, and API migration guidance.
 - [Latest Gemini models — Gemini 4 Argon - what's new](https://aistudio.google.com/docs/whats-new-gemini-4-argon.md): Learn what's new in Gemini 4 Argon (gemini-4-argon), our efficient Gemini 4 frontier reasoning model with a 1M shared context window, long decode, pricing, and API migration guidance.
 - [Latest Gemini models — Gemini 4 Argon - what's new (generateContent)](https://aistudio.google.com/docs/whats-new-gemini-4-argon.md?generate-content=true): Learn what's new in Gemini 4 Argon (gemini-4-argon), our efficient Gemini 4 frontier reasoning model with a 1M shared context window, long decode, pricing, and API migration guidance.
+- [Latest Gemini models — Gemini 4 Neon - what's new](https://aistudio.google.com/docs/whats-new-gemini-4-neon.md): Learn what's new in Gemini 4 Neon (gemini-4-neon), bringing frontier-level intelligence with fast end-to-end task completion across complex software engineering, knowledge work, and science workflows.
+- [Latest Gemini models — Gemini 4 Neon - what's new (generateContent)](https://aistudio.google.com/docs/whats-new-gemini-4-neon.md?generate-content=true): Learn what's new in Gemini 4 Neon (gemini-4-neon), bringing frontier-level intelligence with fast end-to-end task completion across complex software engineering, knowledge work, and science workflows.
 - [Latest Gemini models — Gemini 4 Hydrogen - what's new](https://aistudio.google.com/docs/whats-new-gemini-4-hydrogen.md): Learn what's new in Gemini 4 Hydrogen (gemini-4-hydrogen), bringing cutting-edge intelligence to everyone, with speed and efficiency for everyday coding and agentic workflows.
 - [Latest Gemini models — Gemini 4 Hydrogen - what's new (generateContent)](https://aistudio.google.com/docs/whats-new-gemini-4-hydrogen.md?generate-content=true): Learn what's new in Gemini 4 Hydrogen (gemini-4-hydrogen), bringing cutting-edge intelligence to everyone, with speed and efficiency for everyday coding and agentic workflows.
 - [Latest Gemini models — Gemini 3.8 Flash - what's new](https://aistudio.google.com/docs/whats-new-gemini-3.8.md): Learn about what's new in Gemini 3.8 Flash, including model capabilities, API changes, and migration guidance.
@@ -72,6 +74,8 @@ transfer-encoding: chunked
 - [Latest Gemini models — Gemini 3.5 Flash - what's new](https://aistudio.google.com/docs/whats-new-gemini-3.5.md): Learn about the new features and migration guidance for Gemini 3.5 Flash.
 - [Latest Gemini models — Gemini 3.5 Flash - what's new (generateContent)](https://aistudio.google.com/docs/whats-new-gemini-3.5.md?generate-content=true): Learn about the new features and migration guidance for Gemini 3.5 Flash.
 - [All models](https://aistudio.google.com/docs/models.md): Learn about all of Google's most advanced AI models
+- [Choosing a model](https://aistudio.google.com/docs/choosing-a-model.md): Compare Gemini models across reasoning depth, speed, cost, and modality to pick the right model for your workload.
+- [Gemini 4 Neon](https://aistudio.google.com/docs/models/gemini-4-neon.md): Explore Gemini 4 Neon (gemini-4-neon), bringing frontier-level intelligence with fast end-to-end task completion across complex software engineering, knowledge work, and science workflows.
 - [Gemini 4 Hydrogen](https://aistudio.google.com/docs/models/gemini-4-hydrogen.md): Explore Gemini 4 Hydrogen (gemini-4-hydrogen), bringing cutting-edge intelligence to everyone, with speed and efficiency for everyday coding and agentic workflows.
 - [Gemini 4 Carbon](https://aistudio.google.com/docs/models/gemini-4-carbon.md): Explore Gemini 4 Carbon (gemini-4-carbon), Google's latest Gemini 4 model for coding, reasoning, science, and agents, featuring a 1M context window and long decode.
 - [Gemini 4 Argon](https://aistudio.google.com/docs/models/gemini-4-argon.md): Explore Gemini 4 Argon (gemini-4-argon), our efficient Gemini 4 frontier reasoning model with faster responses and lower token spend per turn compared to Gemini 4 Carbon.
@@ -90,6 +94,7 @@ transfer-encoding: chunked
 - [Gemini 3.5 Flash](https://aistudio.google.com/docs/models/gemini-3.5-flash.md): Learn about Gemini 3.5 Flash from Google
 - [Gemini 3.5 Flash-Lite](https://aistudio.google.com/docs/models/gemini-3.5-flash-lite.md): Learn about Gemini 3.5 Flash-Lite from Google
 - [Gemini Omni Flash](https://aistudio.google.com/docs/models/gemini-omni-flash.md): Learn about the Gemini Omni Flash video generation and editing model
+- [Genie 4](https://aistudio.google.com/docs/models/genie-4.md): Learn about Genie 4, Google's real-time interactive world generation model on the Interactions API.
 - [Gemini 3.5 Transcribe](https://aistudio.google.com/docs/models/gemini-3.5-transcribe.md): Learn about the Gemini 3.5 Transcribe model from Google
 - [Gemini 3.1 Flash Lite image (Nano Banana 2 Lite)](https://aistudio.google.com/docs/models/gemini-3.1-flash-lite-image.md): Learn about Gemini 3.1 Flash Lite Image from Google
 - [Gemini 3.5 Live translate](https://aistudio.google.com/docs/models/gemini-3.5-live-translate-preview.md): Learn about the Gemini 3.5 Live Translate model from Google
@@ -135,6 +140,8 @@ transfer-encoding: chunked
 - [Nano Banana (generateContent)](https://aistudio.google.com/docs/image-generation.md?generate-content=true): Get started generating images with the Gemini API using Nano Banana and Nano Banana Pro
 - [Veo](https://aistudio.google.com/docs/veo.md): Generate high-fidelity videos with native audio using Google's Veo 3.1 API.
 - [Gemini Omni Flash](https://aistudio.google.com/docs/omni.md): Get started with Gemini Omni Flash for fast, conversational video generation and editing using the Interactions API.
+- [Genie 4 — Overview](https://aistudio.google.com/docs/genie.md): Stream real-time, steerable 24 fps interactive worlds with synchronized 48 kHz stereo audio using Genie 4 on the Interactions API.
+- [Genie 4 — Genie 4 prompt and controls guide](https://aistudio.google.com/docs/genie-prompting.md): Design responsive, coherent interactive worlds in Google AI Studio and the Interactions API using five tested Genie 4 prompt and control patterns.
 - [Lyria 3.5 — Lyria 3.5 & Lyria Clip](https://aistudio.google.com/docs/music-generation.md): Generate music with the Gemini API using Lyria 3 Clip and Lyria 3.5.
 - [Lyria 3.5 — Lyria 3.5 & Lyria Clip (generateContent)](https://aistudio.google.com/docs/music-generation.md?generate-content=true): Generate music with the Gemini API using Lyria 3 Clip and Lyria 3.5
 - [Lyria 3.5 — Lyria RealTime](https://aistudio.google.com/docs/realtime-music-generation.md): Get started building with Lyria RealTime's real-time, streaming music generation in the Gemini API
@@ -187,8 +194,8 @@ transfer-encoding: chunked
 - [Function calling](https://aistudio.google.com/docs/function-calling.md): Get started using Function Calling with the Gemini API
 - [Function calling (generateContent)](https://aistudio.google.com/docs/function-calling.md?generate-content=true): Get started using Function Calling with the Gemini API
 - [Long context](https://aistudio.google.com/docs/long-context.md): Learn about how to get started building with long context (1 million context window) on Gemini.
-- [Long decode](https://aistudio.google.com/docs/long-decode.md): Use long decode with Gemini 4 models (gemini-4-carbon, gemini-4-argon, and gemini-4-hydrogen) on the Interactions API to generate past 64K tokens up to the 1M-token context window with background execution or client-side continuation.
-- [Long decode (generateContent)](https://aistudio.google.com/docs/long-decode.md?generate-content=true): Use long decode with Gemini 4 models (gemini-4-carbon, gemini-4-argon, and gemini-4-hydrogen) in generateContent and streamGenerateContent to generate up to the 1M-token unified context window across continuation hops.
+- [Long decode](https://aistudio.google.com/docs/long-decode.md): Use long decode with Gemini 4 models (gemini-4-carbon, gemini-4-argon, gemini-4-neon, and gemini-4-hydrogen) on the Interactions API to generate past 64K tokens up to the 1M-token context window with background execution or client-side continuation.
+- [Long decode (generateContent)](https://aistudio.google.com/docs/long-decode.md?generate-content=true): Use long decode with Gemini 4 models (gemini-4-carbon, gemini-4-argon, gemini-4-neon, and gemini-4-hydrogen) in generateContent and streamGenerateContent to generate up to the 1M-token unified context window across continuation hops.
 
 ## Agents
 - [Overview](https://aistudio.google.com/docs/agents.md): Build agents that reason, write code, manage files, and browse the web with the Gemini API.
@@ -214,6 +221,7 @@ transfer-encoding: chunked
 - [Computer use (generateContent)](https://aistudio.google.com/docs/computer-use.md?generate-content=true): Learn how to use the Gemini API computer use feature.
 - [File search](https://aistudio.google.com/docs/file-search.md): Get started building RAG solutions with the File Search tool in the Gemini API
 - [File search (generateContent)](https://aistudio.google.com/docs/file-search.md?generate-content=true): Get started building RAG solutions with the File Search tool in the Gemini API
+- [Tool retrieval](https://aistudio.google.com/docs/tool-retrieval.md): Let Gemini search for and load tool schemas on demand so large tool libraries don't fill the context window.
 - [Combine tools and function calling](https://aistudio.google.com/docs/tool-combination.md): Learn how to maintain context and enable built-in and custom tool combinations in the Gemini API.
 - [Combine tools and function calling (generateContent)](https://aistudio.google.com/docs/tool-combination.md?generate-content=true): Learn how to maintain context and enable built-in and custom tool combinations in the Gemini API.
 
@@ -254,8 +262,8 @@ transfer-encoding: chunked
 - [Token counting](https://aistudio.google.com/docs/tokens.md): Understand and count tokens with the Gemini API
 - [Token counting (generateContent)](https://aistudio.google.com/docs/tokens.md?generate-content=true): Learn how Gemini models process tokens and how to count tokens in your API requests.
 - [Prompt engineering](https://aistudio.google.com/docs/prompting-strategies.md): Get started designing prompts for Gemini AI models.
-- [Logs and datasets — Get started with logs](https://aistudio.google.com/docs/logs-datasets.md): Learn how to configure project logging, view logs in AI Studio, and create shared datasets.
-- [Logs and datasets — Data logs and sharing](https://aistudio.google.com/docs/logs-policy.md): The policy for sharing your data logs for Gemini improvements.
+- [Logs — Get started with logs](https://aistudio.google.com/docs/logs-datasets.md): Learn how to configure project logging, view logs in AI Studio, and create shared datasets.
+- [Logs — Data logs and sharing](https://aistudio.google.com/docs/logs-policy.md): The policy for sharing your data logs for Gemini improvements.
 - [Safety — Safety settings](https://aistudio.google.com/docs/safety-settings.md): Configure content moderation filters and safety thresholds in the Gemini API.
 - [Safety — Safety settings (generateContent)](https://aistudio.google.com/docs/safety-settings.md?generate-content=true): Configure content moderation filters and safety thresholds in the Gemini API.
 - [Safety — Safety guidance](https://aistudio.google.com/docs/safety-guidance.md): Apply best practices for safety, fairness, and factuality in Gemini apps.
@@ -280,7 +288,7 @@ transfer-encoding: chunked
 - [API errors (generateContent)](https://aistudio.google.com/docs/api-errors.md?generate-content=true): Reference for generateContent API error codes and response format
 - [Partner and library integrations](https://aistudio.google.com/docs/partner-integration.md): Provide the Gemini API as an integration into your platform or library.
 - [Google AI Studio — Quickstart](https://aistudio.google.com/docs/ai-studio-quickstart.md): Get started with prompt engineering and prototyping in Google AI Studio.
-- [Google AI Studio — Google AI plans](https://aistudio.google.com/docs/google-ai-plans.md)
+- [Google AI Studio — Google AI plans](https://aistudio.google.com/docs/google-ai-plans.md): Use your Google AI subscription plan in Google AI Studio and claim monthly Gemini API credits directly in AI Studio.
 - [Google AI Studio — Vibe code in Build](https://aistudio.google.com/docs/aistudio-build-mode.md): Learn how to build full-stack applications using the vibe coding experience in Google AI Studio.
 - [Google AI Studio — Full-stack apps](https://aistudio.google.com/docs/aistudio-fullstack.md): Learn how to develop full-stack applications with server-side logic in Google AI Studio.
 - [Google AI Studio — Build Android apps](https://aistudio.google.com/docs/aistudio-android.md): Learn how to build native Android apps with Kotlin and Jetpack Compose in Google AI Studio.

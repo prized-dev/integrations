@@ -1,37 +1,39 @@
 GET https://docs.nano-gpt.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:04.498Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:48.240Z
 final-url: https://docs.nano-gpt.com/llms.txt
 
 HTTP 200
+age: 7198
 cache-control: public
 cf-cache-status: HIT
-cf-ray: a5c2f4addf03c8da-PDX
+cf-ray: a5f99237ba241fb9-PDX
 content-encoding: br
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:01 GMT
-etag: "bcPKdvFgvGkHHuGIuwWYhW--MN9iN1HcZ4ks9_pIHSA"
+date: Tue, 24 Nov 2026 15:50:45 GMT
+etag: "W2NbUlQWphIxumDjZrlPN53Tp1kMJGTQhp7yMYbI9S4"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: accept-encoding
+x-content-type-options: nosniff
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4177
+x-mintlify-client-version: 0.0.4286
 x-vercel-cache: MISS
-x-vercel-id: pdx1:iad1:iad1::iad1::5wf98-1794962761855-b2bdb2d33265
+x-vercel-id: pdx1:fra1:iad1::iad1::wc8c8-1795535445677-a0cd96024a2e
 x-vercel-project-id: prj_yXOeaGKuDidfrNqkveqTlVxPRlX9
-x-version: dpl_HhUetB7eHHDAmK9T1Teip38TgFx9
+x-version: dpl_G6E2ur2Zjq51xGTVZPSFXsWoTxCu
 connection: close
 transfer-encoding: chunked
 
 # NanoGPT API Documentation
 
-- [Introduction](https://docs.nano-gpt.com/introduction.md): Welcome to the Nano-GPT.com API
+- [Introduction](https://docs.nano-gpt.com/introduction.md): Make your first NanoGPT API request with the OpenAI SDK.
 - [Authentication](https://docs.nano-gpt.com/authentication.md): How to authenticate with the NanoGPT API and web app.
-- [Quickstart](https://docs.nano-gpt.com/quickstart.md): Start querying any model within 2 minutes.
+- [Quickstart](https://docs.nano-gpt.com/quickstart.md): A first request, then streaming with errors, usage and request IDs.
 - [Migrate from OpenRouter](https://docs.nano-gpt.com/migrate-from-openrouter.md): Change the base URL and key, then check the few things that work differently.
 - [Volume Pricing](https://docs.nano-gpt.com/volume-pricing.md): Discounted rates for high-volume and commercial use of the NanoGPT API.
-- [Models](https://docs.nano-gpt.com/api-reference/endpoint/models.md): List available models. The default response is intentionally minimal for OpenAI compatibility; use `detailed=true` for capabilities, supported service tiers, and pricing.
+- [Models](https://docs.nano-gpt.com/api-reference/endpoint/models.md): List available models. The default response is intentionally minimal for OpenAI compatibility; use `detailed=true` for capabilities, supported service tiers, pricing, and paused TEE entries marked with `available: false`. Exclude entries with `available: false` when choosing a model; active entries…
 - [List Image Models](https://docs.nano-gpt.com/api-reference/endpoint/image-api-models.md): List image models for NanoGPT's dedicated Image API
 - [Get Image Model Endpoints](https://docs.nano-gpt.com/api-reference/endpoint/image-api-model-endpoints.md): Inspect endpoint metadata, pricing, and image-input constraints for an image model
 - [Image Models](https://docs.nano-gpt.com/api-reference/endpoint/image-models.md): List available image generation and image editing models with capabilities and supported parameters
@@ -56,7 +58,7 @@ transfer-encoding: chunked
 - [Rerank](https://docs.nano-gpt.com/api-reference/endpoint/rerank.md): Order text documents by relevance to a query
 - [Embedding Models](https://docs.nano-gpt.com/api-reference/endpoint/embedding-models.md): List all available embedding models with detailed information
 - [Generate Images](https://docs.nano-gpt.com/api-reference/endpoint/image-api-generate.md): Generate text-to-image and image-to-image outputs through NanoGPT's normalized Image API endpoint
-- [Image Generation (OpenAI-Compatible)](https://docs.nano-gpt.com/api-reference/endpoint/image-generation-openai.md): Creates an image generation for the provided prompt (OpenAI-compatible). For unauthenticated accountless x402 quote requests, include x-x402: true.
+- [Image Generation (OpenAI-Compatible)](https://docs.nano-gpt.com/api-reference/endpoint/image-generation-openai.md): Creates an image generation for the provided prompt (OpenAI-compatible). For unauthenticated accountless Lightning L402 quote requests, include x-x402: true.
 - [Image Edits](https://docs.nano-gpt.com/api-reference/endpoint/image-edits.md): OpenAI-compatible image editing endpoint with multipart and JSON inputs
 - [NSFW Image Classification](https://docs.nano-gpt.com/api-reference/endpoint/nsfw-image.md): Binary NSFW classification for up to 10 image URLs or data URLs per request
 - [Moderation Models](https://docs.nano-gpt.com/api-reference/endpoint/moderation-models.md): List available content moderation models
@@ -69,7 +71,7 @@ transfer-encoding: chunked
 - [YouTube Transcription](https://docs.nano-gpt.com/api-reference/endpoint/youtube-transcribe.md): Extract transcripts from YouTube videos programmatically. Supports multiple URLs per request and provides detailed response information including success/failure status for each video.
 - [Context Memory (Standalone)](https://docs.nano-gpt.com/api-reference/endpoint/memory.md): Compress a conversation with Context Memory and return compressed messages and usage (no model inference)
 - [Web Scraping](https://docs.nano-gpt.com/api-reference/endpoint/scrape-urls.md): Extract clean, formatted content from web pages. Returns both raw HTML content and formatted markdown.
-- [Data Extraction APIs](https://docs.nano-gpt.com/api-reference/endpoint/data-extraction.md): Public data extraction endpoints for web, maps, social, and email/domain intelligence workflows
+- [Data Extraction APIs](https://docs.nano-gpt.com/api-reference/endpoint/data-extraction.md): Public data extraction endpoints for web and email/domain intelligence workflows
 - [v1/audio/speech (TTS + Music)](https://docs.nano-gpt.com/api-reference/endpoint/speech.md)
 - [Text-to-Speech](https://docs.nano-gpt.com/api-reference/endpoint/tts.md): Convert text into natural-sounding speech using various TTS models from different providers. Supports multiple languages, voices, and customization options including speed control, voice instructions, and audio format selection.
 - [TTS Status](https://docs.nano-gpt.com/api-reference/endpoint/tts-status.md)
@@ -77,9 +79,9 @@ transfer-encoding: chunked
 - [TEE Attestation](https://docs.nano-gpt.com/api-reference/endpoint/tee-attestation.md): Fetch TEE attestation report for a model
 - [TEE Signature](https://docs.nano-gpt.com/api-reference/endpoint/tee-signature.md): Fetch the signed receipt for a chat request, using its X-Receipt-Id value or response body id. The key must belong to the account that made the request.
 - [Video Generation](https://docs.nano-gpt.com/api-reference/endpoint/video-generation.md): Generate videos using supported text-to-video, image-to-video, and video-to-video models. The response includes a runId and pending status; poll the status endpoint for completion. See the docs for the current model list and required inputs.
-- [Video Status (Unified)](https://docs.nano-gpt.com/api-reference/endpoint/video-status-unified.md): Unified video status endpoint that works across all video backends. Check the status of a video generation request using only the request ID and receive normalized status information.
+- [Video Status (Unified)](https://docs.nano-gpt.com/api-reference/endpoint/video-status-unified.md): Unified video status endpoint that works across all video backends. Check the status of a video generation request and receive normalized status information. Only the account that created the job can read it, with its API key or session; another account's job answers 404 like an unknown one. Jobs pa…
 - [Video Recover](https://docs.nano-gpt.com/api-reference/endpoint/video-recover.md): Recover recent video generation runs for a user.
-- [Video Content](https://docs.nano-gpt.com/api-reference/endpoint/video-content.md): Proxy content retrieval for Sora 2 videos.
+- [Video Content](https://docs.nano-gpt.com/api-reference/endpoint/video-content.md): Serves a video NanoGPT stores. Status responses read by the creating account (or for an x402 job, or through a statusUrl) return these URLs signed (expires, sig), good for 24 hours without an API key; anyone else reading an older job by its ID alone gets none. After that, poll the status again for a…
 - [Check Balance](https://docs.nano-gpt.com/api-reference/endpoint/check-balance.md): Check the account balance
 - [Usage](https://docs.nano-gpt.com/api-reference/endpoint/usage.md): Retrieve aggregate spend, request, and token usage for the authenticated API key
 - [Request Billing](https://docs.nano-gpt.com/api-reference/endpoint/request-billing.md): Look up a recorded primary charge and token usage by request ID for 24 hours.
@@ -104,7 +106,7 @@ transfer-encoding: chunked
 - [Webhooks](https://docs.nano-gpt.com/api-reference/miscellaneous/webhooks.md): Get a signed HTTP request when a batch or video job finishes, or when something changes on a team.
 - [Error Handling](https://docs.nano-gpt.com/api-reference/miscellaneous/error-handling.md): Error formats, status codes, and retry guidance for the NanoGPT API.
 - [Inline Moderation](https://docs.nano-gpt.com/api-reference/miscellaneous/inline-moderation.md): Run a paid input safety preflight before selected generation requests
-- [Accountless x402 API Payments](https://docs.nano-gpt.com/api-reference/miscellaneous/x402.md): Opt in to accountless payment quotes for supported NanoGPT API endpoints, pay with a supported crypto rail, and complete or replay the original request.
+- [Accountless Lightning L402 API Payments](https://docs.nano-gpt.com/api-reference/miscellaneous/x402.md): Request a quote without an account, obtain and pay a Lightning invoice, then replay the original API request with L402 payment proof.
 - [Extended Thinking (Reasoning)](https://docs.nano-gpt.com/api-reference/miscellaneous/extended-thinking.md): How NanoGPT surfaces and controls reasoning output across OpenAI-compatible endpoints
 - [Change Reasoning Effort Within a Conversation](https://docs.nano-gpt.com/api-reference/miscellaneous/inline-reasoning-effort.md): Use ordered effort updates with Astra and Fable 5.1, including trailing updates and developer messages.
 - [Streaming Protocol (SSE)](https://docs.nano-gpt.com/api-reference/miscellaneous/streaming-protocol.md): How NanoGPT streams responses over Server-Sent Events across chat completions, messages, and responses.
@@ -122,6 +124,7 @@ transfer-encoding: chunked
 - [Model Suffixes](https://docs.nano-gpt.com/api-reference/miscellaneous/model-suffixes.md): Supported suffixes for web search, memory, PII redaction, caching, reasoning effort and visibility, thinking variants, and provider routing preferences.
 - [Model Presets](https://docs.nano-gpt.com/api-reference/miscellaneous/model-presets.md): Save a model with its settings and call it by name
 - [PII Redaction](https://docs.nano-gpt.com/api-reference/miscellaneous/pii-redaction.md): Optional PII redaction for API and web chat requests.
+- [Private Mode API](https://docs.nano-gpt.com/api-reference/miscellaneous/private-mode.md): Use an OpenAI-compatible local proxy to verify attestation and encrypt prompts before they reach NanoGPT.
 - [API Key Masking](https://docs.nano-gpt.com/api-reference/miscellaneous/api-key-masking.md): Replace recognisable API keys in your prompts with placeholders before they reach a model provider.
 - [OAuth PKCE](https://docs.nano-gpt.com/api-reference/miscellaneous/oauth-pkce.md): Let users sign in with NanoGPT and receive an app-specific API key through authorization-code PKCE.
 - [Brave](https://docs.nano-gpt.com/api-reference/miscellaneous/brave.md): Brave provider notes

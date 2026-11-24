@@ -1,6 +1,6 @@
 GET https://tryelliot.app/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:46.997Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:31.644Z
 redirect: 308 from https://tryelliot.app/llms.txt
 final-url: https://www.tryelliot.app/llms.txt
 
@@ -11,13 +11,13 @@ cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:43 GMT
-etag: W/"e717589f9f9069b6a5c7ce21f721856e"
-last-modified: Wed, 18 Nov 2026 00:47:43 GMT
+date: Tue, 24 Nov 2026 15:52:28 GMT
+etag: W/"8e02b05dd5333cc843b17b6d266b1ee1"
+last-modified: Tue, 24 Nov 2026 15:52:28 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 x-vercel-cache: MISS
-x-vercel-id: pdx1::j2l79-1794962863036-85687c391394
+x-vercel-id: pdx1::qcrjn-1795535547924-72d35c4c753d
 connection: close
 transfer-encoding: chunked
 
@@ -73,8 +73,9 @@ When two findings report the same flaw, keep the clearer one and close the other
 
 ## Blog
 
-- [Java4Shell (CVE-2026-114938): how it works and how to fix it](https://www.tryelliot.app/blog/cve-2026-114938-java-base64-heap-overflow.md): Java4Shell lets one malformed Base64 string overflow the heap in Java 17, 21, 25 and 27 on AVX-512 servers. Learn who is at risk and how to fix it.
+- [Elliot found Java4Shell in one scan](https://www.tryelliot.app/blog/elliot-finds-java4shell-in-one-scan.md): Java4Shell hid in OpenJDK for five years. We gave Elliot the code from before the fix. One scan returned the bug, the input that triggers it, and a patch that matches the one Oracle shipped.
 - [Launching Elliot-1 – a model for offensive cyber tasks](https://www.tryelliot.app/blog/launching-elliot.md): The first of a family of machine learning models that make cyber intelligence accessible to everyone.
+- [Java4Shell (CVE-2026-114938): how it works and how to fix it](https://www.tryelliot.app/blog/cve-2026-114938-java-base64-heap-overflow.md): Java4Shell lets one malformed Base64 string overflow the heap in Java 17, 21, 25 and 27 on AVX-512 servers. Learn who is at risk and how to fix it.
 
 ## Company
 
@@ -82,3 +83,4 @@ When two findings report the same flaw, keep the clearer one and close the other
 - [Privacy](https://www.tryelliot.app/privacy/)
 - [Security](https://www.tryelliot.app/security/)
 - [Blog](https://www.tryelliot.app/blog/)
+- [Changelog](https://www.tryelliot.app/changelog/): new features, integrations and models, newest first

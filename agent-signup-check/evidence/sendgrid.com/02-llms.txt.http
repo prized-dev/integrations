@@ -1,6 +1,6 @@
 GET https://sendgrid.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:01.055Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:42.078Z
 redirect: 301 from https://sendgrid.com/llms.txt
 final-url: https://www.twilio.com/en-us/sendgrid
 
@@ -8,20 +8,20 @@ HTTP 200
 content-type: text/html
 content-length: 631818
 connection: close
+accept-ranges: bytes
 server: AmazonS3
 last-modified: Mon, 12 Oct 2026 22:16:09 GMT
-x-amz-server-side-encryption: AES256
-x-amz-meta-aem-last-modified: Mon, 12 Oct 2026 22:14:56 GMT
 x-amz-meta-aem-etag: W/"9a325-65dac07271f03"
+x-amz-meta-aem-last-modified: Mon, 12 Oct 2026 22:14:56 GMT
 x-amz-version-id: BkngWf7mN8ReTF31VCkvevqQPeiDEQT6
-accept-ranges: bytes
-date: Wed, 18 Nov 2026 00:46:56 GMT
+x-amz-server-side-encryption: AES256
+date: Tue, 24 Nov 2026 15:51:38 GMT
 cache-control: no-cache
 etag: "e98c87f9f796b2683ebe1a8fe012a3d8"
-x-cache: Hit from cloudfront
-via: 1.1 a235f5b7b15b9c8025af96fb0081dd58.cloudfront.net (CloudFront)
+x-cache: RefreshHit from cloudfront
+via: 1.1 518bdec7a5119a665abaf6315a08e6a8.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: qsrSaigXGXWgNpfMMFLND0eYUdfIU8W9SAitdjNhGwkn75aQ_zpWog==
+x-amz-cf-id: hPwOQw5wQ26-PRBzxi3hEOvD_XYlsKBGISJ0DRVmES7qdSKBPeEKrQ==
 
 
 <!DOCTYPE HTML>

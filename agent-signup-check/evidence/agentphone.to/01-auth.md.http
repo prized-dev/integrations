@@ -1,28 +1,26 @@
 GET https://agentphone.to/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:05.644Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:50.872Z
 redirect: 301 from https://agentphone.to/auth.md
 final-url: https://agentphone.ai/auth.md
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:01 GMT
+date: Tue, 24 Nov 2026 15:51:46 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
 content-disposition: inline; filename="404.html"
-content-security-policy: frame-ancestors 'none'
 speculation-rules: "/cdn-cgi/speculation"
-referrer-policy: strict-origin-when-cross-origin
-server: cloudflare
-vary: Accept-Encoding
-x-content-type-options: nosniff
 x-frame-options: DENY
-x-railway-request-id: MgEJJTVySeet6_Ka8u2xcg
-x-railway-edge: sjc1
-x-hikari-trace: sjc1.qeyn
+content-security-policy: frame-ancestors 'none'
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+vary: Accept-Encoding
+strict-transport-security: max-age=31536000; includeSubDomains
 cf-cache-status: DYNAMIC
 content-encoding: gzip
-cf-ray: a5c2f6207efcb84b-PDX
+server: cloudflare
+cf-ray: a5f993b39dd75509-PDX
 
 <!doctype html>
 <html lang="en">
@@ -109,8 +107,8 @@ cf-ray: a5c2f6207efcb84b-PDX
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <!--seo-head-->
-    <script type="module" crossorigin src="/assets/index-DxI9BHnE.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DxF4LJ4j.css">
+    <script type="module" crossorigin src="/assets/index-D70ELzNY.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Bh9BlsEP.css">
       <meta name="robots" content="noindex, nofollow" />
   </head>
   <body>

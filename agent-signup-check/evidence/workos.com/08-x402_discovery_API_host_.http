@@ -1,14 +1,14 @@
 GET https://api.workos.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:42.535Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:28.280Z
 final-url: https://api.workos.com/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:42 GMT
+date: Tue, 24 Nov 2026 15:52:27 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5c2f71ee8ffef24-PDX
+cf-ray: a5f994b5fc5297a5-PDX
 cf-cache-status: DYNAMIC
 etag: W/"46-Xmp0JJH9HvgA0pfe9mtavWSdM7Y"
 server: cloudflare
@@ -24,7 +24,7 @@ x-download-options: noopen
 x-envoy-upstream-service-time: 2
 x-frame-options: SAMEORIGIN
 x-permitted-cross-domain-policies: none
-x-request-id: c96d087b-1da6-4aa2-8ba1-6ff54c074cb5
+x-request-id: 206b22f7-527d-4537-9158-0298884a28bc
 x-xss-protection: 0
 content-encoding: gzip
 
