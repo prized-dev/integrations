@@ -1,17 +1,17 @@
 GET https://docs.hetzner.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:43.516Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:27.200Z
 final-url: https://docs.hetzner.com/llms.txt
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:46:34 GMT
+date: Tue, 24 Nov 2026 15:51:17 GMT
 content-type: text/plain; charset=UTF-8
 transfer-encoding: chunked
 connection: close
 access-control-allow-origin: *
 cache-control: public, max-age=0
-etag: W/"15cf8-1a1ea0138c1"
-last-modified: Tue, 17 Nov 2026 14:55:11 GMT
+etag: W/"15cd4-1a20dfdea90"
+last-modified: Tue, 24 Nov 2026 14:37:54 GMT
 server: HeRay
 alt-svc: h3=":443"; ma=86400
 heray-cache-status: EXPIRED
@@ -52,8 +52,8 @@ Notes for automated readers:
 - [Deprecated server plans](https://docs.hetzner.com/cloud/servers/deprecated-plans/): Deprecated shared (CX) and dedicated (CCX) server plans with vCPU, RAM, and SSD specifications.
 - [FAQ](https://docs.hetzner.com/cloud/servers/faq/): Shared resource plans distribute CPU among instances with baseline performance and burst options at lower prices.
 - [Instructions for an error report with Hetzner network problems](https://docs.hetzner.com/cloud/servers/network-diagnosis-and-report-to-hetzner/): Report server network issues via Hetzner Console under Technical settings, specifying public or private network problems.
+- [Microsoft Windows on Hetzner Cloud Servers](https://docs.hetzner.com/cloud/servers/windows-on-cloud/): Guide to installing Windows on cloud servers, covering licenses, time fixes, IPv6 setup, and VirtIO drivers.
 - [Static IP configuration](https://docs.hetzner.com/cloud/servers/static-configuration/): Disable cloud-init and configure static IPv4/IPv6 addresses for Debian, Ubuntu, CentOS, Fedora, and FreeBSD cloud servers.
-- [Windows on Cloud](https://docs.hetzner.com/cloud/servers/windows-on-cloud/): Guide to installing Windows on cloud servers, covering licenses, time fixes, IPv6 setup, and VirtIO drivers.
 - [Creating a Server](https://docs.hetzner.com/cloud/servers/getting-started/creating-a-server/): Guide to creating and configuring a new Hetzner cloud server with detailed setup options.
 - [Connecting to your Server](https://docs.hetzner.com/cloud/servers/getting-started/connecting-to-the-server/): Guide to connecting to a cloud server via SSH, handling authentication, and configuring local SSH shortcuts.
 - [Connecting to a Server via its private IP](https://docs.hetzner.com/cloud/servers/getting-started/connecting-via-private-ip/): SSH into a private IP server using a public IP jump host and configure automatic proxy connections.
@@ -191,11 +191,11 @@ Notes for automated readers:
 - [vSwitch](https://docs.hetzner.com/robot/dedicated-server/network/vswitch/): Overview of Hetzner vSwitch: virtual layer 2 networks connecting dedicated servers across locations.
 - [vSwitch for Windows servers](https://docs.hetzner.com/robot/dedicated-server/network/vswitch-windows/): Configure Hetzner vSwitch on Windows servers with VLAN setup, MTU adjustment, and Cloud-Network static routing.
 - [Windows Server: Switching from DHCP to static IP at Hetzner](https://docs.hetzner.com/robot/dedicated-server/network/windows-server-dhcp-to-static/): Guide to configuring static IPv4 and IPv6 on Windows Server for Hetzner network changes.
-- [cPanel](https://docs.hetzner.com/robot/dedicated-server/operating-systems/cpanel/): New cPanel/Plesk sales end January 2025. Existing license prices increase January 2026. Full pricing table provided.
+- [cPanel](https://docs.hetzner.com/robot/dedicated-server/operating-systems/cpanel/): New cPanel/Plesk sales end January 2025. Existing license prices increase January 2027. Full pricing table provided.
 - [Deactivate GRUB2 recordfail feature](https://docs.hetzner.com/robot/dedicated-server/operating-systems/deactivate-grub2-recordfail/): Disable GRUB2 recordfail feature and configure boot timeout via config files.
 - [EFI system partition](https://docs.hetzner.com/robot/dedicated-server/operating-systems/efi-system-partition/): Guide to creating and configuring an EFI System Partition for UEFI boot on Linux and Windows.
 - [Hang Up with Realtek r8169-r8168 NIC](https://docs.hetzner.com/robot/dedicated-server/operating-systems/realtek-r8169-r8168-nic/): Fix network hangs by disabling TCP segmentation offload via ethtool and installing the r8168-dkms driver for Realtek NICs.
-- [Hetzner Debian/Ubuntu Package Mirror](https://docs.hetzner.com/robot/dedicated-server/operating-systems/hetzner-package-mirror/): Introduction to Hetzner's local Debian/Ubuntu package mirror, preconfigured in standard images, with IPv6 support.
+- [Hetzner Debian/Ubuntu Package Mirror](https://docs.hetzner.com/robot/dedicated-server/operating-systems/hetzner-package-mirror/): Introduction to Hetzner's local Debian/Ubuntu package mirror, its benefits, preconfiguration, and IPv6 support.
 - [Installimage](https://docs.hetzner.com/robot/dedicated-server/operating-systems/installimage/): Hetzner's installimage script enables fast Linux installation via Rescue System with customizable partitioning, RAID, and LVM configuration.
 - [Installing custom images](https://docs.hetzner.com/robot/dedicated-server/operating-systems/installing-custom-images/): Covers three methods for installing custom or older operating systems on Hetzner servers using Installimage and KVM console.
 - [Plesk](https://docs.hetzner.com/robot/dedicated-server/operating-systems/plesk/): Instructions for manual Plesk installation and link to Plesk documentation.
@@ -509,7 +509,7 @@ Notes for automated readers:
 - [Product migration](https://docs.hetzner.com/general/billing-and-account-management/product-migration/): Robot transfers: dedicated servers via docs link, domain token flow (7-day validity), rackspot form/ticket options, vSwitches non-transferable.
 - [Payment Overview](https://docs.hetzner.com/general/billing-and-account-management/billing-at-hetzner/payment-overview/): Accepted methods: VISA/Mastercard/AMEX/UnionPay credit cards, SEPA for EUR accounts, bank transfer, PayPal; no Apple Pay, no partial plans.
 - [Billing system at Hetzner](https://docs.hetzner.com/general/billing-and-account-management/billing-at-hetzner/billing-system-hetzner/): Pro-rated billing charges after usage, switching from hourly to monthly rates, with invoices covering the previous month.
-- [Promo codes on your Hetzner account](https://docs.hetzner.com/general/billing-and-account-management/billing-at-hetzner/promo-code/): Definition of promo codes as credit or discount codes, plus move from Hetzner Console Usage view to central User account management.
+- [Promo codes on your Hetzner account](https://docs.hetzner.com/general/billing-and-account-management/billing-at-hetzner/promo-code/): What promo codes are and where to redeem them in the Hetzner user account
 - [Value added tax](https://docs.hetzner.com/general/billing-and-account-management/billing-at-hetzner/value-added-tax/): VAT rules by residence: 19% for Germany, EU reverse-charge with valid VAT ID, country-specific EU/non-EU rate tables and US exemption certificates.
 - [Overview – Canceling products and contracts with Hetzner](https://docs.hetzner.com/general/billing-and-account-management/cancellation/cancellations-overview/): Four core rules: users must actively cancel, billing stays pro-rated with monthly cap, notice periods vary, and data is deleted after cancellation.
 - [Cancellations of managed products via konsoleH](https://docs.hetzner.com/general/billing-and-account-management/cancellation/cancellations-managed-products/): Log in to konsoleH.hetzner.com with customer number and password to see all products grouped by category.

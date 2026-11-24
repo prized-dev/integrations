@@ -1,16 +1,16 @@
 GET https://api.render.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:16.648Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:55.733Z
 final-url: https://api.render.com/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:46:15 GMT
+date: Tue, 24 Nov 2026 15:50:54 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
 cache-control: public, max-age=300
 referrer-policy: same-origin
-render-request-id: api-84bf547f4f-t8kzn/IyS9x30ME2-3885410
+render-request-id: api-8646cc8c9b-p6wbf/MdZDgdNLwe-4588641
 strict-transport-security: max-age=315360000; includeSubDomains; preload
 vary: Origin
 x-content-type-options: nosniff
@@ -19,7 +19,7 @@ x-xss-protection: 1; mode=block
 cf-cache-status: DYNAMIC
 content-encoding: gzip
 server: cloudflare
-cf-ray: a5c2f5036d62e3a4-SEA
+cf-ray: a5f9926fcb97c12a-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"issuer":"https://api.render.com","authorization_endpoint":"https://api.render.com/v1/oauth/authorize","token_endpoint":"https://api.render.com/v1/oauth/token","revocation_endpoint":"https://api.render.com/v1/oauth/token/revoke","introspection_endpoint":"https://api.render.com/v1/oauth/introspect","response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["none"],"revocation_endpoint_auth_methods_supported":["none"],"authorization_response_iss_parameter_supported":false}

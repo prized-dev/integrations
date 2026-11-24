@@ -1,15 +1,15 @@
 GET https://api.planetscale.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:48.135Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:31.870Z
 final-url: https://api.planetscale.com/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:46:47 GMT
+date: Tue, 24 Nov 2026 15:51:31 GMT
 content-type: application/json; charset=UTF-8
 transfer-encoding: chunked
 connection: close
-x-request-id: 5e7c6500-4500-46a6-a1d5-340f56b70147
-x-runtime: 0.005759
+x-request-id: 184da283-e011-4a52-87fd-6a6b972291f4
+x-runtime: 0.003009
 strict-transport-security: max-age=63072000; includeSubDomains; preload
 vary: Origin,Accept-Encoding
 content-encoding: gzip

@@ -1,23 +1,23 @@
 GET https://steel.dev/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:10.780Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:56.835Z
 final-url: https://steel.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 34277
+age: 63774
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:07 GMT
-etag: W/"f8f7c2b89e7867d5cfb329cb577d98e5"
+date: Tue, 24 Nov 2026 15:51:53 GMT
+etag: W/"3a10a473553144ac5649e7dfa337677f"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::bqpnc-1794962827039-3c0ebfdeee59
+x-vercel-id: pdx1::qmb77-1795535513433-44bc2ae36132
 connection: close
 transfer-encoding: chunked
 
@@ -123,12 +123,12 @@ transfer-encoding: chunked
 
 - [Docs sitemap](https://steel.dev/docs/sitemap.md): Every docs page with a one-sentence summary and the pages to read first. Start here, and fetch the one page that the task needs.
 - The full text of each sidebar group, in one file that fits in one fetch. Add `?lang=` and `typescript`, `python`, `go` or `rust` to keep the code of one language.
-  - [Docs: Get started](https://steel.dev/docs/llms-full/get-started.txt): 4 pages, 37 KB
-  - [Docs: Drive a browser](https://steel.dev/docs/llms-full/drive-a-browser.txt): 9 pages, 91 KB
+  - [Docs: Get started](https://steel.dev/docs/llms-full/get-started.txt): 3 pages, 33 KB
+  - [Docs: Drive a browser](https://steel.dev/docs/llms-full/drive-a-browser.txt): 9 pages, 100 KB
   - [Docs: Sessions](https://steel.dev/docs/llms-full/sessions.txt): 9 pages, 100 KB
   - [Docs: Stay signed in](https://steel.dev/docs/llms-full/stay-signed-in.txt): 5 pages, 58 KB
   - [Docs: Stealth](https://steel.dev/docs/llms-full/stealth.txt): 7 pages, 81 KB
-  - [Docs: Watch and debug](https://steel.dev/docs/llms-full/watch-and-debug.txt): 8 pages, 77 KB
+  - [Docs: Watch and debug](https://steel.dev/docs/llms-full/watch-and-debug.txt): 9 pages, 83 KB
   - [Docs: Production](https://steel.dev/docs/llms-full/production.txt): 6 pages, 59 KB
   - [Docs: Platform](https://steel.dev/docs/llms-full/platform.txt): 5 pages, 27 KB
   - [Docs: Account](https://steel.dev/docs/llms-full/account.txt): 3 pages, 25 KB
@@ -141,9 +141,9 @@ transfer-encoding: chunked
   - [Integrations: Platforms](https://steel.dev/docs/llms-full/integrations-platforms.txt): 2 pages, 10 KB
   - [Reference: API](https://steel.dev/docs/llms-full/reference-api.txt): 9 pages, 114 KB
   - [Reference: SDKs](https://steel.dev/docs/llms-full/reference-sdks.txt): 4 pages, 28 KB
-  - [Reference: CLI, MCP and Commands](https://steel.dev/docs/llms-full/reference-cli-mcp-and-commands.txt): 3 pages, 96 KB
+  - [Reference: CLI, MCP and Commands](https://steel.dev/docs/llms-full/reference-cli-mcp-and-commands.txt): 3 pages, 99 KB
   - [Reference: Proxy locations, signals, errors and glossary](https://steel.dev/docs/llms-full/reference-proxy-locations-signals-errors-and-glossary.txt): 4 pages, 53 KB
-- [docs/llms-full.txt](https://steel.dev/docs/llms-full.txt): Every docs page in one file, without the blog. At 1089 KB, it is too large for one fetch, so fetch the group file above that the task needs.
+- [docs/llms-full.txt](https://steel.dev/docs/llms-full.txt): Every docs page in one file, without the blog. At 1109 KB, it is too large for one fetch, so fetch the group file above that the task needs.
 - [Pricing](https://steel.dev/pricing.md): Each plan, what it includes, and the usage rates.
 - [FAQ](https://steel.dev/faq.md): Short answers to common questions.
 - [Blog](https://steel.dev/blog.md): Every post, by category.

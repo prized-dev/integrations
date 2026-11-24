@@ -1,0 +1,200 @@
+{
+ "from": "2026-11-18",
+ "to": "2026-11-24",
+ "checkerFrom": "agent-signup-check/0.2.6",
+ "checkerTo": "agent-signup-check/0.2.7",
+ "improved": [
+  {
+   "name": "Clerk",
+   "site": "clerk.com",
+   "from": "2/7",
+   "to": "3/7",
+   "rankFrom": 18,
+   "rankTo": 10,
+   "cells": [
+    {
+     "check": "prm",
+     "name": "Protected resource metadata",
+     "from": "partial",
+     "to": "pass",
+     "reason": "Names 1 authorization server"
+    }
+   ]
+  },
+  {
+   "name": "Fly.io",
+   "site": "fly.io",
+   "from": "2/7",
+   "to": "3/7",
+   "rankFrom": 18,
+   "rankTo": 10,
+   "cells": [
+    {
+     "check": "register",
+     "name": "Sign-up by API",
+     "from": "fail",
+     "to": "pass",
+     "reason": "agent_auth names a registration endpoint (service_auth)"
+    }
+   ]
+  },
+  {
+   "name": "Telnyx",
+   "site": "telnyx.com",
+   "from": "6/7",
+   "to": "7/7",
+   "rankFrom": 3,
+   "rankTo": 1,
+   "cells": [
+    {
+     "check": "limits",
+     "name": "Spend limits",
+     "from": "fail",
+     "to": "pass",
+     "reason": "agent_auth.billing declares a default spend cap"
+    }
+   ]
+  }
+ ],
+ "regressed": [],
+ "changed": [],
+ "added": [],
+ "removed": [],
+ "stale": [],
+ "mismatches": [],
+ "retried": [
+  {
+   "name": "Perplexity",
+   "site": "perplexity.ai",
+   "kept": "kept the first check (the second was no better). First: auth.md 403, llms.txt 403. Second: auth.md 403, llms.txt 403"
+  },
+  {
+   "name": "Fly.io",
+   "site": "fly.io",
+   "kept": "kept the second check. First: api timeout. Second: every request answered"
+  },
+  {
+   "name": "Runloop",
+   "site": "runloop.ai",
+   "kept": "kept the first check (the second was no better). First: api ENOTFOUND, prm (API host) ENOTFOUND, as-metadata (API host) ENOTFOUND. Second: api ENOTFOUND, prm (API host) ENOTFOUND, as-metadata (API host) ENOTFOUND"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "kept": "kept the first check (the second was no better). First: auth.md 403, llms.txt 403, llms.txt (docs) 403, prm 403, as-metadata 403, x402 discovery 403. Second: auth.md 403, llms.txt 403, llms.txt (docs) 403, prm 403, as-metadata 403, x402 discovery 403"
+  },
+  {
+   "name": "RunPod",
+   "site": "runpod.io",
+   "kept": "kept the first check (the second was no better). First: api ENOTFOUND, prm (API host) ENOTFOUND, as-metadata (API host) ENOTFOUND. Second: api ENOTFOUND, prm (API host) ENOTFOUND, as-metadata (API host) ENOTFOUND"
+  },
+  {
+   "name": "Deno Deploy",
+   "site": "deno.com",
+   "kept": "kept the first check (the second was no better). First: llms.txt (docs) 500. Second: llms.txt (docs) 500"
+  }
+ ],
+ "errors": [
+  {
+   "name": "Runloop",
+   "site": "runloop.ai",
+   "label": "api",
+   "url": "https://api.runloop.ai/v1/devboxes",
+   "error": "ENOTFOUND"
+  },
+  {
+   "name": "Runloop",
+   "site": "runloop.ai",
+   "label": "prm (API host)",
+   "url": "https://api.runloop.ai/.well-known/oauth-protected-resource",
+   "error": "ENOTFOUND"
+  },
+  {
+   "name": "Runloop",
+   "site": "runloop.ai",
+   "label": "as-metadata (API host)",
+   "url": "https://api.runloop.ai/.well-known/oauth-authorization-server",
+   "error": "ENOTFOUND"
+  },
+  {
+   "name": "RunPod",
+   "site": "runpod.io",
+   "label": "api",
+   "url": "https://rest.runpod.io/v1/pods",
+   "error": "ENOTFOUND"
+  },
+  {
+   "name": "RunPod",
+   "site": "runpod.io",
+   "label": "prm (API host)",
+   "url": "https://rest.runpod.io/.well-known/oauth-protected-resource",
+   "error": "ENOTFOUND"
+  },
+  {
+   "name": "RunPod",
+   "site": "runpod.io",
+   "label": "as-metadata (API host)",
+   "url": "https://rest.runpod.io/.well-known/oauth-authorization-server",
+   "error": "ENOTFOUND"
+  }
+ ],
+ "unread": [
+  {
+   "name": "Perplexity",
+   "site": "perplexity.ai",
+   "check": "auth.md",
+   "reason": "Not read on 2026-11-24: https://perplexity.ai/auth.md answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "check": "auth.md",
+   "reason": "Not read on 2026-11-24: https://codesandbox.io/auth.md answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "check": "Protected resource metadata",
+   "reason": "Not read on 2026-11-24: https://codesandbox.io/.well-known/oauth-protected-resource answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "check": "Sign-up by API",
+   "reason": "Not read on 2026-11-24: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "check": "Spend limits",
+   "reason": "Not read on 2026-11-24: https://codesandbox.io/.well-known/oauth-authorization-server answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "check": "Payment handoff",
+   "reason": "Not read on 2026-11-24: https://codesandbox.io/.well-known/x402 answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "CodeSandbox",
+   "site": "codesandbox.io",
+   "check": "Docs in Markdown",
+   "reason": "Not read on 2026-11-24: https://codesandbox.io/llms.txt answered with a Cloudflare bot challenge",
+   "was": "fail"
+  },
+  {
+   "name": "Deno Deploy",
+   "site": "deno.com",
+   "check": "Docs in Markdown",
+   "reason": "Not read on 2026-11-24: https://docs.deno.com/llms.txt answered with HTTP 500",
+   "was": "fail"
+  }
+ ],
+ "notChecked": []
+}

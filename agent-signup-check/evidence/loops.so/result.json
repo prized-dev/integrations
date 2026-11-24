@@ -1,7 +1,7 @@
 {
  "site": "loops.so",
- "checkedAt": "2026-11-18T00:47:00.576Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:51:43.852Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 2,
  "partial": 2,
  "unread": 0,
@@ -66,7 +66,7 @@
    "name": "Docs in Markdown",
    "url": "https://loops.so/llms.txt",
    "heading": "# Loops",
-   "bytes": 30872,
+   "bytes": 31121,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -78,8 +78,8 @@
    "finalUrl": "https://loops.so/auth.md",
    "status": 200,
    "error": null,
-   "contentType": "text/markdown; charset=utf-8",
-   "ms": 352,
+   "contentType": "text/markdown;charset=utf-8",
+   "ms": 96,
    "redirects": 0
   },
   {
@@ -89,7 +89,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain;charset=utf-8",
-   "ms": 312,
+   "ms": 56,
    "redirects": 0
   },
   {
@@ -99,7 +99,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 166,
+   "ms": 117,
    "redirects": 0
   },
   {
@@ -109,7 +109,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 316,
+   "ms": 391,
    "redirects": 1
   },
   {
@@ -119,7 +119,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 144,
+   "ms": 118,
    "redirects": 0
   },
   {
@@ -129,7 +129,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 155,
+   "ms": 109,
    "redirects": 1
   },
   {
@@ -139,7 +139,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 250,
+   "ms": 336,
    "redirects": 0
   },
   {
@@ -149,7 +149,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 185,
+   "ms": 48,
    "redirects": 0
   },
   {
@@ -159,7 +159,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 159,
+   "ms": 235,
    "redirects": 0
   }
  ]

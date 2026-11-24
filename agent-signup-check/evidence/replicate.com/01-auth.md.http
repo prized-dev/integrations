@@ -1,16 +1,16 @@
 GET https://replicate.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:03.148Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:42.519Z
 final-url: https://replicate.com/auth.md
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:45:59 GMT
+date: Tue, 24 Nov 2026 15:50:38 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
 server: cloudflare
 vary: Cookie, origin, accept-encoding
-content-security-policy-report-only: style-src 'report-sample' 'self' 'unsafe-inline' https://static.replicateassets.com https://googletagmanager.com https://tagmanager.google.com https://fonts.googleapis.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; img-src 'report-sample' 'self' blob: data: https://replicate.delivery https://*.replicate.delivery https://og.replicateassets.com https://static.replicateassets.com https://*.githubusercontent.com https://github.com https://www.googletagmanager.com https://ssl.gstatic.com https://www.gstatic.com https://*.google-analytics.com https://*.googletagmanager.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; font-src 'report-sample' 'self' data: https://fonts.replicateassets.com https://fonts.gstatic.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; default-src 'self'; worker-src https://static.replicateassets.com; script-src 'report-sample' 'self' 'nonce-xRsq+J9Aou/orxM6DDatCA==' https://static.replicateassets.com https://www.googletagmanager.com https://tagmanager.google.com https://*.googletagmanager.com https://challenges.cloudflare.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; frame-src 'report-sample' 'self' https://replicate-search.replicate-search.workers.dev https://challenges.cloudflare.com; media-src 'report-sample' 'self' https://replicate.delivery https://*.replicate.delivery https://static.replicateassets.com https://*.sentry.io https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; connect-src 'report-sample' 'self' https://stream.replicate.com https://replicate.delivery https://*.replicate.delivery https://*.sentry.io https://og.replicateassets.com https://static.replicateassets.com https://www.googletagmanager.com https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://www.cloudflarestatus.com https://replicate-search.replicate-search.workers.dev
+content-security-policy-report-only: media-src 'report-sample' 'self' https://replicate.delivery https://*.replicate.delivery https://static.replicateassets.com https://*.sentry.io https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; worker-src https://static.replicateassets.com; font-src 'report-sample' 'self' data: https://fonts.replicateassets.com https://fonts.gstatic.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; img-src 'report-sample' 'self' blob: data: https://replicate.delivery https://*.replicate.delivery https://og.replicateassets.com https://static.replicateassets.com https://*.githubusercontent.com https://github.com https://www.googletagmanager.com https://ssl.gstatic.com https://www.gstatic.com https://*.google-analytics.com https://*.googletagmanager.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; script-src 'report-sample' 'self' 'nonce-NkxzcBXFGRNXBZaVywxOhQ==' https://static.replicateassets.com https://www.googletagmanager.com https://tagmanager.google.com https://*.googletagmanager.com https://challenges.cloudflare.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net; connect-src 'report-sample' 'self' https://stream.replicate.com https://replicate.delivery https://*.replicate.delivery https://*.sentry.io https://og.replicateassets.com https://static.replicateassets.com https://www.googletagmanager.com https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://www.cloudflarestatus.com https://replicate-search.replicate-search.workers.dev; default-src 'self'; frame-src 'report-sample' 'self' https://replicate-search.replicate-search.workers.dev https://challenges.cloudflare.com; style-src 'report-sample' 'self' 'unsafe-inline' https://static.replicateassets.com https://googletagmanager.com https://tagmanager.google.com https://fonts.googleapis.com https://replicate-search.replicate-search.workers.dev https://d31rfu1d3w8e4q.cloudfront.net
 cross-origin-opener-policy: same-origin
 referrer-policy: same-origin
 x-content-type-options: nosniff
@@ -19,7 +19,7 @@ strict-transport-security: max-age=15552000
 expect-ct: max-age=86400, enforce
 x-xss-protection: 1; mode=block
 content-encoding: gzip
-cf-ray: a5c2f49b69faf8cb-PDX
+cf-ray: a5f99209dd2311c8-PDX
 alt-svc: h3=":443"; ma=86400
 
 
@@ -61,7 +61,7 @@ alt-svc: h3=":443"; ma=86400
           href="https://d31rfu1d3w8e4q.cloudfront.net/static/apple-touch-icon.39c0aa0659e3.png" />
 
     
-  <script nonce="xRsq+J9Aou/orxM6DDatCA==">
+  <script nonce="NkxzcBXFGRNXBZaVywxOhQ==">
     /* beautify ignore:start */
     window.dataLayer = window.dataLayer || [];
     
@@ -76,7 +76,7 @@ alt-svc: h3=":443"; ma=86400
     
     /* beautify ignore:end */
   </script>
-  <script nonce="xRsq+J9Aou/orxM6DDatCA==">
+  <script nonce="NkxzcBXFGRNXBZaVywxOhQ==">
     (function(w, d, s, l, i) {
       w[l] = w[l] || [];
       w[l].push({
@@ -99,7 +99,7 @@ alt-svc: h3=":443"; ma=86400
     
 
     <link  rel="stylesheet" href="https://d31rfu1d3w8e4q.cloudfront.net/static/dist/index-B-PDs4zH.css" />
-<script type="module" crossorigin="" src="https://d31rfu1d3w8e4q.cloudfront.net/static/dist/index-Cg8ytWuJ.js"></script>
+<script type="module" crossorigin="" src="https://d31rfu1d3w8e4q.cloudfront.net/static/dist/index-CSskr4rp.js"></script>
 
     <link rel="stylesheet"
           href="https://d31rfu1d3w8e4q.cloudfront.net/static/dist/indexCss-BWB5dC2F.css" />
@@ -150,11 +150,11 @@ alt-svc: h3=":443"; ma=86400
     
     
       <meta name="anonymous-id"
-            content="d04d497c-2a39-4c5e-802e-7b433962e808" />
+            content="482d584a-a652-4d0d-8f60-adaa08908e66" />
     
 
     
-      <script nonce="xRsq+J9Aou/orxM6DDatCA==">
+      <script nonce="NkxzcBXFGRNXBZaVywxOhQ==">
         const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
         if (prefersDarkScheme) {
@@ -187,10 +187,10 @@ alt-svc: h3=":443"; ma=86400
 
 <div class="h-[var(--header-height)] mb-6 no-focus">
   
-    <script id="react-component-props-03cd0731-6466-4128-b8b4-02beb5fb99f0" type="application/json">{"activePath": "/auth.md", "isAuthenticated": false, "theme": "", "showSeedanceBanner": true, "__flags": {"web-api-token-show-once": true, "show-open-ai-api-instructions": false}}</script>
+    <script id="react-component-props-436665b4-9b85-4508-83a7-ed847e8e84cb" type="application/json">{"activePath": "/auth.md", "isAuthenticated": false, "theme": "", "showSeedanceBanner": true, "__flags": {"web-api-token-show-once": true, "show-open-ai-api-instructions": false}}</script>
 
 <div data-component="Navigation"
-     data-props="react-component-props-03cd0731-6466-4128-b8b4-02beb5fb99f0">
+     data-props="react-component-props-436665b4-9b85-4508-83a7-ed847e8e84cb">
   
 </div>
 
@@ -242,15 +242,15 @@ alt-svc: h3=":443"; ma=86400
     
 
 <a class="no-default flex flex-col group border border-r8-gray-12 hover:bg-r8-gray-3 focus:bg-r8-gray-12"
-   href="/minimax/h3-lite"
-   title="minimax/h3-lite">
+   href="/openai/gpt-image-2.6-flare"
+   title="openai/gpt-image-2.6-flare">
   <div class="h-80 group-focus:ring ring-r8-gray-12 flex-shrink-0 bg-r8-gray-3">
     
 
 
   <div class=" h-full w-full overflow-hidden">
     
-      <img data-src="https://tjzk.replicate.delivery/models_models_featured_image/00cdaa64-7951-46c0-808b-1ef7aff05d40/compressed.jpg"
+      <img data-src="https://tjzk.replicate.delivery/models_models_featured_image/3b80505d-cb71-4b5a-b257-0b0a780803c0/replicate-prediction-83apwsrd.webp"
            alt=""
            role="presentation"
            class="object-cover object-center w-full h-full lazy" />
@@ -277,12 +277,12 @@ alt-svc: h3=":443"; ma=86400
 
             </span>
           
-          <span class="text-r8-gray-11 group-focus:text-r8-gray-1">minimax</span>
+          <span class="text-r8-gray-11 group-focus:text-r8-gray-1">openai</span>
           <span class="text-r8-gray-11 group-focus:text-r8-gray-1">/</span>
-          <span class="font-semibold text-r8-gray-12 group-focus:text-r8-gray-1">h3-lite</span>
+          <span class="font-semibold text-r8-gray-12 group-focus:text-r8-gray-1">gpt-image-2.6-flare</span>
         </h4>
         <p class="mt-2 text-r8-sm text-r8-gray-12 group-focus:text-r8-gray-1">
-          Generate videos with MiniMax H3 Lite, the lower-cost version of MiniMax H3. Supports text-to-video, first- and last-frame image-to-video, and reference-based video generation at 480P or 768P.
+          OpenAI&#x27;s fast image model for generating and editing images from text and image inputs. Adds a complexity setting that controls how much the model plans before it renders.
         </p>
         
       </div>
@@ -298,7 +298,7 @@ alt-svc: h3=":443"; ma=86400
   </path>
 </svg>
 
-          33.1K runs
+          61.1K runs
         </div>
         
       </div>
@@ -319,10 +319,10 @@ alt-svc: h3=":443"; ma=86400
         
 
 <div class="footer no-focus">
-  <script id="react-component-props-42fbb293-df23-4bc8-a800-15e977ebfe60" type="application/json">{"theme": "", "__flags": {"web-api-token-show-once": true, "show-open-ai-api-instructions": false}}</script>
+  <script id="react-component-props-a38d5dbe-2c32-4fc9-85c9-0711367ad8e4" type="application/json">{"theme": "", "__flags": {"web-api-token-show-once": true, "show-open-ai-api-instructions": false}}</script>
 
 <div data-component="Footer"
-     data-props="react-component-props-42fbb293-df23-4bc8-a800-15e977ebfe60">
+     data-props="react-component-props-a38d5dbe-2c32-4fc9-85c9-0711367ad8e4">
   
 </div>
 
@@ -332,11 +332,11 @@ alt-svc: h3=":443"; ma=86400
 
     
 
-    <script nonce="xRsq+J9Aou/orxM6DDatCA==">
+    <script nonce="NkxzcBXFGRNXBZaVywxOhQ==">
       window.VIDEOJS_NO_DYNAMIC_STYLE = true;
     </script>
 
-    <script nonce="xRsq+J9Aou/orxM6DDatCA==">
+    <script nonce="NkxzcBXFGRNXBZaVywxOhQ==">
       const header = document.getElementById("app-header");
 
       function monitorHeaderStickiness() {

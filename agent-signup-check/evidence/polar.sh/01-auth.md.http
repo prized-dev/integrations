@@ -1,26 +1,26 @@
 GET https://polar.sh/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:30.357Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:16.897Z
 redirect: 307 from https://polar.sh/auth.md
 final-url: https://api.polar.sh/auth.md
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:27 GMT
+date: Tue, 24 Nov 2026 15:52:13 GMT
 content-type: text/markdown; charset=utf-8
-content-length: 2183
+content-length: 2688
 connection: close
 cache-control: private, no-store
 content-encoding: br
 polar-version: 2026-10
-rndr-id: 675b51d0-b9d4-438d
+rndr-id: f7dc9069-65c8-47e2
 server: cloudflare
 strict-transport-security: max-age=63072000; includeSubDomains
 vary: Accept-Encoding
 x-render-origin-server: uvicorn
 cf-cache-status: DYNAMIC
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Fqn43%2Fssao1AdJgoZa8DyTXpSuaD9GpTmcJii5VGs5gGlBXOwavOyZoYEtUgroTvOGU34yI5TEvmzlegTuWQ89GsjZHOVEpQnf68aBhEEYTCqshXhUfJ07QVKW7q8g%3D%3D"}]}
-cf-ray: a5c2f6c36e47efb8-PDX
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=r0bY6MWH%2FQZZMRAoqS5u%2BYJhwGe7o8mQDtdyQKAbrsE%2FVThWVk%2BRQ8IqA3SL9VfbPhKWmkP%2F3ocQ54YcLNS8WHX%2BoG%2BXuYIhQPcdNx68s4KhO0dwc9R%2FpHyVwTV6%2Fg%3D%3D"}]}
+cf-ray: a5f9945d9aa81d57-PDX
 alt-svc: h3=":443"; ma=86400
 
 # auth.md
@@ -83,8 +83,9 @@ server or CLI.
 
 Call the API with `Authorization: Bearer <access_token>`. Before the claim you can create one
 organization and set up its products, benefits, discounts, files, meters, events, checkouts and
-checkout links. You can't touch customers, orders, subscriptions, refunds, payouts, members,
-webhooks or organization access tokens until a human claims you.
+checkout links. You can't touch customers, orders, subscriptions, refunds, payouts, members or
+webhooks until a human claims you. You can't create organization access tokens even then: see
+Step 5 to get the app a token.
 
 ## Step 4: Hand over to a human (claim)
 
@@ -142,6 +143,33 @@ Once claimed, you act on behalf of the human: the organization is theirs, and yo
 access. Everything issued to you before the claim stops working, including the old identity
 assertion. Use the new one in Step 3 from now on.
 
+## Step 5: Get a token for the app
+
+Your access token is for setting things up, not for running the app: it expires every hour and,
+once you're claimed, acts for the human in all their organizations, so it can't ingest events.
+
+When the app needs credentials (to ingest events, check a customer's meters or benefits, ...),
+get an organization access token with the [Polar CLI](https://polar.sh/docs/integrate/cli/introduction).
+Pass only the scopes the app needs:
+
+```sh
+POLAR_ACCESS_TOKEN=<access_token> polar auth token --scope events:write --scope ...
+```
+
+Give the human the link it prints; they must open it on the machine you run on. Once they
+approve, the CLI prints the token. Store it in the app's secrets (e.g. `.env`), never in the
+repo or the chat.
+
+If you can't run the CLI on the human's machine, send them this link instead, with only the
+scopes the app needs:
+
+```
+https://polar.sh/dashboard/<organization slug>/cli/token?name=<token name>&scopes=<scope>,<scope>
+```
+
+They create the token and put it in the app's secrets themselves. Don't ask them to paste it
+into the chat.
+
 ## Errors
 
 | Code | Where | What to do |
@@ -155,6 +183,7 @@ assertion. Use the new one in Step 3 from now on.
 | `invalid_grant` | token endpoint, claim poll | The claim token is wrong, already used, or you were revoked. |
 | `invalid_client` | token endpoint | Don't send a `client_id`: Polar knows your client from your credentials. |
 | `authorization_pending`, `slow_down`, `expired_token` | token endpoint, claim poll | See Step 4. |
+| HTTP 403 | `/v1/events/ingest` | You're claimed, so your token can't ingest events. See Step 5. |
 
 ## Revoking
 

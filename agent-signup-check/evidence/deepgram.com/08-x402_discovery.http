@@ -1,18 +1,22 @@
 GET https://deepgram.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:08.993Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:48.178Z
 final-url: https://deepgram.com/.well-known/x402
 
 HTTP 404
 age: 0
 cache-control: public, max-age=0, must-revalidate
 content-length: 0
-date: Wed, 18 Nov 2026 00:46:08 GMT
+date: Tue, 24 Nov 2026 15:50:47 GMT
+permissions-policy: geolocation=(), payment=(), usb=(), browsing-topics=()
+referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=63072000
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
 x-matched-path: /api/well-known/[...path]
 x-nextjs-rewritten-path: /api/well-known/x402
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::mjtpv-1794962768074-95620f80da5e
+x-vercel-id: pdx1::iad1::vpx26-1795535447356-a3b0834628b4
 connection: close
 

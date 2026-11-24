@@ -1,6 +1,6 @@
 GET https://fal.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:05.766Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:44.231Z
 final-url: https://fal.ai/llms.txt
 
 HTTP 200
@@ -10,11 +10,13 @@ cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:02 GMT
+cross-origin-opener-policy-report-only: same-origin-allow-popups; report-to="coop"
+date: Tue, 24 Nov 2026 15:50:40 GMT
 etag: W/"34c4d4698a3cd52b786b73361783efcb"
-last-modified: Wed, 18 Nov 2026 00:46:02 GMT
+last-modified: Tue, 24 Nov 2026 15:50:40 GMT
 permissions-policy: camera=(self), microphone=(self), display-capture=(self), payment=(self "https://js.stripe.com"), geolocation=(), usb=(), serial=(), hid=(), bluetooth=()
 referrer-policy: strict-origin-when-cross-origin
+reporting-endpoints: coop="/api/security/coop-report"
 server: Vercel
 strict-transport-security: max-age=63072000
 x-content-type-options: nosniff
@@ -22,7 +24,7 @@ x-fal-request-url: /llms.txt
 x-frame-options: SAMEORIGIN
 x-matched-path: /llms.txt
 x-vercel-cache: MISS
-x-vercel-id: pdx1::j4hj8-1794962762364-89ebdc391839
+x-vercel-id: pdx1::2h6tj-1795535440670-d0517937c36b
 connection: close
 transfer-encoding: chunked
 

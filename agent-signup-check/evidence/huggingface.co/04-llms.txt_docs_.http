@@ -1,28 +1,28 @@
 GET https://huggingface.co/docs/hub/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:01.666Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:40.149Z
 final-url: https://huggingface.co/docs/hub/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Wed, 18 Nov 2026 00:46:00 GMT
+date: Tue, 24 Nov 2026 15:50:38 GMT
 content-encoding: gzip
-etag: W/"5954-9b3FYGBzGurrT6swbFjUCEwL2QY"
+etag: W/"59fa-Kqct8FeKI+ACSyG7EmaPd0ZtIKQ"
 x-powered-by: huggingface-moon
-x-request-id: Root=1-6afcf547-1d4c02890cb4dd6504447180
-ratelimit: "pages";r=97;t=204
+x-request-id: Root=1-6b05b24e-7398f34d3efb9a5d34912887
+ratelimit: "pages";r=97;t=225
 ratelimit-policy: "fixed window";"pages";q=100;w=300
 cross-origin-opener-policy: same-origin
 referrer-policy: strict-origin-when-cross-origin
 content-language: en
 vary: Accept-Encoding
 x-cache: Miss from cloudfront
-via: 1.1 e27e33d2ef7d91c8ffc1afbdd6d85df0.cloudfront.net (CloudFront)
+via: 1.1 31d47f77afe1d37fe242b822fcd944d0.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: bP8Dk__RjlYp2OnO5Ocx599I8gZxYw2by5BJorW6-a-EoT0FJlRXxw==
+x-amz-cf-id: PdaiycCSDYXnsSoCKS4P9Sp6Tt7D4SBS502aUSyxQNEtJTZmZWeVGQ==
 strict-transport-security: max-age=31536000
 
 # Hub
@@ -174,6 +174,7 @@ strict-transport-security: max-age=31536000
 - [Streamlit Spaces](https://huggingface.co/docs/hub/spaces-sdks-streamlit.md)
 - [3D Dataset](https://huggingface.co/docs/hub/datasets-3d.md)
 - [SQL Console: Query Hugging Face datasets in your browser](https://huggingface.co/docs/hub/datasets-viewer-sql-console.md)
+- [Pre-Release Model Pages](https://huggingface.co/docs/hub/models-release-announcements.md)
 - [Agent Libraries](https://huggingface.co/docs/hub/agents-libraries.md)
 - [User Management](https://huggingface.co/docs/hub/security-sso-user-management.md)
 - [Collections](https://huggingface.co/docs/hub/collections.md)
@@ -217,6 +218,7 @@ strict-transport-security: max-age=31536000
 - [Resource groups](https://huggingface.co/docs/hub/enterprise-resource-groups.md)
 - [Service Accounts](https://huggingface.co/docs/hub/enterprise-service-accounts.md)
 - [Agent Traces](https://huggingface.co/docs/hub/agent-traces.md)
+- [Nightwatch](https://huggingface.co/docs/hub/enterprise-nightwatch.md)
 - [Using Spaces for Organization Cards](https://huggingface.co/docs/hub/spaces-organization-cards.md)
 - [User Studies](https://huggingface.co/docs/hub/model-cards-user-studies.md)
 - [JupyterLab on Spaces](https://huggingface.co/docs/hub/spaces-sdks-docker-jupyter.md)

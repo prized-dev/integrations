@@ -1,31 +1,32 @@
 GET https://planetscale.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:48.135Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:31.870Z
 redirect: 307 from https://planetscale.com/llms.txt
 final-url: https://planetscale.com/docs/llms.txt
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:46:43 GMT
+date: Tue, 24 Nov 2026 15:51:27 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5c2f5b1ed2e8f7a-PDX
+cf-ray: a5f9933868dfefc6-PDX
 cf-cache-status: DYNAMIC
-age: 6991
+age: 2798
 cache-control: public
 content-encoding: br
-etag: W/"C_xJ5G2TUqoiMIAB_RNbC8vVUiVGwionxNyvdxfCRTA"
+etag: "ME0MnMsGFwyPEbRTGjsf5o6-GZRUZyAksBGZwWsVUWA"
 server: cloudflare
 strict-transport-security: max-age=63072000
 vary: accept-encoding
 cf-placement: local-PDX
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
+x-content-type-options: nosniff
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4177
+x-mintlify-client-version: 0.0.4286
 x-vercel-cache: MISS
-x-vercel-id: pdx1:arn1:iad1::iad1::f7rgm-1794962803636-d70f6284bb7b
+x-vercel-id: pdx1:iad1:iad1::iad1::d7g4k-1795535487383-277bcf82eccc
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
-x-version: dpl_81ettUQ5G7NASN425B6JKU3FX1Rg
+x-version: dpl_3DZuqjnfdjREuPshghHhyiLeMG3U
 alt-svc: h3=":443"; ma=86400
 
 # PlanetScale
@@ -141,7 +142,7 @@ alt-svc: h3=":443"; ma=86400
 - [Deletion protection](https://planetscale.com/docs/security/deletion-protection.md): Block database and branch deletion until protection is turned off
 - [Require multiple administrators for deletion](https://planetscale.com/docs/security/multiple-admins-required-for-deletion.md): Require two administrators to approve database deletion
 
-- [Vitess (172 pages)](https://planetscale.com/docs/_llms/vitess.txt):  , Pricing, Platform, Integrations, Guides.
+- [Vitess (173 pages)](https://planetscale.com/docs/_llms/vitess.txt):  , Pricing, Platform, Integrations, Guides.
 
 ## Neki
 
@@ -161,6 +162,7 @@ alt-svc: h3=":443"; ma=86400
 #### Core concepts
 
 - [Data topology](https://planetscale.com/docs/neki/data-topology.md): How Neki maps tables and shard keys to shards
+- [Data topology scope](https://planetscale.com/docs/neki/data-topology-scope.md): The relationship between Neki topology, shards, and logical objects in Postgres
 - [Query planning](https://planetscale.com/docs/neki/query-planning.md): How Neki plans a statement, and how to inspect its plan with EXPLAIN
 - [Shard targeting and fanout](https://planetscale.com/docs/neki/shard-targeting-fanout.md): Limit how broadly statements route, choose where reads run, and target one shard
 - [Transactions](https://planetscale.com/docs/neki/transactions.md): Snapshot and commit behavior for transactions that reach more than one shard
@@ -208,6 +210,7 @@ alt-svc: h3=":443"; ma=86400
 
 - [Connect privately with AWS PrivateLink](https://planetscale.com/docs/neki/connecting/private-connections/aws-privatelink.md): Private connectivity between an AWS VPC and Neki through AWS PrivateLink.
 - [Connect privately with GCP Private Service Connect](https://planetscale.com/docs/neki/connecting/private-connections/gcp-private-service-connect.md): Private connectivity between a Google Cloud VPC and Neki through Private Service Connect.
+- [Connect directly to Neki routers over VPC peering](https://planetscale.com/docs/neki/connecting/private-connections/vpc-peering.md): Private connectivity from a peered cloud network straight to the routers of a Neki database.
 
 #### Configuration
 
@@ -226,6 +229,7 @@ alt-svc: h3=":443"; ma=86400
 #### Branching
 
 - [Branching](https://planetscale.com/docs/neki/branching.md): Create development branches, restore from backups, and run production with high availability.
+- [Promote and demote a branch](https://planetscale.com/docs/neki/promote-branch.md): Promote a Neki branch to production, or demote it back to development.
 - [Development environments](https://planetscale.com/docs/neki/development-environments.md): Set up empty branches for schema work and disposable test data.
 
 #### Monitoring
@@ -253,8 +257,8 @@ alt-svc: h3=":443"; ma=86400
 - [Connect a Bun application to Neki](https://planetscale.com/docs/neki/guides/bun.md): Bun SQL connections and replica routing
 - [Connect Cloudflare Workers to Neki](https://planetscale.com/docs/neki/guides/cloudflare-workers.md): Cloudflare Workers connection pooling through Hyperdrive
 
-- [Postgres (105 pages)](https://planetscale.com/docs/_llms/postgres.txt): Onboarding, Platform, Guides.
-- [API Reference (272 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Introduction, Webhooks in PlanetScale, Authentication, General API endpoints, Postgres API endpoints, Neki API endpoints, Vitess API endpoints.
+- [Postgres (107 pages)](https://planetscale.com/docs/_llms/postgres.txt): Onboarding, Platform, Guides.
+- [API Reference (276 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Introduction, Webhooks in PlanetScale, Authentication, General API endpoints, Postgres API endpoints, Neki API endpoints, Vitess API endpoints.
 
 ## CLI Reference
 
@@ -326,9 +330,9 @@ alt-svc: h3=":443"; ma=86400
 
 ## Indexes
 
-- [Vitess (172 pages)](https://planetscale.com/docs/_llms/vitess.txt):  , Pricing, Platform, Integrations, Guides.
-- [Postgres (105 pages)](https://planetscale.com/docs/_llms/postgres.txt): Onboarding, Platform, Guides.
-- [API Reference (272 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Introduction, Webhooks in PlanetScale, Authentication, General API endpoints, Postgres API endpoints, Neki API endpoints, Vitess API endpoints.
+- [Vitess (173 pages)](https://planetscale.com/docs/_llms/vitess.txt):  , Pricing, Platform, Integrations, Guides.
+- [Postgres (107 pages)](https://planetscale.com/docs/_llms/postgres.txt): Onboarding, Platform, Guides.
+- [API Reference (276 pages)](https://planetscale.com/docs/_llms/api-reference.txt): Introduction, Webhooks in PlanetScale, Authentication, General API endpoints, Postgres API endpoints, Neki API endpoints, Vitess API endpoints.
 
 
 This documentation is built and hosted on [Mintlify](https://mintlify.com), a developer documentation platform.

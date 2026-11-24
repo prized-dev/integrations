@@ -1,16 +1,16 @@
 GET https://api.cloudinary.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:46.477Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:31.612Z
 final-url: https://api.cloudinary.com/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:46 GMT
+date: Tue, 24 Nov 2026 15:52:31 GMT
 content-type: text/html; charset=utf-8
 transfer-encoding: chunked
 connection: close
 vary: Accept-Encoding, Accept, X-Requested-With
 status: 404 Not Found
-x-request-id: c9a4e0465dd905873bc387f84ade5798
+x-request-id: 815ff4d2e6f642ddb096dfa061b258c0
 cache-control: no-cache
 referrer-policy: strict-origin-when-cross-origin
 x-permitted-cross-domain-policies: none

@@ -1,25 +1,25 @@
 GET https://us.posthog.com/api/projects/
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:41.950Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:26.706Z
 final-url: https://us.posthog.com/api/projects/
 
 HTTP 401
-date: Wed, 18 Nov 2026 00:47:37 GMT
+date: Tue, 24 Nov 2026 15:52:22 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
 www-authenticate: Bearer resource_metadata="https://us.posthog.com/.well-known/oauth-protected-resource"
 allow: GET, POST, HEAD, OPTIONS
-x-request-id: e7d6597d-1215-4bf2-aa64-76df174611fc
+x-request-id: 10a3de36-f82c-4af8-a806-443d692ed07c
 x-frame-options: SAMEORIGIN
 content-security-policy: default-src 'none'
 vary: origin, Cookie, Accept-Encoding
 x-content-type-options: nosniff
 referrer-policy: strict-origin-when-cross-origin
 cross-origin-opener-policy: same-origin
-x-posthog-build: ba8e54466b
+x-posthog-build: 62301be46c
 server: envoy
-x-envoy-upstream-service-time: 5
+x-envoy-upstream-service-time: 6
 content-encoding: gzip
 strict-transport-security: max-age=31536000; includeSubDomains
 

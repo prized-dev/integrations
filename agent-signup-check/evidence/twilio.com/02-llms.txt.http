@@ -1,24 +1,24 @@
 GET https://twilio.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:03.546Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:49.283Z
 redirect: 301 from https://twilio.com/llms.txt
 final-url: https://www.twilio.com/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
-content-length: 2525741
+content-length: 2530731
 connection: close
-server: AmazonS3
-date: Wed, 18 Nov 2026 00:46:58 GMT
-last-modified: Wed, 18 Nov 2026 00:09:53 GMT
-etag: "8df357c85ac9322a0cfaf60d49fa1787"
-x-amz-server-side-encryption: AES256
-x-amz-version-id: d8scfnjeLfq7EhWww_O32zHdPPfM2HVU
 accept-ranges: bytes
+date: Tue, 24 Nov 2026 15:51:43 GMT
+server: AmazonS3
+last-modified: Tue, 24 Nov 2026 12:48:21 GMT
+etag: "8aa91fc56c47500653101ba139a1858e"
+x-amz-version-id: 0F.N1.gmOInwXsHvCSx1wpERjCcvrYLG
+x-amz-server-side-encryption: AES256
 x-cache: Miss from cloudfront
-via: 1.1 f9cbfbc3568832d017c09dbd4649932c.cloudfront.net (CloudFront)
+via: 1.1 b7b9fc5331efc8b070db0bf27b36820e.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
-x-amz-cf-id: JamfX6jJy0S7IqL9UQ2S-nxNwwDrLx5fLPfQRuslux2LBf8lDTjneA==
+x-amz-cf-id: W_wavIE6KvPL7i_YhsjjV5eqikM5vcPOjq7pvQqCWpAcpS2oXxJE7w==
 
 * [Conversational AI and APIs for SMS, Email, Voice](https://www.twilio.com/en-us.md): Build amazing customer experiences on the Twilio platform with APIs for SMS, RCS, voice, and email, plus conversational AI for smarter engagement, and identity verification for trust.
 
@@ -608,6 +608,7 @@ x-amz-cf-id: JamfX6jJy0S7IqL9UQ2S-nxNwwDrLx5fLPfQRuslux2LBf8lDTjneA==
 * [Financial services solutions | Twilio](https://www.twilio.com/en-us/lp/financial-services-apj.md): Compliant text messaging, chat, and customer communications solutions for financial services organizations. Twilio is a trusted partner for digital transformation in banking, insurance, and payments.
 * [Personalisation without the disconnect](https://www.twilio.com/en-us/lp/apj-marketing-and-promotions.md): When your data is fragmented and your channels don’t connect, knowing who to target, what to send, and when to send it gets a whole lot harder.
 * [2026 Customer Data Platform Report | Twilio](https://www.twilio.com/en-us/lp/Customer-Data-Platform-Report-2026.md): 
+* [Startups APJ | Twilio](https://www.twilio.com/en-us/lp/twilio_startups_apj.md): Discover how startups can use Twilio to supercharge their businesses
 
 ## Twilio Super Network
 
@@ -886,7 +887,7 @@ x-amz-cf-id: JamfX6jJy0S7IqL9UQ2S-nxNwwDrLx5fLPfQRuslux2LBf8lDTjneA==
 * [Mobile Identity Intelligence for trusted communications with Twilio Lookup](https://www.twilio.com/en-us/blog/products/mobile-identity-intelligence-for-trusted-communications-with-twilio-lookup.md): x
 * [An Insider’s Guide to San Francisco: What to See, Do, Eat, and Drink at #SIGNALConf](https://www.twilio.com/en-us/blog/events/an-insiders-guide-to-san-francisco-what-to-see-do-eat-and-drink-at-signalconf.md): 
 * [Empowering voters with new and evolving digital communication strategies](https://www.twilio.com/en-us/blog/insights/trends/empowering-voters-digital-communication-strategies.md): Digital communications can be a critical part of voter empowerment and get-out-the-vote efforts. During U.S. midterm election week in 2018, inbound message volume spiked 2000%. Learn more.
-* [How to Reply to an Email](https://www.twilio.com/en-us/blog/insights/6-tips-for-responding-to-your-email-recipients.md): Learn how to reply to an email like a pro with expert tips. Boost your response time and email etiquette with better communication.
+* [How to reply to an email: 8+ tips for responding to emails](https://www.twilio.com/en-us/blog/insights/6-tips-for-responding-to-your-email-recipients.md): How to reply to an email professionally: a simple five-part structure, templates you can copy, and tips for faster, friendlier replies.
 * [Twilio’s Latest: Smarter Data, Faster Insights & More](https://www.twilio.com/en-us/blog/products/launches/trust-access-data-tools-1.md): Discover Twilio’s newest data features and tools: automate workflows, improve data reliability, and boost engagement across every channel.
 * [Announcing General Availability of Twilio Functions Invocation](https://www.twilio.com/en-us/blog/products/launches/announcing-general-availability-functions-invocations.md): Announcing the move to General Availability for Twilio Function invocations, what that means, and how you can use functions.
 * [Partners & Ecosystem](https://www.twilio.com/en-us/blog/partners.md): See how Twilio partners and platform integrations are powering innovation. Explore success stories and new collaborations.
@@ -1525,7 +1526,7 @@ x-amz-cf-id: JamfX6jJy0S7IqL9UQ2S-nxNwwDrLx5fLPfQRuslux2LBf8lDTjneA==
 * [Industry Insights](https://www.twilio.com/en-us/blog/insights.md): Explore the latest trends, best practices, and expert tips shaping the future of customer engagement.
 * [Send a Text Message using JavaScript/Node.js in 30 seconds with Twilio](https://www.twilio.com/en-us/blog/developers/tutorials/product/send-text-in-javascript-node-in-30-seconds-html.md): Send A Text In Node In 30 Seconds With Twilio
 * [Leveraging SendGrid's Event API](https://www.twilio.com/en-us/blog/insights/leveraging-sendgrids-event-api.md): Read how TeamSnap used SendGrid's Event API to improve deliverability and see which emails were getting delivered, bounced, or sent to spam.
-* [What is a Simple Mail Transfer Protocol (SMTP) server?](https://www.twilio.com/en-us/blog/insights/what-is-an-smtp-server.md): What is SMTP (Simple Mail Transfer Protocol), and how do SMTP servers send email? Learn more about the basics of SMTP servers and how they work.
+* [What is an SMTP server? How SMTP works + server addresses](https://www.twilio.com/en-us/blog/insights/what-is-an-smtp-server.md): An SMTP server sends and relays email. See how SMTP works, which port to use, and the SMTP server addresses for Gmail, Outlook, Yahoo, and more.
 * [TwilioCon Speakers Discuss The Future of Communications, and It’s Personal](https://www.twilio.com/en-us/blog/company/news/twiliocon-speakers-discuss-the-future-of-communications-and-its-personal-html.md): This year’s TwilioCon focuses on building the future of communications. We’re bringing together the developers and DOers who are busy creating this fut
 * [Email Marketing for Restaurants | Twilio](https://www.twilio.com/en-us/blog/insights/email-marketing-restaurants.md): Introduction to email marketing for restaurants. Learn how to build a list and leverage email to increase foot traffic and food sales, even during the slow season.
 * [How to use email seed list testing effectively](https://www.twilio.com/en-us/blog/insights/email-seed-list-testing.md): Email seed list testing is a valuable tool in the deliverability toolbox, but it’s not a crystal ball. Learn how to effectively use seed list testing.
@@ -1918,9 +1919,9 @@ x-amz-cf-id: JamfX6jJy0S7IqL9UQ2S-nxNwwDrLx5fLPfQRuslux2LBf8lDTjneA==
 * [Integrate Twilio ConversationRelay with Twilio Flex for Contextual Escalations](https://www.twilio.com/en-us/blog/developers/tutorials/integrations/conversationrelay-flex-contextual-escalations.md): Learn to handover contextual AI escalations to an agent on Twilio Flex with Twilio’s ConversationRelay and OpenAI GPT.
 * [8 Things Product Owners Should Consider With Video Apps](https://www.twilio.com/en-us/blog/insights/best-practices/8-considerations-with-video-apps.md): Learn how to get started with building video applications that are fast, simple, and visually friendly for developers and users alike.
 * [Call Queue: What It Is, How It Works & How to Get Started](https://www.twilio.com/en-us/blog/insights/best-practices/call-queuing.md): Master call queue management with this guide to phone queue systems. Learn call queuing best practices, reduce wait times, and improve customer service.
-* [How to Write a Top-Notch Email Newsletter (27+ Tips)](https://www.twilio.com/en-us/blog/insights/write-email-newsletter.md): Creating an effective newsletter can help make engaged and lifelong customers. Learn how to write a great email newsletter with our tips.
+* [How to write a top-notch email newsletter (27+ tips)](https://www.twilio.com/en-us/blog/insights/write-email-newsletter.md): Write an email newsletter people want to open. 27+ tips on subject lines, content, design, timing, and deliverability, plus examples and templates.
 * [Approve Users and Block Fake Accounts with Twilio Lookup and Verify](https://www.twilio.com/en-us/blog/developers/tutorials/product/block-fake-accounts-lookup-verify-node.md): Build a secure Node.js onboarding flow with Twilio. This tutorial covers 4 layers of defense: Line Type checks, Line Status, Identity Match (name-to-phone), and SMS OTP verification to stop bots and fraud.
-* [The Absolute Best Time to Send Email Campaigns in 2025](https://www.twilio.com/en-us/blog/insights/the-best-time-to-send-your-email-campaign.md): Learn the best time to send your email campaigns and how you can optimize your email send times to increase open rates and engagement.
+* [The absolute best time to send email campaigns in 2026](https://www.twilio.com/en-us/blog/insights/the-best-time-to-send-your-email-campaign.md): The best time to send email: start Tuesday to Thursday mid-morning, then test. Send-time tips by email type, time zone, and audience.
 * [5 ways to make HTTP requests in Ruby](https://www.twilio.com/en-us/blog/developers/tutorials/building-blocks/5-ways-make-http-requests-ruby.md): There are numerous ways to perform HTTP requests in Ruby. Let's dive in 5 of these solutions and compare each other.
 * [Twilio is Now a Remote-first Company](https://www.twilio.com/en-us/blog/company/news/twilio-is-now-a-remote-first-company.md): We’re providing Twilions with flexibility and redesigning our ways of working, by now being a remote-first company.
 * [3 Ways of Querying Data using LangChain Agents in Python](https://www.twilio.com/en-us/blog/developers/tutorials/building-blocks/3-ways-query-data-langchain-agents-python.md): Learn to query LangChain Agents in Python with an OpenAPI Agent, CSV Agent, and Pandas Dataframe Agent.
@@ -3394,7 +3395,7 @@ x-amz-cf-id: JamfX6jJy0S7IqL9UQ2S-nxNwwDrLx5fLPfQRuslux2LBf8lDTjneA==
 * [Building Beacon: How One Team Built A 25 Foot Interactive Chandelier at Signal](https://www.twilio.com/en-us/blog/developers/building-beacon-how-one-team-built-a-25-foot-interactive-chandelier-at-signal-html.md): Building Beacon: Interactive Chandelier at Signal
 * [Sending MMS with Twilio Programmable SMS, Python and Django](https://www.twilio.com/en-us/blog/developers/community/sending-mms-twilio-programmable-sms-python-django.md): Learn how to send multimedia text messages (MMS) using Twilio, Python and the Django web framework.
 * [Automated Survey with C# and ASP.NET MVC](https://www.twilio.com/en-us/blog/automated-survey-csharp-aspnet-mvc.md): Learn how to build automated surveys to gain immediate customer feedback via phone call using C#, ASP.NET, and the Twilio API.
-* [How to Send an Email with Go and SendGrid using Dynamic Templates](https://www.twilio.com/en-us/blog/developers/community/send-email-go-sendgrid-dynamic-templates.md): In this tutorial, learn how to use dynamic templates to programmatically embed data when sending emails with SendGrid.
+* [Send Emails with Go and SendGrid using Dynamic Templates](https://www.twilio.com/en-us/blog/developers/community/send-email-go-sendgrid-dynamic-templates.md): In this tutorial, learn how to use dynamic templates to programmatically embed data when sending emails with SendGrid.
 * [Building an Interactive Voice Response (IVR) System with Python, Django and Twilio](https://www.twilio.com/en-us/blog/building-interactive-voice-response-ivr-system-python-django-twilio.md): Build an Interactive Voice Response system to return movie showtimes using Python, Django and Twilio Programmable Voice.
 * [What's new in the Twilio helper library for ASP.NET (v8.1.1 - December 2024)](https://www.twilio.com/en-us/blog/developers/twilio-helper-library-for-aspdotnet-v811.md): Twilio posts cloud communications trends, customer stories, and tips for building scalable voice and SMS applications with Twilio's APIs.
 * [Magic Link Authentication with SendGrid and Auth.js](https://www.twilio.com/en-us/blog/magic-link-authentication-sendgrid-auth-js.md): In this blog post, you will build a passwordless authentication system using Next.js 13, SendGrid, and Auth.js. With this system, users can access your application by simply clicking on a link sent to their email.
@@ -4002,7 +4003,6 @@ x-amz-cf-id: JamfX6jJy0S7IqL9UQ2S-nxNwwDrLx5fLPfQRuslux2LBf8lDTjneA==
 * [Introducing Bulk Export for accessing final SMS and MMS states](https://www.twilio.com/en-us/blog/introducing-bulk-export.md): Get a flat file of message activity for a day—starting with yesterday. Vault access is free. Available in developer preview. We’re excited to announce
 * [How to Send WhatsApp Messages from Google Sheets with JavaScript and Node.js](https://www.twilio.com/en-us/blog/send-whatsapp-messages-from-google-sheets-javascript-node-js.md): Learn how to quickly send WhatsApp messages with JavaScript and Node.js using data stored in a Google Sheet with this handy programming tutorial.
 * [How to Send WhatsApp Messages from Java Applications with Twilio](https://www.twilio.com/en-us/blog/send-whatsapp-messages-java-applications-twilio-api.md): Programmatically send messages to WhatsApp recipients using the Twilio API.
-* [Get Started with RCS and Twilio](https://www.twilio.com/en-us/blog/get-started-rcs-twilio.md): Learn how to get started with Twilio's RCS Public Beta in this step by step overview of registering, creating a Sender profile, testing, and tracking.
-* [The future of messaging: Twilio's approach to Rich Communic
+* [Get Started with RCS and Twilio](https://www.twilio.com/en-us/blog/get-started-rcs-twilio.md): Learn how to get sta
 
 [truncated at 1048576 bytes]

@@ -1,26 +1,30 @@
 GET https://loops.so/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:00.576Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:43.852Z
 final-url: https://loops.so/auth.md
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:46:55 GMT
-content-type: text/markdown; charset=utf-8
+date: Tue, 24 Nov 2026 15:51:39 GMT
+content-type: text/markdown;charset=utf-8
 transfer-encoding: chunked
 connection: close
+age: 563202
 cache-control: public, max-age=0, must-revalidate
+content-disposition: inline
 content-security-policy: frame-ancestors 'none'
+last-modified: Tue, 10 Nov 2026 23:55:21 GMT
 permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()
 referrer-policy: strict-origin-when-cross-origin
 server: cloudflare
-server-timing: rewrite;desc="markdown", region;desc="us-west-2", version;desc="3824ea1"
+server-timing: rewrite;desc="static", region;desc="us-west-2", version;desc="010e668"
 strict-transport-security: max-age=31536000
-vary: Accept-Encoding, Accept
+vary: Accept
 x-content-type-options: nosniff
 x-frame-options: DENY
 cf-cache-status: DYNAMIC
+etag: W/"c2e4bf4e4d3c4487d0fbdb1db93a8dab"
 content-encoding: br
-cf-ray: a5c2f5fda9fff497-SJC
+cf-ray: a5f993885efd6289-PDX
 
 # Loops auth.md
 

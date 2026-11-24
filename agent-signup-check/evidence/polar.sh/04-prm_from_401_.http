@@ -1,25 +1,25 @@
 GET https://api.polar.sh/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:30.357Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:16.897Z
 final-url: https://api.polar.sh/.well-known/oauth-protected-resource
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:28 GMT
+date: Tue, 24 Nov 2026 15:52:15 GMT
 content-type: application/json
 content-length: 417
 connection: close
 cache-control: private, no-store
 content-encoding: br
 polar-version: 2026-10
-rndr-id: 3b688e47-860d-4f2b
+rndr-id: 4e1c0a76-3f5b-4042
 server: cloudflare
 strict-transport-security: max-age=63072000; includeSubDomains
 vary: Accept-Encoding
 x-render-origin-server: uvicorn
 cf-cache-status: DYNAMIC
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=XXgSy4xGReZvlKoBJXTruVu04ofYYUukhAX4zuGDBUF8tZNM51tXqQMUt08xugb%2FvyCbmxSpCdU2iid3V0WuLjxVo1mq5FZ2VRgrD5%2FrAVH%2BhxSYQJRmeLYSPpXdjQ%3D%3D"}]}
-cf-ray: a5c2f6cc09bfe8e9-PDX
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=KlxRWNR%2FvDVn3CTvJv%2Bz4%2BmkSqMWGQ2F1s2xNIIJhI2IGntoiSMnvNM9gXlKprYMzrw%2BusYOeCgBCk1mQyum9jy8YQwgjEftNLrYBo2kypDlDvvhg%2FnI%2FocVp5Clig%3D%3D"}]}
+cf-ray: a5f99466d8084e7c-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"resource":"https://api.polar.sh","authorization_servers":["https://api.polar.sh"],"scopes_supported":["openid","profile","email","user:read","user:write","organizations:read","organizations:write","custom_fields:read","custom_fields:write","discounts:read","discounts:write","checkout_links:read","checkout_links:write","checkouts:read","checkouts:write","transactions:read","transactions:write","payouts:read","payouts:write","products:read","products:write","benefits:read","benefits:write","events:read","events:write","meters:read","meters:write","files:read","files:write","subscriptions:read","subscriptions:write","customers:read","customers:write","members:read","members:write","wallets:read","wallets:write","disputes:read","disputes:write","customer_meters:read","customer_sessions:write","member_sessions:write","customer_seats:read","customer_seats:write","orders:read","orders:write","refunds:read","refunds:write","payments:read","metrics:read","metrics:write","webhooks:read","webhooks:write","license_keys:read","license_keys:write","customer_portal:read","customer_portal:write","notifications:read","notifications:write","notification_recipients:read","notification_recipients:write"],"bearer_methods_supported":["header"],"resource_name":"Polar","resource_documentation":"https://polar.sh/docs"}

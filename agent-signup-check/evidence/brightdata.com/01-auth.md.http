@@ -1,10 +1,10 @@
 GET https://brightdata.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:14.709Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:00.683Z
 final-url: https://brightdata.com/auth.md
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:10 GMT
+date: Tue, 24 Nov 2026 15:51:56 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -22,7 +22,7 @@ x-permitted-cross-domain-policies: none
 x-xss-protection: 0
 content-encoding: gzip
 cf-cache-status: DYNAMIC
-cf-ray: a5c2f65cbf2c5ec8-PDX
+cf-ray: a5f993f46f194518-PDX
 alt-svc: h3=":443"; ma=86400
 
 # auth.md — Bright Data agent registration
@@ -422,11 +422,11 @@ The human can add funds and lift restrictions in the Control Panel at any time.
 
 ## Errors
 
-Error responses from `/auth`, `/claim`, and `/claim/complete` use `{"error": "<code>", "error_description": "<next step>"}`. A request body that is not valid JSON can return a non-JSON `400`; fix the body.
+Error responses from `/auth`, `/claim`, and `/claim/complete` use `{"error": "<code>", "error_description": "<next step>"}`.
 
 | Code | HTTP | Where | What to do |
 | :---- | :---- | :---- | :---- |
-| `invalid_request` | 400 | `/auth` | Fix the JSON body. Also returned for a `verified_email` assertion that is not an email address. |
+| `invalid_request` | 400 | `/auth`, `/claim`, `/claim/complete` | Fix the JSON body. Also returned for a body that is not valid JSON, for a `verified_email` assertion that is not an email address, and for a `/claim/complete` body without `otp` (or `gist_id`). |
 | `email_not_accepted` | 400 | `/auth` | Disposable, aliased, or invalid address. Ask the user for their real mailbox address. |
 | `registration_denied` | 403 | `/auth`, `/claim/complete` | Registration refused. Do not retry. Go to Step 0, option 2. |
 | `browser_signup_required` | 403 | `/auth` | Do not retry. Tell the user to sign up in the Control Panel with the same email. |

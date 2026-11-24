@@ -1,26 +1,23 @@
 GET https://api.agentphone.ai/v1/numbers
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:05.644Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:50.872Z
 final-url: https://api.agentphone.ai/v1/numbers
 
 HTTP 401
-date: Wed, 18 Nov 2026 00:47:02 GMT
+date: Tue, 24 Nov 2026 15:51:47 GMT
 content-type: application/json
 content-length: 245
 connection: close
-permissions-policy: camera=(), microphone=(), geolocation=()
-referrer-policy: strict-origin-when-cross-origin
-server: cloudflare
-strict-transport-security: max-age=31536000; includeSubDomains
 x-content-type-options: nosniff
 x-frame-options: DENY
-x-railway-request-id: YjoY3GSfSGKWtE9I9I3ezw
-x-request-id: f5c23c3f-e205-4c16-a624-eaf141478956
 x-xss-protection: 0
-x-hikari-trace: sjc1.hqr0
-x-railway-edge: sjc1
+referrer-policy: strict-origin-when-cross-origin
+permissions-policy: camera=(), microphone=(), geolocation=()
+strict-transport-security: max-age=31536000; includeSubDomains
+x-request-id: 9c061b59-a14d-4971-9604-dccfb1bd5113
 cf-cache-status: DYNAMIC
 speculation-rules: "/cdn-cgi/speculation"
-cf-ray: a5c2f6269aa7c36d-PDX
+server: cloudflare
+cf-ray: a5f993bbb9f0ef94-PDX
 
-{"detail":"Authentication required. Provide API key or login via OAuth.","error":{"message":"Authentication required. Provide API key or login via OAuth.","code":"HTTP_401","type":"api_error"},"request_id":"f5c23c3f-e205-4c16-a624-eaf141478956"}
+{"detail":"Authentication required. Provide API key or login via OAuth.","error":{"message":"Authentication required. Provide API key or login via OAuth.","code":"HTTP_401","type":"api_error"},"request_id":"9c061b59-a14d-4971-9604-dccfb1bd5113"}

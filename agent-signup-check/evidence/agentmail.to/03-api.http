@@ -1,18 +1,18 @@
 GET https://api.agentmail.to/v0/inboxes
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:55.067Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:36.518Z
 final-url: https://api.agentmail.to/v0/inboxes
 
 HTTP 401
 content-type: application/json
 content-length: 26
 connection: close
-date: Wed, 18 Nov 2026 00:46:52 GMT
-apigw-requestid: HAtLggmkSK4EJxg=
+date: Tue, 24 Nov 2026 15:51:33 GMT
+apigw-requestid: HWjU_galyK4EJ8Q=
 x-cache: Error from cloudfront
-via: 1.1 d71a9f9985c04c59760fd5574a6fe436.cloudfront.net (CloudFront)
+via: 1.1 30f0e61c1580551568da5e96c38c9796.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P4
-x-amz-cf-id: Ysaz_qw2ivQAAedJBxxQpi-AdzSzdY3gF42TOF6BlYo4aZGioA7OAg==
+x-amz-cf-id: sJaXubrUSim19ET08A6RqJqtUDVQGIloE9CHolQ79zfK6OlMHG3TVA==
 strict-transport-security: max-age=31536000; includeSubDomains
 www-authenticate: Bearer resource_metadata="https://api.agentmail.to/.well-known/oauth-protected-resource"
 

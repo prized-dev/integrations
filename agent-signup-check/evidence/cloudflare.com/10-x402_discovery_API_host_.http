@@ -1,18 +1,18 @@
 GET https://api.cloudflare.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:21.045Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:00.507Z
 final-url: https://api.cloudflare.com/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:46:20 GMT
+date: Tue, 24 Nov 2026 15:51:00 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
-cf-ray: a5c2f5237a879790-PDX
+cf-ray: a5f992920f0128b9-PDX
 cf-cache-status: DYNAMIC
 cache-control: no-store
 server: cloudflare
-cf-auditlog-id: 01a1ec1e-7233-781c-a5e2-e2683145a0ea
+cf-auditlog-id: 01a20e40-d754-7864-8581-68d44888acd5
 api-version: 2026-10-01.epoch
 content-encoding: gzip
 

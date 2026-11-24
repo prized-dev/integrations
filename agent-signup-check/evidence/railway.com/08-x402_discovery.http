@@ -1,16 +1,16 @@
 GET https://railway.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:16.490Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:56.023Z
 final-url: https://railway.com/.well-known/x402
 
 HTTP 406
 content-type: application/json
-date: Wed, 18 Nov 2026 00:46:15 GMT
+date: Tue, 24 Nov 2026 15:50:55 GMT
 server: railway-hikari
-x-railway-request-id: 1iY0WT26RfSKn7Bblt7tkg
+x-railway-request-id: xazBJv-4RfuMaJmO9I3ezw
 x-cache: DYNAMIC
 transfer-encoding: chunked
-x-hikari-trace: lax1.ez9k
+x-hikari-trace: lax1.e74w,lax1.ez9k
 x-railway-edge: lax1
 connection: close
 

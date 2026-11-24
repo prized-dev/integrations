@@ -1,20 +1,20 @@
 GET https://sentry.io/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:38.856Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:24.815Z
 final-url: https://sentry.io/llms.txt
 
 HTTP 200
 server: nginx
-date: Wed, 18 Nov 2026 00:47:36 GMT
+date: Tue, 24 Nov 2026 15:52:22 GMT
 content-type: text/plain; charset=utf-8
 vary: Accept-Encoding,Accept, User-Agent
 access-control-allow-origin: *
-age: 10292
+age: 1088
 cache-control: public, max-age=3600, s-maxage=3600
 content-disposition: inline; filename="llms.txt"
 x-vercel-cache: HIT
-x-vercel-id: cle1::4qcr2-1794962856194-3a50463e3244
-content-security-policy: upgrade-insecure-requests; default-src 'none'; script-src 'strict-dynamic' 'nonce-DgWNqwSrFZpgd79JQhwcYMwTq2k5NQ5q' 'report-sample' 'self' 'unsafe-inline' 'unsafe-eval' *.sentry.dev www.googletagmanager.com plausible.io player.vimeo.com prod-assets.sequelvideo.com; connect-src 'self' sentry.io *.sentry.io *.sentry.dev reload.getsentry.net www.google.com unpkg.com vimeo.com plausible.io *.sequelvideo.com *.sequel.io; img-src 'self' sentry.io *.sentry.io data: *.sentry.dev storage.googleapis.com sentry-blog.storage.googleapis.com www.googletagmanager.com i.vimeocdn.com images.ctfassets.net images.lumacdn.com *.sequelvideo.com *.cloudinary.com; style-src 'self' 'unsafe-inline' *.sentry.dev; media-src 'self' videos.ctfassets.net; font-src 'self' *.sentry.dev data: fonts.gstatic.com; frame-src player.vimeo.com demo.arcade.software recaptcha.google.com www.google.com *.sequel.io *.sequelvideo.com; manifest-src 'self' *.sentry.dev; base-uri 'none'; frame-ancestors *.sentry.io; report-uri https://o1.ingest.sentry.io/api/1297627/security/?sentry_key=e811b9077ef64dcf8a279ec18a61b222
+x-vercel-id: cle1::fk25z-1795535542154-87c2bbc0d8d0
+content-security-policy: upgrade-insecure-requests; default-src 'none'; script-src 'strict-dynamic' 'nonce-kPVv9vhOTNRxTcwmd312leUfWvvdIDy2' 'report-sample' 'self' 'unsafe-inline' 'unsafe-eval' *.sentry.dev www.googletagmanager.com plausible.io player.vimeo.com prod-assets.sequelvideo.com; connect-src 'self' sentry.io *.sentry.io *.sentry.dev reload.getsentry.net www.google.com unpkg.com vimeo.com plausible.io *.sequelvideo.com *.sequel.io; img-src 'self' sentry.io *.sentry.io data: *.sentry.dev storage.googleapis.com sentry-blog.storage.googleapis.com www.googletagmanager.com i.vimeocdn.com images.ctfassets.net images.lumacdn.com *.sequelvideo.com *.cloudinary.com; style-src 'self' 'unsafe-inline' *.sentry.dev; media-src 'self' videos.ctfassets.net; font-src 'self' *.sentry.dev data: fonts.gstatic.com; frame-src player.vimeo.com demo.arcade.software recaptcha.google.com www.google.com *.sequel.io *.sequelvideo.com; manifest-src 'self' *.sentry.dev; base-uri 'none'; frame-ancestors *.sentry.io; report-uri https://o1.ingest.sentry.io/api/1297627/security/?sentry_key=e811b9077ef64dcf8a279ec18a61b222
 content-encoding: br
 via: 1.1 google
 alt-svc: h3=":443"; ma=2592000
@@ -284,7 +284,7 @@ _Source: https://docs.sentry.io/llms.txt_
 - [Tracing for the Frontend (to the Backend)](https://sentry.io/resources/tracing-for-the-frontend-to-the-backend/): Dustin Bailey (Solutions Engineer) shows how developers can trace those pesky performance issues to poor-performing API 
 - [Unsnag Your Mobile Monitoring: Why Teams Are Switching to Sentry](https://sentry.io/resources/unsnag-your-mobile-monitoring/): Mobile error monitoring tools shouldn’t flood your inbox or leave you numb to alerts—just surface what actually matters.
 - [Powering Warp Factories with Sentry](https://sentry.io/resources/warp-workshop/): Sentry DevEx Engineer Sergiy Dybskiy and Warp DevEx Lead Ben Holmes discuss how to integrate Sentry into Warp's new clou
-- [Distributed tracing: What is it?](https://sentry.io/resources/what-is-distributed-tracing/): With distributed tracing, developers can monitor & trace requests across services to fix bugs & address performance issu
+- [Distributed tracing: What is it?](https://sentry.io/resources/what-is-distributed-tracing/): Distributed tracing captures the timing and flow of requests, jobs, and AI agent runs across services, so you can debug 
 - [Sentry demo: debugging for game developers](https://sentry.io/resources/workshop-gaming-march/): In this live demo, we'll walk through how game developers use Sentry to capture crash reports, reconstruct issues with l
 - [Fewer Tools, Faster Fixes: A Practical Guide to Observability Consolidation](https://sentry.io/resources/workshop-observability-consolidation/): Most observability stacks aren't designed, they accumulate. A logging tool here, a tracing platform there, and before yo
 - [Getting Started with XcodeBuildMCP: Let AI Agents Build, Test, and Debug Your iOS Apps](https://sentry.io/resources/xcodebuildmcp-workshop/): XcodeBuildMCP gives AI agents the ability to build, test, and debug native iOS and macOS apps. In this hands-on workshop

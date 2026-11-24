@@ -1,6 +1,6 @@
 GET https://browser-use.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:14.617Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:59.406Z
 final-url: https://browser-use.com/auth.md
 
 HTTP 200
@@ -8,7 +8,7 @@ age: 0
 cache-control: public, max-age=0, must-revalidate
 content-encoding: br
 content-type: text/markdown; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:09 GMT
+date: Tue, 24 Nov 2026 15:51:55 GMT
 link: <https://browser-use.com/developers>; rel="canonical"
 server: Vercel
 strict-transport-security: max-age=63072000
@@ -17,7 +17,7 @@ x-content-source: pages-for-llms
 x-matched-path: /api/md/[[...path]]
 x-robots-tag: noindex
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::k4r8z-1794962829762-0df1b33df621
+x-vercel-id: pdx1::iad1::dxl47-1795535515051-f011283918c8
 connection: close
 transfer-encoding: chunked
 

@@ -1,7 +1,7 @@
 {
  "site": "boat.dev",
- "checkedAt": "2026-11-18T00:46:40.326Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:51:21.290Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 4,
  "partial": 2,
  "unread": 0,
@@ -97,7 +97,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 286,
+   "ms": 268,
    "redirects": 0
   },
   {
@@ -107,7 +107,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 352,
+   "ms": 386,
    "redirects": 0
   },
   {
@@ -117,7 +117,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json;charset=utf-8",
-   "ms": 179,
+   "ms": 202,
    "redirects": 0
   },
   {
@@ -127,7 +127,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json;charset=utf-8",
-   "ms": 199,
+   "ms": 196,
    "redirects": 0
   },
   {
@@ -137,7 +137,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json;charset=utf-8",
-   "ms": 215,
+   "ms": 212,
    "redirects": 0
   },
   {
@@ -147,7 +147,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json;charset=utf-8",
-   "ms": 204,
+   "ms": 210,
    "redirects": 0
   },
   {

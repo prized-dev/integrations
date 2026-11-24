@@ -1,10 +1,10 @@
 GET https://api.context.dev/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:25.434Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:10.642Z
 final-url: https://api.context.dev/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:25 GMT
+date: Tue, 24 Nov 2026 15:52:10 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
@@ -14,11 +14,11 @@ referrer-policy: same-origin
 x-frame-options: SAMEORIGIN
 speculation-rules: "/cdn-cgi/speculation"
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2BvONgeMVSF%2FoMAF6ekYeYIgPjEhK3nza4QOE9Sxx4DPflqHlMhPrBNOF7rtDSaiPaFKR%2BL4tXMMzjstp74nj%2BGoB%2BBzw4nMcNGXrnQCjjVmKei1KgOGXo9OC268vKGmPhg%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=jRJbamhybhX4pHUhEmV8APFDF%2B%2B53Fmra35lpe6%2BSeilpLNJBkj0DZjYm0TB7uRKvkOMOGxu%2BAXDwdY99Bv0TJL4KoMFUJRW50abaPefgufGh0fI0koqg8LMY3I3M4yarQ%3D%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 content-encoding: br
 server: cloudflare
-cf-ray: a5c2f6b60d013d49-PDX
+cf-ray: a5f994489e3e613d-PDX
 alt-svc: h3=":443"; ma=86400
 
 {"message":"The API endpoint you have tried to access does not exist. Review the documentation at https://docs.context.dev or the OpenAPI spec at https://www.context.dev/openapi.json to fix your request. If you have any questions please reach out to hello@context.dev","error_code":"ENDPOINT_NOT_FOUND","docs":"https://docs.context.dev","openapi":"https://www.context.dev/openapi.json"}

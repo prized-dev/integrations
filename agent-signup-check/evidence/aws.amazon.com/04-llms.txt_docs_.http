@@ -1,13 +1,13 @@
 GET https://docs.aws.amazon.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:36.241Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:16.997Z
 final-url: https://docs.aws.amazon.com/llms.txt
 
 HTTP 200
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-date: Wed, 18 Nov 2026 00:46:33 GMT
+date: Tue, 24 Nov 2026 15:43:52 GMT
 content-encoding: gzip
 server: Server
 cache-control: max-age=600
@@ -16,14 +16,15 @@ strict-transport-security: max-age=47304000; includeSubDomains
 x-xss-protection: 1; mode=block
 x-content-type-options: nosniff, nosniff
 content-security-policy: upgrade-insecure-requests;      script-src 'self' 'unsafe-inline' blob:        *.awsstatic.com        *.cdn.uis.awsstatic.com        *.cdn.console.awsstatic.com        d2c.aws.amazon.com        a0.awsstatic.com        *.feedback.console.aws.dev        *.shortbread.aws.dev        *.awswaf.com        *.contentsquare.net        app.contentsquare.com;      object-src 'none';
-last-modified: Tue, 17 Nov 2026 22:35:08 GMT
+last-modified: Tue, 24 Nov 2026 14:50:32 GMT
 accept-ranges: bytes
-etag: "Q3r7fscngeHiileNMVV0DGgDJAw=-gzip"
+etag: "K8/BMR+eud8BYKIEHdeXmgh9eF8=-gzip"
 vary: Accept-Encoding
-x-cache: Miss from cloudfront
-via: 1.1 7d14d4fc1c149f1d429681a4c414c21a.cloudfront.net (CloudFront)
+x-cache: Hit from cloudfront
+via: 1.1 30f0e61c1580551568da5e96c38c9796.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P4
-x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
+x-amz-cf-id: PbpAWEvtA_kGBmAH5ufNp5vnqaE7JixGYaVXMk7OcwbTzfRN76Ytww==
+age: 442
 
 # Amazon Web Services (AWS) Documentation
 > This file provides structured access to AWS service documentation for large language models. Each section represents a service landing page with links to key documentation resources.
@@ -134,7 +135,7 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Amazon CloudWatch Observability Access Manager API Reference](https://docs.aws.amazon.com/OAM/latest/APIReference/Welcome.md): Use Amazon CloudWatch Observability Access Manager to create and manage links between source accounts and monitoring accounts by using CloudWatch cross-account observability. [llms.txt](https://docs.aws.amazon.com/OAM/latest/APIReference/llms.txt)
 
-- [AWS Partner Revenue Measurement Onboarding guide for AWS Partner Revenue Measurement](https://docs.aws.amazon.com/PRM/latest/aws-prm-onboarding-guide/what-is-service.md): Learn about Partner Revenue Measurement, AWS's revenue attribution measurement service for partners. [llms.txt](https://docs.aws.amazon.com/PRM/latest/aws-prm-onboarding-guide/llms.txt)
+- [AWS Revenue Measurement Onboarding guide for AWS Revenue Measurement](https://docs.aws.amazon.com/PRM/latest/aws-prm-onboarding-guide/what-is-service.md): Learn about AWS Revenue Measurement, AWS's revenue attribution measurement service for partners. [llms.txt](https://docs.aws.amazon.com/PRM/latest/aws-prm-onboarding-guide/llms.txt)
 
 - [AWS Flat-Rate Plans User Guide](https://docs.aws.amazon.com/PricingPlanManager/latest/UserGuide/sign-up-for-aws.md): To get started with AWS, you need an AWS account. [llms.txt](https://docs.aws.amazon.com/PricingPlanManager/latest/UserGuide/llms.txt)
 
@@ -145,6 +146,10 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 - [AWS Security Token Service API Reference](https://docs.aws.amazon.com/STS/latest/APIReference/Welcome.md): AWS provides AWS Security Token Service (AWS STS) as a web service that enables you to request temporary, limited-privilege credentials for users. [llms.txt](https://docs.aws.amazon.com/STS/latest/APIReference/llms.txt)
 
 - [AWS Schema Conversion Tool User Guide](https://docs.aws.amazon.com/SchemaConversionTool/latest/userguide/CHAP_Welcome.md): The AWS Schema Conversion Tool (AWS SCT) simplifies the process of migrating databases to new platforms. [llms.txt](https://docs.aws.amazon.com/SchemaConversionTool/latest/userguide/llms.txt)
+
+- [AWS Abuse Signal API API Reference](https://docs.aws.amazon.com/abuse-signal/latest/APIReference/Welcome.md): The AWS Abuse Signal API is a programmatic interface that allows AWS customers, security researchers, and partner organizations to submit and track reports of suspected abuse of AWS resources. [llms.txt](https://docs.aws.amazon.com/abuse-signal/latest/APIReference/llms.txt)
+
+- [AWS Abuse Signal API User Guide](https://docs.aws.amazon.com/abuse-signal/latest/userguide/what-is-service.md): AWS Abuse Signal API is a service that you use to programmatically submit and track abuse reports against AWS resources. [llms.txt](https://docs.aws.amazon.com/abuse-signal/latest/userguide/llms.txt)
 
 - [IAM Access Analyzer API Reference](https://docs.aws.amazon.com/access-analyzer/latest/APIReference/Welcome.md): AWS Identity and Access Management Access Analyzer helps you to set, verify, and refine your IAM policies by providing a suite of capabilities. [llms.txt](https://docs.aws.amazon.com/access-analyzer/latest/APIReference/llms.txt)
 
@@ -159,6 +164,8 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 - [AWS Certificate Manager API Reference](https://docs.aws.amazon.com/acm/latest/APIReference/Welcome.md): Welcome to the AWS Certificate Manager (ACM) API Reference. [llms.txt](https://docs.aws.amazon.com/acm/latest/APIReference/llms.txt)
 
 - [AWS Certificate Manager User Guide](https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.md): Learn about the AWS Certificate Manager. [llms.txt](https://docs.aws.amazon.com/acm/latest/userguide/llms.txt)
+
+- [Agent Registry Public Search (Agent Discovery) API Reference Agent Registry Public Search (Agent Discovery) API Reference](https://docs.aws.amazon.com/agent-discovery/latest/APIReference/Welcome.md): AWS Agent Registry Public Search (Agent Discovery) lets you search public records for AI agents, tools, skills, and other resources that their publishers have made discoverable. [llms.txt](https://docs.aws.amazon.com/agent-discovery/latest/APIReference/llms.txt)
 
 - [AgentRegistry Control Plane API Reference AgentRegistry Control Plane API Reference](https://docs.aws.amazon.com/agent-registry-control/latest/APIReference/Welcome.md): AWS Agent Registry is a managed catalog for publishing and discovering resources such as MCP servers, agents, and agent skills. [llms.txt](https://docs.aws.amazon.com/agent-registry-control/latest/APIReference/llms.txt)
 
@@ -382,8 +389,6 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [AWS Blockchain Templates Developer Guide](https://docs.aws.amazon.com/blockchain-templates/latest/developerguide/what-are-blockchain-templates.md): Learn to use AWS Blockchain Templates, which allows you to quickly create blockchain networks using AWS technology and open-source frameworks such as Ethereum and Hyperledger Fabric. [llms.txt](https://docs.aws.amazon.com/blockchain-templates/latest/developerguide/llms.txt)
 
-- [AWS Blocks Developer Guide](https://docs.aws.amazon.com/blocks/latest/devguide/what-is-blocks.md): Learn about AWS Blocks, a backend toolkit for building full-stack applications on AWS. [llms.txt](https://docs.aws.amazon.com/blocks/latest/devguide/llms.txt)
-
 - [Amazon Braket API Reference](https://docs.aws.amazon.com/braket/latest/APIReference/Welcome.md): The Amazon Braket API Reference provides information about the operations and structures supported by Amazon Braket. [llms.txt](https://docs.aws.amazon.com/braket/latest/APIReference/llms.txt)
 
 - [Amazon Braket Developer Guide](https://docs.aws.amazon.com/braket/latest/developerguide/what-is-braket.md): Learn about Amazon Braket, the quantum computing service on AWS. [llms.txt](https://docs.aws.amazon.com/braket/latest/developerguide/llms.txt)
@@ -392,9 +397,11 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Customer Carbon Footprint Tool CCFT Release Notes](https://docs.aws.amazon.com/ccft/latest/releasenotes/what-is-ccftrn.md): Learn about the information you can find in the Customer Carbon Footprint Tool release notes documentation.
 
+- [AWS CDK Blocks CDK Blocks Developer Guide](https://docs.aws.amazon.com/cdk/blocks/devguide/what-is-blocks.md): Learn about CDK Blocks, an open-source expansion of the AWS CDK that packages application capabilities with AWS best practices built in. [llms.txt](https://docs.aws.amazon.com/cdk/blocks/devguide/llms.txt)
+
 - [AWS Cloud Development Kit (AWS CDK) v1 Developer Guide](https://docs.aws.amazon.com/cdk/v1/guide/home.md): Developer guide for the AWS CDK. [llms.txt](https://docs.aws.amazon.com/cdk/v1/guide/llms.txt)
 
-- [AWS Cloud Development Kit (AWS CDK) v2 Developer Guide](https://docs.aws.amazon.com/cdk/v2/guide/home.md): The AWS Cloud Development Kit (AWS CDK) is an open-source software development framework for defining cloud infrastructure in code and provisioning it through AWS CloudFormation. [llms.txt](https://docs.aws.amazon.com/cdk/v2/guide/llms.txt)
+- [AWS Cloud Development Kit (AWS CDK) v2 Developer Guide](https://docs.aws.amazon.com/cdk/v2/guide/home.md): The AWS Cloud Development Kit (AWS CDK) is an open-source set of libraries and command-line tools for building and deploying applications on AWS. [llms.txt](https://docs.aws.amazon.com/cdk/v2/guide/llms.txt)
 
 - [AWS CloudFormation Guard User Guide](https://docs.aws.amazon.com/cfn-guard/latest/ug/what-is-guard.md): Learn to use Guard to write and test policy rules and validate data against those rules. [llms.txt](https://docs.aws.amazon.com/cfn-guard/latest/ug/llms.txt)
 
@@ -418,7 +425,7 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [AWS Clean Rooms API Reference](https://docs.aws.amazon.com/clean-rooms/latest/apireference/Welcome.md): Welcome to the AWS Clean Rooms API Reference. [llms.txt](https://docs.aws.amazon.com/clean-rooms/latest/apireference/llms.txt)
 
-- [AWS Clean Rooms SQL Reference](https://docs.aws.amazon.com/clean-rooms/latest/sql-reference/sql-reference.md): Learn about the types of SQL functions you can use in AWS Clean Rooms. [llms.txt](https://docs.aws.amazon.com/clean-rooms/latest/sql-reference/llms.txt)
+- [AWS Clean Rooms SQL Reference](https://docs.aws.amazon.com/clean-rooms/latest/sql-reference/sql-reference.md): Learn about the SQL that AWS Clean Rooms runs and the rules that apply to every query. [llms.txt](https://docs.aws.amazon.com/clean-rooms/latest/sql-reference/llms.txt)
 
 - [AWS Clean Rooms User Guide](https://docs.aws.amazon.com/clean-rooms/latest/userguide/what-is.md): AWS Clean Rooms is an AWS service where multiple parties can join their data together in a secure collaboration workspace. [llms.txt](https://docs.aws.amazon.com/clean-rooms/latest/userguide/llms.txt)
 
@@ -670,7 +677,7 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [AWS DevOps Agent API Reference](https://docs.aws.amazon.com/devopsagent/latest/APIReference/Welcome.md): AWS DevOps Agent is your always-available operations teammate. [llms.txt](https://docs.aws.amazon.com/devopsagent/latest/APIReference/llms.txt)
 
-- [AWS DevOps Agent User Guide](https://docs.aws.amazon.com/devopsagent/latest/userguide/about-aws-devops-agent.md): AWS DevOps Agent is an AI-powered, always-available agent that spans release management and production operations, from reviewing release readiness and release testing to investigating and preventing operational issues across AWS, multicloud, and on-premises environments. [llms.txt](https://docs.aws.amazon.com/devopsagent/latest/userguide/llms.txt)
+- [AWS DevOps Agent User Guide](https://docs.aws.amazon.com/devopsagent/latest/userguide/about-aws-devops-agent.md): AWS DevOps Agent is an AI-powered, always-available agent that spans Code Change Risk Analysis and production operations, from reviewing code changes for production risks to investigating and preventing operational issues across AWS, multicloud, and on-premises environments. [llms.txt](https://docs.aws.amazon.com/devopsagent/latest/userguide/llms.txt)
 
 - [AWS Diagnostic Tools AWS Diagnostic Tools API Reference](https://docs.aws.amazon.com/diagnostic-tools/latest/APIReference/Welcome.md): AWS Diagnostic Tools provides an HTTP endpoint to self diagnose common troubleshooting issues with AWS Services. [llms.txt](https://docs.aws.amazon.com/diagnostic-tools/latest/APIReference/llms.txt)
 
@@ -1430,7 +1437,7 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Network Flow Monitor API Reference](https://docs.aws.amazon.com/networkflowmonitor/2.0/APIReference/Welcome.md): Network Flow Monitor is a feature of Amazon CloudWatch Network Monitoring that provides visibility into the performance of network flows for your AWS workloads, between instances in subnets, as well as to and from AWS. [llms.txt](https://docs.aws.amazon.com/networkflowmonitor/2.0/APIReference/llms.txt)
 
-- [AWS Global Networks for Transit Gateways API Reference](https://docs.aws.amazon.com/networkmanager/latest/APIReference/Welcome.md): Amazon Web Services enables you to centrally manage your AWS Cloud WAN core network and your Transit Gateway network across AWS accounts, Regions, and on-premises locations. [llms.txt](https://docs.aws.amazon.com/networkmanager/latest/APIReference/llms.txt)
+- [AWS Network Manager API Reference](https://docs.aws.amazon.com/networkmanager/latest/APIReference/Welcome.md): Amazon Web Services enables you to centrally manage your AWS Cloud WAN core network and your Transit Gateway network across AWS accounts, Regions, and on-premises locations. [llms.txt](https://docs.aws.amazon.com/networkmanager/latest/APIReference/llms.txt)
 
 - [Network Synthetic Monitor API Reference](https://docs.aws.amazon.com/networkmonitor/latest/APIReference/Welcome.md): Network Synthetic Monitor is feature of Network Monitoring in Amazon CloudWatch that provides visibility into the performance of network flows for your workloads, between instances in VPC subnets, as well as to and from AWS. [llms.txt](https://docs.aws.amazon.com/networkmonitor/latest/APIReference/llms.txt)
 
@@ -1630,8 +1637,6 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Amazon Alexa Skill for Airlines Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/alexa-skill-airlines/alexa-skill-airlines.md): Build a secure airline Alexa Skill for booking and travel management by using Amazon API Gateway, AWS Lambda, and Amazon Cognito.
 
-- [Algorithmic Trading on AWS Architecture diagrams for financial services](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/algorithmic-trading-on-aws/algorithmic-trading-on-aws.md): Backtest and host machine learning-based algorithmic trading strategies by using AWS Fargate, Amazon Elastic Container Service, and Amazon SageMaker AI.
-
 - [Amazon EKS on AWS Outposts Rack Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/amazon-eks-on-aws-outposts-rack/amazon-eks-on-aws-outposts-rack.md): This reference architecture diagram shows how to deploy Amazon Elastic Kubernetes Service (Amazon EKS) on an AWS Outposts rack.
 
 - [Amazon RDS on AWS Outposts Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/amazon-rds-on-aws-outposts/amazon-rds-on-aws-outposts.md): This reference architecture diagram shows how to deploy Amazon Relational Database Service (Amazon RDS) on AWS Outposts.
@@ -1772,6 +1777,8 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Edit in the Cloud on AWS AWS Reference Architecture Diagram](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/edit-in-cloud-on-aws/edit-in-cloud-on-aws.md): This architecture helps you build a virtual, video editing environment on AWS to collaborate with your editors and creative professionals.
 
+- [Education Reference Architecture Diagrams Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/education/hybrid-remote-proctoring-solution.md): Monitor students during remote or in-person exams by using AI assistance to highlight prohibited objects and behaviors with Amazon Rekognition and the Amazon Chime SDK. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/education/llms.txt)
+
 - [Electronics, EDA, and HPC Reference Architecture Diagrams Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/electronics-hpc/active-active-and-active-passive-configurations-in-aws-direct-connect.md): This architecture enables you to build configuration with Virtual Interfaces (VIFs) for maximum resiliency. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/electronics-hpc/llms.txt)
 
 - [Element Analytics Unify on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/element-analytics-unify-on-aws/element-analytics-unify-on-aws.md): This diagram has been archived.
@@ -1780,19 +1787,15 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Enhance Existing ML Lifecycles with Amazon SageMaker AI and AWS Fargate Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/enhance-ml-sagemaker-fargate/enhance-ml-sagemaker-fargate.md): Shows how to enhance your existing ML workflow by integrating with SageMaker AI model training while preserving custom serverless endpoints with AWS Fargate.
 
-- [Exploring Real-Time Streaming for Retrieval Augmented Generation in GenerativeAI Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/exploring-real-time-streaming-for-retrieval-augmented-generation/exploring-real-time-streaming-for-retrieval-augmented-generation.md): This architecture demonstrates the integration of streaming data services on AWS with Retrieval Augmented Generation(RAG) in Generative AI applications.
-
 - [Expose Microservices Using Amazon EKS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/expose-microservices-eks/expose-microservices-eks-ipv4.md): Expose Amazon Elastic Kubernetes Service microservices hosted in private subnets to the internet and on-premises networks using public and private load balancers. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/expose-microservices-eks/llms.txt)
 
 - [Using the Federal Aviation Administration SWIM Data Lake Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/faa-swim-data-lake/faa-swim-data-lake.md): Process and analyze FAA SWIM aeronautical data by using Amazon Kinesis, AWS Lambda, AWS Glue, and Amazon Aurora.
 
-- [Financial Advisor Chat Assistant Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/financial-advisor-chat-assistant/financial-advisor-chat-assistant.md): This architecture enables you to .....
+- [Financial Services Reference Architecture Diagrams Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/financial-services/algorithmic-trading-on-aws.md): Backtest and host machine learning-based algorithmic trading strategies by using AWS Fargate, Amazon Elastic Container Service, and Amazon SageMaker AI. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/financial-services/llms.txt)
 
 - [Flight Planning Using Data Lakes and AI/ML Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/flight-planning-data-lakes/flight-planning-data-lakes.md): Improve flight planning with data lakes and AI/ML by using Amazon S3, AWS Glue, Amazon EMR, and Amazon SageMaker AI.
 
 - [Flutura Cerebra Asset Performance Management on AWS Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/flutura-cerebra-apm/flutura-cerebra-apm.md): Reference architecture diagram for deploying Flutura Cerebra Asset Performance Management on AWS for predictive maintenance and process optimization.
-
-- [Fraud ring detection using Neo4j and graphs Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/fraud-ring-detection-using-Neo4j-and-graphs/fraud-ring-detection-using-Neo4j-and-graphs.md): This architecture helps you to set up detection of fraud rings using graphs.
 
 - [Game Production in the Cloud - CI/CD Architecture Diagrams Game Tech](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/game-production-in-the-cloud-cicd/game-production-in-the-cloud-cicd.md): Offload game builds from remote or on-premises development environments to the AWS Cloud by using an engine-agnostic CI/CD architecture.
 
@@ -1821,8 +1824,6 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 - [Hybrid Connectivity to AWS Transit Gateway Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/hybrid-connectivity-transit-gateway/hybrid-vpn.md): Create an AWS Site-to-Site VPN connection directly to AWS Transit Gateway for managed VPN connectivity to multiple VPCs. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/hybrid-connectivity-transit-gateway/llms.txt)
 
 - [Hybrid DNS Resolution with Amazon Route 53 Resolver Endpoints Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/hybrid-dns-route53/hybrid-dns-ipv4.md): Resolve DNS queries between on-premises networks and AWS using Amazon Route 53 Resolver inbound and outbound endpoints over IPv4. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/hybrid-dns-route53/llms.txt)
-
-- [Hybrid Remote Proctoring Solution Architecture Diagrams Education](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/hybrid-remote-proctoring-solution/hybrid-remote-proctoring-solution.md): Monitor students during remote or in-person exams by using AI assistance to highlight prohibited objects and behaviors with Amazon Rekognition and the Amazon Chime SDK.
 
 - [Protect Your Data with HYOK Solutions by Baffle DPS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/hyok-baffle-dps/hyok-baffle-dps.md): Shows how to use Baffle Data Protection Service (DPS) to implement Hold Your Own Key (HYOK) solutions for additional data-centric protection on AWS.
 
@@ -1912,10 +1913,6 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Modernize Applications with Microservices Using Amazon EKS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/modernize-applications-with-microservices-using-amazon-eks/modernize-applications-with-microservices-using-amazon-eks.md): This architecture enables you to integrate Amazon Elastic Kubernetes Service (Amazon EKS) with VMware Cloud on AWS.
 
-- [Moodle for High Availability on AWS Highly available, scalable and elastic open source Learning Management System](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/moodle-for-high-availability-on-aws/moodle-for-high-availability-on-aws.md): This architecture helps you implement Moodle, an open source learning management system that supports distributed online learning on AWS.
-
-- [Moodle Reference Architecture Moodle Reference Architecture](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/moodle-learning-management-system-on-aws/moodle-learning-management-system-on-aws.md): Moodle is a learning platform designed to provide educators, administrators and learners with a single robust, secure, and integrated system to create personalized learning environments.
-
 - [Creating Multi-Account IoT Pipelines On-The-Fly Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/multi-account-iot-pipelines/multi-account-iot-pipelines.md): This reference architecture diagram shows how to deploy AWS IoT Analytics pipelines into different AWS Organizations accounts.
 
 - [Multi-Model Inference Workflow Orchestration Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/multi-model-inference-orchestration/multi-model-inference-orchestration.md): Shows how to orchestrate running multiple ML models for complex ML-driven insight by using AWS Step Functions and SageMaker AI.
@@ -1940,10 +1937,6 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Omni-channel Customer Engagement for Lodging Architecture diagrams for hospitality](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/omni-channel-customer-engagement-lodging/omni-channel-customer-engagement-lodging.md): Provide personalized customer service across all channels by using Amazon Lex, Amazon OpenSearch Service, and Amazon Pinpoint.
 
-- [Open Banking on AWS Architecture diagrams for financial services](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/open-banking-on-aws/open-banking-overview.md): Open APIs for third parties and implement Open Banking regulations by using AWS services for security, scalability, and compliance. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/open-banking-on-aws/llms.txt)
-
-- [Open edX on AWS Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/open-edx-for-high-availability-on-aws/open-edx-for-high-availability-on-aws.md): Open edX is an open-source, distributed learning platform that, when implemented on AWS, can scale flexibly to optimize cost and maximize availability.
-
 - [Oracle Commerce Lift-and-Shift to AWS Architecture diagrams for retail](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/oracle-commerce-lift-shift/oracle-commerce-lift-shift-chapter.md): A reference architecture diagram for migrating Oracle Commerce to AWS by using a lift-and-shift approach with multiple Availability Zones for high availability.
 
 - [AWS Outposts Networking Reference Architecture Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/outposts-networking/outposts-networking.md): Shows an architectural overview of AWS Outposts Rack connectivity for LAN, WAN, and Amazon VPC.
@@ -1952,13 +1945,9 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Patient Outcome Prediction Architecture diagrams for healthcare](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/patient-outcome-prediction/patient-outcome-prediction.md): Use machine learning (ML) on patient health data to predict medical outcomes such as disease progression and hospital readmission probability by using Amazon SageMaker AI and Amazon HealthLake.
 
-- [Payment System Interface Modernization on AWS Modern Cloud-Native Payment Systems](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/payment-system-interface-modernization/payment-system-interface-modernization.md): This architecture shows you how to build a microservices-based payment system to handle scale and optimized performance with improved container-based deployment, and using API and event-based models for handling different channels in payment.
-
 - [Personalization Using AI/ML for Airlines Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/personalization-ai-ml-airlines/personalization-ai-ml-airlines.md): Personalize airline customer communications by using Amazon Personalize, Amazon Pinpoint, and Amazon SageMaker AI.
 
 - [Personalization Using AI/ML for Lodging Architecture diagrams for hospitality](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/personalization-ai-ml-lodging/personalization-ai-ml-lodging.md): Personalize customer communications and offers by using Amazon Personalize, Amazon Pinpoint, and Amazon SageMaker AI on a data lake foundation.
-
-- [Plagiarism Detection Architecture Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/plagiarism-detection-architecture/plagiarism-detection-architecture.md): This architecture helps you create a plagiarism-detection service using AWS Step Functions, AWS Lambda, Amazon SageMaker AI, and OpenSearch Service.
 
 - [Player Churn Prediction and Retention Architecture Diagrams Game Tech](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/player-churn-prediction-retention/player-churn-prediction-retention.md): Use SageMaker AI to build, train, and deploy a churn prediction model for batch or real-time inference, then trigger retention actions in free-to-play games.
 
@@ -1976,8 +1965,6 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Producing Data to InforOS over SFTP Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/producing-data-to-inforos/producing-data-to-inforos.md): Reference architecture diagram for producing data to Infor CloudSuite over SFTP with AWS.
 
-- [Product Recommendations Powered by Neo4j Architecture diagrams for financial services](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/product-recommendations-neo4j/product-recommendations-neo4j.md): Deliver personalized product recommendations in near real time by using Neo4j graph technology, Amazon EMR, Amazon SageMaker AI, and Amazon Kinesis.
-
 - [Property Optimizer for Lodging Architecture diagrams for hospitality](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/property-optimizer-lodging/property-optimizer-lodging.md): Forecast demand and optimize property performance by using diverse data sources with Amazon Forecast, AWS Glue, and AWS Quick Sight.
 
 - [PROS Revenue Management Platform on AWS Architecture diagrams for travel](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/pros-revenue-management/pros-revenue-management.md): Host the PROS revenue management platform on AWS with high availability, security, and cost-effective infrastructure.
@@ -1989,8 +1976,6 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 - [ReadForMe Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/readforme/readforme.md): Shows how the ReadForMe web app can assist the visually impaired with hearing paper documents by using AWS AI services and a serverless architecture.
 
 - [Real-Time Casino Player Analytics AWS Reference Architecture Diagram](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/real-time-player-casino-analytics/real-time-player-casino-analytics.md): This architecture enables casino customers or game developers to build a real-time analytics pipeline and promote advertising offers to customers during the game session.
-
-- [Real-Time Fraud Detection Powered by Redis Enterprise Cloud Architecture diagrams for financial services](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/realtime-fraud-detection-redis/realtime-fraud-detection-redis.md): Detect fraud in real time by using Redis Enterprise Cloud as both a primary database and online feature store with Amazon SageMaker AI for machine learning (ML) inference.
 
 - [Replaying Parallel Requests to Break a Monolith Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/replaying-parallel-requests/replaying-parallel-requests.md): Break your monolith with confidence by setting up a parallel run strategy combined with the strangler fig pattern.
 
@@ -2018,8 +2003,6 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Search and Booking Metrics in Travel and Hospitality Architecture diagrams for hospitality](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/search-booking-metrics/search-booking-metrics.md): Build a platform to gather traffic data in real time by using Amazon CloudFront, Amazon Kinesis, and Amazon OpenSearch Service.
 
-- [Secure HTAP Data Architecture Using TiDB Cloud Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/secure-htap-data-architecture-with-tidb-cloud/secure-htap-data-architecture-with-tidb-cloud.md): This reference architecture outlines a modern hybrid transactional/analytical processing (HTAP) data stack on AWS.
-
 - [Secure Remote Worker Environment Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/secure-remote-worker/secure-remote-worker.md): Shows how to build a secure desktop environment for remote workers to access key line-of-business applications and data.
 
 - [Securing Custom Origins with AWS WAF Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/securing-custom-origins-waf/securing-custom-origins-waf.md): Shows how to protect any endpoint, including non-AWS endpoints, against common web vulnerabilities by using AWS WAF with custom origins and custom secret headers in Amazon CloudFront.
@@ -2038,7 +2021,7 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Serverless Web App Real-Time Data Broadcasting Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/serverless-realtime-broadcasting/serverless-realtime-broadcasting.md): Create a real-time data broadcasting application using AWS AppSync, AWS Lambda, AWS Step Functions, and Amazon DynamoDB with managed GraphQL subscriptions over WebSockets.
 
-- [Serverless Web Hosting on AWS App Runner Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/serverless-web-hosting-aws-app-runner/serverless-web-hosting-aws-app-runner.md): This reference architecture details how to run run serverless, containerized web applications without the need to provision or manage infrastructure.
+- [Siemens Intelligence Center X Graph Studio on AWS Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/siemens-icx-graph-studio/siemens-icx-graph-studio.md): This architecture shows how to deploy Siemens Intelligence Center X Graph Studio in a single Availability Zone on AWS and how users and AI agents interact with it.
 
 - [Siemens Industrial Edge on AWS Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/siemens-industrial-edge/siemens-industrial-edge.md): Reference architecture diagram for integrating AWS IoT SiteWise Edge on Siemens Industrial Edge for decentralized data acquisition and connectivity to AWS.
 
@@ -2064,12 +2047,6 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Telecom Charging (OCS/CHF) on AWS Outposts Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/telecom-charging-ocs-chf-on-aws-outposts/telecom-charging-ocs-chf-on-aws-outposts.md): This architecture enables you to deploy a fully automated, resilient, low latency, and highly available Telecom Online Charging System (OCS) / Charging Function (CHF) on AWS Outposts to run in the country of (or close to) the operator core network in cases of country data residency regulations or low latency requirements.
 
-- [Temenos Payments Hub Architecture diagrams for financial services](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/temenos-payments-hub/temenos-payments-hub-service.md): Deploy the Temenos universal payment initiation and distribution platform by using Amazon Elastic Container Service, AWS Fargate, and Amazon API Gateway. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/temenos-payments-hub/llms.txt)
-
-- [Temenos T24 Transact Architecture diagrams for financial services](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/temenos-t24-transact/temenos-t24-service.md): Deploy the Temenos T24 core banking solution by using Amazon Elastic Container Service, Amazon API Gateway, AWS Lambda, and Amazon DynamoDB for security and elasticity. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/temenos-t24-transact/llms.txt)
-
-- [Temenos WealthSuite Front Office on AWS Architecture diagrams for financial services](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/temenos-wealthsuite-front-office/temenos-wealthsuite-overview.md): Deploy the Temenos integrated portfolio management and securities trading platform by using Amazon Elastic Kubernetes Service, Amazon API Gateway, and Amazon RDS. [llms.txt](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/temenos-wealthsuite-front-office/llms.txt)
-
 - [Totogi Charging-as-a-Service for On-Premises 4G/5G Architecture diagrams for telecommunications](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/totogi-charging-as-a-service/totogi-charging-as-a-service.md): Connect your on-premises 4G/5G network to the Totogi multi-tenant charging engine on AWS for real-time subscriber charging and monetization.
 
 - [TR-069 and AWS Architecture diagrams for telecommunications](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/tr-069-and-aws/tr-069-and-aws.md): Connect TR-069 customer premises equipment (CPE) fleets with AWS for bulk data collection, data lakes, analytics, visualization, and artificial intelligence and machine learning (AI/ML) integrations.
@@ -2085,8 +2062,6 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 - [Tulip Next-Gen MES on AWS Architecture diagrams for manufacturing](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/tulip-next-gen-mes/tulip-next-gen-mes.md): Reference architecture diagram for building end-to-end data flows between Tulip's Frontline Operations Platform and your AWS VPC.
 
 - [Unreal Engine's Pixel Streaming on AWS Architecture Diagrams Game Tech](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/unreal-engine-pixel-streaming/unreal-engine-pixel-streaming.md): Deploy Unreal Engine's Pixel Streaming feature on AWS by using a serverless matchmaker with Amazon SQS, Lambda, and DynamoDB.
-
-- [Using VMware VCDR and NetApp CVO for Disaster Recovery (DR) Architecture Diagrams](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/using-vmware-vcdr-and-netapp-cvo-for-disaster-recovery-architecture/using-vmware-vcdr-and-netapp-cvo-for-disaster-recovery-architecture.md): This architecture shows you how to bring Disaster-Recovery-as-a-Service (DRaaS) and the power of AWS to your on-premises VMware workloads.
 
 - [Utility Volt-VAR Management Framework Architecture diagrams for power and utilities](https://docs.aws.amazon.com/reference-architecture-diagrams/latest/utility-volt-var-management/utility-volt-var-management.md): Build highly scalable distribution grid management applications, such as Volt-VAR Optimization (VVO), by using an event-driven microservices framework with Amazon Managed Streaming for Apache Kafka, AWS Lambda, and Amazon SageMaker AI.
 
@@ -2204,7 +2179,7 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [AWS SDK for PHP Developer Guide for version 3](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/welcome.md): AWS SDK for PHP Version 3 enables PHP developers to use Amazon Web Services in their PHP code. [llms.txt](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/llms.txt)
 
-- [AWS SDK for Python v4 Developer Guide](https://docs.aws.amazon.com/sdk-for-python/v4/guide/welcome.md): Learn how the AWS SDK for Python v4 provides native asynchronous APIs, bidirectional streaming, and modular service clients for Python applications. [llms.txt](https://docs.aws.amazon.com/sdk-for-python/v4/guide/llms.txt)
+- [AWS SDK for Python v4 Developer Guide](https://docs.aws.amazon.com/sdk-for-python/v4/guide/welcome.md): Learn how the AWS SDK for Python v4 provides synchronous and asynchronous service clients in modular per-service packages, with bidirectional streaming in asynchronous clients. [llms.txt](https://docs.aws.amazon.com/sdk-for-python/v4/guide/llms.txt)
 
 - [AWS SDK for Ruby Developer Guide](https://docs.aws.amazon.com/sdk-for-ruby/v3/developer-guide/welcome.md): Build Ruby applications on top of APIs that use the cost-effective, scalable, and reliable AWS infrastructure services with the AWS SDK for Ruby. [llms.txt](https://docs.aws.amazon.com/sdk-for-ruby/v3/developer-guide/llms.txt)
 
@@ -2356,7 +2331,7 @@ x-amz-cf-id: rzGEY1Ax6wiZxzqlWC6jGW7Ywr1dt4235Aj7OI1KXTVDtZFCd7kWNQ==
 
 - [Amazon Textract API Reference](https://docs.aws.amazon.com/textract/latest/APIReference/Welcome.md): Amazon Textract detects and analyzes text in documents and converts it into machine-readable text. [llms.txt](https://docs.aws.amazon.com/textract/latest/APIReference/llms.txt)
 
-- [Amazon Textract Developer Guide](https://docs.aws.amazon.com/textract/latest/dg/what-is.md): Overview of Amazon Textract, which is a service that enables you to add document text detection and analysis to your applications. [llms.txt](https://docs.aws.amazon.com/textract/latest/dg/llms.txt)
+- [Amazon Textract Developer Guide](https://docs.aws.amazon.com/textract/latest/dg/what-is.md): Overview of Amazon Textract, which is a service that helps you add document text detection and analysis to your applications. [llms.txt](https://docs.aws.amazon.com/textract/latest/dg/llms.txt)
 
 - [Amazon Timestream Write Amazon Timestream for LiveAnalytics](https://docs.aws.amazon.com/timestream/latest/APIReference/Welcome.md) [llms.txt](https://docs.aws.amazon.com/timestream/latest/APIReference/llms.txt)
 

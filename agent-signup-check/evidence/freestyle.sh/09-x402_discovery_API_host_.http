@@ -1,16 +1,16 @@
 GET https://api.freestyle.sh/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:31.748Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:12.688Z
 final-url: https://api.freestyle.sh/.well-known/x402
 
 HTTP 401
 server: openresty
-date: Wed, 18 Nov 2026 00:46:31 GMT
+date: Tue, 24 Nov 2026 15:51:12 GMT
 content-type: application/json
 vary: origin, access-control-request-method, access-control-request-headers
 access-control-allow-origin: *
-x-freestyle-trace-id: 38ce25c0-84d8-435a-861d-fe9555324a7a
-x-request-id: 2905b3b6-ca76-42a1-b833-1c20f16e67c0
+x-freestyle-trace-id: aab5fcdd-e166-465e-97f4-54426c1a3def
+x-request-id: 8a6a7ad6-5e71-45d8-9f93-e3633672e1b6
 strict-transport-security: max-age=63072000
 content-length: 173
 connection: close

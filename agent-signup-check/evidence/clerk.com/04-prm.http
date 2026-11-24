@@ -1,32 +1,22 @@
 GET https://clerk.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:42.158Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:27.150Z
 final-url: https://clerk.com/.well-known/oauth-protected-resource
 
 HTTP 200
-accept-ranges: bytes
-access-control-allow-origin: *
-age: 4250
-cache-control: public, max-age=3600
-content-disposition: inline
-content-length: 136
+cache-control: no-store
+content-encoding: br
 content-type: application/json
-date: Wed, 18 Nov 2026 00:47:39 GMT
-etag: "77b1ba9b0ab9551b9a007f02eb57ccd0"
+date: Tue, 24 Nov 2026 15:52:25 GMT
 referrer-policy: same-origin
 server: Vercel
 strict-transport-security: max-age=63072000
-vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
-x-clerk-auth-reason: session-token-and-uat-missing
-x-clerk-auth-status: signed-out
 x-content-type-options: nosniff
 x-download-options: noopen
 x-frame-options: deny
-x-generated-visitor-id: 5e738a68-4d24-43f7-9966-fe398a2fde19
-x-matched-path: /.well-known/oauth-protected-resource
-x-vercel-cache: HIT
-x-vercel-id: pdx1::qbbx7-1794962859768-4ed0b3b773b1
+x-vercel-id: pdx1::nwt7h-1795535545196-dee8ebaacf6d
 x-xss-protection: 1
 connection: close
+transfer-encoding: chunked
 
-{"resource":"https://clerk.com","resource_name":"Clerk","bearer_methods_supported":[],"resource_documentation":"https://clerk.com/docs"}
+{"resource":"https://clerk.com","resource_name":"Clerk","authorization_servers":["https://clerk.clerk.com"],"scopes_supported":["poppy:browser-sign-in","profile"],"bearer_methods_supported":["header"]}

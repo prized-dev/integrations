@@ -1,20 +1,20 @@
 GET https://mistral.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:45:50.735Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:30.087Z
 final-url: https://mistral.ai/llms.txt
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:45:44 GMT
+date: Tue, 24 Nov 2026 15:50:25 GMT
 content-type: text/plain; charset=UTF-8
 transfer-encoding: chunked
 connection: close
 accept-ranges: bytes
-x-nf-request-id: 01M7P1VSER040B3P3GBQ0CF30E
+x-nf-request-id: 01M8740KDB6HW6Y0WG87T28M9B
 cache-control: public,max-age=0,must-revalidate
 cache-status: "Netlify Edge"; fwd=miss; fwd-status=200; stored
 content-encoding: br
 content-security-policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://client.axept.io https://api.axept.io https://static.axept.io https://js-eu1.hs-scripts.com https://js-eu1.hscollectedforms.net https://js-eu1.hs-analytics.net https://js-eu1.hs-banner.com https://forms-eu1.hscollectedforms.net https://cdn.jsdelivr.net https://static.claydar.com https://cdn.claydar.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://fonts.googleapis.com https://fonts.axept.io https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://fonts.axept.io https://cdn.jsdelivr.net; img-src 'self' data: blob: https://cms.globalaegis.net https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://axeptio.imgix.net https://track-eu1.hubspot.com https://favicons.axept.io https://i.ytimg.com https://www.google.com https://www.google.fr https://www.google.de https://www.google.co.uk https://www.google.es https://www.google.it https://www.google.nl https://www.google.be https://www.google.ch https://www.google.at https://www.google.pt https://www.google.ie https://www.google.dk https://www.google.se https://www.google.no https://www.google.fi https://www.google.pl https://www.google.cz https://www.google.gr https://www.google.hu https://www.google.ro https://www.google.sk https://www.google.bg https://www.google.hr https://www.google.si https://www.google.lt https://www.google.lv https://www.google.ee https://www.google.lu https://www.google.com.tr https://www.google.ru https://www.google.com.ua https://www.google.ca https://www.google.com.mx https://www.google.com.br https://www.google.com.ar https://www.google.co.jp https://www.google.com.au https://www.google.co.nz https://www.google.co.in https://www.google.com.sg https://www.google.com.hk https://www.google.co.kr https://www.google.com.my https://www.google.co.th https://www.google.co.id https://www.google.com.ph https://www.google.com.vn https://www.google.co.za https://www.google.ae https://www.google.com.sa https://www.google.co.il https://www.google.com.eg https://pagead2.googlesyndication.com https://stats.g.doubleclick.net https://googleads.g.doubleclick.net https://td.doubleclick.net; media-src 'self' https://cms.globalaegis.net blob:; connect-src 'self' https://cms.globalaegis.net https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://client.axept.io https://static.axept.io https://api.axept.io https://forms-eu1.hscollectedforms.net https://ingesteer.services-prod.nsvcs.net https://api.claydar.com https://pagead2.googlesyndication.com https://stats.g.doubleclick.net https://www.google.com; frame-src 'self' https://www.googletagmanager.com https://td.doubleclick.net https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://app.storylane.io https://spaces-blogs-staging-mistral-01d83c8e.koyeb.app/ https://*.demo.emmi.ai/ https://challenges.cloudflare.com https://ml4-blog-widgets.netlify.app https://website-demo-swarm.netlify.app; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://chat.mistral.ai; frame-ancestors 'none'; upgrade-insecure-requests
-etag: W/"c04a7dd407690d1ac065e74ddbf5c57f-ssl"
+etag: W/"d205cae7bb4706ff0f12500f6abe7b9d-ssl"
 permissions-policy: camera=(), microphone=(), geolocation=()
 referrer-policy: strict-origin-when-cross-origin
 server: cloudflare
@@ -23,65 +23,67 @@ vary: Accept-Encoding
 x-content-type-options: nosniff
 x-frame-options: SAMEORIGIN
 cf-cache-status: BYPASS
-cf-ray: a5c2f4427a625edd-PDX
+cf-ray: a5f991b55917b7b9-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Mistral
-> Frontier AI for enterprises. Customizable, secure, and scalable solutions—from models to agents—built for performance, privacy, and control. Deploy on-prem, in the cloud, or at the edge with open-weight and commercial options.
+> #1 in Sovereign AI: frontier open models you own. Mistral builds and serves frontier and specialized AI on European infrastructure, so organizations keep full control of their models, data, and compute. Deploy on-prem, in your VPC, or on Mistral Cloud.
 
-Mistral empowers organizations with state-of-the-art (SOTA) models, AI assistants (Vibe), and production platforms (AI Studio) to automate workflows, enhance decision-making, and drive innovation. Core offerings include:
-- **Models**: Open-weight and commercial models (e.g., Mistral Large, Codestral) for coding, multilingual tasks, and edge deployment.
-- **Studio**: End-to-end platform for building, deploying, and managing AI agents with observability and governance.
-- *Vibe**: Customizable AI assistant for enterprise knowledge, multimodal tasks, and secure collaboration.
-- *Vibe for Code**: Specialized coding stack.
-- *Compute**: European AI cloud platform with high-performance GPUs and sovereign data control.
-- *Forge**: Platform for building and deploying custom AI models.
-- **Applied AI Services**: Expert-led custom training, fine-tuning, and deployment for domain-specific needs.
-- **Partners**: Ecosystem of cloud providers, technology integrators, and consulting firms for seamless adoption.
+Mistral AI is the European sovereign AI lab. Its catalog pairs the open-weight flagship Mistral Large 4 (Le Chonk) with specialized models (OCR 4.1, Voxtral 3 voice, Timestral forecasting, Shieldstral safety, Robostral robotics, Codestral code), and its platforms (Studio, Vibe, Forge, Cloud) turn them into production agents and apps. Open weights, regional EU endpoints, zero-data-retention options, and on-premises deployment make sovereignty the default, not an add-on.
 
-All solutions prioritize data ownership, compliance, and scalability, with flexible pricing tiers (Free to Enterprise) and transparent SLAs.
+## Flagship model: Mistral Large 4 (Le Chonk)
+- [Mistral Large 4 (Le Chonk) is now open weight](https://mistral.ai/news/mistral-large-4-oss/): 1.05T-parameter natively multimodal MoE with 52B active parameters and a 1M-token context window, under the Mistral Ecosystem Open-Weight license. Leads open-weight benchmarks in agentic coding (FrontierCode, Terminal-Bench) and defensive cybersecurity, with three reasoning modes, 160+ languages, and geospatial visual grounding. Trained from scratch on European infrastructure with clear lineage from inception to release.
+- [Introducing Mistral Large 4](https://mistral.ai/news/mistral-large-4/): public preview launch post, October 6, 2026. API on Studio, weights on Hugging Face (mistralai/Mistral-Large-4-1T-A52B), also served via OpenRouter, NVIDIA, and Vibe Code.
+- [Models catalog](https://mistral.ai/research): full lineup, general purpose and specialist.
 
----
+## Specialized models
+- [Voxtral 3](https://mistral.ai/news/voxtral-3/): speech-to-text, text-to-speech, and a voice agent SDK (built on LiveKit) in one real-time streaming pipeline: listen, reason, call tools, speak, under a second per turn. Transcription in 50+ languages from $0.0035/min, realtime mode under 500ms latency, TTS in 35+ languages and 50+ dialects with emotion and pace control. EU-hosted zero-data-retention endpoints or self-deployment for data sovereignty.
+- [Open-weight Voxtral TTS](https://mistral.ai/news/voxtral-tts): frontier open-weights text-to-speech for voice agents.
+- [Document AI and OCR](https://mistral.ai/solutions/document-ai): Mistral OCR 4.1, state-of-the-art document intelligence with paragraph-level bounding boxes, structural block labels, and confidence scores; multilingual, API-served.
+- [Timestral](https://mistral.ai/news/timestral/): time-series foundation models (5M to 209M parameters), state-of-the-art probabilistic forecasting that runs on CPU, open weights, also customizable via Forge.
+- Mistral Small 4: efficient hybrid MoE (119B total, 6.5B active) unifying instruction, reasoning, and coding with multimodal input; open weight under Apache 2.0.
+- Ministral 3 (3B, 8B, 14B): compact edge models with image understanding, Apache 2.0.
+- Codestral: code completion and generation for enterprise codebases.
+- Shieldstral (3.8B): text and image safety classification against plain-language policies.
+- Robostral Navigate: vision-only embodied navigation for robots from a single RGB camera.
 
-## Core Products
-- [Mistral Studio](https://mistral.ai/products/studio): End-to-end platform for building, deploying, and managing AI agents with observability and governance
-- [Mistral Vibe](https://mistral.ai/products/vibe): Customizable AI assistant for enterprise knowledge, multimodal tasks, and secure collaboration
-- [Mistral Vibe Code](https://mistral.ai/products/vibe/code): Specialized coding stack
-- [Mistral AI Cloud](https://mistral.ai/products/ai-cloud): European AI cloud platform with high-performance GPUs and sovereign data control
-- [Mistral Forge](https://mistral.ai/products/forge): Platform for building and deploying custom AI models
+## Products and platforms
+- [Mistral Studio](https://mistral.ai/products/studio): build, govern, and deploy agents, workflows, and apps on Le Chonk across cloud, VPC, or on-premises, with connectors, MCP servers, observability, and evaluation. See [Le Chonk brings the brains. Studio puts it to work.](https://mistral.ai/news/build-with-studio/)
+- [Mistral Vibe](https://mistral.ai/products/vibe): the AI agent for work and code (Work and Code modes, VS Code extension, remote agents).
+- [Mistral Forge](https://mistral.ai/products/forge): train frontier-grade custom models grounded in your proprietary knowledge via pre-training, post-training, and reinforcement learning.
+- [Mistral Cloud](https://mistral.ai/cloud/): the frontier AI cloud with regional endpoints, priority tier at a 99.9% uptime SLA, and enterprise governance.
+- [Compute](https://mistral.ai/cloud/compute/): dedicated NVIDIA GPUs in Europe, targeting 1 GW of sovereign capacity by 2030.
+- [Inference API](https://mistral.ai/cloud/inference/): one API for Mistral and third-party open models with regional control.
 
-## Latest Models
-- [Mistral Medium 3.5](https://mistral.ai/news/vibe-remote-agents-mistral-medium-3-5/):Mistral Medium 3.5, our new flagship model that merges instruction-following, reasoning, and coding into a single 128B dense model. Released as open weights, under a modified MIT license.
-- [Mistral Small 4](https://mistral.ai/news/mistral-small-4/): Mixture of Experts (MoE): 128 experts, with 4 active per token, enabling efficient scaling and specialization.
-- [Voxtral TTS](https://mistral.ai/news/voxtral-tts/): Voxtral TTS, our first text-to-speech model with state-of-the-art performance in multilingual voice generation.
+## Sovereign AI by design
+- Frontier open models you own: download, inspect, modify, and self-host Le Chonk, Small 4, andministral 3; no third party can restrict access or disable them.
+- European infrastructure and lineage: models trained and served in the EU on Mistral's own data centers; regional endpoints keep data under EU jurisdiction; zero data retention and no training on customer data available.
+- Trusted in sensitive contexts: French Ministry of Defense, Government of Luxembourg, Singapore MINDEF, HTX, European Patent Office, France Travail, plus defense and cybersecurity partners such as Orange Cyberdefense, Rubrik, Cloudflare, CrowdStrike, and Zscaler.
 
-## Solutions
-- [Coding](https://mistral.ai/solutions/coding): Secure, enterprise-grade coding tools. *Codestral, Devstral, and customizable assistants for IP protection.*
-- [Custom Model Training](https://mistral.ai/solutions/custom-model-training): Domain-specialized LLMs. *Co-training partnerships, privacy-preserving workflows, and deployment flexibility.*
-- [Document AI & OCR](https://mistral.ai/solutions/document-ai): Structured data extraction. *99%+ accuracy, multilingual support, and scalable processing.*
-- [AI for Citizens](https://mistral.ai/solutions/ai-for-citizens): Sovereign AI for governments. *Self-hosted/SaaS options, domain-specific models, and transparency.*
-- [AI Transformation](https://mistral.ai/ai-transformation): End-to-end enterprise AI adoption. *On-prem/cloud/edge deployment, compliance, and accuracy.*
+## Customers
+- [All customer stories](https://mistral.ai/customers/): 40+ case studies across finance, industry, public sector, and tech.
+- [BNP Paribas](https://mistral.ai/customers/bnp-paribas/): democratized AI access to 65,000 users on its own infrastructure; KYC onboarding from weeks to days.
+- [HSBC](https://mistral.ai/customers/hsbc/), [Airbus](https://mistral.ai/customers/airbus/), [ASML](https://mistral.ai/customers/asml/), [BMW](https://mistral.ai/customers/bmw/), [Stellantis](https://mistral.ai/customers/stellantis/), [TotalEnergies](https://mistral.ai/customers/totalenergies/), [Cisco](https://mistral.ai/customers/cisco/), [SNCF](https://mistral.ai/customers/sncf/), [Orange](https://mistral.ai/customers/orange/), [AXA](https://mistral.ai/customers/axa/), [CMA CGM](https://mistral.ai/customers/cma-cgm/), [Veolia](https://mistral.ai/customers/veolia/), [SAP](https://mistral.ai/customers/sap/), [Snowflake](https://mistral.ai/customers/snowflake/)
+- Public sector: [France Travail](https://mistral.ai/customers/france-travail/), [French Ministry of Defense](https://mistral.ai/customers/french-ministry-of-defense/), [Government of Luxembourg](https://mistral.ai/customers/government-of-luxembourg/), [Singapore MINDEF](https://mistral.ai/customers/singapores-ministry-of-defence-mindef/), [HTX](https://mistral.ai/customers/htx/), [EPO](https://mistral.ai/customers/epo/)
+- Latest Large 4 and Studio adopters: Rubrik, La Banque Postale, Orange Cyberdefense (early access to a cyber-specialized Le Chonk variant for penetration testing and incident response), ABANCA, Accenture, Alten, Capgemini, Tata Consultancy Services.
 
-## Models
-- [Models](https://mistral.ai/models): Customizable frontier models. *Medium 3, Mistral Small, Magistral, Codestral, Voxtral, and Edge-optimized models.*
+## Solutions by industry
+- [Financial services](https://mistral.ai/industry/financial-services/), [cybersecurity](https://mistral.ai/industry/cybersecurity/), [manufacturing](https://mistral.ai/industry/manufacturing/), [public sector](https://mistral.ai/industry/public-sector/), [all industries](https://mistral.ai/industry/)
+- [Coding](https://mistral.ai/solutions/coding/), [AI for Citizens](https://mistral.ai/solutions/ai-for-citizens) (sovereign AI for governments), [custom model training](https://mistral.ai/solutions/custom-model-training), [document AI](https://mistral.ai/solutions/document-ai), [AI transformation](https://mistral.ai/ai-transformation)
 
-## Enterprise & Support
-- [Pricing](https://mistral.ai/pricing): Transparent tiers (Free to Enterprise). *Scalable features, storage, and administrative controls.*
-- [Customer Stories](https://mistral.ai/customers): Real-world impact across industries. *Case studies from Cisco, Stellantis, BNP Paribas, and governments.*
-- [Partners](https://mistral.ai/partners): Ecosystem for seamless adoption. *Cloud providers (AWS, Azure), technology integrators (Snowflake, GitHub), and consulting firms (Capgemini, McKinsey).*
-- [Enterprise SLA](https://mistral.ai/terms/enterprise-service-level-and-support-schedule): Uptime guarantees (99.5–99.9%) and support tiers. *Service credits, response/resolution times, and exclusions.*
+## Enterprise, developers, and support
+- [Pricing](https://mistral.ai/pricing): Free, Pro at $14.99/mo, Team at $24.99/user/mo, Enterprise custom.
+- [Partners](https://mistral.ai/partners): cloud providers (AWS, Azure, Google Cloud, Outscale), data and integration partners (Snowflake, Cloudera, SAP, MongoDB, IBM), NVIDIA, HUMAIN, Mozilla, Microsoft.
+- [Enterprise SLA](https://mistral.ai/terms/enterprise-service-level-and-support-schedule): uptime guarantees (up to 99.9%) and support tiers.
+- [Documentation](https://docs.mistral.ai), [Console / La Plateforme](https://console.mistral.ai), [Help Center](https://help.mistral.ai), [Trust Center](https://trust.mistral.ai), [Status page](https://status.mistral.ai)
 
-## Support & Compliance
-- [Help Center](https://help.mistral.ai): Self-service guides, FAQs, and troubleshooting.
-- [Trust Center](https://trust.mistral.ai): Security, compliance, and data protection policies.
-- [Status Page](https://status.mistral.ai): Real-time system health and incident updates.
+## News and research
+- [News](https://mistral.ai/news/): latest announcements, including [Le Chonk open weights](https://mistral.ai/news/mistral-large-4-oss/), [Large 4 preview](https://mistral.ai/news/mistral-large-4/), [Voxtral 3](https://mistral.ai/news/voxtral-3/), [Studio for enterprise agents](https://mistral.ai/news/build-with-studio/), [Timestral](https://mistral.ai/news/timestral/)
+- [Research](https://mistral.ai/research/): publications across reasoning, multimodality, audio, document intelligence, safety, robotics, and physical AI.
 
 ## Company
-- [About Us](https://mistral.ai/about): Mission, values, and founding story. *Open-source innovation, transparency, and democratizing AI.*
-- [News](https://mistral.ai/news): Latest updates, announcements, and insights from Mistral AI.
-- [Careers](https://mistral.ai/careers): Join a global team. *Science, Product/Engineering, GTM, and Corporate roles with diversity focus.*
-- [Contact](https://mistral.ai/contact): Engagement channels. *Support (Help Center, Discord), press (press@mistral.ai), privacy requests, and sales form.*
+- [About](https://mistral.ai/about), [Careers](https://mistral.ai/careers), [Contact](https://mistral.ai/contact), [Brand](https://mistral.ai/brand)
+- Mistral raised a €3B Series D in September 2026 at a valuation above €21B.
 
-## Legal & Compliance
-- [Terms of Use](https://mistral.ai/terms): Legal framework for services. *Usage rights, privacy policy, and addendums.*
-- [Legal Notice](https://mistral.ai/legal): Compliance details.
+## Legal
+- [Terms of Use](https://mistral.ai/terms), [Legal Notice](https://mistral.ai/legal)

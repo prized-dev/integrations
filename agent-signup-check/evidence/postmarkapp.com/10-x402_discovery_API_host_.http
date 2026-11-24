@@ -1,12 +1,12 @@
 GET https://api.postmarkapp.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:56.055Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:39.547Z
 final-url: https://api.postmarkapp.com/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:46:55 GMT
+date: Tue, 24 Nov 2026 15:51:39 GMT
 content-type: text/html; charset=utf-8
-content-length: 1901
+content-length: 1927
 connection: close
 cache-control: private
 strict-transport-security: max-age=16000000;
@@ -27,7 +27,7 @@ vary: Origin
          .marker {font-weight: bold; color: black;text-decoration: none;}
          .version {color: gray;}
          .error {margin-bottom: 10px;}
-         .expandable { text-decoration:underline; font-weight:bold; color:navy; cursor:hand; }
+         .expandable { text-decoration:underline; font-weight:bold; color:navy; cursor:pointer; }
          @media screen and (max-width: 639px) {
           pre { width: 440px; overflow: auto; white-space: pre-wrap; word-wrap: break-word; }
          }
@@ -49,6 +49,8 @@ vary: Origin
             <br><br>
 
             <b> Requested URL: </b>/.well-known/x402<br><br>
+
+            </font>
 
     </body>
 </html>

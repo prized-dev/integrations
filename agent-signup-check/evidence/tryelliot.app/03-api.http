@@ -1,6 +1,6 @@
 GET https://dashboard.tryelliot.app/api/v1/me
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:46.997Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:31.644Z
 final-url: https://dashboard.tryelliot.app/api/v1/me
 
 HTTP 401
@@ -12,12 +12,12 @@ access-control-max-age: 86400
 age: 0
 cache-control: no-store
 content-type: application/json
-date: Wed, 18 Nov 2026 00:47:44 GMT
+date: Tue, 24 Nov 2026 15:52:28 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
 www-authenticate: Bearer resource_metadata="https://dashboard.tryelliot.app/.well-known/oauth-protected-resource/api/v1"
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::mmsq7-1794962863693-b869db849a1b
+x-vercel-id: pdx1::iad1::z9nxs-1795535548436-cef24f630909
 connection: close
 transfer-encoding: chunked
 

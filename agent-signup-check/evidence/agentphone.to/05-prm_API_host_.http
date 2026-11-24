@@ -1,27 +1,24 @@
 GET https://api.agentphone.ai/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:05.644Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:50.872Z
 final-url: https://api.agentphone.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:03 GMT
+date: Tue, 24 Nov 2026 15:51:48 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
-permissions-policy: camera=(), microphone=(), geolocation=()
-referrer-policy: strict-origin-when-cross-origin
-server: cloudflare
-strict-transport-security: max-age=31536000; includeSubDomains
 x-content-type-options: nosniff
 x-frame-options: DENY
-x-railway-request-id: -OHvdSKRTcy2oUH8CYBc-A
-x-request-id: a4fc85ca-0daa-4eb2-90e2-93c05457d9de
 x-xss-protection: 0
-x-hikari-trace: sjc1.mdvq
-x-railway-edge: sjc1
+referrer-policy: strict-origin-when-cross-origin
+permissions-policy: camera=(), microphone=(), geolocation=()
+strict-transport-security: max-age=31536000; includeSubDomains
+x-request-id: 6433f80d-1a9e-4e9e-b49a-f717c5b61015
 cf-cache-status: DYNAMIC
 speculation-rules: "/cdn-cgi/speculation"
 content-encoding: gzip
-cf-ray: a5c2f63009c42095-PDX
+server: cloudflare
+cf-ray: a5f993c1489dc4ac-PDX
 
-{"detail":"Not Found","error":{"message":"Not Found","code":"HTTP_404","type":"api_error"},"request_id":"a4fc85ca-0daa-4eb2-90e2-93c05457d9de"}
+{"detail":"Not Found","error":{"message":"Not Found","code":"HTTP_404","type":"api_error"},"request_id":"6433f80d-1a9e-4e9e-b49a-f717c5b61015"}

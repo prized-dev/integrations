@@ -1,6 +1,6 @@
 GET https://claimable.neon.tech/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:47.107Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:28.724Z
 final-url: https://claimable.neon.tech/.well-known/oauth-protected-resource
 
 HTTP 200
@@ -8,12 +8,12 @@ age: 0
 cache-control: public, max-age=0, must-revalidate
 content-encoding: br
 content-type: application/json
-date: Wed, 18 Nov 2026 00:46:44 GMT
+date: Tue, 24 Nov 2026 15:51:26 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
-x-request-id: 1325499d-c14b-48c4-b344-e55d0a39f242
+x-request-id: 400099d9-baec-42eb-93ab-40093bd71293
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::v4hh2-1794962804588-309fcb3ee3f3
+x-vercel-id: pdx1::iad1::w5wr4-1795535486231-111c4fc30095
 connection: close
 transfer-encoding: chunked
 

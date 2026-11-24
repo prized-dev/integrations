@@ -1,7 +1,7 @@
 {
  "site": "sentry.io",
- "checkedAt": "2026-11-18T00:47:38.856Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:52:24.815Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 3,
  "partial": 0,
  "unread": 0,
@@ -78,7 +78,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown",
-   "ms": 95,
+   "ms": 91,
    "redirects": 1
   },
   {
@@ -88,7 +88,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 208,
+   "ms": 211,
    "redirects": 0
   },
   {
@@ -98,7 +98,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 100,
+   "ms": 92,
    "redirects": 0
   },
   {
@@ -108,7 +108,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 86,
+   "ms": 90,
    "redirects": 0
   },
   {
@@ -118,7 +118,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 94,
+   "ms": 90,
    "redirects": 0
   },
   {
@@ -128,7 +128,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown",
-   "ms": 91,
+   "ms": 85,
    "redirects": 1
   },
   {
@@ -138,7 +138,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/html",
-   "ms": 107,
+   "ms": 131,
    "redirects": 2
   }
  ]

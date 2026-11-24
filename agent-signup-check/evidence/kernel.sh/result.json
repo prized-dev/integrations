@@ -1,7 +1,7 @@
 {
  "site": "kernel.sh",
- "checkedAt": "2026-11-18T00:47:09.720Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:51:55.440Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 5,
  "partial": 0,
  "unread": 0,
@@ -30,9 +30,9 @@
    "name": "Protected resource metadata",
    "url": "https://api.onkernel.com/.well-known/oauth-protected-resource",
    "via": "www-authenticate",
-   "resource": "https://api.onkernel.com/",
+   "resource": "https://api.onkernel.com",
    "authorization_servers": [
-    "https://api.onkernel.com/"
+    "https://auth.onkernel.com"
    ],
    "status": "pass",
    "reason": "Names 1 authorization server"
@@ -40,13 +40,13 @@
   {
    "id": "register",
    "name": "Sign-up by API",
-   "url": "https://api.onkernel.com/.well-known/oauth-authorization-server",
+   "url": "https://auth.onkernel.com/.well-known/oauth-authorization-server",
    "endpoint": "https://api.onkernel.com/authmd/agent/auth",
    "identity_types_supported": [
     "identity_assertion"
    ],
    "field": "register_uri",
-   "issuer": "https://api.onkernel.com/",
+   "issuer": "https://auth.onkernel.com",
    "status": "pass",
    "reason": "agent_auth names a registration endpoint (identity_assertion)"
   },
@@ -77,7 +77,7 @@
    "name": "Docs in Markdown",
    "url": "https://www.kernel.sh/llms.txt",
    "heading": "# KERNEL",
-   "bytes": 5369,
+   "bytes": 5328,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -90,7 +90,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 181,
+   "ms": 338,
    "redirects": 1
   },
   {
@@ -100,7 +100,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 157,
+   "ms": 166,
    "redirects": 1
   },
   {
@@ -110,7 +110,7 @@
    "status": 401,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 202,
+   "ms": 196,
    "redirects": 0
   },
   {
@@ -120,17 +120,17 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 193,
+   "ms": 192,
    "redirects": 0
   },
   {
    "label": "as-metadata",
-   "url": "https://api.onkernel.com/.well-known/oauth-authorization-server",
-   "finalUrl": "https://api.onkernel.com/.well-known/oauth-authorization-server",
+   "url": "https://auth.onkernel.com/.well-known/oauth-authorization-server",
+   "finalUrl": "https://auth.onkernel.com/.well-known/oauth-authorization-server",
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 181,
+   "ms": 204,
    "redirects": 0
   },
   {
@@ -140,7 +140,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 50,
+   "ms": 75,
    "redirects": 1
   },
   {
@@ -150,7 +150,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 207,
+   "ms": 180,
    "redirects": 0
   }
  ]

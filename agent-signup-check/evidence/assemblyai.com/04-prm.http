@@ -1,17 +1,17 @@
 GET https://assemblyai.com/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:09.391Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:49.256Z
 redirect: 308 from https://assemblyai.com/.well-known/oauth-protected-resource
 final-url: https://www.assemblyai.com/.well-known/oauth-protected-resource
 
 HTTP 404
 cache-control: no-transform
-cf-cache-status: EXPIRED
-cf-ray: a5c2f4cbbee5d7dd-SEA
+cf-cache-status: HIT
+cf-ray: a5f9923abc2d9236-SEA
 content-encoding: gzip
 content-type: text/html; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:06 GMT
-etag: W/"6afca0d1-58"
+date: Tue, 24 Nov 2026 15:50:46 GMT
+etag: W/"6b0063fd-58"
 permissions-policy: autoplay=(self), geolocation=(self), clipboard-read=(self), clipboard-write=(self)
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -21,7 +21,7 @@ x-content-type-options: nosniff
 x-dns-prefetch-control: off
 x-robots-tag: index, follow
 x-vercel-cache: MISS
-x-vercel-id: pdx1::hhw6s-1794962766600-2b379eb1c2de
+x-vercel-id: pdx1::fnm7k-1795535446122-d845aeed8fcb
 x-wf-region: us-east-1
 x-xss-protection: 1; mode=block
 connection: close

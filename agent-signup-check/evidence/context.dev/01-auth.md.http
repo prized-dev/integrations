@@ -1,19 +1,19 @@
 GET https://context.dev/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:25.434Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:10.642Z
 redirect: 301 from https://context.dev/auth.md
 final-url: https://www.context.dev/auth.md
 
 HTTP 200
 access-control-allow-origin: *
-age: 39389
+age: 1906
 cache-control: public, max-age=3600
 content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'self' https://*.context.dev
 content-type: text/markdown; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:21 GMT
-etag: W/"d8e26b61327cd41040331089e96f9815"
+date: Tue, 24 Nov 2026 15:52:07 GMT
+etag: W/"c17654e609b873adb0c341917fb82be9"
 permissions-policy: camera=(), microphone=(), geolocation=()
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -22,7 +22,7 @@ vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-pre
 x-content-type-options: nosniff
 x-matched-path: /auth.md
 x-vercel-cache: HIT
-x-vercel-id: pdx1::s8mbk-1794962841698-8c39c3a38b38
+x-vercel-id: pdx1::sp6kz-1795535526768-6e82070bdb4c
 connection: close
 transfer-encoding: chunked
 

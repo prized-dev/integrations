@@ -1,12 +1,12 @@
 {
  "site": "fly.io",
- "checkedAt": "2026-11-18T00:46:14.889Z",
- "checker": "agent-signup-check/0.2.6",
- "passed": 2,
+ "checkedAt": "2026-11-24T15:52:40.393Z",
+ "checker": "agent-signup-check/0.2.7",
+ "passed": 3,
  "partial": 3,
  "unread": 0,
  "total": 7,
- "whoActs": null,
+ "whoActs": "the person confirms an email code",
  "apiSource": "named",
  "checks": [
   {
@@ -14,13 +14,16 @@
    "name": "auth.md",
    "url": "https://fly.io/auth.md",
    "heading": "# Authenticating to Fly.io",
-   "registrationEndpoints": [],
-   "mentions": [
-    "anonymous"
+   "registrationEndpoints": [
+    "/agent/identity"
    ],
-   "quote": "ting it at risk, and how to give it back. Fly.io does not support agentic registration. There is no anonymous identity endpoint, no claim ceremony, and no `age",
+   "mentions": [
+    "anonymous",
+    "identity_assertion",
+    "service_auth"
+   ],
    "status": "partial",
-   "reason": "auth.md is published, and says agents cannot register here yet"
+   "reason": "An agent sign-in guide is published at /auth.md, but its heading (# Authenticating to Fly.io) does not name auth.md, so tools looking for the spec may skip it"
   },
   {
    "id": "prm",
@@ -38,8 +41,14 @@
    "id": "register",
    "name": "Sign-up by API",
    "url": "https://fly.io/.well-known/oauth-authorization-server",
-   "status": "fail",
-   "reason": "Authorization server metadata not found (HTTP 404); no sign-up API is documented in auth.md or llms.txt"
+   "endpoint": "https://fly.io/agent/identity",
+   "identity_types_supported": [
+    "service_auth"
+   ],
+   "field": "identity_endpoint",
+   "issuer": "https://fly.io",
+   "status": "pass",
+   "reason": "agent_auth names a registration endpoint (service_auth)"
   },
   {
    "id": "challenge",
@@ -72,7 +81,7 @@
    "name": "Docs in Markdown",
    "url": "https://fly.io/llms.txt",
    "heading": "# Fly.io",
-   "bytes": 5852,
+   "bytes": 6398,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -85,7 +94,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 108,
+   "ms": 145,
    "redirects": 0
   },
   {
@@ -95,7 +104,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 182,
+   "ms": 240,
    "redirects": 0
   },
   {
@@ -105,7 +114,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 145,
+   "ms": 99,
    "redirects": 0
   },
   {
@@ -115,7 +124,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 100,
+   "ms": 102,
    "redirects": 0
   },
   {
@@ -132,20 +141,10 @@
    "label": "as-metadata",
    "url": "https://fly.io/.well-known/oauth-authorization-server",
    "finalUrl": "https://fly.io/.well-known/oauth-authorization-server",
-   "status": 404,
+   "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
    "ms": 102,
-   "redirects": 0
-  },
-  {
-   "label": "as-metadata (API host)",
-   "url": "https://api.machines.dev/.well-known/oauth-authorization-server",
-   "finalUrl": "https://api.machines.dev/.well-known/oauth-authorization-server",
-   "status": 404,
-   "error": null,
-   "contentType": "text/plain; charset=utf-8",
-   "ms": 100,
    "redirects": 0
   },
   {
@@ -155,7 +154,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 175,
+   "ms": 291,
    "redirects": 0
   },
   {
@@ -175,7 +174,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 98,
+   "ms": 99,
    "redirects": 0
   }
  ]

@@ -1,19 +1,19 @@
 GET https://ec2.us-east-1.amazonaws.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:36.241Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:16.997Z
 final-url: https://ec2.us-east-1.amazonaws.com/.well-known/x402
 
 HTTP 400
-x-amzn-requestid: 4cdedcf7-6d5e-440c-89e5-7d85af477a4b
+x-amzn-requestid: 6bec6497-5051-4027-a586-76051ff64d0a
 cache-control: no-cache, no-store
 strict-transport-security: max-age=31536000; includeSubDomains
 vary: accept-encoding
 content-encoding: gzip
 content-type: text/xml;charset=UTF-8
 transfer-encoding: chunked
-date: Wed, 18 Nov 2026 00:46:35 GMT
+date: Tue, 24 Nov 2026 15:51:16 GMT
 connection: close
 server: AmazonEC2
 
 <?xml version="1.0" encoding="UTF-8"?>
-<Response><Errors><Error><Code>InvalidURI</Code><Message>The URI http://ec2.us-east-1.amazonaws.com/.well-known/x402 is  not valid</Message></Error></Errors><RequestID>4cdedcf7-6d5e-440c-89e5-7d85af477a4b</RequestID></Response>
+<Response><Errors><Error><Code>InvalidURI</Code><Message>The URI http://ec2.us-east-1.amazonaws.com/.well-known/x402 is  not valid</Message></Error></Errors><RequestID>6bec6497-5051-4027-a586-76051ff64d0a</RequestID></Response>

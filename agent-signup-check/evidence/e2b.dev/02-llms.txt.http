@@ -1,18 +1,18 @@
 GET https://e2b.dev/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:10.669Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:51.815Z
 final-url: https://e2b.dev/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 425710
+age: 67820
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-security-policy: frame-ancestors 'self';
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:07 GMT
-etag: W/"06dd7ad68ab8713f63445b067904043e"
+date: Tue, 24 Nov 2026 15:50:48 GMT
+etag: W/"409feaac8bd4b482f6846a95346c82b1"
 permissions-policy: camera=(), microphone=(), geolocation=()
 server: Vercel
 strict-transport-security: max-age=63072000; includeSubDomains; preload
@@ -22,7 +22,7 @@ x-dns-prefetch-control: on
 x-frame-options: SAMEORIGIN
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::tww9h-1794962767561-2ee2a718c4f5
+x-vercel-id: pdx1::w578x-1795535448617-e2b77d969fec
 x-xss-protection: 1; mode=block
 connection: close
 transfer-encoding: chunked
@@ -31,7 +31,7 @@ transfer-encoding: chunked
 
 > The AI Agent Cloud. Open-source sandbox platform that gives AI agents isolated machines.
 
-Append `.md` to any page, blog post, or case study URL for its Markdown representation. Use `/index.md` for the homepage.
+Append `.md` to any page, blog post, case study, or integration URL for its Markdown representation. Use `/index.md` for the homepage.
 
 > **If you are an AI agent**, read [SKILL.md](https://e2b.dev/SKILL.md) for step-by-step instructions on setting up and using E2B in your workflow.
 
@@ -43,7 +43,7 @@ E2B provides compute for agents. Bring your own model and orchestration framewor
 
 ## Start building
 
-- Install the SDK: `pip install e2b` for Python or `npm install e2b` for JavaScript and TypeScript.
+- Install the SDK: `pip install "e2b>=2.56"` for Python 3.11+ or `npm install e2b` for JavaScript and TypeScript on Node.js 22.19+.
 - Create an account: https://console.e2b.dev/sign-up?signup_source=agent
 - Get an API key (starts with `e2b_`): https://console.e2b.dev/?tab=keys
 - Create a sandbox with `Sandbox.create()`. Connect to an existing sandbox with `Sandbox.connect(id)`.
@@ -71,6 +71,7 @@ E2B provides compute for agents. Bring your own model and orchestration framewor
 - [Security and compliance](https://e2b.dev/security.md): SOC 2 Type II, HIPAA BAA on Enterprise plans, per-sandbox Firecracker microVM isolation, BYOC, and how to get the SOC 2 report, bridge letter, pen test, and DPA.
 - [Open Source](https://e2b.dev/open-source.md): E2B's Apache-2.0 runtime, SDKs, and open-source projects.
 - [Cookbook](https://e2b.dev/cookbook.md): Ready-to-run examples for code execution and agent workflows.
+- [Integrations](https://e2b.dev/integrations.md): Coding agents, agent frameworks, RL environments and evals that run on E2B sandboxes.
 - [Product updates](https://e2b.dev/product-updates.md): Launch posts and the weekly changelog for the E2B SDKs, CLI, API, and sandboxes.
 - [Talks](https://e2b.dev/talks.md): Recordings of talks and workshops by E2B engineers, with chapters.
 - [E2B for Startups](https://e2b.dev/startups.md): One-time $20,000 in credits and the Pro tier for eligible early-stage startups.

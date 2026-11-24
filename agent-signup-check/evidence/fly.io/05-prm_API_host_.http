@@ -1,17 +1,17 @@
 GET https://api.machines.dev/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:14.889Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:40.393Z
 final-url: https://api.machines.dev/.well-known/oauth-protected-resource
 
 HTTP 404
 content-type: text/plain; charset=utf-8
 x-content-type-options: nosniff
-date: Wed, 18 Nov 2026 00:46:12 GMT
+date: Tue, 24 Nov 2026 15:52:38 GMT
 content-encoding: br
 transfer-encoding: chunked
-server: Fly/781f3a6652 (2026-11-10)
+server: Fly/9bb2ac9a88 (2026-11-23)
 via: 1.1 fly.io
-fly-request-id: 01M7P1WMG5MGXGNXZ32RWMNZK7-lax
+fly-request-id: 01M8744NM7VT2XS5BG7Y50GQEF-lax
 connection: close
 
 404 page not found

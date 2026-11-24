@@ -1,11 +1,11 @@
 GET https://loops.so/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:00.576Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:43.852Z
 redirect: 308 from https://loops.so/.well-known/oauth-protected-resource
 final-url: https://mcp.loops.so/.well-known/oauth-protected-resource
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:46:57 GMT
+date: Tue, 24 Nov 2026 15:51:41 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
@@ -19,6 +19,6 @@ x-content-type-options: nosniff
 cf-cache-status: DYNAMIC
 content-encoding: br
 server: cloudflare
-cf-ray: a5c2f609188cfaf4-SJC
+cf-ray: a5f993900adeefc6-PDX
 
 {"resource":"https://mcp.loops.so","authorization_servers":["https://app.loops.so"],"scopes_supported":["mcp"],"bearer_methods_supported":["header"]}

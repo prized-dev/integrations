@@ -1,23 +1,23 @@
 GET https://northflank.com/docs/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:18.843Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:59.477Z
 final-url: https://northflank.com/docs/llms.txt
 
 HTTP 200
 connection: close
-content-length: 78943
+content-length: 79053
 x-powered-by: Express
 content-type: text/markdown
-x-envoy-upstream-service-time: 462
+x-envoy-upstream-service-time: 711
 server: istio-envoy
 via: 1.1 varnish, 1.1 varnish
 accept-ranges: bytes
 age: 0
-date: Wed, 18 Nov 2026 00:46:15 GMT
-x-served-by: cache-lhr-egll1980095-LHR, cache-bfi-krnt7300032-BFI
-x-cache: HIT, MISS
-x-cache-hits: 2, 0
-x-timer: S1794962775.155913,VS0,VE132
+date: Tue, 24 Nov 2026 15:50:56 GMT
+x-served-by: cache-lhr-egwu1540069-LHR, cache-bfi-kbfi7400116-BFI
+x-cache: MISS, MISS
+x-cache-hits: 0, 0
+x-timer: S1795535455.401444,VS0,VE853
 strict-transport-security: max-age=31557600
 
 # Northflank Documentation
@@ -694,6 +694,7 @@ curl -H "Accept: text/markdown" https://northflank.com/docs/v1/application/getti
 - [List container snapshots](https://northflank.com/docs/v1/api/team/container-snapshots/list-container-snapshots.md)
 - [Get container snapshot](https://northflank.com/docs/v1/api/team/container-snapshots/get-container-snapshot.md)
 - [Delete container snapshot](https://northflank.com/docs/v1/api/team/container-snapshots/delete-container-snapshot.md)
+- [Get metrics for a resource](https://northflank.com/docs/v1/api/team/metrics/get-metrics-for-a-resource.md)
 - [Create network policy](https://northflank.com/docs/v1/api/team/network-policies/create-network-policy.md)
 - [Get network policy](https://northflank.com/docs/v1/api/team/network-policies/get-network-policy.md)
 - [Update network policy](https://northflank.com/docs/v1/api/team/network-policies/update-network-policy.md)

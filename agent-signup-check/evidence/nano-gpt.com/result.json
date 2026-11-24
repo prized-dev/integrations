@@ -1,7 +1,7 @@
 {
  "site": "nano-gpt.com",
- "checkedAt": "2026-11-18T00:46:04.498Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:50:48.240Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 1,
  "partial": 5,
  "unread": 0,
@@ -67,7 +67,7 @@
    "where": "llms.txt",
    "url": "https://docs.nano-gpt.com/llms.txt",
    "match": "x402",
-   "snippet": "enAI-compatible). For unauthenticated accountless x402 quote requests, include x-x402: true. - [Image Edits](https://docs.nano-gpt.com/api-reference/endpoint/im",
+   "snippet": "ountless Lightning L402 quote requests, include x-x402: true. - [Image Edits](https://docs.nano-gpt.com/api-reference/endpoint/image-edits.md): OpenAI-compatibl",
    "status": "partial",
    "reason": "llms.txt mentions a payment path (x402) in prose; nothing machine-readable"
   },
@@ -76,7 +76,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.nano-gpt.com/llms.txt",
    "heading": "# NanoGPT API Documentation",
-   "bytes": 22268,
+   "bytes": 23010,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -89,7 +89,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 409,
+   "ms": 264,
    "redirects": 0
   },
   {
@@ -99,7 +99,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 237,
+   "ms": 399,
    "redirects": 0
   },
   {
@@ -109,7 +109,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 841,
+   "ms": 5034,
    "redirects": 0
   },
   {
@@ -119,7 +119,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 123,
+   "ms": 126,
    "redirects": 0
   },
   {
@@ -129,7 +129,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 419,
+   "ms": 387,
    "redirects": 0
   },
   {
@@ -139,7 +139,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 262,
+   "ms": 399,
    "redirects": 0
   },
   {
@@ -149,7 +149,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 98,
+   "ms": 78,
    "redirects": 0
   },
   {
@@ -159,7 +159,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 282,
+   "ms": 118,
    "redirects": 0
   }
  ]

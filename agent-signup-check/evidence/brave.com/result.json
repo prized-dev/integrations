@@ -1,7 +1,7 @@
 {
  "site": "brave.com",
- "checkedAt": "2026-11-18T00:47:22.187Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:52:07.947Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 1,
  "partial": 1,
  "unread": 0,
@@ -70,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 162,
+   "ms": 186,
    "redirects": 1
   },
   {
@@ -80,7 +80,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 109,
+   "ms": 107,
    "redirects": 1
   },
   {
@@ -90,7 +90,7 @@
    "status": 422,
    "error": null,
    "contentType": "application/json",
-   "ms": 35,
+   "ms": 50,
    "redirects": 0
   },
   {
@@ -100,7 +100,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 41,
+   "ms": 38,
    "redirects": 0
   },
   {
@@ -110,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 103,
+   "ms": 104,
    "redirects": 1
   },
   {
@@ -120,7 +120,7 @@
    "status": 403,
    "error": null,
    "contentType": null,
-   "ms": 32,
+   "ms": 50,
    "redirects": 0
   },
   {
@@ -130,7 +130,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 105,
+   "ms": 108,
    "redirects": 1
   },
   {
@@ -150,7 +150,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html",
-   "ms": 87,
+   "ms": 92,
    "redirects": 1
   },
   {
@@ -160,7 +160,7 @@
    "status": 403,
    "error": null,
    "contentType": null,
-   "ms": 29,
+   "ms": 32,
    "redirects": 0
   }
  ]

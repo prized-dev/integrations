@@ -1,7 +1,7 @@
 {
  "site": "gitlab.com",
- "checkedAt": "2026-11-18T00:47:37.874Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:52:23.428Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 1,
  "partial": 2,
  "unread": 0,
@@ -62,7 +62,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.gitlab.com/llms.txt",
    "heading": "# GitLab Documentation",
-   "bytes": 87804,
+   "bytes": 88304,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -75,7 +75,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 32,
+   "ms": 27,
    "redirects": 1
   },
   {
@@ -85,7 +85,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 25,
+   "ms": 27,
    "redirects": 1
   },
   {
@@ -95,7 +95,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 168,
+   "ms": 186,
    "redirects": 0
   },
   {
@@ -105,7 +105,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain",
-   "ms": 53,
+   "ms": 58,
    "redirects": 0
   },
   {
@@ -115,7 +115,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 43,
+   "ms": 121,
    "redirects": 0
   },
   {
@@ -125,7 +125,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 32,
+   "ms": 43,
    "redirects": 0
   },
   {
@@ -135,7 +135,7 @@
    "status": 403,
    "error": null,
    "contentType": "text/html; charset=UTF-8",
-   "ms": 26,
+   "ms": 36,
    "redirects": 1
   }
  ]

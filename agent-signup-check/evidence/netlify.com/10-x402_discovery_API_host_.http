@@ -1,10 +1,10 @@
 GET https://api.netlify.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:21.770Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:04.528Z
 final-url: https://api.netlify.com/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:46:21 GMT
+date: Tue, 24 Nov 2026 15:51:04 GMT
 content-type: application/json; charset=utf-8
 content-length: 34
 connection: close
@@ -14,8 +14,8 @@ timing-allow-origin: https://app.netlify.com, https://www.netlify.com
 vary: Accept, X-Requested-With
 x-content-type-options: nosniff
 x-frame-options: ALLOWALL
-x-nf-srv-version: 741c442
-x-request-id: bdc52f50-f88f-4e1d-8a7a-aa4a5a461c47
-x-runtime: 0.006552
+x-nf-srv-version: 2c27f37
+x-request-id: fba1f15c-22b6-47f5-b64e-da905c58cee6
+x-runtime: 0.002531
 
 {"code":404,"message":"Not Found"}

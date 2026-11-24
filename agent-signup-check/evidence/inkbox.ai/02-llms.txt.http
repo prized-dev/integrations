@@ -1,6 +1,6 @@
 GET https://inkbox.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:06.269Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:53.361Z
 final-url: https://inkbox.ai/llms.txt
 
 HTTP 200
@@ -8,27 +8,28 @@ content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
 x-vercel-project-id: prj_qLbcBKz7xH7FMLPokJgiafgACigN
-x-version: dpl_Aw98ji4XvBsgtZwL1VrkUF9ehFqz
-cf-ray: a5b6d55c0dad8e5d-PDX
+x-version: dpl_B1qJC7o4Nbc1BrDLB8Y5TDHq3c2t
+cf-ray: a5ebd3817e35d0a0-PDX
 cf-cache-status: HIT
 content-encoding: br
 server: cloudflare
 strict-transport-security: max-age=63072000
 content-security-policy: worker-src 'self' blob:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self'; default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; media-src 'self' data: blob: https:; frame-src 'self' blob: https:; connect-src 'self' data: https: wss:;
+x-content-type-options: nosniff
 x-frame-options: DENY
-x-mintlify-client-version: 0.0.4143
+x-mintlify-client-version: 0.0.4271
 x-vercel-cache: MISS
-x-vercel-id: iad1::iad1::9745d-1794794701299-2333cfdff290
-date: Tue, 17 Nov 2026 14:52:18 GMT
+x-vercel-id: iad1::iad1::4bpkd-1795386370711-e586026cd2e7
+date: Tue, 24 Nov 2026 15:51:51 GMT
 cache-control: public
-etag: "9qRF1xtu6BB4QRNngYdbGKAvm7ZOqCQhjRTtGhEB-4I"
+etag: W/"oV4qGmF1Tx2GEW7dxRZd3Ic4ewj5FoNcHn4DTS9ql3M"
 vary: accept-encoding
 x-cache: Hit from cloudfront
-via: 1.1 8502ceae0080b3523f89d1a518a99726.cloudfront.net (CloudFront)
+via: 1.1 f36cc119cb86b2f70c315ca53fd1b4ee.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P2
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: nRJ_jFryfW1bsjXISkFGmFN23gd07j2SAqzzHKai_Uu_zqilHyunRg==
-age: 42785
+x-amz-cf-id: 8woeFdHP5J3uHmzUmups5fCwLCKCNWZ2YLD5b6L2yetauJGZxSiADg==
+age: 39003
 
 # Inkbox
 
@@ -37,7 +38,9 @@ age: 42785
 - [Agent signup](https://inkbox.ai/docs/get-started/agent-signup.md): Let your AI agent register itself with Inkbox, no account or API key needed
 - [Support agent](https://inkbox.ai/docs/get-started/support-agent.md): Your agent can open an A2A task with @support to get help setting up Inkbox and debugging what its own identity is doing
 - [Identities](https://inkbox.ai/docs/capabilities/identities.md): Create, manage, and provision agent identities using the Inkbox SDK and CLI
-- [Hosted agents](https://inkbox.ai/docs/capabilities/hosted-agents.md): Run a Hermes or Codex agent for an Inkbox identity on its own computer.
+- [Hosted agents](https://inkbox.ai/docs/capabilities/hosted-agents.md): Host an agent for an Inkbox identity on its own computer: choose a harness and model, chat with it, and manage its computer, schedules, and connections.
+- [Agent URLs](https://inkbox.ai/docs/capabilities/agent-urls.md): Give a hosted agent a stable HTTPS address, serve web apps from its computer, and share private ports with token links.
+- [Inbound](https://inkbox.ai/docs/capabilities/inbound.md): Receive webhooks from Stripe, GitHub, and other services on a hosted agent. Inkbox verifies, stores, and delivers them, even while the agent sleeps.
 - [Companion mode](https://inkbox.ai/docs/capabilities/companion-mode.md): Let explicitly allowed senders invite your agent into a specific email or group-message conversation
 - [Agent-to-Agent (A2A)](https://inkbox.ai/docs/capabilities/a2a.md): Make an Inkbox identity reachable by other agents over the A2A 1.0 protocol
 - [Verified domains](https://inkbox.ai/docs/capabilities/verified-domains.md): Connect an agent's identity to a domain your organization controls
@@ -73,6 +76,7 @@ age: 42785
 - [Claude connector](https://inkbox.ai/docs/integrations/claude-connector.md): Connect Claude to Inkbox email, SMS/MMS, iMessage, calls, contacts, notes, and A2A
 - [Cursor and Grok Bot](https://inkbox.ai/docs/integrations/cursor-plugin.md): Connect Cursor or Grok Bot to Inkbox and start automations from incoming communication events
 - [Vercel and Eve](https://inkbox.ai/docs/integrations/vercel-eve.md): Connect an Eve agent to Inkbox with a remote MCP connection and an API key or Vercel Connect OAuth.
+- [Chat SDK adapter](https://inkbox.ai/docs/integrations/chat-sdk.md): Use the Inkbox Chat SDK adapter to receive email, SMS, iMessage, Slack, A2A and call transcripts as chat messages and reply on the same channel.
 - [Cloudflare Agents](https://inkbox.ai/docs/integrations/cloudflare-agents.md): Connect a Cloudflare Agents SDK application to Inkbox over remote MCP with an API key or OAuth.
 - [Codex plugin](https://inkbox.ai/docs/integrations/codex.md): Connect a Codex agent to Inkbox email, phone, iMessage, and tunnel capabilities
 - [Claude Code plugin](https://inkbox.ai/docs/integrations/claude-code.md): Connect a Claude Code agent to Inkbox email, phone, iMessage, and tunnel capabilities
@@ -86,6 +90,8 @@ age: 42785
 - [Agent identity API](https://inkbox.ai/docs/api/identities.md): Unified identity layer for AI agents — group mailboxes and phone numbers under a single handle
 - [Manage Identities](https://inkbox.ai/docs/api/identities/manage.md): Create, list, get, update, and delete agent identities, each owning one mailbox and tunnel with optional phone number and vault access.
 - [Agent hosting](https://inkbox.ai/docs/api/identities/hosting.md): Read and configure hosting for an identity, set idle shutdown, list computer templates, and inspect or retry incoming event deliveries.
+- [Agent URL and ports](https://inkbox.ai/docs/api/identities/ports.md): Read a hosted agent's URL, set its default port and exposed ports, and issue port tokens.
+- [Inbound](https://inkbox.ai/docs/api/identities/inbound.md): Create Inbound sources that receive third-party webhooks for a hosted agent, rotate their URLs, and list or replay received events.
 - [Hosted chat and workspace](https://inkbox.ai/docs/api/identities/chat.md): Conversations, approvals, files, and workspace controls for a hosted agent.
 - [Companion configuration](https://inkbox.ai/docs/api/identities/companion.md): Read and update the Companion enabled preference and inspect channel readiness
 - [Companion conversation state](https://inkbox.ai/docs/api/identities/companion-conversations.md): List visible Companion scopes and distinguish read access from reply readiness
@@ -138,7 +144,7 @@ age: 42785
 - [iMessage Contact Rules](https://inkbox.ai/docs/api/imessage/contact-rules.md): Manage allow and block rules on an identity's shared phone list covering incoming and outgoing iMessage, SMS, calls, and WhatsApp, matched on exact numbers.
 - [Webhooks](https://inkbox.ai/docs/api/imessage/webhooks.md): Receive real-time HTTP POST callbacks for inbound iMessages, tapbacks, and outbound delivery status
 - [WhatsApp API](https://inkbox.ai/docs/api/whatsapp.md): Identity-scoped WhatsApp messages, shared-number connections, existing groups, quoted replies, and reactions
-- [Onboarding](https://inkbox.ai/docs/api/whatsapp/onboarding.md): Get a connect draft and QR code for an agent
+- [Onboarding](https://inkbox.ai/docs/api/whatsapp/onboarding.md): Get WhatsApp connect instructions for an agent, including the triage number, connect command, connect link and QR code, and how the first message arrives.
 - [Assignments](https://inkbox.ai/docs/api/whatsapp/connections.md): Connect a recipient to an agent through your organization's shared WhatsApp pool, list assignments, and disconnect
 - [Router](https://inkbox.ai/docs/api/whatsapp/router.md): Get the WhatsApp router number and the commands people text to reach your agents
 - [Manage numbers and routers](https://inkbox.ai/docs/api/whatsapp/management.md): Assign already-owned WhatsApp numbers and manage your organization's dedicated router
@@ -180,7 +186,7 @@ age: 42785
 - [Vault API](https://inkbox.ai/docs/api/vault.md): Zero-knowledge encrypted credential store for AI agents — manage secrets, keys, and access control
 - [Vault Secrets](https://inkbox.ai/docs/api/vault/secrets.md): Store, retrieve, update, and delete encrypted secrets in the vault
 - [Vault Keys](https://inkbox.ai/docs/api/vault/keys.md): Manage vault encryption keys — list, rotate, and revoke primary and recovery keys
-- [Access Control](https://inkbox.ai/docs/api/vault/access.md): Grant and revoke agent identity access to individual vault secrets
+- [Access Control](https://inkbox.ai/docs/api/vault/access.md): Grant an agent identity access to a specific vault secret, list the access rules on a secret, and revoke identity access one secret at a time.
 - [Payload Schemas](https://inkbox.ai/docs/api/vault/payloads.md): Plaintext JSON payload structures for each vault secret type, encrypted client-side with your vault key before the server stores ciphertext.
 - [Billing usage and settings](https://inkbox.ai/docs/api/billing.md): Read contracted rates, enable calling destinations, and manage usage settings
 - [Changelog](https://inkbox.ai/docs/changelog.md): A digest of new features and improvements across the Inkbox platform: the REST API, the TypeScript, Python, and Rust SDKs, and the CLI.

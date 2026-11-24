@@ -1,12 +1,12 @@
 GET https://cdp.coinbase.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:36.057Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:21.724Z
 redirect: 302 from https://cdp.coinbase.com/auth.md
 redirect: 302 from https://coinbase.com/developer-platform
 final-url: https://www.coinbase.com/developer-platform
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:30 GMT
+date: Tue, 24 Nov 2026 15:52:15 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -18,19 +18,19 @@ expires: 0
 referrer-policy: strict-origin-when-cross-origin
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 surrogate-control: no-store
-trace-id: 7898556238913506691
+trace-id: 3736700099030206752
 x-content-type-options: nosniff
 x-dns-prefetch-control: off
 x-download-options: noopen
 x-frame-options: SAMEORIGIN
 x-xss-protection: 0
 server: cloudflare
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=g6EiHBiN4CbY4998NrO0H%2FoBVUW16qzky7JMqVBtnSdAFhNR8%2B5IkQhhZZ9zMbsWNXwTj6tyzhn%2B36WscAMkiX7WEQxX4s%2FKK5iHKL%2FOfl1v9gnYRN9Mz%2Bba%2BvvzGkDQDW4%3D"}]}
+vary: accept-encoding, accept
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=n82snrSQbmxYAK9kRcaGE2eWCYTk1fXk5D%2F%2B6aU7QKxvadRbZE3uqDjauei812f5tgU%2BZMthMBxLQss6NmzhKVMK01Zr%2FqG4oxZStxkOFD3A1ukcodp2Ml5R%2B3z4tgpHqFI%3D"}]}
 cf-cache-status: DYNAMIC
-vary: accept
 content-signal: ai-train=yes, search=yes, ai-input=yes
 content-encoding: gzip
-cf-ray: a5c2f6d42fb95ec1-PDX
+cf-ray: a5f994671fa8d74d-PDX
 
 ---
 title: Coinbase Developer Platform (CDP)
@@ -38,7 +38,9 @@ description: Trusted crypto infrastructure to power your business
 image: https://images.ctfassets.net/o10es7wu5gm1/1JmBvMXlx7eF9qNbMiavQ0/d3ae19b5bf1791c48d495a28a04ca0fa/CDP__2_.svg
 ---
 
-# Trusted crypto infra­struc­ture to power your business
+# Build the future of finance on Coinbase
+
+Trusted digital asset and agentic infrastructure to power your growth.
 
 [Get started](https://portal.cdp.coinbase.com/?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
 
@@ -48,65 +50,75 @@ image: https://images.ctfassets.net/o10es7wu5gm1/1JmBvMXlx7eF9qNbMiavQ0/d3ae19b5
 
 ## Trusted by the best
 
-![Uniswap Logo](https://images.ctfassets.net/o10es7wu5gm1/pcaEkioi30Kr0ZXYVcHBQ/9a418af67b7e9f5cce918301b716b617/uniswap-logo.svg)
+![checkout](https://images.ctfassets.net/o10es7wu5gm1/zT6REl71r4roPuGetkCW7/061e9a7c70ac3206dc1b63fa0aad8666/Checkout.com.png)
 
-![Anthropic Logo](https://images.ctfassets.net/o10es7wu5gm1/6pxGfBQTDJGpHF3f5YIDoN/976f6505fc564eea75828838fb84aae9/anthropic-logo.svg)
+![pnc](https://images.ctfassets.net/o10es7wu5gm1/6tXQjw1zDrlj9FLkfKIk75/af0a3e9cfedaa7464d7b5ea7db72910d/Mask_group-2.png)
 
-![Shopify Logo](https://images.ctfassets.net/o10es7wu5gm1/6LAmStIMF9mtxrkYuIqSi0/26a9e77a494e4aefed295ba742beef10/shopify-logo.svg)
+![masspay](https://images.ctfassets.net/o10es7wu5gm1/44omVaojy5zzwavwswxYdT/6b4585cc36614e934eeb73e1ccf7652c/Mask_group-3.png)
 
-![Solana Logo](https://images.ctfassets.net/o10es7wu5gm1/LYD3U6V2LcRa2tmBNGkBm/506622dcd4c307e6fd67d0c4336d4f5a/solana-logo.svg)
+![moov](https://images.ctfassets.net/o10es7wu5gm1/4AcppwxiLfM0G73jfoiYId/dfee06cf7e56e0b7e42b621e27bb5e03/PPRO_idosOzg_JG_0_1.png)
 
-![Etoro Logo](https://images.ctfassets.net/o10es7wu5gm1/32g9qxRawT1zjHcFw2rm6N/7b4b9fa2080722c30194ebe14663c688/Logo.png)
+![dlocal](https://images.ctfassets.net/o10es7wu5gm1/77ELepZTlVhyfXQH45VF7g/34b6089e48873f992214a2c426420007/dlocal_logo_color_2024__1.png)
+
+![deel](https://images.ctfassets.net/o10es7wu5gm1/7i7r4vo83U89PwEJhQfEnM/61cfddcfdc59e958bae60e7d1acdb2a0/Mask_group.png)
+
+![Shopify Logo](https://images.ctfassets.net/o10es7wu5gm1/6LAmStIMF9mtxrkYuIqSi0/9d68e5779b3994eaa1872ade013883f3/Shopify-logo-grayscale-1000px.png)
+
+![citi logo ](https://images.ctfassets.net/o10es7wu5gm1/2NRuFQShERWLShWj8s6amY/8f9f2fc8241e6e892b183bf0f4357263/8a3c7d64-11c6-4b21-b537-0d7b8c280d54.png)
+
+![moov](https://images.ctfassets.net/o10es7wu5gm1/57Dez1yJKLr1JHaIPpGZ3p/e5f5dddf15e9c66adf8b34046fcc6ffb/base-moov-white_1.png)
+
+![Nium](https://images.ctfassets.net/o10es7wu5gm1/2v4A4SZ18T8ETZ3VQkGPsE/ac2307641ff8bcc6483be2c3c052afa3/Logo.png)
 
 ## Build solutions that scale
 
 ![](https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/globalPayments-5.svg)
 
-### Payments
+### Payments<br><br>Power global payments with stablecoins
 
-Enable fast and global stablecoin payments with a single integration.
+Accept, send, and settle payments around the clock, without building your own rails.
 
 [Learn more󰐲](https://www.coinbase.com/developer-platform/payments?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
 
+![](https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/robot-0.svg)
+
+### Agentic finance<br><br>Put AI to work, on your terms
+
+Let agents trade and pay within limits you set and Coinbase enforces.
+
+[Learn more󰐲](https://www.coinbase.com/agents?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
 ![](https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/coinbaseOneTrade-1.svg)
 
-### Trading
+### Trading<br><br>Give your customers a better trading experience
 
-Launch crypto trading and custody for your users.
+Offer trading on Coinbase's exchange through a single integration.
 
 [Learn more󰐲](https://www.coinbase.com/developer-platform/trading?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
 
-![](https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/wallet-3.svg)
-
-### Wallets
-
-Deploy customizable and scalable wallets for your business.
-
-[Learn more󰐲](https://www.coinbase.com/developer-platform/wallets?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
-
 ![](https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/stableCoinMetaphor-4.svg)
 
-### Stablecoins
+### Stablecoins<br><br>Launch a stablecoin under your brand
 
-Access USDC and Coinbase Custom Stablecoins.
+Issue a stablecoin on Coinbase's infrastructure, without developing issuance and reserve operations.
 
 [Learn more󰐲](https://www.coinbase.com/developer-platform/products/stablecoin-as-a-service?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
 
-![](https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/pieChartData-0.svg)
+![](https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/wallet-3.svg)
 
-### Onchain Tools
+### Custody<br><br>Build on a foundation of trust
 
-Build onchain with powerful APIs and SDKs.
+Hold assets and manage wallets on regulated, institutional-grade infrastructure.
 
-[Learn more󰐲](https://www.coinbase.com/developer-platform/onchaintools?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+[Learn more󰐲](https://www.coinbase.com/developer-platform/wallets?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
 
-## Crypto-as-a-service for any company
+## Built for your business
 
 ![Image content](https://images.ctfassets.net/o10es7wu5gm1/2BGXeKV6oZi3swCj0exdV5/6b147190bbef0337b4267c2a4918408b/image-for-hero-in-cdp-banks-1765830330824.png)
 
 ### Ban ks
 
-Secure, regulated offerings for retail, private banking, and institutional clients.
+Offer digital assets to retail, private banking, and institutional clients on regulated infrastructure.
 
 [Learn more󰐲](https://www.coinbase.com/developer-platform/banks?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
 
@@ -114,7 +126,7 @@ Secure, regulated offerings for retail, private banking, and institutional clien
 
 ### Payment Firms
 
-Near-instant, low-cost, global payments for modern payment providers.
+Move money globally on stablecoins, with near-instant settlement and lower costs.
 
 [Learn more󰐲](https://coinbase.com/developer-platform/paymentfirms?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
 
@@ -122,7 +134,7 @@ Near-instant, low-cost, global payments for modern payment providers.
 
 ### Brokerages
 
-Crypto infrastructure that expands trading platforms’ reach and capabilities.
+Add digital asset trading to your platform through a single integration.
 
 [Learn more󰐲](https://www.coinbase.com/developer-platform/brokerages?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
 
@@ -130,81 +142,63 @@ Crypto infrastructure that expands trading platforms’ reach and capabilities.
 
 ### Startups
 
-Create onchain apps in minutes and give users seamless wallets, onramps/offramps, staking, and more.
+Launch onchain apps in minutes, with wallets, onramps and offramps, and staking built in.
 
 [Learn more󰐲](https://coinbase.com/developer-platform/startups?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
 
-## Why Coinbase Developer Platform?
+## Why Coinbase Infrastructure?
 
-󰎏
+󰮫
 
-### Simple
+### One partner, the whole stack
 
-Start building with a single API key and your existing Coinbase accounts in minutes.
+One integration for stablecoin payments, issuance, trading, custody, and agentic finance.
 
 󰋛
 
-### Product depth
+### Modular by design
 
-Access to the deepest product suite: we offer everything you need, startup to enterprise.
+Start with what you need and add more without rebuilding.
 
 󰒯
 
-### Experience
+### Deploy locally, scale globally
 
-Utilize the same audited custody, compliance  controls, and risk programs that power Coinbase.
+Launch at home and expand with Coinbase's infrastructure and payment rails.
 
-󰝿
+󰟙
 
-### Trusted
+### Your brand, our infrastructure
 
-The safety and security of working with the most trusted name in crypto.
+Coinbase powers the capabilities, and you own the customer experience.
 
-![ ](https://images.ctfassets.net/o10es7wu5gm1/2usQKnTCEfWvX343lmyXjt/ffbc24fc2a1d13afea3eb1d7da93a2c2/moonshot_5_4.jpg)
+![Webull ](https://images.ctfassets.net/o10es7wu5gm1/7wa5XBJQuWukuTbQD6PmJe/244df31beaa71181ee87b405eed8cd18/BlogHeader_14_V006.png)
 
 ## Case studies
 
 Learn how the biggest businesses across the globe are using CDP to create the future of payments, trading, banking, and onchain apps.
 
-[Learn more](https://www.coinbase.com/developer-platform/discover/case-studies?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+[Learn more](https://www.coinbase.com/developer-platform/discover/case-studies/webull?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
 
-![ ](https://images.ctfassets.net/o10es7wu5gm1/4WvoMuaGBIiVixHPGstqy8/2c7400612d74a03494f008edfc43ef41/Try_demos.png)
+## Launch faster on Coinbase Infrastructure
 
-## Try demos
+APIs, licensing, compliance, and expert support. Everything you need, from one partner.
 
-Want to try our products or see examples of what you can build? Check out our demo apps.
+󰯹
 
-[Try demos](https://docs.cdp.coinbase.com/get-started/demo-apps/explore?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+### Talk to our team
 
-## Building onchain is hard. We make it easy.
+Discuss your use case with our infrastructure experts and plan your launch.
 
-We're committed to helping builders create incredible products. That's why we've made it easy to access powerful APIs and SDKs from Coinbase to help solve developers' toughest problems.
+[Get started](https://www.coinbase.com/developer-platform/developer-interest?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
+
+󰥟
+
+### Docs and SDKs
+
+Give your engineering team the APIs and SDKs to start building.
 
 [View docs](https://docs.cdp.coinbase.com/?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
-
-󰒩
-
-### Github
-
-View and download open source Coinbase code.
-
-[View Github](https://github.com/coinbase)
-
-󰍟
-
-### Discord
-
-Get help with your project, meet other developers, and get access to the web3 community.
-
-[Join Discord](https://discord.com/invite/cdp)
-
-󰡅
-
-### Talk to an expert
-
-Get in touch with us to discuss your integration or if you have an idea on how you would like to work with us.
-
-[Get support](https://support.cdp.coinbase.com/?country=US&currency=USD&mobile=false&japan_bespoke_content=false&logged_in=false&null=)
 
 No representation or warranty is made, express or implied, with respect to the future performance of any digital asset, financial instrument or other market or economic measure. Recipients should consult their advisors before making any investment decision. Coinbase, Inc. is not registered or licensed in any capacity with the U.S. Securities and Exchange Commission or the U.S. Commodity Futures Trading Commission. Not all products and features are available in all jurisdictions.
 

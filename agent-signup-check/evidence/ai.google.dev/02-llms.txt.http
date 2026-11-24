@@ -1,12 +1,12 @@
 GET https://ai.google.dev/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:45:50.041Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:28.832Z
 final-url: https://ai.google.dev/llms.txt
 
 HTTP 404
 content-type: text/html; charset=utf-8
 vary: Cookie, Accept-Encoding
-content-security-policy: base-uri 'self'; object-src 'none'; script-src 'strict-dynamic' 'unsafe-inline' https: http: 'nonce-VWlzGEhQeMhzOpvCIn88+ufHuZ9+y5' 'unsafe-eval'; frame-ancestors 'self' https://developers.google.com/_d/analytics-iframe https://aistudio.google.com; report-uri https://csp.withgoogle.com/csp/devsite/v2
+content-security-policy: base-uri 'self'; object-src 'none'; script-src 'strict-dynamic' 'unsafe-inline' https: http: 'nonce-4OdCAp1HRXFYmfe9iSXtpMeUFLfGP8' 'unsafe-eval'; frame-ancestors 'self' https://developers.google.com/_d/analytics-iframe https://aistudio.google.com; report-uri https://csp.withgoogle.com/csp/devsite/v2
 strict-transport-security: max-age=63072000; includeSubdomains; preload
 x-xss-protection: 0
 x-content-type-options: nosniff
@@ -14,8 +14,8 @@ cache-control: no-cache, must-revalidate
 expires: 0
 pragma: no-cache
 content-encoding: gzip
-x-cloud-trace-context: d7631635c768cc6fde6b7406644bfa0e
-date: Wed, 18 Nov 2026 00:45:44 GMT
+x-cloud-trace-context: c809700479369c212aec744305eee0ca
+date: Tue, 24 Nov 2026 15:50:24 GMT
 server: Google Frontend
 alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
 connection: close
@@ -500,4 +500,4 @@ transfer-encoding: chunked
             <ul class="devsite-tabs-dropdown-section
                  
 
-[body trimmed for publication: kept 16384 of 72399 characters; sha256 of the published body d5a5a44860b1faeb36ec298fdc928aaee928ffba74a9e64c5b63d8dda5904c58]
+[body trimmed for publication: kept 16384 of 72449 characters; sha256 of the published body 97a0cd75f151de30418e2c141cfb702af5654ae08ba7cd7e9b5db2b2273c44b2]

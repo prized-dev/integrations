@@ -1,13 +1,16 @@
-GET https://api.onkernel.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:09.720Z
-final-url: https://api.onkernel.com/.well-known/oauth-authorization-server
+GET https://auth.onkernel.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:55.440Z
+final-url: https://auth.onkernel.com/.well-known/oauth-authorization-server
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:08 GMT
+date: Tue, 24 Nov 2026 15:51:54 GMT
 content-type: application/json
-content-length: 490
+content-length: 873
 connection: close
+access-control-allow-headers: Content-Type, Authorization
+access-control-allow-methods: GET, OPTIONS
+access-control-allow-origin: *
 cache-control: private, no-store
 
-{"agent_auth":{"identity_assertion":{"assertion_types_supported":["verified_email"],"credential_types_supported":["api_key"]},"identity_types_supported":["identity_assertion"],"register_uri":"https://api.onkernel.com/authmd/agent/auth","skill":"https://www.kernel.sh/auth.md"},"authorization_servers":["https://api.onkernel.com/"],"bearer_methods_supported":["header"],"issuer":"https://api.onkernel.com/","resource":"https://api.onkernel.com/","scopes_supported":["api.read","api.write"]}
+{"issuer":"https://auth.onkernel.com","authorization_endpoint":"https://auth.onkernel.com/authorize","token_endpoint":"https://auth.onkernel.com/token","registration_endpoint":"https://auth.onkernel.com/register","jwks_uri":"https://clerk.onkernel.com/.well-known/jwks.json","scopes_supported":["openid"],"response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token","urn:ietf:params:oauth:grant-type:jwt-bearer"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["none"],"authorization_response_iss_parameter_supported":true,"agent_auth":{"identity_assertion":{"assertion_types_supported":["verified_email"],"credential_types_supported":["api_key"]},"identity_types_supported":["identity_assertion"],"register_uri":"https://api.onkernel.com/authmd/agent/auth","skill":"https://www.kernel.sh/auth.md"}}

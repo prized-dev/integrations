@@ -1,7 +1,7 @@
 {
  "site": "northflank.com",
- "checkedAt": "2026-11-18T00:46:18.843Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:50:59.477Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 1,
  "partial": 1,
  "unread": 0,
@@ -57,7 +57,7 @@
    "name": "Docs in Markdown",
    "url": "https://northflank.com/docs/llms.txt",
    "heading": "# Northflank Documentation",
-   "bytes": 78937,
+   "bytes": 79047,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -70,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 223,
+   "ms": 211,
    "redirects": 0
   },
   {
@@ -80,7 +80,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 208,
+   "ms": 199,
    "redirects": 0
   },
   {
@@ -90,7 +90,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 184,
+   "ms": 185,
    "redirects": 0
   },
   {
@@ -100,7 +100,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown",
-   "ms": 170,
+   "ms": 890,
    "redirects": 0
   },
   {
@@ -110,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 273,
+   "ms": 199,
    "redirects": 0
   },
   {
@@ -120,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 185,
+   "ms": 179,
    "redirects": 0
   },
   {
@@ -130,7 +130,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 410,
+   "ms": 196,
    "redirects": 0
   },
   {
@@ -140,7 +140,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 178,
+   "ms": 172,
    "redirects": 0
   },
   {
@@ -150,7 +150,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 221,
+   "ms": 191,
    "redirects": 0
   },
   {
@@ -160,7 +160,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json; charset=utf-8",
-   "ms": 173,
+   "ms": 170,
    "redirects": 0
   }
  ]

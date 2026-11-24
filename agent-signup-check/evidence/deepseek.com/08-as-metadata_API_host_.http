@@ -1,23 +1,23 @@
 GET https://api.deepseek.com/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:45:59.423Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:39.031Z
 final-url: https://api.deepseek.com/.well-known/oauth-authorization-server
 
 HTTP 401
 content-type: application/json
 transfer-encoding: chunked
 connection: close
-date: Wed, 18 Nov 2026 00:45:57 GMT
+date: Tue, 24 Nov 2026 15:50:37 GMT
 x-content-type-options: nosniff
 server: elb
 vary: accept-encoding,origin, access-control-request-method, access-control-request-headers
 content-encoding: br
 access-control-allow-credentials: true
-x-ds-trace-id: 5a253e5bc4ef90c5b364052b080b3756
+x-ds-trace-id: f57bdd9507e014b319a51e147b7f4643
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 x-cache: Error from cloudfront
-via: 1.1 6a31d7747628574e9fa26dd40efa100a.cloudfront.net (CloudFront)
+via: 1.1 7d14d4fc1c149f1d429681a4c414c21a.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P4
-x-amz-cf-id: U5Y4g0zC4kkUM0YRVsbUO8eqedlQJfo_fHSU9vYBThSRH1AAggEz-A==
+x-amz-cf-id: rgVDZZEzB_TguBRtopbWzirtBI4lZaq5FdkaGqkulatjsnaJPNp7rA==
 
-{"error":{"message":"Authentication Fails (missing key) (request_id: c2b849d7-5efd-47ed-b08d-5167ddb24105)","type":"authentication_error","param":null,"code":"invalid_request_error"}}
+{"error":{"message":"Authentication Fails (missing key) (request_id: cf9a1d0f-b8fd-4d03-893c-928d1f42e956)","type":"authentication_error","param":null,"code":"invalid_request_error"}}

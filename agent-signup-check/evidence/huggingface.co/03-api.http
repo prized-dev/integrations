@@ -1,17 +1,17 @@
 GET https://huggingface.co/api/whoami-v2
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:01.666Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:40.149Z
 final-url: https://huggingface.co/api/whoami-v2
 
 HTTP 401
 content-type: application/json; charset=utf-8
 content-length: 41
 connection: close
-date: Wed, 18 Nov 2026 00:45:59 GMT
+date: Tue, 24 Nov 2026 15:50:38 GMT
 etag: W/"29-dEMcHWfJi78ZR1aqzb1ELAhp3Us"
 x-powered-by: huggingface-moon
-x-request-id: Root=1-6afcf547-260d8482435b778544b9b779
-ratelimit: "api";r=9999;t=204
+x-request-id: Root=1-6b05b24e-5bd1784c7144cdee3ff621dc
+ratelimit: "api";r=9999;t=225
 ratelimit-policy: "fixed window";"api";q=10000;w=300
 cross-origin-opener-policy: same-origin
 referrer-policy: strict-origin-when-cross-origin
@@ -22,10 +22,10 @@ access-control-expose-headers: X-Repo-Commit,X-HF-Warning,X-Request-Id,X-Error-C
 x-error-message: Invalid username or password.
 www-authenticate: Bearer realm="Authentication required", charset="UTF-8"
 x-cache: Error from cloudfront
-via: 1.1 b023cfb0f6ff8e2669cab3ce8c9f51f0.cloudfront.net (CloudFront)
+via: 1.1 a1f8044693d3f7f5c5e4c6cb7ec5cb9c.cloudfront.net (CloudFront)
 x-amz-cf-pop: HIO52-P5
 alt-svc: h3=":443"; ma=86400
-x-amz-cf-id: hfdANx2qGU9L8y9H-lrXANC9tBcBSTf_CFD79kDlC8X7w5zs5NcU2g==
+x-amz-cf-id: _08hGDbcR5i93QSo_AscgnGFMg8AXGuqua6dPsCLF5NCtSposN6Czg==
 strict-transport-security: max-age=31536000
 
 {"error":"Invalid username or password."}

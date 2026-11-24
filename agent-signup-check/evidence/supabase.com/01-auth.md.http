@@ -1,22 +1,25 @@
 GET https://supabase.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:46.441Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:28.390Z
 final-url: https://supabase.com/auth.md
 
 HTTP 200
 age: 0
 cache-control: public, max-age=86400
 content-encoding: br
+content-security-policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ss.supabase.com https://ph.supabase.com https://*.usercentrics.eu https://platform.twitter.com https://cdn.syndication.twimg.com https://js.hsforms.net https://*.hsforms.net https://static.hsappstatic.net https://js.hcaptcha.com https://*.hcaptcha.com https://import-cdn.default.com https://bwa.marketplace.awsstatic.com https://cdn.jsdelivr.net/gh/hiunicornstudio/; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
 content-type: text/markdown; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:42 GMT
+date: Tue, 24 Nov 2026 15:51:24 GMT
+referrer-policy: strict-origin-when-cross-origin
 server: Vercel
 strict-transport-security: max-age=31536000; includeSubDomains; preload
 vary: Accept
 x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
 x-matched-path: /api-v2/md/[...slug]
 x-nextjs-rewritten-path: /api-v2/md/auth
 x-vercel-cache: MISS
-x-vercel-id: pdx1::iad1::4xjxc-1794962802151-d77dbec86978
+x-vercel-id: pdx1::iad1::z9nxs-1795535484123-3a9618952f0a
 connection: close
 transfer-encoding: chunked
 

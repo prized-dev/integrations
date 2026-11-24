@@ -1,7 +1,7 @@
 {
  "site": "hetzner.com",
- "checkedAt": "2026-11-18T00:46:43.516Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:51:27.200Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 1,
  "partial": 1,
  "unread": 0,
@@ -57,7 +57,7 @@
    "name": "Docs in Markdown",
    "url": "https://docs.hetzner.com/llms.txt",
    "heading": "# Hetzner Docs",
-   "bytes": 89279,
+   "bytes": 89243,
    "status": "pass",
    "reason": "llms.txt found at a docs path"
   }
@@ -70,7 +70,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 959,
+   "ms": 873,
    "redirects": 1
   },
   {
@@ -80,7 +80,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 664,
+   "ms": 650,
    "redirects": 1
   },
   {
@@ -90,7 +90,7 @@
    "status": 401,
    "error": null,
    "contentType": "application/json",
-   "ms": 715,
+   "ms": 736,
    "redirects": 0
   },
   {
@@ -100,7 +100,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=UTF-8",
-   "ms": 957,
+   "ms": 930,
    "redirects": 0
   },
   {
@@ -110,7 +110,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 654,
+   "ms": 646,
    "redirects": 2
   },
   {
@@ -120,7 +120,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 525,
+   "ms": 524,
    "redirects": 0
   },
   {
@@ -140,7 +140,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 521,
+   "ms": 526,
    "redirects": 0
   },
   {
@@ -150,7 +150,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 658,
+   "ms": 665,
    "redirects": 2
   },
   {
@@ -160,7 +160,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 525,
+   "ms": 527,
    "redirects": 0
   }
  ]

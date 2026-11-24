@@ -1,14 +1,19 @@
 GET https://api.fireworks.ai/.well-known/oauth-protected-resource
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:45:54.357Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:33.343Z
 final-url: https://api.fireworks.ai/.well-known/oauth-protected-resource
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:45:52 GMT
+date: Tue, 24 Nov 2026 15:50:31 GMT
 content-type: application/json
 content-length: 176
 connection: close
+permissions-policy: camera=(), microphone=(), geolocation=()
+referrer-policy: no-referrer
+strict-transport-security: max-age=300
 vary: Origin
-x-request-id: ad0ce035-f742-4e8b-a3d6-0aec73046367
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-request-id: 0653f5ef-46cd-4842-b1f2-da931fb9853e
 
-{"error":{"message":"Path not found: /.well-known/oauth-protected-resource","param":null,"code":"NOT_FOUND","type":"error"},"request_id":"ad0ce035-f742-4e8b-a3d6-0aec73046367"}
+{"error":{"message":"Path not found: /.well-known/oauth-protected-resource","param":null,"code":"NOT_FOUND","type":"error"},"request_id":"0653f5ef-46cd-4842-b1f2-da931fb9853e"}

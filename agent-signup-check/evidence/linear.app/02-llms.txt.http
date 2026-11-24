@@ -1,14 +1,14 @@
 GET https://linear.app/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:41.666Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:27.605Z
 final-url: https://linear.app/llms.txt
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:38 GMT
+date: Tue, 24 Nov 2026 15:52:23 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5c2f7080b44afe8-PDX
+cf-ray: a5f9949ccedcb248-PDX
 cf-cache-status: DYNAMIC
 cache-control: private, no-cache, no-store, max-age=0, must-revalidate
 content-encoding: gzip
@@ -29,60 +29,70 @@ Each page on linear.app is also available as Markdown. Add `.md` to the URL (use
 
 ## Website
 
-- [/](https://linear.app/index.md)
-- [/about](https://linear.app/about.md)
-- [/agents](https://linear.app/agents.md)
-- [/ai](https://linear.app/ai.md)
-- [/careers](https://linear.app/careers.md)
-- [/changelog](https://linear.app/changelog.md)
-- [/coding-agent](https://linear.app/coding-agent.md)
-- [/resource-kit](https://linear.app/resource-kit.md)
-- [/contact](https://linear.app/contact.md)
-- [/contact/demo](https://linear.app/contact/demo.md)
-- [/contact/sales](https://linear.app/contact/sales.md)
-- [/contact/support](https://linear.app/contact/support.md)
-- [/customers](https://linear.app/customers.md)
-- [/customer-requests](https://linear.app/customer-requests.md)
-- [/data](https://linear.app/data.md)
-- [/data/code-review](https://linear.app/data/code-review.md)
-- [/enterprise](https://linear.app/enterprise.md)
-- [/features](https://linear.app/features.md)
-- [/asks](https://linear.app/asks.md)
-- [/insights](https://linear.app/insights.md)
-- [/intake](https://linear.app/intake.md)
-- [/integrations](https://linear.app/integrations.md)
-- [/method](https://linear.app/method.md)
-- [/releases/2020-12](https://linear.app/releases/2020-12.md)
-- [/releases/2021-06](https://linear.app/releases/2021-06.md)
-- [/releases/2022](https://linear.app/releases/2022.md)
-- [/releases/figma](https://linear.app/releases/figma.md)
-- [/security](https://linear.app/security.md)
-- [/security/vulnerability](https://linear.app/security/vulnerability.md)
-- [/startups](https://linear.app/startups.md)
-- [/dpa](https://linear.app/dpa.md)
-- [/legal](https://linear.app/legal.md)
-- [/privacy](https://linear.app/privacy.md)
-- [/terms](https://linear.app/terms.md)
-- [/brand](https://linear.app/brand.md)
-- [/change](https://linear.app/change.md)
-- [/download](https://linear.app/download.md)
-- [/now](https://linear.app/now.md)
-- [/fm](https://linear.app/fm.md)
-- [/pricing](https://linear.app/pricing.md)
-- [/readme](https://linear.app/readme.md)
-- [/plan](https://linear.app/plan.md)
-- [/build](https://linear.app/build.md)
-- [/reviews](https://linear.app/reviews.md)
-- [/mobile](https://linear.app/mobile.md)
-- [/quality](https://linear.app/quality.md)
-- [/switch](https://linear.app/switch.md)
-- [/switch/migration-guide](https://linear.app/switch/migration-guide.md)
-- [/switch/pilot-guide](https://linear.app/switch/pilot-guide.md)
-- [/switch/pitch-guide](https://linear.app/switch/pitch-guide.md)
+- [Linear – The system for product development](https://linear.app/index.md): Purpose-built for planning and building products with AI agents.
+- [About](https://linear.app/about.md): We’re bringing magic back to software.
+- [Linear for Agents](https://linear.app/agents.md): Build and deploy AI agents that work alongside you as teammates.
+- [Linear – Agents that follow work from conversation to code](https://linear.app/ai.md): Linear Agent understands your projects, issues, customer requests, docs, and code, so every decision is grounded with full context.
+- [We’re hiring](https://linear.app/careers.md): We are crafting the tool for teams who care about quality. Join us on our mission!
+- [Changelog](https://linear.app/changelog.md): New updates and improvements to Linear.
+- [Cloud Coding Agent](https://linear.app/coding-agent.md): Turn requests into merged PRs, all in Linear. Delegate changes to Linear or automate incoming work with Loops.
+- [Linear Resource Kit](https://linear.app/resource-kit.md): The product development system for teams and agents.
+- [Contact us](https://linear.app/contact.md): Get in touch with the Linear sales and support teams for demos, onboarding support, or product questions.
+- [Book a demo](https://linear.app/contact/demo.md): Get a live 30-minute product demo with our sales team. We’ll show you Linear’s AI features, various workflows, and answer questions you have.
+- [Talk to sales](https://linear.app/contact/sales.md): Get in touch with the Linear sales team to talk about plans, pricing, enterprise contracts, or to request a demo.
+- [Contact support](https://linear.app/contact/support.md): Get in touch with the Linear support team to ask product questions, report problems, or leave feedback.
+- [Linear Customers](https://linear.app/customers.md): Meet the startups and enterprises that choose Linear to build products better.
+- [Customer Requests](https://linear.app/customer-requests.md): Bring the voice of the customer into product development. Capture feedback, understand user needs, and build what customers actually want.
+- [How teams build](https://linear.app/data.md): AI usage patterns in software teams: who is adopting AI, how it reshapes where teams spend their time, and how much more they ship.
+- [Code review at Linear](https://linear.app/data/code-review.md): How Linear reviews code now that agents write more of it than people can read
+- [An AI product system for modern enterprises](https://linear.app/enterprise.md): Linear gives teams and agents shared context for planning and building products at scale.
+- [Features](https://linear.app/features.md): Linear is the system for modern product development. Streamline work across the entire development cycle, from roadmap to release.
+- [Linear Asks – Manage workplace requests](https://linear.app/asks.md): The easiest way to manage internal requests from Slack and email. Streamline bug reports, feature ideas, IT tickets, and more.
+- [Insights](https://linear.app/insights.md): Instant analytics and customizable dashboards for product and engineering teams.
+- [Linear Intake – Self-driving product operations](https://linear.app/intake.md): Automatically turn conversations and customer feedback into actionable issues that are routed, labeled, and prioritized for the right team.
+- [Integrations](https://linear.app/integrations.md): Enhance your Linear workspace with hand-picked integrations.
+- [Linear Learn](https://linear.app/learn.md): Learn all about Linear’s features and how to use them.
+- [Linear Method – Practices for building](https://linear.app/method.md): The quality of a product is driven by both the talent of its creators and how they feel while they’re crafting it. To bring back the right focus, these are the foundational and evolving ideas Linear is built on.
+- [Linear Release 2020.12](https://linear.app/releases/2020-12.md): Linear helps high-performing teams execute faster and build products now with roadmap, customizable views, list controls, sorting options and an enhanced sub-issue editor.
+- [Grow with Linear – 2021.06 release](https://linear.app/releases/2021-06.md): Linear streamlines issue tracking, roadmap planning, bug reporting and triaging, and more. An issue tracking tool that levels up as you scale.
+- [Built for scale – Linear 2022 Release](https://linear.app/releases/2022.md): Introducing Roadmap improvements, Analytical Reporting, Notion integration, Cycle Insights, Label Groups, and more.
+- [Linear × Figma Plugin](https://linear.app/releases/figma.md): Streamline work across design and engineering.
+- [Security](https://linear.app/security.md): Everything in Linear is designed to keep your work safe and secure. Because your business is nobody else’s business.
+- [Report a vulnerability](https://linear.app/security/vulnerability.md): How to report a security vulnerability in Linear, what is in scope, and how Linear handles reports.
+- [Linear for startups](https://linear.app/startups.md): A shared system for planning, building, and reviewing product work. Get up to 6 months of Linear free through the startup program.
+- [Data Processing Agreement](https://linear.app/dpa.md): How Linear processes and protects personal data on your behalf, including international transfers.
+- [Legal](https://linear.app/legal.md): Read Linear’s privacy policy, terms of service, and other legal documents.
+- [Privacy Policy](https://linear.app/privacy.md): How Linear collects, uses, and shares personal data, with details on your privacy rights and choices.
+- [Terms of Service](https://linear.app/terms.md): The terms that apply when you use Linear, including account responsibilities, subscriptions, and payments.
+- [Brand Guidelines](https://linear.app/brand.md): Resources for presenting the Linear brand consistently and professionally.
+- [Change for the better](https://linear.app/change.md): You don’t have to change what you’re building to change how you build it. Introducing a purpose-built system for teams ready to move forward.
+- [Download Linear](https://linear.app/download.md): Download the Linear app for desktop and mobile. Available for Mac, Windows, iOS, and Android.
+- [Now – Updates from the Linear team](https://linear.app/now.md): Linear product updates, thoughts on crafting beautiful products, and reflections on building a startup.
+- [Linear.fm](https://linear.app/fm.md): Voices of the creators building with Linear
+- [Pricing](https://linear.app/pricing.md): Use Linear for free with your whole team. Upgrade to enable unlimited issues, enhanced security controls, and additional features.
+- [README](https://linear.app/readme.md): This is not a manifesto. This is not a codex, not a whitepaper, and not a secret master plan.
+- [Linear – Plan and navigate from idea to launch](https://linear.app/plan.md): Align your team around a unified product timeline with projects, initiatives, and roadmaps, then monitor progress with analytics, dashboards, and a personalized feed.
+- [Linear – Move work forward across teams and agents](https://linear.app/build.md): Build, review, and ship with AI agents that work alongside your team – from delegating issues and orchestrating work to reviewing diffs and managing releases.
+- [Linear Reviews](https://linear.app/reviews.md): A review experience for the agentic era. Review PRs, respond to feedback, iterate with coding agents, and merge approved work.
+- [Linear Mobile – Available for iOS and Android](https://linear.app/mobile.md): Move product work forward, no matter where you are. Available for iOS and Android.
+- [Conversations on Quality](https://linear.app/quality.md): What is quality? And how do things of quality get built? A limited series. Now streaming.
+- [Switch to Linear](https://linear.app/switch.md): Why and how product teams switch to Linear.
+- [Migration guide](https://linear.app/switch/migration-guide.md): Step-by-step instructions and considerations for a seamless transition to Linear.
+- [Running a pilot](https://linear.app/switch/pilot-guide.md): Run a pilot program to evaluate if Linear is the right fit for your organization.
+- [Pitching Linear](https://linear.app/switch/pitch-guide.md): Walk important stakeholders in your organization through the benefits of Linear.
+
+## Learn
+
+- [Intro to Linear](https://linear.app/learn/intro-to-linear.md): Before you start using Linear, it’s helpful to know that Linear is purpose-built for product teams. That means that we build it with the needs and best practices of product teams in mind.
+- [Daily workflows](https://linear.app/learn/daily-workflows.md): To stay focused every day, we recommend the following routines.
+- [Project planning](https://linear.app/learn/project-planning.md): Your project overview is the source of truth for your project. It contains everything from your project spec to customer requests, external resources, and ongoing updates.
+- [Managing unplanned work](https://linear.app/learn/managing-unplanned-work.md): Triage is your home for managing unplanned work. It works as a central inbox for incoming, unplanned work.
+- [Building with your users](https://linear.app/learn/building-with-your-users.md): Capture customer feedback in Linear, find your most requested features, and turn customer requests into projects your team can ship.
+- [Insights and analytics](https://linear.app/learn/insights-and-analytics.md): Track cycle progress, spot project scope creep, and use insights and dashboards to understand how your team works.
 
 ## Documentation
 
-Get an overview of Linear's features, integrations, and how to use them.
+Get an overview of Linear’s features, integrations, and how to use them.
 
 ### Getting started
 

@@ -1,25 +1,25 @@
 GET https://agentmail.to/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:55.067Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:36.518Z
 redirect: 307 from https://agentmail.to/llms.txt
 final-url: https://www.agentmail.to/llms.txt
 
 HTTP 200
 access-control-allow-origin: *
-age: 152891
+age: 103040
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:51 GMT
-etag: W/"7b38ea07fe8c49413763654732499bbf"
+date: Tue, 24 Nov 2026 15:51:33 GMT
+etag: W/"ddef2546200901664706a15953e900d6"
 link: </openapi.json>; rel="service-desc", </docs>; rel="service-doc", </llms.txt>; rel="https://llmstxt.org", </.well-known/api-catalog>; rel="api-catalog"
 server: Vercel
 strict-transport-security: max-age=63072000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
 x-matched-path: /llms.txt
 x-vercel-cache: HIT
-x-vercel-id: pdx1::5k4mc-1794962811830-2a6e073771e8
+x-vercel-id: pdx1::4xmnr-1795535493324-e7656b28ec7a
 connection: close
 transfer-encoding: chunked
 
@@ -97,6 +97,7 @@ How an agent gets AgentMail credentials and uses them safely:
 
 Foundational guides on agent email:
 
+- [AgentMail: Email Infrastructure for AI Agents](https://www.agentmail.to/blog/agentmail-intro): What AgentMail is, why agents need real inboxes rather than email APIs, and the launch post that introduced it.
 - [Build Email Agents: The Complete Guide](https://www.agentmail.to/blog/build-email-agents-complete-guide): The full stack of agent email, from why email through inbox lifecycle, sending/receiving, threads, architecture patterns, and production deployment.
 - [Why AI Agents Need Email](https://www.agentmail.to/blog/why-ai-agents-need-email): Why email is the universal identity and communication layer agents need to operate on human surfaces.
 - [Email as Identity for AI Agents](https://www.agentmail.to/blog/email-as-identity-for-ai-agents): How an inbox gives an agent a persistent, verifiable identity for signup and authentication across the internet.
@@ -114,6 +115,7 @@ Compare AgentMail vs alternatives:
 
 - [Comparisons hub](https://www.agentmail.to/comparisons): Every AgentMail provider comparison and best-email-API roundup in one place.
 - [AgentMail vs Resend](https://www.agentmail.to/blog/agentmail-vs-resend): Inbox primitive vs transactional sending; inbound, threading, retention, and pricing.
+- [Best Email API for AI Agents: Mailtrap vs Resend vs AgentMail](https://www.agentmail.to/blog/mailtrap-vs-resend-vs-agentmail): Three email APIs for agents compared on inbound, threading, multi-tenancy, and pricing.
 - [AgentMail vs Gmail API](https://www.agentmail.to/blog/agentmail-vs-gmail-api): Per-agent inboxes vs OAuth access to a human's mailbox; limits, quotas, and push notifications.
 - [AgentMail vs Nylas](https://www.agentmail.to/blog/agentmail-vs-nylas): Agent-owned inboxes vs connected accounts and Nylas Agent Accounts; retention and multi-provider tradeoffs.
 - [AgentMail vs SendGrid](https://www.agentmail.to/blog/agentmail-vs-sendgrid): Persistent inbox with threading vs Inbound Parse webhook forwarding; free tier and multi-tenancy.
@@ -122,9 +124,11 @@ Compare AgentMail vs alternatives:
 - [AgentMail is now an official OpenClaw plugin](https://www.agentmail.to/blog/agentmail-official-openclaw-plugin): Install command, the email channel, allowlist defaults, and version requirements.
 - [AgentMail vs Gmail for OpenClaw](https://www.agentmail.to/blog/agentmail-vs-gmail-openclaw): Dedicated agent inboxes vs OAuth/Himalaya Gmail setup for OpenClaw agents.
 - [Cloudflare Email Service vs AgentMail](https://www.agentmail.to/blog/cloudflare-vs-agentmail): Workers-based DIY inbox vs a managed agent inbox provider.
-- [Best Email API for AI Agents (2026)](https://www.agentmail.to/blog/best-email-api-for-ai-agents-2026): 7 options compared across sending, receiving, and inbox features.
+- [Best Email API for AI Agents (2026)](https://www.agentmail.to/blog/best-email-api-for-ai-agents-2026): 9 email APIs in five categories, compared on owning the inbox, two-way email, multi-tenancy, and price.
+- [14 Inbound Reply Parsers for Agent Inboxes Compared (2026)](https://www.agentmail.to/blog/best-inbound-email-apis-ai-agents): 14 inbound email APIs for AI agents compared on inbox provisioning, webhooks, reply extraction and thread ownership.
+- [Email MCP servers compared](https://www.agentmail.to/blog/email-mcp-servers-for-ai-agents): Eight email MCP servers mapped by create-inbox, send platform, and person mailbox, with install paths.
 - [Best Email API for OpenClaw (2026)](https://www.agentmail.to/blog/best-email-api-for-openclaw-2026): Two-way inboxes vs stateless webhooks for OpenClaw agents.
-- [5 Best Email APIs for Developers, Compared (2026)](https://www.agentmail.to/blog/5-best-email-api-for-developers-compared-2026): AgentMail, Resend, SendGrid, Mailgun, and Amazon SES side by side.
+- [6 Best Email APIs for Developers, Compared (2026)](https://www.agentmail.to/blog/5-best-email-api-for-developers-compared-2026): AgentMail, Mailtrap, Resend, SendGrid, Mailgun, and Amazon SES side by side.
 - [Why Gmail and SendGrid Don't Work for AI Agents](https://www.agentmail.to/blog/why-gmail-and-sendgrid-dont-work-for-ai-agents): No programmatic inboxes, OAuth complexity, and stateless webhooks.
 
 ## Research: AgentMail Evals
@@ -346,6 +350,7 @@ Idempotency: Pass `client_id` (Python) / `clientId` (TypeScript) to all create o
 
 Vertical and outcome pages for building AI agents with AgentMail:
 
+- AI agents for construction: https://www.agentmail.to/use-case/ai-agents-for-construction
 - AI agents for finance operations: keep AP and AR apart: https://www.agentmail.to/use-case/ai-finance-operations-agents-email
 - AI agents for real estate: https://www.agentmail.to/use-case/ai-agents-for-real-estate
 - Mailboxes for research agents, created at spin-up: https://www.agentmail.to/use-case/research-agents-with-their-own-inbox

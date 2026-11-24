@@ -1,0 +1,38 @@
+GET https://clerk.clerk.com/.well-known/oauth-authorization-server
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:27.150Z
+final-url: https://clerk.clerk.com/.well-known/oauth-authorization-server
+
+HTTP 200
+date: Tue, 24 Nov 2026 15:52:25 GMT
+content-type: application/json
+transfer-encoding: chunked
+connection: close
+cf-ray: a5f994a88e31d86b-SEA
+cf-cache-status: HIT
+nel: {"report_to":"cf-nel","success_fraction":0.01,"max_age":604800}
+access-control-allow-origin: *
+age: 2840
+cache-control: public, max-age=14400
+expires: Tue, 24 Nov 2026 19:52:25 GMT
+last-modified: Tue, 24 Nov 2026 15:05:11 GMT
+server: cloudflare
+x-robots-tag: noindex, nofollow
+strict-transport-security: max-age=63072000;
+vary: Origin
+via: 1.1 google
+clerk-api-version: 2021-02-05
+content-security-policy: default-src 'none'; frame-ancestors 'none'
+permissions-policy: camera=(), microphone=(), geolocation=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-cfworker: 1
+x-clerk-instance-id: ins_1lyWDZiobr600AKUeQDoSlrEmoM
+x-clerk-trace-id: 72c30959dbb59aaa4632228e5cac629c
+x-cloud-trace-context: ef1ad835b23ef50611a2a21e910f5a35
+x-content-type-options: nosniff
+x-country: US
+x-frame-options: DENY
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=3z8uzmnvjheTozGAgs3AIoth%2FaAnTSkjBs5RebgwuW4F6z3XakI1g9HLVrwg%2BfyUNqs2H3HftUEh600JTDmo%2Fl6Gu511DjRfN%2Fav20y%2BGueVRNjWskQVJ1D2L6D%2Bv0sPeQ%3D%3D"}]}
+content-encoding: br
+
+{"protected_resources":["https://clerk.com"],"issuer":"https://clerk.clerk.com","authorization_endpoint":"https://clerk.clerk.com/oauth/authorize","token_endpoint":"https://clerk.clerk.com/oauth/token","revocation_endpoint":"https://clerk.clerk.com/oauth/token/revoke","jwks_uri":"https://clerk.clerk.com/.well-known/jwks.json","registration_endpoint":"https://clerk.clerk.com/oauth/register","response_types_supported":["code"],"grant_types_supported":["authorization_code","refresh_token","urn:ietf:params:oauth:grant-type:token-exchange"],"token_endpoint_auth_methods_supported":["client_secret_basic","none","client_secret_post"],"scopes_supported":["openid","profile","email","offline_access","user:org:read","poppy:browser-sign-in","application_domains:manage","application_domains:read","applications:manage","applications:read","organizations:read","support_tickets:manage","users:manage","users:read"],"subject_types_supported":["public"],"id_token_signing_alg_values_supported":["RS256"],"claims_supported":["aud","email","email_verified","exp","family_name","given_name","iat","iss","name","picture","preferred_username","sub","org_id"],"service_documentation":"https://clerk.com/docs/oauth/scoped-access","ui_locales_supported":["en"],"op_tos_uri":"https://clerk.com/legal/standard-terms","code_challenge_methods_supported":["S256"],"client_id_metadata_document_supported":true,"authorization_response_iss_parameter_supported":true}

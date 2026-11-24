@@ -1,16 +1,16 @@
 GET https://docs.deno.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:42.728Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:25.762Z
 final-url: https://docs.deno.com/llms.txt
 
 HTTP 500
 content-type: text/plain;charset=UTF-8
 content-length: 21
-date: Wed, 18 Nov 2026 00:46:39 GMT
+date: Tue, 24 Nov 2026 15:51:22 GMT
 connection: close
 age: 0
 cache-status: deno; fwd=bypass; detail=not-cacheable
-x-deno-trace-id: 6ec492ae8704fbe97937b90076f519d9
+x-deno-trace-id: 9d714ce3425e11970fbc739c5d12e4bf
 via: HTTP/1.1 ord.vultr.prod.deno-cluster.net
 server: deployd
 

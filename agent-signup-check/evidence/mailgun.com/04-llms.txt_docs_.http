@@ -1,6 +1,6 @@
 GET https://documentation.mailgun.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:07.841Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:51.713Z
 final-url: https://documentation.mailgun.com/llms.txt
 
 HTTP 200
@@ -9,13 +9,13 @@ alt-svc: h3=":10443"; ma=2592000
 cache-control: no-store
 content-encoding: br
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:47:00 GMT
+date: Tue, 24 Nov 2026 15:51:43 GMT
 vary: Accept-Encoding
-via: 2.0 Caddy, 1.1 Caddy, 1.1 6225fd23298b677711e0721417a30ae2.cloudfront.net (CloudFront)
-x-amz-cf-id: gpkQxk8RoJYlAc_Lsm2aE6UX9PF9ge9ax6JZ5L5mxlTjwDgqCTYkog==
+via: 2.0 Caddy, 1.1 Caddy, 1.1 1a12f863197f986ec10d35ed76e104f0.cloudfront.net (CloudFront)
+x-amz-cf-id: GajlFgzelNx1gXyvYe0WD9Uz3tLzWFglJPEe-Qh0MKIQvsqcK_EPdg==
 x-amz-cf-pop: IAD61-P10
 x-cache: Miss from cloudfront
-x-request-id: cds-04b1e28c-0fab-4235-801b-2e2e62cd664f, cds-04b1e28c-0fab-4235-801b-2e2e62cd664f
+x-request-id: cds-5613c876-87ef-4641-95e0-1c01acd6b400, cds-5613c876-87ef-4641-95e0-1c01acd6b400
 connection: close
 transfer-encoding: chunked
 

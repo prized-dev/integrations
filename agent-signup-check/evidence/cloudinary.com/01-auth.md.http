@@ -1,10 +1,10 @@
 GET https://cloudinary.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:46.477Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:31.612Z
 final-url: https://cloudinary.com/auth.md
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:41 GMT
+date: Tue, 24 Nov 2026 15:52:27 GMT
 content-type: text/markdown; charset=utf-8
 content-length: 7917
 connection: close
@@ -15,24 +15,24 @@ strict-transport-security: max-age=31536000
 x-content-type-options: nosniff
 x-frame-options: deny
 x-xss-protection: 1; mode=block
-x-github-request-id: 3490:10B21E:184BE:6B450:6AFCF5AD
+x-github-request-id: 5F62:29D287:27945:C7C7C:6B05B2BA
 x-github-edge-region: westus2
 content-encoding: gzip
 accept-ranges: bytes
 via: 1.1 varnish
-x-served-by: cache-pdx12324-PDX
+x-served-by: cache-pdx12327-PDX
 x-cache: MISS
 x-cache-hits: 0
-x-timer: S1794962862.756486,VS0,VE130
+x-timer: S1795535547.813587,VS0,VE416
 vary: Authorization,Accept-Encoding
 access-control-allow-origin: *
 cross-origin-resource-policy: cross-origin
-x-fastly-request-id: 7d0a21580f0c489cda5c6209dcbfd24bdc725d41
-expires: Wed, 18 Nov 2026 00:52:41 GMT
+x-fastly-request-id: ba104af3931fff902f0e7da6748d1e14e28992b3
+expires: Tue, 24 Nov 2026 15:57:27 GMT
 source-age: 0
 cf-cache-status: DYNAMIC
 server: cloudflare
-cf-ray: a5c2f71d8d108e66-PDX
+cf-ray: a5f994af0827ff03-PDX
 alt-svc: h3=":443"; ma=86400
 
 # auth.md — Cloudinary

@@ -1,7 +1,7 @@
 {
  "site": "useautumn.com",
- "checkedAt": "2026-11-18T00:47:34.706Z",
- "checker": "agent-signup-check/0.2.6",
+ "checkedAt": "2026-11-24T15:52:21.556Z",
+ "checker": "agent-signup-check/0.2.7",
  "passed": 3,
  "partial": 2,
  "unread": 0,
@@ -73,7 +73,7 @@
    "name": "Docs in Markdown",
    "url": "https://useautumn.com/llms.txt",
    "heading": "# Autumn",
-   "bytes": 8659,
+   "bytes": 8917,
    "status": "pass",
    "reason": "llms.txt found"
   }
@@ -86,7 +86,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/markdown; charset=utf-8",
-   "ms": 293,
+   "ms": 426,
    "redirects": 0
   },
   {
@@ -96,7 +96,7 @@
    "status": 200,
    "error": null,
    "contentType": "text/plain; charset=utf-8",
-   "ms": 252,
+   "ms": 376,
    "redirects": 0
   },
   {
@@ -116,7 +116,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 200,
+   "ms": 160,
    "redirects": 0
   },
   {
@@ -126,7 +126,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 207,
+   "ms": 190,
    "redirects": 0
   },
   {
@@ -136,7 +136,7 @@
    "status": 200,
    "error": null,
    "contentType": "application/json",
-   "ms": 198,
+   "ms": 209,
    "redirects": 0
   },
   {
@@ -146,7 +146,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 50,
+   "ms": 159,
    "redirects": 0
   },
   {
@@ -156,7 +156,7 @@
    "status": 404,
    "error": null,
    "contentType": "text/html; charset=utf-8",
-   "ms": 50,
+   "ms": 54,
    "redirects": 0
   },
   {
@@ -166,7 +166,7 @@
    "status": 404,
    "error": null,
    "contentType": "application/json",
-   "ms": 205,
+   "ms": 191,
    "redirects": 0
   }
  ]

@@ -1,14 +1,19 @@
 GET https://api.fireworks.ai/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:45:54.357Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:33.343Z
 final-url: https://api.fireworks.ai/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:45:54 GMT
+date: Tue, 24 Nov 2026 15:50:33 GMT
 content-type: application/json
 content-length: 156
 connection: close
+permissions-policy: camera=(), microphone=(), geolocation=()
+referrer-policy: no-referrer
+strict-transport-security: max-age=300
 vary: Origin
-x-request-id: 78b8848c-cdf2-452f-a10a-c8514f449749
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-request-id: cc169a6e-fa51-4cbb-b4d1-4998d26ecabd
 
-{"error":{"message":"Path not found: /.well-known/x402","param":null,"code":"NOT_FOUND","type":"error"},"request_id":"78b8848c-cdf2-452f-a10a-c8514f449749"}
+{"error":{"message":"Path not found: /.well-known/x402","param":null,"code":"NOT_FOUND","type":"error"},"request_id":"cc169a6e-fa51-4cbb-b4d1-4998d26ecabd"}

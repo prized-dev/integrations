@@ -1,22 +1,20 @@
 GET https://agentphone.to/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:05.644Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:50.872Z
 redirect: 301 from https://agentphone.to/.well-known/x402
 final-url: https://agentphone.ai/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:04 GMT
+date: Tue, 24 Nov 2026 15:51:50 GMT
 content-type: application/json; charset=utf-8
 transfer-encoding: chunked
 connection: close
-server: cloudflare
 vary: Accept-Encoding
-x-railway-request-id: aTdm5igtTmCxEkQ1Cx5-qw
-x-railway-edge: sjc1
-x-hikari-trace: sjc1.qeyn
+strict-transport-security: max-age=31536000; includeSubDomains
 cf-cache-status: DYNAMIC
 speculation-rules: "/cdn-cgi/speculation"
 content-encoding: gzip
-cf-ray: a5c2f6377e760d87-PDX
+server: cloudflare
+cf-ray: a5f993c9df9358c2-PDX
 
 {"error":{"code":"not_found","message":"The requested path could not be found"}}

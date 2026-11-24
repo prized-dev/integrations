@@ -1,21 +1,21 @@
 GET https://api.lemonsqueezy.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:35.603Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:20.150Z
 final-url: https://api.lemonsqueezy.com/.well-known/x402
 
 HTTP 404
-date: Wed, 18 Nov 2026 00:47:35 GMT
+date: Tue, 24 Nov 2026 15:52:19 GMT
 content-type: application/json
 transfer-encoding: chunked
 connection: close
-x-powered-by: PHP/8.4.27
-cache-control: no-cache, private
 vary: Origin
-apigw-requestid: HAtSMjvECYcEP_Q=
+x-powered-by: PHP/8.4.28
+cache-control: no-cache, private
+apigw-requestid: HWjcJiKoiYcEPRA=
 cf-cache-status: DYNAMIC
 content-encoding: br
 server: cloudflare
-cf-ray: a5c2f6f40ddf8fc5-SJC
+cf-ray: a5f994827dc5ff19-PDX
 
 {
     "message": "The route .well-known/x402 could not be found."

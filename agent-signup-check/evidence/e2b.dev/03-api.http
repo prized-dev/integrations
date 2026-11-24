@@ -1,16 +1,13 @@
 GET https://api.e2b.dev/sandboxes
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:10.669Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:51.815Z
 final-url: https://api.e2b.dev/sandboxes
 
 HTTP 401
 content-type: application/json; charset=utf-8
 vary: Origin
-date: Wed, 18 Nov 2026 00:46:07 GMT
+date: Tue, 24 Nov 2026 15:50:49 GMT
 content-length: 56
-x-ratelimit-limit: 60000
-x-ratelimit-remaining: 60000
-x-ratelimit-reset: 0
 via: 1.1 google
 alt-svc: h3=":443"; ma=2592000
 connection: close

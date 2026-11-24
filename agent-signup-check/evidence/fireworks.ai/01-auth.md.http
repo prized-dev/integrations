@@ -1,23 +1,24 @@
 GET https://fireworks.ai/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:45:54.357Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:33.343Z
 final-url: https://fireworks.ai/auth.md
 
 HTTP 404
-age: 0
+age: 24404
 cache-control: public, max-age=0, must-revalidate
 content-length: 10
 content-security-policy: frame-ancestors 'self' https://fireworks-ai-studio.vercel.app https://fireworks-ai-studio-ten.vercel.app http://localhost:3333 http://localhost:3000
 content-type: text/plain; charset=utf-8
-date: Wed, 18 Nov 2026 00:45:50 GMT
+date: Sat, 21 Nov 2026 19:21:09 GMT
 server: Vercel
 strict-transport-security: max-age=63072000
-vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept
 x-frame-options: SAMEORIGIN
 x-matched-path: /md/[[...slug]]
 x-nextjs-rewritten-path: /md/auth
-x-vercel-cache: MISS
-x-vercel-id: pdx1::pdx1::kk7b2-1794962750077-b510813fae65
+x-robots-tag: noindex
+x-vercel-cache: STALE
+x-vercel-id: pdx1::cdg1::d4zzr-1795535429179-72c9e807776a
 connection: close
 
 Not found

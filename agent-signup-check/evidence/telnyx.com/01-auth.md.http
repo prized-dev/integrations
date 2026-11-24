@@ -1,17 +1,19 @@
 GET https://telnyx.com/auth.md
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:03.281Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:51:46.360Z
 final-url: https://telnyx.com/auth.md
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:00 GMT
+date: Tue, 24 Nov 2026 15:51:43 GMT
 content-type: text/markdown; charset=utf-8
 transfer-encoding: chunked
 connection: close
-cf-ray: a5c2f61ccd593741-PDX
-cf-cache-status: BYPASS
+cf-ray: a5f993a34820dd6a-PDX
+cf-cache-status: HIT
 access-control-allow-origin: *
+age: 3588
 cache-control: public, max-age=3600
+last-modified: Tue, 24 Nov 2026 14:51:55 GMT
 server: cloudflare
 strict-transport-security: max-age=31536000
 vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
@@ -124,6 +126,10 @@ Host: x402.telnyx.com
 Content-Type: application/json
 X-Payment: <signed-EIP-3009-quote>
 ```
+
+## Spend limits
+
+An account registered through `bot_signup` (Method 1) starts with $5 in free credit. Until the account is funded, treat that $5 as the spend cap for the account and every API key on it: usage draws down the credit. `GET https://api.telnyx.com/v2/balance` is the authoritative figure for what is left — read it before making paid calls. To spend more, add credit with one of the funding skills in Step 7 of `https://telnyx.com/agent-signup.md`. Prices are at `https://telnyx.com/pricing.md`.
 
 ## Errors
 

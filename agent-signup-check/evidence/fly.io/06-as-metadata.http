@@ -1,19 +1,19 @@
 GET https://fly.io/.well-known/oauth-authorization-server
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:14.889Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:40.393Z
 final-url: https://fly.io/.well-known/oauth-authorization-server
 
-HTTP 404
-cache-control: max-age=0, private, must-revalidate
+HTTP 200
+cache-control: no-store
 content-encoding: br
 content-type: application/json; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:12 GMT
-server: Fly/781f3a6652 (2026-11-10)
-vary: Accept
-x-request-id: GOj9Ib8xaEurS5cAASlC
+date: Tue, 24 Nov 2026 15:52:37 GMT
+pragma: no-cache
+server: Fly/9bb2ac9a88 (2026-11-23)
+x-request-id: GOsGE9TzshkP5wAAADBB
 transfer-encoding: chunked
 via: 1.1 fly.io
-fly-request-id: 01M7P1WMWSYK1KZDQ6J2X1C6M8-lax
+fly-request-id: 01M8744P0SND78CANSTR7FC03P-lax
 connection: close
 
-{"errors":{"detail":"not found"}}
+{"agent_auth":{"claim_endpoint":"https://fly.io/agent/identity/claim","events_supported":[],"identity_assertion":{"assertion_types_supported":[]},"identity_endpoint":"https://fly.io/agent/identity","identity_types_supported":["service_auth"],"skill":"https://fly.io/auth.md"},"grant_types_supported":["urn:ietf:params:oauth:grant-type:jwt-bearer","urn:workos:agent-auth:grant-type:claim"],"issuer":"https://fly.io","response_types_supported":[],"revocation_endpoint":"https://fly.io/oauth2/revoke","scopes_supported":["fly:org"],"token_endpoint":"https://fly.io/oauth2/token","token_endpoint_auth_methods_supported":["none"]}

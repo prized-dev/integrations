@@ -1,17 +1,17 @@
 GET https://assemblyai.com/.well-known/x402
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:09.391Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:49.256Z
 redirect: 308 from https://assemblyai.com/.well-known/x402
 final-url: https://www.assemblyai.com/.well-known/x402
 
 HTTP 404
 cache-control: no-transform
 cf-cache-status: EXPIRED
-cf-ray: a5c2f4d7dc17a34d-SEA
+cf-ray: a5f992480a7a159c-SEA
 content-encoding: gzip
 content-type: text/html; charset=utf-8
-date: Wed, 18 Nov 2026 00:46:08 GMT
-etag: W/"6afca0d1-58"
+date: Tue, 24 Nov 2026 15:50:48 GMT
+etag: W/"6b0063fd-58"
 permissions-policy: autoplay=(self), geolocation=(self), clipboard-read=(self), clipboard-write=(self)
 referrer-policy: strict-origin-when-cross-origin
 server: Vercel
@@ -21,7 +21,7 @@ x-content-type-options: nosniff
 x-dns-prefetch-control: off
 x-robots-tag: index, follow
 x-vercel-cache: MISS
-x-vercel-id: pdx1::z5czn-1794962768540-bf151788a569
+x-vercel-id: pdx1::2pq6f-1795535448282-56f51681bb29
 x-wf-region: us-east-1
 x-xss-protection: 1; mode=block
 connection: close

@@ -1,6 +1,6 @@
 GET https://deepseek.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:45:59.423Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:39.031Z
 final-url: https://deepseek.com/llms.txt
 
 HTTP 404
@@ -12,14 +12,14 @@ x-amz-error-code: NoSuchKey
 x-amz-error-message: The specified key does not exist.
 x-amz-error-detail-key: llms.txt
 content-encoding: br
-date: Wed, 18 Nov 2026 00:45:53 GMT
+date: Tue, 24 Nov 2026 15:50:32 GMT
 server: AmazonS3
 etag: W/"0fc1255674be9071658644d5b3cbb3fd"
 vary: Accept-Encoding
 x-cache: Error from cloudfront
-via: 1.1 288c777a01e22425da9494dad7a69734.cloudfront.net (CloudFront)
-x-amz-cf-pop: HIO52-P1
-x-amz-cf-id: HdCaPvi3jmN6LptZMUDm7KFH-qcuZQH7YHF9rI-bkMv6Sk4Yu63BUA==
+via: 1.1 44c9323c8e1b3ab3824760718cef5d00.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P2
+x-amz-cf-id: BV7cFNqUPujNkFIwjYPreaqMhixoUahsIiOjhi63VWmRY8qrk4oH5Q==
 cache-control: max-age=86400
 
 <!DOCTYPE html><html lang="zh-CN"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" as="image" href="/images/app-qrcode.png"/><link rel="preload" as="image" href="/images/qr-wechat.png"/><link rel="stylesheet" href="/_next/static/css/12ac947760ee9d08.css" crossorigin="" data-precedence="next"/><link rel="stylesheet" href="/_next/static/css/be6cf46335e70ac8.css" crossorigin="" data-precedence="next"/><link rel="stylesheet" href="/_next/static/css/aa0e993381ed79dc.css" crossorigin="" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/webpack-39a99f2c1457ccb1.js" crossorigin=""/><script src="/_next/static/chunks/7b6c7672-33bc8757ff0b9f0b.js" async="" crossorigin=""></script><script src="/_next/static/chunks/2576-6994e819e7d6be1b.js" async="" crossorigin=""></script><script src="/_next/static/chunks/main-app-9582f3918ee928f6.js" async="" crossorigin=""></script><script src="/_next/static/chunks/1066-fc6aa7899e76bd41.js" async=""></script><script src="/_next/static/chunks/4545-9490c40a12b2aad7.js" async=""></script><script src="/_next/static/chunks/app/layout-0e3103b0b947b1aa.js" async=""></script><script src="/_next/static/chunks/app/not-found-343ea2442a103fae.js" async=""></script><script src="/_next/static/chunks/9631-b5a242ba13a88880.js" async=""></script><script src="/_next/static/chunks/6561-bd369977a9a8959f.js" async=""></script><script src="/_next/static/chunks/1510-3bed238b3b811bfe.js" async=""></script><script src="/_next/static/chunks/7110-76c1799590e4e155.js" async=""></script><script src="/_next/static/chunks/3306-637173fa769c711f.js" async=""></script><script src="/_next/static/chunks/app/%5Blocale%5D/layout-c433792ffe7df80f.js" async=""></script><script src="/_next/static/chunks/app/%5Blocale%5D/page-670a2959ceb0715e.js" async=""></script><script src="/_next/static/chunks/app/%5Blocale%5D/template-4ed140b89f41c3b1.js" async=""></script><script src="/_next/static/chunks/app/%5Blocale%5D/not-found-fe461ab94222589a.js" async=""></script><title>DeepSeek | 深度求索</title><meta name="description" content="深度求索（DeepSeek），探索未至之境。专注于研究世界领先的通用人工智能底层模型与技术，开源 DeepSeek-V4、DeepSeek-R1 等前沿大模型。和 DeepSeek AI 对话，轻松接入 API。"/><meta name="keywords" content="深度求索, DeepSeek, AGI, AI, LLM, DeepSeek V4, DeepSeek R1, DeepSeek API, DeepSeek Chat, 开源模型, 人工智能"/><meta name="app-home" content="1"/><link rel="canonical" href="https://www.deepseek.com/"/><link rel="alternate" hrefLang="zh-CN" href="https://www.deepseek.com/"/><link rel="alternate" hrefLang="en-US" href="https://www.deepseek.com/en/"/><link rel="alternate" hrefLang="x-default" href="https://www.deepseek.com/"/><meta property="og:title" content="DeepSeek | 深度求索"/><meta property="og:description" content="深度求索（DeepSeek），探索未至之境。专注于研究世界领先的通用人工智能底层模型与技术，开源 DeepSeek-V4、DeepSeek-R1 等前沿大模型。和 DeepSeek AI 对话，轻松接入 API。"/><meta property="og:url" content="https://www.deepseek.com/"/><meta property="og:image" content="https://www.deepseek.com/images/deepseek-social.jpg"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image:alt" content="DeepSeek"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="DeepSeek | 深度求索"/><meta name="twitter:description" content="深度求索（DeepSeek），探索未至之境。专注于研究世界领先的通用人工智能底层模型与技术，开源 DeepSeek-V4、DeepSeek-R1 等前沿大模型。和 DeepSeek AI 对话，轻松接入 API。"/><meta name="twitter:image" content="https://www.deepseek.com/images/deepseek-social.jpg"/><meta name="twitter:image:width" content="1200"/><meta name="twitter:image:height" content="630"/><meta name="twitter:image:alt" content="DeepSeek"/><link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="225x225"/><meta name="google" content="notranslate"/><script>(function () {

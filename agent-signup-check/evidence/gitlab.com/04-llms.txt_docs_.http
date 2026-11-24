@@ -1,20 +1,20 @@
 GET https://docs.gitlab.com/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:37.874Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:23.428Z
 final-url: https://docs.gitlab.com/llms.txt
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:36 GMT
+date: Tue, 24 Nov 2026 15:52:21 GMT
 content-type: text/plain
 transfer-encoding: chunked
 connection: close
 cf-cache-status: HIT
 cache-control: public, max-age=0, must-revalidate
 x-docs-origin: cloudflare-worker
-etag: W/"eb73d8c569baba76f635dc2fcb7bdf1c"
+etag: W/"1ee5d84e1ae353301588d0aea7ca2d65"
 content-encoding: gzip
 server: cloudflare
-cf-ray: a5c2f6fc4aefcb90-PDX
+cf-ray: a5f994906c4d4b48-PDX
 
 # GitLab Documentation
 Learn how to use and administer GitLab, the most scalable Git-based integrated platform for software development.
@@ -135,6 +135,7 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 [Use CI/CD to build your application](https://docs.gitlab.com/topics/build_your_application): Runners, jobs, pipelines, variables.
 [Getting started](https://docs.gitlab.com/ci): Build and test your application.
 [Tutorials](https://docs.gitlab.com/tutorials/build_application): CI/CD fundamentals and examples.
+[CI Expert Agent](https://docs.gitlab.com/topics/build_your_application/ci_expert_agent): Learn more about CI Expert Agent in the GitLab documentation.
 [CI/CD YAML syntax reference](https://docs.gitlab.com/ci/yaml): Pipeline configuration keywords, syntax, examples, and inputs.
 [Runners](https://docs.gitlab.com/ci/runners): Configuration and job execution.
 [Pipelines](https://docs.gitlab.com/ci/pipelines): Configuration, automation, stages, schedules, and efficiency.
@@ -169,6 +170,7 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 [GitLab advisory database](https://docs.gitlab.com/user/application_security/gitlab_advisory_database): Security advisories, vulnerabilities, dependencies, database, and updates.
 [CVE ID requests](https://docs.gitlab.com/user/application_security/cve_id_request): Vulnerability tracking and security disclosure.
 [Policies](https://docs.gitlab.com/user/application_security/policies): Security policies, enforcement, compliance, approvals, and scans.
+[Security Analyst Agent](https://docs.gitlab.com/user/application_security/security_analyst_agent): Learn more about Security Analyst Agent in the GitLab documentation.
 [Security glossary](https://docs.gitlab.com/user/application_security/terminology): Definitions for terms related to security features in GitLab.
 
 ### Deploy and release your application
@@ -255,7 +257,7 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 [Tutorials](https://docs.gitlab.com/tutorials/duo): AI-native features and workflows.
 [Availability](https://docs.gitlab.com/user/duo_agent_platform/turn_on_off): Control GitLab Duo Agent Platform availability for groups, projects, and instances.
 [Agentic Chat](https://docs.gitlab.com/user/gitlab_duo_chat/agentic_chat): Use GitLab Duo Agentic Chat to answer complex questions and create or edit files autonomously.
-[AI Catalog](https://docs.gitlab.com/user/duo_agent_platform/ai_catalog): Discover, enable, and manage agents and flows from a central catalog.
+[AI Catalog](https://docs.gitlab.com/user/duo_agent_platform/ai_catalog): Discover, turn on, and manage agents and flows from a central catalog.
 [Agents](https://docs.gitlab.com/user/duo_agent_platform/agents): Learn about foundational, custom, and external agents available in the GitLab Duo Agent Platform.
 [Flows](https://docs.gitlab.com/user/duo_agent_platform/flows): Use foundational and custom flows to automate complex development tasks with multiple agents.
 [Sessions](https://docs.gitlab.com/user/duo_agent_platform/sessions): View and manage the status and execution data for agents and flows you have run.
@@ -615,6 +617,7 @@ Navigation for the Japanese docs site is located at data/ja-jp/navigation.yaml.
 ### Configure GitLab Orbit
 
 [Configure GitLab Orbit](https://docs.gitlab.com/orbit/self-managed): Run GitLab Orbit against your own GitLab instance.
+[Version requirements](https://docs.gitlab.com/orbit/self-managed/version-requirements): The GitLab, Helm chart, and ClickHouse versions that each GitLab Orbit release supports.
 [Get started](https://docs.gitlab.com/orbit/self-managed/getting-started): Prerequisites, installation order, and shared configuration values for GitLab Orbit on GitLab Self-Managed.
 [Sizing](https://docs.gitlab.com/orbit/self-managed/sizing): Sizing recommendations for GitLab Orbit components at each GitLab reference architecture size.
 [ClickHouse](https://docs.gitlab.com/orbit/self-managed/clickhouse): Set up ClickHouse for GitLab Orbit on GitLab Self-Managed.

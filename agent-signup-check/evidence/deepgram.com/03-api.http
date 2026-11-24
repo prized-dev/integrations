@@ -1,15 +1,15 @@
 GET https://api.deepgram.com/v1/projects
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:46:08.993Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:50:48.178Z
 final-url: https://api.deepgram.com/v1/projects
 
 HTTP 401
-date: Wed, 18 Nov 2026 00:46:05 GMT
+date: Tue, 24 Nov 2026 15:50:45 GMT
 content-type: application/json
 content-length: 176
-access-control-allow-credentials: true
-dg-request-id: 8d720017-43ea-44eb-a2ea-2c3495146dd8
+dg-request-id: 45521db9-0e92-4402-a621-0827f476893f
 vary: Origin, Access-Control-Request-Method, Access-Control-Request-Headers
+access-control-allow-credentials: true
 connection: close
 
-{"category":"UNAUTHORIZED","message":"Authentication failed.","details":"Check that you are using the correct credentials.","request_id":"8d720017-43ea-44eb-a2ea-2c3495146dd8"}
+{"category":"UNAUTHORIZED","message":"Authentication failed.","details":"Check that you are using the correct credentials.","request_id":"45521db9-0e92-4402-a621-0827f476893f"}

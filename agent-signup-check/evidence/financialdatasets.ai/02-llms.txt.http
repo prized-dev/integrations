@@ -1,11 +1,11 @@
 GET https://financialdatasets.ai/llms.txt
-user-agent: PrizedAgentSignupCheck/0.2.6 (+https://prized.dev/agent-signup-check; read-only GET)
-fetched: 2026-11-18T00:47:26.143Z
+user-agent: PrizedAgentSignupCheck/0.2.7 (+https://prized.dev/agent-signup-check; read-only GET)
+fetched: 2026-11-24T15:52:11.545Z
 redirect: 308 from https://financialdatasets.ai/llms.txt
 final-url: https://www.financialdatasets.ai/llms.txt
 
 HTTP 200
-date: Wed, 18 Nov 2026 00:47:22 GMT
+date: Tue, 24 Nov 2026 15:52:08 GMT
 content-type: text/plain; charset=utf-8
 transfer-encoding: chunked
 connection: close
@@ -14,18 +14,18 @@ age: 0
 cache-control: public, max-age=0, must-revalidate
 content-disposition: inline; filename="llms.txt"
 content-encoding: br
-etag: W/"9f1c05a53f8472f31475cc72283602db"
-last-modified: Wed, 18 Nov 2026 00:47:22 GMT
+etag: W/"0b2075c8000f6c82cdd17ffcaa0d0467"
+last-modified: Tue, 24 Nov 2026 15:52:07 GMT
 server: cloudflare
 strict-transport-security: max-age=63072000
 x-matched-path: /llms.txt
 x-vercel-cache: MISS
-x-vercel-id: pdx1::45mll-1794962842416-d37559182748
+x-vercel-id: pdx1::nwt7h-1795535527807-18017268857f
 cf-cache-status: DYNAMIC
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=00iXJJjK7CYn5bb4e3hAggvfYYCIP4713z8J31RaOoUZ%2BrqiBa5oID%2FoGywFxrUf62oxsYre1xGcdm1XdgyqvrU2zpu2P4C1iZ9uXkCvA1oCIWNdUTFlj6XiPKxVJJga%2F2JCICeoYb04NHg%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Px2Uq77A6J8oGG%2Fc65VwXhmdZkWklZ01jQWy2gQ4862n3eH6qAVHep0Fb5Dj2Xljk5cmUzeg%2Bg4cmAcIw5Je4jHA1kSjGWFoscYVp2IiiYohUpisfJuof2kdEFYN7quP1SmSxOzFbxBOM1M%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-cf-ray: a5c2f6a4d914b57f-PDX
+cf-ray: a5f994388c7058c2-PDX
 alt-svc: h3=":443"; ma=86400
 
 # Financial Datasets
@@ -46,7 +46,11 @@ No API key yet? An AI agent can create one right now: POST /agent/signup with `{
 
 Or create a key in the dashboard: https://www.financialdatasets.ai
 
-No key and no account: pay with x402. Send a request with no X-API-KEY header to a supported endpoint and the 402 response carries the payment terms in the PAYMENT-REQUIRED header (amount in USDC on Base, network eip155:8453). Sign the payment with your own wallet and retry with the PAYMENT-SIGNATURE header; the x402 client libraries do this for you. x402 endpoints: every documented GET data endpoint (39): prices, financial statements and segments, financial metrics, earnings, company facts, filings, news, insider trades and ownership, politician trades, beneficial, activist and institutional holdings, index funds, macro series (interest rates, yield curve, inflation, labor, GDP, GPU prices), IPOs and KPIs; plus the stock screener, POST /financials/search/screener (JSON body; GET /financials/search/screener/filters lists the valid filter fields, free). Not covered: /filings/items, /prices/snapshot/market, the other POST endpoints, and the free helper lists such as /prices/tickers. Guide: https://docs.financialdatasets.ai/x402. Announcement: https://www.financialdatasets.ai/news/x402
+No key and no account: pay with x402. Send a request with no X-API-KEY header to a supported endpoint and the 402 response carries the payment terms in the PAYMENT-REQUIRED header (amount in USDC on Base, network eip155:8453). Sign the payment with your own wallet and retry with the PAYMENT-SIGNATURE header; the x402 client libraries do this for you. x402 endpoints: every documented data endpoint (49 routes): prices and the market snapshot, the price of a stock token on Base, financial statements (standardized and as-reported) and segments, financial metrics, earnings, company facts, filings and filing items, news, insider trades and ownership, politician trades, beneficial, activist and institutional holdings, index funds, macro series (interest rates, yield curve, inflation, labor, GDP, GPU prices), IPOs and KPIs; plus two POST routes with a JSON body: the stock screener, POST /financials/search/screener (GET /financials/search/screener/filters lists the valid filter fields, free), and the line items search, POST /financials/search/line-items. /filings/items answers 503 with Retry-After, with no charge, for a filing not read yet: send the request again. Not covered: POST /search (alpha, needs a key). The free helper lists such as /prices/tickers need no payment. Guide: https://docs.financialdatasets.ai/x402. Announcement: https://www.financialdatasets.ai/news/x402
+
+Coinbase and Base stock names: in `ticker`, every stock endpoint also accepts a Coinbase stock name (`AAPL-USD`, `AAPL-USDC`), a Base token symbol (`NVDAc`, exact letter case) or a Base token address (`base:0x...`). The response is the same as for the plain ticker. GET /tokenized-stocks lists the tokens with our ticker, the address, the shares per token and the endpoints that have data; it is free and needs no key. Details: https://docs.financialdatasets.ai/api/tokenized-stocks
+
+Tokenized stock price: the stock endpoints return data for the stock. For the token's own price on Base, at any hour, call GET /tokenized-stocks/prices/snapshot?ticker=NVDAc. `ticker` takes a token symbol or a token address only; a stock ticker (`NVDA`) returns 400. The response has the price in the token's USDC pool (read about every 15 seconds), the last trade, the price of the stock and the gap between the two in percent. It works with a key or with x402. Details: https://docs.financialdatasets.ai/api/tokenized-stocks/prices/snapshot
 
 ## API Endpoints
 
@@ -220,6 +224,12 @@ The as-filed line-item hierarchy from SEC filings (10-K / 10-Q). Each row contai
   - `ticker` (required)
 - [Market Snapshot](https://docs.financialdatasets.ai/api/prices/market-snapshot): GET /prices/snapshot/market — the latest price, day change and day change percent of every actively traded US stock (13,000+) in one request
   - No parameters.
+
+### Tokenized Stocks
+- [Tokenized Stocks](https://docs.financialdatasets.ai/api/tokenized-stocks): GET /tokenized-stocks — the stock tokens on Base, each with our ticker, its address, shares per token and the endpoints that have data (free, no API key)
+  - `ticker` (optional): a ticker or any name of the stock; returns the tokens of that stock
+- [Tokenized Stock Price (Snapshot)](https://docs.financialdatasets.ai/api/tokenized-stocks/prices/snapshot): GET /tokenized-stocks/prices/snapshot — latest price of one stock token on Base from its USDC pool, read about every 15 seconds, with the last trade, the price of the stock and the gap between the two in percent
+  - `ticker` (required): a token symbol in its exact letter case (`NVDAc`) or a token address (`base:0x...`). A stock ticker (`NVDA`) returns 400. 404 for a token with no USDC pool we read. 503 with Retry-After when our last read is older than 5 minutes. None of the three is charged.
 
 ### Agent Account (self-signup & funding)
 - [Agent Signup](https://docs.financialdatasets.ai/agents): POST /agent/signup
