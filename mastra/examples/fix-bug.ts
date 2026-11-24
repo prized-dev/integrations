@@ -3,8 +3,8 @@
  *
  *   PRIZED_API_KEY=dcp_... OPENAI_API_KEY=sk-... npm run example
  *
- * MODEL picks another model from Mastra's model router (default openai/gpt-5-nano). The run stops
- * once the model's tokens would cost more than MAX_USD (default 0.10, priced for gpt-5-nano). The
+ * MODEL picks another model from Mastra's model router (default openai/gpt-6-luna). The run stops
+ * once the model's tokens would cost more than MAX_USD (default 0.10, priced for gpt-6-luna). The
  * sandbox (2 vCPU, 4 GB, labelled example=prized-mastra plus EXAMPLE_LABELS) is deleted at the end,
  * failures included.
  */
@@ -15,10 +15,10 @@ import { Workspace } from '@mastra/core/workspace';
 
 import { PrizedSandbox } from '../src/index.js';
 
-const MODEL = process.env.MODEL ?? 'openai/gpt-5-nano';
+const MODEL = process.env.MODEL ?? 'openai/gpt-6-luna';
 const MAX_USD = Number(process.env.MAX_USD ?? 0.1);
-// gpt-5-nano, US$ per million tokens (developers.openai.com/api/docs/pricing, 2026-10-26).
-const PRICE = { input: 0.05, cachedInput: 0.005, output: 0.4 };
+// gpt-6-luna, US$ per million tokens (developers.openai.com/api/docs/pricing, 2026-11-24).
+const PRICE = { input: 0.1, cachedInput: 0.01, output: 0.5 };
 
 const APP = '/home/prized/work/app';
 const FILES = {
