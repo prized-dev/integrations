@@ -37,7 +37,7 @@ def arithmetic() -> Task:
 ```
 
 ```sh
-inspect eval arithmetic.py --model openai/gpt-5
+inspect eval arithmetic.py --model openai/gpt-6.1-sol
 ```
 
 `examples/fix_bug.py` is a fuller task: the agent fixes a bug with the bash tool and the scorer runs the tests in the same sandbox.

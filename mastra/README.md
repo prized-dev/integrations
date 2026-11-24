@@ -29,7 +29,7 @@ const agent = new Agent({
   id: 'fixer',
   name: 'Fixer',
   instructions: 'Read and edit the code with the file tools, and run the tests with execute_command.',
-  model: 'openai/gpt-5-nano',
+  model: 'openai/gpt-6-luna',
   workspace,
 });
 
