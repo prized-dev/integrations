@@ -213,12 +213,12 @@ async def test_environment_toolset_tools_live():
   env = PrizedEnvironment(**SMALL, labels=LABELS)
   toolset = EnvironmentToolset(environment=env)
   tools = {tool.name: tool for tool in await toolset.get_tools()}
-  CREATED.append(env.sandbox_id)
   ctx = mock.MagicMock()
   wrote = await tools["WriteFile"].run_async(
       args={"path": "fizz.py", "content": "print('fizz' * 2)\n"},
       tool_context=ctx,
   )
+  CREATED.append(env.sandbox_id)  # created by now with any google-adk
   assert wrote["status"] == "ok", wrote
   edited = await tools["EditFile"].run_async(
       args={"path": "fizz.py", "old_string": "* 2", "new_string": "* 3"},
