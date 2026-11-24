@@ -570,13 +570,15 @@ async def test_environment_toolset_drives_the_sandbox(sdk):
   toolset = EnvironmentToolset(environment=env)
   tools = {tool.name: tool for tool in await toolset.get_tools()}
   assert set(tools) >= {"Execute", "ReadFile", "EditFile", "WriteFile"}
-  box = sdk.created[0]
   context = mock.MagicMock()
 
+  # google-adk before 2.15 creates the sandbox in get_tools(); 2.15 and later
+  # on the first tool call, and call initialize() before every tool call.
   await tools["WriteFile"].run_async(
       args={"path": "app.py", "content": "print('a')\n"},
       tool_context=context,
   )
+  (box,) = sdk.created
   assert box.fs["/home/prized/work/app.py"] == b"print('a')\n"
   edited = await tools["EditFile"].run_async(
       args={"path": "app.py", "old_string": "'a'", "new_string": "'b'"},
@@ -594,6 +596,7 @@ async def test_environment_toolset_drives_the_sandbox(sdk):
       tool_context=context,
   )
   assert missing["status"] == "error"
+  assert len(sdk.created) == 1  # one sandbox for every call
 
   await toolset.close()
   assert box.deleted
